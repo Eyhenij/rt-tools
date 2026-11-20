@@ -30,9 +30,10 @@ The engine asks the cases in this order, and a met case lets the turn end before
 | --- | --- | --- | --- |
 | 1 | `scenarioEnd` | `any(measure.epic.finished, all(measure.copy.outsideEpic, measure.pr.handed))` | the end of the scenario |
 | 2 | `stopWord` | `measure.owner.saidStop` | a stop word of the owner |
-| 3 | `noWrite` | `any(measure.copy.outOfScenario, all(not(measure.session.wrote), not(measure.owner.nudged)))` | no write to the tree, or a branch outside the scenario |
-| 4 | `role` | `measure.session.role` | a role session |
-| 5 | `hostSilent` | `measure.host.silent` | the host did not answer twice |
+| 3 | `background` | `all(measure.session.waiting, not(measure.pr.handed))` | a background task of the session runs |
+| 4 | `noWrite` | `any(measure.copy.outOfScenario, all(not(measure.session.wrote), not(measure.owner.nudged)))` | no write to the tree, or a branch outside the scenario |
+| 5 | `role` | `measure.session.role` | a role session |
+| 6 | `hostSilent` | `measure.host.silent` | the host did not answer twice |
 | 8 | `menuLost` | `measure.session.menuLost` | the menu did not reach the owner |
 
 ## Measurers
@@ -46,7 +47,7 @@ The engine asks the cases in this order, and a met case lets the turn end before
 | `measure.epic.finished` | `source.git`, `source.host`, `source.tree` |
 | `measure.agreement.named` | `source.git`, `source.tree` |
 | `measure.task.taken` | `source.git`, `source.host` |
-| `measure.plan.approved` | `source.git`, `source.marks`, `source.steps` |
+| `measure.plan.approved` | `source.git`, `source.marks`, `source.steps`, `source.records` |
 | `measure.progress.mirrors` | `source.git`, `source.steps` |
 | `measure.progress.done` | `source.git`, `source.tree`, `source.marks`, `source.steps` |
 | `measure.footprint.touched` | `source.git` |
@@ -61,6 +62,7 @@ The engine asks the cases in this order, and a met case lets the turn end before
 | `measure.session.menuLost` | `source.session` |
 | `measure.session.forbidden` | `source.session` |
 | `measure.session.idle` | `source.session` |
+| `measure.session.waiting` | `source.session` |
 | `measure.host.silent` | `source.host` |
 
 ## Sources
@@ -74,6 +76,7 @@ The engine asks the cases in this order, and a met case lets the turn end before
 | `source.owner.open` | none |
 | `source.session.open` | none |
 | `source.steps.open` | none |
+| `source.records.open` | none |
 
 ## Words
 
@@ -84,7 +87,7 @@ The engine asks the cases in this order, and a met case lets the turn end before
 | `holdAfter` | стоять, останавлива, ждать |
 | `nudge` | `(?<![\p{L}])(?<!не )(продолжай\|доделывай\|работай\|делай дальше\|работаешь)(?![\p{L}])\|почему (ты )?(стоишь\|встал\|остановил)\|что дальше\|дальше\?\|^(ну )?(и )?что там\|^ну и\s*[?!.]\|какого .*останов` |
 | `write` | git commit, git push, git add, git merge, git rm, git mv, sed -i, perl -pi, gh pr, npm run task:new, pnpm run task:new, npm run task:move, pnpm run task:move, npm run agent-kit:sync, pnpm run agent-kit:sync |
-| `menu` | отложить RT-N, сделаю сам, стоп |
+| `menu` | отложить RT-N, стоп |
 | `legacyBranches` | RT-3276-conversation-checks, RT-3329-task-flow-scenario |
 
 ## Expected forms

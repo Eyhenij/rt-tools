@@ -37,6 +37,11 @@
             <ng-template let-c><ng-container *ngTemplateOutlet="panel; context: { $implicit: c }" /></ng-template>
         </app-story-row>
     }
+    @case ('blocks') {
+        <app-story-row slotWidth="26.25rem" [items]="blockCases" [itemLabel]="caseLabel">
+            <ng-template let-c><ng-container *ngTemplateOutlet="panel; context: { $implicit: c }" /></ng-template>
+        </app-story-row>
+    }
     @case ('error') {
         <app-story-row slotWidth="26.25rem" [items]="errorCases" [itemLabel]="caseLabel">
             <ng-template let-c><ng-container *ngTemplateOutlet="panel; context: { $implicit: c }" /></ng-template>

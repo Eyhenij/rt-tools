@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · pitfalls/doc-style.md · e519f288c03e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.1 · pitfalls/doc-style.md · e519f288c03e · правится надстройкой, не здесь -->
 # Project texts — cold part
 
 Pitfalls: traps already stepped on. Loaded not with the rule but on demand — an ordinary

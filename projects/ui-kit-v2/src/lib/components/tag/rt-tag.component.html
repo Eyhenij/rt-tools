@@ -18,7 +18,7 @@
     }">
     @if (!isDot()) {
         @if (icon(); as iconName) {
-            <rt-icon rtElem="icon" [size]="iconSize()" [name]="iconName" />
+            <rt-icon rtElem="icon" [size]="iconSize()" [name]="iconName" [spin]="iconSpin()" />
         }
         <!--
             Целое значение показывает подсказка, и только когда подписи не хватило места:

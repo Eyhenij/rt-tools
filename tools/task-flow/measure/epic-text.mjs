@@ -1,10 +1,10 @@
-// rt-kit v0.37.0 · task-flow/measure/epic-text.mjs · f50936470cc8 · правится надстройкой, не здесь
+// rt-kit v0.37.1 · task-flow/measure/epic-text.mjs · 6a01f795d334 · правится надстройкой, не здесь
 
 /**
  * The plan of an epic: its number, its branch and the rows of its task table, in their order.
  * A row is `| <#> | <KEY>-<n> — <name> | <state> |`; the state «отложено» defers the task,
- * «влито» marks it merged, and a state beginning with «шаг владельца» names the owner's step by a
- * quote in «».
+ * «влито» marks it merged. Any other state, the old mark «шаг владельца» among them, is an ordinary
+ * row.
  */
 export function epicPlan(text) {
     const epic = text.match(/\*\*Эпик:\*\*\s+[A-Z]+-(\d+)/)?.[1] ?? null;
@@ -19,7 +19,6 @@ export function epicPlan(text) {
             state,
             deferred: state === 'отложено',
             merged: state === 'влито',
-            ownerQuote: state.startsWith('шаг владельца') ? (state.match(/«([^»]+)»/)?.[1] ?? '') : null,
         });
     }
     return { epic: epic === null ? null : Number(epic), branch, rows };

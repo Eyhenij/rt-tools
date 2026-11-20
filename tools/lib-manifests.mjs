@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/lib-manifests.mjs · faba213e60d5 · правится надстройкой, не здесь
+// rt-kit v0.37.1 · checks/lib-manifests.mjs · 724abac0bf48 · правится надстройкой, не здесь
 /**
  * The lib itself: the mandatory files, the project name, the selector prefix, the tag and the
  * import alias — everything `project.json` and `tsconfig.base.json` must match the lib path on
@@ -7,11 +7,42 @@
  * The name does not begin with `check-`: by walking such names the package default assembles the
  * push gate set, and a helper with one would be run by the gate as a check of its own.
  */
-import { existsSync } from 'node:fs';
+import { existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { LIB_PREFIX, REQUIRED_FILES, declaredAlias, importAlias, libTag, projectName, readJson, report } from './lib-common.mjs';
+import { ANGULAR_TEST_EXECUTOR, LIB_PREFIX, REQUIRED_FILES, declaredAlias, importAlias, libTag, projectName, readJson, report } from './lib-common.mjs';
 import { ROOT } from './rt-kit-checks.config.mjs';
+
+/**
+ * A lib runs its tests in one of two forms: its own `vitest.config.mts`, or the Angular builder.
+ * The second counts only when all three hold at once: `project.json` declares the `test` target on
+ * the executor `@angular/build:unit-test`, `options.tsConfig` names a file that exists on disk, and
+ * the lib has its own `tsconfig.spec.json`. A lib with both forms is not an error.
+ */
+function checkTestRunner(libPath, project) {
+    if (existsSync(join(ROOT, libPath, 'vitest.config.mts'))) {
+        return;
+    }
+    const expected = `a lib needs a test runner: either ${libPath}/vitest.config.mts, or a \`test\` target on the executor ${ANGULAR_TEST_EXECUTOR} with options.tsConfig pointing at an existing file, together with its own ${libPath}/tsconfig.spec.json`;
+    const target = project.targets?.test;
+    if (!target) {
+        report(libPath, `no file vitest.config.mts and no \`test\` target in project.json; ${expected}`);
+        return;
+    }
+    if (target.executor !== ANGULAR_TEST_EXECUTOR) {
+        report(libPath, `no file vitest.config.mts, and the \`test\` target ${target.executor ? `runs on «${target.executor}»` : 'names no executor'}; ${expected}`);
+        return;
+    }
+    const tsConfig = target.options?.tsConfig;
+    if (typeof tsConfig !== 'string' || tsConfig === '') {
+        report(libPath, `no file vitest.config.mts, and the \`test\` target names no options.tsConfig; ${expected}`);
+    } else if (!existsSync(join(ROOT, tsConfig)) || !statSync(join(ROOT, tsConfig)).isFile()) {
+        report(libPath, `no file vitest.config.mts, and options.tsConfig «${tsConfig}» is not an existing file; ${expected}`);
+    }
+    if (!existsSync(join(ROOT, libPath, 'tsconfig.spec.json'))) {
+        report(libPath, `no file vitest.config.mts, and no file tsconfig.spec.json; ${expected}`);
+    }
+}
 
 function checkLib(libPath, { requirePrefix = true } = {}) {
     for (const file of REQUIRED_FILES) {
@@ -25,6 +56,7 @@ function checkLib(libPath, { requirePrefix = true } = {}) {
     }
 
     const project = readJson(`${libPath}/project.json`);
+    checkTestRunner(libPath, project);
     // The name the tree wrote down is the name. The formula speaks only where nothing is written:
     // it says what the name must become, and judging a declared name by it reddens a lib that
     // breaks nothing.

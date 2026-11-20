@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — about one turn. Load when a turn is being ended — what it ends with, what the owner is told about a step that is theirs, what backs a statement about the tree, what the guards watch. Pattern task-flow-handoff. The whole course of work — rule task-flow.
 ---
-<!-- rt-kit v0.37.0 · rules/turn-conduct.md · 8e1edb634124 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.1 · rules/turn-conduct.md · fca08236a6ea · правится надстройкой, не здесь -->
 
 # Turn conduct — how it works here
 
@@ -31,23 +31,24 @@ demand, not with the rule.
 
 A turn ends when the scenario is over or when the owner's last word is a stop word. The owner put it
 so: «Только твоё «стоп»». The exit guard measures the branch by the task flow description and holds
-every other turn with the one move that comes next.
+every other turn with the one move that comes next, unless a release case below is met.
 
 <!-- flow:turn-end -->
 The engine lets a turn end before the scenario does when a case is met, asked in this order:
 
 - **1** · the end of the scenario — `any(measure.epic.finished, all(measure.copy.outsideEpic, measure.pr.handed))`
 - **2** · a stop word of the owner — `measure.owner.saidStop`
-- **3** · no write to the tree, or a branch outside the scenario — `any(measure.copy.outOfScenario, all(not(measure.session.wrote), not(measure.owner.nudged)))`
-- **4** · a role session — `measure.session.role`
-- **5** · the host did not answer twice — `measure.host.silent`
+- **3** · a background task of the session runs — `all(measure.session.waiting, not(measure.pr.handed))`
+- **4** · no write to the tree, or a branch outside the scenario — `any(measure.copy.outOfScenario, all(not(measure.session.wrote), not(measure.owner.nudged)))`
+- **5** · a role session — `measure.session.role`
+- **6** · the host did not answer twice — `measure.host.silent`
 - **8** · the menu did not reach the owner — `measure.session.menuLost`
 <!-- /flow:turn-end -->
 
 A question to the owner, a guard's refusal, a handover and handed-in work do not end a turn. A
 question waits for its answer inside the turn, a refusal is answered by the next call, and handed-in
-work is followed by the next task. A step that belongs to the owner, or that another guard refuses,
-goes to them as one menu with the options of the description: «отложить RT-N», «сделаю сам», «стоп».
+work is followed by the next task. A step that another guard refuses twice
+goes to the owner as one menu with the options of the description: «отложить RT-N», «стоп».
 
 The queue is asked by a command in the same turn: "there are no tasks" is a statement about the
 tree, and the executor's memory does not confirm it.
@@ -78,7 +79,7 @@ flowchart TD
     B -->|Another release case of the description| I
     B -->|None| D{The next move}
     D -->|The executor's step| G[Done in the same turn: a question, a refusal, a handover never end it]
-    D -->|Another guard refuses it twice| M[One menu: «отложить RT-N», «сделаю сам», «стоп»]
+    D -->|Another guard refuses it twice| M[One menu: «отложить RT-N», «стоп»]
     M --> A
     G --> A
     L --> I{The reply speaks of the tree}
@@ -162,10 +163,10 @@ flowchart TD
   action, not instead of it.
 - **The last action of a turn is only ever work.** A file edit or a changing command stands last
   among what the turn did. The exit guard does not read the last call: a turn whose scenario is not
-  over is held whatever stood last.
+  over is held whatever stood last, unless a release case is met.
 - **Waiting for someone else's step is never the last action of a turn.** While they are waited for,
   the work stays where it stood. The last action is judged: waiting mid-turn is lawful, and so is a
-  launch in the background mid-turn. Standing last, it is an announcement of intent: what does not depend on it is done while it runs.
+  launch in the background mid-turn. Standing last, it ends the turn only as a wait the record shows: a background task of the session with no end, younger than twenty minutes, once per task and not after the work is handed over. What does not depend on it is done first.
 - **The handover is written even where the branch has no name.** All of it lies in the tree and is
   reachable on a detached head; one file needs a name, and a short snapshot of the head gives it.
   Otherwise compaction comes without a handover, and the next session starts from a blank.
@@ -186,7 +187,7 @@ flowchart TD
   whatever the report says.
 - **The word about a stop the guard reads from the owner, not from the executor.** Otherwise the
   stop is declared by whoever finds it convenient, and the ban holds until the first inconvenience.
-- **Until the scenario is over a turn ends only by the owner's stop word.** A question, a refusal, a
+- **Until the scenario is over a turn ends only by the owner's stop word or by a release case.** A question, a refusal, a
   handover and a second pass are the turn going on: the exit guard returns each with the next move
   named. The other release cases of the description are not the executor's to choose.
 - **The owner's word about a stop is read from the record of the session, not from the progress.**

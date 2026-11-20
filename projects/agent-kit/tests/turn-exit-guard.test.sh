@@ -107,7 +107,7 @@ out('end: SC-AK-1505 — слово остановки, добавленное �
 out('end: SC-AK-1505 — пакетное описание этого слова не знает', stop('Шабаш, на сегодня всё'), 'false');
 
 const events = (list) => ({ session: { events: () => list } });
-const MENU = 'Ask the owner: «отложить RT-7», «сделаю сам», «стоп».';
+const MENU = 'Ask the owner: «отложить RT-7», «стоп».';
 const lost = (list) => String(session.menuLost(events(list))(data));
 out('menu: SC-AK-1444 — меню не дошло второй раз подряд', lost([{ kind: 'refusal', text: MENU }, { kind: 'menu', answered: false }, { kind: 'refusal', text: MENU }, { kind: 'menu', answered: false }]), 'true');
 out('menu: SC-AK-1444 — меню не дошло один раз — не потеряно', lost([{ kind: 'refusal', text: MENU }, { kind: 'menu', answered: false }]), 'false');
@@ -118,12 +118,11 @@ const stage = { state: 'этап-идёт', index: 7, reason: null };
 out('удержанный ход в этапе называет шаг и команду', String(holdReason(model, stage, { number: '3.6', name: 'Перевести' }).includes('task-flow-script.mjs step 3.6')), 'true');
 out('удержанный ход до этапа называет действие состояния', String(holdReason(model, held, null).includes('explore the tree')), 'true');
 
-// --- меню владельцу: шаг владельца или шаг, который запрещает другая проверка ---------------------
+// --- меню владельцу: шаг, который запрещает другая проверка, или простой -------------------------
 const HOLD_MENU = { cause: null, task: '7' };
 const forbiddenBy = (name) => (name === 'measure.session.forbidden' ? 'git-guard-delivery' : false);
 const checkMenu = holdReason(model, stage, null, { ...HOLD_MENU, cause: menuCause(forbiddenBy) });
 const ownerMenu = checkMenu;
-out('menu: SC-AK-1744 — строка шага владельца меню не называет', String(holdReason(model, stage, null, { ...HOLD_MENU, cause: menuCause((name) => name === 'measure.epic.ownerStep') }).includes("owner's menu")), 'false');
 out('menu: SC-AK-1442 — шаг запрещает другая проверка — меню об этой проверке', String(checkMenu.includes('`git-guard-delivery` refused the same step twice') && checkMenu.includes("owner's menu")), 'true');
 const blockedBy = (by, reason) => ({ kind: 'blocked', by, reason });
 const called = (name, input = {}, blocked = false) => ({ kind: 'call', name, input, blocked });
@@ -141,10 +140,51 @@ out('menu: SC-AK-1701 — первая остановка — не просто�
 const idleMenu = holdReason(model, stage, null, { ...HOLD_MENU, cause: menuCause((name) => name === 'measure.session.idle') });
 out('menu: SC-AK-1701 — простой называет меню владельцу', String(idleMenu.includes('no call followed it') && idleMenu.includes("owner's menu")), 'true');
 
-out('menu: SC-AK-1443 — заблокированная задача — берётся следующая незаблокированная', String(ownerMenu.includes('takes the next unblocked task') && ownerMenu.includes('takes the next;')), 'true');
+// --- ожидание своей фоновой задачи -----------------------------------------------------------------
+const NOW = Date.parse('2026-11-19T12:00:00Z');
+const minutesAgo = (m) => NOW - m * 60_000;
+const timed = (list) => ({ session: { events: () => list, now: () => NOW } });
+const waits = (list) => String(session.waiting(timed(list))(data));
+const started = (id, m) => ({ kind: 'background', id, task: `task-${id}`, at: minutesAgo(m) });
+const over = (id) => ({ kind: 'backgroundEnd', id, task: `task-${id}` });
+const ended = { kind: 'ended' };
+const BG = called('Bash', { command: 'pnpm test', run_in_background: true });
+const WAITING = { ...WROTE, 'measure.session.waiting': true };
+out('end: SC-AK-1761 — фоновая задача идёт — сессия ждёт', waits([called('Edit'), BG, started('a', 3)]), 'true');
+out('end: SC-AK-1761 — задача кончилась — не ждёт', waits([BG, started('a', 3), over('a')]), 'false');
+out('end: SC-AK-1761 — конец по номеру задачи без номера вызова', waits([BG, started('a', 3), { kind: 'backgroundEnd', id: null, task: 'task-a' }]), 'false');
+out('end: SC-AK-1761 — одна из двух задач ещё идёт — ждёт', waits([BG, started('a', 9), BG, started('b', 2), over('a')]), 'true');
+out('end: SC-AK-1761 — без фоновых задач — не ждёт', waits([called('Edit'), refused]), 'false');
+out('end: SC-AK-1761 — ожидающий ход отпущен своим случаем', released(WAITING), 'a background task of the session runs');
+out('end: SC-AK-1761 — слово остановки спрашивается раньше', released({ ...WAITING, 'measure.owner.saidStop': true }), 'a stop word of the owner');
+out('end: SC-AK-1762 — задача старше границы — не ждёт', waits([BG, started('a', 21)]), 'false');
+out('end: SC-AK-1762 — задача моложе границы — ждёт', waits([BG, started('a', 19)]), 'true');
+out('end: SC-AK-1762 — граница — двадцать минут', String(session.BACKGROUND_BOUND), '20');
+out('end: SC-AK-1762 — задача без времени начала — не ждёт', waits([BG, { kind: 'background', id: 'a', task: 't', at: NaN }]), 'false');
+out('end: SC-AK-1762 — второй конец хода на той же задаче без вызова — не ждёт', waits([BG, started('a', 5), ended]), 'false');
+out('end: SC-AK-1762 — вызов после конца хода — снова ждёт', waits([BG, started('a', 5), ended, called('Read')]), 'true');
+out('end: SC-AK-1762 — отказ конца хода задачу не тратит', waits([BG, started('a', 5), refused]), 'true');
+out('end: SC-AK-1762 — без ожидания ход с записью держится', released(WROTE), 'held');
+out('end: SC-AK-1762 — две задачи отпускают два конца хода', waits([BG, started('a', 5), BG, started('b', 4), ended, ended]) + ' ' + waits([BG, started('a', 5), BG, started('b', 4), ended]), 'false true');
+out('end: SC-AK-1762 — конец одной из двух задач возвращает её конец хода', waits([BG, started('a', 5), BG, started('b', 4), ended, ended, over('a')]) + ' ' + waits([BG, started('a', 5), BG, started('b', 4), ended, over('a')]), 'false true');
+out('end: SC-AK-1762 — задача с началом из будущего — не ждёт', waits([BG, started('a', -60)]), 'false');
+out('end: SC-AK-1761 — конец записан раньше начала — задача не идёт', waits([over('a'), started('a', 1)]), 'false');
+const resumedRun = [started('a', 9), over('a'), { kind: 'background', id: 'm', task: 'task-a', at: minutesAgo(2) }];
+out('end: SC-AK-1761 — поздняя копия уведомления прежнего запуска возобновлённого агента не кончает', waits([...resumedRun, over('a')]), 'true');
+out('end: SC-AK-1761 — уведомление без номера вызова кончает задачу по её номеру', waits([...resumedRun, { kind: 'backgroundEnd', id: null, task: 'task-a' }]), 'false');
+const idlesAt = (list) => String(session.idle(timed(list))(data));
+out('menu: SC-AK-1763 — остановка после отказа при идущей задаче — не простой', idlesAt([BG, started('a', 4), refused]), 'false');
+out('menu: SC-AK-1763 — задача кончилась — простой, как раньше', idlesAt([BG, started('a', 4), over('a'), refused]), 'true');
+out('menu: SC-AK-1763 — задача старше границы — простой', idlesAt([BG, started('a', 30), refused]), 'true');
+out('menu: SC-AK-1763 — потраченная задача меню тоже не зовёт', idlesAt([BG, started('a', 4), ended, refused]), 'false');
+out('menu: SC-AK-1763 — ожидание меню владельцу не называет', String(menuCause((name) => (name === 'measure.session.idle' ? session.idle(timed([BG, started('a', 4), refused]))(data) : false)) === null), 'true');
+out('end: SC-AK-1764 — в состоянии «работа-отдана» ожидание не отпускает', released({ ...WAITING, 'measure.pr.handed': true }), 'held');
+out('end: SC-AK-1764 — молчащий хостинг на вопросе о PR ожидание не держит', releaseCase(model, (name) => { if (name === 'measure.pr.handed') throw Object.assign(new Error('silent'), { name: 'HostSilent' }); return WAITING[name] ?? false; }, held)?.log ?? 'held', 'a background task of the session runs');
 
-out('menu: SC-AK-1445 — меню отказа несёт «отложить RT-N», «сделаю сам» и «стоп»', String(['«отложить RT-7»', '«сделаю сам»', '«стоп»'].every((option) => ownerMenu.includes(option))), 'true');
-out('menu: SC-AK-1445 — без номера задачи вариант остаётся «отложить RT-N»', menuOptions(model.words, null).join(', '), 'отложить RT-N, сделаю сам, стоп');
+out('menu: SC-AK-1443 — заблокированная задача — берётся следующая незаблокированная', String(ownerMenu.includes('takes the next unblocked task') && ownerMenu.includes('«стоп» ends the turn')), 'true');
+
+out('menu: SC-AK-1445 — меню отказа несёт «отложить RT-N» и «стоп»', String(['«отложить RT-7»', '«стоп»'].every((option) => ownerMenu.includes(option))), 'true');
+out('menu: SC-AK-1445 — без номера задачи вариант остаётся «отложить RT-N»', menuOptions(model.words, null).join(', '), 'отложить RT-N, стоп');
 
 const answered = (option) => sourceWordOf({ type: 'user', toolUseResult: { answers: { 'Что делать?': option } }, message: { content: [] } });
 out('menu: SC-AK-1467 — вариант «стоп» меню отказа — слово владельца', answered('стоп'), 'стоп');
@@ -156,9 +196,6 @@ const defer = (word) => judgeCall({ tool: 'Edit', path: 'docs/plans/epic.md', ed
 out('menu: SC-AK-1468 — вариант «отложить RT-N» ставит отметку «отложено»', String(defer(answered('отложить RT-7'))), 'null');
 out('menu: SC-AK-1468 — без варианта отметка отказана', String(defer('ок') !== null), 'true');
 
-const own = judgeCall({ tool: 'Edit', path: 'docs/plans/epic.md', edits: [{ oldString: '| RT-7 — проба | идёт |', newString: '| RT-7 — проба | шаг владельца «сделаю сам» |' }] }, { ...ctx, ownerLast: () => answered('сделаю сам') });
-out('menu: SC-AK-1469 — вариант «сделаю сам» блокирует задачу шагом владельца', String(own), 'null');
-out('menu: SC-AK-1469 — строка шага владельца — задача заблокирована', String(epicPlan(plan.replace('| идёт |', '| шаг владельца «сделаю сам» |')).rows[0].ownerQuote), 'сделаю сам');
 JS
 
 # --- сам хук на дереве фикстуры ---------------------------------------------------------------------
@@ -173,6 +210,25 @@ expect_stop "end: SC-AK-1429 — слово остановки отпускае�
     "$(input_stop "$(transcript "$(edited)" "$(say 'Стоп, хватит')")")" PASS
 expect_stop "end: SC-AK-1432 — сессия без записи отпускает ход через хук" \
     "$(input_stop "$(transcript "$(say 'расскажи, что в ветке')" "$(reply)")")" PASS
+
+# Фоновая задача сессии: запуск с ответом, который несёт номер задачи и время записи.
+bg_run() {
+    jq -c -n '{type:"assistant",message:{content:[{type:"tool_use",id:"bg1",name:"Bash",input:{command:"pnpm test",run_in_background:true}}]}}'
+}
+bg_started() {
+    jq -c -n --arg t "$(node -e "console.log(new Date(Date.now() - $1 * 60000).toISOString())")" \
+        '{type:"user",timestamp:$t,toolUseResult:{backgroundTaskId:"b1"},message:{content:[{type:"tool_result",tool_use_id:"bg1",content:"Command running in background with ID: b1"}]}}'
+}
+bg_over() {
+    jq -c -n '{type:"queue-operation",operation:"enqueue",content:"<task-notification>\n<task-id>b1</task-id>\n<tool-use-id>bg1</tool-use-id>\n<status>completed</status>\n</task-notification>"}'
+}
+expect_stop "end: SC-AK-1761 — фоновая задача идёт — ход отпущен через хук" \
+    "$(input_stop "$(transcript "$(say 'делай')" "$(edited)" "$(bg_run)" "$(bg_started 2)")")" PASS
+report "end: SC-AK-1761 — отпуск на ожидании пишется в журнал" "$(grep -c 'ход отпущен на ожидании' "$REPO/.git/rt-kit/turn-exit.log" 2>/dev/null)" "1"
+expect_stop "end: SC-AK-1761 — задача кончилась — ход держится через хук" \
+    "$(input_stop "$(transcript "$(say 'делай')" "$(edited)" "$(bg_run)" "$(bg_started 2)" "$(bg_over)")")" BLOCK
+expect_stop "end: SC-AK-1762 — задача старше границы — ход держится через хук" \
+    "$(input_stop "$(transcript "$(say 'делай')" "$(edited)" "$(bg_run)" "$(bg_started 25)")")" BLOCK
 
 JOURNAL="$REPO/.git/rt-kit/turn-exit.log"
 BROKEN="$TURNS/broken-engine.mjs"

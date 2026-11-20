@@ -43,6 +43,7 @@
       menuLost: { session: source.session },
       forbidden: { session: source.session },
       idle: { session: source.session },
+      waiting: { session: source.session },
     },
     host: { silent: { host: source.host } },
   },
@@ -136,6 +137,13 @@
       log: 'the end of the scenario',
     },
     stopWord: { when: measure.owner.saidStop, order: 2, log: 'a stop word of the owner' },
+    // The state «работа-отдана» sends work to the background by its own action and goes on: there
+    // the wait releases nothing.
+    background: {
+      when: { all: [measure.session.waiting, { not: measure.pr.handed }] },
+      order: 3,
+      log: 'a background task of the session runs',
+    },
     noWrite: {
       when: {
         any: [
@@ -143,11 +151,11 @@
           { all: [{ not: measure.session.wrote }, { not: measure.owner.nudged }] },
         ],
       },
-      order: 3,
+      order: 4,
       log: 'no write to the tree, or a branch outside the scenario',
     },
-    role: { when: measure.session.role, order: 4, log: 'a role session' },
-    hostSilent: { when: measure.host.silent, order: 5, log: 'the host did not answer twice' },
+    role: { when: measure.session.role, order: 5, log: 'a role session' },
+    hostSilent: { when: measure.host.silent, order: 6, log: 'the host did not answer twice' },
     menuLost: { when: measure.session.menuLost, order: 8, log: 'the menu did not reach the owner' },
   },
 
@@ -166,7 +174,7 @@
       'git commit', 'git push', 'git add', 'git merge', 'git rm', 'git mv', 'sed -i', 'perl -pi', 'gh pr', 'npm run task:new', 'pnpm run task:new', 'npm run task:move',
       'pnpm run task:move', 'npm run agent-kit:sync', 'pnpm run agent-kit:sync',
     ],
-    menu: ['отложить RT-N', 'сделаю сам', 'стоп'],
+    menu: ['отложить RT-N', 'стоп'],
     legacyBranches: ['RT-3276-conversation-checks', 'RT-3329-task-flow-scenario'],
   },
 

@@ -1,6 +1,6 @@
 # The assistant chat
 
-**Status:** in force · **Revision:** 2026-10-09 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-15 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the run status, the value with a copy button, the prompt suggestion, the AI prompt input with the usage ring, the thread list and the markdown text of the kit
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
 **Procedures:** none
@@ -17,38 +17,58 @@ conversations. Every application repeats the same screen, and every copy drifts 
 ## Terminology
 
 - **The question** — a message the person sent.
-- **The answer** — a message of the assistant: the run line, the text, the attachments, the rating.
+- **The answer** — a message of the assistant: the run line, the blocks, the attachments, the rating.
+- **The block** — one part of an answer: markdown text, a notice, a table, KPI cards, a link card, a section
+  of other blocks, or a part of another type the consumer draws with a renderer of its own.
+- **The renderer** — a component the consumer registers for a block type the kit does not draw.
 - **The run** — the progress of one answer: running, done, stopped, failed, with optional steps.
-- **The attachments** — what the application draws under the answer text: a chart, a table.
+- **The attachments** — what the application draws under the answer blocks: a link, a file, a form.
 - **The conversation** — a thread of questions and answers the person can return to.
 - **The run error** — the answer broke off: the message, the reference number, whether to ask again.
 
 ### What it is called in the interface
 
-| In the domain         | On the screen                                           |
-| --------------------- | ------------------------------------------------------- |
-| The question          | the bubble on the right with «You»                      |
-| The answer            | the text on the left with the run line above it         |
-| The rating            | the buttons «Good answer» and «Bad answer»              |
-| Copying a message     | the button «Copy», «Copied» after the press             |
-| The conversations     | the button and the page «Conversations»                 |
-| A new conversation    | the button «New conversation»                           |
-| The reference number  | «Reference» with the id on a plate and «Copy reference» |
-| Ask again             | the button «Ask again» under the error                  |
-| The suggestions       | the cards with ready questions on the empty screen      |
-| The conversation menu | the button «More actions» with «Copy ID» and «Delete»   |
+| In the domain              | On the screen                                           |
+| -------------------------- | ------------------------------------------------------- |
+| The question               | the bubble on the right with «You»                      |
+| The answer                 | the blocks on the left with the run line above them     |
+| A block without a renderer | a dashed plate «The “chart” block is not supported»     |
+| The rating                 | the buttons «Good answer» and «Bad answer»              |
+| Copying a message          | the button «Copy», «Copied» after the press             |
+| The conversations          | the button and the page «Conversations»                 |
+| A new conversation         | the button «New conversation»                           |
+| The reference number       | «Reference» with the id on a plate and «Copy reference» |
+| Ask again                  | the button «Ask again» under the error                  |
+| The suggestions            | the cards with ready questions on the empty screen      |
+| The conversation menu      | the button «More actions» with «Copy ID» and «Delete»   |
 
 ## Rules
 
 - **An empty conversation shows the greeting and the suggestion cards, and a pressed card sends its text.**
 
-- **A question stands on the right in a bubble with «You», an answer on the left as markdown text.**
+- **A question stands on the right in a bubble with «You», an answer on the left as its blocks.**
 
-- **The run line stands above the answer text, and its steps open for one answer at a time.**
+- **The blocks of an answer stand in their order: a markdown block as text, a notice as `rt-message` of its severity, a table block as the kit's table, a KPI block as the kit's grid of cards.** A section block stands as its title and a grid of the blocks it holds. A link block stands as the card of a page.
 
-- **The rating appears once the answer text is written, and pressing the chosen rating again removes it.**
+- **A block of a type the kit does not draw is drawn by the renderer the consumer registered for that type.**
 
-- **A written answer has «Copy» first in its rating row, and the press puts the answer text as the reader sees it, without markdown signs, into the clipboard and shows «Copied» for two seconds.**
+- **A block with no renderer shows a plate with its type name, and the blocks around it stay in place.**
+
+- **A markdown block without text, a notice without a severity `rt-message` knows, a table block without columns or rows, a KPI block without a card and a section without a block are shown as the plate too.** A link block without a title or an address is the plate too. A renderer registered for `markdown`, `notice`, `table`, `kpi`, `link` or `section` is not taken.
+
+- **A screen reader announces a notice in an answer politely, as a status, not as an alert.**
+
+- **The run line stands above the answer blocks, and its steps open for one answer at a time.**
+
+- **The rating appears once the answer has a block and is no longer written, and pressing the chosen rating again removes it.**
+
+- **A written answer has «Copy» first in its rating row, and the press copies the visible text of its blocks without markdown signs or unknown blocks and shows «Copied» for two seconds.**
+
+- **A block drawn by a renderer goes into the copy by the text function registered with it; without one it stays out.**
+
+- **A table block and a KPI block go into the copy as tab-separated lines, their values written as the block shows them in the kit locale.** A link block goes into the copy as one tab-separated line. A section goes into the copy as its title and the texts of the blocks it holds, by the rules of `docs/specs/ui-kit-v2/ai-chat-section/`.
+
+- **A written answer whose blocks give no text shows no «Copy», and its rating stays.**
 
 - **A question has «Copy» in a row under its bubble at the bubble's side, it copies the question text, and the consumer can turn both copy buttons off.**
 
@@ -111,7 +131,8 @@ conversations. Every application repeats the same screen, and every copy drifts 
 - The protocol of the model: the panel gets ready state, it does not read a stream of events.
 - Asking for confirmation before deleting a conversation: the panel reports the request, the
   application decides.
-- Charts: the panel does not know what the attachments are.
+- Drawing a chart and other heavy blocks inside the rich-editor entry: their renderers are
+  registered by the consumer, so a heavy dependency stays out of the entry.
 
 ## Contract
 
@@ -133,8 +154,8 @@ leave through outputs.
 | empty         | the greeting, the suggestion cards, the composer           |
 | loading       | a spinner until the first message arrives                  |
 | thinking      | the question, the running run line, the composer with Stop |
-| writing       | the answer text growing under the running run line         |
-| answered      | the text, the done run line, «Copy» and the rating         |
+| writing       | the answer blocks growing under the running run line       |
+| answered      | the blocks, the done run line, «Copy» and the rating       |
 | run error     | the error message, the reference number, «Ask again»       |
 | conversations | the search and the list in place of the feed               |
 | full screen   | the conversations as a column, the feed beside them        |
@@ -163,8 +184,18 @@ Not applicable.
 
 - **The organism lives in the rich-editor entry.** It holds the message composer, which pulls the
   rich editor library; the main entry does not import it.
-- **The attachments come as a template.** The kit draws the answer text; charts and other
-  attachments are the application's, and the kit does not know them.
+- **The attachments come as a template.** The kit draws the answer blocks; what stands under them
+  is the application's, and the kit does not know it. A part of the answer itself goes as a block
+  with a registered renderer, not through this template.
+- **Heavy blocks are drawn by registered renderers, not by a switch inside the kit.** A chart
+  imported by the rich-editor entry would make its library a dependency of every consumer of the
+  editor. The type of a block is an open union: the kit knows `markdown`, `notice`, `table`, `kpi`, `link` and `section`, the rest
+  arrive by the renderer token.
+- **All renderers are registered at one level, usually the root of the application.** Angular does
+  not join a multi provider list across injectors: a registration in a route or a component hides
+  those of the root in its subtree. Merging the levels is left until a consumer needs it.
+- **A block without a renderer is shown, not skipped.** A skipped block hides a forgotten
+  registration from the developer; the plate names the type.
 - **The protocol stays in the application.** The kit gets a list of messages with a run state, not
   events of a model.
 - **Deleting is a row action of the thread list.** A nested button inside the row button is not
@@ -192,3 +223,6 @@ None.
 - 2026-10-28 — the task RT-2962 of the epic RT-2958: the row actions of a conversation are visible on a touch screen.
 - 2026-10-28 — the task RT-2964 of the epic RT-2958: the composer of the assistant with the row of actions and the usage ring.
 - 2026-11-15 — the task RT-3348: on a phone the row sign shadow is narrower and a tap leaves no hover tint.
+- 2026-11-15 — the task RT-3334 of the epic RT-3346: the answer is a list of blocks — markdown and notice drawn by the kit, other types by registered renderers, a plate for a type without one.
+- 2026-11-17 — the task RT-3334 after review: a renderer gives the copy text of its block, an answer without text shows no «Copy», a notice of an unknown severity is a plate.
+- 2026-11-17 — the task RT-3361 of the epic RT-3346: a notice in an answer is announced as a status, not as an alert.

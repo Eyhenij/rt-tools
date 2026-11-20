@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/git-guard-push-marks.sh · e703a24b22ef · правится надстройкой, не здесь
+# rt-kit v0.37.1 · hooks/git-guard-push-marks.sh · e703a24b22ef · правится надстройкой, не здесь
 # The base of the push set and the marks of a green run, shared by the push guard and by the
 # command that runs the set ahead (`git-guard-push-ahead.sh`).
 #

@@ -139,6 +139,69 @@ printf '{"sourceRoots":["libs"],"families":["alpha"],"apiFamily":["api","beta-ap
 report "SC-AK-1131 — список: домен первой семьи назван" "$(layers_says '^  libs/api/orders: no layers')" 1
 report "SC-AK-1131 — список: домен второй семьи назван" "$(layers_says '^  libs/beta-api/billing: no layers')" 1
 
+# --- SC-AK-1795 — запуск тестов: свой vitest.config.mts или сборщик Angular -------------------
+#
+# Либа с компонентами тестируется сборщиком Angular, и файл vitest.config.mts ей не нужен. Замена
+# засчитывается только целиком: цель test на исполнителе сборщика, существующий файл в
+# options.tsConfig и собственный tsconfig.spec.json. Любой неполный набор остаётся отказом, и отказ
+# называет обе допустимые формы.
+
+printf '{"compilerOptions":{"paths":{"@own/util":["./libs/alpha/auth/util/src/index.ts"]}}}\n' \
+    > "$LAYERS_TREE/tsconfig.base.json"
+layers_config ''
+rm -rf "$LAYERS_TREE/libs/api" "$LAYERS_TREE/libs/beta-api"
+runner_project() {
+    printf '{"name":"alpha-auth-util","sourceRoot":"libs/alpha/auth/util/src","prefix":"own","tags":["scope:alpha-auth-util"],"targets":{"test":%s}}\n' "$1" \
+        > "$LIB_DIR/project.json"
+}
+ANGULAR_TEST='{"executor":"@angular/build:unit-test","options":{"buildTarget":"x:build","tsConfig":"libs/alpha/auth/util/tsconfig.spec.json","watch":false}}'
+runner_says() { layers_says 'a lib needs a test runner'; }
+
+rm -f "$LIB_DIR/vitest.config.mts"
+touch "$LIB_DIR/tsconfig.spec.json"
+
+runner_project "$ANGULAR_TEST"
+report "SC-AK-1795 — сборщик Angular с tsConfig и tsconfig.spec.json принят" "$(runner_says)" 0
+report "SC-AK-1795 — принятая либа не получает никакого другого отказа" "$(layers_says '^  libs/alpha/auth/util: ')" 0
+
+printf '{"name":"alpha-auth-util","sourceRoot":"libs/alpha/auth/util/src","prefix":"own","tags":["scope:alpha-auth-util"]}\n' \
+    > "$LIB_DIR/project.json"
+report "SC-AK-1795 — без файла и без цели test: отказ" "$(runner_says)" 1
+report "SC-AK-1795 — отказ называет обе формы" \
+    "$(layers_says 'vitest\.config\.mts, or a .test. target on the executor @angular/build:unit-test')" 1
+
+runner_project '{"executor":"@nx/vitest:test","options":{"tsConfig":"libs/alpha/auth/util/tsconfig.spec.json"}}'
+report "SC-AK-1795 — цель на другом исполнителе: отказ" "$(layers_says 'runs on «@nx/vitest:test»')" 1
+
+runner_project '{"executor":"@angular/build:unit-test","options":{"watch":false}}'
+report "SC-AK-1795 — цель без tsConfig: отказ" "$(layers_says 'names no options.tsConfig')" 1
+
+runner_project '{"executor":"@angular/build:unit-test","options":{"tsConfig":"libs/alpha/auth/util/missing.json"}}'
+report "SC-AK-1795 — tsConfig на несуществующий файл: отказ" "$(layers_says 'is not an existing file')" 1
+
+runner_project '{"executor":"@angular/build:unit-test","options":{"tsConfig":""}}'
+report "SC-AK-1795 — пустой tsConfig: отказ" "$(layers_says 'names no options.tsConfig')" 1
+
+runner_project '{"executor":"@angular/build:unit-test","options":{"tsConfig":"libs/alpha/auth/util"}}'
+report "SC-AK-1795 — tsConfig на каталог, а не на файл: отказ" "$(layers_says 'is not an existing file')" 1
+
+runner_project '{"options":{"tsConfig":"libs/alpha/auth/util/tsconfig.spec.json"}}'
+report "SC-AK-1795 — цель без исполнителя: отказ" "$(layers_says 'names no executor')" 1
+
+runner_project "$ANGULAR_TEST"
+rm -f "$LIB_DIR/tsconfig.spec.json"
+report "SC-AK-1795 — нет собственного tsconfig.spec.json: отказ" "$(layers_says 'no file tsconfig\.spec\.json')" 1
+
+touch "$LIB_DIR/vitest.config.mts"
+printf '{"name":"alpha-auth-util","sourceRoot":"libs/alpha/auth/util/src","prefix":"own","tags":["scope:alpha-auth-util"]}\n' \
+    > "$LIB_DIR/project.json"
+report "SC-AK-1795 — свой vitest.config.mts без цели test принят" "$(layers_says '^  libs/alpha/auth/util: ')" 0
+runner_project "$ANGULAR_TEST"
+touch "$LIB_DIR/tsconfig.spec.json"
+report "SC-AK-1795 — обе формы сразу не ошибка" "$(layers_says '^  libs/alpha/auth/util: ')" 0
+runner_project '{"executor":"@angular/build:unit-test","options":{"watch":false}}'
+report "SC-AK-1795 — свой vitest.config.mts при неполной цели сборщика не ошибка" "$(layers_says '^  libs/alpha/auth/util: ')" 0
+
 rm -rf "$LAYERS_TREE"
 
 suite_result "проверки: раскладка"

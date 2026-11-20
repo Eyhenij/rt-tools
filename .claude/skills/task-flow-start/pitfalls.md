@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · pitfalls/task-flow-start.md · 3fec7dc7e506 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.1 · pitfalls/task-flow-start.md · 3fec7dc7e506 · правится надстройкой, не здесь -->
 # Starting the work — cold part
 
 The pattern `task-flow-start` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.

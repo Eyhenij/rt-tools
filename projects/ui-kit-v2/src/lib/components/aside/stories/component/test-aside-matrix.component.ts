@@ -7,10 +7,21 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtAsideSectionComponent } from '../../../aside-section/rt-aside-section.component';
 import { RtAsideFooterComponent } from '../../footer/rt-aside-footer.component';
 import { RtAsideHeaderComponent } from '../../header/rt-aside-header.component';
+import { RtTabDirective } from '../../../tabs/rt-tab.directive';
+import { RtTabsComponent } from '../../../tabs/rt-tabs.component';
+import { RtAsideEmptyDirective } from '../../rt-aside-empty.directive';
 import { TRtAsideContentLayout, TRtAsideSize, RtAsideComponent } from '../../rt-aside.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TAsideMatrixPart = 'size' | 'width' | 'layout' | 'error' | 'pending' | 'properties' | 'presets' | 'themes';
+export type TAsideMatrixPart = 'size' | 'width' | 'layout' | 'error' | 'pending' | 'empty' | 'properties' | 'presets' | 'themes';
+
+/** Вид пустой панели: заглушка по умолчанию, со своими входами, свой шаблон, пустая вкладка. */
+type TAsideEmptyKind = 'default' | 'inputs' | 'template' | 'tab';
+
+interface IAsideEmptyCase {
+    readonly name: string;
+    readonly kind: TAsideEmptyKind;
+}
 
 /** Раскладка содержимого: с вкладками содержимое не прокручивается целиком, а отдаёт прокрутку внутрь. */
 interface IAsideLayoutCase {
@@ -141,6 +152,69 @@ interface IAsidePropertiesCase {
                                     </div>
                                 </ng-template>
                             </app-story-themes>
+                        </ng-template>
+                    </app-story-presets>
+                }
+
+                @case ('empty') {
+                    <app-story-presets caption="Пустая панель и пустая вкладка в обоих наборах">
+                        <ng-template>
+                            <app-story-row [items]="emptyCases" [itemLabel]="caseLabel">
+                                <ng-template let-emptyCase>
+                                    <div class="app-aside-matrix__box app-aside-matrix__box--tall">
+                                        @switch (emptyCase.kind) {
+                                            @case ('default') {
+                                                <rt-aside size="sm" ariaLabel="События" [empty]="true">
+                                                    <rt-aside-header title="События" />
+                                                    <rt-aside-footer>
+                                                        <button
+                                                            rtButton
+                                                            asideDismiss
+                                                            type="button"
+                                                            theme="secondary"
+                                                            appearance="text"
+                                                            label="Закрыть"
+                                                            aria-label="Закрыть"
+                                                            qa-dataid="aside-empty-close"></button>
+                                                    </rt-aside-footer>
+                                                </rt-aside>
+                                            }
+                                            @case ('inputs') {
+                                                <rt-aside
+                                                    size="sm"
+                                                    ariaLabel="События"
+                                                    emptyIcon="calendar"
+                                                    emptyTitle="Событий пока нет"
+                                                    emptyDescription="Они появятся после первой брони"
+                                                    [empty]="true">
+                                                    <rt-aside-header title="События" />
+                                                </rt-aside>
+                                            }
+                                            @case ('template') {
+                                                <rt-aside size="sm" ariaLabel="События" [empty]="true">
+                                                    <rt-aside-header title="События" />
+                                                    <ng-template rtAsideEmpty>
+                                                        <rt-aside-section heading="Своя заглушка">
+                                                            Приложение подставило свою разметку целиком.
+                                                        </rt-aside-section>
+                                                    </ng-template>
+                                                </rt-aside>
+                                            }
+                                            @case ('tab') {
+                                                <rt-aside size="sm" ariaLabel="Бронь" contentLayout="tabs">
+                                                    <rt-aside-header title="Бронь № 1042" />
+                                                    <rt-tabs activeId="events" [animationDuration]="0">
+                                                        <ng-template rtTab="main" label="Общее">
+                                                            <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                                        </ng-template>
+                                                        <ng-template rtTab="events" label="События" [empty]="true" />
+                                                    </rt-tabs>
+                                                </rt-aside>
+                                            }
+                                        }
+                                    </div>
+                                </ng-template>
+                            </app-story-row>
                         </ng-template>
                     </app-story-presets>
                 }
@@ -302,10 +376,13 @@ interface IAsidePropertiesCase {
     imports: [
         // components
         RtAsideComponent,
+        RtAsideEmptyDirective,
         RtAsideFooterComponent,
         RtAsideHeaderComponent,
         RtAsideSectionComponent,
         RtButtonDirective,
+        RtTabDirective,
+        RtTabsComponent,
 
         // showcase
         StoryPresetsComponent,
@@ -344,6 +421,13 @@ export class TestRtAsideMatrixComponent {
                 '--rt-aside-error-margin-block: 8px',
             ].join('; '),
         },
+    ];
+
+    public readonly emptyCases: readonly IAsideEmptyCase[] = [
+        { name: 'по умолчанию', kind: 'default' },
+        { name: 'свои значок и тексты', kind: 'inputs' },
+        { name: 'свой шаблон', kind: 'template' },
+        { name: 'пустая вкладка', kind: 'tab' },
     ];
 
     public readonly layoutCases: readonly IAsideLayoutCase[] = [

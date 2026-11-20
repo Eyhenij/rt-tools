@@ -268,7 +268,7 @@ hold 1454-offers-new-session stage "replay: SC-AK-1454 — предложени�
 
 # Тупик RT-3304: папка разобрана, отправку запрещает другая проверка. Отказ называет меню владельцу,
 # а меню, которое хук меню задержал второй раз подряд, отпускает ход.
-hold 1455-deadlock-push-refused archived "replay: SC-AK-1455 — тупик RT-3304: отказ называет меню владельцу" 'папка-разобрана' '«отложить RT-101»' '«сделаю сам»' '«стоп»'
+hold 1455-deadlock-push-refused archived "replay: SC-AK-1455 — тупик RT-3304: отказ называет меню владельцу" 'папка-разобрана' '«отложить RT-101»' '«стоп»'
 release 1455-deadlock-menus-held archived "replay: SC-AK-1455 — тупик RT-3304: меню задержано второй раз подряд" 'the menu did not reach the owner'
 
 # --- шесть живых ходов RT-3276 ----------------------------------------------------------------------
@@ -295,7 +295,7 @@ has() { grep -qF -- "$2" "$1" && echo есть || echo нет; }
 report "replay: SC-AK-1451 — хук модели на Stop держит вопрос с готовым ответом" "$(has "$TURN_JUDGE" 'asks the owner something already answered in the conversation')" есть
 report "replay: SC-AK-1451 — хук модели на Stop не судит открытую работу" "$(has "$TURN_JUDGE" 'Open work is not yours to judge')" есть
 report "replay: SC-AK-1455 — хук меню пропускает меню отказа проверки выхода" "$(has "$ASK_JUDGE" 'The question is the menu named by a refusal of the exit check')" есть
-report "replay: SC-AK-1455 — меню отказа — ровно три варианта" "$(has "$ASK_JUDGE" 'The options are exactly three: «отложить RT-N» with the task number')" есть
+report "replay: SC-AK-1455 — меню отказа — ровно два варианта" "$(has "$ASK_JUDGE" 'The options are exactly two: «отложить RT-N» with the task number')" есть
 report "replay: SC-AK-1470 — хук меню задерживает вариант, который снимает проверку" "$(has "$ASK_JUDGE" 'removes, disables or weakens a hook or a check')" есть
 report "replay: SC-AK-1470 — и в меню отказа проверки выхода" "$(has "$ASK_JUDGE" 'Hold it in any menu, the menu of')" есть
 hold 1470-menu-lifts-check archived "replay: SC-AK-1470 — меню задержано один раз — ход держится" 'папка-разобрана'
@@ -348,13 +348,14 @@ HCMD="$(judge_js "console.log(JSON.stringify(j.asHookCommand({cwd:'/tmp/judge-x'
 report "replay: SC-AK-1756 — у судьи инструменты агент-хука" \
     "$(printf '%s' "$HCMD" | jq -r '.args as $a | $a[($a | index("--tools")) + 1]')" 'Read,Grep,Glob'
 
-# --- объявление дерева: шаблон первого круга — тот же, что в тексте судьи -------------------------------
-DECLARED="$(jq -r '[.hooks.Stop[]?.hooks[]? | select(.type == "agent") | .prompt | select(test("turn-judge"))][0] // ""' "$ROOT/.claude/settings.json" 2>/dev/null)"
+# --- объявление судьи в его файле: шаблон первого круга — тот же, что в тексте судьи -------------------------------
+DECLARED="$(grep -m1 'rt-hook-agent' "$ASSETS/hooks/turn-judge.md")"
 OWNER_IN_TEXT="$(grep -A2 'it is called `OWNER` below' "$ASSETS/hooks/turn-judge.md" | sed -n '3s/^    //p')"
 OWNER_DECLARED="$(printf '%s' "$DECLARED" | grep -o '`[^`]*enqueue[^`]*`' | tr -d '`')"
 report "replay: SC-AK-1758 — шаблон первого круга в объявлении совпадает с OWNER текста" \
     "$([ -z "$OWNER_DECLARED" ] || [ "$OWNER_DECLARED" = "$OWNER_IN_TEXT" ] && echo совпадает || echo расходится)" совпадает
 report "replay: SC-AK-1758 — шаблон OWNER в тексте найден" "$([ -n "$OWNER_IN_TEXT" ] && echo есть || echo нет)" есть
+report "replay: SC-AK-1758 — the declaration of the judge file carries the first-round template" "$([ -n "$OWNER_DECLARED" ] && echo есть || echo нет)" есть
 
 # --- живой счёт: объявление, ветка, таймаут без длительности -----------------------------------------
 L="$WORK/live"

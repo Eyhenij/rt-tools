@@ -16,6 +16,16 @@ export enum ERtMarkdownBlock {
     Table = 'table',
 }
 
+/**
+ * Выравнивание столбца таблицы по строке-разделителю: `--:` к концу, `:-:` по центру, остальное
+ * к началу. Края логические: под письмом справа налево они меняются местами.
+ */
+export enum ERtMarkdownAlign {
+    Start = 'start',
+    Center = 'center',
+    End = 'end',
+}
+
 /** Род куска строки — то, чем текст размечен внутри абзаца. */
 export enum ERtMarkdownInline {
     Text = 'text',
@@ -70,6 +80,8 @@ export interface IRtMarkdownBlockNode {
     readonly language: string | null;
     /** Строка заголовка таблицы: ячейка — свои куски строки. */
     readonly head: readonly (readonly IRtMarkdownInlineNode[])[];
-    /** Прочие строки таблицы. */
+    /** Прочие строки таблицы, каждая ровно по числу ячеек шапки. */
     readonly rows: readonly (readonly (readonly IRtMarkdownInlineNode[])[])[];
+    /** Край выравнивания столбца таблицы — по одному на ячейку шапки, из строки-разделителя. */
+    readonly align: readonly ERtMarkdownAlign[];
 }

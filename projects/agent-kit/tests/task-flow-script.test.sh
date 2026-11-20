@@ -211,9 +211,8 @@ const mergedPullAhead = (task) => ({ number: task, head: `RT-${task}-x`, headRef
 out('host: SC-AK-1388 — ветка следующей задачи есть на сервере', run(epic.nextTaken, { host: { remote: [{ name: 'RT-13-next', sha: 'n' }] } }), 'true');
 out('host: SC-AK-1388 — ветки следующей задачи нет — не выход', run(epic.nextTaken, {}), 'false');
 out('host: SC-AK-1388 — следующей задачи нет — выход выполнен', run(epic.nextTaken, { rows: [['1', 11, 'влито'], ['2', 12, 'идёт']] }), 'true');
-const ownerRows = [['1', 11, 'влито'], ['2', 12, 'идёт'], ['3', 13, 'шаг владельца «сделаю сам RT-13»'], ['4', 14, 'впереди']];
-out('host: SC-AK-1389 — задача с шагом владельца пропускается', run(epic.nextTaken, { rows: ownerRows, owner: ['сделаю сам RT-13'], local: [{ name: 'RT-14-more', sha: 'm' }] }), 'true');
-out('host: SC-AK-1744 — строка шага владельца пропускается без набранной цитаты', run(epic.nextTaken, { rows: ownerRows, local: [{ name: 'RT-14-more', sha: 'm' }] }), 'true');
+const ownerRows = [['1', 11, 'влито'], ['2', 12, 'идёт'], ['3', 13, 'шаг владельца'], ['4', 14, 'впереди']];
+out('host: SC-AK-1793 — строка со старой пометкой «шаг владельца» не пропускается', run(epic.nextTaken, { rows: ownerRows, local: [{ name: 'RT-14-more', sha: 'm' }] }), 'false');
 const deferred = [['1', 11, 'влито'], ['2', 12, 'идёт'], ['—', 13, 'отложено'], ['3', 14, 'впереди']];
 out('host: SC-AK-1390 — отложенная задача пропускается', run(epic.nextTaken, { rows: deferred, local: [{ name: 'RT-14-more', sha: 'm' }] }), 'true');
 // SC-AK-1741 — the case of 18.11: a task with a branch before tasks without one
@@ -423,15 +422,15 @@ console.log(String(open().approval('RT-1-x')));
 " 2>&1)"
 report "local: SC-AK-1371 — метка не JSON читается отсутствующей" "$got" 'null'
 
-# --- Шаг плана и одобрение плана — в подключаемом файле -----------------------------------------
+# --- Шаг плана, одобрение плана и фоновые задачи сессии — в подключаемых файлах ---------------------
 . "$TESTS/task-flow-script-steps.test.sh"
-
+. "$TESTS/task-flow-script-session.test.sh"
 # --- Прогноз отказов по записям разговоров ---------------------------------------------------------
 tf_run <<'JS'
 import { dirname } from 'node:path';
 import { buildModel } from '../assets/checks/flow-model.mjs';
 import { openReaders } from '../assets/checks/task-flow-script.mjs';
-import { forecastCopies, missedLine, perMille } from '../assets/checks/flow-forecast.mjs';
+import { forecastCopies, forecastLine, missedLine, perMille } from '../assets/checks/flow-forecast.mjs';
 import * as sessionSource from '../assets/task-flow/source/session.mjs';
 import { wordOf } from '../assets/task-flow/source/owner.mjs';
 
@@ -441,7 +440,8 @@ const model = buildModel(flow);
 const settings = { tasksDir: 'docs/tasks', plansDir: 'docs/plans', overridePath: 'o.js', protectedPaths: ['^projects/agent-kit/assets/task-flow/'] };
 const window = { from: Date.parse('2026-11-01T00:00:00Z'), to: Date.parse('2026-11-08T00:00:00Z') };
 let n = 0;
-const at = () => `2026-11-02T10:00:${String(n++).padStart(2, '0')}Z`;
+// A second per entry, past the minute too: a time that does not parse drops the entry from the window.
+const at = () => new Date(Date.parse('2026-11-02T10:00:00Z') + 1000 * n++).toISOString();
 const meta = (branch) => ({ uuid: `u${n}`, gitBranch: branch, cwd: '/t', timestamp: at() });
 const owner = (branch, text) => ({ ...meta(branch), type: 'user', message: { content: text } });
 const use = (branch, name, input) => ({ ...meta(branch), type: 'assistant', message: { content: [{ type: 'tool_use', id: `t${n}`, name, input }] } });
@@ -465,6 +465,24 @@ const loop = await run([owner(B, 'делай RT-7'), use(B, 'Edit', { file_path:
 out('forecast: SC-AK-1700 — меню простоя обрывает петлю остановок', `${loop.stops} ${loop.held}`, '2 2');
 const resumed = await run([owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), say(B), stop(B), feedback(B), say(B), stop(B), feedback(B), use(B, 'Read', { file_path: '/t/a.md' }), say(B), stop(B)]);
 out('forecast: SC-AK-1700 — вызов после меню снова считает остановки', `${resumed.stops} ${resumed.held}`, '3 3');
+
+// SC-AK-1765 — a waiting stop is let go, and the line names the longest run of held stops
+const EDIT = () => use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' });
+const bg = (id) => ({ ...meta(B), type: 'assistant', message: { content: [{ type: 'tool_use', id, name: 'Bash', input: { command: 'pnpm test', run_in_background: true } }] } });
+const bgStarted = (id, when) => ({ ...meta(B), ...(when ? { timestamp: when } : {}), type: 'user', toolUseResult: { backgroundTaskId: `b-${id}` }, message: { content: [{ type: 'tool_result', tool_use_id: id, content: 'Command running in background' }] } });
+const bgOver = (id) => ({ type: 'queue-operation', operation: 'enqueue', timestamp: at(), content: `<task-notification>\n<task-id>b-${id}</task-id>\n<tool-use-id>${id}</tool-use-id>\n<status>completed</status>\n</task-notification>` });
+const waited = await run([owner(B, 'делай RT-7'), EDIT(), bg('w1'), bgStarted('w1'), say(B), stop(B)]);
+out('forecast: SC-AK-1765 — остановка при идущей фоновой задаче отпущена', `${waited.stops} ${waited.held}`, '1 0');
+const twice = await run([owner(B, 'делай RT-7'), EDIT(), bg('w1'), bgStarted('w1'), say(B), stop(B), say(B), stop(B)]);
+out('forecast: SC-AK-1765 — вторая остановка на той же задаче без вызова держится', `${twice.stops} ${twice.held}`, '2 1');
+const finished = await run([owner(B, 'делай RT-7'), EDIT(), bg('w1'), bgStarted('w1'), bgOver('w1'), say(B), stop(B)]);
+out('forecast: SC-AK-1765 — задача кончилась — остановка держится', `${finished.stops} ${finished.held}`, '1 1');
+const stale = await run([owner(B, 'делай RT-7'), EDIT(), bg('w1'), bgStarted('w1', '2026-11-02T09:00:00Z'), say(B), stop(B)]);
+out('forecast: SC-AK-1765 — задача старше границы по времени остановки — держится', `${stale.stops} ${stale.held}`, '1 1');
+const series = await run([owner(B, 'делай RT-7'), EDIT(), say(B), stop(B), EDIT(), say(B), stop(B), EDIT(), say(B), stop(B), owner(B, 'дальше'), EDIT(), say(B), stop(B), bg('w2'), bgStarted('w2'), say(B), stop(B), EDIT(), say(B), stop(B)]);
+out('forecast: SC-AK-1765 — серию рвут слово владельца и отпущенная остановка', `${series.held} ${series.longest}`, '4 3');
+out('forecast: SC-AK-1765 — без удержанных остановок серия нулевая', String(waited.longest), '0');
+out('forecast: SC-AK-1765 — строка называет самую длинную серию', String(forecastLine(series, false).endsWith('the longest run of held stops — 3')), 'true');
 
 out('missed: SC-AK-1552 — конец хода с открытой работой пропущен, конец по «стоп» нет', `${held.ended} ${held.missed}`, '2 1');
 out('missed: SC-AK-1552 — остановка с отказом хука ход не кончает', `${loop.ended} ${loop.missed}`, '0 0');

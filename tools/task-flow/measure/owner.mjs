@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · task-flow/measure/owner.mjs · 4d945c99a7e5 · правится надстройкой, не здесь
+// rt-kit v0.37.1 · task-flow/measure/owner.mjs · 4d945c99a7e5 · правится надстройкой, не здесь
 /**
  * The measurer «measure.owner» — what the owner's last word says about the turn: a stop, or a push
  * to go on.

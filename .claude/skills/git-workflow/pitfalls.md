@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · pitfalls/git-workflow.github.md · ac0816e36087 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.1 · pitfalls/git-workflow.github.md · ac0816e36087 · правится надстройкой, не здесь -->
 # Delivery — cold part
 
 Pitfalls: traps already stepped on in a tree on GitHub. Loaded not with the rule but on demand —

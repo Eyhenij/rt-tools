@@ -15,7 +15,7 @@ Covered by the component spec of the organism and the frame `Empty`.
 
 Given a question and an answer
 When the feed is drawn
-Then the question stands in a bubble with «You» and the answer as markdown text
+Then the question stands in a bubble with «You» and the answer as its markdown block
 
 Covered by the component spec of the organism and the frame `Answer`.
 
@@ -283,3 +283,75 @@ When a row with a sign is drawn
 Then the sign shadow blurs by 10 and fits the row inset; wider the shadow is the sign's own
 
 Covered by the styles spec of the thread list and the frame `MessengerPhone`, and in the entry suite by `service-logo-shadow.spec.ts`, which checks that the narrow step reaches an application page.
+
+### SC-UKV-1321 — the copied answer joins the text of its blocks
+
+Given an answer of a markdown block, a notice and a markdown block
+When its text is copied
+Then the clipboard holds the three texts in their order, one empty line between them, without markdown signs
+
+Covered by the spec of the blocks logic.
+
+### SC-UKV-1322 — a block the kit does not know stays out of the copy
+
+Given an answer with a block of type `chart` between two markdown blocks
+When its text is copied
+Then the clipboard holds the two markdown texts only, and an answer of unknown blocks alone gives an empty text
+
+Covered by the spec of the blocks logic.
+
+### SC-UKV-1323 — the blocks stand in order, a notice as a plate of its severity
+
+Given an answer with a markdown block and a warning notice
+When it is drawn
+Then the markdown text stands first with its bold part and the notice under it as `rt-message` of severity `warning`
+
+Covered by the component spec of the blocks and the frame `Blocks`.
+
+### SC-UKV-1324 — a registered renderer draws a block of its type
+
+Given a renderer registered for the type `chart` and an answer with a `chart` block
+When it is drawn
+Then the renderer receives the block and draws it, and no plate is shown
+
+Covered by the component spec of the blocks.
+
+### SC-UKV-1325 — a block without a renderer shows a plate with its type
+
+Given an answer with a `chart` block and no renderer for it
+When it is drawn
+Then a dashed plate «The “chart” block is not supported» stands in its place, and the blocks around it are drawn
+
+Covered by the component spec of the blocks and the frame `Blocks`.
+
+### SC-UKV-1326 — a renderer gives the copy text of its block
+
+Given a renderer registered for the type `chart` with a text function, and an answer of a markdown block, a `chart` block and a `table` block whose renderer has none
+When the answer text is copied
+Then the clipboard holds the markdown text and the text the function gave for the chart, the table stays out, and of two registrations of one type the last is taken
+
+Covered by the spec of the blocks logic and the component spec of the answer.
+
+### SC-UKV-1327 — an answer without text shows no «Copy»
+
+Given a written answer whose only block is a `chart` without a text function
+When it is drawn
+Then its rating row stands without «Copy», and the rating buttons are in place
+
+Covered by the component spec of the answer.
+
+### SC-UKV-1328 — a notice of a severity `rt-message` does not know is a plate
+
+Given a notice block without a severity, one with the severity `critical`, a markdown block without text, and renderers registered for `notice` and `markdown`
+When it is drawn
+Then each stands as the plate with its type, the renderers are not taken, and a notice of a known severity stays a plate of `rt-message`
+
+Covered by the spec of the blocks logic.
+
+### SC-UKV-1329 — a notice in an answer is announced as a status
+
+Given an answer with a notice block of the severity `warning`
+When it is drawn
+Then its `rt-message` stands with the role `status`, and a screen reader does not interrupt the person with it
+
+Covered by the spec of the blocks component.

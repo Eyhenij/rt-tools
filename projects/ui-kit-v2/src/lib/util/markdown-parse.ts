@@ -1,5 +1,5 @@
 import { breakNode, parseInline } from './markdown-inline';
-import { ERtMarkdownBlock, IRtMarkdownBlockNode, IRtMarkdownInlineNode, IRtMarkdownListItem } from './markdown.model';
+import { ERtMarkdownAlign, ERtMarkdownBlock, IRtMarkdownBlockNode, IRtMarkdownInlineNode, IRtMarkdownListItem } from './markdown.model';
 
 /**
  * Разбор текста, написанного разметкой, в дерево узлов показа.
@@ -59,15 +59,38 @@ function makeBlock(kind: ERtMarkdownBlock, patch: Partial<IRtMarkdownBlockNode>)
         language: null,
         head: [],
         rows: [],
+        align: [],
         ...patch,
     };
 }
 
 /** Ячейки строки таблицы: крайние палки не считаются столбцами. */
-function tableCells(line: string): IRtMarkdownInlineNode[][] {
+function cellTexts(line: string): string[] {
     const trimmed: string = line.trim().replace(/^\|/, '').replace(/\|$/, '');
 
-    return trimmed.split('|').map((cell: string): IRtMarkdownInlineNode[] => parseInline(cell.trim()));
+    return trimmed.split('|').map((cell: string): string => cell.trim());
+}
+
+/** Ячейки строки таблицы: каждая — свои куски строки. */
+function tableCells(line: string): IRtMarkdownInlineNode[][] {
+    return cellTexts(line).map((cell: string): IRtMarkdownInlineNode[] => parseInline(cell));
+}
+
+/** Выравнивание столбца по ячейке разделителя: `--:` к концу, `:-:` по центру, прочее к началу. */
+function columnAlign(marker: string | undefined): ERtMarkdownAlign {
+    const left: boolean = marker?.startsWith(':') ?? false;
+    const right: boolean = marker?.endsWith(':') ?? false;
+
+    if (left && right) {
+        return ERtMarkdownAlign.Center;
+    }
+
+    return right ? ERtMarkdownAlign.End : ERtMarkdownAlign.Start;
+}
+
+/** Строка таблицы по числу ячеек шапки: короткая добирается пустыми, лишние отбрасываются. */
+function fitCells(cells: IRtMarkdownInlineNode[][], width: number): IRtMarkdownInlineNode[][] {
+    return Array.from({ length: width }, (_: unknown, index: number): IRtMarkdownInlineNode[] => cells[index] ?? []);
 }
 
 /** Строка-разделитель под шапкой таблицы. */
@@ -193,15 +216,18 @@ function readTable(lines: readonly string[], start: number): IReadBlock | null {
         return null;
     }
 
+    const head: IRtMarkdownInlineNode[][] = tableCells(lines[start]);
+    const markers: string[] = cellTexts(lines[start + 1]);
+    const align: ERtMarkdownAlign[] = head.map((_: unknown, index: number): ERtMarkdownAlign => columnAlign(markers[index]));
     const rows: IRtMarkdownInlineNode[][][] = [];
     let end: number = start + 2;
 
     while (end < lines.length && lines[end].includes('|')) {
-        rows.push(tableCells(lines[end]));
+        rows.push(fitCells(tableCells(lines[end]), head.length));
         end += 1;
     }
 
-    return { next: end, block: makeBlock(ERtMarkdownBlock.Table, { head: tableCells(lines[start]), rows }) };
+    return { next: end, block: makeBlock(ERtMarkdownBlock.Table, { head, rows, align }) };
 }
 
 /** Строки, по которым видно, что абзац кончился и начался блок другого рода. */

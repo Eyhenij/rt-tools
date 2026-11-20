@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/decision-table.mjs · 88bc0def2331 · правится надстройкой, не здесь
+// rt-kit v0.37.1 · checks/decision-table.mjs · 88bc0def2331 · правится надстройкой, не здесь
 /**
  * The decision table of the package hooks: the facts of the tree and an action give «allow»,
  * «deny» or «ask». Every hook is described here by rows or by a mark, and five modes read it.

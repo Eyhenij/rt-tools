@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/flow-forecast.mjs · c93fc12819a9 · правится надстройкой, не здесь
+// rt-kit v0.37.1 · checks/flow-forecast.mjs · bc32a7a25e1c · правится надстройкой, не здесь
 /**
  * The forecast of refusals — the engine command `forecast`, run before the hooks are laid out.
  *
@@ -10,7 +10,8 @@
  * A record keeps what the session did, not the tree at that minute, so the replay reads the tree
  * facts it can recover and fills the rest the strict way:
  *
- *   - the session and the owner measurers read the record up to the stop, as the hook would;
+ *   - the session and the owner measurers read the record up to the stop, as the hook would, and a
+ *     background task is judged by the time of that stop;
  *   - a branch with a task number, and any branch of the main checkout, stand in the scenario;
  *   - the scenario is over for a task branch once its task folder was removed from history;
  *   - the end of an epic and the silent hosting release nothing;
@@ -20,6 +21,9 @@
  *   - a held stop whose refusal names the owner's menu ends the series of stops: until the next call
  *     the executor asks the menu instead of stopping, so a stop the record holds there is not
  *     reached.
+ *
+ * The line names the longest run of held stops in a row within one session: a released stop and a
+ * word of the owner break a run.
  *
  * The same replay counts the missed stops after the layout: a turn that ended while no release case
  * of the description released it. An end by the limit of continuations and a failed engine count
@@ -42,6 +46,7 @@ const FROM_RECORD = new Set([
     'measure.session.menuLost',
     'measure.session.forbidden',
     'measure.session.idle',
+    'measure.session.waiting',
 ]);
 
 /** The calls the guard of the course of work judges. */
@@ -138,13 +143,15 @@ export function historyOf(tree, tasksDir) {
 }
 
 /**
- * The replay of the copies: `{ calls, stops, held, judged, refused, laidStops, ended, missed }`. `openReaders` is the reader
+ * The replay of the copies: `{ calls, stops, held, judged, refused, laidStops, ended, missed, longest }`. `openReaders` is the reader
  * factory of the engine; `sessionSource` and `wordOf` read the record as the sources do.
  */
 export async function forecastCopies({ copies, window, model, base, openReaders, sessionSource, wordOf, tree, settings, laid = () => true }) {
-    const live = { entries: [], uses: [], last: null, messages: [] };
+    const live = { entries: [], uses: [], last: null, messages: [], now: 0 };
+    // The summary of the stop being judged is written after the hook answers: the hook does not see it.
+    const upToStop = () => (live.entries.at(-1)?.subtype === 'stop_hook_summary' ? live.entries.slice(0, -1) : live.entries);
     const given = {
-        session: { toolUses: () => live.uses, events: () => sessionSource.eventsOf(live.entries), agent: () => null, roleTools: () => null },
+        session: { toolUses: () => live.uses, events: () => sessionSource.eventsOf(upToStop()), now: () => live.now, agent: () => null, roleTools: () => null },
         owner: { messages: () => live.messages, said: (quote) => live.messages.some((text) => text.includes(quote)), last: () => live.last },
     };
     const read = await openReaders(model, base, given);
@@ -152,7 +159,7 @@ export async function forecastCopies({ copies, window, model, base, openReaders,
     const marks = new Set();
     const ids = new Set();
     const seen = new Set();
-    const counts = { stops: 0, held: 0, judged: 0, refused: 0, laidStops: 0, ended: 0, missed: 0 };
+    const counts = { stops: 0, held: 0, judged: 0, refused: 0, laidStops: 0, ended: 0, missed: 0, longest: 0 };
 
     const inScenario = (branch, cwd) => TASK_BRANCH.test(branch ?? '') || cwd === tree;
     const handed = (branch, at) => {
@@ -171,12 +178,14 @@ export async function forecastCopies({ copies, window, model, base, openReaders,
             let cwd = null;
             let inStop = false;
             let menuNamed = false;
+            let run = 0;
             for (const [index, entry] of session.entries.entries()) {
                 if (entry?.isSidechain) continue;
                 live.entries.push(entry);
                 branch = entry.gitBranch ?? branch;
                 cwd = entry.cwd ?? cwd;
                 const at = Date.parse(entry.timestamp ?? '');
+                if (Number.isFinite(at)) live.now = at;
                 const fresh = !entry.uuid || !seen.has(entry.uuid);
                 if (entry.uuid) seen.add(entry.uuid);
                 const counted = fresh && at >= window.from && at < window.to;
@@ -228,6 +237,7 @@ export async function forecastCopies({ copies, window, model, base, openReaders,
                     if (word !== null) {
                         live.last = word;
                         if (!entry.toolUseResult) live.messages.push(word);
+                        run = 0;
                     }
                 }
 
@@ -253,8 +263,13 @@ export async function forecastCopies({ copies, window, model, base, openReaders,
                 }
                 if (!judged) continue;
                 counts.stops += 1;
-                if (released) continue;
+                if (released) {
+                    run = 0;
+                    continue;
+                }
                 counts.held += 1;
+                run += 1;
+                counts.longest = Math.max(counts.longest, run);
                 menuNamed = menuCause(answer) !== null;
             }
         }
@@ -266,7 +281,7 @@ export async function forecastCopies({ copies, window, model, base, openReaders,
 export const perMille = ({ calls, held, refused }, guard) => String(Math.round(calls > 0 ? ((held + (guard ? refused : 0)) * 1000) / calls : 0));
 
 export const forecastLine = (result, guard) =>
-    `forecast: ${result.calls} calls, ${result.stops} stops, ${result.held} held; ${result.judged} calls judged by the guard, ${result.refused} refused — ${perMille(result, guard)} per mille`;
+    `forecast: ${result.calls} calls, ${result.stops} stops, ${result.held} held; ${result.judged} calls judged by the guard, ${result.refused} refused — ${perMille(result, guard)} per mille; the longest run of held stops — ${result.longest}`;
 
 /** The arguments of the command: `--days N [--until <date>] [--per-mille] [--guard]`. */
 export function forecastArgs(argv) {

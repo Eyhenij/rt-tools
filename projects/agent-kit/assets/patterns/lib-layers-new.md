@@ -26,7 +26,7 @@ utilities, and their place is the lib that already sees them. The frontend alway
 lib — the family base; the backend — the `util` layer already listed with every domain.
 
 That is how the `list` domain lived as nine libs for three files of code: seven libs empty, and
-each with its own `project.json`, `vitest.config.mts`, barrel, tag and alias.
+each with its own `project.json`, test runner, barrel, tag and alias.
 
 ## Created by the generator, not by bare `nx g`
 
@@ -34,7 +34,10 @@ each with its own `project.json`, `vitest.config.mts`, barrel, tag and alias.
 node tools/generate-domain-lib.mjs
 ```
 
-The generator lays out `project.json`, `tsconfig.json`, `vitest.config.mts` and the barrel. Bare
+The generator lays out `project.json`, `tsconfig.json`, the test runner and the barrel. A lib
+tests either through its own `vitest.config.mts`, or through the Angular builder: the `test` target
+on the executor `@angular/build:unit-test`, `options.tsConfig` pointing at an existing file and the
+lib's own `tsconfig.spec.json`. Bare
 `nx g` gives a vitest config without `passWithNoTests`, and a lib that has no tests yet fails
 `nx run-many -t test` with the line "No test files found". The layout check looks at the
 presence of the file, not at its content, so it lets such a lib through.
@@ -82,7 +85,8 @@ npm run check:layers
 ```
 
 The check looks at the layers, the single tag = name = path, the alias, the presence of
-`project.json`, `vitest.config.mts` and `src/index.ts`, the empty dependency list of
+`project.json`, `tsconfig.json`, `src/index.ts`, the test runner (`vitest.config.mts` or the Angular
+builder form above), the empty dependency list of
 `common/util`, the family base boundaries and re-exports. Seconds — run after any creation,
 rename or removal.
 

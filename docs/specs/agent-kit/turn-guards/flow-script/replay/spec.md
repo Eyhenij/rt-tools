@@ -102,8 +102,8 @@ Not applicable: one turn is run at a time.
 
 ## Open questions
 
-- Q-1. When another check refuses the next step or the step is the owner's, the refusal names one menu
-  to the owner with the options «отложить RT-N», «сделаю сам» and «стоп». The engine does not name it
+- Q-1. When another check refuses the next step twice, the refusal names one menu
+  to the owner with the options «отложить RT-N» and «стоп». The engine does not name it
   yet; step 3.8 of RT-3329 writes it, and the case of the deadlock of RT-3304 stays red until then.
 
 ## History of changes

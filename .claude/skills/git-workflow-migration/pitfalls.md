@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · pitfalls/git-workflow-migration.md · 575dfa277a75 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.1 · pitfalls/git-workflow-migration.md · 575dfa277a75 · правится надстройкой, не здесь -->
 # A migration and the chain run — cold part
 
 The pattern `git-workflow-migration` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.

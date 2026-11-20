@@ -32,6 +32,38 @@ import { RtPdfViewerComponent } from '@rt-tools/ui-kit-v2/pdf-viewer';
 
 Основной вход `pdfjs-dist` не называет, и приложение без просмотрщика собирается без него.
 
+`d3-shape` и `d3-hierarchy` нужны только тем, кто рисует графики. На них стоят два входа: сам
+график `@rt-tools/ui-kit-v2/chart` и блок графика в ответе ассистента
+`@rt-tools/ui-kit-v2/ai-chat-chart`. Блок подключается одним провайдером рядом с прочими
+отрисовщиками блоков чата:
+
+```typescript
+import { provideRtAiChatChart, RT_AI_CHAT_CHART_SCHEMA } from '@rt-tools/ui-kit-v2/ai-chat-chart';
+```
+
+`RT_AI_CHAT_CHART_SCHEMA` — JSON-схема спецификации графика, её приложение отдаёт модели как
+описание инструмента. Ни основной вход, ни `rich-editor` d3 не называют.
+
+Блок таблицы в ответе ассистента кит рисует сам, без провайдера. Его JSON-схему
+`RT_AI_CHAT_TABLE_SCHEMA` даёт основной вход `@rt-tools/ui-kit-v2`, и приложение отдаёт её модели
+так же, как схему графика.
+
+Блок секции собирает составной ответ: заголовок и сетка блоков, в широкой ленте в два столбца. Кит
+рисует его сам. Схему секции для модели собирает функция `rtAiChatSectionSchema` из основного
+входа. Блоки `markdown`, `notice`, `kpi` и `table` в ней уже есть, остальные типы приложение
+называет само. График называют схемой блока `RT_AI_CHAT_CHART_BLOCK_SCHEMA`: блок читает
+спецификацию из поля `spec`, и схема спецификации под именем `chart` даёт негодные графики.
+
+```typescript
+import { rtAiChatSectionSchema } from '@rt-tools/ui-kit-v2';
+import { RT_AI_CHAT_CHART_BLOCK_SCHEMA } from '@rt-tools/ui-kit-v2/ai-chat-chart';
+
+const parameters = rtAiChatSectionSchema({ chart: RT_AI_CHAT_CHART_BLOCK_SCHEMA });
+```
+
+Схема описывает аргументы инструмента; `type: 'section'` к ним дописывает приложение. Графики в
+секции рисуются, когда приложение подключило `provideRtAiChatChart()`.
+
 ### Точки входа компонентов
 
 Каждый компонент собран своей точкой входа по имени своего каталога: `@rt-tools/ui-kit-v2/table`,

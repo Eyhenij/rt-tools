@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/flow-guard.mjs · 97af307bb847 · правится надстройкой, не здесь
+// rt-kit v0.37.1 · checks/flow-guard.mjs · f666b790b904 · правится надстройкой, не здесь
 /**
  * The guard of the course of work — the engine command `guard`, called by the hook
  * `flow-step-guard.sh` before Edit, Write, MultiEdit and a shell command.
@@ -15,9 +15,9 @@
  *   - an edit of the description, its measurers and sources or the engine outside a task whose
  *     approved plan names the path in a footprint row marked «(правится)».
  *
- * Two edits it names as the owner's decision, and the decision table answers them with the window:
- * a replacement line of the progress added or changed, and «шаг владельца» set or changed on a row of
- * the epic plan. The engine reads no quote after that: the allowed edit is the owner's word.
+ * One edit it names as the owner's decision, and the decision table answers it with the window: a
+ * replacement line of the progress added or changed. The engine reads no quote after that: the
+ * allowed edit is the owner's word. «шаг владельца» set on a row of the epic plan is refused outright.
  *
  * A plan without a single check line, and the plan of a branch in `words.legacyBranches`, keep the
  * done marks of the progress as they are: their steps were never measured by the engine.
@@ -31,11 +31,8 @@ import { stepsOfPlan, stepsOfProgress } from './work-steps-lib.mjs';
 /** The word that defers a task in the epic plan. */
 const DEFERRED = 'отложено';
 
-/** The words of an epic plan row whose task waits for the owner's step. */
+/** The words an epic plan row carried for a task handed to the owner: a row is no longer marked so. */
 const OWNER_STEP = 'шаг владельца';
-
-/** The option of the owner's menu that marks the owner's step: chosen there, it needs no second window. */
-const SELF_OPTION = 'сделаю сам';
 
 /** The opening of a replacement line of the progress, with the number of the step. */
 const REPLACEMENT_START = /^-\s+\*\*(?:Проверка шага|Check of step)\s+(\d+\.\d+)\s+(?:заменена|replaced):\*\*/u;
@@ -125,13 +122,17 @@ export function replacementChanges(before, after) {
 }
 
 /**
- * The task numbers of the epic plan rows the edit sets to the owner's step or whose owner's step it
- * changes. A row that leaves the owner's step is not counted: the task goes back to the work.
+ * The task numbers of the epic plan rows the edit marks «шаг владельца». The mark is refused: the
+ * step is the executor's. A row that leaves the mark is not counted: the task goes back to the work.
  */
 export function ownerRowChanges(before, after, key) {
+    const marked = (text) => new RegExp(`\\|\\s*${OWNER_STEP}[^|]*\\|?\\s*$`, 'u').test(text);
+    const numbers = (line) => [...line.matchAll(new RegExp(`${escape(key)}-(\\d+)`, 'g'))].map((match) => match[1]);
+    // A row that carried the mark before the edit is a legacy row: its other cells may be edited.
+    const legacy = new Set((before ?? '').split('\n').filter(marked).flatMap(numbers));
     const tasks = new Set();
-    for (const line of newLines(before, after, (text) => text.includes(OWNER_STEP))) {
-        for (const match of line.matchAll(new RegExp(`${escape(key)}-(\\d+)`, 'g'))) tasks.add(match[1]);
+    for (const line of newLines(before, after, marked)) {
+        for (const task of numbers(line)) if (!legacy.has(task)) tasks.add(task);
     }
     return [...tasks];
 }
@@ -265,9 +266,7 @@ function judgeDefer(call, ctx) {
     if (changed.length === 0) {
         const steps = ownerRowChanges(before, after, ctx.key);
         if (steps.length === 0) return null;
-        // The owner has just chosen «сделаю сам» in the menu: the row carries out that answer.
-        if ((ctx.ownerLast?.() ?? '').trim().startsWith(SELF_OPTION)) return null;
-        return `«${OWNER_STEP}» for ${steps.map((task) => `${ctx.key}-${task}`).join(', ')} is the owner's decision: the owner allows or forbids this edit in the window`;
+        return `«${OWNER_STEP}» for ${steps.map((task) => `${ctx.key}-${task}`).join(', ')} is not written into a row: the step is the executor's, and only the owner's word naming the task puts it off as «${DEFERRED}»`;
     }
     const word = ctx.ownerLast() ?? '';
     const missing = changed.filter((task) => !new RegExp(`${escape(ctx.key)}-${task}(?!\\d)`).test(word));
