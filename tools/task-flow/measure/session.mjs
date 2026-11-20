@@ -1,8 +1,8 @@
-// rt-kit v0.37.0 · task-flow/measure/session.mjs · 4466df13f044 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · task-flow/measure/session.mjs · 03517b5ac559 · правится надстройкой, не здесь
 /**
  * The measurer «measure.session» — what this session did: a write to the tree, a role it runs as, a
- * menu of a refusal that did not reach the owner, a step another check forbids, and a stop after a
- * refusal of a stop with no call in between.
+ * menu of a refusal that did not reach the owner, a step another check forbids, a stop after a
+ * refusal of a stop with no call in between, and a wait for a background task of its own.
  */
 /** The tools that edit a file. */
 const EDIT_TOOLS = new Set(['Edit', 'Write', 'MultiEdit', 'NotebookEdit']);
@@ -53,13 +53,48 @@ export function menuLost({ session }) {
  * same reason, and no call wrote to the tree after the first of them. Answers the name of the guard,
  * or false — the exit check then names the owner's menu about that guard.
  */
-/** The last of the refusals of a stop, the calls and the menus is a refusal of a stop: the move it named was not taken. */
+/**
+ * The last of the refusals of a stop, the calls and the menus is a refusal of a stop: the move it
+ * named was not taken. While a background task of the session runs the stop is a wait, not an idle
+ * one: the executor has a move, and it is to wait.
+ */
 export function idle({ session }) {
     return () => {
+        const events = session.events();
         let last = null;
-        for (const event of session.events()) if (event.kind === 'refusal' || event.kind === 'call' || event.kind === 'menu') last = event;
-        return last?.kind === 'refusal';
+        for (const event of events) if (event.kind === 'refusal' || event.kind === 'call' || event.kind === 'menu') last = event;
+        return last?.kind === 'refusal' && running(events, timeOf(session)).length === 0;
     };
+}
+
+/** A background task older than this releases nothing and counts as no task, in minutes. */
+export const BACKGROUND_BOUND = 20;
+
+const timeOf = (session) => (typeof session.now === 'function' ? session.now() : Date.now());
+
+/**
+ * The background tasks of the session that have a start, no end, and are younger than the bound at
+ * `now`: [{ id, task, at, spent }]. A task is spent once a turn ended while it ran, and fresh again
+ * after the next call of a tool.
+ */
+function running(events, now) {
+    const open = new Map();
+    for (const event of events) {
+        if (event.kind === 'background') open.set(event.id, { ...event, spent: false });
+        else if (event.kind === 'backgroundEnd') {
+            for (const [id, task] of open) if (id === event.id || (event.task && task.task === event.task)) open.delete(id);
+        } else if (event.kind === 'ended') for (const task of open.values()) task.spent = true;
+        else if (event.kind === 'call') for (const task of open.values()) task.spent = false;
+    }
+    return [...open.values()].filter((task) => Number.isFinite(task.at) && now - task.at < BACKGROUND_BOUND * 60_000);
+}
+
+/**
+ * The session waits for a background task of its own: a task runs, and no turn ended on it yet with
+ * no call since. One task releases one stop — a chain of waits does not keep a turn released.
+ */
+export function waiting({ session }) {
+    return () => running(session.events(), timeOf(session)).some((task) => !task.spent);
 }
 
 export function forbidden({ session }) {

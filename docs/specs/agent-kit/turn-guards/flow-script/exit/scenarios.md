@@ -236,3 +236,60 @@ When the owner's last word is judged
 Then none of them releases the turn, and «стоп» alone still does
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1759 — the session source names the start and the end of a background task
+
+Given a record with a command sent to the background, an asynchronous agent, a notice of a task with a final status and a call that stops a task
+When the session source reads the events of the record
+Then each start is an event with the call, the task and the time, and each end names the call or the task
+And a plain call, a refused start, a monitor and a notice with no final status are neither
+And a stop summary with no refusal is the event of an ended turn
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1760 — the session record is read by pieces
+
+Given a record whose line is longer than a piece
+When the lines are read by pieces of seven bytes and by one piece larger than the file
+Then both give the same lines, and a line break at the end adds no line
+And the source of the records reads its entries by the same reader
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1761 — a stop with a background task of the session running is released
+
+Given a session that wrote to the tree and started a background task three minutes ago
+When the hook on Stop measures the session
+Then the session waits, and the turn is released by the case of a background task
+And a task that ended, by its call or by its task, is no wait; one task of two still running is
+And a stop word of the owner is asked before the case
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1762 — a background task past the bound releases nothing
+
+Given a background task started twenty-one minutes ago, or one with no time of its start
+When the hook on Stop measures the session
+Then the session does not wait, and the turn that wrote is held; at nineteen minutes it waits
+And a turn that ended on the task spends it: a second stop with no call is held, and a call makes the task fresh
+And a refused stop does not spend the task
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1763 — a waiting stop after a refusal names no owner's menu
+
+Given a refusal of a stop and a second stop with no call, while a background task of the session runs
+When the hook on Stop measures the session
+Then the session is not idle, and the refusal names no owner's menu, spent task or fresh
+And with the task over or past the bound the stop is idle as before
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1764 — a stop in the state that sends work to the background is held
+
+Given a session that waits for a background task, on a branch whose exit 10 is met
+When the release cases are asked
+Then the case of a background task is not met, and the turn is held
+And a hosting that does not answer about the PR does not hold the wait
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.

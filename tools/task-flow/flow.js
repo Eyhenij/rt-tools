@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · task-flow/flow.js · dd51e5094de1 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · task-flow/flow.js · 4281aa067337 · правится надстройкой, не здесь
 // The task flow as an executable scenario: the data language of `flow-syntax.mjs`, nothing here runs.
 // A state is left when its exit is measured; the first state whose exit is unmet is where the work
 // stands. A release case says when a turn may end before the scenario does. A new fact is a new
@@ -44,6 +44,7 @@
       menuLost: { session: source.session },
       forbidden: { session: source.session },
       idle: { session: source.session },
+      waiting: { session: source.session },
     },
     host: { silent: { host: source.host } },
   },
@@ -137,6 +138,13 @@
       log: 'the end of the scenario',
     },
     stopWord: { when: measure.owner.saidStop, order: 2, log: 'a stop word of the owner' },
+    // The state «работа-отдана» sends work to the background by its own action and goes on: there
+    // the wait releases nothing.
+    background: {
+      when: { all: [measure.session.waiting, { not: measure.pr.handed }] },
+      order: 3,
+      log: 'a background task of the session runs',
+    },
     noWrite: {
       when: {
         any: [
@@ -144,11 +152,11 @@
           { all: [{ not: measure.session.wrote }, { not: measure.owner.nudged }] },
         ],
       },
-      order: 3,
+      order: 4,
       log: 'no write to the tree, or a branch outside the scenario',
     },
-    role: { when: measure.session.role, order: 4, log: 'a role session' },
-    hostSilent: { when: measure.host.silent, order: 5, log: 'the host did not answer twice' },
+    role: { when: measure.session.role, order: 5, log: 'a role session' },
+    hostSilent: { when: measure.host.silent, order: 6, log: 'the host did not answer twice' },
     menuLost: { when: measure.session.menuLost, order: 8, log: 'the menu did not reach the owner' },
   },
 

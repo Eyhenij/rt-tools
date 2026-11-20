@@ -1,6 +1,6 @@
 # The guard of the exits of a turn
 
-**Status:** in force · **Revision:** 2026-11-15 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-20 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `work-conduct`
 **Procedures:** none
@@ -38,6 +38,12 @@ not by a person.
 - **A role session with no edit tool ends with its report.**
 - **The silent hosting releases the turn only when the measurement itself stopped on the silence.**
 - **A menu of a refusal that did not reach the owner a second time in a row releases the turn.**
+- **The session source names the background tasks of a record: the start of a command or an agent sent to the background, and its end by a notice with a final status or by a call that stops it.**
+- **A turn that waits for a background task of its own session is released while the task has a start, no end, and is younger than twenty minutes.**
+- **One background task releases one stop: a second stop with no call of a tool between the two is held.**
+- **A wait releases nothing once the work is handed over: the state whose action sends work to the background goes on by itself.**
+- **A stop made while a background task of the session runs names no owner's menu.**
+- **The session record is read by pieces, so a record longer than one string of the runtime does not fail the engine.**
 - **When another check refused the same step twice for the same reason, or the executor stopped again with no call after a refusal, the one move is the owner's menu.**
 - **The menu of a refusal carries exactly the options of the description: «отложить RT-N» with the task number, «сделаю сам» and «стоп».**
 - **The owner's choice is carried out: a deferral marks the task «отложено», «сделаю сам» marks the owner's step, and the next unblocked task is taken; «стоп» releases the turn.**
@@ -102,6 +108,13 @@ Not applicable: the guard judges one turn of one session.
 - **The silent hosting is read from the measurement.** A read that failed for a state the
   measurement passed over says nothing about a later local exit that is unmet.
 
+- **A wait is read from the record, not from the words of the turn.** A turn that says «the suite
+  runs in the background» with no background task in the record is held as before. Over 14–19.11
+  169 of 251 refusals of the engine at turn ends fell on a turn whose own background task ran.
+- **A released wait is woken only by the notice of the task.** Over 14–19.11 24 of 552 background
+  starts got no notice; after such a start the session stands until the owner writes. The bound of
+  twenty minutes is read only at a stop and wakes nothing: it covers 163 of the 165 waiting stops.
+
 ## Open questions
 
 None.
@@ -134,3 +147,5 @@ None.
 - 2026-11-15 — the engine measures the copy of the session, not the main checkout: sessions of other
   worktrees were held by the steps of a foreign plan. A write is recognised past the variables and
   the options of git, and a stop word followed by an order of work holds the turn.
+- 2026-11-20 — a turn that waits for a background task of its own session is released, once per
+  task and for twenty minutes; such a stop names no owner's menu. The record is read by pieces.

@@ -141,6 +141,40 @@ out('menu: SC-AK-1701 — первая остановка — не просто�
 const idleMenu = holdReason(model, stage, null, { ...HOLD_MENU, cause: menuCause((name) => name === 'measure.session.idle') });
 out('menu: SC-AK-1701 — простой называет меню владельцу', String(idleMenu.includes('no call followed it') && idleMenu.includes("owner's menu")), 'true');
 
+// --- ожидание своей фоновой задачи -----------------------------------------------------------------
+const NOW = Date.parse('2026-11-19T12:00:00Z');
+const minutesAgo = (m) => NOW - m * 60_000;
+const timed = (list) => ({ session: { events: () => list, now: () => NOW } });
+const waits = (list) => String(session.waiting(timed(list))(data));
+const started = (id, m) => ({ kind: 'background', id, task: `task-${id}`, at: minutesAgo(m) });
+const over = (id) => ({ kind: 'backgroundEnd', id, task: `task-${id}` });
+const ended = { kind: 'ended' };
+const BG = called('Bash', { command: 'pnpm test', run_in_background: true });
+const WAITING = { ...WROTE, 'measure.session.waiting': true };
+out('end: SC-AK-1761 — фоновая задача идёт — сессия ждёт', waits([called('Edit'), BG, started('a', 3)]), 'true');
+out('end: SC-AK-1761 — задача кончилась — не ждёт', waits([BG, started('a', 3), over('a')]), 'false');
+out('end: SC-AK-1761 — конец по номеру задачи без номера вызова', waits([BG, started('a', 3), { kind: 'backgroundEnd', id: null, task: 'task-a' }]), 'false');
+out('end: SC-AK-1761 — одна из двух задач ещё идёт — ждёт', waits([BG, started('a', 9), BG, started('b', 2), over('a')]), 'true');
+out('end: SC-AK-1761 — без фоновых задач — не ждёт', waits([called('Edit'), refused]), 'false');
+out('end: SC-AK-1761 — ожидающий ход отпущен своим случаем', released(WAITING), 'a background task of the session runs');
+out('end: SC-AK-1761 — слово остановки спрашивается раньше', released({ ...WAITING, 'measure.owner.saidStop': true }), 'a stop word of the owner');
+out('end: SC-AK-1762 — задача старше границы — не ждёт', waits([BG, started('a', 21)]), 'false');
+out('end: SC-AK-1762 — задача моложе границы — ждёт', waits([BG, started('a', 19)]), 'true');
+out('end: SC-AK-1762 — граница — двадцать минут', String(session.BACKGROUND_BOUND), '20');
+out('end: SC-AK-1762 — задача без времени начала — не ждёт', waits([BG, { kind: 'background', id: 'a', task: 't', at: NaN }]), 'false');
+out('end: SC-AK-1762 — второй конец хода на той же задаче без вызова — не ждёт', waits([BG, started('a', 5), ended]), 'false');
+out('end: SC-AK-1762 — вызов после конца хода — снова ждёт', waits([BG, started('a', 5), ended, called('Read')]), 'true');
+out('end: SC-AK-1762 — отказ конца хода задачу не тратит', waits([BG, started('a', 5), refused]), 'true');
+out('end: SC-AK-1762 — без ожидания ход с записью держится', released(WROTE), 'held');
+const idlesAt = (list) => String(session.idle(timed(list))(data));
+out('menu: SC-AK-1763 — остановка после отказа при идущей задаче — не простой', idlesAt([BG, started('a', 4), refused]), 'false');
+out('menu: SC-AK-1763 — задача кончилась — простой, как раньше', idlesAt([BG, started('a', 4), over('a'), refused]), 'true');
+out('menu: SC-AK-1763 — задача старше границы — простой', idlesAt([BG, started('a', 30), refused]), 'true');
+out('menu: SC-AK-1763 — потраченная задача меню тоже не зовёт', idlesAt([BG, started('a', 4), ended, refused]), 'false');
+out('menu: SC-AK-1763 — ожидание меню владельцу не называет', String(menuCause((name) => (name === 'measure.session.idle' ? session.idle(timed([BG, started('a', 4), refused]))(data) : false)) === null), 'true');
+out('end: SC-AK-1764 — в состоянии «работа-отдана» ожидание не отпускает', released({ ...WAITING, 'measure.pr.handed': true }), 'held');
+out('end: SC-AK-1764 — молчащий хостинг на вопросе о PR ожидание не держит', releaseCase(model, (name) => { if (name === 'measure.pr.handed') throw Object.assign(new Error('silent'), { name: 'HostSilent' }); return WAITING[name] ?? false; }, held)?.log ?? 'held', 'a background task of the session runs');
+
 out('menu: SC-AK-1443 — заблокированная задача — берётся следующая незаблокированная', String(ownerMenu.includes('takes the next unblocked task') && ownerMenu.includes('takes the next;')), 'true');
 
 out('menu: SC-AK-1445 — меню отказа несёт «отложить RT-N», «сделаю сам» и «стоп»', String(['«отложить RT-7»', '«сделаю сам»', '«стоп»'].every((option) => ownerMenu.includes(option))), 'true');

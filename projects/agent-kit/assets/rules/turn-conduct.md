@@ -37,9 +37,10 @@ The engine lets a turn end before the scenario does when a case is met, asked in
 
 - **1** · the end of the scenario — `any(measure.epic.finished, all(measure.copy.outsideEpic, measure.pr.handed))`
 - **2** · a stop word of the owner — `measure.owner.saidStop`
-- **3** · no write to the tree, or a branch outside the scenario — `any(measure.copy.outOfScenario, all(not(measure.session.wrote), not(measure.owner.nudged)))`
-- **4** · a role session — `measure.session.role`
-- **5** · the host did not answer twice — `measure.host.silent`
+- **3** · a background task of the session runs — `all(measure.session.waiting, not(measure.pr.handed))`
+- **4** · no write to the tree, or a branch outside the scenario — `any(measure.copy.outOfScenario, all(not(measure.session.wrote), not(measure.owner.nudged)))`
+- **5** · a role session — `measure.session.role`
+- **6** · the host did not answer twice — `measure.host.silent`
 - **8** · the menu did not reach the owner — `measure.session.menuLost`
 <!-- /flow:turn-end -->
 
