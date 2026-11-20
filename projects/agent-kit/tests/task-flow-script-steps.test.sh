@@ -137,6 +137,12 @@ printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Совпасть\n- [>
 tf_step 1.2 >/dev/null
 report "step: SC-AK-1729 — несовпавший перемер снял метку ветки" "$(test -e "$TF_MARK/1.2.json" && echo есть || echo нет)" 'нет'
 
+# SC-AK-1794 — из двух замен одного шага при отметке побеждает поздняя
+printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Совпасть\n- [>] 1.2 Не совпасть\n\n## Decisions along the way\n\n- **Check of step 1.2 replaced:** `echo три` → `три`\n- **Check of step 1.2 replaced:** `echo два` → `три`\n' > "$TF_PROGRESS"
+tf_step 1.2 >/dev/null
+report "step: SC-AK-1794 — две замены шага — отметку решает поздняя" "$(grep -c '^- \[x\] 1.2' "$TF_PROGRESS")" 0
+printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Совпасть\n- [>] 1.2 Не совпасть\n' > "$TF_PROGRESS"
+
 # SC-AK-1506 — форма ожидаемого, добавленная в описание, принимается step без правки движка
 mkdir -p "$TF_DIR/kit"
 cp -R "$TESTS/../assets/task-flow" "$TF_DIR/kit/task-flow"
@@ -417,6 +423,40 @@ PLAN
 )
 got="$(cd "$TF_DIR/live-repo" && RT_FLOW_STEP_LIMIT_MS=5000 node "$TESTS/../assets/checks/task-flow-script.mjs" step --done --pr 2>&1; printf 'code=%s' "$?")"
 report "pr: SC-AK-1739 — шаг, читающий ход работы, совпал на ходе работы своего замера" "$(printf '%s' "$got" | grep -cE '^1\.1 .*· совпало|matched 2')" 2
+
+# SC-AK-1794 — замена проверки, записанная вместе с отметкой, читается перемером; снятая замена не возвращается
+tf_wr_run() { # $1 — каталог; $2 и $3 — ход работы двух коммитов после плана; 1.1 по плану не совпадает
+    local dir="$TF_DIR/$1" step="node $TESTS/../assets/checks/task-flow-script.mjs"
+    (
+        git -c init.defaultBranch=main init -q "$dir" && cd "$dir" || exit 1
+        printf 'start\n' > start.txt
+        git add start.txt && "${TF_G[@]}" commit -q -m start
+        git update-ref refs/remotes/origin/main HEAD
+        git checkout -q -b RT-5-wr
+        mkdir -p docs/tasks/RT-5-wr
+        printf '# Plan\n\n## Stages\n\n### 1. Первый\n\n- **Steps:**\n    1. Шаг\n       Check: `echo 5` → = 1\n- **Readiness sign:** шаг измерен\n' > docs/tasks/RT-5-wr/plan.md
+        printf '# Ход работы\n\n## Шаги\n\n- [>] 1.1 Шаг\n' > docs/tasks/RT-5-wr/progress.md
+        git add -A && "${TF_G[@]}" commit -q -m plan
+        printf '%s' "$2" > docs/tasks/RT-5-wr/progress.md
+        git add -A && "${TF_G[@]}" commit -q -m progress
+        if [ -n "$3" ]; then printf '%s' "$3" > docs/tasks/RT-5-wr/progress.md && git add -A && "${TF_G[@]}" commit -q -m "replacement taken away"; fi
+        git rm -q -r docs/tasks/RT-5-wr && "${TF_G[@]}" commit -q -m "folder taken apart"
+    )
+    (cd "$dir" && RT_FLOW_STEP_LIMIT_MS=5000 $step step --done --pr 2>&1; printf 'code=%s' "$?")
+}
+WR_HEAD='# Ход работы\n\n## Шаги\n\n- [x] 1.1 Шаг\n\n## Decisions along the way\n\n'
+WR_ONE='- **Check of step 1.1 replaced:** `echo 1` → = 1\n'
+got="$(tf_wr_run wr-one "$(printf "$WR_HEAD$WR_ONE")")"
+report "pr: SC-AK-1794 — замена и отметка в одном коммите — шаг совпал" "$(printf '%s' "$got" | tr '\n' ' ' | grep -c 'matched 1 code=0')" 1
+got="$(tf_wr_run wr-gone "$(printf "$WR_HEAD$WR_ONE")" "$(printf "$WR_HEAD")")"
+report "pr: SC-AK-1794 — снятая замена не возвращается — шаг не совпал" "$(printf '%s' "$got" | tr '\n' ' ' | grep -c 'matched 0 code=1')" 1
+got="$(tf_wr_run wr-two "$(printf "$WR_HEAD- **Check of step 1.1 replaced:** \`echo 7\` → = 1\n$WR_ONE")")"
+report "pr: SC-AK-1794 — две замены одного шага — берётся поздняя" "$(printf '%s' "$got" | tr '\n' ' ' | grep -c 'matched 1 code=0')" 1
+WR_OPEN="$(printf '# Ход работы\n\n## Шаги\n\n- [>] 1.1 Шаг\n\n## Decisions along the way\n\n')"
+got="$(tf_wr_run wr-early-gone "$(printf '%s%s' "$WR_OPEN" "$(printf "$WR_ONE")")" "$(printf "$WR_HEAD")")"
+report "pr: SC-AK-1794 — замена ранней версии, снятая к отметке, не возвращается" "$(printf '%s' "$got" | tr '\n' ' ' | grep -c 'matched 0 code=1')" 1
+got="$(tf_wr_run wr-early-later "$(printf '%s- **Check of step 1.1 replaced:** `echo 7` → = 1\n' "$WR_OPEN")" "$(printf "$WR_HEAD$WR_ONE")")"
+report "pr: SC-AK-1794 — замена ранней версии заменена поздней другого коммита" "$(printf '%s' "$got" | tr '\n' ' ' | grep -c 'matched 1 code=0')" 1
 
 # SC-AK-1740 — перемер идёт на node, закреплённом в .nvmrc дерева
 TF_NVM="$TF_DIR/nvm"

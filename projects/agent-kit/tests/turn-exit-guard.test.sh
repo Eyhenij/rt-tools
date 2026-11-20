@@ -118,7 +118,7 @@ const stage = { state: 'этап-идёт', index: 7, reason: null };
 out('удержанный ход в этапе называет шаг и команду', String(holdReason(model, stage, { number: '3.6', name: 'Перевести' }).includes('task-flow-script.mjs step 3.6')), 'true');
 out('удержанный ход до этапа называет действие состояния', String(holdReason(model, held, null).includes('explore the tree')), 'true');
 
-// --- меню владельцу: шаг владельца или шаг, который запрещает другая проверка ---------------------
+// --- меню владельцу: шаг, который запрещает другая проверка, или простой -------------------------
 const HOLD_MENU = { cause: null, task: '7' };
 const forbiddenBy = (name) => (name === 'measure.session.forbidden' ? 'git-guard-delivery' : false);
 const checkMenu = holdReason(model, stage, null, { ...HOLD_MENU, cause: menuCause(forbiddenBy) });
