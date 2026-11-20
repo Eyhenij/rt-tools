@@ -33,6 +33,9 @@ The person sees a field with a chevron where the buttons were, and a list of swi
   a one-line group folds; the field takes the same values, a single choice as a select and a
   multiple one as a multiselect, and on a phone it opens them in the sheet. A choice there counts
   as a press on the button. One input keeps the buttons however long they are.
+- **The folded field is as wide as the buttons with the unfold margin, and no wider than its
+  place.** Across the whole place it gave a parent sized by its content nothing to grow by: the
+  group folded once in a squeezed moment and stayed a narrow field with half the toolbar empty.
 - **A field of several values can show its choice as toggles.** The field then sums the choice up
   — «All», «N of M» or its placeholder — instead of chips. The panel puts «Show all» and the
   application's own toggles above a line, and one toggle per value under it. A toggle only shows

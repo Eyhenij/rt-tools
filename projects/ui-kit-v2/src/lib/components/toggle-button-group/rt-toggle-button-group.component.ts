@@ -33,7 +33,7 @@ import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { IRtSelect, RtSelectComponent } from '@rt-tools/ui-kit-v2/select';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { IRtToggleButtonGroup } from './rt-toggle-button-group.model';
-import { rtToggleGroupNextFolded } from './rt-toggle-button-group-fold.logic';
+import { RT_TOGGLE_GROUP_UNFOLD_MARGIN_PX, rtToggleGroupNextFolded } from './rt-toggle-button-group-fold.logic';
 import { RtToggleButtonOptionDirective } from './rt-toggle-button-option.directive';
 
 const BEM_BLOCK: string = 'rt-toggle-button-group';
@@ -113,6 +113,7 @@ function isMany<T>(value: IRtToggleButtonGroup.FormValue<T>): value is ReadonlyA
         '[class.rt-toggle-button-group--chips]': "appearance() === 'chips'",
         '[class.rt-toggle-button-group--foldable]': "fold() && layout() === 'row'",
         '[class.rt-toggle-button-group--folded]': 'folded()',
+        '[style.--rt-toggle-button-group-folded-width]': 'foldedWidth()',
     },
 })
 export class RtToggleButtonGroupComponent<T = string> implements ControlValueAccessor {
@@ -123,7 +124,7 @@ export class RtToggleButtonGroupComponent<T = string> implements ControlValueAcc
     #bound: boolean = false;
 
     /** Ширина строки кнопок в минуту сворачивания: от неё считается, когда развернуть группу обратно. */
-    #naturalAtFold: number | null = null;
+    readonly #naturalAtFold: WritableSignal<number | null> = signal<number | null>(null);
 
     /** Сворачивание только что изменило размер: ближайший ответ наблюдателя размера не замеряется. */
     #ignoreFoldResize: boolean = false;
@@ -168,6 +169,16 @@ export class RtToggleButtonGroupComponent<T = string> implements ControlValueAcc
 
     /** Кнопки не помещаются по ширине: группа стоит полем выбора, а строка кнопок только меряется. */
     protected readonly folded: WritableSignal<boolean> = signal<boolean>(false);
+
+    /**
+     * Наибольшая ширина свёрнутого поля — строка кнопок плюс запас разворота. Во всё место родителя
+     * поле не встаёт: родитель по содержимому подстраивался под узкое поле, места для разворота не
+     * появлялось никогда, и группа оставалась полем при пустой половине строки.
+     */
+    protected readonly foldedWidth: Signal<string | null> = computed((): string | null => {
+        const natural: number | null = this.#naturalAtFold();
+        return natural === null ? null : `${natural + RT_TOGGLE_GROUP_UNFOLD_MARGIN_PX}px`;
+    });
 
     /** Выбранное одним значением — для свёрнутого одиночного выбора. */
     protected readonly chosenOne: Signal<T | null> = computed((): T | null => this.#single() ?? null);
@@ -359,11 +370,11 @@ export class RtToggleButtonGroupComponent<T = string> implements ControlValueAcc
         }
         const natural: number = this.row().nativeElement.scrollWidth;
         const place: number = this.#host.nativeElement.clientWidth;
-        const next: boolean = rtToggleGroupNextFolded(natural, place, this.layout(), this.fold(), this.folded(), this.#naturalAtFold);
+        const next: boolean = rtToggleGroupNextFolded(natural, place, this.layout(), this.fold(), this.folded(), this.#naturalAtFold());
         if (next === this.folded()) {
             return;
         }
-        this.#naturalAtFold = next ? natural : null;
+        this.#naturalAtFold.set(next ? natural : null);
         this.folded.set(next);
         this.#ignoreFoldResize = true;
         // Наблюдатель размера отвечает в ближайшие кадры. После паузы группа замеряется заново: смена

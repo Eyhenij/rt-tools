@@ -122,3 +122,11 @@ When its place grows, or changes because of the fold itself
 Then it unfolds only when the place is the width of its buttons plus 8 px; the fold's own change does not unfold it
 
 Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-fold.spec.ts`.
+
+### SC-UKV-1639 — a group folded in a parent sized by its content unfolds by itself
+
+Given a toggle group of 520 px of buttons in a parent that takes the width of its content
+When the place is squeezed to 343 px for a moment and then let go
+Then the folded field is 528 px wide, the parent grows by it, and the group stands as buttons again
+
+Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-fold.spec.ts`.

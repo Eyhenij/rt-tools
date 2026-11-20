@@ -178,4 +178,40 @@ describe('RtToggleButtonGroupComponent — сворачивание', (): void =
 
         expect(folded(fixture)).not.toBeNull();
     });
+
+    it('SC-UKV-1639 — поле в родителе по содержимому шириной в кнопки с запасом, и группа разворачивается сама', (): void => {
+        const callbacks: Array<() => void> = [];
+        Reflect.set(
+            globalThis,
+            'ResizeObserver',
+            class {
+                constructor(callback: () => void) {
+                    callbacks.push(callback);
+                }
+
+                public observe(): void {}
+
+                public disconnect(): void {}
+            }
+        );
+        jest.useFakeTimers();
+        // Место на миг сжалось: группа свернулась.
+        stubWidths(520, 343);
+        const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup({ value: 'week' });
+        callbacks.forEach((callback: () => void): void => callback());
+        settle(fixture);
+        const host: HTMLElement = fixture.nativeElement as HTMLElement;
+        expect(folded(fixture)).not.toBeNull();
+        expect(host.style.getPropertyValue('--rt-toggle-button-group-folded-width')).toBe('528px');
+
+        // Родитель по содержимому вырос по полю — до кнопок с запасом. После паузы сворачивания
+        // группа замеряется заново и снова стоит кнопками.
+        stubWidths(520, 528);
+        jest.runOnlyPendingTimers();
+        settle(fixture);
+        jest.useRealTimers();
+
+        expect(folded(fixture)).toBeNull();
+        expect(host.style.getPropertyValue('--rt-toggle-button-group-folded-width')).toBe('');
+    });
 });
