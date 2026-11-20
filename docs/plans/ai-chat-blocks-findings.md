@@ -241,6 +241,27 @@ The rules review after the PR (#3429):
 - **After a compaction the rules gate asked for the same rules again, one refusal per kind of
   edit.** Seven refusals in this task, the same as in RT-3339. **Address:** rules layer — the
   hooks `skill-gate-rearm.sh` and `skill-loaded.sh`.
+- **The match with the mockup was counted on the rest state alone.** The ring and the hover
+  highlight were cut by the body of the expansion panel, and the owner saw it twice after the
+  showcase was shown. **Address:** names of this tree — the rule `kit-approval`: the match covers
+  every state the showcase names and checks each frame for clipping by an ancestor.
+- **The hover and focus frames of the mockup moved the label, and the code did not.** **Address:**
+  rules layer — a proposal to the pattern `mockups-measure`: a state frame is compared with the rest
+  frame by the bounds of its text nodes before the sheet is shown.
+- **The body of `rt-expansion-panel` cuts a ring or a highlight past a row's edge.** It keeps
+  `overflow: hidden` for its height animation; nothing in the rules says so. **Address:** names of
+  this tree — the rule `rt-tools-styling`: inside the body a ring is drawn inward.
+- **The push set went red with «References that have no story (6)».** The showcase on 6007 was
+  raised before main was merged in and did not know the stories main brought. **Address:** names
+  of this tree — the pattern `ui-component-tests-visual`: the showcase is stopped and the run
+  repeated, the references are not deleted.
+- **The end-to-end coverage guard asked for an application test for an edit of shared kit files.**
+  `rt_kit2_reaches` counts any edit of the kit outside the component directories as reaching the
+  applications, though no application uses `rt-ai-chat`; the skip line was written by the owner's
+  word. **Address:** names of this tree — the profile `.claude/rt-kit/project.sh`, a task of its own.
+- **The stand ports of the end-to-end suites were held by the main copy and a neighbouring
+  session.** The run was repeated on free ports set by variables. **Address:** names of this tree —
+  the push set names who holds the port or picks a free one, a task of its own.
 
 ## Left unresolved
 
