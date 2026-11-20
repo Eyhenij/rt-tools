@@ -12,7 +12,10 @@
   (those numbers and 1486) moved in order to SC-UKV-1554…1627 — only in lines the branch added: the
   sheet scenarios and 20 spec files' titles. The kit's scenario index got the sheet row it lacked;
   the input scenarios name the sample addresses in « » instead of backticks. `check:specs`,
-  `check:docs`, `check:dupes`, `check:styles` green.
+  `check:docs`, `check:dupes`, `check:styles` green. After `pnpm install` (main brought ajv and
+  d3) the kit typecheck is green and the kit's unit tests pass whole: 379 suites, 4148 tests.
+- **Closing texts begun:** the out-of-scope line of the sheet spec now names the field help as the
+  kit tooltip.
 - **The showcase of `prefix` and `suffix` approved:** «Approve showcase» (20.11).
 - **The hint at the field label joined (20.11), «проверь и добавь в текущий тикет»:** confirmed
   live on 6017 — `rt-field__help-popover` has a transparent background, padding 0 and no shadow,

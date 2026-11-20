@@ -68,7 +68,8 @@ the same rows as before.
 
 ## What is out of scope
 
-- Tooltips, the help of a field, confirmations, dialogs and asides keep opening as they do.
+- Tooltips, the help of a field, confirmations, dialogs and asides do not open in the sheet. The
+  help of a field is the kit tooltip, subdomain `field-label-icon-actions`.
 - The look of the rows inside the panel does not change.
 
 ## Contract
