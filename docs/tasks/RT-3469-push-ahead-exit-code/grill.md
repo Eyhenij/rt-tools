@@ -19,9 +19,12 @@ the ready form of the run.
   `bash …/git-guard-push-ahead.sh > log 2>&1; echo "exit $?"; tail log` comes back as «exit code 0»
   over «push ahead: red». On 21.11 this session read such a notice twice; the red line of
   `check-glossary.mjs` stood in the log.
-- **The count over every record on this machine.** 625 Bash calls start the run ahead, 525 of them
-  in the background. After the set stand: `;` — 541, a pipe — 24, a newline — 2, `&&` — 2, nothing
-  — 33, other forms — 23. The calls where a command after the set hides its code: 567 of 625.
+- **The count over every record on this machine, by call id.** 383 different calls start the run
+  ahead; 625 is the count of their entries, a continued record repeats them. A command stands after
+  the set in 340; 317 of them print `$?` of the set into the output, and the session reads the code
+  there. In 15 the code is visible nowhere — a pipe `| tail` with no `$?`. The role
+  `product-strategist` found 42 red results in the records and no case where a red one was read as
+  green.
 - **The ready form is named by four refusal texts of the decision table and by the pattern
   `task-delivery-loop-run`:** `bash .claude/hooks/git-guard-push-ahead.sh` in the background. None
   of them says that nothing may follow it.
@@ -43,17 +46,27 @@ and the measurement settles which forms hide the code.
 
 ## Decisions
 
-- **A call that starts the run ahead and then a command whose code replaces the set's is refused.**
-  The forms: `;`, a newline, `||` and a pipe after the set. Rejected: a fix of the script alone — it
-  already exits with its verdict, and the call hides it.
-- **`&&` after the set passes.** On red the commands after it do not run, and the call ends with the
-  code of the set.
+- **A call is refused only when the code of the set is visible nowhere.** A tail after the set that
+  prints no `$?`, a pipe with no `PIPESTATUS` or `pipefail`, `&` and `!` hide it; `$?` right after the
+  set shows it. The role `product-strategist` counted the cost: a refusal of every tail adds 0,2–1,6
+  refusals per hundred calls a day and lifts 21.11 (4,86) over the milestone; the narrow form adds
+  about 0,02. Спросить было некого: заход автономный, владелец велел решать самому. Цена ошибки:
+  одно правило в проверке и его сценарии, если владелец захочет отказ на любой хвост. Rejected: a
+  fix of the script alone — it already exits with its verdict.
+- **`&&` to the end of the call passes; a `;` after a chain of `&&` is judged.** On red the commands
+  after `&&` do not run, but a `;` after them runs and ends the call with its own code.
 - **Redirections of the set's own output pass.** `> log 2>&1` keeps its code.
-- **The refusal names the ready form:** `bash .claude/hooks/git-guard-push-ahead.sh > <log> 2>&1`,
-  the Bash call with `run_in_background`, nothing after it; the verdict is read from the last line
-  of the log.
-- **The ready form goes into the refusal texts of the decision table that name the run ahead and
-  into the pattern `task-delivery-loop-run`.**
+- **A text that only names the script passes:** a heredoc, `printf` into a file, a quoted commit
+  message, `bash -n`. A run inside `bash -c '…'` is judged by its inner text.
+- **The refusal names the ready form:** `bash .claude/hooks/git-guard-push-ahead.sh > <log outside
+  the tree> 2>&1`, the Bash call with `run_in_background`, nothing after it. The log lies outside the
+  working copy: a file in the tree makes the copy dirty, and the set does not start. The verdict is
+  the code of the notice and `grep '^push ahead:' <log>`; the last line of the log on red is the name
+  of the red check.
+- **The ready form goes into the 11 refusal texts of the decision table with `{ahead_cmd}`, the two
+  texts of `git-guard-delivery-epic.sh` and the pattern `task-delivery-loop-run`.**
+- **The scenarios go to the description of the run ahead,** `docs/specs/agent-kit/push-gate-ahead/`,
+  not to the delivery gate.
 
 ## What is left unclear
 
