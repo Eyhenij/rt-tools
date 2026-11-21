@@ -62,6 +62,8 @@ along the way.
        Check: `pnpm run -s check:ngdoctor` → /^score (\d+) = threshold \1$/
     2. Write its scenario set: equal, lower, higher, empty input, broken input
        Check: `bash tools/tests/check-ngdoctor.test.sh` → exit 0
+    3. Add the scenario set to the selection by a changed file
+       Check: `echo tools/check-ngdoctor.mjs | bash tools/tests/select.sh` → /check-ngdoctor/
     4. Add the step to check:all
        Check: `node -p "require('./package.json').scripts['check:all'].includes('pnpm run check:ngdoctor')"` → `true`
 - **Readiness sign:** the check ends with «score N = threshold N» on the tree; its scenarios are

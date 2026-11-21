@@ -19,8 +19,9 @@ Rewritten by every session, not appended to.
 - [x] 1.3 Write the config file with the report path in tmp and nothing else
 - [x] 2.1 Write the check that reads the JSON of the tool from stdin and compares the score with the threshold
 - [x] 2.2 Write its scenario set: equal, lower, higher, empty input, broken input
-- [>] 2.4 Add the step to check:all
-- [ ] 3.1 Name the command and its place in check:all in CLAUDE.md
+- [x] 2.3 Add the scenario set to the selection by a changed file
+- [x] 2.4 Add the step to check:all
+- [x] 3.1 Name the command and its place in check:all in CLAUDE.md
 
 ## Decisions along the way
 
@@ -40,8 +41,11 @@ Rewritten by every session, not appended to.
   for any changed path under `tools/` that is not a test, so every set runs, the new one with them.
   A set file is picked by name only for texts and the harness. The check line waits for the set
   name and gets `all`. Affected stage of the plan: 2.
-- **2026-11-21. Step 2.3 is removed from the plan.** The owner's word: «Убрать шаг 2.3 из плана».
-  The plan lost the step and its check line; the numbering of the rest is kept.
+- **2026-11-21. Step 2.3 is taken out of the work by a replacement of its check.** The owner's
+  word: «Убрать шаг 2.3 из плана». The engine refuses every step once the approved plan differs
+  from its commit, so the plan stays as approved and the step gets the check of what the
+  selection really does: the full run of the sets picks the new set up by itself.
+- **Check of step 2.3 replaced:** `bash tools/tests/run.sh 2>&1 | grep "^check-ngdoctor:"` → /^check-ngdoctor: \d+ ok, 0 failures$/ · the owner's word: «Убрать шаг 2.3 из плана»
 - **2026-11-21. knip red on main becomes a task of the epic right after this one.** The owner's
   word: «В эпик, перед RT-3478».
 
