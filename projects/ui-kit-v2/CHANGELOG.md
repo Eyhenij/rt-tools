@@ -1,3 +1,23 @@
+# [0.50.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.49.1...rt-ui-kit-v2%400.50.0) (2026-11-21)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** блок источников после второго круга ревью (RT-3340) ([4718dc1](https://github.com/Eyhenij/rt-tools/commit/4718dc1bca41a24c447d323f7f78091de58d3e79))
+- **rt:ui-kit-v2:** блок источников после первого круга ревью (RT-3340) ([d7ae065](https://github.com/Eyhenij/rt-tools/commit/d7ae065b8e41160918a1aad628b861296987eae8))
+- **rt:ui-kit-v2:** наведение и фокус строки источника (RT-3340) ([b41af0d](https://github.com/Eyhenij/rt-tools/commit/b41af0dd817cdb26972ac2fbb65573b1397bb723))
+- **rt:ui-kit-v2:** название источника из одних невидимых знаков отбрасывается (RT-3340) ([cbf9f49](https://github.com/Eyhenij/rt-tools/commit/cbf9f498fdb9a3b1624773ae57053c2f5f35fd82))
+- **rt:ui-kit-v2:** токены вида чата после второго круга ревью (RT-3344) ([845f3a9](https://github.com/Eyhenij/rt-tools/commit/845f3a971bc9c13775b72f79a63196dc025e94fe))
+- **rt:ui-kit-v2:** токены вида чата после первого круга ревью (RT-3344) ([ba2f74d](https://github.com/Eyhenij/rt-tools/commit/ba2f74df61fada94ce12d92a55516d5fb18895c8))
+- **rt:ui-kit-v2:** у элемента блока источников в ленте есть правило стиля (RT-3340) ([eecfaf7](https://github.com/Eyhenij/rt-tools/commit/eecfaf70cdbaf5429c6ad1b7109186a1bdb737b5))
+
+### Features
+
+- **rt:ui-kit-v2:** блок источников в ответе чата и событие нажатия (RT-3340) ([6c360ea](https://github.com/Eyhenij/rt-tools/commit/6c360ea3e0c2a0913db2343a9efd6e259a8c5711))
+- **rt:ui-kit-v2:** вид чата задаётся токенами без внутренних классов (RT-3344) ([3b3026e](https://github.com/Eyhenij/rt-tools/commit/3b3026e52604e8fc87df61cb0498002077ac6f94))
+- **rt:ui-kit-v2:** данные и схема блока источников (RT-3340) ([6eac865](https://github.com/Eyhenij/rt-tools/commit/6eac865cee683bc2a95dea7e5c29c641af46d531))
+- **rt:ui-kit-v2:** истории и страница обзора блока источников (RT-3340) ([97477a6](https://github.com/Eyhenij/rt-tools/commit/97477a6102453fa130aa09c39c8098f9e3c12f4b))
+- **rt:ui-kit-v2:** прерванный ответ чата — тихая строка и «спросить снова» (RT-3341) ([97fa6db](https://github.com/Eyhenij/rt-tools/commit/97fa6dbf1254362327bb7740aadf6bc10d0783bb))
+
 ## [0.49.1](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.49.0...rt-ui-kit-v2%400.49.1) (2026-11-21)
 
 ### Bug Fixes
