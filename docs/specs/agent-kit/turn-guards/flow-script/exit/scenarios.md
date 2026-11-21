@@ -456,11 +456,11 @@ Then the refusal names the run and offers no owner's menu
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-1813 — the stop word passes a running run, not a red attempt ended after it
+### SC-AK-1813 — the stop word passes a fresh head only
 
 Given the owner's «стоп»
 When the turn ends over a running run, a fresh head, and red runs that ended before and after the word
-Then the running run, the fresh head and the red run that ended before the word hold nothing
-And the red run that ended after the word holds the stop until it is read, whatever order the hosting gives the runs in
+Then the fresh head holds nothing, and the running run holds until one background watch starts
+And a red run holds the stop until it is read, whichever side of the word it ended on
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.

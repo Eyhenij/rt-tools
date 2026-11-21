@@ -64,7 +64,7 @@ not by a person.
 - **A red run holds the stop until a call of the hosting client after its end, neither refused nor failed, names it, or a command or a read takes the output of its watch.**
 - **A head with no run holds the stop for two minutes after the result of its push or the opening of its PR.**
 - **A hosting that does not answer about the CI holds nothing.**
-- **The owner's stop word passes a running run and a fresh head, not a red attempt that ended after the word.**
+- **The owner's stop word passes a fresh head only: a running run still asks for one background watch, and a red run holds until it is read.**
 - **The host adapter reads the open PRs and the runs of the PR pipeline file on a head past the clock.**
 - **A call event carries its time and the branch of its record entry, and a background event the command of its call.**
 
@@ -157,11 +157,11 @@ Not applicable: the guard judges one turn of one session.
 - **A read is counted after the end of the attempt.** The call that starts the watch names the run
   before it ends and reads nothing. The red run of PR #3460 on 20.11 (44810853234) was named by no
   record for twelve hours.
-- **A red run after the owner's «стоп» is still read.** The owner chose so by menu on 21.11: the
-  stop lifts the wait of a running run, and a red result after the word holds until one read. A
-  watch started before the word wakes the session with that result. A stricter reading — a watch
-  asked for after the word, a red run before it held too — went past the owner's answer and was
-  dropped in review.
+- **The stop lifts the wait, not the watch.** The owner chose so by two menu answers on 21.11. The
+  first: a red result after «стоп» holds until one read, «so the red does not wait for you till
+  morning». The second, asked when review found that only a watch wakes the session: after «стоп»
+  the session starts one background watch, and an unread red run holds before the word and after
+  it. A fresh head still passes: the watch of a run not yet shown has nothing to name.
 - **A watch of a CI run is no wait.** The hold asks for the watch after every merge into the epic
   branch, and CI runs for up to forty minutes there. Counted as a wait, the watch would release the
   stops of the next stage, and the session would wait instead of working.
@@ -211,5 +211,6 @@ None.
   with no start in the record holds nothing.
 - 2026-11-21 — the CI hold: a CI run of a PR the session answers for, running with no watch, red
   with no read, or not there yet within two minutes of the push, holds the stop before every release
-  case. The refusal names the run and its ready command. The read of a red run shows the last 200
-  lines of its failed log: the error of a failed job stands at its end, past the cut of a tool.
+  case. The refusal names the run and its ready command. The stop word passes a fresh head only.
+  The read of a red run shows the last 200
+  lines of its failed log: the error of a failed step stands at its end, past the cut of a tool.

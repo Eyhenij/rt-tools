@@ -245,8 +245,8 @@ const ciHost = ({ pulls = [PR], runs = {}, bases = ['main'], silent = false, iss
 };
 const EPIC_PLAN = '# Эпик\n\n**Эпик:** RT-3471\n**Ветка эпика:** `RT-3471-rework`\n\n| # | Задача | Состояние |\n| --- | --- | --- |\n| 1 | RT-3467 — CI | идёт |\n';
 const ciTree = (plans = {}) => ({ copyEpic: () => null, list: () => Object.keys(plans), read: (p) => plans[p.split('/').pop()] ?? null });
-const holdOf = ({ branch = PR.head, host = ciHost(), events = [], now = END + 60_000, ownerAt = null, word = null, plans = {} } = {}) =>
-    ci.hold({ git: { branch: () => branch }, host, tree: ciTree(plans), session: { events: () => events, now: () => now, ownerAt: () => ownerAt }, owner: { last: () => word } })(data);
+const holdOf = ({ branch = PR.head, host = ciHost(), events = [], now = END + 60_000, word = null, plans = {} } = {}) =>
+    ci.hold({ git: { branch: () => branch }, host, tree: ciTree(plans), session: { events: () => events, now: () => now }, owner: { last: () => word } })(data);
 const kindOf = (h) => (h ? `${h.kind} ${h.run?.id ?? '-'}` : 'none');
 const runOf = (over) => ({ id: RUN, attempt: 1, status: 'completed', conclusion: 'failure', endedAt: END, ...over });
 const goingRun = runOf({ status: 'in_progress', conclusion: null, endedAt: null });
@@ -342,12 +342,12 @@ out('end: SC-AK-1811 — три остановки — один отказ', Str
 const second = decide(model, ciReader({ 'measure.ci.hold': redHold, 'measure.session.idle': true }), stageState)?.block ?? '';
 out('end: SC-AK-1812 — вторая остановка без вызова называет запуск, не меню', `${second.startsWith(`The CI run ${RUN}`)} ${second.includes("The one move is the owner's menu")}`, 'true false');
 
-// SC-AK-1813 — «стоп» снимает идущий запуск, но не красную попытку, кончившуюся после него
-out('end: SC-AK-1813 — «стоп» снимает удержание идущего запуска', kindOf(holdOf({ host: onHead(goingRun), word: 'стоп', ownerAt: T0 + 60_000, now: T0 + 120_000 })), 'none');
-out('end: SC-AK-1813 — «стоп» снимает свежую вершину без запуска', kindOf(holdOf({ events: [bash(`git push origin ${PR.head}`, END)], word: 'стоп', ownerAt: END + 10_000, now: END + 60_000 })), 'none');
-out('end: SC-AK-1813 — красный после «стоп» держит до чтения', kindOf(holdOf({ host: onHead(redRun), word: 'стоп', ownerAt: T0 + 60_000 })), `red ${RUN}`);
-out('end: SC-AK-1813 — красный до «стоп» не держит', kindOf(holdOf({ host: onHead(redRun), word: 'стоп', ownerAt: END + 30_000 })), 'none');
-out('end: SC-AK-1813 — красный до «стоп» не прячет красный после него', kindOf(holdOf({ host: ciHost({ runs: { [PR.headRefOid]: [runOf({ id: 111 }), runOf({ id: 222, endedAt: END + 120_000 })] } }), word: 'стоп', ownerAt: END + 30_000, now: END + 180_000 })), 'red 222');
+// SC-AK-1813 — «стоп» снимает только свежую вершину
+out('end: SC-AK-1813 — «стоп» не снимает слежение: идущий без слежения держит', kindOf(holdOf({ host: onHead(goingRun), word: 'стоп', now: T0 + 120_000 })), `running ${RUN}`);
+out('end: SC-AK-1813 — после «стоп» со слежением идущий не держит', kindOf(holdOf({ host: onHead(goingRun), events: watching, word: 'стоп', now: T0 + 120_000 })), 'none');
+out('end: SC-AK-1813 — «стоп» снимает свежую вершину без запуска', kindOf(holdOf({ events: [bash(`git push origin ${PR.head}`, END)], word: 'стоп', now: END + 60_000 })), 'none');
+out('end: SC-AK-1813 — красный после «стоп» держит до чтения', kindOf(holdOf({ host: onHead(redRun), word: 'стоп' })), `red ${RUN}`);
+out('end: SC-AK-1813 — непрочитанный красный до «стоп» тоже держит', kindOf(holdOf({ host: onHead(redRun), word: 'стоп', now: END + 600_000 })), `red ${RUN}`);
 
 JS
 

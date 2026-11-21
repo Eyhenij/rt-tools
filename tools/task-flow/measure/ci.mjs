@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · task-flow/measure/ci.mjs · d95f91755846 · правится надстройкой, не здесь
+// rt-kit v0.38.0 · task-flow/measure/ci.mjs · eeeb783cb7a2 · правится надстройкой, не здесь
 /**
  * The measurer «measure.ci» — the CI runs the session answers for. The hold is read before the
  * release cases: a turn does not end over a run nobody watches or a red run nobody read.
@@ -16,8 +16,9 @@
  *     watch of it — the read; a watch call stands before the end and reads nothing;
  *   - there is no run yet, and the head was pushed or the PR opened less than `FRESH_MINUTES` ago.
  *
- * The owner's stop word passes a running run and a fresh head; a red attempt that ended after that
- * word still holds the stop until one call reads it.
+ * The owner's stop word passes a fresh head and nothing else. It lifts the wait, not the watch: a
+ * running run still asks for one background watch, whose notice wakes the session when the run
+ * ends, and a red run holds until one call reads it — before the word or after it.
  */
 import { epicOfWork } from './epic-of.mjs';
 import { saidStop } from './owner.mjs';
@@ -166,19 +167,15 @@ export function hold({ git, host, tree, session, owner }) {
         const pulls = host.openPulls().filter((p) => heads.has(p.head) && wakes(bases, p.base));
         if (pulls.length === 0) return false;
         const stopped = saidStop({ owner })(data);
-        const stopAt = typeof session.ownerAt === 'function' ? session.ownerAt() : null;
-        // A red attempt that ended before the stop word passes: the owner stopped the work over it.
-        const passed = (run) => stopped && Number.isFinite(stopAt) && run.endedAt <= stopAt;
         const now = typeof session.now === 'function' ? session.now() : Date.now();
         const tasks = openTasks(events);
         for (const pr of pulls) {
             const runs = host.runs(pr.headRefOid);
-            const red = runs.find((run) => run.status === 'completed' && !NOT_RED.has(run.conclusion) && !passed(run) && !wasRead(events, run, pr));
+            const red = runs.find((run) => run.status === 'completed' && !NOT_RED.has(run.conclusion) && !wasRead(events, run, pr));
             if (red) return { kind: 'red', pr, run: red, file };
-            if (stopped) continue;
             const running = runs.find((run) => run.status !== 'completed');
             if (running && !tasks.some((task) => watches(task, running, pr))) return { kind: 'running', pr, run: running, file };
-            if (runs.length === 0) {
+            if (runs.length === 0 && !stopped) {
                 const since = Math.max(pushes.get(pr.head) ?? -Infinity, Number.isFinite(pr.createdAt) ? pr.createdAt : -Infinity);
                 if (now - since < FRESH_MINUTES * 60_000 && !tasks.some((task) => watches(task, null, pr))) return { kind: 'fresh', pr, run: null, file };
             }

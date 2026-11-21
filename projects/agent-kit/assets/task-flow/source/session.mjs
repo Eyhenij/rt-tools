@@ -14,7 +14,6 @@
  *                    task, output, status, stopped } — `stopped` when the session stopped it itself —
  *                    and a turn that ended { kind: 'ended' }
  *   now()            the time the session is judged at, in milliseconds
- *   ownerAt()        the time of the owner's last word — a typed message or a menu answer — or null
  *   agent()          the role the session runs as, or null
  *   roleTools(role)  the `tools:` line of the role's header, or null
  *
@@ -22,8 +21,6 @@
  */
 import { closeSync, existsSync, openSync, readFileSync, readSync } from 'node:fs';
 import { join } from 'node:path';
-
-import { wordOf } from './owner.mjs';
 
 /** The text a refusal at the end of a turn arrives with. */
 const STOP_FEEDBACK = /^Stop hook feedback:/;
@@ -235,13 +232,6 @@ export function open() {
                 .map((part) => ({ name: part.name, input: part.input ?? {} })),
         events: () => eventsOf(entries()),
         now: () => Date.now(),
-        ownerAt: () => {
-            const all = entries();
-            for (let index = all.length - 1; index >= 0; index -= 1) {
-                if (wordOf(all[index]) !== null) return Date.parse(all[index].timestamp ?? '');
-            }
-            return null;
-        },
         agent: () => process.env.RT_FLOW_AGENT || null,
         roleTools: (role) => {
             if (!role || /[/\\]|^\./.test(role)) return null;
