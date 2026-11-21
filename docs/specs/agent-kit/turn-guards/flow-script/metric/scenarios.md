@@ -60,7 +60,7 @@ And a stop refused by a hook, in the summary or in the feedback, ends no turn
 And a branch without the engine is not counted
 And every stop on a branch with the engine counts among the stops of the line, held or not
 
-Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-script-forecast.test.sh`.
 
 ### SC-AK-1553 — the window of the last calls
 

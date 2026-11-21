@@ -118,7 +118,7 @@ tf_run <<'JS'
 import { gitDouble, treeDouble, hostDouble, ownerDouble } from './flow-doubles.mjs';
 import { buildModel } from '../assets/checks/flow-model.mjs';
 import { measureStates } from '../assets/checks/task-flow-script.mjs';
-import { attempt, createStore, timedRead } from '../assets/task-flow/source/host.mjs';
+import { attempt, createStore, pipelineRuns, pullRequestBases, timedRead } from '../assets/task-flow/source/host.mjs';
 import * as epic from '../assets/task-flow/measure/epic.mjs';
 import * as task from '../assets/task-flow/measure/task.mjs';
 import * as pr from '../assets/task-flow/measure/pr.mjs';
@@ -255,6 +255,25 @@ out('host: SC-AK-1393 — PR эпика влит — выход выполнен
 out('host: SC-AK-1393 — PR эпика нет — не выход', run(epic.finished, { rows: two, local: tips, host: { landed: { [E]: ['s11', 's12'] } } }), 'false');
 out('host: SC-AK-1394 — отложенные задачи не считаются', run(epic.finished, { rows: [...two, ['—', 13, 'отложено']], local: tips, host: { landed: { [E]: ['s11', 's12'] }, pulls: epicPull } }), 'true');
 out('host: SC-AK-1466 — ветка задачи удалена после слияния — вершина из headRefOid PR', run(epic.finished, { rows: two, local: [tips[1]], host: { merged: [mergedPull(11, 's11')], landed: { [E]: ['s11', 's12'] }, pulls: epicPull } }), 'true');
+
+// SC-AK-1799 — запуски конвейера PR на вершине и базы, для которых он запускается
+const CI = '.github/workflows/ci.yml';
+const runsAnswer = { workflow_runs: [
+    { id: 41, run_attempt: 2, status: 'completed', conclusion: 'failure', updated_at: '2026-11-21T08:23:09Z', path: CI },
+    { id: 42, run_attempt: 1, status: 'completed', conclusion: 'skipped', updated_at: '2026-11-21T08:20:00Z', path: '.github/workflows/close-epic-tasks.yml' },
+    { id: 43, run_attempt: 1, status: 'in_progress', conclusion: null, updated_at: '2026-11-21T08:25:00Z', path: `${CI}@refs/pull/1/merge` },
+] };
+out('host: SC-AK-1799 — берутся только запуски файла конвейера', pipelineRuns(runsAnswer, CI).map((r) => r.id).join(' '), '41 43');
+out('host: SC-AK-1799 — номер, попытка, итог и конец запуска', JSON.stringify(pipelineRuns(runsAnswer, CI)[0]), JSON.stringify({ id: 41, attempt: 2, status: 'completed', conclusion: 'failure', endedAt: Date.parse('2026-11-21T08:23:09Z') }));
+out('host: SC-AK-1799 — идущий запуск без конца', String(pipelineRuns(runsAnswer, CI)[1].endedAt), 'null');
+out('host: SC-AK-1799 — дерево без файла конвейера не судит запусков', String(pipelineRuns(runsAnswer, '').length), '0');
+out('host: SC-AK-1799 — список веток pull_request', JSON.stringify(pullRequestBases('on:\n  pull_request:\n    branches:\n      - main\n  workflow_dispatch:\n')), '["main"]');
+out('host: SC-AK-1799 — список в строку', JSON.stringify(pullRequestBases("on:\n  pull_request:\n    branches: [main, 'release']\n")), '["main","release"]');
+out('host: SC-AK-1799 — pull_request без списка — любая база', JSON.stringify(pullRequestBases('on:\n  pull_request:\n    types: [opened]\n')), 'null');
+out('host: SC-AK-1799 — короткая форма', JSON.stringify(pullRequestBases('on: [push, pull_request]\n')), 'null');
+out('host: SC-AK-1799 — конвейер без pull_request не слушает PR', JSON.stringify(pullRequestBases('on:\n  push:\n    branches: [main]\n  pull_request_target:\n')), '[]');
+out('host: SC-AK-1799 — on в одну строку объектом — любая база', JSON.stringify(pullRequestBases('on: { pull_request: { branches: [main] } }\n')), 'null');
+out('host: SC-AK-1799 — список на отступе ключа и комментарий', JSON.stringify(pullRequestBases('on:\n  pull_request:\n    branches:\n    - main # base\n    types: [opened]\n')), '["main"]');
 JS
 
 # --- Ветка без номера задачи, эпик копии, черновик ------------------------------------------------
@@ -422,78 +441,10 @@ console.log(String(open().approval('RT-1-x')));
 " 2>&1)"
 report "local: SC-AK-1371 — метка не JSON читается отсутствующей" "$got" 'null'
 
-# --- Шаг плана, одобрение плана и фоновые задачи сессии — в подключаемых файлах ---------------------
+# --- Шаг плана, одобрение плана, фоновые задачи сессии и прогноз — в подключаемых файлах ----------
 . "$TESTS/task-flow-script-steps.test.sh"
 . "$TESTS/task-flow-script-session.test.sh"
-# --- Прогноз отказов по записям разговоров ---------------------------------------------------------
-tf_run <<'JS'
-import { dirname } from 'node:path';
-import { buildModel } from '../assets/checks/flow-model.mjs';
-import { openReaders } from '../assets/checks/task-flow-script.mjs';
-import { forecastCopies, forecastLine, missedLine, perMille } from '../assets/checks/flow-forecast.mjs';
-import * as sessionSource from '../assets/task-flow/source/session.mjs';
-import { wordOf } from '../assets/task-flow/source/owner.mjs';
-
-const out = (label, got, want) => console.log(`${label}|${got}|${want}`);
-const flow = new URL('../assets/task-flow/flow.js', import.meta.url).pathname;
-const model = buildModel(flow);
-const settings = { tasksDir: 'docs/tasks', plansDir: 'docs/plans', overridePath: 'o.js', protectedPaths: ['^projects/agent-kit/assets/task-flow/'] };
-const window = { from: Date.parse('2026-11-01T00:00:00Z'), to: Date.parse('2026-11-08T00:00:00Z') };
-let n = 0;
-// A second per entry, past the minute too: a time that does not parse drops the entry from the window.
-const at = () => new Date(Date.parse('2026-11-02T10:00:00Z') + 1000 * n++).toISOString();
-const meta = (branch) => ({ uuid: `u${n}`, gitBranch: branch, cwd: '/t', timestamp: at() });
-const owner = (branch, text) => ({ ...meta(branch), type: 'user', message: { content: text } });
-const use = (branch, name, input) => ({ ...meta(branch), type: 'assistant', message: { content: [{ type: 'tool_use', id: `t${n}`, name, input }] } });
-const stop = (branch) => ({ ...meta(branch), type: 'system', subtype: 'stop_hook_summary' });
-const say = (branch) => ({ ...meta(branch), type: 'assistant', message: { content: [{ type: 'text', text: 'done' }] } });
-const run = async (entries) =>
-    forecastCopies({ copies: [{ name: 'c', sessions: [{ id: 's', entries }] }], window, model, base: dirname(flow), openReaders, sessionSource, wordOf, tree: '/t', settings });
-
-const B = 'RT-7-x';
-const held = await run([owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), say(B), stop(B), say(B), owner(B, 'стоп'), say(B), stop(B)]);
-out('forecast: SC-AK-1549 — остановка после записи держится, «стоп» отпускает', `${held.stops} ${held.held}`, '2 1');
-out('forecast: SC-AK-1549 — на тысячу вызовов', perMille(held, false), '1000');
-const quiet = await run([owner('main-x', 'спасибо'), say('main-x'), stop('main-x')]);
-out('forecast: SC-AK-1549 — сессия без записи отпущена', `${quiet.stops} ${quiet.held}`, '1 0');
-const shell = await run([owner(B, 'делай RT-7'), use(B, 'Bash', { command: 'echo x > docs/tasks/RT-7-x/progress.md' }), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' })]);
-out('forecast: SC-AK-1549 — запись оболочкой в ход работы — отказ стража', `${shell.judged} ${shell.refused}`, '2 1');
-out('forecast: SC-AK-1549 — отказы стража входят с --guard', perMille({ ...shell, held: 0 }, true), '500');
-
-const feedback = (branch) => ({ ...meta(branch), type: 'user', message: { content: 'Stop hook feedback:\nBLOCKED by turn-exit-guard: the scenario is not over' } });
-const loop = await run([owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), say(B), stop(B), feedback(B), say(B), stop(B), feedback(B), say(B), stop(B), feedback(B)]);
-out('forecast: SC-AK-1700 — меню простоя обрывает петлю остановок', `${loop.stops} ${loop.held}`, '2 2');
-const resumed = await run([owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), say(B), stop(B), feedback(B), say(B), stop(B), feedback(B), use(B, 'Read', { file_path: '/t/a.md' }), say(B), stop(B)]);
-out('forecast: SC-AK-1700 — вызов после меню снова считает остановки', `${resumed.stops} ${resumed.held}`, '3 3');
-
-// SC-AK-1765 — a waiting stop is let go, and the line names the longest run of held stops
-const EDIT = () => use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' });
-const bg = (id) => ({ ...meta(B), type: 'assistant', message: { content: [{ type: 'tool_use', id, name: 'Bash', input: { command: 'pnpm test', run_in_background: true } }] } });
-const bgStarted = (id, when) => ({ ...meta(B), ...(when ? { timestamp: when } : {}), type: 'user', toolUseResult: { backgroundTaskId: `b-${id}` }, message: { content: [{ type: 'tool_result', tool_use_id: id, content: 'Command running in background' }] } });
-const bgOver = (id) => ({ type: 'queue-operation', operation: 'enqueue', timestamp: at(), content: `<task-notification>\n<task-id>b-${id}</task-id>\n<tool-use-id>${id}</tool-use-id>\n<status>completed</status>\n</task-notification>` });
-const waited = await run([owner(B, 'делай RT-7'), EDIT(), bg('w1'), bgStarted('w1'), say(B), stop(B)]);
-out('forecast: SC-AK-1765 — остановка при идущей фоновой задаче отпущена', `${waited.stops} ${waited.held}`, '1 0');
-const twice = await run([owner(B, 'делай RT-7'), EDIT(), bg('w1'), bgStarted('w1'), say(B), stop(B), say(B), stop(B)]);
-out('forecast: SC-AK-1765 — вторая остановка на той же задаче без вызова держится', `${twice.stops} ${twice.held}`, '2 1');
-const finished = await run([owner(B, 'делай RT-7'), EDIT(), bg('w1'), bgStarted('w1'), bgOver('w1'), say(B), stop(B)]);
-out('forecast: SC-AK-1765 — задача кончилась — остановка держится', `${finished.stops} ${finished.held}`, '1 1');
-out('forecast: SC-AK-1797 — названная непрочитанная задача — не меню, остановки считаются дальше', await run([owner(B, 'делай RT-7'), EDIT(), bg('w1'), bgStarted('w1'), bgOver('w1'), say(B), stop(B), feedback(B), say(B), stop(B), feedback(B), say(B), stop(B), feedback(B)]).then((r) => `${r.stops} ${r.held}`), '3 3');
-const stale = await run([owner(B, 'делай RT-7'), EDIT(), bg('w1'), bgStarted('w1', '2026-11-02T09:00:00Z'), say(B), stop(B)]);
-out('forecast: SC-AK-1765 — задача старше границы по времени остановки — держится', `${stale.stops} ${stale.held}`, '1 1');
-const series = await run([owner(B, 'делай RT-7'), EDIT(), say(B), stop(B), EDIT(), say(B), stop(B), EDIT(), say(B), stop(B), owner(B, 'дальше'), EDIT(), say(B), stop(B), bg('w2'), bgStarted('w2'), say(B), stop(B), EDIT(), say(B), stop(B)]);
-out('forecast: SC-AK-1765 — серию рвут слово владельца и отпущенная остановка', `${series.held} ${series.longest}`, '4 3');
-out('forecast: SC-AK-1765 — без удержанных остановок серия нулевая', String(waited.longest), '0');
-out('forecast: SC-AK-1765 — строка называет самую длинную серию', String(forecastLine(series, false).endsWith('the longest run of held stops — 3')), 'true');
-
-out('missed: SC-AK-1552 — конец хода с открытой работой пропущен, конец по «стоп» нет', `${held.ended} ${held.missed}`, '2 1');
-out('missed: SC-AK-1552 — остановка с отказом хука ход не кончает', `${loop.ended} ${loop.missed}`, '0 0');
-out('missed: SC-AK-1552 — каждая остановка на ветке с движком входит в знаменатель', loop.laidStops, '3');
-const blocked = await run([owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), { ...stop(B), hookErrors: ['BLOCKED by turn-exit-guard: open'] }]);
-out('missed: SC-AK-1552 — отказ в итоге хуков ход не кончает', `${blocked.ended} ${blocked.missed}`, '0 0');
-const unlaid = await forecastCopies({ copies: [{ name: 'c', sessions: [{ id: 's', entries: [owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), say(B), stop(B)] }] }], window, model, base: dirname(flow), openReaders, sessionSource, wordOf, tree: '/t', settings, laid: () => false });
-out('missed: SC-AK-1552 — ветка без движка не считается', `${unlaid.ended} ${unlaid.missed}`, '0 0');
-out('missed: SC-AK-1552 — строка счёта', missedLine(held, 200), 'missed stops with open work: 1 of 2 stops in the last 200 calls');
-JS
+. "$TESTS/task-flow-script-forecast.test.sh"
 
 rm -rf "$TF_DIR"
 suite_result "сценарий task flow"

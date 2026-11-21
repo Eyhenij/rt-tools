@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · checks/flow-verdict.mjs · 1129da89e07a · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/flow-verdict.mjs · ab56969a467b · правится надстройкой, не здесь
 /**
  * The verdict at the end of a turn — the engine command `verdict`, called by the hook on Stop.
  *
@@ -23,6 +23,60 @@ const SILENCE = 'measure.host.silent';
 
 /** The measurers that name why the next move is the owner's menu. */
 const MENU_CAUSES = { unread: 'measure.session.unread', forbidden: 'measure.session.forbidden', idle: 'measure.session.idle' };
+
+/** The measurer of the CI hold, read before the release cases and before the cause of the menu. */
+const CI_HOLD = 'measure.ci.hold';
+
+/**
+ * The CI hold: { kind, pr, run } of `measure.ci.hold`, or null. A description without the measurer
+ * holds nothing; a hosting that did not answer holds nothing either — the release cases decide then.
+ */
+export function ciHold(model, read) {
+    if (!(model.measures ?? []).some((m) => m.entry === 'ci' && m.caps?.hold)) return null;
+    try {
+        return read(CI_HOLD) || null;
+    } catch (error) {
+        if (error?.name === 'HostSilent') return null;
+        throw error;
+    }
+}
+
+/** The refusal of a CI hold: the run, the PR, and the one move with its ready command. */
+export function ciHoldReason(hold) {
+    const { pr, run } = hold;
+    const where = `PR #${pr.number} (\`${pr.head}\` into \`${pr.base}\`)`;
+    if (hold.kind === 'running') {
+        return [
+            `The CI run ${run.id} of ${where} is running, and no background task of this session watches it.`,
+            `The one move is to watch it in the background: \`command gh run watch ${run.id} --exit-status --interval 30\` with run_in_background — its notice wakes the session when the run ends. The watch lifts this hold; the scenario decides the rest of the turn.`,
+        ].join('\n');
+    }
+    if (hold.kind === 'fresh') {
+        const sha = String(pr.headRefOid ?? '');
+        const workflow = String(hold.file ?? '').split('/').pop();
+        const list = `command gh run list --commit ${sha}${workflow ? ` --workflow ${workflow}` : ''} --json databaseId --jq '.[0].databaseId'`;
+        return [
+            `The head ${sha.slice(0, 7)} of ${where} was pushed less than two minutes ago, and the hosting shows no CI run on it yet.`,
+            `The one move is a background watch of that head: \`for i in $(seq 30); do id=$(${list}); [ -n "$id" ] && break; sleep 10; done; [ -n "$id" ] && command gh run watch "$id" --exit-status --interval 30\` with run_in_background.`,
+        ].join('\n');
+    }
+    return [
+        `The CI run ${run.id} of ${where} ended «${run.conclusion}», and no call after its end has read it.`,
+        `The one move is to read it: \`command gh run view ${run.id} --log-failed | tail -n 200\` — then fix what fell when it is this session's work, or name the run in the reply when another session already fixes it. No owner's menu is offered while the run is unread.`,
+    ].join('\n');
+}
+
+/**
+ * The verdict on a measured branch: { block } of a CI hold first — the end of the scenario does not
+ * pass it — then { release } of the first release case, or null when the turn is held by the
+ * scenario.
+ */
+export function decide(model, read, result) {
+    const hold = ciHold(model, read);
+    if (hold) return { block: ciHoldReason(hold) };
+    const released = releaseCase(model, read, result);
+    return released ? { release: released.log ?? released.key } : null;
+}
 
 /** The first release case met, or null. `read` answers a measurer by its reference. */
 export function releaseCase(model, read, result) {
