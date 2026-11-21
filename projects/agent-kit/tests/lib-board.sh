@@ -33,6 +33,15 @@ cat > "$BOARD_TREE/gh" <<'STUB'
 args="$*"
 printf '%s\n' "$args" >> "${STUB_CALLS:-/dev/null}"
 case "$args" in
+    # Отставание прода спрашивается GraphQL-сравнением, и стоит оно раньше доски: доска — тоже
+    # GraphQL. STUB_COMPARE задаёт отказ хостинга: 422 — «не успел построить», 500 — сбой.
+    *graphql*behindBy*)
+        case "${STUB_COMPARE:-}" in
+            422) printf '%s\n' 'gh: Server Error: Sorry, this diff is taking too long to generate. (HTTP 422)' >&2; exit 1 ;;
+            500) printf '%s\n' 'gh: Server Error (HTTP 500)' >&2; exit 1 ;;
+            *) printf '%s\n' "$STUB_BEHIND" ;;
+        esac
+        ;;
     *graphql*) printf '%s' "$STUB_BOARD" ;;
     "issue list"*) printf '%s' "$STUB_ISSUES" ;;
     "pr list"*) printf '%s' "$STUB_PULLS" ;;
@@ -55,15 +64,19 @@ case "$args" in
     # Последний прогон главной ветки и последняя выкатка спрашиваются одним видом вызова: их
     # различает имя потока — прогон идёт у файла конвейера, выкатка у потока выкатки.
     *workflows/ci.yml/runs*) printf '%s\n' "${STUB_MAIN_RUN:-}" ;;
+    # Состояние последней выкатки спрашивается страницей из одного прогона; сценарий, которому оно
+    # нужно отдельно от отставания, задаёт STUB_DEPLOY_LAST.
+    *actions/workflows/*per_page=1\ *)
+        [ "${STUB_DEPLOY_LAST:-}" = 500 ] && { printf '%s\n' 'gh: Server Error (HTTP 500)' >&2; exit 1; }
+        printf '%s\n' "${STUB_DEPLOY_LAST:-$STUB_DEPLOY}"
+        ;;
     *actions/workflows/*runs*) printf '%s\n' "$STUB_DEPLOY" ;;
     *actions/runs/*/jobs*) printf '%s\n' "${STUB_JOBS:-0}" ;;
     *actions/runs*tojson*) printf '%s\n' "${STUB_EVICTED:-[]}" ;;
     *actions/runs*per_page=20*) printf '%s\n' "$STUB_VERDICT" ;;
     *actions/runs*) printf '%s\n' "$STUB_RUNS" ;;
-    # Отставание ветки заявки и отставание прода спрашиваются одним видом вызова, а отвечают
-    # на разное: у первого читается «позади», у второго — «впереди». Различает их ключ выборки.
+    # Отставание ветки заявки спрашивается REST-сравнением; отставание прода сюда больше не ходит.
     *compare/*behind_by*) printf '%s\n' "${STUB_PULL_BEHIND:-0}" ;;
-    *compare/*) printf '%s\n' "$STUB_BEHIND" ;;
     */commits/*) printf '%s\n' "$STUB_HEAD_DATE" ;;
     *) printf 'неожиданный вызов: %s\n' "$args" >&2; exit 1 ;;
 esac

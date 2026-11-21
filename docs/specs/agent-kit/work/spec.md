@@ -239,6 +239,13 @@ the merge, not after.
   month-old run and yesterday's one within a minute, and the audit three times a day named a lag of
   hundreds of commits that did not exist. The twenty latest runs come without the filter, and the
   first successful one is taken.
+- **The lag of production is counted by a comparison that builds no diff.** The REST comparison
+  builds the diff of the whole even for a page of one commit, and at a lag of hundreds of commits the
+  host refused it with HTTP 422 twice in a row before the PR of a task. The GraphQL comparison
+  counts the commits only.
+- **A comparison the host could not build is a note, not a divergence.** Only the answer 422 or
+  «diff is taking too long» is caught: nothing was judged, and the lines after the lag still come.
+  A 500, no rights or a failure of another request break the check, as before.
 - **A rollout in progress does not count as a divergence.** It may still end in success, and a turn
   refused by it pays for a state that will be gone in a minute.
 - **A tree that named no mark or no directory of the lines gets silence, not a refusal.** There will be

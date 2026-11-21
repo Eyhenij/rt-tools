@@ -2,22 +2,22 @@
 
 ## Где мы
 
-- **State:** `задача-взята`
-- **Stage:** 1 of 2 — The lag is counted without a diff, and a refusal is a note
-- **Done:** разбор, план; две роли прочли план, их находки внесены до коммита плана.
-- **Next step:** одобрение плана владельцем, затем шаг 1.1.
-- **Uncommitted:** nothing
+- **State:** `этапы-кончились`
+- **Stage:** 2 of 2 — The description
+- **Done:** оба этапа; семь шагов отмечены движком.
+- **Next step:** живая проверка, затем первый круг ревью.
+- **Uncommitted:** код, наборы, записанные ответы, описание аудита
 - **PR:** not open yet
 
 ## Шаги
 
-- [>] 1.1 On the double a 422 of the comparison gives the note with the commit and the day
-- [ ] 1.2 On the double the line of the last rollout and the count follow the note, the code is 0
-- [ ] 1.3 On the double a 500 of the comparison and a failure of another request break the audit
-- [ ] 1.4 On the recorded answers the audit names the lag by a number and prints its last line
-- [ ] 1.5 The recorded output holds no stack
-- [ ] 2.1 `SC-AK-1600` no longer waits for the fall
-- [ ] 2.2 The scenario of the note stands in the description of the audit
+- [x] 1.1 On the double a 422 of the comparison gives the note with the commit and the day
+- [x] 1.2 On the double the line of the last rollout and the count follow the note, the code is 0
+- [x] 1.3 On the double a 500 of the comparison and a failure of another request break the audit
+- [x] 1.4 On the recorded answers the audit names the lag by a number and prints its last line
+- [x] 1.5 The recorded output holds no stack
+- [x] 2.1 `SC-AK-1600` no longer waits for the fall
+- [x] 2.2 The scenario of the note stands in the description of the audit
 
 ## Решения по ходу
 
@@ -26,6 +26,12 @@
   файлов; отставание считается GraphQL-сравнением. Перехват узкий и внутри замера отставания.
   Проверки шагов называют случаи, а не только номер; число отставания в проверке не зашито; живой
   аудит — только наблюдение. Находки ролей `goal-critic` и `product-strategist`.
+- **Набор на записанных ответах больше не сравнивает весь вывод аудита.** После строки отставания
+  идут строки, которые аудит судит по файлам дерева: планам эпиков и папкам задач. Они меняются с
+  каждым слиянием. Случаи сравнивают строку отставания, последнюю строку и код выхода с записанным
+  выводом.
+- **Прежняя запись REST-сравнения с ответом 422 оставлена.** Аудит её больше не спрашивает; она
+  остаётся свидетельством отказа хостинга.
 
 ## Сессии
 
@@ -33,3 +39,10 @@
 
 - Замер до работы: набор аудита 91 ok; набор на записанных ответах 10 ok на node 22, 9 ok и 1
   провал на node 20; в записанном выводе 7 строк стека; живое полное сравнение отвечает 487.
+- После этапов: набор аудита 97 ok, набор на записанных ответах 11 ok, набор долгой работы 9 ok —
+  на node 22.22.3 и на node 20.11.0, провалов 0; `agent-kit:check` — exit 0; в записанном выводе
+  строк стека 0.
+- Живой аудит `node tools/check-board.mjs` на хостинге: 91 с, код 1 (56 расхождений), строка
+  «production lags «main» by 487 commits: the last rollout is 50eeae24 of 2026-11-14», последняя
+  строка напечатана, стека нет. Отказ 422 вживую не воспроизвёлся: хостинг на GraphQL-сравнение
+  отвечает числом.

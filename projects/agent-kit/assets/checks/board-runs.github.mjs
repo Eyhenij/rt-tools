@@ -45,6 +45,8 @@ export function runsOnHead(sha, options) {
  * neighbouring check of the last rollout.
  *
  * Returns `null` if there were no rollouts at all: that is not a discrepancy but nothing to compare.
+ * A comparison the host refused returns the rollout with `behind: null` and the words of the host in
+ * `refused`: the caller prints a note and goes on to the lines after it.
  */
 export function deployLag(workflow, mainBranch, options) {
     const runs = gh(
@@ -63,11 +65,40 @@ export function deployLag(workflow, mainBranch, options) {
     }
 
     const run = JSON.parse(last);
-    const behind = gh(
-        ['api', `repos/${OWNER}/${REPO}/compare/${run.sha}...${encodeURIComponent(mainBranch)}`, '--jq', '.ahead_by'],
-        options
-    );
-    return { sha: run.sha, at: run.at, behind: Number(String(behind).trim()) };
+    try {
+        return { sha: run.sha, at: run.at, behind: commitsBehind(run.sha, mainBranch, options) };
+    } catch (error) {
+        const words = String(error.stderr ?? error.message ?? '').trim();
+        if (!(error instanceof Error) || !COMPARISON_REFUSED.test(words)) {
+            throw error;
+        }
+        return { sha: run.sha, at: run.at, behind: null, refused: words.split('\n')[0] };
+    }
+}
+
+/**
+ * The refusal of the host to compare: it could not build the answer in time. Only this one is a
+ * note. A 500, no rights or a commit that is gone break the audit, as any other failure does.
+ */
+const COMPARISON_REFUSED = /HTTP 422\b|diff is taking too long/i;
+
+/**
+ * How many commits the main branch holds past the rolled-out one.
+ *
+ * Asked by the GraphQL comparison, which counts commits and builds no diff. The REST comparison
+ * builds the diff of the whole even for a page of one commit — 300 files on 21.11 — and at a lag of
+ * hundreds of commits the host refused it with 422 twice in a row before the PR of a task.
+ */
+function commitsBehind(sha, mainBranch, options) {
+    const query =
+        `query{repository(owner:"${OWNER}",name:"${REPO}"){` +
+        `ref(qualifiedName:"refs/heads/${mainBranch}"){compare(headRef:"${sha}"){behindBy}}}}`;
+    const answer = gh(['api', 'graphql', '-f', `query=${query}`, '--jq', '.data.repository.ref.compare.behindBy'], options);
+    const behind = Number(String(answer).trim());
+    if (String(answer).trim() === '' || !Number.isFinite(behind)) {
+        throw new Error(`the comparison of «${mainBranch}» with ${sha.slice(0, 8)} returned no number: ${String(answer).trim() || 'empty'}`);
+    }
+    return behind;
 }
 
 /**

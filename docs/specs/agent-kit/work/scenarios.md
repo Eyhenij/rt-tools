@@ -431,6 +431,19 @@ Then it does not count as a divergence: the rollout may still end in success
 
 Covered: `projects/agent-kit/tests/checks-board-long-work.test.sh`.
 
+### SC-AK-1796 — a comparison the host could not build is a note
+
+Given the host answers the comparison of the main branch with the last rollout with HTTP 422
+When the check of the work queue is run
+Then it prints a note with the commit and the day of the last rollout and the words of the host, the
+note is not a divergence, and the line of the last rollout and the count follow it
+
+Given the comparison fails with HTTP 500, or the request about the last rollout fails
+When the same check is run
+Then the check breaks, as on any other failure of the host
+
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
+
 ### SC-AK-936 — the command creates an epic
 
 Given the tree named the label of an epic and the directory of plans

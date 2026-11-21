@@ -322,6 +322,12 @@ if (!offline && DEPLOY_WORKFLOW) {
         const lag = deployLag(DEPLOY_WORKFLOW, MAIN_BRANCH, { token });
         if (lag === null) {
             report(`there was not a single rollout by «${DEPLOY_WORKFLOW}» — there is nothing to compare production against`);
+        } else if (lag.refused) {
+            // The host could not compare: a note, not a divergence — nothing was judged.
+            console.log(
+                `check-board: production was not compared with «${MAIN_BRANCH}» — the last rollout is ` +
+                    `${lag.sha.slice(0, 8)} of ${String(lag.at).slice(0, 10)}, the host answered: ${lag.refused}`
+            );
         } else if (lag.behind > 0) {
             report(
                 `production lags «${MAIN_BRANCH}» by ${lag.behind} commits: the last rollout is ${lag.sha.slice(0, 8)} of ${String(lag.at).slice(0, 10)}`

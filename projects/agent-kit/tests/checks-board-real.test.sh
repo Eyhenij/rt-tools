@@ -66,12 +66,20 @@ report "SC-AK-1600 — таблица эпика на настоящих отв�
     "$(same_as "$(reader tools/epic-table.mjs 3302 | state_marked)" <(state_marked < "$REAL/.epic-table.txt"))" "same"
 report "SC-AK-1600 — последний прогон главной на настоящих ответах — как на хостинге" \
     "$(same_as "$(reader tools/main-run.mjs)" "$REAL/.main-run.txt")" "same"
-report "SC-AK-1600 — аудит очереди на настоящих ответах — как на хостинге" \
-    "$(same_as "$(reader tools/check-board.mjs)" "$REAL/.audit.txt")" "same"
-# The audit fell on the real host: the comparison of the deployed head with the main branch got
-# HTTP 422 «diff is taking too long», and nothing caught it. A finding of RT-3277 — the case names it.
-report "SC-AK-1600 — аудит очереди падает на ответе 422 сравнения веток — находка RT-3277" \
-    "$(grep -c 'diff is taking too long' "$REAL/.audit.txt")" "2"
+# The lag of production is asked by the GraphQL comparison, which builds no diff: the REST one got
+# HTTP 422 «diff is taking too long» on the real host, and the audit died with a stack. The output
+# of the audit is written from the replay; the lines judged by the files of the tree move with every
+# merge, so the cases compare the line of the lag, the last line and the exit code.
+audit_out="$(reader tools/check-board.mjs)"
+audit_code="$(cd "$ROOT" && env -u FORCE_COLOR NO_COLOR=1 HOME="$SUITE_HOME" GH_BIN="$REPLAY" REPLAY_TOKEN_FILE="$FAKE_TOKEN" \
+    node tools/check-board.mjs > /dev/null 2>&1; printf '%s' "$?")"
+report "SC-AK-1600 — аудит очереди называет отставание числом, как в записанном выводе" \
+    "$(printf '%s\n' "$audit_out" | grep -E 'production lags «main» by [0-9]+ commits')" \
+    "$(grep -E 'production lags «main» by [0-9]+ commits' "$REAL/.audit.txt")"
+report "SC-AK-1600 — аудит очереди печатает последнюю строку" \
+    "$(printf '%s\n' "$audit_out" | tail -1)" "$(tail -1 "$REAL/.audit.txt")"
+report "SC-AK-1600 — аудит очереди кончается кодом записанного вывода, без стека" \
+    "$audit_code:$(printf '%s\n' "$audit_out" | grep -c '^Error\|^    at ')" "$(cat "$REAL/.audit.code"):0"
 
 # --- the engine of the task flow: the PRs of a branch through `host.mjs` -----------------------------
 report "SC-AK-1603 — host.mjs: запросы PR ветки и влитых PR на настоящих ответах — как на хостинге" \

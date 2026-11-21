@@ -426,6 +426,30 @@ report "SC-AK-1213 — последняя выкатка спрашиваетс�
 report "SC-AK-1213 — берутся двадцать последних прогонов" "$(grep -c 'workflows/deploy.yml/runs?per_page=20' "$STUB_CALLS")" 1
 unset STUB_CALLS
 
+# --- SC-AK-1796 — сравнение, которое хостинг не смог построить, — заметка ----------------------
+# Хостинг отвечает на сравнение 422, «не успел»: аудит печатает заметку с коммитом и днём выкатки
+# и идёт дальше. Сбой 500 и отказ другого запроса ломают аудит, как раньше.
+export RT_GH_RETRY_MS=1
+export STUB_COMPARE=422
+report "SC-AK-1796 — заметка названа с коммитом и днём выкатки" \
+    "$(board_says 'production was not compared with «main» — the last rollout is fedcba98 of 2026-08-20')" 1
+report "SC-AK-1796 — заметка несёт слова хостинга" "$(board_says 'the host answered: .*diff is taking too long')" 1
+report "SC-AK-1796 — строки после заметки: счёт без расхождений, код 0" \
+    "$(board_says 'no divergences'):$(board_code)" '1:0'
+export STUB_DEPLOY_LAST='{"status":"completed","conclusion":"failure","sha":"abcdef0123456789abcdef0123456789abcdef01","at":"2026-08-21T10:00:00Z","url":"https://host/run/9"}'
+report "SC-AK-1796 — строки после заметки: упавшая выкатка названа" \
+    "$(board_says 'the rollout «deploy.yml» failed on abcdef01 of 2026-08-21')" 1
+unset STUB_DEPLOY_LAST
+export STUB_COMPARE=500
+report "SC-AK-1796 — другой отказ: сбой 500 сравнения ломает аудит" \
+    "$(board_says 'production was not compared'):$(board_code)" '0:1'
+export STUB_COMPARE=''
+export STUB_COMPARE=422 STUB_DEPLOY_LAST=500
+report "SC-AK-1796 — другой отказ: сбой запроса последней выкатки ломает аудит" \
+    "$(board_says 'no divergences'):$(board_code)" '0:1'
+unset STUB_DEPLOY_LAST
+unset RT_GH_RETRY_MS STUB_COMPARE
+
 # Выкаток не было ни одной: сравнивать не с чем, и это тоже расхождение — прода нет вовсе.
 export STUB_DEPLOY=''
 report "SC-AK-531 — дерево без единой выкатки названо" "$(board_says 'not a single rollout by «deploy.yml»')" 1
