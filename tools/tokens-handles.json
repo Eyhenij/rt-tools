@@ -215,6 +215,9 @@
     "--rt-stepper-mark-upcoming-bg": "the mark of a step ahead; the default is the track colour",
     "--rt-stepper-mark-upcoming-color": "the digit of a step-ahead mark; the default is --rt-color-text-primary",
     "--rt-stepper-mark-neutral-bg": "the mark of a list without a current step; the default is --rt-color-text-muted",
-    "--rt-stepper-mark-neutral-color": "the digit of such a mark; the default is --rt-color-text-inverse"
+    "--rt-stepper-mark-neutral-color": "the digit of such a mark; the default is --rt-color-text-inverse",
+    "--rt-ai-chat-font-family": "the font family of the chat feed and the answer text; unset, the feed inherits the page family and the answer text keeps --rt-font-family-sans",
+    "--rt-ai-chat-rating-active-bg": "the fill of a chosen rating button of the chat answer; unset, the fill of the icon button",
+    "--rt-ai-chat-rating-active-color": "the icon colour of a chosen rating button; unset, the colour of the icon button"
   }
 }

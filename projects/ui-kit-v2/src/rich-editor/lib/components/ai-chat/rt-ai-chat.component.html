@@ -100,7 +100,7 @@
                     @if (message.role === 'user') {
                         <div rtElem="question" qa-dataid="ai-chat-question">
                             <div rtElem="bubble">
-                                <span rtElem="author">{{ t().aiYou }}</span>
+                                <ng-container [ngTemplateOutlet]="questionAuthor() ? authorLabel : null" />
                                 <p rtElem="bubble-text">{{ message.text }}</p>
                                 @if (message.time) {
                                     <span rtElem="time">{{ message.time }}</span>
@@ -179,6 +179,13 @@
     </section>
 </ng-container>
 
+<!-- Подпись автора вынесена в заготовку: ветка в пузыре подняла бы сложность шаблона за предел. -->
+<ng-template #authorLabel>
+    <ng-container rtBlock="rt-ai-chat">
+        <span rtElem="author">{{ t().aiYou }}</span>
+    </ng-container>
+</ng-template>
+
 <ng-template #newThreadButton>
     <rt-icon-button
         qa-dataid="ai-chat-new-thread"
@@ -218,7 +225,7 @@
                         <span rtElem="thread-unread" qa-dataid="ai-chat-thread-unread">{{ row.unreadCount }}</span>
                     }
                     @if (row.time) {
-                        <span rtElem="thread-time">{{ row.time }}</span>
+                        <span rtElem="thread-time" rtThreadListUnderActions>{{ row.time }}</span>
                     }
                 </span>
             </ng-template>
