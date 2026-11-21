@@ -45,6 +45,7 @@ not by a person.
 - **A turn has ended when the record holds something after the agent closed it, other than the feedback of a stop hook.**
 - **A wait releases nothing once the work is handed over: the state whose action sends work to the background goes on by itself.**
 - **A stop made while a background task of the session runs names no owner's menu.**
+- **A background task the session has not read is the first move, and no owner's menu is offered over it: the refusal names the task and its output file.**
 - **Two running tasks release two stops, and the end of a task gives its stop back.**
 - **A release on a wait is written to the journal with the session.**
 - **The session source and the source of the records read a record by pieces and never hold it as one string.**
@@ -169,3 +170,9 @@ None.
   The forecast over 14–18.11 holds 142 stops where it held 383. A series of ten refusals in a row
   with no background task running is not lifted by this rule: the series of 19.11 at a step that
   could not be measured on a taken-apart folder stays for the task about that step.
+- 2026-11-21 — a background task whose notice came after the last call is the first move of a held
+  stop: the menu «отложить / стоп» is no longer offered over a result that has not reached the
+  session. The first call or menu after the notice reads it. A stricter sign — a call naming the
+  task or its files — named tasks hundreds of calls old on real records and doubled the held stops
+  of the forecast; it was dropped. A task the session stopped itself, one the harness killed, or one
+  with no start in the record holds nothing.

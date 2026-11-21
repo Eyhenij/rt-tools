@@ -1,4 +1,4 @@
-// rt-kit v0.37.1 · task-flow/measure/session.mjs · 2687390a1506 · правится надстройкой, не здесь
+// rt-kit v0.37.1 · task-flow/measure/session.mjs · 8c70033d7091 · правится надстройкой, не здесь
 /**
  * The measurer «measure.session» — what this session did: a write to the tree, a role it runs as, a
  * menu of a refusal that did not reach the owner, a step another check forbids, a stop after a
@@ -63,8 +63,41 @@ export function idle({ session }) {
         const events = session.events();
         let last = null;
         for (const event of events) if (event.kind === 'refusal' || event.kind === 'call' || event.kind === 'menu') last = event;
-        return last?.kind === 'refusal' && running(events, timeOf(session)).tasks.length === 0;
+        return last?.kind === 'refusal' && running(events, timeOf(session)).tasks.length === 0 && unreadOf(events) === null;
     };
+}
+
+/**
+ * The background task of the session whose notice has not reached it: { task, output, agent }, or null. A
+ * task is unread when its start stands in the record, its notice ended it with a result, and no call
+ * or menu followed that notice: the notice reaches the session only when the turn goes on, and a
+ * call is the first sign it went on. A task the session stopped itself, or one the harness killed,
+ * holds nothing.
+ */
+function unreadOf(events) {
+    const started = new Map();
+    const unread = new Map();
+    for (const event of events) {
+        if (event.kind === 'background' && event.task) {
+            // An agent a message resumed runs again under the same number and sends a notice again.
+            started.set(event.task, { ...event, over: false });
+            unread.delete(event.task);
+        } else if (event.kind === 'backgroundEnd') {
+            // A notice that names its call ends that run alone, as in the count of running tasks: a
+            // late copy of the notice of a former run does not end the run a message resumed.
+            const task = event.id ? [...started.values()].find((one) => one.id === event.id) : started.get(event.task);
+            if (!task || task.over) continue;
+            task.over = true;
+            if (event.stopped || event.status === 'killed' || event.status === 'stopped') continue;
+            unread.set(task.task, { task: task.task, output: event.output ?? task.output ?? null, agent: Boolean(task.agent) });
+        } else if (event.kind === 'call' || event.kind === 'menu') unread.clear();
+    }
+    return [...unread.values()].pop() ?? null;
+}
+
+/** The measurer «measure.session.unread»: the unread background task of the session, or false. */
+export function unread({ session }) {
+    return () => unreadOf(session.events()) ?? false;
 }
 
 /** A background task older than this releases nothing and counts as no task, in minutes. */
@@ -136,6 +169,8 @@ export function forbidden({ session }) {
             }
         }
         if (!last || !before) return false;
+        // While a background task ended unread, the move is to read it, not the owner's menu.
+        if (unreadOf(session.events()) !== null) return false;
         return last.by === before.by && last.reason === before.reason ? last.by : false;
     };
 }
