@@ -28,8 +28,8 @@ Rewritten by every session, not appended to.
 - [x] 3.3 the live check against the agreement
 - [x] 4.1 review round one and its fixes
 - [x] 4.2 review round two and its fixes
-- [>] 4.3 the owner's word on the showcase
-- [ ] 5.1 overviews of the chat and the parts, the README exception, the epic plan
+- [x] 4.3 the owner's word on the showcase
+- [>] 5.1 overviews of the chat and the parts, the README exception, the epic plan
 - [ ] 5.2 the agreement merged into the domain spec, the folder taken apart
 - [ ] 5.3 the push set and the PR into the branch of RT-3340
 
@@ -129,6 +129,15 @@ Rewritten by every session, not appended to.
     заголовки 3–6 уровня мельче крупного кегля ответа; низкая шапка не сжимает кнопки — всё это
     строки обзора чата на шаге 5.1, черновик готов.
   - Обзоры, README и план эпика — шаг 5.1; одобрение витрины — шаг 4.3.
+- **Слово владельца о витрине (4.3):** «сделай ревью сам, проведи 2 цикла ревью, сейчас сломаны
+  rt-prompt-suggestion». Поломки в историях карточки, в её обзоре и в пустом чате не нашлось
+  (карточки 386px, скругление 10px, как на базе). Владелец уточнил, что узкие прямоугольные
+  карточки в ячейке «подсказки» сделаны нарочно: «окей, если это сделано нарочно - тогда ок,
+  продолжай». Ещё два круга ревью веду сам.
+- **Третий круг ревью (свой):** в обзоре чата умолчание цвета разделителя шапки было
+  `--rt-color-border-subtle`, а в коде `--rt-color-border-default` — исправлено. Для семейства
+  шрифта дописано, что без токена ответ держит шрифт кита. Обёртка панели со `style=` в витрине
+  снята: так сделаны 4 из 5 соседних историй чата.
 
 ## Sessions
 

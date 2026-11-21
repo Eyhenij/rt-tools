@@ -73,6 +73,16 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 Светлая и тёмная темы стоят рядом в истории **Themes**.
 
+Свойства блока для действий строки, задаются правилом на самом блоке:
+
+- `--rt-thread-list-row-actions-bg` и `--rt-thread-list-row-actions-bg-active` — подложка действий
+  у обычной и у выбранной строки;
+- `--rt-thread-list-row-actions-padding-inline` — её поля;
+- `--rt-thread-list-row-action-radius` — скругление кнопок действий; вход `radius` кнопки сильнее;
+- `--rt-thread-list-under-actions-visibility` — видимость узла шаблона строки с меткой
+  `rtThreadListUnderActions` под показанными действиями. По умолчанию `visible`; на сенсорном
+  экране действия видны всегда, и значение действует на всех строках.
+
 ## Рядом
 
 - [`rt-chat`](./?path=/docs/organisms-chat-chat-overview--docs) — правая половина того же экрана.

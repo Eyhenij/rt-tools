@@ -45,41 +45,88 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 `--rt-ai-chat-column-width`, `--rt-ai-chat-content-max-width`, `--rt-ai-chat-match-bg`, `--rt-ai-chat-match-color`,
 `--rt-ai-chat-match-radius`, `--rt-ai-chat-unread-radius`.
 
+Вид чата приложение задаёт правилом на элементе `rt-ai-chat`, без селекторов внутренних классов
+чата и его частей. Без этих свойств чат выглядит как прежде.
+
+| свойство                                     | что задаёт                                              | по умолчанию                        |
+| -------------------------------------------- | ------------------------------------------------------- | ----------------------------------- |
+| `--rt-ai-chat-font-family`                   | семейство шрифта ленты, ответ включительно              | лента наследует, ответ — шрифт кита |
+| `--rt-ai-chat-question-font-size`            | кегль текста вопроса                                    | `--rt-text-sm`                      |
+| `--rt-ai-chat-answer-font-size`              | кегль текста ответа                                     | `--rt-text-xs`                      |
+| `--rt-ai-chat-send-bg`                       | фон «Отправить» и «Стоп»                                | `--rt-color-action-primary`         |
+| `--rt-ai-chat-send-bg-hover`                 | их фон под указателем                                   | `--rt-color-action-primary-hover`   |
+| `--rt-ai-chat-focus-border-color`            | рамка поля в фокусе                                     | рамка фокуса поля кита              |
+| `--rt-ai-chat-focus-shadow`                  | кольцо поля в фокусе                                    | кольцо фокуса поля кита             |
+| `--rt-ai-chat-rating-active-bg`              | фон выбранной оценки                                    | заливка кнопки-значка               |
+| `--rt-ai-chat-rating-active-color`           | цвет выбранной оценки                                   | цвет кнопки-значка                  |
+| `--rt-ai-chat-header-height`                 | высота шапки чата и шапки колонки бесед                 | `auto`                              |
+| `--rt-ai-chat-header-border-width`           | толщина разделителя под ними                            | `0`                                 |
+| `--rt-ai-chat-header-border-color`           | цвет разделителя                                        | `--rt-color-border-default`         |
+| `--rt-ai-chat-suggestion-width`              | ширина карточки подсказки, не шире колонки              | `100%`                              |
+| `--rt-ai-chat-suggestion-radius`             | скругление карточки подсказки                           | скругление карточки                 |
+| `--rt-ai-chat-bg`                            | фон панели                                              | фон поверхности                     |
+| `--rt-ai-chat-prompt-bg`                     | фон поля ввода                                          | фон поверхности                     |
+| `--rt-ai-chat-thread-actions-bg`             | подложка действий строки беседы                         | `--rt-color-bg-subtle`              |
+| `--rt-ai-chat-thread-actions-bg-active`      | она же у выбранной беседы                               | `--rt-color-state-info-bg`          |
+| `--rt-ai-chat-thread-action-radius`          | скругление кнопок действий строки                       | `--rt-radius-md`                    |
+| `--rt-ai-chat-thread-actions-padding-inline` | поля подложки действий                                  | `--rt-space-2 --rt-space-4`         |
+| `--rt-ai-chat-thread-time-under-actions`     | `hidden` прячет время строки под показанными действиями | `visible`                           |
+
+Свойства ставятся правилом на `rt-ai-chat` или на классе приложения на нём, вне слоёв кита. С
+`:root` и с обёртки они не доходят: чат объявляет их у себя. С предка наследуются только
+`--rt-ai-chat-font-family`, `--rt-ai-chat-rating-active-bg` и `--rt-ai-chat-rating-active-color`.
+
+```css
+rt-ai-chat {
+    --rt-ai-chat-send-bg: var(--app-primary);
+    --rt-ai-chat-header-height: 4rem;
+}
+```
+
+- Заголовки ответа 3–6 уровня держат `--rt-text-sm`: при кегле ответа крупнее этой ступени они
+  выходят мельче текста.
+- Высота шапки меньше её содержимого не сжимает кнопки: они выходят за край шапки.
+- На сенсорном экране действия строк видны всегда, и `hidden` прячет время у всех строк.
+
+Показ на витрине — истории **AiChatProperties**: Properties, Properties · focus и Properties · row
+actions.
+
 ## Входы
 
-| вход                 | тип                          | умолчание                          |
-| -------------------- | ---------------------------- | ---------------------------------- |
-| `title`              | `string`                     | `''` — подпись кита                |
-| `subtitle`           | `string`                     | `''`                               |
-| `messages`           | `IRtAiChat.Message[]`        | `[]`                               |
-| `suggestions`        | `string[]`                   | `[]`                               |
-| `emptyTitle`         | `string`                     | `''` — подпись кита                |
-| `emptyDescription`   | `string`                     | `''` — подпись кита                |
-| `placeholder`        | `string`                     | `''` — подпись поля                |
-| `disclaimer`         | `string \| null`             | `null` — подпись кита; `''` прячет |
-| `disclaimerPosition` | `'below' \| 'above'`         | `'below'`                          |
-| `model`              | `string`                     | `''`, кнопки модели нет            |
-| `effort`             | `string`                     | `''`, кнопки усилия нет            |
-| `mode`               | `string`                     | `''`, кнопки режима нет            |
-| `usage`              | `number \| null`             | `null`, кольца расхода нет         |
-| `usageHint`          | `string`                     | `''`                               |
-| `sending`            | `boolean`                    | `false`                            |
-| `loading`            | `boolean`                    | `false`                            |
-| `error`              | `IRtAiChat.RunError \| null` | `null`                             |
-| `threads`            | `IRtAiChat.Thread[] \| null` | `null` — кнопки бесед нет          |
-| `activeThreadId`     | `string \| null`             | `null`                             |
-| `threadsLoading`     | `boolean`                    | `false`                            |
-| `threadsFetching`    | `boolean`                    | `false`                            |
-| `threadsHasMore`     | `boolean`                    | `false`                            |
-| `emptyPreviewIcons`  | `IRtIcon.Name[]`             | `['sparkle', 'bot', 'sparkle']`    |
-| `fullScreenable`     | `boolean`                    | `false`                            |
-| `closable`           | `boolean`                    | `true`                             |
-| `copyable`           | `boolean`                    | `true`                             |
-| `threadMenu`         | `boolean`                    | `false`                            |
-| `headerIconPreset`   | `'base' \| 'material'`       | `'base'`                           |
-| `draft`              | `model<string>`              | `''`                               |
-| `threadsOpen`        | `model<boolean>`             | `false`                            |
-| `fullScreen`         | `model<boolean>`             | `false`                            |
+| вход                 | тип                          | умолчание                                      |
+| -------------------- | ---------------------------- | ---------------------------------------------- |
+| `title`              | `string`                     | `''` — подпись кита                            |
+| `subtitle`           | `string`                     | `''`                                           |
+| `messages`           | `IRtAiChat.Message[]`        | `[]`                                           |
+| `suggestions`        | `string[]`                   | `[]`                                           |
+| `emptyTitle`         | `string`                     | `''` — подпись кита                            |
+| `emptyDescription`   | `string`                     | `''` — подпись кита                            |
+| `placeholder`        | `string`                     | `''` — подпись поля                            |
+| `disclaimer`         | `string \| null`             | `null` — подпись кита; `''` прячет             |
+| `disclaimerPosition` | `'below' \| 'above'`         | `'below'`                                      |
+| `model`              | `string`                     | `''`, кнопки модели нет                        |
+| `effort`             | `string`                     | `''`, кнопки усилия нет                        |
+| `mode`               | `string`                     | `''`, кнопки режима нет                        |
+| `usage`              | `number \| null`             | `null`, кольца расхода нет                     |
+| `usageHint`          | `string`                     | `''`                                           |
+| `sending`            | `boolean`                    | `false`                                        |
+| `loading`            | `boolean`                    | `false`                                        |
+| `error`              | `IRtAiChat.RunError \| null` | `null`                                         |
+| `threads`            | `IRtAiChat.Thread[] \| null` | `null` — кнопки бесед нет                      |
+| `activeThreadId`     | `string \| null`             | `null`                                         |
+| `threadsLoading`     | `boolean`                    | `false`                                        |
+| `threadsFetching`    | `boolean`                    | `false`                                        |
+| `threadsHasMore`     | `boolean`                    | `false`                                        |
+| `emptyPreviewIcons`  | `IRtIcon.Name[]`             | `['sparkle', 'bot', 'sparkle']`                |
+| `fullScreenable`     | `boolean`                    | `false`                                        |
+| `closable`           | `boolean`                    | `true`                                         |
+| `copyable`           | `boolean`                    | `true`                                         |
+| `threadMenu`         | `boolean`                    | `false`                                        |
+| `headerIconPreset`   | `'base' \| 'material'`       | `'base'`                                       |
+| `questionAuthor`     | `boolean`                    | `true`; `false` убирает подпись «Вы» в вопросе |
+| `draft`              | `model<string>`              | `''`                                           |
+| `threadsOpen`        | `model<boolean>`             | `false`                                        |
+| `fullScreen`         | `model<boolean>`             | `false`                                        |
 
 ## Выходы
 
