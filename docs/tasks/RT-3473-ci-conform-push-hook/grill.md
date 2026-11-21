@@ -12,11 +12,11 @@ closed by the owner's word «Закрыть эпик сейчас», and the PR 
 
 ## What the tree already has
 
-- **The hook.** `projects/agent-kit/assets/hooks/pre-push.sh:42` passes everything under the
+- **The hook.** `projects/agent-kit/assets/hooks/git-guard-push.sh:42` passes everything under the
   variable `CI`: the pipeline is its own gate.
 - **The sweep.** `projects/agent-kit/assets/checks/decision-table.mjs:runProbe` runs every probe
   with the environment of the process that called it, `{ ...process.env, … }`.
-- **The two rows.** Both are rows of `pre-push.sh` with the decision «deny». On the pipeline
+- **The two rows.** Both are rows of `git-guard-push.sh` with the decision «deny». On the pipeline
   `CI=true` reaches the hook, and it answers «allow».
 - **The measurement.** On this machine the suite gives 516 ok. The sweep with
   `CI=true GITHUB_ACTIONS=true` gives the same two mismatches as the pipeline.

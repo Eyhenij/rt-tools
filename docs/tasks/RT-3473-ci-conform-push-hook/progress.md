@@ -2,10 +2,11 @@
 
 ## Где мы
 
-- **State:** `разбор-кончился`
+- **State:** `этапы-кончились`
 - **Stage:** 2 of 2 — The description
-- **Done:** разбор и план в истории; отметка одобрения «Одобряю plan.md RT-3473».
-- **Next step:** живая проверка, затем первый круг ревью.
+- **Done:** оба этапа, живая проверка, два круга ревью; шаги 1.1, 1.2, 2.1 заново отмечены движком
+  после возврата разбора к версии плана.
+- **Next step:** папка в архив, набор перед push, PR в ветку эпика и прогон #3472 до итога.
 - **Uncommitted:** none
 - **PR:** not open yet
 
@@ -24,6 +25,10 @@
 - **Этап 3 стал строкой «Verified by» этапа 1 (21.11).** `plan-red` не ставит отметку, пока есть
   проверка, зелёная до работы: стили и проверка пакетов зелёные уже сейчас. Обе команды остались в
   плане как защита от регрессии, этапа и шагов для них больше нет.
+- **Разбор возвращён к версии плана (21.11).** Повторный замер шагов перед PR сравнивает папку с
+  коммитом плана, а правки первого и второго кругов меняли `grill.md`: имя хука и язык решения.
+  Разбор после плана не правится; верное имя хука — `pre-push.sh` — стоит здесь и в записи архива.
+  Отметки шагов ставит только движок, поэтому шаги меряются заново.
 
 ## После задачи
 
@@ -43,56 +48,16 @@
   «rows 2, mismatch 2», то есть случай ловит ошибку; `agent-kit:check` и `check-specs` — 0. Хук в
   выводе прогона назван `pre-push.sh:push:deny`.
 - Первый круг ревью: дефектов в коде нет. Исправлено: случай SC-AK-1798 печатает разошедшиеся
-  строки при провале; описание говорит, зачем снимается `GITHUB_ACTIONS`; имя хука в разборе и
-  здесь — `pre-push.sh`. Прогон #3472 — шаг «После задачи», в diff его нет.
-
-## Handover of the session
-
-Put together by a hook before the compaction of the context (auto).
-
-**Working tree:** /Users/eyhenij/WebstormProjects/rt-tools
-**Branch:** RT-3473-ci-conform-push-hook
-
-### Where we stand at the minute of the compaction
-
-- **State:** `задача-взята`
-- **Stage:** 1 of 2 — The probe runs without the pipeline's variables
-- **Next step:** роли читают план, затем одобрение владельца.
-- **PR:** not open yet
-
-The progress in full — `docs/tasks/RT-3473-ci-conform-push-hook/progress.md`; the plan lies next to it.
-
-### Uncommitted
-
-```
-?? docs/tasks/RT-3473-ci-conform-push-hook/plan.md
-?? docs/tasks/RT-3473-ci-conform-push-hook/progress.md
-```
-
-### Commits over the main branch
-
-```
-87d8b11d5 docs(rt:agent-kit): разбор RT-3473 — сверка таблицы решений судит хук без переменных конвейера
-048396949 docs(rt:agent-kit): план эпика RT-3302 — RT-3274 отложена в RT-3471
-5661f3269 Merge remote-tracking branch 'origin/main' into RT-3302-checks-rework-3
-3a6d3a31a docs(rt:agent-kit): план эпика RT-3302 — эпик закрыт, шесть задач отложены в четвёртую часть RT-3471
-337a7b093 [RT-3463] Кончившаяся фоновая задача — первый ход, меню «стоп» над ней не предлагается (#3470)
-fc470e0bd docs(rt:agent-kit): папка задачи о непрочитанной фоновой задаче разобрана в архив (RT-3463)
-e8a5c537a Merge remote-tracking branch 'origin/RT-3302-checks-rework-3' into RT-3463-turn-exit-reads-ended-task
-cc8183b61 Merge remote-tracking branch 'origin/main' into RT-3302-checks-rework-3
-c03d25e3d fix(rt:agent-kit): правки после второго круга ревью (RT-3463)
-ed474c955 fix(rt:agent-kit): правки после первого круга ревью (RT-3463)
-6e8b0c3c4 fix(rt:agent-kit): кончившаяся фоновая задача — ход «прочитать вывод», меню «стоп» над ней не предлагается (RT-3463)
-7ede63af5 docs(rt:agent-kit): план RT-3463 — кончившаяся фоновая задача читается, меню «стоп» над ней не предлагается
-cfbebb6e2 docs(rt:agent-kit): разбор RT-3463 — кончившаяся фоновая задача читается, меню «стоп» над ней не предлагается
-258ce324b Merge remote-tracking branch 'origin/RT-3302-checks-rework-3' into RT-3302-checks-rework-3
-8df1651d5 Merge remote-tracking branch 'origin/main' into RT-3302-checks-rework-3
-cd7265c69 [RT-3422] Аудит очереди падал на ответе 422 сравнения веток (#3462)
-9ddac7e28 test(rt:agent-kit): сценарий заметки остаётся в наборе очереди, отставание от главной ветки — в своём наборе (RT-3422)
-b4bb97d9d test(rt:agent-kit): сценарии прода против главной ветки вынесены в свой набор и в описание проверки очереди (RT-3422)
-293cb2a04 docs(rt:agent-kit): папка задачи об отставании прода разобрана в архив (RT-3422)
-b28a1c324 fix(rt:agent-kit): правки после второго круга ревью (RT-3422)
-```
-
-Written by a hook before the compaction of the context. Everything standing here is checked
-against the tree: a handover retells what was written and describes the minute it was put together.
+  строки при провале; описание говорит, зачем снимается `GITHUB_ACTIONS`. Прогон #3472 — шаг «После
+  задачи», в diff его нет.
+- Второй круг ревью (qa-engineer, product-strategist, goal-critic): дефектов в коде нет.
+  Исправлено: SC-AK-1798 сравнивает строку шаблоном, как SC-AK-1563, — новая строка хука не
+  красит случай; «Где мы» приведено к сделанному, блок передачи после сжатия убран; сценарий
+  говорит, что `GITHUB_ACTIONS` сегодня не читает ни один хук. Снято с причиной: снимать `GITHUB_*`
+  и `RUNNER_*` по префиксу — другие переменные конвейера план оставляет за рамками, ни один хук их
+  не читает; язык решения в разборе — разбор после плана не правится. Замечено: `nx affected -t
+  verify` от `origin/main` выполняет 0 задач — цель `verify` есть только у `@rt-tools/utils`; шаги
+  33–40 видны только на прогоне #3472.
+- Живая проверка после второго круга: таблица из строк `pre-push.sh` под `CI=true
+  GITHUB_ACTIONS=true` — «rows 2, mismatch 0»; набор таблицы — 517 ok, 0 провалов;
+  `check-specs` и `check:spec-coverage` — 0.

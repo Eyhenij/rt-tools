@@ -22,9 +22,9 @@ Covered: `projects/agent-kit/tests/decision-table.test.sh`.
 
 ### SC-AK-1798 — the pipeline's variables do not reach the hook of a probe
 
-Given a table of the two refusal rows of `pre-push.sh`, a hook that passes everything under `CI`
-When the conform mode runs under `CI=true` and `GITHUB_ACTIONS=true`
-Then the hook refuses as the rows say, and the sweep gives «rows 2, mismatch 0»
+Given a table of the rows of `pre-push.sh`, a hook that passes everything under `CI`
+When the conform mode runs under `CI=true`, with `GITHUB_ACTIONS=true` that no hook reads today
+Then the hook answers as the rows say, and the sweep gives «mismatch 0»
 
 Covered: `projects/agent-kit/tests/decision-table.test.sh`.
 
