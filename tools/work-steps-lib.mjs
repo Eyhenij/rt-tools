@@ -1,4 +1,4 @@
-// rt-kit v0.37.1 · checks/work-steps-lib.mjs · db27c7cf5ee9 · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/work-steps-lib.mjs · db27c7cf5ee9 · правится надстройкой, не здесь
 /**
  * The parsing of the steps of a plan and of a progress, shared by every reader of both lists.
  *

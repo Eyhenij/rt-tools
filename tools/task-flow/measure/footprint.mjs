@@ -1,4 +1,4 @@
-// rt-kit v0.37.1 · task-flow/measure/footprint.mjs · 52e1bec0b0ad · правится надстройкой, не здесь
+// rt-kit v0.38.0 · task-flow/measure/footprint.mjs · 52e1bec0b0ad · правится надстройкой, не здесь
 /**
  * The measurer «measure.footprint» — exit 8: after the commit of the plan the branch changed at least
  * one file under every path of every footprint row marked «(правится)», and the directory of the

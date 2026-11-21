@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.1 · checks/flow-scaffold.mjs · f45c8ee1488f · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/flow-scaffold.mjs · f45c8ee1488f · правится надстройкой, не здесь
 /**
  * The generator of stubs for the task flow description: a new measurer or source named by the
  * description gets its file and a stub case of its test, and nothing that is already written is

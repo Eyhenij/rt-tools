@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.1 · checks/work-result.mjs · a0e7d767d1b4 · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/work-result.mjs · a0e7d767d1b4 · правится надстройкой, не здесь
 /**
  * The lines of the work result for the report, counted from the observations of the tree by the same
  * functions the hook at the end of a turn and the reading of merges use: the events of the records,

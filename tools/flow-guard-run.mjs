@@ -1,4 +1,4 @@
-// rt-kit v0.37.1 · checks/flow-guard-run.mjs · de8e47ff044e · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/flow-guard-run.mjs · de8e47ff044e · правится надстройкой, не здесь
 /**
  * The reading half of the guard of the course of work: the hook input as a call, and the context the
  * decisions of `flow-guard.mjs` take. The owner's last word comes from the source «source.owner» of

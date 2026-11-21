@@ -1,4 +1,4 @@
-// rt-kit v0.37.1 · task-flow/source/session.mjs · 50771d9f9e95 · правится надстройкой, не здесь
+// rt-kit v0.38.0 · task-flow/source/session.mjs · 50771d9f9e95 · правится надстройкой, не здесь
 /**
  * The source «source.session» of the task flow description: what this session did, read from the
  * record of the conversation the hook names in `RT_FLOW_TRANSCRIPT`, and the role it runs as, named

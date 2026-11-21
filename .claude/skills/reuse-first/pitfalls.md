@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.1 · pitfalls/reuse-first.md · 448fc3642ea5 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · pitfalls/reuse-first.md · 448fc3642ea5 · правится надстройкой, не здесь -->
 # Uniformity — how it works here — cold part
 
 What the rule `reuse-first` handed over when cut to its statements, every article whole.

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.1 · pitfalls/git-workflow-docker.md · 5322b8d5f8f2 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · pitfalls/git-workflow-docker.md · 5322b8d5f8f2 · правится надстройкой, не здесь -->
 # Images on one's own machine — cold part
 
 The pattern `git-workflow-docker` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.

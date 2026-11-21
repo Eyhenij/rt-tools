@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.1 · pitfalls/task-flow-archive.md · 85d77b9a09fe · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · pitfalls/task-flow-archive.md · 85d77b9a09fe · правится надстройкой, не здесь -->
 # Taking the task folder apart and the rules review of the work — cold part
 
 The pattern `task-flow-archive` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.

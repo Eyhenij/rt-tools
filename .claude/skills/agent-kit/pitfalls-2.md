@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.1 · pitfalls/agent-kit.2.md · 62328a6024f4 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · pitfalls/agent-kit.2.md · 62328a6024f4 · правится надстройкой, не здесь -->
 # The portable rules layer — cold part, second file
 
 What the skill `agent-kit` handed over when cut to its statements, every section whole.

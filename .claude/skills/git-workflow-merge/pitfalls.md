@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.1 · pitfalls/git-workflow-merge.md · 3a40c58307e0 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · pitfalls/git-workflow-merge.md · 3a40c58307e0 · правится надстройкой, не здесь -->
 # Merging the base of a branch into it — cold part
 
 The pattern `git-workflow-merge` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.

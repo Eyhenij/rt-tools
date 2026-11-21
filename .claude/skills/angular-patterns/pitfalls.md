@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.1 · pitfalls/angular-patterns.md · 8b3c1db6d26f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · pitfalls/angular-patterns.md · 8b3c1db6d26f · правится надстройкой, не здесь -->
 # Screen reactivity — how it works here — cold part
 
 What the rule `angular-patterns` handed over when cut to its statements, every article whole.

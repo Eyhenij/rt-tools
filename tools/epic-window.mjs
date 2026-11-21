@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.1 · checks/epic-window.mjs · a2477c16544f · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/epic-window.mjs · a2477c16544f · правится надстройкой, не здесь
 /**
  * The windows of an epic, built from the observations of the tree: the hook at the end of a turn
  * writes the events of the session records, the reading of merges writes the merges.

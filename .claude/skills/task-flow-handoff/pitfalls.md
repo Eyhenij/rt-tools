@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.1 · pitfalls/task-flow-handoff.md · b8a1ddcdf96f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · pitfalls/task-flow-handoff.md · b8a1ddcdf96f · правится надстройкой, не здесь -->
 # Closing a session on window fill — cold part
 
 The pattern `task-flow-handoff` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.

@@ -1,4 +1,4 @@
-// rt-kit v0.37.1 · task-flow/measure/agreement.mjs · de56bbe0e02c · правится надстройкой, не здесь
+// rt-kit v0.38.0 · task-flow/measure/agreement.mjs · de56bbe0e02c · правится надстройкой, не здесь
 /**
  * The measurer «measure.agreement» — exit 3: the grill or the plan of the branch names the directory
  * of the product agreement, found on disk or in the history, or the reason there is none. The forms

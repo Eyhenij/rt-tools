@@ -1,4 +1,4 @@
-// rt-kit v0.37.1 · task-flow/measure/epic-text.mjs · 6a01f795d334 · правится надстройкой, не здесь
+// rt-kit v0.38.0 · task-flow/measure/epic-text.mjs · 6a01f795d334 · правится надстройкой, не здесь
 
 /**
  * The plan of an epic: its number, its branch and the rows of its task table, in their order.

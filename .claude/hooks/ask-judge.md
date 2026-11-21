@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.1 · hooks/ask-judge.md · 71a2d47b1452 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · hooks/ask-judge.md · 71a2d47b1452 · правится надстройкой, не здесь -->
 # Ask judge
 <!-- rt-hook-agent event=PreToolUse pattern=AskUserQuestion limit=60 -->
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.1 · checks/record-turn.mjs · 4f819d304ccd · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/record-turn.mjs · 4f819d304ccd · правится надстройкой, не здесь
 /**
  * The count of one turn of a session record, written as observations. The hook at the end of a turn
  * and at the end of a session calls it; so does the recount of a past day.

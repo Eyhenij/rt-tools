@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.1 · pitfalls/task-flow-resume.md · 33e3826a1e66 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · pitfalls/task-flow-resume.md · 33e3826a1e66 · правится надстройкой, не здесь -->
 # Returning to unfinished work — cold part
 
 The pattern `task-flow-resume` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.
