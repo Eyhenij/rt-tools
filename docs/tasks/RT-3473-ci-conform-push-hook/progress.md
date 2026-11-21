@@ -34,15 +34,17 @@
 
 ### 2026-11-21
 
-- Замер до работы: сверка с `CI=true GITHUB_ACTIONS=true` — «rows 1012, mismatch 2» (`git-guard-push.sh`, оба
+- Замер до работы: сверка с `CI=true GITHUB_ACTIONS=true` — «rows 1012, mismatch 2» (`pre-push.sh`, оба
   «deny»); без них — «mismatch 0»; набор на машине — 516 ok.
 - Замер этапа 3 до работы: `pnpm run lint:styles` — 0, `nx affected -t verify` от `origin/main` — 0:
   пропущенные шаги, которым не нужен стенд, на этой вершине зелёные.
 - Живая проверка на `5cf27aa62`: полная сверка под `CI=true GITHUB_ACTIONS=true` — «rows 1012,
   mismatch 0» (шаг 1.1); набор таблицы — 517 ok, 0 провалов; SC-AK-1798 на неисправленной пробе —
   «rows 2, mismatch 2», то есть случай ловит ошибку; `agent-kit:check` и `check-specs` — 0. Хук в
-  выводе прогона назван `pre-push.sh:push:deny`; в разборе выше он ошибочно записан как
-  `git-guard-push.sh`.
+  выводе прогона назван `pre-push.sh:push:deny`.
+- Первый круг ревью: дефектов в коде нет. Исправлено: случай SC-AK-1798 печатает разошедшиеся
+  строки при провале; описание говорит, зачем снимается `GITHUB_ACTIONS`; имя хука в разборе и
+  здесь — `pre-push.sh`. Прогон #3472 — шаг «После задачи», в diff его нет.
 
 ## Handover of the session
 

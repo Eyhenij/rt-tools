@@ -48,7 +48,8 @@ the permission window of the host.
   row's decision; a helper run on the fixtures refuses nothing.
 - **A probe runs its hook as the session sees it.** The variables of the pipeline, `CI` and
   `GITHUB_ACTIONS`, do not reach the hook: a hook that passes everything on the pipeline would make
-  the sweep there disagree with the table.
+  the sweep there disagree with the table. Today only `CI` is read by a hook; `GITHUB_ACTIONS` is
+  dropped with it so that a hook that starts to read it is still judged as the session sees it.
 - **No state is dead.** In every state of every area at least one action is allowed.
 - **A refusal names a move the table allows in the same state.** A refusal whose named move is
   denied there is a chain, and a chain is a defect, not a description.

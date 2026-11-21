@@ -43,8 +43,11 @@ report "SC-AK-1563 — каждая строка сверена запуском
 # конвейера, держит тот же отказ: проба судит хук так, как его видит сессия.
 jq '(.rows |= map(select(.hook == "pre-push.sh"))) | .states = [] | (.hooks |= map(select(.file == "pre-push.sh")))' \
     "$ASSETS/checks/decision-table.json" >"$TMP/pre-push.json"
-report "SC-AK-1798 — сверка под переменными конвейера не расходится" \
-    "$(CI=true GITHUB_ACTIONS=true RT_DECISION_TABLE="$TMP/pre-push.json" node "$TABLE_CMD" --conform | tail -1)" "rows 2, mismatch 0"
+ci_out="$(CI=true GITHUB_ACTIONS=true RT_DECISION_TABLE="$TMP/pre-push.json" node "$TABLE_CMD" --conform 2>&1)"
+got="$(printf '%s\n' "$ci_out" | tail -1)"
+# A red case prints the rows that diverged, as SC-AK-1563 does: the count alone names no hook.
+[ "$got" = "rows 2, mismatch 0" ] || printf '%s\n' "$ci_out" | head -20 >&2
+report "SC-AK-1798 — сверка под переменными конвейера не расходится" "$got" "rows 2, mismatch 0"
 
 # --- SC-AK-1564, 1565 — тупиков нет, отказ называет разрешённый ход ------------------------------
 report "SC-AK-1564, SC-AK-1565 — перебор настоящей таблицы" "$(last --walk)" "dead 0, unnamed 0"
