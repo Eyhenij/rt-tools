@@ -32,7 +32,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { buildModel } from '../assets/checks/flow-model.mjs';
 import { isWriteCommand, saysStop } from '../assets/checks/flow-data.mjs';
-import { releaseCase, holdReason, menuCause, menuOptions } from '../assets/checks/flow-verdict.mjs';
+import { releaseCase, holdReason, menuCause, menuOptions, decide, ciHold } from '../assets/checks/flow-verdict.mjs';
+import * as ci from '../assets/task-flow/measure/ci.mjs';
 import { judgeCall } from '../assets/checks/flow-guard.mjs';
 import { wordOf as sourceWordOf } from '../assets/task-flow/source/owner.mjs';
 import { eventsOf } from '../assets/task-flow/source/session.mjs';
@@ -229,6 +230,100 @@ const watchEvents = eventsOf([watchCall, watchStarted]);
 out('end: SC-AK-1800 — вызов несёт время и ветку своей записи', `${watchEvents[0].at} ${watchEvents[0].branch}`, `${Date.parse('2026-11-21T11:04:00Z')} RT-7-x`);
 out('end: SC-AK-1800 — фоновая задача несёт команду своего вызова', watchEvents.find((e) => e.kind === 'background')?.command, 'gh run watch 41 --exit-status');
 out('end: SC-AK-1800 — запись без ветки даёт ветку null', String(eventsOf([{ ...watchCall, gitBranch: undefined }])[0].branch), 'null');
+
+// --- удержание хода по CI: двойники хостинга и сессии -------------------------------------------
+const T0 = Date.parse('2026-11-21T08:15:50Z');
+const END = Date.parse('2026-11-21T08:23:09Z');
+const RUN = 44884048830;
+const PR = { number: 3472, head: 'RT-3302-checks', headRefOid: '0483969abcdef0', base: 'main', createdAt: T0 - 3_600_000 };
+const silentErr = () => { throw Object.assign(new Error('silent'), { name: 'HostSilent' }); };
+const ciHost = ({ pulls = [PR], runs = {}, bases = ['main'], silent = false, issues = {} } = {}) => {
+    const ans = (v) => (silent ? silentErr() : v);
+    return { issue: (n) => ans(issues[n] ?? null), pulls: () => ans([]), openPulls: () => ans(pulls), runs: (sha) => ans(runs[sha] ?? []), pipeline: () => ({ file: '.github/workflows/ci.yml', bases }) };
+};
+const EPIC_PLAN = '# Эпик\n\n**Эпик:** RT-3471\n**Ветка эпика:** `RT-3471-rework`\n\n| # | Задача | Состояние |\n| --- | --- | --- |\n| 1 | RT-3467 — CI | идёт |\n';
+const ciTree = (plans = {}) => ({ copyEpic: () => null, list: () => Object.keys(plans), read: (p) => plans[p.split('/').pop()] ?? null });
+const holdOf = ({ branch = PR.head, host = ciHost(), events = [], now = END + 60_000, ownerAt = null, word = null, plans = {} } = {}) =>
+    ci.hold({ git: { branch: () => branch }, host, tree: ciTree(plans), session: { events: () => events, now: () => now, ownerAt: () => ownerAt }, owner: { last: () => word } })(data);
+const kindOf = (h) => (h ? `${h.kind} ${h.run?.id ?? '-'}` : 'none');
+const runOf = (over) => ({ id: RUN, attempt: 1, status: 'completed', conclusion: 'failure', endedAt: END, ...over });
+const goingRun = runOf({ status: 'in_progress', conclusion: null, endedAt: null });
+const redRun = runOf({});
+const onHead = (run) => ciHost({ runs: { [PR.headRefOid]: [run] } });
+const bash = (command, at, over = {}) => ({ kind: 'call', name: 'Bash', input: { command }, blocked: false, at, branch: PR.head, ...over });
+const bgStart = (id, command, at) => ({ kind: 'background', id, task: `b-${id}`, at, output: `/tmp/${id}.output`, agent: false, command });
+const bgEnd = (id) => ({ kind: 'backgroundEnd', id, task: `b-${id}`, output: null });
+const stageState = { state: 'этап-идёт', index: 7, reason: null };
+const ciReader = (answers) => (name) => (typeof answers[name] === 'function' ? answers[name]() : answers[name] ?? false);
+
+// SC-AK-1801 — идущий запуск без слежения держит ход с номером
+const goingHold = holdOf({ host: onHead(goingRun), now: T0 + 120_000 });
+out('end: SC-AK-1801 — идущий запуск без слежения держит ход', kindOf(goingHold), `running ${RUN}`);
+out('end: SC-AK-1801 — отказ называет номер и команду слежения', String(decide(model, ciReader({ 'measure.ci.hold': goingHold }), stageState)?.block?.includes(`gh run watch ${RUN} --exit-status`)), 'true');
+
+// SC-AK-1802 — фоновое слежение снимает удержание, дальше решает сценарий
+const watching = [bgStart('w1', `/opt/homebrew/bin/gh run watch ${RUN} --exit-status`, T0 + 10_000)];
+out('end: SC-AK-1802 — слежение за номером снимает удержание', kindOf(holdOf({ host: onHead(goingRun), events: watching, now: T0 + 120_000 })), 'none');
+out('end: SC-AK-1802 — слежение старше 20 минут снимает удержание, пока запуск идёт', kindOf(holdOf({ host: onHead(goingRun), events: watching, now: T0 + 41 * 60_000 })), 'none');
+out('end: SC-AK-1802 — слежение за номером PR тоже слежение', kindOf(holdOf({ host: onHead(goingRun), events: [bgStart('w2', 'gh pr checks 3472 --watch', T0)], now: T0 + 120_000 })), 'none');
+out('end: SC-AK-1802 — снятое удержание не отпускает ход в «работа-отдана»', String(decide(model, ciReader({ ...WROTE, 'measure.session.waiting': true, 'measure.pr.handed': true }), stageState)), 'null');
+
+// SC-AK-1803 — красный непрочитанный запуск держит ход с номером
+const redHold = holdOf({ host: onHead(redRun) });
+out('end: SC-AK-1803 — красный без чтения держит ход', kindOf(redHold), `red ${RUN}`);
+out('end: SC-AK-1803 — отказ называет номер и команду чтения', String(ciHoldReasonHas(redHold, `gh run view ${RUN} --log-failed`)), 'true');
+function ciHoldReasonHas(hold, text) { return decide(model, ciReader({ 'measure.ci.hold': hold }), stageState).block.includes(text); }
+
+// SC-AK-1804 — красный прочитан после конца — удержание снято
+out('end: SC-AK-1804 — вызов с номером после конца — прочитан', kindOf(holdOf({ host: onHead(redRun), events: [bash(`gh run view ${RUN} --log-failed`, END + 5_000)] })), 'none');
+out('end: SC-AK-1804 — чтение вывода слежения после конца — прочитан', kindOf(holdOf({ host: onHead(redRun), events: [...watching, bgEnd('w1'), { kind: 'call', name: 'Read', input: { file_path: '/tmp/w1.output' }, blocked: false, at: END + 5_000 }] })), 'none');
+out('end: SC-AK-1804 — отказанный вызов с номером не чтение', kindOf(holdOf({ host: onHead(redRun), events: [bash(`gh run view ${RUN} --log-failed`, END + 5_000, { blocked: true })] })), `red ${RUN}`);
+
+// SC-AK-1805 — вызов слежения до конца запуска не чтение
+out('end: SC-AK-1805 — слежение до конца, чтения после — нет: держит', kindOf(holdOf({ host: onHead(redRun), events: [bash(`gh run watch ${RUN} --exit-status`, T0 + 10_000), ...watching, bgEnd('w1')] })), `red ${RUN}`);
+out('end: SC-AK-1805 — номер внутри другого числа не называет запуск', kindOf(holdOf({ host: onHead(redRun), events: [bash(`echo 9${RUN}1`, END + 5_000)] })), `red ${RUN}`);
+
+// SC-AK-1806 — зелёный и пропущенный запуски ход не держат
+out('end: SC-AK-1806 — зелёный запуск не держит', kindOf(holdOf({ host: onHead(runOf({ conclusion: 'success' })) })), 'none');
+out('end: SC-AK-1806 — пропущенный запуск не держит', kindOf(holdOf({ host: onHead(runOf({ conclusion: 'skipped' })) })), 'none');
+out('end: SC-AK-1806 — конвейер без pull_request ничего не держит', kindOf(holdOf({ host: ciHost({ runs: { [PR.headRefOid]: [redRun] }, bases: [] }) })), 'none');
+
+// SC-AK-1807 — молчащий хостинг снимает удержание, ход решают случаи отпуска
+let silentHold = 'held';
+try { holdOf({ host: ciHost({ silent: true }) }); } catch (error) { silentHold = error.name; }
+out('end: SC-AK-1807 — мера на молчащем хостинге бросает HostSilent', silentHold, 'HostSilent');
+out('end: SC-AK-1807 — вердикт на молчащем хостинге отпускает по концу сценария', decide(model, ciReader({ 'measure.ci.hold': silentErr, 'measure.epic.finished': true }), stageState)?.release ?? 'held', 'the end of the scenario');
+
+// SC-AK-1808 — конец эпика не отпускает идущий запуск его PR
+const epicEnd = decide(model, ciReader({ 'measure.ci.hold': goingHold, 'measure.epic.finished': true }), { state: null, index: 14, reason: null });
+out('end: SC-AK-1808 — конец эпика при идущем запуске — отказ с номером', String(Boolean(epicEnd?.block?.includes(String(RUN)))), 'true');
+out('end: SC-AK-1808 — вне эпика с отданным PR — тоже отказ', String(Boolean(decide(model, ciReader({ 'measure.ci.hold': redHold, ...WROTE, 'measure.copy.outsideEpic': true, 'measure.pr.handed': true }), stageState)?.block)), 'true');
+
+// SC-AK-1809 — вершину сдвинула отправка или слияние в ветку эпика, сессия ушла на другую ветку
+out('end: SC-AK-1809 — отправленная ветка держит ход после перехода', kindOf(holdOf({ branch: 'RT-3493-next', host: onHead(goingRun), events: [bash(`git push -u origin ${PR.head}`, T0 - 5_000)], now: T0 + 120_000 })), `running ${RUN}`);
+const epicPr = { ...PR, number: 3500, head: 'RT-3471-rework' };
+const epicHost = ciHost({ pulls: [epicPr], runs: { [PR.headRefOid]: [goingRun] }, issues: { 3467: { open: true, status: 'in-progress', epic: '3471' } } });
+out('end: SC-AK-1809 — ветка эпика текущей задачи держит ход без отправки', kindOf(holdOf({ branch: 'RT-3467-ci', host: epicHost, plans: { 'e.md': EPIC_PLAN }, now: T0 + 120_000 })), `running ${RUN}`);
+out('end: SC-AK-1809 — чужая ветка не держит', kindOf(holdOf({ branch: 'RT-3493-next', host: onHead(goingRun), now: T0 + 120_000 })), 'none');
+
+// SC-AK-1810 — свежая вершина без запуска держит ход две минуты, только для базы конвейера
+const pushedNow = [bash(`git push origin ${PR.head}`, END)];
+out('end: SC-AK-1810 — вершина моложе двух минут без запуска держит', kindOf(holdOf({ events: pushedNow, now: END + 60_000 })), 'fresh -');
+out('end: SC-AK-1810 — старше двух минут не держит', kindOf(holdOf({ events: pushedNow, now: END + 3 * 60_000 })), 'none');
+out('end: SC-AK-1810 — база вне конвейера не держит', kindOf(holdOf({ host: ciHost({ pulls: [{ ...PR, base: 'RT-3471-rework' }] }), events: pushedNow, now: END + 60_000 })), 'none');
+
+// SC-AK-1811 — три остановки на одном красном запуске дают один отказ, когда после него было чтение
+const stops = [[], [bash(`gh run view ${RUN} --log-failed`, END + 5_000)], [bash(`gh run view ${RUN} --log-failed`, END + 5_000), bash('git status', END + 9_000)]];
+out('end: SC-AK-1811 — три остановки — один отказ', String(stops.filter((events) => holdOf({ host: onHead(redRun), events })).length), '1');
+
+// SC-AK-1812 — вторая остановка без вызова называет запуск, не меню
+const second = decide(model, ciReader({ 'measure.ci.hold': redHold, 'measure.session.idle': true }), stageState)?.block ?? '';
+out('end: SC-AK-1812 — вторая остановка без вызова называет запуск, не меню', `${second.includes(String(RUN))} ${second.includes('отложить')}`, 'true false');
+
+// SC-AK-1813 — «стоп» снимает идущий запуск, но не красную попытку, кончившуюся после него
+out('end: SC-AK-1813 — «стоп» снимает удержание идущего запуска', kindOf(holdOf({ host: onHead(goingRun), word: 'стоп', ownerAt: T0 + 60_000, now: T0 + 120_000 })), 'none');
+out('end: SC-AK-1813 — красный после «стоп» держит до чтения', kindOf(holdOf({ host: onHead(redRun), word: 'стоп', ownerAt: T0 + 60_000 })), `red ${RUN}`);
+out('end: SC-AK-1813 — красный до «стоп» не держит', kindOf(holdOf({ host: onHead(redRun), word: 'стоп', ownerAt: END + 30_000 })), 'none');
 
 JS
 

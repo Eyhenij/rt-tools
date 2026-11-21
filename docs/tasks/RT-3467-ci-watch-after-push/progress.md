@@ -2,33 +2,45 @@
 
 ## Где мы
 
-- **State:** `этап-идёт`
-- **Stage:** 1 of 3 — The host and the session give the facts
-- **Done:** разведка движка хода работы; разбор и план; план одобрен владельцем 21.11.
-- **Next step:** 1.1 — адаптер хостинга отдаёт открытые PR и запуски конвейера по sha вершины.
-- **Uncommitted:** ход работы
+- **State:** `этапы-кончились`
+- **Stage:** 3 of 3 — The description
+- **Done:** три этапа: адаптер хостинга и события сессии, удержание хода по CI, сценарии в описании.
+- **Next step:** живая проверка на настоящей записи, затем два круга ревью.
+- **Uncommitted:** этапы 2 и 3
 - **PR:** not open yet
 
 ## Шаги
 
 - [x] 1.1 The host adapter gives the open PRs and the pipeline runs of a head sha
 - [x] 1.2 The session events carry the time and branch of a call and the command of a background task
-- [>] 2.1 A running run without a watch holds the stop with its number
-- [ ] 2.2 A background watch lifts the hold, and the scenario decides the stop
-- [ ] 2.3 An unread red run holds the stop with its number
-- [ ] 2.4 A red run read after its end lifts the hold
-- [ ] 2.5 A watch call before the end of the run is no read
-- [ ] 2.6 A green run and a run of another workflow do not hold the stop
-- [ ] 2.7 A silent host releases the stop
-- [ ] 2.8 The end of the epic does not release a running run of its PR
-- [ ] 2.9 A head moved by a push or an epic merge holds the stop after a branch switch
-- [ ] 2.10 A fresh head without a run holds the stop only for a pipeline base
-- [ ] 2.11 Three stops on one red run give one refusal when a read follows it
-- [ ] 2.12 A second stop without a call names the run, not the menu
-- [ ] 2.13 The stop word passes a running run, not a red attempt ended after it
-- [ ] 3.1 The scenarios stand in the description
+- [x] 2.1 A running run without a watch holds the stop with its number
+- [x] 2.2 A background watch lifts the hold, and the scenario decides the stop
+- [x] 2.3 An unread red run holds the stop with its number
+- [x] 2.4 A red run read after its end lifts the hold
+- [x] 2.5 A watch call before the end of the run is no read
+- [x] 2.6 A green run and a run of another workflow do not hold the stop
+- [x] 2.7 A silent host releases the stop
+- [x] 2.8 The end of the epic does not release a running run of its PR
+- [x] 2.9 A head moved by a push or an epic merge holds the stop after a branch switch
+- [x] 2.10 A fresh head without a run holds the stop only for a pipeline base
+- [x] 2.11 Three stops on one red run give one refusal when a read follows it
+- [x] 2.12 A second stop without a call names the run, not the menu
+- [x] 2.13 The stop word passes a running run, not a red attempt ended after it
+- [x] 3.1 The scenarios stand in the description
 
 ## Решения по ходу
+
+- **Пометки «(правится)» в строках кода следа плана.** Проверка правки движка пускает его файлы
+  только по таким строкам; план их не ставил. Коммит плана переписан до первой правки кода, отметка
+  одобрения записана заново по тому же ответу владельца. Этап плана: 1.
+- **Сверка видов описания в дереве (`node tools/flow-sync.mjs --check`) расходится и до правки.**
+  Разложенный `flow.md` несёт шапку раскладки, генерация её не пишет; сверка в пакете даёт
+  «5 views match». Этап плана: 2.
+- **Блок прогноза вынесен из набора движка в `task-flow-script-forecast.test.sh`.** Сценарий
+  SC-AK-1799 довёл набор до 517 строк при пределе 500 для кода; строки «Covered:» сценариев прогноза
+  переведены на новый файл. Этап плана: 1.
+- **Предел длины не действует на файлы сценариев и привязок.** Вопрос владельцу о переносе
+  сценариев был лишним: 15 сценариев легли в прежний файл. Этап плана: 3.
 
 ## Сессии
 
@@ -44,3 +56,14 @@
   44810853234 красный с 20.11 20:43, ни одна запись не называет его номер.
 - Владелец по меню: красный запуск, кончившийся после «стоп», читается до остановки.
 - Находки разбора правил после RT-3475 по слову владельца легли в эпик задачей RT-3493.
+- Живая проверка: мера `measure.ci.hold` разложенного движка на настоящих записях и данных хостинга.
+  - Запись 05592134, PR #3472, запуск 44884048830 (08:15:50–08:23:09, failure). Срезы и итог:
+    - 08:15:48 — `fresh`;
+    - 08:20:00 — `running 44884048830`;
+    - 08:23:15 — `red 44884048830`;
+    - 08:23:30 — `none`, после `--log-failed` в 08:23:21;
+    - 08:36:48 — `none` на ветке RT-3473.
+  - Запись b8fa904d, запуск 44897325872 на PR #3472, вершину сдвинуло слияние RT-3473 в ветку эпика
+    в браузере, `git push` в ветку эпика не было. 11:10 и 11:30 — `none` со слежением в фоне. Без
+    событий фоновых задач — `running 44897325872` в оба среза. Ветку эпика мера взяла из плана
+    `checks-rework-3.md`.

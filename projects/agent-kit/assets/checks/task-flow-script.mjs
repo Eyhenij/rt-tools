@@ -49,7 +49,7 @@ import { overridePath, removedLines } from './flow-override.mjs';
 import { planProblems, readRecord, runPlanRed } from './flow-plan.mjs';
 import { runStepCommand } from './flow-step.mjs';
 import { FlowSyntaxError } from './flow-syntax.mjs';
-import { currentStep, holdReason, menuCause, releaseCase } from './flow-verdict.mjs';
+import { currentStep, decide, holdReason, menuCause } from './flow-verdict.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
@@ -214,8 +214,8 @@ async function runVerdict(model, base) {
         return cache.get(name);
     };
     const result = measureStates(model, measured);
-    const released = releaseCase(model, measured, result);
-    if (released) return { release: released.log ?? released.key };
+    const decided = decide(model, measured, result);
+    if (decided) return decided;
     const root = spawnSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8' }).stdout?.trim();
     const branch = spawnSync('git', ['rev-parse', '--abbrev-ref', 'HEAD'], { encoding: 'utf8' }).stdout?.trim();
     const progress = join(root ?? '.', GUARD_SETTINGS.tasksDir, branch ?? '', 'progress.md');
