@@ -75,12 +75,33 @@ Rewritten by every session, not appended to.
 - **The pipeline runs only for a PR into main.** `ci.yml` has no manual trigger, so the new step
   first runs on the PR of the epic; until then the push set, which runs it, is the blocking check.
 
+- **Round two: the threshold is the count of findings of every rule, kept in
+  `tools/ngdoctor-threshold.json`.** qa-engineer and goal-critic: four totals do not see a swap —
+  one finding fixed, another added. A swap inside one rule stays unseen; the epic removes rules
+  whole. Affected stage: 2.
+- **Round two: a silent source and a partial scan are a degraded run.** qa-engineer, confirmed in
+  the tool code: oxlint that printed nothing gives no findings and no line in `skippedChecks`, and
+  the old hint offered to pin that result. A source the threshold holds and the run lacks is red,
+  and `--write` refuses it unless the source is named gone. Affected stage: 2.
+- **Round two: the check runs the tool itself.** Its own temporary directory is removed after the
+  run, a non-zero exit of the tool is red, and the pipe without pipefail is gone. `--verbose` lists
+  the files of a rule that grew. Affected stage: 2.
+- **Round two: files outside history are counted.** product-strategist and qa-engineer: the 21
+  warnings of the generated prisma client sit in the threshold, so a new model in the storage
+  schema turns the check red. A question to the owner with an option to count tracked files only
+  was refused by the question guard: it narrows the check, and the owner chose «Подогнать код».
+  A schema task writes the threshold; the epic plan says so.
+- **Round two: texts brought up to the code.** `CLAUDE.md`, the comment of the pipeline step and
+  the epic plan named the order before knip and four totals; the formatter indent of the threshold
+  file is the one `--write` gives.
+
 ## What the work found beside the subject
 
 - **knip is red on main.** `pnpm run check:unused` on a clean copy of `origin/main` at 0c1f35410
   names two unused devDependencies (`d3-hierarchy`, `d3-shape`), nine unused exports and ten
   unused exported types in the rules package and the chart of the kit. Not caused by this branch;
-  `check:all` stops at knip before it reaches `check:ngdoctor`.
+  `check:all` turns red at knip; after round one the Angular Doctor step stands before it. Task
+  RT-3492 of the epic by the owner's word.
 
 ## Sessions
 

@@ -39,10 +39,10 @@ pnpm run prettier
 # `.claude/rt-kit/project.sh`
 pnpm run check:all
 
-# The Angular Doctor result of the tree — the score and the count of errors, warnings and info —
-# against the threshold in `tools/check-ngdoctor.mjs`; red on any other result and on a run that
-# skipped checks. A step of `check:all`, of the pipeline and of the push set. A fix writes the new
-# threshold; the findings themselves — `pnpm exec angular-doctor --verbose`
+# The Angular Doctor result of the tree — the score and the count of findings of every rule —
+# against `tools/ngdoctor-threshold.json`; red on any other result and on a degraded run. A step of
+# `check:all`, of the pipeline and of the push set. `--verbose` lists the files of a rule that
+# grew; a fix writes the threshold by `node tools/check-ngdoctor.mjs --write`
 pnpm run check:ngdoctor
 
 # Files, dependencies and exports nobody uses, by knip over every project; settings in `knip.json`.
