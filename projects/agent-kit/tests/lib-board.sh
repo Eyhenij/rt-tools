@@ -34,10 +34,13 @@ args="$*"
 printf '%s\n' "$args" >> "${STUB_CALLS:-/dev/null}"
 case "$args" in
     # Отставание прода спрашивается GraphQL-сравнением, и стоит оно раньше доски: доска — тоже
-    # GraphQL. STUB_COMPARE задаёт отказ хостинга: 422 — «не успел построить», 500 — сбой.
+    # GraphQL. STUB_COMPARE задаёт отказ хостинга: 422 и timeout — «не успел построить» словами
+    # REST- и GraphQL-сравнения, 422-other — другой отказ с тем же кодом, 500 — сбой.
     *graphql*behindBy*)
         case "${STUB_COMPARE:-}" in
             422) printf '%s\n' 'gh: Server Error: Sorry, this diff is taking too long to generate. (HTTP 422)' >&2; exit 1 ;;
+            timeout) printf '%s\n' 'gh: Something went wrong while executing your query. This may be the result of a timeout, or it could be a GitHub bug.' >&2; exit 1 ;;
+            422-other) printf '%s\n' 'gh: Validation Failed (HTTP 422)' >&2; exit 1 ;;
             500) printf '%s\n' 'gh: Server Error (HTTP 500)' >&2; exit 1 ;;
             *) printf '%s\n' "$STUB_BEHIND" ;;
         esac

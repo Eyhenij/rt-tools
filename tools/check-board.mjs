@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.1 · checks/check-board.github.mjs · b25c67ad7489 · правится надстройкой, не здесь
+// rt-kit v0.37.1 · checks/check-board.github.mjs · 8c56e055d567 · правится надстройкой, не здесь
 /**
  * Audit of the work queue against what the delivery law requires of a task and its PR.
  *
@@ -318,8 +318,8 @@ try {
 // queue by a merge, but a merge is not yet production: where the rollout is started by hand, any
 // number of commits may lie between them, and there is nowhere to notice this from.
 if (!offline && DEPLOY_WORKFLOW) {
-    try {
-        const token = botToken() ?? undefined;
+    const token = botToken() ?? undefined;
+    productionStep(() => {
         const lag = deployLag(DEPLOY_WORKFLOW, MAIN_BRANCH, { token });
         if (lag === null) {
             report(`there was not a single rollout by «${DEPLOY_WORKFLOW}» — there is nothing to compare production against`);
@@ -334,10 +334,13 @@ if (!offline && DEPLOY_WORKFLOW) {
                 `production lags «${MAIN_BRANCH}» by ${lag.behind} commits: the last rollout is ${lag.sha.slice(0, 8)} of ${String(lag.at).slice(0, 10)}`
             );
         }
+    });
 
-        // Why production fell behind, the lag does not say: it is counted by the last SUCCESSFUL
-        // rollout, and "not started" and "failed" look the same through it. They lead to different
-        // things — the first is started, the second is read by its output and fixed.
+    // Why production fell behind, the lag does not say: it is counted by the last SUCCESSFUL
+    // rollout, and "not started" and "failed" look the same through it. They lead to different
+    // things — the first is started, the second is read by its output and fixed. It is asked in a
+    // step of its own: a lag the host could not measure does not hide a rollout that fell.
+    productionStep(() => {
         const deploy = lastDeploy(DEPLOY_WORKFLOW, { token });
         if (deploy.verdict === 'failure') {
             report(
@@ -345,12 +348,23 @@ if (!offline && DEPLOY_WORKFLOW) {
                     `the main branch is ahead of production, and merges on top will travel the same way — ${deploy.url}`
             );
         }
+    });
+}
+
+/**
+ * One request about production. No connection is a note; any other failure breaks the audit by one
+ * line, the way a failure of the queue does, not by a stack.
+ */
+function productionStep(step) {
+    try {
+        step();
     } catch (error) {
         if (error instanceof OfflineError) {
             console.log(`check-board: production was not checked — ${error.message}`);
-        } else {
-            throw error;
+            return;
         }
+        console.error(`check-board: ${String(error.message ?? error)}`);
+        process.exit(1);
     }
 }
 

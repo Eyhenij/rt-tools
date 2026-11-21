@@ -1,4 +1,4 @@
-// rt-kit v0.37.1 · checks/board-runs.github.mjs · f1c050805c6b · правится надстройкой, не здесь
+// rt-kit v0.37.1 · checks/board-runs.github.mjs · eeef78e4d17c · правится надстройкой, не здесь
 /**
  * The state of the runs and of the rollout at the hosting: what stands on the head, how it ended
  * and by how much production has fallen behind the main branch.
@@ -78,10 +78,13 @@ export function deployLag(workflow, mainBranch, options) {
 }
 
 /**
- * The refusal of the host to compare: it could not build the answer in time. Only this one is a
- * note. A 500, no rights or a commit that is gone break the audit, as any other failure does.
+ * The refusal of the host to compare: it could not build the answer in time. The REST comparison
+ * says «diff is taking too long» with HTTP 422; the GraphQL one says «Something went wrong while
+ * executing your query», which the reader of the host takes for a network failure by its word
+ * «timeout». Only these are a note. Another 422, a 500, no rights or a commit that is gone break the
+ * audit, as any other failure does.
  */
-const COMPARISON_REFUSED = /HTTP 422\b|diff is taking too long/i;
+const COMPARISON_REFUSED = /diff is taking too long|Something went wrong while executing your query/i;
 
 /**
  * How many commits the main branch holds past the rolled-out one.

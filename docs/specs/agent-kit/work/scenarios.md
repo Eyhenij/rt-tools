@@ -433,14 +433,17 @@ Covered: `projects/agent-kit/tests/checks-board-long-work.test.sh`.
 
 ### SC-AK-1796 — a comparison the host could not build is a note
 
-Given the host answers the comparison of the main branch with the last rollout with HTTP 422
+Given the host refuses the comparison of the main branch with the last rollout because it could not
+build the answer in time — «diff is taking too long», or «Something went wrong while executing your
+query»
 When the check of the work queue is run
 Then it prints a note with the commit and the day of the last rollout and the words of the host, the
 note is not a divergence, and the line of the last rollout and the count follow it
 
-Given the comparison fails with HTTP 500, or the request about the last rollout fails
+Given the comparison fails with HTTP 500 or with another 422, or the request about the last rollout
+fails
 When the same check is run
-Then the check breaks, as on any other failure of the host
+Then the check breaks by one line with the words of the host, without a stack
 
 Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 

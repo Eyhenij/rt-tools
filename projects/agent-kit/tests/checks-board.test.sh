@@ -434,19 +434,32 @@ export STUB_COMPARE=422
 report "SC-AK-1796 — заметка названа с коммитом и днём выкатки" \
     "$(board_says 'production was not compared with «main» — the last rollout is fedcba98 of 2026-08-20')" 1
 report "SC-AK-1796 — заметка несёт слова хостинга" "$(board_says 'the host answered: .*diff is taking too long')" 1
-report "SC-AK-1796 — строки после заметки: счёт без расхождений, код 0" \
-    "$(board_says 'no divergences'):$(board_code)" '1:0'
+# Последняя выкатка спрошена и прошла: счёт без расхождений и код 0 — после заметки.
+export STUB_DEPLOY_LAST='{"status":"completed","conclusion":"success","sha":"fedcba9876543210fedcba9876543210fedcba98","at":"2026-08-20T10:00:00Z","url":"https://host/run/8"}'
+export STUB_CALLS="$BOARD_TREE/calls.log"
+: > "$STUB_CALLS"
+report "SC-AK-1796 — строки после заметки: выкатка спрошена, счёт без расхождений, код 0" \
+    "$(board_says 'no divergences'):$(board_code):$(grep -c 'deploy.yml/runs?per_page=1 ' "$STUB_CALLS")" '1:0:2'
+unset STUB_CALLS
 export STUB_DEPLOY_LAST='{"status":"completed","conclusion":"failure","sha":"abcdef0123456789abcdef0123456789abcdef01","at":"2026-08-21T10:00:00Z","url":"https://host/run/9"}'
 report "SC-AK-1796 — строки после заметки: упавшая выкатка названа" \
     "$(board_says 'the rollout «deploy.yml» failed on abcdef01 of 2026-08-21')" 1
+# GraphQL-сравнение отказывает своими словами, и читатель хостинга принимает их за сбой сети по
+# слову «timeout»: это та же заметка, и упавшая выкатка после неё по-прежнему названа.
+export STUB_COMPARE=timeout
+report "SC-AK-1796 — заметка на отказ GraphQL-сравнения по времени, упавшая выкатка названа" \
+    "$(board_says 'production was not compared with «main»'):$(board_says 'the rollout «deploy.yml» failed on abcdef01')" '1:1'
 unset STUB_DEPLOY_LAST
+# Сбой ломает аудит одной строкой, без стека и без счёта расхождений.
 export STUB_COMPARE=500
-report "SC-AK-1796 — другой отказ: сбой 500 сравнения ломает аудит" \
+report "SC-AK-1796 — другой отказ: сбой 500 сравнения ломает аудит одной строкой" \
+    "$(board_says 'production was not compared'):$(board_says 'divergences'):$(board_says '^check-board: gh: Server Error \(HTTP 500\)'):$(board_says '^    at '):$(board_code)" '0:0:1:0:1'
+export STUB_COMPARE=422-other
+report "SC-AK-1796 — другой отказ: 422 без слов «не успел» ломает аудит" \
     "$(board_says 'production was not compared'):$(board_code)" '0:1'
-export STUB_COMPARE=''
 export STUB_COMPARE=422 STUB_DEPLOY_LAST=500
 report "SC-AK-1796 — другой отказ: сбой запроса последней выкатки ломает аудит" \
-    "$(board_says 'no divergences'):$(board_code)" '0:1'
+    "$(board_says 'divergences'):$(board_says '^check-board: gh: Server Error \(HTTP 500\)'):$(board_code)" '0:1:1'
 unset STUB_DEPLOY_LAST
 unset RT_GH_RETRY_MS STUB_COMPARE
 
