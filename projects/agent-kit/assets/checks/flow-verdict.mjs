@@ -21,7 +21,7 @@ import { stepsOfProgress } from './work-steps-lib.mjs';
 const SILENCE = 'measure.host.silent';
 
 /** The measurers that name why the next move is the owner's menu. */
-const MENU_CAUSES = { forbidden: 'measure.session.forbidden', idle: 'measure.session.idle' };
+const MENU_CAUSES = { unread: 'measure.session.unread', forbidden: 'measure.session.forbidden', idle: 'measure.session.idle' };
 
 /** The first release case met, or null. `read` answers a measurer by its reference. */
 export function releaseCase(model, read, result) {
@@ -41,7 +41,9 @@ export function releaseCase(model, read, result) {
 
 /**
  * Why the next move is the owner's menu: { by: '<guard>' }, { idle: true }, or null. A measurer the
- * description does not declare, or the hosting could not answer, names no cause.
+ * description does not declare, or the hosting could not answer, names no cause. An unread
+ * background task comes first, { unread: { task, output, long } }: while it is unread the move is to
+ * read it, and no menu is offered.
  */
 export function menuCause(read) {
     const answer = (name) => {
@@ -51,6 +53,8 @@ export function menuCause(read) {
             return false;
         }
     };
+    const unread = answer(MENU_CAUSES.unread);
+    if (unread) return { unread };
     const by = answer(MENU_CAUSES.forbidden);
     if (by) return { by: String(by) };
     return answer(MENU_CAUSES.idle) ? { idle: true } : null;
@@ -76,6 +80,17 @@ export function holdReason(model, result, step, menu = null) {
     const total = model.states.length;
     const state = model.states[result.index - 1];
     const lines = [`The scenario is not over: the work stands in the state \`${result.state}\` (${result.index} of ${total}), whose exit is not met.`];
+    if (menu?.cause?.unread) {
+        const { task, output, long } = menu.cause.unread;
+        const where = output ? ` — its output is \`${output}\`` : '';
+        lines.push(
+            long
+                ? `The background task \`${task}\` runs longer than the bound and its output was not read${where}.`
+                : `The background task \`${task}\` ended after the last call, and its output was not read${where}.`,
+        );
+        lines.push('The one move is to read that output and act on it: a red result is fixed now. No owner\'s menu is offered while the task is unread.');
+        return lines.join('\n');
+    }
     if (menu?.cause) {
         lines.push(
             menu.cause.idle

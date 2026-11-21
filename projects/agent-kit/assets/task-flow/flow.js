@@ -43,6 +43,7 @@
       menuLost: { session: source.session },
       forbidden: { session: source.session },
       idle: { session: source.session },
+      unread: { session: source.session },
       waiting: { session: source.session },
     },
     host: { silent: { host: source.host } },

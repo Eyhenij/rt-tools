@@ -1,4 +1,4 @@
-// rt-kit v0.37.1 · task-flow/source/session.mjs · 3c0b0cf19c57 · правится надстройкой, не здесь
+// rt-kit v0.37.1 · task-flow/source/session.mjs · 688b36797545 · правится надстройкой, не здесь
 /**
  * The source «source.session» of the task flow description: what this session did, read from the
  * record of the conversation the hook names in `RT_FLOW_TRANSCRIPT`, and the role it runs as, named
@@ -9,7 +9,8 @@
  *                    { kind: 'refusal', text }, a menu { kind: 'menu', answered }, a call of a tool
  *                    { kind: 'call', name, input, blocked }, a refusal of a call by a hook
  *                    { kind: 'blocked', by, reason }, the start of a background task
- *                    { kind: 'background', id, task, at }, its end { kind: 'backgroundEnd', id, task }
+ *                    { kind: 'background', id, task, at, output }, its end { kind: 'backgroundEnd', id, task,
+ *                    output, stopped } — `stopped` when the session stopped it itself —
  *                    and a turn that ended { kind: 'ended' }
  *   now()            the time the session is judged at, in milliseconds
  *   agent()          the role the session runs as, or null
@@ -31,6 +32,8 @@ const TASK_OVER = /<status>(?:completed|failed|killed|stopped)<\/status>/;
 const STILL_RUNNING = /<summary>[^<]*is waiting on its own background work<\/summary>/;
 /** A refusal of a stop hook in the summary of the stop hooks. */
 const STOP_BLOCK = /BLOCKED by |"decision"\s*:\s*"block"/;
+/** The file a background task writes its output to, named in the result of its call. */
+const OUTPUT_FILE = /(?:Output is being written to|output_file):?\s*(\S+?)[.,]?(?:\s|$)/;
 /** The tools whose call ends a background task. */
 const STOP_TOOLS = new Set(['TaskStop', 'KillShell', 'KillBash']);
 
@@ -97,9 +100,10 @@ const taskOver = (entry) => {
     const text = typeof content === 'string' ? content : '';
     if (!text.includes('<task-notification>') || !TASK_OVER.test(text) || STILL_RUNNING.test(text)) return null;
     const id = text.match(/<tool-use-id>([^<]+)</)?.[1] ?? null;
+    const output = text.match(/<output-file>([^<]+)</)?.[1] ?? null;
     // One notice may name several tasks: the commands a previous session left unfinished.
     const tasks = [...text.matchAll(/<task-id>([^<]+)</g)].map((match) => match[1]);
-    return tasks.length > 1 ? tasks.map((task) => ({ id: null, task })) : [{ id, task: tasks[0] ?? null }];
+    return tasks.length > 1 ? tasks.map((task) => ({ id: null, task, output: null })) : [{ id, task: tasks[0] ?? null, output }];
 };
 
 /**
@@ -165,7 +169,7 @@ export function eventsOf(entries) {
                 events.push(call);
                 if (STOP_TOOLS.has(part.name)) {
                     const task = call.input.task_id ?? call.input.shell_id ?? call.input.bash_id;
-                    events.push({ kind: 'backgroundEnd', id: null, task: task ? String(task) : null });
+                    events.push({ kind: 'backgroundEnd', id: null, task: task ? String(task) : null, output: null, stopped: true });
                 }
             }
             continue;
@@ -183,7 +187,10 @@ export function eventsOf(entries) {
             if (menu) menu.answered = !part.is_error && Boolean(entry.toolUseResult?.answers);
             // A monitor is no background task: a persistent one never ends.
             const started = part.is_error || calls.get(part.tool_use_id)?.name === 'Monitor' ? null : taskStarted(entry);
-            if (started !== null) events.push({ kind: 'background', id: part.tool_use_id, task: started || null, at: Date.parse(entry.timestamp ?? '') });
+            if (started !== null) {
+                const output = resultText(part).match(OUTPUT_FILE)?.[1] ?? null;
+                events.push({ kind: 'background', id: part.tool_use_id, task: started || null, at: Date.parse(entry.timestamp ?? ''), output });
+            }
             const refused = part.is_error ? resultText(part).match(CALL_REFUSAL) : null;
             if (!refused) continue;
             const call = calls.get(part.tool_use_id);

@@ -282,7 +282,6 @@ Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 Given a refusal of a stop and a second stop with no call, while a background task of the session runs
 When the hook on Stop measures the session
 Then the session is not idle, and the refusal names no owner's menu, spent task or fresh
-And with the task over or past the bound the stop is idle as before
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
@@ -303,3 +302,16 @@ Then the first stop is released, and the second on the same task, the stop after
 And the line names the longest run of held stops in a row, which a word of the owner and a released stop break
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1797 — an unread background task is the move, not the owner's menu
+
+Given a background task of the session whose notice ended it after the last call, and a refusal of a stop
+When the hook on Stop measures the session
+Then the stop is not idle, and the refusal names the task and its output file and offers no owner's menu
+And the menu of a step another check forbids is not offered over it either
+And only a call that names the task or its output file reads it; another call does not
+And a task the session stopped itself, or one with no start in the record, holds nothing
+And a task running past the bound is named the same way
+And a refusal with no unread task still names the menu
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.

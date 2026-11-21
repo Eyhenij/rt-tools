@@ -174,10 +174,28 @@ out('end: SC-AK-1761 — поздняя копия уведомления пре
 out('end: SC-AK-1761 — уведомление без номера вызова кончает задачу по её номеру', waits([...resumedRun, { kind: 'backgroundEnd', id: null, task: 'task-a' }]), 'false');
 const idlesAt = (list) => String(session.idle(timed(list))(data));
 out('menu: SC-AK-1763 — остановка после отказа при идущей задаче — не простой', idlesAt([BG, started('a', 4), refused]), 'false');
-out('menu: SC-AK-1763 — задача кончилась — простой, как раньше', idlesAt([BG, started('a', 4), over('a'), refused]), 'true');
-out('menu: SC-AK-1763 — задача старше границы — простой', idlesAt([BG, started('a', 30), refused]), 'true');
 out('menu: SC-AK-1763 — потраченная задача меню тоже не зовёт', idlesAt([BG, started('a', 4), ended, refused]), 'false');
 out('menu: SC-AK-1763 — ожидание меню владельцу не называет', String(menuCause((name) => (name === 'measure.session.idle' ? session.idle(timed([BG, started('a', 4), refused]))(data) : false)) === null), 'true');
+// SC-AK-1797: задача кончилась после последнего вызова — её вывод читается, меню не предлагается.
+const OUT = '/tmp/tasks/task-a.output';
+const withOut = (id, m) => ({ ...started(id, m), output: OUT });
+const unreadAt = (list) => session.unread(timed(list))(data);
+const unreadOf = (list) => JSON.stringify(unreadAt(list));
+out('menu: SC-AK-1797 — задача кончилась после последнего вызова — не простой', idlesAt([BG, started('a', 4), over('a'), refused]), 'false');
+out('menu: SC-AK-1797 — задача кончилась после последнего вызова — названа непрочитанной', unreadAt([BG, withOut('a', 4), over('a'), refused]).task, 'task-a');
+const unreadVerdict = holdReason(model, stage, null, { ...HOLD_MENU, cause: menuCause((name) => (name === 'measure.session.unread' ? unreadAt([BG, withOut('a', 4), over('a'), refused]) : false)) });
+out('menu: SC-AK-1797 — отказ называет задачу, её вывод и не предлагает меню', String(unreadVerdict.includes('`task-a`') && unreadVerdict.includes(OUT) && !unreadVerdict.includes('«стоп»')), 'true');
+out('menu: SC-AK-1797 — прочитано вызовом с путём вывода', unreadOf([BG, withOut('a', 4), over('a'), called('Read', { file_path: OUT }), refused]), 'false');
+out('menu: SC-AK-1797 — прочитано вызовом с номером задачи', unreadOf([BG, withOut('a', 4), over('a'), called('Bash', { command: 'cat /x/task-a.output' }), refused]), 'false');
+out('menu: SC-AK-1797 — прочитано: посторонний вызов задачу не читает', unreadAt([BG, withOut('a', 4), over('a'), called('Edit', { file_path: 'b.md' }), refused]).task, 'task-a');
+out('menu: SC-AK-1797 — прочитано: поздняя копия уведомления снова не держит', unreadOf([BG, withOut('a', 4), over('a'), called('Read', { file_path: OUT }), over('a'), refused]), 'false');
+out('menu: SC-AK-1797 — не своя или снятая: снятая самой сессией задача прочитана', unreadOf([BG, started('a', 4), called('TaskStop', { task_id: 'task-a' }), { kind: 'backgroundEnd', id: null, task: 'task-a', output: null, stopped: true }, over('a'), refused]), 'false');
+out('menu: SC-AK-1797 — не своя или снятая: конец задачи без её начала не держит', unreadOf([called('Read'), { kind: 'backgroundEnd', id: null, task: 'task-z', output: null }, refused]), 'false');
+const forbiddenOverUnread = menuCause((name) => (name === 'measure.session.unread' ? unreadAt([BG, withOut('a', 4), over('a')]) : forbiddenBy(name)));
+out('menu: SC-AK-1797 — запрет другой проверки над непрочитанной задачей меню не зовёт', String(Boolean(forbiddenOverUnread?.unread) && !forbiddenOverUnread.by), 'true');
+const long = unreadAt([BG, withOut('a', 30), refused]);
+out('menu: SC-AK-1797 — старше предела: идущая задача названа, простой ложен', `${long.task} ${long.long} ${idlesAt([BG, started('a', 30), refused])}`, 'task-a true false');
+out('menu: SC-AK-1797 — простой без кончившейся задачи по-прежнему зовёт меню', `${idlesAt([called('Edit'), refused])} ${unreadOf([called('Edit'), refused])}`, 'true false');
 out('end: SC-AK-1764 — в состоянии «работа-отдана» ожидание не отпускает', released({ ...WAITING, 'measure.pr.handed': true }), 'held');
 out('end: SC-AK-1764 — молчащий хостинг на вопросе о PR ожидание не держит', releaseCase(model, (name) => { if (name === 'measure.pr.handed') throw Object.assign(new Error('silent'), { name: 'HostSilent' }); return WAITING[name] ?? false; }, held)?.log ?? 'held', 'a background task of the session runs');
 
@@ -229,6 +247,12 @@ expect_stop "end: SC-AK-1761 — задача кончилась — ход де
     "$(input_stop "$(transcript "$(say 'делай')" "$(edited)" "$(bg_run)" "$(bg_started 2)" "$(bg_over)")")" BLOCK
 expect_stop "end: SC-AK-1762 — задача старше границы — ход держится через хук" \
     "$(input_stop "$(transcript "$(say 'делай')" "$(edited)" "$(bg_run)" "$(bg_started 25)")")" BLOCK
+
+# Стенограмма вида 21.11: набор в фоне, правка, отказ остановки другой проверки, конец набора.
+bg_refused() { jq -c -n '{type:"user",message:{content:"Stop hook feedback:\nBLOCKED by git-guard-draft-ready: снять черновик"}}'; }
+NIGHT="$(input_stop "$(transcript "$(say 'делай')" "$(bg_run)" "$(bg_started 2)" "$(edited)" "$(bg_refused)" "$(bg_over)")")"
+expect_stop "menu: SC-AK-1797 — стенограмма 21.11 держит остановку через хук" "$NIGHT" BLOCK
+expect_reason "menu: SC-AK-1797 — стенограмма 21.11 называет задачу, не меню" "$NIGHT" 'The background task `b1` ended after the last call'
 
 JOURNAL="$REPO/.git/rt-kit/turn-exit.log"
 BROKEN="$TURNS/broken-engine.mjs"
