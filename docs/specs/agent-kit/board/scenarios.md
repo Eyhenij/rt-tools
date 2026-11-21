@@ -53,7 +53,7 @@ Then it names the number of the lag in a summary line that says there is nothing
 discrepancy and does not call to merge the base in; on a branch without a lag and where there is
 nothing to compare with, it stays silent
 
-Covered: `projects/agent-kit/tests/checks-board.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board-lag.test.sh`.
 
 ### SC-AK-1342 — the lag of a task request is counted against its base, not against main
 

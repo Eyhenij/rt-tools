@@ -201,8 +201,9 @@ Covered: `projects/agent-kit/tests/checks-board-real.test.sh`.
 
 Given the hosting answers recorded under the machine token
 When the work queue audit, the epic table and the last run of the main branch run on them
-Then each prints what it printed on the real host, the audit's fall on the comparison answer 422
-included
+Then the epic table and the last run print what they printed on the real host, and the audit names
+the lag of production by its number, prints its last line and ends with the recorded code, without
+a stack
 
 Covered: `projects/agent-kit/tests/checks-board-real.test.sh`.
 
