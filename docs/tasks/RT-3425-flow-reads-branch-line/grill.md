@@ -18,6 +18,18 @@ base does not replace the progress of the task. The sign is a scenario of the en
 took the folder apart, then merged a base with the old folder; the state is not below
 «папка-разобрана».
 
+> продолжай RT-3471, эпик (четвёртая часть переделки проверок)
+
+The owner's word of 21.11.2026 moved the task into the epic RT-3471: row 5 of its plan
+`docs/plans/checks-rework-4.md`. Point B of the epic for this task and RT-3434: a task taken apart
+does not roll back into «этап-идёт». The milestone G: three working days in a row of at least 1500
+calls, each with fewer than five refusals per hundred and no dead end.
+
+> дальше работай полностью самостоятельно в режиме ночной работы, я ухожу спать. не задавай вопросов и не останавливай сессию, все вопросы решай сам как посчитаешь наиболее правильным
+
+The night of 21.11 writes the plan and runs the roles; the code waits for the owner's approval of
+the plan in the morning.
+
 ## What the tree already has
 
 - **The history the engine reads.** `projects/agent-kit/assets/task-flow/source/git.mjs:open`
@@ -33,8 +45,11 @@ took the folder apart, then merged a base with the old folder; the state is not 
 - **The suites.** The double of the history in `projects/agent-kit/tests/flow-doubles.mjs` is a
   straight line of snapshots and cannot show a merge. The suites of the step guard and of the task
   flow guard build a real repository.
-- **The classification of RT-3418** counted this class: 16 refusals at turn ends over 14–19.11
-  where the engine named the wrong state.
+- **The classification of RT-3418** counted 16 refusals at turn ends over 14–19.11 where the
+  engine named the wrong state, judged by the text alone. The role `product-strategist` searched
+  every branch since 10.11 for a merge after which the branch lost its folder and the merged side
+  kept it: there is one, 19.11 at 10:10Z on RT-3276, and no refusal at a turn end follows it on
+  that branch. The 16 are other causes.
 
 ## What the rules already say
 
@@ -66,6 +81,28 @@ None. The card names the cause, the condition and the sign.
   whether another reader gives the same roll-back; if it does, it is fixed here, by the same line.
 - **The scenario runs on a real repository.** The double cannot hold a merge, and a double taught
   to hold one would prove the double, not the call of the history.
+
+The roles `goal-critic` and `product-strategist` read the plan of 21.11. The decisions below
+replace the matching ones above where they differ. Спросить было некого: заход автономный.
+
+- **The commit that removed a file is found by the path search of `git log` from the head, with
+  the default history simplification, and by the full history only when that is empty.** «The
+  newest removing commit» breaks in two histories. After a fast-forward the default search answers
+  empty. When the base removed its own old copy later than the branch, a walk by date or the full
+  history takes the removal in the base and the old progress again. Цена ошибки: два сценария.
+- **The search stays inside the history of the branch (`--not origin/main`).** The description
+  of the flow script says the history of a branch is what main does not hold; a removal already in
+  main keeps the old answer «no file». Цена ошибки: одна граница поиска.
+- **The function `removedAt` is born in RT-3434, one step lower in the chain.** RT-3434 moves
+  today's search into it as is; this task fixes the search there, and `lastVersion`,
+  `everExisted`, `prepareStep` and `runBeforePull` all call it. Without that, the refusal of
+  RT-3434 «a step the history does not mark done» reads the old progress after a merged base —
+  the dead end of RT-3276 under another name.
+- **The task moves no share of refusals.** It lifts a dead end the epic chain meets at every merge
+  of the base into a task branch; the plan says so instead of a share of `turn-exit-guard`.
+- **A false pass of the footprint exit after a merged base is not fixed here.**
+  `measure/footprint.mjs` counts the commits the base brought as edits of the branch. It is a
+  finding next to the epic plan.
 
 ## What is left unclear
 
