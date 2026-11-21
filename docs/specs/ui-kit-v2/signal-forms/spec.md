@@ -1,6 +1,6 @@
 # A field of the set and a signal form
 
-**Status:** in force · **Revision:** 2026-08-30 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-20 · **Scenario prefix:** `SC-UKV`
 **Depends on:** none
 **Laws:** `frontend-application`, `verifiability`
 **Procedures:** none
@@ -55,6 +55,21 @@ component.
 - **The wrapper of a field takes the state from the field, not from the form.** It does not know which
   binding the field is bound by, and must not know: otherwise the kind of the form would have to be
   named to it by a second input.
+- **A bound the form did not set is no bound, and the field takes it without a refusal.** The signal
+  binding writes every input named like a part of the state of a field — `min`, `max`, `minLength` —
+  and writes nothing in its place when the form set no such bound. A field whose input takes only a
+  value or none does not build in the template of the consumer, so the whole form on the signal
+  binding stays unbuilt over one field. The absent bound reads the same as the former «no bound».
+  The bound of a range field is typed by the form as the range itself; a range given there sets no
+  bound either. A bound the form took off returns the field to its default bound, never to a value
+  that is not a number.
+- **A part of the state named like an input of the field reaches that input, whatever the input
+  means.** The binding writes by name, not by meaning: the `minLength` of the form reaches the
+  `minLength` of a field with hints, where it is the count of letters before the hints open. A form
+  that demands three letters therefore opens the hints from the third letter. The field says so in
+  its description; renaming the input would break every consumer that sets it. The same write
+  overrides a direct binding of that input on the same field: whichever writes last wins, so a
+  bound is set either by the form or directly, not by both.
 
 ## What is out of scope
 
@@ -63,6 +78,9 @@ component.
   A work of its own, and it lifts the former road — that is, it breaks the backward compatibility.
 - The check of the value: the form declares it, and the field shows the outcome.
 - The first kit: it has a base of a field of its own.
+- A radio button bound by the signal binding: Angular reads its `checked` pair as a control of its own
+  and forbids `[value]` next to `[formField]`, so the group of radio buttons has to become the field
+  of the form. A work of its own, with a minor release.
 
 ## Contract
 
