@@ -42,6 +42,16 @@ patterns, `epic-flow`, `epic-flow-declare`, `git-workflow`, `git-workflow-push`,
   same step in about 5 of 30 recent runs. **Address:** names of this tree — the shot browser
   script; a code task, not a rule text.
 
+## RT-3492 — knip green
+
+- **The plan approval mark points at a menu the approval check then refuses.** `plan-red` takes the
+  first menu after the roles with any option that begins with «Одобряю», while the check of the mark
+  joins every answer of that menu and tests the start of the join. A menu of three questions whose
+  answers came back in another order wrote a mark that never holds; the state stayed at «задача-взята»
+  after two approvals, and only a new role call followed by a menu of one question moves it.
+  **Address:** rules layer — `checks/flow-plan.mjs` `approvingEntry` against
+  `task-flow/source/records.mjs` `approvalFault`.
+
 ## Left unresolved
 
 - **All seven findings above** — wait for the owner's decision. The guard table and the snapshot
