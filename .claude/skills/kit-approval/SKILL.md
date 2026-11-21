@@ -49,8 +49,17 @@ The table in `implementation.md` next to it.
   is laid over the Figma frame of the page, and the overlay goes to the owner with the showcase.
 - **The showcase is shown to the owner and approved by a second answer.** The first approval was of
   a picture; the second is of the component a consumer will get.
-- **The push, the PR and the release go only after both approvals.** The check refuses all three
-  while the record lacks either quote. A release is judged by every merge since the last version
+- **A kit file edited without a change of look goes by the owner's word that nothing visible
+  changed.** The check judges by the file, and a component class holds more than its look: the
+  type an input takes is edited there too. Such an edit has no frame to draw and nothing to
+  measure, so the owner is asked whether the edit is invisible, and their answer replaces all three
+  lines of the record. Whether it is invisible is the owner's call, not the executor's. Visible is
+  what the check counts, not what the eye sees: a component class edited for a type is visible to
+  it. The plan names every kit file the check counts, and the no-look question goes to the owner
+  with the plan, not at the push.
+- **The push, the PR and the release go only after the approvals the record demands.** The check
+  refuses all three while the record lacks the mockup and showcase quotes, or the no-look quote in
+  their place. A release is judged by every merge since the last version
   bump of that kit.
 
 ## The record
@@ -61,10 +70,16 @@ The table in `implementation.md` next to it.
 - **Витрина:** «<the owner's words>»
 ```
 
+An edit the owner called invisible carries one line instead of the three:
+
+```markdown
+- **Без вида:** «<the owner's words>»
+```
+
 The match line is printed by `node tools/kit-match.mjs numbers <figma.json> <showcase.json>`; the
 overlay frame by `node tools/kit-match.mjs overlay <figma.png> <showcase.png> <diff.png>`.
 
-The record moves into the archive record when the task folder is taken apart, with both lines
+The record moves into the archive record when the task folder is taken apart, with its lines
 verbatim: the release check reads them there.
 
 ## What of the law is not here

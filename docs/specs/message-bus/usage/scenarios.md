@@ -204,6 +204,15 @@ ones are not, and the arrow back has no backing and is switched off
 
 Covered: `apps/message-bus-admin-e2e/src/usage-section.spec.ts`.
 
+### SC-MB-453 — the start of the period opens a month with the days after the end crossed out
+
+Given the table of a tree is shown for August 2026
+When the person opens the start of the period by the button of its field
+Then the month of August is shown; the September days stand after the end of the period and are
+crossed out, the July ones are not, the arrow forward is switched off, and the arrow back is on
+
+Covered: `apps/message-bus-admin-e2e/src/usage-section.spec.ts`.
+
 ### SC-MB-358 — the quick period puts the pair of days into the address
 
 Given the table of a tree is shown

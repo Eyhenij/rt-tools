@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, Component, DebugElement } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement, WritableSignal, signal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FieldTree, FormField, SchemaPathTree, form, max, min } from '@angular/forms/signals';
+import { By } from '@angular/platform-browser';
 
 import { createRtFixture, el, hostClasses, qa, textOf } from '../../../testing/rt-kit-testing';
 import { RtCounterComponent } from './rt-counter.component';
@@ -24,6 +26,26 @@ class CounterHostComponent {
 })
 class CounterDisabledHostComponent {
     public readonly control: FormControl<number | null> = new FormControl<number | null>({ value: 2, disabled: true });
+}
+
+interface IGuests {
+    guests: number;
+}
+
+/** Сигнальная форма держит обе границы на двух, пока `bounded` включён, и снимает их, когда он выключен. */
+@Component({
+    selector: 'rt-counter-signal-host',
+    template: '<rt-counter ariaLabel="Гостей" [formField]="booking.guests" />',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtCounterComponent, FormField],
+})
+class CounterSignalHostComponent {
+    public readonly bounded: WritableSignal<boolean> = signal<boolean>(true);
+    public readonly model: WritableSignal<IGuests> = signal<IGuests>({ guests: 2 });
+    public readonly booking: FieldTree<IGuests> = form(this.model, (path: SchemaPathTree<IGuests>): void => {
+        min(path.guests, (): number | undefined => (this.bounded() ? 2 : undefined));
+        max(path.guests, (): number | undefined => (this.bounded() ? 2 : undefined));
+    });
 }
 
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtCounterComponent> {
@@ -104,6 +126,22 @@ describe('RtCounterComponent', (): void => {
             press(fixture, 'counter-increase');
 
             expect(value(fixture)).toBe('3');
+        });
+
+        it('SC-UKV-1597 — граница, которую сигнальная форма сняла, становится границей по умолчанию, а не NaN', (): void => {
+            const fixture: ComponentFixture<CounterSignalHostComponent> = createRtFixture(CounterSignalHostComponent);
+            const counter: RtCounterComponent = fixture.debugElement.query(By.directive(RtCounterComponent))
+                .componentInstance as RtCounterComponent;
+            // форма держит значение два между двумя границами на двух — обе кнопки отключены
+            expect([counter.min(), counter.max()]).toEqual([2, 2]);
+            expect(stepButton(fixture, 'counter-increase').disabled).toBe(true);
+
+            fixture.componentInstance.bounded.set(false);
+            fixture.detectChanges();
+
+            expect([counter.min(), counter.max()]).toEqual([0, Number.MAX_SAFE_INTEGER]);
+            expect(stepButton(fixture, 'counter-increase').disabled).toBe(false);
+            expect(stepButton(fixture, 'counter-decrease').disabled).toBe(false);
         });
 
         it('без верхней границы потолка нет', (): void => {

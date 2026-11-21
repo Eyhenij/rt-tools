@@ -9,6 +9,7 @@ import {
     IRtAiRunStatus,
     IRtKpiItem,
     IRtLinkData,
+    IRtSourcesData,
     IRtTableData,
     IRtTag,
     IRtTimeline,
@@ -111,6 +112,27 @@ export namespace IRtAiChat {
         readonly reason?: string;
     }
 
+    /** Один источник цифр ответа: название, уточнение, значок и адрес. */
+    export interface SourceItem {
+        readonly title: string;
+        /** Страница, период, фильтры: то, что уточняет источник. */
+        readonly detail?: string;
+        /** Имя значка кита; без него или с чужим именем — `file`. */
+        readonly icon?: string;
+        /** Адрес, который открывает приложение; без него строка не нажимается. */
+        readonly url?: string;
+    }
+
+    /**
+     * Список источников цифр ответа под заголовком «Источники». Кит рисует его сам, свёрнутым, и
+     * источник не открывает: нажатие строки с адресом чат отдаёт событием `sourceOpen`. Источник
+     * без названия выпадает, а блок без уцелевших источников показан заглушкой.
+     */
+    export interface SourcesBlock {
+        readonly type: 'sources';
+        readonly items: readonly SourceItem[];
+    }
+
     /**
      * Блок, который кит сам не рисует: график и другие. Его рисует отрисовщик,
      * зарегистрированный приложением; без отрисовщика блок показан заглушкой. В текст, который
@@ -140,11 +162,10 @@ export namespace IRtAiChat {
     }
 
     /**
-     * Часть ответа. Список типов открыт: кит знает `markdown`, `notice`, `table`, `kpi`, `link` и
-     * `section`,
-     * остальные регистрирует приложение.
+     * Часть ответа. Список типов открыт: кит знает `markdown`, `notice`, `table`, `kpi`, `link`,
+     * `sources` и `section`, остальные регистрирует приложение.
      */
-    export type Block = MarkdownBlock | NoticeBlock | TableBlock | KpiBlock | LinkBlock | SectionBlock | CustomBlock;
+    export type Block = MarkdownBlock | NoticeBlock | TableBlock | KpiBlock | LinkBlock | SourcesBlock | SectionBlock | CustomBlock;
 
     /**
      * Отрисовщик блока, которого кит сам не знает: компонент с обязательным входом `block` и
@@ -163,6 +184,7 @@ export namespace IRtAiChat {
         | { readonly kind: 'table'; readonly data: IRtTableData; readonly title: string | null }
         | { readonly kind: 'kpi'; readonly items: readonly IRtKpiItem[] }
         | { readonly kind: 'link'; readonly data: IRtLinkData }
+        | { readonly kind: 'sources'; readonly data: IRtSourcesData }
         | { readonly kind: 'custom'; readonly component: Type<unknown>; readonly block: Block }
         | { readonly kind: 'section'; readonly title: string | null; readonly cells: readonly SectionCell[] }
         | { readonly kind: 'unsupported'; readonly type: string };
@@ -197,6 +219,11 @@ export namespace IRtAiChat {
         /** Ответ ещё пишется: оценка не рисуется. */
         readonly streaming?: boolean;
         readonly feedback?: Feedback;
+        /**
+         * Ответ оборвался — связь пропала или ход отменён. Под ответом тихая строка «прерван», в строке
+         * действий — «спросить снова». Флаг ставит и снимает приложение: кит обрыв не распознаёт.
+         */
+        readonly interrupted?: boolean;
     }
 
     export type Message = UserMessage | AssistantMessage;
@@ -232,6 +259,17 @@ export namespace IRtAiChat {
 
     /** Событие `linkOpen` чата: нажатие карточки ссылки и сообщение, в котором она стоит. */
     export interface LinkOpen extends LinkPress {
+        readonly messageId: string;
+    }
+
+    /** Нажатие источника с адресом: что открыть и как источник называется. */
+    export interface SourcePress {
+        readonly url: string;
+        readonly title: string;
+    }
+
+    /** Событие `sourceOpen` чата: нажатие источника и сообщение, в котором он стоит. */
+    export interface SourceOpen extends SourcePress {
         readonly messageId: string;
     }
 

@@ -330,6 +330,27 @@ describe('RtIconButtonComponent', (): void => {
         });
     });
 
+    describe('aria-describedby', (): void => {
+        it('SC-UKV-1581 — вход ariaDescribedby пишется в aria-describedby кнопки', (): void => {
+            expect(control(setup({ ariaDescribedby: 'answer-note' }))?.attributes['aria-describedby']).toBe('answer-note');
+        });
+
+        it('SC-UKV-1581 — вход ariaDescribedby пишется в aria-describedby ссылки', (): void => {
+            const fixture: ComponentFixture<RtIconButtonComponent> = createRtFixture(
+                RtIconButtonComponent,
+                { icon: 'ico-user', ariaLabel: 'Личные настройки', link: '/personal-settings', ariaDescribedby: 'answer-note' },
+                { providers: [provideRouter(LINK_ROUTES)] }
+            );
+
+            expect((control(fixture)?.nativeElement as HTMLElement).tagName).toBe('A');
+            expect(control(fixture)?.attributes['aria-describedby']).toBe('answer-note');
+        });
+
+        it('SC-UKV-1581 — без входа атрибута нет', (): void => {
+            expect(control(setup())?.attributes['aria-describedby']).toBeFalsy();
+        });
+    });
+
     describe('focus()', (): void => {
         it('SC-UKV-1038 — фокусирует кнопку внутри', (): void => {
             const fixture: ComponentFixture<RtIconButtonComponent> = setup();

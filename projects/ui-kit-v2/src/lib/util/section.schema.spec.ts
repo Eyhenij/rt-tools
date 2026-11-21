@@ -95,6 +95,7 @@ describe('rtAiChatSectionSchema', (): void => {
             'kpi',
             'table',
             'link',
+            'sources',
         ]);
         expect(field(joined, ['required'])).toEqual(['blocks']);
         expect(field(joined, ['properties', 'blocks', 'minItems'])).toBe(1);
@@ -128,7 +129,7 @@ describe('rtAiChatSectionSchema', (): void => {
         expect(field(branch(joined, 'map'), ['required'])).toEqual(['type', 'place']);
         expect(field(branch(joined, 'map'), ['properties', 'span', 'enum'])).toEqual(['full', 'column']);
         expect(field(branch(joined, 'markdown'), ['required'])).toEqual(['type', 'body']);
-        expect(branches(joined)).toHaveLength(6);
+        expect(branches(joined)).toHaveLength(7);
     });
 
     it('SC-UKV-1524 — результат ничего не делит с переданным и со схемой секции', (): void => {
@@ -166,6 +167,6 @@ describe('rtAiChatSectionSchema', (): void => {
         const joined: TRtJsonSchema = rtAiChatSectionSchema({ section: RT_AI_CHAT_SECTION_SCHEMA });
 
         expect(field(branch(joined, 'section'), ['properties'])).toBeUndefined();
-        expect(branches(joined)).toHaveLength(5);
+        expect(branches(joined)).toHaveLength(6);
     });
 });

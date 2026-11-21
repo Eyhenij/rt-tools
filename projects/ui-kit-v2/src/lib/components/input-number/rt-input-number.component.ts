@@ -21,7 +21,7 @@ import {
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
-import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
+import { RtFormControlBase, rtBoundOrNull } from '@rt-tools/ui-kit-v2/form-control';
 import { IRtInput } from '@rt-tools/ui-kit-v2/core';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
@@ -223,8 +223,16 @@ export class RtInputNumberComponent extends RtFormControlBase<number | null> {
     /** Текстовый префикс слева от значения (напр. «₽» для рублёвых сумм). */
     public readonly prefix: InputSignal<string | null> = input<string | null>(null);
     public readonly placeholder: InputSignal<string> = input<string>('');
-    public readonly min: InputSignal<number | null> = input<number | null>(null);
-    public readonly max: InputSignal<number | null> = input<number | null>(null);
+    /** Нижняя граница. `undefined` — сигнальная форма не задала границу: границы нет. */
+    public readonly min: InputSignalWithTransform<number | null, number | null | undefined> = input<
+        number | null,
+        number | null | undefined
+    >(null, { transform: rtBoundOrNull });
+    /** Верхняя граница. `undefined` — сигнальная форма не задала границу: границы нет. */
+    public readonly max: InputSignalWithTransform<number | null, number | null | undefined> = input<
+        number | null,
+        number | null | undefined
+    >(null, { transform: rtBoundOrNull });
     public readonly minFractionDigits: InputSignal<number> = input<number>(0);
     public readonly maxFractionDigits: InputSignal<number> = input<number>(2);
     /**

@@ -14,20 +14,20 @@
 
 Свои входы поверх общих из [`RtFormControlBase`](../form-control/CONTEXT.md):
 
-| вход               | тип                                          | умолчание                 |
-| ------------------ | -------------------------------------------- | ------------------------- |
-| `suggestions`      | `ReadonlyArray<TItem>`                       | `[]`                      |
-| `displayWith`      | `(item: TItem \| null) => string`            | `String(item ?? '')`      |
-| `placeholder`      | `string`                                     | `''`                      |
-| `minLength`        | `number`                                     | `1`                       |
-| `openOnFocus`      | `boolean`                                    | `false`                   |
-| `iconLeft`         | `IRtIcon.Name \| null`                       | `null`                    |
-| `itemTemplate`     | `TemplateRef<{ $implicit: TItem }> \| null`  | `null`                    |
-| `loading`          | `boolean`                                    | `false`                   |
-| `emptyText`        | `string \| null`                             | `null` → `uiNothingFound` |
-| `emptyTemplate`    | `TemplateRef<{ $implicit: string }> \| null` | `null`                    |
-| `error`            | `string \| null`                             | `null`                    |
-| `errorDescription` | `string`                                     | `''`                      |
+| вход               | тип                                                                     | умолчание                   |
+| ------------------ | ----------------------------------------------------------------------- | --------------------------- |
+| `suggestions`      | `ReadonlyArray<TItem>`                                                  | `[]`                        |
+| `displayWith`      | `(item: TItem \| null) => string`                                       | `String(item ?? '')`        |
+| `placeholder`      | `string`                                                                | `''`                        |
+| `minLength`        | `number \| undefined` — `undefined` пишет `[formField]` без `minLength` | `1`, и для `undefined` тоже |
+| `openOnFocus`      | `boolean`                                                               | `false`                     |
+| `iconLeft`         | `IRtIcon.Name \| null`                                                  | `null`                      |
+| `itemTemplate`     | `TemplateRef<{ $implicit: TItem }> \| null`                             | `null`                      |
+| `loading`          | `boolean`                                                               | `false`                     |
+| `emptyText`        | `string \| null`                                                        | `null` → `uiNothingFound`   |
+| `emptyTemplate`    | `TemplateRef<{ $implicit: string }> \| null`                            | `null`                      |
+| `error`            | `string \| null`                                                        | `null`                      |
+| `errorDescription` | `string`                                                                | `''`                        |
 
 | выход           | тип                        |
 | --------------- | -------------------------- |
@@ -56,6 +56,9 @@
 
 - Панель открывается, когда набрано не меньше `minLength` символов; более короткая строка
   закрывает её и события не поднимает.
+- Под сигнальной формой (`[formField]`) `minLength` формы доходит до этого входа: Angular пишет
+  состояние поля во входы с тем же именем. Форма, требующая трёх букв, открывает подсказки с
+  третьей; без `minLength` в форме порог остаётся `1`.
 - `openOnFocus` дополнительно запрашивает подсказки при фокусе — для списков «последнее
   выбранное».
 - `itemTemplate` рисует свою разметку подсказки (иконка, две строки); контекст — `$implicit`.

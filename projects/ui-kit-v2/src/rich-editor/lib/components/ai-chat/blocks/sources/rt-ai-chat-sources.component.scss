@@ -1,0 +1,114 @@
+@layer rt-kit.components {
+    /* rt-ai-chat-sources — список источников цифр ответа чата. ViewEncapsulation.None.
+       Рамка и скругление те же, что у карточки ссылки. Блок берёт ширину ответа и ленту не расширяет. */
+
+    .rt-ai-chat-sources {
+        --rt-ai-chat-sources-border-width: var(--rt-border-width-thin);
+        --rt-ai-chat-sources-radius: calc(var(--rt-radius-md) + var(--rt-radius-sm));
+        --rt-ai-chat-sources-row-radius: var(--rt-radius-md);
+        --rt-ai-chat-sources-duration: var(--rt-duration-base);
+
+        display: block;
+        min-width: 0;
+        padding: var(--rt-space-1);
+        border: var(--rt-ai-chat-sources-border-width) solid var(--rt-color-border-default);
+        border-radius: var(--rt-ai-chat-sources-radius);
+        background: var(--rt-color-bg-surface);
+
+        /* Панель во всю ширину карточки без полей: подложка наведения и кольцо фокуса занимают её
+           ширину целиком, а 8 до подписи и значка дают заголовок и строки. Тело панели обрезает
+           всё, что выходит за него, поэтому подложка не может быть шире строки. */
+        &__panel.rt-expansion-panel {
+            --rt-expansion-panel-header-padding-start: var(--rt-space-2);
+            --rt-expansion-panel-header-padding-end: var(--rt-space-2);
+        }
+
+        /* Заголовок панели: подпись и число стоят рядом, шеврон уходит в конец. */
+        &__label {
+            flex: 0 0 auto;
+        }
+
+        &__count {
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+
+        &__list {
+            padding: 0 0 var(--rt-space-2);
+            margin: 0;
+            list-style: none;
+        }
+
+        &__item {
+            display: block;
+            min-width: 0;
+        }
+
+        /* Строка: значок и два текста. С адресом она кнопка, без адреса — обычный блок. */
+        &__row {
+            display: flex;
+            width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            align-items: flex-start;
+            padding: var(--rt-space-2);
+            border: 0;
+            border-radius: var(--rt-ai-chat-sources-row-radius);
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            gap: calc(var(--rt-space-2) + var(--rt-space-1));
+            text-align: start;
+
+            /* Строка с адресом: подложка наведения и кольцо фокуса — вся строка, текст стоит на месте.
+           Кольцо идёт внутрь строки: снаружи его срезает тело панели. */
+            &--pressable {
+                cursor: pointer;
+                transition: background-color var(--rt-ai-chat-sources-duration) ease;
+
+                &:hover {
+                    background: var(--rt-color-bg-hover);
+                }
+
+                &:focus-visible {
+                    outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                    outline-offset: calc(-1 * var(--rt-focus-ring-width));
+                }
+            }
+        }
+
+        &__icon {
+            display: flex;
+            flex: 0 0 auto;
+            color: var(--rt-color-text-muted);
+        }
+
+        &__text {
+            display: flex;
+            min-width: 0;
+            flex: 1 1 auto;
+            flex-direction: column;
+            gap: var(--rt-space-0-5);
+        }
+
+        /* Название и уточнение — по одной строке, дальше многоточие; целый текст остаётся в разметке. */
+        &__title {
+            overflow: hidden;
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-sm);
+            font-weight: var(--rt-font-weight-medium);
+            line-height: var(--rt-leading-tight);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__detail {
+            overflow: hidden;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            line-height: var(--rt-leading-snug);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+}

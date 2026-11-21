@@ -20,6 +20,13 @@
             @case ('link') {
                 <rt-ai-chat-link rtElem="link" qa-dataid="ai-chat-block-link" [data]="view.data" (opened)="linkOpen.emit($event)" />
             }
+            @case ('sources') {
+                <rt-ai-chat-sources
+                    rtElem="sources"
+                    qa-dataid="ai-chat-block-sources"
+                    [data]="view.data"
+                    (opened)="sourceOpen.emit($event)" />
+            }
             @case ('custom') {
                 <ng-container *ngComponentOutlet="view.component; inputs: { block: view.block }" />
             }

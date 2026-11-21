@@ -35,6 +35,13 @@ export namespace IRtDateRange {
         max: string | null;
     }
 
+    /**
+     * Что принимают входы `min`, `max`: день `YYYY-MM-DD` задаёт границу; `null`, `undefined` и
+     * диапазон — нет. Диапазон и `undefined` пишет сигнальная форма: границу поля она типизирует
+     * типом его значения и не пишет ничего, когда границу не задала.
+     */
+    export type Bound = string | Value | null | undefined;
+
     /** Форма числа дней по правилам множественного числа локали. */
     export type Plural = 'one' | 'few' | 'many' | 'other';
 }

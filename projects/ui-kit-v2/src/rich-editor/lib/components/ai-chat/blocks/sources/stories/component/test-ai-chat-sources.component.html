@@ -1,0 +1,12 @@
+<div [style.width.px]="width">
+    <rt-ai-chat-blocks
+        [blocks]="[
+            {
+                type: 'sources',
+                items: [
+                    { title: title, detail: detail, icon: icon, url: url },
+                    { title: 'Склад', detail: 'Обновлено вчера', icon: 'database' },
+                ],
+            },
+        ]" />
+</div>

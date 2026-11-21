@@ -93,6 +93,12 @@ report "no visible kit edit lets the PR through" "$(guard_decision)" PASS
 report "a missing record is refused" "$(STUB_FAIL=1 guard_decision)" deny
 rm -rf "$GUARD_TREE"
 
+INVISIBLE='- **Без вида:** «Да, макет одобряю»'
+report "a no-look line passes without the mockup, the match and the showcase" \
+    "$(run "console.log(m.faultsOf('b', { path: 'r', text: \`$INVISIBLE\` }).length)")" 0
+report "a no-look line goes to the owner's window instead of the two quotes" \
+    "$(RECORD="$INVISIBLE" run "$WINDOW_JS")" 'Без вида: «Да, макет одобряю» (r)'
+
 MATCH="$TOOLS/kit-match.mjs"
 match() {
     local body="$1"

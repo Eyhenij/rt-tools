@@ -8,16 +8,16 @@
 
 Свои входы поверх общих из [`RtFormControlBase`](../form-control/CONTEXT.md):
 
-| вход                | тип                    | умолчание                      |
-| ------------------- | ---------------------- | ------------------------------ |
-| `prefix`            | `string \| null`       | `null`                         |
-| `iconLeft`          | `IRtIcon.Name \| null` | `null`                         |
-| `placeholder`       | `string`               | `''`                           |
-| `min` / `max`       | `number \| null`       | `null` (сторона не ограничена) |
-| `minFractionDigits` | `number`               | `0`                            |
-| `maxFractionDigits` | `number`               | `2`                            |
-| `step`              | `number`               | `1`                            |
-| `stepper`           | `boolean`              | `true`                         |
+| вход                | тип                           | умолчание                                                                                |
+| ------------------- | ----------------------------- | ---------------------------------------------------------------------------------------- |
+| `prefix`            | `string \| null`              | `null`                                                                                   |
+| `iconLeft`          | `IRtIcon.Name \| null`        | `null`                                                                                   |
+| `placeholder`       | `string`                      | `''`                                                                                     |
+| `min` / `max`       | `number \| null \| undefined` | `null` (сторона не ограничена); `undefined` — то же, так пишет `[formField]` без границы |
+| `minFractionDigits` | `number`                      | `0`                                                                                      |
+| `maxFractionDigits` | `number`                      | `2`                                                                                      |
+| `step`              | `number`                      | `1`                                                                                      |
+| `stepper`           | `boolean`                     | `true`                                                                                   |
 
 Значение — `number | null`.
 

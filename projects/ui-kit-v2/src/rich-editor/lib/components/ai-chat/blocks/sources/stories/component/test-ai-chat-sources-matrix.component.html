@@ -1,0 +1,73 @@
+<ng-template #cases let-items>
+    <app-story-row [items]="items" [itemLabel]="caseLabel">
+        <ng-template let-c>
+            <div [attr.dir]="c.dir" [style.width.px]="c.width" [attr.data-sources-open]="c.open ? 'true' : null">
+                <rt-ai-chat-blocks [attr.data-sources-width]="c.width" [blocks]="c.blocks" />
+            </div>
+        </ng-template>
+    </app-story-row>
+</ng-template>
+
+<!-- Весь круг: чат отдаёт sourceOpen, строка под чатом показывает событие как пришло -->
+<ng-template #chat let-width="width">
+    <div
+        style="
+            box-sizing: border-box;
+            block-size: 34rem;
+            border: 1px solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-radius-lg);
+            overflow: hidden;
+        "
+        [style.inline-size]="width">
+        <rt-ai-chat subtitle="Отчёты за ноябрь" [messages]="messages" (sourceOpen)="onSourceOpen($event)" />
+    </div>
+    <pre
+        qa-dataid="ai-chat-sources-log"
+        style="
+            margin: var(--rt-space-2) 0 0;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            min-block-size: 2.5rem;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        "
+        [style.inline-size]="width"
+        >{{ log().join('\n') }}</pre>
+</ng-template>
+
+@switch (part) {
+    @case ('widths') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: widthCases }" />
+    }
+    @case ('states') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: stateCases }" />
+    }
+    @case ('parts') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: partsCases }" />
+    }
+    @case ('invalid') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: invalidCases }" />
+    }
+    @case ('rtl') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: rtlCases }" />
+    }
+    @case ('panel') {
+        <div data-story-root style="width: 26.25rem">
+            <ng-container *ngTemplateOutlet="chat; context: { width: '26.25rem' }" />
+        </div>
+    }
+    @case ('presets') {
+        <app-story-presets caption="Блок источников в обоих наборах">
+            <ng-template>
+                <ng-container *ngTemplateOutlet="cases; context: { $implicit: themeCases }" />
+            </ng-template>
+        </app-story-presets>
+    }
+    @case ('themes') {
+        <app-story-themes>
+            <ng-template>
+                <ng-container *ngTemplateOutlet="cases; context: { $implicit: themeCases }" />
+            </ng-template>
+        </app-story-themes>
+    }
+}

@@ -3,6 +3,8 @@ import {
     IRtKpiItem,
     IRtLinkData,
     IRtSectionItem,
+    IRtSourceItem,
+    IRtSourcesData,
     IRtTableData,
     IRtTag,
     markdownToPlainText,
@@ -14,6 +16,7 @@ import {
     rtSectionSpan,
     rtSectionTitle,
     RT_SECTION_BLOCK_TYPE,
+    rtSourcesData,
     rtTableData,
     rtTablePlainText,
     TRtKitTranslator,
@@ -35,7 +38,10 @@ const NOTICE_SEVERITIES: Readonly<Record<IRtTag.Severity, true>> = {
 };
 
 /** Типы, которые кит рисует сам: отрисовщик из реестра их не заменяет. */
-const OWN_TYPES: ReadonlySet<string> = new Set<string>(['markdown', 'notice', 'table', 'kpi', 'link', RT_SECTION_BLOCK_TYPE]);
+const OWN_TYPES: ReadonlySet<string> = new Set<string>(['markdown', 'notice', 'table', 'kpi', 'link', 'sources', RT_SECTION_BLOCK_TYPE]);
+
+/** Подпись заголовка блока источников в копии, когда подписи приложения не переданы. */
+const DEFAULT_SOURCES_LABEL: string = 'Sources';
 
 /** Блок текста в markdown: тип `markdown` и строка `text`. */
 export function isMarkdownBlock(block: { readonly type: string }): block is IRtAiChat.MarkdownBlock {
@@ -82,6 +88,14 @@ export function linkBlockData(block: { readonly type: string }): IRtLinkData | n
     return block.type === 'link' ? rtLinkData(block) : null;
 }
 
+/**
+ * Источники блока `sources`, приведённые к виду, который можно рисовать; `null` — блок не
+ * источники или без уцелевших источников, и тогда он показан заглушкой.
+ */
+export function sourcesBlockData(block: { readonly type: string }): IRtSourcesData | null {
+    return block.type === 'sources' ? rtSourcesData(block) : null;
+}
+
 /** Запись пунктов дельты подписью кита: в неё уходит записанное число. */
 export type TRtAiChatPointsWriter = (value: string) => string;
 
@@ -123,6 +137,18 @@ function kpiPlainText(items: readonly IRtKpiItem[], locale: string, points: TRtA
 /** Блок ссылки в копии: название, раздел и адрес одной строкой через табуляцию; без раздела поле пустое. */
 function linkPlainText(data: IRtLinkData): string {
     return [data.title, data.section, data.url].map((field: string | null): string => copyField(field)).join('\t');
+}
+
+/**
+ * Блок источников в копии: строка заголовка — подпись и число источников, затем строка на источник —
+ * название, уточнение и адрес через табуляцию; нет уточнения или адреса — поле пустое.
+ */
+function sourcesPlainText(data: IRtSourcesData, label: string): string {
+    const lines: string[] = data.items.map((item: IRtSourceItem): string =>
+        [item.title, item.detail, item.url].map((field: string | null): string => copyField(field)).join('\t')
+    );
+
+    return [`${copyField(label)}\t${data.items.length}`, ...lines].join('\n');
 }
 
 /** Заголовок блока `table`: непустая строка, иначе его нет. */
@@ -169,6 +195,7 @@ interface ICopyContext {
     readonly byType: ReadonlyMap<string, IRtAiChat.BlockRenderer>;
     readonly locale: string;
     readonly points: TRtAiChatPointsWriter;
+    readonly sourcesLabel: string;
 }
 
 /**
@@ -176,7 +203,7 @@ interface ICopyContext {
  * текстом своей функции. Секция сюда попадает только вложенной: она не рисуется и текста не даёт.
  */
 function leafText(block: IRtAiChat.Block, context: ICopyContext): string {
-    const { byType, locale, points }: ICopyContext = context;
+    const { byType, locale, points, sourcesLabel }: ICopyContext = context;
 
     if (isMarkdownBlock(block)) {
         return markdownToPlainText(block.text);
@@ -201,6 +228,11 @@ function leafText(block: IRtAiChat.Block, context: ICopyContext): string {
 
     if (link !== null) {
         return linkPlainText(link);
+    }
+    const sources: IRtSourcesData | null = sourcesBlockData(block);
+
+    if (sources !== null) {
+        return sourcesPlainText(sources, sourcesLabel);
     }
 
     return rendererText(byType.get(block.type), block);
@@ -254,6 +286,11 @@ function leafView(block: IRtAiChat.Block, byType: ReadonlyMap<string, IRtAiChat.
     if (link !== null) {
         return { kind: 'link', data: link };
     }
+    const sources: IRtSourcesData | null = sourcesBlockData(block);
+
+    if (sources !== null) {
+        return { kind: 'sources', data: sources };
+    }
     const renderer: IRtAiChat.BlockRenderer | undefined = byType.get(block.type);
 
     return renderer ? { kind: 'custom', component: renderer.component, block } : { kind: 'unsupported', type: block.type };
@@ -303,15 +340,17 @@ export function toBlockViews(
  * строками через табуляцию со значениями в языке кита, KPI — строкой на карточку через табуляцию,
  * блоки из реестра — текстом функции `toText` их отрисовщика. Блок без такой функции пропущен.
  * Секция — заголовком и текстами своих блоков.
- * Пункты дельты пишутся подписью `points`; без неё — английским умолчанием кита.
+ * Пункты дельты пишутся подписью `points`, заголовок источников — `sourcesLabel`; без них — английским
+ * умолчанием кита.
  */
 export function blocksToPlainText(
     blocks: readonly IRtAiChat.Block[],
     renderers: readonly IRtAiChat.BlockRenderer[] = [],
     locale: string = 'en',
-    points: TRtAiChatPointsWriter = defaultPoints
+    points: TRtAiChatPointsWriter = defaultPoints,
+    sourcesLabel: string = DEFAULT_SOURCES_LABEL
 ): string {
-    const context: ICopyContext = { byType: lastByType(renderers), locale, points };
+    const context: ICopyContext = { byType: lastByType(renderers), locale, points, sourcesLabel };
 
     return blocks
         .map((block: IRtAiChat.Block): string => blockText(block, context))

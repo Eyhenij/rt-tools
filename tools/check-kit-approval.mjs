@@ -18,6 +18,10 @@
  *
  *   - **Макет:** «<the owner's words>» — <the Figma link>
  *   - **Витрина:** «<the owner's words>»
+ *
+ * An edit the owner said changes nothing visible carries one line instead of all three:
+ *
+ *   - **Без вида:** «<the owner's words>»
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
@@ -71,8 +75,10 @@ export function parseApprovals(text) {
     const mockup = /^- \*\*Макет:\*\* «(.+?)» — (https:\/\/(?:www\.)?figma\.com\/\S+)/m.exec(text);
     const showcase = /^- \*\*Витрина:\*\* «(.+?)»/m.exec(text);
     const match = /^- \*\*Совпадение:\*\* (\d+) из (\d+) чисел/m.exec(text);
+    const invisible = /^- \*\*Без вида:\*\* «(.+?)»/m.exec(text);
 
     return {
+        invisible: invisible ? invisible[1] : null,
         mockup: mockup ? mockup[1] : null,
         figma: mockup ? mockup[2] : null,
         showcase: showcase ? showcase[1] : null,
@@ -101,6 +107,13 @@ export function faultsOf(name, record) {
 
     const found = parseApprovals(record.text);
     const faults = [];
+
+    // A kit file edited without a change of look — the type an input takes, say — has no frame to
+    // draw. The owner's word that nothing visible changed stands in for all three lines; like the
+    // other quotes, it goes to the owner's window on `gh pr create` — `quotesLine` shows it there.
+    if (found.invisible !== null) {
+        return [];
+    }
 
     if (found.mockup === null) {
         faults.push(`${record.path}: no line «- **Макет:** «…» — <Figma link>»`);
@@ -224,6 +237,10 @@ function branchFaults() {
 /** The line of the window: both quotes of a record, for the owner to confirm. */
 export function quotesLine(record) {
     const found = parseApprovals(record.text);
+
+    if (found.invisible !== null) {
+        return `Без вида: «${found.invisible}» (${record.path})`;
+    }
 
     return `Макет: «${found.mockup}» — ${found.figma} · Витрина: «${found.showcase}» (${record.path})`;
 }

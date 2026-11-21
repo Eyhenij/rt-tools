@@ -114,6 +114,28 @@ test.describe('раздел использования', () => {
         await expect(prev).not.toHaveClass(/--secondary\b/);
     });
 
+    test('SC-MB-453 — начало периода открывает месяц, где дни после конца зачёркнуты, а дни до него — нет', async ({
+        page,
+    }: {
+        page: Page;
+    }) => {
+        await openSection(page, 'usage', PERIOD_QUERY);
+
+        await qa(page, 'list-period-from').locator('[qa-dataid="date-picker-open"]').click();
+
+        const popup: Locator = qa(page, 'date-picker-popup');
+        const prev: Locator = popup.locator('[qa-dataid="calendar-prev-month"] [qa-dataid="icon-button-control"]');
+        const next: Locator = popup.locator('[qa-dataid="calendar-next-month"] [qa-dataid="icon-button-control"]');
+
+        await expect(popup.locator('[qa-dataid="calendar-month-title"]')).toHaveText('Август 2026');
+        // конец периода — 31 августа: сентябрьский день зачёркнут, июльский — нет, а у начала нижней границы нет
+        await expect(popup.locator('[data-iso="2026-09-01"]')).toHaveAttribute('data-crossed', '');
+        await expect(popup.locator('[data-iso="2026-07-31"]')).toBeVisible();
+        await expect(popup.locator('[data-iso="2026-07-31"]')).not.toHaveAttribute('data-crossed', /.*/);
+        await expect(next).toBeDisabled();
+        await expect(prev).toBeEnabled();
+    });
+
     test('SC-MB-350 — нажатие на строку открывает панель сессий скила: день, признак сессии, сколько раз', async ({
         page,
     }: {

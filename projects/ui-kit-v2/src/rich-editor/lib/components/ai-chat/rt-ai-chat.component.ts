@@ -297,6 +297,9 @@ export class RtAiChatComponent {
 
     public readonly retry: OutputEmitterRef<void> = output<void>();
 
+    /** Нажато «спросить снова» прерванного ответа — id этого ответа. Кит сам ничего не отправляет. */
+    public readonly askAgain: OutputEmitterRef<string> = output<string>();
+
     public readonly newThread: OutputEmitterRef<void> = output<void>();
 
     public readonly closed: OutputEmitterRef<void> = output<void>();
@@ -316,6 +319,12 @@ export class RtAiChatComponent {
      * браузер разрешает открыть, только пока клик ещё идёт. Переход делает приложение.
      */
     public readonly linkOpen: OutputEmitterRef<IRtAiChat.LinkOpen> = output<IRtAiChat.LinkOpen>();
+
+    /**
+     * Нажат источник с адресом. Событие уходит внутри обработчика нажатия, как `linkOpen`. Адрес
+     * открывает приложение, предварительно проверив его схему.
+     */
+    public readonly sourceOpen: OutputEmitterRef<IRtAiChat.SourceOpen> = output<IRtAiChat.SourceOpen>();
 
     /** Нажата кнопка модели, усилия или режима в ряду поля: что она открывает, решает приложение. */
     public readonly controlPicked: OutputEmitterRef<IRtAiPromptInput.Control> = output<IRtAiPromptInput.Control>();
@@ -385,6 +394,10 @@ export class RtAiChatComponent {
 
     protected onLinkOpen(message: IRtAiChat.AssistantMessage, press: IRtAiChat.LinkPress): void {
         this.linkOpen.emit({ messageId: message.id, url: press.url, newTab: press.newTab });
+    }
+
+    protected onSourceOpen(message: IRtAiChat.AssistantMessage, press: IRtAiChat.SourcePress): void {
+        this.sourceOpen.emit({ messageId: message.id, url: press.url, title: press.title });
     }
 
     protected onToggleThreads(): void {

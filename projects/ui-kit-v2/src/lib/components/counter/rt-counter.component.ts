@@ -98,12 +98,17 @@ export class RtCounterComponent implements ControlValueAccessor {
 
     public readonly ariaLabel: InputSignal<string | null> = input<string | null>(null);
 
-    /** Нижняя граница; значение из формы поднимается до неё. */
-    public readonly min: InputSignalWithTransform<number, NumberInput> = input<number, NumberInput>(0, { transform: numberAttribute });
+    /**
+     * Нижняя граница; значение из формы поднимается до неё. `undefined` пишет сигнальная форма,
+     * когда снимает границу, — тогда, как и для не числа, граница по умолчанию.
+     */
+    public readonly min: InputSignalWithTransform<number, NumberInput> = input<number, NumberInput>(0, {
+        transform: (value: NumberInput): number => numberAttribute(value, 0),
+    });
 
-    /** Верхняя граница; по умолчанию потолка нет. */
+    /** Верхняя граница; по умолчанию потолка нет. `undefined` и не число — тоже потолка нет. */
     public readonly max: InputSignalWithTransform<number, NumberInput> = input<number, NumberInput>(Number.MAX_SAFE_INTEGER, {
-        transform: numberAttribute,
+        transform: (value: NumberInput): number => numberAttribute(value, Number.MAX_SAFE_INTEGER),
     });
 
     public readonly step: InputSignalWithTransform<number, NumberInput> = input<number, NumberInput>(1, { transform: numberAttribute });

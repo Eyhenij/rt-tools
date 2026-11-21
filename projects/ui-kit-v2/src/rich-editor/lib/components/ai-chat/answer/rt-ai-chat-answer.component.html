@@ -13,34 +13,52 @@
             rtElem="blocks"
             qa-dataid="ai-chat-answer-blocks"
             [blocks]="message().blocks"
-            (linkOpen)="linkOpen.emit($event)" />
+            (linkOpen)="linkOpen.emit($event)"
+            (sourceOpen)="sourceOpen.emit($event)" />
     }
     @if (extra(); as extraTemplate) {
         <ng-container [ngTemplateOutlet]="extraTemplate" [ngTemplateOutletContext]="{ $implicit: message() }" />
     }
-    @if (isWritten()) {
+    @if (isInterrupted()) {
+        <p rtElem="interrupted" qa-dataid="ai-chat-interrupted" [id]="interruptedId">{{ t().aiInterrupted }}</p>
+    }
+    @if (isWritten() || isInterrupted()) {
         <div rtElem="feedback" qa-dataid="ai-chat-feedback">
-            @if (canCopy()) {
+            @if (isWritten() && canCopy()) {
                 <rt-ai-chat-copy [text]="plainText()" />
             }
-            <rt-icon-button
-                qa-dataid="ai-chat-like"
-                size="sm"
-                iconSize="sm"
-                icon="thumb-up"
-                [active]="message().feedback === 'liked'"
-                [ariaLabel]="t().aiLike"
-                [tooltip]="t().aiLike"
-                (clicked)="feedbackChange.emit('liked')" />
-            <rt-icon-button
-                qa-dataid="ai-chat-dislike"
-                size="sm"
-                iconSize="sm"
-                icon="thumb-down"
-                [active]="message().feedback === 'disliked'"
-                [ariaLabel]="t().aiDislike"
-                [tooltip]="t().aiDislike"
-                (clicked)="feedbackChange.emit('disliked')" />
+            @if (isInterrupted()) {
+                <rt-icon-button
+                    qa-dataid="ai-chat-ask-again"
+                    size="sm"
+                    iconSize="sm"
+                    icon="sync"
+                    [ariaLabel]="t().aiRetry"
+                    [ariaDescribedby]="interruptedId"
+                    [tooltip]="t().aiRetry"
+                    [disabled]="sending()"
+                    (clicked)="askAgain.emit()" />
+            }
+            @if (isWritten()) {
+                <rt-icon-button
+                    qa-dataid="ai-chat-like"
+                    size="sm"
+                    iconSize="sm"
+                    icon="thumb-up"
+                    [active]="message().feedback === 'liked'"
+                    [ariaLabel]="t().aiLike"
+                    [tooltip]="t().aiLike"
+                    (clicked)="feedbackChange.emit('liked')" />
+                <rt-icon-button
+                    qa-dataid="ai-chat-dislike"
+                    size="sm"
+                    iconSize="sm"
+                    icon="thumb-down"
+                    [active]="message().feedback === 'disliked'"
+                    [ariaLabel]="t().aiDislike"
+                    [tooltip]="t().aiDislike"
+                    (clicked)="feedbackChange.emit('disliked')" />
+            }
         </div>
     }
 </ng-container>
