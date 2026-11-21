@@ -19,8 +19,7 @@ Rewritten by every session, not appended to.
 - [x] 1.3 Write the config file with the report path in tmp and nothing else
 - [x] 2.1 Write the check that reads the JSON of the tool from stdin and compares the score with the threshold
 - [x] 2.2 Write its scenario set: equal, lower, higher, empty input, broken input
-- [>] 2.3 Add the scenario set to the selection by a changed file
-- [ ] 2.4 Add the step to check:all
+- [>] 2.4 Add the step to check:all
 - [ ] 3.1 Name the command and its place in check:all in CLAUDE.md
 
 ## Decisions along the way
@@ -41,6 +40,10 @@ Rewritten by every session, not appended to.
   for any changed path under `tools/` that is not a test, so every set runs, the new one with them.
   A set file is picked by name only for texts and the harness. The check line waits for the set
   name and gets `all`. Affected stage of the plan: 2.
+- **2026-11-21. Step 2.3 is removed from the plan.** The owner's word: «Убрать шаг 2.3 из плана».
+  The plan lost the step and its check line; the numbering of the rest is kept.
+- **2026-11-21. knip red on main becomes a task of the epic right after this one.** The owner's
+  word: «В эпик, перед RT-3478».
 
 ## What the work found beside the subject
 
