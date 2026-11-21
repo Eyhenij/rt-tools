@@ -270,6 +270,14 @@ export class RtAiChatComponent {
         transform: booleanAttribute,
     });
 
+    /**
+     * Подпись автора «You» в пузыре вопроса. Выключенная, она не попадает на страницу вовсе: токен
+     * спрятал бы её только от глаз, а диктор читал бы её по-прежнему.
+     */
+    public readonly questionAuthor: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
     /** Кнопка копирования текста под вопросом и в строке действий ответа. */
     public readonly copyable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
