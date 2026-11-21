@@ -86,6 +86,11 @@ RT-3425 and RT-3468. What each plan took in is written in its grill; below is wh
 - **A background run longer than 20 minutes no longer holds the menu.** On 20.11 the push set ran
   24 and 37 minutes, and the engine counted the stops idle. **Address:** `BACKGROUND_BOUND` of the
   engine against the measured length of the push set.
+- **A stop word of the owner releases every turn a background task wakes after it.** The engine
+  reads the owner's last word over the whole record, and a notice of a task carries no word. On
+  20.11 after «стоп» at 16:37 the session was woken 7 times and made 44 calls before the owner's
+  next word. Whether a stop lasts one turn is a product choice for the owner. **Address:**
+  `measure/owner.mjs:saidStop` with a bound «no call of the agent after the word».
 
 ## Left unresolved
 
