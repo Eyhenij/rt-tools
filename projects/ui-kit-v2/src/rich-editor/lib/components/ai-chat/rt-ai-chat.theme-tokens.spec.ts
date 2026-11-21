@@ -44,7 +44,7 @@ function compiled(path: string): string {
 }
 
 describe('токены вида чата', (): void => {
-    it('SC-UKV-1596 — токены чата по умолчанию равны нынешним значениям', (): void => {
+    it('SC-UKV-1655 — токены чата по умолчанию равны нынешним значениям', (): void => {
         const root: string = ruleBody(compiled(CHAT), '.rt-ai-chat');
 
         expect(root).toContain('--rt-ai-chat-question-font-size: var(--rt-text-sm)');
@@ -70,14 +70,14 @@ describe('токены вида чата', (): void => {
         expect(root).not.toContain('--rt-ai-chat-rating-active-color:');
     });
 
-    it('SC-UKV-1583 — семейство чата получает вся лента, без запасного значения', (): void => {
+    it('SC-UKV-1642 — семейство чата получает вся лента, без запасного значения', (): void => {
         const chat: string = compiled(CHAT);
 
         expect(ruleBody(chat, '.rt-ai-chat__feed')).toContain('font-family: var(--rt-ai-chat-font-family)');
         expect(ruleBody(chat, '.rt-ai-chat__bubble-text')).not.toContain('font-family');
     });
 
-    it('SC-UKV-1587 — шапка чата и шапка колонки бесед читают одни токены', (): void => {
+    it('SC-UKV-1646 — шапка чата и шапка колонки бесед читают одни токены', (): void => {
         const chat: string = compiled(CHAT);
 
         for (const selector of ['.rt-ai-chat__header', '.rt-ai-chat__column-head']) {
@@ -88,7 +88,7 @@ describe('токены вида чата', (): void => {
         }
     });
 
-    it('SC-UKV-1595 — чат задаёт токены частей правилом на блоке части внутри себя', (): void => {
+    it('SC-UKV-1654 — чат задаёт токены частей правилом на блоке части внутри себя', (): void => {
         const chat: string = compiled(CHAT);
         const root: string = ruleBody(chat, '.rt-ai-chat');
         const markdown: string = ruleBody(chat, '.rt-ai-chat .rt-markdown-text');
@@ -112,7 +112,7 @@ describe('токены вида чата', (): void => {
         expect(root).not.toContain('--rt-thread-list-');
     });
 
-    it('SC-UKV-1594 — каждая часть объявляет свои токены на своём блоке с нынешним значением', (): void => {
+    it('SC-UKV-1653 — каждая часть объявляет свои токены на своём блоке с нынешним значением', (): void => {
         const markdown: string = ruleBody(compiled(MARKDOWN), '.rt-markdown-text');
         const prompt: string = ruleBody(compiled(PROMPT), '.rt-ai-prompt-input');
         const threads: string = ruleBody(compiled(THREADS), '.rt-thread-list');
@@ -131,7 +131,7 @@ describe('токены вида чата', (): void => {
         expect(threads).toContain('--rt-thread-list-under-actions-visibility: visible');
     });
 
-    it('SC-UKV-1594 — части читают свои токены без запасного значения на месте', (): void => {
+    it('SC-UKV-1653 — части читают свои токены без запасного значения на месте', (): void => {
         const markdown: string = ruleBody(compiled(MARKDOWN), '.rt-markdown-text');
         const prompt: string = compiled(PROMPT);
         const threads: string = compiled(THREADS);
@@ -162,7 +162,7 @@ describe('токены вида чата', (): void => {
         );
     });
 
-    it('SC-UKV-1586 — выбранная оценка без токенов чата красится как прежде', (): void => {
+    it('SC-UKV-1645 — выбранная оценка без токенов чата красится как прежде', (): void => {
         const active: string = ruleBody(
             compiled(ANSWER),
             '.rt-ai-chat-answer__feedback rt-icon-button .rt-icon-button.rt-icon-button--active'
@@ -179,7 +179,7 @@ describe('токены вида чата', (): void => {
         expect(hovered).toContain('color: var(--rt-ai-chat-rating-active-color, var(--rt-icon-button-color-hover))');
     });
 
-    it('SC-UKV-1592 — скругление кнопок действий строки уступает входу radius кнопки', (): void => {
+    it('SC-UKV-1651 — скругление кнопок действий строки уступает входу radius кнопки', (): void => {
         const threads: string = compiled(THREADS);
 
         expect(ruleBody(threads, '.rt-thread-list__row-actions :where(rt-icon-button) .rt-icon-button')).toContain(
@@ -187,7 +187,7 @@ describe('токены вида чата', (): void => {
         );
     });
 
-    it('SC-UKV-1598 — поиск списка бесед без предела ширины', (): void => {
+    it('SC-UKV-1657 — поиск списка бесед без предела ширины', (): void => {
         const search: string = ruleBody(compiled(THREADS), '.rt-thread-list__search');
 
         expect(search).toContain('flex: 1 1 auto');
@@ -195,7 +195,7 @@ describe('токены вида чата', (): void => {
         expect(search).not.toContain('max-width');
     });
 
-    it('SC-UKV-1599 — заголовки и код ответа не читают токены семейства и кегля', (): void => {
+    it('SC-UKV-1658 — заголовки и код ответа не читают токены семейства и кегля', (): void => {
         const markdown: string = compiled(MARKDOWN);
 
         for (const level of [1, 2, 3, 4, 5, 6]) {
@@ -212,7 +212,7 @@ describe('токены вида чата', (): void => {
         }
     });
 
-    it('SC-UKV-1597 — витрина ставит токены правилом на элементе чата, без внутренних классов', (): void => {
+    it('SC-UKV-1656 — витрина ставит токены правилом на элементе чата, без внутренних классов', (): void => {
         const css: string = compiled(STORY)
             .replace(/\/\*[\s\S]*?\*\//g, '')
             .replace(/@charset[^;]*;/, '');

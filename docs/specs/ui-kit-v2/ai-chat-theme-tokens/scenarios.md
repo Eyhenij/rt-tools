@@ -10,7 +10,7 @@ asks it about the scroll stop. Hover and focus in the stories are set by the pse
 parameters of the showcase, not by play steps. The look with changed handles is shown by the
 snapshots of the stories **Properties**, **Properties · focus** and **Properties · row actions**.
 
-### SC-UKV-1582 — the question and the answer take their sizes from the chat
+### SC-UKV-1641 — the question and the answer take their sizes from the chat
 
 Given a chat with `--rt-ai-chat-question-font-size` and `--rt-ai-chat-answer-font-size` set on its element
 When a question and an answer are drawn
@@ -19,7 +19,7 @@ Then the question text and the answer text are drawn in those sizes
 Not covered: a test has no layout, and this is a style rule. It is shown by the snapshot of the
 story **Properties**, the font cell.
 
-### SC-UKV-1583 — the chat family reaches the whole feed
+### SC-UKV-1642 — the chat family reaches the whole feed
 
 Given a chat with `--rt-ai-chat-font-family` set on its element
 When a question and an answer are drawn
@@ -31,7 +31,7 @@ Covered by a test of the compiled CSS: the feed reads the handle with no fallbac
 text takes it by the pass-down. The look is shown by the snapshot of the story **Properties**, the
 font cell and the default cell.
 
-### SC-UKV-1584 — Send and Stop take the chat primary colour
+### SC-UKV-1643 — Send and Stop take the chat primary colour
 
 Given a chat with `--rt-ai-chat-send-bg` and `--rt-ai-chat-send-bg-hover` set on its element
 When Send is drawn, hovered and disabled, and Stop is drawn while sending
@@ -41,7 +41,7 @@ Then both take that fill and that hover fill, the disabled Send draws a share of
 Not covered: a test has no layout, and this is a style rule. It is shown by the snapshot of the
 story **Properties · focus**, with Send and Stop hovered by its pseudo-state parameter.
 
-### SC-UKV-1585 — the prompt box in focus takes the chat ring
+### SC-UKV-1644 — the prompt box in focus takes the chat ring
 
 Given a chat with `--rt-ai-chat-focus-border-color` and `--rt-ai-chat-focus-shadow` set on its element
 When the prompt field gets the focus
@@ -50,7 +50,7 @@ Then the box draws that border colour and that ring
 Not covered: a test has no layout, and this is a style rule. It is shown by the snapshot of the
 story **Properties · focus**, with the field focused by its pseudo-state parameter.
 
-### SC-UKV-1586 — a chosen rating takes the chat colours, also under the pointer
+### SC-UKV-1645 — a chosen rating takes the chat colours, also under the pointer
 
 Given a chat with `--rt-ai-chat-rating-active-bg` and `--rt-ai-chat-rating-active-color` set on its element
 And an answer rated «liked»
@@ -63,7 +63,7 @@ fill and the colour of the icon button as the fallback, at rest and under the po
 declares no default for them. The look is shown by the snapshot of
 the story **Properties · focus**.
 
-### SC-UKV-1587 — the header and the column head take one height and divider
+### SC-UKV-1646 — the header and the column head take one height and divider
 
 Given a chat with the thread column, and `--rt-ai-chat-header-height`,
 `--rt-ai-chat-header-border-width` and `--rt-ai-chat-header-border-color` set on its element
@@ -75,7 +75,7 @@ Covered by a test of the compiled CSS: the header and the column head read the s
 The snapshot of the story **Properties**, the header cell, shows the header; the column head is
 drawn only in the full screen, and its height is measured there in the running showcase.
 
-### SC-UKV-1588 — suggestion cards take the chat width and rounding, never wider than the column
+### SC-UKV-1647 — suggestion cards take the chat width and rounding, never wider than the column
 
 Given a chat with no messages, suggestions, and `--rt-ai-chat-suggestion-width` and
 `--rt-ai-chat-suggestion-radius` set on its element
@@ -86,7 +86,7 @@ chat the cards take the column width, and every card takes that rounding
 Not covered: a test has no layout, and this is a style rule. It is shown by the snapshot of the
 story **Properties**, the suggestion cell.
 
-### SC-UKV-1589 — `questionAuthor` off leaves the author label out
+### SC-UKV-1648 — `questionAuthor` off leaves the author label out
 
 Given a chat with `questionAuthor` set to `false` and a question
 When the question is drawn
@@ -94,7 +94,7 @@ Then its bubble holds no author label node and starts with the question text
 
 Covered by a test of the chat component: the node `rt-ai-chat__author` is absent.
 
-### SC-UKV-1590 — the author label is drawn by default
+### SC-UKV-1649 — the author label is drawn by default
 
 Given a chat without the input `questionAuthor` and a question
 When the question is drawn
@@ -102,7 +102,7 @@ Then its bubble holds the author label «You» above the text, as before
 
 Covered by a test of the chat component: the node `rt-ai-chat__author` holds the kit label.
 
-### SC-UKV-1591 — the panel and the prompt box take two backgrounds
+### SC-UKV-1650 — the panel and the prompt box take two backgrounds
 
 Given a chat with `--rt-ai-chat-bg` and `--rt-ai-chat-prompt-bg` set to two different values on its element
 When the chat is drawn
@@ -111,7 +111,7 @@ Then the panel takes the first and the prompt box the second
 Not covered: a test has no layout, and this is a style rule. It is shown by the snapshot of the
 story **Properties**, the background cell.
 
-### SC-UKV-1592 — the row actions take the chat background, padding and rounding
+### SC-UKV-1651 — the row actions take the chat background, padding and rounding
 
 Given a chat with conversations, `--rt-ai-chat-thread-actions-bg`, `--rt-ai-chat-thread-actions-bg-active`,
 `--rt-ai-chat-thread-actions-padding-inline` and `--rt-ai-chat-thread-action-radius` set on its element
@@ -123,7 +123,7 @@ Covered by a test of the compiled CSS of the conversation list: the rounding rul
 `radius` input of the button. The look is shown by the snapshot of the story
 **Properties · row actions**, with one row hovered by its pseudo-state parameter.
 
-### SC-UKV-1593 — the row time under the shown actions is hidden only on request
+### SC-UKV-1652 — the row time under the shown actions is hidden only on request
 
 Given a chat with conversations that have a time and an unread count
 When the row actions of a row are shown without `--rt-ai-chat-thread-time-under-actions` set
@@ -139,7 +139,7 @@ the cell with the handle while its badge stays, and the time of the other rows s
 is not in a frame: the showcase does not emulate a screen without a pointer. The rule that sets the
 visibility stands outside the hover media query.
 
-### SC-UKV-1594 — the parts take their own handles outside the chat
+### SC-UKV-1653 — the parts take their own handles outside the chat
 
 Given a markdown text, a prompt input and a conversation list each used alone, with their part
 handles set
@@ -151,7 +151,7 @@ Covered by a test of the compiled CSS of each part: the part declares its handle
 with today's value, every property reads them with no fallback, and the disabled box sets its own
 background.
 
-### SC-UKV-1595 — a chat handle reaches its part
+### SC-UKV-1654 — a chat handle reaches its part
 
 Given a chat with chat handles set on its element
 When its parts are drawn inside it
@@ -161,7 +161,7 @@ Covered by a test of the compiled CSS: the chat sets every part handle from its 
 rule on the block of the part, and declares no part handle on its own element. The computed value at each part is measured in the running
 showcase.
 
-### SC-UKV-1596 — without the new handles the chat looks as before
+### SC-UKV-1655 — without the new handles the chat looks as before
 
 Given a chat without any new handle and without the input `questionAuthor`
 When it is drawn in the light and in the dark theme
@@ -171,7 +171,7 @@ Covered by a test of the compiled CSS: every chat handle defaults and every part
 to the value the property took before. The former snapshots of the chat family match without a
 re-take.
 
-### SC-UKV-1597 — the showcase sets the handles without an internal selector
+### SC-UKV-1656 — the showcase sets the handles without an internal selector
 
 Given the stories **Properties**, **Properties · focus** and **Properties · row actions**
 When their own CSS is read
@@ -182,7 +182,7 @@ Covered by a test that reads the CSS of those stories. The rules lie in the kit 
 story's styles must, and win by the cell attribute; an application rule outside the layers wins
 without one.
 
-### SC-UKV-1598 — the search fills the head of the list inside the chat
+### SC-UKV-1657 — the search fills the head of the list inside the chat
 
 Given a chat with its conversation list open
 When the head of the list is drawn
@@ -191,7 +191,7 @@ Then the search fills it up to the filter button, with no width cap
 Covered by a test of the compiled CSS: the search grows and declares no `max-inline-size`. The
 search width against the head is measured in the running showcase.
 
-### SC-UKV-1599 — the headings and code of an answer keep their own type
+### SC-UKV-1658 — the headings and code of an answer keep their own type
 
 Given a chat with `--rt-ai-chat-font-family` and `--rt-ai-chat-answer-font-size` set on its element
 And an answer with a heading, inline code and a code block
