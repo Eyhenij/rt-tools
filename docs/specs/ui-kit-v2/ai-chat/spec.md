@@ -27,6 +27,8 @@ conversations. Every application repeats the same screen, and every copy drifts 
 - **The run error** — the last run failed: the message, the reference number, whether to ask again.
 - **The interrupted answer** — an answer the application marked as broken off; its label and its
   own «Ask again» follow `docs/specs/ui-kit-v2/ai-chat-interrupted/`.
+- **The look handles** — the properties `--rt-ai-chat-*` and the input `questionAuthor` by which an
+  application sets the look of the chat; they follow `docs/specs/ui-kit-v2/ai-chat-theme-tokens/`.
 
 ### What it is called in the interface
 

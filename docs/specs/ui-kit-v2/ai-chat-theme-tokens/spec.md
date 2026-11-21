@@ -1,13 +1,14 @@
 # The look handles of the assistant chat
 
-**Status:** proposed · **Revision:** 2026-11-20 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-21 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the assistant chat, the prompt input, the markdown text, the conversation list,
 the suggestion card and the icon button of the second kit
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
 **Procedures:** none
 
-A product agreement written before the code by task RT-3344. It merges into the second kit's spec
-as a subdomain of its own next to `ai-chat`, with the scenario numbers unchanged.
+The look of `rt-ai-chat` an application sets by handles on the chat element and by the input
+`questionAuthor`, with no selector of an internal class. It is written by task RT-3344 and stands
+as a subdomain of its own next to `ai-chat`. The showcase is approved by the owner.
 
 ## Why
 
@@ -36,8 +37,6 @@ are declared by `docs/specs/ui-kit-v2/ai-chat/` and are not declared again here.
 
 A person sees the same chat; the handles are invisible to them. The author label is the muted line
 «You» above the text of a question.
-
-## Rules
 
 ### The card items
 
@@ -102,6 +101,8 @@ The answer of the chat reads `--rt-ai-chat-rating-active-bg` and `--rt-ai-chat-r
 with the fallback in place as well. The fallbacks are the fill and the colour the icon button takes
 itself, at rest and under the pointer, so a value the application sets on the button reaches the
 chosen rating as before.
+
+## Rules
 
 ### The cascade
 
@@ -288,3 +289,5 @@ None.
   actions takes the time only and the handle is renamed `--rt-ai-chat-thread-time-under-actions`,
   the rating handles have no default on the chat, the button radius in the row actions yields to
   the button `radius` input.
+- 2026-11-21 — merged into the kit spec as the subdomain `ai-chat-theme-tokens` after four review
+  rounds; the bindings point at the code.

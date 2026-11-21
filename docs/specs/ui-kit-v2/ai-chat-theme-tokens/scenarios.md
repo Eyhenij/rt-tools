@@ -4,13 +4,11 @@ The prefix `SC-UKV` is shared across the domain together with the subdomains. Th
 by `pnpm run spec:next-id SC-UKV` as the next free ones and do not change after the merge into the
 spec: the titles of the tests refer to them.
 
-What a scenario will be covered by is said under it. A handle default, a part declaration and a
+What a scenario is covered by is said under it. A handle default, a part declaration and a
 pass-down are style rules: the compiled CSS of the component is asked for them, as the chat already
-asks it about the scroll stop. A value that has to reach a part is measured in the running
-showcase before the work is shown, and the numbers go into the task progress. Hover and focus in the
-stories are set by the pseudo-state parameters of the showcase, not by play steps. The look with changed handles is shown by the snapshots of the stories **Properties**,
-**Properties · focus** and **Properties · row actions**. The scenarios a test is planned for stay
-red in the spec audit until that test exists.
+asks it about the scroll stop. Hover and focus in the stories are set by the pseudo-state
+parameters of the showcase, not by play steps. The look with changed handles is shown by the
+snapshots of the stories **Properties**, **Properties · focus** and **Properties · row actions**.
 
 ### SC-UKV-1582 — the question and the answer take their sizes from the chat
 
