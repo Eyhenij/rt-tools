@@ -77,13 +77,14 @@ export function deployLag(workflow, mainBranch, options) {
 }
 
 /**
- * The refusal of the host to compare: it could not build the answer in time. The REST comparison
- * says «diff is taking too long» with HTTP 422; the GraphQL one says «Something went wrong while
- * executing your query», which the reader of the host takes for a network failure by its word
- * «timeout». Only these are a note. Another 422, a 500, no rights or a commit that is gone break the
- * audit, as any other failure does.
+ * The refusal of the host to compare: it could not build the answer in time. The GraphQL comparison
+ * says so by «This may be the result of a timeout», which the reader of the host takes for a network
+ * failure by its word «timeout». The words «Something went wrong while executing your query» alone
+ * are not enough: the host says them for a commit that is gone as well, measured on 21.11, and such a
+ * commit must break the audit, not leave it green. Only the timeout is a note. Another failure — a
+ * 422, a 500, a refusal by rights (HTTP 403), a commit that is gone — breaks the audit.
  */
-const COMPARISON_REFUSED = /diff is taking too long|Something went wrong while executing your query/i;
+const COMPARISON_REFUSED = /result of a timeout/i;
 
 /**
  * How many commits the main branch holds past the rolled-out one.

@@ -316,6 +316,8 @@ try {
 // Production is audited against the main branch by the last successful rollout. A task leaves the
 // queue by a merge, but a merge is not yet production: where the rollout is started by hand, any
 // number of commits may lie between them, and there is nowhere to notice this from.
+let productionOffline = false;
+let hostFailed = false;
 if (!offline && DEPLOY_WORKFLOW) {
     const token = botToken() ?? undefined;
     productionStep(() => {
@@ -351,19 +353,24 @@ if (!offline && DEPLOY_WORKFLOW) {
 }
 
 /**
- * One request about production. No connection is a note; any other failure breaks the audit by one
- * line, the way a failure of the queue does, not by a stack.
+ * One request about production. No connection is a note, said once: the next step would only
+ * repeat it. Any other failure is a line of its own and the exit code 1, not a stack — and the audit
+ * goes on: what the queue and the next steps have judged is printed, not thrown away with it.
  */
 function productionStep(step) {
+    if (productionOffline) {
+        return;
+    }
     try {
         step();
     } catch (error) {
         if (error instanceof OfflineError) {
             console.log(`check-board: production was not checked — ${error.message}`);
+            productionOffline = true;
             return;
         }
-        console.error(`check-board: ${String(error.message ?? error)}`);
-        process.exit(1);
+        console.error(`check-board: production was not checked, the host failed — ${String(error.message ?? error)}`);
+        hostFailed = true;
     }
 }
 
@@ -437,6 +444,10 @@ if (problems.length > 0) {
     problems.forEach((problem) => console.error(`  ${problem}`));
     console.error('\nA task is created by the command npm run task:new — it does all four steps at once.');
     console.error('The task folder and taking it apart — the rule task-flow.');
+    process.exit(1);
+}
+
+if (hostFailed) {
     process.exit(1);
 }
 

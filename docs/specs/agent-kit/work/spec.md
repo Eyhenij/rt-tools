@@ -244,10 +244,14 @@ the merge, not after.
   host refused it with HTTP 422 twice in a row before the PR of a task. The GraphQL comparison
   counts the commits only.
 - **A comparison the host could not build is a note, not a divergence.** Caught are only the words
-  of «could not in time»: «diff is taking too long» of the REST comparison and «Something went wrong
-  while executing your query» of the GraphQL one. Nothing was judged, and the lines after the lag
-  still come: the last rollout is asked in a step of its own. Another 422, a 500, no rights or a
-  failure of another request break the check by one line, without a stack.
+  «result of a timeout» of the GraphQL comparison. Its first words, «Something went wrong while
+  executing your query», the host says for a commit that is gone as well, and such a commit must not
+  leave the check green. Nothing was judged, and the lines after the lag still come: the last rollout
+  is asked in a step of its own.
+- **A failure of a request about production is a line and the exit code 1, not a stack.** A commit
+  that is gone, another 422, a 500, a refusal by rights (HTTP 403) or a failure of the request about
+  the last rollout are named by one line; the divergences already counted and the next steps are
+  printed after it. No connection is one note for the whole of production.
 - **A rollout in progress does not count as a divergence.** It may still end in success, and a turn
   refused by it pays for a state that will be gone in a minute.
 - **A tree that named no mark or no directory of the lines gets silence, not a refusal.** There will be

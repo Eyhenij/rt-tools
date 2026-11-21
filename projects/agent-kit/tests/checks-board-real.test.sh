@@ -73,9 +73,13 @@ report "SC-AK-1600 — последний прогон главной на на�
 audit_out="$(reader tools/check-board.mjs)"
 audit_code="$(cd "$ROOT" && env -u FORCE_COLOR NO_COLOR=1 HOME="$SUITE_HOME" GH_BIN="$REPLAY" REPLAY_TOKEN_FILE="$FAKE_TOKEN" \
     node tools/check-board.mjs > /dev/null 2>&1; printf '%s' "$?")"
+# The number comes from the recorded answer of the GraphQL comparison, and a line lost on both sides
+# must not pass: the line is counted on each side, then compared.
+lag_line='production lags «main» by [0-9]+ commits'
 report "SC-AK-1600 — аудит очереди называет отставание числом, как в записанном выводе" \
-    "$(printf '%s\n' "$audit_out" | grep -E 'production lags «main» by [0-9]+ commits')" \
-    "$(grep -E 'production lags «main» by [0-9]+ commits' "$REAL/.audit.txt")"
+    "$(printf '%s\n' "$audit_out" | grep -cE "$lag_line"):$(grep -cE "$lag_line" "$REAL/.audit.txt"):$(
+        [ "$(printf '%s\n' "$audit_out" | grep -E "$lag_line")" = "$(grep -E "$lag_line" "$REAL/.audit.txt")" ] && printf same)" \
+    "1:1:same"
 report "SC-AK-1600 — аудит очереди печатает последнюю строку" \
     "$(printf '%s\n' "$audit_out" | tail -1)" "$(tail -1 "$REAL/.audit.txt")"
 report "SC-AK-1600 — аудит очереди кончается кодом записанного вывода, без стека" \

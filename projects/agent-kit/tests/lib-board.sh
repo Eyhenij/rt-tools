@@ -34,13 +34,16 @@ args="$*"
 printf '%s\n' "$args" >> "${STUB_CALLS:-/dev/null}"
 case "$args" in
     # Отставание прода спрашивается GraphQL-сравнением, и стоит оно раньше доски: доска — тоже
-    # GraphQL. STUB_COMPARE задаёт отказ хостинга: 422 и timeout — «не успел построить» словами
-    # REST- и GraphQL-сравнения, 422-other — другой отказ с тем же кодом, 500 — сбой.
+    # GraphQL. STUB_COMPARE задаёт отказ хостинга: timeout — «не успел», gone — те же первые
+    # слова, которыми хостинг отвечает на пропавший коммит (замер 21.11), 422 — слова REST-сравнения,
+    # 422-other — другой отказ с тем же кодом, offline — нет сети, 500 — сбой.
     *graphql*behindBy*)
         case "${STUB_COMPARE:-}" in
+            timeout) printf '%s\n' 'gh: Something went wrong while executing your query. This may be the result of a timeout, or it could be a GitHub bug. Please include `F80D:1` when reporting this issue.' >&2; exit 1 ;;
+            gone) printf '%s\n' 'gh: Something went wrong while executing your query on 2026-11-21T01:07:25Z. Please include `F80D:1` when reporting this issue.' >&2; exit 1 ;;
             422) printf '%s\n' 'gh: Server Error: Sorry, this diff is taking too long to generate. (HTTP 422)' >&2; exit 1 ;;
-            timeout) printf '%s\n' 'gh: Something went wrong while executing your query. This may be the result of a timeout, or it could be a GitHub bug.' >&2; exit 1 ;;
             422-other) printf '%s\n' 'gh: Validation Failed (HTTP 422)' >&2; exit 1 ;;
+            offline) printf '%s\n' 'dial tcp: lookup api.github.com: no such host' >&2; exit 1 ;;
             500) printf '%s\n' 'gh: Server Error (HTTP 500)' >&2; exit 1 ;;
             *) printf '%s\n' "$STUB_BEHIND" ;;
         esac
@@ -71,6 +74,7 @@ case "$args" in
     # нужно отдельно от отставания, задаёт STUB_DEPLOY_LAST.
     *actions/workflows/*per_page=1\ *)
         [ "${STUB_DEPLOY_LAST:-}" = 500 ] && { printf '%s\n' 'gh: Server Error (HTTP 500)' >&2; exit 1; }
+        [ "${STUB_DEPLOY_LAST:-}" = offline ] && { printf '%s\n' 'dial tcp: lookup api.github.com: no such host' >&2; exit 1; }
         printf '%s\n' "${STUB_DEPLOY_LAST:-$STUB_DEPLOY}"
         ;;
     *actions/workflows/*runs*) printf '%s\n' "$STUB_DEPLOY" ;;
