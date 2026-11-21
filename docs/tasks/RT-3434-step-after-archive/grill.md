@@ -20,6 +20,19 @@ lose its mark at the first mismatch before a PR, or the plan warns of such steps
 The sign: on a branch with the folder taken apart and a step mark taken off, the command
 `step N.M` measures the step and puts the mark, and the engine names no move that cannot be made.
 
+> продолжай RT-3471, эпик (четвёртая часть переделки проверок)
+
+The owner's word of 21.11.2026 moved the task into the epic RT-3471: row 4 of its plan
+`docs/plans/checks-rework-4.md`. Point B of the epic for this task and RT-3425: a task taken apart
+does not roll back into «этап-идёт», and a step mark taken off before a PR comes back. The
+milestone G: three working days in a row of at least 1500 calls, each with fewer than five
+refusals per hundred and no dead end.
+
+> дальше работай полностью самостоятельно в режиме ночной работы, я ухожу спать. не задавай вопросов и не останавливай сессию, все вопросы решай сам как посчитаешь наиболее правильным
+
+The night of 21.11 writes the plan and runs the roles; the code waits for the owner's approval of
+the plan in the morning.
+
 ## What the tree already has
 
 - **The command of a step.** `projects/agent-kit/assets/checks/flow-step.mjs:prepareStep` compares
@@ -77,7 +90,28 @@ None. The card names the three demands and the sign.
   is 540 seconds, and the hook that waits for the rerun has 1800. Rejected: a warning in the plan —
   a warning does not return the mark. Цена ошибки: одно число повторов.
 - **The line of an unmatched step names the command of its check and the last three lines of its
-  output.** A bare number says nothing; the command says what was counted.
+  output.** A bare number says nothing; the command says what was counted. The last three lines of
+  the error stream join them when it is not empty.
+
+The roles `product-strategist` and `goal-critic` read the first plan of 21.11 and found four dead
+ends it left. The decisions below replace the matching ones above where they differ. Спросить было
+некого: заход автономный.
+
+- **A step the history does not mark done, and a step that fails twice, get the move `git revert
+  <the commit that took the folder apart>`.** A bare refusal is a dead end again: no command makes
+  such a step done. The revert brings the folder back by a commit; the step guard lets it through.
+  Цена ошибки: одна строка хода и два сценария.
+- **The record of a putting back lies in the git directory of the copy and carries the process
+  number and the root.** A start of the engine during a live run of a neighbour call would remove
+  the folder under it. The folder is removed only when the process is gone, the folder is not at
+  the head and its files match the ones put back. Цена ошибки: одна запись и два сценария.
+- **The rerun before a PR goes by the same groups of progress versions within 1500 s from the start
+  of the rerun.** One group breaks the rule «the progress as it stood when the step was measured»,
+  and the hook that waits for the rerun has 1800 s. Цена ошибки: одно число бюджета.
+- **The exit refusal with no folder reads the progress from history and names the step number.**
+  «`step N.M`» with no number is a move nobody can make.
+- **The search for the commit that removed a path is one function of the history source,
+  `removedAt`.** This task moves today's search into it as is; RT-3425 fixes the search there.
 
 ## What is left unclear
 

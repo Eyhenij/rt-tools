@@ -15,6 +15,20 @@ refusals with no check named, up to 7,19 per hundred a day, and those of `flow-s
 0,37 to 0,93. The card asks to find by the session records where both come from and to lift the
 false ones. Its sign: the report shows the milestone reached on at least one day.
 
+> продолжай RT-3471, эпик (четвёртая часть переделки проверок)
+
+The owner's word of 21.11.2026 moved the task into the epic RT-3471: row 3 of its plan
+`docs/plans/checks-rework-4.md`. The milestone G there is three working days in a row of at least
+1500 calls, each with fewer than five refusals per hundred and no dead end. Point B of the epic
+for this task: every refusal has a name, the report splits the dead ends by check, and the false
+refusals of the step guard are lifted. The report over 15–21.11 gives 4,86 to 22,82 refusals per
+hundred and 4 to 11 dead ends a day, 48 in the week.
+
+> дальше работай полностью самостоятельно в режиме ночной работы, я ухожу спать. не задавай вопросов и не останавливай сессию, все вопросы решай сам как посчитаешь наиболее правильным
+
+The night of 21.11 writes the plan and runs the roles; the code waits for the owner's approval of
+the plan in the morning.
+
 ## What the tree already has
 
 - **How the counter names a check.** `projects/agent-kit/assets/checks/record-count.mjs` takes the
@@ -79,11 +93,16 @@ None. The card names the two sources and the sign.
 
 - **A model check that cannot find its file lets the call through.** The words of its call say so:
   no file — the answer is «pass». A check that is not installed in a copy has nothing to judge by.
-  Спросить было некого: заход автономный. Цена ошибки: одна фраза в словах вызова двух проверок.
+  Спросить было некого: заход автономный. Цена ошибки: одна фраза в словах вызова двух проверок. The words name the file the check looks
+  for, `.claude/hooks/<name>.md`, upwards from the directory of the session: 229 refusals of
+  15–21.11 are a model check that did not find or did not read its file.
 - **The counter of the report names the check by the text of a refusal.** Its table gets a line
-  per kind of text read in the records. The count of refusals does not fall by this — 131 of them
-  move from «no name» to their owners, also in the days already recorded, and a task can then take
-  them. Rejected: a name added by the dispatcher. The role `product-strategist` showed that the
+  per kind of text read in the records, the model check with no file (`turn-judge`, `ask-judge`)
+  and the broken dispatcher (`dispatch-broken`, 199 refusals of 20.11) included. The count of
+  refusals does not fall by this. The names act on the days after the rollout: the observations
+  of past days keep only the name, and the report does not rename them. A recount with the lines
+  of the hook replaced is an edit of `record-recount.mjs` of its own. Спросить было некого: заход
+  автономный. Цена ошибки: прошлые дни остаются под «без имени» до отдельного пересчёта. Rejected: a name added by the dispatcher. The role `product-strategist` showed that the
   engine reads such a name and calls two refusals of one check with one first line a dead end,
   and the first line of the delivery guard is the same in every refusal. Rejected too: a rewrite
   of the texts of every guard — five guards and their suites for the same line of the report.
@@ -110,6 +129,14 @@ None. The card names the two sources and the sign.
 - **The measure of the task is refusals per hundred commands, not the line «no name».** The line
   falls by a rename alone. The role `goal-critic` showed it on the first draft of the plan.
 - **The report with no `--until` takes today.** The command of the card then prints the report.
+- **The report prints the dead ends of a day by check and a verdict on the milestone.** The epic
+  plan RT-3471 names the dead ends of every check and the three days of at least 1500 calls; no
+  report counts either today. The roles `product-strategist` and `goal-critic` showed on the first
+  plan of 21.11 that without them the task reaches neither point B nor the milestone. Спросить
+  было некого: заход автономный. Цена ошибки: две строки отчёта и два сценария.
+- **The dispatcher with conflict markers is not fixed here.** The name `dispatch-broken` makes the
+  failure visible; a wrapper that lets the call through on a syntax error is a finding next to the
+  epic plan.
 
 ## What is left unclear
 
