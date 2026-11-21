@@ -55,6 +55,38 @@ The task ran outside the epic; the owner added its findings to the epic on 21.11
   three «Not checked» bindings of `.claude/skills/turn-conduct/implementation.md` now bound to
   `tools/task-flow/measure/ci.mjs:hold`.
 
+## Plans of the night of 21.11 — what the roles found beside the plans
+
+The roles `product-strategist` and `goal-critic` read the plans of RT-3469, RT-3423, RT-3434,
+RT-3425 and RT-3468. What each plan took in is written in its grill; below is what no plan takes.
+
+- **The dispatcher of hooks has no fallback on a syntax error.** On 20.11 conflict markers in the
+  laid-out `dispatch.sh` gave 199 refusals with no name; every call was refused. RT-3423 names
+  them `dispatch-broken`. **Address:** a wrapper that lets the call through when the dispatcher
+  cannot be parsed, with a journal line. **Metric:** refusals `dispatch-broken` a day, target 0.
+- **Past days keep their refusals with no name.** The observations hold only the name, so the new
+  table of names of RT-3423 does not rename 15–21.11. **Address:** `record-recount.mjs` with the
+  lines of the hook replaced.
+- **17 refusals of the step guard «state … ahead of the measured one» on 20–21.11.** Edits of the
+  progress written before a commit the engine measures. **Address:** not sorted out yet; the
+  records of 20–21.11.
+- **One session counted under two numbers on 20.11.** The report counts its calls twice.
+  **Address:** the session key of `work-result.mjs`.
+- **The run ahead with exit code 3 says nothing alone.** The code is the number of red checks, and
+  a reader takes 3 for a crash. **Address:** RT-3469 names the verdict line `push ahead:` as the
+  one to read; the code stays.
+- **The footprint exit passes falsely after a merged base.** `measure/footprint.mjs` counts every
+  commit of `origin/main..HEAD` after the plan, the ones the base brought among them; in a chain a
+  footprint row edited by a lower task counts for the upper one. The progress exit reads the same
+  way. **Address:** a measure of the branch's own commits after the plan, with the scenario «the
+  base edits a footprint row».
+- **A refusal of a call by another check twice for one reason still gives the owner's menu.** A
+  checkout of a foreign or an epic branch is refused through `forbidden`. RT-3468 leaves it; its
+  card names a foreign branch too. **Address:** `measure/session.mjs:forbidden`.
+- **A background run longer than 20 minutes no longer holds the menu.** On 20.11 the push set ran
+  24 and 37 minutes, and the engine counted the stops idle. **Address:** `BACKGROUND_BOUND` of the
+  engine against the measured length of the push set.
+
 ## Left unresolved
 
 - **The commit hook does not check the pipeline files.** `lint-staged` in `package.json` does not
