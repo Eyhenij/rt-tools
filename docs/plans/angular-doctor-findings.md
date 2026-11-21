@@ -54,7 +54,7 @@ patterns, `epic-flow`, `epic-flow-declare`, `git-workflow`, `git-workflow-push`,
 
 ## Left unresolved
 
-- **All seven findings above** — wait for the owner's decision. The guard table and the snapshot
+- **All eight findings above** — wait for the owner's decision. The guard table and the snapshot
   forwarder become tasks of their own; the texts go as proposals.
 - **The proposal about the local main branch** — written, not sent: the send needs a tree token
   from the intake.
