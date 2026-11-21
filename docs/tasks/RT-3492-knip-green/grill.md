@@ -9,9 +9,7 @@ belongs to:
 
 > изучи https://ngdoctor.dev/, прогони проверки и заведи эпик по исправлению всех замечаний, бери в работу
 
-The card RT-3492: «knip красный на main: неиспользуемые d3-пакеты и экспорты». Its premise that
-`check:all` stops before `check:ngdoctor` went stale with RT-3477, which put the step ahead of knip;
-the row of the epic plan names the goal: «knip зелёный: `check:all` снова зелёный целиком».
+The card RT-3492: «knip зелёный: `check:all` снова зелёный целиком».
 
 ## What the tree already has
 

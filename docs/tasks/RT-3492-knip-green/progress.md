@@ -14,14 +14,21 @@ Rewritten by every session, not appended to.
 
 ## Steps
 
-- [>] 1.1 Drop `export` from the 19 symbols knip names in the agent kit, the chart scene and the link block fixture
-- [ ] 2.1 Move `d3-hierarchy`, `d3-shape` and their type packages from the root devDependencies to devDependencies of the kit
+- [x] 1.1 Drop `export` from the 19 symbols knip names in the agent kit, the chart scene and the link block fixture
+- [>] 2.1 Move `d3-hierarchy`, `d3-shape` and their type packages from the root devDependencies to devDependencies of the kit
 - [ ] 2.2 Keep the versions exact in the kit manifest
 - [ ] 2.3 Declare all four in the kit manifest
 - [ ] 3.1 Run knip over every project
 - [ ] 3.2 Mark RT-3492 as done in the epic plan
 
 ## Decisions along the way
+
+- **The grill quotes the epic plan row, not the card title.** The card RT-3492 is titled «knip
+  красный на main: неиспользуемые d3-пакеты и экспорты»; the quoted «knip зелёный: `check:all`
+  снова зелёный целиком» is row 2 of the epic plan. The card premise that `check:all` stops before
+  `check:ngdoctor` went stale with RT-3477, and the card body was rewritten on 21.11.2026. The grill
+  stays as the plan commit holds it: the step engine compares the folder with that commit.
+  Affected stage of the plan: none.
 
 - **The edit of the chart scene goes without a look.** `rt-chart.scene.ts` is a file the kit
   approval check counts as visible; the edit only drops `export` from three names. The owner's word
