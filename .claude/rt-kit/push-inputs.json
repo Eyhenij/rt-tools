@@ -122,15 +122,16 @@
             "files": [
                 ".claude/commands/agent-kit-digest.md",
                 ".claude/commands/rules-review.md",
+                ".claude/hooks/ask-judge.md",
                 ".claude/hooks/browser-guard-device-id.sh",
                 ".claude/hooks/browser-guard-no-listing.sh",
                 ".claude/hooks/browser-guard-no-other-drivers.sh",
                 ".claude/hooks/browser-guard-require-select.sh",
                 ".claude/hooks/cargo-mark-guard.sh",
-                ".claude/hooks/claim-guard.sh",
                 ".claude/hooks/docs-guard.sh",
                 ".claude/hooks/end-conversation-guard.sh",
                 ".claude/hooks/epic-stop-guard.sh",
+                ".claude/hooks/facts-flow.sh",
                 ".claude/hooks/git-guard-delivery-body.sh",
                 ".claude/hooks/git-guard-delivery-conflict.sh",
                 ".claude/hooks/git-guard-delivery-draft.sh",
@@ -147,14 +148,10 @@
                 ".claude/hooks/git-guard-push-tests.sh",
                 ".claude/hooks/git-guard-tree-assignment.sh",
                 ".claude/hooks/glossary-load.sh",
-                ".claude/hooks/grill-gate.sh",
                 ".claude/hooks/handoff-entry-guard.sh",
                 ".claude/hooks/handoff-write.sh",
-                ".claude/hooks/hook-input.sh",
                 ".claude/hooks/main-run-context.sh",
                 ".claude/hooks/package-release-guard.sh",
-                ".claude/hooks/postmortem-guard.sh",
-                ".claude/hooks/proposal-guard.sh",
                 ".claude/hooks/prose-style-guard.sh",
                 ".claude/hooks/push-set.sh",
                 ".claude/hooks/rerun-guard.sh",
@@ -166,17 +163,14 @@
                 ".claude/hooks/task-flow-guard.sh",
                 ".claude/hooks/tree-assignment-guard.sh",
                 ".claude/hooks/turn-entry-load.sh",
-                ".claude/hooks/turn-exit-epic.sh",
                 ".claude/hooks/turn-exit-guard.sh",
-                ".claude/hooks/turn-exit-patterns.sh",
-                ".claude/hooks/turn-exit-verdict.sh",
-                ".claude/hooks/waiting-turn-guard.sh",
+                ".claude/hooks/turn-judge.md",
                 ".claude/hooks/window-fill-guard.sh",
-                ".claude/hooks/work-start-guard.sh",
                 ".claude/rt-kit.json",
                 ".claude/rt-kit/checks.json",
                 ".claude/rt-kit/defaults/project.sh",
                 ".claude/rt-kit/gate-map.sh",
+                ".claude/rt-kit/project-heavy.sh",
                 ".claude/rt-kit/project.sh",
                 ".claude/workflows/feature.js",
                 ".claude/workflows/plan.js",
@@ -242,7 +236,7 @@
             "probes": []
         },
         "node tools/check-hooks.mjs": {
-            "seconds": 11,
+            "seconds": 10,
             "history": [],
             "untraced": [
                 "bash"
@@ -783,7 +777,7 @@
             "probes": []
         },
         "node tools/check-tokens-styles.mjs": {
-            "seconds": 3,
+            "seconds": 2,
             "history": [],
             "untraced": [],
             "self": [
@@ -965,7 +959,7 @@
             "probes": []
         },
         "node tools/check-format-ignore.mjs": {
-            "seconds": 2,
+            "seconds": 5,
             "history": [],
             "untraced": [],
             "self": [
@@ -978,6 +972,7 @@
                         ".Dockerfile",
                         ".browserslistrc",
                         ".cjs",
+                        ".code",
                         ".conf",
                         ".crontab",
                         ".example",
@@ -989,6 +984,7 @@
                         ".ico",
                         ".js",
                         ".json",
+                        ".jsonl",
                         ".md",
                         ".mdx",
                         ".mjs",
@@ -1006,6 +1002,7 @@
                         ".svg",
                         ".toml",
                         ".ts",
+                        ".txt",
                         ".woff2",
                         ".yaml",
                         ".yml",
@@ -1069,7 +1066,7 @@
             "probes": []
         },
         "node tools/check-package-imports.mjs": {
-            "seconds": 3,
+            "seconds": 6,
             "history": [],
             "untraced": [
                 "npm"
@@ -1126,9 +1123,7 @@
                 "git merge-base",
                 "git rev-parse"
             ],
-            "untraced": [
-                "rg"
-            ],
+            "untraced": [],
             "self": [
                 "tools/check-kit-approval.mjs"
             ],
@@ -1139,7 +1134,7 @@
             "probes": []
         },
         "node tools/check-doc-paths.mjs": {
-            "seconds": 0,
+            "seconds": 1,
             "history": [],
             "untraced": [],
             "self": [
@@ -1347,7 +1342,7 @@
             "probes": []
         },
         "node tools/check-schema-drift.mjs": {
-            "seconds": 0,
+            "seconds": 2,
             "history": [
                 "git diff",
                 "git rev-parse"
@@ -1363,15 +1358,38 @@
             ],
             "walks": [
                 {
-                    "dir": ".",
+                    "dir": "prisma/migrations",
                     "exts": [
-                        ".json",
-                        ".mjs"
+                        ".sql",
+                        ".toml"
                     ]
                 }
             ],
-            "files": [],
-            "probes": []
+            "files": [
+                ".claude/rt-kit/checks.json",
+                ".npmrc",
+                "package.json",
+                "prisma.config.ts",
+                "prisma/schema.prisma",
+                "tools/check-schema-drift.mjs",
+                "tools/rt-kit-checks.config.mjs"
+            ],
+            "probes": [
+                ".config/prisma7.cjs",
+                ".config/prisma7.cts",
+                ".config/prisma7.js",
+                ".config/prisma7.mjs",
+                ".config/prisma7.mts",
+                ".config/prisma7.ts",
+                "prisma.config",
+                "prisma.config.js",
+                "prisma7.config.cjs",
+                "prisma7.config.cts",
+                "prisma7.config.js",
+                "prisma7.config.mjs",
+                "prisma7.config.mts",
+                "prisma7.config.ts"
+            ]
         },
         "node tools/check-states.mjs": {
             "seconds": 0,
@@ -1404,15 +1422,26 @@
                 ".claude/rt-kit/defaults/turn-map.md",
                 ".claude/skills/epic-flow-declare/SKILL.md",
                 ".claude/skills/task-flow-archive/SKILL.md",
+                ".claude/skills/task-flow-archive/pitfalls.md",
                 ".claude/skills/task-flow-close/SKILL.md",
+                ".claude/skills/task-flow-close/pitfalls-2.md",
+                ".claude/skills/task-flow-close/pitfalls.md",
                 ".claude/skills/task-flow-resume/SKILL.md",
+                ".claude/skills/task-flow-resume/pitfalls.md",
                 ".claude/skills/task-flow-start/SKILL.md",
+                ".claude/skills/task-flow-start/pitfalls.md",
                 ".claude/skills/task-flow/SKILL.md",
                 ".claude/skills/turn-conduct/SKILL.md",
                 "docs/constitution/work-conduct.md",
                 "tools/check-state-next.mjs"
             ],
-            "probes": []
+            "probes": [
+                ".claude/skills/epic-flow-declare/pitfalls-2.md",
+                ".claude/skills/epic-flow-declare/pitfalls.md",
+                ".claude/skills/task-flow-archive/pitfalls-2.md",
+                ".claude/skills/task-flow-resume/pitfalls-2.md",
+                ".claude/skills/task-flow-start/pitfalls-2.md"
+            ]
         },
         "node tools/check-turn-map.mjs": {
             "seconds": 0,
@@ -1435,7 +1464,8 @@
             "untraced": [],
             "self": [
                 "tools/check-work-steps.mjs",
-                "tools/rt-kit-checks.config.mjs"
+                "tools/rt-kit-checks.config.mjs",
+                "tools/work-steps-lib.mjs"
             ],
             "walks": [
                 {
@@ -1448,7 +1478,8 @@
             "files": [
                 ".claude/rt-kit/checks.json",
                 "tools/check-work-steps.mjs",
-                "tools/rt-kit-checks.config.mjs"
+                "tools/rt-kit-checks.config.mjs",
+                "tools/work-steps-lib.mjs"
             ],
             "probes": []
         },
@@ -1551,7 +1582,7 @@
             "probes": []
         },
         "pnpm run lint:styles": {
-            "seconds": 4,
+            "seconds": 3,
             "history": [],
             "untraced": [
                 "stylelint"

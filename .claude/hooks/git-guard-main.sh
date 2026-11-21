@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.1 · hooks/git-guard-main.sh · a63130008e62 · правится надстройкой, не здесь
+# rt-kit v0.37.1 · hooks/git-guard-main.sh · 286d21d6b0ee · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Requires: hooks/deny-tail.sh, hooks/guard-note.sh
+# Requires: checks/decide.mjs, hooks/decide.sh, hooks/facts.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Guard of the main branch. PreToolUse on a commit call.
 #
 # A commit into the main branch bypasses the branch, the PR and the review, while delivery is built
@@ -98,7 +98,9 @@ cd "$workdir" 2>/dev/null || exit 0
 
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 
-branch="$(git branch --show-current 2>/dev/null)"
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+branch="$(rt_fact_branch)"
 [ -z "$branch" ] && exit 0   # a detached HEAD is not about this case
 
 # The name is read from the tree's own profile — the one the commit runs in — as the other delivery
@@ -114,7 +116,7 @@ declared="$(
 )"
 
 default="$declared"
-[ -z "$default" ] && default="$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null | sed 's#^origin/##')"
+[ -z "$default" ] && default="$(rt_fact_default_branch)"
 if [ -z "$default" ]; then
     for candidate in main master; do
         if git show-ref --verify --quiet "refs/remotes/origin/$candidate" 2>/dev/null; then
@@ -127,20 +129,12 @@ fi
 
 [ "$branch" = "$default" ] || exit 0
 
-reason="Refused: a commit straight into «${default}». Work travels through a branch and a PR — the rule git-workflow. Create a branch by a separate call and commit into it: the staged changes stay in place. If a commit into ${default} really is needed — ask the owner, do not bypass it yourself."
-
-# The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
-# The file may not be laid out — then there is no tail, and the refusal reason stays as it is.
-# shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-deny_tail_text="$(rt_deny_tail "")"
-[ -n "$deny_tail_text" ] && reason="${reason}
-
-${deny_tail_text}"
-
-jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"A commit into the main branch is refused. Create a branch."}}\n'
-
+# The decision and its text come from the decision table. Whether the rule of delivery is loaded is
+# a fact of the state as the table writes it; an unloaded rule is refused first by the rules gate.
+sid="$(printf '%s' "$RT_HOOK_INPUT" | jq -r '.session_id // "nosession"' 2>/dev/null)"
+facts="$(jq -cn --arg r "$(rt_fact_rule_loaded git-workflow "$sid")" '{rule_loaded:$r, branch_is_main:"yes"}')"
+params="$(jq -cn --arg m "$default" '{main_branch:$m}')"
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/decide.sh" 2>/dev/null
+command -v rt_decide >/dev/null 2>&1 && rt_decide git-guard-main.sh "?commit" "$facts" "$params"
 exit 0

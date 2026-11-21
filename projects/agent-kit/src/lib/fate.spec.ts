@@ -17,7 +17,7 @@ import { IOwnRead, IOwnRecord, TReadOwn } from './ship.js';
 import { dropTree, freshTree, put, said, start, treeEnv, treeRoot } from './shipment.fixture.js';
 
 /** Статья, которая уже стоит в разложенной редакции: взята из ресурса пакета слово в слово. */
-const IN_PACKAGE: string = 'The scenario id stands at the start of the test title, followed by a dash.';
+const IN_PACKAGE: string = 'A test title starts with its scenario id and a dash.';
 
 /** Статья, которой в редакции нет: ради неё надстройка и заведена. */
 const NOT_IN_PACKAGE: string = 'Проба сама называет, какого прогона ждёт, и второй раз его не зовёт.';

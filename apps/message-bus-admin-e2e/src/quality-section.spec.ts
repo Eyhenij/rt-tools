@@ -126,12 +126,11 @@ test.describe('раздел «Качество»', () => {
         await expect(qa(page, 'quality-tile-corrections')).toContainText('Правок: 1, задач: 3');
     });
 
-    test('SC-AK-1325 — день со строкой, но без задач, говорит «нет данных»', async ({ page }: { page: Page }) => {
+    test('SC-MB-449 — день со строкой, но без задач: первая плитка «0 из 0», правки — «нет данных»', async ({ page }: { page: Page }) => {
         await openSection(page, 'quality', NO_TASKS_QUERY);
 
-        await expect(qa(page, 'quality-tile-first-pass')).toContainText('Нет данных');
+        await expect(qa(page, 'quality-tile-first-pass')).toContainText('0 из 0');
         await expect(qa(page, 'quality-tile-corrections')).toContainText('Нет данных');
-        await expect(qa(page, 'quality-tile-first-pass')).not.toContainText('0 из 0');
     });
 
     test('SC-AK-1328 — без фиксов старше месяца плитка повторов говорит «нет данных»', async ({ page }: { page: Page }) => {
@@ -227,7 +226,7 @@ test.describe('раздел «Качество»', () => {
             await expectFits(page, width);
 
             await page.goto(`${SECTION.quality.path}${NO_TASKS_QUERY}`);
-            await expect(qa(page, 'quality-tile-first-pass')).toContainText('Нет данных');
+            await expect(qa(page, 'quality-tile-first-pass')).toContainText('0 из 0');
             await expectFits(page, width);
 
             await page.goto(`${SECTION.quality.path}${EMPTY_PERIOD_QUERY}`);

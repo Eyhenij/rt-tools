@@ -82,12 +82,12 @@ EOF
 }
 
 # --- destructive for certain ------------------------------------------------------------
+# verdict <what is destructive> <class>: a marked request is asked, the rest refused.
 verdict() {
     if [ -n "$soft" ]; then
-        ask "The request is marked by the destructive-ok marker but stays destructive: $1 Confirm the execution if this is deliberate."
+        sql_refuse "The request is marked by the destructive-ok marker but stays destructive: $1 Confirm the execution if this is deliberate." destructive_marked
     fi
-    deny "BLOCKED: $1 Address the rows by the primary key — \`WHERE id IN ('…','…')\`: that way exactly as many rows are touched as are listed, and a miss is visible before the execution. A deletion by a mask (email LIKE '%test%') once carried away, together with the test records, the demonstration bookings of the owner. If addressing by id really does not fit — first run a SELECT with the same condition and show the user what falls under the deletion." \
-        "the destructive-ok marker at the request, with an explanation"
+    sql_refuse "$1 Address the rows by the primary key — \`WHERE id IN ('…','…')\`: that way exactly as many rows are touched as are listed, and a miss is visible before the execution. A deletion by a mask (email LIKE '%test%') once carried away, together with the test records, the demonstration bookings of the owner. If addressing by id really does not fit — first run a SELECT with the same condition and show the user what falls under the deletion." "$2"
 }
 
 sql_check_destructive() {
@@ -97,18 +97,18 @@ sql_check_destructive() {
     esac
 
     if printf '%s' "$flat" | grep -qE '(^|[^[:alnum:]_])(truncate|drop[[:space:]]+(table|database|schema|column|index)|alter[[:space:]]+table)([^[:alnum:]_]|$)'; then
-        verdict "the request changes the schema itself or empties a table whole (${context})."
+        verdict "the request changes the schema itself or empties a table whole (${context})." destructive
     fi
 
     if printf '%s' "$flat" | grep -qE 'prisma[[:space:]]+(migrate[[:space:]]+reset|db[[:space:]]+push)'; then
-        verdict "\`prisma migrate reset\` / \`db push\` recreates the database and loses its content (${context})."
+        verdict "\`prisma migrate reset\` / \`db push\` recreates the database and loses its content (${context})." db_reset
     fi
 
     # `pg_restore --clean` deletes the existing objects before loading — the same emptying of
     # tables, only by someone else's hands. Without `--clean` it is an ordinary top-up, and it goes
     # the common path.
     if printf '%s' "$flat" | grep -q 'pg_restore' && printf '%s' "$flat" | grep -qE '(^|[[:space:]])(--clean|-c|--create)([[:space:]]|=|$)'; then
-        verdict "\`pg_restore --clean\` deletes the objects of the database before loading the dump (${context})."
+        verdict "\`pg_restore --clean\` deletes the objects of the database before loading the dump (${context})." destructive
     fi
 }
 
@@ -166,7 +166,7 @@ sql_check_migrations() {
         # hangs on a loopback address, only on a port of its own, and the common rule "loopback
         # means local" would have let a migration through to production.
         if [ -n "$PROD_DSN" ] && printf '%s' "$migrate_target" | grep -qE "$PROD_DSN"; then
-            deny "BLOCKED: applying migrations to the PRODUCTION database (${context}). The address of the database leads to production. The schema in production is changed by the rollout: it calls the applying of migrations itself, by a one-off container, before the application starts. Doing this by hand is not allowed — the guard must not be bypassed."
+            sql_refuse "applying migrations to the PRODUCTION database (${context}). The address of the database leads to production. The schema in production is changed by the rollout: it calls the applying of migrations itself, by a one-off container, before the application starts. Doing this by hand is not allowed — the guard must not be bypassed." migrate prod
         fi
         case "$migrate_target" in
             *@localhost:*|*@127.0.0.1:*|*@postgres:*|*@host.docker.internal:*)
@@ -197,10 +197,10 @@ MIGRATE_PIPE_EOF
                 [ -z "$other_write" ] && exit 0
                 ;;
             '')
-                ask "Applying migrations to a database (${context}), but the address could not be resolved: DATABASE_URL is neither in the command, nor in the environment, nor in the \`.env\` of the working directory. Check where the migration will go, and confirm."
+                sql_refuse "Applying migrations to a database (${context}), but the address could not be resolved: DATABASE_URL is neither in the command, nor in the environment, nor in the \`.env\` of the working directory. Check where the migration will go, and confirm." migrate unresolved
                 ;;
             *)
-                ask "Applying migrations to an address UNKNOWN TO THE GUARD (${context}). The guard knows local addresses and production ones; this is neither. Make sure this is not production, and confirm."
+                sql_refuse "Applying migrations to an address UNKNOWN TO THE GUARD (${context}). The guard knows local addresses and production ones; this is neither. Make sure this is not production, and confirm." migrate unknown
                 ;;
         esac
     fi
@@ -210,7 +210,7 @@ MIGRATE_PIPE_EOF
 sql_check_addressing() {
     if printf '%s' "$flat" | grep -qE '(^|[^[:alnum:]_])(delete[[:space:]]+from|update)([^[:alnum:]_]|$)'; then
         if ! printf '%s' "$flat" | grep -q 'where'; then
-            verdict "DELETE/UPDATE without WHERE touches the whole table (${context})."
+            verdict "DELETE/UPDATE without WHERE touches the whole table (${context})." write_unaddressed
         fi
 
         # The addressing is looked for ONLY in the tail after the last `where`. While the whole
@@ -224,7 +224,7 @@ sql_check_addressing() {
         # The column name is required whole: `id`, `booking_id`, `"bookingId"`. The former pattern
         # `[a-z_]*id` took `paid` and `valid` for an identifier.
         if ! printf '%s' "$where_tail" | grep -qE '(^|[^[:alnum:]_"])"?(id|[A-Za-z_]+_id|[a-zA-Z]+Id)"?[[:space:]]*(=|[Ii][Nn][[:space:]]*\()'; then
-            verdict "DELETE/UPDATE addresses the rows not by an identifier (${context}) — the condition may match wider than intended."
+            verdict "DELETE/UPDATE addresses the rows not by an identifier (${context}) — the condition may match wider than intended." write_unaddressed
         fi
 
         # The guard sees the column name but not the schema: `propertyId` and `session_id` are
@@ -233,7 +233,7 @@ sql_check_addressing() {
         # without the schema is impossible, so the decision stays with the user — but the warning
         # must be direct, not general.
         if ! printf '%s' "$where_tail" | grep -qE '(^|[^[:alnum:]_"])"?id"?[[:space:]]*(=|[Ii][Nn][[:space:]]*\()'; then
-            ask "The condition addresses the rows by a FOREIGN key, not by the primary one (${context}): $(printf '%s' "$where_tail" | head -c 200). ALL the rows tied to that record fall under it — for example \`WHERE \"propertyId\" = …\` touches every booking of the property, the demonstration ones included. If specific rows are needed, first select them by a SELECT and list them in \`WHERE id IN (…)\`."
+            sql_refuse "The condition addresses the rows by a FOREIGN key, not by the primary one (${context}): $(printf '%s' "$where_tail" | head -c 200). ALL the rows tied to that record fall under it — for example \`WHERE \"propertyId\" = …\` touches every booking of the property, the demonstration ones included. If specific rows are needed, first select them by a SELECT and list them in \`WHERE id IN (…)\`." write_fk
         fi
     fi
 }

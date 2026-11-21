@@ -79,6 +79,12 @@ command that called it.
 - **Every guard and every check of the package has a suite of its own.** They are the only part of
   the layer no linter reads and no spec executes: a broken line in one of them reaches a foreign
   tree with a green run.
+- **A reader of real data is run on saved data, not only on invented data.** A reader is a file
+  that opens the conversation record or calls the hosting client. A suite runs it on a file in a
+  directory whose name begins with fixtures/real-: a cut of a real record, or hosting answers recorded under the machine token
+  with the kind of the token named on each. On invented data a reader of 13.11.2026 was green and
+  fell on the real record. A command that writes to the hosting on its way is listed apart, with
+  its reason and task, and a listed name no reader answers refuses.
 
 ## What is out of scope
 
@@ -148,3 +154,5 @@ task key, the board — is read from the settings of the tree, not written into 
 - 2026-09-10 — the subdomain was created: what a guard and a check of this package are and what each
   of them owes whoever it refuses.
 - 2026-09-18 — the backend families became a list: the check walks every one and names them.
+- 2026-11-17 — the readers of real data run on saved data: a cut of the record of 13.11.2026 and
+  the recorded hosting answers, with the demand in the hooks-kind suite.

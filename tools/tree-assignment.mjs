@@ -1,4 +1,4 @@
-// rt-kit v0.37.1 · checks/tree-assignment.mjs · db384b3725cb · правится надстройкой, не здесь
+// rt-kit v0.37.1 · checks/tree-assignment.mjs · 796e2ee3f3cd · правится надстройкой, не здесь
 /**
  * The epic assigned to this working copy.
  *
@@ -100,32 +100,40 @@ const OWNER_WORD =
  * A tree that declares no assignments is not judged: it has nothing to divide.
  */
 export function assignmentFault(epic, root = ROOT) {
+    return assignmentUnmet(epic, root).text;
+}
+
+/**
+ * The same answer with its kind, as the decision table names the fact `copy_assignment`: `ok`,
+ * `unnamed`, `no_row`, `dash` or `foreign`.
+ */
+export function assignmentUnmet(epic, root = ROOT) {
     if (!CONFIG.assignmentsFile) {
-        return '';
+        return { kind: 'ok', text: '' };
     }
 
     const key = CONFIG.board?.taskKey ?? '';
     const name = treeName(root);
 
     if (name === null) {
-        return `this working copy names itself in no way — write its short name into ${CONFIG.treeNameFile}, and the assignment table will find its row`;
+        return { kind: 'unnamed', text: `this working copy names itself in no way — write its short name into ${CONFIG.treeNameFile}, and the assignment table will find its row` };
     }
 
     const row = assignmentOf(root);
 
     if (row === null) {
-        return `the table ${CONFIG.assignmentsFile} holds no row for the copy «${name}». Ask the owner what this copy leads; work is not taken by guesswork. ${OWNER_WORD}`;
+        return { kind: 'no_row', text: `the table ${CONFIG.assignmentsFile} holds no row for the copy «${name}». Ask the owner what this copy leads; work is not taken by guesswork. ${OWNER_WORD}` };
     }
 
     if (row.epic === null) {
-        return `no epic is assigned to the copy «${name}» — the row in ${CONFIG.assignmentsFile} holds a dash. Ask the owner what to take; an epic chosen by oneself is not an order. ${OWNER_WORD}`;
+        return { kind: 'dash', text: `no epic is assigned to the copy «${name}» — the row in ${CONFIG.assignmentsFile} holds a dash. Ask the owner what to take; an epic chosen by oneself is not an order. ${OWNER_WORD}` };
     }
 
     if (epic !== null && epic !== undefined && String(epic) !== '' && Number(epic) !== row.epic) {
-        return `the copy «${name}» leads the epic ${key}-${row.epic}, and this work belongs to ${key}-${epic}. Someone else's epic is not taken by one's own decision: the owner moves the assignment. ${OWNER_WORD}`;
+        return { kind: 'foreign', text: `the copy «${name}» leads the epic ${key}-${row.epic}, and this work belongs to ${key}-${epic}. Someone else's epic is not taken by one's own decision: the owner moves the assignment. ${OWNER_WORD}` };
     }
 
-    return '';
+    return { kind: 'ok', text: '' };
 }
 
 /**
@@ -142,7 +150,18 @@ if (process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).
         // given, the queue says whether it is still alive.
         const row = assignmentOf();
 
-        console.log(row?.epic ?? '');
+        // Printed as a string: `console.log` colours a number when FORCE_COLOR is set — the task
+        // runner sets it — and the caller then reads escape codes in place of the number.
+        console.log(String(row?.epic ?? ''));
+        process.exit(0);
+    }
+
+    const unmet = process.argv.indexOf('--unmet');
+
+    if (unmet !== -1) {
+        // The kind and the text as one line of JSON, for a guard that hands the kind to the decision
+        // table as a fact and the text to the refusal.
+        console.log(JSON.stringify(assignmentUnmet(process.argv[unmet + 1] ?? '')));
         process.exit(0);
     }
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.1 · hooks/deny-tail.sh · b6a7fe3fc0c7 · правится надстройкой, не здесь
+# rt-kit v0.37.1 · hooks/deny-tail.sh · 00b5c0f42c7f · правится надстройкой, не здесь
 # The shared deny tail. NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event.
 # The guards source it themselves — the same way they source the observation record and the word
 # about a missing profile function.
@@ -20,24 +20,29 @@
 # that. And it does not replace the refusal reason — that stands before it and names the miss by
 # name.
 #
-# THE REFUSAL RECORD GOES FROM HERE TOO. The tail is the one place every refusal passes through: the
-# tree's rule demands that the two lawful moves be named at every refusal, and a guard that refuses
-# past the tail breaks that rule before it loses count. Written inside the guard itself, the record
-# stood in five guards out of thirty, and the digest answered by that fifth. A guard declares itself
-# by the line `RT_GUARD_NAME=<name>` at its top; one that has not declared writes nothing — that is
-# how the rules gate counts its own refusals by itself.
+# THE REFUSAL RECORD IS NOT HERE. Every refusal passes through the decider call, `rt_decide` in
+# `decide.sh`: it knows the decision the table took and writes the record.
 
 # The deny tail as a string. The first parameter is the lawful form of bypass, if the refusal has
 # one; empty means there is no lawful form at all, and this is said outright.
 #
 #   reason="BLOCKED: <reason>. $(rt_deny_tail 'the line `Docs-skip: <reason>` in the commit body')"
 #   reason="BLOCKED: <reason>. $(rt_deny_tail)"
-rt_deny_tail() {
-    # shellcheck disable=SC1090
-    [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/guard-note.sh" ] \
-        && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/guard-note.sh" 2>/dev/null
-    command -v rt_guard_note >/dev/null 2>&1 && rt_guard_note
+# The rule the rules gate still waits for in this session, or nothing. A refusal names a move, and
+# the gate refuses that very move while its rule is not loaded: the executor then walks from one
+# refusal to the next. A guard that names a move the gate judges asks here first and names the
+# loading of the rule instead. The gate's own reading is repeated, not called: the gate is a hook
+# with input of its own, and the record and the rule directory are the whole of its answer.
+# Parameters: the rule name, the session id.
+rt_gate_pending() {
+    local rule="$1" sid="${2:-nosession}"
+    local loaded="${TMPDIR:-/tmp}/claude-skill-gate/${sid}.loaded"
+    [ -f "${CLAUDE_PROJECT_DIR:-.}/${RT_RULES_DIR:-.claude/skills}/${rule}/SKILL.md" ] || return 1
+    [ -f "$loaded" ] && grep -qE "^([^:]*:)?${rule}$" "$loaded" 2>/dev/null && return 1
+    printf '%s' "$rule"
+}
 
+rt_deny_tail() {
     if [ -n "$1" ]; then
         printf 'Two moves from here: fix what is named and repeat the call, or bring the owner the price of a bypass and wait for their word. The lawful form of bypass: %s. An edit is not laid past the guard in silence: it refuses one call, and a bypassed one lifts the requirement from the whole tree and says nothing about it.' "$1"
         return 0

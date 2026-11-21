@@ -30,7 +30,7 @@ Covered: `projects/agent-kit/tests/patterns-kind.test.sh`.
 ### SC-AK-1029 — a rule names its patterns in a section of its own
 
 Given a rule with patterns next to it
-When its section of patterns is read
+When its section of patterns is read, in the rule or in its cold part
 Then every pattern declaring this rule is named there
 
 Covered: `projects/agent-kit/tests/patterns-kind.test.sh`.
@@ -54,7 +54,8 @@ Covered: `projects/agent-kit/tests/patterns-kind.test.sh`.
 ### SC-AK-1032 — a cold part answers to a resource by its name
 
 Given the cold parts of the package
-When a rule or a skill of the same name is looked for
+When a rule, a skill or a pattern of the same name is looked for, a continuation `.2` by the name
+of the first part
 Then it is found for each of them
 
 Covered: `projects/agent-kit/tests/patterns-kind.test.sh`.
@@ -63,7 +64,8 @@ Covered: `projects/agent-kit/tests/patterns-kind.test.sh`.
 
 Given the cold parts of the package
 When their text is read
-Then each names the rule, or the skill where there is no rule above the subject
+Then each names the rule, the pattern it continues, or the skill where there is no rule above
+the subject
 
 Covered: `projects/agent-kit/tests/patterns-kind.test.sh`.
 

@@ -54,6 +54,7 @@ model Tree {
     invites      TreeInvite[]
     observations Observation[]
     metricsDays  MetricsDay[]
+    epicWindows  EpicWindow[]
 
     @@map("tree")
 }
@@ -184,6 +185,38 @@ model MetricsDay {
     @@unique([treeId, origin, day])
     @@index([day])
     @@map("metrics_day")
+}
+
+/// Окно эпика: отрезок работы над эпиком между двумя его событиями. Своя запись, а не ключ строки дня:
+/// окно идёт через дни, и строка, замещаемая своим днём, разрезала бы его.
+model EpicWindow {
+    id         String    @id @default(uuid())
+    treeId     String
+    tree       Tree      @relation(fields: [treeId], references: [id], onDelete: Cascade)
+    /// Признак рабочей копии, прочитавшей слияние, которое открыло окно.
+    origin     String
+    /// Номер эпика без ключа задач.
+    epic       Int
+    /// Момент открытия окна.
+    openedAt   DateTime
+    /// Момент закрытия. Нет: окно открыто.
+    closedAt   DateTime?
+    calls      Int
+    refusals   Int
+    reasks     Int
+    merged     Boolean
+    released   Boolean
+    mergedAt   DateTime?
+    releasedAt DateTime?
+    /// Минуты эпика от взятия до выпуска или слияния. Нет: эпик не слит или взятия не видно.
+    minutes    Int?
+    /// Когда окно собрано. Более старое не заменяет более новое.
+    stamp      DateTime
+    updatedAt  DateTime  @updatedAt
+
+    @@unique([treeId, origin, epic, openedAt])
+    @@index([openedAt])
+    @@map("epic_window")
 }
 
 /// Предложение по слою правил. Копится, а не замещается: сводка отвечает на вопрос «как дела

@@ -11,7 +11,7 @@ whole.
 
 - **A subdomain is checked on a par with a domain.** — `projects/agent-kit/assets/checks/check-specs.mjs:collectSpecDirs`
 - **A proposed law demands no rule.** — `projects/agent-kit/assets/checks/check-specs.mjs:isProposedLaw`
-- **A merged agreement does not lock the branch.** — `projects/agent-kit/assets/hooks/task-flow-draft-guard.sh:draft_path`
+- **A merged agreement does not lock the branch.** — `projects/agent-kit/assets/hooks/facts-flow.sh:rt_fact_agreement`
 - **A scenario prefix is taken by one spec across the whole tree.** — `projects/agent-kit/assets/checks/check-specs.mjs:prefixOwners`
 - **A bare name and a directory are judged on a par with a full path.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:existsInTree`
 - **The tree for the check of the paths is taken from the version control system, not by a walk of the directories.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:treeOfRepo`

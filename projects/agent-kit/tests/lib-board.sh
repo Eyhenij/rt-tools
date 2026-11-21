@@ -33,6 +33,21 @@ cat > "$BOARD_TREE/gh" <<'STUB'
 args="$*"
 printf '%s\n' "$args" >> "${STUB_CALLS:-/dev/null}"
 case "$args" in
+    # Отставание прода спрашивается GraphQL-сравнением, и стоит оно раньше доски: доска — тоже
+    # GraphQL. STUB_COMPARE задаёт отказ хостинга: timeout — «не успел», gone — те же первые
+    # слова, которыми хостинг отвечает на пропавший коммит (замер 21.11), 422 — слова REST-сравнения,
+    # 422-other — другой отказ с тем же кодом, offline — нет сети, 500 — сбой.
+    *graphql*behindBy*)
+        case "${STUB_COMPARE:-}" in
+            timeout) printf '%s\n' 'gh: Something went wrong while executing your query. This may be the result of a timeout, or it could be a GitHub bug. Please include `F80D:1` when reporting this issue.' >&2; exit 1 ;;
+            gone) printf '%s\n' 'gh: Something went wrong while executing your query on 2026-11-21T01:07:25Z. Please include `F80D:1` when reporting this issue.' >&2; exit 1 ;;
+            422) printf '%s\n' 'gh: Server Error: Sorry, this diff is taking too long to generate. (HTTP 422)' >&2; exit 1 ;;
+            422-other) printf '%s\n' 'gh: Validation Failed (HTTP 422)' >&2; exit 1 ;;
+            offline) printf '%s\n' 'dial tcp: lookup api.github.com: no such host' >&2; exit 1 ;;
+            500) printf '%s\n' 'gh: Server Error (HTTP 500)' >&2; exit 1 ;;
+            *) printf '%s\n' "$STUB_BEHIND" ;;
+        esac
+        ;;
     *graphql*) printf '%s' "$STUB_BOARD" ;;
     "issue list"*) printf '%s' "$STUB_ISSUES" ;;
     "pr list"*) printf '%s' "$STUB_PULLS" ;;
@@ -55,15 +70,20 @@ case "$args" in
     # Последний прогон главной ветки и последняя выкатка спрашиваются одним видом вызова: их
     # различает имя потока — прогон идёт у файла конвейера, выкатка у потока выкатки.
     *workflows/ci.yml/runs*) printf '%s\n' "${STUB_MAIN_RUN:-}" ;;
+    # Состояние последней выкатки спрашивается страницей из одного прогона; сценарий, которому оно
+    # нужно отдельно от отставания, задаёт STUB_DEPLOY_LAST.
+    *actions/workflows/*per_page=1\ *)
+        [ "${STUB_DEPLOY_LAST:-}" = 500 ] && { printf '%s\n' 'gh: Server Error (HTTP 500)' >&2; exit 1; }
+        [ "${STUB_DEPLOY_LAST:-}" = offline ] && { printf '%s\n' 'dial tcp: lookup api.github.com: no such host' >&2; exit 1; }
+        printf '%s\n' "${STUB_DEPLOY_LAST:-$STUB_DEPLOY}"
+        ;;
     *actions/workflows/*runs*) printf '%s\n' "$STUB_DEPLOY" ;;
     *actions/runs/*/jobs*) printf '%s\n' "${STUB_JOBS:-0}" ;;
     *actions/runs*tojson*) printf '%s\n' "${STUB_EVICTED:-[]}" ;;
     *actions/runs*per_page=20*) printf '%s\n' "$STUB_VERDICT" ;;
     *actions/runs*) printf '%s\n' "$STUB_RUNS" ;;
-    # Отставание ветки заявки и отставание прода спрашиваются одним видом вызова, а отвечают
-    # на разное: у первого читается «позади», у второго — «впереди». Различает их ключ выборки.
+    # Отставание ветки заявки спрашивается REST-сравнением; отставание прода сюда больше не ходит.
     *compare/*behind_by*) printf '%s\n' "${STUB_PULL_BEHIND:-0}" ;;
-    *compare/*) printf '%s\n' "$STUB_BEHIND" ;;
     */commits/*) printf '%s\n' "$STUB_HEAD_DATE" ;;
     *) printf 'неожиданный вызов: %s\n' "$args" >&2; exit 1 ;;
 esac
@@ -86,5 +106,17 @@ board_code() {
 }
 board_says() {
     board_run | grep -cE "$1"
+}
+
+# The helper of the hosting that answers from the recorded answers of the real host, not from the
+# scenario: `real-data/replay-gh.mjs` over `fixtures/real-host`. It answers by the arguments and by
+# the kind of the token, the way the host does. Prints the path to put into `GH_BIN`.
+board_replay_bin() {
+    local dir="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/fixtures/real-host}"
+    local here
+    here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    printf '#!/usr/bin/env bash\nREPLAY_DIR=%q exec node %q "$@"\n' "$dir" "$here/real-data/replay-gh.mjs" > "$BOARD_TREE/gh-replay"
+    chmod +x "$BOARD_TREE/gh-replay"
+    printf '%s' "$BOARD_TREE/gh-replay"
 }
 

@@ -14,12 +14,12 @@ fixture_metric_tree() {
     printf '%s' "$dir"
 }
 
-# Отказ проверки так, как его пишет общий хвост отказа. Довод — имя сессии и текст вызова.
+# Отказ проверки так, как его пишет вызов решателя. Довод — имя сессии и текст вызова.
 refuse_in() {
     local tree="$1" session="$2" call="$3"
     CLAUDE_PROJECT_DIR="$tree" RT_GUARD_NAME=probe-guard \
         RT_HOOK_INPUT="{\"session_id\":\"$session\",\"tool_input\":{\"command\":\"$call\"}}" \
-        bash -c '. "$1/guard-note.sh"; rt_guard_note' _ "$HOOKS"
+        bash -c '. "$1/guard-note.sh"; rt_guard_note guard-deny' _ "$HOOKS"
 }
 
 # Сколько наблюдений этого рода записано.
@@ -94,7 +94,7 @@ copy="$(fixture_metric_tree)"
 refuse_from() {
     CLAUDE_PROJECT_DIR="$tree" RT_GUARD_NAME=probe-guard \
         RT_HOOK_INPUT="{\"session_id\":\"session-one\",\"cwd\":\"$copy\",\"tool_input\":{\"command\":\"git push\"}}" \
-        bash -c '. "$1/guard-note.sh"; rt_guard_note' _ "$HOOKS"
+        bash -c '. "$1/guard-note.sh"; rt_guard_note guard-deny' _ "$HOOKS"
 }
 refuse_from
 printf 'edit\n' >> "$copy/package.json"
@@ -142,10 +142,11 @@ report "SC-AK-1279 — секунды записаны" "$(runs_of "$tree" secs 
 report "SC-AK-1279 — первый запуск не потерян" "$(runs_of "$tree" wasted | sort -u)" "нет"
 set_in "$tree"
 report "SC-AK-1279 — зелёную проверку отметка второй раз не запускает" "$(runs_of "$tree" res | tr '\n' ' ')" "green red red "
-report "SC-AK-1279 — красный повтор несёт секунды прошлого" "$(runs_of "$tree" wasted | sed -n 3p)" "0"
+report "SC-AK-1279 — красный повтор несёт секунды прошлого" "$(runs_of "$tree" wasted | sed -n 3p)" "$(runs_of "$tree" secs | sed -n 2p)"
 rm "$tree/red"
 set_in "$tree"
-report "SC-AK-1279 — зелёный после красного на том же содержимом считает красный" "$(runs_of "$tree" wasted | sed -n 4p)" "0"
+# На загруженной машине красный запуск идёт секунду: ждём его собственные секунды, а не ноль.
+report "SC-AK-1279 — зелёный после красного на том же содержимом считает красный" "$(runs_of "$tree" wasted | sed -n 4p)" "$(runs_of "$tree" secs | sed -n 3p)"
 rm -rf "$tree"
 
 # Правка между запусками: красный был нужен.
@@ -177,7 +178,7 @@ tree="$(fixture_metric_tree)"
 report "каталог наблюдений: до первой записи игнора нет" \
     "$(git -C "$tree" check-ignore -q .claude/rt-kit/observations/x.jsonl && echo под || echo нет)" "нет"
 CLAUDE_PROJECT_DIR="$tree" RT_GUARD_NAME=probe-guard RT_HOOK_INPUT='{"session_id":"s"}' \
-    bash -c '. "$1/guard-note.sh"; rt_guard_note' _ "$HOOKS"
+    bash -c '. "$1/guard-note.sh"; rt_guard_note guard-deny' _ "$HOOKS"
 report "каталог наблюдений: git его не берёт" "$(git -C "$tree" add -n -A 2>/dev/null | grep -c 'observations')" "0"
 rm -rf "$tree"
 
@@ -342,6 +343,28 @@ jq -n '{session_id:"s",prompt:"обычное сообщение"}' | CLAUDE_PRO
 report "SC-AK-1291 — команда пакета по имени, чужой нет" "$(field_of "$tree" command-call res)" "feedback "
 rm -rf "$tree"
 
+# --- the task of a verdict: the key of the branch, on the main branch the epic of the copy ------------------
+tree="$(fixture_roles)"
+verdict_on() { git -C "$1" checkout -q -B "$2" 2>/dev/null; role_end "$1" goal-critic "$3"; }
+verdict_on "$tree" RT-1-first 'Цель не достигнута.'
+verdict_on "$tree" RT-2-second 'Цель частично достигнута.'
+verdict_on "$tree" RT-3-third 'Цель достигнута.'
+report "SC-AK-1621 — вердикт несёт задачу своей ветки, «частично» — тоже отказ" \
+    "$(cat "$tree/.claude/rt-kit/observations/"*.jsonl | jq -r 'select(.ev == "role-verdict") | .task + ":" + .verdict' | tr '\n' ' ')" \
+    "RT-1:refused RT-2:refused RT-3:passed "
+rm -rf "$tree"
+
+tree="$(fixture_roles)"
+verdict_on "$tree" RT-7-epic 'Цель не достигнута.'
+verdict_on "$tree" main 'Цель не достигнута.'
+mkdir -p "$tree/tools"
+printf 'console.log("7");\n' > "$tree/tools/tree-assignment.mjs"
+verdict_on "$tree" main 'Цель не достигнута.'
+report "SC-AK-1640 — на ветке эпика вердикт против эпика, на главной без назначения — «без задачи», с назначением — эпик копии" \
+    "$(cat "$tree/.claude/rt-kit/observations/"*.jsonl | jq -r 'select(.ev == "role-verdict") | (.task // ("epic " + .epic))' | tr '\n' ' ')" \
+    "RT-7 none epic 7 "
+rm -rf "$tree"
+
 # --- Экзамен, правило проверки, знаменатель правок ------------------------------------------
 
 tree="$(fixture_metric_tree)"
@@ -355,7 +378,7 @@ rm -rf "$tree"
 
 tree="$(fixture_metric_tree)"
 CLAUDE_PROJECT_DIR="$tree" RT_GUARD_NAME=probe-guard RT_GUARD_RULE=doc-style RT_HOOK_INPUT='{"session_id":"s"}' \
-    bash -c '. "$1/guard-note.sh"; rt_guard_note' _ "$HOOKS"
+    bash -c '. "$1/guard-note.sh"; rt_guard_note guard-deny' _ "$HOOKS"
 report "правило: отказ несёт объявленное правило" "$(field_of "$tree" guard-deny rule)" "doc-style "
 rm -rf "$tree"
 
@@ -366,7 +389,8 @@ for hook in "$HOOKS"/*.sh; do
     [ -z "$rule" ] || ls "$ASSETS/rules/$rule".* >/dev/null 2>&1 || unknown=$((unknown + 1))
 done
 report "правило: объявлено только существующее" "$unknown" "0"
-report "правило: объявление есть у проверок" "$(grep -l '^RT_GUARD_RULE=' "$HOOKS"/*.sh | wc -l | tr -d ' ')" "27"
+# Двадцать четвёртый — страж хода работы `flow-step-guard.sh`, правило `task-flow`.
+report "правило: объявление есть у проверок" "$(grep -l '^RT_GUARD_RULE=' "$HOOKS"/*.sh | wc -l | tr -d ' ')" "24"
 
 tree="$(fixture_tree)"
 gate_in() {

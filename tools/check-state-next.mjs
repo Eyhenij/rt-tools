@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.1 · checks/check-state-next.mjs · a7ea24371009 · правится надстройкой, не здесь
+// rt-kit v0.37.1 · checks/check-state-next.mjs · 2bf9e61be360 · правится надстройкой, не здесь
 /**
  * The check that the section of a state names the next move.
  *
@@ -102,21 +102,33 @@ function sectionsOf(pattern) {
     }
 
     const sections = [];
+
+    // A pattern split into a hot index and a cold part keeps every state heading hot, while the body
+    // of a section, its move line included, may stand in the cold part under the same heading. The
+    // cold part adds moves to the sections of the index and declares none of its own; its second file
+    // continues the section the first one broke off in.
+    const cold = ['pitfalls.md', 'pitfalls-2.md'].map((name) => join(SKILLS, pattern, name)).filter((path) => existsSync(path));
+
     let current = null;
 
-    for (const line of readFileSync(file, 'utf8').split('\n')) {
-        const heading = line.match(/^#+\s+(?:State|Состояние)\s+`([^`]+)`/);
+    for (const path of [file, ...cold]) {
+        if (!path.endsWith('pitfalls-2.md')) current = null;
 
-        if (heading) {
-            current = { name: heading[1], heading: line.replace(/^#+\s+/, ''), moves: [] };
-            sections.push(current);
-            continue;
-        }
+        for (const line of readFileSync(path, 'utf8').split('\n')) {
+            const heading = line.match(/^#+\s+(?:State|Состояние)\s+`([^`]+)`/);
 
-        const marker = current ? markerOf(line) : undefined;
+            if (heading) {
+                const text = line.replace(/^#+\s+/, '');
+                current = path === file ? { name: heading[1], heading: text, moves: [] } : (sections.find((one) => one.heading === text) ?? null);
+                if (path === file) sections.push(current);
+                continue;
+            }
 
-        if (marker) {
-            current.moves.push(line.slice(marker.length).trim());
+            const marker = current ? markerOf(line) : undefined;
+
+            if (marker) {
+                current.moves.push(line.slice(marker.length).trim());
+            }
         }
     }
 

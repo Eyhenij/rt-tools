@@ -13,7 +13,7 @@ Pattern of the rule `status-report`. What must be true — the work-conduct law.
 
 - The owner asked where the work stands: "what is the status", "which epic", "what are you doing
   now".
-- The turn ends with an account of what was done, and it names the state of a PR or a run.
+- A reply names the state of a PR or a run.
 - The work runs under an epic, and the reply lists all its tasks.
 
 ## Calls

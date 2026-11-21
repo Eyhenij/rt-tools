@@ -6,11 +6,12 @@
  * то, что уже не получилось: сбой пишется в метку, а не на экран.
  */
 import { createHash, randomBytes } from 'node:crypto';
-import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { collectAssets, IAsset } from './assets.js';
 import { CARGO_SCHEMA_VERSION, ICargoOverride, IMetricsDayCargo, isMetricVersion } from './cargo.js';
+import { readMerges, shipWindows } from './epic-window-send.js';
 import { IEnvironment, IOutcomeOfCommand } from './commands.js';
 import { CONFIG_PATH, IConfig, readConfig } from './config.js';
 import { dropFileLock, takeFileLock } from './file-lock.js';
@@ -24,6 +25,7 @@ import { ILeak, leaksIn } from './proposals.js';
 import { IShipped, readToken, TShip } from './ship.js';
 import { packageSections, treeSnapshot } from './snapshot.js';
 import { treeSlugOf } from './tree-mark.js';
+import { IWorkResultDay, workResultOf } from './work-result.js';
 
 /** Копия пробует не чаще: проверки срабатывают сотнями за сессию. */
 export const SEND_EVERY_MS: number = 15 * 60 * 1000;
@@ -44,11 +46,11 @@ export interface ISendOptions {
 }
 
 /** Чем удачная отправка чистит следы сбоя. */
-const CLEAN_MARK: Pick<ISendMark, 'fault' | 'reason' | 'refusedToken' | 'faultSince'> = {
-    fault: ESendFault.None,
+const CLEAN_MARK: Pick<ISendMark, 'failure' | 'reason' | 'refusedToken' | 'failureSince'> = {
+    failure: ESendFault.None,
     reason: '',
     refusedToken: '',
-    faultSince: 0,
+    failureSince: 0,
 };
 
 function writeSendMark(root: string, mark: ISendMark): void {
@@ -73,15 +75,32 @@ function tokenSign(token: string): string {
     return createHash('sha256').update(token).digest('hex').slice(0, 16);
 }
 
-/** Дни окна: от последней удачи, не дальше срока хранения. Сегодняшний идёт всегда: он несёт числа дерева. */
-export function windowDays(names: readonly string[], lastDay: string, today: string): readonly string[] {
+/**
+ * Дни окна: от последней удачи, не дальше срока хранения. Сегодняшний идёт всегда: он несёт числа дерева.
+ * `changed` — дни старше последней удачи, чей файл менялся после неё: пересчёт прошлой недели иначе
+ * остался бы в дереве.
+ */
+export function windowDays(names: readonly string[], lastDay: string, today: string, changed: readonly string[] = []): readonly string[] {
     const edge: string = dayBefore(today, KEEP_DAYS);
     const since: string = byText(lastDay, edge) > 0 ? lastDay : edge;
     const days: readonly string[] = names
         .map((name: string): string | null => DAY_FILE.exec(name)?.[1] ?? null)
         .filter((day: string | null): day is string => day !== null && byText(day, since) >= 0 && byText(day, today) < 0);
+    const older: readonly string[] = changed.filter((day: string): boolean => byText(day, edge) >= 0 && byText(day, today) < 0);
 
-    return [...new Set([...days, today])].sort(byText);
+    return [...new Set([...days, ...older, today])].sort(byText);
+}
+
+/** Дни, чей файл менялся после последней удачи. Удачи не было: окно и так идёт от срока хранения. */
+function changedDays(root: string, names: readonly string[], succeeded: number): readonly string[] {
+    if (!succeeded) {
+        return [];
+    }
+
+    return names
+        .map((name: string): string | null => DAY_FILE.exec(name)?.[1] ?? null)
+        .filter((day: string | null): day is string => day !== null)
+        .filter((day: string): boolean => statSync(join(root, OBSERVATIONS_DIR, `${day}.jsonl`)).mtimeMs > succeeded);
 }
 
 function dayOf(root: string, day: string): readonly IObservation[] {
@@ -163,7 +182,7 @@ interface IShipOutcome {
 
 /** Сбой держится в числах своего дня: следующая удачная строка того же дня не должна его снять. */
 function faultOfDay(mark: ISendMark, today: string): ESendFault {
-    return mark.fault || (mark.factsByDay[today]?.sendFault ?? ESendFault.None);
+    return mark.failure || (mark.factsByDay[today]?.sendFault ?? ESendFault.None);
 }
 
 /**
@@ -200,8 +219,10 @@ async function shipLines(work: ISendWork, mark: ISendMark, today: string): Promi
     let refused: IShipped | null = null;
     let sent: ITreeFacts | null = null;
 
-    for (const day of windowDays(names, mark.day, today)) {
+    for (const day of windowDays(names, mark.day, today, changedDays(env.root, names, mark.succeeded))) {
         const observations: readonly IObservation[] = dayOf(env.root, day);
+        // Числа записи хода и слияний считает тот же подсчёт, что и отчёт: второй счёт разошёлся бы молча.
+        const result: IWorkResultDay | null = workResultOf(env.root, env.assetsDir, day, 1, null).days?.[0] ?? null;
         const cargo: IMetricsDayCargo = {
             tree,
             origin,
@@ -209,7 +230,7 @@ async function shipLines(work: ISendWork, mark: ISendMark, today: string): Promi
             schema: CARGO_SCHEMA_VERSION,
             version: versionOfDay(observations, env.version),
             stamp: options.now.getTime(),
-            metrics: dayMetrics(observations, assets, day === today ? fresh : (mark.factsByDay[day] ?? null)),
+            metrics: dayMetrics(observations, assets, day === today ? fresh : (mark.factsByDay[day] ?? null), result),
         };
         const shipped: IShipped = await shipLine(work, cargo);
 
@@ -232,11 +253,26 @@ function failed(mark: ISendMark, shipped: IShipped, token: string, now: Date): I
     return {
         ...mark,
         tried: now.getTime(),
-        faultSince: mark.faultSince || now.getTime(),
-        fault,
+        failureSince: mark.failureSince || now.getTime(),
+        failure: fault,
         reason: (fault === ESendFault.Leak ? shipped.said : `${shipped.status || 'нет ответа'}: ${shipped.said}`).slice(0, 200),
         refusedToken: fault === ESendFault.TokenRefused ? tokenSign(token) : '',
     };
+}
+
+/** Окна эпика уходят после строк дня: слияния читаются перед подсчётом окон. */
+async function shipEpicWindows(work: ISendWork, today: string): Promise<IShipped | null> {
+    readMerges(work.env.root);
+
+    return shipWindows({
+        today,
+        root: work.env.root,
+        assetsDir: work.env.assetsDir,
+        intake: work.config.intake,
+        token: work.token,
+        head: { tree: work.tree, origin: copySign(work.env.root), stamp: work.options.now.getTime() },
+        ship: work.options.ship,
+    });
 }
 
 async function sendLocked(work: ISendWork, mark: ISendMark, today: string): Promise<ISendMark> {
@@ -244,7 +280,9 @@ async function sendLocked(work: ISendWork, mark: ISendMark, today: string): Prom
 
     writeSendMark(env.root, { ...mark, tried: options.now.getTime() });
 
-    const { stopped, facts }: IShipOutcome = await shipLines(work, mark, today);
+    const lines: IShipOutcome = await shipLines(work, mark, today);
+    const { facts }: IShipOutcome = lines;
+    const stopped: IShipped | null = lines.stopped ?? (await shipEpicWindows(work, today));
     const counted: Readonly<Record<string, ITreeFacts>> = facts ? { [today]: facts } : {};
     const next: ISendMark = stopped
         ? failed({ ...mark, factsByDay: { ...mark.factsByDay, ...counted } }, stopped, token, options.now)
@@ -295,7 +333,7 @@ export async function sendMetrics(env: IEnvironment, options: ISendOptions): Pro
     try {
         const done: ISendMark = await sendLocked({ env, config, tree, token, options }, mark, options.now.toISOString().slice(0, 10));
 
-        return done.fault === ESendFault.None
+        return done.failure === ESendFault.None
             ? said(options, 0, ['строки дня отправлены'])
             : said(options, 1, [`отправка не удалась — ${done.reason}`]);
     } finally {

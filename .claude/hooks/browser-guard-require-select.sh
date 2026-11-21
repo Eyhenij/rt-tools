@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.1 · hooks/browser-guard-require-select.sh · e534ea6c73b3 · правится надстройкой, не здесь
+# rt-kit v0.37.1 · hooks/browser-guard-require-select.sh · 2dceea9bca6b · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__claude-in-chrome__.*
 # Requires: hooks/deny-tail.sh
 # Guard of the freshness of the browser choice. PreToolUse on all the other extension calls.
@@ -49,25 +49,24 @@ marker="${TMPDIR:-/tmp}/claude-browser-guard/${sid}"
 # The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
 # The file may not be laid out — then there is no tail, and the refusal reason stays as it is.
 # shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+# The decision and the words come from the decision table; the hook names what it found about the
+# selection. The named move is the selection, and the rules gate refuses it while its rule is not
+# loaded: that is a fact of the state.
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/decide.sh" 2>/dev/null
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
 
-# The reason for the refusal goes as a field of the answer, not into the error stream.
-#
-# What is said into the error stream the executor does not see: "No stderr output" reaches him
-# without a single word about what happened, and browser calls failing one after another read as a
-# breakage of the extension. Half an hour spent looking for what the guard already knows and says is
-# the price of one chosen channel.
-deny() {
-    reason="$1 $(rt_deny_tail)"
-    jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}\n' "$1"
+refuse() {
+    command -v rt_decide >/dev/null 2>&1 || exit 0
+    rt_decide browser-guard-require-select.sh browser_call \
+        "$(jq -cn --arg r "$(rt_fact_rule_loaded browser-verification "$sid")" --arg s "$1" '{pinned:"yes", rule_loaded:$r, selection:$s}')" \
+        "$(jq -cn --arg s "$2" --arg t "$3" '{said:$s, then:$t}')" PreToolUse "$input"
     exit 0
 }
 
 if [ ! -f "$marker" ]; then
-    deny "No browser is selected in this session. Call the browser selection with the profile ${device_id} before any other call."
+    refuse none "No browser is selected in this session." "Call the browser selection with the profile ${device_id} before any other call."
 fi
 
 now="$(date +%s)"
@@ -76,7 +75,8 @@ age=$(( now - stamped ))
 
 if [ "$age" -gt "$ttl" ]; then
     rm -f "$marker" 2>/dev/null
-    deny "The last browser selection was ${age} s ago (the limit is ${ttl} s) — over such a break the active browser of the extension drifts away, and it may no longer be the pinned profile. Call the selection with the profile ${device_id} anew and repeat."
+    refuse stale "The last browser selection was ${age} s ago (the limit is ${ttl} s) — over such a break the active browser of the extension drifts away, and it may no longer be the pinned profile." \
+        "Call the selection with the profile ${device_id} anew and repeat."
 fi
 
 : >"$marker" 2>/dev/null

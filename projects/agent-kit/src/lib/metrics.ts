@@ -10,13 +10,15 @@
  * Загрузки, отказы шлюза и неиспользованные правила берутся из готовой сводки `summarize`.
  */
 import { costOf, CostUnavailableError } from './cost.js';
-import { IConfig, readConfig } from './config.js';
+import { DEFAULT_LAYOUT, IConfig, readConfig } from './config.js';
 import { IEnvironment, IOutcomeOfCommand, noObservationLines, sweptLine } from './commands.js';
 import { dayBefore, ICount, IObservation, IReadResult, ISummary, readObservations, summarize } from './observations.js';
 import { IUsageMetric, usageCounted, usageLines, usageOf } from './metric-usage.js';
 import { byText } from './order.js';
 import { collectOutcomes, EOutcomesRead, hasMainNumber, IOutcomeMetric, outcomeLines, outcomeMetricOf } from './outcomes.js';
 import { laidOutSkills } from './snapshot.js';
+import { IPushSetUsefulness, pushSetLines, pushSetUsefulnessOf } from './push-set-usefulness.js';
+import { FIRST_PASS_NONE, IWorkResult, workResultOf } from './work-result.js';
 
 /** Отрезок отчёта, когда он не назван: столько дней наблюдения лежат на диске. */
 export const METRICS_DEFAULT_DAYS: number = 30;
@@ -89,6 +91,12 @@ export interface IMetricsReport {
     readonly noData: readonly string[];
     /** Числа, которые считает только отчёт по всем приложениям. */
     readonly outside: readonly string[];
+    /** Результат работы по записи хода и слияниям. Нет поля: отчёт собран без команды, для отправки. */
+    readonly result?: IWorkResult;
+    /** Названный день отчёта: мёртвые правила за день не судятся, и строка говорит это словами. */
+    readonly day?: string;
+    /** Польза проверок набора перед пушем. Нет поля: отчёт собран без команды, для отправки. */
+    readonly pushSet?: IPushSetUsefulness;
 }
 
 export interface IMetricsOptions {
@@ -96,12 +104,23 @@ export interface IMetricsOptions {
     /** Сегодняшний день, `ГГГГ-ММ-ДД`. Приходит с края: команду со своими часами не проверить. */
     readonly today: string;
     readonly json: boolean;
+    /** Один день отчёта, `ГГГГ-ММ-ДД`: отчёт считает только его. */
+    readonly day?: string;
+}
+
+/** Отрезок отчёта: последний день и число дней. Названный день — отрезок из одного дня. */
+export interface IMetricsPeriod {
+    readonly until: string;
+    readonly days: number;
+}
+
+/** Отрезок, который читает отчёт: названный день или дни до сегодняшнего. */
+export function periodOf(options: IMetricsOptions): IMetricsPeriod {
+    return options.day ? { until: options.day, days: 1 } : { until: options.today, days: options.days };
 }
 
 /** Метрики, которые появятся с новыми событиями. */
 const NOT_RECORDED_YET: readonly string[] = [
-    'Принято с первого раза',
-    'Правки владельца',
     'Отказы после загрузки правила',
     'Доля правок до загрузки правила',
     'Пустые отказы',
@@ -251,13 +270,7 @@ export function metricsOf(
         gateRefusals: summary.denials.reduce((sum: number, rule: ICount): number => sum + rule.count, 0),
         deadRules: full ? summary.unused : null,
         deadRuleShare: full ? percent(summary.unused.length, rules) : null,
-        noData: noDataOf([
-            hasMainNumber(outcomes) && 'Принято с первого раза',
-            comparedRefusals > 0 && 'Пустые отказы',
-            runs.length > 0 && 'Пустые запуски',
-            corrections > 0 && 'Правки владельца',
-            ...usageCounted(usage),
-        ]),
+        noData: noDataOf([comparedRefusals > 0 && 'Пустые отказы', runs.length > 0 && 'Пустые запуски', ...usageCounted(usage)]),
         outside: OUTSIDE_THE_TREE,
     };
 }
@@ -271,6 +284,9 @@ function topLines(lines: readonly string[]): readonly string[] {
 
 /** Мёртвые правила словами: без полного отрезка вместо числа стоит причина. */
 function deadRuleLines(report: IMetricsReport): readonly string[] {
+    if (report.deadRules === null && report.day) {
+        return [`мёртвые правила: за один день не судятся, они считаются за ${METRICS_DEFAULT_DAYS} дн. записей`];
+    }
     if (report.deadRules === null) {
         return [`мёртвые правила: нет данных, они считаются за ${METRICS_DEFAULT_DAYS} дн. записей`];
     }
@@ -318,7 +334,8 @@ export function metricsLines(report: IMetricsReport): readonly string[] {
         `прочитано дней: ${report.daysRead.length}, с ${report.daysRead[0]} по ${report.daysRead[report.daysRead.length - 1]}`,
         `нет данных: ${report.noData.join(', ')}`,
         `вне этого отчёта: ${report.outside.join(', ')}`,
-        ...outcomeLines(report.outcomes, report.outcomesRead, report.corrections),
+        ...outcomeLines(report.outcomes, report.outcomesRead),
+        ...(report.result?.lines ?? []),
         '',
         `отказы проверок: ${report.refusals}, на сессию ${report.refusalsPerSession}`,
         `повторы подряд: ${report.repeats} (${report.repeatShare}%)`,
@@ -335,7 +352,7 @@ export function metricsLines(report: IMetricsReport): readonly string[] {
         `отказы шлюза правил: ${report.gateRefusals}`,
         ...topLines(report.gate.map((rule: ICount): string => `  ${rule.name}: ${rule.count}`)),
         ...runLines(report.runs),
-        ...(report.corrections > 0 && !hasMainNumber(report.outcomes) ? ['', `правки владельца: ${report.corrections}`] : []),
+        ...(report.pushSet ? pushSetLines(report.pushSet) : []),
         ...usageLines(report.usage, topLines),
         '',
         ...deadRuleLines(report),
@@ -392,12 +409,26 @@ export function metrics(env: IEnvironment, options: IMetricsOptions): IOutcomeOf
     }
 
     const read: EOutcomesRead = collectOutcomes(env.root, options.today, env.version);
-    const result: IReadResult = readObservations(env.root, options.today, options.days);
-    const report: IMetricsReport = reportOf(env, config, options.today, result, options.days, read);
+    const period: IMetricsPeriod = periodOf(options);
+    // Названный день читается без чистки: срок хранения отсчитывается от сегодняшнего дня, не от него.
+    const result: IReadResult = readObservations(env.root, period.until, period.days, !options.day);
+    const counted: IMetricsReport = reportOf(env, config, period.until, result, period.days, read);
+    const firstPass: string | null = hasMainNumber(counted.outcomes) ? null : FIRST_PASS_NONE;
+    const report: IMetricsReport = {
+        ...counted,
+        result: workResultOf(env.root, env.assetsDir, period.until, period.days, firstPass),
+        pushSet: pushSetUsefulnessOf(
+            env.root,
+            { defaults: config.layout.defaults ?? DEFAULT_LAYOUT.defaults, hooks: config.layout.hooks ?? DEFAULT_LAYOUT.hooks },
+            period.until,
+            period.days
+        ),
+        ...(options.day ? { day: options.day } : {}),
+    };
 
     if (options.json) {
         return { code: 0, lines: [JSON.stringify(report)] };
     }
 
-    return { code: 0, lines: noObservationLines(result, options.days) ?? metricsLines(report) };
+    return { code: 0, lines: noObservationLines(result, period.days) ?? metricsLines(report) };
 }

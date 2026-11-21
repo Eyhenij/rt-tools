@@ -1,4 +1,4 @@
-<admin-list-page [hint]="hint()" [qaPrefix]="qaPrefix" [title]="title()">
+<admin-list-page [fit]="true" [hint]="hint()" [qaPrefix]="qaPrefix" [title]="title()">
     <ng-template adminListToolbarLeft>
         <admin-tree-filter [choices]="choices()" [tree]="query().tree" (treeChange)="changeTree($event)" />
         <admin-version-filter
@@ -65,6 +65,11 @@
         <ng-container cdkColumnDef="wastedMinutes">
             <th *cdkHeaderCellDef cdk-header-cell>{{ columns()[7].label }}</th>
             <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-wasted-minutes'">{{ row.wastedMinutes }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="per100">
+            <th *cdkHeaderCellDef cdk-header-cell>{{ columns()[8].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-per100'">{{ row.per100Shown }}</td>
         </ng-container>
 
         <tr *cdkHeaderRowDef="rowsTable.displayedColumns()" cdk-header-row></tr>

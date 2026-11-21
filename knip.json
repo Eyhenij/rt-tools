@@ -42,6 +42,7 @@
         "tools/*.{mjs,cjs}",
         "tools/stylelint-rules/*.{js,cjs,mjs}",
         "tools/nx-plugins/*.{js,cjs,mjs}",
+        "tools/task-flow/**/*.{js,mjs}",
         ".claude/workflows/*.js",
         "eslint/**/*.mjs"
       ],

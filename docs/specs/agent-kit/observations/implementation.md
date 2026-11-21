@@ -27,7 +27,7 @@ whole.
 - **Lines of an unknown schema version are counted apart and named by a number.** — `projects/agent-kit/src/lib/observations.ts:parseObservation`
 - **A guard that did not refuse once over the stretch stands in the digest as a line of its own.** — `projects/agent-kit/src/lib/observations.ts:summarize` — the field `silentGuards`; scenario `SC-AK-809`
 - **The digest counts as a guard whoever declared their name for the observations.** — `projects/agent-kit/src/lib/commands.ts:guardsOfTree` — the name is taken from the declaration in the guard header; scenario `SC-AK-809`
-- **A guard's refusal is recorded by the shared refusal tail, not by the guard itself.** — `projects/agent-kit/assets/hooks/deny-tail.sh:rt_deny_tail` — calls the record before assembling the tail; scenario `SC-AK-811`
+- **A guard's refusal is recorded by the decider call, not by the guard itself.** — `projects/agent-kit/assets/hooks/decide.sh:rt_guard_note` — calls the record with the event named by the decision, before assembling the tail; scenario `SC-AK-811`
 - **The list of guards the digest asks of the tree, not of the package.** — `projects/agent-kit/src/lib/commands.ts:stats` — the hooks directory is taken from the layout of the tree; scenario `SC-AK-809`
 - **The silence of a guard is not made a refusal.** — `projects/agent-kit/src/lib/commands.ts:statsLines` — the section is printed on a par with the rest and does not change the exit code; scenario `SC-AK-810`
 - **The outcomes of the push gate the digest counts apart from the refusals of the guards.** — `projects/agent-kit/src/lib/observations.ts:pushGate` — the count goes by the event kind `push-gate`; scenario `SC-AK-836`

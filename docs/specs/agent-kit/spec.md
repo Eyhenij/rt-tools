@@ -62,6 +62,7 @@ subdomains are the ones the rule groups had already drawn.
 | [The texts of the rules layer](texts/spec.md)                            | mandatory sections, bindings and anchors, addresses, the flow graph, the review of a family       |
 | [The edit guards](guards/spec.md)                                        | the plan behind an edit, missing profile functions, the refusal tail                              |
 | [The rules gate](rule-gate/spec.md)                                      | picking a rule by path and by layers, what counts as a write, taking a shell command apart        |
+| [The rules gate delivers the rule](rule-gate-delivery/spec.md)           | the rule put into the session, the host limit, the remaining refusal, the record                  |
 | [The exam on the rules](exam/spec.md)                                    | when it is asked, what counts as passing, what switches the role off                              |
 | [The place of an edit](edit-place/spec.md)                               | where a rules-layer text is fixed, what is refused on a laid-out copy and on an override          |
 | [The state mark of a cargo record](cargo-mark/spec.md)                   | what moves the state of a record, what is refused before the network, how the intake answers      |
@@ -82,6 +83,8 @@ subdomains are the ones the rule groups had already drawn.
 | [Conducting work by commands](work/spec.md)                              | creating a task, closing a session, the task folder on the merge                                  |
 | [Observations and cargo outward](observations/spec.md)                   | an observation and a digest, proposals and blocks, the send, the snapshot of overrides            |
 | [The product metrics](metrics/spec.md)                                   | first-pass acceptance, what a tree counts and sends by itself, the loop from a report to an edit  |
+| [The metrics of the work result](work-result/spec.md)                    | merges and releases, epic windows, refusals per hundred calls, re-asks, the milestone by day      |
+| [The usefulness of the push set checks](push-set-usefulness/spec.md)     | false refusals, idle runs and the price of a defect per check of the set                          |
 | [The boundary of the package](package-boundary/spec.md)                  | what is carried to a consumer and what stays with the package's own tree, the sign and check      |
 | [The cost of context](context-cost/spec.md)                              | what the weight of the input, of a rule and of the layer is counted by; why on the spot           |
 | [The publish checks](publish-checks/spec.md)                             | imports from neighbours against the published version of the neighbour, the lock after publish    |

@@ -38,6 +38,35 @@ printf '%s' "$text" | grep -q 'There is no lawful form of bypass' \
     && report "SC-AK-1171 — законного обхода нет" deny deny \
     || report "SC-AK-1171 — законного обхода нет" PASS deny
 
+# Тот же вызов без пропуска встречает соседние гарды поставки, и отказ называет их ход раньше: на
+# главной ветке — местную ветку, у отправки — запуск тяжёлых шагов заранее. Без этого названный ход
+# вёл прямо во второй отказ.
+says() { input_cmd "$2" Bash "$1" | "$HOOKS/git-guard-no-verify.sh" 2>/dev/null | jq -r '.hookSpecificOutput.permissionDecisionReason' 2>/dev/null; }
+ON_MAIN="$(fixture_repo main)"
+says "$ON_MAIN" 'git commit --no-verify -m fix' | grep -q 'take a local branch first — git checkout -b <name>' \
+    && report "SC-AK-1171 — на главной ветке отказ называет местную ветку" есть есть \
+    || report "SC-AK-1171 — на главной ветке отказ называет местную ветку" нет есть
+says "$REPO" 'git commit --no-verify -m fix' | grep -q 'take a local branch first' \
+    && report "SC-AK-1171 — на рабочей ветке местной ветки не названо" есть нет \
+    || report "SC-AK-1171 — на рабочей ветке местной ветки не названо" нет нет
+says "$REPO" 'git push --no-verify origin RT-7-probe' | grep -q 'git-guard-push-ahead.sh' \
+    && report "SC-AK-1171 — у отправки назван запуск заранее" есть есть \
+    || report "SC-AK-1171 — у отправки назван запуск заранее" нет есть
+rm -rf "$ON_MAIN"
+
+# Коммит без пропуска судит и гард документов: правка кода без её документа отбивается им. Отказ
+# спрашивает соседей о названном коммите и называет их ход раньше, а не ведёт во второй отказ.
+DOCLESS="$(fixture_repo_branched main RT-7-docless)"
+mkdir -p "$DOCLESS/libs/x" "$DOCLESS/docs/specs/x"
+printf '# Domain x\n' > "$DOCLESS/docs/specs/x/spec.md"
+printf 'syntax = 1;\n' > "$DOCLESS/libs/x/a.proto"
+git -C "$DOCLESS" add libs/x/a.proto 2>/dev/null
+CLAUDE_PROJECT_DIR="$DOCLESS" says "$DOCLESS" 'git commit --no-verify -m fix' \
+    | grep -q 'this comes first — BLOCKED: the commit edits code but not the document' \
+    && report "SC-AK-1171 — сначала назван ход гарда документов" есть есть \
+    || report "SC-AK-1171 — сначала назван ход гарда документов" нет есть
+rm -rf "$DOCLESS"
+
 # --- SC-AK-1172. Что проходит -------------------------------------------------------------------
 g "SC-AK-1172 — коммит без пропуска" 'git commit -m fix' Bash PASS
 g "SC-AK-1172 — правка последнего коммита без пропуска" 'git commit --amend -F msg.txt' Bash PASS

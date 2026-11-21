@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.1 · hooks/git-guard-delivery-pipeline.sh · 9b381930fb0d · правится надстройкой, не здесь
+# rt-kit v0.37.1 · hooks/git-guard-delivery-pipeline.sh · f15012916be0 · правится надстройкой, не здесь
 # A draft on a base the pipeline does not wake for, for the delivery guard. NOT a guard: it has no
 # `rt-hook:` declaration and hooks into no agent event. The delivery guard sources it and calls
 # `rt_delivery_pull_draft` with the command text on a PR opening.
@@ -96,5 +96,5 @@ rt_delivery_pull_draft() {
 $bases
 EOF
 
-    fault "a draft into «${base}»: the pipeline «${file##*/}» wakes for a request only into $(printf '%s' "$bases" | tr '\n' ' ' | sed 's/ $//'), so no run will come and the draft will wait for nothing. Open the request ready, without --draft, and set the reviewer in the same call."
+    unmet_class pr_create_draft "a draft into «${base}»: the pipeline «${file##*/}» wakes for a request only into $(printf '%s' "$bases" | tr '\n' ' ' | sed 's/ $//'), so no run will come and the draft will wait for nothing. Open the request ready, without --draft, and set the reviewer in the same call."
 }

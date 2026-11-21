@@ -1,29 +1,36 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.1 · hooks/epic-stop-guard.sh · a2c9c1381d3e · правится надстройкой, не здесь
+# rt-kit v0.37.1 · hooks/epic-stop-guard.sh · a138197ec7ab · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Requires: hooks/deny-tail.sh, hooks/epic-over.sh, checks/epic-table.github.mjs
+# Requires: hooks/observe.sh, hooks/epic-over.sh, checks/epic-table.github.mjs
 # Guard of the stop at the end of an epic. PreToolUse on a call that takes new work.
 #
 # An epic used to end with the session taking the next piece of work. The owner learned that the
 # epic was over from an ordinary report, mixed in with everything else, and had nowhere to give an
 # order about its outcome: by the time they read it, the branch for the next work was already
-# created. The rule of the turn carried a line about this, and it was held the same way the line
-# about the table of tasks was held before the command — by memory, that is, sometimes.
+# created.
 #
 # The guard stands on the call, not on the end of the turn: a turn ends with text, and a guard that
-# took to reading text would refuse by mood. Taking work is a call — a task, a branch by a number, a
-# column.
+# took to reading text would refuse by mood. Taking work is a call — a created task or a branch by a
+# task number.
+#
+# The decision is the owner's, and the guard asks them for it: the answer is `ask`, and the host
+# shows the owner a window to allow or forbid this very command. The guard reads no record of the
+# conversation. It once looked for the owner's consent there by words, and both misses came of it:
+# a real «yes» given in other words was not found, and the owner was asked the same thing three
+# times; an unrelated «yes» was taken for consent. Where nobody can answer the window — a subagent,
+# a run without a person — the host hands the reason to the model, and the call does not go.
+#
+# A column moved to the working one is not judged: it follows the branch of the same work, and a
+# window on it would ask the owner a second time about the decision they have just given.
 #
 # The state of the epic is asked by the same command that prints the table for the owner. A reader
-# of its own would diverge from the printed table in silence: it would refuse work the table itself
-# calls unfinished.
+# of its own would diverge from the printed table in silence: it would ask about work the table
+# itself calls unfinished.
 #
 # FAIL-OPEN: no `jq`, no `node`, no command, an epic that cannot be asked, any error of its own —
 # the call is ALLOWED. A guard that jams the work when the network is gone is switched off on the
 # first day, and the price of a miss here is one turn of the owner's attention.
 
-# Its own name in the observations: the refusal is written by the shared deny tail, not by the
-# guard itself.
 RT_GUARD_NAME=epic-stop-guard
 RT_GUARD_RULE=turn-conduct
 
@@ -57,25 +64,34 @@ if [ "$tool" = "mcp__webstorm__execute_tool" ] && command -v perl >/dev/null 2>&
     [ -n "$inner" ] && cmd="$inner"
 fi
 
-# The order of the owner travels in the call itself: the guard sees the call and does not see the
-# conversation. An empty reason is not a bypass — the line then says nothing about who allowed it.
-if printf '%s' "$cmd" | grep -qE 'Epic-stop-skip:[[:space:]]*[^[:space:]]' 2>/dev/null; then
-    exit 0
-fi
-
-# What counts as taking new work: a branch by a task number, a created task, a column moved to the
-# working one. Everything else — a commit, a push, reading the history — is not judged: the epic is
-# closed by exactly these three, and a wider net would refuse the work of finishing it.
+# What counts as taking new work: a created task or a branch by a task number, and only where the
+# command itself is run. The body of a heredoc is a text for another program, and an argument of a
+# reader is a file name: a script that edits this very guard and a `sed` over the creating command
+# named the command and took no work, and both were refused on 13.11.2026. The command is cut into
+# its pieces by the shell separators; a piece is judged by its head, after the assignments of
+# variables and the options of git.
+heads() {
+    printf '%s\n' "$1" | perl -e '
+        my $text = do { local $/; <STDIN> };
+        $text =~ s/<<-?\s*([\x27"]?)(\w+)\1[^\n]*\n.*?\n\s*\2[ \t]*(?:\n|$)/\n/sg;
+        for my $piece (split /&&|\|\||[;|\n]/, $text) {
+            $piece =~ s/^\s+//;
+            $piece =~ s/^(?:\w+=(?:\x27[^\x27]*\x27|"[^"]*"|\S*)\s+)+//;
+            print "$piece\n" if length $piece;
+        }
+    ' 2>/dev/null
+}
 takes_work=no
-if printf '%s' "$cmd" | grep -qE '(checkout|switch)[[:space:]]+(-[A-Za-z]+[[:space:]]+)*-(b|c)[[:space:]]+[A-Za-z]+-[0-9]+-' 2>/dev/null; then
-    takes_work=yes
-fi
-if printf '%s' "$cmd" | grep -qE 'task:new|task-new\.mjs' 2>/dev/null; then
-    takes_work=yes
-fi
-if printf '%s' "$cmd" | grep -qE '(task:move|board\.mjs[[:space:]]+move)([^|;&]*)in-progress' 2>/dev/null; then
-    takes_work=yes
-fi
+while IFS= read -r piece; do
+    if printf '%s' "$piece" | grep -qE '^git([[:space:]]+-[cC][[:space:]]+[^[:space:]]+)*[[:space:]]+(checkout|switch)[[:space:]]+(-[A-Za-z]+[[:space:]]+)*-(b|c)[[:space:]]+[A-Za-z]+-[0-9]+-'; then
+        takes_work=yes
+    fi
+    if printf '%s' "$piece" | grep -qE '^(npm|pnpm|yarn)[[:space:]]+(run[[:space:]]+)?(-s[[:space:]]+)?task:new([[:space:]]|$)|^node[[:space:]]+[^[:space:]]*task-new(\.github)?\.mjs'; then
+        takes_work=yes
+    fi
+done <<EOF
+$(heads "$cmd")
+EOF
 [ "$takes_work" = yes ] || exit 0
 
 # The reading of the end of an epic is shared with the two guards that judge the stop itself: written
@@ -87,136 +103,22 @@ fi
 command -v rt_epic_over >/dev/null 2>&1 || exit 0
 rt_epic_over || exit 0
 
-# The word of the owner about this very work releases the call: their message or their answer to a
-# menu that names the number the call takes. The line in the call was the only form before, and an
-# owner who forbade writing it left the executor one way out — stopping the work they had just set.
-# The number is read from the call; the words of the executor do not count.
-taken="$(printf '%s' "$cmd" | sed -nE 's/.*(checkout|switch)[[:space:]]+(-[A-Za-z]+[[:space:]]+)*-(b|c)[[:space:]]+[A-Za-z]+-([0-9]+)-.*/\4/p; s/.*(task:move|board\.mjs[[:space:]]+move)[^0-9|;&]*([0-9]+).*/\2/p; s/.*--epic-of[[:space:]=]+([0-9]+).*/\1/p' | head -1)"
-transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/null)"
-
-# The words of the owner are looked for among what the owner side wrote, not among the last lines
-# of the record. A window of lines is spent by the work itself: every command adds two, and a
-# «yes» given an hour of work ago fell out of it while the executor was fixing what refused it.
-# Results of commands are dropped before the count, the answers to menus stay.
-owner_side() {
-    LC_ALL=C grep -F '"type":"user"' "$1" 2>/dev/null \
-        | awk '!/"tool_result"/ || /The user answered:|Your questions have been answered:|the user said:/' \
-        | tail -n 400
-}
-if [ -n "$taken" ] && [ -n "$transcript" ] && [ -f "$transcript" ]; then
-    # A menu answer comes in two forms, «The user answered:» and «Your questions have been answered:»,
-    # followed by "question"="answer" pairs. Only the answers count: the question is written by the
-    # executor, and a number in «take RT-N?» answered «no» is not the owner's word.
-    named="$(owner_side "$transcript" | jq -s -r --arg n "$taken" '
-        def menu_answers: if test("^(The user answered|Your questions have been answered):")
-            then ([match("\"=\"([^\"]*)\""; "g") | .captures[0].string] | join("\n")) else "" end;
-        [.[] | select(.type == "user")
-            | select(((.isMeta // false) or (.isCompactSummary // false)) | not)
-            | select((.origin.kind // "human") == "human")
-            | (.message.content // "")
-            | if type == "string" then .
-              elif type == "array" then (map(
-                  if .type == "text" then (.text // "")
-                  elif .type == "tool_result" then ((.content
-                      | if type == "string" then . elif type == "array"
-                        then (map(if type == "object" then (.text // "") else "" end) | join(" ")) else "" end)
-                      | menu_answers)
-                  else "" end) | join("\n"))
-              else "" end]
-        | map(test("(^|[^0-9])" + $n + "([^0-9]|$)")) | any
-    ' 2>/dev/null)"
-    [ "$named" = "true" ] && exit 0
-fi
-
-# A created task has no number yet, so no menu answer can name it, and the owner's answer to «create
-# a task for these findings?» left the call refused. The word of the owner here is their latest
-# answer to a menu: the answer agrees to a task — a word of a task, of creating it, or a plain
-# «yes» — and it is not a refusal. Any answer was too wide: «not now» and an answer about a button
-# colour passed alike. A new epic needs the word of an epic.
-#
-# The number after `--epic-of` names the epic, not the work taken: said by the owner, it releases
-# the call above, and its absence from their answer refuses nothing here. Read as the number of the
-# work, it left two answers «yes» in a row refused, and the owner was asked a third time.
-#
-# The answer agrees when it names the creating of a task, not a task alone: on the real record of
-# a session ten answers of twenty-three named a task while agreeing to something else. A plain
-# «yes» agrees only to the question it answers: it counts when that question names the creating.
-# Every pair of the latest menu is read, not the first one, and an answer that puts the task off
-# is no consent.
-#
-# What stands after the answer is judged by who wrote it. A notice of a background command and the
-# mark of an interrupted turn are written by no person and cancel nothing. A message of the owner
-# cancels their answer only when one of its lines begins with a refusal — «stop», «wait», «no»,
-# «do not create»: their other words after a «yes» are not a second decision. The words the owner
-# typed while declining a call are read the same way.
-if [ -n "$transcript" ] && [ -f "$transcript" ] \
-    && printf '%s' "$cmd" | grep -qE 'task:new|task-new\.mjs' 2>/dev/null; then
-    topic='задач|карточ|task|issue'
-    deed='заве|завод|созда|нов(ая|ую|ой) (задач|карточ)|create|new (task|issue)'
-    if printf '%s' "$cmd" | grep -qE -- '--epic([[:space:]=]|$)' 2>/dev/null; then
-        topic='эпик|epic'
-        deed='эпик|epic'
-    fi
-    yes='^\s*(да|yes|ок|ok)([^[:alpha:]]|$)'
-    refusal='^\s*(нет([^[:alpha:]]|$)|не (надо|нужно|заводи|создавай|делай)|нельзя|no([^[:alpha:]]|$)|стоп|stop|отмен|cancel|подожд|wait|позже|later|пока ничего|ничего не (надо|нужно|заводи|делай)|nothing)'
-    put_off='отлож|на потом|позже|завтра|не сейчас|пока не|not now|later'
-    # A denial inside the answer: «не создавать задачу», «без задачи», «do not create». The list
-    # above reads only the opening of a line, and an answer that opened with it by another form —
-    # an infinitive, «без» — read as consent by its word of a task.
-    denial='(^|[^[:alpha:]])(не|без|ничего не|do not|don.?t|skip)[[:space:]]+([^[:space:]]+[[:space:]]+)?(созда|завод|заве|задач|карточ|create|task|issue)'
-    latest="$(owner_side "$transcript" | jq -s -r --arg topic "$topic" --arg deed "$deed" --arg yes "$yes" \
-        --arg refusal "$refusal" --arg put_off "$put_off" --arg denial "$denial" '
-        def refuses: split("\n") | map(test($refusal; "i")) | any;
-        [.[] | select(.type == "user")
-            | select(((.isMeta // false) or (.isCompactSummary // false)) | not)
-            | select((.origin.kind // "human") == "human")
-            | (.message.content // "")
-            | if type == "string" then {said: .}
-              elif type == "array" then (map(
-                  if .type == "text" then {said: (.text // "")}
-                  elif .type == "tool_result" then ((.content
-                      | if type == "string" then . elif type == "array"
-                        then (map(if type == "object" then (.text // "") else "" end) | join(" ")) else "" end)
-                      | if test("^(The user answered|Your questions have been answered):")
-                        then {menu: [match("\"([^\"]*)\"=\"([^\"]*)\""; "g") | {asked: .captures[0].string, chose: .captures[1].string}]}
-                        elif test("^The user doesn.t want to proceed") and test("the user said:")
-                        then {said: (split("the user said:") | .[1:] | join("\n") | ltrimstr("\n"))}
-                        else empty end)
-                  else empty end) | .[])
-              else empty end
-            | select(((.said // "") | test("^\\s*\\[Request interrupted")) | not)]
-        | (map(has("menu")) | rindex(true)) as $at
-        | if $at == null then "no"
-          else (.[$at].menu | map(
-                    ((.chose | refuses) or (.chose | test($put_off; "i")) or (.chose | test($denial; "i")) | not)
-                    and ((.chose | test($deed; "i"))
-                         or ((.chose | test($yes + "|" + $topic; "i")) and (.asked | test($deed; "i"))))
-                ) | any) as $agreed
-              | (.[$at + 1:] | map((.said // "") | refuses) | any) as $taken_back
-              | if $agreed and ($taken_back | not) then "yes" else "no" end
-          end
-    ' 2>/dev/null)"
-    [ "$latest" = "yes" ] && exit 0
-fi
-
 root="$(git rev-parse --show-toplevel 2>/dev/null)"
 checks="$(jq -r '.layout.checks // "tools"' "$root/.claude/rt-kit.json" 2>/dev/null)"
 if [ -z "$checks" ] || [ "$checks" = null ]; then
     checks=tools
 fi
 
-reason="Refused: the epic is over — every task of it is merged or handed over by a request, and this call takes new work. The end of an epic is a stop: print the table by «npm run epic:table» (or «node $checks/epic-table.mjs»), tell the owner what was done on each task and what confirms it, and say outright that the session waits for their orders. New work is taken by their word, not by the count of what is left: their message or their answer to a menu that names the number of this work releases the call; a task being created has no number yet, and it is released by the latest answer of the owner to a menu when that answer agrees to a task and is not a refusal. A new epic the owner has declared needs the bypass line in the calls that create its card, its tasks and its branch; once the branch of the new epic is taken, the guard reads that epic and stops refusing."
-
+# The window is counted apart from the refusals: an unanswered window in a run without a person is
+# a refusal by its effect, and a count of refusals alone would not see it.
 # shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-deny_tail_text="$(rt_deny_tail "the line «Epic-stop-skip: <the word of the owner>» in the call itself; an empty reason is not accepted")"
-[ -n "$deny_tail_text" ] && reason="${reason}
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/observe.sh" 2>/dev/null || true
+command -v rt_note >/dev/null 2>&1 && rt_note guard-ask guard="$RT_GUARD_NAME" sid="$(printf '%s' "$input" | jq -r '.session_id // empty' 2>/dev/null)"
 
-${deny_tail_text}"
-
-jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"The epic is over: the end of an epic is a stop, not the next task."}}\n'
-
+# The decision and the words come from the decision table; the class of the call is found by the
+# decider from the call itself, and a run of the task script it does not know is taking a task.
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/decide.sh" 2>/dev/null
+command -v rt_decide >/dev/null 2>&1 || exit 0
+rt_decide epic-stop-guard.sh "?task_new" '{"epic_over":"yes"}' "$(jq -cn --arg c "$checks" '{checks:$c}')" PreToolUse "$input"
 exit 0

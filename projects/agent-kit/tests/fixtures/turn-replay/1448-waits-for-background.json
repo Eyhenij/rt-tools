@@ -1,0 +1,19 @@
+{
+  "case": "SC-AK-1448",
+  "kind": "waiting for a step of someone else: a background task",
+  "record": "3c0dd6d0 3830",
+  "task": 101,
+  "turns": [
+    { "role": "owner", "at": "2026-11-11T13:00:00Z", "owner": "<nudge>" },
+    {
+      "role": "agent",
+      "at": "2026-11-11T13:01:00Z",
+      "call": "Edit",
+      "file": "projects/agent-kit/tests/flow-step-guard.test.sh",
+      "code": 0
+    },
+    { "role": "agent", "at": "2026-11-11T13:02:00Z", "call": "Bash", "command": "bash projects/agent-kit/tests/run.sh", "code": 0 },
+    { "role": "agent", "at": "2026-11-11T13:03:00Z", "say": "The suite runs in the background. I will report when it finishes." }
+  ],
+  "next": { "owner": "<nudge>" }
+}

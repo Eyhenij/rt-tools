@@ -24,9 +24,9 @@ rt_delivery_merge_run() {
     name="${name:-$ref}"
     case "$run" in
         failure)
-            fault "the run on the tip of the request${name:+ #${name}} is red. A merge over red carries the breakage into the branch, and every next request into it turns red. Read the run — gh run list --commit <tip> — fix it in the branch and repeat." ;;
+            unmet pr_tip_run failure "the run on the tip of the request${name:+ #${name}} is red. A merge over red carries the breakage into the branch, and every next request into it turns red. Read the run — gh run list --commit <tip> — fix it in the branch and repeat." ;;
         running)
-            fault "the run on the tip of the request${name:+ #${name}} has not finished. A merge before its end carries what it has not checked yet. Wait for its end and read the result by a command." ;;
+            unmet pr_tip_run running "the run on the tip of the request${name:+ #${name}} has not finished. A merge before its end carries what it has not checked yet. Wait for its end and read the result by a command." ;;
     esac
     return 0
 }

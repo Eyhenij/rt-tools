@@ -52,7 +52,7 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
 | the quick period          | a toggle «7 дней», «30 дней», «90 дней» next to the day pickers                                      |
 | the digest of a period    | the cards above the table: «Загрузки по дням», «Топ скилов», «По роду», «Отказы»                     |
 | the sessions of a skill   | the panel «Сессии» opened by a row: a list of day, session sign and how many times                   |
-| the section of the result | «Качество» in the row of the sections, after «Использование»; the right `quality:read`               |
+| the section of the result | «Качество» in the row of the sections, right after «Разборы происшествий»; the right `quality:read`  |
 | the right                 | `usage:read` — a person with it sees the section and reads the usage                                 |
 
 ## Rules
@@ -213,6 +213,7 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
 | ------------------------------ | ------------------------------------------------------------------------------------------------ |
 | POST /api/intake/observations  | takes the observation cargo in by the tree token: a day of a copy is replaced whole              |
 | POST /api/intake/metrics       | takes a day line in by the tree token: a line of a copy and a day replaces the stored one        |
+| POST /api/intake/epic-windows  | takes an epic window in by the tree token; described in the subdomain `work-result`              |
 | GET /api/usage                 | a page of the usage of the skills of a tree: `tree`, `from`, `to`, `page`, `size`, `sort`, `dir` |
 | GET /api/usage/:skill/sessions | the sessions of one skill of a tree over the period: `tree`, `from`, `to`; newest day first      |
 | GET /api/usage/digest          | the digest of the period of a tree: `tree`, `from`, `to`; the days, the kinds, the two tops      |

@@ -1,0 +1,16 @@
+{
+ "args": [
+  "pr",
+  "list",
+  "--state",
+  "open",
+  "--limit",
+  "1",
+  "--json",
+  "number,reviewRequests"
+ ],
+ "token": "machine",
+ "code": 1,
+ "stdout": "",
+ "stderr": "GraphQL: Your token has not been granted the required scopes to execute this query. The 'login' field requires one of the following scopes: ['read:org'], but your token has only been granted the: ['project', 'repo', 'workflow'] scopes. Please modify your token's scopes at: https://github.com/settings/tokens., Your token has not been granted the required scopes to execute this query. The 'name' field requires one of the following scopes: ['read:org', 'read:discussion'], but your token has only been granted the: ['project', 'repo', 'workflow'] scopes. Please modify your token's scopes at: https://github.com/settings/tokens., Your token has not been granted the required scopes to execute this query. The 'slug' field requires one of the following scopes: ['read:org', 'read:discussion'], but your token has only been granted the: ['project', 'repo', 'workflow'] scopes. Please modify your token's scopes at: https://github.com/settings/tokens.\n"
+}

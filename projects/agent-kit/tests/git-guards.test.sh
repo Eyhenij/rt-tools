@@ -59,6 +59,22 @@ d "SC-AK-872 — то же через switch с флагом" 'git switch -q -c 
 # Имя без номера законно, пока ветка живёт локально: заявка с неё не откроется.
 d "ветка под пробу без номера" 'git checkout -b probe-idea' PASS
 
+# Неверное имя — одна из недостач, а не отказ сам по себе: отбитое отдельно, исправленное имя
+# встречало проверку задачи только вторым вызовом, и первый отказ называл ветку, которую второй
+# отбивал снова.
+NAMED="$(fixture_repo RT-7-probe)"
+mkdir -p "$NAMED/.claude/rt-kit"
+printf '%s\n' "rt_task_state() { printf '%s' '{\"exists\":false,\"open\":true,\"onBoard\":true,\"assigned\":true,\"numbered\":true}'; }" \
+    > "$NAMED/.claude/rt-kit/project.sh"
+named_says="$(CLAUDE_PROJECT_DIR="$NAMED" input_cmd 'git checkout -b RT-9-GuestToken' Bash "$NAMED" \
+    | CLAUDE_PROJECT_DIR="$NAMED" "$HOOKS/git-guard-delivery.sh" 2>/dev/null \
+    | jq -r '.hookSpecificOutput.permissionDecisionReason' 2>/dev/null)"
+case "$named_says" in
+    *'is not of the form accepted here'*'which does not exist'*) report "неверное имя названо вместе с недостающей задачей" есть есть ;;
+    *) report "неверное имя названо вместе с недостающей задачей" нет есть ;;
+esac
+rm -rf "$NAMED"
+
 # --- SC-AK-1074…1076. Форма имени судится деревом, в котором идёт команда ---------------------
 # Сессия работает в соседнем дереве по прямому слову владельца: задача заведена там, номер и
 # краткое имя верны, а ключ задач у соседа свой. Форма, спрошенная у профиля дерева сессии,

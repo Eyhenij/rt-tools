@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.1 · hooks/task-flow-context.sh · d236633aba79 · правится надстройкой, не здесь
+# rt-kit v0.37.1 · hooks/task-flow-context.sh · 0be468b35732 · правится надстройкой, не здесь
 # Shared parsing for the work-conduct guards. NOT a guard: it has no `rt-hook:` declaration and
 # is not attached to any agent event. The guards themselves source it — the same way they source
 # the shared refusal tail.
@@ -15,8 +15,8 @@
 # names the branch, the root, the task folders directory, the folder itself and the plan in it.
 #
 # WHAT IT DOES NOT DO. It judges nothing and refuses nothing: the branch name, the presence of
-# the folder, the work state and the agreement are the business of the guards themselves, and the
-# refusal is printed by the one whose requirement it is.
+# the folder, the work state and the agreement are facts the guards themselves hand to the decision
+# table, and the decision comes from there.
 #
 # FAIL-OPEN: no jq, not a git repository, broken input, a foreign tool, no profile function →
 # the answer is "nothing to judge". Broken parsing must not get in the way of work.
@@ -195,7 +195,9 @@ EOF
     cd "$rt_tf_workdir" 2>/dev/null || return 1
     git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return 1
 
-    RT_TF_BRANCH="$(git branch --show-current 2>/dev/null)"
+    # shellcheck disable=SC1091
+    command -v rt_fact_branch >/dev/null 2>&1 || . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+    RT_TF_BRANCH="$(rt_fact_branch)"
     [ -z "$RT_TF_BRANCH" ] && return 1   # a detached HEAD is not about this case
 
     RT_TF_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
@@ -208,19 +210,4 @@ EOF
     RT_TF_PLAN="$RT_TF_DIR/plan.md"
 
     return 0
-}
-
-# The refusal of a work-conduct guard: the reason as the first parameter, the lawful form of
-# bypass as the second. The tail is appended here, not in every text: missed in one place, it
-# reads as "this refusal has no moves". The tail may not be laid out — then there is none, and
-# the reason stays as it was.
-rt_task_flow_deny() {
-    rt_tf_reason="$1"
-    if command -v rt_deny_tail >/dev/null 2>&1; then
-        rt_tf_tail="$(rt_deny_tail "$2")"
-        [ -n "$rt_tf_tail" ] && rt_tf_reason="$1 ${rt_tf_tail}"
-    fi
-    jq -n --arg r "$rt_tf_reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}\n' "$rt_tf_reason"
-    exit 0
 }

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Сценарии остановки в конце эпика: что считается взятием работы и когда оно отбивается.
+# Сценарии остановки в конце эпика: что считается взятием работы и когда проверка спрашивает
+# владельца окном.
 #
 # Состояние эпика спрашивается двойником команды: набор судит гард, а не очередь работ дерева, в
 # котором его запустили.
@@ -48,31 +49,23 @@ stop_reason() {
 export STUB_LEFT=''
 export STUB_CODE=0
 
-# --- SC-AK-979 — взятие работы при кончившемся эпике отбито ---------------------------------
-stop_decision "SC-AK-979 — ветка по номеру задачи отбита" 'git checkout -b RT-1999-probe main' deny
+# --- SC-AK-979 — взятие работы при кончившемся эпике спрашивает владельца ----------------------
+stop_decision "SC-AK-979 — ветка по номеру задачи спрашивает" 'git checkout -b RT-1999-probe main' ask
 
 # --- SC-AK-980 — незаконченная задача эпика пропускает работу --------------------------------
 export STUB_LEFT='1947'
 stop_decision "SC-AK-980 — незаконченная задача пропускает" 'git checkout -b RT-1999-probe main' PASS
 export STUB_LEFT=''
 
-# --- SC-AK-981 — отказ называет остановку ----------------------------------------------------
+# --- SC-AK-981 — окно называет конец эпика и таблицу -----------------------------------------
 stop_reason "SC-AK-981 — названа команда таблицы" 'git checkout -b RT-1999-probe main' 'epic:table'
-stop_reason "SC-AK-981 — названо ожидание приказа" 'git checkout -b RT-1999-probe main' 'waits for their orders'
-stop_reason "SC-AK-981 — названа лазейка со словом владельца" 'git checkout -b RT-1999-probe main' 'Epic-stop-skip'
+stop_reason "SC-AK-981 — назван конец эпика" 'git checkout -b RT-1999-probe main' 'The epic is over'
 
-# --- SC-AK-1227 — отказ называет, до какого вызова нужна строка для нового эпика ----------------
-stop_reason "SC-AK-1227 — названа граница строки обхода для нового эпика" 'git checkout -b RT-1999-probe main' 'branch of the new epic is taken'
-
-# --- SC-AK-982 — задача и столбец судятся наравне с веткой -----------------------------------
-stop_decision "SC-AK-982 — заведение задачи отбито" 'npm run task:new -- "Проба"' deny
-stop_decision "SC-AK-982 — движение столбца в рабочий отбито" 'npm run task:move -- 1999 in-progress' deny
+# --- SC-AK-982 — задача судится наравне с веткой, столбец не судится -------------------------
+stop_decision "SC-AK-982 — заведение задачи спрашивает" 'npm run task:new -- "Проба"' ask
+stop_decision "SC-AK-982 — ветка через switch спрашивает" 'git switch -c RT-1999-probe main' ask
+stop_decision "SC-AK-982 — движение столбца в рабочий не судится" 'npm run task:move -- 1999 in-progress' PASS
 stop_decision "SC-AK-982 — движение в рецензию не судится" 'npm run task:move -- 1999 in-review' PASS
-stop_decision "SC-AK-982 — ветка через switch отбита" 'git switch -c RT-1999-probe main' deny
-
-# --- SC-AK-983 — слово владельца в самом вызове пропускает -----------------------------------
-stop_decision "SC-AK-983 — названная причина пропускает" 'git checkout -b RT-1999-probe main  # Epic-stop-skip: владелец сказал брать следующее' PASS
-stop_decision "SC-AK-983 — пустая причина не лазейка" 'git checkout -b RT-1999-probe main  # Epic-stop-skip:' deny
 
 # --- SC-AK-984 — ветка без номера задачи не судится ------------------------------------------
 stop_decision "SC-AK-984 — ветка без номера пропущена" 'git checkout -b probe-without-number main' PASS
@@ -88,10 +81,38 @@ stop_decision "SC-AK-986 — отправка ветки не судится" 'g
 stop_decision "SC-AK-986 — чтение истории не судится" 'git log --oneline -5' PASS
 stop_decision "SC-AK-986 — переход на готовую ветку не судится" 'git checkout RT-1999-probe' PASS
 
-# --- SC-AK-987 — гард ожидания не требует следующей задачи при кончившемся эпике --------------
-#
-# Отданная работа при живом эпике требует взять следующую задачу; при кончившемся её брать нельзя —
-# и оба гарда обязаны сходиться, иначе у хода не остаётся законного конца.
+# --- SC-AK-987, SC-AK-988 — конец эпика отпускает ход, живой эпик держит --------------------------
+# Ход на Stop держит движок task flow: конец эпика — случай отпуска «конец сценария», а при живом
+# эпике ход с работой держится, что бы ни стояло в ответе — отданная работа или «жду вашего слова».
+# Случаи зовут вердикт движка напрямую: состояние эпика задаёт ответ измерителя.
+ES_OUT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && node --input-type=module 2>&1 <<'JS'
+import { buildModel } from '../assets/checks/flow-model.mjs';
+import { releaseCase } from '../assets/checks/flow-verdict.mjs';
+
+const model = buildModel(new URL('../assets/task-flow/flow.js', import.meta.url).pathname);
+const handed = { state: 'работа-отдана', index: 11, reason: null };
+const verdict = (finished) => {
+    const answers = { 'measure.session.wrote': true, 'measure.epic.finished': finished };
+    return releaseCase(model, (name) => answers[name] ?? false, handed) ? 'PASS' : 'BLOCK';
+};
+console.log(`SC-AK-987 — живой эпик требует следующей задачи|${verdict(false)}|BLOCK`);
+console.log(`SC-AK-987 — кончившийся эпик требования снимает|${verdict(true)}|PASS`);
+console.log(`SC-AK-988 — при живом эпике объявленная остановка отбита|${verdict(false)}|BLOCK`);
+console.log(`SC-AK-988 — при кончившемся эпике остановка законна|${verdict(true)}|PASS`);
+JS
+)"
+while IFS='|' read -r label got want; do
+    [ -n "$label" ] || continue
+    report "$label" "$got" "$want"
+done <<< "$ES_OUT"
+
+# --- SC-AK-1558 — новый эпик берётся через то же окно ----------------------------------------
+stop_decision "SC-AK-1558 — карточка нового эпика спрашивает" "npm run task:new -- --epic --title 'Возможность' --slug x" ask
+stop_decision "SC-AK-1558 — строка в команде окно не снимает" 'git checkout -b RT-1999-probe main  # Epic-stop-skip: владелец сказал' ask
+
+# --- SC-AK-1559 — проверка не читает запись разговора ----------------------------------------
+# Раньше согласие искалось в записи по словам: настоящее «да» другими словами не находилось, а
+# постороннее «да» засчитывалось. Теперь запись не читается вовсе — что бы в ней ни стояло.
 TURNS="$(mktemp -d)"
 turn() {
     local path
@@ -103,45 +124,6 @@ turn() {
     printf '%s' "$path"
 }
 said() { jq -c -n --arg t "$1" '{type:"user",message:{content:[{type:"text",text:$t}]}}'; }
-spoke() { jq -c -n --arg t "$1" '{type:"assistant",message:{content:[{type:"text",text:$t}]}}'; }
-called() {
-    jq -c -n --arg c "$1" '{type:"assistant",message:{content:[{type:"tool_use",name:"Bash",input:{command:$c}}]}}'
-}
-stop_input() {
-    jq -n --arg p "$1" --arg d "$STOP_TREE" '{session_id:"tests",transcript_path:$p,cwd:$d,stop_hook_active:false}'
-}
-stop_turn() {
-    local label="$1" hook="$2" json="$3" want="$4" out got
-    out="$(cd "$STOP_TREE" && printf '%s' "$json" | "$HOOKS/$hook" 2>/dev/null)"
-    if [ -z "$out" ]; then
-        got="PASS"
-    else
-        got="$(printf '%s' "$out" | jq -r 'if (.decision == "block") or (.hookSpecificOutput.permissionDecision == "deny") then "BLOCK" else "PASS" end' 2>/dev/null)"
-    fi
-    report "$label" "$got" "$want"
-}
-
-# Состояние отданного в ходе спрошено: то требование эпиком не снимается, и без него отказ пришёл
-# бы по другой причине.
-HANDED="$(turn "$(said 'работай')" "$(called 'gh pr create --draft --title x')" "$(called 'gh run list --branch RT-1-probe')" "$(called 'gh pr ready 1')")"
-
-export STUB_LEFT='1947'
-stop_turn "SC-AK-987 — живой эпик требует следующей задачи" waiting-turn-guard.sh "$(stop_input "$HANDED")" BLOCK
-export STUB_LEFT=''
-stop_turn "SC-AK-987 — кончившийся эпик требования снимает" waiting-turn-guard.sh "$(stop_input "$HANDED")" PASS
-
-# --- SC-AK-988 — ход, ждущий приказа, при кончившемся эпике не отбивается ---------------------
-mkdir -p "$STOP_TREE/docs/tasks"
-WAITED="$(turn "$(said 'работай')" "$(called 'git commit -m проба')" "$(spoke 'Эпик кончился. Жду вашего слова.')")"
-
-export STUB_LEFT='1947'
-stop_turn "SC-AK-988 — при живом эпике объявленная остановка отбита" turn-exit-guard.sh "$(stop_input "$WAITED")" BLOCK
-export STUB_LEFT=''
-stop_turn "SC-AK-988 — при кончившемся эпике остановка законна" turn-exit-guard.sh "$(stop_input "$WAITED")" PASS
-
-# --- SC-AK-1201 — слово владельца с номером новой работы снимает остановку --------------------
-# Строку обхода в команде владелец запретил, и две записи дерева противоречили друг другу: выход
-# оставался один — остановить работу, которую он сам только что поставил.
 answered() { jq -c -n --arg t "$1" '{type:"user",message:{content:[{type:"tool_result",content:$t}]}}'; }
 call_in() {
     jq -n --arg c "$1" --arg p "$2" '{tool_name:"Bash",tool_input:{command:$c},transcript_path:$p}'
@@ -152,116 +134,27 @@ stop_word() {
     if [ -z "$out" ]; then got="PASS"; else got="$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision // "deny"')"; fi
     report "$label" "$got" "$want"
 }
-stop_word "SC-AK-1201 — ответ меню с номером работы пропускает" 'git checkout -b RT-1999-probe main' \
-    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Что брать дальше?"="Брать эпик RT-1999 (Recommended)"')")" PASS
-stop_word "SC-AK-1201 — сообщение владельца с номером пропускает" 'npm run task:move -- 1999 in-progress' \
-    "$(turn "$(said 'бери 1999')")" PASS
-stop_word "SC-AK-1201 — слово о другой работе не пропускает" 'git checkout -b RT-1999-probe main' \
-    "$(turn "$(said 'бери 2001')")" deny
-stop_word "SC-AK-1201 — номер в словах исполнителя не пропускает" 'git checkout -b RT-1999-probe main' \
-    "$(turn "$(said 'продолжай')" "$(spoke 'Беру RT-1999.')")" deny
-
-# --- SC-AK-1207 — ответ меню узнаётся в обоих видах, номер берётся только из ответа ----------
-# Ответ «Бери RT-2681» пришёл вторым видом, и проверка его не увидела: работа стояла до сообщения.
-stop_word "SC-AK-1207 — второй вид ответа меню с номером пропускает" 'git checkout -b RT-1999-probe main' \
-    "$(turn "$(said 'что дальше')" "$(answered 'Your questions have been answered: "Что брать дальше?"="Бери RT-1999 (Recommended)". You can now continue with these answers in mind.')")" PASS
-stop_word "SC-AK-1207 — номер только в вопросе меню не пропускает" 'git checkout -b RT-1999-probe main' \
-    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Брать RT-1999?"="Нет, подожди". Read the answers carefully.')")" deny
-stop_word "SC-AK-1207 — результат команды с номером не пропускает" 'git checkout -b RT-1999-probe main' \
-    "$(turn "$(said 'что дальше')" "$(answered 'issue RT-1999 answered by the bot')")" deny
-
-# --- SC-AK-1334 — у создаваемой задачи номера нет, её пускает последний ответ меню ----------
-# Ответ «Одна задача на четыре находки» номера не называл, и заведение задачи стояло под отказом.
-NEW_TASK='npm run task:new -- --title "Находки после выпуска" --label documentation'
-stop_word "SC-AK-1334 — ответ меню пускает заведение задачи" "$NEW_TASK" \
-    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Как завести находки?"="Одна задача на все находки (Recommended)"')")" PASS
-stop_word "SC-AK-1334 — второй вид ответа меню тоже пускает" "$NEW_TASK" \
-    "$(turn "$(said 'что дальше')" "$(answered 'Your questions have been answered: "Заводить?"="Заводи". You can now continue with these answers in mind.')")" PASS
-stop_word "SC-AK-1334 — отказ в меню не пускает" "$NEW_TASK" \
-    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Заводить задачу?"="Нет, подожди"')")" deny
-stop_word "SC-AK-1334 — сообщение владельца после ответа меню не пускает" "$NEW_TASK" \
-    "$(turn "$(answered 'The user answered: "Заводить задачу?"="Заводи (Recommended)"')" "$(said 'стоп, сначала отчёт')")" deny
-stop_word "SC-AK-1334 — «пока ничего» в меню не пускает" "$NEW_TASK" \
-    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Как завести находки?"="Пока ничего"')")" deny
-stop_word "SC-AK-1334 — «позже» в меню не пускает" "$NEW_TASK" \
-    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Заводить задачу?"="Позже, задачу заведём завтра"')")" deny
-stop_word "SC-AK-1334 — ответ на посторонний вопрос не пускает" "$NEW_TASK" \
-    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Какой цвет у кнопки?"="Синий (Recommended)"')")" deny
-stop_word "SC-AK-1334 — прямое «да» пускает" "$NEW_TASK" \
-    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Заводить?"="Да"')")" PASS
-stop_word "SC-AK-1334 — ответ о задаче эпик не объявляет" \
-    "npm run task:new -- --epic --title 'Возможность' --slug x" \
-    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Как завести находки?"="Одна задача на все находки (Recommended)"')")" deny
-stop_word "SC-AK-1334 — ответ об эпике эпик объявляет" \
-    "npm run task:new -- --epic --title 'Возможность' --slug x" \
-    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Как вести работу?"="Новый эпик (Recommended)"')")" PASS
-stop_word "SC-AK-1334 — без ответа меню заведение отбито" "$NEW_TASK" \
-    "$(turn "$(said 'продолжай')")" deny
-stop_word "SC-AK-1334 — ответ меню без номера ветку не пускает" 'git checkout -b RT-1999-probe main' \
-    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Как завести находки?"="Одна задача на все находки (Recommended)"')")" deny
-
-# --- SC-AK-1343 — согласие владельца на задачу не спрашивается второй раз -------------------
-# Владелец дважды ответил «да» на меню о задаче эпика, и оба ответа были отбиты: номер эпика из
-# команды читался как номер работы, которого в ответе нет. Третий раз он повторять отказался.
-EPIC_TASK='npm run task:new -- --epic-of 1947 --title "Пункты аудита" --label bug --slug audit'
-AGREED='Your questions have been answered: "Заводить задачу в эпике?"="Да, завести задачу (Recommended)". You can now continue with these answers in mind.'
-noticed() { jq -c -n --arg t "$1" '{type:"user",origin:{kind:"task-notification"},message:{content:$t}}'; }
-typed() { jq -c -n --arg t "$1" '{type:"user",origin:{kind:"human"},message:{content:$t}}'; }
-stop_word "SC-AK-1343 — согласие без номера пускает задачу эпика" "$EPIC_TASK" \
-    "$(turn "$(said 'что дальше')" "$(answered "$AGREED")")" PASS
-stop_word "SC-AK-1343 — уведомление фоновой команды согласия не отменяет" "$EPIC_TASK" \
-    "$(turn "$(answered "$AGREED")" "$(noticed '<task-notification> the gate ended, no task was taken')")" PASS
-stop_word "SC-AK-1343 — отметка прерванного хода согласия не отменяет" "$EPIC_TASK" \
-    "$(turn "$(answered "$AGREED")" "$(said '[Request interrupted by user]')")" PASS
-stop_word "SC-AK-1343 — слова владельца без отказа согласия не отменяют" "$EPIC_TASK" \
-    "$(turn "$(answered "$AGREED")" "$(typed 'я уже ответил, делай')")" PASS
-stop_word "SC-AK-1343 — отказ владельца после согласия отменяет его" "$EPIC_TASK" \
-    "$(turn "$(answered "$AGREED")" "$(typed 'стоп, сначала отчёт')")" deny
-stop_word "SC-AK-1343 — отказ в меню задачу эпика не пускает" "$EPIC_TASK" \
-    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Заводить задачу в эпике?"="Нет, записать долгом"')")" deny
-stop_word "SC-AK-1343 — ответ на посторонний вопрос задачу эпика не пускает" "$EPIC_TASK" \
-    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Какой цвет у кнопки?"="Синий (Recommended)"')")" deny
-stop_word "SC-AK-1343 — без ответа меню задача эпика отбита" "$EPIC_TASK" \
-    "$(turn "$(typed 'продолжай')")" deny
-stop_word "SC-AK-1343 — уведомление со словом о задаче ответом не считается" "$EPIC_TASK" \
-    "$(turn "$(typed 'продолжай')" "$(noticed 'Your questions have been answered: "x"="Да, завести задачу"')")" deny
-stop_word "SC-AK-1343 — слова «не переспрашивай, заводи» согласия не отменяют" "$EPIC_TASK" \
-    "$(turn "$(answered "$AGREED")" "$(typed 'не переспрашивай, заводи')")" PASS
-stop_word "SC-AK-1343 — слова «не заводи» согласие отменяют" "$EPIC_TASK" \
-    "$(turn "$(answered "$AGREED")" "$(typed 'не заводи')")" deny
-stop_word "SC-AK-1343 — отказ во второй строке сообщения согласие отменяет" "$EPIC_TASK" \
-    "$(turn "$(answered "$AGREED")" "$(typed "$(printf 'Понял.\nСтоп, сначала отчёт')")")" deny
-stop_word "SC-AK-1343 — «да» на вопрос не о задаче задачу эпика не пускает" "$EPIC_TASK" \
-    "$(turn "$(answered 'The user answered: "Отправить ветку?"="Да (Recommended)"')" "$(typed 'покажи таблицу эпика')")" deny
-stop_word "SC-AK-1343 — согласие во втором вопросе меню пускает" "$EPIC_TASK" \
-    "$(turn "$(answered 'The user answered: "Какой цвет у кнопки?"="Синий", "Заводить задачу в эпике?"="Да"')")" PASS
-stop_word "SC-AK-1343 — ответ «отложить задачу» задачу эпика не пускает" "$EPIC_TASK" \
-    "$(turn "$(answered 'The user answered: "Что с пунктами аудита?"="Отложить задачу на потом"')")" deny
-stop_word "SC-AK-1343 — слова при отклонении вызова согласие отменяют" "$EPIC_TASK" \
-    "$(turn "$(answered "$AGREED")" "$(answered "$(printf "The user doesn't want to proceed with this tool use. To tell you how to proceed, the user said:\nнет, не заводи")")")" deny
-stop_word "SC-AK-1343 — номер эпика в уведомлении фоновой команды вызов не пускает" "$EPIC_TASK" \
-    "$(turn "$(typed 'продолжай')" "$(noticed 'the report of the role names the epic RT-1947')")" deny
-stop_word "SC-AK-1343 — ответ «Не создавать задачу» задачу эпика не пускает" "$EPIC_TASK" \
-    "$(turn "$(answered 'The user answered: "Заводить задачу на находки?"="Не создавать задачу"')")" deny
-stop_word "SC-AK-1343 — ответ «Без задачи, записать долгом» задачу эпика не пускает" "$EPIC_TASK" \
-    "$(turn "$(answered 'The user answered: "Заводить задачу?"="Без задачи, записать долгом"')")" deny
-stop_word "SC-AK-1343 — ответ «Do not create» задачу эпика не пускает" "$EPIC_TASK" \
-    "$(turn "$(answered 'The user answered: "Create a task for it?"="Do not create a task"')")" deny
-stop_word "SC-AK-1343 — ответ «Создать задачу позже» задачу эпика не пускает" "$EPIC_TASK" \
-    "$(turn "$(answered 'The user answered: "Заводить задачу?"="Создать задачу позже"')")" deny
-stop_word "SC-AK-1343 — вывод команды со словами «the user said» согласия не отменяет" "$EPIC_TASK" \
-    "$(turn "$(answered "$AGREED")" "$(answered "$(printf 'grep: the user said:\nnothing to commit')")")" PASS
-
-# Согласие дано давно: после него в записи пятьсот пар «вызов команды и её результат».
-LONG="$TURNS/turn-long.jsonl"
-answered "$AGREED" > "$LONG"
-for _ in $(seq 1 500); do
-    called 'git status' >> "$LONG"
-    answered 'On branch RT-1-probe, nothing to commit' >> "$LONG"
-done
-stop_word "SC-AK-1343 — согласие за пятьсот команд до вызова всё ещё пускает" "$EPIC_TASK" "$LONG" PASS
-
+stop_word "SC-AK-1559 — ответ меню с номером работы окно не снимает" 'git checkout -b RT-1999-probe main' \
+    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Что брать дальше?"="Брать эпик RT-1999 (Recommended)"')")" ask
+stop_word "SC-AK-1559 — согласие на задачу окно не снимает" 'npm run task:new -- --title "Находки"' \
+    "$(turn "$(answered 'The user answered: "Заводить задачу?"="Да, завести задачу"')")" ask
+stop_word "SC-AK-1559 — отказ в записи окна не заменяет" 'npm run task:new -- --title "Находки"' \
+    "$(turn "$(answered 'The user answered: "Заводить задачу?"="Нет, подожди"')")" ask
 rm -rf "$TURNS"
+
+# --- SC-AK-1560 — имя команды в тексте не судится --------------------------------------------
+stop_decision "SC-AK-1560 — чтение файла команды не судится" 'sed -n 1,60p tools/task-new.mjs | cut -c1-200' PASS
+stop_decision "SC-AK-1560 — тело heredoc не судится" "$(printf 'python3 - <<%s\nrun(\"npm run task:new -- --title x\")\nrun(\"git checkout -b RT-1999-probe main\")\nEOF\n' "'EOF'")" PASS
+stop_decision "SC-AK-1560 — сообщение коммита не судится" 'git commit -m "npm run task:new и git checkout -b RT-1999-x"' PASS
+stop_decision "SC-AK-1560 — команда после cd спрашивает" 'cd /tmp && npm run -s task:new -- --title x' ask
+stop_decision "SC-AK-1560 — команда после присваивания спрашивает" 'GIT_AUTHOR_NAME=x git checkout -b RT-1999-probe main' ask
+stop_decision "SC-AK-1560 — запуск скрипта команды спрашивает" 'node tools/task-new.mjs --title x' ask
+
+# --- SC-AK-1561 — окно пишется в журнал отдельно от отказов -----------------------------------
+rm -rf "$STOP_TREE/.claude/rt-kit/observations"
+(cd "$STOP_TREE" && call 'git checkout -b RT-1999-probe main' | "$HOOKS/epic-stop-guard.sh" >/dev/null 2>&1)
+if cat "$STOP_TREE"/.claude/rt-kit/observations/*.jsonl 2>/dev/null | grep -q '"ev":"guard-ask".*"guard":"epic-stop-guard"'; then got="есть"; else got="нет"; fi
+report "SC-AK-1561 — окно записано меткой guard-ask" "$got" "есть"
 
 rm -rf "$STOP_TREE"
 

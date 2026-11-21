@@ -489,3 +489,11 @@ When their second lines are read
 Then not one of them carries the layout header, while a planted one is found
 
 Covered: `projects/agent-kit/tests/source-no-layout-header.test.sh`.
+
+### SC-AK-1540 — the task flow scenario lands next to the engine by its own path
+
+Given a source of the task flow scenario in a subdirectory of its kind
+When it is counted where the file lands by the default layout
+Then it lands under the directory of the engine and keeps its subdirectory
+
+Covered: `projects/agent-kit/src/lib/assets.spec.ts`.

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.1 · pitfalls/task-flow.md · a23cb4ed4f82 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.1 · pitfalls/task-flow.md · 428f33663853 · правится надстройкой, не здесь -->
 # Work conduct — cold part
 
 Pitfalls and behaviour from incident analyses. Loaded not with the rule but on demand: an ordinary
@@ -26,10 +26,10 @@ The rule is `task-flow`; the articles that hold the law stand there.
 - **The name of another tree is not written into repository files, and the full path to a sample
   carries it.** So the full path lives in the directory of records that belong to no branch, where
   it is lawful, and the repository holds only a reference without the name.
-- **The line "Waiting for the owner" in the progress outlives the reason it was written for.** It
-  lies on disk, enters the context in the next session and reads as the current state — so it is
-  removed in the same turn in which the owner answered. Otherwise the wait confirms itself: three
-  owner's instructions in a row did not outweigh one line on disk.
+- **A stop written into the progress outlived the reason it was written for.** It lay on disk,
+  entered the context in the next session and read as the current state: three owner's instructions
+  in a row did not outweigh one line. So the progress carries no line about a stop any more, and the
+  guard reads the owner's word from the record of the session.
 
 - **The folder is named after the branch, one to one.** The startup hook looks for it by `git branch
   --show-current`, and a folder named otherwise is found by nothing: the work goes on with an empty

@@ -1,0 +1,18 @@
+{
+  "case": "SC-AK-1447",
+  "kind": "an announced intention instead of the action",
+  "record": "220795b5 2426",
+  "task": 101,
+  "turns": [
+    { "role": "owner", "at": "2026-11-05T11:00:00Z", "owner": "<order:RT-101>" },
+    {
+      "role": "agent",
+      "at": "2026-11-05T11:03:00Z",
+      "call": "Write",
+      "file": "projects/agent-kit/tests/turn-exit-guard.test.sh",
+      "code": 0
+    },
+    { "role": "agent", "at": "2026-11-05T11:04:00Z", "say": "Next I will run the suite and then take step 1.2." }
+  ],
+  "next": { "owner": "<nudge>" }
+}

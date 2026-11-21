@@ -1,0 +1,81 @@
+{
+ "args": [
+  "api",
+  "graphql",
+  "-f",
+  "query={ node(id: \"PVT_kwHOBE82K84AjroZ\") { ... on ProjectV2 { items(first: 100, after: \"Y3Vyc29yOnYyOpK5MDAwMDAwMDAuMDAwNzM2OTE5Njc1NzU1M84SgHAr\") {\n                pageInfo { hasNextPage endCursor }\n                nodes { id\n                    status: fieldValueByName(name: \"Status\") { ... on ProjectV2ItemFieldSingleSelectValue { name optionId } }\n                    content { __typename ... on Issue { number } ... on PullRequest { number } ... on DraftIssue { title } } } } } } }"
+ ],
+ "token": "machine",
+ "code": 0,
+ "stdout": "{\"data\":{\"node\":{\"items\":{\"pageInfo\":{\"hasNextPage\":false,\"endCursor\":\"Y3Vyc29yOnYyOpK5MDAwMDAwMDAuMDAwNzM0MjE0MzkwNjAyMM4ShZmT\"},\"nodes\":[{\"id\":\"PVTI_lAHOBE82K84AjroZzhKCLMQ\",\"status\":{\"name\":\"✅ Done\",\"optionId\":\"a8204467\"},\"content\":{\"__typename\":\"Issue\",\"number\":3408}},{\"id\":\"PVTI_lAHOBE82K84AjroZzhKC8RQ\",\"status\":{\"name\":\"📋 Backlog\",\"optionId\":\"ed6ec61b\"},\"content\":{\"__typename\":\"Issue\",\"number\":3410}},{\"id\":\"PVTI_lAHOBE82K84AjroZzhKDZ0U\",\"status\":{\"name\":\"📋 Backlog\",\"optionId\":\"ed6ec61b\"},\"content\":{\"__typename\":\"Issue\",\"number\":3412}},{\"id\":\"PVTI_lAHOBE82K84AjroZzhKDazs\",\"status\":{\"name\":\"📋 Backlog\",\"optionId\":\"ed6ec61b\"},\"content\":{\"__typename\":\"Issue\",\"number\":3413}},{\"id\":\"PVTI_lAHOBE82K84AjroZzhKFmZM\",\"status\":{\"name\":\"📋 Backlog\",\"optionId\":\"ed6ec61b\"},\"content\":{\"__typename\":\"Issue\",\"number\":3415}}]}}}}",
+ "stderr": "",
+ "json": {
+  "data": {
+   "node": {
+    "items": {
+     "pageInfo": {
+      "hasNextPage": false,
+      "endCursor": "Y3Vyc29yOnYyOpK5MDAwMDAwMDAuMDAwNzM0MjE0MzkwNjAyMM4ShZmT"
+     },
+     "nodes": [
+      {
+       "id": "PVTI_lAHOBE82K84AjroZzhKCLMQ",
+       "status": {
+        "name": "✅ Done",
+        "optionId": "a8204467"
+       },
+       "content": {
+        "__typename": "Issue",
+        "number": 3408
+       }
+      },
+      {
+       "id": "PVTI_lAHOBE82K84AjroZzhKC8RQ",
+       "status": {
+        "name": "📋 Backlog",
+        "optionId": "ed6ec61b"
+       },
+       "content": {
+        "__typename": "Issue",
+        "number": 3410
+       }
+      },
+      {
+       "id": "PVTI_lAHOBE82K84AjroZzhKDZ0U",
+       "status": {
+        "name": "📋 Backlog",
+        "optionId": "ed6ec61b"
+       },
+       "content": {
+        "__typename": "Issue",
+        "number": 3412
+       }
+      },
+      {
+       "id": "PVTI_lAHOBE82K84AjroZzhKDazs",
+       "status": {
+        "name": "📋 Backlog",
+        "optionId": "ed6ec61b"
+       },
+       "content": {
+        "__typename": "Issue",
+        "number": 3413
+       }
+      },
+      {
+       "id": "PVTI_lAHOBE82K84AjroZzhKFmZM",
+       "status": {
+        "name": "📋 Backlog",
+        "optionId": "ed6ec61b"
+       },
+       "content": {
+        "__typename": "Issue",
+        "number": 3415
+       }
+      }
+     ]
+    }
+   }
+  }
+ }
+}

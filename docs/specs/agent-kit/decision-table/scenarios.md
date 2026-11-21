@@ -1,0 +1,481 @@
+# Scenarios — the decision table of the package hooks
+
+A promise of the subdomain and the test that closes it. A number is issued once and never reused.
+
+### SC-AK-1562 — every hook of the package is named by the table
+
+Given the hooks directory of the package
+When the coverage mode reads the table
+Then every deciding hook has rows, every helper and model hook carries its mark, and the count of
+deciding hooks equals the count of hooks with rows
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1563 — a row matches the decision of its hook
+
+Given a row with its fixture
+When the conform mode runs the hook on that fixture
+Then the hook gives the decision of the row, and its refusal text holds the words of the row; a
+helper subscribed to an event refuses nothing on a plain command
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1798 — the pipeline's variables do not reach the hook of a probe
+
+Given a table of the rows of `pre-push.sh`, a hook that passes everything under `CI`
+When the conform mode runs under `CI=true`, with `GITHUB_ACTIONS=true` that no hook reads today
+Then the hook answers as the rows say, and the sweep gives «mismatch 0»
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1564 — no state of an area is dead
+
+Given the rows of one area
+When the walk looks for a state where every action of the area is denied
+Then it finds none in the real table, and a sample table with such a state prints `dead 1`
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1565 — a refusal names a move allowed in the same state
+
+Given a refusal row and its named move
+When another row of the area denies that move where the refusal fires
+Then the walk counts the pair as unnamed: the real table prints `unnamed 0`, a sample table with
+such a pair prints `unnamed 1`
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1566 — a state where only the question is allowed is counted apart
+
+Given an area that names its question action
+When every other action of a state is denied and no row denies the question
+Then the walk prints that state in the `ask-only` count, and a sample table prints `ask-only 1`
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1567 — every derived chain has its scenario
+
+Given the pairs where a refusal names the action another row of the area denies
+When the chains mode reads this file
+Then every pair stands here in one item — the refusal first, the row that denies its move after it,
+both in backticks — and in each pair the two conditions do not meet
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1568 — an edit of any hook selects the test of the table
+
+Given a change of one hook of the package
+When the suite selection reads the changed paths
+Then the test of the table is among the selected files
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1569 — a hook removed by the tree is named, not refused
+
+Given a tree that does not lay out one hook of the package
+When the coverage mode reads the table against that tree
+Then it prints the hook as skipped by the tree and exits zero
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1570 — a refusal of browser-guard-device-id.sh names a move allowed where it fires
+
+Given the area «browser» and a refusal of browser-guard-device-id.sh; skill-gate.sh deny its named moves elsewhere
+When the walk meets the refusal with each denial of its move
+Then the two never hold in one state — the test names, for each pair of rows, the fact that parts
+them:
+- `browser-guard-device-id.sh:select_other:deny` against `skill-gate.sh:select_pinned:deny`;
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1571 — a refusal of browser-guard-no-listing.sh names a move allowed where it fires
+
+Given the area «browser» and a refusal of browser-guard-no-listing.sh; skill-gate.sh deny its named moves elsewhere
+When the walk meets the refusal with each denial of its move
+Then the two never hold in one state — the test names, for each pair of rows, the fact that parts
+them:
+- `browser-guard-no-listing.sh:list_browsers:deny` against `skill-gate.sh:select_pinned:deny`;
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1572 — a refusal of browser-guard-no-asking.sh names a move allowed where it fires
+
+Given the area «browser» and a refusal of browser-guard-no-asking.sh; skill-gate.sh deny its named moves elsewhere
+When the walk meets the refusal with each denial of its move
+Then the two never hold in one state — the test names, for each pair of rows, the fact that parts
+them:
+- `browser-guard-no-asking.sh:ask_which_browser:deny` against `skill-gate.sh:select_pinned:deny`;
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1573 — a refusal of browser-guard-no-other-drivers.sh names a move allowed where it fires
+
+Given the area «browser» and a refusal of browser-guard-no-other-drivers.sh; skill-gate.sh deny its named moves elsewhere
+When the walk meets the refusal with each denial of its move
+Then the two never hold in one state — the test names, for each pair of rows, the fact that parts
+them:
+- `browser-guard-no-other-drivers.sh:other_driver:deny` against `skill-gate.sh:select_pinned:deny`;
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1574 — a refusal of browser-guard-require-select.sh names a move allowed where it fires
+
+Given the area «browser» and a refusal of browser-guard-require-select.sh; skill-gate.sh deny its named moves elsewhere
+When the walk meets the refusal with each denial of its move
+Then the two never hold in one state — the test names, for each pair of rows, the fact that parts
+them:
+- `browser-guard-require-select.sh:browser_call:deny` against `skill-gate.sh:select_pinned:deny`;
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1575 — a refusal of git-guard-main.sh names a move allowed where it fires
+
+Given the area «delivery» and a refusal of git-guard-main.sh; skill-gate.sh deny its named moves elsewhere
+When the walk meets the refusal with each denial of its move
+Then the two never hold in one state — the test names, for each pair of rows, the fact that parts
+them:
+- `git-guard-main.sh:commit:deny` against `skill-gate.sh:branch_create_local:deny`;
+- `git-guard-main.sh:amend_signature:deny` against `skill-gate.sh:branch_create_local:deny`;
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1576 — a refusal of git-guard-no-verify.sh names a move allowed where it fires
+
+Given the area «delivery» and a refusal of git-guard-no-verify.sh; git-guard-main.sh, git-guard-delivery.sh, skill-gate.sh, docs-guard.sh, window-fill-guard.sh, handoff-entry-guard.sh, exam-guard.sh deny its named moves elsewhere
+When the walk meets the refusal with each denial of its move
+Then the two never hold in one state — the test names, for each pair of rows, the fact that parts
+them:
+- `git-guard-no-verify.sh:commit_skip_hooks:deny` against `git-guard-main.sh:commit:deny`, `git-guard-delivery.sh:commit:deny`, `skill-gate.sh:commit:deny`,
+  `docs-guard.sh:commit:deny`, `skill-gate.sh:branch_create_local:deny`, `git-guard-main.sh:amend_signature:deny`, `skill-gate.sh:amend_signature:deny`,
+  `window-fill-guard.sh:call_teacher:deny`, `handoff-entry-guard.sh:edit_doc:deny`, `exam-guard.sh:edit_doc:deny`, `skill-gate.sh:edit_doc:deny`,
+  `window-fill-guard.sh:edit_doc:deny`, `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1577 — a refusal of git-guard-delivery.sh names a move allowed where it fires
+
+Given the area «delivery» and a refusal of git-guard-delivery.sh; git-guard-delivery.sh, tree-assignment-guard.sh, skill-gate.sh, git-guard-main.sh, docs-guard.sh, window-fill-guard.sh, handoff-entry-guard.sh, exam-guard.sh deny its named moves elsewhere
+When the walk meets the refusal with each denial of its move
+Then the two never hold in one state — the test names, for each pair of rows, the fact that parts
+them:
+- `git-guard-delivery.sh:branch_create:deny` against `git-guard-delivery.sh:task_new:deny`, `tree-assignment-guard.sh:task_new:deny`,
+  `skill-gate.sh:task_new:deny`;
+- `git-guard-delivery.sh:branch_create_bad_name:deny` against `git-guard-delivery.sh:branch_create:deny`, `skill-gate.sh:branch_create:deny`,
+  `git-guard-delivery.sh:task_new:deny`, `tree-assignment-guard.sh:task_new:deny`, `skill-gate.sh:task_new:deny`;
+- `git-guard-delivery.sh:branch_create_stale_base:deny` against `git-guard-delivery.sh:branch_create:deny`, `skill-gate.sh:branch_create:deny`,
+  `git-guard-delivery.sh:task_new:deny`, `tree-assignment-guard.sh:task_new:deny`, `skill-gate.sh:task_new:deny`;
+- `git-guard-delivery.sh:commit:deny` against `git-guard-main.sh:amend_signature:deny`, `skill-gate.sh:amend_signature:deny`,
+  `skill-gate.sh:branch_create_local:deny`;
+- `git-guard-delivery.sh:push:deny` against `git-guard-main.sh:amend_signature:deny`, `skill-gate.sh:amend_signature:deny`,
+  `skill-gate.sh:branch_create_local:deny`, `git-guard-delivery.sh:task_new:deny`, `tree-assignment-guard.sh:task_new:deny`, `skill-gate.sh:task_new:deny`;
+- `git-guard-delivery.sh:pr_create:deny` against `git-guard-delivery.sh:task_new:deny`, `tree-assignment-guard.sh:task_new:deny`, `skill-gate.sh:task_new:deny`,
+  `git-guard-delivery.sh:task_move:deny`, `tree-assignment-guard.sh:task_move:deny`, `skill-gate.sh:merge_base:deny`, `git-guard-main.sh:commit:deny`,
+  `git-guard-delivery.sh:commit:deny`, `skill-gate.sh:commit:deny`, `docs-guard.sh:commit:deny`, `git-guard-main.sh:amend_signature:deny`,
+  `skill-gate.sh:amend_signature:deny`, `window-fill-guard.sh:call_teacher:deny`, `handoff-entry-guard.sh:edit_doc:deny`, `exam-guard.sh:edit_doc:deny`,
+  `skill-gate.sh:edit_doc:deny`, `window-fill-guard.sh:edit_doc:deny`, `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`,
+  `exam-guard.sh:edit_progress:deny`;
+- `git-guard-delivery.sh:pr_create_bad_title:deny` against `git-guard-delivery.sh:pr_create:deny`, `skill-gate.sh:pr_create:deny`,
+  `git-guard-delivery.sh:task_new:deny`, `tree-assignment-guard.sh:task_new:deny`, `skill-gate.sh:task_new:deny`, `git-guard-delivery.sh:task_move:deny`,
+  `tree-assignment-guard.sh:task_move:deny`, `skill-gate.sh:merge_base:deny`, `git-guard-main.sh:commit:deny`, `git-guard-delivery.sh:commit:deny`,
+  `skill-gate.sh:commit:deny`, `docs-guard.sh:commit:deny`, `git-guard-main.sh:amend_signature:deny`, `skill-gate.sh:amend_signature:deny`,
+  `window-fill-guard.sh:call_teacher:deny`, `handoff-entry-guard.sh:edit_doc:deny`, `exam-guard.sh:edit_doc:deny`, `skill-gate.sh:edit_doc:deny`,
+  `window-fill-guard.sh:edit_doc:deny`, `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `git-guard-delivery.sh:pr_create_wrong_number:deny` against `git-guard-delivery.sh:pr_create:deny`, `skill-gate.sh:pr_create:deny`,
+  `git-guard-delivery.sh:task_new:deny`, `tree-assignment-guard.sh:task_new:deny`, `skill-gate.sh:task_new:deny`, `git-guard-delivery.sh:task_move:deny`,
+  `tree-assignment-guard.sh:task_move:deny`, `skill-gate.sh:merge_base:deny`, `git-guard-main.sh:commit:deny`, `git-guard-delivery.sh:commit:deny`,
+  `skill-gate.sh:commit:deny`, `docs-guard.sh:commit:deny`, `git-guard-main.sh:amend_signature:deny`, `skill-gate.sh:amend_signature:deny`,
+  `window-fill-guard.sh:call_teacher:deny`, `handoff-entry-guard.sh:edit_doc:deny`, `exam-guard.sh:edit_doc:deny`, `skill-gate.sh:edit_doc:deny`,
+  `window-fill-guard.sh:edit_doc:deny`, `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `git-guard-delivery.sh:pr_create_draft:deny` against `git-guard-delivery.sh:task_new:deny`, `tree-assignment-guard.sh:task_new:deny`,
+  `skill-gate.sh:task_new:deny`, `git-guard-delivery.sh:task_move:deny`, `tree-assignment-guard.sh:task_move:deny`, `skill-gate.sh:merge_base:deny`,
+  `git-guard-main.sh:commit:deny`, `git-guard-delivery.sh:commit:deny`, `skill-gate.sh:commit:deny`, `docs-guard.sh:commit:deny`,
+  `git-guard-main.sh:amend_signature:deny`, `skill-gate.sh:amend_signature:deny`, `window-fill-guard.sh:call_teacher:deny`,
+  `handoff-entry-guard.sh:edit_doc:deny`, `exam-guard.sh:edit_doc:deny`, `skill-gate.sh:edit_doc:deny`, `window-fill-guard.sh:edit_doc:deny`,
+  `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `git-guard-delivery.sh:pr_create_wrong_base:deny` against `git-guard-delivery.sh:pr_create:deny`, `skill-gate.sh:pr_create:deny`,
+  `git-guard-delivery.sh:task_new:deny`, `tree-assignment-guard.sh:task_new:deny`, `skill-gate.sh:task_new:deny`, `git-guard-delivery.sh:task_move:deny`,
+  `tree-assignment-guard.sh:task_move:deny`, `skill-gate.sh:merge_base:deny`, `git-guard-main.sh:commit:deny`, `git-guard-delivery.sh:commit:deny`,
+  `skill-gate.sh:commit:deny`, `docs-guard.sh:commit:deny`, `git-guard-main.sh:amend_signature:deny`, `skill-gate.sh:amend_signature:deny`,
+  `window-fill-guard.sh:call_teacher:deny`, `handoff-entry-guard.sh:edit_doc:deny`, `exam-guard.sh:edit_doc:deny`, `skill-gate.sh:edit_doc:deny`,
+  `window-fill-guard.sh:edit_doc:deny`, `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `git-guard-delivery.sh:pr_create_self_review:deny` against `git-guard-delivery.sh:pr_create:deny`, `skill-gate.sh:pr_create:deny`,
+  `git-guard-delivery.sh:task_new:deny`, `tree-assignment-guard.sh:task_new:deny`, `skill-gate.sh:task_new:deny`, `git-guard-delivery.sh:task_move:deny`,
+  `tree-assignment-guard.sh:task_move:deny`, `skill-gate.sh:merge_base:deny`, `git-guard-main.sh:commit:deny`, `git-guard-delivery.sh:commit:deny`,
+  `skill-gate.sh:commit:deny`, `docs-guard.sh:commit:deny`, `git-guard-main.sh:amend_signature:deny`, `skill-gate.sh:amend_signature:deny`,
+  `window-fill-guard.sh:call_teacher:deny`, `handoff-entry-guard.sh:edit_doc:deny`, `exam-guard.sh:edit_doc:deny`, `skill-gate.sh:edit_doc:deny`,
+  `window-fill-guard.sh:edit_doc:deny`, `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `git-guard-delivery.sh:pr_create_thin_body:deny` against `git-guard-delivery.sh:pr_create:deny`, `skill-gate.sh:pr_create:deny`,
+  `git-guard-delivery.sh:task_new:deny`, `tree-assignment-guard.sh:task_new:deny`, `skill-gate.sh:task_new:deny`, `git-guard-delivery.sh:task_move:deny`,
+  `tree-assignment-guard.sh:task_move:deny`, `skill-gate.sh:merge_base:deny`, `git-guard-main.sh:commit:deny`, `git-guard-delivery.sh:commit:deny`,
+  `skill-gate.sh:commit:deny`, `docs-guard.sh:commit:deny`, `git-guard-main.sh:amend_signature:deny`, `skill-gate.sh:amend_signature:deny`,
+  `window-fill-guard.sh:call_teacher:deny`, `handoff-entry-guard.sh:edit_doc:deny`, `exam-guard.sh:edit_doc:deny`, `skill-gate.sh:edit_doc:deny`,
+  `window-fill-guard.sh:edit_doc:deny`, `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `git-guard-delivery.sh:pr_ready:deny` against `skill-gate.sh:set_reviewer:deny`, `skill-gate.sh:merge_base:deny`, `git-guard-main.sh:commit:deny`,
+  `git-guard-delivery.sh:commit:deny`, `skill-gate.sh:commit:deny`, `docs-guard.sh:commit:deny`, `git-guard-main.sh:amend_signature:deny`,
+  `skill-gate.sh:amend_signature:deny`, `window-fill-guard.sh:call_teacher:deny`, `handoff-entry-guard.sh:edit_doc:deny`, `exam-guard.sh:edit_doc:deny`,
+  `skill-gate.sh:edit_doc:deny`, `window-fill-guard.sh:edit_doc:deny`, `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`,
+  `exam-guard.sh:edit_progress:deny`;
+- `git-guard-delivery.sh:pr_merge:deny` against `git-guard-main.sh:commit:deny`, `git-guard-delivery.sh:commit:deny`, `skill-gate.sh:commit:deny`,
+  `docs-guard.sh:commit:deny`, `git-guard-main.sh:amend_signature:deny`, `skill-gate.sh:amend_signature:deny`, `window-fill-guard.sh:call_teacher:deny`,
+  `handoff-entry-guard.sh:edit_doc:deny`, `exam-guard.sh:edit_doc:deny`, `skill-gate.sh:edit_doc:deny`, `window-fill-guard.sh:edit_doc:deny`,
+  `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1578 — a refusal of dev-server-guard.sh names a move allowed where it fires
+
+Given the area «stand» and a refusal of dev-server-guard.sh; skill-gate.sh deny its named moves elsewhere
+When the walk meets the refusal with each denial of its move
+Then the two never hold in one state — the test names, for each pair of rows, the fact that parts
+them:
+- `dev-server-guard.sh:raise_dev_server:deny` against `skill-gate.sh:check_stand:deny`;
+- `dev-server-guard.sh:raise_static:deny` against `skill-gate.sh:check_stand:deny`;
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1579 — a refusal of sql-guard.sh names a move allowed where it fires
+
+Given the area «storage» and a refusal of sql-guard.sh; sql-guard.sh deny its named moves elsewhere
+When the walk meets the refusal with each denial of its move
+Then the two never hold in one state — the test names, for each pair of rows, the fact that parts
+them:
+- `sql-guard.sh:destructive:deny` against `sql-guard.sh:write_by_pk:deny`;
+- `sql-guard.sh:write_unaddressed:deny` against `sql-guard.sh:write_by_pk:deny`;
+- `sql-guard.sh:db_reset:deny` against `sql-guard.sh:write_by_pk:deny`;
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1580 — a refusal of turn-exit-guard.sh names a move allowed where it fires
+
+Given the area «turn» and a refusal of turn-exit-guard.sh; window-fill-guard.sh deny its named moves elsewhere
+When the walk meets the refusal with each denial of its move
+Then the two never hold in one state — the test names, for each pair of rows, the fact that parts
+them:
+- `turn-exit-guard.sh:end_turn:deny` against `window-fill-guard.sh:work_call:deny`;
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1581 — a refusal of window-fill-guard.sh names a move allowed where it fires
+
+Given the area «turn» and a refusal of window-fill-guard.sh; skill-gate.sh, handoff-entry-guard.sh, exam-guard.sh deny its named moves elsewhere
+When the walk meets the refusal with each denial of its move
+Then the two never hold in one state — the test names, for each pair of rows, the fact that parts
+them:
+- `window-fill-guard.sh:work_call:deny` against `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`,
+  `exam-guard.sh:edit_progress:deny`;
+- `window-fill-guard.sh:end_conversation:deny` against `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`,
+  `exam-guard.sh:edit_progress:deny`;
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1582 — a refusal of task-flow-guard.sh names a move allowed where it fires
+
+Given the area «work» and a refusal of task-flow-guard.sh; skill-gate.sh, window-fill-guard.sh, handoff-entry-guard.sh, exam-guard.sh deny its named moves elsewhere
+When the walk meets the refusal with each denial of its move
+Then the two never hold in one state — the test names, for each pair of rows, the fact that parts
+them:
+- `task-flow-guard.sh:edit_code:deny` against `skill-gate.sh:new_task:deny`, `window-fill-guard.sh:new_task:deny`, `window-fill-guard.sh:call_teacher:deny`,
+  `handoff-entry-guard.sh:copy_template:deny`, `exam-guard.sh:copy_template:deny`, `skill-gate.sh:copy_template:deny`,
+  `window-fill-guard.sh:copy_template:deny`, `skill-gate.sh:commit_folder:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `task-flow-guard.sh:edit_template:deny` against `skill-gate.sh:new_task:deny`, `window-fill-guard.sh:new_task:deny`, `window-fill-guard.sh:call_teacher:deny`,
+  `handoff-entry-guard.sh:copy_template:deny`, `exam-guard.sh:copy_template:deny`, `skill-gate.sh:copy_template:deny`,
+  `window-fill-guard.sh:copy_template:deny`, `skill-gate.sh:commit_folder:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `task-flow-guard.sh:edit_laid_out:deny` against `skill-gate.sh:new_task:deny`, `window-fill-guard.sh:new_task:deny`, `window-fill-guard.sh:call_teacher:deny`,
+  `handoff-entry-guard.sh:copy_template:deny`, `exam-guard.sh:copy_template:deny`, `skill-gate.sh:copy_template:deny`,
+  `window-fill-guard.sh:copy_template:deny`, `skill-gate.sh:commit_folder:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `task-flow-guard.sh:edit_source:deny` against `skill-gate.sh:new_task:deny`, `window-fill-guard.sh:new_task:deny`, `window-fill-guard.sh:call_teacher:deny`,
+  `handoff-entry-guard.sh:copy_template:deny`, `exam-guard.sh:copy_template:deny`, `skill-gate.sh:copy_template:deny`,
+  `window-fill-guard.sh:copy_template:deny`, `skill-gate.sh:commit_folder:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `task-flow-guard.sh:edit_flow_description:deny` against `skill-gate.sh:new_task:deny`, `window-fill-guard.sh:new_task:deny`,
+  `window-fill-guard.sh:call_teacher:deny`, `handoff-entry-guard.sh:copy_template:deny`, `exam-guard.sh:copy_template:deny`, `skill-gate.sh:copy_template:deny`,
+  `window-fill-guard.sh:copy_template:deny`, `skill-gate.sh:commit_folder:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1583 — a refusal of task-flow-draft-guard.sh names a move allowed where it fires
+
+Given the area «work» and a refusal of task-flow-draft-guard.sh; window-fill-guard.sh, handoff-entry-guard.sh, exam-guard.sh, skill-gate.sh deny its named moves elsewhere
+When the walk meets the refusal with each denial of its move
+Then the two never hold in one state — the test names, for each pair of rows, the fact that parts
+them:
+- `task-flow-draft-guard.sh:edit_code:deny` against `window-fill-guard.sh:call_teacher:deny`, `handoff-entry-guard.sh:edit_plan:deny`,
+  `exam-guard.sh:edit_plan:deny`, `skill-gate.sh:edit_plan:deny`, `handoff-entry-guard.sh:write_agreement:deny`, `exam-guard.sh:write_agreement:deny`,
+  `skill-gate.sh:write_agreement:deny`, `window-fill-guard.sh:write_agreement:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `task-flow-draft-guard.sh:edit_template:deny` against `window-fill-guard.sh:call_teacher:deny`, `handoff-entry-guard.sh:edit_plan:deny`,
+  `exam-guard.sh:edit_plan:deny`, `skill-gate.sh:edit_plan:deny`, `handoff-entry-guard.sh:write_agreement:deny`, `exam-guard.sh:write_agreement:deny`,
+  `skill-gate.sh:write_agreement:deny`, `window-fill-guard.sh:write_agreement:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `task-flow-draft-guard.sh:edit_laid_out:deny` against `window-fill-guard.sh:call_teacher:deny`, `handoff-entry-guard.sh:edit_plan:deny`,
+  `exam-guard.sh:edit_plan:deny`, `skill-gate.sh:edit_plan:deny`, `handoff-entry-guard.sh:write_agreement:deny`, `exam-guard.sh:write_agreement:deny`,
+  `skill-gate.sh:write_agreement:deny`, `window-fill-guard.sh:write_agreement:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `task-flow-draft-guard.sh:edit_source:deny` against `window-fill-guard.sh:call_teacher:deny`, `handoff-entry-guard.sh:edit_plan:deny`,
+  `exam-guard.sh:edit_plan:deny`, `skill-gate.sh:edit_plan:deny`, `handoff-entry-guard.sh:write_agreement:deny`, `exam-guard.sh:write_agreement:deny`,
+  `skill-gate.sh:write_agreement:deny`, `window-fill-guard.sh:write_agreement:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `task-flow-draft-guard.sh:edit_flow_description:deny` against `window-fill-guard.sh:call_teacher:deny`, `handoff-entry-guard.sh:edit_plan:deny`,
+  `exam-guard.sh:edit_plan:deny`, `skill-gate.sh:edit_plan:deny`, `handoff-entry-guard.sh:write_agreement:deny`, `exam-guard.sh:write_agreement:deny`,
+  `skill-gate.sh:write_agreement:deny`, `window-fill-guard.sh:write_agreement:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1584 — a refusal of flow-step-guard.sh names a move allowed where it fires
+
+Given the area «work» and a refusal of flow-step-guard.sh; window-fill-guard.sh, skill-gate.sh, handoff-entry-guard.sh, exam-guard.sh deny its named moves elsewhere
+When the walk meets the refusal with each denial of its move
+Then the two never hold in one state — the test names, for each pair of rows, the fact that parts
+them:
+- `flow-step-guard.sh:shell_write_progress:deny` against `window-fill-guard.sh:call_teacher:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `flow-step-guard.sh:edit_flow_description:deny` against `window-fill-guard.sh:call_teacher:deny`, `handoff-entry-guard.sh:edit_plan:deny`,
+  `exam-guard.sh:edit_plan:deny`, `skill-gate.sh:edit_plan:deny`, `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`,
+  `exam-guard.sh:edit_progress:deny`;
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1585 — a refusal of rule-source-guard.sh names a move allowed where it fires
+
+Given the area «work» and a refusal of rule-source-guard.sh; handoff-entry-guard.sh, skill-gate.sh, window-fill-guard.sh, exam-guard.sh, task-flow-guard.sh, task-flow-draft-guard.sh deny its named moves elsewhere
+When the walk meets the refusal with each denial of its move
+Then the two never hold in one state — the test names, for each pair of rows, the fact that parts
+them:
+- `rule-source-guard.sh:edit_laid_out:deny` against `handoff-entry-guard.sh:edit_override:deny`, `skill-gate.sh:edit_override:deny`,
+  `window-fill-guard.sh:edit_override:deny`, `window-fill-guard.sh:call_teacher:deny`, `skill-gate.sh:new_task:deny`, `window-fill-guard.sh:new_task:deny`,
+  `handoff-entry-guard.sh:copy_template:deny`, `exam-guard.sh:copy_template:deny`, `skill-gate.sh:copy_template:deny`,
+  `window-fill-guard.sh:copy_template:deny`, `skill-gate.sh:commit_folder:deny`, `handoff-entry-guard.sh:edit_plan:deny`, `exam-guard.sh:edit_plan:deny`,
+  `skill-gate.sh:edit_plan:deny`, `handoff-entry-guard.sh:write_agreement:deny`, `exam-guard.sh:write_agreement:deny`, `skill-gate.sh:write_agreement:deny`,
+  `window-fill-guard.sh:write_agreement:deny`, `task-flow-guard.sh:edit_source:deny`, `task-flow-draft-guard.sh:edit_source:deny`,
+  `handoff-entry-guard.sh:edit_source:deny`, `exam-guard.sh:edit_source:deny`, `skill-gate.sh:edit_source:deny`, `window-fill-guard.sh:edit_source:deny`,
+  `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1586 — a refusal of override-write-guard.sh names a move allowed where it fires
+
+Given the area «work» and a refusal of override-write-guard.sh; handoff-entry-guard.sh, skill-gate.sh, window-fill-guard.sh, exam-guard.sh deny its named moves elsewhere
+When the walk meets the refusal with each denial of its move
+Then the two never hold in one state — the test names, for each pair of rows, the fact that parts
+them:
+- `override-write-guard.sh:write_override:deny` against `handoff-entry-guard.sh:edit_override:deny`, `skill-gate.sh:edit_override:deny`,
+  `window-fill-guard.sh:edit_override:deny`, `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`,
+  `exam-guard.sh:edit_progress:deny`;
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1587 — a refusal of docs-guard.sh names a move allowed where it fires
+
+Given the area «work» and a refusal of docs-guard.sh; window-fill-guard.sh, handoff-entry-guard.sh, exam-guard.sh, skill-gate.sh deny its named moves elsewhere
+When the walk meets the refusal with each denial of its move
+Then the two never hold in one state — the test names, for each pair of rows, the fact that parts
+them:
+- `docs-guard.sh:commit:deny` against `window-fill-guard.sh:call_teacher:deny`, `handoff-entry-guard.sh:edit_doc:deny`, `exam-guard.sh:edit_doc:deny`,
+  `skill-gate.sh:edit_doc:deny`, `window-fill-guard.sh:edit_doc:deny`, `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`,
+  `exam-guard.sh:edit_progress:deny`;
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1589 — a refusal of exam-guard.sh names a move allowed where it fires
+
+Given the area «work» and a refusal of exam-guard.sh; window-fill-guard.sh, skill-gate.sh, handoff-entry-guard.sh, exam-guard.sh deny its named moves elsewhere
+When the walk meets the refusal with each denial of its move
+Then the two never hold in one state — the test names, for each pair of rows, the fact that parts
+them:
+- `exam-guard.sh:edit_code:deny` against `window-fill-guard.sh:call_teacher:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `exam-guard.sh:edit_template:deny` against `window-fill-guard.sh:call_teacher:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `exam-guard.sh:template_no_anchor:deny` against `window-fill-guard.sh:call_teacher:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `exam-guard.sh:template_own_primitive:deny` against `window-fill-guard.sh:call_teacher:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `exam-guard.sh:edit_laid_out:deny` against `window-fill-guard.sh:call_teacher:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `exam-guard.sh:edit_source:deny` against `window-fill-guard.sh:call_teacher:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `exam-guard.sh:edit_doc:deny` against `window-fill-guard.sh:call_teacher:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `exam-guard.sh:write_dirty_md:deny` against `window-fill-guard.sh:call_teacher:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `exam-guard.sh:write_agreement:deny` against `window-fill-guard.sh:call_teacher:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `exam-guard.sh:edit_plan:deny` against `window-fill-guard.sh:call_teacher:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `exam-guard.sh:set_state:deny` against `window-fill-guard.sh:call_teacher:deny`;
+- `exam-guard.sh:edit_progress:deny` against `window-fill-guard.sh:call_teacher:deny`;
+- `exam-guard.sh:mark_step_done:deny` against `window-fill-guard.sh:call_teacher:deny`;
+- `exam-guard.sh:shell_write_progress:deny` against `window-fill-guard.sh:call_teacher:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `exam-guard.sh:write_marks:deny` against `window-fill-guard.sh:call_teacher:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `exam-guard.sh:defer_task:deny` against `window-fill-guard.sh:call_teacher:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `exam-guard.sh:edit_flow_description:deny` against `window-fill-guard.sh:call_teacher:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `exam-guard.sh:copy_template:deny` against `window-fill-guard.sh:call_teacher:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `exam-guard.sh:pr_ready:deny` against `window-fill-guard.sh:call_teacher:deny`, `skill-gate.sh:edit_progress:deny`,
+  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1590 — a refusal of window-fill-guard.sh names a move allowed where it fires
+
+Given the area «work» and a refusal of window-fill-guard.sh; skill-gate.sh, handoff-entry-guard.sh, exam-guard.sh deny its named moves elsewhere
+When the walk meets the refusal with each denial of its move
+Then the two never hold in one state — the test names, for each pair of rows, the fact that parts
+them:
+- `window-fill-guard.sh:edit_code:deny` against `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`,
+  `exam-guard.sh:edit_progress:deny`;
+- `window-fill-guard.sh:edit_template:deny` against `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`,
+  `exam-guard.sh:edit_progress:deny`;
+- `window-fill-guard.sh:edit_laid_out:deny` against `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`,
+  `exam-guard.sh:edit_progress:deny`;
+- `window-fill-guard.sh:edit_override:deny` against `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`,
+  `exam-guard.sh:edit_progress:deny`;
+- `window-fill-guard.sh:write_override:deny` against `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`,
+  `exam-guard.sh:edit_progress:deny`;
+- `window-fill-guard.sh:edit_source:deny` against `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`,
+  `exam-guard.sh:edit_progress:deny`;
+- `window-fill-guard.sh:edit_doc:deny` against `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`,
+  `exam-guard.sh:edit_progress:deny`;
+- `window-fill-guard.sh:write_agreement:deny` against `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`,
+  `exam-guard.sh:edit_progress:deny`;
+- `window-fill-guard.sh:copy_template:deny` against `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`,
+  `exam-guard.sh:edit_progress:deny`;
+- `window-fill-guard.sh:new_task:deny` against `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`,
+  `exam-guard.sh:edit_progress:deny`;
+- `window-fill-guard.sh:call_teacher:deny` against `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`,
+  `exam-guard.sh:edit_progress:deny`;
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1591 — a refusal of window-fill-guard.sh names a move allowed where it fires
+
+Given the area «delivery» and a refusal of window-fill-guard.sh; skill-gate.sh, handoff-entry-guard.sh, exam-guard.sh deny its named moves elsewhere
+When the walk meets the refusal with each denial of its move
+Then the two never hold in one state — the test names, for each pair of rows, the fact that parts
+them:
+- `window-fill-guard.sh:edit_doc:deny` against `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`,
+  `exam-guard.sh:edit_progress:deny`;
+- `window-fill-guard.sh:call_teacher:deny` against `skill-gate.sh:edit_progress:deny`, `handoff-entry-guard.sh:edit_progress:deny`,
+  `exam-guard.sh:edit_progress:deny`;
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1593 — a refusal of commit-msg.sh names a move allowed where it fires
+
+Given the area «delivery» and a refusal of commit-msg.sh; git-guard-main.sh, git-guard-delivery.sh, skill-gate.sh, docs-guard.sh deny its named moves elsewhere
+When the walk meets the refusal with each denial of its move
+Then the two never hold in one state — the test names, for each pair of rows, the fact that parts
+them:
+- `commit-msg.sh:commit_bad_message:deny` against `git-guard-main.sh:commit:deny`, `git-guard-delivery.sh:commit:deny`, `skill-gate.sh:commit:deny`,
+  `docs-guard.sh:commit:deny`;
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.

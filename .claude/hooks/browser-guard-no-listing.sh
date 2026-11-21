@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.1 · hooks/browser-guard-no-listing.sh · 7691925f0f6d · правится надстройкой, не здесь
+# rt-kit v0.37.1 · hooks/browser-guard-no-listing.sh · 47457ca95583 · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__claude-in-chrome__(list_connected_browsers|switch_browser)
 # Requires: hooks/deny-tail.sh
 # Guard against listing and switching browsers. PreToolUse.
@@ -18,7 +18,7 @@ RT_GUARD_RULE=browser-verification
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 
-cat >/dev/null 2>&1
+input="$(cat 2>/dev/null)"
 
 device_id="$("${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/browser-device-id.sh" 2>/dev/null)"
 [ -z "$device_id" ] && exit 0
@@ -26,9 +26,15 @@ device_id="$("${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/browser-device-id.sh" 2>/de
 # The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
 # The file may not be laid out — then there is no tail, and the refusal reason stays as it is.
 # shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-
-echo "Do not list and do not switch browsers. Call the browser selection with the profile ${device_id} — the only one where the sign-in was made. $(rt_deny_tail)" >&2
-exit 2
+# The decision and the words come from the decision table. The named move is the selection, and the
+# rules gate refuses it while its rule is not loaded: that is a fact of the state.
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/decide.sh" 2>/dev/null
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+command -v rt_decide >/dev/null 2>&1 || exit 0
+sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
+rt_decide browser-guard-no-listing.sh list_browsers \
+    "$(jq -cn --arg r "$(rt_fact_rule_loaded browser-verification "$sid")" '{pinned:"yes", rule_loaded:$r}')" \
+    "$(jq -cn --arg d "$device_id" '{device_id:$d}')" stderr "$input"
+exit $?

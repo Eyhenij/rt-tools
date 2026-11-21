@@ -1,0 +1,211 @@
+# The visual snapshot — ready-made code — cold part
+
+The pattern `ui-component-tests-visual` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.
+
+## Pitfalls
+
+The misses of this pattern stand where they happen: in its sections below and in its list of
+common misses, when it has one.
+
+The snapshot of every story is matched against the reference in
+`projects/ui-kit-v2/.storybook/__snapshots__/`. The harness is
+`projects/ui-kit-v2/.storybook/test-runner.ts`. The shape of the story itself — the rule
+`rt-tools-storybook`.
+
+## When to use
+
+- A state that is not in the frame gets a story of its own.
+- The snapshot run fell, and it has to be understood whether the divergence is one's own.
+- The references are taken for the first time, or re-taken.
+
+The comparison threshold is held at zero, so that a small edit does not pass silently.
+
+The frames are taken by a browser raised in an image, and the showcase is built and served as
+files: `node tools/visual-gate.mjs ui-kit-v2`, a re-take
+by the same command with `--update`. A pointed re-take passes a piece of the story file path after
+the flag, not the frame name: a frame name matches no file, and the run reports no tests. The image
+is one on any machine, so the references are matched
+everywhere — on the developer's machine and in the pipeline alike. A re-take by any other road
+writes the raster of the machine that took it, and the run refuses to start without the image's
+address for exactly that reason. The development server is not shot at all: from the image it
+reloads the page without end, and the runner's injected script does not survive a single reload.
+
+The showcase is reached as `localhost` from both sides: inside the image the shot browser forwards
+the showcase port to the machine through `host.docker.internal`, the same way it reaches the e2e
+stand. The image is started with `--add-host host.docker.internal:host-gateway`: Docker Desktop
+gives that name by itself, Docker on Linux only by this flag. The machine's address on its own network is not used: a Docker network whose range covers
+that network takes the route, and every story fails on a load timeout. A harness that cuts the shot
+off from a foreign network counts the showcase address as its own — otherwise it severs every lazy
+chunk of the very showcase it is shooting, and the run comes back with a `ChunkLoadError` at every
+story.
+
+Two traits of the machine are taken out of that dependence — the timezone and the
+browser's language. The timezone is set by the run's settings file next to the showcase, the
+language by the arguments of the browser in the image; the list of what is undetermined says how.
+
+## A state that is not in the frame
+
+A story of its own is created for a state the snapshot does not reach by itself: a tooltip, a button
+under the pointer, content in an overlay, the branch after a file is chosen.
+
+**Hover** — by a story parameter, with a real pointer. An event played out from the story does not
+live to the frame: a whole-page snapshot lays the page out anew.
+
+```typescript
+export const CopyOnHover: TStory = {
+    parameters: { snapshot: { hover: '.rt-copy-cell__button' } },
+};
+```
+
+**An overlay** — opened by a press in `play`, and its node is named by the `overlay` parameter: the
+harness waits for it and refuses when it is not there by the moment of the frame.
+
+```typescript
+export const Menu: TStory = {
+    parameters: { snapshot: { fullPage: true, overlay: '.rt-action-bar__menu' } },
+    args: { part: 'menu' },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openStoryOverlay(canvasElement, { within: '.rt-action-bar__action' });
+    },
+};
+```
+
+**A narrow screen** — set by the `viewport` parameter, not by the showcase's viewport global. The
+harness shoots at 1280×720 otherwise: a story that sets `globals.viewport` alone looks narrow in the
+showcase and lands in the reference wide.
+
+```typescript
+export const Phone: TStory = {
+    parameters: { snapshot: { viewport: STORY_PHONE_VIEWPORT } },
+};
+```
+
+**An animation is shot at its last frame.** The harness finishes every running animation before the
+shot; a part fading in from transparency otherwise comes out empty or half-transparent.
+
+**The markup does not arrive in the same frame as the story.** A search for a node in `play` is
+wrapped in a wait:
+
+```typescript
+const cell: HTMLElement = await waitFor(findCell);
+```
+
+**The initial state is not set by an input.** The story's values reach the wrapper later than its
+`ngOnInit`, and a state computed in the hook is counted by the field's default. An empty list, a
+chosen file, an opened panel are reached by a press in `play`.
+
+## What is undetermined does not get into the frame
+
+- random data — by a generator seed in `preview.ts`, not by a call on the spot;
+- pictures — by bytes in the address, not by a load from the network; the type in the address must
+  match the bytes, otherwise an empty frame is left in the shot;
+- the skeleton animations do not go through CSS and do not stop at a declared zero duration — the
+  harness drives them to the end before the shot;
+- the icon font lies next to the showcase and is served by it rather than travelling from a foreign
+  network; an icon keeps itself invisible until it is loaded, so the harness itself calls the
+  loading of the families and refuses if they did not come up;
+- the timezone and the browser's language — by the run's own settings file next to the showcase,
+  `projects/ui-kit-v2/.storybook/test-runner-jest.config.js`. The run picks a file of that name up
+  from the showcase config directory and hands it to the test builder instead of its own default.
+
+**Two settings are needed there, not one, and this is measured rather than reasoned.** The
+context's `locale` moves `navigator.language` and the request header but does not touch the format
+of a native date field: that one the browser draws in the language of its own launch. On one
+date-picker story: without settings the month came first and the clock was twelve-hour, with
+`locale` alone the same, with the launch language `15.03.2026` and `09:30`. The timezone is the
+other way round — it obeys
+the context, and a debug-protocol session sets it too, while the language it does not.
+
+## The sweep over all the stories — before the references are taken
+
+The sweep answers the question no run asks: is there anything at all in the frame. It goes over the
+raised showcase and **before** the first taking of the references — after the taking it would be
+checking what is already pinned.
+
+```bash
+pnpm run storybook:ui-kit-v2   # the showcase is raised apart and stays raised
+pnpm run test:stories:v2       # the sweep: tools/story-sweep-v2.mjs
+```
+
+What it does: it takes the list of stories from the showcase itself (`GET <address>/index.json`),
+opens each one and looks at two things — the showing area and the console.
+
+- **The area.** The showing root is `[data-story-root]`, and at a zero root height — the largest
+  drawn node inside the showing and inside the overlay container. A toast and a bottom sheet stand
+  outside the flow, and the root above them collapses: without that reservation they would read as
+  empty.
+- **The console matters more than the area.** `NG0201` means a provider is not in the showcase's
+  injector, `NG0950` means the owner did not set a mandatory input. The markup then draws emptiness,
+  which from outside is indistinguishable from a matrix with nothing to show. A wreck's area happens
+  to be non-zero too.
+- **The showcase's noise is sifted out by name.** `NG04002` about `iframe.html` arrives in every
+  story: the showcase's router is declared with an empty set of routes. Everything else is a refusal.
+
+A green PR does not mean "shown rightly": it means "there is something to look at". After that the
+frames are looked at by eye, and only then are the references taken.
+
+## Sorting out a fallen run
+
+1. **The share of the divergence and the area** — before the picture. A shift by a pixel and a
+   vanished block are indistinguishable by eye.
+2. **One's own divergence or a foreign one.** A divergence in a story the edit did not touch means a
+   leak between stories or an edit of a shared layer.
+3. **Re-taking — one reference at a time.** The file is deleted, and the run takes it anew;
+   re-taking everything at once erases the divergence that was not expected as well.
+4. **"Couldn't find story … after HMR"** — a trace of the hot reload: the showcase is restarted, the
+   code is not edited.
+5. **`ECONNRESET` to `ws://localhost:<port>/shot`** — a second run on the same machine restarted the
+   shot container. The pipeline has a container and a port of its own; a local run waits for the
+   other local run to end.
+
+The difference between two references is read by cutting one area out of both files and enlarging it
+— by a one-off script in a temporary directory; it does not travel into the repository.
+
+## A measurement instead of a look
+
+When the snapshot said "it became different", what exactly drifted is answered by a measurement of
+computed values: the font size, the height, the padding, the rounding, the colour. The technique and
+the traps — the pattern `browser-verification-measure`; the narrow screen and work with the
+showcase's driver — `browser-verification`, the file `implementation.md`.
+
+## Traps
+
+Each is checked on this machine; they all look like a broken harness, while what is broken is
+something else.
+
+- **`storybook-addon-pseudo-states` does not load in Node.** At the top level it touches `Element`,
+  and the import falls with `Element is not defined`. The run reads `main.ts` in Node to find the
+  story files, swallows the error — and is left without a page: **all** 124 files fall with
+  `Cannot read properties of undefined (reading 'goto')`. So `main.ts` does not attach the addon when
+  `RT_SNAPSHOT_RUN=1` is set, and the run command sets it. The showcase needs the addon: the states
+  are drawn in the browser, and raising it with this variable is not allowed — hover, focus and
+  active would leave the frame, and the reference would pin the wrong state.
+- **The flag `-t` breaks the run's environment exactly the same way.** A selection by story name does
+  not work. A pointed re-take selects **story files by path** (Jest's positional sample), not
+  stories by name.
+- **The path sample is a Jest regex, and the harness quotes it for the shell itself.**
+  `test-storybook` builds the Jest command as a string, so an unquoted sample with brackets or a bar
+  dropped the launch (`syntax error near unexpected token`). The sample is passed bare —
+  `'components/(tag|badge)/stories/'` — and not wrapped in a second pair of quotes.
+- **A missing reference is not taken up silently.** The harness refuses: the
+  comparison library would by default append the file and pass green, that is, the run would be green
+  exactly because there was nothing to compare with.
+- **A reference without a story drops the run.** A renamed story leaves its reference orphaned and
+  forever green, because nobody opens it. This is caught by matching the directory against the
+  registry of what was taken, not by `test-storybook` itself.
+- **The pointer outlives the move between stories.** Hover from one arrives in the snapshot of the
+  next: a story without hover carries the pointer away into a corner.
+- **An orphaned reference can be a consequence rather than a rename.** A story that takes a second
+  frame at a threshold width does not reach it once the first frame has fallen: the second is never
+  taken, and its reference reads as orphaned. Eight such stood next to fifteen divergences and went
+  away together with them, without a single file deleted. So the orphan list is read after the
+  divergences are cured, not before: deleted on sight, those references would have to be taken anew.
+  The same cause inflates a pointed re-take: it rewrites every frame of the sampled files, including
+  second-width frames the fallen run never reached. The list of rewritten references is checked
+  against the divergence list before the commit, and a reference outside it is looked at as new.
+- **A divergence only in native controls after a browser raise is the browser, not the layout.**
+  A newer Playwright brings a newer Chromium, and the textarea grip, the scrollbar and the focus
+  ring are drawn a pixel differently on stories nobody edited. The sign: the difference frames
+  show only such controls, and the computed values of the nodes around them match to the
+  hundredth. The cure is the browser version held where the references were taken, or a
+  deliberate re-take of every touched reference — not a fix of the layout.

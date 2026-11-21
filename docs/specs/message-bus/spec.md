@@ -106,7 +106,7 @@ interface belongs to the admin application.
 | the people                   | the section "Пользователи": creating, disabling, a new password  |
 | the entry                    | the screen "Вход": the name and the password                     |
 | the exit                     | the item "Выйти" in the header                                   |
-| the sections                 | "Разборы происшествий", "Предложения", "Сводки деревьев"         |
+| the sections                 | "Разборы происшествий", "Качество", "Предложения", "Сводки деревьев" |
 | the panel of details         | a panel sliding out at a press on a row                          |
 
 ## Rules
@@ -136,6 +136,7 @@ the limit is split further by the same technique.
 | [What the intake writes about itself](journal/spec.md)                  | the row of the journal, the taken-apart reason, the cleaning of the fields                                 |
 | [A right, a role and the check that reads them](access-rights/spec.md)  | what a person may do after the entry: the closed set of rights and the client roles of the token           |
 | [The usage of the rules in the sessions](usage/spec.md)                 | the observation lines: the intake of a day whole, the counting by skill over a period, the section         |
+| [The work result](work-result/spec.md)                                  | the intake of the epic windows, the numbers of the result and the milestone on the screen «Качество»       |
 | [The first record](first-run/spec.md)                                   | the first-run screen of an empty node: one public operation creates the owner and signs them in            |
 | [The transfer of the bus people](people-transfer/spec.md)               | the export of the people of production to Keycloak and the rewrite of the chat operators                   |
 

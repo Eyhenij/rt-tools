@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.1 · hooks/tree-assignment-guard.sh · bf930d83ffbc · правится надстройкой, не здесь
+# rt-kit v0.37.1 · hooks/tree-assignment-guard.sh · 09f4f38ed30e · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh, checks/tree-assignment.mjs
 # Guard of the assignment of an epic to a working copy. PreToolUse on a call that takes new work
@@ -83,21 +83,32 @@ creates_epic && exit 0
 
 epic="$(printf '%s' "$cmd" | sed -nE 's/.*--epic-of[[:space:]]+([0-9]+).*/\1/p' | head -1)"
 
-said="$(node "$reader" --fault "$epic" 2>/dev/null)"
+# The kind of the miss is the fact the decision table reads, the text is the words of the miss.
+unmet="$(node "$reader" --unmet "$epic" 2>/dev/null)"
+kind="$(printf '%s' "$unmet" | jq -r '.kind // empty' 2>/dev/null)"
+said="$(printf '%s' "$unmet" | jq -r '.text // empty' 2>/dev/null)"
 [ -n "$said" ] || exit 0
 
-reason="Refused: this call takes work, and ${said}."
+# A foreign epic is a class of its own: the copy is assigned, and the work belongs elsewhere.
+if [ "$kind" = foreign ]; then
+    action=task_new_other_epic
+    kind=ok
+elif printf '%s' "$cmd" | grep -qE '(task:new|task-new\.mjs)' 2>/dev/null; then
+    action=task_new
+else
+    action=task_move
+fi
 
-# shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-deny_tail_text="$(rt_deny_tail "")"
-[ -n "$deny_tail_text" ] && reason="${reason}
-
-${deny_tail_text}"
-
-jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"This copy has no assignment: work is not taken by guesswork."}}\n'
-
+# The decision and the words come from the decision table. The named move is held by the rules gate
+# when the rule of this call is not loaded: that is a fact of the state.
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/decide.sh" 2>/dev/null
+command -v rt_decide >/dev/null 2>&1 || exit 0
+sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
+call="$(jq -cn --arg c "$cmd" '{command:$c}')"
+rt_decide tree-assignment-guard.sh "$action" \
+    "$(jq -cn --arg k "$kind" --arg r "$(rt_fact_move_rule_loaded Bash "$call" "$sid")" --arg g "$(rt_fact_move_gate_rule Bash "$call" "$sid")" '{copy_assignment:$k, rule_loaded:$r, gate_rule:$g}')" \
+    "$(jq -cn --arg s "$said" '{said:$s}')" PreToolUse "$input"
 exit 0

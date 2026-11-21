@@ -95,7 +95,7 @@ task, a line per finding, each with its address.
 - **The conversation guard counts its own refusal and a rules-gate refusal as a blocker.** After
   a rules-gate refusal, a loaded rule and a look at the showcase, the approval question was refused
   twice. Proposed: `after_refusal` skips «BLOCKED by grill-gate» and «Refused by the rules gate», and
-  a scenario for it. **Address:** rules layer — the hook `grill-gate.sh` of the package.
+  a scenario for it. **Address:** rules layer — the conversation guard of the package, since removed.
 - **The record of loaded rules is removed after the compaction, and a load made right after it is
   lost.** `browser-verification` was demanded twice. Proposed: the rearm hook cuts the record by
   time instead of removing it. Cause not proved. **Address:** rules layer — the hooks

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.1 · hooks/git-guard-push-marks.sh · 9036ec6106cd · правится надстройкой, не здесь
+# rt-kit v0.37.1 · hooks/git-guard-push-marks.sh · e703a24b22ef · правится надстройкой, не здесь
 # The base of the push set and the marks of a green run, shared by the push guard and by the
 # command that runs the set ahead (`git-guard-push-ahead.sh`).
 #
@@ -46,7 +46,9 @@ rt_push_base() {
     best="origin/$main"
     best_count="$(git rev-list --count "refs/remotes/origin/$main..HEAD" 2>/dev/null)"
     case "$best_count" in '' | *[!0-9]*) printf '%s' "$best" && return 0 ;; esac
-    branch="$(git symbolic-ref --quiet --short HEAD 2>/dev/null)"
+    # shellcheck disable=SC1091
+    command -v rt_fact_branch >/dev/null 2>&1 || . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+    branch="$(rt_fact_branch)"
     [ -n "$branch" ] || { printf '%s' "$best" && return 0; }
 
     own="refs/remotes/origin/$branch"
@@ -201,6 +203,56 @@ rt_push_select() {
         return 0
     fi
     printf '%s\n' "$steps"
+}
+
+# Whether the change touched the subject of each step: a line `<mark><TAB><step>` per step on stdin,
+# the mark one of `touched`, `idle`, `unknown`, `not-run`. A step of the table of reads is judged by
+# the rule `rt_push_select` uses; for the rest the tree declares the paths by `rt_push_subject`. No
+# program or a failure of it — every step is `unknown`: the metrics report says so instead of zero.
+rt_push_subjects() {
+    local steps root program declared step path marks
+    steps="$(cat)"
+    root="${CLAUDE_PROJECT_DIR:-.}"
+    program="$root/${RT_CHECKS_DIR:-tools}/push-inputs.mjs"
+    if [ -n "$1" ] && [ -f "$program" ]; then
+        declared="$(mktemp 2>/dev/null)"
+        if [ -n "$declared" ]; then
+            if command -v rt_push_subject >/dev/null 2>&1; then
+                while IFS= read -r step; do
+                    [ -n "$step" ] || continue
+                    rt_push_subject "$step" | while IFS= read -r path; do
+                        [ -n "$path" ] && printf '%s\t%s\n' "$path" "$step"
+                    done
+                done <<<"$steps" >"$declared"
+            fi
+            marks="$(printf '%s\n' "$steps" | (cd "$root" && node "$program" subject "$1" --declared "$declared" 2>/dev/null))"
+            rm -f "$declared"
+            if [ -n "$marks" ]; then
+                printf '%s\n' "$marks"
+                return 0
+            fi
+        fi
+    fi
+    printf '%s\n' "$steps" | while IFS= read -r step; do [ -n "$step" ] && printf 'unknown\t%s\n' "$step"; done
+    return 0
+}
+
+# The subject mark of one step from the lines `rt_push_subjects` printed; `unknown` when absent.
+rt_push_subject_of() {
+    local mark
+    mark="$(printf '%s\n' "$1" | awk -F '\t' -v step="$2" '$2 == step { print $1; exit }')"
+    printf '%s' "${mark:-unknown}"
+}
+
+# The steps `rt_push_select` dropped leave a run line of their own: zero seconds, `not-run`. The
+# report counts them apart from the idle runs — such a step cannot run idle.
+rt_push_note_not_run() {
+    local sign="$1" base="$2" subjects="$3" step
+    command -v rt_run_note >/dev/null 2>&1 || return 0
+    printf '%s\n' "$subjects" | awk -F '\t' '$1 == "not-run" { print $2 }' | while IFS= read -r step; do
+        [ -n "$step" ] && rt_run_note "$sign" "$(date +%s 2>/dev/null)" not-run "$step" "$base" not-run
+    done
+    return 0
 }
 
 # The tree runs its heavy steps ahead and the guard only reads their marks. Declared by the

@@ -1,0 +1,22 @@
+{
+  "case": "SC-AK-1462",
+  "kind": "a lawful end: the end of the epic by the history of the last closed epic of the tree",
+  "record": "the epic RT-3288, merged by its PR into the main branch",
+  "task": 101,
+  "turns": [
+    { "role": "owner", "at": "2026-11-15T06:00:00Z", "owner": "<nudge>" },
+    { "role": "agent", "at": "2026-11-15T06:05:00Z", "call": "Bash", "command": "gh pr merge 11 --merge", "code": 0 },
+    {
+      "role": "agent",
+      "at": "2026-11-15T06:10:00Z",
+      "call": "Bash",
+      "command": "gh pr create --base main --head RT-100-replay-epic --fill",
+      "code": 0
+    },
+    {
+      "role": "agent",
+      "at": "2026-11-15T06:11:00Z",
+      "say": "Both tasks lie in the epic branch, and the PR of the epic into the main branch is open."
+    }
+  ]
+}

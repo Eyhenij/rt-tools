@@ -1,6 +1,6 @@
 # The dispatcher of the agent's events
 
-**Status:** in force · **Revision:** 2026-08-23 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-20 · **Scenario prefix:** `SC-AK`
 **Depends on:** `layout` — the record of the declaration is written by the layout
 **Laws:** `verifiability`, `work-conduct`
 **Procedures:** none
@@ -89,6 +89,12 @@ edit guards and the turn-closing guards.
   kills a hook without a limit field at its own limit, and a killed guard gives no decision: the call
   passes as if the guard were silent. A standing record with a smaller limit is not rewritten — the
   layout names it, and the tree adds the field.
+- **A branch that declares a time limit is stopped at it.** The agent's own limit covers the whole
+  dispatcher, and one slow branch would spend it for all the branches after it.
+- **On the event of a stop a branch that failed or ran past its limit releases the turn and writes
+  «движок упал» to the journal.** A stop nobody decided is written, never taken for a verdict.
+- **The next prompt of the owner starts with the failure the journal holds, once.** A turn released
+  by a failure reads to the executor the same as one released by the scenario, unless it is told.
 - **A guard called directly works as before.** It asks the environment for the fields and parses the
   input itself when there is no environment. Otherwise the scenario suites would check not the guard
   but the dispatcher.
@@ -108,6 +114,29 @@ edit guards and the turn-closing guards.
   indistinguishable from a refusal on the merits from outside, and there is nothing to fix it with:
   the dispatcher mutes the error output of the branches, and nobody knows which file is broken. The
   name is named by the dispatcher itself — otherwise nothing speaks about a broken branch.
+
+- **A model check is connected by a record of the kind `agent`, which the layout writes from the
+  declaration in the file of the check.** The file of a model check is a text a model follows, and
+  laid out without a record it is indistinguishable from a working one: a release that takes the
+  script checks of the conversation away would leave the tree with nothing in their place. The check
+  declares its event, its pattern, its limit, its model and the words added to the call in one
+  comment of its own file; the layout holds no list of model checks. The record does not go through
+  the dispatcher, so a tree that did not take the dispatcher gets it too, and a moved directory of
+  hooks is named in it. A host that runs no hooks of the kind `agent` names the check in `skip`.
+- **A record that stands is neither doubled nor rewritten, and one that differs is named.** The
+  settings are a file of the tree. Other words, another pattern and a limit below the declared one
+  are named and refused by the check of the layout; another model and a higher limit are named only,
+  so a tree with no access to the declared model can change it and stay green.
+- **A file of a model check that lies on disk with no record calling it refuses the check of the
+  layout, and the refusal names the `skip` id as the way out.** A tree whose host runs no hooks of
+  the kind `agent` must be able to leave the file out and stay green.
+- **Settings that do not parse are not edited.** The layout names the checks still to connect and
+  prints the ready records to insert by hand; a check counts as connected when the call `Read the
+  file <path>` of its file stands in the text. The same holds for settings whose `hooks` section is
+  not an object or whose list of an event is not an array.
+- **A refused record anywhere in the layout stops the writing of every record, the model records
+  included.** A tree whose directory of hooks is moved gets the model records and no record of the
+  dispatcher, and the layout names that mixed state.
 
 ## What is out of scope
 
@@ -173,6 +202,11 @@ Not applicable.
   when it matters to two branches which comes first.
 
 ## History of changes
+
+- 2026-11-20 — the layout writes the records of the model checks from the declaration in the file of each check: the rules and the scenarios SC-AK-1766 to SC-AK-1774.
+- 2026-11-15 — the scenario of the line about a failure at the start of the next turn left for the
+  subdomain `docs/specs/agent-kit/turn-guards/flow-script/exit/` with its number; the rule stays
+  here.
 
 - 2026-11-05 — the answers of several branches reach the agent as one object.
 

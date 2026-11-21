@@ -32,4 +32,40 @@
         color: var(--rt-color-state-error-text);
         font-size: var(--rt-text-sm);
     }
+
+    /** Веха и «Подряд» стоят рядом и уходят в столбец, когда двум карточкам тесно. */
+    &__blocks {
+        display: grid;
+        gap: var(--rt-space-md);
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+
+    &__block-hint {
+        margin: 0 0 var(--rt-space-sm);
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+    }
+
+    /** Строка блока переносит числа под себя на узком экране, а не уходит за край карточки. */
+    &__row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        padding: var(--rt-space-xs) 0;
+        gap: var(--rt-space-xs) var(--rt-space-sm);
+    }
+
+    &__row-title,
+    &__row-count {
+        font-weight: var(--rt-font-weight-semibold);
+    }
+
+    &__row-span {
+        font-size: var(--rt-text-sm);
+    }
+
+    &__row-note {
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+    }
 }

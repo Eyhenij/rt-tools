@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.1 · hooks/git-guard-discard.sh · bcb9547dd93b · правится надстройкой, не здесь
+# rt-kit v0.37.1 · hooks/git-guard-discard.sh · ee34b6f8ed27 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Requires: hooks/deny-tail.sh, hooks/guard-note.sh
+# Requires: checks/decide.mjs, hooks/decide.sh, hooks/facts.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Guard of the working tree. PreToolUse on a git command that throws uncommitted edits away.
 #
 # `git reset --hard`, `git checkout -- <path>`, `git restore <path>` and `git clean -f` erase what
@@ -126,21 +126,11 @@ files="$(printf '%s\n' "$changed" | sed 's/^...//' | head -20 | sed 's/^/    /')
     … and $((count - 20)) more"
 what="$(printf '%s\n' "$hits" | sort -u | paste -sd ',' - | sed 's/,/, /g')"
 
-reason="BLOCKED by git-guard-discard: «git ${what}» throws away uncommitted edits, and the working tree holds ${count} of them:
-${files}
-
-Git keeps no object of an uncommitted edit: after this call there is nothing to restore it from. In one working copy two sessions work at once, so these files may be a neighbour's as well as your own. To drop a commit and keep the edits, take \`git reset --soft\`; to keep them aside, commit or stash them by name first. \`--hard\` is taken only when the goal is to throw the edits away, and then they are named before the call — the rule git-workflow."
-
-# shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-deny_tail_text="$(rt_deny_tail 'the comment `# discard: <reason>` in the same command, the erased files named in the reason')"
-[ -n "$deny_tail_text" ] && reason="${reason}
-
-${deny_tail_text}"
-
-jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"A discarding git command on a dirty working tree is refused. Commit or name the edits first."}}\n'
-
+# The decision and its text come from the decision table; the hook names the state and the files.
+params="$(jq -cn --arg w "$what" --arg c "$count" --arg f "$files" \
+    --arg b 'the comment `# discard: <reason>` in the same command, the erased files named in the reason' \
+    '{what:$w, count:$c, files:$f, bypass:$b}')"
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/decide.sh" 2>/dev/null
+command -v rt_decide >/dev/null 2>&1 && rt_decide git-guard-discard.sh discard '{"tree_dirty":"yes"}' "$params"
 exit 0

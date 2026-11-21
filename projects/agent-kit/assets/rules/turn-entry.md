@@ -19,7 +19,7 @@ into the session.
 | --- | --- |
 | session entry | what the startup hook puts into the context before the first reply |
 | what the past session handed over | the "Session handover" section in the progress of this branch; for work without a task folder — a file named after the branch in the handovers directory. The hook writes it before context compaction |
-| the order of conducting work | the turn map — the states with their mandatory actions and the four turn exits |
+| the order of conducting work | the turn map — the states with their mandatory actions and the two ends of a turn |
 | a launch | first launch, resume, context compaction, clear |
 
 ## Where it lives
@@ -41,7 +41,7 @@ flowchart TD
     B2 -->|No| D[Nothing is said about a handover]
     C --> E{The turn map resource is laid out}
     D --> E
-    E -->|Yes| F[The map goes next: states, actions, four exits]
+    E -->|Yes| F[The map goes next: states, actions, two ends of a turn]
     E -->|No| G[Nothing is said about a map]
     F --> H[The hook exits with zero: the launch is refused on no outcome]
     G --> H

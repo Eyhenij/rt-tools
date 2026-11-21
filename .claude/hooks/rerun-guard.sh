@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.1 · hooks/rerun-guard.sh · f79bf0482015 · правится надстройкой, не здесь
+# rt-kit v0.37.1 · hooks/rerun-guard.sh · 15f31f31941d · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh
 # Guard of the rerun: a fallen run is not rerun until its log has been read.
@@ -71,7 +71,9 @@ fi
 run_id="$(printf '%s' "$cmd" | grep -oE '(^|[[:space:]])[0-9]{6,}([[:space:]]|$)' | tr -d ' ' | head -1)"
 [ -z "$run_id" ] && exit 0
 
-transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/null)"
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+transcript="$(rt_fact_transcript "$input")"
 [ -z "$transcript" ] && exit 0
 [ -f "$transcript" ] || exit 0
 
@@ -86,19 +88,12 @@ seen="$(jq -s -r --arg id "$run_id" '
 
 [ "$seen" = "read" ] && exit 0
 
-reason="BLOCKED by rerun-guard: a rerun of the run ${run_id} without its output read. Red on a run comes in two kinds, and in the list they look the same: a hosting refusal on the preparation step is cured by a rerun, a defect of the branch is not cured by it at all, and the circle repeats until the output is opened. Read the output of this run — ${log_cmd} ${run_id}$([ "$log_cmd" = "glab ci trace" ] || printf ' --log-failed') — and repeat the call. The guard judges the order, not the cause of the fall: what is written in the output you judge yourself."
-
-# The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
-# The file may not be laid out — then there is no tail, and the refusal reason stays as it is.
-# shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-deny_tail_text="$(rt_deny_tail "")"
-[ -n "$deny_tail_text" ] && reason="${reason}
-
-${deny_tail_text}"
-
-jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"rerun-guard: the output of the run was not read in this turn."}}\n'
+# The decision and the words come from the decision table; the hook names the run and how its output
+# is read.
+log="${log_cmd} ${run_id}$([ "$log_cmd" = "glab ci trace" ] || printf ' --log-failed')"
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/decide.sh" 2>/dev/null
+command -v rt_decide >/dev/null 2>&1 || exit 0
+rt_decide rerun-guard.sh rerun_run '{"run_log_read":"no"}' \
+    "$(jq -cn --arg r "$run_id" --arg l "$log" '{run_id:$r, log:$l}')" PreToolUse "$input"
 exit 0

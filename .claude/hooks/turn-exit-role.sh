@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.1 · hooks/turn-exit-role.sh · a29644a324c1 · правится надстройкой, не здесь
+# rt-kit v0.37.1 · hooks/turn-exit-role.sh · 00a31636efcd · правится надстройкой, не здесь
 # The role a session runs as, for the turn-exit guard. NOT a guard: it has no `rt-hook:` declaration
 # and hooks into no agent event. The guard sources it right after the root of the tree is known.
 #
@@ -27,7 +27,9 @@ rt_te_read_only_role() {
     case "$role" in
         */* | .*) return 1 ;;
     esac
-    file="$root/.claude/agents/$role.md"
+    # The role is read in the copy the session works in, and in the project when the copy has none.
+    file="${dir:-$root}/.claude/agents/$role.md"
+    [ -f "$file" ] || file="$root/.claude/agents/$role.md"
     [ -f "$file" ] || return 1
 
     # Only the header is read: the body of a role may quote the line itself.

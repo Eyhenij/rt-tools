@@ -1,0 +1,18 @@
+{
+  "case": "SC-AK-1456",
+  "kind": "RT-3276 live turn: a question of the owner in a session that wrote nothing",
+  "record": "RT-3276 live check",
+  "task": 101,
+  "turns": [
+    { "role": "owner", "at": "2026-11-14T17:00:00Z", "owner": "<question>" },
+    {
+      "role": "agent",
+      "at": "2026-11-14T17:00:20Z",
+      "call": "Bash",
+      "command": "git log --oneline -5",
+      "code": 0,
+      "out": "a1b2c3d4e docs: step 1.1 of the stage of RT-101\nb2c3d4e5f docs: plan of RT-101\nc3d4e5f6a docs: task folder of RT-101"
+    },
+    { "role": "agent", "at": "2026-11-14T17:00:40Z", "say": "The branch holds the plan and the first step of the stage." }
+  ]
+}

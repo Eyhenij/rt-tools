@@ -37,8 +37,9 @@ OUT="$(out_of)"
 has 'SC-AK-436 — передача прошлого захода приходит в контекст' "$OUT" 'Прошлый заход встал на пробе'
 has 'SC-AK-437 — передача берётся по имени текущей ветки' "$OUT" 'Это чужая ветка' 'нет'
 has 'SC-AK-439 — карта приходит тем же запуском, что и передача' "$OUT" '# Turn map'
-has 'SC-AK-440 — карта называет обязательное действие состояния' "$OUT" 'finish the stage and mark it in the progress'
-has 'SC-AK-441 — карта называет выходы хода' "$OUT" 'the window filled where there is no compaction'
+has 'SC-AK-440 — карта называет обязательное действие состояния' "$OUT" 'finish the stage: `step N.M` measures each step and marks it done'
+has 'SC-AK-441 — карта называет концы хода: конец сценария' "$OUT" 'the end of the scenario'
+has 'SC-AK-441 — карта называет концы хода: слово остановки' "$OUT" 'a stop word of the owner'
 has 'SC-AK-442 — карта берётся из ресурса, а не из разметки правила' "$OUT" 'States and mandatory actions'
 
 # Передача ветки с папкой задачи лежит разделом её хода работы: он коммитится и едет в ветку,
@@ -56,7 +57,7 @@ rm -rf "$REPO/docs/tasks/RT-1-probe"
 # Правило в дереве есть и переписано до неузнаваемости: карта от этого не меняется — она лежит
 # своим файлом, а не вынимается разбором.
 printf '# Ведение работы\n\nТаблицы состояний здесь больше нет.\n' > "$REPO/.claude/skills/task-flow/SKILL.md"
-has 'SC-AK-442 — переписанное правило карту не ломает' "$(out_of)" 'finish the stage and mark it in the progress'
+has 'SC-AK-442 — переписанное правило карту не ломает' "$(out_of)" 'finish the stage: `step N.M` measures each step and marks it done'
 
 # SC-AK-443 — предел размера карты. Судит его проверка дерева, а не хук: здесь проверяется, что
 # карта, которую хук кладёт в контекст, эту проверку проходит.

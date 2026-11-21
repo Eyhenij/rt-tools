@@ -17,3 +17,5 @@ statement: a removed statement is removed together with its line.
 - **The refusal has an exit that does not demand lifting the protection.** — `projects/agent-kit/assets/hooks/exam-guard.sh:rt_exam_declared_skip` — scenario SC-AK-852
 - **Both refusals say that the path through the list of switched-off roles demands lifting the protection.** — `projects/agent-kit/assets/hooks/exam-guard.sh:deny` — the text of both refusals; scenario SC-AK-852
 - **A call of the client counts as lifting the draft, not an occurrence of words.** — `projects/agent-kit/assets/hooks/exam-guard.sh:ready` — scenario SC-AK-853
+- **A window past its stop threshold lets the progress through without the exam.** — `projects/agent-kit/assets/hooks/exam-guard.sh:exam_sid` — the mark of `window-fill-guard.sh`; scenario SC-AK-1588
+- **The refusal of the exam asks its neighbours about the call of the examiner.** — `projects/agent-kit/assets/hooks/exam-guard.sh:decide_exam` — the guard hands the window facts to the decider, and the decider puts the window refusal first; scenario SC-AK-1592
