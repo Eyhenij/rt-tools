@@ -5,9 +5,9 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 4 из 5 — review
-- **Done:** код, витрина и два круга ревью с исправлениями; RT-3343 выкинута владельцем
-- **Next step:** слово владельца о витрине (4.3)
+- **Stage:** 5 из 5 — closing
+- **Done:** код, витрина, четыре круга ревью, слово владельца о витрине, обзоры и план эпика
+- **Next step:** слить договорённость в спеку домена и разобрать папку (5.2)
 - **Uncommitted:** нет
 - **Waiting for the owner:** нет
 - **PR:** не открыт; #3454 (RT-3341) влит в ветку RT-3340, ветка задачи взяла её (6d811c52b); база PR — `RT-3340-ai-chat-sources-block`, а после слияния #3453 — `main`
@@ -29,8 +29,8 @@ Rewritten by every session, not appended to.
 - [x] 4.1 review round one and its fixes
 - [x] 4.2 review round two and its fixes
 - [x] 4.3 the owner's word on the showcase
-- [>] 5.1 overviews of the chat and the parts, the README exception, the epic plan
-- [ ] 5.2 the agreement merged into the domain spec, the folder taken apart
+- [x] 5.1 overviews of the chat and the parts, the README exception, the epic plan
+- [>] 5.2 the agreement merged into the domain spec, the folder taken apart
 - [ ] 5.3 the push set and the PR into the branch of RT-3340
 
 ## Decisions along the way
@@ -138,6 +138,10 @@ Rewritten by every session, not appended to.
   `--rt-color-border-subtle`, а в коде `--rt-color-border-default` — исправлено. Для семейства
   шрифта дописано, что без токена ответ держит шрифт кита. Обёртка панели со `style=` в витрине
   снята: так сделаны 4 из 5 соседних историй чата.
+- **Четвёртый круг ревью (свой), находок нет:** весь набор кита 4090 тестов в 369 наборах, линтер
+  кита и стилей, `check:tokens-styles`, `check:tokens-graph`, сборка перечней токенов зелёные;
+  18 умолчаний договорённости совпадают с кодом строка в строку; четыре страницы обзоров открыты
+  в витрине — новые таблицы, пример правила и вход `questionAuthor` на месте.
 
 ## Sessions
 
