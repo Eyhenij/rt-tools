@@ -333,6 +333,12 @@ jobs:
             - name: Boolean inputs of kit two
               run: node tools/check-boolean-inputs.mjs
 
+            # Оценка Angular Doctor равна порогу, записанному в проверке. Ниже порога — новая
+            # находка: устаревший API, ошибка шаблона, дыра в безопасности. Выше — задача эпика
+            # RT-3476 подняла оценку и не подняла порог, и следующая находка спряталась бы в зазоре.
+            - name: Angular Doctor score
+              run: pnpm run check:ngdoctor
+
             # Сборка темы Keycloak зовёт `mvn --version` и без Maven падает строкой «Apache Maven
             # required». Раннеров у дерева два, и Maven стоит не на обоих: задание, попавшее на
             # машину без него, краснеет, хотя код цел. Поэтому JDK и Maven ставятся здесь, в

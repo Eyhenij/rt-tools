@@ -28,10 +28,11 @@
     "test:visual:v2:update-all": "STORYBOOK_URL=${STORYBOOK_URL:-http://localhost:6007} node tools/visual-snapshots-v2.mjs --update-all",
     "test:stories:v2": "STORYBOOK_URL=${STORYBOOK_URL:-http://localhost:6007} node tools/story-sweep-v2.mjs",
     "prettier": "npx prettier --write ./projects",
-    "check:all": "pnpm exec nx run-many -t lint typecheck test build verify --all --parallel && pnpm run lint:styles && pnpm run check:unused",
+    "check:all": "pnpm exec nx run-many -t lint typecheck test build verify --all --parallel && pnpm run lint:styles && pnpm run check:unused && pnpm run check:ngdoctor",
     "check:affected": "pnpm exec nx affected -t lint typecheck test build verify --parallel && pnpm run lint:styles",
     "check:specs": "node tools/check-specs.mjs",
     "check:unused": "knip --no-progress",
+    "check:ngdoctor": "angular-doctor --json | node tools/check-ngdoctor.mjs",
     "spec:next-id": "node tools/spec-next-id.mjs",
     "specs:for": "node tools/specs-for.mjs",
     "check:docs": "node tools/check-doc-paths.mjs",
@@ -145,6 +146,7 @@
     "reflect-metadata": "0.2.2"
   },
   "devDependencies": {
+    "@abiramcodes/angular-doctor": "0.3.0",
     "@analogjs/vite-plugin-angular": "2.8.0",
     "@analogjs/vitest-angular": "2.8.0",
     "@angular-devkit/build-angular": "22.2.2",
@@ -153,7 +155,6 @@
     "@angular-eslint/eslint-plugin": "22.5.0",
     "@angular-eslint/eslint-plugin-template": "22.5.0",
     "@angular-eslint/template-parser": "22.5.0",
-    "@angular/animations": "22.2.2",
     "@angular/build": "22.2.2",
     "@angular/cdk": "22.2.2",
     "@angular/cli": "22.2.2",
