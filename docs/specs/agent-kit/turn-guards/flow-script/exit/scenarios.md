@@ -303,17 +303,19 @@ And the line names the longest run of held stops in a row, which a word of the o
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 
-### SC-AK-1797 — an unread background task is the move, not the owner's menu
+### SC-AK-1797 — an unread background task is the first move, not the owner's menu
 
 Given a background task of the session whose notice ended it after the last call, and a refusal of a stop
 When the hook on Stop measures the session
 Then the stop is not idle, and the refusal names the task and its output file and offers no owner's menu
-And the menu of a step another check forbids is not offered over it either, nor over a task that runs
-And an agent is read by the first call after its notice; a command by a call that names its number, its output file or a file it wrote to
-And a late copy of the notice does not make a read task unread again
+And for an agent the refusal names its report in the notice, not the file of its transcript
+And the refusal still names the next step of the state
+And the menu of a step another check forbids is not offered over it either
+And the first call or menu after the notice reads it, and a late copy of the notice does not make it unread again
+And the forecast takes a named unread task for a move, not for the menu
 And a task the session stopped itself, one the harness killed, or one with no start in the record holds nothing
 And a late copy of the notice of a former run does not end the run a message resumed
-And a command running past the bound is named until a call names its number or its output file; an agent past the bound is not
+And a task running past the bound is not named, and a stop with no call names the menu
 And a refusal with no unread task still names the menu
 
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`, `projects/agent-kit/tests/task-flow-script-session.test.sh`, `projects/agent-kit/tests/task-flow-script.test.sh`.

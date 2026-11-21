@@ -42,7 +42,7 @@ export function releaseCase(model, read, result) {
 /**
  * Why the next move is the owner's menu: { by: '<guard>' }, { idle: true }, or null. A measurer the
  * description does not declare, or the hosting could not answer, names no cause. An unread
- * background task comes first, { unread: { task, output, long } }: while it is unread the move is to
+ * background task comes first, { unread: { task, output, agent } }: while it is unread the move is to
  * read it, and no menu is offered.
  */
 export function menuCause(read) {
@@ -81,14 +81,15 @@ export function holdReason(model, result, step, menu = null) {
     const state = model.states[result.index - 1];
     const lines = [`The scenario is not over: the work stands in the state \`${result.state}\` (${result.index} of ${total}), whose exit is not met.`];
     if (menu?.cause?.unread) {
-        const { task, output, long } = menu.cause.unread;
-        const where = output ? ` — its output is \`${output}\`` : '';
-        lines.push(
-            long
-                ? `The background task \`${task}\` runs longer than the bound and its output was not read${where}.`
-                : `The background task \`${task}\` ended, and no call read its output since${where}.`,
-        );
-        lines.push('The first move is to read that output and act on it: a red result is fixed now. No owner\'s menu is offered while the task is unread.');
+        const { task, output, agent } = menu.cause.unread;
+        if (agent) {
+            lines.push(`The background agent \`${task}\` ended after the last call, and its notice has not been read.`);
+            lines.push('The first move is to take its report from the notice and act on it. No owner\'s menu is offered while it is unread.');
+        } else {
+            const where = output ? ` — its output is \`${output}\`` : '';
+            lines.push(`The background task \`${task}\` ended after the last call, and its notice has not been read${where}.`);
+            lines.push('The first move is to read that output and act on it: a red result is fixed now. No owner\'s menu is offered while the task is unread.');
+        }
     } else if (menu?.cause) {
         lines.push(
             menu.cause.idle

@@ -1,4 +1,4 @@
-// rt-kit v0.37.1 · checks/flow-forecast.mjs · 046b378d525d · правится надстройкой, не здесь
+// rt-kit v0.37.1 · checks/flow-forecast.mjs · 578c87905ec8 · правится надстройкой, не здесь
 /**
  * The forecast of refusals — the engine command `forecast`, run before the hooks are laid out.
  *
@@ -271,7 +271,9 @@ export async function forecastCopies({ copies, window, model, base, openReaders,
                 counts.held += 1;
                 run += 1;
                 counts.longest = Math.max(counts.longest, run);
-                menuNamed = menuCause(answer) !== null;
+                // A named unread task is a move, not the menu: the next stop is judged as usual.
+                const cause = menuCause(answer);
+                menuNamed = cause !== null && !cause.unread;
             }
         }
     }

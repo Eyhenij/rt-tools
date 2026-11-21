@@ -170,8 +170,9 @@ None.
   The forecast over 14–18.11 holds 142 stops where it held 383. A series of ten refusals in a row
   with no background task running is not lifted by this rule: the series of 19.11 at a step that
   could not be measured on a taken-apart folder stays for the task about that step.
-- 2026-11-21 — an unread background task is the first move of a held stop: the menu «отложить /
-  стоп» is no longer offered over an unread red result, nor the menu of a forbidden step over a
-  running task. An agent is read by the first call after its notice; a command by a call that names
-  it, its output file or a file it wrote to. A command past the bound is named until a call names it. A task the session stopped itself, one the harness
-  killed, or one with no start in the record holds nothing.
+- 2026-11-21 — a background task whose notice came after the last call is the first move of a held
+  stop: the menu «отложить / стоп» is no longer offered over a result that has not reached the
+  session. The first call or menu after the notice reads it. A stricter sign — a call naming the
+  task or its files — named tasks hundreds of calls old on real records and doubled the held stops
+  of the forecast; it was dropped. A task the session stopped itself, one the harness killed, or one
+  with no start in the record holds nothing.

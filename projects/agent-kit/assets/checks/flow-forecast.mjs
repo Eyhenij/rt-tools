@@ -270,7 +270,9 @@ export async function forecastCopies({ copies, window, model, base, openReaders,
                 counts.held += 1;
                 run += 1;
                 counts.longest = Math.max(counts.longest, run);
-                menuNamed = menuCause(answer) !== null;
+                // A named unread task is a move, not the menu: the next stop is judged as usual.
+                const cause = menuCause(answer);
+                menuNamed = cause !== null && !cause.unread;
             }
         }
     }

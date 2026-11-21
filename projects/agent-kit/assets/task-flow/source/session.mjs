@@ -8,7 +8,7 @@
  *                    { kind: 'refusal', text }, a menu { kind: 'menu', answered }, a call of a tool
  *                    { kind: 'call', name, input, blocked }, a refusal of a call by a hook
  *                    { kind: 'blocked', by, reason }, the start of a background task
- *                    { kind: 'background', id, task, at, output, agent, logs }, its end { kind: 'backgroundEnd', id,
+ *                    { kind: 'background', id, task, at, output, agent }, its end { kind: 'backgroundEnd', id,
  *                    task, output, status, stopped } — `stopped` when the session stopped it itself —
  *                    and a turn that ended { kind: 'ended' }
  *   now()            the time the session is judged at, in milliseconds
@@ -35,11 +35,6 @@ const STOP_BLOCK = /BLOCKED by |"decision"\s*:\s*"block"/;
 const OUTPUT_FILE = /(?:Output is being written to|output_file):?[ \t]*([^\n]+)/;
 /** The path in the line of the output file: the line up to a sentence that follows it, with no closing stop. */
 const outputOf = (text) => text.match(OUTPUT_FILE)?.[1].replace(/\.\s+[A-Z].*$/, '').replace(/[.,]$/, '').trim() || null;
-/** The files a command sends its output to by a redirect or `tee`: reading one reads the task. */
-const logsOf = (command) =>
-    typeof command === 'string'
-        ? [...command.matchAll(/(?:\d?>>?|\btee(?:\s+-a)?)\s*([^\s;&|<>()]+)/g)].map((match) => match[1]).filter((path) => !/^&|^\/dev\//.test(path))
-        : [];
 /** The tools whose call ends a background task. */
 const STOP_TOOLS = new Set(['TaskStop', 'KillShell', 'KillBash']);
 
@@ -197,8 +192,7 @@ export function eventsOf(entries) {
             if (started !== null) {
                 const output = outputOf(resultText(part));
                 const agent = !entry.toolUseResult.backgroundTaskId;
-                const logs = logsOf(calls.get(part.tool_use_id)?.input?.command);
-                events.push({ kind: 'background', id: part.tool_use_id, task: started || null, at: Date.parse(entry.timestamp ?? ''), output, agent, logs });
+                events.push({ kind: 'background', id: part.tool_use_id, task: started || null, at: Date.parse(entry.timestamp ?? ''), output, agent });
             }
             const refused = part.is_error ? resultText(part).match(CALL_REFUSAL) : null;
             if (!refused) continue;
