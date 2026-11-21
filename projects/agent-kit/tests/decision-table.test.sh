@@ -38,6 +38,18 @@ got="$(printf '%s\n' "$conform_out" | tail -1)"
 printf '%s' "$got" | grep -qE '^rows [1-9][0-9]*, mismatch 0$' && got=ok || printf '%s\n' "$conform_out" | head -20 >&2
 report "SC-AK-1563 — каждая строка сверена запуском хука" "$got" ok
 
+# --- SC-AK-1798 — переменные конвейера не доходят до хука пробы ------------------------------------
+# Хук отправки пропускает всё под `CI`. Таблица из его строк, сверенная под переменными конвейера,
+# держит тот же ответ: проба судит хук так, как его видит сессия. Число строк не сравнивается: новая
+# строка хука не делает случай красным.
+jq '(.rows |= map(select(.hook == "pre-push.sh"))) | .states = [] | (.hooks |= map(select(.file == "pre-push.sh")))' \
+    "$ASSETS/checks/decision-table.json" >"$TMP/pre-push.json"
+ci_out="$(CI=true GITHUB_ACTIONS=true RT_DECISION_TABLE="$TMP/pre-push.json" node "$TABLE_CMD" --conform 2>&1)"
+got="$(printf '%s\n' "$ci_out" | tail -1)"
+# A red case prints the rows that diverged, as SC-AK-1563 does: the count alone names no hook.
+printf '%s' "$got" | grep -qE '^rows [1-9][0-9]*, mismatch 0$' && got=ok || printf '%s\n' "$ci_out" | head -20 >&2
+report "SC-AK-1798 — сверка под переменными конвейера не расходится" "$got" ok
+
 # --- SC-AK-1564, 1565 — тупиков нет, отказ называет разрешённый ход ------------------------------
 report "SC-AK-1564, SC-AK-1565 — перебор настоящей таблицы" "$(last --walk)" "dead 0, unnamed 0"
 
