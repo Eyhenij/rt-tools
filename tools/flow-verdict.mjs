@@ -1,4 +1,4 @@
-// rt-kit v0.37.1 · checks/flow-verdict.mjs · 2fc86d5c26d0 · правится надстройкой, не здесь
+// rt-kit v0.37.1 · checks/flow-verdict.mjs · a0b0f6143bf9 · правится надстройкой, не здесь
 /**
  * The verdict at the end of a turn — the engine command `verdict`, called by the hook on Stop.
  *
@@ -87,12 +87,10 @@ export function holdReason(model, result, step, menu = null) {
         lines.push(
             long
                 ? `The background task \`${task}\` runs longer than the bound and its output was not read${where}.`
-                : `The background task \`${task}\` ended after the last call, and its output was not read${where}.`,
+                : `The background task \`${task}\` ended, and no call read its output since${where}.`,
         );
-        lines.push('The one move is to read that output and act on it: a red result is fixed now. No owner\'s menu is offered while the task is unread.');
-        return lines.join('\n');
-    }
-    if (menu?.cause) {
+        lines.push('The first move is to read that output and act on it: a red result is fixed now. No owner\'s menu is offered while the task is unread.');
+    } else if (menu?.cause) {
         lines.push(
             menu.cause.idle
                 ? 'The previous refusal named a move, and no call followed it.'

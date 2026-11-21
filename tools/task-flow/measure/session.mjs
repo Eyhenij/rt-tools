@@ -1,4 +1,4 @@
-// rt-kit v0.37.1 · task-flow/measure/session.mjs · 5ee17537c9cf · правится надстройкой, не здесь
+// rt-kit v0.37.1 · task-flow/measure/session.mjs · 69be29438f1d · правится надстройкой, не здесь
 /**
  * The measurer «measure.session» — what this session did: a write to the tree, a role it runs as, a
  * menu of a refusal that did not reach the owner, a step another check forbids, a stop after a
@@ -69,52 +69,47 @@ export function idle({ session }) {
 
 /**
  * The background task of the session whose output the session has not read: { task, output, long },
- * or null. A task is unread when its start stands in the record and its notice ended it after the
- * start, and no call since named its number or its output file. A task the session stopped itself is
- * read: it knows why it ended. A task with a start and no end older than the bound is named too, as
- * `long`: the move is to read its output, not the owner's menu.
+ * or null. A task is unread when its start stands in the record, its notice ended it with a result,
+ * and it is not read since. An agent is read by the first call after its notice: its report comes
+ * inside the notice. A command is read by a call that names its number, its output file or a file
+ * it wrote to by a redirect. A task the session stopped itself, or one the harness killed,
+ * holds nothing. A command — not an agent, whose notice always comes — with a start and no end older
+ * than the bound is named as `long` until a call names its number or its output file.
  */
 function unreadOf(events, now) {
     const started = new Map();
     const unread = new Map();
-    const stopped = new Set();
-    // The tasks read after their end: a late copy of the same notice does not make them unread again.
-    const done = new Set();
     const named = (call, task) => {
         const text = JSON.stringify(call.input ?? {});
-        return (task.task && text.includes(task.task)) || (task.output && text.includes(task.output));
+        return [task.task, task.output, ...(task.logs ?? [])].some((mark) => mark && text.includes(mark));
     };
     for (const event of events) {
         if (event.kind === 'background' && event.task) {
             // An agent a message resumed runs again under the same number and sends a notice again.
-            started.set(event.task, { id: event.id, task: event.task, output: event.output ?? null, at: event.at, over: false });
-            done.delete(event.task);
-            stopped.delete(event.task);
+            started.set(event.task, { ...event, over: false, read: false });
+            unread.delete(event.task);
         } else if (event.kind === 'backgroundEnd') {
-            const task = started.get(event.task) ?? [...started.values()].find((one) => event.id && one.id === event.id);
-            if (!task) continue;
+            // A notice that names its call ends that run alone, as in the count of running tasks: a
+            // late copy of the notice of a former run does not end the run a message resumed.
+            const task = event.id ? [...started.values()].find((one) => one.id === event.id) : started.get(event.task);
+            if (!task || task.over) continue;
             task.over = true;
-            if (event.stopped) {
-                stopped.add(task.task);
-                unread.delete(task.task);
-            } else if (!stopped.has(task.task) && !done.has(task.task)) {
-                task.output = task.output ?? event.output ?? null;
-                unread.set(task.task, task);
-            }
+            if (event.stopped || event.status === 'killed' || event.status === 'stopped') continue;
+            task.output = event.output ?? task.output ?? null;
+            unread.set(task.task, task);
         } else if (event.kind === 'call') {
-            for (const task of [...unread.values(), ...started.values()]) if (named(event, task)) {
-                unread.delete(task.task);
-                if (task.over) done.add(task.task);
-                else task.read = true;
-            }
+            // An agent's report comes inside its notice: the first call after it shows it was read.
+            // A command is read by a call that names its number, its output file or a file it wrote.
+            for (const task of [...unread.values()]) if (task.agent || named(event, task)) unread.delete(task.task);
+            for (const task of started.values()) if (!task.over && named(event, task)) task.read = true;
         }
     }
     const last = [...unread.values()].pop();
-    if (last) return { task: last.task, output: last.output, long: false };
-    const long = [...started.values()].filter(
-        (task) => !task.over && !task.read && !stopped.has(task.task) && Number.isFinite(task.at) && now - task.at >= BACKGROUND_BOUND * 60_000,
-    ).pop();
-    return long ? { task: long.task, output: long.output, long: true } : null;
+    if (last) return { task: last.task, output: last.output ?? null, long: false };
+    const long = [...started.values()]
+        .filter((task) => !task.over && !task.read && !task.agent && Number.isFinite(task.at) && now - task.at >= BACKGROUND_BOUND * 60_000)
+        .pop();
+    return long ? { task: long.task, output: long.output ?? null, long: true } : null;
 }
 
 /** The measurer «measure.session.unread»: the unread background task of the session, or false. */
@@ -191,6 +186,10 @@ export function forbidden({ session }) {
             }
         }
         if (!last || !before) return false;
+        // While a background task of the session runs, or one ended unread, the move is to wait or
+        // to read it, not the owner's menu.
+        const events = session.events();
+        if (running(events, timeOf(session)).tasks.length > 0 || unreadOf(events, timeOf(session)) !== null) return false;
         return last.by === before.by && last.reason === before.reason ? last.by : false;
     };
 }

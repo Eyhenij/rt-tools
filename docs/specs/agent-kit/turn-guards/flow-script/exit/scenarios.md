@@ -308,10 +308,12 @@ Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 Given a background task of the session whose notice ended it after the last call, and a refusal of a stop
 When the hook on Stop measures the session
 Then the stop is not idle, and the refusal names the task and its output file and offers no owner's menu
-And the menu of a step another check forbids is not offered over it either
-And only a call that names the task or its output file reads it; another call does not
-And a task the session stopped itself, or one with no start in the record, holds nothing
-And a task running past the bound is named the same way
+And the menu of a step another check forbids is not offered over it either, nor over a task that runs
+And an agent is read by the first call after its notice; a command by a call that names its number, its output file or a file it wrote to
+And a late copy of the notice does not make a read task unread again
+And a task the session stopped itself, one the harness killed, or one with no start in the record holds nothing
+And a late copy of the notice of a former run does not end the run a message resumed
+And a command running past the bound is named until a call names its number or its output file; an agent past the bound is not
 And a refusal with no unread task still names the menu
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.

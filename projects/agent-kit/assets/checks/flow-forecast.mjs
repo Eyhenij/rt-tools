@@ -45,6 +45,7 @@ const FROM_RECORD = new Set([
     'measure.session.menuLost',
     'measure.session.forbidden',
     'measure.session.idle',
+    'measure.session.unread',
     'measure.session.waiting',
 ]);
 

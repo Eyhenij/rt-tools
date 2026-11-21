@@ -8,8 +8,8 @@
  *                    { kind: 'refusal', text }, a menu { kind: 'menu', answered }, a call of a tool
  *                    { kind: 'call', name, input, blocked }, a refusal of a call by a hook
  *                    { kind: 'blocked', by, reason }, the start of a background task
- *                    { kind: 'background', id, task, at, output }, its end { kind: 'backgroundEnd', id, task,
- *                    output, stopped } — `stopped` when the session stopped it itself —
+ *                    { kind: 'background', id, task, at, output, agent, logs }, its end { kind: 'backgroundEnd', id,
+ *                    task, output, status, stopped } — `stopped` when the session stopped it itself —
  *                    and a turn that ended { kind: 'ended' }
  *   now()            the time the session is judged at, in milliseconds
  *   agent()          the role the session runs as, or null
@@ -32,7 +32,14 @@ const STILL_RUNNING = /<summary>[^<]*is waiting on its own background work<\/sum
 /** A refusal of a stop hook in the summary of the stop hooks. */
 const STOP_BLOCK = /BLOCKED by |"decision"\s*:\s*"block"/;
 /** The file a background task writes its output to, named in the result of its call. */
-const OUTPUT_FILE = /(?:Output is being written to|output_file):?\s*(\S+?)[.,]?(?:\s|$)/;
+const OUTPUT_FILE = /(?:Output is being written to|output_file):?[ \t]*([^\n]+)/;
+/** The path in the line of the output file: the line up to a sentence that follows it, with no closing stop. */
+const outputOf = (text) => text.match(OUTPUT_FILE)?.[1].replace(/\.\s+[A-Z].*$/, '').replace(/[.,]$/, '').trim() || null;
+/** The files a command sends its output to by a redirect or `tee`: reading one reads the task. */
+const logsOf = (command) =>
+    typeof command === 'string'
+        ? [...command.matchAll(/(?:\d?>>?|\btee(?:\s+-a)?)\s*([^\s;&|<>()]+)/g)].map((match) => match[1]).filter((path) => !/^&|^\/dev\//.test(path))
+        : [];
 /** The tools whose call ends a background task. */
 const STOP_TOOLS = new Set(['TaskStop', 'KillShell', 'KillBash']);
 
@@ -100,9 +107,10 @@ const taskOver = (entry) => {
     if (!text.includes('<task-notification>') || !TASK_OVER.test(text) || STILL_RUNNING.test(text)) return null;
     const id = text.match(/<tool-use-id>([^<]+)</)?.[1] ?? null;
     const output = text.match(/<output-file>([^<]+)</)?.[1] ?? null;
+    const status = text.match(/<status>([^<]+)</)?.[1] ?? null;
     // One notice may name several tasks: the commands a previous session left unfinished.
     const tasks = [...text.matchAll(/<task-id>([^<]+)</g)].map((match) => match[1]);
-    return tasks.length > 1 ? tasks.map((task) => ({ id: null, task, output: null })) : [{ id, task: tasks[0] ?? null, output }];
+    return tasks.length > 1 ? tasks.map((task) => ({ id: null, task, output: null, status })) : [{ id, task: tasks[0] ?? null, output, status }];
 };
 
 /**
@@ -187,8 +195,10 @@ export function eventsOf(entries) {
             // A monitor is no background task: a persistent one never ends.
             const started = part.is_error || calls.get(part.tool_use_id)?.name === 'Monitor' ? null : taskStarted(entry);
             if (started !== null) {
-                const output = resultText(part).match(OUTPUT_FILE)?.[1] ?? null;
-                events.push({ kind: 'background', id: part.tool_use_id, task: started || null, at: Date.parse(entry.timestamp ?? ''), output });
+                const output = outputOf(resultText(part));
+                const agent = !entry.toolUseResult.backgroundTaskId;
+                const logs = logsOf(calls.get(part.tool_use_id)?.input?.command);
+                events.push({ kind: 'background', id: part.tool_use_id, task: started || null, at: Date.parse(entry.timestamp ?? ''), output, agent, logs });
             }
             const refused = part.is_error ? resultText(part).match(CALL_REFUSAL) : null;
             if (!refused) continue;

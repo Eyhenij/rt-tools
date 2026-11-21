@@ -1,4 +1,4 @@
-// rt-kit v0.37.1 · checks/flow-forecast.mjs · bc32a7a25e1c · правится надстройкой, не здесь
+// rt-kit v0.37.1 · checks/flow-forecast.mjs · 046b378d525d · правится надстройкой, не здесь
 /**
  * The forecast of refusals — the engine command `forecast`, run before the hooks are laid out.
  *
@@ -46,6 +46,7 @@ const FROM_RECORD = new Set([
     'measure.session.menuLost',
     'measure.session.forbidden',
     'measure.session.idle',
+    'measure.session.unread',
     'measure.session.waiting',
 ]);
 
