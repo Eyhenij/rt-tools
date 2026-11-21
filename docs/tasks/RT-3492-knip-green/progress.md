@@ -5,11 +5,10 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 3 and stage 4 by the owner's word — done; review round one fixed
-- **Done:** all six steps matched; knip in the push set and the pipeline; round one: the web
-  image gets the kit manifest before its install, the findings count and this section fixed
-- **Next step:** review round two by fresh readers
-- **Uncommitted:** the fixes of round one until their commit
+- **Stage:** 3 of 3 and stage 4 by the owner's word — done; review rounds one and two fixed
+- **Done:** all six steps matched; knip in the push set and the pipeline; both review rounds
+- **Next step:** close the texts, take the folder apart, run the push set
+- **Uncommitted:** the fixes of round two until their commit
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
@@ -72,6 +71,13 @@ Rewritten by every session, not appended to.
 - Review round one, three roles: no defect in the code. Fixed: the web image installs before the
   kit manifest is in it, so after the move it would carry no d3 — the kit manifest is now copied
   before the install; the stale «Where we stand» and the missing measurements here; the findings
-  count. Written off: a check of exactness over the kit manifest — the companion of `dependencies`
+  count. The image stage `build` of `deploy/message-bus-web.Dockerfile` with the fix built, exit 0,
+  and holds `projects/ui-kit-v2/node_modules/d3-shape`, `d3-hierarchy` and `@types/d3-shape`.
+  Written off: a check of exactness over the kit manifest — the companion of `dependencies`
   names it as held by the author, a task of its own; the measurement of knip under load (19 s
   against 2.7 s on a free machine) — the run went beside `check:all`.
+- Review round two, three fresh roles: no defect in the code; kit chart tests 17 of 17, agent kit
+  603 of 603. Fixed: `docs/plans/ai-chat-blocks.md` still said knip names the chart exports and
+  stands outside the push set; the «Uncommitted» line here. Written off: the install layer of the
+  web image now rebuilds on every kit version bump — the price of the image carrying d3; a knip run
+  over an untracked `.ts` file in the working tree — every check of the push set reads the tree so.
