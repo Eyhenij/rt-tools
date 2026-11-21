@@ -33,3 +33,7 @@
   `.claude/skills/deploy-flow/pitfalls.md` тоже 1 (1.3); `check:board` называет последнюю выкатку
   819535a1, как до правки; `agent-kit:check` и `check-doc-paths` — 0. Новое имя в списке Actions
   видно только после слияния в main: хостинг берёт имя из главной ветки.
+- Первый круг ревью (qa-engineer, product-strategist, goal-critic): дефектов нет. Исправлено:
+  абзацы в `docs/PROD.md` и в надстройке правила выкатки перенесены по ширине соседних. Снято с
+  причиной: имя «Deploy Auth» — владелец назвал один экшен. Шаги 1.1–1.3 после правки совпали
+  снова; `prettier --check` и `agent-kit:check` — 0.
