@@ -133,11 +133,13 @@ its unread badge and the row time of the other rows stay
 And on a touch screen, where the actions of every row are always shown, the handle `hidden` hides
 the time of every row
 
-Not covered: a test has no layout, and this is a style rule. It is shown by the snapshot of the
-story **Properties · row actions**: the row with the unread badge is hovered, its time is hidden in
-the cell with the handle while its badge stays, and the time of the other rows stays. The touch case
-is not in a frame: the showcase does not emulate a screen without a pointer. The rule that sets the
-visibility stands outside the hover media query.
+Covered by a test of the compiled CSS: the list keeps the marked node visible by default, the rule
+that reads the handle stands outside the hover media query, and under hover only the shown actions
+take it; the chat passes its handle down with `visible` as the default. The look is shown by the
+snapshot of the story **Properties · row actions**: the row with the unread badge is hovered, its
+time is hidden in the cell with the handle while its badge stays, and the time of the other rows
+stays. The touch case is not in a frame: the showcase does not emulate a screen without a pointer.
+No end-to-end suite walks it: no application of the tree draws `rt-ai-chat`.
 
 ### SC-UKV-1653 — the parts take their own handles outside the chat
 

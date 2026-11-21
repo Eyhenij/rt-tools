@@ -70,6 +70,29 @@ describe('токены вида чата', (): void => {
         expect(root).not.toContain('--rt-ai-chat-rating-active-color:');
     });
 
+    it('SC-UKV-1652 — время строки под показанными действиями прячется только по токену', (): void => {
+        const threads: string = compiled(THREADS);
+        const hover: string = threads.slice(threads.indexOf('@media (hover: hover)'));
+        const marked: string = '.rt-thread-list__row-wrap [rtThreadListUnderActions] {';
+        const shown: string = '.rt-thread-list__row-wrap:hover [rtThreadListUnderActions]';
+
+        // по умолчанию список держит узел с меткой видимым, как прежде
+        expect(ruleBody(threads, '.rt-thread-list')).toContain('--rt-thread-list-under-actions-visibility: visible');
+
+        // без наведения действия видны всегда, и токен действует вне медиазапроса
+        expect(threads.indexOf(marked)).toBeGreaterThanOrEqual(0);
+        expect(threads.indexOf(marked)).toBeLessThan(threads.indexOf('@media (hover: hover)'));
+        expect(ruleWith(threads, marked)).toContain('visibility: var(--rt-thread-list-under-actions-visibility)');
+
+        // с наведением узел виден в покое и берёт токен только под показанными действиями
+        expect(ruleWith(hover, marked)).toContain('visibility: visible');
+        expect(ruleWith(hover, shown)).toContain('visibility: var(--rt-thread-list-under-actions-visibility)');
+
+        // чат передаёт списку свой токен, а его умолчание — видимое время
+        expect(compiled(CHAT)).toContain('--rt-thread-list-under-actions-visibility: var(--rt-ai-chat-thread-time-under-actions)');
+        expect(ruleBody(compiled(CHAT), '.rt-ai-chat')).toContain('--rt-ai-chat-thread-time-under-actions: visible');
+    });
+
     it('SC-UKV-1642 — семейство чата получает вся лента, без запасного значения', (): void => {
         const chat: string = compiled(CHAT);
 
