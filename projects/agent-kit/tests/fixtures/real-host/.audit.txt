@@ -3,18 +3,79 @@ check-board: #3321, #3317 — the titles overlap heavily, look whether this is o
 check-board: #3302, #3293 — the titles overlap heavily, look whether this is one work: «[RT-3302] Проверки пакета правил останавливают работу — переделка, третья часть»
 check-board: #3209, #3190 — the titles overlap heavily, look whether this is one work: «[RT-3209] Тексты пакета правил вне семей законов не сверены»
 check-board: #2820, #2819 — the titles overlap heavily, look whether this is one work: «[RT-2820] Морские ступени в шкале цвета второго кита: тёмные плашки лендинга и подложки над видео»
-file://~/WebstormProjects/rt-tools/tools/board-gh.mjs:118
-            const failure = new Error(stderr.trim() || `gh ${args[0]} finished with an error`);
-                            ^
+check-board: the main branch run was not checked — the pipeline does not wake on a push to «main»
+check-board: divergences 70
 
-Error: gh: Server Error: Sorry, this diff is taking too long to generate. (HTTP 422)
-    at gh (file://~/WebstormProjects/rt-tools/tools/board-gh.mjs:118:29)
-    at deployLag (file://~/WebstormProjects/rt-tools/tools/board-runs.mjs:67:20)
-    at file://~/WebstormProjects/rt-tools/tools/check-board.mjs:323:21
-    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
-    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
-    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5) {
-  stderr: 'gh: Server Error: Sorry, this diff is taking too long to generate. (HTTP 422)\n'
-}
+  #3344: the task has no assignee — by the work queue there is no seeing who took it
+  #3343: the task has no assignee — by the work queue there is no seeing who took it
+  #3342: the task has no assignee — by the work queue there is no seeing who took it
+  #3341: the task has no assignee — by the work queue there is no seeing who took it
+  #3340: the task has no assignee — by the work queue there is no seeing who took it
+  #3339: the task has no assignee — by the work queue there is no seeing who took it
+  #3338: the plan of the epic #3346 names the task, and its body does not name the epic. Add the line «Задача эпика #3346, замысел — docs/plans/ai-chat-blocks.md»
+  #3342: the plan of the epic #3346 names the task, and its body does not name the epic. Add the line «Задача эпика #3346, замысел — docs/plans/ai-chat-blocks.md»
+  #3339: the plan of the epic #3346 names the task, and its body does not name the epic. Add the line «Задача эпика #3346, замысел — docs/plans/ai-chat-blocks.md»
+  #3340: the plan of the epic #3346 names the task, and its body does not name the epic. Add the line «Задача эпика #3346, замысел — docs/plans/ai-chat-blocks.md»
+  #3341: the plan of the epic #3346 names the task, and its body does not name the epic. Add the line «Задача эпика #3346, замысел — docs/plans/ai-chat-blocks.md»
+  #3343: the plan of the epic #3346 names the task, and its body does not name the epic. Add the line «Задача эпика #3346, замысел — docs/plans/ai-chat-blocks.md»
+  #3344: the plan of the epic #3346 names the task, and its body does not name the epic. Add the line «Задача эпика #3346, замысел — docs/plans/ai-chat-blocks.md»
+  #3317: the epic plan «docs/plans/mockup-all-states.md» is not on disk — the card points into emptiness
+  #3313: the epic plan «docs/plans/kit-figma-copy-match.md» is not on disk — the card points into emptiness
+  #3293: the epic plan «docs/plans/checks-rework-2.md» is not on disk — the card points into emptiness
+  #3370: the body names the epic #3346, and its plan does not carry the task — «take the next one» will not give it out
+  #3366: the body names the epic #3346, and its plan does not carry the task — «take the next one» will not give it out
+  #3254: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3253: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3252: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3251: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3250: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3249: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3248: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3247: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3246: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3245: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3244: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3243: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3242: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3241: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3240: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3239: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3238: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3237: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3236: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3235: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3234: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3233: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3229: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3228: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3226: the body names the epic #3190, and its plan does not carry the task — «take the next one» will not give it out
+  #3084: the body names the epic #2863, and its plan does not carry the task — «take the next one» will not give it out
+  #3344: the task names no epic, and no word of the owner about work outside one. Add the line «Задача эпика #<номер>, замысел — <путь>» or «Работа вне эпика — <слово владельца>»
+  #3343: the task names no epic, and no word of the owner about work outside one. Add the line «Задача эпика #<номер>, замысел — <путь>» or «Работа вне эпика — <слово владельца>»
+  #3342: the task names no epic, and no word of the owner about work outside one. Add the line «Задача эпика #<номер>, замысел — <путь>» or «Работа вне эпика — <слово владельца>»
+  #3341: the task names no epic, and no word of the owner about work outside one. Add the line «Задача эпика #<номер>, замысел — <путь>» or «Работа вне эпика — <слово владельца>»
+  #3340: the task names no epic, and no word of the owner about work outside one. Add the line «Задача эпика #<номер>, замысел — <путь>» or «Работа вне эпика — <слово владельца>»
+  #3339: the task names no epic, and no word of the owner about work outside one. Add the line «Задача эпика #<номер>, замысел — <путь>» or «Работа вне эпика — <слово владельца>»
+  #3338: the task names no epic, and no word of the owner about work outside one. Add the line «Задача эпика #<номер>, замысел — <путь>» or «Работа вне эпика — <слово владельца>»
+  #3158: the task names no epic, and no word of the owner about work outside one. Add the line «Задача эпика #<номер>, замысел — <путь>» or «Работа вне эпика — <слово владельца>»
+  #2950: the task names no epic, and no word of the owner about work outside one. Add the line «Задача эпика #<номер>, замысел — <путь>» or «Работа вне эпика — <слово владельца>»
+  #2891: the task names no epic, and no word of the owner about work outside one. Add the line «Задача эпика #<номер>, замысел — <путь>» or «Работа вне эпика — <слово владельца>»
+  #2821: the task names no epic, and no word of the owner about work outside one. Add the line «Задача эпика #<номер>, замысел — <путь>» or «Работа вне эпика — <слово владельца>»
+  #2820: the task names no epic, and no word of the owner about work outside one. Add the line «Задача эпика #<номер>, замысел — <путь>» or «Работа вне эпика — <слово владельца>»
+  #2819: the task names no epic, and no word of the owner about work outside one. Add the line «Задача эпика #<номер>, замысел — <путь>» or «Работа вне эпика — <слово владельца>»
+  #2816: the task names no epic, and no word of the owner about work outside one. Add the line «Задача эпика #<номер>, замысел — <путь>» or «Работа вне эпика — <слово владельца>»
+  #3412: the epic has no branch in the requests — neither one from it nor one into it. The branch of an epic is taken before its first task, and without it every task stands on the main branch
+  #3346: the epic has no branch in the requests — neither one from it nor one into it. The branch of an epic is taken before its first task, and without it every task stands on the main branch
+  #3317: the epic has no branch in the requests — neither one from it nor one into it. The branch of an epic is taken before its first task, and without it every task stands on the main branch
+  #3313: the epic has no branch in the requests — neither one from it nor one into it. The branch of an epic is taken before its first task, and without it every task stands on the main branch
+  #3302: the epic has no branch in the requests — neither one from it nor one into it. The branch of an epic is taken before its first task, and without it every task stands on the main branch
+  #3293: the epic has no branch in the requests — neither one from it nor one into it. The branch of an epic is taken before its first task, and without it every task stands on the main branch
+  #3190: the epic has no branch in the requests — neither one from it nor one into it. The branch of an epic is taken before its first task, and without it every task stands on the main branch
+  #3043: the epic has no branch in the requests — neither one from it nor one into it. The branch of an epic is taken before its first task, and without it every task stands on the main branch
+  #2863: the epic has no branch in the requests — neither one from it nor one into it. The branch of an epic is taken before its first task, and without it every task stands on the main branch
+  #2862: the epic has no branch in the requests — neither one from it nor one into it. The branch of an epic is taken before its first task, and without it every task stands on the main branch
+  #3302: the plan names tasks that are not sub-issues of the epic card — #3417, #3418, #3419, #3420, #3421, #3422, #3423, #3425, #3426, #3427, #3434. On the board the epic then shows neither its makeup nor how much of it is done
+  production lags «main» by 487 commits: the last rollout is 50eeae24 of 2026-11-14
 
-Node.js v22.22.3
+A task is created by the command npm run task:new — it does all four steps at once.
+The task folder and taking it apart — the rule task-flow.
