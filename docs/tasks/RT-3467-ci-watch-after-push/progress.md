@@ -2,18 +2,18 @@
 
 ## Где мы
 
-- **State:** `задача-взята`
+- **State:** `этап-идёт`
 - **Stage:** 1 of 3 — The host and the session give the facts
-- **Done:** разведка движка хода работы; разбор и план; две роли прочли план дважды, план переписан.
-- **Next step:** одобрение плана владельцем, затем этап 1.
-- **Uncommitted:** папка задачи, план эпика и файл его находок
+- **Done:** разведка движка хода работы; разбор и план; план одобрен владельцем 21.11.
+- **Next step:** 1.1 — адаптер хостинга отдаёт открытые PR и запуски конвейера по sha вершины.
+- **Uncommitted:** ход работы
 - **PR:** not open yet
 
 ## Шаги
 
-- [>] 1.1 The host adapter gives the open PRs and the pipeline runs of a head sha
-- [ ] 1.2 The session events carry the time and branch of a call and the command of a background task
-- [ ] 2.1 A running run without a watch holds the stop with its number
+- [x] 1.1 The host adapter gives the open PRs and the pipeline runs of a head sha
+- [x] 1.2 The session events carry the time and branch of a call and the command of a background task
+- [>] 2.1 A running run without a watch holds the stop with its number
 - [ ] 2.2 A background watch lifts the hold, and the scenario decides the stop
 - [ ] 2.3 An unread red run holds the stop with its number
 - [ ] 2.4 A red run read after its end lifts the hold

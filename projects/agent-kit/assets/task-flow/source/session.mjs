@@ -6,9 +6,10 @@
  *   toolUses()       the calls of the agent, oldest first: { name, input }
  *   events()         what happened in the record, oldest first: a refusal at the end of a turn
  *                    { kind: 'refusal', text }, a menu { kind: 'menu', answered }, a call of a tool
- *                    { kind: 'call', name, input, blocked }, a refusal of a call by a hook
- *                    { kind: 'blocked', by, reason }, the start of a background task
- *                    { kind: 'background', id, task, at, output, agent }, its end { kind: 'backgroundEnd', id,
+ *                    { kind: 'call', name, input, blocked, at, branch } — `branch` is the branch of its
+ *                    record entry — a refusal of a call by a hook { kind: 'blocked', by, reason }, the
+ *                    start of a background task { kind: 'background', id, task, at, output, agent,
+ *                    command } — `command` is the command of its call — its end { kind: 'backgroundEnd', id,
  *                    task, output, status, stopped } — `stopped` when the session stopped it itself —
  *                    and a turn that ended { kind: 'ended' }
  *   now()            the time the session is judged at, in milliseconds
@@ -166,7 +167,7 @@ export function eventsOf(entries) {
                     events.push(event);
                     continue;
                 }
-                const call = { kind: 'call', name: part.name, input: part.input ?? {}, blocked: false };
+                const call = { kind: 'call', name: part.name, input: part.input ?? {}, blocked: false, at: Date.parse(entry.timestamp ?? ''), branch: entry.gitBranch ?? null };
                 calls.set(part.id, call);
                 events.push(call);
                 if (STOP_TOOLS.has(part.name)) {
@@ -192,7 +193,8 @@ export function eventsOf(entries) {
             if (started !== null) {
                 const output = outputOf(resultText(part));
                 const agent = !entry.toolUseResult.backgroundTaskId;
-                events.push({ kind: 'background', id: part.tool_use_id, task: started || null, at: Date.parse(entry.timestamp ?? ''), output, agent });
+                const command = calls.get(part.tool_use_id)?.input?.command ?? null;
+                events.push({ kind: 'background', id: part.tool_use_id, task: started || null, at: Date.parse(entry.timestamp ?? ''), output, agent, command });
             }
             const refused = part.is_error ? resultText(part).match(CALL_REFUSAL) : null;
             if (!refused) continue;

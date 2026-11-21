@@ -118,7 +118,7 @@ tf_run <<'JS'
 import { gitDouble, treeDouble, hostDouble, ownerDouble } from './flow-doubles.mjs';
 import { buildModel } from '../assets/checks/flow-model.mjs';
 import { measureStates } from '../assets/checks/task-flow-script.mjs';
-import { attempt, createStore, timedRead } from '../assets/task-flow/source/host.mjs';
+import { attempt, createStore, pipelineRuns, pullRequestBases, timedRead } from '../assets/task-flow/source/host.mjs';
 import * as epic from '../assets/task-flow/measure/epic.mjs';
 import * as task from '../assets/task-flow/measure/task.mjs';
 import * as pr from '../assets/task-flow/measure/pr.mjs';
@@ -255,6 +255,23 @@ out('host: SC-AK-1393 — PR эпика влит — выход выполнен
 out('host: SC-AK-1393 — PR эпика нет — не выход', run(epic.finished, { rows: two, local: tips, host: { landed: { [E]: ['s11', 's12'] } } }), 'false');
 out('host: SC-AK-1394 — отложенные задачи не считаются', run(epic.finished, { rows: [...two, ['—', 13, 'отложено']], local: tips, host: { landed: { [E]: ['s11', 's12'] }, pulls: epicPull } }), 'true');
 out('host: SC-AK-1466 — ветка задачи удалена после слияния — вершина из headRefOid PR', run(epic.finished, { rows: two, local: [tips[1]], host: { merged: [mergedPull(11, 's11')], landed: { [E]: ['s11', 's12'] }, pulls: epicPull } }), 'true');
+
+// SC-AK-1799 — запуски конвейера PR на вершине и базы, для которых он запускается
+const CI = '.github/workflows/ci.yml';
+const runsAnswer = { workflow_runs: [
+    { id: 41, run_attempt: 2, status: 'completed', conclusion: 'failure', updated_at: '2026-11-21T08:23:09Z', path: CI },
+    { id: 42, run_attempt: 1, status: 'completed', conclusion: 'skipped', updated_at: '2026-11-21T08:20:00Z', path: '.github/workflows/close-epic-tasks.yml' },
+    { id: 43, run_attempt: 1, status: 'in_progress', conclusion: null, updated_at: '2026-11-21T08:25:00Z', path: `${CI}@refs/pull/1/merge` },
+] };
+out('host: SC-AK-1799 — берутся только запуски файла конвейера', pipelineRuns(runsAnswer, CI).map((r) => r.id).join(' '), '41 43');
+out('host: SC-AK-1799 — номер, попытка, итог и конец запуска', JSON.stringify(pipelineRuns(runsAnswer, CI)[0]), JSON.stringify({ id: 41, attempt: 2, status: 'completed', conclusion: 'failure', endedAt: Date.parse('2026-11-21T08:23:09Z') }));
+out('host: SC-AK-1799 — идущий запуск без конца', String(pipelineRuns(runsAnswer, CI)[1].endedAt), 'null');
+out('host: SC-AK-1799 — дерево без файла конвейера не судит запусков', String(pipelineRuns(runsAnswer, '').length), '0');
+out('host: SC-AK-1799 — список веток pull_request', JSON.stringify(pullRequestBases('on:\n  pull_request:\n    branches:\n      - main\n  workflow_dispatch:\n')), '["main"]');
+out('host: SC-AK-1799 — список в строку', JSON.stringify(pullRequestBases("on:\n  pull_request:\n    branches: [main, 'release']\n")), '["main","release"]');
+out('host: SC-AK-1799 — pull_request без списка — любая база', JSON.stringify(pullRequestBases('on:\n  pull_request:\n    types: [opened]\n')), 'null');
+out('host: SC-AK-1799 — короткая форма', JSON.stringify(pullRequestBases('on: [push, pull_request]\n')), 'null');
+out('host: SC-AK-1799 — конвейер без pull_request не слушает PR', JSON.stringify(pullRequestBases('on:\n  push:\n    branches: [main]\n  pull_request_target:\n')), '[]');
 JS
 
 # --- Ветка без номера задачи, эпик копии, черновик ------------------------------------------------

@@ -35,6 +35,7 @@ import { isWriteCommand, saysStop } from '../assets/checks/flow-data.mjs';
 import { releaseCase, holdReason, menuCause, menuOptions } from '../assets/checks/flow-verdict.mjs';
 import { judgeCall } from '../assets/checks/flow-guard.mjs';
 import { wordOf as sourceWordOf } from '../assets/task-flow/source/owner.mjs';
+import { eventsOf } from '../assets/task-flow/source/session.mjs';
 import { epicPlan } from '../assets/task-flow/measure/epic-text.mjs';
 import * as owner from '../assets/task-flow/measure/owner.mjs';
 import * as session from '../assets/task-flow/measure/session.mjs';
@@ -220,6 +221,14 @@ const ctx = { tasksDir: 'docs/tasks', branch: 'RT-7-x', marksDir: '.git/rt-kit',
 const defer = (word) => judgeCall({ tool: 'Edit', path: 'docs/plans/epic.md', edits: [{ oldString: '| RT-7 — проба | идёт |', newString: '| RT-7 — проба | отложено |' }] }, { ...ctx, ownerLast: () => word });
 out('menu: SC-AK-1468 — вариант «отложить RT-N» ставит отметку «отложено»', String(defer(answered('отложить RT-7'))), 'null');
 out('menu: SC-AK-1468 — без варианта отметка отказана', String(defer('ок') !== null), 'true');
+
+// SC-AK-1800 — событие вызова несёт время и ветку записи, событие фоновой задачи — команду вызова
+const watchCall = { type: 'assistant', timestamp: '2026-11-21T11:04:00Z', gitBranch: 'RT-7-x', message: { stop_reason: 'tool_use', content: [{ type: 'tool_use', id: 'w1', name: 'Bash', input: { command: 'gh run watch 41 --exit-status', run_in_background: true } }] } };
+const watchStarted = { type: 'user', timestamp: '2026-11-21T11:04:01Z', toolUseResult: { backgroundTaskId: 'b1' }, message: { content: [{ type: 'tool_result', tool_use_id: 'w1', content: 'Command running in background with ID: b1.' }] } };
+const watchEvents = eventsOf([watchCall, watchStarted]);
+out('end: SC-AK-1800 — вызов несёт время и ветку своей записи', `${watchEvents[0].at} ${watchEvents[0].branch}`, `${Date.parse('2026-11-21T11:04:00Z')} RT-7-x`);
+out('end: SC-AK-1800 — фоновая задача несёт команду своего вызова', watchEvents.find((e) => e.kind === 'background')?.command, 'gh run watch 41 --exit-status');
+out('end: SC-AK-1800 — запись без ветки даёт ветку null', String(eventsOf([{ ...watchCall, gitBranch: undefined }])[0].branch), 'null');
 
 JS
 
