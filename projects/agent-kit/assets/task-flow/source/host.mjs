@@ -88,7 +88,7 @@ export function pullRequestBases(text) {
         return body;
     };
     const onIndex = lines.findIndex((line) => /^["']?on["']?:\s*(#.*)?$/.test(line));
-    if (onIndex === -1) return lines.some((line) => /^["']?on["']?:\s*(\[.*\bpull_request\b(?!_).*\]|pull_request)\s*(#.*)?$/.test(line)) ? null : [];
+    if (onIndex === -1) return lines.some((line) => /^["']?on["']?:\s*(\[.*\bpull_request\b(?!_).*\]|\{.*\bpull_request\b(?!_).*\}|pull_request)\s*(#.*)?$/.test(line)) ? null : [];
     const on = below(lines, onIndex);
     const prIndex = on.findIndex((line) => /^\s+pull_request:/.test(line));
     if (prIndex === -1) return [];

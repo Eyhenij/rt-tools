@@ -328,6 +328,7 @@ Then only the runs of the pipeline file come back, with number, attempt, conclus
 And a running run has no end, and a tree that names no pipeline file judges no run
 And the bases are the list of `pull_request.branches`, null for every base, and none for a pipeline that does not listen to PRs
 And a list at the indent of its key and a comment after a name are read as YAML reads them
+And an `on` written as a one-line mapping that names `pull_request` gives every base
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 
@@ -337,6 +338,7 @@ Given a record with a call sent to the background and the result that names its 
 When the session source reads the record
 Then the call carries the time and the branch of its entry, and the background event the command of the call
 And an entry without a branch gives the branch null
+And a notice of the end of a task attached to the record as a queued command ends the task with its time
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
@@ -355,6 +357,9 @@ When the turn ends, also forty minutes after the watch started
 Then the CI holds nothing
 And a session in «работа-отдана» is not released by the watch: the scenario holds it
 And a background task with no call of the hosting client, a log file named after the PR, is no watch
+And a call of the client with no watch, a comment on the PR, is no watch
+And a watch that finds the run by the branch of the PR is a watch
+And a watch of a CI run releases no stop as a wait
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
@@ -362,7 +367,7 @@ Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
 Given an open PR into main whose head has a failed run, and no call after its end
 When the turn ends
-Then the stop is held, and the refusal names the run and `gh run view <id> --log-failed`
+Then the stop is held, and the refusal names the run and `gh run view <id> --log-failed | tail -n 200`
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
@@ -373,6 +378,7 @@ When the turn ends
 Then the CI holds nothing
 And a call with the number that a hook refused or that failed reads nothing
 And an edit of a text that names the run reads nothing
+And a command that prints the output of the watch reads it
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
@@ -382,6 +388,7 @@ Given a failed run whose watch was started before its end, and no call after the
 When the turn ends
 Then the stop is held by the red run
 And a number inside another number does not name the run
+And a command with the number and no call of the hosting client reads nothing
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
@@ -416,6 +423,8 @@ When the turn ends while the run of that PR goes with no watch
 Then the stop is held by that run
 And a PR of a branch the session neither works on nor pushed holds nothing
 And a push with its output redirected, a push of `HEAD`, a push of two branches and `gh pr create -H` name their branches
+And `git checkout -b` before a push of `HEAD` in one command names the new branch
+And a quoted branch, a line continued by a backslash, an address built by a substitution with a pipe, a quoted credential helper before `push`, and `--head owner:branch` name their branches
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
@@ -425,6 +434,7 @@ Given a head pushed a minute ago with no run on it
 When the turn ends
 Then the stop is held as a fresh head
 And the minutes count from the result of the push, not from its start
+And for a push sent to the background they count from the notice of its end
 And a base that matches a mask of the pipeline holds as a listed one
 And three minutes after the push, or for a base the pipeline does not wake for, it holds nothing
 
@@ -449,7 +459,8 @@ Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 ### SC-AK-1813 — the stop word passes a running run, not a red attempt ended after it
 
 Given the owner's «стоп»
-When the turn ends over a running run, over a red attempt that ended after the word, and over one that ended before it
-Then the running run and the earlier red one hold nothing, and the red one after the word holds the stop
+When the turn ends over a running run, a fresh head, and red runs that ended before and after the word
+Then the running run, the fresh head and the red run that ended before the word hold nothing
+And the red run that ended after the word holds the stop until it is read, whatever order the hosting gives the runs in
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.

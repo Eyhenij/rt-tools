@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · task-flow/source/host.mjs · f6b6c8820240 · правится надстройкой, не здесь
+// rt-kit v0.38.0 · task-flow/source/host.mjs · 7512fd78a200 · правится надстройкой, не здесь
 /**
  * The source «source.host» of the task flow description: the hosting and the work queue, read by
  * the board module of the tree and by `git` against the server.
@@ -89,7 +89,7 @@ export function pullRequestBases(text) {
         return body;
     };
     const onIndex = lines.findIndex((line) => /^["']?on["']?:\s*(#.*)?$/.test(line));
-    if (onIndex === -1) return lines.some((line) => /^["']?on["']?:\s*(\[.*\bpull_request\b(?!_).*\]|pull_request)\s*(#.*)?$/.test(line)) ? null : [];
+    if (onIndex === -1) return lines.some((line) => /^["']?on["']?:\s*(\[.*\bpull_request\b(?!_).*\]|\{.*\bpull_request\b(?!_).*\}|pull_request)\s*(#.*)?$/.test(line)) ? null : [];
     const on = below(lines, onIndex);
     const prIndex = on.findIndex((line) => /^\s+pull_request:/.test(line));
     if (prIndex === -1) return [];

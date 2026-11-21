@@ -4,9 +4,9 @@
 
 - **State:** `этапы-кончились`
 - **Stage:** 3 of 3 — The description
-- **Done:** три этапа: адаптер хостинга и события сессии, удержание хода по CI, сценарии в описании.
-- **Next step:** живая проверка на настоящей записи, затем два круга ревью.
-- **Uncommitted:** этапы 2 и 3
+- **Done:** три этапа, живая проверка, два круга ревью с правками.
+- **Next step:** коммит второго круга, слияние ветки эпика, разбор папки, набор перед отправкой, PR.
+- **Uncommitted:** правки второго круга ревью
 - **PR:** not open yet
 
 ## Шаги
@@ -56,7 +56,25 @@
     задача берётся из того же эпика.
 - **Точка A плана названа примером, который работа не судит.** PR #3460 открыл сторонний участник,
   и ни одна сессия на его ветке не стояла. Работа меняет другое: 20.11 запись 84ce19f0 останавливала
-  ход с 10:48 по 14:57 на ветке RT-3341, пока запуск 44720542029 PR #3453 шёл без слежения.
+  ход с 10:48 по 14:57 на ветке RT-3341, пока запуск 44720542029 PR #3453 стоял красным с 10:56
+  до 15:00 и ни один вызов его не прочёл.
+- **Второй круг ревью: «стоп» возвращён к ответу владельца.** Правка круга требовала слежения и
+  после «стоп» и держала красный, кончившийся до слова. Это расходилось с выбранным вариантом:
+  «стоп» снимает ожидание идущего запуска. Теперь «стоп» пропускает идущий запуск и свежую
+  вершину, а держит только красный, кончившийся после слова, в любом порядке ответа хостинга.
+- **Второй круг ревью: исправлено.**
+  - Вывод слежения, прочитанный через `cat` или `tail`, засчитывается как чтение.
+  - Команда чтения из отказа обрезает лог до 200 последних строк: ошибка стоит в конце лога.
+  - Разбор отправки находит ветку в кавычках, после продолжения строки, в адресе с подстановкой,
+    после помощника учётных данных в кавычках и в `--head owner:branch`. В записях 52fdffe9,
+    7eee7976 и 84ce19f0 отправки с токеном давали ноль веток, теперь 21, 5 и 7.
+  - Слежение требует слова `watch` и находит запуск по ветке PR.
+  - Запись `on:` в одну строку с `pull_request` даёт любую базу.
+- **Второй круг ревью: снято с причиной.**
+  - `git -C <другая копия> push` и `--repo=` дают ветку записи. Таких форм в записях не нашлось.
+  - Чтения хостинга идут без своего предела времени. Зависший клиент выводит движок за предел, ход
+    отпускается со строкой «движок упал»; предел для всех чтений адаптера — отдельная правка.
+  - Журнал молчащего хостинга и прогноз без удержания по CI сняты в первом круге.
 - **Предел длины не действует на файлы сценариев и привязок.** Вопрос владельцу о переносе
   сценариев был лишним: 15 сценариев легли в прежний файл. Этап плана: 3.
 
@@ -85,3 +103,47 @@
     в браузере, `git push` в ветку эпика не было. 11:10 и 11:30 — `none` со слежением в фоне. Без
     событий фоновых задач — `running 44897325872` в оба среза. Ветку эпика мера взяла из плана
     `checks-rework-3.md`.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/eyhenij/WebstormProjects/rt-tools
+**Branch:** RT-3467-ci-watch-after-push
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этапы-кончились`
+- **Stage:** 3 of 3 — The description
+- **Next step:** живая проверка на настоящей записи, затем два круга ревью.
+- **PR:** not open yet
+
+The progress in full — `docs/tasks/RT-3467-ci-watch-after-push/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+ M docs/specs/agent-kit/turn-guards/flow-script/exit/implementation.md
+ M docs/specs/agent-kit/turn-guards/flow-script/exit/scenarios.md
+ M docs/specs/agent-kit/turn-guards/flow-script/exit/spec.md
+ M projects/agent-kit/assets/checks/flow-verdict.mjs
+ M projects/agent-kit/assets/task-flow/measure/ci.mjs
+ M projects/agent-kit/assets/task-flow/measure/session.mjs
+ M projects/agent-kit/assets/task-flow/source/session.mjs
+ M projects/agent-kit/tests/turn-exit-guard.test.sh
+```
+
+### Commits over the main branch
+
+```
+461418400 fix(rt:agent-kit): удержание по CI после первого круга ревью (RT-3467)
+2b29c57a4 feat(rt:agent-kit): конец хода держит запуск CI без слежения и непрочитанный красный (RT-3467)
+eded67aba feat(rt:agent-kit): адаптер хостинга читает запуски CI вершины, события сессии — время и ветку (RT-3467)
+6293aa0d0 docs(rt:agent-kit): план RT-3467 — конец хода читает CI открытых PR
+fcc5d0834 docs(rt:agent-kit): разбор RT-3467 — конец хода читает запуск CI после PR
+efe70df68 docs(rt:agent-kit): план эпика RT-3471 — признак RT-3427 без адреса в кавычках
+4386d62e2 docs(rt:agent-kit): план эпика RT-3471 — четвёртая часть переделки проверок
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.

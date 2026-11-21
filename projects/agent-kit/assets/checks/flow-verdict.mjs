@@ -61,7 +61,7 @@ export function ciHoldReason(hold) {
     }
     return [
         `The CI run ${run.id} of ${where} ended «${run.conclusion}», and no call after its end has read it.`,
-        `The one move is to read it: \`command gh run view ${run.id} --log-failed\` — then fix what fell. No owner's menu is offered while the run is unread.`,
+        `The one move is to read it: \`command gh run view ${run.id} --log-failed | tail -n 200\` — then fix what fell when it is this session's work, or name the run in the reply when another session already fixes it. No owner's menu is offered while the run is unread.`,
     ].join('\n');
 }
 

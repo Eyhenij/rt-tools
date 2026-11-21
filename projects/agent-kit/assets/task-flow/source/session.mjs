@@ -6,15 +6,15 @@
  *   toolUses()       the calls of the agent, oldest first: { name, input }
  *   events()         what happened in the record, oldest first: a refusal at the end of a turn
  *                    { kind: 'refusal', text }, a menu { kind: 'menu', answered }, a call of a tool
- *                    { kind: 'call', name, input, blocked, at, branch, doneAt, failed } — `branch` is
+ *                    { kind: 'call', id, name, input, blocked, at, branch, doneAt, failed } — `branch` is
  *                    the branch of its record entry, `doneAt` the time of its result, `failed` an
  *                    error result — a refusal of a call by a hook { kind: 'blocked', by, reason }, the
  *                    start of a background task { kind: 'background', id, task, at, output, agent,
  *                    command } — `command` is the command of its call — its end { kind: 'backgroundEnd', id,
  *                    task, output, status, stopped } — `stopped` when the session stopped it itself —
  *                    and a turn that ended { kind: 'ended' }
- *   ownerAt()        the time of the owner's last word — a typed message or a menu answer — or null
  *   now()            the time the session is judged at, in milliseconds
+ *   ownerAt()        the time of the owner's last word — a typed message or a menu answer — or null
  *   agent()          the role the session runs as, or null
  *   roleTools(role)  the `tools:` line of the role's header, or null
  *
@@ -102,7 +102,15 @@ const resultText = (part) =>
 
 /** The notice of background tasks that are over: [{ id, task }], or null. */
 const taskOver = (entry) => {
-    const content = entry?.type === 'queue-operation' ? entry.content : entry?.type === 'user' ? entry.message?.content : null;
+    // A notice comes as a queue operation, as a message, or as a queued command attached to the record.
+    const content =
+        entry?.type === 'queue-operation'
+            ? entry.content
+            : entry?.type === 'user'
+              ? entry.message?.content
+              : entry?.type === 'attachment' && entry.attachment?.type === 'queued_command'
+                ? entry.attachment.prompt
+                : null;
     const text = typeof content === 'string' ? content : '';
     if (!text.includes('<task-notification>') || !TASK_OVER.test(text) || STILL_RUNNING.test(text)) return null;
     const id = text.match(/<tool-use-id>([^<]+)</)?.[1] ?? null;
@@ -157,7 +165,8 @@ export function eventsOf(entries) {
         if (entry?.type === 'user' && !entry.isMeta && feedbackText(entry) === null) ended();
         const over = taskOver(entry);
         if (over) {
-            for (const task of over) events.push({ kind: 'backgroundEnd', ...task });
+            const at = Date.parse(entry.timestamp ?? '');
+            for (const task of over) events.push({ kind: 'backgroundEnd', ...task, ...(Number.isFinite(at) ? { at } : {}) });
             continue;
         }
         if (entry?.type === 'assistant') {
@@ -171,7 +180,7 @@ export function eventsOf(entries) {
                     events.push(event);
                     continue;
                 }
-                const call = { kind: 'call', name: part.name, input: part.input ?? {}, blocked: false, at: Date.parse(entry.timestamp ?? ''), branch: entry.gitBranch ?? null };
+                const call = { kind: 'call', id: part.id, name: part.name, input: part.input ?? {}, blocked: false, at: Date.parse(entry.timestamp ?? ''), branch: entry.gitBranch ?? null };
                 calls.set(part.id, call);
                 events.push(call);
                 if (STOP_TOOLS.has(part.name)) {
@@ -225,6 +234,7 @@ export function open() {
                 .flatMap((entry) => parts(entry).filter((part) => part?.type === 'tool_use'))
                 .map((part) => ({ name: part.name, input: part.input ?? {} })),
         events: () => eventsOf(entries()),
+        now: () => Date.now(),
         ownerAt: () => {
             const all = entries();
             for (let index = all.length - 1; index >= 0; index -= 1) {
@@ -232,7 +242,6 @@ export function open() {
             }
             return null;
         },
-        now: () => Date.now(),
         agent: () => process.env.RT_FLOW_AGENT || null,
         roleTools: (role) => {
             if (!role || /[/\\]|^\./.test(role)) return null;

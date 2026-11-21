@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · task-flow/measure/session.mjs · 8c70033d7091 · правится надстройкой, не здесь
+// rt-kit v0.38.0 · task-flow/measure/session.mjs · 2f2a02e22eb2 · правится надстройкой, не здесь
 /**
  * The measurer «measure.session» — what this session did: a write to the tree, a role it runs as, a
  * menu of a refusal that did not reach the owner, a step another check forbids, a stop after a
@@ -100,6 +100,9 @@ export function unread({ session }) {
     return () => unreadOf(session.events()) ?? false;
 }
 
+/** The command of a background watch of a CI run: the hosting client with `run watch` or `--watch`. */
+const CI_WATCH = /\bgh\b[\s\S]*(?:\brun\s+watch\b|--watch\b)/;
+
 /** A background task older than this releases nothing and counts as no task, in minutes. */
 export const BACKGROUND_BOUND = 20;
 
@@ -122,6 +125,8 @@ function running(events, now) {
         return true;
     };
     for (const event of events) {
+        // A watch of a CI run is no wait: the CI hold asks for it, and the work goes on while it runs.
+        if (event.kind === 'background' && CI_WATCH.test(event.command ?? '')) continue;
         if (event.kind === 'background') {
             if (!over.has(event.id)) open.set(event.id, event);
         } else if (event.kind === 'backgroundEnd') {

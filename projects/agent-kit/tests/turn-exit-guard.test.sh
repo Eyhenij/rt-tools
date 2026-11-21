@@ -230,6 +230,8 @@ const watchEvents = eventsOf([watchCall, watchStarted]);
 out('end: SC-AK-1800 — вызов несёт время и ветку своей записи', `${watchEvents[0].at} ${watchEvents[0].branch}`, `${Date.parse('2026-11-21T11:04:00Z')} RT-7-x`);
 out('end: SC-AK-1800 — фоновая задача несёт команду своего вызова', watchEvents.find((e) => e.kind === 'background')?.command, 'gh run watch 41 --exit-status');
 out('end: SC-AK-1800 — запись без ветки даёт ветку null', String(eventsOf([{ ...watchCall, gitBranch: undefined }])[0].branch), 'null');
+const attached = { type: 'attachment', timestamp: '2026-11-21T11:30:00Z', attachment: { type: 'queued_command', prompt: '<task-notification>\n<task-id>b1</task-id>\n<tool-use-id>w1</tool-use-id>\n<status>completed</status>\n</task-notification>' } };
+out('end: SC-AK-1800 — уведомление в виде attachment кончает фоновую задачу', JSON.stringify(eventsOf([watchCall, watchStarted, attached]).filter((e) => e.kind === 'backgroundEnd').map((e) => [e.id, e.at])), JSON.stringify([['w1', Date.parse('2026-11-21T11:30:00Z')]]));
 
 // --- удержание хода по CI: двойники хостинга и сессии -------------------------------------------
 const T0 = Date.parse('2026-11-21T08:15:50Z');
@@ -267,6 +269,9 @@ out('end: SC-AK-1802 — слежение за номером снимает у�
 out('end: SC-AK-1802 — слежение старше 20 минут снимает удержание, пока запуск идёт', kindOf(holdOf({ host: onHead(goingRun), events: watching, now: T0 + 41 * 60_000 })), 'none');
 out('end: SC-AK-1802 — слежение за номером PR тоже слежение', kindOf(holdOf({ host: onHead(goingRun), events: [bgStart('w2', 'gh pr checks 3472 --watch', T0)], now: T0 + 120_000 })), 'none');
 out('end: SC-AK-1802 — фоновая задача с номером PR в имени журнала — не слежение', kindOf(holdOf({ host: onHead(goingRun), events: [bgStart('w3', 'pnpm run check:all > /tmp/pr-3472.log 2>&1', T0)], now: T0 + 120_000 })), `running ${RUN}`);
+out('end: SC-AK-1802 — фоновый вызов клиента без watch — не слежение', kindOf(holdOf({ host: onHead(goingRun), events: [bgStart('w4', 'gh pr comment 3472 --body ok', T0)], now: T0 + 120_000 })), `running ${RUN}`);
+out('end: SC-AK-1802 — слежение по имени ветки PR — слежение', kindOf(holdOf({ host: onHead(goingRun), events: [bgStart('w5', `id=$(gh run list --branch ${PR.head} --limit 1 --json databaseId --jq '.[0].databaseId'); gh run watch "$id" --exit-status`, T0)], now: T0 + 120_000 })), 'none');
+out('end: SC-AK-1802 — слежение за CI не отпускает остановку как ожидание', String(session.waiting({ session: { events: () => watching, now: () => T0 + 120_000 } })()), 'false');
 out('end: SC-AK-1802 — снятое удержание не отпускает ход в «работа-отдана»', String(decide(model, ciReader({ ...WROTE, 'measure.session.waiting': true, 'measure.pr.handed': true }), stageState)), 'null');
 
 // SC-AK-1803 — красный непрочитанный запуск держит ход с номером
@@ -278,6 +283,7 @@ function ciHoldReasonHas(hold, text) { return decide(model, ciReader({ 'measure.
 // SC-AK-1804 — красный прочитан после конца — удержание снято
 out('end: SC-AK-1804 — вызов с номером после конца — прочитан', kindOf(holdOf({ host: onHead(redRun), events: [bash(`gh run view ${RUN} --log-failed`, END + 5_000)] })), 'none');
 out('end: SC-AK-1804 — чтение вывода слежения после конца — прочитан', kindOf(holdOf({ host: onHead(redRun), events: [...watching, bgEnd('w1'), { kind: 'call', name: 'Read', input: { file_path: '/tmp/w1.output' }, blocked: false, at: END + 5_000 }] })), 'none');
+out('end: SC-AK-1804 — чтение вывода слежения через cat — прочитан', kindOf(holdOf({ host: onHead(redRun), events: [...watching, bgEnd('w1'), bash('cat /tmp/w1.output | tail -40', END + 5_000)] })), 'none');
 out('end: SC-AK-1804 — отказанный вызов с номером не чтение', kindOf(holdOf({ host: onHead(redRun), events: [bash(`gh run view ${RUN} --log-failed`, END + 5_000, { blocked: true })] })), `red ${RUN}`);
 out('end: SC-AK-1804 — упавший вызов с номером не чтение', kindOf(holdOf({ host: onHead(redRun), events: [bash(`gh run view ${RUN} --log-failed`, END + 5_000, { failed: true })] })), `red ${RUN}`);
 out('end: SC-AK-1804 — правка текста с номером запуска не чтение', kindOf(holdOf({ host: onHead(redRun), events: [{ kind: 'call', name: 'Edit', input: { file_path: 'notes.md', new_string: `run ${RUN} red` }, blocked: false, at: END + 5_000 }] })), `red ${RUN}`);
@@ -285,6 +291,7 @@ out('end: SC-AK-1804 — правка текста с номером запус�
 // SC-AK-1805 — вызов слежения до конца запуска не чтение
 out('end: SC-AK-1805 — слежение до конца, чтения после — нет: держит', kindOf(holdOf({ host: onHead(redRun), events: [bash(`gh run watch ${RUN} --exit-status`, T0 + 10_000), ...watching, bgEnd('w1')] })), `red ${RUN}`);
 out('end: SC-AK-1805 — номер внутри другого числа не называет запуск', kindOf(holdOf({ host: onHead(redRun), events: [bash(`echo 9${RUN}1`, END + 5_000)] })), `red ${RUN}`);
+out('end: SC-AK-1805 — команда без клиента хостинга с номером — не чтение', kindOf(holdOf({ host: onHead(redRun), events: [bash(`echo ${RUN}`, END + 5_000)] })), `red ${RUN}`);
 
 // SC-AK-1806 — зелёный и пропущенный запуски ход не держат
 out('end: SC-AK-1806 — зелёный запуск не держит', kindOf(holdOf({ host: onHead(runOf({ conclusion: 'success' })) })), 'none');
@@ -305,8 +312,14 @@ out('end: SC-AK-1808 — вне эпика с отданным PR — тоже �
 // SC-AK-1809 — вершину сдвинула отправка или слияние в ветку эпика, сессия ушла на другую ветку
 out('end: SC-AK-1809 — отправленная ветка держит ход после перехода', kindOf(holdOf({ branch: 'RT-3493-next', host: onHead(goingRun), events: [bash(`git push -u origin ${PR.head}`, T0 - 5_000)], now: T0 + 120_000 })), `running ${RUN}`);
 out('end: SC-AK-1809 — перенаправление вывода отправки не прячет ветку', JSON.stringify([...ci.pushedHeads([bash(`git push -u origin ${PR.head} > /tmp/push.log 2>&1`, T0)]).keys()]), JSON.stringify([PR.head]));
+out('end: SC-AK-1809 — ветка в кавычках', JSON.stringify([...ci.pushedHeads([bash('git push -u origin "RT-1-a"', END)]).keys()]), '["RT-1-a"]');
+out('end: SC-AK-1809 — строка, продолженная обратной чертой', JSON.stringify([...ci.pushedHeads([bash('git push -u origin \\\nRT-1-a', END)]).keys()]), '["RT-1-a"]');
+out('end: SC-AK-1809 — адрес с подстановкой и конвейером внутри', JSON.stringify([...ci.pushedHeads([bash('git push -q "https://x-access-token:$(cat ~/t)@github.com/$(git remote get-url origin | sed s#x##).git" RT-3326-a', END)]).keys()]), '["RT-3326-a"]');
+out('end: SC-AK-1809 — помощник учётных данных в кавычках перед push', JSON.stringify([...ci.pushedHeads([bash(`git -c credential.helper= -c credential.helper='!f() { echo username=x-access-token; echo "password=$(cat ~/t)"; }; f' push origin RT-3347-a 2>&1 | tail -5`, END)]).keys()]), '["RT-3347-a"]');
+out('end: SC-AK-1809 — `--head` с владельцем ветки', JSON.stringify([...ci.pushedHeads([bash('gh pr create --head Eyhenij:RT-1-a --base main', END)]).keys()]), '["RT-1-a"]');
 out('end: SC-AK-1809 — отправка HEAD берёт ветку записи', JSON.stringify([...ci.pushedHeads([bash('git push origin HEAD', T0)]).keys()]), JSON.stringify([PR.head]));
 out('end: SC-AK-1809 — две ветки одной отправки и ключ -H', JSON.stringify([...ci.pushedHeads([bash('git push origin RT-1-a RT-2-b', T0), bash('gh pr create -H RT-3-c --base main', T0)]).keys()]), JSON.stringify(['RT-1-a', 'RT-2-b', 'RT-3-c']));
+out('end: SC-AK-1809 — checkout -b и отправка HEAD в одной команде', JSON.stringify([...ci.pushedHeads([bash('git checkout -b RT-9-new && git push -u origin HEAD', T0)]).keys()]), JSON.stringify(['RT-9-new']));
 const epicPr = { ...PR, number: 3500, head: 'RT-3471-rework' };
 const epicHost = ciHost({ pulls: [epicPr], runs: { [PR.headRefOid]: [goingRun] }, issues: { 3467: { open: true, status: 'in-progress', epic: '3471' } } });
 out('end: SC-AK-1809 — ветка эпика текущей задачи держит ход без отправки', kindOf(holdOf({ branch: 'RT-3467-ci', host: epicHost, plans: { 'e.md': EPIC_PLAN }, now: T0 + 120_000 })), `running ${RUN}`);
@@ -317,6 +330,7 @@ const pushedNow = [bash(`git push origin ${PR.head}`, END)];
 out('end: SC-AK-1810 — вершина моложе двух минут без запуска держит', kindOf(holdOf({ events: pushedNow, now: END + 60_000 })), 'fresh -');
 out('end: SC-AK-1810 — старше двух минут не держит', kindOf(holdOf({ events: pushedNow, now: END + 3 * 60_000 })), 'none');
 out('end: SC-AK-1810 — окно считается от конца отправки, не от начала', kindOf(holdOf({ events: [bash(`git push origin ${PR.head}`, END - 200_000, { doneAt: END })], now: END + 60_000 })), 'fresh -');
+out('end: SC-AK-1810 — фоновая отправка: окно от уведомления о её конце', kindOf(holdOf({ events: [{ ...bash(`git push origin ${PR.head}`, END - 300_000), id: 'p1', input: { command: `git push origin ${PR.head}`, run_in_background: true }, doneAt: END - 299_000 }, { kind: 'backgroundEnd', id: 'p1', task: 'b-p1', at: END }], now: END + 60_000 })), 'fresh -');
 out('end: SC-AK-1810 — база вне конвейера не держит', kindOf(holdOf({ host: ciHost({ pulls: [{ ...PR, base: 'RT-3471-rework' }] }), events: pushedNow, now: END + 60_000 })), 'none');
 out('end: SC-AK-1810 — база по маске конвейера держит', kindOf(holdOf({ host: ciHost({ pulls: [{ ...PR, base: 'release-1' }], bases: ['release-*'] }), events: pushedNow, now: END + 60_000 })), 'fresh -');
 
@@ -330,8 +344,10 @@ out('end: SC-AK-1812 — вторая остановка без вызова н�
 
 // SC-AK-1813 — «стоп» снимает идущий запуск, но не красную попытку, кончившуюся после него
 out('end: SC-AK-1813 — «стоп» снимает удержание идущего запуска', kindOf(holdOf({ host: onHead(goingRun), word: 'стоп', ownerAt: T0 + 60_000, now: T0 + 120_000 })), 'none');
+out('end: SC-AK-1813 — «стоп» снимает свежую вершину без запуска', kindOf(holdOf({ events: [bash(`git push origin ${PR.head}`, END)], word: 'стоп', ownerAt: END + 10_000, now: END + 60_000 })), 'none');
 out('end: SC-AK-1813 — красный после «стоп» держит до чтения', kindOf(holdOf({ host: onHead(redRun), word: 'стоп', ownerAt: T0 + 60_000 })), `red ${RUN}`);
 out('end: SC-AK-1813 — красный до «стоп» не держит', kindOf(holdOf({ host: onHead(redRun), word: 'стоп', ownerAt: END + 30_000 })), 'none');
+out('end: SC-AK-1813 — красный до «стоп» не прячет красный после него', kindOf(holdOf({ host: ciHost({ runs: { [PR.headRefOid]: [runOf({ id: 111 }), runOf({ id: 222, endedAt: END + 120_000 })] } }), word: 'стоп', ownerAt: END + 30_000, now: END + 180_000 })), 'red 222');
 
 JS
 

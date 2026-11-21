@@ -28,7 +28,8 @@ export const FRESH_MINUTES = 2;
 const NOT_RED = new Set(['success', 'skipped', 'neutral']);
 
 /** A number or a sha as a whole word of a text: «3472» is not found inside «44884034720». */
-const names = (text, value) => value !== null && value !== undefined && new RegExp(`(?<![\\w])${String(value)}(?![\\w])`).test(text);
+const names = (text, value) =>
+    value !== null && value !== undefined && value !== '' && new RegExp(`(?<![\\w./-])${String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\w-])`).test(text);
 
 /** The text of a call that may name a run: its command, or its whole input. */
 const callText = (event) => (typeof event.input?.command === 'string' ? event.input.command : JSON.stringify(event.input ?? {}));
@@ -40,6 +41,22 @@ const argsOf = (tail) =>
         .trim()
         .split(/\s+/)
         .filter((arg) => arg && !arg.startsWith('-') && !/[<>]/.test(arg));
+
+/**
+ * A command as the shell splits it into words: a substitution `$(…)` or `\`…\`` is one word, a line
+ * continued by a backslash is one line, and a quoted text with a space or a separator in it is one
+ * word. The branch of `git push "https://…$(cat t)@…" X` and of `git -c h='!f() { …; }; f' push o X`
+ * is X.
+ */
+const QUOTED_WORD = (quoted) => (/[\s;&|]/.test(quoted) ? 'QUOTED' : quoted);
+const flat = (command) => {
+    let text = command.replace(/\\\n/g, ' ').replace(/'[^']*'/g, QUOTED_WORD).replace(/`[^`]*`/g, 'SUB');
+    for (let before = ''; before !== text; ) [before, text] = [text, text.replace(/\$\([^()]*\)/g, 'SUB')];
+    return text.replace(/"[^"]*"/g, QUOTED_WORD);
+};
+
+/** An argument without its quotes: `"RT-1-a"` names RT-1-a. */
+const unquote = (arg) => arg.replace(/^(['"])(.*)\1$/, '$2');
 
 /** The tail of a command up to its end: `;`, a pipe, `&&` or a lone `&`, not the `&` of `2>&1`. */
 const TAIL = String.raw`((?:[^;&|\n]|>&|&>)*)`;
@@ -54,18 +71,23 @@ export function pushedHeads(events) {
         if (!head || head.includes('$')) return;
         heads.set(head, Math.max(heads.get(head) ?? -Infinity, Number.isFinite(at) ? at : -Infinity));
     };
+    // A push sent to the background ends with the notice of its task, not with the result of its call.
+    const ended = new Map(events.filter((e) => e.kind === 'backgroundEnd' && e.id).map((e) => [e.id, e.at]));
     for (const event of events) {
         if (event.kind !== 'call' || event.blocked || event.failed || event.name !== 'Bash') continue;
-        const command = event.input?.command ?? '';
-        const at = Number.isFinite(event.doneAt) ? event.doneAt : event.at;
-        const own = (ref) => (!ref || ref === 'HEAD' ? event.branch : ref);
+        const command = flat(event.input?.command ?? '');
+        const at = event.input?.run_in_background ? ended.get(event.id) : Number.isFinite(event.doneAt) ? event.doneAt : event.at;
+        // `git checkout -b X && git push origin HEAD` pushes X, not the branch the call started on.
+        const switched = (index) => [...command.slice(0, index).matchAll(/\bgit\s+(?:checkout\s+-[bB]|switch\s+-[cC])\s+(\S+)/g)].pop()?.[1] ?? event.branch;
+        const own = (ref, index) => (!ref || ref === 'HEAD' ? switched(index) : ref);
         for (const match of command.matchAll(new RegExp(String.raw`\bgit\s+(?:-[Cc]\s+\S+\s+)*push\b${TAIL}`, 'g'))) {
-            const refspecs = argsOf(match[1]).slice(1);
-            if (refspecs.length === 0) put(event.branch, at);
-            for (const refspec of refspecs) put(own(refspec.replace(/^\+/, '').split(':').pop().replace(/^refs\/heads\//, '')), at);
+            const refspecs = argsOf(match[1]).map(unquote).slice(1);
+            if (refspecs.length === 0) put(switched(match.index), at);
+            for (const refspec of refspecs) put(own(refspec.replace(/^\+/, '').split(':').pop().replace(/^refs\/heads\//, ''), match.index), at);
         }
         for (const match of command.matchAll(new RegExp(String.raw`\bgh\s+pr\s+(?:create|new)\b${TAIL}`, 'g'))) {
-            put(own(/(?:--head|-H)[=\s]+['"]?([^\s'"]+)/.exec(match[1])?.[1]), at);
+            // `--head owner:branch` names the branch of a fork: the PR list names it without the owner.
+            put(own(/(?:--head|-H)[=\s]+['"]?([^\s'"]+)/.exec(match[1])?.[1]?.replace(/^[^:]+:/, ''), match.index), at);
         }
     }
     return heads;
@@ -90,8 +112,11 @@ function openTasks(events) {
  */
 const watches = (task, run, pr) =>
     typeof task.command === 'string' &&
-    /\bgh\b/.test(task.command) &&
-    (names(task.command, run?.id) || names(task.command, pr.number) || (pr.headRefOid && task.command.includes(pr.headRefOid.slice(0, 7))));
+    /\bgh\b[\s\S]*\bwatch\b/.test(task.command) &&
+    (names(task.command, run?.id) ||
+        names(task.command, pr.number) ||
+        names(task.command, pr.head) ||
+        (pr.headRefOid && task.command.includes(pr.headRefOid.slice(0, 7))));
 
 /**
  * A command after the end of the run that a hook did not refuse and that did not fail names it, or a
@@ -106,7 +131,9 @@ function wasRead(events, run, pr) {
             !event.failed &&
             Number.isFinite(event.at) &&
             event.at > run.endedAt &&
-            ((event.name === 'Bash' && names(callText(event), run.id)) || (event.name === 'Read' && outputs.has(event.input?.file_path))),
+            ((event.name === 'Bash' && /\bgh\b/.test(callText(event)) && names(callText(event), run.id)) ||
+                (event.name === 'Bash' && [...outputs].some((output) => callText(event).includes(output))) ||
+                (event.name === 'Read' && outputs.has(event.input?.file_path))),
     );
 }
 
@@ -139,12 +166,14 @@ export function hold({ git, host, tree, session, owner }) {
         if (pulls.length === 0) return false;
         const stopped = saidStop({ owner })(data);
         const stopAt = typeof session.ownerAt === 'function' ? session.ownerAt() : null;
+        // A red attempt that ended before the stop word passes: the owner stopped the work over it.
+        const passed = (run) => stopped && Number.isFinite(stopAt) && run.endedAt <= stopAt;
         const now = typeof session.now === 'function' ? session.now() : Date.now();
         const tasks = openTasks(events);
         for (const pr of pulls) {
             const runs = host.runs(pr.headRefOid);
-            const red = runs.find((run) => run.status === 'completed' && !NOT_RED.has(run.conclusion) && !wasRead(events, run, pr));
-            if (red && !(stopped && Number.isFinite(stopAt) && red.endedAt <= stopAt)) return { kind: 'red', pr, run: red, file };
+            const red = runs.find((run) => run.status === 'completed' && !NOT_RED.has(run.conclusion) && !passed(run) && !wasRead(events, run, pr));
+            if (red) return { kind: 'red', pr, run: red, file };
             if (stopped) continue;
             const running = runs.find((run) => run.status !== 'completed');
             if (running && !tasks.some((task) => watches(task, running, pr))) return { kind: 'running', pr, run: running, file };
