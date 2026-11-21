@@ -117,11 +117,14 @@
                             qa-dataid="ai-chat-answer"
                             [message]="message"
                             [copyable]="copyable()"
+                            [sending]="sending()"
                             [extra]="extraTemplate()?.templateRef ?? null"
                             [expanded]="openRuns().has(message.id)"
                             (expandedChange)="onToggleRun(message.id, $event)"
                             (feedbackChange)="onFeedback(message, $event)"
-                            (linkOpen)="onLinkOpen(message, $event)" />
+                            (askAgain)="askAgain.emit(message.id)"
+                            (linkOpen)="onLinkOpen(message, $event)"
+                            (sourceOpen)="onSourceOpen(message, $event)" />
                     }
                 }
 

@@ -2,7 +2,8 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { ChangeDetectionStrategy, Component, input, InputSignal, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
-import { RT_KIT_LOCALE } from '../../../../../lib/i18n/rt-kit-labels.providers';
+import { RT_KIT_LABELS_EN } from '../../../../../lib/i18n/rt-kit-labels.en';
+import { RT_KIT_LABELS, RT_KIT_LOCALE } from '../../../../../lib/i18n/rt-kit-labels.providers';
 import { createRtFixture, qa } from '../../../../../testing/rt-kit-testing';
 import { provideRtAiChatBlock } from '../blocks/rt-ai-chat-blocks.providers';
 import { IRtAiChat } from '../rt-ai-chat.model';
@@ -65,6 +66,30 @@ describe('RtAiChatAnswerComponent', (): void => {
 
         expect(clipboard.copied).toEqual(['Occupancy by week']);
     });
+    it('SC-UKV-1555 — копия блока источников несёт подпись заголовка из переводчика кита', (): void => {
+        const clipboard: ClipboardDouble = new ClipboardDouble();
+        const message: IRtAiChat.AssistantMessage = {
+            id: 'sources',
+            role: 'assistant',
+            blocks: [{ type: 'sources', items: [{ title: 'Отчёт', url: '/r' }] }],
+        };
+        const fixture: ComponentFixture<RtAiChatAnswerComponent> = createRtFixture(
+            RtAiChatAnswerComponent,
+            { message },
+            {
+                providers: [
+                    { provide: Clipboard, useValue: clipboard },
+                    { provide: RT_KIT_LABELS, useValue: signal({ ...RT_KIT_LABELS_EN, aiSources: 'Источники' }) },
+                ],
+            }
+        );
+
+        ((qa(fixture, 'ai-chat-copy')?.nativeElement as HTMLElement).querySelector('button') as HTMLButtonElement).click();
+
+        expect(clipboard.copied).toHaveLength(1);
+        expect(clipboard.copied[0].startsWith('Источники\t1')).toBe(true);
+    });
+
     it('SC-UKV-1423 — после смены языка кита копия ответа пишет значения таблицы в новом языке', (): void => {
         const clipboard: ClipboardDouble = new ClipboardDouble();
         const locale: WritableSignal<string> = signal<string>('en');

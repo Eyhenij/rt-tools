@@ -3,6 +3,7 @@ import { RT_AI_CHAT_LINK_SCHEMA } from './link.schema';
 import { RT_AI_CHAT_MARKDOWN_SCHEMA } from './markdown.schema';
 import { RT_AI_CHAT_NOTICE_SCHEMA } from './notice.schema';
 import { ERtSectionSpan, RT_SECTION_BLOCK_TYPE } from './section-data';
+import { RT_AI_CHAT_SOURCES_SCHEMA } from './sources.schema';
 import { RT_AI_CHAT_TABLE_SCHEMA } from './table.schema';
 
 /** JSON-схема как запись полей: так её отдают модели и так её читает функция объединения. */
@@ -50,6 +51,7 @@ const OWN_SCHEMAS: Readonly<Record<string, TRtJsonSchema>> = {
     kpi: RT_AI_CHAT_KPI_SCHEMA,
     table: RT_AI_CHAT_TABLE_SCHEMA,
     link: RT_AI_CHAT_LINK_SCHEMA,
+    sources: RT_AI_CHAT_SOURCES_SCHEMA,
 };
 
 function record(value: unknown): TRtJsonSchema {
