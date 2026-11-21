@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.1 · hooks/git-guard-no-verify.sh · 18353f35fe7a · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/git-guard-no-verify.sh · abffbd1f9fb2 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Requires: hooks/deny-tail.sh, hooks/guard-note.sh
+# Requires: checks/decide.mjs, hooks/decide.sh, hooks/facts.sh, hooks/facts-docs.sh, hooks/git-guard-delivery-signature.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Guard of the commit hooks. PreToolUse on a git commit or push that skips the tree's git hooks.
 #
 # The commit hooks check the message, the formatting and the document pair; the push gate does not
@@ -125,20 +125,60 @@ hits="$(printf '%s\n' "$cmd" | awk -v sq="'" '
 
 what="$(printf '%s\n' "$hits" | sed 's/^/git /' | paste -sd ',' - | sed 's/,/, /g')"
 
-reason="BLOCKED by git-guard-no-verify: «${what}» skips the git hooks of the tree.
+# The decision, the move and the text come from the decision table. The same command without the skip
+# meets the other delivery guards, and the refusal names what they refuse it for first: a commit on
+# the main branch, a commit while the contribution carries a foreign signature, the document pair and
+# the exam the commit waits for, a push while the heavy steps have no green mark. The hook gathers the
+# facts of that state; the decider composes the words.
+rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/facts.sh" 2>/dev/null
+command -v rt_fact_branch >/dev/null 2>&1 || exit 0
+sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
+record="$(rt_fact_transcript "$input")"
+main_branch=main
+on_main=no
+signed=yes
+signature=''
+doc_pair=yes
+problems=''
+workdir="$(rt_hook_cwd)"
+[ -z "$workdir" ] && workdir="${CLAUDE_PROJECT_DIR:-.}"
+if cd "$workdir" 2>/dev/null && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    root="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null)}"
+    for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" "$root/.claude/rt-kit/defaults/project.sh" "$root/.claude/rt-kit/project.sh"; do
+        # shellcheck disable=SC1090
+        [ -f "$profile" ] && . "$profile" >/dev/null 2>&1 </dev/null
+    done
+    commit_email="${RT_COMMIT_EMAIL:-}"
+    main_branch="${RT_MAIN_BRANCH:-main}"
+    if printf '%s\n' "$hits" | grep -q '^commit'; then
+        plain="$(printf '%s' "$cmd" | sed -E 's/[[:space:]](--no-verify|--no-verif|--no-veri|-n)([[:space:]]|$)/ /g')"
+        if [ "$(rt_fact_branch)" = "$main_branch" ]; then
+            on_main=yes
+        else
+            # shellcheck disable=SC1091
+            [ -f "$rt_hooks_dir/git-guard-delivery-signature.sh" ] && . "$rt_hooks_dir/git-guard-delivery-signature.sh" 2>/dev/null
+            command -v rt_signature_commit_note >/dev/null 2>&1 && signature="$(rt_signature_commit_note)"
+            [ -n "$signature" ] && signed=no
+            # shellcheck disable=SC1091
+            [ -f "$rt_hooks_dir/facts-docs.sh" ] && . "$rt_hooks_dir/facts-docs.sh" 2>/dev/null
+            if command -v rt_fact_doc_problems >/dev/null 2>&1 && rt_fact_doc_problems "$plain"; then
+                [ -n "$problems" ] && doc_pair=no
+            fi
+        fi
+    fi
+fi
 
-The commit hooks check the message, the formatting and the document pair, and the push gate does not read commit messages: a commit made past the hooks reaches the host unchecked. An amend goes through the same hooks as a commit, a one-letter typo included. Run the same command without the skip; when a hook refuses, fix what it names. A commit already made past the hooks is redone without the skip before the push — the rule git-workflow."
-
-# shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-deny_tail_text="$(rt_deny_tail)"
-[ -n "$deny_tail_text" ] && reason="${reason}
-
-${deny_tail_text}"
-
-jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"A git commit or push that skips the git hooks is refused. Run it without the skip."}}\n'
-
+action=push_skip_hooks
+printf '%s\n' "$hits" | grep -q '^commit' && action=commit_skip_hooks
+facts="$(jq -cn --arg r "$(rt_fact_rule_loaded git-workflow "$sid")" --arg m "$on_main" --arg s "$signed" --arg d "$doc_pair" \
+    --arg e "$(rt_fact_exam_holds "$record")" --arg w "$(rt_fact_window_over_stop "$sid" "$record")" \
+    '{rule_loaded:$r, branch_is_main:$m, commits_signed_declared:$s, doc_pair:$d, exam:$e, window_over_stop:$w}')"
+params="$(jq -cn --arg w "$what" --arg m "$main_branch" --arg s "$signature" --arg p "$problems" \
+    --arg a "bash ${rt_hooks_dir#"$PWD"/}/git-guard-push-ahead.sh" \
+    '{what:$w, main_branch:$m, signature:$s, problems:$p, ahead_cmd:$a}')"
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/decide.sh" 2>/dev/null
+command -v rt_decide >/dev/null 2>&1 && rt_decide git-guard-no-verify.sh "$action" "$facts" "$params"
 exit 0

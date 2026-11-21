@@ -109,13 +109,13 @@ the line of a postponed task are in the pattern `autonomous-work-run`.
 
 ## 7. The cycle
 
-Then the work goes by the rule and the pattern. The night ends at the named boundary, and the last
-reply gives the list — the same one that lies in the file.
+Then the work goes by the rule and the pattern, and the last reply gives the list — the same one
+that lies in the file.
 
-Where a turn-exit guard holds a working turn under an open epic, silence does not end the night:
-the guard does not know the boundary. The last turn appends the list and ends with a question
-through the question tool — the night is over, the list is in the file. The owner answers it in the
-morning.
+Where a turn-exit guard is laid out, it holds a working turn until the scenario is over or the
+owner's last word is a stop word. The boundary is neither, and a question does not end the turn
+either. So the list is appended along the way and lies in the file at any minute. The night ends
+with the end of the scenario, or with the owner's «стоп» in the morning.
 
 ## What this command does not do
 

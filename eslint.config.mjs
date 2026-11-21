@@ -20,7 +20,18 @@ export default [
     // первой строкой пустая, на другой нет, и линтер краснел на шестнадцати его файлах у
     // конвейера, оставаясь зелёным у того, кто пушил.
     // Граф кода пишет graphify: его страница — не разметка экрана, а кеш — не исходники.
-    { ignores: ['**/src/generated/**', '**/graphify-out/**'] },
+    // Описание task flow — язык данных, а не JavaScript: его читает парсер описания, никто его не
+    // исполняет. Ссылка `measure.plan.approved` в нём — данные, а линтер видит необъявленную
+    // переменную. Форму описания проверяет модель описания и её набор.
+    {
+        ignores: [
+            '**/src/generated/**',
+            '**/graphify-out/**',
+            'projects/agent-kit/assets/task-flow/flow.js',
+            'tools/task-flow/flow.js',
+            '.claude/rt-kit/overrides/task-flow/flow.js',
+        ],
+    },
     eslintPluginPrettierRecommended,
     baseTypeScriptConfig,
     {

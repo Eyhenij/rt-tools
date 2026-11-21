@@ -1,0 +1,25 @@
+{
+  "case": "SC-AK-1460",
+  "kind": "RT-3276 live turn: a menu after a refusal of another check",
+  "record": "RT-3276 live check",
+  "task": 101,
+  "turns": [
+    { "role": "owner", "at": "2026-11-14T17:30:00Z", "owner": "<order:RT-101>" },
+    {
+      "role": "agent",
+      "at": "2026-11-14T17:35:00Z",
+      "call": "Bash",
+      "command": "git push -u origin RT-101-replay-task",
+      "code": "refused",
+      "guard": "git-guard-push-marks"
+    },
+    { "role": "hook", "at": "2026-11-14T17:36:00Z", "stop": "menu" },
+    {
+      "role": "agent",
+      "at": "2026-11-14T17:37:00Z",
+      "menu": ["The push of RT-101 is refused by another check.", "отложить RT-101", "стоп"],
+      "answer": { "owner": "<menu-answer:2>" }
+    },
+    { "role": "agent", "at": "2026-11-14T17:38:00Z", "say": "Stopped at your word." }
+  ]
+}

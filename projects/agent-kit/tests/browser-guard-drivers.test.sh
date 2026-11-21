@@ -111,7 +111,10 @@ tool_call "SC-AK-1267 — закреплённое расширение прох
 # возвращался. Поэтому имя инструмента прогоняется через диспетчер.
 DISPATCH_DIR="$(mktemp -d)"
 cp "$ASSETS/hooks/dispatch.sh" "$ASSETS/hooks/hook-input.sh" "$ASSETS/hooks/utf8.sh" \
-    "$ASSETS/hooks/deny-tail.sh" "$ASSETS/hooks/browser-guard-no-other-drivers.sh" "$DISPATCH_DIR/" 2>/dev/null
+    "$ASSETS/hooks/deny-tail.sh" "$ASSETS/hooks/decide.sh" "$ASSETS/hooks/facts.sh" \
+    "$ASSETS/hooks/browser-guard-no-other-drivers.sh" "$DISPATCH_DIR/" 2>/dev/null
+# The copied guard asks the decider of the package: the copy has no checks directory next to it.
+export RT_DECIDE_CMD="$ASSETS/checks/decide.mjs"
 dispatched() {
     local label="$1" tool="$2" want="$3" got
     if input_cmd '' "$tool" "$TMP" | bash "$DISPATCH_DIR/dispatch.sh" PreToolUse >/dev/null 2>&1; then

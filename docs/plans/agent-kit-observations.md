@@ -17,7 +17,7 @@ and it can be found by the name of the file in the history.
 | the digest                    | `projects/agent-kit/src/lib/observations.ts`                                                      | the loadings, the refusals, the kinds of an edit, the guards, what was never loaded once, the term of the keeping is thirty days                 |
 | the proposals                 | `projects/agent-kit/src/lib/proposals.ts`                                                         | a block per proposal, three addresses, a check of the text against the address of the tree                                                       |
 | the sending                   | `projects/agent-kit/src/lib/ship.ts`, `shipment.ts`                                               | the gathering of the cargo of three kinds and a query into the intake; the snapshot of the overrides and what is not chosen are counted in place |
-| the admission of a miss       | `projects/agent-kit/assets/hooks/postmortem-guard.sh`                                             | it catches by samples, demands a record about an incident on the same day                                                                        |
+| the admission of a miss       | `projects/agent-kit/assets/hooks/turn-judge.md`                                                   | the agent hook at the end of a turn reads the admission by meaning and demands a record about an incident in the same turn                       |
 
 ## What is missing
 

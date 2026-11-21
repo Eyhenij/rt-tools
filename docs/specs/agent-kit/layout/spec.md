@@ -200,6 +200,11 @@ The subdomain has no interface beyond the launch line.
 - **A tree has the right to name the samples a path of its own and to refuse them whole.** The layout of
   the kind is set by the tree, as with any other kind, and the removal goes by the refusal list. A tree
   whose task folders lie differently gets the samples where its own guards look for them.
+- **The task flow scenario travels by a kind of its own and lands next to the engine, keeping its path
+  inside the kind.** The engine looks for the description beside itself, and a measurer imports only its
+  neighbours: laid out into another directory or flattened, the scenario would not build. Two of its
+  files share a last name segment by design, so a kind whose path is its place is not judged for names
+  that coincide.
 - **A sample carries the layout header on a par with the rest of the laid-out.** An edit in place is lost
   at the next layout, and a sample here differs from a rule in nothing: its own tree appends by an
   override. A copy taken from a sample carries the header away with it — this is a trace of the origin of
@@ -208,8 +213,8 @@ The subdomain has no interface beyond the launch line.
 - **The cold part of a rule is a kind of resource of its own, not a name inside the kind of the rules.**
   The kind sets both the layout directory and the refusal by a list: the cold part lands as a third file
   at its rule, is removed after it and is put anew at every layout, because its text belongs to the
-  package whole. It looks for its parent by the name of the resource, not by a header field: a rule has
-  one cold part and it is called the same way it is.
+  package whole. It looks for its parent by the name of the resource, not by a header field: a cold
+  part is called the same way as its rule.
 - **"Pitfalls" is a section of the cold part, not of the rule.** In a rule it stopped being mandatory and
   became mandatory in the cold part: otherwise the move takes the section completeness check down at
   every rule that gave it away. A rule whose pitfalls went nowhere is lawful — the section is simply not
@@ -355,3 +360,4 @@ The open questions of the domain are shared, and they live in the spec next to i
 - 2026-08-17 — the subdomain was split off from the domain spec, which had outgrown the length limit. The
   rules, the scenarios and the bindings of the layout moved here unchanged: the scenario numbers were not
   recounted.
+- 2026-11-15 — the task flow scenario got a kind of its own, laid out next to the engine.

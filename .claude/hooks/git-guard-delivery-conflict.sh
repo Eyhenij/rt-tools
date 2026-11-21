@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.1 · hooks/git-guard-delivery-conflict.sh · 2f998e969d26 · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/git-guard-delivery-conflict.sh · e20f9731fd59 · правится надстройкой, не здесь
 # A conflicting PR of one's own, for the delivery guard: while at least one handed-over piece of
 # work is marked conflicting, a new one is not taken.
 #
@@ -54,7 +54,7 @@
 rt_delivery_led_branch() {
     named="$1"
     [ -z "$named" ] && return 0
-    [ "$named" = "$(git -C "$root" rev-parse --abbrev-ref HEAD 2>/dev/null)" ] && return 0
+    [ "$named" = "$(rt_fact_branch "$root")" ] && return 0
     git -C "$root" reflog HEAD -n 400 2>/dev/null \
         | awk -v branch="$named" '
             /checkout: moving from /  { if ($NF == branch) { found = 1 } }
@@ -75,8 +75,11 @@ rt_delivery_note_out() {
 rt_delivery_conflict() {
     # The sign of taking work is read from the text of the command and stands first: the query goes
     # to the network, and paying for it on every shell command is not allowed.
-    taking=''
-    case "$cmd" in
+    #
+    # A caller whose own refusal is about to name new work passes what that work is: the push into a
+    # merged branch names a new task, and that move is refused here while a conflict stands.
+    taking="${1:-}"
+    [ -n "$taking" ] || case "$cmd" in
         *"${task_new}"*) taking='creating a task' ;;
     esac
     # Moving the column is judged together with the name of the work column: a move into review and
@@ -133,11 +136,14 @@ The branch is led by another session and holds its own commits: a merge of the m
     fi
     [ -z "$listed" ] && return 0
 
-    deny "BLOCKED: ${taking} while a conflicting request of your own stands. What was handed over conflicts with the main branch, and a person cannot merge it:
-
-${listed}
-
-The conflict arrives by someone else's merge, without a single action by the author of the request: it stands until it is caught up with. New work does not fix it — it adds one more branch to the queue, growing from the same main and falling behind the same way.
-
-There is one move from here: pull the main branch, merge it into the named branch, resolve the conflict and send it — and only then take new work. What is fixed by what — the pattern git-workflow-freshness."
+    # The action of the table is the move being taken; the words are the table's.
+    case "$taking" in
+        'creating a task') _action=task_new ;;
+        'moving the column into work') _action=task_move ;;
+        'creating a branch for a task') _action=branch_create ;;
+        'opening a request') _action=pr_create ;;
+        *) _action=push ;;
+    esac
+    fact own_pr_conflicting yes
+    refuse "$_action" "$(jq -cn --arg t "$taking" --arg l "$listed" '{taking:$t, listed:$l}')"
 }

@@ -1,0 +1,16 @@
+{
+ "args": [
+  "api",
+  "repos/Eyhenij/rt-tools/actions/workflows/deploy.yml/runs?per_page=20",
+  "--jq",
+  "[.workflow_runs[] | select(.conclusion == \"success\") | {sha: .head_sha, at: .created_at}] | first // empty"
+ ],
+ "token": "machine",
+ "code": 0,
+ "stdout": "{\"at\":\"2026-11-14T01:37:49Z\",\"sha\":\"50eeae24c7d06172ac3917975a2384636b4016f6\"}",
+ "stderr": "",
+ "json": {
+  "at": "2026-11-14T01:37:49Z",
+  "sha": "50eeae24c7d06172ac3917975a2384636b4016f6"
+ }
+}

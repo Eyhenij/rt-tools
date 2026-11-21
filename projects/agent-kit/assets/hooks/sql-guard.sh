@@ -85,22 +85,64 @@ PROD_DSN="${RT_PROD_DSN:-}"
 # one. The file may not be laid out — then there is no tail, and the reason for the refusal stays
 # as it was.
 # shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+# The decision and the words come from the decision table. The hook names the class of the request,
+# where it goes and what it found; the table says whether that is refused, asked or let through.
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/decide.sh" 2>/dev/null
 
-deny() {
-    reason="$1"
-    tail_text="$(rt_deny_tail "$2")"
-    [ -n "$tail_text" ] && reason="$1 ${tail_text}"
-    jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Destructive SQL blocked. Address rows by id."}}\n'
-    exit 0
+# The class of the request by the same signs the checks below use. A marker on a destructive request
+# makes it a class of its own: the table asks instead of refusing. `sql_class write` leaves the
+# migration out: a migration next to a second write is judged by that write.
+sql_class() {
+    local destructive=""
+    printf '%s' "$flat" | grep -qE '(^|[^[:alnum:]_])(truncate|drop[[:space:]]+(table|database|schema|column|index)|alter[[:space:]]+table)([^[:alnum:]_]|$)' \
+        && destructive=schema
+    printf '%s' "$flat" | grep -q 'pg_restore' && printf '%s' "$flat" | grep -qE '(^|[[:space:]])(--clean|-c|--create)([[:space:]]|=|$)' \
+        && destructive=schema
+    printf '%s' "$flat" | grep -qE 'prisma[[:space:]]+(migrate[[:space:]]+reset|db[[:space:]]+push)' && destructive=reset
+    if [ -n "$destructive" ]; then
+        case "$flat" in
+            *destructive-ok*) printf '%s' destructive_marked; return ;;
+        esac
+        [ "$destructive" = reset ] && printf '%s' db_reset || printf '%s' destructive
+        return
+    fi
+    if [ "${1:-}" != write ] && printf '%s' "$flat" | grep -qE 'prisma[[:space:]]+migrate[[:space:]]+(deploy|dev)'; then
+        printf '%s' migrate
+        return
+    fi
+    if printf '%s' "$flat" | grep -qE '(^|[^[:alnum:]_])(delete[[:space:]]+from|update)([^[:alnum:]_]|$)'; then
+        local tail
+        tail="$(printf '%s' "$sql" | tr '\n\t' '  ' | tr -d '\\' | sed -E 's/.*[Ww][Hh][Ee][Rr][Ee]/where/')"
+        if ! printf '%s' "$flat" | grep -q 'where' \
+            || ! printf '%s' "$tail" | grep -qE '(^|[^[:alnum:]_"])"?(id|[A-Za-z_]+_id|[a-zA-Z]+Id)"?[[:space:]]*(=|[Ii][Nn][[:space:]]*\()'; then
+            printf '%s' write_unaddressed
+            return
+        fi
+        printf '%s' "$tail" | grep -qE '(^|[^[:alnum:]_"])"?id"?[[:space:]]*(=|[Ii][Nn][[:space:]]*\()' || { printf '%s' write_fk; return; }
+    fi
+    sql_delivers_file && { printf '%s' file_into_client; return; }
+    printf '%s' write_by_pk
 }
 
-ask() {
-    jq -n --arg r "$1" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"ask",permissionDecisionReason:$r}}' 2>/dev/null \
-        || exit 0
+# Where the request goes: production, a connection the guard does not know, or a local one.
+sql_target_of() {
+    if [ -n "$is_prod" ]; then
+        printf '%s' prod
+    elif [ -n "$conn" ] && [ -z "$conn_known" ]; then
+        printf '%s' unknown
+    else
+        printf '%s' local
+    fi
+}
+
+# sql_refuse <what the guard found> [class] [target]: the class and the target default to the ones
+# the request itself gives.
+sql_refuse() {
+    local action="${2:-$(sql_class)}" target="${3:-$(sql_target_of)}"
+    command -v rt_decide >/dev/null 2>&1 || exit 0
+    rt_decide sql-guard.sh "$action" "$(jq -cn --arg t "$target" '{target:$t}')" \
+        "$(jq -cn --arg s "$1" '{said:$s}')" PreToolUse "$input"
     exit 0
 }
 
@@ -126,7 +168,7 @@ sql_check_addressing
 # An unknown connection is no reason to pass silently: the target of the query is not recognised,
 # and it may turn out to be the production database under another identifier.
 if [ "$conn_known" = "" ] && [ -n "$conn" ]; then
-    ask "A write into the database through a CONNECTION UNKNOWN TO THE GUARD (id ${conn}). The guard knows the local connection and the production one; this is neither, so make sure the request does not go to production. If the connection is permanent, write its id into PROD_CONNECTIONS or LOCAL_CONNECTIONS in .claude/hooks/sql-guard.sh."
+    sql_refuse "A write into the database through a CONNECTION UNKNOWN TO THE GUARD (id ${conn}). The guard knows the local connection and the production one; this is neither, so make sure the request does not go to production. If the connection is permanent, write its id into PROD_CONNECTIONS or LOCAL_CONNECTIONS in .claude/hooks/sql-guard.sh." "$(sql_class write)"
 fi
 
-ask "A write into the database (${context}). Check that only the expected rows are touched, and confirm."
+sql_refuse "A write into the database (${context}). Check that only the expected rows are touched, and confirm." "$(sql_class write)"

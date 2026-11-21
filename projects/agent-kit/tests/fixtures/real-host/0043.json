@@ -1,0 +1,15 @@
+{
+ "args": [
+  "api",
+  "graphql",
+  "-f",
+  "query=query{repository(owner:\"Eyhenij\",name:\"rt-tools\"){ref(qualifiedName:\"refs/heads/main\"){compare(headRef:\"50eeae24c7d06172ac3917975a2384636b4016f6\"){behindBy}}}}",
+  "--jq",
+  ".data.repository.ref.compare.behindBy"
+ ],
+ "token": "machine",
+ "code": 0,
+ "stdout": "487\n",
+ "stderr": "",
+ "json": 487
+}

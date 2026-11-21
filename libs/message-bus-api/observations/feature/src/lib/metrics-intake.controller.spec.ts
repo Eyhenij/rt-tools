@@ -119,6 +119,41 @@ describe('MetricsIntakeController', () => {
         expect(double.rows[0]?.['metrics']).toEqual({ sessions: 5 });
     });
 
+    it('SC-MB-434 — строка с новыми ключами и строка старой редакции без них принимаются обе', async () => {
+        const fresh: TCargoBody = { sessions: 1, calls: 187, refusalsHook: 30, 'recordRefusals:own': 35, idleMinutes: 42, tasksMerged: 1 };
+        const older: TCargoBody = { sessions: 2, 'guardRefusals:grill-gate': 3 };
+        const first: {
+            readonly double: PrismaDouble;
+            readonly controller: MetricsIntakeController;
+            readonly request: ITreeBearingRequest;
+        } = setup();
+        const second: {
+            readonly double: PrismaDouble;
+            readonly controller: MetricsIntakeController;
+            readonly request: ITreeBearingRequest;
+        } = setup();
+
+        await first.controller.accept(cargo(100, fresh), first.request, new ResponseDouble());
+        await second.controller.accept(cargo(100, older), second.request, new ResponseDouble());
+
+        expect(first.double.rows[0]?.['metrics']).toEqual(fresh);
+        expect(second.double.rows[0]?.['metrics']).toEqual(older);
+    });
+
+    it('SC-MB-445 — ключ пары принимается по двум половинам, ключ с одной половиной отказан с его именем', async () => {
+        const { double, controller, request } = setup();
+
+        await controller.accept(cargo(100, { 'refusalPairs:grill-gate:skill-gate': 2 }), request, new ResponseDouble());
+        expect(double.rows[0]?.['metrics']).toEqual({ 'refusalPairs:grill-gate:skill-gate': 2 });
+
+        const refused: unknown = await controller
+            .accept(cargo(200, { 'refusalPairs:grill-gate': 1 }), request, new ResponseDouble())
+            .then((): unknown => null)
+            .catch((failure: unknown): unknown => (failure as { getResponse(): unknown }).getResponse());
+
+        expect(refused).toMatchObject({ code: ERefusal.MetricsFieldRefused, params: { field: 'refusalPairs:grill-gate' } });
+    });
+
     it('чужое дерево отказывается головой груза', async () => {
         const { controller, request } = setup();
         const attempt: Promise<IMetricsDayAccepted> = controller.accept({ ...cargo(100), tree: 'other' }, request, new ResponseDouble());

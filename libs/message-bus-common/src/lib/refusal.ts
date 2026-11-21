@@ -80,6 +80,8 @@ export enum ERefusal {
     MetricsFieldRefused = 'metrics-field-refused',
     /** Лежит более новая строка этого дня. */
     MetricsStale = 'metrics-stale',
+    /** Поле окна эпика вне своей формы: число, момент или копия. */
+    EpicWindowFieldRefused = 'epic-window-field-refused',
 }
 
 /** Подстановки отказа: причина названа кодом, а значения идут рядом по имени. */
@@ -139,6 +141,7 @@ const SAID: Readonly<Record<ERefusal, string>> = {
     [ERefusal.ChatEntryExpired]: 'вход устарел, обновите страницу',
     [ERefusal.MetricsFieldRefused]: 'поле «{{field}}» строки дня не принято',
     [ERefusal.MetricsStale]: 'за {{day}} лежит более новая строка дня',
+    [ERefusal.EpicWindowFieldRefused]: 'поле «{{field}}» окна эпика не принято',
 };
 
 /**

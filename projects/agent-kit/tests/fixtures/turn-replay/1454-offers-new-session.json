@@ -1,0 +1,13 @@
+{
+  "case": "SC-AK-1454",
+  "kind": "a new session proposed for the agent's own step",
+  "record": "the session of the plan, 15.11",
+  "task": 101,
+  "turns": [
+    { "role": "owner", "at": "2026-11-15T07:00:00Z", "owner": "<order:RT-101>" },
+    { "role": "agent", "at": "2026-11-15T07:30:00Z", "call": "Write", "file": "docs/tasks/RT-101-replay-task/plan.md", "code": 0 },
+    { "role": "agent", "at": "2026-11-15T07:31:00Z", "call": "Bash", "command": "git commit -q -F msg.txt", "code": 0 },
+    { "role": "agent", "at": "2026-11-15T07:32:00Z", "say": "Step 1.2 is better done by a new session; here is a prompt for it." }
+  ],
+  "next": { "owner": "<abuse>" }
+}

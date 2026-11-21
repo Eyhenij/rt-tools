@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { EpicWindowIntakeController } from './epic-window-intake.controller';
 import { MetricsIntakeController } from './metrics-intake.controller';
 import { ObservationRetentionService } from './observation-retention.service';
 import { ObservationsIntakeController } from './observations-intake.controller';
@@ -23,6 +24,7 @@ import { UsageReadController } from './usage-read.controller';
         SummaryIntakeController,
         ObservationsIntakeController,
         MetricsIntakeController,
+        EpicWindowIntakeController,
         SummariesReadController,
         UsageReadController,
     ],

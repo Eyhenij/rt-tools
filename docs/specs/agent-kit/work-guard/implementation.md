@@ -5,14 +5,14 @@ statement: a removed statement is removed together with its line.
 
 - **Application code is not edited while there is no task folder, no plan in it and no declared state.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:progress`
 - **What is judged is the declared transition, not the presence of files.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:state`
-- **The refusal names the mandatory action of the state that is declared.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:state_action`
-- **A folder taken apart by a commit of the branch lifts the requirement of the plan.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:folder_archived`
-- **The task folder goes into the branch by a commit, it does not live in one working tree.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:in_tree`
-- **A file in conflict while a merge stands is resolved without a task folder.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:merge_conflict_only`; scenarios SC-AK-1180, SC-AK-1181
+- **The refusal names the mandatory action of the state that is declared.** — `projects/agent-kit/assets/hooks/facts-flow.sh:rt_flow_state_action`
+- **A folder taken apart by a commit of the branch lifts the requirement of the plan.** — `projects/agent-kit/assets/hooks/facts-flow.sh:rt_flow_folder_archived`
+- **The task folder goes into the branch by a commit, it does not live in one working tree.** — `projects/agent-kit/assets/hooks/facts-flow.sh:rt_flow_in_tree`
+- **A file in conflict while a merge stands is resolved without a task folder.** — `projects/agent-kit/assets/hooks/facts-flow.sh:rt_flow_merge_conflict_only`; scenarios SC-AK-1180, SC-AK-1181
 - **In a second working copy the guard judges that copy, not the tree the session started in.** — `projects/agent-kit/assets/defaults/project.sh:rt_copy_relative` — the application code sign; the relative path of a command — `projects/agent-kit/assets/hooks/task-flow-context.sh:rt_tf_askdir`; scenarios SC-AK-1336, SC-AK-1337
 - **The agreement is demanded by the paths of the edit, not by an appraisal of the task.** — `projects/agent-kit/assets/hooks/task-flow-context.sh:rt_tf_candidates`
 - **The agreement is named by one of two kinds — a draft in the "proposed" directory or a domain spec.** — `projects/agent-kit/assets/hooks/task-flow-draft-guard.sh:draft`
-- **A named agreement must exist on the disk or in the history of the branch.** — `projects/agent-kit/assets/hooks/task-flow-draft-guard.sh:draft_path`
+- **A named agreement must exist on the disk or in the history of the branch.** — `projects/agent-kit/assets/hooks/facts-flow.sh:rt_fact_agreement`
 - **The bypass of the requirement of the agreement is the line about unchanged behaviour with the reason of the owner.** — `projects/agent-kit/assets/hooks/task-flow-draft-guard.sh:plan`
 - **An edit put by a shell command is judged on a par with an edit by a tool.** — `projects/agent-kit/assets/hooks/task-flow-context.sh:rt_tf_cmd`
 - **Removing a path that is not in the history does not count as an edit of the product.** — `projects/agent-kit/assets/hooks/task-flow-context.sh:rt_tf_removes`

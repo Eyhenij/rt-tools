@@ -95,5 +95,5 @@ rt_delivery_pull_draft() {
 $bases
 EOF
 
-    fault "a draft into «${base}»: the pipeline «${file##*/}» wakes for a request only into $(printf '%s' "$bases" | tr '\n' ' ' | sed 's/ $//'), so no run will come and the draft will wait for nothing. Open the request ready, without --draft, and set the reviewer in the same call."
+    unmet_class pr_create_draft "a draft into «${base}»: the pipeline «${file##*/}» wakes for a request only into $(printf '%s' "$bases" | tr '\n' ' ' | sed 's/ $//'), so no run will come and the draft will wait for nothing. Open the request ready, without --draft, and set the reviewer in the same call."
 }

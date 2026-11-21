@@ -4,7 +4,7 @@ kind: pattern
 rule: status-report
 description: Pattern of rule status-report. Load when answering the owner where the work stands. Ready-made calls for every cell: the branch and its commits, the PR state, the pipeline run checked against the head, the task on the board, the task order from the epic plan. A filled-in sample table is attached.
 ---
-<!-- rt-kit v0.37.1 · patterns/status-report-table.github.md · 8ff2c3c1a98e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · patterns/status-report-table.github.md · 51f6a03a99fb · правится надстройкой, не здесь -->
 
 # What the state is asked with and how it lands in the table
 
@@ -14,7 +14,7 @@ Pattern of the rule `status-report`. What must be true — the work-conduct law.
 
 - The owner asked where the work stands: "what is the status", "which epic", "what are you doing
   now".
-- The turn ends with an account of what was done, and it names the state of a PR or a run.
+- A reply names the state of a PR or a run.
 - The work runs under an epic, and the reply lists all its tasks.
 
 ## Calls

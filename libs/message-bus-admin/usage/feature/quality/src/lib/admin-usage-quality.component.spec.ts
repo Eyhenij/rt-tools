@@ -5,7 +5,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { QUALITY_PATH } from '@rt/message-bus-admin/usage/util';
-import { IQualityReport } from '@rt/message-bus-common';
+import { EQualityResultTile, IQualityReport, IQualityResultTile } from '@rt/message-bus-common';
 import { IDBStorageService, provideRtStorage, provideRtUtils } from '@rt-tools/core';
 import { RT_KIT_LOCALE } from '@rt-tools/ui-kit-v2';
 import { Observable, of } from 'rxjs';
@@ -37,7 +37,20 @@ class ColumnSettingsStub {
 
 function report(over: Partial<IQualityReport> = {}): IQualityReport {
     return {
-        rows: [{ resource: 'one-guard', refusals: 1, empty: 2, gateRefusals: 0, afterLoad: 0, wastedRuns: 1, wastedSeconds: 120, loss: 3 }],
+        rows: [
+            {
+                resource: 'one-guard',
+                refusals: 1,
+                empty: 2,
+                gateRefusals: 0,
+                afterLoad: 0,
+                wastedRuns: 1,
+                wastedSeconds: 120,
+                loss: 3,
+                recordRefusals: 0,
+                per100: null,
+            },
+        ],
         total: 1,
         page: 1,
         size: 20,
@@ -50,6 +63,20 @@ function report(over: Partial<IQualityReport> = {}): IQualityReport {
         repeats: { repeats: 0, fixes: 0, share: null, unnamed: 0 },
         completeness: { enrolled: 2, sent: 1, withOutcomes: 1, faults: [] },
         versions: ['0.35.0'],
+        result: {
+            tiles: Object.fromEntries(
+                Object.values(EQualityResultTile).map((tile: EQualityResultTile): [EQualityResultTile, IQualityResultTile] => [
+                    tile,
+                    { value: null, missing: 0 },
+                ])
+            ) as Record<EQualityResultTile, IQualityResultTile>,
+            takenHours: null,
+            ownerWords: null,
+            refusalsOfCalls: null,
+        },
+        milestones: [],
+        pairs: [],
+        epicWindows: [],
         ...over,
     };
 }

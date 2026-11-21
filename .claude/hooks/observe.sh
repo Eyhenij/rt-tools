@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.1 · hooks/observe.sh · 79c3a571d456 · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/observe.sh · b3763066c5a9 · правится надстройкой, не здесь
 # Recording observations about the rules layer. NOT a guard: it has no `rt-hook:` declaration and it
 # hooks into no agent event. The guards source it — the same way the gate sources the map.
 #
@@ -173,7 +173,7 @@ rt_send_fault_line() {
     mark="$dir/.marks/send.json"
     [ -f "$mark" ] || return 0
     jq -r --argjson now "$(date +%s)" \
-        'select(.fault != 0 and ($now * 1000 - .faultSince) > 86400000)
+        'select(.failure != 0 and ($now * 1000 - .failureSince) > 86400000)
          | "The numbers of this tree have not reached the intake: \(.reason). `agent-kit doctor` names the way out."' \
         "$mark" 2>/dev/null
     return 0

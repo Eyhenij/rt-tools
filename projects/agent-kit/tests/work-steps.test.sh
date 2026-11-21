@@ -10,7 +10,7 @@ echo "проверки: шаги замысла и отметки хода ра�
 
 WS_TREE="$(mktemp -d)"
 mkdir -p "$WS_TREE/tools" "$WS_TREE/.claude/rt-kit"
-cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/check-work-steps.mjs" "$WS_TREE/tools/"
+cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/check-work-steps.mjs" "$CHECKS/work-steps-lib.mjs" "$WS_TREE/tools/"
 printf '{\n    "tasksDir": "docs/tasks"\n}\n' > "$WS_TREE/.claude/rt-kit/checks.json"
 
 # Замысел фикстуры: два этапа, три шага. Он один на все пробы — расходится с ним ход работы.
@@ -138,6 +138,56 @@ cat > "$WS_TREE/docs/tasks/_template/plan.md" <<'PLAN'
 PLAN
 ws_progress _template '- [x] 1.1 <name of the first step>' '- [>] 1.2 <name of the second step>'
 report "SC-AK-1008 — образец не судится" "$(ws_code)" 0
+
+# --- SC-AK-1537 — строка проверки под шагом читается с любым из двух слов -----------------------
+ws_reset
+mkdir -p "$WS_TREE/docs/tasks/RT-9-nine"
+cat > "$WS_TREE/docs/tasks/RT-9-nine/plan.md" <<'PLAN'
+# Plan
+
+## Stages
+
+### 1. Первый
+
+- **Steps:**
+    1. поставить ярус
+       Проверка: `bash tests/one.sh | tail -1` → `ярус стоит`
+    2. завести пробы
+       Check: `grep -c proba tests/one.sh` → >= 2
+    3. записать статью
+- **Readiness sign:** ярус стоит
+
+### 2. Второй
+
+- **Steps:**
+    1. собрать
+       Check: `true` → exit 0
+PLAN
+ws_checks() {
+    (cd "$WS_TREE" && node --input-type=module -e "
+import { stepsOfPlan } from './tools/work-steps-lib.mjs';
+import { readFileSync } from 'node:fs';
+const steps = stepsOfPlan(readFileSync('docs/tasks/RT-9-nine/plan.md', 'utf8'));
+console.log(steps.map((s) => [s.number, s.command, s.expected].join(' | ')).join(' ; '));
+" 2>&1)
+}
+got="$(ws_checks)"
+report "SC-AK-1537 — проверка со словом «Проверка:» прочитана" \
+    "$(printf '%s' "$got" | grep -c '1.1 | bash tests/one.sh | tail -1 | `ярус стоит`')" 1
+report "SC-AK-1537 — проверка со словом «Check:» прочитана" \
+    "$(printf '%s' "$got" | grep -c '1.2 | grep -c proba tests/one.sh | >= 2')" 1
+report "SC-AK-1537 — шаг без строки проверки читается без неё" \
+    "$(printf '%s' "$got" | grep -c '1.3 |  | ')" 1
+report "SC-AK-1537 — проверка второго этапа принадлежит его шагу" \
+    "$(printf '%s' "$got" | grep -c '2.1 | true | exit 0')" 1
+
+# --- SC-AK-1538 — строка проверки не входит в имя шага ------------------------------------------
+report "SC-AK-1538 — шагов четыре, строки проверки шагами не считаются" \
+    "$(printf '%s' "$got" | tr ';' '\n' | grep -c '|')" 4
+ws_progress RT-9-nine '- [x] 1.1 поставить ярус' '- [x] 1.2 завести пробы' '- [>] 1.3 записать статью' '- [ ] 2.1 собрать'
+report "SC-AK-1538 — имена шагов сверяются без строки проверки" "$(ws_code)" 0
+ws_progress RT-9-nine '- [x] 1.1 поставить ярус Проверка: `bash tests/one.sh | tail -1`' '- [x] 1.2 завести пробы' '- [>] 1.3 записать статью' '- [ ] 2.1 собрать'
+report "SC-AK-1538 — имя со строкой проверки расходится с именем замысла" "$(ws_code)" 1
 
 rm -rf "$WS_TREE"
 suite_result "проверки: шаги замысла и отметки хода работы"

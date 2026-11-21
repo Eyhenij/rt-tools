@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Requires: rules/task-flow.md, hooks/deny-tail.sh, hooks/write-targets.sh
+# Requires: checks/decide.mjs, hooks/decide.sh, hooks/facts.sh, rules/task-flow.md, hooks/deny-tail.sh, hooks/write-targets.sh
 # Handover entry guard: a session started from a handover edits no file until the work-conduct rule
 # is loaded.
 #
@@ -50,7 +50,9 @@ case "$tool" in
     *) exit 0 ;;
 esac
 
-transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/null)"
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+transcript="$(rt_fact_transcript "$input")"
 [ -z "$transcript" ] && exit 0
 [ -f "$transcript" ] || exit 0
 
@@ -58,41 +60,20 @@ transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/nu
 # guard looks at both signs.
 rule="${RT_TASK_FLOW_RULE:-task-flow}"
 
-verdict="$(jq -s -r --arg rule "$rule" '
-    [.[] | select(.type == "user") | .message.content
-       | if type == "string" then . elif type == "array"
-         then (map(if type == "object" then (.text // "") else "" end) | join("\n")) else "" end] as $said
-    | [.[] | select(.type == "assistant") | (.message.content // [])[] | select(.type == "tool_use")
-       | ((.name // "") + " " + ((.input.skill // .input.command // "") | tostring))] as $used
-    | (($said | join("\n")) | test("handoff|передач[аи][[:space:]]+захода")) as $from_handoff
-    | (($used | join("\n")) | test("Skill[[:space:]]+" + $rule + "|skills/" + $rule)) as $loaded
-    | if ($from_handoff and ($loaded | not)) then "no-rule" else "fine" end
+# The facts this guard judges by: the session began from a handover, and the rule of work conduct is
+# loaded — by a call of the skill or a read of its file, as the record shows.
+from_handoff="$(rt_fact_from_handoff "$transcript")"
+rule_loaded="$(jq -s -r --arg rule "$rule" '
+    [.[] | select(.type == "assistant") | (.message.content // [])[] | select(.type == "tool_use")
+       | ((.name // "") + " " + ((.input.skill // .input.command // "") | tostring))]
+    | join("\n") | if test("Skill[[:space:]]+" + $rule + "|skills/" + $rule) then "yes" else "no" end
 ' "$transcript" 2>/dev/null)"
+[ "$from_handoff" = yes ] && [ "$rule_loaded" = no ] || exit 0
 
-[ "$verdict" = "no-rule" ] || exit 0
-
-reason="BLOCKED by handoff-entry-guard: the session began from a handover, and the rule of work conduct is not loaded for it.
-
-The handover was written by the previous session and is read by no check: everything standing in it is verified against the tree. The order of entry is four steps:
-
-    1. the rule of work conduct and the pattern of returning — by the first move;
-    2. the branch and the state of the work are read in the tree, not in the handover;
-    3. the numbers from the handover are recomputed on the current commit;
-    4. the next step is taken from the progress.
-
-Load the rule and repeat the edit."
-
-# The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
-# The file may not be laid out — then there is no tail, and the refusal reason stays as it is.
-# shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-deny_tail_text="$(rt_deny_tail "")"
-[ -n "$deny_tail_text" ] && reason="${reason}
-
-${deny_tail_text}"
-
-jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"handoff-entry-guard: the rule of work conduct is not loaded."}}\n'
+# The decision, the move and the text come from the decision table; the action is the class of
+# this call.
+facts="$(jq -cn --arg h "$from_handoff" --arg r "$rule_loaded" '{from_handoff:$h, rule_loaded:$r}')"
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/decide.sh" 2>/dev/null
+command -v rt_decide >/dev/null 2>&1 && rt_decide handoff-entry-guard.sh "?edit_code" "$facts" '{}' PreToolUse "$input"
 exit 0

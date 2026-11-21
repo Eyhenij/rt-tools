@@ -15,7 +15,9 @@
 # knowledge about it: the words of a refusal, in both languages a role answers in. A role outside the
 # table is counted by calls. Only the answer goes into the record, the text stays where it is. It is
 # read when the role ends, not when it is called: a role usually runs in the background, and at the
-# call its answer is only the fact of the launch.
+# call its answer is only the fact of the launch. A verdict carries the task of its moment: the key
+# of the branch, and on the main branch the epic number of the copy's assignment, read by
+# `checks/tree-assignment.mjs` where it is laid out.
 #
 # FAIL-OPEN: no input, no parser, no record — exit with zero and no output. This hook never refuses.
 
@@ -45,6 +47,24 @@ rt_called_name() {
 
 # The words of a verdict by role: the refusal first, because it holds the words of a pass. No line —
 # the role gives no verdict the report counts.
+# The task a verdict counts against: the task key of the branch at the moment of the verdict. On a
+# branch with no key — the main branch — it is the epic the tree assignment names for the copy, and
+# with none it is `none`: the report prints such a verdict under «без задачи».
+rt_verdict_task() {
+    local branch key checks epic
+    branch="$(git -C "$root" branch --show-current 2>/dev/null)"
+    key="$(printf '%s' "$branch" | sed -nE 's/^([A-Z]+-[0-9]+)(-.*)?$/\1/p')"
+    if [ -n "$key" ]; then
+        printf 'task=%s' "$key"
+        return 0
+    fi
+    checks="$(jq -r '.layout.checks // "tools"' "$root/.claude/rt-kit.json" 2>/dev/null)"
+    [ -n "$checks" ] && [ "$checks" != null ] || checks=tools
+    epic=''
+    [ -f "$root/$checks/tree-assignment.mjs" ] && epic="$(cd "$root" && node "$checks/tree-assignment.mjs" --assigned 2>/dev/null)"
+    if [ -n "$epic" ]; then printf 'epic=%s' "$epic"; else printf 'task=none'; fi
+}
+
 rt_refusal_words() {
     case "$1" in
         goal-critic) printf '%s' 'not met|partly met|не достигнут|не выполнен|частично' ;;
@@ -67,7 +87,9 @@ rt_role_answer() {
         printf '%s' "$answer"
         return 0
     fi
-    path="$(printf '%s' "$RT_HOOK_INPUT" | jq -r '.agent_transcript_path // empty' 2>/dev/null)"
+    # shellcheck disable=SC1091
+    command -v rt_fact_agent_transcript >/dev/null 2>&1 || . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+    path="$(rt_fact_agent_transcript "$RT_HOOK_INPUT")"
     [ -f "$path" ] || return 0
     tail -n 20 "$path" 2>/dev/null \
         | jq -c 'select(.message.content? | type == "array") | .message.content[]
@@ -107,7 +129,7 @@ if [ "$(printf '%s' "$RT_HOOK_INPUT" | jq -r '.hook_event_name // empty' 2>/dev/
     ended="$(printf '%s' "$RT_HOOK_INPUT" | jq -r '.agent_type // empty' 2>/dev/null)"
     name="$(rt_called_name "$root/.claude/agents/$ended.md" "$ended")"
     verdict="$(rt_verdict_of "$name")"
-    [ -z "$verdict" ] || rt_note role-verdict "res=$name" "sid=$sid" "verdict=$verdict"
+    [ -z "$verdict" ] || rt_note role-verdict "res=$name" "sid=$sid" "verdict=$verdict" $(rt_verdict_task)
     exit 0
 fi
 

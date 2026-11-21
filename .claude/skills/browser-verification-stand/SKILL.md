@@ -4,7 +4,7 @@ kind: pattern
 rule: browser-verification
 description: Pattern of rule browser-verification. Load when a stand from the production build is needed — the build of the site, the admin stand, a stand behind real nginx, signing in to the admin, finding out what sits on a port. Not for layout measurements — that is pattern browser-verification-measure.
 ---
-<!-- rt-kit v0.37.1 · patterns/browser-verification-stand.md · 4e9e4de2406b · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · patterns/browser-verification-stand.md · 4e9e4de2406b · правится надстройкой, не здесь -->
 
 # A stand from the production build
 

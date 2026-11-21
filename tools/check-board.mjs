@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.1 · checks/check-board.github.mjs · 677c72cd019b · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/check-board.github.mjs · 1e5d3b2a9cfc · правится надстройкой, не здесь
 /**
  * Audit of the work queue against what the delivery law requires of a task and its PR.
  *
@@ -317,21 +317,32 @@ try {
 // Production is audited against the main branch by the last successful rollout. A task leaves the
 // queue by a merge, but a merge is not yet production: where the rollout is started by hand, any
 // number of commits may lie between them, and there is nowhere to notice this from.
+let productionOffline = false;
+let hostFailed = false;
 if (!offline && DEPLOY_WORKFLOW) {
-    try {
-        const token = botToken() ?? undefined;
+    const token = botToken() ?? undefined;
+    productionStep(() => {
         const lag = deployLag(DEPLOY_WORKFLOW, MAIN_BRANCH, { token });
         if (lag === null) {
             report(`there was not a single rollout by «${DEPLOY_WORKFLOW}» — there is nothing to compare production against`);
+        } else if (lag.refused) {
+            // The host could not compare: a note, not a divergence — nothing was judged.
+            console.log(
+                `check-board: production was not compared with «${MAIN_BRANCH}» — the last rollout is ` +
+                    `${lag.sha.slice(0, 8)} of ${String(lag.at).slice(0, 10)}, the host answered: ${lag.refused}`
+            );
         } else if (lag.behind > 0) {
             report(
                 `production lags «${MAIN_BRANCH}» by ${lag.behind} commits: the last rollout is ${lag.sha.slice(0, 8)} of ${String(lag.at).slice(0, 10)}`
             );
         }
+    });
 
-        // Why production fell behind, the lag does not say: it is counted by the last SUCCESSFUL
-        // rollout, and "not started" and "failed" look the same through it. They lead to different
-        // things — the first is started, the second is read by its output and fixed.
+    // Why production fell behind, the lag does not say: it is counted by the last SUCCESSFUL
+    // rollout, and "not started" and "failed" look the same through it. They lead to different
+    // things — the first is started, the second is read by its output and fixed. It is asked in a
+    // step of its own: a lag the host could not measure does not hide a rollout that fell.
+    productionStep(() => {
         const deploy = lastDeploy(DEPLOY_WORKFLOW, { token });
         if (deploy.verdict === 'failure') {
             report(
@@ -339,12 +350,28 @@ if (!offline && DEPLOY_WORKFLOW) {
                     `the main branch is ahead of production, and merges on top will travel the same way — ${deploy.url}`
             );
         }
+    });
+}
+
+/**
+ * One request about production. No connection is a note, said once: the next step would only
+ * repeat it. Any other failure is a line of its own and the exit code 1, not a stack — and the audit
+ * goes on: what the queue and the next steps have judged is printed, not thrown away with it.
+ */
+function productionStep(step) {
+    if (productionOffline) {
+        return;
+    }
+    try {
+        step();
     } catch (error) {
         if (error instanceof OfflineError) {
             console.log(`check-board: production was not checked — ${error.message}`);
-        } else {
-            throw error;
+            productionOffline = true;
+            return;
         }
+        console.error(`check-board: production was not checked, the host failed — ${String(error.message ?? error)}`);
+        hostFailed = true;
     }
 }
 
@@ -418,6 +445,10 @@ if (problems.length > 0) {
     problems.forEach((problem) => console.error(`  ${problem}`));
     console.error('\nA task is created by the command npm run task:new — it does all four steps at once.');
     console.error('The task folder and taking it apart — the rule task-flow.');
+    process.exit(1);
+}
+
+if (hostFailed) {
     process.exit(1);
 }
 

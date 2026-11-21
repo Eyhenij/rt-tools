@@ -22,6 +22,7 @@ whole.
 - **An unchosen edition is judged on a par with the chosen one.** — `projects/agent-kit/tests/rules-review.test.sh:KINDS_WITH_SECTIONS`
 - **A resource without a mandatory section of its kind is a divergence.** — `projects/agent-kit/tests/rules-review.test.sh:missing_pitfalls`
 - **The set of sections is declared per kind and named by name, it is not derived from a sample.** — `projects/agent-kit/tests/rules-review.test.sh:sections_for`
+- **A section of a rule may stand in its cold part, under the same heading.** — `projects/agent-kit/tests/rules-review.test.sh:missing_sections`
 - **The section of the articles of a law is read under two names, English and Russian.** — `projects/agent-kit/assets/checks/check-specs.mjs:LAW_HEADINGS` — the suite of the package reads the same two names in `projects/agent-kit/tests/rules-review.test.sh:sections_for`; scenario SC-AK-906
 - **The sample of a kind is judged by the declared set on a par with the corpus.** — `projects/agent-kit/tests/rules-review.test.sh:template_gaps`
 - **A kind that has no set declared stays silent, it does not turn red.** — `projects/agent-kit/tests/rules-review.test.sh:KINDS_WITHOUT_SECTIONS`

@@ -249,4 +249,50 @@ expect_decision "SC-AK-759 — запись в настройку дерева �
 expect_decision "SC-AK-759 — команда без записи файла не судится" exam-guard.sh \
     "$(shell_in "$(transcript "$(say 'x')")" 'git status --short')" PASS
 
+# --- SC-AK-1588 — окно за порогом: правка progress проходит без экзамена --------------------------
+# Окно сверх порога пропускает только закрытие и запрещает саму роль экзаменатора. Экзамен,
+# держащий progress, называл бы ход, который запрещает окно.
+progress_in() {
+    jq -n --arg p "$1" --arg f "$2" \
+        '{session_id:"window-test",tool_name:"Edit",tool_input:{file_path:$f},transcript_path:$p}'
+}
+STOP_DIR="${TMPDIR:-/tmp}/claude-window-stop"
+mkdir -p "$STOP_DIR"
+rm -f "$STOP_DIR/window-test"
+expect_decision "SC-AK-1588 — без отметки окна правка progress держится экзаменом" exam-guard.sh \
+    "$(progress_in "$(transcript "$(say 'x')")" "docs/tasks/RT-1-x/progress.md")" deny
+: >"$STOP_DIR/window-test"
+expect_decision "SC-AK-1588 — окно за порогом: правка progress проходит" exam-guard.sh \
+    "$(progress_in "$(transcript "$(say 'x')")" "docs/tasks/RT-1-x/progress.md")" PASS
+expect_decision "SC-AK-1588 — окно за порогом: правка кода держится экзаменом" exam-guard.sh \
+    "$(progress_in "$(transcript "$(say 'x')")" "libs/x/src/lib/x.ts")" deny
+rm -f "$STOP_DIR/window-test"
+
+# --- SC-AK-1592 — окно за порогом: отказ экзамена сначала называет закрытие -----------------------
+# Отказ экзамена велит позвать роль экзаменатора, а окно за порогом этот вызов запрещает. Отказ
+# спрашивает окно и называет его ход — закрытие сессии. Ниже порога отказ прежний.
+filled_in() {
+    local p
+    p="$(transcript "$(say 'x')")"
+    jq -cn --argjson f "$1" '{type:"assistant",message:{usage:{input_tokens:$f,cache_creation_input_tokens:0,cache_read_input_tokens:0,output_tokens:0}}}' >>"$p"
+    jq -n --arg p "$p" --arg f "$2" \
+        '{session_id:"window-first",hook_event_name:"PreToolUse",tool_name:"Edit",tool_input:{file_path:$f,new_string:"x"},transcript_path:$p}'
+}
+export RT_WINDOW_TOKENS=200000 RT_WINDOW_WARN_PCT=40 RT_WINDOW_STOP_PCT=50
+expect_reason "SC-AK-1592 — окно за порогом: отказ экзамена называет сначала закрытие" exam-guard.sh \
+    "$(filled_in 120000 libs/x/src/lib/x.ts)" 'this comes first — BLOCKED by window-fill-guard'
+expect_reason "SC-AK-1592 — ниже порога отказ экзамена зовёт экзаменатора" exam-guard.sh \
+    "$(filled_in 20000 libs/x/src/lib/x.ts)" 'Call the role strict-teacher'
+expect_no_reason "SC-AK-1592 — ниже порога окно не названо" exam-guard.sh \
+    "$(filled_in 20000 libs/x/src/lib/x.ts)" 'BLOCKED by window-fill-guard'
+# Первый вызов за порогом: окно ещё ни разу не отказало, отметки нет — экзамен спрашивает окно сам.
+rm -f "$STOP_DIR/window-first"
+expect_decision "SC-AK-1588 — первый вызов за порогом: правка progress проходит без отметки" exam-guard.sh \
+    "$(filled_in 120000 docs/tasks/RT-1-x/progress.md)" PASS
+rm -f "$STOP_DIR/window-first"
+expect_decision "SC-AK-1588 — ниже порога без отметки правка progress держится экзаменом" exam-guard.sh \
+    "$(filled_in 20000 docs/tasks/RT-1-x/progress.md)" deny
+unset RT_WINDOW_TOKENS RT_WINDOW_WARN_PCT RT_WINDOW_STOP_PCT
+rm -f "$STOP_DIR/window-first"
+
 suite_result "гард экзамена"

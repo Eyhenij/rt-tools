@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.1 · hooks/conscience-guard.sh · f1e71e6e05a1 · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/conscience-guard.sh · 8b300dcef3ba · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: agents/conscience.md, hooks/roles.sh, hooks/deny-tail.sh
 # Guard of conscience: a turn in which the conscience role found a repeat of an analysed miss does
@@ -44,7 +44,9 @@ command -v rt_role_off >/dev/null 2>&1 && rt_role_off conscience && exit 0
 active="$(printf '%s' "$input" | jq -r '.stop_hook_active // false' 2>/dev/null)"
 [ "$active" = "true" ] && exit 0
 
-transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/null)"
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+transcript="$(rt_fact_transcript "$input")"
 [ -z "$transcript" ] && exit 0
 [ -f "$transcript" ] || exit 0
 
@@ -126,28 +128,10 @@ verdict="$(printf '%s\n' "$found" | head -1)"
 
 detail="$(printf '%s\n' "$found" | tail -n +2)"
 
-reason="BLOCKED by conscience-guard: the conscience found in this turn a repeat of a miss already analysed, and nothing was done about it.
-
-${detail}
-
-A turn does not end at the finding. Do one of three things in this same turn: fix the work, create an analysis of the incident if the mechanism is new, or name the repeat to the owner in words — what repeats and how it ended last time.
-
-The finding is wrong — then say so to the owner: a false finding also costs a turn, and silence does not fix it.
-
-The guard judges one turn: the next session is not refused."
-
-# The shared deny tail: two lawful moves. The file may not be laid out — then there is no tail, and
-# the refusal reason stays as it is.
-# shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-deny_tail_text="$(rt_deny_tail "")"
-[ -n "$deny_tail_text" ] && reason="${reason}
-
-${deny_tail_text}"
-
-jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-    || printf '{"decision":"block","reason":"conscience-guard: a repeat of an analysed miss is found — analyse it or name it to the owner."}\n'
-
+# The decision and the words come from the decision table; the hook names what the conscience found.
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/decide.sh" 2>/dev/null
+command -v rt_decide >/dev/null 2>&1 && rt_decide conscience-guard.sh end_turn \
+    '{"conscience_repeat_found":"yes","repeat_dealt_with":"no","stop_hook_active":"no"}' \
+    "$(jq -cn --arg d "$detail" '{detail:$d}')" Stop
 exit 0

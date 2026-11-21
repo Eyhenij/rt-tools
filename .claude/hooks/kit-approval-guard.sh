@@ -11,7 +11,8 @@
 #   gh workflow run publish-ui-kit-v2.yml — every merge into main since the last version bump.
 #
 # The decision is the check's own, `tools/check-kit-approval.mjs`: the guard only recognises the
-# call and passes the refusal on.
+# call and passes the refusal on. A record in place on `gh pr create` opens the owner's window with
+# its two quotes — the owner confirms them there.
 #
 # FAIL-OPEN: no input, no jq, no node, no check file — pass.
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -42,7 +43,19 @@ if [ "$mode" = "branch" ]; then
 else
     out="$(cd "$root" && node "$check" --publish "$mode" 2>&1)"
 fi
-[ $? -eq 0 ] && exit 0
+code=$?
+
+# A record in place is confirmed by the owner, not by a search of the conversations: the window shows
+# both quotes, and the owner allows the PR or forbids it. The check no longer reads the records of
+# the conversations — it missed answers given in other words and on another machine.
+if [ "$code" -eq 0 ]; then
+    [ "$mode" = "branch" ] || exit 0
+    quotes="$(cd "$root" && node "$check" --quotes 2>/dev/null)"
+    [ -n "$quotes" ] || exit 0
+    reason="The branch carries a visible kit edit, and its approval record says: ${quotes}. Allow the PR if these are your words about this mockup and this showcase; forbid it otherwise."
+    jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"ask",permissionDecisionReason:$r}}'
+    exit 0
+fi
 
 tail_text="$(rt_deny_tail 2>/dev/null)"
 reason="BLOCKED by kit-approval: ${out} ${tail_text}"

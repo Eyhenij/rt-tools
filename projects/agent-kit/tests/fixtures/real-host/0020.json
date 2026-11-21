@@ -1,0 +1,17 @@
+{
+ "args": [
+  "pr",
+  "list",
+  "--state",
+  "open",
+  "--limit",
+  "200",
+  "--json",
+  "number,title,headRefName,headRefOid,isDraft,body,mergeable,baseRefName,author"
+ ],
+ "token": "machine",
+ "code": 0,
+ "stdout": "[]",
+ "stderr": "",
+ "json": []
+}

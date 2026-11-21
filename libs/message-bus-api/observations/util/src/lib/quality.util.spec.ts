@@ -34,6 +34,7 @@ function report(over: Partial<IQualityInput>): IQualityReport {
         fresh: [],
         records: [],
         firstSeen: [],
+        windows: [],
         ...over,
     });
 }

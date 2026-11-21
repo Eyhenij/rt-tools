@@ -4,7 +4,7 @@ kind: rule
 law: autonomous-work
 description: Rule under the autonomous-work law. Load when the owner has left and asked for unattended work — a chain of branches, a default instead of a question, local work with nothing pushed outside, a list of what was done by morning. Pattern autonomous-work-run. One piece of work — rule task-flow.
 ---
-<!-- rt-kit v0.37.1 · rules/autonomous-work.md · 98eaf517d281 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · rules/autonomous-work.md · 33fc91f50591 · правится надстройкой, не здесь -->
 
 # Autonomous work — how it works here
 
@@ -102,8 +102,8 @@ flowchart TD
 
 Nothing checks the session's time boundary: the command writes it into the head of the list, and
 the session ends at it or by the owner's word; a queue emptied earlier ends it with the list. A
-turn-exit guard that holds a working turn under an open epic does not know the boundary either:
-the command names the lawful last turn. The
+turn-exit guard does not know the boundary either: it releases a working turn at the end of the
+scenario or on the owner's stop word, and the command says so. The
 ban on what is visible from outside, the chain's base, a written default and a readiness command
 named before the stage are held the same way — by the rule, not by a guard: the push command is no
 different from the one made by day.

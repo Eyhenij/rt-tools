@@ -40,7 +40,7 @@ right. The file lies next to the plan of the epic, `docs/plans/cargo-triage-sept
   through by the bypass line. **Address:** rules layer — the guard lets through a switch to the
   branch of the finished epic and a request opened from it.
 - **The guard of the end of a turn is at its length limit, and its tiers land in the file of the
-  epic tiers.** Two tiers in a row went to `turn-exit-epic.sh` for want of room, and the file name
+  epic tiers.** Two tiers in a row went to the file of the epic tiers for want of room, and the file name
   no longer says what lies in it. **Address:** rules layer — the state tiers move to a file of their
   own before the next one.
 - **The clean-database step of the pipeline reads the container as ready before the server is.**

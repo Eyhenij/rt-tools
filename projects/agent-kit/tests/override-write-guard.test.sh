@@ -90,4 +90,19 @@ exit_code_of "пустой вход пропускается" ''
 exit_code_of "неразбираемый вход пропускается" 'не json'
 exit_code_of "правка по месту гарду безразлична" "$(jq -n --arg d "$TREE" '{session_id:"tests",tool_name:"Edit",tool_input:{file_path:"x"},cwd:$d}')"
 
+# Ход, названный отказом, — правка раздела надстройки, и её держит гейт, пока её правило не
+# загружено: отказ называет загрузку правила в том же тексте.
+mkdir -p "$TREE/.claude/skills/spec-driven"
+printf -- '---\nname: spec-driven\nkind: rule\n---\n' > "$TREE/.claude/skills/spec-driven/SKILL.md"
+# Правило длиннее предела хозяина: гейт не кладёт его в заход сам и держит ход до загрузки.
+printf '%010000d\n' 0 >> "$TREE/.claude/skills/spec-driven/SKILL.md"
+gate_session_reset
+report "правку раздела держит гейт — отказ называет правило" \
+    "$(run "$(write_in .claude/rt-kit/overrides/rules/probe.md)" | jq -r '.hookSpecificOutput.permissionDecisionReason' | grep -c 'load the rule «spec-driven» by the tool Skill first')" 1
+gate_session_load spec-driven
+report "правило загружено — ход назван один" \
+    "$(run "$(write_in .claude/rt-kit/overrides/rules/probe.md)" | jq -r '.hookSpecificOutput.permissionDecisionReason' | grep -c 'held by the rules gate')" 0
+gate_session_cleanup
+unset TMPDIR
+
 suite_result "гард затирания надстройки"

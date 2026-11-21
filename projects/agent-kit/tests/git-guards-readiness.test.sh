@@ -393,4 +393,16 @@ dlv_reason "SC-AK-390 — и отбивается именно колонкой"
     'gh pr create --title "[RT-91] Сделано" --body x' 'stands in the column «Backlog»'
 rm -rf "$COLUMN_BOTH"
 
+# Разбор папки задачи кончается коммитом, а коммит правки кода без её документа отбивает гард
+# документов. Отказ спрашивает соседей о названном коммите и называет их ход раньше.
+FOLDER_DOCLESS="$(fixture_repo_branched main RT-92-folder)"
+fixture_commit "$FOLDER_DOCLESS" docs/tasks/RT-92-folder/plan.md 'замысел' 'docs: замысел'
+mkdir -p "$FOLDER_DOCLESS/libs/x" "$FOLDER_DOCLESS/docs/specs/x"
+printf '# Domain x\n' > "$FOLDER_DOCLESS/docs/specs/x/spec.md"
+printf 'syntax = 1;\n' > "$FOLDER_DOCLESS/libs/x/a.proto"
+git -C "$FOLDER_DOCLESS" add libs/x/a.proto 2>/dev/null
+dlv_reason "папка задачи: сначала назван ход гарда документов" "$FOLDER_DOCLESS" \
+    'gh pr create --title "[RT-92] Сделано" --body x' 'commit it by the last commit .* this comes first — BLOCKED: the commit edits code but not the document'
+rm -rf "$FOLDER_DOCLESS"
+
 suite_result "готовность к поставке"

@@ -61,5 +61,16 @@ rt_delivery_merged() {
     _merged="$(cd "$root" && rt_pull_merged "$_target" 2>/dev/null)" || return 0
     [ -n "$_merged" ] || return 0
 
-    deny "BLOCKED: the PR #${_merged} of the branch «${_target}» is merged, and the branch has no open PR. The host deleted the branch with the merge, and this push recreates it with commits nobody will merge. Take a new branch from the fresh base and move the commits there: git fetch origin && git checkout -b <new branch> origin/<base> && git cherry-pick <commits>."
+    # The move named below is new work: a task and its branch. Both are refused while a conflicting
+    # request of one's own stands or the copy has no assignment, so those are asked first and named
+    # in place of the creation.
+    fact branch_pr_merged yes
+    command -v rt_delivery_conflict >/dev/null 2>&1 && rt_delivery_conflict 'moving the commits of a merged branch into a new task'
+    faults=''
+    command -v rt_assignment_unmet >/dev/null 2>&1 && rt_assignment_unmet '' 'a new task for these commits'
+    # The words after the first sentence: the misses that refuse taking the new task, or the way to it.
+    _rest="Create a new task for these commits — ${task_new:-npm run task:new} — then take its branch from the fresh base and move the commits there: git fetch origin && git checkout -b <task branch> origin/<base> && git cherry-pick <commits>."
+    [ -n "$faults" ] && _rest="The commits move into a new task, and taking it is refused now:
+${faults}"
+    refuse push "$(jq -cn --arg m "$_merged" --arg t "$_target" --arg r "$_rest" '{merged:$m, target:$t, rest:$r}')"
 }

@@ -418,18 +418,23 @@ one by
 
 Covered: `projects/agent-kit/tests/checks-board-long-work.test.sh`.
 
-### SC-AK-824 — a rollout that fell in the check of the work queue
+### SC-AK-1796 — a comparison the host could not build is a note
 
-Given the last rollout ended in failure
+Given the host refuses to compare the last rollout with the main branch: «result of a timeout»
 When the check of the work queue is run
-Then it names it by a line of its own with a reference to the run: the main branch is ahead of
-production
+Then it prints a note with the commit and the day of the last rollout and the words of the host, the
+note is not a divergence, and the line of the last rollout and the count follow it
 
-Given the rollout is still in progress
+Given the comparison meets a gone commit, an HTTP 500 or another 422, or the rollout request fails
 When the same check is run
-Then it does not count as a divergence: the rollout may still end in success
+Then the check names the failure by one line with the words of the host, without a stack, prints the
+divergences already counted and ends with the exit code 1
 
-Covered: `projects/agent-kit/tests/checks-board-long-work.test.sh`.
+Given there is no connection
+When the same check is run
+Then production gets one note, not one per request
+
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
 ### SC-AK-936 — the command creates an epic
 

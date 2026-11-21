@@ -43,15 +43,31 @@ done
 [ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
 command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
 
-# shellcheck disable=SC1090
-[ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { printf ''; }
+# The decision and the words come from the decision table. A refusal that names an edit of another
+# file hands the decider the facts its neighbours judge that edit by — the exam, the window, the rules
+# gate, the handover and the course of work — and the decider puts first what they want.
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/decide.sh" 2>/dev/null
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/facts.sh" 2>/dev/null
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/facts-flow.sh" 2>/dev/null
 
-deny() {
-
-    reason="$1 $(rt_deny_tail "$2")"
-    jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"The guard of the place of the edit."}}\n'
+# refuse <action> <own facts JSON> <params JSON> [file of the named edit]
+refuse() {
+    local move='{}' flow='{"facts":{},"params":{}}' named
+    command -v rt_decide >/dev/null 2>&1 || exit 0
+    if [ -n "${4:-}" ]; then
+        named="$(jq -cn --arg f "$4" '{file_path:$f,old_string:"",new_string:""}')"
+        move="$(rt_fact_move Edit "$named" "$input")"
+        if command -v rt_fact_flow_of >/dev/null 2>&1; then
+            flow="$(rt_fact_flow_of Edit "$named" "$input")"
+            [ -n "$flow" ] || flow='{"facts":{},"params":{}}'
+        fi
+    fi
+    rt_decide "$RT_GUARD_NAME.sh" "$1" \
+        "$(jq -cn --argjson m "$move" --argjson f "$flow" --argjson o "$2" '$m + $f.facts + $o')" \
+        "$(jq -cn --argjson f "$flow" --argjson p "$3" '$f.params + $p')" PreToolUse "$input"
     exit 0
 }
 
@@ -88,6 +104,9 @@ esac
 [ -z "$candidates" ] && exit 0
 
 root="${CLAUDE_PROJECT_DIR:-.}"
+root_abs="$(cd "$root" 2>/dev/null && pwd -P)"
+[ -n "$root_abs" ] || root_abs="$root"
+
 
 # The directory of package sources in this tree. Only the tree that carries the package has one; a
 # consumer has no source at all, and has a single address for an edit — the override.
@@ -106,25 +125,32 @@ while IFS= read -r candidate; do
     # turns a report into a statement of the one who edited it. Only the guards write here.
     case "$candidate" in
         */.claude/rt-kit/observations/*)
-            deny "BLOCKED by rule-source-guard: «${candidate#"$root"/}» lies in the observations directory, and only the guards write there. An edit by hand makes the numbers of the package a statement of the one who wrote them." \
-                "the way out is to do the work the observation records, not to write the observation"
+            refuse edit_observations '{}' "$(jq -cn --arg p "${candidate#"$root"/}" '{path:$p}')"
             ;;
         */.claude/rt-kit.json)
             # Both keys decide what the numbers of the package are, and the one those numbers judge
             # must not switch them off. The owner edits them by hand.
             if printf '%s' "$input" | jq -r '.tool_input | tostring' 2>/dev/null | grep -qE '(^|[^[:alnum:]_-])(send|observe)([^[:alnum:]_-]|$)'; then
-                deny "BLOCKED by rule-source-guard: the keys «send» and «observe» of «${candidate#"$root"/}» decide what the numbers of the package are, and a session does not edit them." \
-                    "the way out is to name the change to the owner: they edit these two keys by hand"
+                refuse edit_rtkit_send '{}' "$(jq -cn --arg p "${candidate#"$root"/}" '{path:$p}')"
             fi
             ;;
     esac
     [ -f "$candidate" ] || continue
+    # A laid-out file is a file of this tree. One outside it — a scratch copy, a neighbouring
+    # repository — is laid out by nobody here, even when it quotes a header. The two checks above
+    # judge by the end of the path and stay before this one.
+    case "$candidate" in
+        "$root"/* | "$root_abs"/*) ;;
+        *) continue ;;
+    esac
 
     # The header stands at the beginning of the file, but not on the first line: in a script `#!`
     # pushes it down, in a rule the title with the name and the kind of the resource does. Ten
     # lines are enough for both, and the whole file must not be read: the guard stands on every
     # edit.
-    resource="$(head -12 "$candidate" 2>/dev/null | sed -nE 's/.*rt-kit v[^ ]+ · ([^ ]+) · [0-9a-f]+.*/\1/p' | head -1)"
+    # Only a comment line of the header form counts: a file that quotes the header inside a string
+    # or a sentence is not laid out.
+    resource="$(head -12 "$candidate" 2>/dev/null | sed -nE 's/^[[:space:]]*(<!--|\/\/|#|\/\*|\*)[[:space:]]*rt-kit v[^ ]+ · ([^ ]+) · [0-9a-f]+.*/\2/p' | head -1)"
     [ -z "$resource" ] && continue
 
     # A file in conflict is skipped on a par with a removed one. Resolving a conflict does not
@@ -148,19 +174,26 @@ while IFS= read -r candidate; do
         *.md) override_way="an edit true only to this tree goes to the override .claude/rt-kit/overrides/${resource} — it merges by the section «## » and outlives the layout" ;;
         *) override_way="there is no override by sections for a resource of this kind: it has no «## » sections at all, and the edit goes into the package itself" ;;
     esac
+    said="$(jq -cn --arg p "${candidate#"$root"/}" --arg r "$resource" --arg w "$override_way" '{path:$p, resource:$r, override_way:$w}')"
 
     if [ -n "$sources" ] && [ -f "$root/$sources/$resource" ]; then
-        deny "BLOCKED by rule-source-guard: «${candidate#"$root"/}» is laid out by the package, and an edit in its place is lost on the next layout — and until then the layout refuses this file whole, and the price is paid by whoever edits a neighbouring resource that day. The resource is «${resource}». Edit the source: ${sources}/${resource} — then build the package and lay it out." \
-            "$override_way"
+        refuse edit_laid_out '{"package_source":"present"}' \
+            "$(printf '%s' "$said" | jq -c --arg s "$sources/$resource" '. + {source:$s}')" "$root/$sources/$resource"
     fi
 
+    # The override merges by the section «## »; a resource of another kind has no override at all.
     case "$resource" in
-        *.md) where="Edit the override: .claude/rt-kit/overrides/${resource} — it merges by the section «## » and outlives the layout." ;;
-        *) where="A resource of this kind has no override by sections — it has no «## » sections at all. The edit goes into the package itself and arrives here by a new edition." ;;
+        *.md)
+            refuse edit_laid_out '{"package_source":"absent"}' \
+                "$(printf '%s' "$said" | jq -c --arg w "Edit the override: .claude/rt-kit/overrides/${resource} — it merges by the section «## » and outlives the layout." '. + {where:$w}')" \
+                "$root/.claude/rt-kit/overrides/${resource}"
+            ;;
+        *)
+            refuse edit_laid_out '{"package_source":"absent"}' \
+                "$(printf '%s' "$said" | jq -c --arg w "A resource of this kind has no override by sections — it has no «## » sections at all. The edit goes into the package itself and arrives here by a new edition." '. + {where:$w}')" \
+                "$candidate"
+            ;;
     esac
-
-    deny "BLOCKED by rule-source-guard: «${candidate#"$root"/}» is laid out by the package @rt-tools/agent-kit, and an edit in its place is lost on the next layout. The resource is «${resource}». ${where}" \
-        "what is true of any tree is edited in the package itself and arrives here by a new edition"
 done <<EOF
 $candidates
 EOF

@@ -25,7 +25,7 @@ const PAGE: IPageModel = { pageNumber: 1, pageSize: 20, totalCount: 137 };
 @Component({
     selector: 'admin-list-page-host',
     template: `
-        <admin-list-page qaPrefix="postmortems" hint="Что и почему сломалось" title="Разборы происшествий">
+        <admin-list-page qaPrefix="postmortems" hint="Что и почему сломалось" title="Разборы происшествий" [fit]="true">
             <ng-template adminListToolbarLeft>
                 <span qa-dataid="postmortems-filter">отбор раздела</span>
             </ng-template>
@@ -154,6 +154,10 @@ describe('AdminListPageComponent', () => {
         expect(fixture.debugElement.query(By.css('[qa-dataid="postmortems-fault"]'))).toBeNull();
     });
 
+    it('раздел, попросивший таблицу по ширине экрана, получает модификатор зоны таблицы', () => {
+        expect(fixture.debugElement.query(By.css('.admin-page__scroll--fit'))).not.toBeNull();
+    });
+
     it('над таблицей стоит сказанное обо всём списке сразу', () => {
         expect(textOf(fixture, 'postmortems-notice')).toBe('сказанное обо всём списке');
     });
@@ -209,6 +213,11 @@ describe('AdminListPageComponent', () => {
         beforeEach(() => {
             bare = TestBed.createComponent(BareHostComponent);
             bare.detectChanges();
+        });
+
+        it('без просьбы о ширине таблица уходит в прокрутку вбок, как прежде', () => {
+            expect(bare.debugElement.query(By.css('.admin-page__scroll'))).not.toBeNull();
+            expect(bare.debugElement.query(By.css('.admin-page__scroll--fit'))).toBeNull();
         });
 
         it('SC-MB-113 — незанятое место над таблицей высоты не занимает', () => {

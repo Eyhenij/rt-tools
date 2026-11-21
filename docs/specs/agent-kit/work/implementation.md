@@ -19,7 +19,7 @@ needed sentence — and the statement stays green when the text of the role itse
 - **The folder is looked for by the name of the branch whole, together with the slash.** — `projects/agent-kit/assets/hooks/git-guard-delivery-folder.sh:rt_folder_in_branch`
 - **A tree that set no directory of tasks gets no requirement.** — `projects/agent-kit/assets/defaults/project.sh:RT_TASKS_DIR`
 - **A task left in the first column of the work queue is not ready for delivery.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:backlog_column`
-- **The column is asked about where it should already have been moved.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:judge_column`
+- **The column is asked about where it should already have been moved.** — `projects/agent-kit/assets/hooks/git-guard-delivery-task.sh:judge_column`
 - **The name of the first column is named by the tree, and without it the column is not judged.** — `projects/agent-kit/assets/defaults/project.sh:RT_BOARD_BACKLOG`
 - **The draft is not lifted while the PR has no review.** — `projects/agent-kit/assets/hooks/git-guard-delivery-draft.sh:pull_ref`
 - **The draft is not lifted from a PR that does not merge either.** — `projects/agent-kit/assets/hooks/git-guard-delivery-draft.sh:conflicting`
@@ -67,5 +67,8 @@ needed sentence — and the statement stays green when the text of the role itse
 - **What counts as a record in the line is a row where both the word of the mark and the number of the task stand.** — `projects/agent-kit/assets/checks/board-long-work.github.mjs:markedRows`
 - **A rollout that fell is named apart from a production that lags.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:lastDeploy` — scenario SC-AK-824
 - **The last successful rollout is looked for among the latest runs, not by the status filter of the hosting.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:deployLag` — the request carries `per_page=20` and no `status`, the first run with the conclusion `success` is taken; scenario SC-AK-1213
+- **The lag of production is counted by a comparison that builds no diff.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:commitsBehind` — the query `ref.compare(headRef).behindBy`; scenario SC-AK-1600
+- **A comparison the host could not build is a note, not a divergence.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:COMPARISON_REFUSED` — scenario SC-AK-1796
+- **A failure of a request about production is a line and the exit code 1, not a stack.** — `projects/agent-kit/assets/checks/check-board.github.mjs:productionStep` — scenario SC-AK-1796
 - **A rollout in progress does not count as a divergence.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:lastDeploy` — an unfinished run gives back the verdict "running", and there is no line about it
 - **A tree that named no mark or no directory of the lines gets silence, not a refusal.** — `projects/agent-kit/assets/checks/board-long-work.github.mjs:LONG_LABEL`

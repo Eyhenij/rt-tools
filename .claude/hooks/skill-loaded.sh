@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.1 · hooks/skill-loaded.sh · 8e19cffac365 · правится надстройкой, не здесь
-# rt-hook: PostToolUse Skill
-# The record of a loaded rule. PostToolUse on the `Skill` tool.
+# rt-kit v0.38.0 · hooks/skill-loaded.sh · be9659c2973d · правится надстройкой, не здесь
+# rt-hook: PostToolUse Skill|Read
+# The record of a loaded rule. PostToolUse on the `Skill` tool and on a read of a rule file.
 #
 # The gate has to know whether a rule is loaded or not, and it has nobody to ask: the tool does not
 # tell about its past calls. So the load is recorded here, per session.
@@ -21,11 +21,26 @@ input="$RT_HOOK_INPUT"
 
 sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
 skill="$(printf '%s' "$input" | jq -r '.tool_input.skill // empty' 2>/dev/null)"
+# A read of a rule file by the tool `Read` is a load too: the gate names that read for a rule
+# longer than the host limit, and for a rule created after the session began the registry of the
+# tool `Skill` does not know the name. Only the rule file itself counts, not its companion.
+if [ -z "$skill" ]; then
+    read_path="$(printf '%s' "$input" | jq -r 'select(.tool_name == "Read") | .tool_input.file_path // empty' 2>/dev/null)"
+    rules_dir="${RT_RULES_DIR:-.claude/skills}"
+    case "$read_path" in
+        */"$rules_dir"/*/SKILL.md)
+            skill="${read_path%/SKILL.md}"
+            skill="${skill##*/}"
+            ;;
+    esac
+fi
 [ -z "$skill" ] && exit 0
 
+# A subagent's load lands in the subagent's own record: its context is not the parent's.
+agent="$(printf '%s' "$input" | jq -r '.agent_id // empty' 2>/dev/null)"
 dir="${TMPDIR:-/tmp}/claude-skill-gate"
 mkdir -p "$dir" 2>/dev/null || exit 0
-printf '%s\n' "$skill" >> "$dir/${sid}.loaded" 2>/dev/null
+printf '%s\n' "$skill" >> "$dir/${agent:-$sid}.loaded" 2>/dev/null
 
 # The same load at a second address — the tree's observations. The record above lives until context
 # compaction and dies with it: it answers the gate's question "is it loaded", and nothing else.

@@ -9,7 +9,7 @@ import { join } from 'node:path';
 
 import { chosenEntries } from './cascade.js';
 import { IEntryOfCatalog, readCatalog } from './catalog.js';
-import { IConfig, PITFALLS_FILE, SKILL_FILE, SKILL_KINDS, TKind } from './config.js';
+import { COLD_PART, IConfig, PITFALLS_FILE, SKILL_FILE, SKILL_KINDS, TKind } from './config.js';
 
 export interface IAsset {
     /** Идентификатор: `laws/application/money.md`. Он же путь надстройки и ключ в `only` и `skip`. */
@@ -43,7 +43,13 @@ export function targetOf(entry: Pick<IEntryOfCatalog, 'id' | 'kind' | 'name'>, l
     // Холодная часть ложится в каталог своего правила и под своим именем: правило читается как
     // `<имя>/SKILL.md`, а её читают отдельно и по требованию — `<имя>/pitfalls.md`.
     if (entry.kind === 'pitfalls') {
-        return join(layout[entry.kind], entry.name, PITFALLS_FILE);
+        // A cold part that outgrew the size limit goes on in a second file: `<имя>.2.md` lands as
+        // `<имя>/pitfalls-2.md` next to the first.
+        const part: RegExpExecArray | null = COLD_PART.exec(entry.name);
+
+        return part
+            ? join(layout[entry.kind], part[1], PITFALLS_FILE.replace(/\.md$/, `-${part[2]}.md`))
+            : join(layout[entry.kind], entry.name, PITFALLS_FILE);
     }
 
     return SKILL_KINDS.includes(entry.kind)

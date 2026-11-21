@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.1 · hooks/push-set.sh · 7c074df7d68b · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/push-set.sh · ef6be49a94e4 · правится надстройкой, не здесь
 # The gate set before a push, one way for both who run it. NOT a guard: it has no `rt-hook:`
 # declaration and hooks into no agent event. The session guard of the push and the git hook
 # `pre-push` source it and call its functions.
@@ -42,6 +42,9 @@ rt_push_set_profile() {
     command -v rt_push_set_over_budget >/dev/null 2>&1 || rt_push_set_over_budget() { return 0; }
     command -v rt_push_mark_drop >/dev/null 2>&1 || rt_push_mark_drop() { return 0; }
     command -v rt_push_select >/dev/null 2>&1 || rt_push_select() { cat; }
+    command -v rt_push_subjects >/dev/null 2>&1 || rt_push_subjects() { cat >/dev/null; }
+    command -v rt_push_subject_of >/dev/null 2>&1 || rt_push_subject_of() { printf unknown; }
+    command -v rt_push_note_not_run >/dev/null 2>&1 || rt_push_note_not_run() { return 0; }
     # The line of a run for the metrics. No file — the set runs and records nothing.
     # shellcheck disable=SC1091
     [ -f "$hooks_dir/metric-marks.sh" ] && . "$hooks_dir/metric-marks.sh" 2>/dev/null
@@ -74,10 +77,14 @@ rt_push_set_base() {
 # named in `rt_push_set_ahead` instead of being started. The git hook has no such limit, leaves the
 # variable empty and runs the step itself.
 rt_push_set_run() {
-    local base="$1" check out status key_before skip_code="${RT_SKIP_CODE:-7}" sign started set_started set_took set_over over marked=""
+    local base="$1" check out status key_before skip_code="${RT_SKIP_CODE:-7}" sign started set_started set_took set_over over marked="" subjects
     case "$skip_code" in '' | 0 | 1 | *[!0-9]*) skip_code=7 ;; esac
     command -v rt_push_check_heavy >/dev/null 2>&1 || rt_push_check_heavy() { return 1; }
     sign="$(rt_tree_sign .)"
+    # Whether the change touched the subject of each step, for the run lines; a step the selection
+    # drops leaves a line of its own.
+    subjects="$(rt_push_checks "$base" | rt_push_subjects "$base")"
+    rt_push_note_not_run "$sign" "$base" "$subjects"
 
     rt_push_set_failed=""
     rt_push_set_output=""
@@ -120,16 +127,16 @@ rt_push_set_run() {
             rt_push_mark_put "$check" "$base" "$key_before"
             marked="${marked}${marked:+
 }${check}"
-            rt_run_note "$sign" "$started" green "$check"
+            rt_run_note "$sign" "$started" green "$check" "$base" "$(rt_push_subject_of "$subjects" "$check")"
             continue
         fi
         if [ "$status" -eq "$skip_code" ]; then
             rt_push_set_skipped="${rt_push_set_skipped}${rt_push_set_skipped:+
 }${check}"
-            rt_run_note "$sign" "$started" skipped "$check"
+            rt_run_note "$sign" "$started" skipped "$check" "$base" "$(rt_push_subject_of "$subjects" "$check")"
             continue
         fi
-        rt_run_note "$sign" "$started" red "$check"
+        rt_run_note "$sign" "$started" red "$check" "$base" "$(rt_push_subject_of "$subjects" "$check")"
         rt_push_set_failed="${rt_push_set_failed}${rt_push_set_failed:+
 }${check}"
         rt_push_set_output="${rt_push_set_output}${rt_push_set_output:+

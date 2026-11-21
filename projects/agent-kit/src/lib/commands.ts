@@ -16,6 +16,7 @@ import { debtLine, ICompanion, isUnfilled, IUnaddressed, pathOf as companionPath
 import { CONFIG_PATH, DEFAULT_LAYOUT, IConfig, KINDS, OVERRIDES_DIR, PROFILE_FILE, readConfig, RT_KIT_DIR, TKind } from './config.js';
 import { IStaleBuild } from './freshness.js';
 import { IAmbiguousName } from './integrity.js';
+import { agentRecord, IAgentBindResult, IAgentCheck, IAgentDrift } from './agent-checks.js';
 import { hooksSection, IHookBinding, IMatcherDrift, IShortTimeout, SETTINGS_PATH } from './hooks-map.js';
 import {
     DEFAULT_DAYS,
@@ -113,6 +114,7 @@ const KIND_TITLE: Readonly<Record<TKind, string>> = {
     templates: 'ШАБЛОНЫ',
     docs: 'ДОКУМЕНТЫ',
     samples: 'ОБРАЗЦЫ',
+    'task-flow': 'СЦЕНАРИЙ TASK FLOW',
 };
 
 /** Состояние компаньона словами. У заполненного слова нет: о нём говорить нечего. */
@@ -434,6 +436,79 @@ const driftedLines: (result: ISyncResult) => string[] = (result: ISyncResult): s
           ]
         : [];
 
+/** Готовая запись настройки для модельных проверок: вставляется рукой, когда пакет её не пишет. */
+const agentRecordLines: (checks: readonly IAgentCheck[]) => string[] = (checks: readonly IAgentCheck[]): string[] => [
+    `  вставь в \`${SETTINGS_PATH}\` раздел \`hooks\` — готовый кусок ниже:`,
+    ...JSON.stringify(
+        {
+            hooks: Object.fromEntries(
+                [...new Set(checks.map((check: IAgentCheck): string => check.event))].map((event: string): [string, unknown[]] => [
+                    event,
+                    checks.filter((check: IAgentCheck): boolean => check.event === event).map(agentRecord),
+                ])
+            ),
+        },
+        null,
+        4
+    )
+        .split('\n')
+        .map((line: string): string => `  ${line}`),
+];
+
+/**
+ * Модельные проверки, которых нет в настройке агента: файл лежит, а позвать его некому.
+ *
+ * Хост, который не запускает хуки вида `agent`, снимает такую проверку именем ресурса в `skip`:
+ * иначе проверка раскладки отказывала бы ему на файле, которого он не вызовет никогда.
+ */
+const agentUnboundLines: (checks: readonly IAgentCheck[]) => string[] = (checks: readonly IAgentCheck[]): string[] =>
+    checks.length
+        ? [
+              `модельные проверки разложены, но в \`${SETTINGS_PATH}\` их не зовёт никто: ${checks.length}`,
+              ...checks.map((check: IAgentCheck): string => `  ${check.path} — ${check.event}${check.matcher ? ' ' + check.matcher : ''}`),
+              `  хост без хуков вида \`agent\` называет проверку в \`skip\` конфига: ${checks.map((check: IAgentCheck): string => check.id).join(', ')}`,
+              ...agentRecordLines(checks),
+          ]
+        : [];
+
+/** Стоящие записи модельных проверок, разошедшиеся с объявлением: обе стороны названы. */
+const agentDriftedLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] =>
+    result.agentDrifted.length
+        ? [
+              `записи модельных проверок разошлись с объявлением: ${result.agentDrifted.length}`,
+              ...result.agentDrifted.flatMap((drift: IAgentDrift): string[] => [
+                  `  ${drift.path} — ${drift.event}${drift.refused ? '' : ' (только названо)'}`,
+                  ...drift.differs.map((line: string): string => `    ${line}`),
+              ]),
+          ]
+        : [];
+
+/** Что запись модельных проверок сделала с настройкой дерева. */
+const agentBoundLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] => {
+    const bound: IAgentBindResult | null = result.agentBound;
+    if (bound === null) {
+        return [];
+    }
+    if (bound.unreadable) {
+        return bound.pending.length
+            ? [
+                  `\`${SETTINGS_PATH}\` не разбирается как JSON или хранит \`hooks\` не списками — записи модельных проверок не делалось`,
+                  ...agentUnboundLines(bound.pending),
+              ]
+            : [];
+    }
+
+    return bound.added.length
+        ? [
+              `в \`${SETTINGS_PATH}\` дописано записей модельных проверок: ${bound.added.length}`,
+              ...bound.added.map((check: IAgentCheck): string => `  ${check.path} — ${check.event}`),
+              ...(result.bound?.missing
+                  ? ['  скриптовые гарды при этом не подключены: диспетчера на диске нет, а модельные проверки зовутся своей записью']
+                  : []),
+          ]
+        : [];
+};
+
 /**
  * Разорванные связи между ресурсами.
  *
@@ -555,6 +630,8 @@ const describe: (result: ISyncResult) => string[] = (result: ISyncResult): strin
     ...ambiguousLines(result),
     ...unboundLines(result),
     ...driftedLines(result),
+    ...agentUnboundLines(result.agentUnbound),
+    ...agentDriftedLines(result),
     ...warnings(result),
     ...pendingOf(result).map((entry: IPlanned): string => `  ${entry.path} — ${STATE_WORD[entry.outcome]}`),
     ...unfilled(result).map(companionLine),
@@ -797,9 +874,19 @@ function syncCheck(config: IConfig, root: string, version: string, assetsDir: st
         // себе, а не о расхождении разложенного с редакцией. Она печатается предупреждением —
         // и на сошедшемся дереве тоже.
         const count: number =
-            result.gaps.length + result.ambiguous.length + pending.length + empty.length + result.unbound.length + result.drifted.length;
+            result.gaps.length +
+            result.ambiguous.length +
+            pending.length +
+            empty.length +
+            result.unbound.length +
+            result.drifted.length +
+            result.agentUnbound.length +
+            result.agentDrifted.filter((drift: IAgentDrift): boolean => drift.refused).length;
         if (!count) {
-            return { code: 0, lines: [`sync --check: разложенное сходится с пакетом v${version}`, ...warnings(result)] };
+            return {
+                code: 0,
+                lines: [`sync --check: разложенное сходится с пакетом v${version}`, ...agentDriftedLines(result), ...warnings(result)],
+            };
         }
 
         return { code: 1, lines: [`sync --check: расхождений ${count}`, ...describe(result)] };
@@ -870,7 +957,9 @@ export function sync(env: IEnvironment, check: boolean): IOutcomeOfCommand {
             ...sendEnrolledLines(config, result.written),
             ...boundLines(result),
             ...(result.bound?.unreadable === false ? [] : unboundLines(result)),
+            ...agentBoundLines(result),
             ...driftedLines(result),
+            ...agentDriftedLines(result),
             ...staleOverrideLines(root, assetsDir),
             ...debtLines(config, root, assetsDir),
             ...warnings(result),

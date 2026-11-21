@@ -79,8 +79,8 @@ Covered: `projects/agent-kit/tests/defaults.test.sh`, `projects/agent-kit/tests/
 
 Given a command of merging a PR goes
 When the gate decides what to demand
-Then it names the rule of delivery and the rule of the conduct of work, and demands the first
-unloaded one
+Then it names the rule of delivery and the part of the work-conduct rule about closing a task, and
+demands the first unloaded one
 
 Covered: `projects/agent-kit/tests/defaults.test.sh`, `projects/agent-kit/tests/skill-gate.test.sh`.
 
@@ -304,3 +304,31 @@ Then it demands the rule of the epic on top of the delivery rule; a task created
 does not demand it
 
 Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
+
+### SC-AK-1695 — opening and readying a PR demand the part about closing a task
+
+Given a command opens a PR or lifts its draft
+When the gate decides what to demand
+Then it names the rule of delivery and the part of the work-conduct rule about closing a task
+
+Covered: `projects/agent-kit/tests/defaults.test.sh`.
+
+### SC-AK-1696 — a task folder demands the states part and the part of its file
+
+Given a file of a task folder is edited
+When the gate decides what to demand
+Then it names the states part of the work-conduct rule, and with it the part about the owner's
+word for the grill and a draft folder, and the part about the plan for any other file
+
+Covered: `projects/agent-kit/tests/defaults.test.sh`.
+
+### SC-AK-1697 — a delivery command demands the part of the delivery rule of its subject
+
+Given a command of delivery goes
+When the gate decides what to demand
+Then a request to the host names the part about requests with the branch part, a commit and a push
+name the branch part with the part about the push set, the creation of a task names the branch part
+with the part about the queue, and an edit of a PR body by an address call names the part about
+requests alone
+
+Covered: `projects/agent-kit/tests/defaults.test.sh`.

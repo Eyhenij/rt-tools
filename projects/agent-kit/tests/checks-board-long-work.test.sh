@@ -30,6 +30,7 @@ cat > "$LW_TREE/gh" <<'STUB'
 #!/usr/bin/env bash
 args="$*"
 case "$args" in
+    *graphql*behindBy*) printf '%s\n' "${STUB_BEHIND:-0}" ;;
     *graphql*) printf '%s' "$STUB_BOARD" ;;
     "issue list"*) printf '%s' "$STUB_ISSUES" ;;
     "pr list"*) printf '%s' "$STUB_PULLS" ;;
@@ -42,7 +43,6 @@ case "$args" in
     *actions/runs*per_page=20*) printf '%s\n' 'success' ;;
     *actions/runs*) printf '%s\n' '1' ;;
     *compare/*behind_by*) printf '%s\n' '0' ;;
-    *compare/*) printf '%s\n' "${STUB_BEHIND:-0}" ;;
     */commits/*) printf '%s\n' "$STUB_HEAD_DATE" ;;
     *) printf 'неожиданный вызов: %s\n' "$args" >&2; exit 1 ;;
 esac

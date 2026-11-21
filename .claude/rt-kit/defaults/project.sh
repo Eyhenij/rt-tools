@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.1 · defaults/project.sh · fbf71f038025 · правится надстройкой, не здесь
+# rt-kit v0.38.0 · defaults/project.sh · 497ad2da7034 · правится надстройкой, не здесь
 # Tree profile: what checks an edit here and what counts as reinvention.
 #
 # The package default. Everything the trees of this workshop have in common lives here: the Nx
@@ -129,13 +129,9 @@ rt_handoff_allowed_cmd_default() {
     return 1
 }
 
-# Where the texts read before a question to the owner lie: laws, rules and product agreements. By
-# them the conversation guard judges whether anything at all was read during the turn, and it names
-# them in the hint. Empty for laws and rules at once — the tree does not get this requirement: there
-# is nothing to read.
+# Where the laws and the rules lie. The rules gate and the docs guard read them by these names.
 RT_LAWS_DIR="${RT_LAWS_DIR:-docs/constitution}"
 RT_RULES_DIR="${RT_RULES_DIR:-.claude/skills}"
-RT_SPECS_DIR="${RT_SPECS_DIR:-docs/specs}"
 
 # The directory of plans that outlive one task: the order of an epic's tasks lies there, not in the
 # rules.
@@ -425,6 +421,11 @@ rt_pull_outcomes_default() {
         }'
     done
 }
+
+# Reading the merges and the packages — what the epic windows and the release are judged by — lives
+# in a neighbouring file: together with it the profile outgrew the length limit.
+# shellcheck disable=SC1090
+[ -f "$(dirname "${BASH_SOURCE[0]}")/merges.sh" ] && . "$(dirname "${BASH_SOURCE[0]}")/merges.sh"
 
 # What counts as reinvention in this tree. One line per "pattern<tab>replacement". The patterns are
 # narrow on purpose: the guard checks only NEW text, and a wide pattern would refuse an edit that

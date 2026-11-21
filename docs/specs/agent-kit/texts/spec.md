@@ -121,6 +121,10 @@ the neighbouring subdomain "The check of the specs and the addresses" next to it
     | a pattern             | "When to use" and a closing section about misses — "Common misses" or "Pitfalls"; the Russian names of the same sections are lawful on a par                                          |
     | a skill without a law | "When to use" or "Когда брать"                                                                                                                                                        |
 
+- **A section of a rule may stand in its cold part, under the same heading.** A rule cut to the
+  statements that decide an edit keeps the section of its articles and hands the names, the flow and
+  the rest to the file read on demand; the section is there, only not in the hot part. A second cold
+  part continues the first, and "Pitfalls" is asked of the first alone.
 - **The section of the articles of a law is read under two names, English and Russian.** The law of
   the package carries the English name, and a law the tree wrote before the translation of the layer
   the Russian one. Both mean one thing, and neither the check of the specs nor the suite of the

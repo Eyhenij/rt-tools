@@ -46,13 +46,28 @@ KINDS_WITHOUT_SECTIONS='hooks defaults checks agents commands workflows template
 # «имя ресурса :: недостающий заголовок» — по строке на пропуск. Заголовок — образец строки
 # целиком: у раздела статей закона два имени, английское и русское, и оба законны.
 missing_sections() {
-    local root="$1" kind="$2" file want
+    local root="$1" kind="$2" file want cold cold2
     [ -d "$root/$kind" ] || return 0
     while IFS= read -r want; do
         [ -n "$want" ] || continue
         for file in "$root/$kind"/*.md; do
             [ -e "$file" ] || continue
-            grep -qxE "$want" "$file" || printf '%s :: %s\n' "${file##*/}" "$want"
+            # A second cold part continues the first: the sections are asked of the first.
+            [ "$kind" = pitfalls ] && case "${file##*/}" in *.[0-9].md | *.[0-9].*.md) continue ;; esac
+            grep -qxE "$want" "$file" && continue
+            # A section of a rule may stand in its cold part: the rule keeps what decides an edit,
+            # and the rest leaves for the file read on demand, under the same heading.
+            if [ "$kind" = rules ]; then
+                cold="$root/pitfalls/${file##*/}"
+                cold2="${cold%.md}.2.md"
+                { [ -f "$cold" ] && grep -qxE "$want" "$cold"; } && continue
+                { [ -f "$cold2" ] && grep -qxE "$want" "$cold2"; } && continue
+                # An edition `<name>.<host>` continues in `<name>.2.<host>`.
+                base="${file##*/}"; base="${base%.md}"
+                cold3="$root/pitfalls/${base%.*}.2.${base##*.}.md"
+                { [ -f "$cold3" ] && grep -qxE "$want" "$cold3"; } && continue
+            fi
+            printf '%s :: %s\n' "${file##*/}" "$want"
         done
     done <<< "$(sections_for "$kind")"
 }
@@ -213,6 +228,20 @@ cp "$ASSETS/pitfalls/doc-style.md" "$probe/pitfalls/doc-style.md"
 cp "$ASSETS/patterns/doc-style-write.md" "$probe/patterns/doc-style-write.md"
 report "SC-AK-218 — возвращённый раздел расхождением не считается" \
     "$(missing_sections "$probe" pitfalls | grep -c 'Ловушки')" 0
+
+# SC-AK-1693 — раздел правила, стоящий в его холодной части, полноту не роняет: правило держит то,
+# что решает правку, а остальное уходит в файл, который читают по требованию.
+grep -vxE '## (Flow|Ход)' "$ASSETS/rules/doc-style.md" > "$probe/rules/doc-style.md"
+report "SC-AK-1693 — снятый раздел правила найден" \
+    "$(missing_sections "$probe" rules | grep -c '^doc-style.md :: ## (Flow')" 1
+printf '\n## Flow\n\nThe flow, moved here.\n' > "$probe/pitfalls/doc-style.2.md"
+report "SC-AK-1693 — раздел во второй холодной части засчитан правилу" \
+    "$(missing_sections "$probe" rules | grep -c '^doc-style.md :: ## (Flow')" 0
+# SC-AK-1694 — вторая холодная часть продолжает первую, и «Ловушки» с неё не спрашиваются.
+report "SC-AK-1694 — со второй холодной части раздел ловушек не спрашивается" \
+    "$(missing_sections "$probe" pitfalls | grep -c '^doc-style.2.md')" 0
+rm -f "$probe/pitfalls/doc-style.2.md"
+cp "$ASSETS/rules/doc-style.md" "$probe/rules/doc-style.md"
 
 # Правило без паттерна: в копии лежит правило, на которое не ссылается ни один паттерн.
 cp "$ASSETS/rules/task-flow.md" "$probe/rules/task-flow.md"

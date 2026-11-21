@@ -1,6 +1,6 @@
 # The guards of the end of a turn
 
-**Status:** in force · **Revision:** 2026-09-06 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-15 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `verifiability`, `work-conduct`
 **Procedures:** none
@@ -37,24 +37,17 @@ turn.
 
 ## Rules
 
-The guard of the conversation — the questions to the owner — is a subdomain of its own,
-`docs/specs/agent-kit/turn-guards/grill/`. The guard of the exits is split in two:
-`docs/specs/agent-kit/turn-guards/exit/` and, for a turn under an open epic,
-`docs/specs/agent-kit/turn-guards/exit-epic/`.
+The questions to the owner are judged by the agent hook of the question tool, and what was said in a
+turn by the agent hook of the Stop event; both are rules at the end of this section. The guard of the
+exits asks the engine of the task flow for a verdict: `docs/specs/agent-kit/turn-guards/flow-script/exit/`.
 
 - **A squeeze summary is never a real remark of the owner.** It retells turns that have already
   ended: a request carried out yesterday reads in it as said now, and a turn refused by it pays for
   work nobody asked for. By its words it is indistinguishable from the speech of the owner and is
   richer than it — it retells the whole session at once — so it is recognised by a sign of the record,
   not by the text.
-- **A second pass over the same turn is not judged.** The guard says its word once and lets go;
-  otherwise the turn will never end. The one exception is the guard of the exits under an open epic,
-  and its subdomain says so.
 - **The tool that closes the conversation is refused always.** The session is ended by the owner and
   by nobody else; the guard has no lawful form of bypass and refuses even without a JSON parser.
-- **Under an open epic the guard of the exits judges a turn that ended with work and a second
-  pass.** The tiers of that lie in a file of their own next to the guard; the epic is read once per
-  turn, on the way to a refusal, by the shared reading of the end of an epic.
 - **A role switched off by the tree does not hold the guard at it.** The tree names the switched-off
   roles by a list in its setting, and the guard at such a role exits silently. What is switched off is
   the mandatory call, not the role itself: its file stays laid out, and it can be called at any
@@ -91,74 +84,16 @@ The guard of the conversation — the questions to the owner — is a subdomain 
 - **One file of a guard has the right to declare several events.** The reminder and the refusal are
   different events of the agent, and the guard is one: taking them apart into two files would mean
   keeping two parses of one record.
-- **A removed task folder lifts the requirement of a state and does not end the turn.** The folder is
-  taken apart before the request is opened, and from that minute there is nothing to declare a state
-  by. Letting the turn go by this sign is not allowed: a removed folder means the middle of handing
-  in, not its end — between the tidying and the request the work is seen by nobody. Further the turn
-  is judged by the second sign; a turn in which the request was opened or read the second sign lets
-  through itself.
-- **A turn that declared a written plan does not end at all.** The mandatory action of this state is
-  to do the first stage, and whoever began it moves the state by the same edit: a turn that stayed in
-  the former state did not begin the first stage by definition. The second sign does not fit here — it
-  counts the creating of a task, a branch, a column and a folder as work. The refusal names the
-  heading of the first stage of the plan, not general words about unfinished work.
-- **A turn that opened a request does not end until the state of the handed-in work is asked by a
-  command.** A draft is read by the owner as "the work is not finished", and the next task taken
-  instead of finishing leaves what is ready invisible. This is asked by a command of the same turn —
-  by lifting the draft, by reading the run or by the check of the work queue; the guard does not touch
-  the network. The GitLab client counts on a par: `glab mr update --ready` or `-r` lifts the draft,
-  and `glab ci` reads the pipeline.
-- **A step of closing the work does not count as taking the next task.** Moving the task being closed
-  into the column of the review and removing its folder are mandatory steps of the closing, and both
-  stand in the same turn the request was opened by. The sign of taking lists what taking happens to
-  be, not what counts as an action: the list of the steps of closing is open and grows, and the list
-  of the actions on the next task is closed.
-- **A run started or rerun in the turn gets a wait for its end in the same turn.** The outcome of a
-  run does not call by itself: its state read once is a moment, not a result, and a request left
-  without watching reaches the owner before the executor. The wait is a watching command of the
-  hosting client, a loop until the end or the watching tool, in the background or blocking; the next
-  task taken does not lift this.
-- **A stage declared closed is confirmed by the output of a command.** The mark "done" is a statement
-  about the tree, and a session later what was marked from memory is indistinguishable from what was
-  checked. The former number of the stage the guard reads from the history of the branch, the command
-  from the line of the plan "What it is checked by".
-- **A technique written in prose the guard does not read.** There is nothing to confirm it by an
-  output with — that is its known boundary, not a promise.
-- **A turn in which nothing was done about the work does not end.** A report about what was done is
-  not an exit of a turn: it looks like work better than any other — it is full, it names numbers and
-  states, and the emptiness behind it is visible neither to the owner nor to the session itself.
-- **What counts as work is an edit of a file and a command that changes the tree.** Reading, searching
-  and conversation do not count as it: they are what fills a turn that has stalled. A command of the
-  GitLab client is judged on a par with the same command of `gh`. A merge or a retry is work, and a
-  reading subcommand is not.
-- **A word about a stop is judged by the remark of the owner, not by the words of the executor.**
-  Otherwise the stop is declared by whoever finds it convenient at that minute.
-- **The word of the owner about a stop said a turn earlier holds until their later order to work, and
-  a quote of it in the reply releases the turn.** Read from the current turn alone, the word was
-  lost, and the turn could leave only by a line in the progress of a folder already taken apart. The
-  quote in « » is checked against the message of the owner.
-- **Commits left in the working tree with a reason named in the reply release the turn.** The
-  refusal itself orders to name what is left and why; without the line «Не отправлено: <reason>»
-  the only accepted move was a push made to lift the refusal.
-- **A turn that ended with words about waiting for the word of the owner is not let go without their
-  word or a question to them by a tool.** The phrase "waiting for your word" without them is a stop
-  declared by the executor; the general signs refused it without a name, and after one step the turn
-  ended with the same phrase again. The refusal names the phrase by name and orders to go on: the
-  instruction of the owner holds until they cancel it. The set of the samples of the phrase is named
-  and closed.
-- **Work handed in and merged the guard does not judge.** It has already waited for someone else's
-  step, and a turn closed at it drops nothing.
+- **What counts as work is an edit of a file and a command of the work the description names.**
+  Reading, searching and conversation do not count as it: they are what fills a turn that has
+  stalled. The commands of the work are the list `words.write` of the description of the task flow,
+  and a tree adds its own through the override, not through an edit of the engine.
 - **A turn in which the executor admitted a miss does not close until there is a record about the
-  incident.** By the same technique a turn with a question demands the reading of the rules.
+  incident.** The agent hook on the Stop event reads the admission in the reply and looks for the
+  record in the directory of incident analyses the tree names.
 - **A turn in which the owner said to create or send a proposal does not close until there was a
   sending.** What is written and not sent lies in the tree indistinguishably from what is sent, and it
   has no record of its own in the rules layer. Showing what would go away does not count as a sending.
-- **A report of a role is not the word of the owner for the guard of the proposals.** It arrives
-  under the role of the owner marked as a service message; a role that called its findings
-  «proposal» woke the guard as if a sending had been asked for.
-- **A request for a proposal is caught by a verb next to a word about the rules layer, not by the word
-  itself.** Work on proposals that already arrived does not end with a sending, and the word
-  "proposal" without a neighbour about the layer walks in every second turn about something else.
 - **The guard declares the locale of its run, it does not inherit it.** The samples are written in the
   words of the tree, and the folding of the case at a word outside Latin works only under UTF-8: a
   service launching the same work goes with an empty locale, and the guard does not find its word —
@@ -167,18 +102,20 @@ The guard of the conversation — the questions to the owner — is a subdomain 
 - **A turn in which the executor asks the owner to sign in or type a password does not end.** The
   stand, the sign-in and the accounts for the check are prepared by the agent. An obstacle before the
   request — a field that does not accept input, a foreign extension in the browser, a profile that
-  disconnected — is removed by the agent. The requirement was held by the memory of the executor and
-  did not fire: over one session the request sounded four times.
-- **A request to switch the mode of work is allowed.** The owner is asked for the ordinary mode
-  instead of the automatic one; the input into a form is done by the agent. A guard that does not tell
-  these two requests apart would forbid the only allowed one.
-- **The boundary of the set of samples is named.** A request in other words or through a menu of
-  options the guard does not recognise.
+  disconnected — is removed by the agent. The agent hook on the Stop event refuses such a request.
 
-- **The keys of the progress of the work and of the plan are read under two names, English and
-  Russian.** The samples of a task folder in the package are English, those of a folder of the tree
-  before the translation of the layer are Russian. The guard judges both the same: the state, the
-  stage and the next step it takes by either of the two names.
+- **Whether a turn may end by what was said in it is judged by a model, not by word samples.** The
+  package lays out the text of an agent hook for the Stop event; the hook reads the owner's latest
+  words, the final reply and the calls of the turn. Open work is not its to judge: the exit guard
+  measures it. The hook refuses a turn that leaves undone the work the owner's latest word ordered,
+  asks what is already answered, states a fact with no output or admits a miss with no record.
+
+- **The refusal of the model names itself by a fixed mark.** It starts with `BLOCKED by
+  turn-judge:`, and refusals are counted by that mark in the transcripts.
+
+- **Whether a question to the owner may leave is judged by a model.** The package lays out the text
+  of an agent hook for the question tool; a refusal of another check is never a reason to hold the
+  question, and a held one starts with `BLOCKED by ask-judge:`.
 
 ## What is out of scope
 
@@ -259,3 +196,9 @@ None.
   close the remaining questions by assumption, and the next menu is refused.
 - 2026-10-09 — the guard of the conversation went into a subdomain of its own: the scenario file ran
   past the length limit again with two new scenarios of that guard.
+- 2026-11-15 — the guard of the exits asks the engine of the task flow for a verdict. The rules of its
+  tiers are removed with their scenarios: the second pass, the open epic, the written plan, the
+  closed stage, the unpushed commits, the handed-in work and the keys under two names. The subdomain
+  of a turn under an open epic is removed: the epic is measured by the description. The agent hook
+  of the Stop event no longer reads the progress and the epic table: scenarios `SC-AK-1362` and
+  `SC-AK-1364` are removed with the waiting line and the handed-in work it judged.

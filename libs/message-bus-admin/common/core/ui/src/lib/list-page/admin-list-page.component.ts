@@ -19,7 +19,7 @@ import {
     IReadFault,
     LIST_PAGE_SIZES,
 } from '@rt/message-bus-admin/common/core/util';
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import {
     RtButtonDirective,
     RtIconButtonComponent,
@@ -104,6 +104,7 @@ export class AdminListAboveTableDirective {}
         // rt-tools
         BlockDirective,
         ElemDirective,
+        ModDirective,
 
         // components
         RtButtonDirective,
@@ -156,6 +157,8 @@ export class AdminListPageComponent {
      * Одинаковые якоря на трёх разделах не отвечают на вопрос, чей элемент нашла проверка: спека,
      * открывшая не тот раздел, находит тот же якорь и проходит зелёной.
      */
+    /** Модификатор зоны таблицы. */
+    protected readonly scrollMods: Signal<Record<string, boolean>> = computed((): Record<string, boolean> => ({ fit: this.fit() }));
     protected readonly hintId: Signal<string> = computed(() => `${this.qaPrefix()}-hint`);
     protected readonly columnsId: Signal<string> = computed(() => `${this.qaPrefix()}-columns`);
     protected readonly refreshId: Signal<string> = computed(() => `${this.qaPrefix()}-refresh`);
@@ -187,6 +190,12 @@ export class AdminListPageComponent {
 
     /** Пояснение при названии раздела. Пусто — заголовок стоит один, и места под подсказку нет. */
     public readonly hint: InputSignal<string> = input<string>('');
+
+    /**
+     * Таблица держит ширину экрана, а заголовки столбцов переносятся. Без этого таблица шире
+     * экрана уходит в прокрутку вбок — так её ведут разделы с длинными строками.
+     */
+    public readonly fit: InputSignal<boolean> = input<boolean>(false);
 
     /**
      * Короткое имя раздела, из которого собраны якоря его страницы. То же слово, что у его

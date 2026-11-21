@@ -29,10 +29,24 @@ describe('куда ложится образец', (): void => {
     });
 });
 
+describe('сценарий task flow', (): void => {
+    it('SC-AK-1540 — источник сценария ложится рядом с движком по своему пути', (): void => {
+        expect(targetOf({ id: 'task-flow/source/git.mjs', kind: 'task-flow', name: 'source/git' }, DEFAULT_LAYOUT)).toBe(
+            'tools/task-flow/source/git.mjs'
+        );
+    });
+});
+
 describe('холодная часть правила', (): void => {
     it('SC-AK-517 — холодная часть ложится третьим файлом в каталог своего правила', (): void => {
         expect(targetOf({ id: 'pitfalls/task-flow.md', kind: 'pitfalls', name: 'task-flow' }, DEFAULT_LAYOUT)).toBe(
             '.claude/skills/task-flow/pitfalls.md'
+        );
+    });
+
+    it('SC-AK-1691 — вторая холодная часть ложится рядом с первой своим файлом', (): void => {
+        expect(targetOf({ id: 'pitfalls/task-flow.2.md', kind: 'pitfalls', name: 'task-flow.2' }, DEFAULT_LAYOUT)).toBe(
+            '.claude/skills/task-flow/pitfalls-2.md'
         );
     });
 

@@ -14,7 +14,7 @@ interface IStoredRow {
 }
 
 /** Двойник хранилища: строки с деревом и днём, группировка и снятие по дню — сам. */
-function storage(rows: IStoredRow[], failing: boolean = false): PrismaService {
+function storage(rows: IStoredRow[], failing: boolean = false, windows: Date[] = []): PrismaService {
     const older: (where: Record<string, unknown>) => IStoredRow[] = (where: Record<string, unknown>): IStoredRow[] => {
         const since: string = (where['day'] as { lt: string }).lt;
 
@@ -27,6 +27,17 @@ function storage(rows: IStoredRow[], failing: boolean = false): PrismaService {
     return {
         metricsDay: {
             deleteMany: async (): Promise<{ count: number }> => ({ count: 0 }),
+        },
+        epicWindow: {
+            deleteMany: async (args: Record<string, unknown>): Promise<{ count: number }> => {
+                const edge: Date = ((args['where'] as Record<string, unknown>)['openedAt'] as { lt: Date }).lt;
+                const kept: Date[] = windows.filter((openedAt: Date): boolean => openedAt >= edge);
+                const count: number = windows.length - kept.length;
+
+                windows.splice(0, windows.length, ...kept);
+
+                return { count };
+            },
         },
         observation: {
             findMany: async (args: Record<string, unknown>): Promise<unknown[]> => {
@@ -92,6 +103,16 @@ describe('ObservationRetentionService', () => {
             { treeId: 'tree-1', count: 2, since: '2025-09-14' },
             { treeId: 'tree-2', count: 1, since: '2025-09-14' },
         ]);
+    });
+
+    it('окна эпиков, открытые больше года назад, сняты ночной уборкой, свежие остались', async () => {
+        const windows: Date[] = [new Date('2025-09-13T23:59:59Z'), new Date('2025-09-14T00:00:00Z'), new Date('2026-11-13T00:34:01Z')];
+        const written: { text: string; fields: unknown }[] = journal();
+
+        await new ObservationRetentionService(storage([], false, windows)).sweep(NOW);
+
+        expect(windows).toEqual([new Date('2025-09-14T00:00:00Z'), new Date('2026-11-13T00:34:01Z')]);
+        expect(written[0]).toEqual({ text: 'окна эпиков старше срока сняты', fields: { count: 1, since: '2025-09-14' } });
     });
 
     it('SC-MB-342 — нечего снимать — одна строка журнала о том, что старше срока нет', async () => {

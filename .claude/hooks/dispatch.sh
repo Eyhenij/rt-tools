@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.1 · hooks/dispatch.sh · ddf8594dd769 · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/dispatch.sh · fef71fd56cf7 · правится надстройкой, не здесь
 # The dispatcher of agent events. NOT a guard: it has no `rt-hook:` declaration — on the contrary,
 # it reads such declarations in the others. In the agent settings it stands alone on an event
 # instead of a list.
@@ -47,14 +47,47 @@ if [ -n "$assignments" ]; then
 fi
 export RT_HOOK_INPUT="$input"
 
+collected=""
+
+# The journal of the turn exit: a Stop branch that failed or ran past its limit writes «движок упал»
+# here, and the next turn starts with that line, so a released turn is never released in silence.
+journal_file=""
+journal_common="$(git -C "${RT_HOOK_CWD:-${CLAUDE_PROJECT_DIR:-.}}" rev-parse --git-common-dir 2>/dev/null)"
+case "$journal_common" in
+    '') ;;
+    /*) journal_file="$journal_common/rt-kit/turn-exit.log" ;;
+    *) journal_file="${RT_HOOK_CWD:-${CLAUDE_PROJECT_DIR:-.}}/$journal_common/rt-kit/turn-exit.log" ;;
+esac
+rt_dispatch_journal() {
+    [ -n "$journal_file" ] || return 0
+    mkdir -p "$(dirname "$journal_file")" 2>/dev/null || return 0
+    printf '%s\t%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$1" >> "$journal_file" 2>/dev/null
+}
+if [ "$event" = UserPromptSubmit ] && [ -s "$journal_file" ]; then
+    read_mark="${journal_file%.log}.read"
+    seen="$(cat "$read_mark" 2>/dev/null || echo 0)"
+    total="$(wc -l < "$journal_file" | tr -d ' ')"
+    if [ "$total" -gt "$seen" ] 2>/dev/null; then
+        fresh="$(tail -n "$((total - seen))" "$journal_file" | grep 'движок упал' | cut -f2- | tail -3)"
+        printf '%s\n' "$total" > "$read_mark" 2>/dev/null
+        if [ -n "$fresh" ]; then
+            notice="The previous turn was released by a failure of the exit check, not by the scenario: ${fresh}. Measure the branch first — node tools/task-flow-script.mjs measure."
+            answers="${answers:-}$(jq -cn --arg c "$notice" '{hookSpecificOutput:{hookEventName:"UserPromptSubmit",additionalContext:$c}}' | jq -Rsc . 2>/dev/null)
+"
+            collected="${collected}$(jq -cn --arg c "$notice" '{hookSpecificOutput:{hookEventName:"UserPromptSubmit",additionalContext:$c}}')
+"
+            count=$((${count:-0} + 1))
+        fi
+    fi
+fi
 branches="$(grep -l '^# rt-hook:' "$here"/*.sh 2>/dev/null | sort)"
-[ -z "$branches" ] && exit 0
+[ -z "$branches" ] && [ -z "$collected" ] && exit 0
 
 # A file happens to have several declarations: a guard standing both on a tool call and on the end
 # of a turn names both events by lines of its own. Before, only the first was read — and the second
 # branch was never called, silently: from the outside that is indistinguishable from a guard that
 # looked and let through.
-collected=""
+
 for branch in $branches; do
     matched=0
     while IFS= read -r declaration; do
@@ -95,16 +128,26 @@ EOF
     # is noise and does not go out, and on a refusal it is the reason itself. A guard that prints
     # its refusal there reached the executor as a line about a broken file — with the file whole and
     # the text plain, which nobody saw. In one session two refusals in a row were lost that way.
+    # A branch names its own limit by `# rt-hook-timeout: <seconds>`; past it the branch is stopped.
+    limit="$(sed -n 's/^# rt-hook-timeout:[[:space:]]*\([0-9][0-9]*\).*/\1/p' "$branch" 2>/dev/null | head -1)"
+    run=(bash "$branch")
+    [ -n "$limit" ] && command -v perl >/dev/null 2>&1 && run=(perl -e 'alarm shift; exec @ARGV' "$limit" bash "$branch")
     branch_err="$(mktemp 2>/dev/null)"
     if [ -n "$branch_err" ]; then
-        branch_out="$(printf '%s' "$input" | bash "$branch" 2>"$branch_err")"
+        branch_out="$(printf '%s' "$input" | "${run[@]}" 2>"$branch_err")"
         code=$?
         said_err="$(cat "$branch_err" 2>/dev/null)"
         rm -f "$branch_err" 2>/dev/null
     else
-        branch_out="$(printf '%s' "$input" | bash "$branch" 2>/dev/null)"
+        branch_out="$(printf '%s' "$input" | "${run[@]}" 2>/dev/null)"
         code=$?
         said_err=""
+    fi
+    # On Stop a branch that failed or ran past its limit releases the turn and says so in the journal:
+    # a stop the engine did not decide is written, never taken for a verdict.
+    if [ "$code" -ne 0 ] && [ "$event" = Stop ]; then
+        rt_dispatch_journal "движок упал: $(basename "$branch") exited $code"
+        continue
     fi
     if [ "$code" -ne 0 ]; then
         if [ -n "$branch_out" ]; then

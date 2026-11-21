@@ -45,7 +45,7 @@ sections through the override; they merge here by heading, and a package edit do
 - **Grill** — questioning the owner before the first edit. Written in the owner's words and never rewritten afterwards
 - **Plan** — a file of the task folder: the task footprint and the stages with readiness signs. Not edited after it is written; the result is checked against it at acceptance
 - **Progress** — a file of the task folder: "Where we stand", decisions along the way with reasons, session entries. The only place where done work is marked. Not called a log
-- **Work state** — the unit by which work is conducted: each has a named entry, a mandatory action and an exit. Declared by a line in the "Where we stand" section of the progress, and the guard judges it, not the presence of files
+- **Work state** — the unit by which work is conducted: each has a named entry, a mandatory action and an exit. Measured by the flow script from the branch, the task folder and the host; the line in the "Where we stand" section of the progress mirrors it and never stands ahead of it
 - **Task footprint** — a section of the plan: which specs, laws, rules and parts of the code the work touches
 - **Session** — one sitting of work on a task. Work lives longer than a session, and between sessions its state is held by the progress
 - **Window fill** — the share of the session's room already taken: the input, the cache write, the cache read and the last reply's output, divided by the window size. Not "spend" and not "budget": it is about room, not cost
@@ -65,6 +65,8 @@ sections through the override; they merge here by heading, and a package edit do
 - **Run** — a launch of a set of scenarios. "Tests are run", not "put into work"
 - **Audit** — a check that edits nothing and names discrepancies: of the layout against the package, of specs against the code, of the work queue against the branches
 - **Measurement** — a number taken from the running application. A look at the screen is not a measurement
+- **Flow script** — the engine of the task flow. It measures the work state of a branch by the task flow description, runs the check of a plan step and writes its mark, and gives the verdict at the end of a turn. The description is data; the script edits no file of the work
+- **Exit check** — the guard at the end of a turn that asks the flow script for a verdict. It holds a turn whose scenario is not over and names the one next move. Only the end of the scenario, the owner's stop word and the release cases of the description let a turn end
 
 ## Russian names
 
@@ -86,7 +88,9 @@ one, so that the same notion does not arrive under three names.
 | draft             | черновик                  |
 | epic              | эпик                      |
 | executor          | исполнитель               |
+| exit check        | проверка выхода из хода       |
 | fail-open         | пропуск при ошибке            |
+| flow script       | скрипт task flow              |
 | gate              | проверка перед push           |
 | grill             | уточнение задачи              |
 | guard             | блокирующая проверка          |

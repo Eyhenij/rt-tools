@@ -15,16 +15,16 @@ whole.
 - **The sign of an interpreter is read at the line that opened the body, not at the whole command.** — `projects/agent-kit/assets/defaults/project.sh:rt_shell_paths_default`
 - **The sign of application code is judged relative to the root of the tree.** — `projects/agent-kit/assets/defaults/project.sh:rt_is_app_code_default`
 - **The plan guard judges the declared transition, not the presence of files.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:state`
-- **A refusal by state names the mandatory action of the state that is declared.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:state_action`
-- **Only a word from the list counts as a state name.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:state_action`
-- **The task folder is asked of the history of the branch too, not only of the disk.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:in_tree`
+- **A refusal by state names the mandatory action of the state that is declared.** — `projects/agent-kit/assets/hooks/facts-flow.sh:rt_flow_state_action`
+- **Only a word from the list counts as a state name.** — `projects/agent-kit/assets/hooks/facts-flow.sh:rt_flow_state_action`
+- **The task folder is asked of the history of the branch too, not only of the disk.** — `projects/agent-kit/assets/hooks/facts-flow.sh:rt_flow_in_tree`
 - **The state is judged before the agreement and its bypass.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:progress`
-- **A session begun from a handover edits no files while the rule of conducting work is not loaded.** — `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:verdict`
+- **A session begun from a handover edits no files while the rule of conducting work is not loaded.** — `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:from_handoff`
 - **The handover is recognised both by the path to it and by a word about it.** — `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:from_handoff`
 - **A guard of an edit judges a write by a shell command on a par with one by the edit tool.** — `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:rt_write_targets` — the shared parse; scenarios `SC-AK-928`–`SC-AK-930`
 - **A refusal of a guard names two lawful moves.** — `projects/agent-kit/assets/hooks/deny-tail.sh:rt_deny_tail`
 - **The lawful shape of a bypass is named by the same tail, and its absence too.** — `projects/agent-kit/assets/hooks/deny-tail.sh:rt_deny_tail`
-- **The tail of a refusal is assembled by a shared function, not by every text on its own.** — `projects/agent-kit/assets/hooks/git-guard-main.sh:deny_tail_text`
+- **The tail of a refusal is assembled by a shared function, not by every text on its own.** — `projects/agent-kit/assets/hooks/decide.sh:rt_decide` — the guards that decide by the table get the tail there
 - **The start of a call counts variable assignments as part of the command, and it is declared in one place.** — `projects/agent-kit/assets/hooks/hook-input.sh:RT_CMD_BOUND` — the sample of the call prefix; the carriers take it from there, they have no copies of their own; scenario `SC-AK-559`
 - **The scenario suite runs its fixtures on its own tree, whatever environment stands around it.** — `projects/agent-kit/tests/lib.sh:unset` — the git variables are removed alongside the parsed input fields, before the first fixture. The suite guarding it is `projects/agent-kit/tests/suite-git-env.test.sh`; scenario `SC-AK-999`
 - **The scenario suite takes a port from the system, it does not assign it by a number.** — `projects/agent-kit/tests/lib.sh:wait_for_port` — the technique is one for both cargo suites: the server listens on port zero, the chosen number travels into a file.

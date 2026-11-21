@@ -52,10 +52,12 @@ stands="${RT_STANDS:-}"
 raiser="${RT_STANDS_RAISED_BY:-owner}"
 
 # shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-
+# The decision and the words come from the decision table; the hook names the action it caught,
+# who raises the stands and whether a stand port is taken.
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/decide.sh" 2>/dev/null
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
 # A port of the stand list somebody is listening on. Only these are judged under `session`: a port
 # the tree never named belongs to no stand of it, and a refusal over it would refuse the session's
 # own work.
@@ -68,21 +70,26 @@ taken_stand_port() {
     return 1
 }
 
-deny() {
-    local port
+refuse() {
+    local port="" facts load="" sid
+    command -v rt_decide >/dev/null 2>&1 || exit 0
+    sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
     if [ "$raiser" = "session" ]; then
         # Nobody raises the stands here but the session: a free port is its own business, and only
         # a taken one is worth a refusal.
         port="$(taken_stand_port)" || exit 0
-        echo "$1 On port ${port} somebody is already listening — a second instance answers with a build of its own and leads the investigation astray. Ask what it is: lsof -nP -iTCP:${port} -sTCP:LISTEN. $(rt_deny_tail)" >&2
-        exit 2
-    fi
-    if [ -n "$stands" ]; then
-        echo "$1 The applications are already raised by the owner: ${stands} — check those. Do not raise an instance of your own; if a port does not answer, tell the owner instead of launching a second one. $(rt_deny_tail)" >&2
+        facts='{"stands_raised_by":"session","stand_port_taken":"yes"}'
     else
-        echo "$1 The applications are already raised by the owner — check those. Do not raise an instance of your own; if a port does not answer, tell the owner instead of launching a second one. $(rt_deny_tail)" >&2
+        # The named move is a check of a raised stand, and the rules gate refuses it while the rule
+        # of the browser check is not loaded.
+        facts="$(jq -cn --arg r "$(rt_fact_rule_loaded browser-verification "$sid")" '{stands_raised_by:"owner", rule_loaded:$r}')"
+        [ "$(rt_fact_rule_loaded browser-verification "$sid")" = yes ] \
+            || load="Load the rule «browser-verification» by the tool Skill first — the rules gate refuses a check of a stand until then. "
     fi
-    exit 2
+    rt_decide dev-server-guard.sh "$1" "$facts" \
+        "$(jq -cn --arg s "$2" --arg p "$port" --arg l "$load" --arg st "${stands:+: $stands}" '{said:$s, port:$p, load:$l, stands:$st}')" \
+        stderr "$input"
+    exit $?
 }
 case "$tool" in
     Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool) ;;
@@ -98,14 +105,14 @@ case "$tool" in
             file="$(printf '%s' "$input" | jq -r '.tool_input.filePath // empty' 2>/dev/null)"
             case "$file" in
                 */package.json|package.json)
-                    deny "A launch of a script straight from the manifest: the guard sees only the file and the line, not the script itself, so it cannot tell raising a server from a build. If a build or a test is needed, run them by a command in the terminal." ;;
+                    refuse run_manifest_script "A launch of a script straight from the manifest: the guard sees only the file and the line, not the script itself, so it cannot tell raising a server from a build. If a build or a test is needed, run them by a command in the terminal." ;;
             esac
             exit 0
         fi
         # The word "start" without a boundary also caught "restart", which raises no server.
         case "$(printf '%s' "$name" | tr '[:upper:]' '[:lower:]')" in
             *serve*|*dev*|start*|*\ start*|*:start*)
-                deny "The configuration «${name}» looks like raising a development server. If the configuration does something else, run it by a command: by the name alone the guard does not see the content." ;;
+                refuse run_config_serve "The configuration «${name}» looks like raising a development server. If the configuration does something else, run it by a command: by the name alone the guard does not see the content." ;;
         esac
         exit 0 ;;
     *) exit 0 ;;
@@ -142,24 +149,24 @@ RUNNER='((npx|pnpm|yarn|bun|npm)([[:space:]]+(exec|run|dlx))?[[:space:]]+)?'
 BOUND="$RT_CMD_BOUND"
 
 printf '%s' "$cmd" | grep -qE "${BOUND}${RUNNER}(nx|ng)[[:space:]]+(run[[:space:]]+[^[:space:]]*:)?(serve|dev)" \
-    && deny "A launch of one more development server through the framework."
+    && refuse raise_dev_server "A launch of one more development server through the framework."
 
 # Requiring a space right after the name broke the match on a colon: the guard let through scripts
 # like "serve:site" — that is, exactly the commands it is written for.
 printf '%s' "$cmd" | grep -qE "${BOUND}(npm|pnpm|yarn|bun)([[:space:]]+run)?[[:space:]]+(dev|start|serve)([:._-][A-Za-z0-9:._-]*)?([[:space:]]|\$)" \
-    && deny "A launch of one more development server through the package runner."
+    && refuse raise_dev_server "A launch of one more development server through the package runner."
 
 # The subcommand is mandatory: while it was optional, the bare name of the bundler fell under the
 # rule — that is, any one-liner where it occurs inside the text.
 printf '%s' "$cmd" | grep -qE "${BOUND}${RUNNER}vite([[:space:]]+(dev|serve|preview))?[[:space:]]*(\$|[;&|\"'])" \
-    && deny "A launch of one more development server."
+    && refuse raise_dev_server "A launch of one more development server."
 printf '%s' "$cmd" | grep -qE "${BOUND}${RUNNER}(next|astro|nuxt)[[:space:]]+(dev|start|preview)([[:space:]]|\$)" \
-    && deny "A launch of one more development server."
+    && refuse raise_dev_server "A launch of one more development server."
 
 # Static files served over a build are the same second instance. Every name sits under the shared
 # anchor of the command start: without it a package listing and a search through documents read as
 # a start.
 printf '%s' "$cmd" | grep -qE "${BOUND}(python3?[[:space:]]+-m[[:space:]]+http\.server|${RUNNER}(http-server|live-server|serve)([[:space:]]|\$))" \
-    && deny "Raising a static server on top of a build — the same second instance."
+    && refuse raise_static "Raising a static server on top of a build — the same second instance."
 
 exit 0

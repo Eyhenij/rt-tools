@@ -1,4 +1,4 @@
-// rt-kit v0.37.1 · checks/board-runs.github.mjs · 588152bb6146 · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/board-runs.github.mjs · a67b7bf52938 · правится надстройкой, не здесь
 /**
  * The state of the runs and of the rollout at the hosting: what stands on the head, how it ended
  * and by how much production has fallen behind the main branch.
@@ -46,6 +46,8 @@ export function runsOnHead(sha, options) {
  * neighbouring check of the last rollout.
  *
  * Returns `null` if there were no rollouts at all: that is not a discrepancy but nothing to compare.
+ * A comparison the host refused returns the rollout with `behind: null` and the words of the host in
+ * `refused`: the caller prints a note and goes on to the lines after it.
  */
 export function deployLag(workflow, mainBranch, options) {
     const runs = gh(
@@ -64,11 +66,44 @@ export function deployLag(workflow, mainBranch, options) {
     }
 
     const run = JSON.parse(last);
-    const behind = gh(
-        ['api', `repos/${OWNER}/${REPO}/compare/${run.sha}...${encodeURIComponent(mainBranch)}`, '--jq', '.ahead_by'],
-        options
-    );
-    return { sha: run.sha, at: run.at, behind: Number(String(behind).trim()) };
+    try {
+        return { sha: run.sha, at: run.at, behind: commitsBehind(run.sha, mainBranch, options) };
+    } catch (error) {
+        const words = String(error.stderr ?? error.message ?? '').trim();
+        if (!(error instanceof Error) || !COMPARISON_REFUSED.test(words)) {
+            throw error;
+        }
+        return { sha: run.sha, at: run.at, behind: null, refused: words.split('\n')[0] };
+    }
+}
+
+/**
+ * The refusal of the host to compare: it could not build the answer in time. The GraphQL comparison
+ * says so by «This may be the result of a timeout», which the reader of the host takes for a network
+ * failure by its word «timeout». The words «Something went wrong while executing your query» alone
+ * are not enough: the host says them for a commit that is gone as well, measured on 21.11, and such a
+ * commit must break the audit, not leave it green. Only the timeout is a note. Another failure — a
+ * 422, a 500, a refusal by rights (HTTP 403), a commit that is gone — breaks the audit.
+ */
+const COMPARISON_REFUSED = /result of a timeout/i;
+
+/**
+ * How many commits the main branch holds past the rolled-out one.
+ *
+ * Asked by the GraphQL comparison, which counts commits and builds no diff. The REST comparison
+ * builds the diff of the whole even for a page of one commit — 300 files on 21.11 — and at a lag of
+ * hundreds of commits the host refused it with 422 twice in a row before the PR of a task.
+ */
+function commitsBehind(sha, mainBranch, options) {
+    const query =
+        `query{repository(owner:"${OWNER}",name:"${REPO}"){` +
+        `ref(qualifiedName:"refs/heads/${mainBranch}"){compare(headRef:"${sha}"){behindBy}}}}`;
+    const answer = gh(['api', 'graphql', '-f', `query=${query}`, '--jq', '.data.repository.ref.compare.behindBy'], options);
+    const behind = Number(String(answer).trim());
+    if (String(answer).trim() === '' || !Number.isFinite(behind)) {
+        throw new Error(`the comparison of «${mainBranch}» with ${sha.slice(0, 8)} returned no number: ${String(answer).trim() || 'empty'}`);
+    }
+    return behind;
 }
 
 /**

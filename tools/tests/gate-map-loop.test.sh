@@ -32,7 +32,7 @@ P=/x/rt-tools
 G=git
 H=gh
 
-report "a task folder edit demands the loop first, then task-flow" "$(rules edit "$P/docs/tasks/RT-1-x/plan.md")" "task-delivery-loop task-flow"
+report "a task folder edit demands the loop first, then task-flow and task-flow-plan" "$(rules edit "$P/docs/tasks/RT-1-x/plan.md")" "task-delivery-loop task-flow task-flow-plan"
 report "an epic plan edit demands the loop" "$(loop edit "$P/docs/plans/x.md")" loop
 report "a spec edit stays with its rule" "$(rules edit "$P/docs/specs/core/spec.md")" "spec-driven"
 report "a component edit stays with its rule" "$(rules edit "$P/projects/ui-kit-v2/src/x.component.ts")" "component-structure"

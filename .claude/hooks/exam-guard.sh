@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.1 · hooks/exam-guard.sh · d457e32512b7 · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/exam-guard.sh · 620654a1ae0e · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file|Bash|mcp__webstorm__execute_terminal_command
-# Requires: agents/strict-teacher.md, hooks/roles.sh, hooks/deny-tail.sh, hooks/write-targets.sh
+# Requires: checks/decide.mjs, hooks/decide.sh, hooks/facts.sh, agents/strict-teacher.md, hooks/roles.sh, hooks/deny-tail.sh, hooks/write-targets.sh
 # Exam guard: no edit goes through until the exam on the loaded rules has been passed this session.
 #
 # Why this way. The rules gate demands that a rule be loaded before an edit, and ends there: to
@@ -41,6 +41,7 @@ RT_GUARD_NAME=exam-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null || true
 
 rt_hook_read
 input="$RT_HOOK_INPUT"
@@ -82,6 +83,17 @@ case "$tool" in
     Edit | Write | MultiEdit | mcp__webstorm__create_new_file)
         target="$(printf '%s' "$input" | jq -r '.tool_input.file_path // .tool_input.pathInProject // empty' 2>/dev/null)"
         [ -n "$target" ] && [ "$(printf '%s\n' "$target" | rt_exam_free_paths)" = "yes" ] && exit 0
+        # A window past its stop threshold: the window guard lets through only the closing — the
+        # progress and the handover — and refuses the examiner role itself. Holding the progress
+        # for an exam then names a move the window guard denies, and the session cannot close.
+        # The window fact reads the mark of the window guard, and before the mark it counts the fill
+        # the way the window guard counts it.
+        case "$target" in
+            */docs/tasks/*/progress.md | docs/tasks/*/progress.md)
+                exam_sid="$(printf '%s' "$input" | jq -r '.session_id // "unknown"' 2>/dev/null)"
+                [ "$(rt_fact_window_over_stop "$exam_sid" "$(rt_fact_transcript "$input")")" = yes ] && exit 0
+                ;;
+        esac
         ;;
     Bash | mcp__webstorm__execute_terminal_command)
         cmd="$(rt_hook_cmd)"
@@ -103,16 +115,9 @@ case "$tool" in
     *) exit 0 ;;
 esac
 
-transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/null)"
+transcript="$(rt_fact_transcript "$input")"
 [ -z "$transcript" ] && exit 0
 [ -f "$transcript" ] || exit 0
-
-# The shared deny tail: two lawful moves and the lawful form of bypass, if the refusal has one.
-# The file may not be laid out — then there is no tail, and the reason for the refusal stays.
-# shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
 
 # The second way out of the refusal — one that does not require lifting protection.
 #
@@ -129,68 +134,30 @@ rt_exam_declared_skip() {
         | grep -qE '^Exam-skip:[[:space:]]*[^[:space:]<]'
 }
 
-deny() {
+# The decision, the move and the text come from the decision table. A declared bypass lets the call
+# through before the table is asked: it is the lawful way out the refusal itself names.
+# Parameters: the action (empty — the decider takes it from the call), the facts.
+decide_exam() {
     if rt_exam_declared_skip; then
         printf 'the exam guard: a bypass is declared in the body of the last commit by the line Exam-skip. The call is let through, the record stays in the history.\n' >&2
         exit 0
     fi
-
-    reason="$1"
-    tail_text="$(rt_deny_tail "$2")"
-    [ -n "$tail_text" ] && reason="$1 ${tail_text}"
-    jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}\n' "$reason"
+    # The named move is the call of the exam role; the window guard judges it by the window and by
+    # the rule of the course of work loaded for the closing edits.
+    exam_sid="$(printf '%s' "$input" | jq -r '.session_id // "unknown"' 2>/dev/null)"
+    exam_facts="$(jq -cn --argjson f "$2" \
+        --arg w "$(rt_fact_window_over_stop "$exam_sid" "$transcript")" \
+        --arg r "$(rt_fact_rule_loaded "${RT_TASK_FLOW_RULE:-task-flow}" "$exam_sid")" \
+        '$f + {window_over_stop:$w, rule_loaded:$r}')"
+    # shellcheck disable=SC1091
+    . "$rt_hooks_dir/decide.sh" 2>/dev/null
+    command -v rt_decide >/dev/null 2>&1 && rt_decide exam-guard.sh "$1" "$exam_facts" '{}' PreToolUse "$input"
     exit 0
 }
 
 # The whole session is judged, not the last turn: the exam is passed once at the start and holds
 # to the end.
-verdict="$(jq -s -r '
-    def textof:
-        if type == "string" then .
-        elif type == "array" then (map(if type == "object" then (.text // "") else tostring end) | join("\n"))
-        else tostring end;
-
-    # The call whose answer is discarded is recognised by its identifier, and the identifier is
-    # bound by a name: a dot after a pipe means the list itself, the search over it answers zero
-    # on any non-empty list, and every answer of every tool gets muted at once — that is, the
-    # verdict is looked for in the host records alone.
-    #
-    # Tools that read and write files: their result does not count as a verdict — otherwise
-    # echoing the same line or reading a file with it passes the guard, and the real verdict
-    # does not.
-    ["Bash", "Read", "Grep", "Glob", "Edit", "Write", "MultiEdit", "NotebookEdit"] as $mute
-    | ([.[] | select(.type == "assistant") | (.message.content // [])[]
-         | select(.type == "tool_use") | select(.name as $n | $mute | index($n) != null)
-         | {key: (.id // ""), value: true}] | from_entries) as $muted
-
-    | [ .[]
-        # The assistant text is never a verdict: writing the needed line in a reply costs one
-        # move.
-        | if .type == "assistant" then ""
-          elif .type == "user" then
-              ([ ((.message.content // []) | if type == "array" then .[] else empty end
-                    | select(.type == "tool_result")
-                    | select((.tool_use_id // "") | if . == "" then true else ($muted[.] | not) end)
-                    | .content | textof),
-                 ((.message.content // "") | if type == "string" then . else "" end),
-                 # The call result field: the same record, another form. Discarded only when
-                 # this result belongs to a reading or writing tool.
-                 (. as $rec
-                  | if ($rec.toolUseResult // null) == null then ""
-                    elif ([($rec.message.content // []) | if type == "array" then .[] else empty end
-                            | select(.type == "tool_result") | (.tool_use_id // "")]
-                          | map($muted[.] // false) | any) then ""
-                    else ($rec.toolUseResult | textof) end)
-               ] | join("\n"))
-          # Host records — the role completion notice and the attachment: the host chooses their
-          # form, and they count whole.
-          else tostring end ] | join("\n")
-    | [scan("(ЭКЗАМЕН:[[:space:]]*сдано|EXAM:[[:space:]]*passed)[[:space:]]*([0-9]+)[[:space:]]*(из|of)[[:space:]]*([0-9]+)")]
-    | if length == 0 then "none"
-      else (.[-1] | if .[1] == .[3] then "passed" else "failed" end)
-      end
-' "$transcript" 2>/dev/null)"
+verdict="$(rt_fact_exam "$transcript")"
 
 # The second exam is the one placed after the PR is opened. The first does not replace it: they
 # ask about different things, and the whole work lies between them.
@@ -248,7 +215,7 @@ if [ "$ready" = "1" ]; then
     case "$after" in
         passed | no-pr) exit 0 ;;
         *)
-            deny "BLOCKED by exam-guard: the draft is lifted after the second exam, and there was none in this session. Call the role strict-teacher with the rules of delivery and with what the task demanded: a whole session passed between reading those rules and lifting the draft. The way out through the list of switched-off roles requires removing the protection, and the runtime may forbid such an edit; the second way out does not require it — declare the bypass by the line «Exam-skip: причина» in the body of the last commit of the branch: it stays in the history and is visible to the owner on the page of the request."
+            decide_exam pr_ready '{"exam_after_pr":"none"}'
             ;;
     esac
 fi
@@ -261,9 +228,9 @@ fi
 case "$verdict" in
     passed) exit 0 ;;
     failed)
-        deny "BLOCKED by exam-guard: the exam on the loaded rules is failed. Read the rule whole again — not the piece that was asked about — and call the role strict-teacher anew. The answer shown gives knowledge of one line, not of the rule. The way out through the list of switched-off roles requires removing the protection, and the runtime may forbid such an edit; the second way out does not require it — the bypass is declared by the line «Exam-skip: причина» in the body of the last commit of the branch."
+        decide_exam "?edit_code" '{"exam":"failed"}'
         ;;
     *)
-        deny "BLOCKED by exam-guard: there was no exam on the loaded rules in this session. Call the role strict-teacher, hand it the list of loaded rules, answer its questions from memory and return the answers to it — the verdict it gives by the line «ЭКЗАМЕН: сдано N из 5». It counts from the answer of the role in whatever form the host delivered it, but not from the output of the shell and not from your own text: printing that line as an echo does not release the guard. The role was already called and the verdict received — then it arrived in a form the guard does not see: that is a defect of the guard, and an edit of «.claude/rt-kit.json» is taken out from under it. A loaded rule and a read rule are different things, and the price of that difference is paid by the owner."
+        decide_exam "?edit_code" '{"exam":"none"}'
         ;;
 esac

@@ -27,12 +27,18 @@ along the way.
 By this same table, at closing, one looks at which of the specs, rules and patterns went stale:
 what is named here is read twice — before the work and after it.>
 
-| What  | Where                            |
-| ----- | -------------------------------- |
-| Specs | <domains the work touches>       |
-| Laws  | <laws along its footprint>       |
-| Rules | <rules and their companions>     |
-| Code  | <libs and applications>          |
+| What             | Where                            |
+| ---------------- | -------------------------------- |
+| Specs (правится) | <domains the work touches>       |
+| Laws             | <laws along its footprint>       |
+| Rules            | <rules and their companions>     |
+| Code (правится)  | <libs and applications>          |
+
+A row the work edits carries the mark «(правится)» after its name; a row read only for context
+carries none. Where the engine of the task flow is laid out, it measures the end of the stages by
+the marked rows: after the commit of the plan the branch changes at least one file under every
+path of every marked row. A plan with no marked row is judged only by its agreement directory under
+`proposed/`.
 
 ## What counts as done
 
@@ -44,13 +50,31 @@ what is named here is read twice — before the work and after it.>
 
 - **Steps:**
     1. <what is done first>
+       Check: `<command>` → <expected>
     2. <what is done after it>
+       Check: `<command>` → <expected>
 - **Readiness sign:** <what must become true>
 - **Verified by:** `<command>` — <what in its output means "it matched">
 
 The steps are the smallest unit of the work, and they are written here in full: the progress
 mirrors this list with its marks, and a check matches the two by number and by name. A step is
 named by what is done, not by what is thought over — a line nobody can call done is not a step.
+
+Under every step stands its check: the command in backticks, an arrow and the expected result in
+one of the forms below. The parsing takes the word «Check:» and its Russian form alike, and the
+check line is not part of the step name. Where the engine of the task flow is laid out, it runs the
+command as the commit of the plan wrote it and marks the step only when the result matches.
+
+<!-- flow:expect -->
+| Form | Expected text | It matches when |
+| --- | --- | --- |
+| `exit` | `^exit (\d+)$` | the command exits with the code of the first group; the output is not compared |
+| `line` | `` ^`(.*)`$ `` | the code is 0 and the last non-empty line of the output equals the first group |
+| `regex` | `^/(.*)/$` | the code is 0 and the last non-empty line matches the first group |
+| `number` | `^(=\|>=\|<=) ?(-?\d+)$` | the code is 0, the last non-empty line is an integer, and its comparison by the first group with the second holds |
+<!-- /flow:expect -->
+
+A command of the work itself — a commit, a push, a PR, a task or a layout — is never a check.
 
 The command is written in backticks: the turn exit guard reads it and does not let out a turn in
 which the stage is declared closed and the command was not run. An acceptance written in prose

@@ -36,6 +36,11 @@ done
     printf '%s\n' "$changed" | sed -n 's#^projects/agent-kit/tests/##p' | while read -r f; do [ -f "$f" ] && printf '%s\n' "$f"; done
     for n in $names; do grep -l -- "$n" ./*.test.sh | sed 's#^\./##'; done
     [ -n "$defaults" ] && grep -l 'DEFAULTS\|defaults/' ./*.test.sh | sed 's#^\./##'
+    # The decision table describes every hook: an edit of any of them may break its row.
+    [ -n "$names" ] && [ -f decision-table.test.sh ] && printf '%s\n' decision-table.test.sh
+    # The kind of the hooks judges every hook file, a new one first of all: whether it declares its
+    # event, has a suite, and runs on saved data if it reads the record.
+    [ -n "$names" ] && [ -f hooks-kind.test.sh ] && printf '%s\n' hooks-kind.test.sh
 } 2>/dev/null | sort -u
 }
 
