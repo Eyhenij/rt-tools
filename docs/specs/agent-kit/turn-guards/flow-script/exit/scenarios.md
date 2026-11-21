@@ -327,6 +327,7 @@ When the adapter reads them
 Then only the runs of the pipeline file come back, with number, attempt, conclusion and end
 And a running run has no end, and a tree that names no pipeline file judges no run
 And the bases are the list of `pull_request.branches`, null for every base, and none for a pipeline that does not listen to PRs
+And a list at the indent of its key and a comment after a name are read as YAML reads them
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 
@@ -353,6 +354,7 @@ Given a running run and a background task of the session that names the run or t
 When the turn ends, also forty minutes after the watch started
 Then the CI holds nothing
 And a session in «работа-отдана» is not released by the watch: the scenario holds it
+And a background task with no call of the hosting client, a log file named after the PR, is no watch
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
@@ -369,7 +371,8 @@ Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 Given a failed run and an unrefused call after its end that names it, or a read of the output of its watch
 When the turn ends
 Then the CI holds nothing
-And a call with the number that a hook refused reads nothing
+And a call with the number that a hook refused or that failed reads nothing
+And an edit of a text that names the run reads nothing
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
@@ -412,6 +415,7 @@ Given a session on another branch that pushed the branch of an open PR, and a ta
 When the turn ends while the run of that PR goes with no watch
 Then the stop is held by that run
 And a PR of a branch the session neither works on nor pushed holds nothing
+And a push with its output redirected, a push of `HEAD`, a push of two branches and `gh pr create -H` name their branches
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
@@ -420,6 +424,8 @@ Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 Given a head pushed a minute ago with no run on it
 When the turn ends
 Then the stop is held as a fresh head
+And the minutes count from the result of the push, not from its start
+And a base that matches a mask of the pipeline holds as a listed one
 And three minutes after the push, or for a base the pipeline does not wake for, it holds nothing
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.

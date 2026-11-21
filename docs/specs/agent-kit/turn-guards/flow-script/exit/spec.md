@@ -59,9 +59,9 @@ not by a person.
 - **The engine measures the copy the session works in, and a worktree copy whose branch does not carry the engine is not judged.**
 - **The CI hold is read before the release cases and the menu: a CI run nobody watches or a red run nobody read holds the stop, at the end of the scenario too.**
 - **The CI hold judges the open PRs whose base wakes the pipeline and whose branch is the current one, the epic branch of the work, or one pushed in this record.**
-- **A running run holds the stop until a background task of the session that has not ended names the run, the PR or the head; the watch lifts the hold, and the release cases decide the turn.**
-- **A red run holds the stop until an unrefused call after its end names it or reads the output of a watch of it.**
-- **A head with no run holds the stop for two minutes after its push or the opening of its PR.**
+- **A running run holds the stop until an open background task of the session calls the hosting client with the run, the PR or the head; the watch lifts the hold, and the release cases decide the turn.**
+- **A red run holds the stop until a command after its end, neither refused nor failed, names it, or a read of the output of a watch of it.**
+- **A head with no run holds the stop for two minutes after the result of its push or the opening of its PR.**
 - **A hosting that does not answer about the CI holds nothing.**
 - **The owner's stop word passes a running run and a fresh head, not a red attempt that ended after the word.**
 - **The host adapter reads the open PRs and the runs of the PR pipeline file on a head past the clock.**

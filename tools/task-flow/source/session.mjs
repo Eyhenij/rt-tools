@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · task-flow/source/session.mjs · 9817a800994b · правится надстройкой, не здесь
+// rt-kit v0.38.0 · task-flow/source/session.mjs · b593ba5a4548 · правится надстройкой, не здесь
 /**
  * The source «source.session» of the task flow description: what this session did, read from the
  * record of the conversation the hook names in `RT_FLOW_TRANSCRIPT`, and the role it runs as, named
@@ -7,8 +7,9 @@
  *   toolUses()       the calls of the agent, oldest first: { name, input }
  *   events()         what happened in the record, oldest first: a refusal at the end of a turn
  *                    { kind: 'refusal', text }, a menu { kind: 'menu', answered }, a call of a tool
- *                    { kind: 'call', name, input, blocked, at, branch } — `branch` is the branch of its
- *                    record entry — a refusal of a call by a hook { kind: 'blocked', by, reason }, the
+ *                    { kind: 'call', name, input, blocked, at, branch, doneAt, failed } — `branch` is
+ *                    the branch of its record entry, `doneAt` the time of its result, `failed` an
+ *                    error result — a refusal of a call by a hook { kind: 'blocked', by, reason }, the
  *                    start of a background task { kind: 'background', id, task, at, output, agent,
  *                    command } — `command` is the command of its call — its end { kind: 'backgroundEnd', id,
  *                    task, output, status, stopped } — `stopped` when the session stopped it itself —
@@ -200,9 +201,14 @@ export function eventsOf(entries) {
                 const command = calls.get(part.tool_use_id)?.input?.command ?? null;
                 events.push({ kind: 'background', id: part.tool_use_id, task: started || null, at: Date.parse(entry.timestamp ?? ''), output, agent, command });
             }
+            const call = calls.get(part.tool_use_id);
+            if (call) {
+                // The result of a call: when it came, and whether the call failed.
+                call.doneAt = Date.parse(entry.timestamp ?? '');
+                call.failed = Boolean(part.is_error);
+            }
             const refused = part.is_error ? resultText(part).match(CALL_REFUSAL) : null;
             if (!refused) continue;
-            const call = calls.get(part.tool_use_id);
             if (call) call.blocked = true;
             events.push({ kind: 'blocked', by: refused[1], reason: refused[2].trim() });
         }

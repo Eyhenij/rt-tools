@@ -272,6 +272,7 @@ out('host: SC-AK-1799 — список в строку', JSON.stringify(pullRequ
 out('host: SC-AK-1799 — pull_request без списка — любая база', JSON.stringify(pullRequestBases('on:\n  pull_request:\n    types: [opened]\n')), 'null');
 out('host: SC-AK-1799 — короткая форма', JSON.stringify(pullRequestBases('on: [push, pull_request]\n')), 'null');
 out('host: SC-AK-1799 — конвейер без pull_request не слушает PR', JSON.stringify(pullRequestBases('on:\n  push:\n    branches: [main]\n  pull_request_target:\n')), '[]');
+out('host: SC-AK-1799 — список на отступе ключа и комментарий', JSON.stringify(pullRequestBases('on:\n  pull_request:\n    branches:\n    - main # base\n    types: [opened]\n')), '["main"]');
 JS
 
 # --- Ветка без номера задачи, эпик копии, черновик ------------------------------------------------

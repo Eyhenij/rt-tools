@@ -73,7 +73,10 @@ try {
  * does not listen to PRs.
  */
 export function pullRequestBases(text) {
-    const lines = String(text ?? '').split('\n');
+    // A comment is no part of a key or a name: `- main # base` names `main`.
+    const lines = String(text ?? '')
+        .split('\n')
+        .map((line) => line.replace(/\s+#.*$/, '').replace(/^\s*#.*$/, ''));
     const indentOf = (line) => line.length - line.trimStart().length;
     const below = (list, index) => {
         const depth = indentOf(list[index]);
@@ -93,11 +96,15 @@ export function pullRequestBases(text) {
     const branchesIndex = pr.findIndex((line) => /^\s+branches:/.test(line));
     if (branchesIndex === -1) return null;
     const inline = /^\s+branches:\s*\[(.*)\]/.exec(pr[branchesIndex]);
-    const names = inline
-        ? inline[1].split(',')
-        : below(pr, branchesIndex)
-              .filter((line) => /^\s+-\s/.test(line))
-              .map((line) => line.replace(/^\s+-\s*/, ''));
+    // The items of the list stand deeper than the key, or at its own indent: both are YAML.
+    const depth = indentOf(pr[branchesIndex]);
+    const items = [];
+    for (const line of pr.slice(branchesIndex + 1)) {
+        if (line.trim() === '') continue;
+        if (/^\s*-\s/.test(line) && indentOf(line) >= depth) items.push(line.replace(/^\s*-\s*/, ''));
+        else break;
+    }
+    const names = inline ? inline[1].split(',') : items;
     return names.map((name) => name.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean);
 }
 

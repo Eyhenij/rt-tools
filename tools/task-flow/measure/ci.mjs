@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · task-flow/measure/ci.mjs · 5ca421b40fb5 · правится надстройкой, не здесь
+// rt-kit v0.38.0 · task-flow/measure/ci.mjs · cb356bfeea6c · правится надстройкой, не здесь
 /**
  * The measurer «measure.ci» — the CI runs the session answers for. The hold is read before the
  * release cases: a turn does not end over a run nobody watches or a red run nobody read.
@@ -34,23 +34,39 @@ const names = (text, value) => value !== null && value !== undefined && new RegE
 /** The text of a call that may name a run: its command, or its whole input. */
 const callText = (event) => (typeof event.input?.command === 'string' ? event.input.command : JSON.stringify(event.input ?? {}));
 
-/** The branches the session pushed: { head: the time of the last push }. */
+/** The arguments of a command tail, with its redirections cut off: `> /tmp/push.log` names no branch. */
+const argsOf = (tail) =>
+    tail
+        .replace(/\d*&?>>?\s*\S+/g, ' ')
+        .trim()
+        .split(/\s+/)
+        .filter((arg) => arg && !arg.startsWith('-') && !/[<>]/.test(arg));
+
+/** The tail of a command up to its end: `;`, a pipe, `&&` or a lone `&`, not the `&` of `2>&1`. */
+const TAIL = String.raw`((?:[^;&|\n]|>&|&>)*)`;
+
+/**
+ * The branches the session pushed: { head: the time of the last push }. The time is the result of
+ * the call: a push runs the push set for minutes, and the hosting shows the run only after it.
+ */
 export function pushedHeads(events) {
     const heads = new Map();
     const put = (head, at) => {
-        if (!head || head.includes('$') || head === 'HEAD') return;
+        if (!head || head.includes('$')) return;
         heads.set(head, Math.max(heads.get(head) ?? -Infinity, Number.isFinite(at) ? at : -Infinity));
     };
     for (const event of events) {
-        if (event.kind !== 'call' || event.blocked || event.name !== 'Bash') continue;
+        if (event.kind !== 'call' || event.blocked || event.failed || event.name !== 'Bash') continue;
         const command = event.input?.command ?? '';
-        for (const match of command.matchAll(/\bgit\s+(?:-[Cc]\s+\S+\s+)*push\b([^;&|\n]*)/g)) {
-            const args = match[1].trim().split(/\s+/).filter((arg) => arg && !arg.startsWith('-') && !/^\d?>/.test(arg));
-            const refspec = args.length > 1 ? args[args.length - 1] : null;
-            put(refspec ? refspec.replace(/^\+/, '').split(':').pop().replace(/^refs\/heads\//, '') : event.branch, event.at);
+        const at = Number.isFinite(event.doneAt) ? event.doneAt : event.at;
+        const own = (ref) => (!ref || ref === 'HEAD' ? event.branch : ref);
+        for (const match of command.matchAll(new RegExp(String.raw`\bgit\s+(?:-[Cc]\s+\S+\s+)*push\b${TAIL}`, 'g'))) {
+            const refspecs = argsOf(match[1]).slice(1);
+            if (refspecs.length === 0) put(event.branch, at);
+            for (const refspec of refspecs) put(own(refspec.replace(/^\+/, '').split(':').pop().replace(/^refs\/heads\//, '')), at);
         }
-        for (const match of command.matchAll(/\bgh\s+pr\s+(?:create|new)\b([^;&|\n]*)/g)) {
-            put(/--head[=\s]+['"]?([^\s'"]+)/.exec(match[1])?.[1] ?? event.branch, event.at);
+        for (const match of command.matchAll(new RegExp(String.raw`\bgh\s+pr\s+(?:create|new)\b${TAIL}`, 'g'))) {
+            put(own(/(?:--head|-H)[=\s]+['"]?([^\s'"]+)/.exec(match[1])?.[1]), at);
         }
     }
     return heads;
@@ -69,26 +85,40 @@ function openTasks(events) {
     return [...open.values()];
 }
 
-/** A background task watches the run: its command names the run, the PR or the head. */
+/**
+ * A background task watches the run: its command calls the hosting client and names the run, the PR
+ * or the head. A log file named after the PR is no watch.
+ */
 const watches = (task, run, pr) =>
-    typeof task.command === 'string' && (names(task.command, run?.id) || names(task.command, pr.number) || (pr.headRefOid && task.command.includes(pr.headRefOid.slice(0, 7))));
+    typeof task.command === 'string' &&
+    /\bgh\b/.test(task.command) &&
+    (names(task.command, run?.id) || names(task.command, pr.number) || (pr.headRefOid && task.command.includes(pr.headRefOid.slice(0, 7))));
 
-/** An unrefused call after the end of the run names it, or reads the output of a watch of it. */
+/**
+ * A command after the end of the run that a hook did not refuse and that did not fail names it, or a
+ * read of the output of a watch of it. An edit of a text that names the run reads nothing.
+ */
 function wasRead(events, run, pr) {
     const outputs = new Set(events.filter((e) => e.kind === 'background' && e.output && watches(e, run, pr)).map((e) => e.output));
     return events.some(
         (event) =>
             event.kind === 'call' &&
             !event.blocked &&
+            !event.failed &&
             Number.isFinite(event.at) &&
             event.at > run.endedAt &&
-            (names(callText(event), run.id) || (event.name === 'Read' && outputs.has(event.input?.file_path))),
+            ((event.name === 'Bash' && names(callText(event), run.id)) || (event.name === 'Read' && outputs.has(event.input?.file_path))),
     );
 }
 
+/** A base the pipeline wakes for: a name of the list, or a mask with `*`. */
+const wakes = (bases, base) =>
+    bases === null || bases.some((name) => (name.includes('*') ? new RegExp(`^${name.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*+/g, '.*')}$`).test(base) : name === base));
+
 /**
- * The hold: { kind: 'running' | 'red' | 'fresh', pr, run }, or false. `pr` — { number, head,
- * headRefOid, base }; `run` — { id, attempt, conclusion, endedAt }, null for a fresh head.
+ * The hold: { kind: 'running' | 'red' | 'fresh', pr, run, file }, or false. `pr` — { number, head,
+ * headRefOid, base }; `run` — { id, attempt, conclusion, endedAt }, null for a fresh head; `file` —
+ * the pipeline file.
  */
 export function hold({ git, host, tree, session, owner }) {
     return (data) => {
@@ -104,9 +134,9 @@ export function hold({ git, host, tree, session, owner }) {
             if (error?.name !== 'HostSilent') throw error;
         }
         if (epic) heads.add(epic);
-        const { bases } = host.pipeline();
+        const { bases, file } = host.pipeline();
         if (Array.isArray(bases) && bases.length === 0) return false;
-        const pulls = host.openPulls().filter((p) => heads.has(p.head) && (bases === null || bases.includes(p.base)));
+        const pulls = host.openPulls().filter((p) => heads.has(p.head) && wakes(bases, p.base));
         if (pulls.length === 0) return false;
         const stopped = saidStop({ owner })(data);
         const stopAt = typeof session.ownerAt === 'function' ? session.ownerAt() : null;
@@ -115,13 +145,13 @@ export function hold({ git, host, tree, session, owner }) {
         for (const pr of pulls) {
             const runs = host.runs(pr.headRefOid);
             const red = runs.find((run) => run.status === 'completed' && !NOT_RED.has(run.conclusion) && !wasRead(events, run, pr));
-            if (red && !(stopped && Number.isFinite(stopAt) && red.endedAt <= stopAt)) return { kind: 'red', pr, run: red };
+            if (red && !(stopped && Number.isFinite(stopAt) && red.endedAt <= stopAt)) return { kind: 'red', pr, run: red, file };
             if (stopped) continue;
             const running = runs.find((run) => run.status !== 'completed');
-            if (running && !tasks.some((task) => watches(task, running, pr))) return { kind: 'running', pr, run: running };
+            if (running && !tasks.some((task) => watches(task, running, pr))) return { kind: 'running', pr, run: running, file };
             if (runs.length === 0) {
                 const since = Math.max(pushes.get(pr.head) ?? -Infinity, Number.isFinite(pr.createdAt) ? pr.createdAt : -Infinity);
-                if (now - since < FRESH_MINUTES * 60_000 && !tasks.some((task) => watches(task, null, pr))) return { kind: 'fresh', pr, run: null };
+                if (now - since < FRESH_MINUTES * 60_000 && !tasks.some((task) => watches(task, null, pr))) return { kind: 'fresh', pr, run: null, file };
             }
         }
         return false;

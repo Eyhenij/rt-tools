@@ -47,19 +47,21 @@ export function ciHoldReason(hold) {
     if (hold.kind === 'running') {
         return [
             `The CI run ${run.id} of ${where} is running, and no background task of this session watches it.`,
-            `The one move is to watch it in the background: \`gh run watch ${run.id} --exit-status\` with run_in_background — its notice wakes the session when the run ends. The watch lifts this hold; the scenario decides the rest of the turn.`,
+            `The one move is to watch it in the background: \`command gh run watch ${run.id} --exit-status --interval 30\` with run_in_background — its notice wakes the session when the run ends. The watch lifts this hold; the scenario decides the rest of the turn.`,
         ].join('\n');
     }
     if (hold.kind === 'fresh') {
-        const sha = String(pr.headRefOid ?? '').slice(0, 7);
+        const sha = String(pr.headRefOid ?? '');
+        const workflow = String(hold.file ?? '').split('/').pop();
+        const list = `command gh run list --commit ${sha}${workflow ? ` --workflow ${workflow}` : ''} --json databaseId --jq '.[0].databaseId'`;
         return [
-            `The head ${sha} of ${where} was pushed less than two minutes ago, and the hosting shows no CI run on it yet.`,
-            `The one move is a background watch of that head: \`until gh run list --commit ${pr.headRefOid} --json databaseId --jq '.[0].databaseId' | grep -q .; do sleep 10; done; gh run watch "$(gh run list --commit ${pr.headRefOid} --json databaseId --jq '.[0].databaseId')" --exit-status\` with run_in_background.`,
+            `The head ${sha.slice(0, 7)} of ${where} was pushed less than two minutes ago, and the hosting shows no CI run on it yet.`,
+            `The one move is a background watch of that head: \`for i in $(seq 30); do id=$(${list}); [ -n "$id" ] && break; sleep 10; done; [ -n "$id" ] && command gh run watch "$id" --exit-status --interval 30\` with run_in_background.`,
         ].join('\n');
     }
     return [
         `The CI run ${run.id} of ${where} ended «${run.conclusion}», and no call after its end has read it.`,
-        `The one move is to read it: \`gh run view ${run.id} --log-failed\` — then fix what fell. No owner's menu is offered while the run is unread.`,
+        `The one move is to read it: \`command gh run view ${run.id} --log-failed\` — then fix what fell. No owner's menu is offered while the run is unread.`,
     ].join('\n');
 }
 
