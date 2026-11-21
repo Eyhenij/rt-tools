@@ -2,18 +2,18 @@
 
 ## Где мы
 
-- **State:** `задача-взята`
+- **State:** `этап-идёт`
 - **Stage:** 1 of 2 — The probe runs without the pipeline's variables
-- **Done:** разбор в истории, черновик плана.
-- **Next step:** роли читают план, затем одобрение владельца.
-- **Uncommitted:** план
+- **Done:** разбор и план в истории; отметка одобрения «Одобряю plan.md RT-3473».
+- **Next step:** живая проверка, затем первый круг ревью.
+- **Uncommitted:** none
 - **PR:** not open yet
 
 ## Шаги
 
-- [>] 1.1 The sweep under the pipeline's variables gives no mismatch
-- [ ] 1.2 The suite holds the scenario of the pipeline's variables
-- [ ] 2.1 The scenario stands in the description
+- [x] 1.1 The sweep under the pipeline's variables gives no mismatch
+- [x] 1.2 The suite holds the scenario of the pipeline's variables
+- [x] 2.1 The scenario stands in the description
 
 ## Решения по ходу
 

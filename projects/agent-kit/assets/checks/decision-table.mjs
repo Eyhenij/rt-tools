@@ -235,6 +235,10 @@ function runProbe(row, extraEnv = {}) {
         `tr '\\n' ' ' < "$probe_err"; rm -f "$probe_err"`,
     ].join('\n');
     const env = { ...process.env, HOOKS_OVERRIDE: HOOKS, TMPDIR: process.env.TMPDIR ?? '/tmp', ...extraEnv };
+    // The table speaks of the session's calls. A hook that passes everything on the pipeline would
+    // answer a sweep run there otherwise than it answers the session.
+    delete env.CI;
+    delete env.GITHUB_ACTIONS;
     return new Promise((resolve) => {
         const child = spawn('bash', ['-c', script], { env, stdio: ['ignore', 'pipe', 'ignore'] });
         let stdout = '';

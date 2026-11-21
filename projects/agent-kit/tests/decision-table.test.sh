@@ -38,6 +38,14 @@ got="$(printf '%s\n' "$conform_out" | tail -1)"
 printf '%s' "$got" | grep -qE '^rows [1-9][0-9]*, mismatch 0$' && got=ok || printf '%s\n' "$conform_out" | head -20 >&2
 report "SC-AK-1563 — каждая строка сверена запуском хука" "$got" ok
 
+# --- SC-AK-1798 — переменные конвейера не доходят до хука пробы ------------------------------------
+# Хук отправки пропускает всё под `CI`. Таблица из двух его строк отказа, сверенная под переменными
+# конвейера, держит тот же отказ: проба судит хук так, как его видит сессия.
+jq '(.rows |= map(select(.hook == "pre-push.sh"))) | .states = [] | (.hooks |= map(select(.file == "pre-push.sh")))' \
+    "$ASSETS/checks/decision-table.json" >"$TMP/pre-push.json"
+report "SC-AK-1798 — сверка под переменными конвейера не расходится" \
+    "$(CI=true GITHUB_ACTIONS=true RT_DECISION_TABLE="$TMP/pre-push.json" node "$TABLE_CMD" --conform | tail -1)" "rows 2, mismatch 0"
+
 # --- SC-AK-1564, 1565 — тупиков нет, отказ называет разрешённый ход ------------------------------
 report "SC-AK-1564, SC-AK-1565 — перебор настоящей таблицы" "$(last --walk)" "dead 0, unnamed 0"
 
