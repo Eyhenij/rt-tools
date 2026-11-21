@@ -139,6 +139,11 @@
             overflow-y: auto;
         }
 
+        /* Поиск наверху нижней шторки: боковой отступ — отступ шапки шторки. */
+        &__sheet-search {
+            padding: var(--rt-space-2) var(--rt-space-5);
+        }
+
         &__option {
             padding: var(--rt-space-sm) var(--rt-space-md);
             color: var(--rt-color-text-primary);

@@ -405,9 +405,45 @@ async function shoot(
     }
 }
 
+/** Сколько раз открывается страница витрины, прежде чем файл историй падает. */
+const PREPARE_ATTEMPTS: number = 3;
+
+/**
+ * Открытие страницы витрины, повторённое при зависании.
+ *
+ * Браузер образа ходит к раздаче через пересылку адреса машины, и изредка соединение встаёт:
+ * страница, которая открывается за 0,2 с, не доходит до `load` за 30 с. Своя подготовка
+ * прогонщика открывает её один раз, и зависание роняет весь файл историй без единого
+ * разошедшегося кадра — так падали проверки трёх веток. Повтор лечит только зависание: отказ
+ * соединения и прочие ошибки уходят наружу с первой попытки.
+ */
+async function openShowcase(page: Page): Promise<void> {
+    const address: string = new URL('iframe.html', process.env.TARGET_URL).toString();
+
+    for (let attempt: number = 1; ; attempt++) {
+        try {
+            await page.goto(address, { waitUntil: 'load' });
+
+            return;
+        } catch (failure: unknown) {
+            const stalled: boolean = failure instanceof Error && failure.name === 'TimeoutError';
+
+            if (!stalled || attempt === PREPARE_ATTEMPTS) {
+                throw failure;
+            }
+
+            process.stderr.write(`витрина: ${address} не открылась с попытки ${attempt}, повтор\n`);
+        }
+    }
+}
+
 const config: TestRunnerConfig = {
     setup(): void {
         expect.extend({ toMatchImageSnapshot });
+    },
+
+    async prepare({ page }: { page: Page }): Promise<void> {
+        await openShowcase(page);
     },
 
     async preVisit(page: Page, context: TestContext): Promise<void> {

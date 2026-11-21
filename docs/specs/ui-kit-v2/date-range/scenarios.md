@@ -131,3 +131,16 @@ the sheet
 
 Покрытие: частичное — the component spec of the panel checks the rule of the sheet in the panel
 styles; the distance on the screen is shown by the frame of the story Sheet.
+
+### SC-UKV-1665 — the panel of a date or period field lines up with the field edge
+
+Given a date field or a period field wider than its panel
+When the panel opens next to the field
+Then its end edge stands on the end edge of the field, not of the calendar button inside it, and
+its top stands 4px below the field
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-range/rt-date-range.component.spec.ts`,
+`projects/ui-kit-v2/src/lib/components/date-picker/rt-date-picker.component.spec.ts` — the field
+hands its root to the popover; `projects/ui-kit-v2/src/lib/components/popover/rt-popover.directive.spec.ts`
+— the popover places the panel by that root and takes its width; the edge itself was measured live
+in the showcase.

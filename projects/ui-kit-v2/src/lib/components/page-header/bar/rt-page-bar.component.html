@@ -8,11 +8,16 @@
                 @if (filters().length > 0 || search()) {
                     <span rtElem="filters-trigger">
                         <rt-icon-button
+                            #filtersPopover="rtPopover"
                             icon="filter"
                             size="sm"
                             qa-dataid="page-bar-filters"
+                            rtPopoverAlign="end"
                             [ariaLabel]="filtersActive() ? t().uiFiltersActive : t().uiFilters"
-                            (click)="sheetOpen.set(true)" />
+                            [rtPopover]="filtersPanel"
+                            [rtPopoverDisabled]="filtersInSheet()"
+                            (rtPopoverOpened)="onPanelOpened()"
+                            (click)="onFiltersClick()" />
                         @if (filtersActive()) {
                             <span rtElem="dot" qa-dataid="page-bar-filters-dot"></span>
                         }
@@ -62,7 +67,7 @@
         </div>
     }
 
-    @if (isNarrow() && sheetOpen()) {
+    @if (filtersInSheet() && sheetOpen()) {
         <rt-bottom-sheet [open]="true" (openChange)="sheetOpen.set($event)">
             <span sheetHeader>{{ t().uiPageFilters }}</span>
             <div rtElem="sheet" qa-dataid="page-bar-sheet">
@@ -105,6 +110,22 @@
                 }
             </div>
         }
+    </ng-template>
+
+    <!-- Отборы узкого вида шире телефона: панель у кнопки, как «Ещё отборы», с поиском и «Применить». -->
+    <ng-template #filtersPanel>
+        <!-- Панель живёт в перекрытии в конце страницы: фокус ставится на неё саму, чтобы Tab шёл по отборам. -->
+        <div #filtersPanelBox rtBlock="rt-page-bar-more" qa-dataid="page-bar-filters-panel" tabindex="-1">
+            @if (search(); as searchSlot) {
+                <ng-container [ngTemplateOutlet]="searchSlot.templateRef" />
+            }
+            @for (filter of filters(); track filter) {
+                <ng-container [ngTemplateOutlet]="filter.templateRef" />
+            }
+            <button rtButton rtElem="apply" type="button" size="sm" qa-dataid="page-bar-panel-apply" (click)="onApply()">
+                {{ t().uiApply }}
+            </button>
+        </div>
     </ng-template>
 
     <ng-template #morePanel>

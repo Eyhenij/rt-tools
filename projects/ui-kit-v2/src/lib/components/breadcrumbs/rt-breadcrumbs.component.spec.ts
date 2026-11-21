@@ -24,7 +24,9 @@ const LONG_CHAIN: readonly IRtBreadcrumbs.Crumb[] = [
 
 /** Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. */
 class NarrowBreakpointsService {
+    public readonly phone: () => boolean = (): boolean => true;
     public readonly narrow: () => boolean = (): boolean => true;
+    public readonly viewportNarrow: () => boolean = (): boolean => true;
 }
 
 @Component({

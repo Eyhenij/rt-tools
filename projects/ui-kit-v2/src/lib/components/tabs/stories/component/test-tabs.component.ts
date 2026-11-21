@@ -22,7 +22,8 @@ import { IRtTabs } from '../../rt-tabs.model';
             [contentScrollable]="contentScrollable"
             [animationDuration]="animationDuration"
             [preserveContent]="preserveContent"
-            [contentTabIndex]="contentTabIndex">
+            [contentTabIndex]="contentTabIndex"
+            [sheet]="sheet">
             <ng-template rtTab="overview" label="Обзор">Сводка по договору</ng-template>
             <ng-template rtTab="members" label="Участники" [badge]="3">Список участников</ng-template>
             <ng-template rtTab="history" label="История" icon="ico-listing">Журнал изменений</ng-template>
@@ -45,4 +46,6 @@ export class TestRtTabsComponent {
     public preserveContent: boolean = false;
     /** Таб-стоп открытой панели; `null` — Tab с полосы идёт прямо в поля панели. */
     public contentTabIndex: number | null = 0;
+    /** Нижняя шторка на телефоне для «Ещё» и меню вкладки; `false` оставляет их рядом с полосой. */
+    public sheet: boolean = true;
 }

@@ -22,8 +22,8 @@
     }
 
     &:focus-visible {
-        outline: 2px solid var(--rt-color-action-primary);
-        outline-offset: -2px;
+        outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+        outline-offset: calc(-1 * var(--rt-focus-ring-width));
     }
 
     // Стрелка: треугольник вверх у правого края. Пока колонка не сортирует, её не видно — она

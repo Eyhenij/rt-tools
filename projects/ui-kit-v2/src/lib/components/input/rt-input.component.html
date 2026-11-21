@@ -1,6 +1,6 @@
 <ng-container rtBlock="rt-input">
     @if (isReadonly()) {
-        <span rtElem="readonly" qa-dataid="input-readonly" [rtMod]="{ empty: !displayText() }">{{ displayText() || '—' }}</span>
+        <span rtElem="readonly" qa-dataid="input-readonly" [rtMod]="{ empty: !displayText() }">{{ readonlyText() }}</span>
     } @else {
         @if (iconLeft(); as left) {
             @if (iconLeftAction()) {
@@ -25,22 +25,42 @@
                 {{ label }}
             </span>
         }
-        <input
-            #fieldEl
-            rtElem="field"
-            qa-dataid="input-control"
-            [type]="effectiveType()"
-            [placeholder]="placeholder()"
-            [value]="value()"
-            [disabled]="isDisabled()"
-            [attr.autocomplete]="autocomplete()"
-            [attr.maxlength]="maxlength()"
-            [attr.id]="effectiveControlId()"
-            [attr.aria-label]="ariaLabel()"
-            [attr.aria-labelledby]="labelledBy()"
-            [attr.aria-invalid]="isInvalid() || null"
-            (input)="onInput($event)"
-            (blur)="onBlur()" />
+        @if (prefix(); as pre) {
+            <!-- Постоянный текст до значения: диктору его читает описание поля, а не сам узел. -->
+            <span rtElem="prefix" qa-dataid="input-prefix" aria-hidden="true" [id]="prefixId">{{ pre }}</span>
+        }
+        <!-- Без суффикса обёртка не рисуется коробкой, и поле стоит в строке как прежде. С суффиксом
+             невидимая копия текста задаёт ширину поля, и суффикс идёт сразу за набранным. -->
+        <span rtElem="value">
+            @if (suffix()) {
+                <span rtElem="sizer" aria-hidden="true">{{ sizingText() }}</span>
+            }
+            <input
+                #fieldEl
+                rtElem="field"
+                qa-dataid="input-control"
+                [type]="effectiveType()"
+                [placeholder]="placeholder()"
+                [value]="value()"
+                [disabled]="isDisabled()"
+                [attr.autocomplete]="autocomplete()"
+                [attr.maxlength]="maxlength()"
+                [attr.id]="effectiveControlId()"
+                [attr.aria-label]="ariaLabel()"
+                [attr.aria-labelledby]="labelledBy()"
+                [attr.aria-describedby]="affixDescribedBy()"
+                [attr.aria-invalid]="isInvalid() || null"
+                [attr.role]="combobox() ? 'combobox' : null"
+                [attr.aria-autocomplete]="combobox() ? 'list' : null"
+                [attr.aria-controls]="combobox()?.controls ?? null"
+                [attr.aria-expanded]="combobox()?.expanded ?? null"
+                [attr.aria-activedescendant]="combobox()?.activeDescendant ?? null"
+                (input)="onInput($event)"
+                (blur)="onBlur()" />
+        </span>
+        @if (suffix(); as post) {
+            <span rtElem="suffix" qa-dataid="input-suffix" aria-hidden="true" [id]="suffixId">{{ post }}</span>
+        }
         @if (showClearButton() && !showPasswordToggle()) {
             <rt-icon-button
                 rtElem="clear"

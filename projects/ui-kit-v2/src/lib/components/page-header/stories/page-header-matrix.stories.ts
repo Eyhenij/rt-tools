@@ -36,7 +36,8 @@ export const User: TStory = { args: { part: 'user' } };
 export const UserMenuNarrow: TStory = {
     args: { part: 'user-menu' },
     globals: { viewport: { value: 'narrow' } },
-    parameters: { snapshot: { fullPage: true, viewport: STORY_PHONE_VIEWPORT } },
+    // Только кадр телефона: широкие кадры файла здесь показали бы ту же шторку на широком окне.
+    parameters: { snapshot: { fullPage: true, viewport: STORY_PHONE_VIEWPORT, widths: [] } },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await openStoryOverlay(canvasElement, { event: 'click', within: '[qa-dataid="header-user-menu"]', wait: 200 });
     },

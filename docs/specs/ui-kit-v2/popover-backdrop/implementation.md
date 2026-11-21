@@ -4,7 +4,7 @@ The rule of the subdomain is on the left, the place where it is carried out is o
 paths are given from the root of the tree.
 
 - **A popover without a backdrop class leaves the page next to the panel open.** — `projects/ui-kit-v2/src/lib/components/popover/rt-popover.directive.ts:backdropClass`
-- **A backdrop class puts a backdrop under the panel, and a press on it closes the panel.** — `projects/ui-kit-v2/src/lib/components/popover/rt-popover.directive.ts:backdropClick`
+- **A backdrop class puts a backdrop under the panel, and a press on it closes the panel.** — `projects/ui-kit-v2/src/lib/components/popover/rt-popover-intents.logic.ts:backdropClick`
 - **The mobile menu of the page header stands on a dimmed backdrop.** — `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header.component.html:rt-page-header-mobile-backdrop`, the colour — `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header-mobile.scss:rt-page-header-mobile-backdrop`
 - **The profile menu stands on that backdrop only on a narrow screen.** — `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header.component.ts:userMenuBackdropClass`
 

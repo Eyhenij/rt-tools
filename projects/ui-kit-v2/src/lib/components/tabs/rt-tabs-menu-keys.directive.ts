@@ -1,6 +1,9 @@
 import { FocusKeyManager } from '@angular/cdk/a11y';
 import { DOCUMENT } from '@angular/common';
-import { afterNextRender, inject, DestroyRef, Directive, ElementRef } from '@angular/core';
+import { afterNextRender, inject, DestroyRef, Directive, ElementRef, Injector } from '@angular/core';
+
+/** Сколько отрисовок ждать, пока предок с `inert` уйдёт: открытие шторки занимает одну-две. */
+const INERT_WAIT_RENDERS: number = 3;
 
 /** Пункт меню для перехода стрелками: отключённый пропускается. */
 interface IRtTabsMenuItem {
@@ -26,17 +29,12 @@ export class RtTabsMenuKeysDirective {
     /** Узел с фокусом в минуту открытия: кнопка «Ещё» или вкладка. */
     readonly #returnTo: Element | null = this.#doc.activeElement;
 
+    readonly #injector: Injector = inject(Injector);
+
     #keys: FocusKeyManager<IRtTabsMenuItem> | null = null;
 
     constructor() {
-        afterNextRender((): void => {
-            const items: IRtTabsMenuItem[] = this.#items().map((node: HTMLElement): IRtTabsMenuItem => ({
-                disabled: node.getAttribute('aria-disabled') === 'true' || node.hasAttribute('disabled'),
-                focus: (): void => node.focus(),
-            }));
-            this.#keys = new FocusKeyManager<IRtTabsMenuItem>(items).withWrap().withHomeAndEnd();
-            this.#keys.setFirstItemActive();
-        });
+        this.#activateWhenReady(INERT_WAIT_RENDERS);
 
         inject(DestroyRef).onDestroy((): void => {
             this.#keys?.destroy();
@@ -52,6 +50,29 @@ export class RtTabsMenuKeysDirective {
         if (event.key !== 'Tab' && event.key !== 'Escape') {
             this.#keys?.onKeydown(event);
         }
+    }
+
+    /**
+     * Берёт фокус после отрисовки. Меню в нижней шторке стоит внутри закрытого, то есть `inert`,
+     * листа, пока шторка не откроется, и `focus()` в нём ничего не делает: пока предок `inert`,
+     * ждёт следующую отрисовку, но не больше `attemptsLeft` раз.
+     */
+    #activateWhenReady(attemptsLeft: number): void {
+        afterNextRender(
+            (): void => {
+                if (attemptsLeft > 0 && this.#host.closest('[inert]') !== null) {
+                    this.#activateWhenReady(attemptsLeft - 1);
+                    return;
+                }
+                const items: IRtTabsMenuItem[] = this.#items().map((node: HTMLElement): IRtTabsMenuItem => ({
+                    disabled: node.getAttribute('aria-disabled') === 'true' || node.hasAttribute('disabled'),
+                    focus: (): void => node.focus(),
+                }));
+                this.#keys = new FocusKeyManager<IRtTabsMenuItem>(items).withWrap().withHomeAndEnd();
+                this.#keys.setFirstItemActive();
+            },
+            { injector: this.#injector }
+        );
     }
 
     #items(): HTMLElement[] {

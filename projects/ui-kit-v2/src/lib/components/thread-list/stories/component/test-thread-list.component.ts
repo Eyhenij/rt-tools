@@ -21,7 +21,8 @@ import { RtThreadListComponent } from '../../rt-thread-list.component';
                     [loading]="loading"
                     [fetching]="fetching"
                     [hasMore]="hasMore"
-                    [filtersActive]="filtersActive" />
+                    [filtersActive]="filtersActive"
+                    [sheet]="sheet" />
             </ng-template>
         </app-story-presets>
     `,
@@ -43,4 +44,5 @@ export class TestRtThreadListComponent {
     public fetching: boolean = false;
     public hasMore: boolean = false;
     public filtersActive: boolean = false;
+    public sheet: boolean = true;
 }

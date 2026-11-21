@@ -25,6 +25,8 @@ const narrow: WritableSignal<boolean> = signal<boolean>(true);
 /** Двойник ширины экрана: тест сам переводит его через порог узкого. */
 class BreakpointsDouble {
     public readonly narrow: WritableSignal<boolean> = narrow;
+    public readonly viewportNarrow: WritableSignal<boolean> = narrow;
+    public readonly phone: WritableSignal<boolean> = this.viewportNarrow;
 }
 
 class ObserverDouble {

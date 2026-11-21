@@ -41,7 +41,12 @@ const ROWS: readonly ICardRow[] = [
     selector: 'app-table-card-focus',
     templateUrl: './test-table-card-focus.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [{ provide: BreakpointsService, useValue: { narrow: signal<boolean>(true) } }],
+    providers: [
+        {
+            provide: BreakpointsService,
+            useValue: { narrow: signal<boolean>(true), viewportNarrow: signal<boolean>(true), phone: signal<boolean>(true) },
+        },
+    ],
     imports: [
         RtTableComponent,
         RtTableRowDirective,

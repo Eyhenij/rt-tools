@@ -12,6 +12,7 @@ export default {
         iconLeft: { control: false },
         filter: { control: { type: 'boolean' } },
         filterPlaceholder: { control: { type: 'text' } },
+        sheet: { control: { type: 'boolean' } },
     },
 } as Meta<TestRtSelectComponent>;
 
@@ -24,5 +25,6 @@ export const Playground: TStory = {
         iconLeft: null,
         filter: false,
         filterPlaceholder: '',
+        sheet: true,
     },
 };

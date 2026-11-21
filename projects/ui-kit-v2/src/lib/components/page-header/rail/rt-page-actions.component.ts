@@ -1,9 +1,12 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import {
+    booleanAttribute,
     input,
     output,
     ChangeDetectionStrategy,
     Component,
     InputSignal,
+    InputSignalWithTransform,
     OutputEmitterRef,
     TemplateRef,
     ViewEncapsulation,
@@ -32,6 +35,11 @@ const BEM_BLOCK: string = 'rt-page-actions';
     host: { class: BEM_BLOCK, '[class.rt-page-actions--rail]': "placement() === 'rail'" },
 })
 export class RtPageActionsComponent {
+    /** На телефоне меню профиля открывается в нижней шторке кита; `false` оставляет его у кнопки. */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
     public readonly items: InputSignal<ReadonlyArray<IRtPageHeader.Item>> = input<ReadonlyArray<IRtPageHeader.Item>>([]);
 
     public readonly user: InputSignal<IRtPageHeader.User | null> = input<IRtPageHeader.User | null>(null);

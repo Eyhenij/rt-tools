@@ -1,3 +1,4 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import { NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
@@ -177,6 +178,11 @@ export class RtThreadListComponent<TRow extends IRtThreadList.Row> implements On
     protected readonly emptyTemplate: Signal<RtThreadListEmptyDirective | undefined> = contentChild(RtThreadListEmptyDirective);
 
     protected readonly errorTemplate: Signal<RtThreadListErrorDirective | undefined> = contentChild(RtThreadListErrorDirective);
+
+    /** На телефоне панель открывается в нижней шторке кита; `false` оставляет её у кнопки. */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
 
     public readonly rows: InputSignal<readonly TRow[]> = input<readonly TRow[]>([]);
 

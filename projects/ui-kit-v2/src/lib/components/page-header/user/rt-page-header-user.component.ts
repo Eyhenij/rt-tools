@@ -1,3 +1,4 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import { NgTemplateOutlet } from '@angular/common';
 import {
     input,
@@ -8,6 +9,8 @@ import {
     OutputEmitterRef,
     TemplateRef,
     ViewEncapsulation,
+    booleanAttribute,
+    InputSignalWithTransform,
 } from '@angular/core';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
@@ -33,6 +36,11 @@ const BEM_BLOCK: string = 'rt-page-header-user';
     host: { class: BEM_BLOCK },
 })
 export class RtPageHeaderUserComponent {
+    /** На телефоне меню открывается в нижней шторке кита; `false` оставляет его у кнопки. */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
     public readonly name: InputSignal<string> = input.required<string>();
 
     public readonly avatar: InputSignal<string> = input.required<string>();

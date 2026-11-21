@@ -12,6 +12,7 @@ export default {
         userTitle: { control: { type: 'text' } },
         userMenu: { control: false },
         ariaLabel: { control: { type: 'text' } },
+        sheet: { control: { type: 'boolean' } },
     },
 } as Meta<TestRtPageHeaderComponent>;
 
@@ -23,5 +24,6 @@ export const Playground: TStory = {
         userTitle: '',
         userMenu: null,
         ariaLabel: '',
+        sheet: true,
     },
 };

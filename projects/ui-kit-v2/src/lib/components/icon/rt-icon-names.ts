@@ -78,6 +78,7 @@ export const iconsName = [
     'building',
     'burger',
     'calendar',
+    'calendar-2',
     'calendar-minus',
     'calendar-plus',
     'calendar-times',

@@ -33,6 +33,11 @@ tables inside then kept the wide look in a narrow place and broke the row.
 - **A kit component inside the page place counts its thresholds from the place width.**
 - **Without the page place the thresholds count from the window.**
 - **The page container declares itself the page place and releases it when it leaves.**
+- **The window threshold of a page without a place is told by a class on the root, not by a
+  search of the page.** The page container puts the class on the root before its first drawing and
+  takes it off when no other container is left. A condition `:has()` on the root made the browser
+  recount the styles of the whole document on any edit of the page: an edit of one table cell took
+  7.5 ms instead of 0.4, and a change of month held a frame for 987 ms.
 - **The narrow sign of the breakpoint service answers by the page place, and by the window without one.**
 - **An overlay counts its thresholds from the window.**
 
@@ -89,7 +94,7 @@ Not applicable: a screen has one page place.
 - **A page without a place gets its thresholds from a window query, not from a container on the
   root.** A container on the root or on `body` stops the browser from spreading the `body`
   background over the whole window: the page background then ended under the content. The window
-  query stands under the ancestor `html:not(:has(.rt-container))`, so the nested element rules of a
+  query stands under the ancestor `html:not(.rt-has-place)`, so the nested element rules of a
   component keep their form.
 - **The page container takes its width from its parent.** A container of width declares no width by
   its content: in a parent that sizes itself by content it collapses. An application frame puts
@@ -106,3 +111,5 @@ None.
 - 21 October 2026 — written by the task RT-2913 straight into the kit spec.
 - 21 October 2026 — task RT-2924: the root no longer declares a place, a window query takes its
   part.
+- 2026-11-20 — the window threshold reads a class on the root instead of `:has()`; the task
+  RT-3399.

@@ -104,18 +104,19 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход                  | тип                          | умолчание          |
-| --------------------- | ---------------------------- | ------------------ |
-| `items`               | `ReadonlyArray<Item>`        | `[]`               |
-| `user`                | `{ name, avatar? } \| null`  | `null`             |
-| `userTitle`           | `string`                     | `''`               |
-| `userMenu`            | `TemplateRef \| null`        | `null`             |
-| `ariaLabel`           | `string`                     | `''` → `uiMainNav` |
-| `stickyCompact`       | `boolean`                    | `false`            |
-| `compactVisibleCount` | `number`                     | `2`                |
-| `layout`              | `'horizontal' \| 'vertical'` | `'horizontal'`     |
-| `railFoot`            | `boolean`                    | `true`             |
-| `railActions`         | `ReadonlyArray<Item>`        | `[]`               |
+| вход                  | тип                          | умолчание                   |
+| --------------------- | ---------------------------- | --------------------------- |
+| `items`               | `ReadonlyArray<Item>`        | `[]`                        |
+| `user`                | `{ name, avatar? } \| null`  | `null`                      |
+| `userTitle`           | `string`                     | `''`                        |
+| `userMenu`            | `TemplateRef \| null`        | `null`                      |
+| `ariaLabel`           | `string`                     | `''` → `uiMainNav`          |
+| `stickyCompact`       | `boolean`                    | `false`                     |
+| `compactVisibleCount` | `number`                     | `2`                         |
+| `layout`              | `'horizontal' \| 'vertical'` | `'horizontal'`              |
+| `railFoot`            | `boolean`                    | `true`                      |
+| `railActions`         | `ReadonlyArray<Item>`        | `[]`                        |
+| `sheet`               | `boolean`                    | `true` → шторка на телефоне |
 
 Поле пункта `priority` (`number`, по умолчанию `0`) — очередь ухода раздела в «Ещё».
 
@@ -127,7 +128,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 При `layout="vertical"` слот `[rtRailLogo]` принимает логотип, слот `[rtRailPage]` — содержимое строки
 телефона. Компактная шапка страницы — отдельная часть `rt-page-bar`: входы `pageTitle`, `actions`,
-`filtersActive`, выходы `actionClick` и `filtersApply`, шаблоны `rtPageBarSearch` и `rtPageBarFilter`: полям в строке
+`filtersActive`, `sheet` (шторка отборов на телефоне; шире — панель у кнопки), выходы `actionClick` и `filtersApply`, шаблоны `rtPageBarSearch` и `rtPageBarFilter`: полям в строке
 задаётся `size="sm"`, кнопки действий шапка держит высотой 32 сама. Кнопки в ряду с вкладками — `rt-page-actions`.
 
 ## Выходы

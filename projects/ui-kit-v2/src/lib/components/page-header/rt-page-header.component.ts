@@ -238,6 +238,11 @@ export class RtPageHeaderComponent {
 
     protected readonly isVertical: Signal<boolean> = computed((): boolean => this.layout() === 'vertical');
 
+    /** На телефоне меню открывается в нижней шторке кита; `false` оставляет его у кнопки. */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
     public readonly items: InputSignal<ReadonlyArray<IRtPageHeader.Item>> = input<ReadonlyArray<IRtPageHeader.Item>>([]);
 
     public readonly user: InputSignal<IRtPageHeader.User | null> = input<IRtPageHeader.User | null>(null);
