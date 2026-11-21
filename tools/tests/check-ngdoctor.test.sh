@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
 # The scenarios of the Angular Doctor threshold check: the verdict on the JSON the tool prints.
 # The tool itself is not run here — the input is written out, so that every verdict is reachable,
-# the failed run of the tool among them.
+# the failed run of the tool and the run with skipped checks among them.
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 echo "the Angular Doctor threshold check"
 
 CHECK="$TOOLS/check-ngdoctor.mjs"
-THRESHOLD="$(node --input-type=module -e "import('$CHECK').then((m) => console.log(m.THRESHOLD))")"
-BELOW="$(node -p "$THRESHOLD - 0.75")"
-ABOVE="$(node -p "$THRESHOLD + 0.75")"
+# The threshold as four numbers: score, errors, warnings, info.
+read -r SCORE ERRORS WARNINGS INFO <<<"$(node --input-type=module -e "import('$CHECK').then(({ THRESHOLD: t }) => console.log(t.score, t.error, t.warning, t.info))")"
 
 # The verdict of the check on the given standard input: green or red.
 verdict() {
@@ -25,17 +24,38 @@ says() {
     report "$label" "$got" "yes"
 }
 
-report_of() { printf '{"score": %s, "totals": {"error": 1, "warning": 2, "info": 3}}' "$1"; }
+# The JSON of the tool: score, errors, warnings, info and the skipped checks as a JSON list.
+report_of() {
+    printf '{"score": %s, "totals": {"error": %s, "warning": %s, "info": %s}, "skippedChecks": %s}' \
+        "$1" "$2" "$3" "$4" "${5:-[]}"
+}
 
-verdict "a score equal to the threshold is green" "$(report_of "$THRESHOLD")" "green"
-says "the green verdict ends with the shown score" "$(report_of "$THRESHOLD")" "^score [0-9]+ = threshold [0-9]+$"
-verdict "a score below the threshold is red" "$(report_of "$BELOW")" "red"
-says "the red verdict below names the way to the finding" "$(report_of "$BELOW")" "angular-doctor --verbose"
-verdict "a score above the threshold is red" "$(report_of "$ABOVE")" "red"
-says "the red verdict above names the new threshold" "$(report_of "$ABOVE")" "THRESHOLD = $ABOVE"
+SAME="$(report_of "$SCORE" "$ERRORS" "$WARNINGS" "$INFO")"
+verdict "the result equal to the threshold is green" "$SAME" "green"
+says "the green verdict ends with the shown score" "$SAME" "^score [0-9]+ = threshold [0-9]+$"
+
+LOWER="$(report_of "$(node -p "$SCORE - 0.75")" "$ERRORS" "$((WARNINGS + 1))" "$INFO")"
+verdict "a lower score is red" "$LOWER" "red"
+says "the red verdict on a worse result names the way to the finding" "$LOWER" "angular-doctor --verbose"
+
+verdict "one more warning at the same score is red" "$(report_of "$SCORE" "$ERRORS" "$((WARNINGS + 1))" "$INFO")" "red"
+verdict "one more error at the same score is red" "$(report_of "$SCORE" "$((ERRORS + 1))" "$WARNINGS" "$INFO")" "red"
+verdict "one more info at the same score is red" "$(report_of "$SCORE" "$ERRORS" "$WARNINGS" "$((INFO + 1))")" "red"
+verdict "a fix that adds another finding is red" \
+    "$(report_of "$(node -p "$SCORE + 1.5")" "$((ERRORS - 1))" "$((WARNINGS + 1))" "$INFO")" "red"
+
+HIGHER="$(report_of "$(node -p "$SCORE + 0.75")" "$ERRORS" "$((WARNINGS - 1))" "$INFO")"
+verdict "a better result not written as the threshold is red" "$HIGHER" "red"
+says "the red verdict on a better result names the new threshold" "$HIGHER" "write THRESHOLD = \\{ score: $(node -p "$SCORE + 0.75"), error: $ERRORS"
+
+SKIPPED="$(report_of "$SCORE" "$ERRORS" "$WARNINGS" "$INFO" '["oxlint is not available"]')"
+verdict "a run with skipped checks is red at equal numbers" "$SKIPPED" "red"
+says "the red verdict on skipped checks prints their reason" "$SKIPPED" "oxlint is not available"
+
 verdict "an empty input is red" "" "red"
 verdict "a broken input is red" "Error: something failed" "red"
 verdict "an input without a score is red" '{"totals": {}}' "red"
 verdict "a score that is not a number is red" '{"score": "31"}' "red"
+verdict "an input without the counts is red" "{\"score\": $SCORE}" "red"
 
 suite_result "check-ngdoctor"

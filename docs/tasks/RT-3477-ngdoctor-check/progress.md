@@ -4,12 +4,12 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `этап-идёт`
-- **Stage:** 2 of 3 — The threshold check
-- **Done:** steps 1.1–2.2 measured and matched; 2.4 and 3.1 are done in the tree and matched by `step`, their marks wait for 2.3; the step is in the pipeline and the push set
-- **Next step:** the owner's word about step 2.3, whose check cannot match as written
-- **Uncommitted:** nothing after the stage commit
-- **Waiting for the owner:** the way out for step 2.3
+- **State:** `этапы-кончились`
+- **Stage:** 3 of 3 — Texts; review round one fixed
+- **Done:** all eight steps measured and matched; review round one: findings checked against the code and fixed
+- **Next step:** review round two by fresh readers
+- **Uncommitted:** the fixes of round one until their commit
+- **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
@@ -48,6 +48,32 @@ Rewritten by every session, not appended to.
 - **Check of step 2.3 replaced:** `bash tools/tests/run.sh 2>&1 | grep "^check-ngdoctor:"` → /^check-ngdoctor: \d+ ok, 0 failures$/ · the owner's word: «Убрать шаг 2.3 из плана»
 - **2026-11-21. knip red on main becomes a task of the epic right after this one.** The owner's
   word: «В эпик, перед RT-3478».
+
+- **Round one: the threshold is four numbers, not the score alone.** product-strategist showed
+  by the scoring model of the tool that a second warning of a firing rule, a second error of a rule
+  in a file where it fires and any info leave the score as it was. The threshold is now the score
+  with the count of errors, warnings and info; a worse one of any is red. Affected stage: 2.
+- **Round one: a run with skipped checks is red.** qa-engineer, confirmed in the tool code: a
+  subsystem that did not start goes to `skippedChecks`, its findings vanish and the exit is 0.
+  Affected stage: 2.
+- **Round one: each run gets its own temporary directory.** qa-engineer, confirmed in the tool
+  code: the oxlint config is written once into the shared temporary directory and read from there
+  by every later run, of any version. Live: a planted config gave warnings 1175 without isolation
+  and the equal result through the script. Affected stage: 2.
+- **Round one: the step stands before knip in `check:all`.** goal-critic: knip is red on main
+  until RT-3492, and `check:all` stopped before the step. Affected stage: 2.
+- **Round one, written off: a pipe without pipefail.** qa-engineer: a full JSON followed by a
+  non-zero exit of the tool would pass. The pinned 0.3.0 returns right after it prints the JSON,
+  so the case is not reachable; a truncated or empty output is red by the scenarios.
+- **Round one, written off: equality makes parallel branches touch one line.** qa-engineer: two
+  branches that move the result both edit the threshold. That is the price of a gap-free
+  threshold, and the epic branches stand in a stack, one after another.
+- **Corrections to the grill, which is not rewritten.** The first scan ran on the local main at
+  eeebbb935, not at 0c1f35410. The scan reads 26 files of the prisma client outside history, not
+  18; the score does not depend on them today, because the rule they fire also fires elsewhere —
+  after RT-3488 it will, and the epic plan names that question.
+- **The pipeline runs only for a PR into main.** `ci.yml` has no manual trigger, so the new step
+  first runs on the PR of the epic; until then the push set, which runs it, is the blocking check.
 
 ## What the work found beside the subject
 
