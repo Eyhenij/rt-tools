@@ -33,10 +33,17 @@ pnpm run lint
 # Format code
 pnpm run prettier
 
-# Lint, types, tests, build and verify over every project, then the styles linter and knip. It is
-# not the push gate: the tree checks, the hook scenarios and the showcase snapshots run only before
-# a push, and that set is printed by `rt_push_checks` in `.claude/rt-kit/project.sh`
+# Lint, types, tests, build and verify over every project, then the styles linter, check:ngdoctor
+# and knip. It is not the push gate: the tree checks, the hook scenarios and the showcase
+# snapshots run only before a push, and that set is printed by `rt_push_checks` in
+# `.claude/rt-kit/project.sh`
 pnpm run check:all
+
+# The Angular Doctor result of the tree — the score and the count of findings of every rule —
+# against `tools/ngdoctor-threshold.json`; red on any other result and on a degraded run. A step of
+# `check:all`, of the pipeline and of the push set. `--verbose` lists the files of a rule that
+# grew; a fix writes the threshold by `node tools/check-ngdoctor.mjs --write`
+pnpm run check:ngdoctor
 
 # Files, dependencies and exports nobody uses, by knip over every project; settings in `knip.json`.
 # The last step of `check:all`; it is not in the push set, and any finding turns it red
