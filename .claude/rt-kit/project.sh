@@ -199,6 +199,7 @@ node tools/check-showcase-links.mjs
 node tools/check-kit-coverage.mjs
 node tools/check-boolean-inputs.mjs
 pnpm run check:ngdoctor
+pnpm run check:unused
 node tools/check-tokens-styles.mjs
 node tools/check-cascade-layer.mjs
 node tools/check-format-ignore.mjs
