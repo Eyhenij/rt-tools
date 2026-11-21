@@ -32,7 +32,7 @@ Then the hint ends with an ellipsis at the right edge of the field
 styles. The promise is held by the frame of the story Molecules/ServiceBlock/Panel `Phone`, where
 the hints of the three key fields are longer than the fields.
 
-### SC-UKV-1541 — the prefix stands before the value and does not enter it
+### SC-UKV-1659 — the prefix stands before the value and does not enter it
 
 Given a field with the prefix «site.ru/team/»
 When the person types `my-page`
@@ -40,7 +40,7 @@ Then the prefix stands before the typed text, and the form gets `my-page`
 
 Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input-affixes.spec.ts`.
 
-### SC-UKV-1542 — the suffix follows the typed text, not the right edge
+### SC-UKV-1660 — the suffix follows the typed text, not the right edge
 
 Given a field with the suffix `.site.ru` and the hint `имя-команды`
 When the field is empty, then the person types `my-team`
@@ -50,7 +50,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input-affixes.spec.ts` 
 nodes and the hidden copy of the text that sizes the field. The distance on the screen was measured
 live in the story Molecules/Forms/FieldExtras `Affixes`: zero between the value and the suffix.
 
-### SC-UKV-1543 — a field without the two inputs stays as it was
+### SC-UKV-1661 — a field without the two inputs stays as it was
 
 Given a field with neither a prefix nor a suffix
 When the field is drawn
@@ -58,7 +58,7 @@ Then it has no fixed text, no hidden copy and no description
 
 Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input-affixes.spec.ts`.
 
-### SC-UKV-1544 — the field is described by its fixed text
+### SC-UKV-1662 — the field is described by its fixed text
 
 Given a field with a prefix and a suffix
 When a screen reader reads the field
@@ -66,7 +66,7 @@ Then the field is described by both texts, and the texts themselves are hidden f
 
 Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input-affixes.spec.ts`.
 
-### SC-UKV-1548 — the label on the border of an empty field with fixed text stays raised
+### SC-UKV-1666 — the label on the border of an empty field with fixed text stays raised
 
 Given an empty field with a label on the border and a prefix or a suffix
 When the field is drawn without focus
@@ -75,7 +75,7 @@ Then the label stands raised on the border rather than over the fixed text
 Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input-affixes.spec.ts` — the field carries
 the class the rules of the raised label read.
 
-### SC-UKV-1549 — a hidden password with a suffix is sized by its dots
+### SC-UKV-1667 — a hidden password with a suffix is sized by its dots
 
 Given a password field with a suffix
 When the person types `пароль`
@@ -83,7 +83,7 @@ Then the hidden copy that sizes the field holds six dots, not the typed characte
 
 Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input-affixes.spec.ts`.
 
-### SC-UKV-1550 — a press on the fixed text puts the caret next to it
+### SC-UKV-1668 — a press on the fixed text puts the caret next to it
 
 Given a field with a prefix, a suffix and the value `page`, the caret in the middle
 When the person presses the suffix, then the prefix
@@ -91,7 +91,7 @@ Then the caret stands at the end of the value, then at its start
 
 Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input-affixes.spec.ts`.
 
-### SC-UKV-1545 — a read-only field shows the value with its fixed text
+### SC-UKV-1663 — a read-only field shows the value with its fixed text
 
 Given a read-only field with a prefix and a suffix
 When it holds `my-page`, then nothing

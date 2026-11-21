@@ -215,6 +215,12 @@ export class RtIconButtonComponent {
     public readonly ariaHaspopup: InputSignal<IRtIconButton.HasPopup | null> = input<IRtIconButton.HasPopup | null>(null);
 
     /**
+     * Id узла, который поясняет кнопку, — превращается в `aria-describedby`: диктор читает его после
+     * имени. `null` — атрибута нет.
+     */
+    public readonly ariaDescribedby: InputSignal<string | null> = input<string | null>(null);
+
+    /**
      * Команды маршрута приложения, как у `routerLink`. Задан — компонент рисует ссылку `<a href>` с тем
      * же видом, подсказкой и рябью: Ctrl/Cmd-click, Shift-click, средняя кнопка и контекстное меню
      * браузера открывают её в новой вкладке или окне. `type`, `active` и `aria-pressed` у ссылки не

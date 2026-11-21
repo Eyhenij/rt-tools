@@ -12,12 +12,61 @@
         --rt-ai-chat-match-radius: var(--rt-radius-xs);
         --rt-ai-chat-unread-radius: var(--rt-radius-full);
 
+        /* Вид чата под приложение: значения по умолчанию равны нынешним. Семейство шрифта не
+           объявлено — без него лента наследует шрифт страницы, а ответ держит свой. Токены
+           выбранной оценки тоже не объявлены: без них оценка берёт цвет и заливку кнопки-значка,
+           и то, что приложение задало кнопке, доходит до неё как прежде. Все три — ручки
+           потребителя. */
+        --rt-ai-chat-question-font-size: var(--rt-text-sm);
+        --rt-ai-chat-answer-font-size: var(--rt-text-xs);
+        --rt-ai-chat-send-bg: var(--rt-color-action-primary);
+        --rt-ai-chat-send-bg-hover: var(--rt-color-action-primary-hover);
+        --rt-ai-chat-focus-border-color: var(--rt-input-color-border-focus);
+        --rt-ai-chat-focus-shadow: var(--rt-input-focus-shadow);
+        --rt-ai-chat-header-height: auto;
+        --rt-ai-chat-header-border-width: 0;
+        --rt-ai-chat-header-border-color: var(--rt-color-border-default);
+        --rt-ai-chat-suggestion-width: 100%;
+        --rt-ai-chat-suggestion-radius: var(--rt-radius-lg);
+        --rt-ai-chat-bg: var(--rt-color-bg-surface);
+        --rt-ai-chat-prompt-bg: var(--rt-color-bg-surface);
+        --rt-ai-chat-thread-actions-bg: var(--rt-color-bg-subtle);
+        --rt-ai-chat-thread-actions-bg-active: var(--rt-color-state-info-bg);
+        --rt-ai-chat-thread-action-radius: var(--rt-radius-md);
+        --rt-ai-chat-thread-actions-padding-inline: var(--rt-space-2) var(--rt-space-4);
+        --rt-ai-chat-thread-time-under-actions: visible;
+
         display: flex;
         overflow: hidden;
-        background: var(--rt-color-bg-surface);
+        background: var(--rt-ai-chat-bg);
         block-size: 100%;
         color: var(--rt-color-text-primary);
         min-block-size: 0;
+
+        /* Передача частям: каждая часть объявляет свои токены на своём блоке, и чат задаёт их
+           правилом на блоке части внутри себя — тем же приёмом, каким приложение переопределяет
+           свойство блока. Значения берутся из токенов чата, объявленных выше. Семейство шрифта —
+           ручка потребителя: без неё ответ держит шрифт кита. */
+        .rt-markdown-text {
+            --rt-markdown-text-font-family: var(--rt-ai-chat-font-family, var(--rt-font-family-sans));
+            --rt-markdown-text-font-size: var(--rt-ai-chat-answer-font-size);
+        }
+
+        .rt-ai-prompt-input {
+            --rt-ai-prompt-input-bg: var(--rt-ai-chat-prompt-bg);
+            --rt-ai-prompt-input-send-bg: var(--rt-ai-chat-send-bg);
+            --rt-ai-prompt-input-send-bg-hover: var(--rt-ai-chat-send-bg-hover);
+            --rt-ai-prompt-input-focus-border-color: var(--rt-ai-chat-focus-border-color);
+            --rt-ai-prompt-input-focus-shadow: var(--rt-ai-chat-focus-shadow);
+        }
+
+        .rt-thread-list {
+            --rt-thread-list-row-actions-bg: var(--rt-ai-chat-thread-actions-bg);
+            --rt-thread-list-row-actions-bg-active: var(--rt-ai-chat-thread-actions-bg-active);
+            --rt-thread-list-row-action-radius: var(--rt-ai-chat-thread-action-radius);
+            --rt-thread-list-row-actions-padding-inline: var(--rt-ai-chat-thread-actions-padding-inline);
+            --rt-thread-list-under-actions-visibility: var(--rt-ai-chat-thread-time-under-actions);
+        }
 
         &__thread-column {
             display: flex;
@@ -27,11 +76,15 @@
             inline-size: var(--rt-ai-chat-column-width);
         }
 
+        // Шапка колонки бесед берёт высоту и разделитель шапки чата: верх обеих стоит на одной линии.
         &__column-head {
             display: flex;
+            box-sizing: border-box;
             align-items: center;
             justify-content: space-between;
             padding: var(--rt-space-sm) var(--rt-space-md);
+            block-size: var(--rt-ai-chat-header-height);
+            border-block-end: var(--rt-ai-chat-header-border-width) solid var(--rt-ai-chat-header-border-color);
             gap: var(--rt-space-xs);
         }
 
@@ -48,11 +101,15 @@
             min-inline-size: 0;
         }
 
+        // Высота шапки — полная, с отступами и разделителем; по умолчанию её задаёт содержимое.
         &__header {
             display: flex;
+            box-sizing: border-box;
             flex: none;
             align-items: center;
             padding: var(--rt-space-sm) var(--rt-space-md);
+            block-size: var(--rt-ai-chat-header-height);
+            border-block-end: var(--rt-ai-chat-header-border-width) solid var(--rt-ai-chat-header-border-color);
             gap: var(--rt-space-xs);
         }
 
@@ -88,10 +145,12 @@
             gap: var(--rt-space-xs);
         }
 
+        // Семейство ленты без запасного значения: не заданное приложением, оно наследуется.
         &__feed {
             display: flex;
             flex: 1 1 auto;
             flex-direction: column;
+            font-family: var(--rt-ai-chat-font-family);
             font-size: var(--rt-text-sm);
             gap: var(--rt-space-md);
             min-block-size: 0;
@@ -114,10 +173,21 @@
             margin-block: auto;
         }
 
+        // Карточка подсказки не шире колонки и стоит у её начала, когда уже её. Скругление карточка
+        // объявляет на кнопке шаблона, поэтому его переназначают там же.
         &__suggestions {
             display: flex;
             flex-direction: column;
+            align-items: flex-start;
             gap: var(--rt-space-sm);
+
+            rt-prompt-suggestion {
+                inline-size: min(100%, var(--rt-ai-chat-suggestion-width));
+            }
+
+            rt-prompt-suggestion .rt-prompt-suggestion {
+                --rt-prompt-suggestion-radius: var(--rt-ai-chat-suggestion-radius);
+            }
         }
 
         &__question {
@@ -153,8 +223,10 @@
             font-weight: var(--rt-font-weight-semibold);
         }
 
+        // Семейство текст вопроса берёт у ленты.
         &__bubble-text {
             margin: 0;
+            font-size: var(--rt-ai-chat-question-font-size);
             line-height: var(--rt-leading-normal);
             overflow-wrap: anywhere;
             white-space: pre-wrap;

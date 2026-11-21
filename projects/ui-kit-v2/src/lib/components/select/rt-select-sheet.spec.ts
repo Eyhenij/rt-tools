@@ -140,7 +140,7 @@ describe('Панель выбора в нижней шторке', (): void => {
         expect(panelBySide()).not.toBeNull();
     });
 
-    it('SC-UKV-1554 — заголовок шторки — подпись поля', (): void => {
+    it('SC-UKV-1672 — заголовок шторки — подпись поля', (): void => {
         const fixture: ComponentFixture<FieldHostComponent> = createRtFixture(FieldHostComponent, {}, { providers: providersFor(true) });
 
         press(fixture, 'select-trigger');
@@ -179,7 +179,7 @@ describe('Панель выбора в нижней шторке', (): void => {
         expect(left[0].textContent?.trim()).toBe('Минск');
     });
 
-    it('SC-UKV-1555 — выбор в селекте ставит значение и закрывает шторку', (): void => {
+    it('SC-UKV-1673 — выбор в селекте ставит значение и закрывает шторку', (): void => {
         const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true);
         let chosen: string | null = null;
         fixture.componentInstance.registerOnChange((value: string | null): void => {
@@ -194,7 +194,7 @@ describe('Панель выбора в нижней шторке', (): void => {
         expect(sheet()).toBeNull();
     });
 
-    it('SC-UKV-1556 — выбор в мультиселекте оставляет шторку открытой', (): void => {
+    it('SC-UKV-1674 — выбор в мультиселекте оставляет шторку открытой', (): void => {
         const fixture: ComponentFixture<RtMultiselectComponent<string>> = createRtFixture(
             RtMultiselectComponent<string>,
             { options: OPTIONS },
@@ -266,7 +266,7 @@ describe('Панель выбора в нижней шторке', (): void => {
         expect(document.querySelectorAll('[qa-dataid="multiselect-option"]').length).toBe(3);
     });
 
-    it('SC-UKV-1557 — подложка шторки закрывает список', (): void => {
+    it('SC-UKV-1675 — подложка шторки закрывает список', (): void => {
         const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true);
         press(fixture, 'select-trigger');
 
@@ -277,7 +277,7 @@ describe('Панель выбора в нижней шторке', (): void => {
         expect(hostClasses(fixture)).not.toContain('rt-select--open');
     });
 
-    it('SC-UKV-1559 — подвал шторки мультиселекта считает выбранное', (): void => {
+    it('SC-UKV-1677 — подвал шторки мультиселекта считает выбранное', (): void => {
         const fixture: ComponentFixture<RtMultiselectComponent<string>> = setupMultiselect(['msk', 'kzn']);
 
         press(fixture, 'multiselect-trigger');
@@ -287,7 +287,7 @@ describe('Панель выбора в нижней шторке', (): void => {
         expect(document.querySelector('[qa-dataid="multiselect-sheet-done"]')).not.toBeNull();
     });
 
-    it('SC-UKV-1560 — сброс в подвале снимает весь выбор и оставляет шторку открытой', (): void => {
+    it('SC-UKV-1678 — сброс в подвале снимает весь выбор и оставляет шторку открытой', (): void => {
         const fixture: ComponentFixture<RtMultiselectComponent<string>> = setupMultiselect(['msk', 'kzn']);
         let chosen: ReadonlyArray<string> | null = null;
         fixture.componentInstance.registerOnChange((value: ReadonlyArray<string>): void => {
@@ -302,7 +302,7 @@ describe('Панель выбора в нижней шторке', (): void => {
         expect(sheetOpen()).toBe(true);
     });
 
-    it('SC-UKV-1561 — кнопка готовности в подвале закрывает шторку', (): void => {
+    it('SC-UKV-1679 — кнопка готовности в подвале закрывает шторку', (): void => {
         const fixture: ComponentFixture<RtMultiselectComponent<string>> = setupMultiselect(['msk']);
         press(fixture, 'multiselect-trigger');
 
@@ -313,7 +313,7 @@ describe('Панель выбора в нижней шторке', (): void => {
         expect((fixture.nativeElement as HTMLElement).querySelectorAll('[qa-dataid="multiselect-chip"]').length).toBe(1);
     });
 
-    it('SC-UKV-1558 — список в шторке не берёт ширину поля', (): void => {
+    it('SC-UKV-1676 — список в шторке не берёт ширину поля', (): void => {
         const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { panelWidth: 'trigger' });
 
         press(fixture, 'select-trigger');

@@ -95,7 +95,7 @@ describe('RtPageHeaderComponent — нижняя шторка', (): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1567: на телефоне касание имени открывает меню профиля в нижней шторке с именем в заголовке', (): void => {
+    it('SC-UKV-1685: на телефоне касание имени открывает меню профиля в нижней шторке с именем в заголовке', (): void => {
         const fixture: ComponentFixture<PageHeaderSheetHostComponent> = setup();
 
         pointerEnter(userButton(), 'touch');
@@ -107,7 +107,7 @@ describe('RtPageHeaderComponent — нижняя шторка', (): void => {
         expect(document.querySelector('.rt-popover-panel')).toBeNull();
     });
 
-    it('SC-UKV-1568: наведение мышью шторку не открывает, а уход курсора открытую шторку не закрывает', (): void => {
+    it('SC-UKV-1686: наведение мышью шторку не открывает, а уход курсора открытую шторку не закрывает', (): void => {
         jest.useFakeTimers();
         const fixture: ComponentFixture<PageHeaderSheetHostComponent> = setup();
 

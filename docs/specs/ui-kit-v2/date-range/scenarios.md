@@ -132,7 +132,7 @@ the sheet
 Покрытие: частичное — the component spec of the panel checks the rule of the sheet in the panel
 styles; the distance on the screen is shown by the frame of the story Sheet.
 
-### SC-UKV-1547 — the panel of a date or period field lines up with the field edge
+### SC-UKV-1665 — the panel of a date or period field lines up with the field edge
 
 Given a date field or a period field wider than its panel
 When the panel opens next to the field

@@ -38,10 +38,19 @@ import { IRtAiChat } from '../rt-ai-chat.model';
 
 const BEM_BLOCK: string = 'rt-ai-chat-answer';
 
+/** Счётчик нарисованных ответов: id строки «прерван» не зависит от знаков id сообщения. */
+let answerCount: number = 0;
+
+function nextInterruptedId(): string {
+    answerCount += 1;
+    return `rt-ai-chat-answer-interrupted-${answerCount}`;
+}
+
 /**
  * Ответ ассистента в ленте `rt-ai-chat`: ход работы, блоки, вложения приложения и строка действий —
  * копирование и оценка. Строка появляется, когда у ответа есть блок и поток кончился; копирование —
- * когда у блоков есть текст.
+ * когда у блоков есть текст. Прерванный ответ добавляет тихую строку «прерван» и «спросить снова»
+ * в строку действий; у пустого прерванного ответа в строке только оно.
  */
 @Component({
     selector: 'rt-ai-chat-answer',
@@ -77,12 +86,26 @@ export class RtAiChatAnswerComponent {
     /** Ответ дописан: есть хотя бы один блок, и поток кончился — строка действий с копированием и оценкой. */
     protected readonly isWritten: Signal<boolean> = computed((): boolean => this.message().blocks.length > 0 && !this.message().streaming);
 
+    /** Ответ оборвался и уже не пишется: строка «прерван» и «спросить снова». Пока идёт поток — ещё не оборвался. */
+    protected readonly isInterrupted: Signal<boolean> = computed(
+        (): boolean => this.message().interrupted === true && !this.message().streaming
+    );
+
+    /** Id строки «прерван», которой кнопка «спросить снова» поясняется для диктора. */
+    protected readonly interruptedId: string = nextInterruptedId();
+
     /**
      * Что копирует кнопка: видимый текст блоков без знаков разметки — без хода работы и вложений.
      * Значения таблиц и карточек KPI записаны в языке кита на минуту копии: язык и подписи читаются здесь же.
      */
     protected readonly plainText: Signal<string> = computed((): string =>
-        blocksToPlainText(this.message().blocks, this.#renderers, this.#locale(), rtAiChatPointsWriter(this.#translate()))
+        blocksToPlainText(
+            this.message().blocks,
+            this.#renderers,
+            this.#locale(),
+            rtAiChatPointsWriter(this.#translate()),
+            this.t().aiSources
+        )
     );
 
     /** Кнопка копирования видна, когда её не выключили и у блоков есть текст: пустая копия обманула бы. */
@@ -100,12 +123,23 @@ export class RtAiChatAnswerComponent {
         transform: booleanAttribute,
     });
 
+    /** Идёт отправка: «спросить снова» отключено и выпадает из обхода Tab. */
+    public readonly sending: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
     /** Шаги хода работы раскрыты. */
     public readonly expanded: ModelSignal<boolean> = model<boolean>(false);
 
     /** Нажата оценка; повторное нажатие той же снимает её — решает родитель. */
     public readonly feedbackChange: OutputEmitterRef<Exclude<IRtAiChat.Feedback, null>> = output<Exclude<IRtAiChat.Feedback, null>>();
 
+    /** Нажато «спросить снова» прерванного ответа; id ответа добавляет родитель. */
+    public readonly askAgain: OutputEmitterRef<void> = output<void>();
+
     /** Нажата кнопка карточки ссылки в этом ответе. */
     public readonly linkOpen: OutputEmitterRef<IRtAiChat.LinkPress> = output<IRtAiChat.LinkPress>();
+
+    /** Нажат источник с адресом в этом ответе. */
+    public readonly sourceOpen: OutputEmitterRef<IRtAiChat.SourcePress> = output<IRtAiChat.SourcePress>();
 }

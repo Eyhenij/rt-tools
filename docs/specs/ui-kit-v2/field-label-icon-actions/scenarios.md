@@ -216,7 +216,7 @@ Then the focus lands on the cross, a button outside the trigger, and Enter clear
 
 Covered: `projects/ui-kit-v2/src/lib/components/form-control/rt-clear-tabbable.spec.ts`.
 
-### SC-UKV-1551 — the help of a field opens the kit tooltip
+### SC-UKV-1669 — the help of a field opens the kit tooltip
 
 Given a field with a label and a help text
 When the field is drawn
@@ -224,7 +224,7 @@ Then the question mark carries the kit tooltip with the help text, and no card o
 
 Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field.component.spec.ts`.
 
-### SC-UKV-1552 — the help of a field opens on a tap
+### SC-UKV-1670 — the help of a field opens on a tap
 
 Given a field with a help text on a touch screen
 When the person taps the question mark
@@ -232,7 +232,7 @@ Then the tooltip with the help text opens: its trigger shows on a tap, not only 
 
 Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field.component.spec.ts`.
 
-### SC-UKV-1553 — the question mark is described by the help text
+### SC-UKV-1671 — the question mark is described by the help text
 
 Given a field with a help text
 When a screen reader reaches the question mark

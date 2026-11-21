@@ -15,6 +15,7 @@
         [attr.aria-disabled]="isDisabled() ? 'true' : null"
         [attr.aria-expanded]="expanded()"
         [attr.aria-haspopup]="ariaHaspopup()"
+        [attr.aria-describedby]="ariaDescribedby()"
         [attr.tabindex]="linkTabIndex()"
         (click)="onClick($event)">
         <ng-container *ngTemplateOutlet="content" />
@@ -41,6 +42,7 @@
     [attr.aria-pressed]="active() ? 'true' : null"
     [attr.aria-expanded]="expanded()"
     [attr.aria-haspopup]="ariaHaspopup()"
+    [attr.aria-describedby]="ariaDescribedby()"
     [attr.tabindex]="tabIndex()"
     (click)="onClick($event)">
     @if (!isLink()) {

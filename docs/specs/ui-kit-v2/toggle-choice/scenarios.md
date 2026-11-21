@@ -3,7 +3,7 @@
 The prefix `SC-UKV` is shared across the domain together with the subdomains. What a scenario is
 covered by is said under it.
 
-### SC-UKV-1575 — a toggle group that does not fit folds into a select, and a choice there counts as a press
+### SC-UKV-1693 — a toggle group that does not fit folds into a select, and a choice there counts as a press
 
 Given a toggle group «Период» of six values that need 520 px where 343 px are free, on a phone
 When it is drawn, its field is pressed and «Месяц» is chosen in the sheet
@@ -11,7 +11,7 @@ Then the group stands as a select, its buttons are hidden and only measured, and
 
 Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-fold.spec.ts`.
 
-### SC-UKV-1576 — a toggle group that fits stays buttons
+### SC-UKV-1694 — a toggle group that fits stays buttons
 
 Given the same group needing 280 px where 343 px are free
 When it is drawn
@@ -19,7 +19,7 @@ Then it stays buttons, and no field of choice stands in its place
 
 Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-fold.spec.ts`.
 
-### SC-UKV-1577 — a toggle group of multiple choice folds into a multiselect
+### SC-UKV-1695 — a toggle group of multiple choice folds into a multiselect
 
 Given a toggle group of multiple choice that does not fit its place
 When it is drawn
@@ -27,7 +27,7 @@ Then it stands as a multiselect
 
 Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-fold.spec.ts`.
 
-### SC-UKV-1578 — the folding switched off, or a wrapping layout, keeps the buttons
+### SC-UKV-1696 — the folding switched off, or a wrapping layout, keeps the buttons
 
 Given a toggle group that does not fit its place, with the folding switched off, then with a wrapping layout
 When it is drawn
@@ -35,7 +35,7 @@ Then it stays buttons each time; a group not laid out yet, or short of its place
 
 Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-fold.spec.ts`.
 
-### SC-UKV-1579 — the field with toggles sums up the choice instead of chips
+### SC-UKV-1697 — the field with toggles sums up the choice instead of chips
 
 Given a multiselect with toggles over five categories
 When all five are on, then three, then none
@@ -43,7 +43,7 @@ Then the field says «Все», then «3 из 5», then its placeholder, and no 
 
 Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-toggles.spec.ts`.
 
-### SC-UKV-1580 — a row with a toggle switches its value and keeps the panel open
+### SC-UKV-1698 — a row with a toggle switches its value and keeps the panel open
 
 Given a multiselect with toggles open, «Продукты» off
 When the row «Продукты» is pressed
@@ -51,7 +51,7 @@ Then its toggle is on, the value holds «Продукты», and the panel is st
 
 Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-toggles.spec.ts`.
 
-### SC-UKV-1581 — «Show all» turns every value on, and off when all are on
+### SC-UKV-1699 — «Show all» turns every value on, and off when all are on
 
 Given a multiselect with toggles open with three of five on
 When «Показать все» is pressed twice
@@ -59,7 +59,7 @@ Then all five are on after the first press, and none after the second
 
 Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-toggles.spec.ts`.
 
-### SC-UKV-1582 — the application's own toggles stand above the line, the values under it
+### SC-UKV-1700 — the application's own toggles stand above the line, the values under it
 
 Given a multiselect with toggles and the application's toggle «Скрыть пустые»
 When its panel is open
@@ -67,7 +67,7 @@ Then «Показать все» and «Скрыть пустые» stand above t
 
 Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-toggles.spec.ts`.
 
-### SC-UKV-1583 — in the sheet the field with toggles has no footer
+### SC-UKV-1701 — in the sheet the field with toggles has no footer
 
 Given a multiselect with toggles on a phone
 When its field is pressed
@@ -75,7 +75,7 @@ Then its rows are inside the bottom sheet, and no footer «Выбрано · С�
 
 Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-toggles.spec.ts`.
 
-### SC-UKV-1597 — the folded toggle group passes the switch and has no clear cross
+### SC-UKV-1704 — the folded toggle group passes the switch and has no clear cross
 
 Given a toggle group folded into a field, with the sheet switched off, on a phone
 When the field is pressed
@@ -99,7 +99,7 @@ Then the disabled value stays, and «Reset» goes inactive when nothing is left 
 
 Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-toggles-keys.spec.ts`.
 
-### SC-UKV-1600 — «Show all» is reached by the arrows
+### SC-UKV-1705 — «Show all» is reached by the arrows
 
 Given an open field with toggles
 When the arrows are pressed, then Enter

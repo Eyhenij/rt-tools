@@ -109,4 +109,4 @@ Not applicable.
 - 2026-11-02 — the task RT-2994: a value or a hint longer than the field ends with an ellipsis,
   scenario `SC-UKV-1116`.
 - 2026-11-20 — the task RT-3399: fixed text before the value and after it, scenarios
-  `SC-UKV-1541`…`SC-UKV-1545`.
+  `SC-UKV-1659`…`SC-UKV-1663`.

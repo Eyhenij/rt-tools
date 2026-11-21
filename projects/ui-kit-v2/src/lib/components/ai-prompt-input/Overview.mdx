@@ -41,6 +41,16 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `stopped`       | нет значения                       |
 | `controlPicked` | `'model'`, `'effort'` или `'mode'` |
 
+## Оформление
+
+Свойства блока, задаются правилом на самом блоке; без них поле выглядит как прежде:
+
+- `--rt-ai-prompt-input-bg` — фон поля;
+- `--rt-ai-prompt-input-focus-border-color` и `--rt-ai-prompt-input-focus-shadow` — рамка и кольцо
+  в фокусе;
+- `--rt-ai-prompt-input-send-bg` и `--rt-ai-prompt-input-send-bg-hover` — фон «Отправить» и «Стоп»,
+  в покое и под указателем.
+
 ## Когда применять
 
 - Вопрос ассистенту: выбор модели, усилия и режима, расход лимита рядом с отправкой.

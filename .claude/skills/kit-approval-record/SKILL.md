@@ -17,8 +17,10 @@ Pattern of the rule `kit-approval`.
 
 ## The question
 
-One question, with the link and nothing to choose from: «Макет: <ссылка на кадр Figma>. Одобряете?»
-For the showcase: «Витрина: <адрес истории>, совпадение с макетом <число>. Одобряете?»
+Each question goes by the question window, never as prose. Mockup: «Макет: <ссылка на кадр
+Figma>. Одобряете?» Showcase: «Витрина: <адрес истории>, совпадение с макетом <число>.
+Одобряете?» An edit with no change of look: «Правка <файлы>: <что меняется>. Вид не меняется —
+подтверждаете?»
 
 ## The answer
 
@@ -28,6 +30,13 @@ An approval goes into the task folder's approvals.md word for word, between « a
 - **Макет:** «да, одобряю» — https://www.figma.com/design/<file>?node-id=<node>
 - **Совпадение:** 48 из 48 чисел
 - **Витрина:** «одобряю витрину»
+```
+
+An edit with no change of look — the type an input takes, say — carries one line instead of the
+three:
+
+```markdown
+- **Без вида:** «<the owner's words>»
 ```
 
 ## The match before the showcase question

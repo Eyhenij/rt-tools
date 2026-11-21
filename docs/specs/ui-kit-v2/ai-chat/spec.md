@@ -18,13 +18,17 @@ conversations. Every application repeats the same screen, and every copy drifts 
 
 - **The question** — a message the person sent.
 - **The answer** — a message of the assistant: the run line, the blocks, the attachments, the rating.
-- **The block** — one part of an answer: markdown text, a notice, a table, KPI cards, a link card, a section
+- **The block** — one part of an answer: markdown text, a notice, a table, KPI cards, a link card, a list of sources, a section
   of other blocks, or a part of another type the consumer draws with a renderer of its own.
 - **The renderer** — a component the consumer registers for a block type the kit does not draw.
 - **The run** — the progress of one answer: running, done, stopped, failed, with optional steps.
 - **The attachments** — what the application draws under the answer blocks: a link, a file, a form.
 - **The conversation** — a thread of questions and answers the person can return to.
-- **The run error** — the answer broke off: the message, the reference number, whether to ask again.
+- **The run error** — the last run failed: the message, the reference number, whether to ask again.
+- **The interrupted answer** — an answer the application marked as broken off; its label and its
+  own «Ask again» follow `docs/specs/ui-kit-v2/ai-chat-interrupted/`.
+- **The look handles** — the properties `--rt-ai-chat-*` and the input `questionAuthor` by which an
+  application sets the look of the chat; they follow `docs/specs/ui-kit-v2/ai-chat-theme-tokens/`.
 
 ### What it is called in the interface
 
@@ -48,13 +52,13 @@ conversations. Every application repeats the same screen, and every copy drifts 
 
 - **A question stands on the right in a bubble with «You», an answer on the left as its blocks.**
 
-- **The blocks of an answer stand in their order: a markdown block as text, a notice as `rt-message` of its severity, a table block as the kit's table, a KPI block as the kit's grid of cards.** A section block stands as its title and a grid of the blocks it holds. A link block stands as the card of a page.
+- **The blocks of an answer stand in their order: a markdown block as text, a notice as `rt-message` of its severity, a table block as the kit's table, a KPI block as the kit's grid of cards.** A section block stands as its title and a grid of the blocks it holds. A link block stands as the card of a page. A sources block stands as a collapsed list of sources. A press on a source leaves the chat as `sourceOpen`, as a press on a link card leaves as `linkOpen`.
 
 - **A block of a type the kit does not draw is drawn by the renderer the consumer registered for that type.**
 
 - **A block with no renderer shows a plate with its type name, and the blocks around it stay in place.**
 
-- **A markdown block without text, a notice without a severity `rt-message` knows, a table block without columns or rows, a KPI block without a card and a section without a block are shown as the plate too.** A link block without a title or an address is the plate too. A renderer registered for `markdown`, `notice`, `table`, `kpi`, `link` or `section` is not taken.
+- **A markdown block without text, a notice without a severity `rt-message` knows, a table block without columns or rows, a KPI block without a card and a section without a block are shown as the plate too.** A link block without a title or an address is the plate too, and so is a sources block without a source that has a title. A renderer registered for `markdown`, `notice`, `table`, `kpi`, `link`, `sources` or `section` is not taken.
 
 - **A screen reader announces a notice in an answer politely, as a status, not as an alert.**
 
@@ -66,7 +70,7 @@ conversations. Every application repeats the same screen, and every copy drifts 
 
 - **A block drawn by a renderer goes into the copy by the text function registered with it; without one it stays out.**
 
-- **A table block and a KPI block go into the copy as tab-separated lines, their values written as the block shows them in the kit locale.** A link block goes into the copy as one tab-separated line. A section goes into the copy as its title and the texts of the blocks it holds, by the rules of `docs/specs/ui-kit-v2/ai-chat-section/`.
+- **A table block and a KPI block go into the copy as tab-separated lines, their values written as the block shows them in the kit locale.** A link block goes into the copy as one tab-separated line, and a sources block as a header line and one line per source. A section goes into the copy as its title and the texts of the blocks it holds, by the rules of `docs/specs/ui-kit-v2/ai-chat-section/`.
 
 - **A written answer whose blocks give no text shows no «Copy», and its rating stays.**
 
@@ -76,7 +80,7 @@ conversations. Every application repeats the same screen, and every copy drifts 
 
 - **While an answer is written, the composer offers Stop, and the suggestions and «New conversation» are off.**
 
-- **A run error shows the message, the reference number with a copy button, and «Ask again» only when the answer can be asked again.**
+- **A run error shows the message, the reference number with a copy button, and «Ask again» only when the answer can be asked again.** It describes the last run only. An interrupted answer carries an «Ask again» of its own in its row of actions, and a press on it leaves the chat as `askAgain` with the id of that answer, not as `retry`.
 
 - **The feed follows the last answer while the person stays at the bottom, and stops when they scroll up.**
 
@@ -157,6 +161,7 @@ leave through outputs.
 | writing       | the answer blocks growing under the running run line       |
 | answered      | the blocks, the done run line, «Copy» and the rating       |
 | run error     | the error message, the reference number, «Ask again»       |
+| interrupted   | the label «Answer interrupted», «Ask again» in the row     |
 | conversations | the search and the list in place of the feed               |
 | full screen   | the conversations as a column, the feed beside them        |
 
@@ -189,7 +194,7 @@ Not applicable.
   with a registered renderer, not through this template.
 - **Heavy blocks are drawn by registered renderers, not by a switch inside the kit.** A chart
   imported by the rich-editor entry would make its library a dependency of every consumer of the
-  editor. The type of a block is an open union: the kit knows `markdown`, `notice`, `table`, `kpi`, `link` and `section`, the rest
+  editor. The type of a block is an open union: the kit knows `markdown`, `notice`, `table`, `kpi`, `link`, `sources` and `section`, the rest
   arrive by the renderer token.
 - **All renderers are registered at one level, usually the root of the application.** Angular does
   not join a multi provider list across injectors: a registration in a route or a component hides
@@ -226,3 +231,5 @@ None.
 - 2026-11-15 — the task RT-3334 of the epic RT-3346: the answer is a list of blocks — markdown and notice drawn by the kit, other types by registered renderers, a plate for a type without one.
 - 2026-11-17 — the task RT-3334 after review: a renderer gives the copy text of its block, an answer without text shows no «Copy», a notice of an unknown severity is a plate.
 - 2026-11-17 — the task RT-3361 of the epic RT-3346: a notice in an answer is announced as a status, not as an alert.
+- 2026-11-20 — the task RT-3340: the sources block is a type of the kit, and a press on a source leaves the chat as `sourceOpen`.
+- 2026-11-20 — the task RT-3341: an answer may be marked interrupted, its «Ask again» leaves the chat as `askAgain` with the id of the answer, and the run error term reads «the last run failed».

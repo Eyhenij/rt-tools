@@ -80,7 +80,7 @@ describe('RtToggleButtonGroupComponent — сворачивание', (): void =
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1575 — кнопки не помещаются: группа стоит полем выбора, а выбор в шторке уходит как нажатие', (): void => {
+    it('SC-UKV-1693 — кнопки не помещаются: группа стоит полем выбора, а выбор в шторке уходит как нажатие', (): void => {
         stubWidths(520, 343);
         const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup({ value: 'week' });
         const picked: string[] = [];
@@ -101,7 +101,7 @@ describe('RtToggleButtonGroupComponent — сворачивание', (): void =
         expect(picked).toEqual(['month']);
     });
 
-    it('SC-UKV-1576 — кнопки помещаются: группа остаётся кнопками', (): void => {
+    it('SC-UKV-1694 — кнопки помещаются: группа остаётся кнопками', (): void => {
         stubWidths(280, 343);
         const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup({ value: 'week' });
 
@@ -109,14 +109,14 @@ describe('RtToggleButtonGroupComponent — сворачивание', (): void =
         expect(row(fixture).getAttribute('aria-hidden')).toBeNull();
     });
 
-    it('SC-UKV-1577 — множественный выбор сворачивается в мультиселект', (): void => {
+    it('SC-UKV-1695 — множественный выбор сворачивается в мультиселект', (): void => {
         stubWidths(520, 343);
         const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup({ multiple: true, values: ['day'] });
 
         expect(folded(fixture)?.tagName).toBe('RT-MULTISELECT');
     });
 
-    it('SC-UKV-1578 — выключенное сворачивание и перенос строк оставляют кнопки', (): void => {
+    it('SC-UKV-1696 — выключенное сворачивание и перенос строк оставляют кнопки', (): void => {
         stubWidths(520, 343);
 
         expect(folded(setup({ fold: false }))).toBeNull();
@@ -125,7 +125,7 @@ describe('RtToggleButtonGroupComponent — сворачивание', (): void =
         expect(rtToggleGroupFolds(343.4, 343, 'row', true)).toBe(false);
     });
 
-    it('SC-UKV-1597 — sheet=false: свёрнутое поле открывает список поповером, а одиночное поле не очищается крестиком', (): void => {
+    it('SC-UKV-1704 — sheet=false: свёрнутое поле открывает список поповером, а одиночное поле не очищается крестиком', (): void => {
         stubWidths(520, 343);
         const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup({ value: 'week', sheet: false });
 

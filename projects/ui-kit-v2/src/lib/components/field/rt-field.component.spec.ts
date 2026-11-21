@@ -322,7 +322,7 @@ describe('RtFieldComponent', (): void => {
             expect(qa(fixture, 'field-help')?.attributes['aria-label']).toBe('Hint');
         });
 
-        it('SC-UKV-1551: пояснение открывает подсказку кита, своей карточки нет', (): void => {
+        it('SC-UKV-1669: пояснение открывает подсказку кита, своей карточки нет', (): void => {
             const fixture: ComponentFixture<FieldHostComponent> = setup();
 
             fixture.componentInstance.help.set('Как в документе');
@@ -334,7 +334,7 @@ describe('RtFieldComponent', (): void => {
             expect(tooltip.text()).toBe('Как в документе');
         });
 
-        it('SC-UKV-1553: знак вопроса описан текстом пояснения для программы чтения экрана', (): void => {
+        it('SC-UKV-1671: знак вопроса описан текстом пояснения для программы чтения экрана', (): void => {
             const fixture: ComponentFixture<FieldHostComponent> = setup();
 
             fixture.componentInstance.help.set('Как в документе');
@@ -346,7 +346,7 @@ describe('RtFieldComponent', (): void => {
             expect(described?.textContent?.trim()).toBe('Как в документе');
         });
 
-        it('SC-UKV-1552: нажатие по знаку вопроса открывает подсказку с пояснением', (): void => {
+        it('SC-UKV-1670: нажатие по знаку вопроса открывает подсказку с пояснением', (): void => {
             const fixture: ComponentFixture<FieldHostComponent> = setup();
 
             fixture.componentInstance.help.set('Как в документе');

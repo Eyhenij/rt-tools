@@ -43,7 +43,7 @@ describe('Автокомплит в нижней шторке', (): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1564 — нажатие на поле открывает шторку с поиском, не дожидаясь набора', (): void => {
+    it('SC-UKV-1682 — нажатие на поле открывает шторку с поиском, не дожидаясь набора', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup();
 
         tapField(fixture);
@@ -53,7 +53,7 @@ describe('Автокомплит в нижней шторке', (): void => {
         expect(document.querySelectorAll('.rt-popover-sheet [qa-dataid="autocomplete-option"]').length).toBe(3);
     });
 
-    it('SC-UKV-1565 — набор в поиске шторки просит подсказки, а короткий набор шторку не закрывает', (): void => {
+    it('SC-UKV-1683 — набор в поиске шторки просит подсказки, а короткий набор шторку не закрывает', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup();
         const queries: string[] = [];
         fixture.componentInstance.complete.subscribe((event: IRtAutocomplete.CompleteEvent): void => {
@@ -73,7 +73,7 @@ describe('Автокомплит в нижней шторке', (): void => {
         expect(document.querySelector('.rt-popover-sheet')).not.toBeNull();
     });
 
-    it('SC-UKV-1566 — выбор подсказки в шторке ставит значение и закрывает шторку', (): void => {
+    it('SC-UKV-1684 — выбор подсказки в шторке ставит значение и закрывает шторку', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup();
         let chosen: string | null = null;
         fixture.componentInstance.registerOnChange((value: string | null): void => {

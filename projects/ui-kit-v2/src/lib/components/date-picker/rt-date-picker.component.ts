@@ -23,7 +23,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { RT_KIT_LABELS, RT_KIT_LOCALE, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
 import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
 import { RtBottomSheetComponent } from '@rt-tools/ui-kit-v2/bottom-sheet';
-import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
+import { RtFormControlBase, rtBoundOrNull } from '@rt-tools/ui-kit-v2/form-control';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { IRtInput } from '@rt-tools/ui-kit-v2/core';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
@@ -132,8 +132,16 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
     public readonly sheet: InputSignalWithTransform<boolean, TBooleanInput> = input<boolean, TBooleanInput>(true, {
         transform: booleanAttribute,
     });
-    public readonly min: InputSignal<string | null> = input<string | null>(null);
-    public readonly max: InputSignal<string | null> = input<string | null>(null);
+    /** Первый допустимый день. `undefined` — сигнальная форма не задала границу: границы нет. */
+    public readonly min: InputSignalWithTransform<string | null, string | null | undefined> = input<
+        string | null,
+        string | null | undefined
+    >(null, { transform: rtBoundOrNull });
+    /** Последний допустимый день. `undefined` — сигнальная форма не задала границу: границы нет. */
+    public readonly max: InputSignalWithTransform<string | null, string | null | undefined> = input<
+        string | null,
+        string | null | undefined
+    >(null, { transform: rtBoundOrNull });
     /** Шаг колонки минут в панели. */
     public readonly minuteStep: InputSignalWithTransform<number, NumberInput> = input<number, NumberInput>(5, {
         transform: numberAttribute,

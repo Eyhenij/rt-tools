@@ -45,41 +45,88 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 `--rt-ai-chat-column-width`, `--rt-ai-chat-content-max-width`, `--rt-ai-chat-match-bg`, `--rt-ai-chat-match-color`,
 `--rt-ai-chat-match-radius`, `--rt-ai-chat-unread-radius`.
 
+Вид чата приложение задаёт правилом на элементе `rt-ai-chat`, без селекторов внутренних классов
+чата и его частей. Без этих свойств чат выглядит как прежде.
+
+| свойство                                     | что задаёт                                              | по умолчанию                        |
+| -------------------------------------------- | ------------------------------------------------------- | ----------------------------------- |
+| `--rt-ai-chat-font-family`                   | семейство шрифта ленты, ответ включительно              | лента наследует, ответ — шрифт кита |
+| `--rt-ai-chat-question-font-size`            | кегль текста вопроса                                    | `--rt-text-sm`                      |
+| `--rt-ai-chat-answer-font-size`              | кегль текста ответа                                     | `--rt-text-xs`                      |
+| `--rt-ai-chat-send-bg`                       | фон «Отправить» и «Стоп»                                | `--rt-color-action-primary`         |
+| `--rt-ai-chat-send-bg-hover`                 | их фон под указателем                                   | `--rt-color-action-primary-hover`   |
+| `--rt-ai-chat-focus-border-color`            | рамка поля в фокусе                                     | рамка фокуса поля кита              |
+| `--rt-ai-chat-focus-shadow`                  | кольцо поля в фокусе                                    | кольцо фокуса поля кита             |
+| `--rt-ai-chat-rating-active-bg`              | фон выбранной оценки                                    | заливка кнопки-значка               |
+| `--rt-ai-chat-rating-active-color`           | цвет выбранной оценки                                   | цвет кнопки-значка                  |
+| `--rt-ai-chat-header-height`                 | высота шапки чата и шапки колонки бесед                 | `auto`                              |
+| `--rt-ai-chat-header-border-width`           | толщина разделителя под ними                            | `0`                                 |
+| `--rt-ai-chat-header-border-color`           | цвет разделителя                                        | `--rt-color-border-default`         |
+| `--rt-ai-chat-suggestion-width`              | ширина карточки подсказки, не шире колонки              | `100%`                              |
+| `--rt-ai-chat-suggestion-radius`             | скругление карточки подсказки                           | скругление карточки                 |
+| `--rt-ai-chat-bg`                            | фон панели                                              | фон поверхности                     |
+| `--rt-ai-chat-prompt-bg`                     | фон поля ввода                                          | фон поверхности                     |
+| `--rt-ai-chat-thread-actions-bg`             | подложка действий строки беседы                         | `--rt-color-bg-subtle`              |
+| `--rt-ai-chat-thread-actions-bg-active`      | она же у выбранной беседы                               | `--rt-color-state-info-bg`          |
+| `--rt-ai-chat-thread-action-radius`          | скругление кнопок действий строки                       | `--rt-radius-md`                    |
+| `--rt-ai-chat-thread-actions-padding-inline` | поля подложки действий                                  | `--rt-space-2 --rt-space-4`         |
+| `--rt-ai-chat-thread-time-under-actions`     | `hidden` прячет время строки под показанными действиями | `visible`                           |
+
+Свойства ставятся правилом на `rt-ai-chat` или на классе приложения на нём, вне слоёв кита. С
+`:root` и с обёртки они не доходят: чат объявляет их у себя. С предка наследуются только
+`--rt-ai-chat-font-family`, `--rt-ai-chat-rating-active-bg` и `--rt-ai-chat-rating-active-color`.
+
+```css
+rt-ai-chat {
+    --rt-ai-chat-send-bg: var(--app-primary);
+    --rt-ai-chat-header-height: 4rem;
+}
+```
+
+- Заголовки ответа 3–6 уровня держат `--rt-text-sm`: при кегле ответа крупнее этой ступени они
+  выходят мельче текста.
+- Высота шапки меньше её содержимого не сжимает кнопки: они выходят за край шапки.
+- На сенсорном экране действия строк видны всегда, и `hidden` прячет время у всех строк.
+
+Показ на витрине — истории **AiChatProperties**: Properties, Properties · focus и Properties · row
+actions.
+
 ## Входы
 
-| вход                 | тип                          | умолчание                          |
-| -------------------- | ---------------------------- | ---------------------------------- |
-| `title`              | `string`                     | `''` — подпись кита                |
-| `subtitle`           | `string`                     | `''`                               |
-| `messages`           | `IRtAiChat.Message[]`        | `[]`                               |
-| `suggestions`        | `string[]`                   | `[]`                               |
-| `emptyTitle`         | `string`                     | `''` — подпись кита                |
-| `emptyDescription`   | `string`                     | `''` — подпись кита                |
-| `placeholder`        | `string`                     | `''` — подпись поля                |
-| `disclaimer`         | `string \| null`             | `null` — подпись кита; `''` прячет |
-| `disclaimerPosition` | `'below' \| 'above'`         | `'below'`                          |
-| `model`              | `string`                     | `''`, кнопки модели нет            |
-| `effort`             | `string`                     | `''`, кнопки усилия нет            |
-| `mode`               | `string`                     | `''`, кнопки режима нет            |
-| `usage`              | `number \| null`             | `null`, кольца расхода нет         |
-| `usageHint`          | `string`                     | `''`                               |
-| `sending`            | `boolean`                    | `false`                            |
-| `loading`            | `boolean`                    | `false`                            |
-| `error`              | `IRtAiChat.RunError \| null` | `null`                             |
-| `threads`            | `IRtAiChat.Thread[] \| null` | `null` — кнопки бесед нет          |
-| `activeThreadId`     | `string \| null`             | `null`                             |
-| `threadsLoading`     | `boolean`                    | `false`                            |
-| `threadsFetching`    | `boolean`                    | `false`                            |
-| `threadsHasMore`     | `boolean`                    | `false`                            |
-| `emptyPreviewIcons`  | `IRtIcon.Name[]`             | `['sparkle', 'bot', 'sparkle']`    |
-| `fullScreenable`     | `boolean`                    | `false`                            |
-| `closable`           | `boolean`                    | `true`                             |
-| `copyable`           | `boolean`                    | `true`                             |
-| `threadMenu`         | `boolean`                    | `false`                            |
-| `headerIconPreset`   | `'base' \| 'material'`       | `'base'`                           |
-| `draft`              | `model<string>`              | `''`                               |
-| `threadsOpen`        | `model<boolean>`             | `false`                            |
-| `fullScreen`         | `model<boolean>`             | `false`                            |
+| вход                 | тип                          | умолчание                                      |
+| -------------------- | ---------------------------- | ---------------------------------------------- |
+| `title`              | `string`                     | `''` — подпись кита                            |
+| `subtitle`           | `string`                     | `''`                                           |
+| `messages`           | `IRtAiChat.Message[]`        | `[]`                                           |
+| `suggestions`        | `string[]`                   | `[]`                                           |
+| `emptyTitle`         | `string`                     | `''` — подпись кита                            |
+| `emptyDescription`   | `string`                     | `''` — подпись кита                            |
+| `placeholder`        | `string`                     | `''` — подпись поля                            |
+| `disclaimer`         | `string \| null`             | `null` — подпись кита; `''` прячет             |
+| `disclaimerPosition` | `'below' \| 'above'`         | `'below'`                                      |
+| `model`              | `string`                     | `''`, кнопки модели нет                        |
+| `effort`             | `string`                     | `''`, кнопки усилия нет                        |
+| `mode`               | `string`                     | `''`, кнопки режима нет                        |
+| `usage`              | `number \| null`             | `null`, кольца расхода нет                     |
+| `usageHint`          | `string`                     | `''`                                           |
+| `sending`            | `boolean`                    | `false`                                        |
+| `loading`            | `boolean`                    | `false`                                        |
+| `error`              | `IRtAiChat.RunError \| null` | `null`                                         |
+| `threads`            | `IRtAiChat.Thread[] \| null` | `null` — кнопки бесед нет                      |
+| `activeThreadId`     | `string \| null`             | `null`                                         |
+| `threadsLoading`     | `boolean`                    | `false`                                        |
+| `threadsFetching`    | `boolean`                    | `false`                                        |
+| `threadsHasMore`     | `boolean`                    | `false`                                        |
+| `emptyPreviewIcons`  | `IRtIcon.Name[]`             | `['sparkle', 'bot', 'sparkle']`                |
+| `fullScreenable`     | `boolean`                    | `false`                                        |
+| `closable`           | `boolean`                    | `true`                                         |
+| `copyable`           | `boolean`                    | `true`                                         |
+| `threadMenu`         | `boolean`                    | `false`                                        |
+| `headerIconPreset`   | `'base' \| 'material'`       | `'base'`                                       |
+| `questionAuthor`     | `boolean`                    | `true`; `false` убирает подпись «Вы» в вопросе |
+| `draft`              | `model<string>`              | `''`                                           |
+| `threadsOpen`        | `model<boolean>`             | `false`                                        |
+| `fullScreen`         | `model<boolean>`             | `false`                                        |
 
 ## Выходы
 
@@ -88,10 +135,12 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `send`                                                    | текст вопроса              |
 | `stop`, `retry`, `newThread`, `closed`, `loadMoreThreads` | —                          |
 | `selectThread`, `deleteThread`                            | id беседы                  |
+| `askAgain`                                                | id прерванного ответа      |
 | `searchThreads`                                           | строка поиска              |
 | `feedbackChange`                                          | `IRtAiChat.FeedbackChange` |
 | `controlPicked`                                           | `IRtAiPromptInput.Control` |
 | `linkOpen`                                                | `IRtAiChat.LinkOpen`       |
+| `sourceOpen`                                              | `IRtAiChat.SourceOpen`     |
 
 ## Методы
 
@@ -105,20 +154,21 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 ## Блоки ответа
 
 Ответ — `IRtAiChat.AssistantMessage` с массивом `blocks`, вопрос — `IRtAiChat.UserMessage` со
-строкой `text`. Кит сам рисует шесть типов блока:
+строкой `text`. Кит сам рисует семь типов блока:
 
-| тип        | поля                                  | что рисуется                                                                                              |
-| ---------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `markdown` | `text`                                | `rt-markdown-text`                                                                                        |
-| `notice`   | `severity`, `text`                    | `rt-message` этой severity                                                                                |
-| `table`    | `columns`, `rows`, `total?`, `title?` | таблица с «Copy CSV» — [AiChatTable](./?path=/docs/organisms-chat-aichattable-overview--docs)             |
-| `kpi`      | `items`                               | сетка карточек-плиток — [AiChatKpi](./?path=/docs/organisms-chat-aichatkpi-overview--docs)                |
-| `link`     | `title`, `url`, `section?`, `icon?`   | карточка страницы с двумя кнопками — [AiChatLink](./?path=/docs/organisms-chat-aichatlink-overview--docs) |
-| `section`  | `blocks`, `title?`                    | заголовок и сетка блоков — [AiChatSection](./?path=/docs/organisms-chat-aichatsection-overview--docs)     |
+| тип        | поля                                  | что рисуется                                                                                                  |
+| ---------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `markdown` | `text`                                | `rt-markdown-text`                                                                                            |
+| `notice`   | `severity`, `text`                    | `rt-message` этой severity                                                                                    |
+| `table`    | `columns`, `rows`, `total?`, `title?` | таблица с «Copy CSV» — [AiChatTable](./?path=/docs/organisms-chat-aichattable-overview--docs)                 |
+| `kpi`      | `items`                               | сетка карточек-плиток — [AiChatKpi](./?path=/docs/organisms-chat-aichatkpi-overview--docs)                    |
+| `link`     | `title`, `url`, `section?`, `icon?`   | карточка страницы с двумя кнопками — [AiChatLink](./?path=/docs/organisms-chat-aichatlink-overview--docs)     |
+| `sources`  | `items`                               | свёрнутый список источников цифр — [AiChatSources](./?path=/docs/organisms-chat-aichatsources-overview--docs) |
+| `section`  | `blocks`, `title?`                    | заголовок и сетка блоков — [AiChatSection](./?path=/docs/organisms-chat-aichatsection-overview--docs)         |
 
-Блоки `table`, `kpi`, `link` и `section` кит рисует сам, даже если приложение зарегистрировало
+Блоки `table`, `kpi`, `link`, `sources` и `section` кит рисует сам, даже если приложение зарегистрировало
 отрисовщик этого типа. Карточка `link` никуда не переходит: нажатие её кнопки чат отдаёт событием
-`linkOpen` с номером сообщения, адресом и признаком новой вкладки, а страницу открывает приложение. Секция держит другие блоки и раскладывает их в один или два столбца по своей ширине.
+`linkOpen` с номером сообщения, адресом и признаком новой вкладки, а страницу открывает приложение. Блок `sources` рисуется свёрнутым списком источников; нажатие источника с адресом чат отдаёт событием `sourceOpen` с номером сообщения, адресом и названием. Секция держит другие блоки и раскладывает их в один или два столбца по своей ширине. Ответ с `interrupted: true` рисует под собой тихую строку «прерван», а в строке действий — кнопку-иконку «спросить снова»; нажатие чат отдаёт событием `askAgain` с id ответа, обрыв распознаёт и вопрос отправляет приложение.
 
 Остальные типы рисует отрисовщик приложения: `provideRtAiChatBlock('chart', MyChartBlockComponent,
 (block) => '…')` в провайдерах корня приложения, компонент получает блок во вход `block`. Все

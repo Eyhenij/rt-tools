@@ -106,7 +106,7 @@ describe('Мультиселект — «Показать все», «Сброс
         expect((document.querySelector('[qa-dataid="multiselect-sheet-reset"]') as HTMLButtonElement).disabled).toBe(true);
     });
 
-    it('SC-UKV-1600 — стрелки первым пунктом ведут на «Показать все», Enter переключает, дальше идут строки', (): void => {
+    it('SC-UKV-1705 — стрелки первым пунктом ведут на «Показать все», Enter переключает, дальше идут строки', (): void => {
         const fixture: ComponentFixture<RtMultiselectComponent<string>> = setup('toggles', []);
         const chosen: () => ReadonlyArray<string> = listen(fixture);
 

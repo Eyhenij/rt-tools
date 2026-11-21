@@ -36,7 +36,7 @@ Then its list opens next to the field, and no bottom sheet is open
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
-### SC-UKV-1554 — the sheet carries the label of the field as its title
+### SC-UKV-1672 — the sheet carries the label of the field as its title
 
 Given a select inside a field labelled «Страна» on a phone
 When the select is pressed
@@ -44,7 +44,7 @@ Then the title of the bottom sheet is «Страна»
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
-### SC-UKV-1555 — a choice in the select closes the sheet
+### SC-UKV-1673 — a choice in the select closes the sheet
 
 Given the list of a select open in the bottom sheet
 When an option is chosen
@@ -53,7 +53,7 @@ Then the value of the select is the option, and the bottom sheet is closed
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`; on the admin
 panel's state filter by `apps/message-bus-admin-e2e/src/list-state-filter-sheet.narrow.spec.ts`.
 
-### SC-UKV-1556 — choices in the multiselect keep the sheet open
+### SC-UKV-1674 — choices in the multiselect keep the sheet open
 
 Given the list of a multiselect open in the bottom sheet
 When two options are chosen one after another
@@ -61,7 +61,7 @@ Then both are in the value, and the bottom sheet is still open
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
-### SC-UKV-1557 — the backdrop of the sheet closes the panel
+### SC-UKV-1675 — the backdrop of the sheet closes the panel
 
 Given the list of a select open in the bottom sheet
 When the backdrop of the sheet is pressed
@@ -69,7 +69,7 @@ Then the bottom sheet is closed, and the select reports its list closed
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
-### SC-UKV-1558 — the panel in the sheet takes the width of the sheet
+### SC-UKV-1676 — the panel in the sheet takes the width of the sheet
 
 Given the list of a select with the width of its trigger open in the bottom sheet
 When it is drawn
@@ -77,7 +77,7 @@ Then the list carries no fixed width taken from the field
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
-### SC-UKV-1559 — the footer of the multiselect sheet counts the chosen values
+### SC-UKV-1677 — the footer of the multiselect sheet counts the chosen values
 
 Given a multiselect with two values chosen, open in the bottom sheet
 When the sheet is drawn
@@ -85,7 +85,7 @@ Then its footer says «Selected: 2» and carries a reset and a done button
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
-### SC-UKV-1560 — the reset in the footer takes the whole choice off and keeps the sheet open
+### SC-UKV-1678 — the reset in the footer takes the whole choice off and keeps the sheet open
 
 Given a multiselect with two values chosen, open in the bottom sheet
 When the reset in the footer is pressed
@@ -93,7 +93,7 @@ Then the choice is empty, the multiselect reports it, and the sheet stays open
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
-### SC-UKV-1561 — the done button in the footer closes the sheet
+### SC-UKV-1679 — the done button in the footer closes the sheet
 
 Given a multiselect open in the bottom sheet
 When the done button in the footer is pressed
@@ -101,7 +101,7 @@ Then the bottom sheet is closed, and the choice made stays
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
-### SC-UKV-1562 — the rest of the set opens its panel in the sheet on a phone
+### SC-UKV-1680 — the rest of the set opens its panel in the sheet on a phone
 
 Given a part of the set — the split button, the speed menu, the colour palette, the action bar,
 the dynamic selector, the table filter header — on a phone
@@ -110,7 +110,7 @@ Then the panel is inside the bottom sheet, and no panel stands next to the butto
 
 Covered: `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet-set.spec.ts` — for the split button, the speed menu, the colour palette, the action bar, the dynamic selector and the table filter header. The «more» panel of the tabs and the filters of the thread list are not covered by a spec yet: they are checked in the showcase.
 
-### SC-UKV-1563 — the switched-off sheet keeps the panel of the rest of the set by its button
+### SC-UKV-1681 — the switched-off sheet keeps the panel of the rest of the set by its button
 
 Given the same part of the set with the sheet switched off on a phone
 When its panel is opened
@@ -118,7 +118,7 @@ Then the panel opens next to the button, and no bottom sheet is open
 
 Covered: `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet-set.spec.ts` — for the split button, the speed menu, the colour palette, the action bar, the dynamic selector and the table filter header. The «more» panel of the tabs and the filters of the thread list are not covered by a spec yet: they are checked in the showcase.
 
-### SC-UKV-1564 — a tap on the autocomplete opens the sheet with a search before any typing
+### SC-UKV-1682 — a tap on the autocomplete opens the sheet with a search before any typing
 
 Given an autocomplete on a phone
 When its field gets the focus
@@ -126,7 +126,7 @@ Then the bottom sheet is open with a search at its top and the suggestions under
 
 Covered: `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-sheet.spec.ts`.
 
-### SC-UKV-1565 — typing in the search of the sheet asks for suggestions and keeps the sheet open
+### SC-UKV-1683 — typing in the search of the sheet asks for suggestions and keeps the sheet open
 
 Given the autocomplete open in the bottom sheet
 When «Гру» is typed in the search of the sheet, then the search is emptied
@@ -134,7 +134,7 @@ Then the autocomplete asked for suggestions for «Гру», and the sheet stays 
 
 Covered: `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-sheet.spec.ts`.
 
-### SC-UKV-1566 — a suggestion chosen in the sheet sets the value and closes the sheet
+### SC-UKV-1684 — a suggestion chosen in the sheet sets the value and closes the sheet
 
 Given the autocomplete open in the bottom sheet
 When a suggestion is pressed
@@ -142,7 +142,7 @@ Then the autocomplete reports that value, and the bottom sheet is closed
 
 Covered: `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-sheet.spec.ts`.
 
-### SC-UKV-1567 — on a phone a tap on the user name opens the profile menu in the bottom sheet
+### SC-UKV-1685 — on a phone a tap on the user name opens the profile menu in the bottom sheet
 
 Given the page header on a phone with a user and a profile menu
 When the user name is tapped
@@ -150,7 +150,7 @@ Then the profile menu is inside the bottom sheet titled with the user name, and 
 
 Covered: `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header-sheet.spec.ts`.
 
-### SC-UKV-1568 — a mouse passing over the button opens no sheet, and leaving it closes none
+### SC-UKV-1686 — a mouse passing over the button opens no sheet, and leaving it closes none
 
 Given the page header on a phone with a user and a profile menu, used with a mouse
 When the mouse comes over the user name, then the name is pressed and the mouse leaves it
@@ -158,7 +158,7 @@ Then nothing opens on hover, the press opens the bottom sheet, and it stays open
 
 Covered: `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header-sheet.spec.ts`.
 
-### SC-UKV-1569 — on a phone the actions menu opens in the bottom sheet titled by its button
+### SC-UKV-1687 — on a phone the actions menu opens in the bottom sheet titled by its button
 
 Given an actions menu labelled «Действия» with two items on a phone
 When its button is pressed
@@ -166,7 +166,7 @@ Then both items are inside the bottom sheet titled «Действия», and no 
 
 Covered: `projects/ui-kit-v2/src/lib/components/menu/rt-menu-sheet.spec.ts`.
 
-### SC-UKV-1570 — an item in the sheet does its action and closes the sheet
+### SC-UKV-1688 — an item in the sheet does its action and closes the sheet
 
 Given the actions menu open in the bottom sheet
 When an item is pressed
@@ -174,7 +174,7 @@ Then the item's action runs once, the sheet is closed, and the menu reports it o
 
 Covered: `projects/ui-kit-v2/src/lib/components/menu/rt-menu-sheet.spec.ts`.
 
-### SC-UKV-1571 — the backdrop of the sheet closes the actions menu
+### SC-UKV-1689 — the backdrop of the sheet closes the actions menu
 
 Given the actions menu open in the bottom sheet
 When the backdrop of the sheet is pressed
@@ -182,7 +182,7 @@ Then the sheet is closed, and the menu reports it opened and then closed
 
 Covered: `projects/ui-kit-v2/src/lib/components/menu/rt-menu-sheet.spec.ts`.
 
-### SC-UKV-1572 — the actions menu stays by its button with the sheet off or on a wide screen
+### SC-UKV-1690 — the actions menu stays by its button with the sheet off or on a wide screen
 
 Given the actions menu with the sheet switched off on a phone, then with it on on a wide screen
 When its button is pressed
@@ -190,7 +190,7 @@ Then the panel opens by the button each time, and no bottom sheet is open
 
 Covered: `projects/ui-kit-v2/src/lib/components/menu/rt-menu-sheet.spec.ts`.
 
-### SC-UKV-1573 — on a phone the menu of a tab opens in the bottom sheet titled by the tab
+### SC-UKV-1691 — on a phone the menu of a tab opens in the bottom sheet titled by the tab
 
 Given tabs on a phone, where the tab «Брони» carries a menu of its own
 When the tab is long pressed
@@ -198,7 +198,7 @@ Then the menu of the tab is inside the bottom sheet titled «Брони», and n
 
 Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-context-menu-sheet.spec.ts`.
 
-### SC-UKV-1574 — an item of the tab menu in the sheet does its action and closes the sheet
+### SC-UKV-1692 — an item of the tab menu in the sheet does its action and closes the sheet
 
 Given the menu of the tab «Брони» open in the bottom sheet
 When its item is pressed
@@ -206,7 +206,7 @@ Then the item's action runs for that tab, and the sheet is closed
 
 Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-context-menu-sheet.spec.ts`.
 
-### SC-UKV-1584 — tabs with the sheet switched off keep the tab menu and «more» by the tabs
+### SC-UKV-1702 — tabs with the sheet switched off keep the tab menu and «more» by the tabs
 
 Given tabs with the sheet switched off on a phone, where a tab carries a menu of its own
 When the tab is long pressed
@@ -214,7 +214,7 @@ Then the menu stands by the tab, and no bottom sheet is open; the «more» panel
 
 Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-sheet-off.spec.ts`.
 
-### SC-UKV-1585 — the application switches the sheet off for the popover by one setting
+### SC-UKV-1703 — the application switches the sheet off for the popover by one setting
 
 Given an application that provides `RT_POPOVER_SHEET` as false, on a phone
 When a popover trigger is pressed

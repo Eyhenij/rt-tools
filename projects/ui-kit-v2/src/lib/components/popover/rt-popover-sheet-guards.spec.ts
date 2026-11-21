@@ -45,7 +45,7 @@ describe('Нижняя шторка поповера — токен, фокус 
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1585: токен RT_POPOVER_SHEET со значением false оставляет панель у триггера на телефоне', (): void => {
+    it('SC-UKV-1703: токен RT_POPOVER_SHEET со значением false оставляет панель у триггера на телефоне', (): void => {
         const fixture: ComponentFixture<SheetGuardsHostComponent> = setup([{ provide: RT_POPOVER_SHEET, useValue: false }]);
 
         trigger(fixture).click();
@@ -55,7 +55,7 @@ describe('Нижняя шторка поповера — токен, фокус 
         expect(document.querySelector('[qa-dataid="guards-inner"]')).not.toBeNull();
     });
 
-    it('SC-UKV-1585: без токена на телефоне панель открывается в шторке', (): void => {
+    it('SC-UKV-1703: без токена на телефоне панель открывается в шторке', (): void => {
         const fixture: ComponentFixture<SheetGuardsHostComponent> = setup();
 
         trigger(fixture).click();

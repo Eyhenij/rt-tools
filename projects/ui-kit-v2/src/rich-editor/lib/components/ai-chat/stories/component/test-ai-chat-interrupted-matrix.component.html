@@ -1,0 +1,88 @@
+<ng-template #chat let-c>
+    <rt-ai-chat subtitle="Отвечает по данным организации" [messages]="c.messages" [sending]="c.sending ?? false" [error]="c.error ?? null">
+        @if (c.extra) {
+            <ng-template rtAiChatMessageExtra>
+                <div
+                    style="
+                        display: grid;
+                        place-items: center;
+                        block-size: 2rem;
+                        border: 1px dashed var(--rt-color-border-default);
+                        border-radius: var(--rt-radius-md);
+                        color: var(--rt-color-text-muted);
+                        font-size: var(--rt-text-xs);
+                    ">
+                    Вложения приложения (шаблон extra)
+                </div>
+            </ng-template>
+        }
+    </rt-ai-chat>
+</ng-template>
+
+<!-- Ящик панели: ширина ответа плюс поля ленты по 16 и рамка по 1 -->
+<ng-template #panel let-c>
+    <div
+        style="
+            box-sizing: border-box;
+            block-size: 40rem;
+            border: 1px solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-radius-lg);
+            overflow: hidden;
+        "
+        [style.inline-size.px]="c.width + 34"
+        [attr.dir]="c.dir ?? null"
+        [attr.data-story-state]="c.state ?? null"
+        [attr.data-answer-width]="c.width">
+        @if (c.english) {
+            <!-- Чат объявлен прямо в обёртке: шаблон через ngTemplateOutlet берёт инжектор места
+                 объявления, и поставщик обёртки до него не доходит -->
+            <app-ai-chat-english-labels>
+                <rt-ai-chat
+                    subtitle="Answers from the organisation's data"
+                    [messages]="c.messages"
+                    [sending]="c.sending ?? false"
+                    [error]="c.error ?? null" />
+            </app-ai-chat-english-labels>
+        } @else {
+            <ng-container *ngTemplateOutlet="chat; context: { $implicit: c }" />
+        }
+    </div>
+</ng-template>
+
+<ng-template #cases let-items>
+    <app-story-row [items]="items" [itemLabel]="caseLabel">
+        <ng-template let-c><ng-container *ngTemplateOutlet="panel; context: { $implicit: c }" /></ng-template>
+    </app-story-row>
+</ng-template>
+
+@switch (part) {
+    @case ('widths') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: widthCases }" />
+    }
+    @case ('empty') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: emptyCases }" />
+    }
+    @case ('cases') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: otherCases }" />
+    }
+    @case ('rtl') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: rtlCases }" />
+    }
+    @case ('states') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: stateCases }" />
+    }
+    @case ('presets') {
+        <app-story-presets caption="Прерванный ответ в обоих наборах">
+            <ng-template>
+                <ng-container *ngTemplateOutlet="cases; context: { $implicit: themeCases }" />
+            </ng-template>
+        </app-story-presets>
+    }
+    @case ('themes') {
+        <app-story-themes>
+            <ng-template>
+                <ng-container *ngTemplateOutlet="cases; context: { $implicit: themeCases }" />
+            </ng-template>
+        </app-story-themes>
+    }
+}

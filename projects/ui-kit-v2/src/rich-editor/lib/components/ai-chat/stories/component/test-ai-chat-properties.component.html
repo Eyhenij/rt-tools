@@ -1,0 +1,43 @@
+<ng-template #panel let-c>
+    <div
+        style="
+            box-sizing: border-box;
+            block-size: 40rem;
+            border: 1px solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-radius-lg);
+            overflow: hidden;
+        "
+        [attr.data-story-state]="c.state ?? null"
+        [style.inline-size]="c.width ?? '100%'">
+        <rt-ai-chat
+            subtitle="Occupancy last week"
+            activeThreadId="t1"
+            [attr.data-cell]="c.cell"
+            [messages]="c.messages"
+            [suggestions]="c.suggestions ?? []"
+            [threads]="threads"
+            [threadsOpen]="c.threadsOpen ?? false"
+            [threadMenu]="c.threadMenu ?? false"
+            [questionAuthor]="c.questionAuthor ?? true"
+            [draft]="c.draft ?? ''"
+            [sending]="c.sending ?? false" />
+    </div>
+</ng-template>
+
+@switch (part) {
+    @case ('properties') {
+        <app-story-row slotWidth="26.25rem" [items]="propertyCases" [itemLabel]="caseLabel">
+            <ng-template let-c><ng-container *ngTemplateOutlet="panel; context: { $implicit: c }" /></ng-template>
+        </app-story-row>
+    }
+    @case ('focus') {
+        <app-story-row slotWidth="26.25rem" [items]="focusCases" [itemLabel]="caseLabel">
+            <ng-template let-c><ng-container *ngTemplateOutlet="panel; context: { $implicit: c }" /></ng-template>
+        </app-story-row>
+    }
+    @case ('rowActions') {
+        <app-story-row slotWidth="26.25rem" [items]="rowActionCases" [itemLabel]="caseLabel">
+            <ng-template let-c><ng-container *ngTemplateOutlet="panel; context: { $implicit: c }" /></ng-template>
+        </app-story-row>
+    }
+}

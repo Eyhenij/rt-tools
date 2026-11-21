@@ -113,6 +113,7 @@
 
                 @if (isStoppable()) {
                     <rt-icon-button
+                        rtElem="send"
                         qa-dataid="ai-prompt-input-stop"
                         icon="stop"
                         size="sm"
@@ -122,6 +123,7 @@
                         (clicked)="stop()" />
                 } @else {
                     <rt-icon-button
+                        rtElem="send"
                         qa-dataid="ai-prompt-input-send"
                         icon="arrow-up"
                         size="sm"

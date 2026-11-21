@@ -60,7 +60,7 @@ describe('Меню вкладки в нижней шторке', (): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1573 — на телефоне меню вкладки открывается в нижней шторке с названием вкладки', (): void => {
+    it('SC-UKV-1691 — на телефоне меню вкладки открывается в нижней шторке с названием вкладки', (): void => {
         const fixture: ComponentFixture<TabsContextSheetHostComponent> = setup();
 
         longPress(fixture);
@@ -70,7 +70,7 @@ describe('Меню вкладки в нижней шторке', (): void => {
         expect(document.querySelectorAll('[qa-dataid="tabs-context-menu"]').length).toBe(1);
     });
 
-    it('SC-UKV-1574 — пункт меню вкладки в шторке делает своё и закрывает шторку', (): void => {
+    it('SC-UKV-1692 — пункт меню вкладки в шторке делает своё и закрывает шторку', (): void => {
         const fixture: ComponentFixture<TabsContextSheetHostComponent> = setup();
         longPress(fixture);
 

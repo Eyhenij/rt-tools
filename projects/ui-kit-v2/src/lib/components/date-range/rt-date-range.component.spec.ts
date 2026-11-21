@@ -66,7 +66,7 @@ describe('RtDateRangeComponent', (): void => {
         expect(hostClasses(setup())).toContain('rt-date-range');
     });
 
-    it('SC-UKV-1547 — панель периода встаёт по корню поля, а не по кнопке календаря', (): void => {
+    it('SC-UKV-1665 — панель периода встаёт по корню поля, а не по кнопке календаря', (): void => {
         const fixture: ComponentFixture<RtDateRangeComponent> = setup();
         const popover: RtPopoverDirective = fixture.debugElement.query(By.directive(RtPopoverDirective)).injector.get(RtPopoverDirective);
 

@@ -425,6 +425,14 @@ Then the button carries `aria-haspopup` with the kind of the panel; without the 
 
 Covered: `projects/ui-kit-v2/src/lib/components/icon-button/rt-icon-button.component.spec.ts`.
 
+### SC-UKV-1581 — an icon button points to the node that describes it
+
+Given an icon button, drawn as a button or as a link, with the id of a describing node
+When it is drawn
+Then the button or the link carries `aria-describedby` with that id; without the input it carries none
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon-button/rt-icon-button.component.spec.ts`.
+
 ### SC-UKV-1038 — the application focuses an icon button
 
 Given an icon button, drawn as a button or as a link

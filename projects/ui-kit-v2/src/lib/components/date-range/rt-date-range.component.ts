@@ -23,7 +23,7 @@ import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
 import { RtBottomSheetComponent } from '@rt-tools/ui-kit-v2/bottom-sheet';
 import { IRtDatePicker } from '@rt-tools/ui-kit-v2/date-picker';
 import { RT_DATE_SHAPE_MASK, rtDateLayout } from '@rt-tools/ui-kit-v2/date-picker';
-import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
+import { RtFormControlBase, rtDayBoundOrNull } from '@rt-tools/ui-kit-v2/form-control';
 import { IRtInput } from '@rt-tools/ui-kit-v2/core';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RT_POPOVER_SHEET, RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
@@ -121,10 +121,17 @@ export class RtDateRangeComponent extends RtFormControlBase<IRtDateRange.Value |
     public readonly sheet: InputSignalWithTransform<boolean, TBooleanInput> = input<boolean, TBooleanInput>(true, {
         transform: booleanAttribute,
     });
-    /** Первый допустимый день `YYYY-MM-DD`. */
-    public readonly min: InputSignal<string | null> = input<string | null>(null);
-    /** Последний допустимый день `YYYY-MM-DD`. */
-    public readonly max: InputSignal<string | null> = input<string | null>(null);
+    /**
+     * Первый допустимый день `YYYY-MM-DD`. Сигнальная форма типизирует границу поля типом его
+     * значения и пишет `undefined`, когда границу не задала: и это, и диапазон — границы нет.
+     */
+    public readonly min: InputSignalWithTransform<string | null, IRtDateRange.Bound> = input<string | null, IRtDateRange.Bound>(null, {
+        transform: rtDayBoundOrNull,
+    });
+    /** Последний допустимый день `YYYY-MM-DD`; чтение — как у `min`. */
+    public readonly max: InputSignalWithTransform<string | null, IRtDateRange.Bound> = input<string | null, IRtDateRange.Bound>(null, {
+        transform: rtDayBoundOrNull,
+    });
 
     /** Значение из формы снимает ошибку набора: в поле теперь стоит оно. */
     public override writeValue(value: IRtDateRange.Value | null): void {

@@ -346,7 +346,7 @@ describe('RtPopoverDirective', (): void => {
             expect(pane()?.style.minWidth).toBe('');
         });
 
-        it('SC-UKV-1547 — с узлом места панель встаёт по нему и берёт его ширину, а не ширину host', (): void => {
+        it('SC-UKV-1665 — с узлом места панель встаёт по нему и берёт его ширину, а не ширину host', (): void => {
             const spy: jest.SpyInstance = jest.spyOn(OverlayPositionBuilder.prototype, 'flexibleConnectedTo');
             const origin: HTMLElement = document.createElement('div');
             Object.defineProperty(origin, 'offsetWidth', { value: 320 });

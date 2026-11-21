@@ -43,7 +43,7 @@ describe('Вкладки со шторкой выключенной', (): void =
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1584 — rt-tabs со шторкой выключенной оставляет меню вкладки и «Ещё» у вкладок на телефоне', (): void => {
+    it('SC-UKV-1702 — rt-tabs со шторкой выключенной оставляет меню вкладки и «Ещё» у вкладок на телефоне', (): void => {
         const providers: Provider[] = [{ provide: BreakpointsService, useValue: new PhoneBreakpointsStub() }];
         const fixture: ComponentFixture<TabsSheetOffHostComponent> = createRtFixture(TabsSheetOffHostComponent, {}, { providers });
         settle(fixture);
