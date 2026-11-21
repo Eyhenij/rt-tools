@@ -135,7 +135,7 @@ When the request is made
 Then it carries the twenty latest runs and no status filter, and the first successful run among
 them is the one production is compared against
 
-Covered: `projects/agent-kit/tests/checks-board-deploy.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board-lag.test.sh`.
 
 ### SC-AK-531 — a production that lags is named a divergence
 
@@ -144,7 +144,7 @@ When the check of the work queue goes
 Then the check names the lag by the number of commits and the commit of the last rollout: a merge
 does not move production, and a run of the main branch says nothing about it
 
-Covered: `projects/agent-kit/tests/checks-board-deploy.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board-lag.test.sh`.
 
 ### SC-AK-532 — a tree without a named flow of the rollout gets no check of production
 
@@ -153,27 +153,20 @@ When the check of the work queue goes
 Then production is not checked, and the check says so aloud: silence would read as production being
 in step
 
-Covered: `projects/agent-kit/tests/checks-board-deploy.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board-lag.test.sh`.
 
-### SC-AK-1796 — a comparison the host could not build is a note
+### SC-AK-824 — a rollout that fell in the check of the work queue
 
-Given the host refuses the comparison of the main branch with the last rollout with the words «result
-of a timeout»
+Given the last rollout ended in failure
 When the check of the work queue is run
-Then it prints a note with the commit and the day of the last rollout and the words of the host, the
-note is not a divergence, and the line of the last rollout and the count follow it
+Then it names it by a line of its own with a reference to the run: the main branch is ahead of
+production
 
-Given the comparison names a commit that is gone, fails with HTTP 500 or with another 422, or the
-request about the last rollout fails
+Given the rollout is still in progress
 When the same check is run
-Then the check names the failure by one line with the words of the host, without a stack, prints the
-divergences already counted and ends with the exit code 1
+Then it does not count as a divergence: the rollout may still end in success
 
-Given there is no connection
-When the same check is run
-Then production gets one note, not one per request
-
-Covered: `projects/agent-kit/tests/checks-board-deploy.test.sh`.
+Covered: `projects/agent-kit/tests/checks-board-long-work.test.sh`.
 
 ### SC-AK-1104 — the last run of the main branch is judged by the check
 

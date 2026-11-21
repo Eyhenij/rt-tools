@@ -398,24 +398,59 @@ export STUB_RUNS=1
 export STUB_VERDICT=success
 export STUB_HEAD_DATE="$(minutes_ago 60)"
 
-# SC-AK-752 — отставание ветки открытой заявки от главной называется сверкой
-# Гард судит основание один раз, в минуту открытия, а заявка стоит днями: влитого за это время
-# не видит ни он, ни зелёный прогон на её вершине.
+# --- SC-AK-1796 — сравнение, которое хостинг не смог построить, — заметка ----------------------
+# Стенд прода: последняя успешная выкатка и поток выкатки в настройке дерева. Остальные сценарии
+# прода — в `checks-board-lag.test.sh`.
+export STUB_DEPLOY='{"sha":"fedcba9876543210fedcba9876543210fedcba98","at":"2026-08-20T10:00:00Z"}'
+DEPLOY_CONFIG='{"tasksDir":"docs/tasks","pushGate":{"pipelineFile":".github/workflows/ci.yml"},"deploy":{"workflow":"deploy.yml","mainBranch":"main"},"board":{"owner":"probe","repo":"tree","projectId":"P","statusFieldId":"F","statusOptions":{"in-review":{"id":"r","name":"In review"}},"taskKey":"RT","bot":"probe-bot","tokenPath":"","reviewer":"probe"}}'
+board_config "$DEPLOY_CONFIG"
+# GraphQL-сравнение отказывает по времени словами «result of a timeout»: аудит печатает заметку с
+# коммитом и днём выкатки и идёт дальше. Пропавший коммит, другой 422, сбой 500 и отказ другого
+# запроса ломают аудит одной строкой — без стека, и уже насчитанное печатается.
+export RT_GH_RETRY_MS=1
+export STUB_COMPARE=timeout
+report "SC-AK-1796 — заметка названа с коммитом и днём выкатки" \
+    "$(board_says 'production was not compared with «main» — the last rollout is fedcba98 of 2026-08-20')" 1
+report "SC-AK-1796 — заметка несёт слова хостинга" "$(board_says 'the host answered: .*result of a timeout')" 1
+# Последняя выкатка спрошена и прошла: счёт без расхождений и код 0 — после заметки.
+export STUB_DEPLOY_LAST='{"status":"completed","conclusion":"success","sha":"fedcba9876543210fedcba9876543210fedcba98","at":"2026-08-20T10:00:00Z","url":"https://host/run/8"}'
+export STUB_CALLS="$BOARD_TREE/calls.log"
+: > "$STUB_CALLS"
+report "SC-AK-1796 — строки после заметки: выкатка спрошена, счёт без расхождений, код 0" \
+    "$(board_says 'no divergences'):$(board_code):$(grep -c 'deploy.yml/runs?per_page=1 ' "$STUB_CALLS")" '1:0:2'
+unset STUB_CALLS
+FAILED_ROLLOUT='{"status":"completed","conclusion":"failure","sha":"abcdef0123456789abcdef0123456789abcdef01","at":"2026-08-21T10:00:00Z","url":"https://host/run/9"}'
+export STUB_DEPLOY_LAST="$FAILED_ROLLOUT"
+report "SC-AK-1796 — строки после заметки: упавшая выкатка названа" \
+    "$(board_says 'the rollout «deploy.yml» failed on abcdef01 of 2026-08-21')" 1
+# Те же первые слова хостинг говорит о пропавшем коммите: это не «не успел», и аудит ломается.
+export STUB_COMPARE=gone
+report "SC-AK-1796 — другой отказ: пропавший коммит ломает аудит, а не даёт заметку" \
+    "$(board_says 'production was not compared'):$(board_says 'the host failed — .*Something went wrong'):$(board_code)" '0:1:1'
+# Сбой ломает аудит одной строкой, без стека; упавшая выкатка и счёт расхождений всё равно названы.
+export STUB_COMPARE=500
+report "SC-AK-1796 — другой отказ: сбой 500 сравнения ломает аудит одной строкой, без стека" \
+    "$(board_says 'production was not compared'):$(board_says '^check-board: production was not checked, the host failed — gh: Server Error \(HTTP 500\)'):$(board_says '^    at '):$(board_code)" '0:1:0:1'
+report "SC-AK-1796 — другой отказ: после сбоя 500 упавшая выкатка и счёт расхождений напечатаны" \
+    "$(board_says 'the rollout «deploy.yml» failed on abcdef01'):$(board_says 'divergences 1')" '1:1'
+unset STUB_DEPLOY_LAST
+report "SC-AK-1796 — другой отказ: после сбоя 500 строка «no divergences» не печатается" \
+    "$(board_says 'no divergences')" 0
+export STUB_COMPARE=422
+report "SC-AK-1796 — другой отказ: слова REST-сравнения ломают аудит" \
+    "$(board_says 'production was not compared'):$(board_code)" '0:1'
+export STUB_COMPARE=422-other
+report "SC-AK-1796 — другой отказ: 422 без слов «не успел» ломает аудит" \
+    "$(board_says 'production was not compared'):$(board_code)" '0:1'
+export STUB_COMPARE=timeout STUB_DEPLOY_LAST=500
+report "SC-AK-1796 — другой отказ: сбой запроса последней выкатки ломает аудит" \
+    "$(board_says 'production was not compared with'):$(board_says 'the host failed — gh: Server Error \(HTTP 500\)'):$(board_code)" '1:1:1'
+# Нет сети — заметка одна, а не по строке на каждый запрос о проде.
+export STUB_COMPARE=offline STUB_DEPLOY_LAST=offline
+report "SC-AK-1796 — нет сети: заметка о проде одна" "$(board_says 'production was not checked — ')" 1
+unset STUB_DEPLOY_LAST
+unset RT_GH_RETRY_MS STUB_COMPARE
 board_config "$BOARD_CONFIG"
-export STUB_RUNS=1
-export STUB_VERDICT=success
-export STUB_HEAD_DATE="$(minutes_ago 60)"
-export STUB_PULL_BEHIND=4
-report "SC-AK-752 — отставание названо числом" "$(board_says 'lags «main» by 4 commits')" 1
-report "SC-AK-752 — расхождением это не считается" "$(board_code)" 0
-report "SC-AK-752 — вливать базу строка не велит" "$(board_says 'Merge «main» in')" 0
-report "SC-AK-752 — сказано, что делать нечего" "$(board_says 'nothing to do, the host merges such a branch itself')" 1
-export STUB_PULL_BEHIND=0
-report "SC-AK-752 — ветка вровень с главной молчит" "$(board_says 'lags «main»')" 0
-# Сравнить нечем — молчание: сверка без доступа отбивала бы работу вместо промаха.
-export STUB_PULL_BEHIND=""
-report "SC-AK-752 — пустой ответ судится как ноль" "$(board_says 'lags «main»')" 0
-export STUB_PULL_BEHIND=0
 
 # --- SC-AK-1062 — задачи эпика привязаны к его карточке подзадачами ----------------------------
 # Замысел держит состав, а доска его не читает: на доске задача эпика выглядит как задача вне
