@@ -4,10 +4,10 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `замысел-записан`
-- **Stage:** 1 of 3 — Exports nobody imports
-- **Done:** the grill, the plan, its reading by both roles and the owner's approval
-- **Next step:** drop `export` from the 19 symbols knip names
+- **State:** `этап-идёт`
+- **Stage:** 2 of 3 — The d3 packages move to the kit
+- **Done:** stage 1 — 19 symbols without `export`, step 1.1 matched
+- **Next step:** declare the d3 packages in the kit manifest
 - **Uncommitted:** this file until its commit
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -15,11 +15,11 @@ Rewritten by every session, not appended to.
 ## Steps
 
 - [x] 1.1 Drop `export` from the 19 symbols knip names in the agent kit, the chart scene and the link block fixture
-- [>] 2.1 Move `d3-hierarchy`, `d3-shape` and their type packages from the root devDependencies to devDependencies of the kit
-- [ ] 2.2 Keep the versions exact in the kit manifest
-- [ ] 2.3 Declare all four in the kit manifest
-- [ ] 3.1 Run knip over every project
-- [ ] 3.2 Mark RT-3492 as done in the epic plan
+- [x] 2.1 Move `d3-hierarchy`, `d3-shape` and their type packages from the root devDependencies to devDependencies of the kit
+- [x] 2.2 Keep the versions exact in the kit manifest
+- [x] 2.3 Declare all four in the kit manifest
+- [x] 3.1 Run knip over every project
+- [x] 3.2 Mark RT-3492 as done in the epic plan
 
 ## Decisions along the way
 
