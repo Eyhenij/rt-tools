@@ -95,8 +95,12 @@ Not applicable: one call is judged at a time.
   sign of a write. The text of a command takes in its heredoc, what a pipe feeds into an interpreter
   and a script the same call wrote; a variable assigned a literal in the call is read as that literal.
 - **A write whose target is not a literal path errs towards firing.** The refusal names the target
-  and asks for the path as a literal. The price, measured on 13 067 shell calls of 15–21.11: a
-  script that reads a guarded file and writes another one is refused too — 7 calls.
+  and asks for the path as a literal. Removing or moving away a whole task folder and copying the
+  template into a new one pass: they mark no step. The price, measured on 22 460 calls of 15–21.11:
+  15 calls refused falsely — a script that reads a guarded file and writes another one by a path
+  from its arguments or a variable, and a function of a sourced file given a guarded path. The old
+  guard refused 139 calls the new one passes, and the new one refuses 51 true writes the old one
+  passed.
 
 ## Open questions
 

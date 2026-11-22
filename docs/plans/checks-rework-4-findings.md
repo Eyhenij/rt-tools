@@ -103,15 +103,20 @@ The task ran outside the epic; the owner added its findings to the epic on 21.11
 
 ## RT-3423 — every refusal named, the step guard judges only a write
 
-- **The first filter of the step guard hook does not know the task folders.** The pattern on line
-  35 of `assets/hooks/flow-step-guard.sh` lets `rm -rf docs/tasks/<x>`, `git restore
-  docs/tasks/<x>/`, `git checkout <rev> -- docs/tasks/<x>` and `cp "$F" docs/tasks/<x>/` pass before
-  the guard reads them; the guard itself refuses them. **Address:** rules layer — the pattern of
-  the first filter in `assets/hooks/flow-step-guard.sh` with a scenario per form.
 - **A script written by an earlier call and run with a guarded path is not judged.** `python3
   /tmp/w.py docs/tasks/<x>/progress.md` and `source /tmp/w.sh` pass: the code of the script is not in
-  the call. The old guard let them through too. **Address:** rules layer — the step guard reads a
-  script file under a temporary directory named by the call.
+  the call. A script written to a temporary directory by one call and run by the next passes both.
+  **Address:** rules layer — the step guard reads a script file under a temporary directory named
+  by the call.
+- **A model check whose Read the permission mode refuses runs off, and nothing records it.** On
+  16.11 the turn-end check refused 182 calls with «the read of the file is refused by the
+  permissions»; by the new words such a call passes unjudged. **Address:** rules layer — a note in
+  the observations when a model check lets a call through for no file or no read. **Metric:** the
+  refusals of `turn-judge` and `ask-judge` that name a missing or unread file on the first day after
+  the merge, by a recount of the records, 0 expected.
+- **`awk` with `print >` and `sed` with `w <file>` write past the step guard.** Both are taken as
+  readers; no call of 15–21.11 wrote a guarded file so. **Address:** rules layer — the readers of
+  `assets/checks/flow-guard.mjs`.
 - **The whole directory of epic plans is guarded, findings files included.** `sed -i` on a findings
   file next to the epic plan is refused as an edit of the epic plan. **Address:** rules layer — the
   guarded path of the epic plan in `assets/checks/flow-guard.mjs`.

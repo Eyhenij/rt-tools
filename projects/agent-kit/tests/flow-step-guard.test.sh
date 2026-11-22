@@ -240,6 +240,32 @@ d "shell: SC-AK-1820 — tee за nice -n 10 отказан" "$(shell_input "ech
 d "shell: SC-AK-1820 — запись после cd /tmp; cd - отказана" "$(shell_input "cd /tmp; cd -; echo x > docs/tasks/$B/progress.md" "$R")" deny
 d "shell: SC-AK-1820 — sed -i по пути из переменной той же команды отказан" "$(shell_input "P=docs/tasks/$B/progress.md; sed -i '' 's/a/b/' \$P" "$R")" deny
 d "shell: SC-AK-1820 — перенаправление >! отказано" "$(shell_input "echo x >! docs/tasks/$B/progress.md" "$R")" deny
+# Разбор папки задачи по паттерну task-flow-archive и папка из шаблона проходят; запись внутрь — нет.
+C10="$(sc <<CMD
+cat docs/tasks/$B/grill.md > docs/archive/probe-decision.md
+rm -r docs/tasks/$B
+test ! -e docs/tasks/$B/plan.md
+CMD
+)"
+d "shell: SC-AK-1819 — разбор папки задачи командой паттерна проходит" "$(shell_input "$C10" "$R")" PASS
+d "shell: SC-AK-1819 — папка новой задачи из шаблона проходит" "$(shell_input "cp -r docs/tasks/_template docs/tasks/RT-9-new && ls docs/tasks/RT-9-new/progress.md" "$R")" PASS
+d "shell: SC-AK-1819 — xxd по ходу работы проходит" "$(shell_input "xxd docs/tasks/$B/progress.md | head -3" "$R")" PASS
+d "shell: SC-AK-1819 — sys.stdout.write плана проходит" "$(shell_input "python3 -c \"import sys; sys.stdout.write(open('docs/tasks/$B/plan.md').read())\"" "$R")" PASS
+d "shell: SC-AK-1819 — сценарий, пишущий во временный файл, проходит" "$(shell_input "node -e \"const fs=require('fs'); fs.writeFileSync('/tmp/out.txt', fs.readFileSync('docs/tasks/$B/plan.md'))\"" "$R")" PASS
+d "shell: SC-AK-1819 — find -exec ls по меткам проходит" "$(shell_input "find .git/rt-kit -name '*.json' -exec ls -l {} +" "$R")" PASS
+d "shell: SC-AK-1820 — sed -i в подстановке \$(…) отказан" "$(shell_input "echo \"\$(sed -i '' s/a/b/ docs/tasks/$B/progress.md)\"" "$R")" deny
+d "shell: SC-AK-1820 — rm в подстановке присваивания отказан" "$(shell_input "X=\$(rm -f docs/tasks/$B/progress.md)" "$R")" deny
+d "shell: SC-AK-1820 — awk print > в ход работы отказан" "$(shell_input "awk '{print > \"docs/tasks/$B/progress.md\"}' /tmp/x" "$R")" deny
+d "shell: SC-AK-1820 — os.replace в ход работы отказан" "$(shell_input "python3 -c \"import os; os.replace('/tmp/x','docs/tasks/$B/progress.md')\"" "$R")" deny
+C11="$(sc <<CMD
+tee /tmp/w.sh >/dev/null <<'EOF'
+echo x > docs/tasks/$B/progress.md
+EOF
+bash /tmp/w.sh
+CMD
+)"
+d "shell: SC-AK-1820 — сценарий, записанный tee и запущенный той же командой, отказан" "$(shell_input "$C11" "$R")" deny
+d "shell: SC-AK-1820 — find -exec sed -i по папке задачи отказан" "$(shell_input "find docs/tasks/$B -name progress.md -exec sed -i '' s/a/b/ {} +" "$R")" deny
 expect_reason "shell: SC-AK-1820 — отказ называет путь не буквой" "$GUARD" "$(shell_input "F=\$(ls -t ~/Downloads/*.md | head -1); cp \"\$F\" docs/tasks/$B/ && head -3 docs/tasks/$B/progress.md" "$R")" 'write the path as a literal'
 
 # --- legacy: планы, которые движок не мерил ----------------------------------------------------

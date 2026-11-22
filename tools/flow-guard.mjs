@@ -1,43 +1,33 @@
-// rt-kit v0.38.0 · checks/flow-guard.mjs · 63d7b7649922 · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/flow-guard.mjs · 8fafb056b985 · правится надстройкой, не здесь
 /**
- * The guard of the course of work — the engine command `guard`, called by the hook
- * `flow-step-guard.sh` before Edit, Write, MultiEdit and a shell command.
- *
- * It refuses what would move the scenario by a declaration instead of a measurement: a step marked
- * done without the green mark the engine wrote for it; done and current marks out of order; the state
- * line ahead of the measured state; a shell write into the progress, the plan, the epic plan, the
- * marks, the session records, the description or the engine; «отложено» set or lifted in the epic
- * plan without the owner's last word naming the task; an edit of the tree override without the
- * owner's last word naming the key; an edit of the description or the engine outside a task whose
- * approved plan names the path in a footprint row marked «(правится)». A replacement line of the
- * progress is the owner's decision, answered with the window; «шаг владельца» on a row is refused.
- * A plan with no check line, and a branch in `words.legacyBranches`, keep their done marks as they are.
- *
- * The decisions are pure: the context brings the files, the marks, the owner's last word and the
- * measured state. A shell command is judged by a list of readers: a simple command whose text names
- * a guarded file passes only when it reads; a copy, a move or a removal into a directory of the
- * guarded files is refused even when it names no file.
+ * The guard of the course of work — the engine command `guard`, called by the hook `flow-step-guard.sh`
+ * before Edit, Write, MultiEdit and a shell command. It refuses what would move the scenario by a
+ * declaration instead of a measurement: a step marked done without the engine's green mark; marks out
+ * of order; the state line ahead of the measured state; a shell write into the progress, the plan, the
+ * epic plan, the marks, the session records, the description or the engine; «отложено» set or lifted,
+ * or an edit of the tree override, without the owner's last word naming the task or the key; an edit
+ * of the description or the engine outside a task whose approved plan names the path in a footprint
+ * row marked «(правится)». A replacement line of the progress is the owner's decision; «шаг владельца»
+ * on a row is refused. A plan with no check line, and a legacy branch, keep their done marks. The
+ * decisions are pure: the context brings the files, the marks, the owner's last word and the state.
  */
 import { posix } from 'node:path';
 
 import { stepsOfPlan, stepsOfProgress } from './work-steps-lib.mjs';
 
 /** The word that defers a task in the epic plan; the words a row carried for a task handed to the owner. */
-const DEFERRED = 'отложено';
-const OWNER_STEP = 'шаг владельца';
-/** The opening of a replacement line of the progress, with the number of the step. */
+const [DEFERRED, OWNER_STEP] = ['отложено', 'шаг владельца'];
+/** The opening of a replacement line of the progress; the mark of an edited footprint row; the state line. */
 const REPLACEMENT_START = /^-\s+\*\*(?:Проверка шага|Check of step)\s+(\d+\.\d+)\s+(?:заменена|replaced):\*\*/u;
-/** The mark of a footprint row the task edits; the state line of the progress. */
 const EDITED_ROW = '(правится)';
 const STATE_LINE = /^-\s+\*\*(?:State|Состояние):\*\*\s+`([^`]+)`/mu;
 const escape = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-/** A path under the temporary directories or a device: never a file of the tree. */
+/** A path under the temporary directories or a device; a word the shell still expands. */
 const TEMP = /^\/(?:private\/)?(?:tmp|var\/folders)(?:\/|$)|^\/dev\//;
-/** A word the shell still expands: a variable, a substitution, a glob or a brace list. */
 const DYNAMIC = /[$`*?[]|\{[^}"':\s]*(?:,|\.\.)[^}"':\s]*\}/;
 /** The commands that only read what they name; echo and printf name nothing but their redirects. */
-const READERS = new Set('cat head tail less wc grep rg egrep fgrep jq diff cmp ls stat file test [ [[ echo printf awk sed sort cut tr nl uniq column find gh mkdir cd pushd popd export local declare readonly for read true false : basename dirname realpath readlink pwd shasum md5 du tree chmod pgrep sleep which type date tsc'.split(' '));
+const READERS = new Set('cat head tail less wc grep rg egrep fgrep jq diff cmp ls stat file test [ [[ echo printf awk gawk sed sort cut tr nl uniq column find gh mkdir cd pushd popd export local declare readonly for read true false : basename dirname realpath readlink pwd shasum sha256sum md5 md5sum xxd od cspell du tree chmod pgrep sleep which type date tsc'.split(' '));
 const GIT_READERS = new Set('diff log show status add blame ls-files ls-tree grep rev-parse rev-list cat-file commit merge-base check-ignore diff-tree for-each-ref show-ref branch reflog shortlog describe'.split(' '));
 const COPIES = new Set(['cp', 'mv', 'install', 'ln', 'rsync', 'tar', 'unzip']);
 /** The words before a command that only run it, with their options that take a value. */
@@ -47,8 +37,14 @@ for (const word of 'command exec time nohup builtin if then else elif do while u
 const STRINGS = /'''[\s\S]*?'''|"""[\s\S]*?"""|`(?:\\[\s\S]|[^\\`])*`|'(?:\\.|[^\\'\n])*'|"(?:\\.|[^\\"\n])*"/g;
 /** A call of a script that runs a command: then all its text is read, not only its paths. */
 const RUNS = /(?<!\.)\bexec\w*\s*\(|\b(?:system|popen|spawn\w*)\s*\(|child_process|subprocess/;
-/** A call of a script that writes a file or runs a command, read in its code. */
-const WIDE = new RegExp(`${RUNS.source}|\\b(?:writeFile|appendFile|createWriteStream)\\w*\\b|(?<!read(?:File|dir|link)?|exists|stat|lstat|realpath|access)Sync\\s*\\(|\\b(?:write|rename|unlink|remove|copy|move|truncate|rmdir|rm|cp|symlink)\\w*\\s*\\(|\\bopen\\s+(?:my\\s+)?[$\\w]+\\s*,`);
+/** A write or a command run in the code of a script; not a write to stdout, nor `.copy()` of a list. */
+const WIDE = new RegExp(
+    `${RUNS.source}|\\b(?:writeFile|appendFile|createWriteStream)\\w*\\b|(?<!read(?:File|dir|link)?|exists|stat|lstat|realpath|access)Sync\\s*\\(|(?<!std(?:out|err)\\.)\\bwrite\\w*\\s*\\(|(?:\\b(?:os|shutil|fs|fsp|promises)\\.|(?<![.\\w]))(?:rename|unlink|remove|copy|move|truncate|rmdir|rm|cp|symlink|link|replace)\\w*\\s*\\(|\\bPath\\([^)]*\\)\\.(?:replace|rename|unlink|write_\\w+|\\w+_to)\\s*\\(|\\.touch\\s*\\(|\\bgetattr\\s*\\(|\\bopen\\s+(?:my\\s+)?[$\\w]+\\s*,`
+);
+/** A write call with a literal first argument under a temporary directory, and its handle: no file of the tree. */
+const TEMP_PATH = `\\s*\\(\\s*(?<q>['"])\\/(?:private\\/)?(?:tmp|var\\/folders)\\/[^'"]*\\k<q>`;
+const TEMP_WRITE = new RegExp(`\\b(?:open|writeFile\\w*|appendFile\\w*|createWriteStream)${TEMP_PATH}[^()]*(?:\\((?:[^()]|\\([^()]*\\))*\\)[^()]*)*\\)(?:\\.write\\w*)?`, 'g');
+const TEMP_HANDLE = new RegExp(`(?:(\\w+)\\s*=\\s*|with\\s+)open${TEMP_PATH}[^)]*\\)(?:\\s+as\\s+(\\w+))?`, 'g');
 /** A call of a script that copies, moves or removes a whole directory. */
 const TREE_CALL = /\b(?:cp|copy|rename|rm|move|rmdir)\w*\s*\(|copytree|rmtree/;
 
@@ -66,11 +62,10 @@ function closing(text, at) {
 
 /**
  * The simple commands of a shell text, quotes taken off: { words, redirects, stdin, subs, piped,
- * depth }. A here-document and a here-string are the stdin; `<(…)` and `>(…)` are the subs.
+ * depth }. A here-document and a here-string are the stdin; `<(…)`, `>(…)`, `$(…)` and backticks the subs.
  */
 export function shellCommands(text) {
-    const commands = [];
-    const docs = [];
+    const [commands, docs] = [[], []];
     let [cmd, word, pending, piped, depth] = [null, null, null, false, 0];
     const fresh = () => (cmd = { words: [], redirects: [], stdin: null, subs: [], piped, depth });
     const endWord = () => {
@@ -96,12 +91,18 @@ export function shellCommands(text) {
         } else if (c === "'" || c === '"' || (c === '$' && text[i + 1] === "'")) {
             // A double-quoted `$(…)` is kept whole: its own quotes do not end the word.
             const from = c === '$' ? i + 2 : i + 1;
+            // A substitution in double quotes is a command of its own: it goes to the subs.
             let j = from;
-            while (j < text.length && text[j] !== text[from - 1]) j = c === '"' && text[j] === '\\' ? j + 2 : c === '"' && text.startsWith('$(', j) ? closing(text, j + 1) + 1 : j + 1;
+            while (j < text.length && text[j] !== text[from - 1]) {
+                const end = c !== '"' ? -1 : text.startsWith('$(', j) ? closing(text, j + 1) : text[j] === '`' ? text.indexOf('`', j + 1) : -1;
+                if (end > j) cmd.subs.push(text.slice(j + (text[j] === '`' ? 1 : 2), end));
+                j = c === '"' && text[j] === '\\' ? j + 2 : end > j ? end + 1 : j + 1;
+            }
             word = (word ?? '') + (c === '"' ? text.slice(from, j).replace(/\\(["\\$`])/g, '$1') : text.slice(from, j));
             i = j + 1;
         } else if (text.startsWith('$(', i) || c === '`') {
             const end = c === '`' ? text.indexOf('`', i + 1) : closing(text, i + 1);
+            if (end > i) cmd.subs.push(text.slice(i + (c === '`' ? 1 : 2), end));
             word = (word ?? '') + text.slice(i, end < 0 ? text.length : end + 1);
             i = end < 0 ? text.length : end + 1;
         } else if (c === '#' && word === null) while (i < text.length && text[i] !== '\n') i++;
@@ -142,9 +143,11 @@ export function shellCommands(text) {
 }
 
 /** A script writes: a call of a write or of a command in its code, or `open` in a mode other than reading. */
-function scriptWrites(script) {
+function scriptWrites(text) {
+    const handles = [...text.matchAll(TEMP_HANDLE)].map((match) => match[1] ?? match[3]).filter(Boolean);
+    const script = text.replace(TEMP_WRITE, 'read()').replace(handles.length ? new RegExp(`\\b(?:${handles.join('|')})\\.write\\w*\\s*\\(`, 'g') : /^\b$/, 'read(');
     const code = script.replace(STRINGS, (literal) => literal.replace(/[^\n]/g, ' '));
-    if (WIDE.test(code) || RUNS.test(script) || /shutil|\bIO\.|\bFile\.(?:open|write)/.test(script)) return true;
+    if (WIDE.test(code) || RUNS.test(script) || /shutil|\bIO\.|\bFile\.(?:open|write)|\[\s*['"]\w*(?:write|append|rename|unlink|rm|cp|copy|truncate|link)\w*['"]\s*\]/i.test(script)) return true;
     return [...code.matchAll(/(\.?)\bopen\s*\(/g)].some((call) => {
         const from = call.index + call[0].length;
         const end = closing(code, from - 1);
@@ -158,22 +161,19 @@ function scriptWrites(script) {
 
 /** The word with the variables of the command put in; `mktemp` and `$TMPDIR` are a temporary directory. */
 const expand = (word, vars) =>
-    word
-        .replace(/\$\(mktemp\b[^)]*\)/g, '/tmp/mktemp')
-        .replace(/^~(?=\/|$)/, '/HOME')
-        .replace(/\$(?:\{(\w+)[^}]*\}|(\w+))/g, (all, braced, bare) => ({ TMPDIR: '/tmp', HOME: '/HOME' })[braced ?? bare] ?? vars.get(braced ?? bare) ?? all);
+    word.replace(/\$\(mktemp\b[^)]*\)/g, '/tmp/mktemp').replace(/^~(?=\/|$)/, '/HOME').replace(/\$(?:\{(\w+)[^}]*\}|(\w+))/g, (all, braced, bare) => ({ TMPDIR: '/tmp', HOME: '/HOME' })[braced ?? bare] ?? vars.get(braced ?? bare) ?? all);
 
 /** Every tail of a path after a slash: a path of the tree may be written from any directory above it. */
 const tails = (path) => path.split('/').map((_, k, parts) => parts.slice(k).join('/')).filter(Boolean);
 
 /**
- * A path lies in a directory of the guarded files: the directory itself or below it when the area
- * ends with a slash, or above it when `up` — a removal or a tree copy reaches the files under it.
+ * A path lies in a guarded directory: in it, below it when the area ends with a slash, above it when
+ * `up`. A relative path counts from the root; an absolute one by a tail, only on an area of two parts.
  */
 const inArea = (path, area, up) => {
-    const dir = area.replace(/\/$/, '');
-    const deep = dir !== area;
-    return (up && path === '.') || tails(path).some((tail) => (tail === dir && (deep || up)) || (up && dir.startsWith(`${tail}/`)) || (deep && tail.startsWith(`${dir}/`)));
+    const [dir, deep] = [area.replace(/\/$/, ''), area.endsWith('/')];
+    const here = (tail) => (tail === dir && (deep || up)) || (deep && tail.startsWith(`${dir}/`));
+    return path.startsWith('/') ? dir.includes('/') && tails(path).some(here) : here(path) || (up && (path === '.' || dir.startsWith(`${path}/`)));
 };
 
 /** The guarded files of a shell command: the sign of their name in a text, their directories, the reason. */
@@ -188,41 +188,39 @@ function shellGuards(ctx) {
     return [
         [new RegExp(`rt-kit/(?:steps|approval)|${escape(marks)}`), [`${marks}/`, 'rt-kit/steps/', 'rt-kit/approval/'], () => 'the marks of the steps and of the approval are written only by the engine `task-flow-script.mjs`, never by a shell command'],
         [/\.claude\/projects\/\S*(?:\.jsonl\b|\*)/, ['.claude/projects/'], () => 'the session records are written only by the harness, never by a shell command: an approval is read from them'],
-        [new RegExp(`(?:^|[^\\w.-])(?:progress|plan)\\.md(?![\\w.-])|${escape(ctx.tasksDir)}/\\S*[*?[]`), [`${ctx.tasksDir}/`], () => `the progress and the plan are edited ${shell}: the guard judges an edit, and a shell write passes it unseen`],
+        [new RegExp(`(?:^|[^\\w.-])(?:progress|plan)\\.md(?![\\w.-])|${escape(ctx.tasksDir)}/\\S*[*?[]`, 'i'),[`${ctx.tasksDir}/`], () => `the progress and the plan are edited ${shell}: the guard judges an edit, and a shell write passes it unseen`],
         [new RegExp(`(?:^|[^\\w.-])${escape(ctx.plansDir)}/`), [`${ctx.plansDir}/`], () => `the epic plan is edited ${shell}: «отложено» in it needs the owner's word, and a shell write passes it unseen`],
         [{ exec: (text) => (name(text) ? [name(text)] : null) }, ctx.protectedPaths.map(area).filter(Boolean), (path) => judgeProtected(path, ctx, `${ctx.tasksDir}/${ctx.branch}/plan.md`)],
         [new RegExp(`${escape(posix.dirname(ctx.overridePath))}/`), [`${posix.dirname(ctx.overridePath)}/`], () => `the override of the description is edited ${shell}, and only by the owner's word naming the key`],
     ];
 }
 
-/** The paths a script names: its string literals with no space in them, its globs only when it globs. */
+/** The paths a script names: its literals with no space in them but what it imports, its globs when it globs. */
 const literals = (script) =>
-    (script.match(STRINGS) ?? [])
-        .map((literal) => literal.replace(/^('''|"""|['"`])([\s\S]*)\1$/, '$2'))
-        .filter((literal) => literal && !/\s/.test(literal) && (!/[*?[]/.test(literal) || /glob|readdir|listdir|walk|scandir|Dir\[/.test(script)))
-        .join(' ');
+    (script.replace(/\b(?:from|import\s*\(|require\s*\()\s*(['"`])[^'"`]*\1/g, '').match(STRINGS) ?? []).map((literal) => literal.replace(/^('''|"""|['"`])([\s\S]*)\1$/, '$2')).filter((literal) => literal && !/\s/.test(literal) && (!/[*?[]/.test(literal) || /glob|readdir|listdir|walk|scandir|Dir\[/.test(script))).join(' ');
 
 /**
- * The verdict on a shell command. Each simple command is read with its words, its redirects and, for
- * a runner, its script: inline, a here-document, the words piped into it or a file the same command
- * wrote. Variables set in the command are put in; a word under a temporary directory names nothing.
- * A script the command did not write is code of the tree, run by its path: it reads.
+ * The verdict on a shell command, simple command by simple command, variables of the command put in; a
+ * script the command wrote is judged, a script it did not write is code of the tree and reads.
  */
 function judgeShell(command, ctx, level = 0, vars = new Map(), cwd = '.') {
     const guards = shellGuards(ctx);
     const written = new Map();
+    // A function the command defines runs its body, and the body is judged as commands of its own.
+    const defined = new Set([...command.matchAll(/(?:^|[\s;&|({])(?:function\s+)?([\w-]+)\s*\(\)\s*\{/g)].map((match) => match[1]));
     const cwds = [cwd];
     let pipeline = '';
     for (const unit of shellCommands(command)) {
         cwds.length = Math.min(cwds.length, unit.depth + 1);
         while (cwds.length <= unit.depth) cwds.push(cwds.at(-1));
-        // The path of a word; of a word the shell still expands, the literal directory before it.
+        // The path of a word; of a word the shell expands, the directory before it — none after an unknown variable.
         let base = cwds[unit.depth];
         const at = (word) => {
             const text = expand(word, vars);
             const cut = text.search(DYNAMIC);
-            if (cut >= 0 && (text.includes('..') || !text.slice(0, cut).includes('/'))) return null;
-            const path = cut < 0 ? text : text.slice(0, text.lastIndexOf('/', cut) + 1);
+            const slash = text.lastIndexOf('/', cut);
+            if (cut >= 0 && (text.includes('..') || (slash < 0 && /[$`]/.test(text[cut])))) return null;
+            const path = cut < 0 ? text : text.slice(0, slash + 1);
             return path.startsWith('/') || base !== null ? posix.normalize(posix.join(path.startsWith('/') ? '/' : base, path)).replace(/(.)\/$/, '$1') : null;
         };
         // A temporary path names nothing, save a session record: the records of a session may lie there.
@@ -235,8 +233,8 @@ function judgeShell(command, ctx, level = 0, vars = new Map(), cwd = '.') {
         }
         if (words[0] === 'for' && words[2] === 'in') vars.set(words[1], words.slice(3).join(' '));
         let fed = false;
-        while (words.length > 0 && (Object.hasOwn(PREFIXES, words[0]) || /^\w+=/.test(words[0]) || (/^p?npm$/.test(words[0]) && /^(?:exec|dlx)$/.test(words[1])))) {
-            const head = words.shift();
+        while (words.length > 0 && (Object.hasOwn(PREFIXES, posix.basename(words[0])) || /^\w+=/.test(words[0]) || (/^p?npm$/.test(words[0]) && /^(?:exec|dlx)$/.test(words[1])))) {
+            const head = posix.basename(words.shift());
             if (/^p?npm$/.test(head)) words.shift();
             while (words[0]?.startsWith('-')) if ((PREFIXES[head] ?? []).includes(words.shift())) words.shift();
             if (head === 'timeout') words.shift();
@@ -260,18 +258,21 @@ function judgeShell(command, ctx, level = 0, vars = new Map(), cwd = '.') {
             const inline = args.findIndex((arg) => /^-[a-zA-Z]*[ce]$/.test(arg) || ['--eval', '-p', '--print'].includes(arg));
             const file = runsWritten ? words[0] : operands[0];
             if (name === 'eval') script = args.join(' ');
-            else if (inline >= 0) script = argv.splice(inline + 1, 1)[0] ?? '';
-            else if (file && file !== '-') [script, trusted, params] = [written.get(at(file)) ?? null, !written.has(at(file)), runsWritten ? operands : operands.slice(1)];
+            else if (inline >= 0) [script, params] = [(argv.splice(inline + 1, 1)[0] ?? '').replaceAll('{}', fed ? fromPipe.trim() : '{}'),shellRunner ? args.slice(inline + 2) : []];
+            else if (file && file !== '-') [script, trusted, params] = [written.get(at(file)) ?? null, !written.has(at(file)) && !flag(/^-m$/), runsWritten ? [words[0], ...operands] : operands];
             else script = unit.stdin ?? (unit.piped ? fromPipe : null);
         }
-        // A shell script is judged as a command of its own, its positional parameters put in.
-        for (const inner of [...unit.subs, ...(shellRunner && script !== null && level < 3 ? [script] : [])]) {
-            const verdict = judgeShell(inner, ctx, level + 1, new Map([...vars, ...params.map((value, k) => [String(k + 1), value])]), base);
+        // A shell script is a command of its own, its positional parameters put in; so is what find runs.
+        const [option, exec] = [args.findIndex((arg) => /^[-(!]/.test(arg)), name === 'find' ? args.findIndex((arg) => /^-(?:exec|execdir|ok|okdir)$/.test(arg)) : -1];
+        const [starts, quote] = [option < 0 ? args : args.slice(0, option), (arg) => (/^[\w./=@%+:,-]*$/.test(arg) ? arg : `'${arg.replaceAll("'", `'\\''`)}'`)];
+        const found = exec < 0 ? [] : [args.slice(exec + 1).filter((arg, k, list) => !list.slice(0, k + 1).some((one) => one === ';' || one === '+')).map((arg) => quote(arg.replaceAll('{}', starts.map((start) => `${start}/*`).join(' ')))).join(' ')];
+        for (const inner of [...unit.subs, ...found, ...(shellRunner && script !== null && level < 3 ? [script] : [])]) {
+            const verdict = judgeShell(inner, ctx, level + 1, new Map([...vars, ...params.map((value, k) => [String(k), value])]), base);
             if (verdict) return verdict;
         }
         const data = name === 'echo' || name === 'printf';
         const content = unit.stdin ?? (data ? args.join(' ') : null);
-        for (const target of unit.redirects) if (content !== null && at(target) !== null) written.set(at(target), content);
+        for (const target of [...unit.redirects, ...(name === 'tee' ? operands : [])]) if (at(target) !== null) written.set(at(target), content ?? fromPipe);
         // The names: the words, the redirects, the names a copy lands in its target, the script — of a
         // script that runs no command only the paths it names — and the words piped into xargs. A
         // here-document of a command that is not a runner is the text it writes, not a name; so are
@@ -292,28 +293,46 @@ function judgeShell(command, ctx, level = 0, vars = new Map(), cwd = '.') {
         };
         // The directories a copy, a move, a removal or a checkout writes into, and whether it reaches below.
         // A copy of named files is judged by the names it lands; a tree, or a source the shell expands, by its target.
+        // A whole task folder is removed or moved away as the taking-apart does, and made from the template
+        // when it does not stand yet; a write into a standing folder from anything else is judged below.
+        const [taskFolder, template] = [`(?!_template$)[^/]+$`, '_template(?:/|$)'].map((tail) => (word) => new RegExp(`(?:^|/)${escape(ctx.tasksDir)}/${tail}`).test((DYNAMIC.test(expand(word, vars)) ? expand(word, vars) : at(word)) ?? ''));
+        const sources = operands.filter((word) => word !== into);
+        if (name === 'cp' && into && taskFolder(into) && sources.every(template) && !ctx.read?.(`${at(into)}/progress.md`)) continue;
         const sub = name === 'git' ? args.find((arg, k) => !arg.startsWith('-') && !['-C', '-c'].includes(args[k - 1])) : null;
         const staged = flag(/^(?:--staged|-S)$/) && !flag(/^(?:--worktree|-W)$/);
         const recursive = flag(/^-[a-zA-Z]*[rRa]|^--(?:recursive|archive)$/) || ['rsync', 'tar', 'unzip'].includes(name);
+        const mode = name === 'tar' ? args.filter((arg, k) => /^-[a-zA-Z]+$/.test(arg) || (k === 0 && /^[a-zA-Z]+$/.test(arg))).join('') : '';
+        const listing = (name === 'tar' && /[tO]/.test(mode)) || (name === 'unzip' && flag(/^-[lpvZ]/));
         const dirs = [];
-        const unnamed = recursive || operands.slice(0, -1).some((word) => DYNAMIC.test(word)) || into === null;
-        if (COPIES.has(name) && unnamed && (name !== 'tar' || flag(/^-?[a-zA-Z]*x/))) dirs.push([into ?? (['tar', 'unzip'].includes(name) ? '.' : null), recursive]);
         const folder = (word) => !/\.\w+$/.test(word);
-        if (name === 'mv') dirs.push(...operands.slice(0, -1).filter(folder).map((word) => [word, true]));
-        if (name === 'rm' && recursive) dirs.push(...operands.map((word) => [word, true]));
-        if (sub === 'checkout' || (sub === 'restore' && !staged)) dirs.push(...operands.slice(operands.indexOf(sub) + 1).filter((arg) => (!/^[\w.~^@{}-]+$/.test(arg) || arg === '.') && folder(arg)).map((word) => [word, true]));
+        const unnamed = recursive || sources.some((word) => DYNAMIC.test(word) || (name === 'mv' && folder(word))) || into === null;
+        const moved = name === 'mv' && sources.length > 0 && sources.every(taskFolder);
+        if (COPIES.has(name) && unnamed && !listing && !moved && (name !== 'tar' || /x/.test(mode))) dirs.push([into ?? (['tar', 'unzip'].includes(name) ? '.' : null), recursive]);
+        if (name === 'mv') dirs.push(...sources.filter((word) => folder(word) && !taskFolder(word)).map((word) => [word, true]));
+        if (name === 'rm' && recursive) dirs.push(...operands.filter((word) => !taskFolder(word)).map((word) => [word, true]));
+        if (name === 'find' && flag(/^-(?:delete|fprint)/)) dirs.push(...starts.map((word) => [word, true]));
+        // A git path: every word after `--`; before it, a word with a slash or one that holds a guarded directory.
+        const dash = args.indexOf('--');
+        const gitPaths = dash >= 0 ? args.slice(dash + 1) : operands.slice(operands.indexOf(sub) + 1).filter((arg) => !/^[\w.~^@{}-]+$/.test(arg) || arg === '.' || guards.some(([, list]) => list.some((one) => inArea(at(arg) ?? '', one, true))));
+        if (sub === 'checkout' || (sub === 'restore' && !staged) || sub === 'clean') dirs.push(...(gitPaths.length || sub !== 'clean' ? gitPaths : ['.']).filter(folder).map((word) => [word, true]));
         // A script that copies or removes a directory and names a task folder itself writes into the folder.
         if (interpreter && script !== null && TREE_CALL.test(script.replace(STRINGS, '""'))) dirs.push(...(text.match(new RegExp(`${escape(ctx.tasksDir)}/[^/\\s'"]+(?=/?['"\\s]|/?$)`, 'g')) ?? []).map((word) => [word, false]));
         // An in-place edit of sed, awk, perl or ruby writes the files it names, not its expression.
         const inPlace = /^(?:g?sed|g?awk|perl|ruby)$/.test(name) && flag(/^-[a-zA-Z0-9]*i|^--in-place|^inplace$/);
         const expressions = args.filter((arg, k) => /^-[a-zA-Z]*e$|^--expression$/.test(args[k - 1] ?? ''));
         const edited = [...operands.filter((arg) => arg && arg !== 'inplace' && !expressions.includes(arg)).slice(expressions.length || interpreter ? 0 : 1), ...(fed ? fromPipe.split(/\s+/).filter(Boolean) : [])];
-        const reads = READERS.has(name) ? !(name === 'sort' && flag(/^-o|^--output/)) && !(name === 'find' && flag(/^-(?:delete|exec|ok|fprint)/))
+        // A write target the shell still expands is judged by the directory it lies in.
+        dirs.push(...[...unit.redirects, ...(inPlace ? edited : []), ...(name === 'rm' ? operands : [])].filter((word) => DYNAMIC.test(expand(word, vars))).map((word) => [word, false]));
+        // awk that prints into a file or runs a command, and sed with a `w` command, write.
+        const scripted = (/^g?awk$/.test(name) && flag(/printf?[^;}]*>|system\s*\(|\|\s*"/)) || (/^g?sed$/.test(name) && flag(/(?:^|[;{}\n]|\/[gpiIme0-9]*)\s*w\s+\S/));
+        const archive = args[args.findIndex((arg) => /^-?[a-zA-Z]*f$/.test(arg)) + 1] ?? '';
+        const reads = READERS.has(name) ? !scripted && !(name === 'sort' && flag(/^-o|^--output/)) && !(name === 'find' && flag(/^-(?:delete|fprint)/))
             : name === 'git' ? GIT_READERS.has(sub) || (sub === 'restore' && staged) || (sub === 'reset' && !flag(/^--(?:hard|merge|keep)$/))
             : ['cp', 'install', 'ln', 'rsync'].includes(name) ? into !== null && spared(into)
-            : name === 'prettier' || name === 'eslint' ? !flag(/^(?:-w|--write|--fix\b.*)$/)
+            : name === 'tar' || name === 'unzip' ? listing || (/c/.test(mode) && spared(archive))
+            : ['prettier', 'eslint', 'markdownlint', 'markdownlint-cli2', 'iconv'].includes(name) ? !flag(/^(?:-w|--write|--fix\b.*|-o|--output\b.*)$/)
             : shellRunner || interpreter ? trusted || (script !== null && (shellRunner || !scriptWrites(script)))
-            : name === '';
+            : name === '' || defined.has(name);
         const reader = unit.redirects.every(spared) && (inPlace ? edited.every(spared) : reads);
         if (fed && !reader) dirs.push(...fromPipe.split(/\s+/).filter(Boolean).map((word) => [word, true]));
         const why = reader ? null : named.map((by) => refuse(by)).find(Boolean);
@@ -331,12 +350,8 @@ function judgeShell(command, ctx, level = 0, vars = new Map(), cwd = '.') {
 /** The text an edit leaves: Write gives it whole, Edit and MultiEdit replace in the text before. */
 export function textAfter(call, before) {
     if (call.tool === 'Write') return call.content ?? '';
-    let text = before ?? '';
-    for (const edit of call.edits ?? []) {
-        if (edit.replaceAll) text = text.split(edit.oldString).join(edit.newString);
-        else text = text.replace(edit.oldString, () => edit.newString);
-    }
-    return text;
+    const apply = (text, edit) => (edit.replaceAll ? text.split(edit.oldString).join(edit.newString) : text.replace(edit.oldString, () => edit.newString));
+    return (call.edits ?? []).reduce(apply, before ?? '');
 }
 
 /** The done and current marks of the progress are in order: done steps first, the current right after. */
@@ -344,8 +359,7 @@ export function marksOutOfOrder(progress) {
     const { steps } = stepsOfProgress(progress);
     let open = false;
     for (const step of steps) {
-        if (step.mark === 'x' && open) return `step ${step.number} is marked done after a step that is not done`;
-        if (step.mark === '>' && open) return `step ${step.number} is marked current after a step that is not done`;
+        if (open && (step.mark === 'x' || step.mark === '>')) return `step ${step.number} is marked ${step.mark === 'x' ? 'done' : 'current'} after a step that is not done`;
         if (step.mark !== 'x') open = true;
     }
     return null;
@@ -369,23 +383,12 @@ export function deferChanges(before, after, key) {
 }
 
 /** The lines of the text after the edit that match the sign and did not stand in the text before. */
-const newLines = (before, after, sign) => {
-    const was = new Set((before ?? '').split('\n').map((line) => line.trim()));
-    return (after ?? '').split('\n').filter((line) => sign(line) && !was.has(line.trim()));
-};
+const newLines = (before, after, sign) => ((was) => (after ?? '').split('\n').filter((line) => sign(line) && !was.has(line.trim())))(new Set((before ?? '').split('\n').map((line) => line.trim())));
 
-/**
- * The step numbers whose replacement line the edit adds or changes. A removed line is not counted:
- * dropping a replacement gives the check of the plan back and needs no word of the owner.
- */
-export function replacementChanges(before, after) {
-    return [...new Set(newLines(before, after, (line) => REPLACEMENT_START.test(line)).map((line) => line.match(REPLACEMENT_START)[1]))];
-}
+/** The step numbers whose replacement line the edit adds or changes; dropping one needs no owner's word. */
+export const replacementChanges = (before, after) => [...new Set(newLines(before, after, (line) => REPLACEMENT_START.test(line)).map((line) => line.match(REPLACEMENT_START)[1]))];
 
-/**
- * The task numbers of the epic plan rows the edit marks «шаг владельца». The mark is refused: the
- * step is the executor's. A row that leaves the mark is not counted: the task goes back to the work.
- */
+/** The tasks of the epic plan rows the edit marks «шаг владельца» (refused: the step is the executor's). */
 export function ownerRowChanges(before, after, key) {
     const marked = (text) => new RegExp(`\\|\\s*${OWNER_STEP}[^|]*\\|?\\s*$`, 'u').test(text);
     const numbers = (line) => [...line.matchAll(new RegExp(`${escape(key)}-(\\d+)`, 'g'))].map((match) => match[1]);
@@ -409,10 +412,7 @@ export function editedPaths(plan) {
     return rows.flatMap((line) => [...line.matchAll(/`([^`\s]+)`/g)].map((match) => match[1]));
 }
 
-/**
- * The path is named by a footprint path: the same file, a directory that holds it, or a bare file
- * name equal to its last part — a footprint row lists the files of one directory by name.
- */
+/** The path is named by a footprint path: the same file, a directory that holds it, or its bare file name. */
 export const namedBy = (path, paths) =>
     paths.some((named) => path === named || (named.endsWith('/') && path.startsWith(named)) || (!named.includes('/') && path.split('/').pop() === named));
 

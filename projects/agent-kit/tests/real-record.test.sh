@@ -180,6 +180,20 @@ observe "$SKIPPED" 2026-11-19 2000 0
 report "SC-AK-1835 — a day under 1500 calls or with no record is skipped: it neither counts nor breaks the run" \
     "$(report_lines "$SKIPPED" --until 2026-11-19 --days 5 | grep '^  Веха G эпика:' | sed 's/ (.*//')" \
     "  Веха G эпика: достигнута — 2026-11-15, 2026-11-18, 2026-11-19"
+SHORT="$WORK/milestone-short"
+observe "$SHORT" 2026-11-16 1500 0
+observe "$SHORT" 2026-11-17 700 0
+observe "$SHORT" 2026-11-18 1600 0
+report "SC-AK-1835 — a run too short to reach the milestone says how many working days hold it" \
+    "$(report_lines "$SHORT" --until 2026-11-18 --days 3 | grep -A3 '^  Веха G эпика:' | grep 'рабочих дней подряд' | sed 's/^ *//')" \
+    "рабочих дней подряд держат веху: 2 из 3 (в отрезке 3 дн.)"
+LIGHT="$WORK/milestone-light"
+observe "$LIGHT" 2026-11-17 1500 0
+observe "$LIGHT" 2026-11-18 800 0
+observe "$LIGHT" 2026-11-19 1600 0
+report "SC-AK-1835 — the day line of a reached light day names it no working day of the epic milestone" \
+    "$(report_lines "$LIGHT" --until 2026-11-19 --days 3 | grep '^  2026-11-18 веха G:' | sed 's/.* — //')" \
+    "достигнута (не рабочий день для вехи эпика)"
 
 # --- the report with no --until takes today ---------------------------------------------------------------
 report "SC-AK-1818 — без --until последний день отрезка — день момента запуска" \

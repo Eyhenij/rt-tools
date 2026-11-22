@@ -199,7 +199,7 @@ export function epicMilestoneOf(days) {
         run = milestoneMissesOf(d).length > 0 ? [] : [...run, d.day];
         if (run.length === MILESTONE_G_DAYS) return { reached: true, run, misses };
     }
-    return { reached: false, run: [], misses };
+    return { reached: false, run: [], held: run.length, misses };
 }
 
 /** The lines of the verdict on milestone G of the epic. */
@@ -208,7 +208,10 @@ export function epicMilestoneLines(milestone, dayCount) {
     if (milestone.reached) return [`  Веха G эпика: достигнута — ${milestone.run.join(', ')} (${rule})`];
     const lines = [`  Веха G эпика: не достигнута (нужно ${rule})`];
     for (const m of milestone.misses) lines.push(`    ${m.day}: ${m.why.join(', ')}${m.skipped ? ' — не рабочий день, пропущен' : ''}`);
-    if (milestone.misses.length === 0) lines.push(`    в отрезке ${dayCount} дн., нужно ${MILESTONE_G_DAYS} подряд`);
+    // With no working day that breaks it, the run is only short: say how long the last one is.
+    if (milestone.misses.every((m) => m.skipped)) {
+        lines.push(`    рабочих дней подряд держат веху: ${milestone.held ?? 0} из ${MILESTONE_G_DAYS} (в отрезке ${dayCount} дн.)`);
+    }
     return lines;
 }
 
@@ -267,7 +270,12 @@ export function linesOf(result) {
     lines.push(gateLine(result.days));
     lines.push(`  Цель не достигнута: ${sum('goalNotMet')}`);
     for (const [task, n] of byCountThenName(Object.entries(verdicts))) lines.push(`    ${task}: ${n}`);
-    for (const d of result.days) lines.push(result.days.length === 1 ? `  ${milestoneOf(d)}` : `  ${d.day} ${milestoneOf(d)}`);
+    // Beside the verdict of the epic, a reached day the epic skips says so, or the two lines disagree.
+    const epic = result.days.length >= MILESTONE_G_DAYS;
+    for (const d of result.days) {
+        const skipped = epic && d.calls > 0 && !workingDay(d) && milestoneMissesOf(d).length === 1 ? ' (не рабочий день для вехи эпика)' : '';
+        lines.push(result.days.length === 1 ? `  ${milestoneOf(d)}` : `  ${d.day} ${milestoneOf(d)}${skipped}`);
+    }
     // The epic milestone asks for days in a row: a shorter period has nothing to judge it by.
     if (result.days.length >= MILESTONE_G_DAYS) {
         lines.push(...epicMilestoneLines(result.milestone ?? epicMilestoneOf(result.days), result.days.length));

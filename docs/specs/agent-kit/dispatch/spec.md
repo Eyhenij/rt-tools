@@ -125,9 +125,12 @@ edit guards and the turn-closing guards.
   hooks is named in it. A host that runs no hooks of the kind `agent` names the check in `skip`.
 - **A model check that finds no file of its own, or whose read is refused, lets the call through.**
   The words of its call name its own file, tell the model to look for it in the directory of the
-  session and then up to the first directory that holds `.claude/`, and say: no file or no read —
-  let the call through and judge nothing else. A copy where the check is not laid out has nothing to
-  judge by: on 15–21.11 a model check that did not find or read its file refused calls in a row.
+  session and then upwards to the root, taking the first directory where the file itself lies — a
+  stray `.claude/` in a subdirectory does not stop the search — and say: no file or no read, shown
+  only by its own Read by absolute path, lets the call through and judges nothing else. A copy where
+  the check is not laid out has nothing to judge by: on 15–21.11 a model check that did not find or
+  read its file refused calls in a row. The price: a session whose permission mode refuses the Read
+  runs with the check off, and nothing records it.
 - **A record that stands is neither doubled nor rewritten, and one that differs is named.** The
   settings are a file of the tree. Other words, another pattern and a limit below the declared one
   are named and refused by the check of the layout; another model and a higher limit are named only,

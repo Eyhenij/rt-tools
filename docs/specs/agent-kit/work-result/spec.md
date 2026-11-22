@@ -40,15 +40,17 @@ and no dead end over a working day — is read from the same numbers.
 
   Every other error result is not a refusal: a non-zero exit of a command, the owner turning a call
   down («The user doesn't want to proceed»), an interrupt, an error of the tool itself.
-- **The check of a refusal** — the package name of the check the refusal text names, by this table.
-  The prefix `PreToolUse:<tool> hook error:` is dropped before the table is read.
+- **The check of a refusal** — the package name of the check the refusal text names, by this table,
+  read top down: the first row that matches gives the name. The frame of a model check is read with
+  the prefix `PreToolUse:<tool> hook error:` of its event; every other row is found anywhere in the
+  text.
 
   | The refusal text holds                            | The check                |
   | ------------------------------------------------- | ------------------------ |
-  | a shell error `…/hooks/dispatch.sh: line N:`      | `dispatch-broken`        |
   | the frame of the turn-end model check             | `turn-judge`             |
   | the frame of the menu model check                 | `ask-judge`              |
   | `BLOCKED by <name>:`                              | `<name>`                 |
+  | a shell error `…/hooks/dispatch.sh: line N:`      | `dispatch-broken`        |
   | `Refused by the rules gate`                       | `skill-gate`             |
   | `Refused: the epic is over`                       | `epic-over`              |
   | the opening of a text of a guard that names no check — delivery, push, main branch, tree assignment, documents, reuse, browser | that guard's name |
