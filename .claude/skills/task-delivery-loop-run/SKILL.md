@@ -95,19 +95,20 @@ pnpm exec nx affected -t test-hooks --base=origin/<base>    # the guard scenario
 ```
 
 The heavy steps run ahead by a call of their own, in the background, on a clean copy. The output
-goes to a log outside the working copy, and nothing stands after the set: the notice carries the
-code of the last command of the call, and a tail after the set turns red into «exit code 0». A log
-in the tree makes the copy dirty, and the set does not start:
+goes to a log outside the working copy, named by the copy, and nothing stands after the set: the
+notice carries the code of the last command of the call, and a tail after the set — even
+`echo "exit=$?"` — turns red into «exit code 0». A log in the tree makes the copy dirty, and the
+set does not start:
 
 ```bash
-bash .claude/hooks/git-guard-push-ahead.sh > /tmp/push-ahead.log 2>&1
+bash .claude/hooks/git-guard-push-ahead.sh > "${TMPDIR:-/tmp}/push-ahead-$(basename "$PWD").log" 2>&1
 ```
 
-The verdict is the code of the notice and the last line `push ahead:` of the log; on red the lines
-after it name the red checks:
+The verdict is the code of the notice. The log says it in its last line `push ahead:`, and on red
+the lines after that line name the red checks:
 
 ```bash
-grep '^push ahead:' /tmp/push-ahead.log | tail -1
+sed -n '/^push ahead: red/,$p' "${TMPDIR:-/tmp}/push-ahead-$(basename "$PWD").log"
 ```
 
 The push is a separate call after it; the push guard reads the marks the run ahead left, and a

@@ -294,22 +294,25 @@ heavy one is not started and is named as held
 
 Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 
-### SC-AK-1814 — a call that hides the exit code of the run ahead is refused
+### SC-AK-1814 — a call that does not end with the exit code of the run ahead is refused
 
-Given a call that runs the set ahead
-When `;`, a newline or `||` follows the set and the next command prints no `$?`, or a pipe follows it
-with no `PIPESTATUS` and no `set -o pipefail`, or the set stands under `&` or `!`, or a chain of `&&`
-after it ends with `;` and no `$?`
-Then the call is refused, and the refusal names what hid the code, the ready form with a log outside
-the working copy and the read of the `push ahead:` line
+Given a background call that runs the set ahead, `; echo "exit=$?"` after it among them
+When a command other than `exit $?` follows the set by `;`, a newline or `||`, or a pipe follows it
+with no `exit ${PIPESTATUS[0]}`, or the set stands under `&` or `!`, or a chain of `&&` after it
+ends with `;`, a newline or `||` and no `exit $?`
+Then the call is refused, and the refusal names what hid the code, the ready form with a log of the
+copy outside the working copy and the read of the last `push ahead:` line
 
 Covered: `projects/agent-kit/tests/push-ahead-call-guard.test.sh`.
 
-### SC-AK-1815 — a call whose code of the run ahead shows passes
+### SC-AK-1815 — a call that ends with the exit code of the run ahead passes
 
 Given a call that runs the set ahead
 When the set stands alone, with its output redirected, chained by `&&` to the end of the call,
-followed by `$?`, or piped with `PIPESTATUS` after it or `set -o pipefail` before it
+followed by `exit $?` or by `rc=$?` with `exit $rc` at the end, piped with
+`exit ${PIPESTATUS[0]}` after the pipe or ending the call under `set -o pipefail`, or closed by a
+loop with nothing after it — or the call runs in the foreground, where its output stands in the
+result
 Then the call passes
 
 Covered: `projects/agent-kit/tests/push-ahead-call-guard.test.sh`.
@@ -319,7 +322,7 @@ Covered: `projects/agent-kit/tests/push-ahead-call-guard.test.sh`.
 Given a call that names the script without running it — a search, a read, a heredoc, `printf` into a
 file, a quoted commit message, `bash -n`
 When the guard judges the call
-Then the call passes; a run inside `bash -c` is judged by its inner text
+Then the call passes; a run inside `bash -c` or `eval` is judged by its inner text
 
 Covered: `projects/agent-kit/tests/push-ahead-call-guard.test.sh`.
 

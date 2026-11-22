@@ -60,14 +60,18 @@ There is no interface: the guard answers with a refusal text, the run ahead with
 - **The run ahead runs the whole set, writes a mark for every green check and starts only on a
   clean copy.** A red set exits with a nonzero code, and the last `push ahead:` line of its output
   names the red checks.
-- **A call that runs the set ahead and hides its exit code is refused with the ready form.** A
-  background notice carries the code of the last command of the call. The code is hidden by `;`, a
-  newline or `||` after the set with no `$?` in the next command, by a pipe with no `PIPESTATUS`
-  and no `set -o pipefail`, by `&`, by `!`, and by a chain of `&&` that ends with `;` and no `$?`.
-  The set alone, with its output redirected, chained by `&&` to the end of the call or followed by
-  `$?` passes; a text that only names the script passes, and a run inside `bash -c` is judged by
-  its inner text. The ready form is the set alone with its output in a log outside the working
-  copy: a file in the tree makes the copy dirty, and the set does not start.
+- **A call that runs the set ahead and does not end with its exit code is refused with the ready
+  form.** A background notice carries the code of the last command of the call, and a code printed
+  into the output is no substitute for it. Only a background call is judged: a call in the
+  foreground returns its output in the result. Refused: any command after the set by `;`, a newline
+  or `||` other than `exit`, `exit $?` or `rc=$?` with `exit $rc` at the end; a pipe with no
+  `exit ${PIPESTATUS[0]}` after it, unless `set -o pipefail` stands before it and it ends the
+  call; `&`; `!`; a chain of `&&` that ends with `;`, a newline or `||` and no `exit $?`. The set
+  alone, with its output redirected or chained by `&&` to the end of the call passes; loops and
+  groups closing after the set pass its code on. A text that only names the script passes, and a
+  run inside `bash -c` or `eval` is judged by its inner text. The ready form is the set alone with
+  its output in a log outside the working copy, named by the copy: a file in the tree makes the
+  copy dirty, and the set does not start.
 - **Running ahead is declared by the tree, not by the package.** The package does not know how long
   another tree's heavy steps take.
 - **A check that passed over its time limit is red.** The limit is the tree's own measurement of the
@@ -159,10 +163,11 @@ Several working copies share the marks: a key holds the tree and the base, not t
 
 ## Decisions
 
-- **The call is refused only where the code of the set is visible nowhere.** Most calls with a
-  tail print `$?` of the set, and the code is seen in the output; a refusal of every tail would add
-  a refusal per hundred calls a day for no read gained. The script is not changed: it already exits
-  with its verdict.
+- **The call is refused whenever it does not end with the code of the set, `$?` printed into the
+  output included.** On 21.11 a session saw «exit=1» in the output and read the notice «exit code
+  0» as green; and the likeliest answer to a refusal of `| tail` — `; echo "exit $?"` after the
+  pipe — prints the code of `tail`. A narrower guard that let printed `$?` through was tried and
+  dropped on review. The script is not changed: it already exits with its verdict.
 - **The base is read from the remote refs of the working copy, not from the branch reflog and not
   from an open request.** The reflog line is absent in a branch taken in another copy and names
   nothing for a branch created from the checked-out head; a parent merged and removed from the
@@ -236,5 +241,6 @@ None.
 - 2026-11-17 — one table for a copy with `.env` and a copy without it: ignored and untracked files
   are no reads, recorded process kinds are kept, and a step that runs always is not traced by the
   check. Task RT-3347.
-- 2026-11-22 — a call of the run ahead that hides the exit code of the set is refused with the
-  ready form. A red set run with `| tail` came back as «exit code 0». Task RT-3469.
+- 2026-11-22 — a call of the run ahead that does not end with the exit code of the set is refused
+  with the ready form. A red set run with `; echo "exit=$?"` after it came back as «exit code 0».
+  Task RT-3469.
