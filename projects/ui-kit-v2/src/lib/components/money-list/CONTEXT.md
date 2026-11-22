@@ -4,9 +4,9 @@
 
 ```html
 <rt-money-list>
-    <rt-money-row label="Тариф">12 000 ₽</rt-money-row>
-    <rt-money-row label="Скидка" [loading]="!discount()">−1 200 ₽</rt-money-row>
-    <rt-money-row label="Итого" [total]="true">10 800 ₽</rt-money-row>
+    <rt-money-row label="Тариф"><ng-template rtMoneyRowContent>12 000 ₽</ng-template></rt-money-row>
+    <rt-money-row label="Скидка" [loading]="!discount()"><ng-template rtMoneyRowContent>−1 200 ₽</ng-template></rt-money-row>
+    <rt-money-row label="Итого" [total]="true"><ng-template rtMoneyRowContent>10 800 ₽</ng-template></rt-money-row>
 </rt-money-list>
 ```
 
@@ -18,7 +18,8 @@
 | `total`             | `boolean` | `false`   |
 | `loading`           | `boolean` | `false`   |
 
-Сумма приходит проекцией — форматирует её потребитель.
+Сумма приходит шаблоном `<ng-template rtMoneyRowContent>` — форматирует её потребитель; в загрузке
+шаблон не создаётся.
 
 ## Главное, что нужно знать
 

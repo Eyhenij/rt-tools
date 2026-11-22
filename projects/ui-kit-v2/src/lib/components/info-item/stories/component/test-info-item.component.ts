@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { RtInfoItemContentDirective } from '../../rt-info-item-content.directive';
 import { RtInfoItemComponent } from '../../rt-info-item.component';
 
 /**
@@ -10,12 +11,15 @@ import { RtInfoItemComponent } from '../../rt-info-item.component';
 @Component({
     selector: 'app-info-item',
     template: `
-        <rt-info-item [label]="label" [loading]="loading" [grow]="grow">{{ value }}</rt-info-item>
+        <rt-info-item [label]="label" [loading]="loading" [grow]="grow">
+            <ng-template rtInfoItemContent>{{ value }}</ng-template>
+        </rt-info-item>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
         RtInfoItemComponent,
+        RtInfoItemContentDirective,
     ],
 })
 export class TestRtInfoItemComponent {

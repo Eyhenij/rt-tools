@@ -21,6 +21,7 @@ import { Directive, inject, TemplateRef } from '@angular/core';
  *     <ng-container *rtDynamicListSelectors>
  *         <rt-select [options]="stages()" />
  *     </ng-container>
+ *     <ng-template rtDynamicListContent>…</ng-template>
  * </rt-dynamic-list>
  * ```
  */

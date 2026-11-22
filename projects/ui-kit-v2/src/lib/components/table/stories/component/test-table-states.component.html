@@ -23,7 +23,9 @@
                         <td *cdkCellDef="let row" cdk-cell>{{ row.status }}</td>
                     </ng-container>
                     <ng-container cdkColumnDef="date">
-                        <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="date">Дата</th>
+                        <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="date">
+                            <ng-template rtTableSortHeaderContent>Дата</ng-template>
+                        </th>
                         <td *cdkCellDef="let row" cdk-cell>{{ row.date }}</td>
                     </ng-container>
                     <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>

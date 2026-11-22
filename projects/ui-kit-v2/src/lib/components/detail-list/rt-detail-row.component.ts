@@ -9,9 +9,9 @@ import {
     ViewEncapsulation,
 } from '@angular/core';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RtSkeletonWrapperComponent } from '@rt-tools/ui-kit-v2/skeleton-wrapper';
+import { RtSkeletonComponent } from '@rt-tools/ui-kit-v2/skeleton';
 
 const BEM_BLOCK: string = 'rt-detail-row';
 
@@ -21,8 +21,8 @@ const BEM_BLOCK: string = 'rt-detail-row';
  * (раньше — пять разных реализаций).
  *
  * Значение проецируется через `<ng-content>` — допустим текст, дата через pipe
- * или `rt-tag`. При `[loading]="true"` значение замещается скелетоном (потребитель
- * не оборачивает `rt-skeleton-wrapper` вручную).
+ * или `rt-tag`. При `[loading]="true"` на месте значения стоит скелетон, а само значение
+ * остаётся в странице скрытым (потребитель не оборачивает его в скелетон вручную).
  */
 @Component({
     selector: 'rt-detail-row',
@@ -32,9 +32,10 @@ const BEM_BLOCK: string = 'rt-detail-row';
     encapsulation: ViewEncapsulation.None,
     imports: [
         // standalone components / directives
-        RtSkeletonWrapperComponent,
+        RtSkeletonComponent,
         BlockDirective,
         ElemDirective,
+        ModDirective,
     ],
     host: {
         class: BEM_BLOCK,

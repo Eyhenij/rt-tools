@@ -18,15 +18,17 @@ import {
     InputSignalWithTransform,
     Signal,
     ViewEncapsulation,
+    contentChildren,
 } from '@angular/core';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { IRtIcon, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { IRtIcon, rtKitLabel, RtSlotOutletDirective } from '@rt-tools/ui-kit-v2/core';
 import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
 import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
 import { RtAsideErrorBoxComponent } from './error-box/rt-aside-error-box.component';
 import { RtAsideEmptyDirective } from './rt-aside-empty.directive';
+import { RtAsideContentDirective } from './rt-aside-content.directive';
 
 const BEM_BLOCK: string = 'rt-aside';
 
@@ -75,6 +77,7 @@ export type TRtAsideContentLayout = 'default' | 'tabs';
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
+        RtSlotOutletDirective,
         NgTemplateOutlet,
         BlockDirective,
         ElemDirective,
@@ -88,6 +91,9 @@ export type TRtAsideContentLayout = 'default' | 'tabs';
     },
 })
 export class RtAsideComponent {
+    /** Шаблоны тела: рисуются, только пока панель не пуста. */
+    protected readonly contents: Signal<readonly RtAsideContentDirective[]> = contentChildren(RtAsideContentDirective);
+
     readonly #focusTrapFactory: FocusTrapFactory = inject(FocusTrapFactory);
     readonly #document: Document = inject(DOCUMENT);
 

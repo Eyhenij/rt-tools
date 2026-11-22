@@ -5,10 +5,12 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 <Title>SkeletonWrapper — `rt-skeleton-wrapper`</Title>
 
 Развилка «загрузка ↔ содержимое»: пока идёт загрузка, рисует
-[`rt-skeleton`](./?path=/docs/atoms-feedback-skeleton-overview--docs), иначе — проекцию.
+[`rt-skeleton`](./?path=/docs/atoms-feedback-skeleton-overview--docs), иначе — шаблон `rtSkeletonWrapperContent`.
 
 ```html
-<rt-skeleton-wrapper width="240px" height="16px" [isLoading]="!tour()">{{ tour()?.title }}</rt-skeleton-wrapper>
+<rt-skeleton-wrapper width="240px" height="16px" [isLoading]="!tour()">
+    <ng-template rtSkeletonWrapperContent>{{ tour()?.title }}</ng-template>
+</rt-skeleton-wrapper>
 ```
 
 ## Когда применять
@@ -31,7 +33,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | вид заглушки | как у `rt-skeleton` | —                     |
 
 Своя ось у обёртки одна — `isLoading`, и показывать её надо парой: подмена полная, во время
-загрузки проекция не спрятана, а не отрисована вовсе.
+загрузки шаблон содержимого не спрятан, а не создан вовсе.
 
 **Остальные входы обёртка пробрасывает в `rt-skeleton` как есть.** Их матрицы стоят у него, и
 здесь не повторяются: вторая копия той же сетки разошлась бы с первой молча. В сетке

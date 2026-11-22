@@ -5,7 +5,7 @@ import { CMS_LABELS, IRedirectListRow, TCmsLabelMap } from '@rt-tools/cms-angula
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2';
 
 import { BaseListPageDirective } from '../../list/base-list-page.directive';
-import { CmsListPageComponent } from '../../list/cms-list-page/cms-list-page.component';
+import { CmsListPageComponent, CmsListToolbarRightDirective } from '../../list/cms-list-page/cms-list-page.component';
 import { provideCmsListPage } from '../../list/list-page.tokens';
 import { RedirectsStore } from '../../store/redirects.store';
 import { CmsRedirectsTableComponent } from '../../table/cms-redirects-table/cms-redirects-table.component';
@@ -28,6 +28,7 @@ const BEM_BLOCK: string = 'rt-cms-redirects-page';
 
         // components
         CmsListPageComponent,
+        CmsListToolbarRightDirective,
         CmsRedirectsTableComponent,
     ],
     providers: [provideCmsListPage(() => CmsRedirectsPageComponent)],

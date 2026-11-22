@@ -46,7 +46,8 @@
     "[rtDataListCustomCells]": "маркер шаблонов ячеек приложения: своей разметки у него нет, а ячейку рисует приложение. Он лишь увозит шаблоны в таблицу списка",
     "[rtDataListRowActions]": "маркер пунктов меню строки: разметку даёт приложение. Полосу действий строки показывает история `Actions` семейства `data-table`",
     "[rtDataListAdditionalRowActions]": "маркер действий рядом с кнопкой меню строки: разметку даёт приложение, у маркера её нет",
-    "ng-template[rtExpansionPanelContent]": "маркер ленивого тела панели: своей разметки у него нет вовсе. В кадре виден не маркер, а тело, которое панель создала при раскрытии, — это показывают истории семейства `expansion-panel`"
+    "ng-template[rtExpansionPanelContent]": "маркер ленивого тела панели: своей разметки у него нет вовсе. В кадре виден не маркер, а тело, которое панель создала при раскрытии, — это показывают истории семейства `expansion-panel`",
+    "[rtChatFooter]": "маркер шаблона подвала ленты переписки: своей разметки у него нет вовсе, и ни одна история кита подвал не подаёт. В кадре был бы не маркер, а содержимое потребителя под лентой; как лента раскладывает соседние слоты, показывают истории семейства `chat`"
   },
   "shownWithin": {
     "rt-ai-chat-section": "projects/ui-kit-v2/src/ai-chat-chart/lib/components/block/stories/ai-chat-section-matrix.stories.ts",
@@ -131,7 +132,26 @@
     "rt-page-header-user": "projects/ui-kit-v2/src/lib/components/page-header/stories/page-header.stories.ts",
     "rt-tabs-more": "projects/ui-kit-v2/src/lib/components/tabs/stories/tabs-more.stories.ts",
     "rt-tabs-context-menu": "projects/ui-kit-v2/src/lib/components/tabs/stories/tabs-more.stories.ts",
-    "[rtTabsMenuKeys]": "projects/ui-kit-v2/src/lib/components/tabs/stories/tabs-more.stories.ts"
+    "[rtTabsMenuKeys]": "projects/ui-kit-v2/src/lib/components/tabs/stories/tabs-more.stories.ts",
+    "ng-template[rtAsideContent]": "projects/ui-kit-v2/src/lib/components/aside/stories/aside-matrix.stories.ts",
+    "ng-template[rtBreadcrumbsContent]": "projects/ui-kit-v2/src/lib/components/breadcrumbs/stories/breadcrumbs-matrix.stories.ts",
+    "ng-template[rtDynamicListContent]": "projects/ui-kit-v2/src/lib/components/dynamic-list/stories/dynamic-list-matrix.stories.ts",
+    "ng-template[rtIconButtonContent]": "projects/ui-kit-v2/src/lib/components/icon-button/stories/icon-button-matrix.stories.ts",
+    "ng-template[rtInfoItemContent]": "projects/ui-kit-v2/src/lib/components/info-item/stories/info-item-matrix.stories.ts",
+    "ng-template[rtMenuContent]": "projects/ui-kit-v2/src/lib/components/menu/stories/menu-matrix.stories.ts",
+    "ng-template[rtMoneyRowContent]": "projects/ui-kit-v2/src/lib/components/money-list/stories/money-list-matrix.stories.ts",
+    "[rtRailLogo]": "projects/ui-kit-v2/src/lib/components/page-header/stories/page-header-vertical.stories.ts",
+    "[rtRailPage]": "projects/ui-kit-v2/src/lib/components/page-header/stories/page-header-vertical.stories.ts",
+    "[rtCompactLeft]": "projects/ui-kit-v2/src/lib/components/page-header/stories/page-header-more.stories.ts",
+    "[rtCompactCenter]": "projects/ui-kit-v2/src/lib/components/page-header/stories/page-header-more.stories.ts",
+    "[rtCompactRight]": "projects/ui-kit-v2/src/lib/components/page-header/stories/page-header-more.stories.ts",
+    "[rtHeaderBell]": "projects/ui-kit-v2/src/lib/components/page-header/stories/page-header-end.stories.ts",
+    "[rtSideMenuSubItemAction]": "projects/ui-kit-v2/src/lib/components/side-menu/stories/side-menu-favorites.stories.ts",
+    "ng-template[rtSkeletonWrapperContent]": "projects/ui-kit-v2/src/lib/components/skeleton-wrapper/stories/skeleton-wrapper-matrix.stories.ts",
+    "ng-template[rtTableSortHeaderContent]": "projects/ui-kit-v2/src/lib/components/table/sort-header/stories/table-sort-header.stories.ts",
+    "[rtChatHeaderActions]": "projects/ui-kit-v2/src/rich-editor/lib/components/chat/stories/chat-states.stories.ts",
+    "[rtChatComposerBar]": "projects/ui-kit-v2/src/rich-editor/lib/components/chat/stories/chat-page.stories.ts",
+    "[rtChatComposerTools]": "projects/ui-kit-v2/src/rich-editor/lib/components/chat/stories/chat-matrix.stories.ts"
   },
   "noPlayground": {
     "toolbar": "Содержимое панели приходит проекцией шаблонов в три места, и страница с входами их не задаёт: витрина умеет подставлять значения, а не разметку. Единственный вход — плотность — показан своей осью."

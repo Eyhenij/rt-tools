@@ -4,7 +4,7 @@ kind: pattern
 rule: entity-conventions
 description: Pattern of rule entity-conventions. Load when assembling or editing the record create-and-edit panel — the ready-made route in the ro outlet, inheriting the shared base, runMutation, the unsaved edits guard, header and footer, leaving for a linked record. Not for the store — pattern entity-store.
 ---
-<!-- rt-kit v0.38.0 · patterns/entity-aside.md · 05314ce277ff · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · patterns/entity-aside.md · 41d164bd6f0a · правится надстройкой, не здесь -->
 
 # The record edit panel
 
@@ -195,6 +195,10 @@ a skeleton for the time of the read.
     </rt-aside-section>
 }
 ```
+
+These sections are the body of `rt-aside`, and the body reaches it only inside
+`<ng-template rtAsideContent>`; the header and the footer buttons stay elements. A body written
+straight into the aside is not drawn, and nothing warns.
 
 The reading sign comes to the aside as an input and goes into every row: the skeleton is drawn by
 the kit row, and `rt-skeleton-wrapper` is not wrapped by hand. The record input accepts emptiness

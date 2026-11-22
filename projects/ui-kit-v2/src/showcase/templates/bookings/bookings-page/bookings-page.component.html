@@ -4,13 +4,14 @@
     [title]="'navBookingsTitle' | transloco"
     [hint]="'bookingsHint' | transloco"
     [createLabel]="'bookingsAdd' | transloco">
-    <rt-filter-control
-        appListToolbarLeft
-        qa-dataid="bookings-status-filter"
-        [ariaLabel]="'bookingStatus' | transloco"
-        [options]="statusFilterOptions()"
-        [value]="activeFilter()"
-        (valueChange)="selectFilter($event)" />
+    <ng-template appListToolbarLeft>
+        <rt-filter-control
+            qa-dataid="bookings-status-filter"
+            [ariaLabel]="'bookingStatus' | transloco"
+            [options]="statusFilterOptions()"
+            [value]="activeFilter()"
+            (valueChange)="selectFilter($event)" />
+    </ng-template>
 
     <!-- Подтверждение идёт с суммой, поэтому живёт полосой над таблицей, а не в меню строки:
          владелец видит и правит число до того, как оно уйдёт гостю письмом -->

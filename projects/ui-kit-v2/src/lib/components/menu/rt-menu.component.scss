@@ -32,6 +32,11 @@
                 --rt-overlay-menu-item-min-height: var(--rt-overlay-menu-sm-item-min-height);
                 --rt-overlay-menu-item-icon-size: var(--rt-overlay-menu-sm-item-icon-size);
             }
+
+            /* Меню закрыто, а пункт ждёт ответа окна подтверждения: панель в странице, но не видна. */
+            &--held {
+                visibility: hidden;
+            }
         }
     }
 }

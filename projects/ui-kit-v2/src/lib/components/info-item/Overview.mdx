@@ -4,12 +4,14 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 <Title>InfoItem — `rt-info-item`</Title>
 
-Пара «подпись: значение» как самостоятельный блок. Значение приходит проекцией, а не входом,
+Пара «подпись: значение» как самостоятельный блок. Значение приходит шаблоном `rtInfoItemContent`, а не входом,
 поэтому внутрь кладётся что угодно: текст, пилюля, ссылка, `@if`.
 
 ```html
-<rt-info-item label="Тариф" [loading]="!plan()">{{ plan()?.title }}</rt-info-item>
-<rt-info-item label="Статус"><rt-tag value="Активен" severity="success" /></rt-info-item>
+<rt-info-item label="Тариф" [loading]="!plan()"><ng-template rtInfoItemContent>{{ plan()?.title }}</ng-template></rt-info-item>
+<rt-info-item label="Статус">
+    <ng-template rtInfoItemContent><rt-tag value="Активен" severity="success" /></ng-template>
+</rt-info-item>
 ```
 
 ## Когда применять
@@ -37,7 +39,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 **Растяжение видно только в ряду.** Сам по себе элемент занимает своё место в обоих случаях —
 поэтому его матрица нарисована полосой из трёх пар, а не одиночной ячейкой.
 
-Содержимое — ось не входа, а проекции: «внутрь можно положить что угодно» — это и есть
+Содержимое — ось не входа, а шаблона: «внутрь можно положить что угодно» — это и есть
 контракт, и показывать его надо примерами.
 
 ## Состояния

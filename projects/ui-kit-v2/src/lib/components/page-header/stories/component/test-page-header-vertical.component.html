@@ -7,12 +7,12 @@
         [railFoot]="phone() || tabs === 0"
         [railActions]="railActions"
         (itemClick)="onAction($event)">
-        <span rtRailLogo class="app-rail-screen__logo"></span>
-        @if (phone()) {
-            <ng-container ngProjectAs="[rtRailPage]">
+        <ng-template rtRailLogo><span class="app-rail-screen__logo"></span></ng-template>
+        <ng-template rtRailPage>
+            @if (phone()) {
                 <ng-container [ngTemplateOutlet]="barTpl" />
-            </ng-container>
-        }
+            }
+        </ng-template>
     </rt-page-header>
 
     <div class="app-rail-screen__rest">

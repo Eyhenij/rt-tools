@@ -101,7 +101,7 @@
     @if (actionsShown()) {
         <div rtElem="actions">
             <div rtElem="add">
-                <ng-content />
+                <ng-container [ngTemplateOutlet]="addButton()" />
             </div>
 
             @if (resetClearShown()) {

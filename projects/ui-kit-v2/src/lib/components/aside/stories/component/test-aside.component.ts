@@ -4,6 +4,7 @@ import { RtButtonDirective } from '../../../button/rt-button.directive';
 import { RtAsideSectionComponent } from '../../../aside-section/rt-aside-section.component';
 import { RtAsideFooterComponent } from '../../footer/rt-aside-footer.component';
 import { RtAsideHeaderComponent } from '../../header/rt-aside-header.component';
+import { RtAsideContentDirective } from '../../rt-aside-content.directive';
 import { TRtAsideContentLayout, TRtAsideSize, RtAsideComponent } from '../../rt-aside.component';
 
 /**
@@ -18,8 +19,10 @@ import { TRtAsideContentLayout, TRtAsideSize, RtAsideComponent } from '../../rt-
     template: `
         <rt-aside [size]="size" [contentLayout]="contentLayout" [width]="width" [ariaLabel]="ariaLabel">
             <rt-aside-header title="Тур в Сочи" overline="Заявка № 1024" />
-            <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
-            <rt-aside-section heading="Даты">12.05.2026 — 26.05.2026</rt-aside-section>
+            <ng-template rtAsideContent>
+                <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                <rt-aside-section heading="Даты">12.05.2026 — 26.05.2026</rt-aside-section>
+            </ng-template>
             <rt-aside-footer>
                 <button
                     rtButton
@@ -44,6 +47,7 @@ import { TRtAsideContentLayout, TRtAsideSize, RtAsideComponent } from '../../rt-
     imports: [
         // components
         RtAsideComponent,
+        RtAsideContentDirective,
         RtAsideFooterComponent,
         RtAsideHeaderComponent,
         RtAsideSectionComponent,

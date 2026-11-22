@@ -51,7 +51,7 @@ import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { IRtLoadError, RtEmptyStateComponent, rtLoadErrorView } from '@rt-tools/ui-kit-v2/empty-state';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
-import { RtMenuComponent } from '@rt-tools/ui-kit-v2/menu';
+import { RtMenuComponent, RtMenuContentDirective } from '@rt-tools/ui-kit-v2/menu';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtSkeletonComponent } from '@rt-tools/ui-kit-v2/skeleton';
 import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
@@ -112,6 +112,7 @@ const DEFAULT_EMPTY_KEY: TRtKitLabelKey = 'uiNoRows';
         RtButtonDirective,
         RtEmptyStateComponent,
         RtMenuComponent,
+        RtMenuContentDirective,
         RtSkeletonComponent,
         RtSpinnerComponent,
         RtTableFilterHeaderComponent,

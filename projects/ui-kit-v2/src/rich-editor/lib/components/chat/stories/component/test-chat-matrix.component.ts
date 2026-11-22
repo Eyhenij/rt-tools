@@ -14,6 +14,7 @@ import {
 } from '../../../../../../lib/components/workspace/rt-workspace.directives';
 import { RtWorkspaceComponent } from '../../../../../../lib/components/workspace/rt-workspace.component';
 import { RtChatMessageActionsDirective } from '../../rt-chat-message-actions.directive';
+import { RtChatComposerToolsDirective } from '../../rt-chat-states.directive';
 import { RtChatComponent } from '../../rt-chat.component';
 import { ERtChatMessageStatus, IRtChat } from '../../rt-chat.model';
 import { CHAT_MESSAGES, CHAT_PEER } from './chat.fixture';
@@ -280,20 +281,22 @@ function dayAt(daysAgo: number, hours: number, minutes: number): string {
                                         subtitle="WhatsApp · +66 81 234 5678"
                                         [messages]="messengerMessages"
                                         [sign]="signCases[1].sign">
-                                        <rt-icon-button
-                                            rtChatComposerTools
-                                            icon="bolt"
-                                            variant="ghost"
-                                            size="sm"
-                                            iconColor="muted"
-                                            ariaLabel="Быстрые ответы" />
-                                        <rt-icon-button
-                                            rtChatComposerTools
-                                            icon="clock"
-                                            variant="ghost"
-                                            size="sm"
-                                            iconColor="muted"
-                                            ariaLabel="Отправить позже" />
+                                        <ng-template rtChatComposerTools>
+                                            <rt-icon-button
+                                                icon="bolt"
+                                                variant="ghost"
+                                                size="sm"
+                                                iconColor="muted"
+                                                ariaLabel="Быстрые ответы" />
+                                        </ng-template>
+                                        <ng-template rtChatComposerTools>
+                                            <rt-icon-button
+                                                icon="clock"
+                                                variant="ghost"
+                                                size="sm"
+                                                iconColor="muted"
+                                                ariaLabel="Отправить позже" />
+                                        </ng-template>
                                     </rt-chat>
                                 </ng-template>
                                 <ng-template rtWorkspaceAside>
@@ -371,6 +374,7 @@ function dayAt(daysAgo: number, hours: number, minutes: number): string {
     imports: [
         // components
         RtChatComponent,
+        RtChatComposerToolsDirective,
         RtChatMessageActionsDirective,
         RtIconButtonComponent,
         RtMenuItemComponent,

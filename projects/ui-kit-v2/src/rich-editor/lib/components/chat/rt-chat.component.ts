@@ -4,6 +4,7 @@ import {
     booleanAttribute,
     computed,
     contentChild,
+    contentChildren,
     effect,
     inject,
     input,
@@ -26,7 +27,14 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { RtAiPromptInputComponent, rtLoadErrorView, IRtIcon, IRtLoadError, IRtServiceLogo } from '@rt-tools/ui-kit-v2';
 import { RT_KIT_LABELS, RT_KIT_LOCALE, rtKitLabel, TRtKitLabelKey, TRtKitLabelMap } from '@rt-tools/ui-kit-v2';
 import { RtChatMessageActionsDirective, RtChatMessageButtonsDirective } from './rt-chat-message-actions.directive';
-import { RtChatEmptyDirective, RtChatErrorDirective } from './rt-chat-states.directive';
+import {
+    RtChatComposerBarDirective,
+    RtChatComposerToolsDirective,
+    RtChatEmptyDirective,
+    RtChatErrorDirective,
+    RtChatFooterDirective,
+    RtChatHeaderActionsDirective,
+} from './rt-chat-states.directive';
 import { RT_CHAT_IMPORTS } from './rt-chat.imports';
 import { RtMessageComposerComponent } from '../message-composer/rt-message-composer.component';
 import { IRtMessageComposer } from '../message-composer/rt-message-composer.model';
@@ -185,6 +193,12 @@ export class RtChatComponent {
     /** Свои виды заглушек: `<ng-template rtChatEmpty>` и `<ng-template rtChatError>`. */
     protected readonly emptyTemplate: Signal<RtChatEmptyDirective | undefined> = contentChild(RtChatEmptyDirective);
     protected readonly errorTemplate: Signal<RtChatErrorDirective | undefined> = contentChild(RtChatErrorDirective);
+
+    /** Слоты-шаблоны: рисуются только в своей ветке, все по порядку записи. */
+    protected readonly headerActionSlots: Signal<readonly RtChatHeaderActionsDirective[]> = contentChildren(RtChatHeaderActionsDirective);
+    protected readonly composerBarSlots: Signal<readonly RtChatComposerBarDirective[]> = contentChildren(RtChatComposerBarDirective);
+    protected readonly composerToolSlots: Signal<readonly RtChatComposerToolsDirective[]> = contentChildren(RtChatComposerToolsDirective);
+    protected readonly footerSlots: Signal<readonly RtChatFooterDirective[]> = contentChildren(RtChatFooterDirective);
 
     /** История сообщений (consumer уже смаппил из доменной модели). */
     public readonly messages: InputSignal<readonly IRtChat.Message[]> = input<readonly IRtChat.Message[]>([]);

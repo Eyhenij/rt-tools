@@ -8,11 +8,13 @@
         [title]="title()"
         (dismiss)="onClose()" />
 
-    @if (failedText(); as reason) {
-        <rt-empty-state qa-dataid="usage-sessions-failed" icon="ico-warning" [title]="reason" />
-    } @else {
-        <admin-usage-sessions-view [reading]="reading()" [rows]="rows()" />
-    }
+    <ng-template rtAsideContent>
+        @if (failedText(); as reason) {
+            <rt-empty-state qa-dataid="usage-sessions-failed" icon="ico-warning" [title]="reason" />
+        } @else {
+            <admin-usage-sessions-view [reading]="reading()" [rows]="rows()" />
+        }
+    </ng-template>
 
     <rt-aside-footer>
         <button

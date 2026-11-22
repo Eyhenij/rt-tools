@@ -15,7 +15,7 @@ import {
     TCmsLabelMap,
     TOOLBAR_BLOCKS,
 } from '@rt-tools/cms-angular';
-import { RtButtonDirective, RtFormControlBase, RtMenuComponent, RtMenuItemComponent } from '@rt-tools/ui-kit-v2';
+import { RtButtonDirective, RtFormControlBase, RtMenuComponent, RtMenuContentDirective, RtMenuItemComponent } from '@rt-tools/ui-kit-v2';
 
 import { blockMenuOf, CmsEditorBlockComponent, IBlockMenuItem, ICmsEditorInsert } from '../cms-editor-block/cms-editor-block.component';
 
@@ -40,6 +40,7 @@ const BEM_BLOCK: string = 'rt-cms-editor';
         ElemDirective,
         RtButtonDirective,
         RtMenuComponent,
+        RtMenuContentDirective,
         RtMenuItemComponent,
 
         // components

@@ -8,5 +8,5 @@
         [radius]="radius()"
         [animation]="animation()" />
 } @else {
-    <ng-content />
+    <ng-container [rtSlotOutlet]="contents()" />
 }

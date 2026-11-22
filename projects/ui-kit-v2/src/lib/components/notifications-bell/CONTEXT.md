@@ -31,4 +31,5 @@
 
 ## Рядом
 
-- [`rt-header`](../header/CONTEXT.md) — слот `[rtHeaderBell]`, куда его обычно кладут.
+- [`rt-header`](../header/CONTEXT.md) — слот-элемент `[rtHeaderBell]`, куда его обычно кладут; в
+  `rt-page-header` тот же слот — шаблон `<ng-template rtHeaderBell>`.
