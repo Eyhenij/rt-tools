@@ -120,6 +120,61 @@ The task ran outside the epic; the owner added its findings to the epic on 21.11
 - **The whole directory of epic plans is guarded, findings files included.** `sed -i` on a findings
   file next to the epic plan is refused as an edit of the epic plan. **Address:** rules layer — the
   guarded path of the epic plan in `assets/checks/flow-guard.mjs`.
+- **The rules review: a step that changes what a guard refuses was checked by its own scenarios
+  only.** Stage 3 was rewritten three times; the middle version refused about 108 calls falsely,
+  and `rm -r docs/tasks/<x>` of every closed task was refused until round two. **Address:** rules
+  layer — the article on step checks in `assets/pitfalls/task-flow.2.md`: such a step takes its
+  check from `task-flow-script.mjs forecast --days 7 --guard`, bounded by the refused count of the
+  version before the edit. **Metric:** guard steps that let a regression through on the recorded
+  calls, 2 of 3 versions here, down.
+- **The rules review: a footprint row names an engine file near the length limit, and no module can
+  split off it.** `flow-guard.mjs` stands at 496 of 500 lines; three findings above lead into it.
+  **Address:** rules layer — the plan template `assets/samples/tasks/_template/plan.md`: a file of
+  the engine within a tenth of the limit is named in its row by its directory. The next plan on
+  these findings names `projects/agent-kit/assets/checks/`.
+- **The rules review: the rule of the delivery loop takes 9399 of the 10 000 characters the host
+  carries.** The rules gate refused 36 calls on 19–22.11 for rules that did not fit together.
+  **Address:** this tree — `.claude/skills/task-delivery-loop/SKILL.md` keeps its bold lines; the
+  article bodies and the names table move into a cold `pitfalls.md`, the section on the owner's
+  answer into the pattern `task-delivery-loop-run`. **Metric:** refusals of the gate for rules
+  together with this one, 36, target 0.
+- **The rules review: the frame of a review round names no place for probes.** Reviewers' probes
+  that read a guarded file and write by a path from `argv` are refused. **Address:** this tree —
+  the frame in `.claude/skills/task-delivery-loop-run/SKILL.md`: «A probe is a script file under
+  <scratchpad>, given literal paths; a guarded path is only read.»
+- **The rules review: archive records past their week turn the push set red by the calendar.**
+  **Address:** this tree — the closing block of `task-delivery-loop-run` runs `node
+  tools/archive-prune.mjs --apply` alone before the set.
+- **`check-format-ignore` fell on an observation lock that vanished during its walk.** **Address:**
+  this tree — `tools/check-format-ignore.mjs` skips a file gone between the directory read and its
+  `stat`, or walks `git ls-files`.
+- **Hooks run by hand left three stray `.claude/` directories under `projects/agent-kit/`.** The
+  `.gitignore` line for observations hides them. **Address:** this tree — remove them in the next
+  branch; the cause is the RT-3469 finding on the working directory without `CLAUDE_PROJECT_DIR`.
+
+## RT-3434 — the step is measured after the folder is taken apart
+
+- **The step guard measures the branch from the directory of the call, and a session in a
+  subdirectory gets a correct state line refused.** On 22.11 the line `этап-идёт` was refused as
+  «ahead of the measured one» while the shell stood in `projects/agent-kit/tests`; the same edit
+  from the root passed, and `measure` from the root named `этап-идёт`. **Address:** rules layer —
+  the guard of `assets/checks/flow-guard-run.mjs` measures from the root of the copy, not from the
+  `cwd` of the hook input.
+- **`step N.M` run from a subdirectory measures there and drops the mark of a matched step.** The
+  paths of the history and the check resolve against the directory of the call, as in the guard
+  above; the change of the task kept that old behaviour. **Address:** rules layer — the engine runs
+  `step` from the root of the copy.
+- **A dead end of the turn end carries no state, so the share of this task in the dead ends of
+  `turn-exit-guard` cannot be told.** The observation of the refusal holds the task, the kind, the
+  check and the session. **Address:** rules layer — a field `state` in that observation and the line
+  of dead ends split by it in `assets/checks/work-result.mjs`.
+- **While a step run holds a folder put back, the folder lies untracked in the working copy.** A
+  `git add -A` and a commit in that window bring it back into the head with an older progress. The
+  window is one check; the rerun before a PR runs inside the opening of the PR, when no commit is
+  made. **Address:** rules layer — the step guard refuses a commit that adds a folder put back.
+- **A live record is trusted by its process number alone.** A number reused by another process keeps
+  a dead run's folder until that process ends. **Address:** rules layer — the record carries the
+  start time of the process in `assets/task-flow/source/git.mjs`.
 
 ## Left unresolved
 

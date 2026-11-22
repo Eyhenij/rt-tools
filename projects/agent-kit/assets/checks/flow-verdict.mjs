@@ -15,7 +15,7 @@
  * case the hosting could not answer is not met.
  */
 import { evaluateCondition } from './flow-condition.mjs';
-import { stepsOfProgress } from './work-steps-lib.mjs';
+import { stepsOfPlan, stepsOfProgress } from './work-steps-lib.mjs';
 
 /** The measurer whose answer depends on where the measurement stopped. */
 const SILENCE = 'measure.host.silent';
@@ -127,6 +127,50 @@ export function currentStep(progress) {
 }
 
 /**
+ * The step the stages wait for: the current one of the progress, else the first step of the plan that
+ * the progress does not mark done or that has no matched mark. `{ number, name, left, done }`, or null;
+ * `matched(number)` answers the mark of a step.
+ */
+export function pendingStep(progress, matched, plan = '') {
+    const marked = stepsOfProgress(progress ?? '').steps;
+    const planned = plan ? stepsOfPlan(plan).map((s) => ({ ...s, mark: marked.find((m) => m.number === s.number)?.mark ?? ' ' })) : marked;
+    const open = planned.filter((s) => s.mark !== 'x' || !matched(s.number));
+    const step = marked.find((s) => s.mark === '>') ?? open[0];
+    return step ? { number: step.number, name: step.name, left: open.length, done: step.mark === 'x' } : null;
+}
+
+/**
+ * The step of a running stage with no current step: from `text`, the progress on disk, or with no
+ * folder from the last progress of the history, with the commit that took the folder apart. Null when
+ * no progress is found.
+ */
+export function stageStep(git, marks, folder, branch, text = null) {
+    const progress = text ?? git.lastVersion(`${folder}/progress.md`);
+    const plan = git.lastVersion(`${folder}/plan.md`) ?? '';
+    const pending = progress === null ? null : pendingStep(progress, (number) => marks.step(branch, number)?.matched === true, plan);
+    return pending ? { ...pending, removedBy: text === null ? git.removedAt(folder) : null } : null;
+}
+
+/** The lines of the step the stages wait for; `removedBy` names the commit that took the folder apart. */
+function stepLines(step) {
+    const measure = `\`node tools/task-flow-script.mjs step ${step.number}\``;
+    const back = step.removedBy ? `\`git revert --no-edit ${step.removedBy}\`` : null;
+    if (!back) {
+        // A step read with the marks: its count is not the one of `check-work-steps`, which reads the progress alone.
+        const count = step.done === undefined ? 'are not done, counted by `node tools/check-work-steps.mjs`' : 'are not done or have no matched mark';
+        return [`${step.left} steps of the plan ${count}.`, `The next move is step ${step.number} «${step.name}»: do it, then measure it — ${measure}.`];
+    }
+    const lines = [`${step.left} steps of the plan are not done or have no matched mark, read from the last progress of the history: the task folder is taken apart by ${step.removedBy.slice(0, 9)}.`];
+    if (!step.done) {
+        lines.push(`The next move is step ${step.number} «${step.name}»: the history does not mark it done, so bring the folder back — ${back} — then do the step and measure it — ${measure}.`);
+    } else {
+        lines.push(`The next move is step ${step.number} «${step.name}»: measure it — ${measure}; the command puts the folder back for the run.`);
+        lines.push(`A step that does not match again is fixed where its check reads; a fix that lies in the folder — a check replaced in the progress — needs the folder back — ${back} — then take it apart again.`);
+    }
+    return lines;
+}
+
+/**
  * The reason of a held turn: the measured state, its action, and the step when the stages go on. With a
  * cause of the menu the one move is the owner's menu instead.
  */
@@ -156,8 +200,7 @@ export function holdReason(model, result, step, menu = null) {
         return lines.join('\n');
     }
     if (step && state?.key === 'stage') {
-        lines.push(`${step.left} steps of the plan are not done, counted by \`node tools/check-work-steps.mjs\`.`);
-        lines.push(`The next move is step ${step.number} «${step.name}»: do it, then measure it — \`node tools/task-flow-script.mjs step ${step.number}\`.`);
+        lines.push(...stepLines(step));
     } else {
         lines.push(`The next move is the action of this state: ${state?.action ?? ''} (pattern \`${state?.pattern ?? ''}\`).`);
     }
