@@ -19,9 +19,9 @@
 - [x] 2.1 Правка блока очищает разметку DOMPurify с белым списком вставки и кладёт узлы
 - [x] 2.2 Превью встраивания пускает в доверие только разобранный https-адрес
 - [x] 2.3 Тест SC-CMS-80 зелёный: скрипт и обработчик уходят, style выделения и атрибуты ссылки остаются
-- [>] 3.1 Виджет строит разметку узлами DOM, тексты идут в textContent
-- [ ] 3.2 Тест SC-CH-118 зелёный: слово об отказе с разметкой в пределе и сторона реплики показаны текстом
-- [ ] 4.1 Находок двух правил в дереве ровно одна — превью встраивания cms
+- [x] 3.1 Виджет строит разметку узлами DOM, тексты идут в textContent
+- [x] 3.2 Тест SC-CH-118 зелёный: слово об отказе с разметкой в пределе и сторона реплики показаны текстом
+- [>] 4.1 Находок двух правил в дереве ровно одна — превью встраивания cms
 - [ ] 4.2 Порог записан на результате задачи без правила inner-html
 - [ ] 4.3 Ни одно правило порога не выросло против порога ветки эпика
 
@@ -48,3 +48,53 @@
 - Разбор с владельцем: пайп убрать, превью встраивания — обход за разбором адреса.
 - План прочли две роли; подтверждённые находки вошли в план до одобрения: очистка правки блока
   DOMPurify, `script` и `on*` в SVG значков, неэкранированные поля виджета, рост правил в пороге.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/eyhenij/WebstormProjects/rt-tools
+**Branch:** RT-3478-ngdoctor-security
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 1 из 4 — Ядро и кит
+- **Next step:** удалить пайп sanitize из core
+- **PR:** ещё не открыт
+
+The progress in full — `docs/tasks/RT-3478-ngdoctor-security/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+none
+```
+
+### Commits over the main branch
+
+```
+1914b4b41 fix(rt:cms): правка блока без записи innerHTML, превью встраивания только для разобранного https (RT-3478)
+47ea435e6 docs(rt:ui-kit-v2): слово владельца о том, что правка значков и ячейки не меняет вид (RT-3478)
+ef78a6919 fix(rt:ui-kit-v2): значки и стиль значка ячейки без записи innerHTML и обхода очистки (RT-3478)
+51b022a44 refactor(rt:core): пайп sanitize удалён из пакета (RT-3478)
+81085f414 docs(rt:ui-kit-v2): ход работы задачи о записи innerHTML и обходе очистки (RT-3478)
+d5852dcde docs(rt:ui-kit-v2): разбор и план задачи о записи innerHTML и обходе очистки (RT-3478)
+513f11b21 [RT-3492] knip зелёный: неиспользуемые экспорты сняты, d3 объявлен в ките, knip в наборе перед push и в конвейере (#3501)
+6cd98a50d Merge branch 'RT-3476-angular-doctor' into RT-3492-knip-green
+43ab01cc6 Merge remote-tracking branch 'origin/main' into RT-3476-angular-doctor
+f3a66731d docs(rt:ui-kit-v2): десять записей архива старше недели удалены (RT-3492)
+2f263fd77 test(rt:message-bus): разделы админки и экран записей открываются без ошибок загрузки (RT-3492)
+19f8c6567 docs(rt:ui-kit-v2): папка задачи разобрана в архив (RT-3492)
+c0a6ab371 fix(rt:ui-kit-v2): knip зелёный после второго круга ревью (RT-3492)
+ff8a6d363 fix(rt:ui-kit-v2): knip зелёный после первого круга ревью (RT-3492)
+034732f7d build(rt:ui-kit-v2): knip в конвейере и в наборе перед push (RT-3492)
+6ec873891 build(rt:ui-kit-v2): пакеты d3 и их типы объявлены в наборе, который их импортирует; knip зелёный (RT-3492)
+504ec733d refactor(rt:ui-kit-v2): девятнадцать символов без export, которые никто не импортирует (RT-3492)
+c4ace998d docs(rt:ui-kit-v2): ход работы RT-3492, слово владельца о правке графика без вида (RT-3492)
+2eccbead1 docs(rt:ui-kit-v2): в разборе RT-3492 заголовок карточки вместо строки плана эпика (RT-3492)
+ca72f1b98 docs(rt:ui-kit-v2): задача RT-3477 влита в ветку эпика, RT-3492 в работе (RT-3492)
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.

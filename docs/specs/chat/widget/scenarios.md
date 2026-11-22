@@ -178,3 +178,11 @@ When the visitor sends one more remark
 Then the remark stands in the same thread after the first one, and the field is empty again
 
 Covered by the end-to-end spec of the widget.
+
+### SC-CH-118 — the words of people and of the service reach the page as text
+
+Given a refusal of a too long remark whose limit holds markup, and a remark whose side and text
+hold markup
+When the widget draws the refusal word and the feed
+Then the markup is shown as text, the side stays the value of its attribute, and no element of the
+markup appears on the page
