@@ -96,7 +96,7 @@ describe('RtBreadcrumbsComponent', (): void => {
         expect(qa(setup({ crumbs: [{ label: 'Home' }], back: true }), 'breadcrumbs-back')).toBeNull();
     });
 
-    it('SC-UKV-821 — в виде заголовка текущее звено — заголовок строкой ниже, рядом проекция', (): void => {
+    it('SC-UKV-821 — в виде заголовка текущее звено — заголовок строкой ниже, рядом шаблон содержимого', (): void => {
         const fixture: ComponentFixture<HeadingHostComponent> = createRtFixture(
             HeadingHostComponent,
             {},

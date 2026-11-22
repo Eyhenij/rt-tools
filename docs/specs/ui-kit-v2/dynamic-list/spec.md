@@ -64,8 +64,8 @@ no toolbar and no dynamic list: they see the section they came to — orders, st
   search.** The left side takes the selectors, the right side the actions; the search field belongs
   to the family, and its place in the strip is not given away.
 
-- **The records are projected, not passed by an input.** The table between them is the consumer's
-  own: their columns, their cells, their row actions. The family stands around it and does not
+- **The records come by a template, not by an input.** The template is `rtDynamicListContent`, and
+  the table in it is the consumer's own: their columns, their cells, their row actions. The family stands around it and does not
   decide what is drawn inside.
 
 ## What is out of scope
@@ -123,9 +123,10 @@ apart by the table's own identifier.
   the table, and exports the container outward. Nothing in this tree calls it apart from the list,
   and two names for one assembly give a consumer two ways to do one thing.
 
-- **The records are projected rather than passed.** A family taking records and columns as inputs
+- **The records come by a template rather than by inputs.** A family taking records and columns as inputs
   would describe every cell, every row action and every custom template through itself, repeating
-  the table's whole surface. Projection leaves the table to the consumer.
+  the table's whole surface. A template leaves the table to the consumer and is not built while the
+  list loads for the first time, fails or is empty.
 
 ## Open questions
 

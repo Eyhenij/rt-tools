@@ -110,6 +110,6 @@ other, and the page is not reloaded
 
 ### SC-MB-456 — a section whose reading failed builds no table
 
-Given a section whose reading failed
+Given a section whose reading failed, its table given by the template `adminListPageContent`
 When the list page is drawn
 Then the refusal is shown and the table of the section is not built

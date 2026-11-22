@@ -285,7 +285,7 @@ describe('RtDynamicListComponent', (): void => {
             expect(qa(fixture, 'dynamic-list-search')).not.toBeNull();
         });
 
-        it('SC-UKV-172 — таблица потребителя проецируется как есть', (): void => {
+        it('SC-UKV-172 — таблица потребителя рисуется из шаблона как есть', (): void => {
             const fixture: ComponentFixture<DynamicListHostComponent> = createRtFixture(DynamicListHostComponent);
             const content: HTMLElement = qa(fixture, 'dynamic-list-content')?.nativeElement as HTMLElement;
 

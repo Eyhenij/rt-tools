@@ -177,7 +177,7 @@ describe('Переключатели бокового меню', (): void => {
 class IconButtonContentHostComponent {}
 
 describe('Содержимое кнопки-иконки', (): void => {
-    it('SC-UKV-623 — кнопка без имени значка показывает вложенное, со значком — значок', (): void => {
+    it('SC-UKV-623 — кнопка без имени значка показывает шаблон содержимого, со значком — значок', (): void => {
         TestBed.configureTestingModule({ providers: PROVIDERS as never[] });
         const fixture: ComponentFixture<IconButtonContentHostComponent> = TestBed.createComponent(IconButtonContentHostComponent);
         fixture.detectChanges();

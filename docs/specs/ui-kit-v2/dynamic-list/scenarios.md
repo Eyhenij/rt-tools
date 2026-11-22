@@ -60,11 +60,11 @@ keeps its place
 
 Covered by the component spec of the dynamic list family.
 
-### SC-UKV-172 — the table is projected as it was given
+### SC-UKV-172 — the table is drawn from its template as it was given
 
-Given a list of records with a table projected into it
+Given a list of records with a table in the template `rtDynamicListContent`
 When it is drawn
-Then the projected table is inside the family, with its own columns and its own row actions
+Then the table is inside the family, with its own columns and its own row actions
 
 Covered by the component spec of the dynamic list family.
 

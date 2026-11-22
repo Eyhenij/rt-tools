@@ -1,6 +1,6 @@
 # Template slots
 
-**Status:** proposed · **Revision:** 2026-11-22 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-22 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the families whose slots change — the expansion panel, the field, the detail row,
 the page header, the chat, the side menu, the menu, the icon button, the breadcrumbs, the dynamic
 selectors, the dynamic list, the side panel, the skeleton wrapper, the money row, the info item, the
@@ -8,23 +8,12 @@ table sort header; the list pages of the CMS client and of the admin libraries t
 **Laws:** `frontend-application`, `verifiability`
 **Procedures:** none
 
-The product agreement written before the code, by task RT-3479. It merges into the spec of the
-second kit as a subdomain of its own by the last commit of the work, with the scenario numbers
-unchanged. Two parts merge apart, each into the spec of its own domain with its own prefix: the list
-page of `@rt-tools/cms-angular` into `docs/specs/cms/angular/` (`SC-CMS`), the list page of the
-admin libraries into `docs/specs/message-bus/admin-list-page/` (`SC-MB`) — see "Several objects".
-
-Live texts the work changes in place, by the commit that changes the code and the test titles:
-
-- the expansion panel — the rules "a collapsed panel draws no body" and "`aria-controls` while
-  expanded", the SEO line, `SC-UKV-519` and `SC-UKV-521`: the body node now stays in the page;
-- the breadcrumbs — the rule "what the page projects into the component stands in the same row" and
-  `SC-UKV-821`;
-- the side menu options — "an icon button without an icon name shows its projected content";
-- the dynamic list — "the records are projected, not passed by an input" and `SC-UKV-172`;
-- the empty side panel — "the panel body shows the placeholder instead of the projected content";
-- the slot wording of `SC-UKV-1165` of the chat draft, of the page header end and of the dynamic
-  selectors' add button.
+A subdomain of the second kit about the slots a component draws only in some of its states: they
+are given as templates and created only in the branch where they are seen. Written by task RT-3479,
+the work that removed the projection under a condition from the kit and its consumers. The list
+pages of `@rt-tools/cms-angular` and of the admin libraries follow the same rule, each in the spec of
+its own domain: `docs/specs/cms/angular/` (`SC-CMS-81`) and `docs/specs/message-bus/admin-list-page/`
+(`SC-MB-456`).
 
 ## Why
 
@@ -244,16 +233,10 @@ state inside them does not survive the switch.
 The slots of one component are independent: one branch opening does not create the content of
 another. Nested panels keep their own actions and their own body, as now.
 
-Two parts belong to other domains and keep their own numbering. Their numbers are asked by
-`pnpm run spec:next-id <PREFIX>` at the merge, not here.
-
-- `docs/specs/cms/angular/` gets the rule "the toolbar of a list page takes its filters and actions
-  as templates" and a scenario: given a list screen with two filter templates on the left and an
-  action template on the right, when the list page is drawn, then both filters stand before the
-  search in the order written and the action before the reload.
-- `docs/specs/message-bus/admin-list-page/` gets the rule "the table of a list page is given as a
-  template" and a scenario: given a section whose read failed, when the list page is drawn, then the
-  fault is shown and the section's table is not built.
+The list pages of the CMS client and of the admin libraries keep their rules in their own specs:
+the toolbar of the CMS list page takes its filters and actions as templates (`SC-CMS-81`), and the
+table of the admin list page is the template `adminListPageContent`, not built under a refusal
+(`SC-MB-456`).
 
 ## Decisions
 
@@ -285,6 +268,16 @@ Two parts belong to other domains and keep their own numbering. Their numbers ar
   their own projection to `rt-skeleton-wrapper`, and the field's control has to stay in the form
   while loading.
 
+- **The slot directives of the page header and of the showcase list live in their components'
+  files, those of the chat next to its state templates.** A file of several directives would add a
+  finding of a file named apart from its class, a file of one directive one of a missing neighbouring
+  spec, and the threshold of the doctor lets no rule grow.
+- **A menu item of the template is told by its place in the panel.** The content query of the menu
+  sees the items of the template while the panel is open, so only an item outside the panel warns.
+- **The CMS client runs its specs against the kit of the tree.** The kit it installs is a published
+  version without template slots; the specs already ran against the contract of the tree the same
+  way.
+
 ## Open questions
 
 None.
@@ -293,3 +286,5 @@ None.
 
 - 2026-11-22 — the agreement written by the grill of task RT-3479, before the code; revised the same
   day by the owner's answers on the panel body, on the else branches and on the sort label.
+- 2026-11-22 — merged into the spec of the second kit by the last commits of RT-3479, the bindings
+  written by the code.
