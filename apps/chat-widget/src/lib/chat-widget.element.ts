@@ -44,13 +44,13 @@ import {
     greetingCard,
     hoursNote,
     node,
-    panel,
     remarks,
     sendForm,
     talkHead,
     talksList,
     titleHead,
     unavailable,
+    widgetPanel,
 } from './chat-widget.view';
 import { WIDGET_WORDS } from './chat-widget.words';
 
@@ -360,16 +360,16 @@ export class ChatWidgetElement extends HTMLElement {
 
     #panel(): HTMLElement {
         if (!this.#live) {
-            return panel(titleHead(WIDGET_WORDS.bubble), unavailable());
+            return widgetPanel(titleHead(WIDGET_WORDS.bubble), unavailable());
         }
 
         if (this.#screen === EWidgetScreen.Talks) {
-            return panel(titleHead(WIDGET_WORDS.talks), ...talksList(this.#talks, this.#seen, new Date()));
+            return widgetPanel(titleHead(WIDGET_WORDS.talks), ...talksList(this.#talks, this.#seen, new Date()));
         }
 
         const placeholder: string = this.#closed ? WIDGET_WORDS.newQuestion : WIDGET_WORDS.placeholder;
 
-        return panel(
+        return widgetPanel(
             this.#talkHead(),
             node('div', { class: 'feed', 'data-part': 'feed', 'qa-dataid': 'widget-feed' }, ...this.#feed()),
             this.#fault ? node('div', { class: 'fault', 'data-part': 'fault', 'qa-dataid': 'widget-fault' }, this.#fault) : null,

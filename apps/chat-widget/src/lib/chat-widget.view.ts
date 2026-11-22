@@ -25,10 +25,6 @@ import {
 import { widgetDayText, widgetFirstName, widgetInitials, widgetTimeText, widgetUnread } from './chat-widget.logic';
 import { WIDGET_WORDS } from './chat-widget.words';
 
-/** Пространство имён SVG: без него узел иконки создаётся как неизвестный элемент HTML. */
-type TSvgNamespace = 'http://www.w3.org/2000/svg';
-const SVG_NS: TSvgNamespace = 'http://www.w3.org/2000/svg';
-
 /** Ребёнок узла: узел, текст или ничего — пропущенная часть разметки. */
 export type TWidgetChild = Node | string | null;
 
@@ -47,10 +43,11 @@ export function node(tag: string, attributes: Readonly<Record<string, string>>, 
 }
 
 /** Узел иконки по её контуру. */
-export function iconNode(icon: IWidgetIcon): SVGSVGElement {
-    const svg: SVGSVGElement = document.createElementNS(SVG_NS, 'svg');
-    const group: SVGGElement = document.createElementNS(SVG_NS, 'g');
-    const path: SVGPathElement = document.createElementNS(SVG_NS, 'path');
+function iconNode(icon: IWidgetIcon): SVGSVGElement {
+    // пространство имён берётся у корня: без него узел создаётся как неизвестный элемент HTML
+    const svg: SVGSVGElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const group: Element = document.createElementNS(svg.namespaceURI, 'g');
+    const path: Element = document.createElementNS(svg.namespaceURI, 'path');
 
     svg.setAttribute('aria-hidden', 'true');
     svg.setAttribute('fill', 'currentColor');
@@ -235,7 +232,7 @@ export function bubble(): HTMLElement {
 }
 
 /** Развёрнутая панель с её частями. */
-export function panel(...parts: readonly TWidgetChild[]): HTMLElement {
+export function widgetPanel(...parts: readonly TWidgetChild[]): HTMLElement {
     return node('div', { class: 'panel', 'qa-dataid': 'widget-panel' }, ...parts);
 }
 
