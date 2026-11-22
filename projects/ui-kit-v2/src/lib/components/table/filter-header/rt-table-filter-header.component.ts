@@ -1,3 +1,4 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import {
     ChangeDetectionStrategy,
     Component,
@@ -15,6 +16,8 @@ import {
     untracked,
     viewChild,
     WritableSignal,
+    booleanAttribute,
+    InputSignalWithTransform,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -228,6 +231,11 @@ export class RtTableFilterHeaderComponent {
                 label: option.label,
             }))
     );
+
+    /** На телефоне панель открывается в нижней шторке кита; `false` оставляет её у кнопки. */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
 
     /** Ключ колонки — тот же, что в `cdkColumnDef` и в `[columnsConfig]`. */
     public readonly propertyName: InputSignal<string> = input.required<string>();

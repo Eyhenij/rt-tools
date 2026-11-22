@@ -16,7 +16,7 @@ import { IRtMenu } from '../../rt-menu.model';
 @Component({
     selector: 'app-menu',
     template: `
-        <rt-menu [icon]="icon" [ariaLabel]="ariaLabel" [align]="align" [disabled]="disabled">
+        <rt-menu [icon]="icon" [ariaLabel]="ariaLabel" [align]="align" [disabled]="disabled" [sheet]="sheet">
             <rt-menu-item label="Открыть" icon="ico-eye" />
             <rt-menu-item label="Изменить" icon="ico-edit" />
             <rt-menu-item label="Скопировать" icon="ico-copy" [disabled]="true" />
@@ -40,4 +40,5 @@ export class TestRtMenuComponent {
     public ariaLabel: string = '';
     public align: IRtMenu.Align = 'end';
     public disabled: boolean = false;
+    public sheet: boolean = true;
 }

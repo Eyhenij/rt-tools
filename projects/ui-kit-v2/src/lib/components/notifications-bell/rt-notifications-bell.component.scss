@@ -4,7 +4,6 @@
     .rt-notifications-bell {
         --rt-notifications-bell-radius: var(--rt-radius-md);
         --rt-notifications-bell-dot-radius: var(--rt-radius-full);
-        --rt-notifications-bell-outline-width: var(--rt-border-width-thin);
         --rt-notifications-bell-transition-duration: var(--rt-duration-fast);
 
         display: inline-flex;
@@ -24,8 +23,8 @@
         }
 
         &:focus-visible {
-            outline: var(--rt-notifications-bell-outline-width) dashed var(--rt-color-border-strong);
-            outline-offset: calc(var(--rt-space-0-5) * -1);
+            outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+            outline-offset: var(--rt-focus-ring-offset);
         }
 
         /* Точка идёт следом за иконкой, в потоке содержимого кнопки: место ей даёт

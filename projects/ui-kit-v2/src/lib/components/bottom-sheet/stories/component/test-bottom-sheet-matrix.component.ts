@@ -7,6 +7,7 @@ import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtBottomSheetComponent } from '../../rt-bottom-sheet.component';
+import { OwnSheetStackDirective } from './own-sheet-stack.directive';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TBottomSheetMatrixPart = 'open' | 'content' | 'footer' | 'presets' | 'themes';
@@ -52,6 +53,7 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'footer' | 'presets' |
                         <app-story-row slotWidth="18rem" [items]="opens" [itemLabel]="openLabel">
                             <ng-template let-value>
                                 <div
+                                    rtStoryOwnSheetStack
                                     style="position: relative; contain: paint; inline-size: 100%; height: 16rem; border: 1px dashed var(--rt-color-border-subtle)">
                                     <rt-bottom-sheet [open]="value">
                                         <span sheetHeader>Действия с договором</span>
@@ -71,6 +73,7 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'footer' | 'presets' |
                         <app-story-row slotWidth="18rem" [items]="contents">
                             <ng-template let-content>
                                 <div
+                                    rtStoryOwnSheetStack
                                     style="position: relative; contain: paint; inline-size: 100%; height: 16rem; border: 1px dashed var(--rt-color-border-subtle)">
                                     @switch (content) {
                                         @case ('без шапки') {
@@ -107,6 +110,7 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'footer' | 'presets' |
                 <app-story-presets caption="Подвал под длинным содержимым в обоих наборах">
                     <ng-template>
                         <div
+                            rtStoryOwnSheetStack
                             style="position: relative; contain: paint; height: 32rem; width: 28rem; border: 1px dashed var(--rt-color-border-subtle); --rt-bottom-sheet-max-height: 28rem">
                             <rt-bottom-sheet [open]="true">
                                 <span sheetHeader>Фильтры</span>
@@ -132,6 +136,7 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'footer' | 'presets' |
                 <app-story-presets caption="Лист в обоих наборах">
                     <ng-template>
                         <div
+                            rtStoryOwnSheetStack
                             style="position: relative; contain: paint; height: 16rem; width: 18rem; border: 1px dashed var(--rt-color-border-subtle)">
                             <rt-bottom-sheet [open]="true">
                                 <span sheetHeader>Действия с договором</span>
@@ -148,6 +153,7 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'footer' | 'presets' |
                         <app-story-themes>
                             <ng-template>
                                 <div
+                                    rtStoryOwnSheetStack
                                     style="position: relative; contain: paint; height: 16rem; width: 18rem; border: 1px dashed var(--rt-color-border-subtle)">
                                     <rt-bottom-sheet [open]="true">
                                         <span sheetHeader>Действия с договором</span>
@@ -168,6 +174,7 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'footer' | 'presets' |
 
         // directives
         RtButtonDirective,
+        OwnSheetStackDirective,
 
         // forms
         ReactiveFormsModule,

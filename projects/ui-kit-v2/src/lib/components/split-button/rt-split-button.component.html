@@ -8,6 +8,8 @@
         rtPopoverWidth="trigger"
         rtPopoverPanelClass="rt-split-button-menu-panel"
         [rtPopover]="menuTpl"
+        [rtPopoverSheet]="sheet()"
+        [rtPopoverSheetTitle]="label()"
         [rtPopoverOffsetY]="6"
         [rtPopoverDisabled]="disabled() || loading()">
         <button

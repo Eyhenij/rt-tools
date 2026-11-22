@@ -30,6 +30,7 @@
         --rt-toggle-button-group-btn-gap: 4px;
         --rt-toggle-button-group-btn-font-size: 12px;
         --rt-toggle-button-group-btn-line-height: 14px;
+        --rt-toggle-button-group-folded-width: 100%;
 
         display: inline-flex;
 
@@ -156,6 +157,42 @@
         .rt-toggle-button-group {
             min-width: 0;
             flex: 0 1 auto;
+        }
+    }
+
+    /* Сворачиваемая строка не шире своего места: только так видно, что кнопкам его не хватает.
+       Во флекс-строке она не сжимается: соседи, чья ширина в подсчёте строки меньше, чем в раскладке
+       (поле даты — 188 против 262), отдавали ей нехватку, и группа в тулбаре по содержимому
+       сворачивалась в поле в 59 px при пустой половине строки. Сворачивает её только своё место. */
+    rt-toggle-button-group.rt-toggle-button-group--foldable {
+        position: relative;
+        min-width: 0;
+        max-width: 100%;
+        flex-shrink: 0;
+    }
+
+    /* Свёрнутая группа — поле выбора шириной в строку кнопок плюс запас разворота, но не шире места.
+       Во всё место поле не встаёт: родитель по содержимому подстраивался бы под него, и места для
+       разворота не появлялось бы никогда. Строка кнопок остаётся только для замера: не видна, не
+       нажимается и не сдвигает поле. */
+    rt-toggle-button-group.rt-toggle-button-group--folded {
+        display: flex;
+        width: var(--rt-toggle-button-group-folded-width);
+        max-width: 100%;
+
+        > .rt-select,
+        > .rt-multiselect {
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+
+        .rt-toggle-button-group--measure {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: max-content;
+            pointer-events: none;
+            visibility: hidden;
         }
     }
 

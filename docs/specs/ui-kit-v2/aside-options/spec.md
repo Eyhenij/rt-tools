@@ -54,6 +54,10 @@ options, the stream and the properties are invisible to them.
 - **The footer buttons stand in one row at any width.** On a phone, 480 points and narrower, the
   dismiss button is labelled with the kit's short «Close».
 - **The cancel button of the confirm popover is outlined with the secondary theme.**
+- **The confirm popover is as wide as its buttons need, and never narrower than 280 points.** The
+  title and the message wrap by that width and do not widen it. A popover wider than the window
+  puts its buttons in two rows, and a label longer than the window wraps inside its button. Fixed
+  at 280 points, the popover cut a long button label.
 - **The window about the unsaved edits is of the medium width, and its stay button is outlined.**
   Its three buttons stand in one row, and on a phone they stand in a column across the whole width.
 
@@ -125,3 +129,5 @@ None.
 - 2 October 2026 — the agreement was written from the consumer's request by task RT-2480.
 - 7 October 2026 — the application's remarks (RT-2619): the header properties from any ancestor, the
   back button sizes, the slot of the title column, the navigation option and the frame check.
+- 2026-11-20 — the confirm popover takes the width of its buttons; the application's remark, task
+  RT-3399.

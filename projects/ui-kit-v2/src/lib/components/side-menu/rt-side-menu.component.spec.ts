@@ -13,6 +13,8 @@ import { IRtSideMenu } from './rt-side-menu.model';
 /** Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. */
 class StubBreakpointsService {
     public readonly narrow: WritableSignal<boolean> = signal(false);
+    public readonly viewportNarrow: WritableSignal<boolean> = this.narrow;
+    public readonly phone: WritableSignal<boolean> = this.viewportNarrow;
 }
 
 const ITEMS: IRtSideMenu.Item[] = [

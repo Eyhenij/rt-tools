@@ -11,7 +11,9 @@
             [attr.aria-label]="user().name"
             [attr.aria-haspopup]="true"
             [attr.aria-expanded]="userPopover.isOpen()"
-            [rtPopover]="menuTpl">
+            [rtPopover]="menuTpl"
+            [rtPopoverSheet]="sheet()"
+            [rtPopoverSheetTitle]="user().name">
             <ng-container [ngTemplateOutlet]="body" />
         </button>
     } @else {

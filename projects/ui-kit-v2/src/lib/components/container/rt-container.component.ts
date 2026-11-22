@@ -41,6 +41,7 @@ import { BreakpointsService, carryThemeScope, materialPresetClassesOf } from '@r
 import { clampWidth, listenTransitionEnd, RtResizeHandleComponent } from '@rt-tools/ui-kit-v2/drawer';
 import { RtToasterComponent } from '@rt-tools/ui-kit-v2/toast';
 import { RtContainerStateService } from './rt-container-state.service';
+import { rtMarkPlaceRoot } from './rt-place-root.logic';
 import {
     RtContainerContentDirective,
     RtContainerHeaderDirective,
@@ -225,6 +226,9 @@ export class RtContainerComponent {
         // после первой отрисовки и снимается вместе с контейнером.
         const breakpoints: BreakpointsService = inject(BreakpointsService);
         const destroyRef: DestroyRef = inject(DestroyRef);
+        // Класс на корне ставится сразу, до первой отрисовки: по нему стили снимают запасной
+        // порог по окну, и первый кадр не берёт пороги окна вместо порогов места.
+        destroyRef.onDestroy(rtMarkPlaceRoot(this.#host.nativeElement));
         afterNextRender((): void => {
             destroyRef.onDestroy(breakpoints.registerPlace(this.#host.nativeElement));
         });

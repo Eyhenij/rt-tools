@@ -79,6 +79,11 @@ export class RtSpeedMenuComponent {
         speedMenuTooltipSide(this.direction())
     );
 
+    /** На телефоне панель открывается в нижней шторке кита; `false` оставляет её у кнопки. */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
     /** Действия меню в порядке чтения: сверху вниз в столбце, от начала к концу в ряду. */
     public readonly actions: InputSignal<readonly IRtSpeedMenu.Action[]> = input.required<readonly IRtSpeedMenu.Action[]>();
 

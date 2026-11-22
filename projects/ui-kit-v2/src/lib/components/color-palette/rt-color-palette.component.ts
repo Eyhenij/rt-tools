@@ -94,6 +94,11 @@ export class RtColorPaletteComponent extends RtFormControlBase<string | null> {
     protected readonly swatchRefs: Signal<readonly ElementRef<HTMLButtonElement>[]> = viewChildren<ElementRef<HTMLButtonElement>>('swatch');
     protected readonly picker: Signal<RtPopoverDirective | undefined> = viewChild(RtPopoverDirective);
 
+    /** На телефоне панель открывается в нижней шторке кита; `false` оставляет её у кнопки. */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
     /** Цвета образцов по порядку; без них — набор кита. Неверные цвета и повторы не рисуются. */
     public readonly colors: InputSignal<readonly string[]> = input<readonly string[]>([]);
 

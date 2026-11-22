@@ -16,6 +16,8 @@
         [attr.aria-haspopup]="true"
         [attr.aria-expanded]="morePopover.isOpen()"
         [rtPopover]="moreTpl"
+        [rtPopoverSheet]="sheet()"
+        [rtPopoverSheetTitle]="t().uiNavMore"
         (click)="morePopover.open()">
         <span rtElem="label">{{ t().uiNavMore }}</span>
         @if (unread()) {

@@ -17,6 +17,8 @@
                         [rtMod]="view.modifiers"
                         [attr.aria-label]="view.ariaLabel"
                         [rtPopover]="menuTpl"
+                        [rtPopoverSheet]="sheet()"
+                        [rtPopoverSheetTitle]="view.ariaLabel"
                         [rtPopoverContext]="view.action.menu">
                         <ng-container *ngTemplateOutlet="actionFace; context: { $implicit: view.action }" />
                     </button>

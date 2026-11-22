@@ -233,6 +233,25 @@ Given the phone bottom sheet with filters is open
 When the apply button is pressed
 Then the bar reports it and the sheet closes
 
+### SC-UKV-1629 — wider than a phone the filters open in a panel by the button
+
+Given the narrow view of the bar in a window of 768, wider than a phone
+When the filters button is pressed
+Then a panel opens by the button with search, all filters and «Apply», and no bottom sheet is open;
+«Apply» reports it and closes the panel
+
+### SC-UKV-1630 — the sheet switched off keeps the panel on a phone
+
+Given the bar with the input `sheet` set to false on a phone
+When the filters button is pressed
+Then the filters open in the panel by the button, not in the bottom sheet
+
+### SC-UKV-1638 — the application setting switches the filters sheet off as well
+
+Given an application that provides `RT_POPOVER_SHEET` as false, on a phone
+When the filters button of the bar is pressed
+Then the filters open in the panel by the button, not in the bottom sheet
+
 ### SC-UKV-1201 — the close button only on the selected tab
 
 Given tabs with `closeOn="selected"` and several closable tabs

@@ -3,6 +3,9 @@ import { ComponentFixture } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { RT_KIT_LOCALE } from '../../i18n';
+import { By } from '@angular/platform-browser';
+
+import { RT_POPOVER_SHEET, RtPopoverDirective } from '../popover';
 import { BreakpointsService } from '../../platform';
 import { createRtFixture, el, hostClasses, qa, textOf } from '../../../testing/rt-kit-testing';
 import { RtDateRangeComponent } from './rt-date-range.component';
@@ -24,6 +27,7 @@ class DateRangeHostComponent {
 /** Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. */
 class NarrowBreakpointsService {
     public readonly viewportNarrow: () => boolean = (): boolean => true;
+    public readonly phone: () => boolean = (): boolean => true;
 }
 
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtDateRangeComponent> {
@@ -62,10 +66,17 @@ describe('RtDateRangeComponent', (): void => {
         expect(hostClasses(setup())).toContain('rt-date-range');
     });
 
+    it('SC-UKV-1665 — панель периода встаёт по корню поля, а не по кнопке календаря', (): void => {
+        const fixture: ComponentFixture<RtDateRangeComponent> = setup();
+        const popover: RtPopoverDirective = fixture.debugElement.query(By.directive(RtPopoverDirective)).injector.get(RtPopoverDirective);
+
+        expect(popover.origin()).toBe(fixture.nativeElement);
+    });
+
     it('SC-UKV-469 — пустое поле подсказывает форму двух дат, заполненное показывает их в порядке языка', (): void => {
         const fixture: ComponentFixture<DateRangeHostComponent> = setupHost();
-        expect(field(fixture).getAttribute('placeholder')).toBe('dd.mm.yyyy — dd.mm.yyyy');
-        expect(field(fixture).getAttribute('title')).toBe('dd.mm.yyyy — dd.mm.yyyy');
+        expect(field(fixture).getAttribute('placeholder')).toBe('--.--.---- — --.--.----');
+        expect(field(fixture).getAttribute('title')).toBe('--.--.---- — --.--.----');
         expect(field(fixture).getAttribute('size')).toBe('23');
 
         fixture.componentInstance.control.setValue({ start: '2026-10-12', end: '2026-10-15' });
@@ -187,6 +198,40 @@ describe('RtDateRangeComponent', (): void => {
             expect(sheet.querySelector('rt-date-range-panel')?.classList).toContain('rt-date-range-panel--sheet');
             expect(sheet.querySelectorAll('[qa-dataid="calendar-month"]').length).toBe(1);
             expect(popup()).toBeNull();
+        });
+
+        it('SC-UKV-1596 — на узком экране с sheet=false панель открывается поповером у поля, шторки нет', (): void => {
+            const fixture: ComponentFixture<RtDateRangeComponent> = createRtFixture(
+                RtDateRangeComponent,
+                { sheet: false },
+                { providers: [RU_LOCALE, { provide: BreakpointsService, useClass: NarrowBreakpointsService }] }
+            );
+
+            openButton(fixture).click();
+            fixture.detectChanges();
+
+            expect(qa(fixture, 'date-range-sheet')).toBeNull();
+            expect(popup()).not.toBeNull();
+        });
+
+        it('SC-UKV-1612 — токен RT_POPOVER_SHEET со значением false на телефоне оставляет поповер у поля, шторки нет', (): void => {
+            const fixture: ComponentFixture<RtDateRangeComponent> = createRtFixture(
+                RtDateRangeComponent,
+                {},
+                {
+                    providers: [
+                        RU_LOCALE,
+                        { provide: BreakpointsService, useClass: NarrowBreakpointsService },
+                        { provide: RT_POPOVER_SHEET, useValue: false },
+                    ],
+                }
+            );
+
+            openButton(fixture).click();
+            fixture.detectChanges();
+
+            expect(qa(fixture, 'date-range-sheet')).toBeNull();
+            expect(popup()).not.toBeNull();
         });
     });
 });

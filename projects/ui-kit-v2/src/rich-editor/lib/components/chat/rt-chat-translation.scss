@@ -3,7 +3,6 @@
 // файлы уместились в предел длины.
 @layer rt-kit.components {
     .rt-chat {
-        --rt-chat-translate-outline-width: var(--rt-border-width-medium);
         --rt-chat-translate-radius: var(--rt-radius-xs);
         --rt-chat-translate-gap: var(--rt-space-2);
 
@@ -45,7 +44,8 @@
             }
 
             &:focus-visible {
-                outline: var(--rt-chat-translate-outline-width) solid var(--rt-color-border-focus);
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: var(--rt-focus-ring-offset);
             }
 
             // Перевод загружается: кнопка приглушена и не нажимается

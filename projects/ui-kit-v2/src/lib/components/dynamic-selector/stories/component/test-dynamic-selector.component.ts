@@ -44,6 +44,7 @@ export class TestRtDynamicSelectorComponent {
     public draggable: boolean = true;
     public invitation: boolean = false;
     public multiToggleShown: boolean = false;
+    public sheet: boolean = true;
 
     public readonly people: readonly IStoryPerson[] = STORY_PEOPLE;
     public readonly readonlyKeys: readonly number[] = [1];

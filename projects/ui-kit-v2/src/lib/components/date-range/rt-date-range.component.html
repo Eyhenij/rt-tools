@@ -34,15 +34,16 @@
         <rt-icon-button
             rtElem="open"
             qa-dataid="date-range-open"
-            icon="ico-calendar"
+            icon="calendar-2"
             size="sm"
             variant="ghost"
             iconColor="muted"
             rtPopoverAlign="end"
+            [rtPopoverOrigin]="host"
             [ariaLabel]="t().uiOpenCalendar"
             [disabled]="isDisabled()"
             [rtPopover]="panelTpl"
-            [rtPopoverDisabled]="narrow() || isDisabled()"
+            [rtPopoverDisabled]="useSheet() || isDisabled()"
             (clicked)="openPanel()" />
 
         <ng-template #panelTpl>
@@ -51,7 +52,7 @@
             </div>
         </ng-template>
 
-        @if (narrow()) {
+        @if (useSheet()) {
             <rt-bottom-sheet qa-dataid="date-range-sheet" [open]="sheetOpen()" (openChange)="sheetOpen.set($event)">
                 @if (sheetOpen()) {
                     <rt-date-range-panel
