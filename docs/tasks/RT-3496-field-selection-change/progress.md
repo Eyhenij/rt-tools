@@ -6,9 +6,9 @@ Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
 - **Stage:** 2 of 2 — texts and the built declarations, done
-- **Done:** all five steps matched; the live check and review round one with its fixes; the kit's
-  unit tests 4129 of 4129 green
-- **Next step:** review round two
+- **Done:** all five steps matched; the live check and two review rounds with their fixes; the
+  kit's unit tests 4132 of 4132 green
+- **Next step:** the last live check, then the folder taken apart, the push set and the PR
 - **Uncommitted:** none after the round commit
 - **PR:** not open yet
 
@@ -45,6 +45,17 @@ Rewritten by every session, not appended to.
   requirement; `rt-select` emits on a repeated pick too. Affected stage: none.
 - **Round one, written off: the disabled guard returns before `stopPropagation`** — the sample
   `rt-select` does the same, and a disabled field shows no cross. Affected stage: none.
+- **Round two: the text is accepted before the form gets the value, and `writeValue` rewrites the
+  field only when its text differs** — a `valueChanges` subscriber that handed back the old value
+  was overwritten by the typed text, and the first fix wiped a half-typed text on a value with the
+  same text. Both are held by specs now. Affected stage: 1.
+- **Round two, beside the subject: a rejection on signal forms** — a handler that sets the model
+  back in the same pass gets no `writeValue` from Angular's `FormField`, so the field keeps the
+  person's text; `rt-select` behaves the same, and the owner asked for no rejection. The round-one
+  fix holds for a reactive form only. Named in the PR body. Affected stage: none.
+- **Round two, beside the subject: a field disabled while its panel is open still takes a pick** —
+  it was so before the change; the two date fields do not close the panel in `setDisabledState`.
+  A task of its own. Affected stage: none.
 
 ## Sessions
 
@@ -55,6 +66,9 @@ Rewritten by every session, not appended to.
 - Live check in the showcase on port 6007, the stories `Playground` of the three fields, through
   the component instance: `writeValue` gave 0 events at each field. Typing, a panel pick, a removed
   chip and the cross gave events equal to the form values: the range 2 of 2, the date 3 of 3, the
-  multiselect 3 of 3, and the multiselect passes the same array. After round one, a handler that
-  hands back the old value leaves «10.03.2026» and «12.10.2026 — 15.10.2026» in the fields.
+  multiselect 3 of 3, and the multiselect passes the same array. After round one, on a reactive
+  form, a handler that hands back the old value leaves «10.03.2026» and «12.10.2026 — 15.10.2026».
 - Mutation check: without `emit` in `#commit` the range spec fails 4 of 7.
+- Last live check after round two, the range field: a form subscriber handing back the old value
+  leaves «12.10.2026 — 15.10.2026»; a value with the same text keeps «12.10.2026 — 1»; typing still
+  gives an event equal to the form value.

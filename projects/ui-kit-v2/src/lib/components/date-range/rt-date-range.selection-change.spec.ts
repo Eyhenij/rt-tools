@@ -138,6 +138,35 @@ describe('RtDateRangeComponent — selectionChange', (): void => {
         expect((qa(fixture, 'date-range-control')?.nativeElement as HTMLInputElement).value).toBe('12.10.2026 — 15.10.2026');
     });
 
+    it('SC-UKV-1706 — подписчик формы, вернувший прежнее значение, видит его в поле', (): void => {
+        const fixture: ComponentFixture<DateRangeSelectionHostComponent> = setupHost();
+        fixture.componentInstance.control.setValue(PERIOD);
+        fixture.detectChanges();
+        fixture.componentInstance.control.valueChanges.subscribe((value: IRtDateRange.Value | null): void => {
+            if (value !== PERIOD) {
+                fixture.componentInstance.control.setValue(PERIOD);
+            }
+        });
+
+        type(fixture, '01.08.2026 — 15.08.2026');
+
+        expect(fixture.componentInstance.control.value).toEqual(PERIOD);
+        expect((qa(fixture, 'date-range-control')?.nativeElement as HTMLInputElement).value).toBe('12.10.2026 — 15.10.2026');
+    });
+
+    it('SC-UKV-1706 — значение формы с тем же текстом недонабранное не стирает', (): void => {
+        const fixture: ComponentFixture<DateRangeSelectionHostComponent> = setupHost();
+        fixture.componentInstance.control.setValue(PERIOD);
+        fixture.detectChanges();
+
+        type(fixture, '12.10.2026 — 1');
+        fixture.componentInstance.control.setValue({ ...PERIOD });
+        fixture.detectChanges();
+
+        expect((qa(fixture, 'date-range-control')?.nativeElement as HTMLInputElement).value).toBe('12.10.2026 — 1');
+        expect(fixture.componentInstance.events).toEqual([]);
+    });
+
     describe('панель', (): void => {
         beforeEach((): void => {
             jest.useFakeTimers({ now: new Date(2026, 8, 30, 10, 37), doNotFake: ['queueMicrotask', 'requestAnimationFrame'] });

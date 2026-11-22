@@ -138,13 +138,18 @@ export class RtDateRangeComponent extends RtFormControlBase<IRtDateRange.Value |
     public readonly selectionChange: OutputEmitterRef<IRtDateRange.Value | null> = output<IRtDateRange.Value | null>();
 
     /**
-     * Значение из формы снимает ошибку набора и пишет свой текст в поле: в поле теперь стоит оно.
-     * Текст пишется сам, а не привязкой: форма может вернуть значение, равное прежнему, после того
-     * как человек набрал другое, и привязка с неизменным текстом поле бы не тронула.
+     * Значение из формы снимает ошибку набора. Когда его текст другой, чем у прежнего значения, он
+     * пишется в поле сам, а не привязкой: форма может вернуть прежнее значение после того, как
+     * человек набрал другое, и привязка, чей текст не менялся, поле бы не тронула. Значение с тем же
+     * текстом недонабранное не стирает.
      */
     public override writeValue(value: IRtDateRange.Value | null): void {
+        const shown: string = this.text();
         super.writeValue(value);
-        this.#accept(this.range());
+        this.textInvalid.set(false);
+        if (this.text() !== shown) {
+            this.#accept(this.range());
+        }
     }
 
     protected getEmptyValue(): IRtDateRange.Value | null {
@@ -207,9 +212,10 @@ export class RtDateRangeComponent extends RtFormControlBase<IRtDateRange.Value |
 
     #commit(value: IRtDateRange.Value | null): void {
         this.value.set(value);
-        this.emitChange(value);
+        // Текст принимается до формы и события: подписчик формы или обработчик события, вернувший
+        // другое значение, пишет его текст в поле последним.
         this.#accept(value);
-        // Событие последним: обработчик, который вернёт форме другое значение, увидит его в поле.
+        this.emitChange(value);
         this.selectionChange.emit(value);
     }
 

@@ -126,6 +126,21 @@ describe('RtDatePickerComponent — selectionChange', (): void => {
         expect((qa(fixture, 'date-picker-control')?.nativeElement as HTMLInputElement).value).toBe('10.03.2026');
     });
 
+    it('SC-UKV-1708 — подписчик формы, вернувший прежнее значение, видит его в поле', (): void => {
+        const fixture: ComponentFixture<DatePickerSelectionHostComponent> = setupHost();
+        setValue(fixture, '2026-03-10');
+        fixture.componentInstance.control.valueChanges.subscribe((value: string | null): void => {
+            if (value !== '2026-03-10') {
+                fixture.componentInstance.control.setValue('2026-03-10');
+            }
+        });
+
+        type(fixture, '15.03.2026');
+
+        expect(fixture.componentInstance.control.value).toBe('2026-03-10');
+        expect((qa(fixture, 'date-picker-control')?.nativeElement as HTMLInputElement).value).toBe('10.03.2026');
+    });
+
     describe('панель', (): void => {
         afterEach((): void => {
             popup()?.closest('.cdk-overlay-container')?.replaceChildren();
