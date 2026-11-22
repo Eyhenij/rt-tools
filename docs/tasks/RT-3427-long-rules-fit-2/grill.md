@@ -85,7 +85,32 @@ order says to decide alone.
 - **The metric is judged on the records of `gate-deny` a week after the merge of the epic into
   `main`,** without the records of the probe, as RT-3410 decided.
 
+The roles `goal-critic` and `product-strategist` read the plan of 22.11 and measured it on a copy
+with the rules cut to its targets: 43 of 47. The decisions below replace the matching ones above.
+Спросить было некого: заход автономный.
+
+- **The sign is narrowed to the 43 lines a compression can reach.** A task folder edit, the plan
+  of a task folder and the commands with a body of a PR or a card (`gh pr create`, `gh pr edit`,
+  `gh issue create`, `task:new`) demand five or six rules; `gh pr create --body-file` sums 12 018
+  characters even with `task-delivery-loop` and `doc-style-human` at zero. Only a delivery of the
+  rules in parts or a change of the map lifts them, and both change what the gate demands — the
+  owner's choice. Цена ошибки: эти строки остаются отказами до отдельной задачи.
+- **The budget follows the line, and no rule goes below what the owner said.** Eight rules at most
+  3 000 characters, `platform-access` at 2 700 (its line leaves about 2 830), counted as the gate
+  counts: `LC_ALL=en_US.UTF-8 wc -m`; the shell of the plan counted bytes.
+- **`observability` stays up to 4 800.** Its table of names and 29 statements alone weigh about
+  4 200; at 3 000 the hot part would lose the table or the statements, against «смысл не теряй».
+  Цена ошибки: отступ от «ужимай до 3000» на одном правиле; деление правила на два — другой путь.
+- **The five duties of the steps of `task-delivery-loop` stay hot** one line each; the steps go to
+  the cold part. The meaning check could not see them lost: the paragraph stands in the cold part.
+- **The meaning check demands the rows of the table of names in the hot part,** and the blind
+  retelling is a step with its own check, not a line of the done-sign. Without both, a hot part of
+  bare statements passed the check with 0 losses on a copy.
+- **The probe covers `queue-audit` by `tools/board.mjs` and `mockups` by the design tool.**
+  `tools/check-board.mjs` demands `testing` here.
+- **The metric reads `why: too-long`,** the value the records hold; `long` is never written.
+
 ## What is left unclear
 
-- Whether the head line and the separators leave room for four rules of a task folder at the
-  targets above. The first stage measures it; if not, the plan names the next rule to shorten.
+- How the gate should deliver a set of rules longer than the limit: in parts, or by a change of
+  the map. The finding goes next to the epic plan and to the morning list.
