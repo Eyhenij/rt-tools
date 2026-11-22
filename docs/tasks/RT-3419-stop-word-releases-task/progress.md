@@ -2,17 +2,27 @@
 
 ## Где мы
 
-- **State:** `задача-взята`
-- **Stage:** нет — план переписан 22.11 по выбору владельца и по находкам ролей
-- **Done:** владелец 22.11 переопределил задачу: ожидание долгого процесса вместо «стоп», «стоп» убрать; разбор и план в четыре этапа переписаны; роли прочли план, находки внесены (слежение за CI — ожидание, Esc отпускает ход, `turn-judge` пропускает ожидание, зависшая задача названа, сервер не ожидание, меню со свободным полем, след расширен, метрика по прогнозу 169 → 152); `plan-check` — код 0
-- **Next step:** меню «Одобряю план RT-3419», затем `plan-red`
-- **Uncommitted:** grill.md, plan.md, progress.md
-- **Waiting for the owner:** одобрение плана
+- **State:** `замысел-записан`
+- **Stage:** 1 из 4 — ожидание до границы зависшей задачи
+- **Done:** владелец 22.11 переопределил задачу и одобрил план: «Одобряю план RT-3419»; `plan-red` — 10 из 10 красные, отметка одобрения записана
+- **Next step:** шаг 1.1
+- **Uncommitted:** progress.md
 - **PR:** not open yet
 
 ## Шаги
 
-Появятся вместе с закоммиченным планом.
+- `[x]` done · `[>]` going on right now · `[ ]` not begun
+
+- [>] 1.1 The bound of the wait is 90 minutes, and the hold names a hung task
+- [ ] 1.2 A CI watch is a wait, a server is none
+- [ ] 1.3 A read notice with no step holds the stop and names the step
+- [ ] 2.1 The hook on a branch in `этап-идёт` holds the turn after «стоп» and releases it after Esc
+- [ ] 2.2 The engine and its tests hold no stop word
+- [ ] 3.1 The hold names the new menu and the free field
+- [ ] 3.2 The model checks name the new menu and no stop word
+- [ ] 3.3 `turn-judge` lets a turn end on a wait for its own background task
+- [ ] 4.1 The rules and the texts of the package name no stop word and no bound of twenty minutes
+- [ ] 4.2 The descriptions hold no removed scenario
 
 ## Решения по ходу
 
