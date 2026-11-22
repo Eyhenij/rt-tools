@@ -30,10 +30,10 @@ const ICONS: Readonly<Record<TListSortOrderType | 'none', IRtIcon.Name>> = Objec
 
 /**
  * Заголовок сортируемой колонки — атрибутом на ячейке шапки:
- * `<th *cdkHeaderCellDef cdk-header-cell rtSortHeader="checkIn">Заезд</th>`.
+ * `<th *cdkHeaderCellDef cdk-header-cell rtSortHeader="checkIn"><ng-template rtTableSortHeaderContent>Заезд</ng-template></th>`.
  *
- * Подпись проецируется внутрь кнопки, и доступное имя кнопки берётся из неё — порядок
- * меняется не только мышью. Текущее направление читается с самой колонки через
+ * Подпись приходит шаблоном и разворачивается внутри кнопки, и доступное имя кнопки берётся
+ * из неё — порядок меняется не только мышью. Текущее направление читается с самой колонки через
  * `aria-sort`, а видно его по стрелке.
  *
  * Колонка сортируется, только когда помечена `sortable` в `[columnsConfig]` таблицы;

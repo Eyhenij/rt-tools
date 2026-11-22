@@ -393,6 +393,10 @@ describe('RtScrollAreaComponent', (): void => {
 
             fixture.componentInstance.isScrollHintShown.set(true);
             fixture.detectChanges();
+            // Включение ставит наблюдателя размера; настоящий откликается сразу после постановки,
+            // двойник спеки — по вызову. Первый замер идёт из этого отклика, а не из эффекта.
+            expect(observed.has(body)).toBe(true);
+            notifySize?.();
 
             expect(reads).toHaveBeenCalled();
         });

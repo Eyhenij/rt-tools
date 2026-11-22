@@ -58,4 +58,17 @@ describe('RtSlotOutletDirective', (): void => {
 
         expect([before, drawn().length]).toEqual([3, 0]);
     });
+
+    it('пришедший и ушедший шаблон не пересоздают соседей, а порядок следует записи', (): void => {
+        const fixture: ComponentFixture<SlotOutletHostComponent> = createRtFixture(SlotOutletHostComponent);
+        fixture.componentInstance.picked.set([0, 2]);
+        fixture.detectChanges();
+        const [first, third]: Element[] = Array.from(document.querySelectorAll('[qa-dataid="outlet"] [qa-dataid="slot"]'));
+
+        fixture.componentInstance.picked.set([2, 1, 0]);
+        fixture.detectChanges();
+        const after: Element[] = Array.from(document.querySelectorAll('[qa-dataid="outlet"] [qa-dataid="slot"]'));
+
+        expect([drawn(), after[0] === third, after[2] === first]).toEqual([['третий', 'второй', 'первый'], true, true]);
+    });
 });

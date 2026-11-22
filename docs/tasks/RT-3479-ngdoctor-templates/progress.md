@@ -6,7 +6,8 @@
 - **Stage:** 5 из 5 — Порог (все этапы закрыты)
 - **Done:** этап 1 (ae3cb5084); этап 2 (0a6fb6e2e); этап 3 (517e8eeb9); этап 4 (d1e5d817b) — потребители дерева на шаблонах, тесты cms по киту дерева; этап 5 — порог 37 → 68.5 без трёх правил, черновик слит в `docs/specs/ui-kit-v2/template-slots/`
 - **Live check:** `node tools/visual-gate.mjs ui-kit-v2` → истории 1196 из 1196, кадры 1223 из 1223; первый прогон поймал подвал панели настроек списка данных внутри шаблона тела (кадр 708 → 740 px), исправлено
-- **Next step:** первый круг ревью
+- **Review round 1:** подтверждены и исправлены: запись сигналов из эффекта области прокрутки, зависшее ожидание окна подтверждения меню, пересборка соседних видов выходом слота, старый пример заголовка сортировки, строка RT-3478 в таблице эпика. Списаны: выпуск cms на ките `^0.23.3` — решение владельца о выпуске; молчаливый пропуск прежней формы у внешних потребителей — решение договорённости, сноска о ломающем изменении называет каждый слот. Витрина после правок: истории 1196 из 1196, кадры 1223 из 1223; тесты кита 4187 из 4187, cms 112 из 112
+- **Next step:** второй круг ревью
 - **Uncommitted:** нет
 - **PR:** ещё не открыт
 
@@ -58,9 +59,9 @@ Put together by a hook before the compaction of the context (auto).
 
 ### Where we stand at the minute of the compaction
 
-- **State:** `этап-идёт`
-- **Stage:** 3 из 5 — Слоты по умолчанию кита
-- **Next step:** 3.1 — слоты по умолчанию кита шаблонами
+- **State:** `этапы-кончились`
+- **Stage:** 5 из 5 — Порог (все этапы закрыты)
+- **Next step:** первый круг ревью
 - **PR:** ещё не открыт
 
 The progress in full — `docs/tasks/RT-3479-ngdoctor-templates/progress.md`; the plan lies next to it.
@@ -68,31 +69,16 @@ The progress in full — `docs/tasks/RT-3479-ngdoctor-templates/progress.md`; th
 ### Uncommitted
 
 ```
- M projects/ui-kit-v2/src/lib/components/aside/CONTEXT.md
- M projects/ui-kit-v2/src/lib/components/aside/Overview.mdx
- M projects/ui-kit-v2/src/lib/components/aside/header/Overview.mdx
- M projects/ui-kit-v2/src/lib/components/aside/header/rt-aside-header.component.html
- M projects/ui-kit-v2/src/lib/components/aside/header/rt-aside-header.component.ts
- M projects/ui-kit-v2/src/lib/components/aside/index.ts
- M projects/ui-kit-v2/src/lib/components/aside/rt-aside-empty.spec.ts
- M projects/ui-kit-v2/src/lib/components/aside/rt-aside-open.spec.ts
- M projects/ui-kit-v2/src/lib/components/aside/rt-aside-options.spec.ts
- M projects/ui-kit-v2/src/lib/components/aside/rt-aside.component.html
- M projects/ui-kit-v2/src/lib/components/aside/rt-aside.component.spec.ts
- M projects/ui-kit-v2/src/lib/components/aside/rt-aside.component.ts
- M projects/ui-kit-v2/src/lib/components/aside/stories/component/test-aside-matrix.component.ts
- M projects/ui-kit-v2/src/lib/components/aside/stories/component/test-aside.component.ts
- M projects/ui-kit-v2/src/lib/components/breadcrumbs/CONTEXT.md
- M projects/ui-kit-v2/src/lib/components/breadcrumbs/index.ts
- M projects/ui-kit-v2/src/lib/components/breadcrumbs/rt-breadcrumbs.component.html
- M projects/ui-kit-v2/src/lib/components/breadcrumbs/rt-breadcrumbs.component.spec.ts
- M projects/ui-kit-v2/src/lib/components/breadcrumbs/rt-breadcrumbs.component.ts
- M projects/ui-kit-v2/src/lib/components/breadcrumbs/stories/component/test-breadcrumbs-matrix.component.html
+none
 ```
 
 ### Commits over the main branch
 
 ```
+208cac200 fix(rt:ui-kit-v2): подвал панели настроек списка данных снова стоит внизу (RT-3479)
+8de4e10cf docs(rt:ui-kit-v2): порог Angular Doctor и договорённость о шаблонных слотах в спеках кита (RT-3479)
+d1e5d817b feat(rt:ui-kit-v2): потребители кита передают слоты шаблонами (RT-3479)
+517e8eeb9 feat(rt:ui-kit-v2): слоты по умолчанию кита передаются шаблонами (RT-3479)
 0a6fb6e2e feat(rt:ui-kit-v2): именованные слоты кита передаются шаблонами (RT-3479)
 ae3cb5084 refactor(rt:ui-kit-v2): эффекты кита и панели чата без записи сигналов, примеры на @if и @for (RT-3479)
 c93428afa docs(rt:ui-kit-v2): шаг 1.1 RT-3479 идёт (RT-3479)
@@ -109,10 +95,6 @@ f8a87a946 docs(rt:ui-kit-v2): папка задачи RT-3478 разобрана
 6717f5189 fix(rt:cms): правки после первого круга ревью (RT-3478)
 a5cd357da chore(rt:ui-kit-v2): порог Angular Doctor без записи innerHTML и с одним обходом очистки (RT-3478)
 57d3de4a7 fix(rt:message-bus): виджет чата строит разметку узлами, а не строкой (RT-3478)
-1914b4b41 fix(rt:cms): правка блока без записи innerHTML, превью встраивания только для разобранного https (RT-3478)
-47ea435e6 docs(rt:ui-kit-v2): слово владельца о том, что правка значков и ячейки не меняет вид (RT-3478)
-ef78a6919 fix(rt:ui-kit-v2): значки и стиль значка ячейки без записи innerHTML и обхода очистки (RT-3478)
-51b022a44 refactor(rt:core): пайп sanitize удалён из пакета (RT-3478)
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

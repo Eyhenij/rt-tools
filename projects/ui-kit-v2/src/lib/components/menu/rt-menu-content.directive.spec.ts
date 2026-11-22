@@ -135,6 +135,21 @@ describe('RtMenuComponent — пункты шаблоном', (): void => {
         expect([dialog.opened, heldOpen, fixture.componentInstance.removed, items().length]).toEqual([1, true, 1, 0]);
     });
 
+    it('SC-UKV-1733: нажатие мимо удержанной панели снимает ожидание, и подложка уходит со страницы', (): void => {
+        const fixture: ComponentFixture<MenuSlotsHostComponent> = setup();
+
+        pressTrigger(fixture);
+        items()[2].click();
+        fixture.detectChanges();
+        pressTrigger(fixture);
+        const heldOpen: boolean = items().length === 3;
+        (document.querySelector('.cdk-overlay-backdrop') as HTMLElement).click();
+        fixture.detectChanges();
+
+        // Уходящая подложка снимает класс показа и перестаёт ловить нажатия ещё до конца перехода.
+        expect([heldOpen, items().length, document.querySelector('.cdk-overlay-backdrop-showing')]).toEqual([true, 0, null]);
+    });
+
     it('SC-UKV-1746: меню с пунктами шаблоном не предупреждает и после открытия', (): void => {
         const warn: jest.SpyInstance = jest.spyOn(console, 'warn').mockImplementation((): void => undefined);
         const fixture: ComponentFixture<MenuSlotsHostComponent> = setup();

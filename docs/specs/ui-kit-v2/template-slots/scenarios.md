@@ -187,6 +187,7 @@ Covered: `projects/ui-kit-v2/src/showcase/templates/bookings/list-page/app-list-
 Given a menu item with a confirmation message, its dialog open and the menu closed
 When the person confirms in the dialog
 Then the item's `selected` reaches the consumer once
+And a click outside the held panel, once no dialog covers it, drops the wait and the backdrop with it
 
 Covered: `projects/ui-kit-v2/src/lib/components/menu/rt-menu-content.directive.spec.ts`.
 
