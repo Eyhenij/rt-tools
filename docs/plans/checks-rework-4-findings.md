@@ -175,6 +175,23 @@ The task ran outside the epic; the owner added its findings to the epic on 21.11
 - **A live record is trusted by its process number alone.** A number reused by another process keeps
   a dead run's folder until that process ends. **Address:** rules layer — the record carries the
   start time of the process in `assets/task-flow/source/git.mjs`.
+- **The rules review: an engine fix after the taking-apart is refused, and the pitfalls say it
+  passes.** The push set found `tools/flow-step.mjs` at 501 lines after the folder was taken apart;
+  the step guard reads the approved plan from disk, so the fix cost a revert of the taking-apart, a
+  second taking-apart and one more set run. **Address:** rules layer — `judgeProtected` of
+  `assets/checks/flow-guard.mjs` reads the plan at the parent of the taking-apart commit, as `step`
+  does; until then a sentence in `assets/pitfalls/task-flow-archive.md` and a pointer in
+  `assets/pitfalls/task-flow-close.2.md`.
+- **The rules review: the size check runs only in the push set, after the taking-apart.**
+  **Address:** this tree — the closing block of `.claude/skills/task-delivery-loop-run/SKILL.md`
+  runs `node tools/check-file-size.mjs` with the spec and path checks, before the folder goes.
+- **The rules review: a package script is measured on its laid-out copy, one header line longer.**
+  A source of 499 lines by `wc -l` gives a copy of 501 by the size check. **Address:** rules layer —
+  `assets/checks/check-file-size.mjs` judges a source under `projects/agent-kit/assets/` at the
+  limit minus its header; or this tree — an article in `.claude/skills/agent-kit-source/pitfalls.md`.
+- **The rules review: the formatter run from `projects/agent-kit` rewrote four package files.** The
+  root ignore list is not read from there. **Address:** this tree — an ignore list of the formatter
+  in the package directory itself, with the line `assets/`.
 
 ## Left unresolved
 
