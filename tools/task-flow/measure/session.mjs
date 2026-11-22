@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · task-flow/measure/session.mjs · 2f2a02e22eb2 · правится надстройкой, не здесь
+// rt-kit v0.38.0 · task-flow/measure/session.mjs · 1b7b85e1a01d · правится надстройкой, не здесь
 /**
  * The measurer «measure.session» — what this session did: a write to the tree, a role it runs as, a
  * menu of a refusal that did not reach the owner, a step another check forbids, a stop after a
@@ -48,22 +48,32 @@ export function menuLost({ session }) {
     };
 }
 
+/** The hook of the engine itself, the one that holds a turn by the scenario. */
+const ENGINE_HOOK = 'turn-exit-guard';
+
 /**
  * Another check forbids the step: the last two refusals of calls come from the same guard for the
  * same reason, and no call wrote to the tree after the first of them. Answers the name of the guard,
  * or false — the exit check then names the owner's menu about that guard.
  */
 /**
- * The last of the refusals of a stop, the calls and the menus is a refusal of a stop: the move it
- * named was not taken. While a background task of the session runs the stop is a wait, not an idle
- * one: the executor has a move, and it is to wait.
+ * The refusals of a stop stand after the last call and menu: the move they named was not taken. The
+ * stop is idle when one of them is the engine's own, or names no hook: true. When every one of them
+ * is another hook's, the stop is no idle one: { foreign: [<their hooks, each once>] }. While a
+ * background task of the session runs the stop is a wait, not an idle one: the executor has a move,
+ * and it is to wait.
  */
 export function idle({ session }) {
     return () => {
         const events = session.events();
-        let last = null;
-        for (const event of events) if (event.kind === 'refusal' || event.kind === 'call' || event.kind === 'menu') last = event;
-        return last?.kind === 'refusal' && running(events, timeOf(session)).tasks.length === 0 && unreadOf(events) === null;
+        let refusals = [];
+        for (const event of events) {
+            if (event.kind === 'call' || event.kind === 'menu') refusals = [];
+            else if (event.kind === 'refusal') refusals.push(event);
+        }
+        if (refusals.length === 0 || running(events, timeOf(session)).tasks.length > 0 || unreadOf(events) !== null) return false;
+        if (refusals.some((refusal) => !refusal.by || refusal.by === ENGINE_HOOK)) return true;
+        return { foreign: [...new Set(refusals.map((refusal) => refusal.by))] };
     };
 }
 

@@ -7,8 +7,9 @@
  * the command that measures it.
  *
  * When another check refused the same step twice for the same reason, or the executor stopped again
- * with no call after the previous refusal,
+ * with no call after a refusal of the engine itself,
  * the one move is the owner's menu: the options of `words.menu`, with the number of the task put in.
+ * A stop again after refusals of other stop hooks only names those hooks and the move instead.
  *
  * The case of the silent hosting counts only when the measurement itself stopped on the silence: a
  * read that failed for a state passed over says nothing when a later local exit is unmet. Any other
@@ -97,7 +98,8 @@ export function releaseCase(model, read, result) {
  * Why the next move is the owner's menu: { by: '<guard>' }, { idle: true }, or null. A measurer the
  * description does not declare, or the hosting could not answer, names no cause. An unread
  * background task comes first, { unread: { task, output, agent } }: while it is unread the move is to
- * read it, and no menu is offered.
+ * read it, and no menu is offered. A stop refused only by other hooks gives { foreign: ['<hook>', …] }:
+ * the hold names those hooks and the move of the state, not the menu.
  */
 export function menuCause(read) {
     const answer = (name) => {
@@ -111,7 +113,11 @@ export function menuCause(read) {
     if (unread) return { unread };
     const by = answer(MENU_CAUSES.forbidden);
     if (by) return { by: String(by) };
-    return answer(MENU_CAUSES.idle) ? { idle: true } : null;
+    const idle = answer(MENU_CAUSES.idle);
+    // A stop refused only by other hooks is no idle one: no menu, the refusal is named in one line.
+    const foreign = idle && typeof idle === 'object' ? [idle.foreign ?? []].flat().filter(Boolean).map(String) : [];
+    if (foreign.length > 0) return { foreign };
+    return idle ? { idle: true } : null;
 }
 
 /** The options of the owner's menu: `words.menu`, the number of the task put in place of N. */
@@ -188,6 +194,9 @@ export function holdReason(model, result, step, menu = null) {
             lines.push(`The background task \`${task}\` ended after the last call, and its notice has not been read${where}.`);
             lines.push('The first move is to read that output and act on it: a red result is fixed now. No owner\'s menu is offered while the task is unread.');
         }
+    } else if (menu?.cause?.foreign) {
+        const hooks = menu.cause.foreign.map((hook) => `\`${hook}\``).join(', ');
+        lines.push(`The previous refusal came from ${hooks}, not from this check, and no owner's menu is offered for it. Do what it named; when it is not yours, say so in one line and make the move below in the same turn: a stop with no call after this refusal gives the menu.`);
     } else if (menu?.cause) {
         lines.push(
             menu.cause.idle

@@ -55,6 +55,38 @@ The task ran outside the epic; the owner added its findings to the epic on 21.11
   three «Not checked» bindings of `.claude/skills/turn-conduct/implementation.md` now bound to
   `tools/task-flow/measure/ci.mjs:hold`.
 
+## Plans of the night of 21.11 — what the roles found beside the plans
+
+The roles `product-strategist` and `goal-critic` read the plans of RT-3469, RT-3423, RT-3434,
+RT-3425 and RT-3468. What each plan took in is written in its grill; below is what no plan takes.
+
+- **The dispatcher of hooks has no fallback on a syntax error.** On 20.11 conflict markers in the
+  laid-out `dispatch.sh` gave 199 refusals with no name; every call was refused. RT-3423 names
+  them `dispatch-broken`. **Address:** a wrapper that lets the call through when the dispatcher
+  cannot be parsed, with a journal line. **Metric:** refusals `dispatch-broken` a day, target 0.
+- **Past days keep their refusals with no name.** The observations hold only the name, so the new
+  table of names of RT-3423 does not rename 15–21.11. **Address:** `record-recount.mjs` with the
+  lines of the hook replaced.
+- **17 refusals of the step guard «state … ahead of the measured one» on 20–21.11.** Edits of the
+  progress written before a commit the engine measures. **Address:** not sorted out yet; the
+  records of 20–21.11.
+- **One session counted under two numbers on 20.11.** The report counts its calls twice.
+  **Address:** the session key of `work-result.mjs`.
+- **The run ahead with exit code 3 says nothing alone.** The code is the number of red checks, and
+  a reader takes 3 for a crash. **Address:** RT-3469 names the verdict line `push ahead:` as the
+  one to read; the code stays.
+- **The footprint exit passes falsely after a merged base.** `measure/footprint.mjs` counts every
+  commit after the plan that the main branch lacks, the ones the base brought among them; in a chain a
+  footprint row edited by a lower task counts for the upper one. The progress exit reads the same
+  way. **Address:** a measure of the branch's own commits after the plan, with the scenario «the
+  base edits a footprint row».
+- **A refusal of a call by another check twice for one reason still gives the owner's menu.** A
+  checkout of a foreign or an epic branch is refused through `forbidden`. RT-3468 leaves it; its
+  card names a foreign branch too. **Address:** `measure/session.mjs:forbidden`.
+- **A background run longer than 20 minutes no longer holds the menu.** On 20.11 the push set ran
+  24 and 37 minutes, and the engine counted the stops idle. **Address:** `BACKGROUND_BOUND` of the
+  engine against the measured length of the push set.
+
 ## RT-3469 — the run ahead started in the background ends with the code of the set
 
 - **The exit code 3 of the run ahead means both «did not start» and «three red checks».** The
@@ -214,6 +246,27 @@ The task ran outside the epic; the owner added its findings to the epic on 21.11
   `measure/folder.mjs` reads the combined diff, and a merge whose first parent lacks the folder
   shows no removal. **Address:** rules layer — `assets/task-flow/measure/folder.mjs` reads the
   removal against each parent.
+- **The rules review: the plan's done-sign fixed a mechanism.** The sign named a `git log` command;
+  both review rounds found cases it answers wrong, and the code left the approved text twice.
+  **Address:** rules layer — `assets/rules/task-flow-plan.md` and the cold part
+  `assets/pitfalls/task-flow.2.md`: «The done-sign names what must hold and on which cases, never
+  the mechanism that makes it hold»; the role `product-strategist` at planning names one case on
+  which a mechanism in a sign answers wrong.
+- **The rules review: a reviewer's probe ran in the session's copy.** A probe without `cd` created
+  a stray task folder, ran `git add -A` and tried five commits; commitlint stopped them. **Address:**
+  rules layer — `assets/agents/product-strategist.md` and `assets/agents/goal-critic.md`: every
+  command of a probe copy starts with `cd <copy> &&` or carries `git -C <copy>`.
+- **The rules review: the question judge held a plan approval for a general advance approval.**
+  The engine counts only an answer after the plan's commit naming its task. **Address:** rules
+  layer — the allow list of `assets/hooks/ask-judge.md`; the other way, an engine that accepts an
+  advance approval, is the owner's choice.
+- **The rules review: the prose guard judges the text of shell commands.** **Address:** this tree —
+  a section «Command text» in `.claude/skills/task-delivery-loop/GUARDS.md`: a message, a body or a
+  script with prose is written to a file by the edit tool, the command names the file.
+- **The rules review: a suite over a real history gave every commit one date.** A counter advanced
+  inside `$(…)` stays in a subshell. **Address:** this tree — an article in
+  `.claude/skills/agent-kit-source/pitfalls.md`, or a shared commit helper in
+  `projects/agent-kit/tests/lib.sh`.
 - **A shallow clone hides the history that marks a copy as old.** With `--depth 2` the fallback
   picks the base's copy. **Address:** rules layer — `assets/task-flow/source/git.mjs` names a
   shallow repository and refuses the fallback.
@@ -221,6 +274,19 @@ The task ran outside the epic; the owner added its findings to the epic on 21.11
   `lastVersion` with the newest snapshot that holds the path and has no `removedAt`; a line of
   snapshots cannot hold a merge, so the merge cases live on real repositories. **Address:** rules
   layer — the double drops `lastVersion` for a removed path or names that it reads a straight line.
+
+## RT-3468 — a refusal of another stop check calls no menu
+
+- **The forecast counts a foreign refusal as a named menu.** `menuNamed` in
+  `assets/checks/flow-forecast.mjs` is true for any cause but an unread task, so the cause
+  `{ foreign }` skips the next stop. The live engine judges that stop: its own hold stands after the
+  last call, and the stop is idle. The forecast now counts fewer held stops than the engine gives.
+  The file stands outside the footprint of RT-3468. **Address:** rules layer — `flow-forecast.mjs`
+  treats `cause.foreign` like `cause.unread`: a move, not the menu.
+- **A stop feedback whose first part is not text is not read as a refusal.** `feedbackText` of
+  `assets/task-flow/source/session.mjs` joins the parts with a line break, so a leading image part
+  puts `\n` before «Stop hook feedback:», and the anchored pattern misses it. No such entry stands
+  in the November records. **Address:** rules layer — `feedbackText` trims the joined text.
 
 ## Left unresolved
 
