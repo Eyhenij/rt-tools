@@ -5,7 +5,8 @@
  *
  *   toolUses()       the calls of the agent, oldest first: { name, input }
  *   events()         what happened in the record, oldest first: a refusal at the end of a turn
- *                    { kind: 'refusal', text }, a menu { kind: 'menu', answered }, a call of a tool
+ *                    { kind: 'refusal', text, by } — `by` is the hook that refused, see `refusalBy`
+ *                    — a menu { kind: 'menu', answered }, a call of a tool
  *                    { kind: 'call', id, name, input, blocked, at, branch, doneAt, failed } — `branch` is
  *                    the branch of its record entry, `doneAt` the time of its result, `failed` an
  *                    error result — a refusal of a call by a hook { kind: 'blocked', by, reason }, the
@@ -24,6 +25,21 @@ import { join } from 'node:path';
 
 /** The text a refusal at the end of a turn arrives with. */
 const STOP_FEEDBACK = /^Stop hook feedback:/;
+/** The name of a hook in a refusal; the opening of a refusal of the model check of a stop, which may name nothing. */
+const BLOCKED_BY = /BLOCKED by ([\w-]+)/;
+const MODEL_HOOK = /^Agent hook condition was not met:/;
+/** The model check of a stop: its refusal with no name of a hook is still its own. */
+const MODEL_CHECK = 'turn-judge';
+
+/**
+ * The hook that refused a stop, read from the first line after the feedback header: the name of
+ * «BLOCKED by <name>» anywhere in the line, the model check for its opening with no name, or null.
+ */
+export function refusalBy(text) {
+    const line = String(text ?? '').replace(STOP_FEEDBACK, '').replace(/^\s+/, '').split('\n')[0];
+    return line.match(BLOCKED_BY)?.[1] ?? (MODEL_HOOK.test(line) ? MODEL_CHECK : null);
+}
+
 /** A hook refused a call: the result of the call names the guard that refused it. */
 const CALL_REFUSAL = /hook error:[\s\S]*?BLOCKED by ([\w-]+):\s*([^\n]*)/;
 
@@ -191,7 +207,7 @@ export function eventsOf(entries) {
         const refusal = feedbackText(entry);
         if (refusal) {
             closing = false;
-            events.push({ kind: 'refusal', text: refusal });
+            events.push({ kind: 'refusal', text: refusal, by: refusalBy(refusal) });
             continue;
         }
         for (const part of parts(entry)) {

@@ -451,4 +451,6 @@ printf -- '---\nname: reader\ntools: Read, Grep\n---\nроль\n' > "$REPO/.clau
 expect_stop "end: SC-AK-1434 — сессия роли отпускает ход через хук" \
     "$(input_role reader "$(transcript "$(say 'разбери')" "$(edited)")")" PASS
 
+. "$TESTS/turn-exit-guard-foreign.test.sh"
+
 suite_result "проверка выхода из хода"

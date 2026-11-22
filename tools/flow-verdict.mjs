@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · checks/flow-verdict.mjs · d69dd1f60d4e · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/flow-verdict.mjs · 6507d86cd5e2 · правится надстройкой, не здесь
 /**
  * The verdict at the end of a turn — the engine command `verdict`, called by the hook on Stop.
  *
@@ -98,7 +98,8 @@ export function releaseCase(model, read, result) {
  * Why the next move is the owner's menu: { by: '<guard>' }, { idle: true }, or null. A measurer the
  * description does not declare, or the hosting could not answer, names no cause. An unread
  * background task comes first, { unread: { task, output, agent } }: while it is unread the move is to
- * read it, and no menu is offered.
+ * read it, and no menu is offered. A stop refused only by other hooks gives { foreign: '<hook>' }: the
+ * hold names that refusal and the move of the state, not the menu.
  */
 export function menuCause(read) {
     const answer = (name) => {
@@ -112,7 +113,10 @@ export function menuCause(read) {
     if (unread) return { unread };
     const by = answer(MENU_CAUSES.forbidden);
     if (by) return { by: String(by) };
-    return answer(MENU_CAUSES.idle) ? { idle: true } : null;
+    const idle = answer(MENU_CAUSES.idle);
+    // A stop refused only by other hooks is no idle one: no menu, the refusal is named in one line.
+    if (idle && typeof idle === 'object' && idle.foreign) return { foreign: String(idle.foreign) };
+    return idle ? { idle: true } : null;
 }
 
 /** The options of the owner's menu: `words.menu`, the number of the task put in place of N. */
@@ -189,6 +193,8 @@ export function holdReason(model, result, step, menu = null) {
             lines.push(`The background task \`${task}\` ended after the last call, and its notice has not been read${where}.`);
             lines.push('The first move is to read that output and act on it: a red result is fixed now. No owner\'s menu is offered while the task is unread.');
         }
+    } else if (menu?.cause?.foreign) {
+        lines.push(`The previous refusal came from \`${menu.cause.foreign}\` and is not about your work: name it in one line and make the move of the state. No owner's menu is offered for it.`);
     } else if (menu?.cause) {
         lines.push(
             menu.cause.idle
