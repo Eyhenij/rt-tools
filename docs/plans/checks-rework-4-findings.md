@@ -246,6 +246,27 @@ RT-3425 and RT-3468. What each plan took in is written in its grill; below is wh
   `measure/folder.mjs` reads the combined diff, and a merge whose first parent lacks the folder
   shows no removal. **Address:** rules layer — `assets/task-flow/measure/folder.mjs` reads the
   removal against each parent.
+- **The rules review: the plan's done-sign fixed a mechanism.** The sign named a `git log` command;
+  both review rounds found cases it answers wrong, and the code left the approved text twice.
+  **Address:** rules layer — `assets/rules/task-flow-plan.md` and the cold part
+  `assets/pitfalls/task-flow.2.md`: «The done-sign names what must hold and on which cases, never
+  the mechanism that makes it hold»; the role `product-strategist` at planning names one case on
+  which a mechanism in a sign answers wrong.
+- **The rules review: a reviewer's probe ran in the session's copy.** A probe without `cd` created
+  a stray task folder, ran `git add -A` and tried five commits; commitlint stopped them. **Address:**
+  rules layer — `assets/agents/product-strategist.md` and `assets/agents/goal-critic.md`: every
+  command of a probe copy starts with `cd <copy> &&` or carries `git -C <copy>`.
+- **The rules review: the question judge held a plan approval for a general advance approval.**
+  The engine counts only an answer after the plan's commit naming its task. **Address:** rules
+  layer — the allow list of `assets/hooks/ask-judge.md`; the other way, an engine that accepts an
+  advance approval, is the owner's choice.
+- **The rules review: the prose guard judges the text of shell commands.** **Address:** this tree —
+  a section «Command text» in `.claude/skills/task-delivery-loop/GUARDS.md`: a message, a body or a
+  script with prose is written to a file by the edit tool, the command names the file.
+- **The rules review: a suite over a real history gave every commit one date.** A counter advanced
+  inside `$(…)` stays in a subshell. **Address:** this tree — an article in
+  `.claude/skills/agent-kit-source/pitfalls.md`, or a shared commit helper in
+  `projects/agent-kit/tests/lib.sh`.
 - **A shallow clone hides the history that marks a copy as old.** With `--depth 2` the fallback
   picks the base's copy. **Address:** rules layer — `assets/task-flow/source/git.mjs` names a
   shallow repository and refuses the fallback.
