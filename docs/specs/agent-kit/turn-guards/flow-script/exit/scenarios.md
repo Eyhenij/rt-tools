@@ -464,3 +464,17 @@ Then the fresh head holds nothing, and the running run holds until one backgroun
 And a red run holds the stop until it is read, whichever side of the word it ended on
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1833 — a step that fails twice on a taken-apart folder: the revert move and its number
+
+Given a taken-apart task folder and a done step that does not match on either run before the PR
+When the final rerun runs
+Then it names the step and the move `git revert --no-edit <the commit that took the folder apart>`
+When the turn is held in the running stage
+Then the refusal names that step by its number with the command that measures it and the same move, and no `step N.M`
+When the folder is brought back by that move and the turn is held again
+Then the refusal names the same step by its number
+And the refusal of the PR opening names the command of each unmatched step by its number
+And a step the plan names and the progress lacks is the one the stage waits for
+
+Covered: `projects/agent-kit/tests/task-flow-script-archive.test.sh`.
