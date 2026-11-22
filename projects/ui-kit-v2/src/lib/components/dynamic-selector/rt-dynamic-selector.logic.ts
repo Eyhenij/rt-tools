@@ -169,3 +169,25 @@ export function dynamicLabelCase(label: string, labelCase: IRtDynamicSelector.La
 
     return label;
 }
+
+/** Записи по ключам в порядке ключей; ключ, которого нет среди известных записей, пропускается. */
+export function dynamicEntitiesOf<T>(keys: ReadonlyArray<unknown>, known: ReadonlyArray<T>, keyOf: (item: T) => unknown): T[] {
+    return keys
+        .map((key: unknown): T | undefined => known.find((item: T): boolean => keyOf(item) === key))
+        .filter((item: T | undefined): item is T => item !== undefined);
+}
+
+/** Строки списка выбранного: подпись строкой и признак строки, которую нельзя убрать. */
+export function dynamicListRows<T>(
+    chosen: ReadonlyArray<T>,
+    locked: ReadonlyArray<unknown>,
+    keyOf: (item: T) => unknown,
+    labelOf: (item: T) => unknown
+): IRtDynamicSelector.ListRow<T>[] {
+    return chosen.map((item: T): IRtDynamicSelector.ListRow<T> => ({
+        item,
+        key: keyOf(item),
+        label: dynamicSelectorLabel(item, labelOf) ?? '',
+        locked: locked.includes(keyOf(item)),
+    }));
+}

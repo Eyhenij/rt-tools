@@ -22,9 +22,10 @@
 | `asideOverlayWidth`                                     | `number \| string`    | 540             |
 | `asideTitle`                                            | `string \| null`      | `null`          |
 | `asideContentLayout`                                    | `'default' \| 'tabs'` | `'default'`     |
+| `detailsInHeader`                                       | `boolean`             | `false`         |
 
 Выход: `backClicked`. API панели: `openAside()`, `closeAside()`, `toggleAside()`,
-`toggleAsideCollapsed()`, сигналы `asideOpen()`, `asideCollapsed()`, `asideOverlay()`, `listWidth()`,
+`toggleAsideCollapsed()`, сигналы `asideOpen()`, `asideCollapsed()`, `asideOverlay()`, `asideButtonInHeader()`, `listWidth()`,
 `asideWidth()`.
 
 ## Главное, что нужно знать
@@ -55,8 +56,11 @@
 ## Края
 
 - Ширина всегда зажимается в границы — и при перетаскивании, и с клавиатуры.
-- На узком экране появляется полоса с кнопками «назад» и «подробности» (только при `hasActive`);
-  «назад» закрывает панель подробностей и поднимает событие.
+- До 1080 появляется полоса с кнопками «назад» и «подробности» (только при `hasActive`); «назад»
+  закрывает панель подробностей и поднимает событие. С входом `detailsInHeader` от 768 (или порога
+  из входа) до 1080, пока список стоит рядом, полосы нет, и `asideButtonInHeader()` просит
+  содержимое поставить кнопку сведений в шапку середины. Без входа полоса остаётся: содержимое без
+  своей кнопки иначе потеряло бы доступ к сведениям.
 - `asideCollapsed` — это «свернуть на широком экране», `asideOpen` — «показать на узком».
 
 ## Рядом

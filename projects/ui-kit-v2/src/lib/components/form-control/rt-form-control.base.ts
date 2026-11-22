@@ -90,6 +90,8 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
      * этого признака её обязательное поле не получало бы ни звёздочки, ни ошибки.
      */
     readonly #requiredAssigned: WritableSignal<boolean> = signal<boolean>(false);
+    /** Подпись поля, объявленная rt-field: заголовок шторки, в которой на телефоне открывается выбор. */
+    readonly #fieldLabelAssigned: WritableSignal<string> = signal<string>('');
     /** Состояние, разосланное прежней привязкой: её контрол сигналами не читается. */
     readonly #pushedState: WritableSignal<IControlState> = signal<IControlState>(PRISTINE_STATE);
     /**
@@ -198,6 +200,15 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
     /** Обязателен ли контрол — по валидатору формы или по слову rt-field. Для авто-«*». */
     public readonly required: Signal<boolean> = computed((): boolean => this.#state().required || this.#requiredAssigned());
 
+    /**
+     * Заголовок шторки выбора на телефоне: подпись поля, затем собственная подпись контрола
+     * (`floatingLabel` там, где она есть), а без них — доступное имя. Без всех трёх шторка
+     * остаётся без заголовка.
+     */
+    public readonly sheetTitle: Signal<string> = computed(
+        (): string => this.#fieldLabelAssigned() || this.ownLabel() || this.ariaLabel() || ''
+    );
+
     /** Текст read-only представления. Реализуется конкретным контролом. */
     public abstract readonly displayText: Signal<string>;
 
@@ -261,6 +272,11 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
         this.#requiredAssigned.set(value);
     }
 
+    /** Передать подпись поля — вызывает родительский rt-field. */
+    public setFieldLabel(value: string): void {
+        this.#fieldLabelAssigned.set(value);
+    }
+
     /** Очистка значения по кнопке-крестику + возврат фокуса в поле. */
     protected clear(event?: Event): void {
         event?.stopPropagation();
@@ -282,6 +298,11 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
     /** Прокидывает change наружу — для обработчиков пользовательского ввода. */
     protected emitChange(value: TValue): void {
         this.#onChange(value);
+    }
+
+    /** Собственная подпись контрола на рамке; у контрола без неё — `null`. Читается сигналами. */
+    protected ownLabel(): string | null {
+        return null;
     }
 
     /** Помечает контрол touched — для blur/close-обработчиков. */

@@ -10,6 +10,8 @@ export namespace IRtWorkspace {
         asideOpen: Signal<boolean>;
         /** Панель сведений открывается поверх окна боковой панелью с затемнением */
         asideOverlay: Signal<boolean>;
+        /** Кнопку сведений ставит содержимое в шапку середины: список рядом, своей полосы нет */
+        asideButtonInHeader: Signal<boolean>;
         toggleAsideCollapsed(): void;
         openAside(): void;
         closeAside(): void;

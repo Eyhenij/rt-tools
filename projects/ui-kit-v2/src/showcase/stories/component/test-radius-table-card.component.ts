@@ -16,7 +16,11 @@ import { RtTableComponent } from '../../../lib/components/table/rt-table.compone
 import { BreakpointsService } from '../../../lib/platform';
 
 /** Признак узкого экрана, который таблица читает у службы порогов. Здесь он включён всегда. */
-const NARROW: Pick<BreakpointsService, 'narrow'> = { narrow: signal<boolean>(true).asReadonly() };
+const NARROW: Pick<BreakpointsService, 'narrow' | 'viewportNarrow' | 'phone'> = {
+    narrow: signal<boolean>(true).asReadonly(),
+    viewportNarrow: signal<boolean>(true).asReadonly(),
+    phone: signal<boolean>(true).asReadonly(),
+};
 
 /**
  * Таблица сетки скруглений в узком показе: шаг входа `radius` виден только на карточке.

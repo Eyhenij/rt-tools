@@ -1,3 +1,4 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import { NgTemplateOutlet } from '@angular/common';
 import {
     ChangeDetectionStrategy,
@@ -9,6 +10,8 @@ import {
     computed,
     input,
     output,
+    booleanAttribute,
+    InputSignalWithTransform,
 } from '@angular/core';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
@@ -93,6 +96,11 @@ export class RtActionBarComponent {
             ariaLabel: action.icon || action.glyph ? action.label : null,
         }))
     );
+
+    /** На телефоне панель открывается в нижней шторке кита; `false` оставляет её у кнопки. */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
 
     public readonly config: InputSignal<IRtActionBar.Config> = input.required<IRtActionBar.Config>();
     /** Значок кнопки, закрывающей полосу. */

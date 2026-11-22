@@ -6,6 +6,7 @@ import { TRtAsideContentLayout } from '../../../aside';
 import { RtAsideSectionComponent } from '../../../aside-section';
 import { RtDetailListComponent, RtDetailRowComponent } from '../../../detail-list';
 import { RtFieldComponent } from '../../../field';
+import { RtIconButtonComponent } from '../../../icon-button';
 import { RtInputComponent } from '../../../input';
 import { RtTabDirective, RtTabsComponent } from '../../../tabs';
 import { RtTagComponent } from '../../../tag';
@@ -35,6 +36,7 @@ import { RtWorkspaceAsideDirective, RtWorkspaceCenterDirective, RtWorkspaceListD
         RtDetailListComponent,
         RtDetailRowComponent,
         RtFieldComponent,
+        RtIconButtonComponent,
         RtInputComponent,
         RtTabsComponent,
         RtTagComponent,

@@ -160,7 +160,7 @@ export function rtRangeText(value: IRtDateRange.Value | null, layout: IRtDatePic
     return value === null ? '' : `${rtDateText(value.start, 'date', layout)}${DASH}${rtDateText(value.end, 'date', layout)}`;
 }
 
-/** Подсказка формы текста буквами кита: `дд.мм.гггг — дд.мм.гггг`. */
+/** Подсказка формы текста: `--.--.---- — --.--.----` с маской `RT_DATE_SHAPE_MASK`. */
 export function rtRangeShape(layout: IRtDatePicker.TextLayout, letters: IRtDatePicker.ShapeLetters): string {
     const day: string = rtDateShape('date', layout, letters);
     return `${day}${DASH}${day}`;

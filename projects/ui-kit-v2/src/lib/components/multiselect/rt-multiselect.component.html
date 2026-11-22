@@ -11,6 +11,8 @@
         [rtMod]="{ own: !!triggerTpl() }"
         [rtPopover]="panelTpl"
         [rtPopoverDisabled]="isDisabled()"
+        [rtPopoverSheet]="sheet()"
+        [rtPopoverSheetTitle]="sheetTitle()"
         [attr.id]="effectiveControlId()"
         [attr.aria-label]="ariaLabel()"
         [attr.aria-haspopup]="'listbox'"
@@ -33,7 +35,11 @@
             @if (iconLeft(); as left) {
                 <rt-icon rtElem="icon-left" qa-dataid="multiselect-icon-left" size="sm" color="muted" [name]="left" />
             }
-            @if (value().length === 0) {
+            @if (look() === 'toggles') {
+                <span rtElem="summary" qa-dataid="multiselect-summary" [rtMod]="{ empty: summary().state === 'none' }">
+                    {{ summaryText() }}
+                </span>
+            } @else if (value().length === 0) {
                 <span rtElem="placeholder" qa-dataid="multiselect-placeholder">{{ placeholderText() }}</span>
             } @else {
                 <span rtElem="chips">
@@ -94,27 +100,68 @@
         <div
             rtElem="panel"
             qa-dataid="multiselect-panel"
-            role="listbox"
+            [rtMod]="{ toggles: look() === 'toggles', sheet: openedInSheet() }"
+            [attr.role]="look() === 'toggles' ? null : 'listbox'"
             [style.--rt-multiselect-panel-max-height]="panelMaxHeight()"
-            [attr.aria-label]="ariaLabel()">
+            [attr.aria-label]="look() === 'toggles' ? null : ariaLabel()">
             <!--
                 Опции выбираются мышью через (click); keyboard-nav — на trigger'е
                 (activedescendant), опции не focusable индивидуально.
             -->
             <!-- eslint-disable @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
-            <ul rtElem="list">
+            @if (filter()) {
+                <div rtElem="filter">
+                    <rt-input
+                        qa-dataid="multiselect-filter"
+                        iconLeft="ico-search"
+                        [placeholder]="filterPlaceholderText()"
+                        [ngModel]="filterTerm()"
+                        [ngModelOptions]="{ standalone: true }"
+                        (ngModelChange)="setFilter($event)" />
+                </div>
+            }
+            @if (look() === 'toggles') {
+                <!-- «Показать все» и свои переключатели приложения стоят над чертой, значения — под ней. -->
+                <div rtElem="toggles-head" qa-dataid="multiselect-toggles-head">
+                    <!--
+                        Строка, а не кнопка: переключатель внутри сам рисует кнопку, а кнопка в кнопке
+                        не объявляется скринридером. Клавиши строки — те же, что у переключателя.
+                    -->
+                    <div
+                        rtElem="toggle-row"
+                        qa-dataid="multiselect-show-all"
+                        role="switch"
+                        [id]="showAllId"
+                        [rtMod]="{ active: showAllActive() }"
+                        [attr.tabindex]="isDisabled() ? -1 : 0"
+                        [attr.aria-checked]="summary().state === 'all'"
+                        [attr.aria-disabled]="isDisabled()"
+                        (click)="toggleAll()"
+                        (keydown.enter)="toggleAll()"
+                        (keydown.space)="onShowAllSpace($event)">
+                        <span rtElem="option-label">{{ t().uiShowAll }}</span>
+                        <rt-toggle-switch rtElem="switch" aria-hidden="true" inert [ngModel]="summary().state === 'all'" />
+                    </div>
+                    <ng-content select="[rtMultiselectExtra]" />
+                </div>
+                <div rtElem="divider" role="separator"></div>
+            }
+            <ul
+                rtElem="list"
+                [attr.role]="look() === 'toggles' ? 'listbox' : null"
+                [attr.aria-label]="look() === 'toggles' ? ariaLabel() : null">
                 @for (row of rows(); track row.option.value; let i = $index) {
                     <li
                         rtElem="option"
                         qa-dataid="multiselect-option"
                         role="option"
-                        [id]="panelId + '-opt-' + i"
+                        [id]="panelId + '-opt-' + (i + rowOffset())"
                         [attr.data-value]="row.option.value"
                         [attr.aria-level]="isTree() ? row.level + 1 : null"
                         [style.--rt-multiselect-tree-level]="row.level"
                         [rtMod]="{
                             selected: rowChecks()[i] === 'all',
-                            active: i === activeIndex(),
+                            active: i + rowOffset() === activeIndex(),
                             disabled: !!row.option.disabled,
                         }"
                         [attr.aria-selected]="rowChecks()[i] === 'all'"
@@ -136,14 +183,25 @@
                                 <span rtElem="toggle-space"></span>
                             }
                         }
-                        <input
-                            rtElem="checkbox"
-                            qa-dataid="multiselect-option-checkbox"
-                            type="checkbox"
-                            tabindex="-1"
-                            [checked]="rowChecks()[i] === 'all'"
-                            [indeterminate]="rowChecks()[i] === 'some'" />
+                        @if (look() === 'list') {
+                            <input
+                                rtElem="checkbox"
+                                qa-dataid="multiselect-option-checkbox"
+                                type="checkbox"
+                                tabindex="-1"
+                                [checked]="rowChecks()[i] === 'all'"
+                                [indeterminate]="rowChecks()[i] === 'some'" />
+                        }
                         <span rtElem="option-label" qa-dataid="multiselect-option-label">{{ row.option.label }}</span>
+                        @if (look() === 'toggles') {
+                            <!-- Переключатель только показывает выбор: нажатие принимает строка, как у флажка. -->
+                            <rt-toggle-switch
+                                rtElem="switch"
+                                qa-dataid="multiselect-option-switch"
+                                aria-hidden="true"
+                                inert
+                                [ngModel]="rowChecks()[i] === 'all'" />
+                        }
                     </li>
                 } @empty {
                     @if (emptyTpl(); as own) {
@@ -155,6 +213,32 @@
                     }
                 }
             </ul>
+            @if (openedInSheet() && look() === 'list') {
+                <!-- Подвал шторки: выбор пишется по каждому нажатию, «Готово» только закрывает шторку. -->
+                <div rtElem="sheet-footer" qa-dataid="multiselect-sheet-footer">
+                    <span rtElem="sheet-count" qa-dataid="multiselect-sheet-count">{{ selectedLabel() }}</span>
+                    <button
+                        rtButton
+                        rtElem="sheet-reset"
+                        qa-dataid="multiselect-sheet-reset"
+                        type="button"
+                        size="sm"
+                        appearance="text"
+                        [label]="t().uiReset"
+                        [attr.aria-label]="t().uiReset"
+                        [disabled]="!canReset()"
+                        (click)="resetChoice()"></button>
+                    <button
+                        rtButton
+                        rtElem="sheet-done"
+                        qa-dataid="multiselect-sheet-done"
+                        type="button"
+                        size="sm"
+                        [label]="t().uiDone"
+                        [attr.aria-label]="t().uiDone"
+                        (click)="closeSheet()"></button>
+                </div>
+            }
         </div>
     </ng-template>
 </ng-container>

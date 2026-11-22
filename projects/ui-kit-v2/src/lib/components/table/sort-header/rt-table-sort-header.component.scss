@@ -20,8 +20,8 @@
             }
 
             &:focus-visible {
-                outline: 2px solid var(--rt-color-action-primary);
-                outline-offset: 2px;
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: var(--rt-focus-ring-offset);
             }
         }
 

@@ -1,6 +1,6 @@
 import { ERtCalendarDayState, IRtCalendar } from '../calendar/rt-calendar.model';
 import { IRtDatePicker } from '../date-picker/rt-date-picker.model';
-import { rtDateLayout } from '../date-picker/rt-date-text.logic';
+import { RT_DATE_SHAPE_MASK, rtDateLayout } from '../date-picker/rt-date-text.logic';
 import {
     rtRangeDates,
     rtRangeDays,
@@ -18,7 +18,6 @@ import {
 import { ERtDateRangePreset, IRtDateRange } from './rt-date-range.model';
 
 const RU: IRtDatePicker.TextLayout = rtDateLayout('ru');
-const RU_LETTERS: IRtDatePicker.ShapeLetters = { day: 'дд', month: 'мм', year: 'гггг', hour: 'чч', minute: 'мм' };
 const CTX: IRtDateRange.MonthContext = { locale: 'ru', today: '2026-10-01', start: null, end: null, hover: null, min: null, max: null };
 
 function stateOf(month: IRtCalendar.Month, key: string): ERtCalendarDayState | undefined {
@@ -40,10 +39,10 @@ describe('rt-date-range.logic', (): void => {
         expect(rtRangeRead('2026-10-12')).toBeNull();
     });
 
-    it('SC-UKV-469 — диапазон пишется двумя датами в порядке языка, подсказка — буквами кита', (): void => {
+    it('SC-UKV-469 — диапазон пишется двумя датами в порядке языка, подсказка — маской из чёрточек', (): void => {
         expect(rtRangeText({ start: '2026-10-12', end: '2026-10-15' }, RU)).toBe('12.10.2026 — 15.10.2026');
         expect(rtRangeText(null, RU)).toBe('');
-        expect(rtRangeShape(RU, RU_LETTERS)).toBe('дд.мм.гггг — дд.мм.гггг');
+        expect(rtRangeShape(RU, RT_DATE_SHAPE_MASK)).toBe('--.--.---- — --.--.----');
     });
 
     it('SC-UKV-469 — набранный текст читается двумя датами через тире, иначе не читается', (): void => {

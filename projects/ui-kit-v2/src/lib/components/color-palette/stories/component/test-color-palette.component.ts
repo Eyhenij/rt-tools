@@ -51,6 +51,9 @@ export class TestRtColorPaletteComponent {
     public readonly channels: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,
     });
+    public readonly sheet: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
 
     constructor() {
         effect((): void => {

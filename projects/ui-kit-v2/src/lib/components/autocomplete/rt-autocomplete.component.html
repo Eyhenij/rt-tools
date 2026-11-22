@@ -2,7 +2,15 @@
     @if (isReadonly()) {
         <span rtElem="readonly" qa-dataid="autocomplete-readonly" [rtMod]="{ empty: !displayText() }">{{ displayText() || '—' }}</span>
     }
-    <div rtElem="field" rtPopoverTrigger="manual" rtPopoverWidth="trigger" [rtPopover]="panelTpl" (rtPopoverClosed)="onClosed()">
+    <div
+        rtElem="field"
+        rtPopoverTrigger="manual"
+        rtPopoverWidth="trigger"
+        [rtPopover]="panelTpl"
+        [rtPopoverSheet]="sheet()"
+        [rtPopoverSheetTitle]="sheetTitle()"
+        (rtPopoverSheetOpened)="onSheetOpened()"
+        (rtPopoverClosed)="onClosed()">
         @if (iconLeft(); as left) {
             <rt-icon rtElem="icon-left" size="sm" color="muted" [name]="left" />
         }
@@ -42,6 +50,21 @@
     </div>
 
     <ng-template #panelTpl>
+        @if (openedInSheet()) {
+            <!-- Поиск наверху шторки: на телефоне набирают здесь, поле под шторкой закрыто ею. -->
+            <div rtElem="sheet-search" qa-dataid="autocomplete-sheet-search">
+                <rt-input
+                    iconLeft="ico-search"
+                    [clearable]="true"
+                    [placeholder]="placeholder()"
+                    [ariaLabel]="ariaLabel() || sheetTitle()"
+                    [combobox]="{ controls: panelId, expanded: isOpen(), activeDescendant: activeOptionId() }"
+                    [ngModel]="inputText()"
+                    [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="onSheetQuery($event)"
+                    (keydown)="onInputKeydown($event)" />
+            </div>
+        }
         <!--
             Опции выбираются мышью через (click); keyboard-nav — на input'е
             (activedescendant), опции не focusable индивидуально.

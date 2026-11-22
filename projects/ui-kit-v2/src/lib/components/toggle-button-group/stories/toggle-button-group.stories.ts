@@ -21,6 +21,7 @@ export default {
             control: { type: 'inline-radio' },
         },
         checkmark: { control: { type: 'boolean' } },
+        fold: { control: { type: 'boolean' } },
     },
 } as Meta<TestRtToggleButtonGroupComponent>;
 
@@ -38,5 +39,6 @@ export const Playground: TStory = {
         fullWidth: false,
         appearance: 'segmented',
         checkmark: false,
+        fold: true,
     },
 };

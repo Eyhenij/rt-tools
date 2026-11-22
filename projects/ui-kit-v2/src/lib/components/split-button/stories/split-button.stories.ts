@@ -14,6 +14,7 @@ export default {
         menuAriaLabel: { control: { type: 'text' } },
         loading: { control: { type: 'boolean' } },
         disabled: { control: { type: 'boolean' } },
+        sheet: { control: { type: 'boolean' } },
     },
 } as Meta<TestRtSplitButtonComponent>;
 
@@ -28,5 +29,6 @@ export const Playground: TStory = {
         menuAriaLabel: '',
         loading: false,
         disabled: false,
+        sheet: true,
     },
 };
