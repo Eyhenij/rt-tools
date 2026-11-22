@@ -128,6 +128,41 @@ describe('RtIconRegistry', (): void => {
         expect(symbolsInSprite()).toEqual([`${RT_ICON_SYMBOL_ID_PREFIX}check`, `${RT_ICON_SYMBOL_ID_PREFIX}wallet`]);
     });
 
+    it('SC-UKV-1709 — символ спрайта несёт рисунок файла, а скрипт, вложенный HTML и обработчики в него не попадают', (): void => {
+        const harness: IHarness = setup();
+        const hostile: string = [
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" onload="window.hit=1">',
+            '<script>window.hit=2</script>',
+            '<foreignObject><div xmlns="http://www.w3.org/1999/xhtml">чужое</div></foreignObject>',
+            '<a href="javascript:window.hit=3"><path d="M0 0h20v20H0z" onclick="window.hit=4" fill="red"/></a>',
+            '</svg>',
+        ].join('');
+
+        serve(harness, 'check', hostile);
+
+        const symbol: Element | null = document.getElementById(`${RT_ICON_SYMBOL_ID_PREFIX}check`);
+        expect(symbol?.getAttribute('viewBox')).toBe('0 0 20 20');
+        expect(symbol?.querySelector('path')?.getAttribute('d')).toBe('M0 0h20v20H0z');
+        expect(symbol?.querySelector('path')?.getAttribute('fill')).toBe('red');
+        expect(symbol?.querySelectorAll('script, foreignObject')).toHaveLength(0);
+        expect(symbol?.querySelector('[onclick], [onload]')).toBeNull();
+        expect(symbol?.querySelector('a')?.hasAttribute('href')).toBe(false);
+    });
+
+    it('SC-UKV-1709 — файл с прологом XML и объявлением типа разбирается так же', (): void => {
+        const harness: IHarness = setup();
+
+        serve(
+            harness,
+            'check',
+            `<?xml version="1.0"?><!DOCTYPE svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M1 1"/></svg>`
+        );
+
+        const symbol: Element | null = document.getElementById(`${RT_ICON_SYMBOL_ID_PREFIX}check`);
+        expect(symbol?.getAttribute('viewBox')).toBe('0 0 16 16');
+        expect(symbol?.querySelectorAll('path')).toHaveLength(1);
+    });
+
     it('SC-UKV-63 — символ, уже лежащий в спрайте страницы, запроса не даёт', (): void => {
         const sprite: SVGSVGElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         sprite.id = RT_ICON_SPRITE_ID;

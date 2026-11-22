@@ -13,6 +13,7 @@ import {
     RT_ICON_SPRITE_ID,
     RT_ICON_SYMBOL_ID_PREFIX,
 } from './rt-icon.const';
+import { rtIconCleanDrawing, SVG_NS } from './rt-icon-drawing.logic';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 
 /**
@@ -137,27 +138,36 @@ export class RtIconRegistry {
         return `${prefix[drawing]}${name}`;
     }
 
+    /**
+     * Тело корневого `<svg>` файла становится телом `<symbol>` спрайта. Файл разбирается как SVG,
+     * а не вклеивается строкой: адрес набора задаёт токен, и потребитель может направить его на
+     * свои файлы. Скрипты, вложенный HTML и обработчики событий в спрайт не попадают.
+     */
     #mountSymbol(asked: IRtIconRequest, raw: string): void {
-        const symbol: SVGSymbolElement = this.#doc.createElementNS('http://www.w3.org/2000/svg', 'symbol');
+        const symbol: SVGSymbolElement = this.#doc.createElementNS(SVG_NS, 'symbol');
         symbol.id = this.#symbolId(asked.name, asked.drawing);
-        symbol.setAttribute('viewBox', this.#viewBox(raw));
-        symbol.innerHTML = this.#inner(raw);
+        const root: Element | null = this.#parsedRoot(raw);
+        symbol.setAttribute('viewBox', root?.getAttribute('viewBox') ?? '0 0 24 24');
+        if (root) {
+            rtIconCleanDrawing(root);
+            symbol.append(...Array.from(root.childNodes, (node: Node): Node => this.#doc.importNode(node, true)));
+        }
         this.#sprite().appendChild(symbol);
     }
 
-    #viewBox(raw: string): string {
-        const viewBoxMatch: RegExpExecArray | null = /viewBox="([^"]+)"/.exec(raw);
-        return viewBoxMatch ? viewBoxMatch[1] : '0 0 24 24';
-    }
-
-    #inner(raw: string): string {
-        // Тело корневого `<svg>` без него самого: оно и становится телом `<symbol>`.
-        return raw
-            .replace(/<\?xml[\s\S]*?\?>/g, '')
-            .replace(/<!DOCTYPE[\s\S]*?>/g, '')
-            .replace(/<svg\b[^>]*>/i, '')
-            .replace(/<\/svg>\s*$/i, '')
-            .trim();
+    /**
+     * Корень `<svg>` файла, или `null`, когда в файле его нет. Разбор идёт разборщиком HTML, как шла
+     * прежняя запись разметки: он кладёт `<svg>` и его детей в пространство SVG и тогда, когда файл
+     * не объявил `xmlns`, а разборщик XML оставил бы такие узлы без пространства, и они не рисуются.
+     * Документ разбора не исполняет скриптов.
+     */
+    #parsedRoot(raw: string): Element | null {
+        const Parser: typeof DOMParser | undefined = this.#doc.defaultView?.DOMParser;
+        if (!Parser) {
+            return null;
+        }
+        const root: Element | null = new Parser().parseFromString(raw, 'text/html').body.querySelector('svg');
+        return root?.namespaceURI === SVG_NS ? root : null;
     }
 
     #sprite(): SVGSVGElement {
@@ -165,7 +175,7 @@ export class RtIconRegistry {
         if (existing) {
             return existing;
         }
-        const sprite: SVGSVGElement = this.#doc.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        const sprite: SVGSVGElement = this.#doc.createElementNS(SVG_NS, 'svg');
         sprite.id = RT_ICON_SPRITE_ID;
         sprite.setAttribute('aria-hidden', 'true');
         sprite.setAttribute('style', 'position:absolute;width:0;height:0;overflow:hidden;');
