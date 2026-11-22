@@ -472,5 +472,8 @@ When the final rerun runs
 Then it names the step and the move `git revert --no-edit <the commit that took the folder apart>`
 When the turn is held in the running stage
 Then the refusal names that step by its number with the command that measures it and the same move, and no `step N.M`
+When the folder is brought back by that move and the turn is held again
+Then the refusal names the same step by its number
+And the refusal of the PR opening names the command of each unmatched step by its number
 
 Covered: `projects/agent-kit/tests/task-flow-script-archive.test.sh`.

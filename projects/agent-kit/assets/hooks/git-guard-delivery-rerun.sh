@@ -26,7 +26,13 @@ rt_delivery_rerun() {
     out="$(cd "$dir" && PATH="$run_path" node "$engine" step --done --pr 2>&1)"
     code=$?
     [ "$code" -eq 0 ] && return 0
+    # The move names the steps by their numbers: a line of a step begins with it and does not end matched.
+    local steps move
+    steps="$(printf '%s\n' "$out" | awk '/^[0-9]+\.[0-9]+ / && !/· совпало$/ { printf "%s`node tools/task-flow-script.mjs step %s`", (n++ ? ", " : ""), $1 }')"
+    move="Fix what each step measures and run ${steps:-the step command of each} again: it marks the step done when the check matches."
+    printf '%s' "$out" | grep -q 'git revert --no-edit' &&
+        move="$move The task folder is taken apart: the command puts it back for the run, and a fix that lies in the folder takes the move the engine named above."
     unmet steps_remeasured no "the done steps of the plan were measured once more before the PR, and not every one matched:
 $(printf '%s\n' "$out" | sed 's/^/    /')
-Fix what the step measures and run \`node tools/task-flow-script.mjs step N.M\` again: it marks the step done when the check matches."
+$move"
 }

@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · task-flow/source/git.mjs · bc79f436bbdd · правится надстройкой, не здесь
+// rt-kit v0.38.0 · task-flow/source/git.mjs · d168d4593afc · правится надстройкой, не здесь
 /**
  * The source «source.git» of the task flow description: the history of the branch, read by `git`.
  *
@@ -18,8 +18,14 @@
  *   branches(prefix)    [{ name, sha }] — the local branches whose name begins so
  *   head()              the sha of the head commit
  *   filesAt(dir, sha)   [path] — the files under the directory at that commit
+ *
+ * Outside `open()`, the engine puts a taken-apart task folder back from this history for one run of
+ * a check: `putBack`, `rewritePutBack`, `release`, and `cleanBroken` at a start of the engine.
  */
 import { spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 
 const BASE = 'origin/main';
 
@@ -89,4 +95,110 @@ export function open() {
         filesAt: (dir, sha) =>
             (run(['ls-tree', '-r', '--name-only', sha, '--', dir.replace(/\/$/, '')]) ?? '').split('\n').filter(Boolean),
     };
+}
+
+// --- A taken-apart folder put back for one run ------------------------------------------------------
+//
+// The record lies in the git directory of this copy, never shared with another worktree:
+// { pid, root, folder, files: { path: [digest, …] } }. It is written before any file, and a digest
+// before its text, so a run broken at any point leaves a record that names every text it wrote.
+
+export const digest = (text) => createHash('sha256').update(text).digest('hex');
+
+/** The path of the record, or null outside a repository. */
+export const recordPath = () => {
+    const dir = run(['rev-parse', '--absolute-git-dir']);
+    return dir === null ? null : join(dir.trim(), 'rt-kit-restored.json');
+};
+
+const readEntry = () => {
+    const file = recordPath();
+    try {
+        return file && existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : null;
+    } catch {
+        return {};
+    }
+};
+const writeEntry = (entry) => writeFileSync(recordPath(), `${JSON.stringify(entry)}\n`);
+
+/** The process lives: a signal 0 reaches it, or it belongs to another user. */
+export const alive = (pid) => {
+    try {
+        process.kill(pid, 0);
+        return true;
+    } catch (error) {
+        return error.code === 'EPERM';
+    }
+};
+
+/** The pid of another live run that holds `folder` put back, or null. */
+export function liveRun(folder) {
+    const entry = readEntry();
+    return entry?.folder === folder && Number.isInteger(entry.pid) && entry.pid !== process.pid && alive(entry.pid) ? entry.pid : null;
+}
+
+/**
+ * Puts a taken-apart task folder back: the files at the parent of the commit that removed it.
+ * `{ folder, removedBy, files }`; `{ busy: pid }` when another live run holds it; null when the
+ * folder stands on disk or at the head, or no commit of the head removed it.
+ */
+export function putBack(source, folder) {
+    if (existsSync(folder)) {
+        const pid = liveRun(folder);
+        return pid ? { busy: pid } : null;
+    }
+    const removedBy = source.existsAtHead(folder) ? null : source.removedAt(folder);
+    if (!removedBy) return null;
+    const at = `${removedBy}^`;
+    const texts = source.filesAt(folder, at).map((path) => [path, source.versionAt(path, at)]).filter(([, text]) => text !== null);
+    const root = (run(['rev-parse', '--show-toplevel']) ?? '').trim();
+    writeEntry({ pid: process.pid, root, folder, files: Object.fromEntries(texts.map(([path, text]) => [path, [digest(text)]])) });
+    for (const [path, text] of texts) {
+        mkdirSync(dirname(path), { recursive: true });
+        writeFileSync(path, text);
+    }
+    return { folder, removedBy, files: texts.map(([path]) => path) };
+}
+
+/** Writes a new text into a file put back; its digest reaches the record first. */
+export function rewritePutBack(path, text) {
+    const entry = readEntry();
+    if (entry?.files) {
+        entry.files[path] = [...(entry.files[path] ?? []), digest(text)];
+        writeEntry(entry);
+    }
+    writeFileSync(path, text);
+}
+
+/** Removes the folder of this run with all it holds, and the record when it is this run's. */
+export function release(restored) {
+    if (!restored?.folder) return;
+    rmSync(restored.folder, { recursive: true, force: true });
+    if (readEntry()?.pid === process.pid) rmSync(recordPath(), { force: true });
+}
+
+/**
+ * Cleans what a broken run left, at a start of the engine: `{ verdict, folder }` — `cleaned`, `kept`
+ * or `live` — or null with no record. The folder goes only when the process is gone, the head holds
+ * no such folder and every recorded file is absent or has a text the run wrote; a live run keeps the
+ * folder and the record, and any other record is dropped with the files left as they are.
+ */
+export function cleanBroken() {
+    const entry = readEntry();
+    if (entry === null) return null;
+    if (Number.isInteger(entry.pid) && alive(entry.pid) && entry.pid !== process.pid) return { verdict: 'live', folder: entry.folder };
+    let verdict = 'kept';
+    if (entry.root && entry.folder) {
+        const atHead = spawnSync('git', ['cat-file', '-e', `HEAD:${entry.folder}`], { cwd: entry.root }).status === 0;
+        const own = Object.entries(entry.files ?? {}).every(([path, digests]) => {
+            const file = join(entry.root, path);
+            return !existsSync(file) || [digests].flat().includes(digest(readFileSync(file, 'utf8')));
+        });
+        if (!atHead && own) {
+            rmSync(join(entry.root, entry.folder), { recursive: true, force: true });
+            verdict = 'cleaned';
+        }
+    }
+    rmSync(recordPath(), { force: true });
+    return { verdict, folder: entry.folder };
 }

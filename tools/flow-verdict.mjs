@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · checks/flow-verdict.mjs · b5c2b2f24b17 · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/flow-verdict.mjs · 25852d9e8bd0 · правится надстройкой, не здесь
 /**
  * The verdict at the end of a turn — the engine command `verdict`, called by the hook on Stop.
  *
@@ -16,7 +16,7 @@
  * case the hosting could not answer is not met.
  */
 import { evaluateCondition } from './flow-condition.mjs';
-import { stepsOfProgress } from './work-steps-lib.mjs';
+import { stepsOfPlan, stepsOfProgress } from './work-steps-lib.mjs';
 
 /** The measurer whose answer depends on where the measurement stopped. */
 const SILENCE = 'measure.host.silent';
@@ -128,25 +128,28 @@ export function currentStep(progress) {
 }
 
 /**
- * The step the stages wait for in a progress read from the history after the folder was taken apart:
- * the current one, else the first not done, else the first done step with no matched mark.
- * `{ number, name, left, done }`, or null; `matched(number)` answers the mark of a step.
+ * The step the stages wait for: the current one of the progress, else the first step of the plan that
+ * the progress does not mark done or that has no matched mark. `{ number, name, left, done }`, or null;
+ * `matched(number)` answers the mark of a step.
  */
-export function pendingStep(progress, matched) {
-    const steps = stepsOfProgress(progress ?? '').steps;
-    const open = steps.filter((s) => s.mark !== 'x' || !matched(s.number));
-    const step = steps.find((s) => s.mark === '>') ?? open[0];
+export function pendingStep(progress, matched, plan = '') {
+    const marked = stepsOfProgress(progress ?? '').steps;
+    const planned = plan ? stepsOfPlan(plan).map((s) => ({ ...s, mark: marked.find((m) => m.number === s.number)?.mark ?? ' ' })) : marked;
+    const open = planned.filter((s) => s.mark !== 'x' || !matched(s.number));
+    const step = marked.find((s) => s.mark === '>') ?? open[0];
     return step ? { number: step.number, name: step.name, left: open.length, done: step.mark === 'x' } : null;
 }
 
 /**
- * The step of a taken-apart task folder: read from the last progress of the history and the marks of
- * the branch, with the commit that took the folder apart. Null when the history holds no progress.
+ * The step of a running stage with no current step: from `text`, the progress on disk, or with no
+ * folder from the last progress of the history, with the commit that took the folder apart. Null when
+ * no progress is found.
  */
-export function archivedStep(git, marks, folder, branch) {
-    const text = git.lastVersion(`${folder}/progress.md`);
-    const pending = text === null ? null : pendingStep(text, (number) => marks.step(branch, number)?.matched === true);
-    return pending ? { ...pending, removedBy: git.removedAt(folder) } : null;
+export function stageStep(git, marks, folder, branch, text = null) {
+    const progress = text ?? git.lastVersion(`${folder}/progress.md`);
+    const plan = git.lastVersion(`${folder}/plan.md`) ?? '';
+    const pending = progress === null ? null : pendingStep(progress, (number) => marks.step(branch, number)?.matched === true, plan);
+    return pending ? { ...pending, removedBy: text === null ? git.removedAt(folder) : null } : null;
 }
 
 /** The lines of the step the stages wait for; `removedBy` names the commit that took the folder apart. */
@@ -164,7 +167,7 @@ function stepLines(step) {
         lines.push(`The next move is step ${step.number} «${step.name}»: the history does not mark it done, so bring the folder back — ${back} — then do the step and measure it — ${measure}.`);
     } else {
         lines.push(`The next move is step ${step.number} «${step.name}»: measure it — ${measure}; the command puts the folder back for the run.`);
-        lines.push(`A step that does not match again needs the folder back — ${back} — then fix the check or the step, measure it and take the folder apart again.`);
+        lines.push(`A step that does not match again is fixed where its check reads; a fix that lies in the folder — a check replaced in the progress — needs the folder back — ${back} — then take it apart again.`);
     }
     return lines;
 }

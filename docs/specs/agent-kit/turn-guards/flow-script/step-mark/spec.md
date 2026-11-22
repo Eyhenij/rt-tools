@@ -59,9 +59,13 @@ prints a line per fixture.
   step is measured with the progress as it stood when it was measured, and a match writes its mark.
 - **A step the last progress of the history does not mark done is refused on a taken-apart folder, with the move `git revert` of the commit that took it apart.**
   The step guard lets that command through: it names no guarded file.
-- **A folder put back for a run is cleaned at a start of the engine only when its process is gone, the head holds no such folder and its files keep the text put back.**
+- **A folder put back for a run is cleaned at a start of the engine only when its process is gone, the head lacks it and each recorded file is absent or holds a text the run wrote.**
   The record of the run lies in the git directory of its own copy with the process, the root and the
-  digest of each file. A live run keeps its folder; an edited file stays where it is.
+  digests of each file, written before the text. A live run keeps its folder; a folder with an edited
+  file stays, and the engine names it on stderr.
+- **A step run while another live run holds the folder put back is refused, and its mark stays.**
+  The folder on disk then carries the progress of the other run.
+- **`step --done` on a taken-apart folder measures the done steps the way the final rerun does.**
 
 ### The final rerun
 
@@ -81,13 +85,17 @@ prints a line per fixture.
   could make itself green.
 - **A check that fails on the network does not match, and the refusal names the network as the cause.**
 - **A step past its limit of 540 seconds, or whose command does not run, does not match on the final rerun.**
-- **A step that does not match on the final rerun runs once more in its group while the budget of 1500 seconds lasts, and loses its mark only on the second mismatch.**
+- **A step that does not match on the final rerun runs once more in its group while its longest first run still fits the budget of 1500 seconds, and loses its mark only on the second mismatch.**
   An answer of a model or a live count can differ once in six runs; one mismatch is no verdict. A
-  step past its limit does not run again, and a step whose group did not start within the budget
-  loses its mark after the one run.
-- **The line of an unmatched step names its command and the last three lines of its output and of its errors.**
+  step past its limit does not run again, a step whose group does not fit the budget loses its mark
+  after the one run, and a step refused on its second run keeps the first mismatch.
+- **The line of an unmatched step names its command and the last three lines of its output, of its errors and of what a pipe fed its last command.**
+  A check that counts the lines of a suite prints one number; the lines naming a failure before the
+  last pipe show where the step went wrong.
 - **A step that does not match on a taken-apart folder gets the move `git revert` of the commit that took it apart.**
-  Bring the folder back, fix the check or the step, measure it and take the folder apart again.
+  A fix outside the folder needs no revert; a fix in the folder, a check replaced in the progress,
+  brings the folder back, and the folder is taken apart again.
+- **The refusal of the PR names the command of each unmatched step by its number.**
 
 ### The approval
 

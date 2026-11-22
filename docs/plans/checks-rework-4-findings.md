@@ -160,9 +160,21 @@ The task ran outside the epic; the owner added its findings to the epic on 21.11
   from the root passed, and `measure` from the root named `этап-идёт`. **Address:** rules layer —
   the guard of `assets/checks/flow-guard-run.mjs` measures from the root of the copy, not from the
   `cwd` of the hook input.
-- **`step --done` without `--pr` still refuses on a taken-apart folder.** Only `step N.M` and the
-  rerun before a PR put the folder back. **Address:** rules layer — `runStepCommand` in
-  `assets/checks/flow-step.mjs`.
+- **`step N.M` run from a subdirectory measures there and drops the mark of a matched step.** The
+  paths of the history and the check resolve against the directory of the call, as in the guard
+  above; the change of the task kept that old behaviour. **Address:** rules layer — the engine runs
+  `step` from the root of the copy.
+- **A dead end of the turn end carries no state, so the share of this task in the dead ends of
+  `turn-exit-guard` cannot be told.** The observation of the refusal holds the task, the kind, the
+  check and the session. **Address:** rules layer — a field `state` in that observation and the line
+  of dead ends split by it in `assets/checks/work-result.mjs`.
+- **While a step run holds a folder put back, the folder lies untracked in the working copy.** A
+  `git add -A` and a commit in that window bring it back into the head with an older progress. The
+  window is one check; the rerun before a PR runs inside the opening of the PR, when no commit is
+  made. **Address:** rules layer — the step guard refuses a commit that adds a folder put back.
+- **A live record is trusted by its process number alone.** A number reused by another process keeps
+  a dead run's folder until that process ends. **Address:** rules layer — the record carries the
+  start time of the process in `assets/task-flow/source/git.mjs`.
 
 ## Left unresolved
 
