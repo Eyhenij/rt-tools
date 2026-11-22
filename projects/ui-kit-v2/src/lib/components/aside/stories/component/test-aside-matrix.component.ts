@@ -177,6 +177,10 @@ interface IAsidePropertiesCase {
                                             @case ('default') {
                                                 <rt-aside size="sm" ariaLabel="События" [empty]="true">
                                                     <rt-aside-header title="События" />
+                                                    <!-- Пустая панель тела не строит: шаблон ниже не создаётся -->
+                                                    <ng-template rtAsideContent>
+                                                        <rt-aside-section heading="События">Список событий</rt-aside-section>
+                                                    </ng-template>
                                                     <rt-aside-footer>
                                                         <button
                                                             rtButton
@@ -199,11 +203,19 @@ interface IAsidePropertiesCase {
                                                     emptyDescription="Они появятся после первой брони"
                                                     [empty]="true">
                                                     <rt-aside-header title="События" />
+                                                    <!-- Пустая панель тела не строит: шаблон ниже не создаётся -->
+                                                    <ng-template rtAsideContent>
+                                                        <rt-aside-section heading="События">Список событий</rt-aside-section>
+                                                    </ng-template>
                                                 </rt-aside>
                                             }
                                             @case ('template') {
                                                 <rt-aside size="sm" ariaLabel="События" [empty]="true">
                                                     <rt-aside-header title="События" />
+                                                    <!-- Пустая панель тела не строит: шаблон ниже не создаётся -->
+                                                    <ng-template rtAsideContent>
+                                                        <rt-aside-section heading="События">Список событий</rt-aside-section>
+                                                    </ng-template>
                                                     <ng-template rtAsideEmpty>
                                                         <rt-aside-section heading="Своя заглушка">
                                                             Приложение подставило свою разметку целиком.

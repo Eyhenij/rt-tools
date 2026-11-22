@@ -48,7 +48,14 @@ import {
     TStyleAction,
     updateLink,
 } from '@rt-tools/cms-angular';
-import { RtDialogService, RtIconButtonComponent, RtMenuComponent, RtMenuItemComponent } from '@rt-tools/ui-kit-v2';
+import {
+    RtDialogService,
+    RtIconButtonComponent,
+    RtIconButtonContentDirective,
+    RtMenuComponent,
+    RtMenuContentDirective,
+    RtMenuItemComponent,
+} from '@rt-tools/ui-kit-v2';
 
 import { CmsEditableDirective } from '../cms-editable.directive';
 import { CmsEditorButtonComponent } from '../cms-editor-button/cms-editor-button.component';
@@ -125,7 +132,9 @@ function closestOf(node: Node, selector: string): HTMLElement | null {
         BlockDirective,
         ElemDirective,
         RtIconButtonComponent,
+        RtIconButtonContentDirective,
         RtMenuComponent,
+        RtMenuContentDirective,
         RtMenuItemComponent,
 
         // components

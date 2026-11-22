@@ -5,6 +5,7 @@ import { AdminMonthRecordViewComponent } from '@rt/message-bus-admin/summaries/u
 import { IMonthRecord } from '@rt/message-bus-admin/summaries/util';
 import {
     RtAsideComponent,
+    RtAsideContentDirective,
     RtAsideFooterComponent,
     RtAsideHeaderComponent,
     RtButtonDirective,
@@ -36,6 +37,7 @@ const BEM_BLOCK: string = 'admin-month-record-details-aside';
         // components
         AdminMonthRecordViewComponent,
         RtAsideComponent,
+        RtAsideContentDirective,
         RtAsideFooterComponent,
         RtAsideHeaderComponent,
         RtButtonDirective,

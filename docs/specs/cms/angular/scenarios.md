@@ -263,3 +263,9 @@ When the block opens in the editor
 Then the script, the handler and the script address are gone, while the emphasis style, the line
 break and the address, target and kind of a link stay, an internal link keeping the page it leads
 to; text without letters still clears the block
+
+### SC-CMS-81 — the filters and the action of a list stand on their sides of the bar
+
+Given a list screen with two filter templates on the left and an action template on the right
+When the list page is drawn
+Then both filters stand before the search in the order written and the action before the reload

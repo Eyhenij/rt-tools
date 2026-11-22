@@ -14,6 +14,7 @@ or the code holds what the spec is silent about.
 - **The host is answered by the common base of the mechanics, and a section only points at itself by one line.** — `libs/message-bus-admin/common/core/util/src/lib/list-host.ts:provideAdminListHost`
 - **The panel of the setting of the columns opens by an address of its own at every section.** — `libs/message-bus-admin/common/core/util/src/lib/list-host.ts:COLUMNS_ROUTE`
 - **The page shows the state of the reading that the host named.** — `libs/message-bus-admin/common/core/ui/src/lib/list-page/admin-list-page.component.ts:host`
+- **The table of a list page is given as a template, `adminListPageContent`.** — `libs/message-bus-admin/common/core/ui/src/lib/list-page/admin-list-page.component.ts:AdminListPageContentDirective`; scenario `SC-MB-456`
 - **The heading accepts a hint, and a section without a hint shows the name alone.** — `libs/message-bus-admin/common/core/ui/src/lib/list-page/admin-list-page.component.ts:hint`
 - **The page grows under the content, and it scrolls whole.** — `libs/message-bus-admin/common/container/feature/src/lib/admin-container.component.html:rt-container` — the mode of growing with the window is removed, and the zone of the content is not cut off any more
 - **All the records of the page are reachable by scrolling.** — `libs/message-bus-admin/common/container/feature/src/lib/admin-container.component.html:rtContainerContent`
