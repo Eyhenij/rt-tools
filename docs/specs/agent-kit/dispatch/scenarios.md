@@ -260,7 +260,9 @@ Covered: `projects/agent-kit/src/lib/commands.spec.ts`.
 
 Given the declarations of the two real files of the package
 When the records are built from them
-Then each equals the record of this tree in the words, the model, the limit and the pattern
+Then each equals the record of this tree in the words, the model, the limit and the pattern, and
+the words of each name its own file, the search up to the directory with `.claude/` and «no file or
+no read» as a pass
 
 Covered: `projects/agent-kit/src/lib/hooks-map.spec.ts`.
 

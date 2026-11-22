@@ -22,9 +22,13 @@
  * done marks of the progress as they are: their steps were never measured by the engine.
  *
  * The decisions are pure: the context brings the files, the marks, the owner's last word and the
- * measured state. A shell command is judged by its text, so a script that computes the path itself
- * is not seen.
+ * measured state. A shell command is refused only when it writes to a guarded file: a read, a run of
+ * the engine and a file name inside the text of a message pass. A write to a literal path is judged
+ * by the path; a write whose target is not a literal path — a variable, a substitution, a directory
+ * that holds guarded files, a script with a write call — is refused when the command names the file.
  */
+import { posix } from 'node:path';
+
 import { stepsOfPlan, stepsOfProgress } from './work-steps-lib.mjs';
 
 /** The word that defers a task in the epic plan. */
@@ -42,22 +46,182 @@ const EDITED_ROW = '(правится)';
 /** The state line of the progress. */
 const STATE_LINE = /^-\s+\*\*(?:State|Состояние):\*\*\s+`([^`]+)`/mu;
 
-/** A shell command that writes: a redirect, a tee, an in-place edit, a copy, a move, a removal or an inline script. */
-const WRITE_SIGNS = [
-    (path) => new RegExp(`>{1,2}\\s*["']?[^\\s;|&"']*${path}`),
-    (path) => new RegExp(`\\btee\\b[^;|&]*${path}`),
-    (path) => new RegExp(`\\b(?:sed|perl|awk|gawk)\\b[^;|&]*\\s-i[^;|&]*${path}`),
-    (path) => new RegExp(`\\b(?:cp|mv|rm|install|rsync|truncate|touch|dd|ln)\\b[^;|&]*${path}`),
-    (path) => new RegExp(`\\bgit\\s+(?:checkout|restore)\\b[^;|&]*${path}`),
-    (path) => new RegExp(`\\b(?:python3?|node|ruby|perl)\\b[^;|&]*(?:\\s-[ce]\\b|\\s--eval\\b|\\s-\\s*<<)[\\s\\S]*${path}`),
-];
-
 const escape = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-/** The shell command writes into a path matching the pattern (a regular expression source). */
-export function shellWrites(command, pathSource) {
-    return WRITE_SIGNS.some((sign) => sign(pathSource).test(command));
+/** A literal path under the temporary directories: a scratch copy, never a file of the tree. */
+const TEMP = /^\/(?:private\/)?(?:tmp|var\/folders)(?:\/|$)/;
+/** A word the shell still expands: a variable, a substitution, a glob or a brace list. */
+const DYNAMIC = /[$`*?[{]/;
+/** The words before a command that only run it. */
+const PREFIXES = new Set(['if', 'then', 'else', 'elif', 'do', 'while', 'until', '!', '{', 'time', 'nohup', 'command', 'exec', 'sudo', 'nice', 'env', 'timeout', 'xargs']);
+/** A call of a script that writes a file. `open` writes by its mode, which is read in the text itself. */
+const WRITE_CALL =
+    /\b(?:writeFileSync|appendFileSync|writeFile|appendFile|createWriteStream|copyFileSync|copyFile|cpSync|renameSync|rmSync|unlinkSync|truncateSync|symlinkSync|fs\.(?:promises\.)?(?:rm|unlink|truncate|cp|rename)|os\.(?:rename|replace|remove|unlink)|shutil\.\w+|File\.write)\s*\(|\.write_(?:text|bytes)\s*\(/;
+/** A script file run by its interpreter: the file it runs is not named by the command. */
+const RUN = /\b(node|python[\d.]*|bash|sh|zsh)\s+((?:-[-\w=]+\s+)*)[^\s;|&'"]+\.(?:mjs|cjs|js|py|sh)\b/g;
+
+/** The index of the bracket that closes the one at `at`, quotes skipped. */
+function closing(text, at) {
+    let depth = 0;
+    for (let i = at; i < text.length; i++) {
+        if (text[i] === '\\') i++;
+        else if ("'\"`".includes(text[i])) i = text.indexOf(text[i], i + 1) < 0 ? text.length : text.indexOf(text[i], i + 1);
+        else if (text[i] === '(') depth++;
+        else if (text[i] === ')' && --depth === 0) return i;
+    }
+    return text.length;
 }
+
+/**
+ * The simple commands of a shell text, quotes taken off: { words, redirects, stdin }. A word keeps
+ * `$NAME` and `$(…)` as written; a here-document and a here-string are the stdin of their command.
+ */
+export function shellCommands(text) {
+    const commands = [];
+    const docs = [];
+    let cmd = { words: [], redirects: [], stdin: null };
+    let word = null;
+    let pending = null;
+    const endWord = () => {
+        if (word === null) return;
+        if (pending === '<<' || pending === '<<-') docs.push({ delim: word, strip: pending === '<<-', cmd });
+        else if (pending === '<<<') cmd.stdin = word;
+        else if (pending === '>') cmd.redirects.push(word);
+        else if (pending !== '<') cmd.words.push(word);
+        [pending, word] = [null, null];
+    };
+    const endCommand = () => {
+        endWord();
+        if (cmd.words.length || cmd.redirects.length) commands.push(cmd);
+        cmd = { words: [], redirects: [], stdin: null };
+    };
+    for (let i = 0; i < text.length; ) {
+        const c = text[i];
+        if (c === '\\') {
+            if (text[i + 1] !== '\n') word = (word ?? '') + (text[i + 1] ?? '');
+            i += 2;
+        } else if (c === "'" || c === '"' || (c === '$' && text[i + 1] === "'")) {
+            // A double-quoted `$(…)` is kept whole: its own quotes do not end the word.
+            const from = c === '$' ? i + 2 : i + 1;
+            let j = from;
+            while (j < text.length && text[j] !== text[from - 1]) j = c === '"' && text[j] === '\\' ? j + 2 : c === '"' && text.startsWith('$(', j) ? closing(text, j + 1) + 1 : j + 1;
+            word = (word ?? '') + (c === '"' ? text.slice(from, j).replace(/\\(["\\$`])/g, '$1') : text.slice(from, j));
+            i = j + 1;
+        } else if (text.startsWith('$(', i) || c === '`') {
+            const end = c === '`' ? text.indexOf('`', i + 1) : closing(text, i + 1);
+            word = (word ?? '') + text.slice(i, end < 0 ? text.length : end + 1);
+            i = end < 0 ? text.length : end + 1;
+        } else if (c === '#' && word === null) {
+            while (i < text.length && text[i] !== '\n') i++;
+        } else if (c === '\n') {
+            endCommand();
+            i++;
+            for (const doc of docs.splice(0)) {
+                const end = new RegExp(`^${doc.strip ? '\\t*' : ''}${escape(doc.delim)}$`, 'm').exec(text.slice(i)) ?? { index: text.length - i, 0: '' };
+                doc.cmd.stdin = text.slice(i, i + end.index).replace(/\n$/, '');
+                i += end.index + end[0].length + 1;
+            }
+        } else if (c === ' ' || c === '\t') {
+            endWord();
+            i++;
+        } else if (';|&()'.includes(c) && !(c === '&' && text[i + 1] === '>')) {
+            endCommand();
+            i += text[i + 1] === c && c !== '(' && c !== ')' ? 2 : 1;
+        } else if (c === '>' || c === '<' || c === '&') {
+            if (word !== null && /^\d+$/.test(word)) word = null;
+            endWord();
+            const op = text.slice(i).match(/^(?:<<<|<<-|<<|<|&?>>|&?>\|?)/)[0];
+            i += op.length;
+            if (text[i] === '(') i = closing(text, i) + 1;
+            else if (op.endsWith('>') && text[i] === '&') for (i++; /[\d-]/.test(text[i] ?? ''); ) i++;
+            else pending = op.includes('>') ? '>' : op;
+        } else {
+            word = (word ?? '') + c;
+            i++;
+        }
+    }
+    endCommand();
+    return commands;
+}
+
+/** The script has a call that writes a file, its string literals blanked so a quoted call is not one. */
+function scriptWrites(script) {
+    const code = script.replace(/'''[\s\S]*?'''|"""[\s\S]*?"""|`(?:\\[\s\S]|[^\\`])*`|'(?:\\.|[^\\'\n])*'|"(?:\\.|[^\\"\n])*"/g, (text) => text.replace(/[^\n]/g, ' '));
+    if (WRITE_CALL.test(code)) return true;
+    // `open(p, 'w')` of Python and Node, `open(F, '>…')` of Perl: the mode stands on the line of the call.
+    return [...code.matchAll(/(?<![\w.])open(?:Sync)?\s*\(/g)].some((call) => /,\s*(?:mode\s*=\s*)?['"][^'"]*[wax+>]/.test(script.slice(call.index).split('\n')[0]));
+}
+
+/** The text a runner runs: an inline script, its stdin, or a file the same command wrote; null otherwise. */
+function scriptOf(args, command, state) {
+    for (let k = 0; k < args.length; k++) {
+        if (['-c', '-e', '--eval', '-p', '--print'].includes(args[k])) return args[k + 1] ?? '';
+        if (args[k] === '-m') return null;
+        if (['-W', '-X', '-r', '--require', '--import', '--loader'].includes(args[k])) k++;
+        else if (args[k] === '-') return command.stdin ?? '';
+        else if (!args[k].startsWith('-')) return state.written.get(args[k]) ?? null;
+    }
+    return command.stdin;
+}
+
+/** The files one command of the shell writes, by its name. */
+function commandTargets(words, command, state, out, depth) {
+    while (words.length > 0 && (PREFIXES.has(words[0]) || /^\w+=/.test(words[0]))) {
+        if (words.shift() === 'timeout') words.splice(0, words.findIndex((word) => !word.startsWith('-')) + 1);
+        while (words[0]?.startsWith('-')) words.shift();
+    }
+    const [head = '', ...args] = words;
+    const name = posix.basename(head);
+    const operands = args.filter((arg) => !arg.startsWith('-'));
+    const recursive = args.some((arg) => /^-[a-zA-Z]*[rRa]|^--(?:recursive|archive)$/.test(arg));
+    // A relative path after a `cd` into a temporary directory lies there too.
+    const add = (word, dir = false) => {
+        if (DYNAMIC.test(word)) out.push({ built: word });
+        else if (!state.away || word.startsWith('/')) out.push(dir ? { dir: posix.normalize(word) } : { path: posix.normalize(word) });
+    };
+    for (const word of command.redirects) {
+        add(word);
+        if (command.stdin !== null) state.written.set(word, command.stdin);
+    }
+    if (name === 'cd' || name === 'pushd') {
+        if (/^\/[^$`*?[{]*$/.test(operands[0] ?? '')) state.away = TEMP.test(operands[0]);
+    } else if (/^(?:g?sed|perl|ruby|g?awk)$/.test(name) && args.some((arg) => /^-[a-zA-Z0-9]*i|^--in-place|^inplace$/.test(arg))) {
+        // An in-place edit writes the files after its script: the value of `-e` or the first operand.
+        const files = args.filter((arg, k) => arg !== '' && arg !== 'inplace' && !arg.startsWith('-') && !['-e', '-f'].includes(args[k - 1]));
+        (args.includes('-e') || args.includes('-f') ? files : files.slice(1)).forEach((word) => add(word));
+    } else if (['cp', 'mv', 'install', 'ln', 'rsync'].includes(name) && operands.length > 1) {
+        const dest = operands.at(-1);
+        const sources = operands.slice(0, -1);
+        if (name === 'mv') sources.forEach((word) => add(word));
+        if (recursive || name === 'rsync') add(dest, true);
+        if (dest.endsWith('/') || sources.length > 1) sources.forEach((word) => add(`${dest.replace(/\/$/, '')}/${posix.basename(word)}`));
+        else add(dest);
+    } else if (['tee', 'rm', 'unlink', 'truncate', 'touch', 'shred', 'rmdir'].includes(name)) {
+        operands.forEach((word) => add(word) || (recursive && add(word, true)));
+    } else if (name === 'git') {
+        let k = 0;
+        while (args[k]?.startsWith('-')) k += args[k] === '-C' || args[k] === '-c' ? 2 : 1;
+        const [sub, ...rest] = args.slice(k);
+        const paths = rest.includes('--') ? rest.slice(rest.indexOf('--') + 1) : rest.filter((arg, j) => !arg.startsWith('-') && !['-s', '--source', '-b', '-B', '-m', '-F'].includes(rest[j - 1]));
+        const staged = rest.some((arg) => arg === '--staged' || arg === '-S') && !rest.some((arg) => arg === '--worktree' || arg === '-W');
+        if ((sub === 'checkout' && !rest.some((arg) => /^-[bB]$|^--orphan$/.test(arg))) || (sub === 'restore' && !staged)) paths.forEach((word) => add(word));
+        else if ((sub === 'rm' && !rest.includes('--cached')) || sub === 'mv') commandTargets([sub, ...rest], { ...command, redirects: [] }, state, out, depth);
+    } else if (/^(?:python[\d.]*|node|nodejs|ruby|perl|deno|bun|bash|sh|zsh|eval)$/.test(name) && depth < 3) {
+        const script = name === 'eval' ? args.join(' ') : scriptOf(args, command, state);
+        if (script !== null && /^(?:bash|sh|zsh|eval)$/.test(name)) out.push(...shellTargets(script, depth + 1, state));
+        else if (script !== null && !state.away && scriptWrites(script)) out.push({ built: `a script of ${name}` });
+    }
+}
+
+/** What a shell text writes: `{ path }` literal, `{ dir }` a directory written under, `{ built }` anything else. */
+export function shellTargets(text, depth = 0, state = { written: new Map(), away: false }) {
+    const out = [];
+    for (const command of shellCommands(text)) commandTargets(command.words.slice(), command, state, out, depth);
+    return out;
+}
+
+/** Every tail of a path after a slash: a path of the tree may be written from any directory above it. */
+const tails = (path) => path.split('/').map((_, k, parts) => parts.slice(k).join('/')).filter(Boolean);
 
 /** The text an edit leaves: Write gives it whole, Edit and MultiEdit replace in the text before. */
 export function textAfter(call, before) {
@@ -189,9 +353,8 @@ export function judgeCall(call, ctx) {
     const folder = `${ctx.tasksDir}/${ctx.branch}`;
     const progressPath = `${folder}/progress.md`;
     const planPath = `${folder}/plan.md`;
-    const marks = escape(ctx.marksDir);
 
-    if (call.tool === 'Bash') return judgeShell(call.command ?? '', ctx, marks);
+    if (call.tool === 'Bash') return judgeShell(call.command ?? '', ctx);
 
     const path = call.path ?? '';
     if (path.startsWith(`${ctx.marksDir}/`) || path === ctx.marksDir) return 'the marks of the steps and of the approval are written only by the engine `task-flow-script.mjs`';
@@ -203,26 +366,67 @@ export function judgeCall(call, ctx) {
     return null;
 }
 
-function judgeShell(command, ctx, marks) {
-    const engine = /task-flow-script\.mjs/.test(command);
-    if (!engine && (shellWrites(command, marks) || shellWrites(command, 'rt-kit/(?:steps|approval)/'))) {
-        return 'the marks of the steps and of the approval are written only by the engine `task-flow-script.mjs`, never by a shell command';
+/** The guarded files of a shell command: the tail of a path that is one, their directories, the sign of their name. */
+function shellGuards(ctx) {
+    const marks = posix.normalize(ctx.marksDir);
+    const engine = (tail) => ctx.protectedPaths.some((source) => new RegExp(source).test(tail));
+    const inTree = (test) => (path) => (TEMP.test(path) ? null : (tails(path).find(test) ?? null));
+    const shell = 'by the edit tool, not by a shell command';
+    return [
+        [
+            inTree((tail) => tail.startsWith(`${marks}/`) || /^rt-kit\/(?:steps|approval)(?:\/|$)/.test(tail)),
+            [marks],
+            (text) => new RegExp(`rt-kit/(?:steps|approval)|${escape(marks)}`).test(text),
+            () => 'the marks of the steps and of the approval are written only by the engine `task-flow-script.mjs`, never by a shell command',
+        ],
+        [
+            (path) => (/\.claude\/projects\/.*\.jsonl$/.test(path) ? path : null),
+            [],
+            (text) => /\.claude\/projects\//.test(text) && /\.jsonl\b/.test(text),
+            () => 'the session records are written only by the harness, never by a shell command: an approval is read from them',
+        ],
+        [
+            inTree((tail) => /^(?:progress|plan)\.md$/.test(tail)),
+            [ctx.tasksDir],
+            (text) => /(?:^|[^\w.-])(?:progress|plan)\.md(?![\w.-])/.test(text),
+            () => `the progress and the plan are edited ${shell}: the guard judges an edit, and a shell write passes it unseen`,
+        ],
+        [
+            inTree((tail) => tail.startsWith(`${ctx.plansDir}/`)),
+            [ctx.plansDir],
+            (text) => new RegExp(`(?:^|[^\\w.-])${escape(ctx.plansDir)}/`).test(text),
+            () => `the epic plan is edited ${shell}: «отложено» in it needs the owner's word, and a shell write passes it unseen`,
+        ],
+        [
+            inTree(engine),
+            ctx.protectedPaths.map((source) => source.replace(/^\^|^\(\?:\^\|\/\)/, '').match(/^[\w./-]*/)[0].replace(/\/?[^/]*$/, '')),
+            (text) => text.split(/[\s;|&<>'"()=,`{}]+/).flatMap((token) => tails(token.replace(/^\.\//, ''))).find(engine),
+            (path) => judgeProtected(path, ctx, `${ctx.tasksDir}/${ctx.branch}/plan.md`),
+        ],
+        [
+            inTree((tail) => tail === ctx.overridePath),
+            [posix.dirname(ctx.overridePath)],
+            (text) => text.includes(ctx.overridePath),
+            () => `the override of the description is edited ${shell}, and only by the owner's word naming the key`,
+        ],
+    ];
+}
+
+/**
+ * A shell command is refused only when it writes to a guarded file: a literal target by its path, any
+ * other by the command naming a guarded file — the script file an interpreter runs is not such a name.
+ */
+function judgeShell(command, ctx) {
+    const targets = shellTargets(command);
+    const text = command.replace(RUN, '$1 $2');
+    const under = (dir, area) => area === '' || dir === '.' || tails(dir).some((tail) => tail === area || tail.startsWith(`${area}/`) || area.startsWith(`${tail}/`));
+    for (const [holds, areas, names, reason] of shellGuards(ctx)) {
+        const hit = targets.map((target) => (target.path === undefined ? null : holds(target.path))).find(Boolean);
+        if (hit) return reason(hit);
+        const loose = targets.some((target) => target.built !== undefined || (target.dir !== undefined && !TEMP.test(target.dir) && areas.some((area) => under(target.dir, area))));
+        const named = loose && names(text);
+        if (named) return reason(named);
     }
-    if (shellWrites(command, '\\.claude/projects/[^\\s;|&"\']*\\.jsonl')) {
-        return 'the session records are written only by the harness, never by a shell command: an approval is read from them';
-    }
-    if (shellWrites(command, `${escape(ctx.tasksDir)}/[^\\s;|&]*(?:progress|plan)\\.md`) || shellWrites(command, '(?:^|[\\s/"\'])(?:progress|plan)\\.md')) {
-        return 'the progress and the plan are edited by the edit tool, not by a shell command: the guard judges an edit, and a shell write passes it unseen';
-    }
-    if (shellWrites(command, `${escape(ctx.plansDir)}/`)) {
-        return 'the epic plan is edited by the edit tool, not by a shell command: «отложено» in it needs the owner\'s word, and a shell write passes it unseen';
-    }
-    const written = command
-        .split(/[\s;|&<>'"]+/)
-        .map((token) => token.replace(/^\.\//, ''))
-        .find((token) => ctx.protectedPaths.some((source) => new RegExp(source).test(token)) && shellWrites(command, escape(token)));
-    if (written) return judgeProtected(written, ctx, `${ctx.tasksDir}/${ctx.branch}/plan.md`);
-    if (shellWrites(command, escape(ctx.overridePath))) return 'the override of the description is edited by the edit tool, and only by the owner\'s word naming the key';
     return null;
 }
 

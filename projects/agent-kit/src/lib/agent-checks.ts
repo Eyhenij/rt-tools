@@ -89,11 +89,22 @@ export function agentChecksOf(text: string, path: string, id: string = path): re
     ];
 }
 
-/** Подсказка вызова: прочесть файл проверки, следовать ему, добавленные слова, ввод хука. */
+/**
+ * Подсказка вызова: прочесть файл проверки, следовать ему, добавленные слова, ввод хука.
+ *
+ * Каталог сессии не всегда корень дерева, поэтому файл ищется вверх от него до каталога, где лежит
+ * `.claude/`. Нет файла или чтение отказано — вызов проходит: проверке, которой в копии нет,
+ * судить не по чему, а отказ без её текста останавливает работу без причины.
+ */
 function promptOf(check: IAgentCheck): string {
     const words: string = check.words ? ` ${check.words}` : '';
 
-    return `Read the file ${check.path} under the project root named by the field cwd of the hook input, and follow it exactly.${words} The hook input: $ARGUMENTS`;
+    return [
+        `Read the file ${check.path} and follow it exactly.`,
+        `Look for it in the directory named by the field cwd of the hook input, then in each parent directory up to the first one that holds .claude/.`,
+        `On no file or no read — the file is not found there or its read is refused — answer {"ok": true} and judge nothing else.${words}`,
+        'The hook input: $ARGUMENTS',
+    ].join(' ');
 }
 
 /** Запись настройки, которой зовётся проверка: образец, команда вида `agent`, предел и модель. */

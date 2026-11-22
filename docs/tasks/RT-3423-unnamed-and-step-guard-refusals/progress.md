@@ -2,24 +2,24 @@
 
 ## Где мы
 
-- **State:** `замысел-записан`
-- **Stage:** 1–4 идут одновременно, файлы этапов не пересекаются
-- **Done:** план одобрен владельцем 22.11 ответом «Одобряю план RT-3423», отметка `plan-red` записана; ветка вобрала RT-3469 после её второго круга ревью
-- **Next step:** закончить этапы 1–4, раскладка, этап 5 — описания
-- **Uncommitted:** правки этапов 1–4
+- **State:** `этап-идёт`
+- **Stage:** этапы кончились — все 9 шагов отмечены движком, живая проверка сделана
+- **Done:** код этапов 1–4, описания, раскладка пакета и записей модельных проверок
+- **Next step:** коммит этапов, затем два круга ревью
+- **Uncommitted:** код этапов 1–5
 - **PR:** not open yet
 
 ## Шаги
 
-- [>] 1.1 The report prints the dead ends of a day by check
-- [ ] 1.2 The report judges the milestone by three days in a row of at least 1500 calls
-- [ ] 1.3 The report with no `--until` takes today
-- [ ] 2.1 The counter names the check of a refusal text with no name by its kind
-- [ ] 3.1 A read, a run of the engine and a file name inside another text pass the step guard
-- [ ] 3.2 A write to a guarded file by a built path, a copy into its directory or a writing script is refused
-- [ ] 4.1 The words of a model check let the call through when its file is missing or unread
-- [ ] 4.2 The settings laid out from the package carry those words
-- [ ] 5.1 The scenarios stand in the descriptions
+- [x] 1.1 The report prints the dead ends of a day by check
+- [x] 1.2 The report judges the milestone by three days in a row of at least 1500 calls
+- [x] 1.3 The report with no `--until` takes today
+- [x] 2.1 The counter names the check of a refusal text with no name by its kind
+- [x] 3.1 A read, a run of the engine and a file name inside another text pass the step guard
+- [x] 3.2 A write to a guarded file by a built path, a copy into its directory or a writing script is refused
+- [x] 4.1 The words of a model check let the call through when its file is missing or unread
+- [x] 4.2 The settings laid out from the package carry those words
+- [x] 5.1 The scenarios stand in the descriptions
 
 ## Решения по ходу
 
@@ -30,6 +30,29 @@
   ответ «Одобряю план RT-3423» после ролей на этом плане.
 - **Номера сценариев SC-AK-1817…1820, 1834, 1835.** SC-AK-1814…1816 и SC-AK-1821 взяты планом
   RT-3469, 1822…1833 — планами задач ниже по цепочке.
+- **Живая проверка 22.11, отчёт.** `work-result.mjs --until 2026-11-21 --days 7` печатает тупики
+  по проверкам: за неделю 8, 6, 6, 11, 5, 8, 4 — 48, как в плане. Чаще всего это `turn-exit-guard`,
+  `skill-gate` и без имени. Веха G эпика не достигнута: каждый день 15–20.11 держит больше пяти
+  отказов на сто и тупики, 21.11 — 4 тупика.
+- **Живая проверка 22.11, имена отказов.** На записях 16.11 без имени было 6 отказов, стало 0. На
+  записях 20.11 было 257, стало 0: `dispatch-broken` 199, `turn-judge` 48, `git-guard-delivery` 9,
+  `browser-guard-require-select` 1. На днях 13–22.11 без имени не осталось ничего. Модельная
+  проверка без файла 20.11 — 48 отказов, а не 229 из разбора: остальные уже назывались через
+  `BLOCKED by` или лежали в записях, которых нет.
+- **Живая проверка 22.11, проверка шагов.** 106 разных команд оболочки, которым она отказала
+  15–21.11. Старая проверка отказывает всем 106. Новая — 45: 21 верный отказ (прямые записи в ход
+  работы, план, план эпика и файлы движка) и 24 ложных. Ложные — цена буквального правила разбора:
+  - 13 — сценарий правит другой файл, а в его тексте стоит охраняемое имя;
+  - 7 — запись в черновик через переменную в команде, которая называет охраняемый файл;
+  - 4 — пробный репозиторий после `cd` в переменную.
+
+  Первая версия с вычислением путей давала 21 отказ и 0 ложных, но выросла до 728 строк при
+  пределе 500. Новый модуль проверка не пустит: одобренный план называет только `flow-guard.mjs`,
+  план не правится. Сделано по разбору, 498 строк. Цель метрики — 0 ложных — не достигнута:
+  на этих 106 командах ложных было 85, стало 24.
+- **Записи модельных проверок в настройках удалены и разложены заново.** Раскладка не переписывает
+  стоящую запись, поэтому обе записи `agent` удалены из `.claude/settings.json`, и `agent-kit:sync`
+  записал их с новыми словами. `sync --check` сходится.
 - **Роли на первом плане 21.11 показали, что он не ведёт ни к точке B, ни к вехе G.** В план
   вошли тупики по проверкам и суждение о вехе в отчёте (этап 1), имя сбою диспетчера и модельной
   проверке без файла (этап 2), поиск своего файла модельной проверкой (этап 4).

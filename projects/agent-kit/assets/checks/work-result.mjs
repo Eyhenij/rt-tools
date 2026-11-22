@@ -4,8 +4,11 @@
  * functions the hook at the end of a turn and the reading of merges use: the events of the records,
  * the merges, the editions, the verdicts.
  *
- *   node work-result.mjs --observations <dir> --until YYYY-MM-DD [--days N] [--no-package]
- *   node work-result.mjs --epics --own <dir> [--observations <dir>]... --until YYYY-MM-DD [--days N]
+ *   node work-result.mjs --observations <dir> [--until YYYY-MM-DD] [--days N] [--no-package]
+ *   node work-result.mjs --epics --own <dir> [--observations <dir>]... [--until YYYY-MM-DD] [--days N]
+ *
+ * With no `--until` the period ends today, the day of the moment of the run as the observations
+ * write it (UTC).
  *
  * Prints one JSON object: `{ result, lines }`. `result` holds the numbers, never a null among the
  * lines of the result; `lines` holds the text the report prints.
@@ -98,6 +101,8 @@ export function dayResult(observations, events, day, firstCounted = firstCounted
         ...dayMerges(observations, day),
     };
     if (!kept.recorded) return { ...kept, beforeCounter: firstCounted === null || day < firstCounted };
+    // A dead end belongs to the day of its last refusal, and to the check whose refusals made it.
+    const ends = deadEndsOf(events).filter((d) => String(d.to).startsWith(day));
     return {
         ...kept,
         beforeCounter: false,
@@ -112,7 +117,8 @@ export function dayResult(observations, events, day, firstCounted = firstCounted
         interrupts: of.filter((e) => e.ev === 'interrupt').length,
         ownerWords: of.filter((e) => e.ev === 'word').length,
         corrections: of.filter((e) => e.ev === 'word' && e.corr).length,
-        deadEnds: deadEndsOf(events).filter((d) => String(d.to).startsWith(day)).length,
+        deadEnds: ends.length,
+        deadEndsByCheck: Object.fromEntries(byCountThenName(Object.entries(count(ends, (d) => d.check || 'unnamed')))),
     };
 }
 
@@ -138,13 +144,18 @@ export function periodEpics(observations, days, { publishes = true } = {}) {
     }));
 }
 
-/** The result of a period: a result per day, the epics of the period and the sums the lines print. */
+/**
+ * The result of a period: a result per day, the epics of the period, the verdict on milestone G of
+ * the epic and the sums the lines print.
+ */
 export function resultOf(observations, days, { publishes = true } = {}) {
     const events = eventsOf(observations);
     const firstCounted = firstCountedDay(observations);
+    const dayResults = days.map((day) => dayResult(observations, events, day, firstCounted));
     return {
-        days: days.map((day) => dayResult(observations, events, day, firstCounted)),
+        days: dayResults,
         epics: periodEpics(observations, days, { publishes }),
+        milestone: epicMilestoneOf(dayResults),
     };
 }
 
@@ -152,6 +163,48 @@ const hours = (minutes) => (minutes / 60).toFixed(1);
 
 /** Milestone G: fewer than this many refusals per hundred calls; exactly this many is not reached. */
 const MILESTONE_G_LIMIT = 5;
+/** Milestone G of the epic: a day is judged only with at least this many calls. */
+const MILESTONE_G_CALLS = 1500;
+/** Milestone G of the epic: this many days in a row, each holding it. */
+const MILESTONE_G_DAYS = 3;
+
+/**
+ * What keeps one day from holding milestone G of the epic, in the words of the report; an empty list
+ * when the day holds it. A day with no session record holds nothing: no number of it is counted.
+ */
+export function milestoneMissesOf(d) {
+    if (!d.recorded) return ['записи сессий нет'];
+    const misses = [];
+    if (d.calls < MILESTONE_G_CALLS) misses.push(`вызовов ${d.calls} < ${MILESTONE_G_CALLS}`);
+    if (d.refusalsPer100 >= MILESTONE_G_LIMIT) misses.push(`отказов ${d.refusalsPer100.toFixed(2)} на сто ≥ ${MILESTONE_G_LIMIT}`);
+    if (d.deadEnds > 0) misses.push(`тупиков ${d.deadEnds} > 0`);
+    return misses;
+}
+
+/**
+ * Milestone G of the epic over the days of a period, oldest first: reached when MILESTONE_G_DAYS days
+ * in a row each hold it. `run` names the first such days; `misses` names every day that does not hold
+ * it and by what.
+ */
+export function epicMilestoneOf(days) {
+    const misses = days.map((d) => ({ day: d.day, why: milestoneMissesOf(d) })).filter((m) => m.why.length > 0);
+    let run = [];
+    for (const d of days) {
+        run = milestoneMissesOf(d).length > 0 ? [] : [...run, d.day];
+        if (run.length === MILESTONE_G_DAYS) return { reached: true, run, misses };
+    }
+    return { reached: false, run: [], misses };
+}
+
+/** The lines of the verdict on milestone G of the epic. */
+export function epicMilestoneLines(milestone, dayCount) {
+    const rule = `${MILESTONE_G_DAYS} дня подряд: от ${MILESTONE_G_CALLS} вызовов, отказов меньше ${MILESTONE_G_LIMIT} на сто, ни одного тупика`;
+    if (milestone.reached) return [`  Веха G эпика: достигнута — ${milestone.run.join(', ')} (${rule})`];
+    const lines = [`  Веха G эпика: не достигнута (нужно ${rule})`];
+    for (const m of milestone.misses) lines.push(`    ${m.day}: ${m.why.join(', ')}`);
+    if (milestone.misses.length === 0) lines.push(`    в отрезке ${dayCount} дн., нужно ${MILESTONE_G_DAYS} подряд`);
+    return lines;
+}
 
 /** The milestone G words of a day. A day with no call is not judged. */
 export function milestoneOf(d) {
@@ -209,6 +262,7 @@ export function linesOf(result) {
     lines.push(`  Цель не достигнута: ${sum('goalNotMet')}`);
     for (const [task, n] of byCountThenName(Object.entries(verdicts))) lines.push(`    ${task}: ${n}`);
     for (const d of result.days) lines.push(result.days.length === 1 ? `  ${milestoneOf(d)}` : `  ${d.day} ${milestoneOf(d)}`);
+    lines.push(...epicMilestoneLines(result.milestone ?? epicMilestoneOf(result.days), result.days.length));
     lines.push('  Повторы ошибок: считается в приёмнике');
     return lines;
 }
@@ -229,6 +283,12 @@ export function gateLine(days) {
     return `  проверка правил: отказов ${total}${parts.length ? ` (${parts.join(', ')})` : ''}, правил без отказа ${delivered}`;
 }
 
+/** The dead ends of a day by check: the name and the number of series, most first; «нет» for none. */
+export const deadEndWords = (byCheck) => {
+    const parts = Object.entries(byCheck ?? {}).map(([name, n]) => `${name} ${n}`);
+    return parts.length ? parts.join(', ') : 'нет';
+};
+
 /** The lines counted from the session record, over the days that have one. */
 function recordLines(days, sum) {
     const lines = [`  Простой: ${hours(sum('idleMinutes', days))} ч`, '  Отказов на сто вызовов:'];
@@ -236,6 +296,8 @@ function recordLines(days, sum) {
         lines.push(`    ${d.day}: ${d.refusalsPer100.toFixed(2)} (${d.refusals} из ${d.calls})`);
         for (const [name, c] of Object.entries(d.byCheck)) lines.push(`      ${name}: ${c.per100.toFixed(2)}`);
     }
+    lines.push('  Тупики по проверкам:');
+    for (const d of days) lines.push(`    ${d.day}: ${deadEndWords(d.deadEndsByCheck)}`);
     const pairs = {};
     for (const d of days) for (const [pair, n] of Object.entries(d.pairs)) pairs[pair] = (pairs[pair] ?? 0) + n;
     const pairList = byCountThenName(Object.entries(pairs));
@@ -259,19 +321,21 @@ export function sendingEpics(own, others, days, { publishes = true } = {}) {
     }));
 }
 
-function main(argv) {
+/** The last day of the period: `--until`, or the day of the moment when it is not given. */
+export const untilOf = (argv, now) => option(argv, '--until') ?? now.toISOString().slice(0, 10);
+
+function main(argv, now = new Date()) {
+    const until = untilOf(argv, now);
     if (argv.includes('--epics')) {
         const own = option(argv, '--own');
-        const until = option(argv, '--until');
-        if (!own || !until) return 1;
+        if (!own) return 1;
         const days = daysOf(until, Number(option(argv, '--days') ?? '1'));
         const others = options(argv, '--observations').filter((dir) => dir !== own).flatMap((dir) => readObservations(dir));
         console.log(JSON.stringify({ epics: sendingEpics(readObservations(own), others, days, { publishes: !argv.includes('--no-package') }) }));
         return 0;
     }
     const dir = option(argv, '--observations');
-    const until = option(argv, '--until');
-    if (!dir || !until) return 1;
+    if (!dir) return 1;
     const days = daysOf(until, Number(option(argv, '--days') ?? '1'));
     const result = resultOf(readObservations(dir), days, { publishes: !argv.includes('--no-package') });
     console.log(JSON.stringify({ result, lines: linesOf(result) }));

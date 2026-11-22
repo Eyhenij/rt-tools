@@ -333,21 +333,21 @@ const withRecord: (record: Record<string, unknown>, event: string) => string = (
     JSON.stringify({ hooks: { [event]: [record] } }, null, 2) + '\n';
 
 describe('модельные проверки', () => {
-    it('SC-AK-1773 — записи, собранные из объявлений настоящих файлов, равны записям этого дерева', (): void => {
+    it('SC-AK-1773 — записи из объявлений настоящих файлов равны записям дерева и пропускают вызов без файла', (): void => {
         const assets: string = join(__dirname, '..', '..', 'assets', 'hooks');
         const tree: { hooks: Record<string, unknown[]> } = JSON.parse(
             readFileSync(join(__dirname, '..', '..', '..', '..', SETTINGS_PATH), 'utf8')
         );
 
         for (const name of ['turn-judge', 'ask-judge']) {
-            const [check]: readonly IAgentCheck[] = agentChecksOf(
-                readFileSync(join(assets, `${name}.md`), 'utf8'),
-                `.claude/hooks/${name}.md`
-            );
+            const path: string = `.claude/hooks/${name}.md`;
+            const [check]: readonly IAgentCheck[] = agentChecksOf(readFileSync(join(assets, `${name}.md`), 'utf8'), path);
             const standing: unknown[] = (tree.hooks[check.event] ?? []).filter((record: unknown): boolean =>
                 JSON.stringify(record).includes(check.path)
             );
 
+            expect(JSON.stringify(agentRecord(check))).toMatch(new RegExp(`Read the file ${path} and .*holds \\.claude/\\.`));
+            expect(JSON.stringify(agentRecord(check))).toMatch(/On no file or no read — .*\{\\"ok\\": true\} and judge nothing else/);
             expect(standing).toHaveLength(1);
             expect(agentRecord(check)).toEqual(standing[0]);
         }

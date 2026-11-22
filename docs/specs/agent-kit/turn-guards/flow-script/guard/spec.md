@@ -87,8 +87,15 @@ Not applicable: one call is judged at a time.
   its mark, and a whole rewrite of the progress is judged by the difference.
 - **The state is measured only when an edit moves the state line.** A measurement reads git and the
   hosting, and an ordinary edit of the progress does not pay for it.
-- **A shell command errs towards firing.** A command that copies a file away from the progress is
-  refused too: a refusal seen at once is fixed, a write never seen is not.
+- **A shell command is refused only when it writes to a guarded file.** A read, a run of the engine,
+  an inline script that only reads, `git restore --staged` and a file name inside the text of a
+  commit message pass. A write by a literal path is judged by that path; a literal path under a
+  temporary directory is outside the tree.
+- **A write whose target is not a literal path errs towards firing.** A target built by a variable or
+  a substitution, a copy or a removal of a directory that holds guarded files, and an interpreter
+  script with a write call are refused when the command names a guarded file; a script with no
+  write call passes. The path of the script an interpreter runs is not such a name. The price: a
+  script that edits another file and quotes a guarded name in its text is refused too.
 
 ## Open questions
 
@@ -100,3 +107,5 @@ None.
   and the description.
 - 2026-11-15 — the engine merges the tree override, and an override that does not build no longer
   lifts the hooks: they judge by the package description.
+- 2026-11-22 — task RT-3423: a shell command is refused only when it writes to a guarded file;
+  scenarios SC-AK-1819 and SC-AK-1820.
