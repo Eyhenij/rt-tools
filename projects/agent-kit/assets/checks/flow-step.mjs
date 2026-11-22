@@ -45,10 +45,7 @@ export const RERUN_BUDGET_MS = 1_500_000;
 /** The progress changes every turn and is the one file of the folder not judged against the plan. */
 const PROGRESS = 'progress.md';
 
-/**
- * A taken-apart folder put back for one run by `putBack`, or null. A folder on disk the head does not
- * hold — a live run's, a broken run's, or files left after the taking-apart — refuses the step.
- */
+/** A taken-apart folder put back for one run, or null; a live, broken or stray folder on disk refuses the step. */
 export function restoreFolder(git, folder) {
     const restored = putBack(git, folder);
     if (restored?.busy) throw new StepRefused(`the task folder is put back by the live run ${restored.busy}: measure after it ends`);
@@ -64,9 +61,8 @@ const versionsOf = (source, path) =>
 const doneLine = (number) => new RegExp(`^\\s*-\\s+\\[x\\]\\s+${number.replace('.', '\\.')}\\s`, 'm');
 
 /**
- * The progress as it stood when step `number` was measured: the version before the first one that
- * marks the step done, with the replacements of `latest`. A check that reads the progress saw it so,
- * while the last version has every step done. With no such version the last one is taken.
+ * The progress as step `number` saw it: the version before the first one marking it done, with the
+ * replacements of `latest` (the last version has every step done). With no such version, `latest`.
  */
 export function progressOfStep(versions, latest, number) {
     const first = versions.findIndex((text) => text !== null && doneLine(number).test(text));
