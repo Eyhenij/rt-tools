@@ -4,20 +4,21 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `замысел-записан`
-- **Stage:** 1 of 2 — the event on the three fields
-- **Done:** the plan is approved, its checks are red before the work; the epic RT-3497 holds the task
-- **Next step:** emit `selectionChange` from the date range field
-- **Uncommitted:** this file
+- **State:** `этап-идёт`
+- **Stage:** 2 of 2 — texts and the built declarations, done
+- **Done:** all five steps matched; the kit's unit tests 4126 of 4126 green; the build carries the
+  event in the three declarations
+- **Next step:** the live check in the showcase, then two review rounds
+- **Uncommitted:** none after the stage commit
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Emit `selectionChange` from the date range field on a pick, typing and the cross
-- [ ] 1.2 Emit `selectionChange` from the multiselect on a pick, a removed chip and the cross
-- [ ] 1.3 Emit `selectionChange` from the date picker on a pick, typing and the cross
-- [ ] 2.1 Name the event in the «Выходы» tables of the three fields
-- [ ] 2.2 Check the built declarations of the three fields
+- [x] 1.1 Emit `selectionChange` from the date range field on a pick, typing and the cross
+- [x] 1.2 Emit `selectionChange` from the multiselect on a pick, a removed chip and the cross
+- [x] 1.3 Emit `selectionChange` from the date picker on a pick, typing and the cross
+- [x] 2.1 Name the event in the «Выходы» tables of the three fields
+- [x] 2.2 Check the built declarations of the three fields
 
 ## Decisions along the way
 

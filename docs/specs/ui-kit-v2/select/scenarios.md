@@ -143,3 +143,30 @@ Then the icon stands in the trigger before the placeholder or the chips, and wit
 there is no icon
 
 Covered by the component spec of the multiselect family.
+
+### SC-UKV-1706 — the date range field announces a person's change and not a value from outside
+
+Given a date range field bound to a form
+When a person applies a range in the panel, types two dates, erases the text or presses the cross
+Then `selectionChange` carries the value the form got, `null` after the cross; a value written by
+the form, a signal form model set from outside and the cross of a disabled field raise nothing
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-range/rt-date-range.selection-change.spec.ts`.
+
+### SC-UKV-1707 — the multiselect announces a person's change and not a value from outside
+
+Given a multiselect bound to a form
+When a person picks an option by the mouse or the keys, removes a chip or presses the cross
+Then `selectionChange` carries the array the form got, `[]` after the cross; a value written by the
+form and the cross of a disabled field raise nothing
+
+Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect.selection-change.spec.ts`.
+
+### SC-UKV-1708 — the date field announces a person's change and not a value from outside
+
+Given a date field bound to a form
+When a person picks a day in the panel, types a date, erases the text or presses the cross
+Then `selectionChange` carries the string the form got, `''` after the cross; a value written by
+the form, a signal form model set from outside and the cross of a disabled field raise nothing
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/rt-date-picker.selection-change.spec.ts`.

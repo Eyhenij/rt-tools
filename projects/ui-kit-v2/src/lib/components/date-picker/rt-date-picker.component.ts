@@ -5,6 +5,7 @@ import {
     inject,
     input,
     numberAttribute,
+    output,
     signal,
     viewChild,
     ChangeDetectionStrategy,
@@ -12,6 +13,7 @@ import {
     ElementRef,
     InputSignal,
     InputSignalWithTransform,
+    OutputEmitterRef,
     Signal,
     ViewEncapsulation,
     WritableSignal,
@@ -145,6 +147,12 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
         transform: numberAttribute,
     });
 
+    /**
+     * Смена значения человеком: выбор в панели, набор текста, крестик. Несёт ту же строку, что уходит
+     * в форму; на `writeValue` и на модель формы, заданную снаружи, не испускается.
+     */
+    public readonly selectionChange: OutputEmitterRef<string> = output<string>();
+
     /** Значение из формы снимает ошибку набора: в поле теперь стоит оно. */
     public override writeValue(value: string | null): void {
         super.writeValue(value);
@@ -157,6 +165,15 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
 
     protected focusAfterClear(): void {
         this.fieldEl()?.nativeElement.focus();
+    }
+
+    /** Крестик: событие несёт значение поля после очистки — то же, что ушло в форму. */
+    protected override clear(event?: Event): void {
+        if (this.isDisabled()) {
+            return;
+        }
+        super.clear(event);
+        this.selectionChange.emit(this.value());
     }
 
     protected override clearValue(): void {
@@ -203,6 +220,7 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
     #commit(value: string): void {
         this.value.set(value);
         this.emitChange(value);
+        this.selectionChange.emit(value);
         this.#accept(value);
     }
 

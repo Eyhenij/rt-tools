@@ -3,6 +3,7 @@ import {
     forwardRef,
     inject,
     input,
+    output,
     signal,
     viewChild,
     ChangeDetectionStrategy,
@@ -10,6 +11,7 @@ import {
     ElementRef,
     InputSignal,
     InputSignalWithTransform,
+    OutputEmitterRef,
     Signal,
     ViewEncapsulation,
     WritableSignal,
@@ -129,6 +131,12 @@ export class RtDateRangeComponent extends RtFormControlBase<IRtDateRange.Value |
         transform: rtDayBoundOrNull,
     });
 
+    /**
+     * Смена значения человеком: выбор в панели, набор текста, крестик. Несёт то же значение, что
+     * уходит в форму; на `writeValue` и на модель формы, заданную снаружи, не испускается.
+     */
+    public readonly selectionChange: OutputEmitterRef<IRtDateRange.Value | null> = output<IRtDateRange.Value | null>();
+
     /** Значение из формы снимает ошибку набора: в поле теперь стоит оно. */
     public override writeValue(value: IRtDateRange.Value | null): void {
         super.writeValue(value);
@@ -141,6 +149,15 @@ export class RtDateRangeComponent extends RtFormControlBase<IRtDateRange.Value |
 
     protected focusAfterClear(): void {
         this.fieldEl()?.nativeElement.focus();
+    }
+
+    /** Крестик: событие несёт значение поля после очистки — то же, что ушло в форму. */
+    protected override clear(event?: Event): void {
+        if (this.isDisabled()) {
+            return;
+        }
+        super.clear(event);
+        this.selectionChange.emit(this.value());
     }
 
     protected override clearValue(): void {
@@ -187,6 +204,7 @@ export class RtDateRangeComponent extends RtFormControlBase<IRtDateRange.Value |
     #commit(value: IRtDateRange.Value | null): void {
         this.value.set(value);
         this.emitChange(value);
+        this.selectionChange.emit(value);
         this.#accept(value);
     }
 
