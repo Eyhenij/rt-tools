@@ -5,6 +5,7 @@ import {
     booleanAttribute,
     computed,
     contentChild,
+    contentChildren,
     forwardRef,
     inject,
     input,
@@ -24,7 +25,7 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap, TRtKitLabelParams, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RT_KIT_LABELS, TRtKitLabelMap, TRtKitLabelParams, rtKitLabel, RtSlotOutletDirective } from '@rt-tools/ui-kit-v2/core';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
@@ -47,6 +48,7 @@ import {
 } from '@rt-tools/ui-kit-v2/core';
 import { RtSelectTriggerDirective } from '@rt-tools/ui-kit-v2/select';
 import { RtMultiselectEmptyDirective } from './rt-multiselect-empty.directive';
+import { RtMultiselectExtraDirective } from './rt-multiselect-extra.directive';
 import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
 import { RtTagComponent } from '@rt-tools/ui-kit-v2/tag';
 import { RtToggleSwitchComponent } from '@rt-tools/ui-kit-v2/toggle-switch';
@@ -89,6 +91,7 @@ function nextPanelId(): number {
         RtPopoverDirective,
         RtTagComponent,
         RtToggleSwitchComponent,
+        RtSlotOutletDirective,
         BlockDirective,
         ElemDirective,
         ModDirective,
@@ -210,6 +213,8 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
 
     /** Свой вид пустого списка вариантов вместо строки «Нет вариантов». */
     protected readonly emptyTpl: Signal<RtMultiselectEmptyDirective | undefined> = contentChild(RtMultiselectEmptyDirective);
+    /** Свои переключатели приложения над чертой вида `toggles`: создаются, пока открыта его панель. */
+    protected readonly extraSlots: Signal<readonly RtMultiselectExtraDirective[]> = contentChildren(RtMultiselectExtraDirective);
 
     protected readonly hasValue: Signal<boolean> = computed((): boolean => this.value().length > 0);
 
