@@ -25,7 +25,7 @@ seed() {
     printf "%s\n" "import { RtIconOutlinedDirective, BreakpointService } from '@rt-tools/utils';" > "$tree/src/moved.ts"
     printf "%s\n" "import { isNil, POSITION_ENUM, type IBreakpoints, Nullable } from '@rt-tools/utils';" > "$tree/src/mixed.ts"
     printf "%s\n" "import { isNil, isEmail } from '@rt-tools/utils';" > "$tree/src/nested/pure.ts"
-    printf "%s\n%s\n" "import { MessageBus } from '@rt-tools/core';" "import { isNil, SanitizePipe } from '@rt-tools/utils';" > "$tree/src/merge.ts"
+    printf "%s\n%s\n" "import { MessageBus } from '@rt-tools/core';" "import { isNil, TernaryPipe } from '@rt-tools/utils';" > "$tree/src/merge.ts"
     printf "%s\n" "import { POSITION_ENUM as Pos, checkIsMatchingValues } from '@rt-tools/utils';" > "$tree/src/alias.ts"
     printf "%s\n" "import * as utils from '@rt-tools/utils';" > "$tree/src/whole.ts"
     cp "$tree/src/moved.ts" "$tree/node_modules/installed.ts"
@@ -75,7 +75,7 @@ probe 'объявление без переехавших имён не трон
     "$(has src/nested/pure.ts "import { isNil, isEmail } from '@rt-tools/utils';")"
 
 probe 'имена дописаны в стоящий импорт нового пакета' 'да' \
-    "$(has src/merge.ts "import { MessageBus, SanitizePipe } from '@rt-tools/core';")"
+    "$(has src/merge.ts "import { MessageBus, TernaryPipe } from '@rt-tools/core';")"
 
 probe 'второго объявления того же адреса не заведено' '1' \
     "$(grep -cF "from '@rt-tools/core'" "$tree/src/merge.ts")"

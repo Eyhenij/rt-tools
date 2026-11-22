@@ -15,7 +15,6 @@ import {
     WritableSignal,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
-import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 import { BlockDirective, ElemDirective, EmptyToDashPipe, ModDirective } from '@rt-tools/core';
 import { isEmpty, TNullable } from '@rt-tools/utils';
@@ -77,7 +76,6 @@ const COPIED_DELAY_MS: number = 2000;
 export class RtDataTableCellComponent<T = Record<string, unknown>> {
     readonly #breakpoints: BreakpointsService = inject(BreakpointsService);
     readonly #clipboard: Clipboard = inject(Clipboard);
-    readonly #sanitizer: DomSanitizer = inject(DomSanitizer);
     readonly #host: ElementRef<HTMLElement> = inject(ElementRef);
 
     #copiedTimer: ReturnType<typeof setTimeout> | null = null;
@@ -153,13 +151,13 @@ export class RtDataTableCellComponent<T = Record<string, unknown>> {
     /**
      * Стиль значка, посчитанный колонкой по значению строки, — строкой, как в первом ките.
      * Это одна из странностей первого кита, перенесённых как есть: такую строку не перекрашивает
-     * ни набор, ни тёмная тема.
+     * ни набор, ни тёмная тема. Angular не очищает строку стиля с версии 10, поэтому она
+     * привязывается как есть, без доверия очистителя.
      */
-    protected readonly iconStyle: Signal<SafeStyle | null> = computed(() => {
+    protected readonly iconStyle: Signal<string | null> = computed(() => {
         const transform: TNullable<(value: T[keyof T]) => string> = this.column().iconTransform;
 
-        // eslint-disable-next-line sonarjs/no-angular-bypass-sanitization -- строка стиля собрана описанием колонок приложения, а не значением, введённым человеком
-        return transform ? this.#sanitizer.bypassSecurityTrustStyle(transform(this.row()[this.column().propName])) : null;
+        return transform ? transform(this.row()[this.column().propName]) : null;
     });
 
     protected readonly hovered: WritableSignal<boolean> = signal(false);

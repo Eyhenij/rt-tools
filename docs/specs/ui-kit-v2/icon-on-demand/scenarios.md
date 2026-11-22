@@ -81,3 +81,14 @@ Given the page declared the material preset, and the application did not publish
 When the page draws a filled icon
 Then the request goes to the outlined material drawing after the refusal, and the icon is drawn by it
 Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon.registry.spec.ts`.
+
+### SC-UKV-1709 — the sprite symbol carries the drawing of the file without its scripts and handlers
+
+Given the icon set address points at a file that holds a script, embedded HTML, event handlers, a
+style, an animation of attributes and a `javascript:` link, plain or broken by control signs, next
+to its shapes
+When the page draws that icon
+Then the symbol of the sprite carries the shapes and the view box of the file, and none of the
+script, the embedded HTML, the handlers, the style, the animation or the link; a file with an XML
+prolog is read the same way
+Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon.registry.spec.ts`.

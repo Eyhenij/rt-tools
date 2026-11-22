@@ -74,3 +74,10 @@ the build fails to load
 Given a person entered the admin and is on the records screen
 When they look at the icon buttons of the screen
 Then each of them shows the glyph of its icon, not an empty frame: the kit found every icon name
+
+### SC-AUTH-120 — the sprite symbols of the records screen carry SVG shapes and nothing that runs
+
+Given a person entered the admin and is on the records screen
+When the kit has put the icons of the screen into the sprite of the page
+Then every symbol carries the shapes of its file, every node of it is an SVG node, and none carries
+an event handler

@@ -247,3 +247,19 @@ Then `robots` closes it, and leaving lifts the ban
 Given a page published in some languages of the site
 When its head is set and the page is left
 Then only the sites of those languages stay, and leaving brings the rest back
+
+### SC-CMS-79 — the preview of an embedded link loads only a parsed https address
+
+Given an editor types the address of an embedded link
+When the address parses as a URL with the https scheme and a host
+Then the preview frame loads it; a script, a data or a plain http address, an https address
+without a host and text that does not parse give no frame
+
+### SC-CMS-80 — a block goes into the editor cleaned by the allow list of a paste
+
+Given a stored block whose HTML holds a script, an event handler or a script link next to
+emphasis and links
+When the block opens in the editor
+Then the script, the handler and the script address are gone, while the emphasis style, the line
+break and the address, target and kind of a link stay, an internal link keeping the page it leads
+to; text without letters still clears the block
