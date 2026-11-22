@@ -51,6 +51,9 @@ d "SC-AK-1816 — a quoted commit message passes" "git commit -m \"docs: $SET | 
 d "SC-AK-1816 — a syntax check by \`bash -n\` passes" "bash -n .claude/hooks/git-guard-push-ahead.sh | head" PASS
 d "SC-AK-1816 — a run inside \`bash -c\` that hides the code is refused" "bash -c '$SET; tail -3 /tmp/a.log'" deny
 d "SC-AK-1816 — a run inside \`bash -c\` that shows the code passes" "bash -c '$SET > /tmp/a.log 2>&1'" PASS
+d "SC-AK-1816 — a background \`bash -c\` that writes \`\$?\` into the log passes" \
+    "nohup bash -c \"$SET > /tmp/a.log 2>&1; echo exit \\\$? >> /tmp/a.log\" >/dev/null 2>&1 &
+sleep 2; echo started" PASS
 
 exit_code_of() {
     printf '%s' "$2" | "$HOOKS/push-ahead-call-guard.sh" >/dev/null 2>&1

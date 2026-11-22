@@ -79,7 +79,7 @@ rt_epic_base() {
             if rt_epic_is_merged "$_epic"; then
                 return 0
             fi
-            unmet epic_branch none "the task belongs to the epic #${_epic}, and no branch of that epic is in the remote. The branch of the epic is taken before the first of its tasks and sent at once — a branch that exists only on one machine is a base nobody else has. Take it from the fresh main branch, run the heavy steps by \`${ahead_cmd:-bash git-guard-push-ahead.sh}\` (the Bash call with run_in_background) and push it after their end: the push is refused until they have a green mark."
+            unmet epic_branch none "the task belongs to the epic #${_epic}, and no branch of that epic is in the remote. The branch of the epic is taken before the first of its tasks and sent at once — a branch that exists only on one machine is a base nobody else has. Take it from the fresh main branch, run the heavy steps by \`${ahead_cmd:-bash git-guard-push-ahead.sh} > /tmp/push-ahead.log 2>&1\` (the Bash call with run_in_background, nothing after it; the verdict is the code of the notice and the last \`push ahead:\` line of the log) and push it after their end: the push is refused until they have a green mark."
             return 0
             ;;
         *' '*)
@@ -109,7 +109,7 @@ rt_epic_base() {
         && ! git merge-base --is-ancestor "origin/${main_branch}" "origin/${_epic_branch}" 2>/dev/null \
         && ! git merge-base --is-ancestor "origin/${main_branch}" "$_base_ref" 2>/dev/null; then
         _behind="$(git rev-list --count "origin/${_epic_branch}..origin/${main_branch}" 2>/dev/null)"
-        unmet epic_has_main_tip no "the branch of the epic «${_epic_branch}» does not carry the tip of «${main_branch}» — it has moved ahead by ${_behind:-several} commits. The main branch is merged into the branch of the epic, not bypassed by taking the base from the main one: git checkout ${_epic_branch}, git merge origin/${main_branch}, run the heavy steps by \`${ahead_cmd:-bash git-guard-push-ahead.sh}\` (the Bash call with run_in_background), and send the branch after their end: the push is refused until they have a green mark."
+        unmet epic_has_main_tip no "the branch of the epic «${_epic_branch}» does not carry the tip of «${main_branch}» — it has moved ahead by ${_behind:-several} commits. The main branch is merged into the branch of the epic, not bypassed by taking the base from the main one: git checkout ${_epic_branch}, git merge origin/${main_branch}, run the heavy steps by \`${ahead_cmd:-bash git-guard-push-ahead.sh} > /tmp/push-ahead.log 2>&1\` (the Bash call with run_in_background, nothing after it; the verdict is the code of the notice and the last \`push ahead:\` line of the log), and send the branch after their end: the push is refused until they have a green mark."
     fi
 
     return 0

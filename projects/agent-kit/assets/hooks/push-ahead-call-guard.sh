@@ -206,6 +206,9 @@ const runOf = (c) => {
     if (inner !== null) {
         const v = judge(inner);
         if (v.hide) return { neg, hide: v.hide };
+        // An inner text that prints `$?` after the set writes the code where it is read — into
+        // the log, as a rule: the tail outside the shell hides nothing more.
+        if (v.shown) return { neg, shown: true };
         return v.ran ? { neg } : null;
     }
     return w[k] !== undefined && base(w[k]) === SCRIPT ? { neg } : null;
@@ -223,12 +226,15 @@ const describe = {
 function judge(text) {
     const cmds = commands(lex(dropHeredocs(text)));
     let ran = false;
+    let shown = false;
     for (let k = 0; k < cmds.length; k++) {
         const run = runOf(cmds[k]);
         if (run === null) continue;
         if (run.hide) return { hide: run.hide, ran: true };
         ran = true;
         if (run.neg) return { hide: describe["!"], ran };
+        if (run.shown) { shown = true; continue; }
+        if (cmds.slice(k + 1).some(shows)) shown = true;
         const sep = cmds[k].sep;
         if (sep === null) continue;
         if (sep === "&") return { hide: describe["&"], ran };
@@ -252,7 +258,7 @@ function judge(text) {
             return { hide: describe[sep], ran };
         }
     }
-    return { ran };
+    return { ran, shown };
 }
 
 const v = judge(process.env.RT_CALL ?? "");
