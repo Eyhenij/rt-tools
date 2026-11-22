@@ -98,7 +98,8 @@ task is taken by the same move. They return to the PR by the turn that reads the
 
 The review returned remarks, or the run went red — it is fixed in the same branch. The plan is no
 longer there, and the folder is not assembled again: the progress guard lets the edit through on the
-sign from the branch history. What exactly is fixed is taken from the remark, not from the plan.
+sign from the branch history. What exactly is fixed is taken from the remark, not from the plan. The
+one exception is the `git revert` the engine names for a step whose fix lies in the folder.
 
 A merge left in the working copy is either pushed in the same turn or not made — otherwise the owner
 sees the old state and decides by it.
