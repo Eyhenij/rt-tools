@@ -235,6 +235,28 @@ describe('RtMenuComponent — нижняя шторка', (): void => {
         expect(document.querySelectorAll('[qa-dataid="menu-panel"]').length).toBe(1);
     });
 
+    it('SC-UKV-1747: клавиши у пункта шторки при открытом окне меню не берёт — Escape уходит окну над шторкой', (): void => {
+        const fixture: ComponentFixture<MenuSheetHostComponent> = setup(true);
+        openMenu(fixture);
+
+        const item: HTMLElement = document.querySelectorAll<HTMLElement>('.rt-popover-sheet rt-menu-item[role="menuitem"]')[1];
+        item.click();
+        settle(fixture);
+        item.focus();
+        let escapeReachedPage: boolean = false;
+        const onPage: (event: KeyboardEvent) => void = (event: KeyboardEvent): void => {
+            escapeReachedPage = escapeReachedPage || event.key === 'Escape';
+        };
+        document.addEventListener('keydown', onPage);
+        item.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', keyCode: 40, bubbles: true }));
+        const focusAfterArrow: Element | null = document.activeElement;
+        item.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        document.removeEventListener('keydown', onPage);
+
+        expect(focusAfterArrow).toBe(item);
+        expect(escapeReachedPage).toBe(true);
+    });
+
     it('SC-UKV-1747: меню, закрытое при открытом окне пункта шторки, доводит подтверждённый выбор и не ставит панель у кнопки', (): void => {
         const fixture: ComponentFixture<MenuSheetHostComponent> = setup(true);
         openMenu(fixture);

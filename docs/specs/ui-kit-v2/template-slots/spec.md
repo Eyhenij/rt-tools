@@ -138,6 +138,8 @@ Named slots — the attribute moves onto an `<ng-template>`:
 - **CMS list page.** `rtCmsListToolbarLeft`, `rtCmsListToolbarRight` — on their sides of the
   toolbar, before the search and before the reload.
 - **Showcase list page.** `appListToolbarLeft`, `appListToolbarRight` — on their sides of the toolbar.
+- **Multiselect.** `rtMultiselectExtra` — in the open panel of the `toggles` look, above the divider,
+  after «Показать все».
 
 Former default slots — a named template:
 
