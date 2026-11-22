@@ -120,6 +120,15 @@ dimmed under the sign of reading
 
 Covered: `apps/message-bus-admin-e2e/src/usage-section.spec.ts`.
 
+### SC-MB-454 — a day removed by the cross removes the period, and both fields show the counted one
+
+Given the table of a tree is shown for August 2026
+When the person removes the first day of the period by its cross
+Then the period leaves the address, and both day fields show the period the receiver counted: the
+last day is today, the first is no longer 1 August
+
+Covered: `apps/message-bus-admin-e2e/src/usage-section.spec.ts`.
+
 ### SC-MB-350 — a row opens the panel of the sessions of its skill
 
 Given the table of a tree is shown
