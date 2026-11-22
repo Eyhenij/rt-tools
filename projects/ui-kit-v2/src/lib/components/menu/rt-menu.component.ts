@@ -3,6 +3,7 @@ import { BooleanInput } from '@angular/cdk/coercion';
 import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedPosition, Overlay, OverlayModule } from '@angular/cdk/overlay';
 import { NgTemplateOutlet } from '@angular/common';
 import {
+    afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
@@ -49,6 +50,9 @@ import { RtMenuItemComponent } from './rt-menu-item.component';
 import { IRtMenu } from './rt-menu.model';
 
 const BEM_BLOCK: string = 'rt-menu';
+
+/** Коробка шторки, спрятанная до ответа окна подтверждения: вид — в `rt-menu.component.scss`. */
+const SHEET_HELD_CLASS: string = `${BEM_BLOCK}__sheet--held`;
 
 const POSITION_BELOW_END: ConnectedPosition = {
     originX: 'end',
@@ -307,6 +311,10 @@ export class RtMenuComponent {
             this.#pending.delete(item);
         }
         this.confirming.set(this.#pending.size);
+        if (!this.isOpen() && this.#pending.size === 0 && this.#sheet !== null) {
+            this.#closeSheet();
+            this.openedInSheet.set(false);
+        }
     }
 
     /** Клавиши в шторке: у панели рядом с триггером их шлёт оверлей, а у шторки — сама панель. */
@@ -384,6 +392,30 @@ export class RtMenuComponent {
         }
     }
 
+    /**
+     * Закрытое меню снимает шторку, а пока пункт шторки ждёт ответа окна подтверждения, прячет её
+     * целиком: пункт живёт в шторке, и снятая шторка унесла бы его вместе с подтверждённым выбором.
+     * Шторку снимает ответ окна. Меню остаётся «в шторке», и панель у кнопки не встаёт.
+     */
+    #closeOrHoldSheet(): void {
+        if (this.confirming() > 0 && this.#sheet !== null) {
+            this.#sheet.overlayRef.addPanelClass(SHEET_HELD_CLASS);
+            return;
+        }
+        this.#closeSheet(true);
+        this.openedInSheet.set(false);
+    }
+
+    /** Меню, открытое снова до ответа окна, показывает спрятанную шторку, а не строит вторую. */
+    #showHeldSheet(): void {
+        this.#sheet?.overlayRef.removePanelClass(SHEET_HELD_CLASS);
+        if (this.#sheet !== null) {
+            afterNextRender((): void => this.#activateKeys(this.#sheet?.overlayRef.overlayElement ?? null), {
+                injector: this.#injector,
+            });
+        }
+    }
+
     #focusTrigger(): void {
         this.trigger().elementRef.nativeElement.querySelector('button')?.focus();
     }
@@ -407,16 +439,16 @@ export class RtMenuComponent {
             if (!open) {
                 this.#keyManager?.destroy();
                 this.#keyManager = null;
-                this.#closeSheet(true);
-                this.openedInSheet.set(false);
                 this.#dropGonePending();
+                this.#closeOrHoldSheet();
             }
             if (open) {
                 this.presetClasses.set(materialPresetClassesOf(this.#host.nativeElement));
-                this.openedInSheet.set(this.inSheet());
+                this.#showHeldSheet();
+                this.openedInSheet.set(this.#sheet !== null || this.inSheet());
             }
             this.isOpen.set(open);
-            if (open && this.openedInSheet()) {
+            if (open && this.openedInSheet() && this.#sheet === null) {
                 this.#openSheet();
             }
             this.openedChange.emit(open);
