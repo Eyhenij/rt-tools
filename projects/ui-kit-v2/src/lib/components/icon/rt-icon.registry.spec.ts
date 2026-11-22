@@ -149,11 +149,13 @@ describe('RtIconRegistry', (): void => {
         expect(symbol?.querySelector('a')?.hasAttribute('href')).toBe(false);
     });
 
-    it('SC-UKV-1709 — стиль, анимация атрибутов и схема скрипта, разбитая знаками, в символ не попадают', (): void => {
+    it('SC-UKV-1709 — стиль, анимация атрибутов, HTML в описании, внешняя картинка и схема скрипта, разбитая знаками, в символ не попадают', (): void => {
         const harness: IHarness = setup();
         const hostile: string = [
             '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">',
             '<style>body{display:none}</style>',
+            '<desc><meta http-equiv="refresh" content="0;url=https://evil.example/"><link rel="stylesheet" href="https://evil.example/x.css"></desc>',
+            '<image href="https://evil.example/pixel.png"/>',
             '<a href="java&#x09;script:window.hit=1"><path d="M0 0h20v20H0z"/>',
             '<set attributeName="href" to="javascript:window.hit=2"/>',
             '<animate attributeName="href" values="javascript:window.hit=3"/></a>',
@@ -164,7 +166,7 @@ describe('RtIconRegistry', (): void => {
 
         const symbol: Element | null = document.getElementById(`${RT_ICON_SYMBOL_ID_PREFIX}check`);
         expect(symbol?.querySelector('path')?.getAttribute('d')).toBe('M0 0h20v20H0z');
-        expect(symbol?.querySelectorAll('style, set, animate')).toHaveLength(0);
+        expect(symbol?.querySelectorAll('style, set, animate, meta, link, image')).toHaveLength(0);
         expect(symbol?.querySelector('a')?.hasAttribute('href')).toBe(false);
     });
 

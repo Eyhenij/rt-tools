@@ -6,10 +6,11 @@ type TSvgNamespace = 'http://www.w3.org/2000/svg';
 export const SVG_NS: TSvgNamespace = 'http://www.w3.org/2000/svg';
 
 /**
- * Узлы, которым в рисунке значка нечего делать: они исполняют код, несут чужую разметку, меняют
- * атрибуты анимацией или стилем достают до всей страницы — стиль рисунка в спрайте ложится на неё.
+ * Узлы SVG, которым в рисунке значка нечего делать: они исполняют код, несут чужую разметку, тянут
+ * картинку с чужого адреса, меняют атрибуты анимацией или стилем достают до всей страницы — стиль
+ * рисунка в спрайте ложится на неё.
  */
-const RT_ICON_FOREIGN_NODES: string = 'script, foreignObject, iframe, object, embed, style, set, animate, animateMotion, animateTransform';
+const RT_ICON_FOREIGN_NODES: string = 'script, foreignObject, image, style, set, animate, animateMotion, animateTransform';
 
 /** Код последнего знака, который разбор адреса выкидывает: пробел и управляющие знаки до него. */
 const RT_ICON_ADDRESS_NOISE_LAST: number = 0x20;
@@ -27,6 +28,11 @@ function rtIconAddressOf(value: string): string {
  * атрибуты — всё, чем значок рисуется.
  */
 export function rtIconCleanDrawing(root: Element): void {
+    // HTML внутри `desc` и `title` разбирается в узлы HTML, а не SVG: `meta`, `link`, `base` и любой
+    // другой такой узел уходит целиком, по пространству имён, а не по списку имён
+    Array.from(root.querySelectorAll('*'))
+        .filter((node: Element): boolean => node.namespaceURI !== SVG_NS)
+        .forEach((node: Element): void => node.remove());
     root.querySelectorAll(RT_ICON_FOREIGN_NODES).forEach((node: Element): void => node.remove());
     for (const element of [root, ...Array.from(root.querySelectorAll('*'))]) {
         for (const attribute of Array.from(element.attributes)) {
