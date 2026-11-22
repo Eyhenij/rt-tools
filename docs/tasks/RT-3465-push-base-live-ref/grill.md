@@ -62,7 +62,28 @@ night order says to decide alone.
 - **A branch removed between the run ahead and the push still splits the bases.** The push guard
   names the base it judges by; this task does not hold the host still.
 
+The roles `goal-critic` and `product-strategist` read the plan of 22.11. Both showed the filter
+alone closes the case of 21.11 and opens two splits it does not have today. The decisions below
+replace the matching ones above. Спросить было некого: заход автономный.
+
+- **The push judges the tree from the base its run ahead took.** The run ahead records the tree,
+  the base and its commit next to its marks; the push guard and the pre-push hook take them for
+  the same tree. Without it a lower branch merged and removed during a set of 30 minutes splits
+  the bases — the chain of the epic merges bottom-up, and the host deletes a merged branch
+  (`delete_branch_on_merge: true`). A new nearer branch split them on 16.11 at 11:52 too. The
+  card asks «при любом состоянии ссылок». Цена ошибки: около 15 строк и два сценария.
+- **The mark key meets by the commit of the recorded base.** A base whose branch moved between the
+  set and the push has the same name and another key today.
+- **The case of 21.11 was a prune by a neighbour session** (`git fetch -q origin --prune` at 03:28,
+  the refusal at 03:34), not the host alone; the command of the tree `next-session` prunes too.
+- **No answer from the host is said by a line of the run ahead.** The run ahead may go without the
+  network and the push with it; the line tells the executor the push may judge from another base.
+- **The refusal names both bases.** Today it names neither, and the executor cannot see why the
+  green set does not count.
+- **SC-AK-1340 «the ref of a removed branch stays the base» and two decisions of the description are
+  rewritten.** They state the behaviour this task removes.
+
 ## What is left unclear
 
-- Nothing blocks the work: the card names the case, and the probe of the function on a built
-  repository shows it.
+- Nothing blocks the work. The search for branches the host merged off the first-parent line is a
+  finding next to the epic plan.
