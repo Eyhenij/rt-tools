@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · task-flow/source/git.mjs · d168d4593afc · правится надстройкой, не здесь
+// rt-kit v0.38.0 · task-flow/source/git.mjs · a0599cac7e2e · правится надстройкой, не здесь
 /**
  * The source «source.git» of the task flow description: the history of the branch, read by `git`.
  *
@@ -24,7 +24,7 @@
  */
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
 const BASE = 'origin/main';
@@ -139,15 +139,19 @@ export function liveRun(folder) {
 
 /**
  * Puts a taken-apart task folder back: the files at the parent of the commit that removed it.
- * `{ folder, removedBy, files }`; `{ busy: pid }` when another live run holds it; null when the
- * folder stands on disk or at the head, or no commit of the head removed it.
+ * `{ folder, removedBy, files }`; null when the folder stands at the head or no commit of the head
+ * removed it. A folder on disk the head does not hold is not written over: `{ busy: pid }` when
+ * another live run holds it, `{ left: true }` when a broken run left it edited, `{ stray, removedBy }`
+ * with the files that lie in it otherwise.
  */
 export function putBack(source, folder) {
+    const removedBy = source.existsAtHead(folder) ? null : source.removedAt(folder);
     if (existsSync(folder)) {
         const pid = liveRun(folder);
-        return pid ? { busy: pid } : null;
+        if (pid) return { busy: pid };
+        if (readEntry()?.kept && readEntry().folder === folder) return { left: true };
+        return removedBy ? { stray: readdirSync(folder, { recursive: true }).map(String), removedBy } : null;
     }
-    const removedBy = source.existsAtHead(folder) ? null : source.removedAt(folder);
     if (!removedBy) return null;
     const at = `${removedBy}^`;
     const texts = source.filesAt(folder, at).map((path) => [path, source.versionAt(path, at)]).filter(([, text]) => text !== null);
@@ -179,26 +183,33 @@ export function release(restored) {
 
 /**
  * Cleans what a broken run left, at a start of the engine: `{ verdict, folder }` — `cleaned`, `kept`
- * or `live` — or null with no record. The folder goes only when the process is gone, the head holds
- * no such folder and every recorded file is absent or has a text the run wrote; a live run keeps the
- * folder and the record, and any other record is dropped with the files left as they are.
+ * or `live` — or null. The folder goes only when the process is gone, the head holds no such folder
+ * and every recorded file is absent or has a text the run wrote. A live run keeps the folder and the
+ * record. A folder with an edited file stays, and so does its record, marked `kept`, until the folder
+ * is gone: every later start names it. A record of a folder the head holds, of another root or that
+ * does not parse is dropped and nothing is touched.
  */
 export function cleanBroken() {
     const entry = readEntry();
     if (entry === null) return null;
     if (Number.isInteger(entry.pid) && alive(entry.pid) && entry.pid !== process.pid) return { verdict: 'live', folder: entry.folder };
-    let verdict = 'kept';
-    if (entry.root && entry.folder) {
-        const atHead = spawnSync('git', ['cat-file', '-e', `HEAD:${entry.folder}`], { cwd: entry.root }).status === 0;
-        const own = Object.entries(entry.files ?? {}).every(([path, digests]) => {
-            const file = join(entry.root, path);
-            return !existsSync(file) || [digests].flat().includes(digest(readFileSync(file, 'utf8')));
-        });
-        if (!atHead && own) {
-            rmSync(join(entry.root, entry.folder), { recursive: true, force: true });
-            verdict = 'cleaned';
-        }
+    const root = (run(['rev-parse', '--show-toplevel']) ?? '').trim();
+    const dir = entry.folder && entry.root === root ? join(root, entry.folder) : null;
+    const atHead = dir !== null && spawnSync('git', ['cat-file', '-e', `HEAD:${entry.folder}`], { cwd: root }).status === 0;
+    const drop = (verdict) => {
+        rmSync(recordPath(), { force: true });
+        return verdict && { verdict, folder: entry.folder };
+    };
+    if (dir === null || atHead || !existsSync(dir)) return drop(null);
+    if (entry.kept) return { verdict: 'kept', folder: entry.folder };
+    const own = Object.entries(entry.files ?? {}).every(([path, digests]) => {
+        const file = join(root, path);
+        return !existsSync(file) || [digests].flat().includes(digest(readFileSync(file, 'utf8')));
+    });
+    if (own) {
+        rmSync(dir, { recursive: true, force: true });
+        return drop('cleaned');
     }
-    rmSync(recordPath(), { force: true });
-    return { verdict, folder: entry.folder };
+    writeEntry({ ...entry, pid: null, kept: true });
+    return { verdict: 'kept', folder: entry.folder };
 }

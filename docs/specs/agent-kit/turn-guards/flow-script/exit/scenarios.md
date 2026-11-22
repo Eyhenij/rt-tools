@@ -475,5 +475,6 @@ Then the refusal names that step by its number with the command that measures it
 When the folder is brought back by that move and the turn is held again
 Then the refusal names the same step by its number
 And the refusal of the PR opening names the command of each unmatched step by its number
+And a step the plan names and the progress lacks is the one the stage waits for
 
 Covered: `projects/agent-kit/tests/task-flow-script-archive.test.sh`.

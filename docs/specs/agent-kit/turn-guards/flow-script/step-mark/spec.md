@@ -57,14 +57,18 @@ prints a line per fixture.
 - **On a taken-apart task folder the step command puts the folder back from the history for its run.**
   The files come from the parent of the commit that removed the folder and leave after the run; the
   step is measured with the progress as it stood when it was measured, and a match writes its mark.
+  Files left on disk where the folder is taken apart stop the run: the refusal names them, and the
+  mark stays.
 - **A step the last progress of the history does not mark done is refused on a taken-apart folder, with the move `git revert` of the commit that took it apart.**
   The step guard lets that command through: it names no guarded file.
 - **A folder put back for a run is cleaned at a start of the engine only when its process is gone, the head lacks it and each recorded file is absent or holds a text the run wrote.**
   The record of the run lies in the git directory of its own copy with the process, the root and the
-  digests of each file, written before the text. A live run keeps its folder; a folder with an edited
-  file stays, and the engine names it on stderr.
+  digests of each file, written before the text. A live run keeps its folder. A folder with an edited
+  file stays: its record is marked kept, every later start names it on stderr, and a step on it is
+  refused with the same words. A record of a folder the head holds is dropped silently.
 - **A step run while another live run holds the folder put back is refused, and its mark stays.**
-  The folder on disk then carries the progress of the other run.
+  The folder on disk then carries the progress of the other run. `step --done` is refused the same
+  way: its steps would read that progress.
 - **`step --done` on a taken-apart folder measures the done steps the way the final rerun does.**
 
 ### The final rerun
@@ -86,15 +90,20 @@ prints a line per fixture.
 - **A check that fails on the network does not match, and the refusal names the network as the cause.**
 - **A step past its limit of 540 seconds, or whose command does not run, does not match on the final rerun.**
 - **A step that does not match on the final rerun runs once more in its group while its longest first run still fits the budget of 1500 seconds, and loses its mark only on the second mismatch.**
-  An answer of a model or a live count can differ once in six runs; one mismatch is no verdict. A
-  step past its limit does not run again, a step whose group does not fit the budget loses its mark
-  after the one run, and a step refused on its second run keeps the first mismatch.
+  An answer of a model or a live count can differ once in six runs; one mismatch is no verdict. The
+  budget counts the time already spent: a group runs again only while its longest first run fits
+  what is left, and its limit is what is left. A step past its limit does not run again, a step
+  whose group does not fit loses its mark after the one run, and a step refused on its second run
+  keeps the first mismatch.
 - **The line of an unmatched step names its command and the last three lines of its output, of its errors and of what a pipe fed its last command.**
   A check that counts the lines of a suite prints one number; the lines naming a failure before the
-  last pipe show where the step went wrong.
+  last pipe show where the step went wrong. The output is kept by a `tee` before a closing `grep`
+  only: a pipe inside `case`, `((`, `[[` or `>|`, a backslash and `PIPESTATUS` would change their
+  meaning under it, so such a check runs as written.
 - **A step that does not match on a taken-apart folder gets the move `git revert` of the commit that took it apart.**
   A fix outside the folder needs no revert; a fix in the folder, a check replaced in the progress,
-  brings the folder back, and the folder is taken apart again.
+  brings the folder back, and the folder is taken apart again. A folder file edited after the
+  commit of the plan gets the same move after the refusal that names it.
 - **The refusal of the PR names the command of each unmatched step by its number.**
 
 ### The approval

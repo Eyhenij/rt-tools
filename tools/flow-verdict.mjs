@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · checks/flow-verdict.mjs · 25852d9e8bd0 · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/flow-verdict.mjs · d69dd1f60d4e · правится надстройкой, не здесь
 /**
  * The verdict at the end of a turn — the engine command `verdict`, called by the hook on Stop.
  *
@@ -157,10 +157,9 @@ function stepLines(step) {
     const measure = `\`node tools/task-flow-script.mjs step ${step.number}\``;
     const back = step.removedBy ? `\`git revert --no-edit ${step.removedBy}\`` : null;
     if (!back) {
-        return [
-            `${step.left} steps of the plan are not done, counted by \`node tools/check-work-steps.mjs\`.`,
-            `The next move is step ${step.number} «${step.name}»: do it, then measure it — ${measure}.`,
-        ];
+        // A step read with the marks: its count is not the one of `check-work-steps`, which reads the progress alone.
+        const count = step.done === undefined ? 'are not done, counted by `node tools/check-work-steps.mjs`' : 'are not done or have no matched mark';
+        return [`${step.left} steps of the plan ${count}.`, `The next move is step ${step.number} «${step.name}»: do it, then measure it — ${measure}.`];
     }
     const lines = [`${step.left} steps of the plan are not done or have no matched mark, read from the last progress of the history: the task folder is taken apart by ${step.removedBy.slice(0, 9)}.`];
     if (!step.done) {

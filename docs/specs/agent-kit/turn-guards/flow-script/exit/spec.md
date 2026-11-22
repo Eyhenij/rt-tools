@@ -37,6 +37,9 @@ not by a person.
 - **A held turn in a running stage with no current step names by its number the first step of the plan not done or without a matched mark.**
   On a taken-apart folder the progress comes from the history, and the refusal adds the move `git
   revert` of the commit that took it apart; a folder a live step run put back is read from the history too.
+  The history is asked only in the state of a running stage. A step the plan names and the progress
+  lacks counts as not done. A step done with no matched mark gets the measuring command, and the
+  revert move only for a fix inside the folder.
 - **The owner's last word releases the turn when it begins with a stop word and nothing after it asks to go on.**
 - **A session that wrote nothing to the tree releases the turn unless the owner's last word pushes the work on, and a branch outside the scenario releases it always.**
 - **A role session with no edit tool ends with its report.**

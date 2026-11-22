@@ -227,7 +227,7 @@ async function runVerdict(model, base) {
     let step = currentStep(text);
     // No current step: the first one of the plan not done or without a matched mark, from the history
     // when the folder is taken apart.
-    if (!step && branch) {
+    if (!step && branch && model.states[result.index - 1]?.key === 'stage') {
         const source = await openSources(model, base);
         step = stageStep(source('git'), source('marks'), folder, branch, text);
     }

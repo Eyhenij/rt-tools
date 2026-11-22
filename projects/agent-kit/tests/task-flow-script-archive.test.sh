@@ -84,6 +84,12 @@ report "archive: SC-AK-1822 — проверка написала файл в п
 report "archive: SC-AK-1822 — следующий шаг после такого запуска меряется" "$(ta_engine "$TA" step 1.1 | grep -c '· совпало code=0')" 1
 got="$(ta_engine "$TA" step --done)"
 report "archive: SC-AK-1822 — step --done на разобранной папке меряет сделанные шаги" "$(printf '%s' "$got" | grep -c 'matched 3 code=0')" 1
+# Лишний файл в разобранной папке: возврата нет, отказ называет файл, отметка цела.
+mkdir -p "$TA/docs/tasks/RT-6-arc" && printf 'x' > "$TA/docs/tasks/RT-6-arc/.DS_Store"
+got="$(ta_engine "$TA" step 1.1)"
+report "archive: SC-AK-1822 — лишний файл в разобранной папке назван в отказе, отметка цела" \
+    "$(printf '%s' "$got" | grep -c 'still holds .DS_Store: remove them.* code=1')|$(ta_mark "$TA" 1.1)" '1|есть'
+rm -rf "$TA/docs/tasks/RT-6-arc"
 
 # --- SC-AK-1823 — шаг, который история не отмечает сделанным, получает ход отката ------------------
 removed="$(cd "$TA" && git rev-parse HEAD)"
@@ -97,10 +103,22 @@ report "archive: SC-AK-1823 — проверка шагов ход отката 
     "$(cd "$TA" && printf '%s' "$input" | node "$TA_ENGINE" guard 2>&1)" ''
 (cd "$TA" && "${TA_G[@]}" revert --no-edit "$removed" >/dev/null)
 report "archive: SC-AK-1823 — ход отката возвращает папку" "$(ta_folder "$TA")" 'есть'
-# Запись мёртвого запуска при папке у вершины: старт движка папку не трогает.
+# Пара к пропуску отката: та же проверка в той же обвязке отказывает ручную отметку шага.
+input="$(jq -cn --arg f "$TA/docs/tasks/RT-6-arc/progress.md" --arg d "$TA" \
+    '{session_id:"tests",tool_name:"Edit",cwd:$d,tool_input:{file_path:$f,old_string:"- [>] 1.3 Третий",new_string:"- [x] 1.3 Третий"}}')"
+report "archive: SC-AK-1823 — та же проверка отказывает ручную отметку шага" \
+    "$(cd "$TA" && printf '%s' "$input" | node "$TA_ENGINE" guard 2>&1 | grep -c .)" 1
+# Запись мёртвого запуска при папке у вершины: старт движка папку не трогает и молчит.
 printf '{"pid":%s,"root":"%s","folder":"docs/tasks/RT-6-arc","files":{}}\n' "$(ta_dead_pid)" "$TA" > "$TA/.git/rt-kit-restored.json"
-ta_engine "$TA" states >/dev/null
-report "archive: SC-AK-1824 — папка у вершины не убирается по записи мёртвого запуска" "$(ta_folder "$TA")" 'есть'
+got="$(ta_engine "$TA" states 2>&1)"
+report "archive: SC-AK-1824 — папка у вершины не убирается по записи мёртвого запуска" \
+    "$(ta_folder "$TA")|$(printf '%s' "$got" | grep -c 'left by a broken step run')" 'есть|0'
+# Файл папки правлен после коммита плана, папка разобрана: отказ называет ход отката.
+(cd "$TA" && printf 'новое слово\n' >> docs/tasks/RT-6-arc/probe.txt && git add -A && "${TA_G[@]}" commit -q -m edited \
+    && git rm -q -r docs/tasks/RT-6-arc && "${TA_G[@]}" commit -q -m "apart again")
+got="$(ta_engine "$TA" step 1.1)"
+report "archive: SC-AK-1823 — правленый после плана файл разобранной папки — отказ с ходом отката" \
+    "$(printf '%s' "$got" | grep -c "differs from the commit of the plan.*probe.txt.*git revert --no-edit $(cd "$TA" && git rev-parse HEAD).* code=1")" 1
 
 # --- SC-AK-1824 — старт движка чистит папку мёртвого запуска и не трогает живой -------------------
 TB="$(ta_repo arc-broken "$TA_PLAN" "$TA_DONE2")"
@@ -120,6 +138,8 @@ mkdir -p "$TB/.git/rt-kit/steps/RT-6-arc" && printf '{"matched":true}\n' > "$TB/
 got="$(ta_engine "$TB" step 1.1)"
 report "archive: SC-AK-1822 — второй шаг во время живого запуска отказан, его метка цела" \
     "$(printf '%s' "$got" | grep -c "put back by the live run $pid.* code=1")|$(ta_mark "$TB" 1.1)" '1|есть'
+report "archive: SC-AK-1822 — step --done во время живого запуска отказан" \
+    "$(ta_engine "$TB" step --done | grep -c "put back by the live run $pid.* code=1")" 1
 kill -9 "$pid" 2>/dev/null
 wait 2>/dev/null
 report "archive: SC-AK-1824 — оборванный запуск оставил папку" "$(ta_folder "$TB")" 'есть'
@@ -130,9 +150,13 @@ pid="$(ta_broken_run)"
 kill -9 "$pid" 2>/dev/null
 wait 2>/dev/null
 printf 'правка\n' >> "$TB/docs/tasks/RT-6-arc/probe.txt"
+# Первый старт — молчаливый, как у хука: поток ошибок уходит в никуда, а запись остаётся.
+(cd "$TB" && printf '{}' | node "$TA_ENGINE" guard >/dev/null 2>&1)
 got="$(ta_engine "$TB" states 2>&1)"
 report "archive: SC-AK-1824 — правленый файл возвращённой папки не убран, и это названо" \
     "$(ta_folder "$TB")|$(printf '%s' "$got" | grep -c 'left by a broken step run')" 'есть|1'
+report "archive: SC-AK-1824 — шаг на оставленной папке называет её, а не «differs»" \
+    "$(ta_engine "$TB" step 1.1 | grep -c 'left by a broken step run and was edited after it.* code=1')" 1
 rm -rf "$TB/docs/tasks/RT-6-arc"
 # Обрыв посреди возврата: части файлов нет, остальные — как их записал запуск.
 pid="$(ta_broken_run)"
@@ -215,7 +239,7 @@ TA_FLIP2="$TF_DIR/arc-flip-2"
     2. Видеть отметку 1.1
        Check: \`grep -c '^- \\[x\\] 1.1' docs/tasks/RT-7-grp/progress.md\` → = 1
     3. Упасть в середине конвейера
-       Check: \`printf 'ok 1\\nFAIL 2 сломалось\\nok 3\\n' | grep -c '^ok 2'\` → >= 1
+       Check: \`{ echo ok 1; echo FAIL 2 сломалось; echo ok 3; echo ok 4; echo ok 5; echo ok 6; } | grep -c '^ok 2'\` → >= 1
 - **Readiness sign:** шаги измерены
 PLAN
     printf '# Ход работы\n\n## Шаги\n\n- [>] 1.1 Не видеть своей отметки\n- [ ] 1.2 Видеть отметку 1.1\n- [ ] 1.3 Упасть в середине конвейера\n' > docs/tasks/RT-7-grp/progress.md
@@ -232,6 +256,55 @@ report "archive: SC-AK-1825 — второй прогон идёт на ходе
 report "archive: SC-AK-1826 — у конвейера видна строка провала до последней команды" \
     "$(printf '%s' "$got" | grep -c '^    before the last pipe: FAIL 2 сломалось$')" 1
 rm -f "$TA_FLIP2"
+
+# Перехват вывода до последней трубы — только там, где смысл команды под tee не меняется.
+got="$(node --input-type=module -e '
+const { tapped } = await import(process.argv[1]);
+const cases = [
+    ["case $x in a|b) echo y;; esac | grep -c y", null],
+    ["(( a | b )) | grep -c x", null],
+    ["echo \\\"a\\\" | grep -c a", null],
+    ["false | grep -c x; echo ${PIPESTATUS[0]}", null],
+    ["echo a >| f | grep -c a", null],
+    ["echo a | wc -l", null],
+    ["echo \x27a|b\x27 | grep -c a", "echo \x27a|b\x27 | tee \x27F\x27 | grep -c a"],
+    ["a | grep -c x", "a | tee \x27F\x27 | grep -c x"],
+];
+console.log(cases.filter(([c, want]) => tapped(c, "F") !== want).map(([c]) => c).join(" ; "));
+' "$TESTS/../assets/checks/flow-step.mjs" 2>&1)"
+report "archive: SC-AK-1826 — tee ставится только перед последним grep вне неоднозначных форм" "$got" ''
+
+# Шаг, ждущий стадию: шаг плана, которого нет в ходе работы, считается несделанным.
+got="$(node --input-type=module -e '
+const { pendingStep } = await import(process.argv[1]);
+const plan = "## Stages\n\n### 1. A\n\n- **Steps:**\n    1. Один\n       Check: `true` → exit 0\n    2. Два\n       Check: `true` → exit 0\n";
+const step = pendingStep("## Шаги\n\n- [x] 1.1 Один\n", () => true, plan);
+console.log(`${step?.number}|${step?.left}|${step?.done}`);
+' "$TESTS/../assets/checks/flow-verdict.mjs" 2>&1)"
+report "archive: SC-AK-1833 — шаг плана без строки в ходе работы ждёт стадию" "$got" '1.2|1|false'
+
+# Бюджет второго прогона считает уже ушедшее время: шаг в секунду при бюджете в полторы идёт один раз.
+TA_FLIP3="$TF_DIR/arc-flip-3"
+TE="$(ta_repo arc-budget "# Plan
+
+## Stages
+
+### 1. Первый
+
+- **Steps:**
+    1. Совпасть со второго раза
+       Check: \`sleep 1; if [ -e $TA_FLIP3 ]; then echo да; else touch $TA_FLIP3; echo нет; fi\` → \`да\`
+- **Readiness sign:** шаги измерены
+" '# Ход работы
+
+## Шаги
+
+- [x] 1.1 Совпасть со второго раза
+')"
+got="$(cd "$TE" && RT_FLOW_RERUN_BUDGET_MS=1500 RT_FLOW_STEP_LIMIT_MS=5000 node "$TA_ENGINE" step --done --pr 2>&1)"
+report "archive: SC-AK-1825 — второй прогон не начинается, если с ушедшим временем выйдет за бюджет" \
+    "$(printf '%s' "$got" | grep -c '^    runs: once')|$(printf '%s' "$got" | grep -c 'matched on the second run')" '1|0'
+rm -f "$TA_FLIP3"
 
 # --- SC-AK-1833 — шаг, не совпавший дважды на разобранной папке: ход отката и номер в отказе -------
 (cd "$TC" && git rm -q -r docs/tasks/RT-6-arc && "${TA_G[@]}" commit -q -m "folder taken apart")

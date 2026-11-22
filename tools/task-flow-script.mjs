@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.38.0 · checks/task-flow-script.mjs · e70615dce8ba · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/task-flow-script.mjs · 0a183f985837 · правится надстройкой, не здесь
 /**
  * The engine of the task flow: reads the description `flow.js` through the model and answers about
  * the scenario. The description lies next to the engine as `task-flow/flow.js` where the engine is
@@ -228,7 +228,7 @@ async function runVerdict(model, base) {
     let step = currentStep(text);
     // No current step: the first one of the plan not done or without a matched mark, from the history
     // when the folder is taken apart.
-    if (!step && branch) {
+    if (!step && branch && model.states[result.index - 1]?.key === 'stage') {
         const source = await openSources(model, base);
         step = stageStep(source('git'), source('marks'), folder, branch, text);
     }

@@ -20,7 +20,7 @@ rt_delivery_rerun() {
     local dir="${root:-${CLAUDE_PROJECT_DIR:-.}}" pinned run_path="$PATH"
     # The checks run on the node the tree pins in .nvmrc, as they ran when measured: the session may
     # carry another default, and a tree with an engines field refuses it.
-    pinned="$(tr -d ' \n' < "$dir/.nvmrc" 2>/dev/null)"
+    pinned="$({ tr -d ' \n' < "$dir/.nvmrc"; } 2>/dev/null)"
     pinned="${NVM_DIR:-$HOME/.nvm}/versions/node/v${pinned#v}/bin"
     [ -x "$pinned/node" ] && run_path="$pinned:$PATH"
     out="$(cd "$dir" && PATH="$run_path" node "$engine" step --done --pr 2>&1)"
@@ -29,7 +29,9 @@ rt_delivery_rerun() {
     # The move names the steps by their numbers: a line of a step begins with it and does not end matched.
     local steps move
     steps="$(printf '%s\n' "$out" | awk '/^[0-9]+\.[0-9]+ / && !/· совпало$/ { printf "%s`node tools/task-flow-script.mjs step %s`", (n++ ? ", " : ""), $1 }')"
-    move="Fix what each step measures and run ${steps:-the step command of each} again: it marks the step done when the check matches."
+    move="Fix what each step measures and run $steps again: it marks the step done when the check matches."
+    # No unmatched step: a live run holds the folder, or a check changed a tracked file — the lines say which.
+    [ -n "$steps" ] || move="The lines above name the cause: do what they say, then open the PR again."
     printf '%s' "$out" | grep -q 'git revert --no-edit' &&
         move="$move The task folder is taken apart: the command puts it back for the run, and a fix that lies in the folder takes the move the engine named above."
     unmet steps_remeasured no "the done steps of the plan were measured once more before the PR, and not every one matched:
