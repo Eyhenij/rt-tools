@@ -2,17 +2,22 @@
 
 ## Где мы
 
-- **State:** `задача-взята`
-- **Stage:** нет — план написан и закоммичен, роли его прочли; одобрение владельца утром
-- **Done:** разведка: почему команда шага отказывает после разбора папки и как перемер перед PR снимает отметку; план в три этапа переписан по находкам `product-strategist` и `goal-critic`, `plan-check` — код 0
-- **Next step:** утром — «Одобряю план RT-3434» и `plan-red`
+- **State:** `замысел-записан`
+- **Stage:** 1 — команда шага меряет шаг после разбора папки
+- **Done:** план одобрен владельцем 22.11 ответом «Одобряю план RT-3434», отметка `plan-red` записана; ветка вобрала RT-3423 после её разбора папки
+- **Next step:** этап 1, затем этап 2 и описания
 - **Uncommitted:** nothing
-- **Waiting for the owner:** одобрение плана утром — заход автономный
 - **PR:** not open yet
 
 ## Шаги
 
-Появятся вместе с планом.
+- [>] 1.1 The step command on a taken-apart folder puts it back, measures the step and writes the mark
+- [ ] 1.2 A step the history does not mark done is refused with a move the step guard lets through
+- [ ] 1.3 A start of the engine cleans a folder of a dead run and leaves the folder of a live one
+- [ ] 2.1 A step that did not match before a PR is run again and loses its mark only on the second mismatch
+- [ ] 2.2 The line of an unmatched step names the command and the last lines of its output and errors
+- [ ] 2.3 A step that fails twice on a taken-apart folder gets the revert move, and the exit refusal names its number
+- [ ] 3.1 The scenarios stand in the descriptions
 
 ## Решения по ходу
 
