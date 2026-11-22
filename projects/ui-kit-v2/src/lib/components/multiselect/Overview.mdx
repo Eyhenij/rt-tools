@@ -12,6 +12,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 <rt-field label="Города">
     <rt-multiselect [options]="cities" [maxChips]="3" [formControl]="selectedCities" />
 </rt-field>
+
+<rt-multiselect [options]="cities" [formField]="filter.cities" (selectionChange)="store.setCities($event)" />
 ```
 
 ## Когда применять
@@ -135,8 +137,14 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Выходы
 
-Своих выходов нет: значение уходит через `ControlValueAccessor`, то есть в связанный контрол
-формы. Массив всегда заменяется новым — прежний не правится, и форма видит новую ссылку.
+| выход             | тип                     | когда                                                        |
+| ----------------- | ----------------------- | ------------------------------------------------------------ |
+| `selectionChange` | `ReadonlyArray<TValue>` | пункт в панели мышью или клавишами, снятый чип, крестик      |
+| `cleared`         | `void`                  | сброс крестиком, после того как пустое значение ушло в форму |
+
+`selectionChange` несёт тот же массив, что ушёл в форму, и только на правку человека. На значение
+из формы (`writeValue`) его нет; крестик даёт `[]`. Массив всегда заменяется новым — прежний не
+правится, и форма видит новую ссылку.
 
 ## Свой указатель
 
