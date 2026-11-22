@@ -37,6 +37,25 @@ export function pastedElementsOf(html: string): Element[] {
 }
 
 /**
+ * The tags the HTML of a block keeps on its way into the editable element: those of a paste, the
+ * emphasis tags a page body carries, and a line break.
+ */
+const EDITABLE_ALLOWED_TAGS: string[] = [...PASTE_ALLOWED_TAGS, 'b', 'i', 's', 'u', 'strong', 'em', 'br'];
+
+/**
+ * The HTML of a block, cleaned by the allow list of a paste and given as nodes for the editable
+ * element. A script, an event handler and a `javascript:` link do not pass; the emphasis `span`
+ * keeps its `style`, and a link keeps its address, target and kind.
+ */
+export function editableNodesOf(html: string): DocumentFragment {
+    return DOMPurify.sanitize(html, {
+        ALLOWED_TAGS: EDITABLE_ALLOWED_TAGS,
+        ALLOWED_ATTR: PASTE_ALLOWED_ATTRIBUTES,
+        RETURN_DOM_FRAGMENT: true,
+    });
+}
+
+/**
  * The paste goes as plain text rather than blocks: the block already has text, the paste has no
  * markup, or the text was copied from the editor itself.
  */
