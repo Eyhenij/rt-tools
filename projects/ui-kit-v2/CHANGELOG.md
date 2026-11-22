@@ -1,3 +1,14 @@
+# [0.51.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.50.0...rt-ui-kit-v2%400.51.0) (2026-11-22)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** selectionChange после второго круга ревью (RT-3496) ([671f78b](https://github.com/Eyhenij/rt-tools/commit/671f78b2039a9b3aba76e42e65fe58a46a3783dd))
+- **rt:ui-kit-v2:** selectionChange после первого круга ревью (RT-3496) ([e4e4ead](https://github.com/Eyhenij/rt-tools/commit/e4e4ead6e836244b3ab1b9bc5d5bbc3daed97c32))
+
+### Features
+
+- **rt:ui-kit-v2:** событие selectionChange у полей диапазона дат, даты и мультивыбора (RT-3496) ([9b2c11a](https://github.com/Eyhenij/rt-tools/commit/9b2c11a528da39d846825e1d51ca4e15e977fab8))
+
 # [0.50.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.49.1...rt-ui-kit-v2%400.50.0) (2026-11-21)
 
 ### Bug Fixes

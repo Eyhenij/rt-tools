@@ -35,7 +35,7 @@ export interface IRtChartLegendItem {
 }
 
 /** Шкала плотности под тепловой картой: подписи краёв и плашки цвета по ступеням плотности. */
-export interface IRtChartScale {
+interface IRtChartScale {
     readonly low: string;
     readonly high: string;
     readonly color: string;
@@ -77,7 +77,7 @@ export const RT_CHART_TOP: number = 8;
 export const RT_CHART_BOTTOM: number = 20;
 
 /** Наименьший отступ сетки слева, под подписи значений. */
-export const RT_CHART_LEFT_MIN: number = 32;
+const RT_CHART_LEFT_MIN: number = 32;
 
 /** Промежуток между подписью значения и сеткой. */
 export const RT_CHART_LABEL_GAP: number = 6;
@@ -112,7 +112,7 @@ export function rtChartSlotAt(index: number, own?: IRtChart.TSlot): IRtChart.TSl
 }
 
 /** Наименьший «круглый» шаг не меньше данного. */
-export function rtChartNiceStep(raw: number): number {
+function rtChartNiceStep(raw: number): number {
     if (Number.isNaN(raw) || raw <= 0) {
         return 1;
     }

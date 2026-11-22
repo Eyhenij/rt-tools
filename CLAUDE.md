@@ -46,7 +46,7 @@ pnpm run check:all
 pnpm run check:ngdoctor
 
 # Files, dependencies and exports nobody uses, by knip over every project; settings in `knip.json`.
-# The last step of `check:all`; it is not in the push set, and any finding turns it red
+# The last step of `check:all`, a step of the pipeline and of the push set; any finding turns it red
 pnpm run check:unused
 
 # Raise the applications on one's own machine. The database is needed only by the receiver;

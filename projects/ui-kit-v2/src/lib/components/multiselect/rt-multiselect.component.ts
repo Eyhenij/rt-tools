@@ -5,12 +5,14 @@ import {
     forwardRef,
     inject,
     input,
+    output,
     signal,
     viewChild,
     ChangeDetectionStrategy,
     Component,
     ElementRef,
     InputSignal,
+    OutputEmitterRef,
     Signal,
     ViewEncapsulation,
     WritableSignal,
@@ -212,11 +214,27 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
      */
     public readonly panelMaxHeight: InputSignal<string | null> = input<string | null>(null);
 
+    /**
+     * Смена выбора человеком: пункт в панели (мышью или клавишами), снятый чип, крестик. Несёт тот
+     * же массив, что уходит в форму; на `writeValue` и на модель формы, заданную снаружи, не
+     * испускается.
+     */
+    public readonly selectionChange: OutputEmitterRef<ReadonlyArray<TValue>> = output<ReadonlyArray<TValue>>();
+
     public override setDisabledState(disabled: boolean): void {
         super.setDisabledState(disabled);
         if (disabled) {
             this.popover().close();
         }
+    }
+
+    /** Крестик: событие несёт значение поля после очистки — то же, что ушло в форму. */
+    protected override clear(event?: Event): void {
+        if (this.isDisabled()) {
+            return;
+        }
+        super.clear(event);
+        this.selectionChange.emit(this.value());
     }
 
     protected getEmptyValue(): ReadonlyArray<TValue> {
@@ -263,8 +281,7 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
         const next: ReadonlyArray<TValue> = clearing
             ? current.filter((v: TValue): boolean => !leaves.includes(v))
             : [...current, ...leaves.filter((leaf: TValue): boolean => !current.includes(leaf))];
-        this.value.set(next);
-        this.emitChange([...next]);
+        this.#commit(next);
     }
 
     protected removeChip(value: TValue, event: MouseEvent): void {
@@ -273,8 +290,7 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
             return;
         }
         const next: ReadonlyArray<TValue> = this.value().filter((v: TValue): boolean => v !== value);
-        this.value.set(next);
-        this.emitChange([...next]);
+        this.#commit(next);
     }
 
     protected onTriggerKeydown(event: KeyboardEvent): void {
@@ -290,6 +306,14 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
             return;
         }
         this.#handleOpenKeydown(event);
+    }
+
+    /** Правка человека: значение поля, форма и событие получают один и тот же массив. */
+    #commit(next: ReadonlyArray<TValue>): void {
+        const value: ReadonlyArray<TValue> = [...next];
+        this.value.set(value);
+        this.emitChange(value);
+        this.selectionChange.emit(value);
     }
 
     #handleOpenKeydown(event: KeyboardEvent): void {
