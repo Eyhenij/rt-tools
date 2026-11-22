@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.38.0 · checks/task-flow-script.mjs · 781636b2a9f0 · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/task-flow-script.mjs · f20dd619d967 · правится надстройкой, не здесь
 /**
  * The engine of the task flow: reads the description `flow.js` through the model and answers about
  * the scenario. The description lies next to the engine as `task-flow/flow.js` where the engine is
@@ -35,7 +35,7 @@
  * read from a broken description would measure what nobody wrote.
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, rmSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -48,9 +48,9 @@ import { isWriteCommand, saysStop } from './flow-data.mjs';
 import { FlowModelError, buildModel } from './flow-model.mjs';
 import { overridePath, removedLines } from './flow-override.mjs';
 import { planProblems, readRecord, runPlanRed } from './flow-plan.mjs';
-import { runStepCommand } from './flow-step.mjs';
+import { digest, removeRestored, restoreRecord, runStepCommand } from './flow-step.mjs';
 import { FlowSyntaxError } from './flow-syntax.mjs';
-import { currentStep, decide, holdReason, menuCause } from './flow-verdict.mjs';
+import { archivedStep, currentStep, decide, holdReason, menuCause } from './flow-verdict.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
@@ -220,9 +220,56 @@ async function runVerdict(model, base) {
     const root = spawnSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8' }).stdout?.trim();
     const branch = spawnSync('git', ['rev-parse', '--abbrev-ref', 'HEAD'], { encoding: 'utf8' }).stdout?.trim();
     const progress = join(root ?? '.', GUARD_SETTINGS.tasksDir, branch ?? '', 'progress.md');
-    const step = currentStep(existsSync(progress) ? readFileSync(progress, 'utf8') : null);
+    let step = currentStep(existsSync(progress) ? readFileSync(progress, 'utf8') : null);
+    // A taken-apart folder: the step is read from the last progress of the history and the marks.
+    if (!existsSync(progress) && branch) {
+        const source = await openSources(model, base);
+        step = archivedStep(source('git'), source('marks'), `${GUARD_SETTINGS.tasksDir}/${branch}`, branch) ?? step;
+    }
     const task = branch?.match(/^[A-Z]+-(\d+)-/)?.[1] ?? null;
     return { block: holdReason(model, result, step, { cause: menuCause(measured), task }) };
+}
+
+const alive = (pid) => {
+    try {
+        process.kill(pid, 0);
+        return true;
+    } catch (error) {
+        return error.code === 'EPERM';
+    }
+};
+
+/**
+ * Cleans the folder a broken step run put back, at a start of the engine: `cleaned`, `kept`, `live`,
+ * or null with no record. The folder goes only when the process of the record is gone, the head holds
+ * no such folder and every file still has the text put back; a live run keeps the folder and the
+ * record, and any other record is dropped with the files left as they are.
+ */
+export function cleanBrokenRun() {
+    const record = restoreRecord();
+    if (!record || !existsSync(record)) return null;
+    let entry = null;
+    try {
+        entry = JSON.parse(readFileSync(record, 'utf8'));
+    } catch {
+        entry = null;
+    }
+    if (entry && Number.isInteger(entry.pid) && alive(entry.pid)) return 'live';
+    let verdict = 'kept';
+    if (entry?.root && entry.folder) {
+        const atHead = spawnSync('git', ['cat-file', '-e', `HEAD:${entry.folder}`], { cwd: entry.root }).status === 0;
+        const files = Object.entries(entry.files ?? {});
+        const same = files.every(([path, hash]) => {
+            const file = join(entry.root, path);
+            return existsSync(file) && digest(readFileSync(file, 'utf8')) === hash;
+        });
+        if (!atHead && same) {
+            removeRestored(entry.root, entry.folder, files.map(([path]) => path));
+            verdict = 'cleaned';
+        }
+    }
+    rmSync(record, { force: true });
+    return verdict;
 }
 
 const COMMANDS = ['states', 'measure', 'step', 'plan-check', 'plan-red', 'guard', 'verdict', 'forecast'];
@@ -241,6 +288,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
         console.error(USAGE);
         process.exit(2);
     }
+    // A folder a broken step run put back is cleaned before any command; a live run keeps it.
+    cleanBrokenRun();
     try {
         const path = flowPath(given);
         const override = overridePath(overrideGiven, given);

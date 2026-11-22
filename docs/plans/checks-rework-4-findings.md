@@ -152,6 +152,18 @@ The task ran outside the epic; the owner added its findings to the epic on 21.11
   `.gitignore` line for observations hides them. **Address:** this tree — remove them in the next
   branch; the cause is the RT-3469 finding on the working directory without `CLAUDE_PROJECT_DIR`.
 
+## RT-3434 — the step is measured after the folder is taken apart
+
+- **The step guard measures the branch from the directory of the call, and a session in a
+  subdirectory gets a correct state line refused.** On 22.11 the line `этап-идёт` was refused as
+  «ahead of the measured one» while the shell stood in `projects/agent-kit/tests`; the same edit
+  from the root passed, and `measure` from the root named `этап-идёт`. **Address:** rules layer —
+  the guard of `assets/checks/flow-guard-run.mjs` measures from the root of the copy, not from the
+  `cwd` of the hook input.
+- **`step --done` without `--pr` still refuses on a taken-apart folder.** Only `step N.M` and the
+  rerun before a PR put the folder back. **Address:** rules layer — `runStepCommand` in
+  `assets/checks/flow-step.mjs`.
+
 ## Left unresolved
 
 - **The commit hook does not check the pipeline files.** `lint-staged` in `package.json` does not

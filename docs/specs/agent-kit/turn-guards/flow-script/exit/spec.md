@@ -34,6 +34,7 @@ not by a person.
 - **A turn ends with the scenario: the engine measures the branch, and a turn whose scenario is not over is held.**
 - **A turn is released by the first release case of the description that is met, in the order of the cases.**
 - **A held turn names one move: the action of the measured state, and in a running stage the current step with the command that measures it.**
+- **On a taken-apart task folder a held turn names the step by its number from the last progress of the history and the marks, with the move `git revert` of the commit that took it apart.**
 - **The owner's last word releases the turn when it begins with a stop word and nothing after it asks to go on.**
 - **A session that wrote nothing to the tree releases the turn unless the owner's last word pushes the work on, and a branch outside the scenario releases it always.**
 - **A role session with no edit tool ends with its report.**

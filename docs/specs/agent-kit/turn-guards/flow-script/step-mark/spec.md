@@ -54,6 +54,14 @@ prints a line per fixture.
 - **Whether a plan has checks, and which, is read from the commit that added the plan, never from the working copy.**
   A plan stripped of its check lines in the working copy does not lift the refusal.
 - **The marks are kept by branch, and the latest measurement of a step in any working copy is the one that holds.**
+- **On a taken-apart task folder the step command puts the folder back from the history for its run.**
+  The files come from the parent of the commit that removed the folder and leave after the run; the
+  step is measured with the progress as it stood when it was measured, and a match writes its mark.
+- **A step the last progress of the history does not mark done is refused on a taken-apart folder, with the move `git revert` of the commit that took it apart.**
+  The step guard lets that command through: it names no guarded file.
+- **A folder put back for a run is cleaned at a start of the engine only when its process is gone, the head holds no such folder and its files keep the text put back.**
+  The record of the run lies in the git directory of its own copy with the process, the root and the
+  digest of each file. A live run keeps its folder; an edited file stays where it is.
 
 ### The final rerun
 
@@ -73,6 +81,13 @@ prints a line per fixture.
   could make itself green.
 - **A check that fails on the network does not match, and the refusal names the network as the cause.**
 - **A step past its limit of 540 seconds, or whose command does not run, does not match on the final rerun.**
+- **A step that does not match on the final rerun runs once more in its group while the budget of 1500 seconds lasts, and loses its mark only on the second mismatch.**
+  An answer of a model or a live count can differ once in six runs; one mismatch is no verdict. A
+  step past its limit does not run again, and a step whose group did not start within the budget
+  loses its mark after the one run.
+- **The line of an unmatched step names its command and the last three lines of its output and of its errors.**
+- **A step that does not match on a taken-apart folder gets the move `git revert` of the commit that took it apart.**
+  Bring the folder back, fix the check or the step, measure it and take the folder apart again.
 
 ### The approval
 

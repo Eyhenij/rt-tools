@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · checks/flow-verdict.mjs · ab56969a467b · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/flow-verdict.mjs · b5c2b2f24b17 · правится надстройкой, не здесь
 /**
  * The verdict at the end of a turn — the engine command `verdict`, called by the hook on Stop.
  *
@@ -128,6 +128,48 @@ export function currentStep(progress) {
 }
 
 /**
+ * The step the stages wait for in a progress read from the history after the folder was taken apart:
+ * the current one, else the first not done, else the first done step with no matched mark.
+ * `{ number, name, left, done }`, or null; `matched(number)` answers the mark of a step.
+ */
+export function pendingStep(progress, matched) {
+    const steps = stepsOfProgress(progress ?? '').steps;
+    const open = steps.filter((s) => s.mark !== 'x' || !matched(s.number));
+    const step = steps.find((s) => s.mark === '>') ?? open[0];
+    return step ? { number: step.number, name: step.name, left: open.length, done: step.mark === 'x' } : null;
+}
+
+/**
+ * The step of a taken-apart task folder: read from the last progress of the history and the marks of
+ * the branch, with the commit that took the folder apart. Null when the history holds no progress.
+ */
+export function archivedStep(git, marks, folder, branch) {
+    const text = git.lastVersion(`${folder}/progress.md`);
+    const pending = text === null ? null : pendingStep(text, (number) => marks.step(branch, number)?.matched === true);
+    return pending ? { ...pending, removedBy: git.removedAt(folder) } : null;
+}
+
+/** The lines of the step the stages wait for; `removedBy` names the commit that took the folder apart. */
+function stepLines(step) {
+    const measure = `\`node tools/task-flow-script.mjs step ${step.number}\``;
+    const back = step.removedBy ? `\`git revert --no-edit ${step.removedBy}\`` : null;
+    if (!back) {
+        return [
+            `${step.left} steps of the plan are not done, counted by \`node tools/check-work-steps.mjs\`.`,
+            `The next move is step ${step.number} «${step.name}»: do it, then measure it — ${measure}.`,
+        ];
+    }
+    const lines = [`${step.left} steps of the plan are not done or have no matched mark, read from the last progress of the history: the task folder is taken apart by ${step.removedBy.slice(0, 9)}.`];
+    if (!step.done) {
+        lines.push(`The next move is step ${step.number} «${step.name}»: the history does not mark it done, so bring the folder back — ${back} — then do the step and measure it — ${measure}.`);
+    } else {
+        lines.push(`The next move is step ${step.number} «${step.name}»: measure it — ${measure}; the command puts the folder back for the run.`);
+        lines.push(`A step that does not match again needs the folder back — ${back} — then fix the check or the step, measure it and take the folder apart again.`);
+    }
+    return lines;
+}
+
+/**
  * The reason of a held turn: the measured state, its action, and the step when the stages go on. With a
  * cause of the menu the one move is the owner's menu instead.
  */
@@ -157,8 +199,7 @@ export function holdReason(model, result, step, menu = null) {
         return lines.join('\n');
     }
     if (step && state?.key === 'stage') {
-        lines.push(`${step.left} steps of the plan are not done, counted by \`node tools/check-work-steps.mjs\`.`);
-        lines.push(`The next move is step ${step.number} «${step.name}»: do it, then measure it — \`node tools/task-flow-script.mjs step ${step.number}\`.`);
+        lines.push(...stepLines(step));
     } else {
         lines.push(`The next move is the action of this state: ${state?.action ?? ''} (pattern \`${state?.pattern ?? ''}\`).`);
     }

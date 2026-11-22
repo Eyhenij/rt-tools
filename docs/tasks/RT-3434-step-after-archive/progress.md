@@ -2,22 +2,22 @@
 
 ## Где мы
 
-- **State:** `замысел-записан`
-- **Stage:** 1 — команда шага меряет шаг после разбора папки
-- **Done:** план одобрен владельцем 22.11 ответом «Одобряю план RT-3434», отметка `plan-red` записана; ветка вобрала RT-3423 после её разбора папки
-- **Next step:** этап 1, затем этап 2 и описания
-- **Uncommitted:** nothing
+- **State:** `этапы-кончились`
+- **Stage:** нет — этапы 1–3 сделаны, все семь шагов совпали на `step N.M`
+- **Done:** команда шага меряет шаг на разобранной папке; несделанный в истории шаг получает ход `git revert`; старт движка чистит папку мёртвого запуска; перемер перед PR снимает отметку только со второго несовпадения и называет команду, вывод и ошибки шага; отказ конца хода без папки называет номер шага; сценарии в описаниях. Набор движка — 241 ok, новый набор — 25 ok дважды подряд
+- **Next step:** живая проверка на ветке RT-3423 с разобранной папкой, затем два круга ревью
+- **Uncommitted:** код этапов 1–3, описания
 - **PR:** not open yet
 
 ## Шаги
 
-- [>] 1.1 The step command on a taken-apart folder puts it back, measures the step and writes the mark
-- [ ] 1.2 A step the history does not mark done is refused with a move the step guard lets through
-- [ ] 1.3 A start of the engine cleans a folder of a dead run and leaves the folder of a live one
-- [ ] 2.1 A step that did not match before a PR is run again and loses its mark only on the second mismatch
-- [ ] 2.2 The line of an unmatched step names the command and the last lines of its output and errors
-- [ ] 2.3 A step that fails twice on a taken-apart folder gets the revert move, and the exit refusal names its number
-- [ ] 3.1 The scenarios stand in the descriptions
+- [x] 1.1 The step command on a taken-apart folder puts it back, measures the step and writes the mark
+- [x] 1.2 A step the history does not mark done is refused with a move the step guard lets through
+- [x] 1.3 A start of the engine cleans a folder of a dead run and leaves the folder of a live one
+- [x] 2.1 A step that did not match before a PR is run again and loses its mark only on the second mismatch
+- [x] 2.2 The line of an unmatched step names the command and the last lines of its output and errors
+- [x] 2.3 A step that fails twice on a taken-apart folder gets the revert move, and the exit refusal names its number
+- [x] 3.1 The scenarios stand in the descriptions
 
 ## Решения по ходу
 
@@ -31,3 +31,10 @@
   правит его там.
 - **Новые случаи — в отдельном наборе `task-flow-script-archive.test.sh`.** Набор шагов уже 486
   строк при пределе 500 для кода.
+- **Очистка прерванного запуска лежит в `task-flow-script.mjs`, как называет след плана.** В
+  `flow-step.mjs` она подняла файл до 534 строк при пределе 500; после переноса — 492.
+- **Шаг, не повторённый вторым прогоном, теряет отметку после одного несовпадения.** Это шаг за
+  пределом 540 с или группа, не начатая в бюджете 1500 с: перемер не может его повторить, и PR
+  отказан всё равно.
+- **Отказ конца хода без папки берёт шаг из функции `archivedStep`.** Движок и сценарий зовут
+  один и тот же код: суждение конца хода в наборе не запустить без хостинга.

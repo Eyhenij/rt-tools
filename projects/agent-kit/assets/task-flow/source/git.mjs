@@ -10,6 +10,7 @@
  *   versionAt(path, sha) the text of the file at that commit, null where it is absent
  *   lastVersion(path)   the text at the newest commit of the branch that holds the file
  *   addedBy(path)       the sha of the oldest commit of the branch that added the file, or null
+ *   removedAt(path)     the sha of the newest commit of the head that removed the path, or null
  *   everExisted(path)   the path, a file or a directory, stood in a commit of the branch or of the
  *                       main branch on the server
  *   existsAtHead(path)  the path stands in the head commit
@@ -62,6 +63,10 @@ export function open() {
         },
         addedBy(path) {
             return commits().find((c) => c.added.includes(path))?.sha ?? null;
+        },
+        removedAt(path) {
+            const bare = path.replace(/\/$/, '');
+            return (run(['log', '-1', '--format=%H', '--diff-filter=D', 'HEAD', '--', bare]) ?? '').trim() || null;
         },
         everExisted(path) {
             const bare = path.replace(/\/$/, '');

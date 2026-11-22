@@ -338,3 +338,49 @@ When `step 1.1` is run
 Then the progress keeps step 1.1 current and not done, and no mark of step 1.1 lies in the directory of the marks
 
 Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+
+### SC-AK-1822 — the step command measures a step after the folder is taken apart
+
+Given a branch whose task folder is taken apart, and steps 1.1 and 1.2 the last progress marks done with no marks
+When `step 1.1` and `step 1.2` are run
+Then each matches and writes its mark, step 1.2 on the progress as it stood when it was measured
+And after each run the folder and the record of the run are gone
+
+Covered: `projects/agent-kit/tests/task-flow-script-archive.test.sh`.
+
+### SC-AK-1823 — a step the history does not mark done gets the revert move
+
+Given a branch whose task folder is taken apart, and step 1.3 the last progress does not mark done
+When `step 1.3` is run
+Then it is refused with the move `git revert --no-edit <the commit that took the folder apart>`
+And the step guard lets that command through, and the command brings the folder back
+
+Covered: `projects/agent-kit/tests/task-flow-script-archive.test.sh`.
+
+### SC-AK-1824 — a start of the engine cleans the folder of a dead run only
+
+Given a step run on a taken-apart folder that put the folder back
+When the engine starts while the run lives
+Then the folder stays
+When the run is killed and the engine starts again
+Then the folder and the record of the run are gone
+And a folder whose file was edited after a killed run stays
+
+Covered: `projects/agent-kit/tests/task-flow-script-archive.test.sh`.
+
+### SC-AK-1825 — the final rerun keeps a mark on one mismatch
+
+Given two done steps with marks: one matches only on its second run, one never matches
+When the final rerun runs
+Then the first matches on the second run and keeps its mark, the second runs twice and loses its mark
+And with the budget spent no step runs twice, and a step that did not match loses its mark
+
+Covered: `projects/agent-kit/tests/task-flow-script-archive.test.sh`.
+
+### SC-AK-1826 — the line of an unmatched step names its command, output and errors
+
+Given a done step whose check prints four lines and an error and exits 3
+When the final rerun runs
+Then under its line stand its command, the last three lines of its output and its error line
+
+Covered: `projects/agent-kit/tests/task-flow-script-archive.test.sh`.
