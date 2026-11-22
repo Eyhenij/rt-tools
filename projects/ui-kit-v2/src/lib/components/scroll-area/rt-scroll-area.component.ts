@@ -130,9 +130,10 @@ export class RtScrollAreaComponent {
             const body: HTMLElement | null = this.bodyRef()?.nativeElement ?? null;
             const footer: HTMLElement | null = this.footerRef()?.nativeElement ?? null;
 
+            // Выключенный признак подсказку не рисует: шаблон сам проверяет признак, а включение
+            // меряет тело в этом же проходе, так что прежний замер не успевает показаться.
             if (!this.isScrollHintShown()) {
                 this.#unwatch();
-                this.hasMoreBelow.set(false);
 
                 return;
             }
