@@ -8,7 +8,7 @@ import { RtDynamicListComponent } from './rt-dynamic-list.component';
 @Component({
     selector: 'rt-content-slot-host',
     template: `
-        <rt-dynamic-list [loading]="on()">
+        <rt-dynamic-list [loading]="on()" [empty]="empty()" [error]="error()">
             <ng-template rtDynamicListContent><span qa-dataid="slot-probe">содержимое</span></ng-template>
         </rt-dynamic-list>
     `,
@@ -17,6 +17,8 @@ import { RtDynamicListComponent } from './rt-dynamic-list.component';
 })
 class ContentSlotHostComponent {
     public readonly on: WritableSignal<boolean> = signal<boolean>(true);
+    public readonly empty: WritableSignal<boolean> = signal<boolean>(false);
+    public readonly error: WritableSignal<string | null> = signal<string | null>(null);
 }
 
 /** Сколько узлов содержимого построено: шаблон, который не создан, узла не даёт. */
@@ -39,5 +41,30 @@ describe('RtDynamicListComponent — записи шаблоном', (): void =>
         fixture.detectChanges();
 
         expect(probes()).toBe(1);
+    });
+
+    it('SC-UKV-1742: пустота и ошибка чтения прячут построенные записи, а не разрушают их', (): void => {
+        const fixture: ComponentFixture<ContentSlotHostComponent> = createRtFixture(ContentSlotHostComponent);
+        fixture.componentInstance.on.set(false);
+        fixture.detectChanges();
+        const probe: Element | null = document.querySelector('[qa-dataid="slot-probe"]');
+        const content: HTMLElement = document.querySelector('[qa-dataid="dynamic-list-content"]') as HTMLElement;
+
+        fixture.componentInstance.empty.set(true);
+        fixture.detectChanges();
+        const hiddenOnEmpty: boolean = content.classList.contains('rt-dynamic-list__content--hidden');
+        fixture.componentInstance.empty.set(false);
+        fixture.componentInstance.error.set('Нет сети');
+        fixture.detectChanges();
+        const hiddenOnError: boolean = content.classList.contains('rt-dynamic-list__content--hidden');
+        fixture.componentInstance.error.set(null);
+        fixture.detectChanges();
+
+        expect([
+            hiddenOnEmpty,
+            hiddenOnError,
+            content.classList.contains('rt-dynamic-list__content--hidden'),
+            document.querySelector('[qa-dataid="slot-probe"]') === probe,
+        ]).toEqual([true, true, false, true]);
     });
 });

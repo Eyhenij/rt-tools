@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Directive, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Directive, OnDestroy, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 import { Observable, Subject } from 'rxjs';
 
@@ -41,7 +41,9 @@ class DialogStub {
             <ng-template rtMenuContent>
                 <rt-menu-item rtProbe label="Открыть" (selected)="opened = opened + 1" />
                 <rt-menu-item rtProbe label="Копировать" />
-                <rt-menu-item rtProbe label="Удалить" confirmMessage="Удалить запись?" (selected)="removed = removed + 1" />
+                @if (removable()) {
+                    <rt-menu-item rtProbe label="Удалить" confirmMessage="Удалить запись?" (selected)="removed = removed + 1" />
+                }
             </ng-template>
         </rt-menu>
     `,
@@ -49,6 +51,7 @@ class DialogStub {
     imports: [RtMenuComponent, RtMenuContentDirective, RtMenuItemComponent, ProbeDirective],
 })
 class MenuSlotsHostComponent {
+    public readonly removable: WritableSignal<boolean> = signal<boolean>(true);
     public opened: number = 0;
     public removed: number = 0;
 }
@@ -133,6 +136,20 @@ describe('RtMenuComponent — пункты шаблоном', (): void => {
         fixture.detectChanges();
 
         expect([dialog.opened, heldOpen, fixture.componentInstance.removed, items().length]).toEqual([1, true, 1, 0]);
+    });
+
+    it('SC-UKV-1733: пункт, ушедший при открытом окне, не держит скрытую панель после закрытия меню', (): void => {
+        const fixture: ComponentFixture<MenuSlotsHostComponent> = setup();
+
+        pressTrigger(fixture);
+        items()[2].click();
+        fixture.detectChanges();
+        fixture.componentInstance.removable.set(false);
+        fixture.detectChanges();
+        document.querySelector('[qa-dataid="menu-panel"]')?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        fixture.detectChanges();
+
+        expect([items().length, document.querySelector('[qa-dataid="menu-panel"]')]).toEqual([0, null]);
     });
 
     it('SC-UKV-1733: нажатие мимо удержанной панели снимает ожидание, и подложка уходит со страницы', (): void => {

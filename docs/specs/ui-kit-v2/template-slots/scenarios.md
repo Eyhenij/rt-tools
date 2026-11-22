@@ -260,6 +260,8 @@ Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field.component.spec.ts
 Given a dynamic list with a content template, loading for the first time
 When the list is drawn
 Then the loading state is shown and the content of the template is not built
+And once the load ends the content is built, and an empty or failed list later hides it without
+destroying it
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-list/rt-dynamic-list-content.directive.spec.ts`.
 

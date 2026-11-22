@@ -151,8 +151,9 @@ Former default slots — a named template:
   column sorts, as plain content otherwise.
 - **Side panel.** `rtAsideContent` — while the panel is not empty.
 - **Skeleton wrapper.** `rtSkeletonWrapperContent` — while not loading.
-- **Dynamic list.** `rtDynamicListContent` — while the list is neither loading for the first time,
-  nor failed, nor empty.
+- **Dynamic list.** `rtDynamicListContent` — built once the first load ends and kept from then on:
+  an empty or failed list hides it rather than destroying it, so a table inside keeps its column
+  settings and order.
 - **Money row.** `rtMoneyRowContent` — while not loading.
 - **Info item.** `rtInfoItemContent` — while not loading.
 - **Admin list page.** `adminListPageContent` — while the page shows no read fault.

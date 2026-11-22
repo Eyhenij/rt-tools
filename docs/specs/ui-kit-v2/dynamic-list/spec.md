@@ -66,7 +66,8 @@ no toolbar and no dynamic list: they see the section they came to — orders, st
 
 - **The records come by a template, not by an input.** The template is `rtDynamicListContent`, and
   the table in it is the consumer's own: their columns, their cells, their row actions. The family stands around it and does not
-  decide what is drawn inside.
+  decide what is drawn inside. The template is built when the first load ends, and an empty or
+  failed list hides it instead of destroying it: the table keeps its column settings and order.
 
 ## What is out of scope
 

@@ -116,22 +116,24 @@
                     }
                 </rt-empty-state>
             }
-        } @else {
-            <div rtElem="content" qa-dataid="dynamic-list-content">
-                <ng-container [rtSlotOutlet]="contents()" />
-            </div>
-
-            @if (isPaginationShown()) {
-                <rt-pagination
-                    rtElem="pagination"
-                    qa-dataid="dynamic-list-pagination"
-                    [pageModel]="pageModel()!"
-                    [perPageOptions]="perPageOptions"
-                    [loading]="fetching()"
-                    (pageChange)="pageChange.emit($event)"
-                    (perPageChange)="perPageChange.emit($event)" />
-            }
         }
+    }
+
+    @if (isContentBuilt()) {
+        <div rtElem="content" qa-dataid="dynamic-list-content" [rtMod]="{ hidden: !isContentShown() }">
+            <ng-container [rtSlotOutlet]="contents()" />
+        </div>
+    }
+
+    @if (isContentShown() && isPaginationShown()) {
+        <rt-pagination
+            rtElem="pagination"
+            qa-dataid="dynamic-list-pagination"
+            [pageModel]="pageModel()!"
+            [perPageOptions]="perPageOptions"
+            [loading]="fetching()"
+            (pageChange)="pageChange.emit($event)"
+            (perPageChange)="perPageChange.emit($event)" />
     }
 
     <ng-template #defaultError>

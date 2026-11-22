@@ -136,6 +136,9 @@ export class RtMenuComponent {
     /** Пункты, ждущие ответа окна подтверждения: пока они есть, закрытая панель остаётся скрытой. */
     protected readonly confirming: WritableSignal<number> = signal<number>(0);
 
+    /** Узлы ждущих пунктов: пункт, разрушенный до ответа окна, узнаётся по уходу узла со страницы. */
+    readonly #pending: Set<HTMLElement> = new Set<HTMLElement>();
+
     /** Класс набора, найденный над меню при открытии: панель лежит вне контейнера с признаком. */
     protected readonly presetClasses: WritableSignal<string[]> = signal<string[]>([]);
 
@@ -246,14 +249,21 @@ export class RtMenuComponent {
      * панель держала бы прозрачную подложку над страницей.
      */
     protected onBackdropClick(): void {
+        this.#pending.clear();
         this.confirming.set(0);
         this.close();
     }
 
     /** Пункт открыл или закрыл окно подтверждения: закрытая панель ждёт его ответа. */
     protected onConfirm(event: Event): void {
-        const pending: boolean = (event as CustomEvent<boolean>).detail;
-        this.confirming.update((count: number): number => Math.max(0, count + (pending ? 1 : -1)));
+        const item: HTMLElement = event.target as HTMLElement;
+
+        if ((event as CustomEvent<boolean>).detail) {
+            this.#pending.add(item);
+        } else {
+            this.#pending.delete(item);
+        }
+        this.confirming.set(this.#pending.size);
     }
 
     protected onKeydown(event: KeyboardEvent): void {
@@ -282,11 +292,26 @@ export class RtMenuComponent {
         this.trigger().elementRef.nativeElement.querySelector('button')?.focus();
     }
 
+    /**
+     * Пункт, разрушенный при открытом окне, ответ окна уже не получит и ожидание не снимет: его узел
+     * ушёл со страницы. Закрытие меню снимает такие ожидания, иначе скрытая панель держала бы
+     * прозрачную подложку над страницей.
+     */
+    #dropGonePending(): void {
+        this.#pending.forEach((item: HTMLElement): void => {
+            if (!item.isConnected) {
+                this.#pending.delete(item);
+            }
+        });
+        this.confirming.set(this.#pending.size);
+    }
+
     #setOpen(open: boolean): void {
         if (open !== this.isOpen()) {
             if (!open) {
                 this.#keyManager?.destroy();
                 this.#keyManager = null;
+                this.#dropGonePending();
             }
             if (open) {
                 this.presetClasses.set(materialPresetClassesOf(this.#host.nativeElement));

@@ -75,7 +75,8 @@ describe('RtDynamicListComponent — ошибка загрузки и свои �
         );
 
         expect(textOf(qa(fixture, 'dynamic-list-error'))).toContain('Нет сети');
-        expect(qa(fixture, 'host-table')).toBeNull();
+        // Записи на ошибке скрыты, а не разрушены: таблица держит свои настройки колонок.
+        expect((qa(fixture, 'dynamic-list-content')?.nativeElement as HTMLElement).classList).toContain('rt-dynamic-list__content--hidden');
         expect(qa(fixture, 'dynamic-list-pagination')).toBeNull();
         expect(qa(fixture, 'dynamic-list-toolbar')).not.toBeNull();
 

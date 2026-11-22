@@ -20,13 +20,15 @@ import {
     untracked,
     ViewEncapsulation,
     contentChildren,
+    linkedSignal,
+    WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { filter, map } from 'rxjs';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { IPageModel, TNullable } from '@rt-tools/utils';
 
 import { RT_KIT_LABELS, rtKitLabel, TRtKitLabelMap, TRtKitLabelParams, RtSlotOutletDirective } from '@rt-tools/ui-kit-v2/core';
@@ -88,12 +90,28 @@ const PER_PAGE_OPTIONS: ReadonlyArray<number> = [20, 50, 100];
         RtSpinnerComponent,
         BlockDirective,
         ElemDirective,
+        ModDirective,
     ],
     host: { class: BEM_BLOCK },
 })
 export class RtDynamicListComponent implements OnInit {
-    /** Шаблоны записей: рисуются, только пока у списка есть что показать. */
+    /** Шаблоны записей: строятся по концу первой загрузки, видны, пока у списка есть что показать. */
     protected readonly contents: Signal<readonly RtDynamicListContentDirective[]> = contentChildren(RtDynamicListContentDirective);
+
+    /**
+     * Записи построены: первая загрузка кончилась. Дальше они живут и при пустоте, и при ошибке
+     * чтения, скрытые: таблица внутри держит свои настройки колонок и порядок, и пустой отбор не
+     * снимает их с учёта.
+     */
+    protected readonly isContentBuilt: WritableSignal<boolean> = linkedSignal<boolean, boolean>({
+        source: (): boolean => !this.loading(),
+        computation: (ready: boolean, previous?: { source: boolean; value: boolean }): boolean => ready || (previous?.value ?? false),
+    });
+
+    /** Записи видны: не первая загрузка, не ошибка чтения и не пустота. */
+    protected readonly isContentShown: Signal<boolean> = computed(
+        (): boolean => !this.loading() && !this.loadError.shown() && !this.empty()
+    );
 
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
 
