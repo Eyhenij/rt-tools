@@ -1,10 +1,12 @@
 import { NumberInput } from '@angular/cdk/coercion';
 import {
+    booleanAttribute,
     computed,
     forwardRef,
     inject,
     input,
     numberAttribute,
+    output,
     signal,
     viewChild,
     ChangeDetectionStrategy,
@@ -12,6 +14,7 @@ import {
     ElementRef,
     InputSignal,
     InputSignalWithTransform,
+    OutputEmitterRef,
     Signal,
     ViewEncapsulation,
     WritableSignal,
@@ -26,12 +29,14 @@ import { RtFormControlBase, rtBoundOrNull } from '@rt-tools/ui-kit-v2/form-contr
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { IRtInput } from '@rt-tools/ui-kit-v2/core';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
-import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { RT_POPOVER_SHEET, RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtDatePanelComponent } from './panel/rt-date-panel.component';
 import { rtDateInBounds } from './rt-date-panel.logic';
 import { IRtDatePicker } from './rt-date-picker.model';
-import { rtDateLayout, rtDateParse, rtDateShape, rtDateText } from './rt-date-text.logic';
+import { RT_DATE_SHAPE_MASK, rtDateLayout, rtDateParse, rtDateShape, rtDateText } from './rt-date-text.logic';
+
+type TBooleanInput = boolean | string;
 
 const BEM_BLOCK: string = 'rt-date-picker';
 
@@ -86,8 +91,14 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
     readonly #layout: Signal<IRtDatePicker.TextLayout> = computed((): IRtDatePicker.TextLayout => rtDateLayout(this.#locale()));
 
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
+    /** Корень поля: поповер встаёт по его краю, а не по кнопке календаря внутри него. */
+    protected readonly host: HTMLElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
     /** Узкий экран: панель открывается в нижней шторке, а не в поповере. */
-    protected readonly narrow: Signal<boolean> = inject(BreakpointsService).viewportNarrow;
+    protected readonly phone: Signal<boolean> = inject(BreakpointsService).phone;
+    /** Приложение разрешает шторку токеном `RT_POPOVER_SHEET` (по умолчанию да); `false` оставляет поповер у поля везде под ним. */
+    readonly #sheetAllowed: boolean = inject(RT_POPOVER_SHEET);
+    /** Шторка включена входом `sheet`, токеном и экраном телефона (`BreakpointsService.phone`, до 480 px); иначе панель открывается поповером у поля. */
+    protected readonly useSheet: Signal<boolean> = computed((): boolean => this.#sheetAllowed && this.phone() && this.sheet());
 
     protected readonly fieldEl: Signal<ElementRef<HTMLInputElement> | undefined> = viewChild<ElementRef<HTMLInputElement>>('fieldEl');
     protected readonly popover: Signal<RtPopoverDirective | undefined> = viewChild(RtPopoverDirective);
@@ -95,25 +106,14 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
     /** Набранный текст не читается как значение в границах: поле помечено ошибкой. */
     protected readonly textInvalid: WritableSignal<boolean> = signal(false);
     protected readonly sheetOpen: WritableSignal<boolean> = signal(false);
-    /** Подсказка формы текста буквами кита: `дд.мм.гггг` под русскими метками. */
-    protected readonly shape: Signal<string> = computed((): string => {
-        const labels: TRtKitLabelMap = this.t();
-        return rtDateShape(this.type(), this.#layout(), {
-            day: labels.uiShapeDay,
-            month: labels.uiShapeMonth,
-            year: labels.uiShapeYear,
-            hour: labels.uiShapeHour,
-            minute: labels.uiShapeMinute,
-        });
-    });
+    /** Подсказка формы текста маской из чёрточек: `--.--.----` в порядке языка интерфейса. */
+    protected readonly shape: Signal<string> = computed((): string => rtDateShape(this.type(), this.#layout(), RT_DATE_SHAPE_MASK));
     /**
      * Текст в поле — значение в порядке языка интерфейса. Не строку форма кладёт мимо контракта
      * (например `Date`), и поле показывает её пустой, как показывало браузерное.
      */
     protected readonly text: Signal<string> = computed((): string => this.#text(this.value()));
-    protected readonly openIcon: Signal<IRtIcon.Name> = computed((): IRtIcon.Name =>
-        this.type() === 'time' ? 'ico-time' : 'ico-calendar'
-    );
+    protected readonly openIcon: Signal<IRtIcon.Name> = computed((): IRtIcon.Name => (this.type() === 'time' ? 'ico-time' : 'calendar-2'));
 
     protected readonly hasValue: Signal<boolean> = computed((): boolean => this.value() !== '');
     /**
@@ -130,6 +130,10 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
     public readonly displayText: Signal<string> = computed((): string => this.#format(this.value(), this.type()));
 
     public readonly type: InputSignal<IRtDatePicker.Type> = input<IRtDatePicker.Type>('date');
+    /** На узком экране панель открывается в нижней шторке; `false` оставляет поповер у поля. */
+    public readonly sheet: InputSignalWithTransform<boolean, TBooleanInput> = input<boolean, TBooleanInput>(true, {
+        transform: booleanAttribute,
+    });
     /** Первый допустимый день. `undefined` — сигнальная форма не задала границу: границы нет. */
     public readonly min: InputSignalWithTransform<string | null, string | null | undefined> = input<
         string | null,
@@ -145,10 +149,25 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
         transform: numberAttribute,
     });
 
-    /** Значение из формы снимает ошибку набора: в поле теперь стоит оно. */
+    /**
+     * Смена значения человеком: выбор в панели, набор текста, крестик. Несёт ту же строку, что уходит
+     * в форму; на `writeValue` и на модель формы, заданную снаружи, не испускается.
+     */
+    public readonly selectionChange: OutputEmitterRef<string> = output<string>();
+
+    /**
+     * Значение из формы снимает ошибку набора. Когда его текст другой, чем у прежнего значения, он
+     * пишется в поле сам, а не привязкой: форма может вернуть прежнее значение после того, как
+     * человек набрал другое, и привязка, чей текст не менялся, поле бы не тронула. Значение с тем же
+     * текстом недонабранное не стирает.
+     */
     public override writeValue(value: string | null): void {
+        const shown: string = this.text();
         super.writeValue(value);
         this.textInvalid.set(false);
+        if (this.text() !== shown) {
+            this.#accept(this.value());
+        }
     }
 
     protected getEmptyValue(): string {
@@ -157,6 +176,15 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
 
     protected focusAfterClear(): void {
         this.fieldEl()?.nativeElement.focus();
+    }
+
+    /** Крестик: событие несёт значение поля после очистки — то же, что ушло в форму. */
+    protected override clear(event?: Event): void {
+        if (this.isDisabled()) {
+            return;
+        }
+        super.clear(event);
+        this.selectionChange.emit(this.value());
     }
 
     protected override clearValue(): void {
@@ -181,7 +209,7 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
 
     /** Кнопка в конце поля: на узком экране открывает шторку, на широком поповер открывает сам. */
     protected openPanel(): void {
-        if (this.narrow() && !this.isDisabled()) {
+        if (this.useSheet() && !this.isDisabled()) {
             this.sheetOpen.set(true);
         }
     }
@@ -202,8 +230,11 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
 
     #commit(value: string): void {
         this.value.set(value);
-        this.emitChange(value);
+        // Текст принимается до формы и события: подписчик формы или обработчик события, вернувший
+        // другое значение, пишет его текст в поле последним.
         this.#accept(value);
+        this.emitChange(value);
+        this.selectionChange.emit(value);
     }
 
     /** Текст в поле — принятое значение, ошибки набора нет. */

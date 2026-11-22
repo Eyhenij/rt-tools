@@ -85,6 +85,8 @@ function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture
 /** Подмена наблюдателя ширины: узкий экран, на котором шапка показывает бургер. */
 class NarrowBreakpointsService {
     public readonly narrow: Signal<boolean> = signal(true).asReadonly();
+    public readonly viewportNarrow: Signal<boolean> = signal(true).asReadonly();
+    public readonly phone: Signal<boolean> = this.viewportNarrow;
 }
 
 function navItems(fixture: ComponentFixture<RtPageHeaderComponent>): HTMLElement[] {
@@ -111,13 +113,15 @@ class PageHeaderHostComponent {
 /** Подмена наблюдателя ширины: широкий экран, на котором разделы стоят в строке. */
 class WideBreakpointsService {
     public readonly narrow: Signal<boolean> = signal(false).asReadonly();
+    public readonly viewportNarrow: Signal<boolean> = signal(false).asReadonly();
+    public readonly phone: Signal<boolean> = this.viewportNarrow;
 }
 
 /** Меню профиля приходит шаблоном — нужна host-обёртка. */
 @Component({
     selector: 'rt-page-header-user-host',
     template: `
-        <rt-page-header [items]="items" [user]="user" [userMenu]="menu" />
+        <rt-page-header [items]="items" [user]="user" [userMenu]="menu" [sheet]="false" />
         <ng-template #menu><span qa-dataid="host-user-menu">Профиль</span></ng-template>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -248,12 +252,12 @@ describe('RtPageHeaderComponent', (): void => {
         expect(qa(setup(), 'header-nav-burger')).not.toBeNull();
     });
 
-    it('SC-UKV-1072: открытое мобильное меню стоит на затемнении, и нажатие по нему меню закрывает', (): void => {
+    it('SC-UKV-1072: открытое мобильное меню без шторки стоит на затемнении, и нажатие по нему меню закрывает', (): void => {
         // Шапка закрывает мобильное меню, как только экран перестаёт быть узким, а в тестовой
         // среде наблюдатель ширины ничего не измеряет
         const fixture: ComponentFixture<RtPageHeaderComponent> = createRtFixture(
             RtPageHeaderComponent,
-            { items: ITEMS },
+            { items: ITEMS, sheet: false },
             {
                 providers: [
                     provideRouter([]),

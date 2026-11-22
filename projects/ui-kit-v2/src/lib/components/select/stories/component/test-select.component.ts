@@ -18,7 +18,8 @@ import { IRtSelect } from '../../rt-select.model';
             [placeholder]="placeholder"
             [iconLeft]="iconLeft"
             [filter]="filter"
-            [filterPlaceholder]="filterPlaceholder" />
+            [filterPlaceholder]="filterPlaceholder"
+            [sheet]="sheet" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -41,4 +42,5 @@ export class TestRtSelectComponent {
     public iconLeft: IRtIcon.Name | null = null;
     public filter: boolean = false;
     public filterPlaceholder: string = '';
+    public sheet: boolean = true;
 }

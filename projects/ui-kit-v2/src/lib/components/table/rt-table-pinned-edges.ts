@@ -1,3 +1,5 @@
+import { signal, Signal, WritableSignal } from '@angular/core';
+
 /** С какой стороны под закреплённой колонкой лежит прокрученное содержимое. */
 export interface IRtTablePinnedEdges {
     /** Прокручено от начала: под колонкой, закреплённой у начала, есть скрытые колонки. */
@@ -46,7 +48,16 @@ export function horizontalScrollParentOf(element: Element, view: Window): HTMLEl
  * ширины окна или набора колонок.
  */
 export class RtTablePinnedEdges {
-    readonly #changed: (edges: IRtTablePinnedEdges) => void;
+    readonly #changed: ((edges: IRtTablePinnedEdges) => void) | null;
+
+    /** Под какой закреплённой колонкой есть прокрученное содержимое — по нему видна тень у края. */
+    readonly #hidden: WritableSignal<IRtTablePinnedEdges> = signal<IRtTablePinnedEdges>(
+        { start: false, end: false },
+        { equal: (a: IRtTablePinnedEdges, b: IRtTablePinnedEdges): boolean => a.start === b.start && a.end === b.end }
+    );
+
+    /** Скрытые края сейчас; сигнал не меняется, пока края те же. */
+    public readonly hidden: Signal<IRtTablePinnedEdges> = this.#hidden.asReadonly();
 
     #container: HTMLElement | null = null;
 
@@ -64,7 +75,7 @@ export class RtTablePinnedEdges {
         this.#report();
     };
 
-    constructor(changed: (edges: IRtTablePinnedEdges) => void) {
+    constructor(changed: ((edges: IRtTablePinnedEdges) => void) | null = null) {
         this.#changed = changed;
     }
 
@@ -109,7 +120,9 @@ export class RtTablePinnedEdges {
     #report(): void {
         const container: HTMLElement | null = this.#container;
         if (container) {
-            this.#changed(hiddenEdges(container.scrollLeft, this.#scrollWidth, this.#clientWidth));
+            const edges: IRtTablePinnedEdges = hiddenEdges(container.scrollLeft, this.#scrollWidth, this.#clientWidth);
+            this.#hidden.set(edges);
+            this.#changed?.(edges);
         }
     }
 }

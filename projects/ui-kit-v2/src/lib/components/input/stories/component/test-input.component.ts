@@ -19,7 +19,9 @@ import { IRtIcon } from '../../../icon/rt-icon.model';
             [iconRight]="iconRight"
             [passwordToggle]="passwordToggle"
             [autocomplete]="autocomplete"
-            [maxlength]="maxlength" />
+            [maxlength]="maxlength"
+            [prefix]="prefix"
+            [suffix]="suffix" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -35,4 +37,6 @@ export class TestRtInputComponent {
     public passwordToggle: boolean = false;
     public autocomplete: string | null = null;
     public maxlength: number | null = null;
+    public prefix: string | null = null;
+    public suffix: string | null = null;
 }

@@ -13,6 +13,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 </rt-field>
 
 <rt-date-picker type="datetime-local" ariaLabel="Начало смены" [formControl]="startsAt" />
+
+<rt-date-picker [formField]="filter.day" (selectionChange)="store.setDay($event)" />
 ```
 
 ## Когда применять
@@ -87,14 +89,15 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход         | тип                                    | умолчание                 |
-| ------------ | -------------------------------------- | ------------------------- |
-| `appearance` | `'outline' \| 'fill'`                  | `'outline'`               |
-| `type`       | `'date' \| 'datetime-local' \| 'time'` | `'date'`                  |
-| `min`        | `string \| null` — форма значения      | `null`                    |
-| `max`        | `string \| null` — форма значения      | `null`                    |
-| `minuteStep` | `number` — шаг колонки минут           | `5`                       |
-| `radius`     | `TRtRadius \| null`                    | `null` → скругление полей |
+| вход         | тип                                                                      | умолчание                 |
+| ------------ | ------------------------------------------------------------------------ | ------------------------- |
+| `appearance` | `'outline' \| 'fill'`                                                    | `'outline'`               |
+| `type`       | `'date' \| 'datetime-local' \| 'time'`                                   | `'date'`                  |
+| `sheet`      | `boolean` — на телефоне панель в нижней шторке; `false` — поповер у поля | `true`                    |
+| `min`        | `string \| null` — форма значения                                        | `null`                    |
+| `max`        | `string \| null` — форма значения                                        | `null`                    |
+| `minuteStep` | `number` — шаг колонки минут                                             | `5`                       |
+| `radius`     | `TRtRadius \| null`                                                      | `null` → скругление полей |
 
 ## Входы от основы полей
 
@@ -113,9 +116,15 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Выходы
 
-Своих выходов нет: значение уходит через `ControlValueAccessor`, то есть в связанный контрол
-формы. Разбор строки и часовые пояса остаются на стороне потребителя — `Date` компонент не
-создаёт.
+| выход             | тип      | когда                                                        |
+| ----------------- | -------- | ------------------------------------------------------------ |
+| `selectionChange` | `string` | выбор в панели, набор даты, стёртый текст, крестик           |
+| `cleared`         | `void`   | сброс крестиком, после того как пустое значение ушло в форму |
+
+`selectionChange` несёт ту же строку, что ушла в форму, и только на правку человека. На значение из
+формы (`writeValue`) и на модель сигнальной формы, заданную снаружи, его нет. Стёртый текст и
+крестик дают `''`. Разбор строки и часовые пояса остаются на стороне потребителя — `Date`
+компонент не создаёт.
 
 ## Рядом
 

@@ -263,12 +263,11 @@
             color: var(--rt-color-text-primary);
         }
 
-        /* Inset-outline вместо box-shadow ring: полоса вкладок — scroll-контейнер
-           (overflow), который обрезал бы внешнее кольцо. Inset рисуется внутри
-           элемента, не клиппится и переживает forced-colors. */
+        /* Кольцо кита, но внутрь: полоса вкладок — scroll-контейнер (overflow), который обрезал бы
+           внешнее кольцо. Inset рисуется внутри элемента, не клиппится и переживает forced-colors. */
         &:has(> .rt-tab-item__trigger:focus-visible) {
-            outline: 2px solid var(--rt-color-action-primary);
-            outline-offset: -3px;
+            outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+            outline-offset: calc(-1 * var(--rt-focus-ring-width));
         }
 
         /* Сама вкладка внутри обёртки: несёт отступы и содержимое, вид берёт у обёртки. Кольцо
@@ -383,8 +382,8 @@
             }
 
             &:focus-visible {
-                outline: 2px solid var(--rt-color-action-primary);
-                outline-offset: 0;
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: var(--rt-focus-ring-offset);
             }
         }
 

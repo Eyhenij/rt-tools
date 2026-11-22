@@ -64,6 +64,26 @@ export const PanelEmpty: TStory = {
 };
 
 /**
+ * Вид `toggles`: три поля макета 8293:3667 в ряд при ширине 280 — «Все», «N из M» и открытое. Панель
+ * открытого поля — отдельная история `TogglesPanel`: открытая панель в истории одна.
+ */
+export const Toggles: TStory = { args: { part: 'toggles' } };
+
+/**
+ * Открытая панель вида `toggles`: «Показать все», свой переключатель приложения «Скрыть пустые»
+ * из слота `rtMultiselectExtra`, черта и по переключателю на каждую опцию. Открывает её клавиша,
+ * как у `Panel`. Узел панели назван снимку параметром `overlay`: обвязка сверяет его наличие
+ * в кадре, а не число панелей на странице. Телефонная шторка — история `MultiselectSheet`.
+ */
+export const TogglesPanel: TStory = {
+    parameters: { snapshot: { fullPage: true, overlay: '.rt-multiselect__panel' } },
+    args: { part: 'toggles-panel' },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openStoryOverlay(canvasElement, { key: 'ArrowDown' });
+    },
+};
+
+/**
  * Дерево опций: в области выбраны все листья — её флажок включён, у округа над ней выбрана часть —
  * промежуточный. Ветки над выбранным раскрыты при открытии, соседний округ свёрнут.
  */

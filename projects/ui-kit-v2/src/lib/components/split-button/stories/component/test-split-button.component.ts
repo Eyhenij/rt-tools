@@ -18,7 +18,8 @@ import { IRtSplitButton } from '../../rt-split-button.model';
             [size]="size"
             [menuAriaLabel]="menuAriaLabel"
             [loading]="loading"
-            [disabled]="disabled" />
+            [disabled]="disabled"
+            [sheet]="sheet" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -42,4 +43,5 @@ export class TestRtSplitButtonComponent {
     public menuAriaLabel: string = '';
     public loading: boolean = false;
     public disabled: boolean = false;
+    public sheet: boolean = true;
 }

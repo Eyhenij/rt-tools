@@ -1,0 +1,63 @@
+import { signal } from '@angular/core';
+import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
+
+import { openStoryOverlay } from '../../../../showcase/story-overlay';
+import { BreakpointsService } from '../../../platform';
+import { TestRtActionBarSheetComponent } from './component/test-action-bar-sheet.component';
+
+/**
+ * Служба брейкпоинтов, всегда отвечающая «узкий экран». Шторка нужна узкому окну, а окно историей
+ * не задать; узел, который служба рисует после смены окна, не получил бы состояния витрины. Поэтому
+ * подменяется источник ответа: «узкий» с первой отрисовки.
+ */
+const NARROW_ANSWERS: Pick<BreakpointsService, 'mobile' | 'tablet' | 'desktop' | 'narrow' | 'viewportNarrow' | 'phone'> = {
+    mobile: signal(true),
+    tablet: signal(false),
+    desktop: signal(false),
+    narrow: signal(true),
+    viewportNarrow: signal(true),
+    phone: signal(true),
+};
+
+const NARROW_BREAKPOINTS: BreakpointsService = NARROW_ANSWERS as BreakpointsService;
+
+/** Окно телефона из эскиза `Телефон · Action Bar`. */
+const PHONE_WINDOW: { readonly width: number; readonly height: number } = { width: 375, height: 812 };
+
+/**
+ * Полоса массовых действий на узком экране. Заголовок шторки — доступное имя действия со вложенным
+ * списком («Отправить»). Список открывает `play` щелчком по этому действию, и он стоит в оверлее,
+ * поэтому кадр снимает всю страницу.
+ */
+export default {
+    title: 'Molecules/Data/ActionBarSheet',
+    component: TestRtActionBarSheetComponent,
+    decorators: [
+        applicationConfig({
+            providers: [{ provide: BreakpointsService, useValue: NARROW_BREAKPOINTS }],
+        }),
+    ],
+    parameters: {
+        controls: { disable: true },
+    },
+} as Meta<TestRtActionBarSheetComponent>;
+
+type TStory = StoryObj<TestRtActionBarSheetComponent>;
+
+async function open({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> {
+    await openStoryOverlay(canvasElement);
+}
+
+/** Узкий экран: вложенный список в нижней шторке с заголовком «Отправить». */
+export const Sheet: TStory = {
+    args: { sheet: true },
+    parameters: { snapshot: { fullPage: true, overlay: '.rt-popover-sheet .rt-bottom-sheet--open', viewport: PHONE_WINDOW } },
+    play: open,
+};
+
+/** Узкий экран с `[sheet]="false"`: шторки нет, список стоит рядом с действием. */
+export const SheetOff: TStory = {
+    args: { sheet: false },
+    parameters: { snapshot: { fullPage: true, overlay: '.rt-popover-panel', viewport: PHONE_WINDOW } },
+    play: open,
+};

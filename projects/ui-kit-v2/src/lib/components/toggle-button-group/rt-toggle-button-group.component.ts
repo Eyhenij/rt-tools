@@ -1,12 +1,16 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import { NgTemplateOutlet } from '@angular/common';
 import {
+    afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
     contentChild,
+    DestroyRef,
+    ElementRef,
     forwardRef,
+    inject,
     input,
     InputSignal,
     InputSignalWithTransform,
@@ -14,21 +18,28 @@ import {
     OutputEmitterRef,
     signal,
     Signal,
+    viewChild,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtMultiselectComponent } from '@rt-tools/ui-kit-v2/multiselect';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
+import { IRtSelect, RtSelectComponent } from '@rt-tools/ui-kit-v2/select';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { IRtToggleButtonGroup } from './rt-toggle-button-group.model';
+import { RT_TOGGLE_GROUP_UNFOLD_MARGIN_PX, rtToggleGroupFoldedSize, rtToggleGroupNextFolded } from './rt-toggle-button-group-fold.logic';
 import { RtToggleButtonOptionDirective } from './rt-toggle-button-option.directive';
 
 const BEM_BLOCK: string = 'rt-toggle-button-group';
+
+/** Сколько после сворачивания не замерять размер: на это время приходится ответ наблюдателя, вызванный самим сворачиванием. */
+const FOLD_RESIZE_SETTLE_MS: number = 150;
 
 /**
  * Маппинг размера группы на размер вложенной `<rt-icon>`. rt-icon не имеет
@@ -73,9 +84,12 @@ function isMany<T>(value: IRtToggleButtonGroup.FormValue<T>): value is ReadonlyA
     imports: [
         // angular
         NgTemplateOutlet,
+        FormsModule,
 
         // standalone components / directives
         RtIconComponent,
+        RtMultiselectComponent,
+        RtSelectComponent,
         RtTooltipDirective,
         BlockDirective,
         ElemDirective,
@@ -97,6 +111,9 @@ function isMany<T>(value: IRtToggleButtonGroup.FormValue<T>): value is ReadonlyA
         '[class.rt-toggle-button-group--md]': "size() === 'md'",
         '[class.rt-toggle-button-group--lg]': "size() === 'lg'",
         '[class.rt-toggle-button-group--chips]': "appearance() === 'chips'",
+        '[class.rt-toggle-button-group--foldable]': "fold() && layout() === 'row'",
+        '[class.rt-toggle-button-group--folded]': 'folded()',
+        '[style.--rt-toggle-button-group-folded-width]': 'foldedWidth()',
     },
 })
 export class RtToggleButtonGroupComponent<T = string> implements ControlValueAccessor {
@@ -106,6 +123,12 @@ export class RtToggleButtonGroupComponent<T = string> implements ControlValueAcc
     /** Группа связана с формой: нажатие тогда само переносит подсветку, без ответа хозяина. */
     #bound: boolean = false;
 
+    /** Ширина строки кнопок в минуту сворачивания: от неё считается, когда развернуть группу обратно. */
+    readonly #naturalAtFold: WritableSignal<number | null> = signal<number | null>(null);
+
+    /** Сворачивание только что изменило размер: ближайший ответ наблюдателя размера не замеряется. */
+    #ignoreFoldResize: boolean = false;
+
     /** Значение, записанное формой или нажатием; `undefined`, пока форма ничего не писала. */
     readonly #formValue: WritableSignal<{ readonly value: IRtToggleButtonGroup.FormValue<T> } | undefined> = signal<
         { readonly value: IRtToggleButtonGroup.FormValue<T> } | undefined
@@ -113,6 +136,9 @@ export class RtToggleButtonGroupComponent<T = string> implements ControlValueAcc
 
     /** Отключение, назначенное формой через CVA (`setDisabledState`). */
     readonly #disabledByForm: WritableSignal<boolean> = signal<boolean>(false);
+
+    readonly #host: ElementRef<HTMLElement> = inject<ElementRef<HTMLElement>>(ElementRef);
+    readonly #destroyRef: DestroyRef = inject(DestroyRef);
 
     /** Выбранное при одиночном выборе: слово формы, если она его сказала, иначе вход. */
     readonly #single: Signal<T | undefined> = computed((): T | undefined => {
@@ -138,6 +164,41 @@ export class RtToggleButtonGroupComponent<T = string> implements ControlValueAcc
 
     /** Своя разметка сегмента; без неё кнопка рисует значок и подпись. */
     protected readonly optionTpl: Signal<RtToggleButtonOptionDirective<T> | undefined> = contentChild(RtToggleButtonOptionDirective);
+
+    protected readonly row: Signal<ElementRef<HTMLElement>> = viewChild.required<ElementRef<HTMLElement>>('row');
+
+    /** Кнопки не помещаются по ширине: группа стоит полем выбора, а строка кнопок только меряется. */
+    protected readonly folded: WritableSignal<boolean> = signal<boolean>(false);
+
+    /**
+     * Наибольшая ширина свёрнутого поля — строка кнопок плюс запас разворота. Во всё место родителя
+     * поле не встаёт: родитель по содержимому подстраивался под узкое поле, места для разворота не
+     * появлялось никогда, и группа оставалась полем при пустой половине строки.
+     */
+    protected readonly foldedWidth: Signal<string | null> = computed((): string | null => {
+        const natural: number | null = this.#naturalAtFold();
+        return natural === null ? null : `${natural + RT_TOGGLE_GROUP_UNFOLD_MARGIN_PX}px`;
+    });
+
+    /** Размер свёрнутого поля: не ниже среднего, как поля строки отборов рядом. */
+    protected readonly foldedSize: Signal<IRtToggleButtonGroup.Size> = computed((): IRtToggleButtonGroup.Size =>
+        rtToggleGroupFoldedSize(this.size())
+    );
+
+    /** Выбранное одним значением — для свёрнутого одиночного выбора. */
+    protected readonly chosenOne: Signal<T | null> = computed((): T | null => this.#single() ?? null);
+
+    /** Выбранное набором — для свёрнутого множественного выбора. */
+    protected readonly chosenMany: Signal<T[]> = computed((): T[] => [...this.#many()]);
+
+    /** Значения группы как пункты поля выбора: подпись, значение и недоступность. */
+    protected readonly foldedOptions: Signal<IRtSelect.Option<T>[]> = computed((): IRtSelect.Option<T>[] =>
+        this.options().map((option: IRtToggleButtonGroup.Option<T>): IRtSelect.Option<T> => ({
+            label: option.label,
+            value: option.value,
+            disabled: !!option.disabled,
+        }))
+    );
 
     protected readonly iconSize: Signal<IRtIcon.Size> = computed((): IRtIcon.Size => ICON_SIZE_BY_SIZE[this.size()]);
 
@@ -215,6 +276,19 @@ export class RtToggleButtonGroupComponent<T = string> implements ControlValueAcc
         transform: booleanAttribute,
     });
 
+    /**
+     * Свернуть группу в поле выбора, когда кнопки не помещаются по ширине: на телефоне поле
+     * открывает список в нижней шторке. `false` оставляет кнопки, даже если они вылезают за край.
+     */
+    public readonly fold: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
+    /** Свёрнутое поле на телефоне открывает список в нижней шторке; `false` оставляет поповер у поля. */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
     public readonly valueChange: OutputEmitterRef<T> = output<T>();
 
     /**
@@ -222,6 +296,20 @@ export class RtToggleButtonGroupComponent<T = string> implements ControlValueAcc
      * своим состоянием сам, и каждый сводит по-своему.
      */
     public readonly valuesChange: OutputEmitterRef<ReadonlyArray<T>> = output<ReadonlyArray<T>>();
+
+    constructor() {
+        // Ширина места и строки меняется и без нового рендера: окно, панель, шрифт. Замер — по
+        // наблюдателю размера, как у хлебных крошек; без него в среде без браузера группа — кнопки.
+        afterNextRender((): void => {
+            if (typeof ResizeObserver === 'undefined') {
+                return;
+            }
+            const watch: ResizeObserver = new ResizeObserver((): void => this.#measure());
+            watch.observe(this.#host.nativeElement);
+            watch.observe(this.row().nativeElement);
+            this.#destroyRef.onDestroy((): void => watch.disconnect());
+        });
+    }
 
     public writeValue(value: IRtToggleButtonGroup.FormValue<T>): void {
         this.#formValue.set({ value });
@@ -261,6 +349,46 @@ export class RtToggleButtonGroupComponent<T = string> implements ControlValueAcc
 
         this.#commit(next);
         this.valuesChange.emit(next);
+    }
+
+    /** Выбор в свёрнутом поле одного значения — то же, что нажатие на кнопку. */
+    protected onFoldedPickOne(value: T | null): void {
+        if (value !== null) {
+            this.#commit(value);
+            this.valueChange.emit(value);
+        }
+    }
+
+    /** Выбор в свёрнутом поле набора — весь набор, как после нажатия на кнопку. */
+    protected onFoldedPickMany(values: ReadonlyArray<T> | null): void {
+        const next: T[] = [...(values ?? [])];
+        this.#commit(next);
+        this.valuesChange.emit(next);
+    }
+
+    /** Сколько нужно строке кнопок и сколько есть у группы. */
+    #measure(): void {
+        // Размер, который изменило само сворачивание, не замеряется: он принадлежит другой базе флекса
+        // и тут же развернул бы группу, а развёрнутая сжалась бы и свернулась снова.
+        if (this.#ignoreFoldResize) {
+            return;
+        }
+        const natural: number = this.row().nativeElement.scrollWidth;
+        const place: number = this.#host.nativeElement.clientWidth;
+        const next: boolean = rtToggleGroupNextFolded(natural, place, this.layout(), this.fold(), this.folded(), this.#naturalAtFold());
+        if (next === this.folded()) {
+            return;
+        }
+        this.#naturalAtFold.set(next ? natural : null);
+        this.folded.set(next);
+        this.#ignoreFoldResize = true;
+        // Наблюдатель размера отвечает в ближайшие кадры. После паузы группа замеряется заново: смена
+        // места, пришедшаяся на паузу, иначе пропала бы до следующего изменения размера.
+        const settle: ReturnType<typeof setTimeout> = setTimeout((): void => {
+            this.#ignoreFoldResize = false;
+            this.#measure();
+        }, FOLD_RESIZE_SETTLE_MS);
+        this.#destroyRef.onDestroy((): void => clearTimeout(settle));
     }
 
     /** Нажатие уходит в форму, если группа с ней связана; без формы подсветку ведёт хозяин входами. */

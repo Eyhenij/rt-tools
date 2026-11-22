@@ -35,15 +35,18 @@ import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtTabDirective } from './rt-tab.directive';
 import { RtTabsArrowPress, TRtTabsScrollDirection } from './rt-tabs.arrow-press';
+import { RtTabsClose } from './rt-tabs.close';
 import { RtTabsFollow } from './rt-tabs.follow';
 import { rtTabsKeyTargetId, rtTabsSelectedId } from './rt-tabs.keys';
+import { rtTabsEnabledIds } from './rt-tabs.logic';
 import { RtTabsControlDirective } from './rt-tabs-control.directive';
 import { RtTabsContextMenuComponent } from './rt-tabs-context-menu.component';
 import { RtTabsMoreComponent } from './rt-tabs-more.component';
 import { IRtTabs } from './rt-tabs.model';
 import { RT_TABS_MORE_LIMIT, RtTabsMoreRow } from './rt-tabs.more-row';
 import { RtTabsInk, RtTabsPanels } from './rt-tabs.motion';
-import { rtTabsRestShown, RtTabsScroller, rtTabsTabTarget } from './rt-tabs.scroll';
+import { RtTabsReveal } from './rt-tabs.reveal';
+import { RtTabsScroller } from './rt-tabs.scroll';
 
 /** Дебаунс пересчёта видимости стрелок прокрутки на resize/scroll (мс). */
 const REST_DEBOUNCE_MS: number = 50;
@@ -136,12 +139,7 @@ export class RtTabsComponent {
      * асинхронную загрузку/смену набора вкладок.
      */
     protected readonly selectedId: Signal<IRtTabs.Id | null> = computed((): IRtTabs.Id | null =>
-        rtTabsSelectedId(
-            this.visibleTabs()
-                .filter((tab: RtTabDirective): boolean => !tab.disabled())
-                .map((tab: RtTabDirective): IRtTabs.Id => tab.id()),
-            this.activeId() ?? this.#internalId()
-        )
+        rtTabsSelectedId(rtTabsEnabledIds(this.visibleTabs()), this.activeId() ?? this.#internalId())
     );
 
     /** Режим «Ещё» работает только в горизонтальной полосе. */
@@ -249,6 +247,14 @@ export class RtTabsComponent {
         transform: (value: unknown): number => numberAttribute(value, RT_TABS_MORE_LIMIT),
     });
 
+    /**
+     * Нижняя шторка на телефоне: панель «Ещё» и меню вкладки открываются в ней. Включена по умолчанию;
+     * `false` оставляет их у вкладок на любой ширине.
+     */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
     /** Стрелки прокрутки поверх вкладок (`overlay`) или в своих местах по краям полосы (`inline`). */
     public readonly scrollArrows: InputSignal<IRtTabs.ScrollArrows> = input<IRtTabs.ScrollArrows>('overlay');
 
@@ -276,8 +282,6 @@ export class RtTabsComponent {
      */
     public readonly tabClose: OutputEmitterRef<IRtTabs.Id> = output<IRtTabs.Id>();
 
-    readonly #injector: Injector = inject(Injector);
-
     /** Плавная прокрутка полосы: стрелки и вкладка, встающая в видимую область. */
     readonly #scroller: RtTabsScroller = new RtTabsScroller(this.#win, this.#host, (): ElementRef<HTMLElement> | undefined =>
         this.tabListRef()
@@ -289,36 +293,61 @@ export class RtTabsComponent {
     /** Вкладка, на которую перевели фокус стрелками в ручном режиме; сбрасывается выбором. */
     readonly #focusedId: WritableSignal<IRtTabs.Id | null> = signal<IRtTabs.Id | null>(null);
 
+    /** Закрытие вкладки: крестик и Delete; куда уходят выбор и фокус — {@link RtTabsClose}. */
+    readonly #closer: RtTabsClose = new RtTabsClose({
+        injector: inject(Injector),
+        selectedId: (): IRtTabs.Id | null => this.selectedId(),
+        closeOn: (): IRtTabs.CloseOn => this.closeOn(),
+        request: (id: IRtTabs.Id): void => this.tabClose.emit(id),
+        adopt: (id: IRtTabs.Id): void => {
+            this.#internalId.set(id);
+            this.activeIdChange.emit(id);
+        },
+        focus: (id: IRtTabs.Id): void => this.#focusTab(id),
+    });
+
     /** Нажатие и удержание стрелок прокрутки. */
     readonly #press: RtTabsArrowPress = new RtTabsArrowPress(
         this.#win,
         this.#scroller,
         (): HTMLElement | undefined => this.tabListRef()?.nativeElement,
         (): IRtTabs.ScrollStep => this.scrollStep(),
-        (): void => this.#updateRestVisibility()
+        (): void => this.#reveal.updateRest()
     );
 
     /** Вкладки стали шире или уже — полоса снова встаёт к выбранной, пока её не прокрутили рукой. */
-    readonly #follow: RtTabsFollow = new RtTabsFollow((): void => this.#scrollToSelected(true));
+    readonly #follow: RtTabsFollow = new RtTabsFollow((): void => this.#reveal.toSelected(true));
 
-    /** Вкладка, к которой полоса прокручена последней: второй прокрутки к ней не нужно. */
-    #scrolledId: IRtTabs.Id | null = null;
+    /** Показ выбранной вкладки в полосе и видимость стрелок прокрутки — {@link RtTabsReveal}. */
+    readonly #reveal: RtTabsReveal = new RtTabsReveal({
+        scroller: this.#scroller,
+        follow: this.#follow,
+        list: (): HTMLElement | undefined => this.tabListRef()?.nativeElement,
+        selectedId: (): IRtTabs.Id | null => this.selectedId(),
+        moreMode: (): boolean => this.moreMode(),
+        horizontal: (): boolean => this.direction() === 'horizontal',
+        overlayArrows: (): boolean => this.scrollArrows() === 'overlay',
+        shown: (shown: IRtTabs.RestShown): void => {
+            this.restBeforeVisible.set(shown.before);
+            this.restAfterVisible.set(shown.after);
+        },
+    });
 
     constructor() {
         if (this.#win) {
             fromEvent(this.#win, 'resize')
                 .pipe(debounceTime(REST_DEBOUNCE_MS), takeUntilDestroyed())
-                .subscribe((): void => this.#updateRestVisibility());
+                .subscribe((): void => this.#reveal.updateRest());
         }
 
         afterNextRender((): void => {
-            this.#scrollToSelected();
-            this.#updateRestVisibility();
+            this.#reveal.toSelected();
+            this.#reveal.updateRest();
         });
 
         // Смена вкладки извне — входом `activeId` или новым набором вкладок. После клика
-        // полоса уже прокручена из `selectTab`, и `#scrolledId` пропускает вторую прокрутку.
-        afterRenderEffect((): void => this.#scrollToSelected());
+        // полоса уже прокручена из `selectTab`, и `RtTabsReveal` пропускает вторую прокрутку.
+        afterRenderEffect((): void => this.#reveal.toSelected());
 
         // Новый набор вкладок — наблюдение за их размерами ставится заново.
         afterRenderEffect((): void => this.#follow.watch(this.tabListRef()?.nativeElement, this.visibleTabs().length));
@@ -343,18 +372,18 @@ export class RtTabsComponent {
         this.#focusedId.set(null);
         this.activeIdChange.emit(id);
         this.#follow.follow();
-        this.#scrollTabIntoView(id);
+        this.#reveal.intoView(id);
     }
 
     /** Крестик: нажатие не выбирает вкладку; фокус с крестика после закрытия уходит на вкладку, не на страницу. */
     protected onCloseClick(event: MouseEvent, tab: RtTabDirective): void {
         event.stopPropagation();
-        this.#close(tab, event.currentTarget instanceof HTMLElement && event.currentTarget.matches(':focus'));
+        this.#closer.close(tab, event.currentTarget instanceof HTMLElement && event.currentTarget.matches(':focus'));
     }
 
     /** Крестик строки меню: фокус остаётся на месте, выбор не меняется. */
     protected onMoreClose(tab: RtTabDirective): void {
-        this.#close(tab, false);
+        this.#closer.close(tab, false);
     }
 
     /**
@@ -363,14 +392,11 @@ export class RtTabsComponent {
      */
     protected onTabKeydown(event: KeyboardEvent, tab: RtTabDirective): void {
         if (event.key === 'Delete') {
-            this.#closeByKey(event, tab);
+            this.#closer.byKey(event, tab);
             return;
         }
 
-        const enabled: readonly IRtTabs.Id[] = this.more
-            .rowTabs()
-            .filter((item: RtTabDirective): boolean => !item.disabled())
-            .map((item: RtTabDirective): IRtTabs.Id => item.id());
+        const enabled: readonly IRtTabs.Id[] = rtTabsEnabledIds(this.more.rowTabs());
         const targetId: IRtTabs.Id | undefined = rtTabsKeyTargetId(enabled, tab.id(), event.key, this.direction());
 
         if (targetId === undefined) {
@@ -381,7 +407,7 @@ export class RtTabsComponent {
 
         if (this.activation() === 'manual') {
             this.#focusedId.set(targetId);
-            this.#scrollTabIntoView(targetId);
+            this.#reveal.intoView(targetId);
         } else {
             this.selectTab(targetId);
         }
@@ -406,89 +432,7 @@ export class RtTabsComponent {
     }
 
     protected onTabListScroll(): void {
-        this.#updateRestVisibility();
-    }
-
-    /**
-     * Delete на вкладке с видимым крестиком: при `closeOn="selected"` — только на выбранной. Фокус после
-     * перерисовки встаёт на активную вкладку: закрытая пропадёт из шапки, и фокус иначе упал бы на страницу.
-     */
-    #closeByKey(event: KeyboardEvent, tab: RtTabDirective): void {
-        if (!tab.showClose() || (this.closeOn() === 'selected' && tab.id() !== this.selectedId())) {
-            return;
-        }
-
-        event.preventDefault();
-        this.#close(tab, true);
-    }
-
-    /**
-     * Просьба закрыть вкладку. Владелец убирает её из набора; если она была активной, выбор после
-     * перерисовки переходит на первую доступную, и об этом сообщает `activeIdChange` — иначе владелец,
-     * держащий `activeId`, хранил бы id закрытой вкладки и показывал её содержимое снаружи.
-     */
-    #close(tab: RtTabDirective, focus: boolean): void {
-        const closedId: IRtTabs.Id = tab.id();
-        const wasActive: boolean = this.selectedId() === closedId;
-        this.tabClose.emit(closedId);
-
-        afterNextRender(
-            (): void => {
-                const id: IRtTabs.Id | null = this.selectedId();
-                if (id === null) {
-                    return;
-                }
-                if (wasActive && id !== closedId) {
-                    this.#internalId.set(id);
-                    this.activeIdChange.emit(id);
-                }
-                if (focus) {
-                    this.#focusTab(id);
-                }
-            },
-            { injector: this.#injector }
-        );
-    }
-
-    #updateRestVisibility(): void {
-        const list: HTMLElement | undefined = this.tabListRef()?.nativeElement;
-        const shown: IRtTabs.RestShown =
-            list && this.direction() === 'horizontal' && !this.moreMode() ? rtTabsRestShown(list) : { before: false, after: false };
-
-        this.restBeforeVisible.set(shown.before);
-        this.restAfterVisible.set(shown.after);
-    }
-
-    /** `again` — вкладки сменили размер: та же вкладка встаёт на место ещё раз. */
-    #scrollToSelected(again: boolean = false): void {
-        const id: IRtTabs.Id | null = this.selectedId();
-
-        if (id !== null && (again || id !== this.#scrolledId)) {
-            this.#follow.follow();
-            this.#scrollTabIntoView(id);
-        }
-    }
-
-    /**
-     * Ставит вкладку в полосу целиком. Стрелки поверх полосы закрывают её края, поэтому вкладка
-     * отступает от края на ширину стрелки. Первая прокрутка — сразу: открытая страница не едет.
-     */
-    #scrollTabIntoView(id: IRtTabs.Id): void {
-        const list: HTMLElement | undefined = this.tabListRef()?.nativeElement;
-        const target: number | null | undefined =
-            list && !this.moreMode() ? rtTabsTabTarget(list, id, this.scrollArrows() === 'overlay') : undefined;
-
-        if (target === undefined) {
-            return;
-        }
-
-        const first: boolean = this.#scrolledId === null;
-        this.#scrolledId = id;
-
-        this.#scroller.place(target, first);
-
-        // Сразу — для прокрутки без движения; плавную ведут события прокрутки самой полосы.
-        this.#updateRestVisibility();
+        this.#reveal.updateRest();
     }
 
     #focusTab(id: IRtTabs.Id): void {

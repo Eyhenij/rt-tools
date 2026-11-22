@@ -11,6 +11,7 @@ export default {
         placeholder: { control: { type: 'text' } },
         minLength: { control: { type: 'number' } },
         openOnFocus: { control: { type: 'boolean' } },
+        sheet: { control: { type: 'boolean' } },
         suggestions: { control: false },
         displayWith: { control: false },
         iconLeft: { control: false },
@@ -25,6 +26,7 @@ export const Playground: TStory = {
         placeholder: 'Начните вводить город',
         minLength: 1,
         openOnFocus: false,
+        sheet: true,
     },
 };
 

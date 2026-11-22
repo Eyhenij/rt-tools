@@ -53,10 +53,16 @@
             padding: var(--rt-space-0-5) var(--rt-space-2) 0;
         }
 
+        // Поверхность панели фильтров в поповере — та же, что у панели периода: панель рисуется в
+        // CDK Overlay, и без своего фона её пункты ложатся прямо на строки списка
         &__filters-panel {
             display: flex;
             flex-direction: column;
             padding: var(--rt-space-4);
+            border: var(--rt-overlay-select-panel-border-width) solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-overlay-select-radius);
+            background-color: var(--rt-color-bg-surface);
+            box-shadow: var(--rt-overlay-select-shadow);
             gap: var(--rt-space-2);
             min-inline-size: 220px;
         }

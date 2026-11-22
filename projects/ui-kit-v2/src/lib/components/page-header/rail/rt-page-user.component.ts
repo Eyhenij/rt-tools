@@ -1,3 +1,4 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import { ConnectedPosition } from '@angular/cdk/overlay';
 import { NgTemplateOutlet } from '@angular/common';
 import {
@@ -11,6 +12,8 @@ import {
     Signal,
     TemplateRef,
     ViewEncapsulation,
+    booleanAttribute,
+    InputSignalWithTransform,
 } from '@angular/core';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
@@ -45,6 +48,11 @@ export class RtPageUserComponent {
     protected readonly positions: Signal<readonly ConnectedPosition[] | null> = computed((): readonly ConnectedPosition[] | null =>
         this.placement() === 'rail' ? RAIL_POSITIONS : null
     );
+
+    /** На телефоне меню открывается в нижней шторке кита; `false` оставляет его у кнопки. */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
 
     public readonly user: InputSignal<IRtPageHeader.User> = input.required<IRtPageHeader.User>();
 

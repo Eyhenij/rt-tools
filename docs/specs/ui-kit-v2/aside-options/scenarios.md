@@ -153,3 +153,13 @@ When it is drawn
 Then its cancel button is outlined with the secondary theme
 
 Covered: `projects/ui-kit-v2/src/lib/components/confirm-popover/rt-confirm-popover.component.spec.ts`.
+
+### SC-UKV-1637 — a long button label widens the confirm popover
+
+Given a confirm popover whose confirm button reads «Удалить без возможности восстановления»
+When it is drawn in a wide window and in a window narrower than the label
+Then in the wide window the popover grows to both buttons in one row with nothing cut, and in the
+narrow one the long button stands in its own row inside the popover
+
+Coverage: partial — the spec reads the width rules from the built styles; the widths themselves
+were measured in the showcase: 531 points in a wide window, the button 300 of 300 at the limit.

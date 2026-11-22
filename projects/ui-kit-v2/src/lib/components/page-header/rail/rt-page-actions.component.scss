@@ -27,8 +27,8 @@
             }
 
             &:focus-visible {
-                outline: 1px dashed var(--rt-nav-color-focus);
-                outline-offset: -1px;
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: calc(-1 * var(--rt-focus-ring-width));
             }
 
             &--disabled {

@@ -112,6 +112,20 @@
             }
         }
 
+        /* Шторка, открытая из этой, подменяет её: эта уходит вниз, как закрытая, и возвращается,
+           когда верхнюю закроют. Стоит после `--open`, чтобы перекрыть его. */
+        &--open.rt-bottom-sheet--covered {
+            pointer-events: none;
+
+            .rt-bottom-sheet__backdrop {
+                opacity: 0;
+            }
+
+            .rt-bottom-sheet__panel {
+                transform: translateY(100%);
+            }
+        }
+
         /* Шаг входа `radius` переназначает скругление панели. */
         @include kv.radius-steps('--rt-bottom-sheet-radius');
     }

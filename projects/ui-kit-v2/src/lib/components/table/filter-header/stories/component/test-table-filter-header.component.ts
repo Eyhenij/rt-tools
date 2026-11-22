@@ -17,7 +17,12 @@ import { RtTableFilterHeaderComponent } from '../../rt-table-filter-header.compo
     // native-ok: обёртка истории витрины — показ живёт рядом с историей, а не отдельным файлом разметки
     template: `
         <div class="app-table-filter-header-box" data-story-root>
-            <rt-table-filter-header propertyName="title" [filter]="filterOf()" [filters]="filters" (filtersChange)="onFilters($event)" />
+            <rt-table-filter-header
+                propertyName="title"
+                [filter]="filterOf()"
+                [filters]="filters"
+                [sheet]="sheet"
+                (filtersChange)="onFilters($event)" />
 
             <small>{{ happened }}</small>
         </div>
@@ -41,6 +46,7 @@ import { RtTableFilterHeaderComponent } from '../../rt-table-filter-header.compo
 })
 export class TestRtTableFilterHeaderComponent {
     public kind: IRtTable.FilterKind = 'text';
+    public sheet: boolean = true;
     public filters: readonly IFilterModel<string>[] = [];
     public happened: string = 'Набор условий пуст';
 

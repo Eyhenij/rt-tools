@@ -14,6 +14,7 @@ export default {
             control: { type: 'select' },
         },
         disabled: { control: { type: 'boolean' } },
+        sheet: { control: { type: 'boolean' } },
     },
 } as Meta<TestRtMenuComponent>;
 
@@ -26,5 +27,6 @@ export const Playground: TStory = {
         ariaLabel: '',
         align: 'end',
         disabled: false,
+        sheet: true,
     },
 };

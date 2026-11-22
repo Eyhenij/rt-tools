@@ -27,7 +27,7 @@ const ACTIONS: Readonly<Record<TActionBarKind, readonly IRtActionBar.Action[]>> 
     selector: 'app-action-bar',
     // native-ok: обёртка истории витрины — показ живёт рядом с историей, а не отдельным файлом разметки
     template: `
-        <rt-action-bar [config]="configOf()" (actionRun)="onRun($event)" (closed)="onClosed()" />
+        <rt-action-bar [config]="configOf()" [sheet]="sheet" (actionRun)="onRun($event)" (closed)="onClosed()" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -39,6 +39,7 @@ export class TestRtActionBarComponent {
     public selected: number = 3;
     public total: number = 128;
     public kind: TActionBarKind = 'plain';
+    public sheet: boolean = true;
     public happened: string = '';
 
     /**

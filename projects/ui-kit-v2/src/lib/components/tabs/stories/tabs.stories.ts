@@ -20,6 +20,7 @@ export default {
             options: [0, null],
             control: { type: 'select' },
         },
+        sheet: { control: { type: 'boolean' } },
     },
 } as Meta<TestRtTabsComponent>;
 
@@ -35,5 +36,6 @@ export const Playground: TStory = {
         animationDuration: '500ms',
         preserveContent: false,
         contentTabIndex: 0,
+        sheet: true,
     },
 };

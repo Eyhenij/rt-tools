@@ -15,7 +15,16 @@ import { RtInputComponent } from '../../rt-input.component';
 import { IRtInput } from '../../rt-input.model';
 
 /** Какую страницу рисовать: у каждого дополнения поля своя история, и выбирает её этот вход. */
-export type TFieldExtrasPart = 'label' | 'label-toolbar' | 'label-themes' | 'option' | 'icon-actions' | 'clear';
+export type TFieldExtrasPart = 'label' | 'label-toolbar' | 'label-themes' | 'option' | 'icon-actions' | 'clear' | 'affixes';
+
+/** Случай постоянного текста: подпись ряда, состояние, ширина поля и значения двух полей. */
+interface IAffixCase {
+    readonly name: string;
+    readonly state: string | null;
+    readonly width: string;
+    readonly before: FormControl<string | null>;
+    readonly after: FormControl<string | null>;
+}
 
 /** Случай подписи на рамке: подпись ряда, вид рамки, иконка, состояние и значения двух полей. */
 interface ILabelCase {
@@ -76,6 +85,20 @@ function control(value: string | null, required: boolean = false): FormControl<s
     if (required) {
         result.markAsTouched();
     }
+    return result;
+}
+
+/** Отключённый контрол показа: поле берёт состояние у формы. */
+function disabledControl(value: string): FormControl<string | null> {
+    const result: FormControl<string | null> = control(value);
+    result.disable();
+    return result;
+}
+
+/** Значение с пробелом не годится для адреса: поле сразу показывает ошибку. */
+function spacedControl(value: string): FormControl<string | null> {
+    const result: FormControl<string | null> = new FormControl<string | null>(value, [Validators.pattern(/^\S*$/)]);
+    result.markAsTouched();
     return result;
 }
 
@@ -247,6 +270,38 @@ function labelCases(appearance: IRtInput.Appearance): readonly ILabelCase[] {
                     </ng-template>
                 </app-story-presets>
             }
+
+            @case ('affixes') {
+                <!-- Без крестика очистки, как в макете постоянного текста: крестик рядом с суффиксом виден на странице Input, в Playground. -->
+                <app-story-presets caption="Постоянный текст до значения (prefix) и после него (suffix)">
+                    <ng-template>
+                        <app-story-row caption="prefix" [items]="affixCases" [itemLabel]="caseLabel" [slotWidth]="affixWidth">
+                            <ng-template let-affixCase>
+                                <rt-input
+                                    ariaLabel="Адрес страницы"
+                                    prefix="site.ru/team/"
+                                    placeholder="адрес-страницы"
+                                    [clearable]="false"
+                                    [style.inline-size]="affixCase.width"
+                                    [formControl]="affixCase.before"
+                                    [attr.data-story-state]="affixCase.state" />
+                            </ng-template>
+                        </app-story-row>
+                        <app-story-row caption="suffix" [items]="affixCases" [itemLabel]="caseLabel" [slotWidth]="affixWidth">
+                            <ng-template let-affixCase>
+                                <rt-input
+                                    ariaLabel="Имя команды"
+                                    suffix=".site.ru"
+                                    placeholder="имя-команды"
+                                    [clearable]="false"
+                                    [style.inline-size]="affixCase.width"
+                                    [formControl]="affixCase.after"
+                                    [attr.data-story-state]="affixCase.state" />
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
         }
     `,
     // native-ok: обёртка истории витрины — правила коробки живут рядом с показом, а не отдельным файлом
@@ -318,6 +373,25 @@ export class TestRtFieldExtrasComponent {
     public readonly multiselectWidth: string = '20rem';
 
     public readonly clears: WritableSignal<number> = signal<number>(0);
+
+    /** Ширина поля макета постоянного текста: 320 px, узкое поле в ней — 200 px. */
+    public readonly affixWidth: string = '20rem';
+
+    /** Состояния макета: пусто, значение, фокус, ошибка, отключено и узкое поле с длинным значением. */
+    public readonly affixCases: readonly IAffixCase[] = [
+        { name: 'пусто', state: null, width: '100%', before: control(null), after: control(null) },
+        { name: 'значение', state: null, width: '100%', before: control('my-page'), after: control('my-team') },
+        { name: 'фокус', state: STORY_STATE_FOCUS_WITHIN.state, width: '100%', before: control('my-page'), after: control('my-team') },
+        { name: 'ошибка', state: null, width: '100%', before: spacedControl('my page'), after: spacedControl('my team') },
+        { name: 'отключено', state: null, width: '100%', before: disabledControl('my-page'), after: disabledControl('my-team') },
+        {
+            name: 'узкое, длинное значение',
+            state: null,
+            width: '12.5rem',
+            before: control('очень-длинный-адрес-страницы'),
+            after: control('очень-длинное-имя-команды'),
+        },
+    ];
 
     public readonly caseLabel: (value: { readonly name: string }) => string = (value: { readonly name: string }): string => value.name;
 

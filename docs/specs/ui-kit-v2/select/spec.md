@@ -102,6 +102,16 @@ a list: a field, a badge, an icon, a pill with a name.
   same input `iconLeft`, the same place before the content, the same size and colour: one input
   shape across the kit, and a form holding both families looks the same in both.
 
+- **The multiselect takes a search above its list the same way the select does.** The same input
+  `filter`, next to the field and in the phone sheet alike: it leaves only the matching values,
+  keeps what was chosen before the search and is empty again at the next opening.
+
+- **A change a person makes is announced by the field's own `selectionChange`, a value from outside
+  is not.** The select, the multiselect, the date field and the date range field emit it next to
+  the form change and with the same value; on the cross it is the field's empty value. A consumer
+  on signal forms feeds the model from a store, and a reaction to the model would fire on the
+  store's own update.
+
 ## What is out of scope
 
 - The look of the consumer's trigger: the kit gives no badge, no pill and no icon trigger of its own.
@@ -149,7 +159,8 @@ Not applicable: the kit is not indexed.
 
 The input changes nothing at any width. The panel is no narrower than the trigger and grows to its
 content, so on a narrow screen the window is what bounds it; the consumer's markup is theirs to lay
-out.
+out. On a phone the list opens in the kit's bottom sheet instead — the subdomain
+`docs/specs/ui-kit-v2/popover-sheet/`.
 
 ### Several objects
 
@@ -176,3 +187,6 @@ None.
 - 2026-09-29 — the magnifier of the filter line and the multiselect's icon on the left; the task
   RT-2368 of the epic RT-2370.
 - 2026-10-08 — the open list highlights the chosen option; the task RT-2698 of the epic RT-2649.
+- 2026-11-20 — the multiselect search above its list; the task RT-3399.
+- 2026-11-22 — `selectionChange` at the multiselect, the date field and the date range field; the
+  task RT-3496 of the epic RT-3497.

@@ -10,6 +10,7 @@
         qa-dataid="bottom-sheet-panel"
         role="dialog"
         aria-modal="true"
+        [attr.aria-labelledby]="ariaLabelledby()"
         [rtMod]="{ dragging: dragging() }"
         [style.transform]="dragging() ? 'translateY(' + dragDeltaY() + 'px)' : null">
         <div rtElem="handle" qa-dataid="bottom-sheet-handle" (pointerdown)="onDragStart($event)"></div>

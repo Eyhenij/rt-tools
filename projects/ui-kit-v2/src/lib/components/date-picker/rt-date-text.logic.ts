@@ -103,7 +103,13 @@ export function rtDateText(value: string, type: IRtDatePicker.Type, layout: IRtD
     return `${dayText(day, layout)} ${time}`;
 }
 
-/** Подсказка формы текста в буквах кита: `дд.мм.гггг`, `чч:мм`, `дд.мм.гггг чч:мм`. */
+/**
+ * Маска пустого поля: чёрточка на каждый знак, `--.--.----`. Одна на все языки — буквы частей даты
+ * в каждом языке свои, а чёрточка читается без перевода.
+ */
+export const RT_DATE_SHAPE_MASK: IRtDatePicker.ShapeLetters = { day: '--', month: '--', year: '----', hour: '--', minute: '--' };
+
+/** Подсказка формы текста: `--.--.----`, `--:--`, `--.--.---- --:--` с маской `RT_DATE_SHAPE_MASK`. */
 export function rtDateShape(type: IRtDatePicker.Type, layout: IRtDatePicker.TextLayout, letters: IRtDatePicker.ShapeLetters): string {
     const time: string = `${letters.hour}:${letters.minute}`;
     if (type === 'time') {
