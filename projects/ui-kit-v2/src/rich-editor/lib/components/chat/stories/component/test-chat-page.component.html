@@ -108,7 +108,9 @@
                         <div style="display: flex; gap: 0.25rem">
                             <rt-icon-button icon="calendar-plus" variant="ghost" size="sm" ariaLabel="Завести бронь" />
                             <rt-menu icon="ellipsis-v" triggerSize="sm" ariaLabel="Действия с перепиской">
-                                <rt-menu-item icon="box" label="Перенести в архив" />
+                                <ng-template rtMenuContent>
+                                    <rt-menu-item icon="box" label="Перенести в архив" />
+                                </ng-template>
                             </rt-menu>
                         </div>
                     </ng-template>

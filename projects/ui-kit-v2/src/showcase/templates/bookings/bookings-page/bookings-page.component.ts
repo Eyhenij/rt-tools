@@ -43,6 +43,7 @@ import {
     IBooking,
 } from '../booking.model';
 import { BookingsStore } from '../bookings.store';
+import { AppListToolbarLeftDirective } from '../list-page/app-list-page.component';
 import { AppListPageComponent } from '../list-page/app-list-page.component';
 import { IListPage } from '../list-page/list-page.model';
 import { provideListPage } from '../list-page/list-page.token';
@@ -180,6 +181,7 @@ function bookingRowHasActions(row: IBookingRow): boolean {
 
         // components
         AppListPageComponent,
+        AppListToolbarLeftDirective,
         AppSortHeaderDirective,
         RtButtonDirective,
         RtCopyCellComponent,

@@ -27,7 +27,7 @@ import { RT_KIT_LABELS, TRtKitLabelKey, TRtKitLabelMap, rtKitLabel, rtSlotTempla
 import { rtNotchWidth, RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
-import { RtSkeletonWrapperComponent } from '@rt-tools/ui-kit-v2/skeleton-wrapper';
+import { RtSkeletonComponent } from '@rt-tools/ui-kit-v2/skeleton';
 import { RtFieldHintDirective } from './rt-field-hint.directive';
 import { RT_FIELD_DEFAULT_ERROR_KEYS, RT_FIELD_EMPTY_VALUE, IRtField } from './rt-field.model';
 
@@ -53,7 +53,7 @@ function nextAutoId(): string {
  *
  * Читает контрол через contentChild(RtFormControlBase): авто-связывает label[for],
  * прокидывает read-only режим, показывает текст ошибки/required-маркер. На loading
- * оборачивает зону контрола в rt-skeleton-wrapper (label/hint остаются видимыми) —
+ * ставит заглушку на место контрола и прячет его, не убирая из формы (label/hint видимы) —
  * нужно для route-aside, где поля рендерятся до прихода данных.
  */
 @Component({
@@ -67,7 +67,7 @@ function nextAutoId(): string {
         NgTemplateOutlet,
         RtIconComponent,
         RtPopoverDirective,
-        RtSkeletonWrapperComponent,
+        RtSkeletonComponent,
         BlockDirective,
         ElemDirective,
         ModDirective,

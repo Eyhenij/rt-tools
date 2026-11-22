@@ -31,7 +31,7 @@ import { rtKitDefault } from '@rt-tools/ui-kit-v2/core';
 import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { IRtInput } from '@rt-tools/ui-kit-v2/core';
 import { RtCheckboxComponent } from '@rt-tools/ui-kit-v2/checkbox';
-import { RtMenuComponent } from '@rt-tools/ui-kit-v2/menu';
+import { RtMenuComponent, RtMenuContentDirective } from '@rt-tools/ui-kit-v2/menu';
 import { RtRadioButtonComponent } from '@rt-tools/ui-kit-v2/radio-button';
 import { RtDataTableCellComponent } from './cell/rt-data-table-cell.component';
 import { RtDataTableFilterCellComponent } from './filter-cell/rt-data-table-filter-cell.component';
@@ -77,6 +77,7 @@ const BEM_BLOCK: string = 'rt-data-table';
         RtDataTableFilterCellComponent,
         RtDataTableHeaderCellComponent,
         RtMenuComponent,
+        RtMenuContentDirective,
         RtRadioButtonComponent,
 
         // directives

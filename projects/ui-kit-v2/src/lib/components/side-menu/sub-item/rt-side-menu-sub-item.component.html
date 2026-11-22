@@ -88,13 +88,15 @@
                         [iconFill]="menuRef.subItemIconFill()"
                         [ariaLabel]="row.name ?? ''"
                         (clicked)="onClickSubMenuAdditional(row, $event)">
-                        @if (buttonOwnTpl) {
-                            <span rtElem="own-icon" qa-dataid="side-menu-own-button-icon" aria-hidden="true">
-                                <ng-container
-                                    [ngTemplateOutlet]="buttonOwnTpl"
-                                    [ngTemplateOutletContext]="{ $implicit: row, icon: buttonIcon, slot: 'iconButton' }" />
-                            </span>
-                        }
+                        <ng-template rtIconButtonContent>
+                            @if (buttonOwnTpl) {
+                                <span rtElem="own-icon" qa-dataid="side-menu-own-button-icon" aria-hidden="true">
+                                    <ng-container
+                                        [ngTemplateOutlet]="buttonOwnTpl"
+                                        [ngTemplateOutletContext]="{ $implicit: row, icon: buttonIcon, slot: 'iconButton' }" />
+                                </span>
+                            }
+                        </ng-template>
                     </rt-icon-button>
                 }
             </a>

@@ -22,7 +22,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RtExpansionPanelComponent, RtExpansionPanelContentDirective } from '@rt-tools/ui-kit-v2/expansion-panel';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
-import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtIconButtonComponent, RtIconButtonContentDirective } from '@rt-tools/ui-kit-v2/icon-button';
 import { rtKitLabel, rtSlotTemplates } from '@rt-tools/ui-kit-v2/core';
 import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
@@ -64,6 +64,7 @@ const FAVORITE_BUTTON: string = '.rt-side-menu-sub-item__favorite button';
         RtExpansionPanelContentDirective,
         RtIconComponent,
         RtIconButtonComponent,
+        RtIconButtonContentDirective,
         RtTooltipDirective,
         RtSideMenuTitlePartsPipe,
         RtSideMenuIconPipe,

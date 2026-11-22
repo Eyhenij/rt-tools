@@ -19,6 +19,7 @@ import {
     Signal,
     untracked,
     ViewEncapsulation,
+    contentChildren,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -28,7 +29,7 @@ import { filter, map } from 'rxjs';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { IPageModel, TNullable } from '@rt-tools/utils';
 
-import { RT_KIT_LABELS, rtKitLabel, TRtKitLabelMap, TRtKitLabelParams } from '@rt-tools/ui-kit-v2/core';
+import { RT_KIT_LABELS, rtKitLabel, TRtKitLabelMap, TRtKitLabelParams, RtSlotOutletDirective } from '@rt-tools/ui-kit-v2/core';
 import { searchDebounce } from '@rt-tools/ui-kit-v2/core';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtCheckboxComponent } from '@rt-tools/ui-kit-v2/checkbox';
@@ -41,6 +42,7 @@ import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
 import { RtDynamicListEmptyDirective, RtDynamicListErrorDirective } from './rt-dynamic-list-states.directive';
 import { RtDynamicListToolbarActionsDirective, RtDynamicListToolbarSelectorsDirective } from './rt-dynamic-list.directives';
 import { IRtDynamicList } from './rt-dynamic-list.model';
+import { RtDynamicListContentDirective } from './rt-dynamic-list-content.directive';
 
 const BEM_BLOCK: string = 'rt-dynamic-list';
 
@@ -70,6 +72,7 @@ const PER_PAGE_OPTIONS: ReadonlyArray<number> = [20, 50, 100];
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
+        RtSlotOutletDirective,
         // Angular
         NgTemplateOutlet,
         FormsModule,
@@ -89,6 +92,9 @@ const PER_PAGE_OPTIONS: ReadonlyArray<number> = [20, 50, 100];
     host: { class: BEM_BLOCK },
 })
 export class RtDynamicListComponent implements OnInit {
+    /** Шаблоны записей: рисуются, только пока у списка есть что показать. */
+    protected readonly contents: Signal<readonly RtDynamicListContentDirective[]> = contentChildren(RtDynamicListContentDirective);
+
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
 
     /**

@@ -17,6 +17,7 @@ import { ISortModel, EListSortOrder } from '@rt-tools/utils';
 import { createRtFixture, el, qa, textOf } from '../../../../testing/rt-kit-testing';
 import { IRtTable } from '../rt-table.model';
 import { RtTableComponent } from '../rt-table.component';
+import { RtTableSortHeaderContentDirective } from './rt-table-sort-header-content.directive';
 import { RtTableSortHeaderComponent } from './rt-table-sort-header.component';
 
 interface ITourRow {
@@ -48,11 +49,11 @@ const COLUMNS_CONFIG: ReadonlyArray<IRtTable.ColumnConfig> = [
             [sort]="sort()"
             (sortChange)="picked = $event">
             <ng-container cdkColumnDef="title">
-                <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="title">Название</th>
+                <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="title"><ng-template rtTableSortHeaderContent>Название</ng-template></th>
                 <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
             </ng-container>
             <ng-container cdkColumnDef="city">
-                <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="city">Город</th>
+                <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="city"><ng-template rtTableSortHeaderContent>Город</ng-template></th>
                 <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
             </ng-container>
             <tr *cdkHeaderRowDef="t.displayedColumns()" cdk-header-row></tr>
@@ -63,6 +64,7 @@ const COLUMNS_CONFIG: ReadonlyArray<IRtTable.ColumnConfig> = [
     imports: [
         RtTableComponent,
         RtTableSortHeaderComponent,
+        RtTableSortHeaderContentDirective,
         CdkColumnDef,
         CdkHeaderCellDef,
         CdkHeaderCell,

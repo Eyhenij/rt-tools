@@ -54,28 +54,28 @@ the component nothing to find the former content by, and nothing is checked for 
 - **`SC-UKV-1719`** — `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.slots.spec.ts`
 - **`SC-UKV-1720`** — `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.slots.spec.ts`
 - **`SC-UKV-1721`** — `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.slots.spec.ts`
-- **`SC-UKV-1722`** — `projects/ui-kit-v2/src/lib/components/side-menu/sub-item/rt-side-menu-sub-item-action.spec.ts`
-- **`SC-UKV-1723`** — `projects/ui-kit-v2/src/lib/components/side-menu/sub-item/rt-side-menu-sub-item-action.spec.ts`
-- **`SC-UKV-1724`** — no test
-- **`SC-UKV-1725`** — no test
-- **`SC-UKV-1726`** — no test
-- **`SC-UKV-1727`** — no test
-- **`SC-UKV-1728`** — no test
-- **`SC-UKV-1729`** — no test
-- **`SC-UKV-1730`** — no test
-- **`SC-UKV-1731`** — no test
-- **`SC-UKV-1732`** — no test
-- **`SC-UKV-1733`** — no test
-- **`SC-UKV-1734`** — `projects/ui-kit-v2/src/lib/components/side-menu/sub-item/rt-side-menu-sub-item-action.spec.ts`
+- **`SC-UKV-1722`** — `projects/ui-kit-v2/src/lib/components/side-menu/sub-item/rt-side-menu-sub-item-action.directive.spec.ts`
+- **`SC-UKV-1723`** — `projects/ui-kit-v2/src/lib/components/side-menu/sub-item/rt-side-menu-sub-item-action.directive.spec.ts`
+- **`SC-UKV-1724`** — `projects/ui-kit-v2/src/lib/components/menu/rt-menu-content.directive.spec.ts`
+- **`SC-UKV-1725`** — `projects/ui-kit-v2/src/lib/components/menu/rt-menu-content.directive.spec.ts`
+- **`SC-UKV-1726`** — `projects/ui-kit-v2/src/lib/components/menu/rt-menu-content.directive.spec.ts`
+- **`SC-UKV-1727`** — `projects/ui-kit-v2/src/lib/components/menu/rt-menu-content.directive.spec.ts`
+- **`SC-UKV-1728`** — `projects/ui-kit-v2/src/lib/components/icon-button/rt-icon-button-content.directive.spec.ts`
+- **`SC-UKV-1729`** — `projects/ui-kit-v2/src/lib/components/breadcrumbs/rt-breadcrumbs-content.directive.spec.ts`
+- **`SC-UKV-1730`** — `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-invitation.spec.ts`
+- **`SC-UKV-1731`** — `projects/ui-kit-v2/src/lib/components/table/sort-header/rt-table-sort-header-content.directive.spec.ts`
+- **`SC-UKV-1732`** — `projects/ui-kit-v2/src/showcase/templates/bookings/list-page/app-list-page.component.spec.ts`
+- **`SC-UKV-1733`** — `projects/ui-kit-v2/src/lib/components/menu/rt-menu-content.directive.spec.ts`
+- **`SC-UKV-1734`** — `projects/ui-kit-v2/src/lib/components/side-menu/sub-item/rt-side-menu-sub-item-action.directive.spec.ts`
 - **`SC-UKV-1735`** — `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.slots.spec.ts`
 - **`SC-UKV-1736`** — `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header.slots.spec.ts`
 - **`SC-UKV-1737`** — `projects/ui-kit-v2/src/lib/components/expansion-panel/rt-expansion-panel-additions.spec.ts`
 - **`SC-UKV-1738`** — `projects/ui-kit-v2/src/lib/components/expansion-panel/rt-expansion-panel-additions.spec.ts`
-- **`SC-UKV-1739`** — no test
-- **`SC-UKV-1740`** — no test
-- **`SC-UKV-1741`** — no test
-- **`SC-UKV-1742`** — no test
-- **`SC-UKV-1743`** — no test
-- **`SC-UKV-1744`** — no test
+- **`SC-UKV-1739`** — `projects/ui-kit-v2/src/lib/components/aside/rt-aside-content.directive.spec.ts`
+- **`SC-UKV-1740`** — `projects/ui-kit-v2/src/lib/components/skeleton-wrapper/rt-skeleton-wrapper-content.directive.spec.ts`
+- **`SC-UKV-1741`** — `projects/ui-kit-v2/src/lib/components/field/rt-field.component.spec.ts`
+- **`SC-UKV-1742`** — `projects/ui-kit-v2/src/lib/components/dynamic-list/rt-dynamic-list-content.directive.spec.ts`
+- **`SC-UKV-1743`** — `projects/ui-kit-v2/src/lib/components/money-list/rt-money-row-content.directive.spec.ts`
+- **`SC-UKV-1744`** — `projects/ui-kit-v2/src/lib/components/info-item/rt-info-item-content.directive.spec.ts`
 - **`SC-UKV-1745`** — `projects/ui-kit-v2/src/lib/components/field/rt-field.component.spec.ts`
-- **`SC-UKV-1746`** — no test
+- **`SC-UKV-1746`** — `projects/ui-kit-v2/src/lib/components/menu/rt-menu-content.directive.spec.ts`

@@ -5,4 +5,3 @@ export * from './rail/rt-page-user.component';
 export * from './bar/rt-page-bar.component';
 export * from './bar/rt-page-bar-slots.directive';
 export * from './bar/rt-page-bar.model';
-export * from './rt-page-header-slots.directive';

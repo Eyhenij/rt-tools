@@ -5,4 +5,3 @@ export * from './rt-chat-message-actions.logic';
 export * from './rt-chat-message-actions.pipe';
 export * from './to-rt-message';
 export * from './rt-chat-states.directive';
-export * from './rt-chat-slots.directive';

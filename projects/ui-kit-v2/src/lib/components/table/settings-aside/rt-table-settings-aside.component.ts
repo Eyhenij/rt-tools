@@ -16,7 +16,7 @@ import { Observable, of } from 'rxjs';
 import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
 import { RtAsideFooterComponent } from '@rt-tools/ui-kit-v2/aside';
 import { RtAsideHeaderComponent } from '@rt-tools/ui-kit-v2/aside';
-import { RtAsideComponent } from '@rt-tools/ui-kit-v2/aside';
+import { RtAsideComponent, RtAsideContentDirective } from '@rt-tools/ui-kit-v2/aside';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtContainerRightSidenavPanelDirective } from '@rt-tools/ui-kit-v2/container';
 import { RtRouteAsideComponent } from '@rt-tools/ui-kit-v2/container';
@@ -46,6 +46,7 @@ const BEM_BLOCK: string = 'rt-table-settings-aside';
     encapsulation: ViewEncapsulation.None,
     imports: [
         RtAsideComponent,
+        RtAsideContentDirective,
         RtAsideFooterComponent,
         RtAsideHeaderComponent,
         RtButtonDirective,

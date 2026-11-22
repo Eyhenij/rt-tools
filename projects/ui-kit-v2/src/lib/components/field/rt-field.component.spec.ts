@@ -441,8 +441,22 @@ describe('RtFieldComponent', (): void => {
             fixture.detectChanges();
 
             expect(qa(fixture, 'skeleton-wrapper-placeholder')).not.toBeNull();
-            expect(qa(fixture, 'input-control')).toBeNull();
+            expect(el(fixture, '.rt-field__control-body')?.nativeElement.classList).toContain('rt-field__control-body--hidden');
             expect(textOf(qa(fixture, 'field-label'))).toContain('Имя');
+        });
+
+        it('SC-UKV-1741: контрол в загрузке остаётся в форме, спрятанный под заглушкой', (): void => {
+            const fixture: ComponentFixture<FieldHostComponent> = setup();
+
+            fixture.componentInstance.loading.set(true);
+            fixture.detectChanges();
+
+            const body: HTMLElement = el(fixture, '.rt-field__control-body')?.nativeElement as HTMLElement;
+            expect(qa(fixture, 'skeleton-wrapper-placeholder')).not.toBeNull();
+            expect(body.classList).toContain('rt-field__control-body--hidden');
+            expect(body.querySelector('[qa-dataid="input-control"]')).not.toBeNull();
+            expect(fixture.debugElement.query(By.directive(RtInputComponent))).not.toBeNull();
+            expect(fixture.componentInstance.control.invalid).toBe(true);
         });
     });
 });

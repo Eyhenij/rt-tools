@@ -7,7 +7,7 @@ import { WINDOW } from '@rt-tools/core';
 import { BreakpointsService } from '../../platform';
 import { createRtFixture, el, hostClasses, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
 import { IRtPageHeader } from './rt-page-header.model';
-import { RtCompactCenterDirective, RtCompactLeftDirective, RtCompactRightDirective } from './rt-page-header-slots.directive';
+import { RtCompactCenterDirective, RtCompactLeftDirective, RtCompactRightDirective } from './rt-page-header.component';
 import { RtPageHeaderComponent } from './rt-page-header.component';
 
 const ITEMS: ReadonlyArray<IRtPageHeader.Item> = [

@@ -110,9 +110,11 @@
                                             <rt-menu
                                                 [icon]="messenger() ? 'ellipsis-v' : 'ellipsis-h'"
                                                 [triggerSize]="messenger() ? 'sm' : 'md'">
-                                                <ng-container
-                                                    [ngTemplateOutlet]="actionsTpl"
-                                                    [ngTemplateOutletContext]="{ $implicit: m }" />
+                                                <ng-template rtMenuContent>
+                                                    <ng-container
+                                                        [ngTemplateOutlet]="actionsTpl"
+                                                        [ngTemplateOutletContext]="{ $implicit: m }" />
+                                                </ng-template>
                                             </rt-menu>
                                         }
                                     </div>

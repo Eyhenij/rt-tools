@@ -7,11 +7,15 @@ import {
     InputSignal,
     InputSignalWithTransform,
     ViewEncapsulation,
+    contentChildren,
+    Signal,
 } from '@angular/core';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
 import { RtSkeletonComponent } from '@rt-tools/ui-kit-v2/skeleton';
+import { RtSlotOutletDirective } from '@rt-tools/ui-kit-v2/core';
+import { RtMoneyRowContentDirective } from './rt-money-row-content.directive';
 
 const BEM_BLOCK: string = 'rt-money-row';
 
@@ -29,6 +33,7 @@ const BEM_BLOCK: string = 'rt-money-row';
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
+        RtSlotOutletDirective,
         // standalone components / directives
         RtSkeletonComponent,
         BlockDirective,
@@ -40,6 +45,9 @@ const BEM_BLOCK: string = 'rt-money-row';
     },
 })
 export class RtMoneyRowComponent {
+    /** Шаблоны суммы: рисуются, только пока строка не грузится. */
+    protected readonly contents: Signal<readonly RtMoneyRowContentDirective[]> = contentChildren(RtMoneyRowContentDirective);
+
     public readonly label: InputSignal<string> = input<string>('');
 
     public readonly total: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {

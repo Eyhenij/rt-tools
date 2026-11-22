@@ -5,7 +5,7 @@ import { StoryRowComponent } from '../../../../../../showcase/story-row.componen
 import { RtIconButtonComponent } from '../../../../../../lib/components/icon-button/rt-icon-button.component';
 import { PLACEHOLDER_MARK_BLOCK } from '../../../../../../lib/components/service-logo/stories/component/story-placeholder-marks';
 import { RtChatEmptyDirective, RtChatErrorDirective } from '../../rt-chat-states.directive';
-import { RtChatHeaderActionsDirective } from '../../rt-chat-slots.directive';
+import { RtChatHeaderActionsDirective } from '../../rt-chat-states.directive';
 import { RtChatComponent } from '../../rt-chat.component';
 import { IRtChat } from '../../rt-chat.model';
 import { CHAT_MESSAGES } from './chat.fixture';

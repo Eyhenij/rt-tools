@@ -1,6 +1,6 @@
 import { afterNextRender, signal, viewChildren, ChangeDetectionStrategy, Component, Signal, WritableSignal } from '@angular/core';
 
-import { RtChatComposerBarDirective } from '../../rt-chat-slots.directive';
+import { RtChatComposerBarDirective } from '../../rt-chat-states.directive';
 import { RtChatComponent } from '../../rt-chat.component';
 import { IRtChat } from '../../rt-chat.model';
 import { TestRtChatEditBarComponent } from './test-chat-edit-bar.component';

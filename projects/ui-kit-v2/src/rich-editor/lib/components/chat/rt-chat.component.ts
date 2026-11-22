@@ -30,10 +30,11 @@ import { RtChatMessageActionsDirective, RtChatMessageButtonsDirective } from './
 import {
     RtChatComposerBarDirective,
     RtChatComposerToolsDirective,
+    RtChatEmptyDirective,
+    RtChatErrorDirective,
     RtChatFooterDirective,
     RtChatHeaderActionsDirective,
-} from './rt-chat-slots.directive';
-import { RtChatEmptyDirective, RtChatErrorDirective } from './rt-chat-states.directive';
+} from './rt-chat-states.directive';
 import { RT_CHAT_IMPORTS } from './rt-chat.imports';
 import { RtMessageComposerComponent } from '../message-composer/rt-message-composer.component';
 import { IRtMessageComposer } from '../message-composer/rt-message-composer.model';

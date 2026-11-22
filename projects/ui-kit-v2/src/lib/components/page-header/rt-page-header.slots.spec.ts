@@ -12,7 +12,7 @@ import {
     RtPageHeaderBellDirective,
     RtRailLogoDirective,
     RtRailPageDirective,
-} from './rt-page-header-slots.directive';
+} from './rt-page-header.component';
 import { RtPageHeaderComponent } from './rt-page-header.component';
 import { IRtPageHeader } from './rt-page-header.model';
 

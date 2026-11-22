@@ -10,7 +10,7 @@ import { IRtToggleButtonGroup } from '../../../toggle-button-group/rt-toggle-but
 import { RtProfileMenuComponent } from '../../../profile-menu/rt-profile-menu.component';
 import { PROFILE_MENU_LOCALES } from '../../../profile-menu/stories/component/test-profile-menu.data';
 import { IRtPageHeader } from '../../rt-page-header.model';
-import { RtCompactCenterDirective, RtCompactLeftDirective, RtCompactRightDirective } from '../../rt-page-header-slots.directive';
+import { RtCompactCenterDirective, RtCompactLeftDirective, RtCompactRightDirective } from '../../rt-page-header.component';
 import { RtPageHeaderComponent } from '../../rt-page-header.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */

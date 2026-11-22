@@ -92,15 +92,11 @@ Given a menu with a content template of three items
 When the menu is drawn closed
 Then no item of the template is built
 
-Not covered: the template slots are not made yet.
-
 ### SC-UKV-1725 — an opened menu draws its items and focuses the first
 
 Given a closed menu with a content template of three items
 When the trigger is pressed
 Then the three items are drawn in the panel and the first holds the focus
-
-Not covered: the template slots are not made yet.
 
 ### SC-UKV-1726 — a closed menu destroys the items it drew
 
@@ -108,15 +104,11 @@ Given an open menu with a content template
 When the menu closes
 Then the items of the template are destroyed
 
-Not covered: the template slots are not made yet.
-
 ### SC-UKV-1727 — a press on a menu item reaches the handler of the consumer
 
 Given a menu whose content template holds an item bound to a handler of the consumer
 When the item is pressed
 Then the handler runs and the menu closes
-
-Not covered: the template slots are not made yet.
 
 ### SC-UKV-1728 — a loading icon button builds no content
 
@@ -124,15 +116,11 @@ Given an icon button without an icon, with a content template, in the loading st
 When the button is drawn
 Then the spinner stands in the button and the content of the template is not built
 
-Not covered: the template slots are not made yet.
-
 ### SC-UKV-1729 — the breadcrumbs build their content only in the heading look
 
 Given breadcrumbs in the inline look with a content template
 When the breadcrumbs are drawn
 Then the content of the template is not built
-
-Not covered: the template slots are not made yet.
 
 ### SC-UKV-1730 — the selector list under the invitation builds no add button
 
@@ -140,15 +128,11 @@ Given a dynamic selector with the `invitation` input, two chosen values and addi
 When the selector is drawn
 Then the list shows the two rows and the add button is not built
 
-Not covered: the template slots are not made yet.
-
 ### SC-UKV-1731 — a sortable header draws its label once, inside the sort button
 
 Given a sortable column header with a label template
 When the header is drawn
 Then the label stands once, inside the sort button before the arrow
-
-Not covered: the template slots are not made yet.
 
 ### SC-UKV-1732 — the showcase list page draws its toolbar templates on their sides
 
@@ -156,15 +140,11 @@ Given the showcase list page with a filter template on the left and an action te
 When the page is drawn
 Then the filter stands on the left side of the toolbar and the action before the reload button
 
-Not covered: the template slots are not made yet.
-
 ### SC-UKV-1733 — a confirmed menu action reaches the consumer after the menu closed
 
 Given a menu item with a confirmation message, its dialog open and the menu closed
 When the person confirms in the dialog
 Then the item's `selected` reaches the consumer once
-
-Not covered: the template slots are not made yet.
 
 ### SC-UKV-1734 — the focus follows the handle of a moved favourite
 
@@ -202,15 +182,11 @@ Given a side panel with a content template holding a form, marked empty
 When the panel is drawn
 Then the empty placeholder is shown and the form is not built
 
-Not covered: the template slots are not made yet.
-
 ### SC-UKV-1740 — a loading skeleton wrapper builds no content
 
 Given a skeleton wrapper with a content template, loading
 When the wrapper is drawn
 Then the skeleton is shown and the content of the template is not built
-
-Not covered: the template slots are not made yet.
 
 ### SC-UKV-1741 — a loading field keeps its control in the form, hidden under the skeleton
 
@@ -218,15 +194,11 @@ Given a field with a control bound to a form, loading
 When the field is drawn
 Then the skeleton is shown, the control is hidden and the form holds it
 
-Not covered: the template slots are not made yet.
-
 ### SC-UKV-1742 — a loading dynamic list builds no records
 
 Given a dynamic list with a content template, loading for the first time
 When the list is drawn
 Then the loading state is shown and the content of the template is not built
-
-Not covered: the template slots are not made yet.
 
 ### SC-UKV-1743 — a loading money row builds no value
 
@@ -234,15 +206,11 @@ Given a money row with a content template, loading
 When the row is drawn
 Then the skeleton stands in the value place and the content of the template is not built
 
-Not covered: the template slots are not made yet.
-
 ### SC-UKV-1744 — a loading info item builds no value
 
 Given an info item with a content template, loading
 When the item is drawn
 Then the skeleton stands in the value place and the content of the template is not built
-
-Not covered: the template slots are not made yet.
 
 ### SC-UKV-1745 — the former form of a named slot warns in development mode
 
@@ -256,4 +224,3 @@ Given a menu whose item is written without `rtMenuContent`, in development mode
 When the menu is drawn
 Then the console holds a warning naming `rt-menu` and `rtMenuContent`
 
-Not covered: the template slots are not made yet.

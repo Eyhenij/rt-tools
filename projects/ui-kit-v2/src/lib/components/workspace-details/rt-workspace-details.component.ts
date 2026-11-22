@@ -35,7 +35,7 @@ import { IRtLoadError, RtEmptyStateComponent, rtLoadErrorView } from '@rt-tools/
 import { RtFieldComponent } from '@rt-tools/ui-kit-v2/field';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtMoneyListComponent } from '@rt-tools/ui-kit-v2/money-list';
-import { RtMoneyRowComponent } from '@rt-tools/ui-kit-v2/money-list';
+import { RtMoneyRowComponent, RtMoneyRowContentDirective } from '@rt-tools/ui-kit-v2/money-list';
 import { RtNoteComponent } from '@rt-tools/ui-kit-v2/note';
 import { RtSelectComponent } from '@rt-tools/ui-kit-v2/select';
 import { RtServiceLogoComponent } from '@rt-tools/ui-kit-v2/service-logo';
@@ -79,6 +79,7 @@ interface ITransitionFormShape {
         RtIconButtonComponent,
         RtMoneyListComponent,
         RtMoneyRowComponent,
+        RtMoneyRowContentDirective,
         RtNoteComponent,
         RtSelectComponent,
         RtServiceLogoComponent,

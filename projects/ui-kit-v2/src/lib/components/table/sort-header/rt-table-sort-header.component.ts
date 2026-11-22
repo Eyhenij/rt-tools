@@ -1,13 +1,23 @@
-import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, Signal, ViewEncapsulation } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    inject,
+    input,
+    InputSignal,
+    Signal,
+    ViewEncapsulation,
+    contentChildren,
+} from '@angular/core';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { EListSortOrder, TListSortOrderType } from '@rt-tools/utils';
 
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
-import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { IRtIcon, RtSlotOutletDirective } from '@rt-tools/ui-kit-v2/core';
 import { ariaSortOf, TRtTableAriaSort, isColumnSortable, sortDirectionOf } from '../rt-table-sort.logic';
 import { RtTableComponent } from '../rt-table.component';
+import { RtTableSortHeaderContentDirective } from './rt-table-sort-header-content.directive';
 
 const BEM_BLOCK: string = 'rt-table-sort-header';
 
@@ -37,8 +47,8 @@ const ICONS: Readonly<Record<TListSortOrderType | 'none', IRtIcon.Name>> = Objec
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
+        RtSlotOutletDirective,
         // angular
-        NgTemplateOutlet,
 
         // rt-tools
         BlockDirective,
@@ -54,6 +64,9 @@ const ICONS: Readonly<Record<TListSortOrderType | 'none', IRtIcon.Name>> = Objec
     },
 })
 export class RtTableSortHeaderComponent {
+    /** Шаблоны подписи: рисуются один раз, в кнопке сортировки или без неё. */
+    protected readonly contents: Signal<readonly RtTableSortHeaderContentDirective[]> = contentChildren(RtTableSortHeaderContentDirective);
+
     readonly #table: RtTableComponent<unknown> = inject<RtTableComponent<unknown>>(RtTableComponent);
 
     /** Направление сортировки по этой колонке; `null` — сортирует другая либо никакая. */

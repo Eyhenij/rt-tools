@@ -8,7 +8,7 @@ import {
     RtChatComposerToolsDirective,
     RtChatFooterDirective,
     RtChatHeaderActionsDirective,
-} from './rt-chat-slots.directive';
+} from './rt-chat-states.directive';
 import { RtChatComponent } from './rt-chat.component';
 import { IRtChat } from './rt-chat.model';
 

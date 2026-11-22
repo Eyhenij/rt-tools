@@ -26,10 +26,16 @@
         </span>
     }
 
-    <rt-skeleton-wrapper rtElem="control" height="var(--rt-input-height)" [isLoading]="loading()">
+    <!-- Контрол стоит в форме и в загрузке: заглушка встаёт на его место, а сам он прячется. -->
+    <span rtElem="control">
+        @if (loading()) {
+            <rt-skeleton qa-dataid="skeleton-wrapper-placeholder" width="100%" height="var(--rt-input-height)" />
+        }
         <!-- Элемент прежней формы подсказки сюда не попадает: он не рисуется и только предупреждает. -->
-        <ng-content select=":not([rtFieldHint])" />
-    </rt-skeleton-wrapper>
+        <span rtElem="control-body" [rtMod]="{ hidden: loading() }">
+            <ng-content select=":not([rtFieldHint])" />
+        </span>
+    </span>
 
     <!-- С резервом hint остаётся в потоке даже под ошибкой (скрытый), а сама
          ошибка кладётся в ту же ячейку грида: высота зоны равна большему из

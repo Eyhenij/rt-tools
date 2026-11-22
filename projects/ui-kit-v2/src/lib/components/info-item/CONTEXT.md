@@ -1,7 +1,9 @@
 # `rt-info-item`
 
 ```html
-<rt-info-item label="Тариф" [loading]="!plan()" [grow]="true">{{ plan()?.title }}</rt-info-item>
+<rt-info-item label="Тариф" [loading]="!plan()" [grow]="true">
+    <ng-template rtInfoItemContent>{{ plan()?.title }}</ng-template>
+</rt-info-item>
 ```
 
 | вход      | тип       | умолчание      |
@@ -10,7 +12,7 @@
 | `loading` | `boolean` | `false`        |
 | `grow`    | `boolean` | `false`        |
 
-Значение приходит **проекцией**, а не входом — поэтому внутрь можно положить что угодно:
+Значение приходит **шаблоном** `<ng-template rtInfoItemContent>`, а не входом — поэтому внутрь можно положить что угодно:
 текст, `rt-tag`, ссылку, `@if`.
 
 ## Главное, что нужно знать

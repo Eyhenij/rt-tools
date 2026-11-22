@@ -11,9 +11,9 @@
             [ariaLabel]="t().uiResetDefaults"
             (clicked)="onReset()" />
     </rt-aside-header>
-
-    <rt-table-settings-panel [(items)]="items" />
-
+    <ng-template rtAsideContent>
+        <rt-table-settings-panel [(items)]="items" />
+    </ng-template>
     <rt-aside-footer>
         <button
             rtButton

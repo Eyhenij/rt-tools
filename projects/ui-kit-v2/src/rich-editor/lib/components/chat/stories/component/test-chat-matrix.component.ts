@@ -14,7 +14,7 @@ import {
 } from '../../../../../../lib/components/workspace/rt-workspace.directives';
 import { RtWorkspaceComponent } from '../../../../../../lib/components/workspace/rt-workspace.component';
 import { RtChatMessageActionsDirective } from '../../rt-chat-message-actions.directive';
-import { RtChatComposerToolsDirective } from '../../rt-chat-slots.directive';
+import { RtChatComposerToolsDirective } from '../../rt-chat-states.directive';
 import { RtChatComponent } from '../../rt-chat.component';
 import { ERtChatMessageStatus, IRtChat } from '../../rt-chat.model';
 import { CHAT_MESSAGES, CHAT_PEER } from './chat.fixture';

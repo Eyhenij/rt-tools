@@ -6,7 +6,7 @@ import { WINDOW } from '@rt-tools/core';
 
 import { createRtFixture, el, IRtFixtureOptions, qa } from '../../../testing/rt-kit-testing';
 import { IRtPageHeader } from './rt-page-header.model';
-import { RtPageHeaderBellDirective } from './rt-page-header-slots.directive';
+import { RtPageHeaderBellDirective } from './rt-page-header.component';
 import { RtPageHeaderComponent } from './rt-page-header.component';
 
 const ITEMS: ReadonlyArray<IRtPageHeader.Item> = [{ id: 'tours', label: 'Туры', route: '/tours', icon: 'book' }];

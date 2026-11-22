@@ -5,6 +5,7 @@ import {
     booleanAttribute,
     computed,
     contentChildren,
+    Directive,
     effect,
     inject,
     input,
@@ -16,6 +17,7 @@ import {
     Component,
     DestroyRef,
     ElementRef,
+    InjectionToken,
     InputSignal,
     InputSignalWithTransform,
     OutputEmitterRef,
@@ -38,6 +40,7 @@ import {
     TRtKitLabelMap,
     TRtKitTranslator,
     rtKitLabel,
+    rtSlotTemplate,
     RtSlotOutletDirective,
 } from '@rt-tools/ui-kit-v2/core';
 import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
@@ -48,15 +51,6 @@ import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtPageHeaderMoreComponent } from './more/rt-page-header-more.component';
 import { RtPageRailComponent } from './rail/rt-page-rail.component';
 import { RtPageHeaderUserComponent } from './user/rt-page-header-user.component';
-import {
-    RT_PAGE_HEADER_SLOT_HOST,
-    RtCompactCenterDirective,
-    RtCompactLeftDirective,
-    RtCompactRightDirective,
-    RtPageHeaderBellDirective,
-    RtRailLogoDirective,
-    RtRailPageDirective,
-} from './rt-page-header-slots.directive';
 import {
     activeSectionIds,
     compactSectionsOf,
@@ -70,10 +64,61 @@ import {
 } from './rt-page-header.logic';
 import { IRtPageHeader } from './rt-page-header.model';
 
+/**
+ * Метка шапки страницы над слотом. Колокольчик `[rtHeaderBell]` остаётся слотом-элементом
+ * `rt-header`, и прежняя форма предупреждает только в `rt-page-header`.
+ */
 const BEM_BLOCK: string = 'rt-page-header';
+const SLOT_HOST: string = BEM_BLOCK;
+
+/** Признак шапки страницы над слотом: прежняя форма колокольчика предупреждает только в ней. */
+export const RT_PAGE_HEADER_SLOT_HOST: InjectionToken<boolean> = new InjectionToken<boolean>('RT_PAGE_HEADER_SLOT_HOST');
 
 /** Подложка узкой шапки: её вид задан в `rt-page-header-mobile.scss`, класс ставит и бургер */
 const PAGE_HEADER_MOBILE_BACKDROP: string = 'rt-page-header-mobile-backdrop';
+
+/** Логотип рейла: `<ng-template rtRailLogo>`, рисуется только при `layout="vertical"`. */
+@Directive({ selector: '[rtRailLogo]' })
+class RtRailLogoDirective {
+    public readonly template: TemplateRef<unknown> | null = rtSlotTemplate(SLOT_HOST, 'rtRailLogo');
+}
+
+/** Содержимое строки страницы рейла: `<ng-template rtRailPage>`, только при `layout="vertical"`. */
+@Directive({ selector: '[rtRailPage]' })
+class RtRailPageDirective {
+    public readonly template: TemplateRef<unknown> | null = rtSlotTemplate(SLOT_HOST, 'rtRailPage');
+}
+
+/** Левая часть компактной полосы: `<ng-template rtCompactLeft>`, только в горизонтальном виде. */
+@Directive({ selector: '[rtCompactLeft]' })
+class RtCompactLeftDirective {
+    public readonly template: TemplateRef<unknown> | null = rtSlotTemplate(SLOT_HOST, 'rtCompactLeft');
+}
+
+/** Середина компактной полосы: `<ng-template rtCompactCenter>`, только в горизонтальном виде. */
+@Directive({ selector: '[rtCompactCenter]' })
+class RtCompactCenterDirective {
+    public readonly template: TemplateRef<unknown> | null = rtSlotTemplate(SLOT_HOST, 'rtCompactCenter');
+}
+
+/** Правая часть компактной полосы: `<ng-template rtCompactRight>`, только в горизонтальном виде. */
+@Directive({ selector: '[rtCompactRight]' })
+class RtCompactRightDirective {
+    public readonly template: TemplateRef<unknown> | null = rtSlotTemplate(SLOT_HOST, 'rtCompactRight');
+}
+
+/**
+ * Кнопки у правого края шапки страницы: `<ng-template rtHeaderBell>`, только в горизонтальном виде.
+ * Несколько шаблонов встают все, в порядке записи, перед профилем.
+ */
+@Directive({ selector: '[rtHeaderBell]' })
+class RtPageHeaderBellDirective {
+    public readonly template: TemplateRef<unknown> | null = rtSlotTemplate(
+        SLOT_HOST,
+        'rtHeaderBell',
+        inject(RT_PAGE_HEADER_SLOT_HOST, { optional: true }) === true
+    );
+}
 
 /**
  * Верхняя горизонтальная плашка-навигация для первого уровня доменных страниц.
@@ -442,3 +487,12 @@ export class RtPageHeaderComponent {
         this.closeNavPanels();
     }
 }
+
+export {
+    RtRailLogoDirective,
+    RtRailPageDirective,
+    RtCompactLeftDirective,
+    RtCompactCenterDirective,
+    RtCompactRightDirective,
+    RtPageHeaderBellDirective,
+};

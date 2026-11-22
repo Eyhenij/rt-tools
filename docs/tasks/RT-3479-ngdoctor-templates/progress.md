@@ -3,9 +3,9 @@
 ## Где стоим
 
 - **State:** `этап-идёт`
-- **Stage:** 3 из 5 — Слоты по умолчанию кита
-- **Done:** этап 1 (ae3cb5084); этап 2 — именованные слоты поля, панели раскрытия, шапки страницы, чата и подпункта меню шаблонами, тело панели в DOM с начала, предупреждение прежней формы; кит 4156 из 4156
-- **Next step:** 3.1 — слоты по умолчанию кита шаблонами
+- **Stage:** 4 из 5 — Потребители: cms, админка, витрина, пример входа
+- **Done:** этап 1 (ae3cb5084); этап 2 (0a6fb6e2e); этап 3 — слоты по умолчанию кита шаблонами, кнопка добавления списка выбора входом, подтверждение меню после закрытия; кит 391 набор зелёный, проекция в условиях 18 → 2
+- **Next step:** 4.1 — список cms и список админки передают слоты шаблонами
 - **Uncommitted:** нет
 - **PR:** ещё не открыт
 
@@ -19,11 +19,11 @@
 - [x] 2.2 Тело панели раскрытия стоит в DOM с начала, свёрнутое скрыто и inert
 - [x] 2.3 Старая форма именованного слота пишет предупреждение в режиме разработки
 - [x] 2.4 Тесты именованных слотов зелёные: SC-UKV-1711…1723, 1734…1737
-- [>] 3.1 Меню, кнопка-значок, хлебные крошки, заголовок сортировки (rtTableSortHeaderContent), боковая панель, обёртка скелетона, динамический список, строка суммы и пункт сведений берут содержимое шаблоном
-- [ ] 3.2 Список динамического выбора берёт кнопку добавления входом, поле и деталь-строка держат своё содержимое в DOM под скелетоном
-- [ ] 3.3 Подтверждённое действие пункта меню доходит до потребителя после закрытия меню; пункт вне rtMenuContent предупреждает
-- [ ] 3.4 Тесты слотов по умолчанию зелёные: SC-UKV-1724…1733, 1739…1744, 1746
-- [ ] 4.1 Список cms и список админки передают слоты шаблонами
+- [x] 3.1 Меню, кнопка-значок, хлебные крошки, заголовок сортировки (rtTableSortHeaderContent), боковая панель, обёртка скелетона, динамический список, строка суммы и пункт сведений берут содержимое шаблоном
+- [x] 3.2 Список динамического выбора берёт кнопку добавления входом, поле и деталь-строка держат своё содержимое в DOM под скелетоном
+- [x] 3.3 Подтверждённое действие пункта меню доходит до потребителя после закрытия меню; пункт вне rtMenuContent предупреждает
+- [x] 3.4 Тесты слотов по умолчанию зелёные: SC-UKV-1724…1733, 1739…1744, 1746
+- [>] 4.1 Список cms и список админки передают слоты шаблонами
 - [ ] 4.2 Разметка дерева не держит ни одного места старой формы именованного слота
 - [ ] 4.3 Каждое место дерева со слотом по умолчанию и колокольчик шапки страницы передают содержимое шаблоном
 - [ ] 4.4 Ни одного ng-content под условием или в шаблоне в шаблонах кита, cms, админки и витрины, ветки @else тоже
@@ -34,6 +34,9 @@
 - [ ] 5.3 Черновик договорённости слит в спеки кита, живые тексты SC-UKV-519, 521, 821, 172, 1165 приведены к нему
 
 ## Решения по ходу
+
+- **Директивы слотов шапки страницы и списка витрины объявлены в файлах их компонентов, слоты чата — в файле его шаблонов состояний.** Отдельный файл на несколько директив добавлял находку «имя файла не совпадает с классом», а файл на одну директиву — находку «нет соседней спеки»; порог этапа 5 не даёт расти ни одному правилу. Директивы стоят перед компонентом без `export` у объявления и выходят списком в конце файла: линтер запрещает ссылку на класс до объявления.
+- **Пункт меню из шаблона узнаётся по месту в панели.** Запрос содержимого меню видит и пункты шаблона открытого меню, и предупреждение о пункте вне `rtMenuContent` срабатывало на каждом открытии; теперь предупреждает только пункт, который не лежит в панели.
 
 ## Заходы
 
@@ -53,8 +56,8 @@ Put together by a hook before the compaction of the context (auto).
 ### Where we stand at the minute of the compaction
 
 - **State:** `этап-идёт`
-- **Stage:** 1 из 5 — Примеры и эффекты
-- **Next step:** 1.1 — примеры в комментариях пайпов и директивы действий строки
+- **Stage:** 3 из 5 — Слоты по умолчанию кита
+- **Next step:** 3.1 — слоты по умолчанию кита шаблонами
 - **PR:** ещё не открыт
 
 The progress in full — `docs/tasks/RT-3479-ngdoctor-templates/progress.md`; the plan lies next to it.
@@ -62,12 +65,32 @@ The progress in full — `docs/tasks/RT-3479-ngdoctor-templates/progress.md`; th
 ### Uncommitted
 
 ```
-none
+ M projects/ui-kit-v2/src/lib/components/aside/CONTEXT.md
+ M projects/ui-kit-v2/src/lib/components/aside/Overview.mdx
+ M projects/ui-kit-v2/src/lib/components/aside/header/Overview.mdx
+ M projects/ui-kit-v2/src/lib/components/aside/header/rt-aside-header.component.html
+ M projects/ui-kit-v2/src/lib/components/aside/header/rt-aside-header.component.ts
+ M projects/ui-kit-v2/src/lib/components/aside/index.ts
+ M projects/ui-kit-v2/src/lib/components/aside/rt-aside-empty.spec.ts
+ M projects/ui-kit-v2/src/lib/components/aside/rt-aside-open.spec.ts
+ M projects/ui-kit-v2/src/lib/components/aside/rt-aside-options.spec.ts
+ M projects/ui-kit-v2/src/lib/components/aside/rt-aside.component.html
+ M projects/ui-kit-v2/src/lib/components/aside/rt-aside.component.spec.ts
+ M projects/ui-kit-v2/src/lib/components/aside/rt-aside.component.ts
+ M projects/ui-kit-v2/src/lib/components/aside/stories/component/test-aside-matrix.component.ts
+ M projects/ui-kit-v2/src/lib/components/aside/stories/component/test-aside.component.ts
+ M projects/ui-kit-v2/src/lib/components/breadcrumbs/CONTEXT.md
+ M projects/ui-kit-v2/src/lib/components/breadcrumbs/index.ts
+ M projects/ui-kit-v2/src/lib/components/breadcrumbs/rt-breadcrumbs.component.html
+ M projects/ui-kit-v2/src/lib/components/breadcrumbs/rt-breadcrumbs.component.spec.ts
+ M projects/ui-kit-v2/src/lib/components/breadcrumbs/rt-breadcrumbs.component.ts
+ M projects/ui-kit-v2/src/lib/components/breadcrumbs/stories/component/test-breadcrumbs-matrix.component.html
 ```
 
 ### Commits over the main branch
 
 ```
+0a6fb6e2e feat(rt:ui-kit-v2): именованные слоты кита передаются шаблонами (RT-3479)
 ae3cb5084 refactor(rt:ui-kit-v2): эффекты кита и панели чата без записи сигналов, примеры на @if и @for (RT-3479)
 c93428afa docs(rt:ui-kit-v2): шаг 1.1 RT-3479 идёт (RT-3479)
 72008fbc2 docs(rt:ui-kit-v2): ход работы RT-3479 на первом этапе (RT-3479)
@@ -87,7 +110,6 @@ a5cd357da chore(rt:ui-kit-v2): порог Angular Doctor без записи inn
 47ea435e6 docs(rt:ui-kit-v2): слово владельца о том, что правка значков и ячейки не меняет вид (RT-3478)
 ef78a6919 fix(rt:ui-kit-v2): значки и стиль значка ячейки без записи innerHTML и обхода очистки (RT-3478)
 51b022a44 refactor(rt:core): пайп sanitize удалён из пакета (RT-3478)
-81085f414 docs(rt:ui-kit-v2): ход работы задачи о записи innerHTML и обходе очистки (RT-3478)
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

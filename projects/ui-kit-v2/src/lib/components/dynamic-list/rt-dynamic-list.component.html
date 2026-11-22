@@ -118,7 +118,7 @@
             }
         } @else {
             <div rtElem="content" qa-dataid="dynamic-list-content">
-                <ng-content />
+                <ng-container [rtSlotOutlet]="contents()" />
             </div>
 
             @if (isPaginationShown()) {

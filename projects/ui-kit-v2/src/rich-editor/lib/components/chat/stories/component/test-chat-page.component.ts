@@ -7,6 +7,7 @@ import { RtPopoverDirective } from '../../../../../../lib/components/popover/rt-
 import { RtIconComponent } from '../../../../../../lib/components/icon/rt-icon.component';
 import { RtIconButtonComponent } from '../../../../../../lib/components/icon-button/rt-icon-button.component';
 import { RtMenuItemComponent } from '../../../../../../lib/components/menu/rt-menu-item.component';
+import { RtMenuContentDirective } from '../../../../../../lib/components/menu/rt-menu-content.directive';
 import { RtMenuComponent } from '../../../../../../lib/components/menu/rt-menu.component';
 import { IRtServiceLogo } from '../../../../../../lib/components/service-logo/rt-service-logo.model';
 import { RtTabDirective } from '../../../../../../lib/components/tabs/rt-tab.directive';
@@ -29,7 +30,7 @@ import {
 } from '../../../../../../lib/components/workspace/rt-workspace.directives';
 import { RtWorkspaceComponent } from '../../../../../../lib/components/workspace/rt-workspace.component';
 import { RtChatMessageActionsDirective, RtChatMessageButtonsDirective } from '../../rt-chat-message-actions.directive';
-import { RtChatComposerBarDirective, RtChatComposerToolsDirective, RtChatHeaderActionsDirective } from '../../rt-chat-slots.directive';
+import { RtChatComposerBarDirective, RtChatComposerToolsDirective, RtChatHeaderActionsDirective } from '../../rt-chat-states.directive';
 import { RtChatComponent } from '../../rt-chat.component';
 import { ERtChatMessageStatus, IRtChat } from '../../rt-chat.model';
 import { TestRtChatEditBarComponent } from './test-chat-edit-bar.component';
@@ -105,6 +106,7 @@ function today(hours: number, minutes: number): string {
         RtIconButtonComponent,
         RtIconComponent,
         RtMenuComponent,
+        RtMenuContentDirective,
         RtMenuItemComponent,
         RtTabDirective,
         RtTabsComponent,
