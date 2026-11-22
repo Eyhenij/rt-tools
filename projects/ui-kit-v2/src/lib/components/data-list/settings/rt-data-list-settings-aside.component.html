@@ -1,7 +1,8 @@
 <rt-aside size="md" [ariaLabel]="title()">
-    <ng-template rtAsideContent>
-        <!-- Подпись стоит в шапке под заголовком, как у панели первого кита. -->
+    <!-- Подпись стоит в шапке под заголовком, как у панели первого кита. -->
+    <rt-aside-header [title]="title()" [subtitle]="hint()" />
 
+    <ng-template rtAsideContent>
         <ng-container rtBlock="rt-data-list-settings-aside">
             <div rtElem="switches">
                 <div rtElem="switch-row">
@@ -69,36 +70,35 @@
                 }
             </ul>
         </ng-container>
-
-        <!-- Блок стоит над подвалом, чтобы кнопка сохранения взяла свой элемент: подпись прописными,
-             как в подвале первого кита. -->
-        <ng-container rtBlock="rt-data-list-settings-aside" ngProjectAs="rt-aside-footer">
-            <rt-aside-footer>
-                <!-- Подпись кнопке рисует директива кита, поэтому тело пустое. -->
-                <button
-                    rtButton
-                    asideDismiss
-                    type="button"
-                    appearance="text"
-                    qa-dataid="data-list-settings-cancel"
-                    [label]="cancelLabel()"
-                    (click)="onCancel()">
-                    <!-- empty: label is drawn by the directive -->
-                </button>
-
-                <button
-                    rtButton
-                    rtElem="save"
-                    asidePrimary
-                    type="button"
-                    qa-dataid="data-list-settings-save"
-                    [label]="saveLabel()"
-                    [disabled]="!isChanged()"
-                    (click)="onSave()">
-                    <!-- empty: label is drawn by the directive -->
-                </button>
-            </rt-aside-footer>
-        </ng-container>
     </ng-template>
-    <rt-aside-header [title]="title()" [subtitle]="hint()" />
+
+    <!-- Блок стоит над подвалом, чтобы кнопка сохранения взяла свой элемент: подпись прописными,
+         как в подвале первого кита. -->
+    <ng-container rtBlock="rt-data-list-settings-aside" ngProjectAs="rt-aside-footer">
+        <rt-aside-footer>
+            <!-- Подпись кнопке рисует директива кита, поэтому тело пустое. -->
+            <button
+                rtButton
+                asideDismiss
+                type="button"
+                appearance="text"
+                qa-dataid="data-list-settings-cancel"
+                [label]="cancelLabel()"
+                (click)="onCancel()">
+                <!-- empty: label is drawn by the directive -->
+            </button>
+
+            <button
+                rtButton
+                rtElem="save"
+                asidePrimary
+                type="button"
+                qa-dataid="data-list-settings-save"
+                [label]="saveLabel()"
+                [disabled]="!isChanged()"
+                (click)="onSave()">
+                <!-- empty: label is drawn by the directive -->
+            </button>
+        </rt-aside-footer>
+    </ng-container>
 </rt-aside>
