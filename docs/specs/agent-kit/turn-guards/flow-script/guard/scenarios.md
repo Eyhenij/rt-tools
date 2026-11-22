@@ -171,6 +171,26 @@ Then it is refused on the first and passes on the second
 
 Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
 
+### SC-AK-1819 — a shell command that does not write to a guarded file passes
+
+Given commands of the records refused by the old guard: a read by an inline script, `grep -ln`, a
+run of the engine, an inline script that imports an engine file to read, a copy of a template into
+the scratchpad, `git restore --staged` of the progress and a commit whose message names the plan
+When the step guard judges them
+Then each passes
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1820 — a write to a guarded file by a target that is not a literal path is refused
+
+Given a copy of a template into the task folder by a script, a path built by `$(ls …)` or by the
+environment inside a script, a copy into the directory of the progress, a script with `open(p,'w')`
+that names the plan, and a script written and run by one command
+When the step guard judges them
+Then each is refused
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
 ### SC-AK-1530 — a plan added before the engine with the footprint row may edit
 
 Given a branch of the closed list whose plan names the directory of the description in an edited row and no approval mark
