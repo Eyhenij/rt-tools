@@ -2,17 +2,24 @@
 
 ## Где мы
 
-- **State:** `задача-взята`
-- **Stage:** нет — план написан и закоммичен, роли его прочли; одобрение владельца утром
-- **Done:** разведка: отказы без имени и отказы проверки шагов за 14–21.11 разложены по классам; план в пять этапов переписан по находкам `product-strategist` и `goal-critic`, `plan-check` — код 0
-- **Next step:** утром — «Одобряю план RT-3423» и `plan-red`
-- **Uncommitted:** nothing
-- **Waiting for the owner:** одобрение плана утром — заход автономный
+- **State:** `замысел-записан`
+- **Stage:** 1–4 идут одновременно, файлы этапов не пересекаются
+- **Done:** план одобрен владельцем 22.11 ответом «Одобряю план RT-3423», отметка `plan-red` записана; ветка вобрала RT-3469 после её второго круга ревью
+- **Next step:** закончить этапы 1–4, раскладка, этап 5 — описания
+- **Uncommitted:** правки этапов 1–4
 - **PR:** not open yet
 
 ## Шаги
 
-Появятся вместе с планом.
+- [>] 1.1 The report prints the dead ends of a day by check
+- [ ] 1.2 The report judges the milestone by three days in a row of at least 1500 calls
+- [ ] 1.3 The report with no `--until` takes today
+- [ ] 2.1 The counter names the check of a refusal text with no name by its kind
+- [ ] 3.1 A read, a run of the engine and a file name inside another text pass the step guard
+- [ ] 3.2 A write to a guarded file by a built path, a copy into its directory or a writing script is refused
+- [ ] 4.1 The words of a model check let the call through when its file is missing or unread
+- [ ] 4.2 The settings laid out from the package carry those words
+- [ ] 5.1 The scenarios stand in the descriptions
 
 ## Решения по ходу
 
