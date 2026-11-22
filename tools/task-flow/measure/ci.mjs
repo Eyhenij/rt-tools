@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · task-flow/measure/ci.mjs · eac37b70ffef · правится надстройкой, не здесь
+// rt-kit v0.38.0 · task-flow/measure/ci.mjs · 3b1c08d482dd · правится надстройкой, не здесь
 /**
  * The measurer «measure.ci» — the CI runs the session answers for. The hold is read before the
  * release cases: a turn does not end over a run nobody watches or a red run nobody read.
@@ -16,10 +16,12 @@
  *     watch of it — the read; a watch call stands before the end and reads nothing;
  *   - there is no run yet, and the head was pushed or the PR opened less than `FRESH_MINUTES` ago.
  *
- * No word of the owner passes the hold: a running run asks for one background watch, whose notice
- * wakes the session when the run ends, and a red run holds until one call reads it.
+ * No typed word of the owner passes the hold: a running run asks for one background watch, whose
+ * notice wakes the session when the run ends, and a red run holds until one call reads it. The
+ * owner's Esc does: after it a notice does not put the work back on until the owner writes again.
  */
 import { epicOfWork } from './epic-of.mjs';
+import { interrupted } from './owner.mjs';
 
 /** How long a head without a run holds the stop, in minutes: the hosting shows a run within seconds. */
 export const FRESH_MINUTES = 2;
@@ -146,8 +148,9 @@ const wakes = (bases, base) =>
  * headRefOid, base }; `run` — { id, attempt, conclusion, endedAt }, null for a fresh head; `file` —
  * the pipeline file.
  */
-export function hold({ git, host, tree, session }) {
+export function hold({ git, host, tree, session, owner }) {
     return (data) => {
+        if (owner && interrupted({ owner })(data)) return false;
         const events = session.events();
         const pushes = pushedHeads(events);
         const heads = new Set(pushes.keys());

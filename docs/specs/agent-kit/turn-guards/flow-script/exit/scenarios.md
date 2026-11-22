@@ -27,6 +27,9 @@ Then only the mark of Esc is an interrupt, and only it releases the turn as «th
 And «стоп» in the running stage with a step not done holds the turn
 And through the hook after a write «Стоп, хватит» and «не сейчас» are held, and the mark of Esc is released
 And «стоп» does not lift the CI hold of a fresh head with no run
+And after Esc neither a red run nor a running one with no watch holds the stop, and a new word of the owner brings the hold back
+And a message typed mid-turn, kept as a queued command from a person, is the owner's word, and after Esc it holds the turn again; a queued notice of a task or a wrapper is no word
+And a mark of Esc a second and a half after a typed order delivers it and the turn is held; a minute after the order it releases the turn
 And the text of the model hook on Stop names no «стоп»
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`, `projects/agent-kit/tests/turn-replay.test.sh`.
@@ -250,8 +253,9 @@ Given a session that wrote and started a background task ninety-five minutes ago
 When the hung task is measured and the turn is held in the running stage
 Then the task is hung with its number, its ninety-five minutes and its output file
 And the hold names the task, its minutes and its output, and offers no owner's menu
-And after a refusal of a stop the hung task comes before the idle stop
+And after a refusal of a stop the hung task comes before the idle stop, and a step another check refused twice comes before the hung task
 And a task of fifty-eight minutes, or one that ended, is not hung
+And an agent of a hundred and five minutes is neither hung nor a wait
 
 Covered: `projects/agent-kit/tests/turn-exit-guard-wait.test.sh`.
 

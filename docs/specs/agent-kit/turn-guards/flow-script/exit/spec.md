@@ -45,15 +45,20 @@ not by a person.
   lacks counts as not done. A step done with no matched mark gets the measuring command, and the
   revert move only for a fix inside the folder.
 - **The owner's interrupt releases the turn: their last word is the mark of Esc, and no typed word releases a turn.**
-  A turn a background notice wakes after Esc is released until the owner writes again. A word typed
-  to stop and an option chosen in a menu are words like any other: the turn is judged by the scenario.
+  A turn a background notice wakes after Esc is released until the owner writes again. A message
+  typed mid-turn counts as writing: the host keeps it as a queued command, not as a user entry. A
+  mark within five seconds after a typed message only delivers it, and the message stays the last
+  word. A word typed to stop and an option chosen in a menu are words like any other: the turn is
+  judged by the scenario.
 - **A session that wrote nothing to the tree releases the turn unless the owner's last word pushes the work on, and a branch outside the scenario releases it always.**
 - **A role session with no edit tool ends with its report.**
 - **The silent hosting releases the turn only when the measurement itself stopped on the silence.**
 - **A menu of a refusal that did not reach the owner a second time in a row releases the turn.**
 - **The session source names the background tasks of a record: the start of a command or an agent sent to the background, and its end by a notice with a final status or by a call that stops it.**
 - **A turn that waits for a background task of its own session is released while the task has a start, no end, and is younger than ninety minutes.**
-- **A background task older than ninety minutes with no notice is hung: the hold names it with its minutes and its output, and offers no owner's menu.**
+- **A background command older than ninety minutes with no notice is hung: the hold names it with its minutes and its output, and offers no owner's menu unless another check refused the step twice.**
+  An agent past the bound counts as no task: one that handed its report back while its own work ran
+  ends with no notice the record reads.
 - **A server started in the background is no wait and is never hung; a watch of a CI run and any other command are waits.**
 - **The model hook on Stop lets a turn end while a background task of the session still runs and the reply names the task and the step that goes on by its notice.**
 - **One background task releases one stop: a second stop with no call of a tool between the two is held.**
@@ -223,3 +228,6 @@ None.
   1463, 1505 and 1556 are removed with their tests. Scenario 1445 is removed too: scenario 1842
   carries its menu, now «отложить RT-N» and «подскажу путь». The bound of a wait is ninety minutes,
   and a task past it is hung and named by the hold. A server is no wait; a watch of a CI run is one.
+- 2026-11-22 — after the first review round: a message typed mid-turn is the owner's word; a mark
+  of Esc within five seconds after a typed message delivers it; an agent past the bound is not hung;
+  a step another check refused twice comes before a hung task; Esc lifts the CI hold.

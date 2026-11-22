@@ -201,8 +201,8 @@ flowchart TD
 - **A refusal of a guard never ends the turn.** It is answered by the next call: the condition met,
   another step taken, or the owner's menu put to them. A refused stop — the
   closing tool — is no exit either.
-- **The phrase "waiting for your word" is a stop declared by the executor.** Without the owner's stop
-  word, waiting for their word is a report, not work. A decision that is theirs goes to them as a
+- **The phrase "waiting for your word" is a stop declared by the executor.** Without the owner's
+  Esc, waiting for their word is a report, not work. A decision that is theirs goes to them as a
   menu, and the turn waits for the answer inside itself. The agent hook judges it by meaning.
 - **A statement about the tree's state is watched by the agent hook, not by the executor's
   memory.** Everything the reply says about the tree carries a command and its output; said without

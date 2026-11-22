@@ -111,9 +111,12 @@ export function unread({ session }) {
 
 /**
  * The command of a server started in the background: a stand, a showcase, a dev server. It never
- * ends by itself and sends no notice, so it is no wait.
+ * ends by itself and sends no notice, so it is no wait. A package script `serve`, `serve:*`,
+ * `storybook` or `storybook:*`; `storybook dev`; the serve target of nx or ng; a stand's `up.mjs`.
+ * A build, a lint or a search that only names the showcase is no server.
  */
-const SERVER = /(?:\bserve:[\w-]+|(?<![\w-])storybook(?::[\w-]+)?\b|\b(?:nx|ng)\s+serve\b)/;
+const SERVER =
+    /\b(?:pnpm|npm|yarn)\s+(?:run\s+)?(?:serve|storybook)(?::[\w-]+)?(?![\w:-])|\bstorybook\s+dev\b|\b(?:nx|ng)\s+serve\b|\bnx\s+run\s+[\w@./-]+:serve\b|\bnx\s+run-many\b[^|;&]*?(?:-t|--targets?)[=\s]+serve\b|\bstand\/up\.mjs\b/;
 
 /**
  * A background task older than this releases nothing: it is hung, in minutes. The longest command of
@@ -158,7 +161,9 @@ function running(events, now) {
     const age = (task) => now - task.at;
     const timed = [...open.values()].filter((task) => Number.isFinite(task.at) && age(task) > -60_000);
     const tasks = timed.filter((task) => age(task) < BACKGROUND_BOUND * 60_000);
-    const hung = timed.filter((task) => age(task) >= BACKGROUND_BOUND * 60_000).map((task) => ({ task: task.task ?? task.id, minutes: Math.floor(age(task) / 60_000), output: task.output ?? null }));
+    // An agent that handed its report back while its own background work ran ends with no notice
+    // the record reads: past the bound it counts as no task, never as a hung one.
+    const hung = timed.filter((task) => !task.agent && age(task) >= BACKGROUND_BOUND * 60_000).map((task) => ({ task: task.task ?? task.id, minutes: Math.floor(age(task) / 60_000), output: task.output ?? null }));
     return { tasks, hung, spent };
 }
 

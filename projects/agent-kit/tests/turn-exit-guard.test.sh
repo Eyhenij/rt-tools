@@ -328,6 +328,14 @@ out('end: SC-AK-1812 — вторая остановка без вызова н�
 
 // SC-AK-1839 — слово владельца удержание CI не снимает
 out('end: SC-AK-1839 — «стоп» не снимает свежую вершину без запуска', kindOf(holdOf({ events: [bash(`git push origin ${PR.head}`, END)], word: 'стоп', now: END + 60_000 })), 'fresh -');
+const ESC = '[Request interrupted by user]';
+const queuedEntry = (prompt, kind = 'human') => ({ type: 'attachment', attachment: { type: 'queued_command', prompt, origin: { kind } } });
+out('end: SC-AK-1839 — сообщение, набранное во время хода, — слово владельца', String(sourceWordOf(queuedEntry('нет, продолжай шаг 2'))), 'нет, продолжай шаг 2');
+out('end: SC-AK-1839 — уведомление задачи в очереди — не слово владельца', String(sourceWordOf(queuedEntry('<task-notification>x</task-notification>', 'task-notification'))), 'null');
+out('end: SC-AK-1839 — обёртка в очереди от человека — не слово', String(sourceWordOf(queuedEntry('<command-name>/x</command-name>'))), 'null');
+out('end: SC-AK-1839 — после Esc красный запуск ход не держит', kindOf(holdOf({ host: onHead(redRun), word: ESC })), 'none');
+out('end: SC-AK-1839 — после Esc идущий запуск без слежения ход не держит', kindOf(holdOf({ host: onHead(goingRun), word: ESC, now: T0 + 120_000 })), 'none');
+out('end: SC-AK-1839 — после нового слова владельца красный снова держит', kindOf(holdOf({ host: onHead(redRun), word: 'продолжай' })), `red ${RUN}`);
 
 JS
 
@@ -345,6 +353,14 @@ expect_stop "end: SC-AK-1839 — «не сейчас» ход через хук 
     "$(input_stop "$(transcript "$(edited)" "$(say 'не сейчас')")")" BLOCK
 expect_stop "end: SC-AK-1839 — Esc отпускает ход через хук" \
     "$(input_stop "$(transcript "$(edited)" "$(say '[Request interrupted by user]')")")" PASS
+queued() { jq -c -n --arg t "$1" '{type:"attachment",attachment:{type:"queued_command",prompt:$t,origin:{kind:"human"}}}'; }
+said_at() { jq -c -n --arg t "$1" --arg at "$2" '{type:"user",timestamp:$at,message:{content:[{type:"text",text:$t}]}}'; }
+expect_stop "end: SC-AK-1839 — Esc через секунду после поручения его доставляет — ход держится" \
+    "$(input_stop "$(transcript "$(edited)" "$(said_at 'делай задачу' 2026-11-16T00:27:54.000Z)" "$(said_at '[Request interrupted by user]' 2026-11-16T00:27:55.500Z)")")" BLOCK
+expect_stop "end: SC-AK-1839 — Esc через минуту после поручения — остановка, ход отпущен" \
+    "$(input_stop "$(transcript "$(edited)" "$(said_at 'делай задачу' 2026-11-16T00:27:54.000Z)" "$(said_at '[Request interrupted by user]' 2026-11-16T00:28:54.000Z)")")" PASS
+expect_stop "end: SC-AK-1839 — слово, набранное после Esc во время хода, снова держит ход" \
+    "$(input_stop "$(transcript "$(edited)" "$(say '[Request interrupted by user]')" "$(queued 'нет, продолжай шаг 2')")")" BLOCK
 expect_stop "end: SC-AK-1432 — сессия без записи отпускает ход через хук" \
     "$(input_stop "$(transcript "$(say 'расскажи, что в ветке')" "$(reply)")")" PASS
 

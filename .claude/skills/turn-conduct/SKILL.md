@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — about one turn. Load when a turn is being ended — what it ends with, what the owner is told about a step that is theirs, what backs a statement about the tree, what the guards watch. Pattern task-flow-handoff. The whole course of work — rule task-flow.
 ---
-<!-- rt-kit v0.38.0 · rules/turn-conduct.md · 64822fa185e0 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · rules/turn-conduct.md · 86f601973b03 · правится надстройкой, не здесь -->
 
 # Turn conduct — how it works here
 
@@ -202,8 +202,8 @@ flowchart TD
 - **A refusal of a guard never ends the turn.** It is answered by the next call: the condition met,
   another step taken, or the owner's menu put to them. A refused stop — the
   closing tool — is no exit either.
-- **The phrase "waiting for your word" is a stop declared by the executor.** Without the owner's stop
-  word, waiting for their word is a report, not work. A decision that is theirs goes to them as a
+- **The phrase "waiting for your word" is a stop declared by the executor.** Without the owner's
+  Esc, waiting for their word is a report, not work. A decision that is theirs goes to them as a
   menu, and the turn waits for the answer inside itself. The agent hook judges it by meaning.
 - **A statement about the tree's state is watched by the agent hook, not by the executor's
   memory.** Everything the reply says about the tree carries a command and its output; said without

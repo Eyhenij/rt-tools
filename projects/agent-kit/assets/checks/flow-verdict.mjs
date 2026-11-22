@@ -111,11 +111,12 @@ export function menuCause(read) {
     };
     const unread = answer(MENU_CAUSES.unread);
     if (unread) return { unread };
-    // A task past the bound of the wait is hung: the move is to deal with it, not the owner's menu.
-    const hung = answer(MENU_CAUSES.hung);
-    if (hung && typeof hung === 'object') return { hung };
     const by = answer(MENU_CAUSES.forbidden);
     if (by) return { by: String(by) };
+    // A task past the bound of the wait is hung: the move is to deal with it, not the owner's menu.
+    // A step another check refused twice still goes to the owner's menu above.
+    const hung = answer(MENU_CAUSES.hung);
+    if (hung && typeof hung === 'object') return { hung };
     const idle = answer(MENU_CAUSES.idle);
     // A stop refused only by other hooks is no idle one: no menu, the refusal is named in one line.
     const foreign = idle && typeof idle === 'object' ? [idle.foreign ?? []].flat().filter(Boolean).map(String) : [];

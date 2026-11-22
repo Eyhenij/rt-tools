@@ -273,7 +273,8 @@ export async function forecastCopies({ copies, window, model, base, openReaders,
                 counts.longest = Math.max(counts.longest, run);
                 // A named unread task is a move, not the menu: the next stop is judged as usual.
                 const cause = menuCause(answer);
-                menuNamed = cause !== null && !cause.unread;
+                // A hung task, like an unread one, names a move, not the owner's menu.
+                menuNamed = cause !== null && !cause.unread && !cause.hung;
             }
         }
     }

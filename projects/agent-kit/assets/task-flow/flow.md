@@ -66,7 +66,7 @@ The engine asks the cases in this order, and a met case lets the turn end before
 | `measure.session.waiting` | `source.session` |
 | `measure.session.hung` | `source.session` |
 | `measure.host.silent` | `source.host` |
-| `measure.ci.hold` | `source.git`, `source.host`, `source.tree`, `source.session` |
+| `measure.ci.hold` | `source.git`, `source.host`, `source.tree`, `source.session`, `source.owner` |
 
 ## Sources
 

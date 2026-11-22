@@ -50,7 +50,7 @@
     host: { silent: { host: source.host } },
     // Read by the verdict before the release cases: a CI run nobody watches or a red run nobody read
     // holds the stop, the end of the scenario included.
-    ci: { hold: { git: source.git, host: source.host, tree: source.tree, session: source.session } },
+    ci: { hold: { git: source.git, host: source.host, tree: source.tree, session: source.session, owner: source.owner } },
   },
 
   state: {

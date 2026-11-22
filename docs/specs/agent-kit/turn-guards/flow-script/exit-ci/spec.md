@@ -37,7 +37,7 @@ There is no interface: the refusal is read by the executor and names the run and
 - **A red run holds the stop until a call of the hosting client after its end, neither refused nor failed, names it, or a command or a read takes the output of its watch.**
 - **A head with no run holds the stop for two minutes after the result of its push or the opening of its PR.**
 - **A hosting that does not answer about the CI holds nothing.**
-- **No word of the owner passes the CI hold: a fresh head with no run holds the stop whatever the owner said.**
+- **No typed word of the owner passes the CI hold, and their Esc does: after the mark of Esc the hold holds nothing until the owner writes again.**
 - **The host adapter reads the open PRs and the runs of the PR pipeline file on a head past the clock.**
 - **A call event carries its time and the branch of its record entry, and a background event the command of its call.**
 
@@ -121,5 +121,6 @@ None.
   lines of its failed log: the error of a failed step stands at its end, past the cut of a tool.
 - 2026-11-22 — the rules of the CI hold moved here from the guard of the exits of a turn: its
   scenario file outgrew the length limit.
-- 2026-11-22 — the hold reads no word of the owner, and a watch of a CI run is a wait. Scenario 1813
-  is removed with its test: no typed word stops the work, the owner stops it by Esc.
+- 2026-11-22 — the hold reads no typed word of the owner, and a watch of a CI run is a wait.
+  Scenario 1813 is removed with its test: no typed word stops the work, the owner stops it by Esc.
+  After Esc the hold holds nothing: a red run or a running one does not put the work back on.
