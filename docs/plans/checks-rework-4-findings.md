@@ -55,6 +55,24 @@ The task ran outside the epic; the owner added its findings to the epic on 21.11
   three «Not checked» bindings of `.claude/skills/turn-conduct/implementation.md` now bound to
   `tools/task-flow/measure/ci.mjs:hold`.
 
+## RT-3469 — the run ahead started in the background ends with the code of the set
+
+- **The exit code 3 of the run ahead means both «did not start» and «three red checks».** The
+  script exits with the number of red checks, at most 100, and with 3 when the run did not start.
+  A session that reads the code alone takes a red set for one that did not start. **Address:**
+  rules layer — the exit codes of `assets/hooks/git-guard-push-ahead.sh`, a code for «did not
+  start» above 100, and the Contract section of `docs/specs/agent-kit/push-gate-ahead/spec.md`.
+- **A retry loop that exits 0 on green and 1 after the loop is refused.** The form `if set; then …;
+  exit 0; fi; done; …; exit 1` ends red on red, but the guard reads only the set and its next
+  command. Three calls of 17.11; the ready form passes. **Address:** rules layer — the judge of
+  `assets/hooks/push-ahead-call-guard.sh`. **Metric:** refusals of the guard on calls whose last
+  command is `exit N` with a nonzero N, 3 over 14–21.11, target 0.
+- **The scenario suites of the hooks write observations into the real tree.** A run of a suite or
+  of a hook by hand with no `CLAUDE_PROJECT_DIR` appends `guard-deny` lines to the observations of
+  the day: 458 lines of this guard on 22.11 came from review runs. The report of the tree does not
+  count them, `agent-kit stats` does. **Address:** rules layer — `tests/lib.sh` of the package sets
+  `CLAUDE_PROJECT_DIR` to a temporary directory.
+
 ## Left unresolved
 
 - **The commit hook does not check the pipeline files.** `lint-staged` in `package.json` does not
