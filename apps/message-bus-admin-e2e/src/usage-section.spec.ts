@@ -255,4 +255,25 @@ test.describe('раздел использования', () => {
         await expect(qa(page, 'usage-digest-top').locator('[qa-dataid="bar-list-empty-text"]')).toHaveText('За период загрузок не было');
         await expect(qa(page, 'usage-digest-denied').locator('[qa-dataid="bar-list-empty-text"]')).toHaveText('За период отказов не было');
     });
+
+    test('SC-MB-454 — снятый крестиком первый день снимает период, и оба поля показывают период, посчитанный приёмником', async ({
+        page,
+    }: {
+        page: Page;
+    }) => {
+        await openSection(page, 'usage', PERIOD_QUERY);
+        await expect(rowsOf(page, 'usage')).toHaveCount(5);
+
+        const from: Locator = qa(page, 'list-period-from');
+        const now: Date = new Date();
+
+        await from.locator('[qa-dataid="date-picker-clear"] [qa-dataid="icon-button-control"]').click();
+
+        // поле, которое человек очистил, получает день приёмника записью формы, а не набором
+        await expect(qa(page, 'list-period-to').locator('input')).toHaveValue(shownDayOf(now));
+        await expect(from.locator('input')).toHaveValue(/^\d{2}\.\d{2}\.\d{4}$/);
+        await expect(from.locator('input')).not.toHaveValue('01.08.2026');
+        expect(queryOf(page).get('from')).toBeNull();
+        expect(queryOf(page).get('to')).toBeNull();
+    });
 });
