@@ -91,6 +91,60 @@ EOF
 report "SC-AK-1646 — отказ конца хода считается один раз, по записи обратной связи" \
     "$(count "$WORK/stop.jsonl" refusals 'r.map((x) => x.kind + ":" + x.check).join(" ")')" "stop:turn-exit-guard stop:unnamed"
 
+# Тексты отказов без имени проверки — начала настоящих отказов из записей 14–20.11 (браузерные
+# отказы профиля, списка и вопроса — из таблицы решений: в записях их нет). Каждая строка таблицы
+# счётчика называет свою проверку по тексту.
+cat > "$WORK/named.jsonl" <<'EOF'
+{"type":"user","uuid":"n1","sessionId":"s1","timestamp":"2026-11-20T01:00:00Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t1","is_error":true,"content":"PreToolUse:Read hook error: [command hook 3]: /Users/x/tree/.claude/hooks/dispatch.sh: line 2: syntax error near unexpected token `<<<'\n/Users/x/tree/.claude/hooks/dispatch.sh: line 2: `<<<<<<< HEAD'"}]}}
+{"type":"user","uuid":"n2","sessionId":"s1","timestamp":"2026-11-20T01:01:00Z","message":{"role":"user","content":"Stop hook feedback:\nAgent hook condition was not met: The file .claude/hooks/turn-judge.md does not exist under the cwd, so I could not follow it."}}
+{"type":"user","uuid":"n3","sessionId":"s1","timestamp":"2026-11-20T01:02:00Z","message":{"role":"user","content":"Stop hook feedback:\nAgent hook condition was not met: The plan is not finished. The last message quotes BLOCKED by turn-exit-guard: the scenario is not over"}}
+{"type":"user","uuid":"n4","sessionId":"s1","timestamp":"2026-11-20T01:03:00Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t4","is_error":true,"content":"PreToolUse:AskUserQuestion hook error: Agent hook condition was not met: I couldn't read .claude/hooks/ask-judge.md, so I could not judge the question."}]}}
+{"type":"user","uuid":"n5","sessionId":"s1","timestamp":"2026-11-20T01:04:00Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t5","is_error":true,"content":"PreToolUse:AskUserQuestion hook error: Agent hook condition was not met: BLOCKED by ask-judge: the third question repeats a decision the owner already gave"}]}}
+{"type":"user","uuid":"n6","sessionId":"s1","timestamp":"2026-11-20T01:05:00Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t6","is_error":true,"content":"PreToolUse:Bash hook error: BLOCKED: the work is not ready for delivery. Everything unmet is named whole — so that it\nis fixed in one session, not one miss per round:"}]}}
+{"type":"user","uuid":"n7","sessionId":"s1","timestamp":"2026-11-20T01:06:00Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t7","is_error":true,"content":"PreToolUse:Bash hook error: BLOCKED: creating a branch for a task while a conflicting request of your own stands. What was handed over conflicts with the main branch"}]}}
+{"type":"user","uuid":"n8","sessionId":"s1","timestamp":"2026-11-20T01:07:00Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t8","is_error":true,"content":"PreToolUse:Bash hook error: BLOCKED: the PR #3311 of the branch «RT-3309-auth-metrika-frame-src» is merged, and the branch has no open PR."}]}}
+{"type":"user","uuid":"n9","sessionId":"s1","timestamp":"2026-11-20T01:08:00Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t9","is_error":true,"content":"PreToolUse:Bash hook error: BLOCKED: the heavy steps of this tree run ahead, not inside the guard — inside it they hit the hook limit"}]}}
+{"type":"user","uuid":"n10","sessionId":"s1","timestamp":"2026-11-20T01:09:00Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t10","is_error":true,"content":"PreToolUse:Bash hook error: BLOCKED: the call goes from a second working copy — «/Users/x/other», while the session stands in «/Users/x/tree»."}]}}
+{"type":"user","uuid":"n11","sessionId":"s1","timestamp":"2026-11-20T01:10:00Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t11","is_error":true,"content":"PreToolUse:Bash hook error: Refused: a commit straight into «main». Work travels through a branch and a PR — the rule git-workflow."}]}}
+{"type":"user","uuid":"n12","sessionId":"s1","timestamp":"2026-11-20T01:11:00Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t12","is_error":true,"content":"PreToolUse:Bash hook error: Refused: this call takes work, and the copy «rt-tools» leads the epic RT-3232, and this work belongs to RT-3313."}]}}
+{"type":"user","uuid":"n13","sessionId":"s1","timestamp":"2026-11-20T01:12:00Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t13","is_error":true,"content":"PreToolUse:Bash hook error: BLOCKED: the commit edits code but not the document that describes it.\n\n  • `a.component.ts` is edited without its document"}]}}
+{"type":"user","uuid":"n14","sessionId":"s1","timestamp":"2026-11-20T01:13:00Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t14","is_error":true,"content":"PreToolUse:Edit hook error: BLOCKED: this is already written. File: auth-start-check.spec.ts\n\nThe order of moves: 1) open the ready-made"}]}}
+{"type":"user","uuid":"n15","sessionId":"s1","timestamp":"2026-11-20T01:14:00Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t15","is_error":true,"content":"PreToolUse:mcp__claude-in-chrome__tabs_context_mcp hook error: No browser is selected in this session. Call the browser selection with the profile p1 before any other call."}]}}
+{"type":"user","uuid":"n16","sessionId":"s1","timestamp":"2026-11-20T01:15:00Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t16","is_error":true,"content":"PreToolUse:mcp__claude-in-chrome__tabs_context_mcp hook error: The last browser selection was 48073 s ago (the limit is 300 s) — over such a break the active browser drifts away"}]}}
+{"type":"user","uuid":"n17","sessionId":"s1","timestamp":"2026-11-20T01:16:00Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t17","is_error":true,"content":"PreToolUse:mcp__claude-in-chrome__select_browser hook error: The profile «p2» is not the one pinned to the project. Take p1"}]}}
+{"type":"user","uuid":"n18","sessionId":"s1","timestamp":"2026-11-20T01:17:00Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t18","is_error":true,"content":"PreToolUse:mcp__claude-in-chrome__list_connected_browsers hook error: Do not list and do not switch browsers. Call the browser selection with the profile p1"}]}}
+{"type":"user","uuid":"n19","sessionId":"s1","timestamp":"2026-11-20T01:18:00Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t19","is_error":true,"content":"PreToolUse:AskUserQuestion hook error: Do not ask which browser to use — the profile is pinned. Call select_browser with deviceId p1"}]}}
+{"type":"user","uuid":"n20","sessionId":"s1","timestamp":"2026-11-20T01:19:00Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t20","is_error":true,"content":"PreToolUse:Bash hook error: [$CLAUDE_PROJECT_DIR/.claude/hooks/dispatch.sh PreToolUse]: A browser raised by a library from inside the tree. Drive the browser by the pinned extension: select the profile p1 and work by its tools."}]}}
+EOF
+named() { count "$WORK/named.jsonl" refusals "r.slice($1, $2).map((x) => x.check).join(\" \")"; }
+report "SC-AK-1817 — сбой диспетчера хуков — dispatch-broken" "$(named 0 1)" "dispatch-broken"
+report "SC-AK-1817 — модельная проверка конца хода без файла и с чужой цитатой — turn-judge" \
+    "$(named 1 3)" "turn-judge turn-judge"
+report "SC-AK-1817 — модельная проверка вопроса без файла и с именем — ask-judge" \
+    "$(named 3 5)" "ask-judge ask-judge"
+report "SC-AK-1817 — проверка доставки без имени — git-guard-delivery" \
+    "$(named 5 8)" "git-guard-delivery git-guard-delivery git-guard-delivery"
+report "SC-AK-1817 — проверка отправки без имени — git-guard-push-tests" \
+    "$(named 8 10)" "git-guard-push-tests git-guard-push-tests"
+report "SC-AK-1817 — коммит прямо в главную ветку — git-guard-main" "$(named 10 11)" "git-guard-main"
+report "SC-AK-1817 — назначение дерева — tree-assignment-guard" "$(named 11 12)" "tree-assignment-guard"
+report "SC-AK-1817 — коммит кода без документа — docs-guard" "$(named 12 13)" "docs-guard"
+report "SC-AK-1817 — уже написанное — reuse-first-guard" "$(named 13 14)" "reuse-first-guard"
+report "SC-AK-1817 — браузер не выбран или выбран давно — browser-guard-require-select" \
+    "$(named 14 16)" "browser-guard-require-select browser-guard-require-select"
+report "SC-AK-1817 — браузерные проверки профиля, списка, вопроса и чужого драйвера" \
+    "$(named 16 20)" "browser-guard-device-id browser-guard-no-listing browser-guard-no-asking browser-guard-no-other-drivers"
+check_of() { node --input-type=module -e "import { checkOf } from '$ASSETS/checks/record-count.mjs'; process.stdout.write(checkOf(process.argv[1]));" "$1"; }
+report "SC-AK-1817 — a guard that names itself keeps its name over a line of the dispatcher" \
+    "$(check_of 'PreToolUse:Bash hook error: [/u/.claude/hooks/dispatch.sh PreToolUse]: BLOCKED by git-guard-push-tests: /u/.claude/hooks/dispatch.sh: line 12: jq: command not found')" \
+    "git-guard-push-tests"
+report "SC-AK-1817 — a model check frame keeps its name over a quoted shell error of the dispatcher" \
+    "$(check_of 'Stop hook feedback:
+Agent hook condition was not met: /u/.claude/hooks/dispatch.sh: line 4: syntax error')" "turn-judge"
+report "SC-AK-1817 — a model check frame after a leading newline is still named" \
+    "$(check_of '
+PreToolUse:AskUserQuestion hook error: Agent hook condition was not met: BLOCKED by grill-gate: x')" "ask-judge"
+
 # --- pairs, interrupts, corrections -------------------------------------------------------------------
 cat > "$WORK/pairs.jsonl" <<'EOF'
 {"type":"user","uuid":"p1","sessionId":"s1","timestamp":"2026-11-13T01:00:00Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t1","is_error":true,"content":"PreToolUse:AskUserQuestion hook error: BLOCKED by grill-gate: x"}]}}
