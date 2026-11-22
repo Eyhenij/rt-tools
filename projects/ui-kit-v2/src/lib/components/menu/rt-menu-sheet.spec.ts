@@ -198,11 +198,23 @@ describe('RtMenuComponent — нижняя шторка', (): void => {
             sheetPanel() !== null,
             document.querySelectorAll('[qa-dataid="menu-panel"]').length,
         ];
+        // Шторка уезжает с пунктами: ни шторка, ни её панель не прячутся на пути к закрытию.
+        const watch: MutationObserver = new MutationObserver((): void => undefined);
+        watch.observe(document.body, { attributes: true, attributeFilter: ['class'], subtree: true });
         dialog.answer.next(true);
         dialog.answer.complete();
         settle(fixture);
+        const hidden: boolean = watch
+            .takeRecords()
+            .some((record: MutationRecord): boolean =>
+                ['rt-menu__sheet--held', 'rt-menu__panel--held'].some((name: string): boolean =>
+                    (record.target as Element).classList.contains(name)
+                )
+            );
+        watch.disconnect();
 
         expect(whileAsked).toEqual([1, true, 1]);
+        expect(hidden).toBe(false);
         expect(fixture.componentInstance.removed).toBe(1);
         expect(document.querySelector('.rt-popover-sheet')).toBeNull();
         expect(document.querySelector('[qa-dataid="menu-panel"]')).toBeNull();
@@ -232,12 +244,14 @@ describe('RtMenuComponent — нижняя шторка', (): void => {
         (document.querySelector('.rt-popover-sheet [qa-dataid="bottom-sheet-backdrop"]') as HTMLElement).click();
         settle(fixture);
         const panelsWhileAsked: number = document.querySelectorAll('[qa-dataid="menu-panel"]:not(.rt-popover-sheet *)').length;
+        const sheetHidden: boolean = !!document.querySelector('.cdk-overlay-pane.rt-menu__sheet--held .rt-popover-sheet');
         dialog.answer.next(true);
         dialog.answer.complete();
         settle(fixture);
 
-        expect(panelsWhileAsked).toBe(0);
+        expect([panelsWhileAsked, sheetHidden]).toEqual([0, true]);
         expect(fixture.componentInstance.removed).toBe(1);
         expect(document.querySelector('.rt-popover-sheet')).toBeNull();
+        expect(document.activeElement).toBe((fixture.nativeElement as HTMLElement).querySelector('[qa-dataid="menu-trigger"] button'));
     });
 });

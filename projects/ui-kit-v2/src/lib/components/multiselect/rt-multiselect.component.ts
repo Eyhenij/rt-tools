@@ -259,7 +259,7 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
 
     /**
      * Вид: `list` — флажки в списке и чипы в поле; `toggles` — переключатели справа в строках,
-     * строка «Показать все» и место `[rtMultiselectExtra]` для своих переключателей приложения над
+     * строка «Показать все» и шаблон `rtMultiselectExtra` для своих переключателей приложения над
      * ними, а поле пишет сводку вместо чипов.
      */
     public readonly look: InputSignal<TRtMultiselectLook> = input<TRtMultiselectLook>('list');

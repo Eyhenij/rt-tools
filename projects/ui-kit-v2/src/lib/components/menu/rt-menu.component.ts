@@ -283,8 +283,14 @@ export class RtMenuComponent {
         this.#activateKeys(pane);
     }
 
-    /** Выбранный пункт закрывает панель и возвращает фокус кнопке, откуда меню открыли. */
-    protected onSelect(): void {
+    /**
+     * Выбранный пункт закрывает панель и возвращает фокус кнопке, откуда меню открыли. Пункт, чей
+     * выбор подтвердило окно, ждать перестаёт до закрытия: открытая шторка уезжает вниз с пунктами,
+     * а не прячется до ответа, который уже пришёл.
+     */
+    protected onSelect(event: Event): void {
+        this.#pending.delete(event.target as HTMLElement);
+        this.confirming.set(this.#pending.size);
         this.close();
         this.#focusTrigger();
     }
@@ -311,9 +317,16 @@ export class RtMenuComponent {
             this.#pending.delete(item);
         }
         this.confirming.set(this.#pending.size);
+        // Спрятанная шторка не видна, и снимается она без выезда; фокус, оставшийся в ней после окна,
+        // возвращается кнопке меню.
         if (!this.isOpen() && this.#pending.size === 0 && this.#sheet !== null) {
+            const pane: HTMLElement = this.#sheet.overlayRef.overlayElement;
+            const focusInSheet: boolean = pane.contains(pane.ownerDocument.activeElement);
             this.#closeSheet();
             this.openedInSheet.set(false);
+            if (focusInSheet || pane.ownerDocument.activeElement === pane.ownerDocument.body) {
+                this.#focusTrigger();
+            }
         }
     }
 

@@ -34,8 +34,8 @@
             qa-dataid="menu-panel"
             role="menu"
             tabindex="-1"
-            [rtMod]="{ size: size(), held: !isOpen() }"
-            (rtMenuSelect)="onSelect()"
+            [rtMod]="{ size: size(), held: !isOpen() && confirming() > 0 }"
+            (rtMenuSelect)="onSelect($event)"
             (rtMenuConfirm)="onConfirm($event)"
             (keydown)="onSheetKeydown($event)">
             <ng-container [rtSlotOutlet]="contents()" />
