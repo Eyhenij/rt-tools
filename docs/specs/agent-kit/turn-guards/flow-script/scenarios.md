@@ -410,13 +410,15 @@ Covered: `projects/agent-kit/tests/task-flow-script-forecast.test.sh`.
 Given a branch that took its task folder apart, and an epic branch holding an older copy of the folder
 When the branch merges the base, is fast-forwarded onto the base, or merges a base that removed its old copy later
 Then the last progress is the one of the branch, every step done
-And a file no commit of the branch held reads as absent
+And so after the base removed its copy and the branch was fast-forwarded, after the folder is taken apart in the merge commit, and after a fast-forward with no old copy
+And a file no commit of the branch held reads as absent, and so does a removal the main branch already holds
+And without a reference to the main branch the progress is read at the parent of the branch's removal
 
 Covered: `projects/agent-kit/tests/task-flow-script-merge.test.sh`.
 
 ### SC-AK-1828 — a merged base does not roll a taken-apart task back
 
-Given the same three histories
+Given the same six histories
 When the states are measured
 Then the state is not below «папка-разобрана», and the exits of the grill, the agreement, the plan, the footprint and the folder are met
 
@@ -425,7 +427,7 @@ Covered: `projects/agent-kit/tests/task-flow-script-merge.test.sh`.
 ### SC-AK-1829 — the step command after a merged base measures by the branch's own progress
 
 Given a taken-apart folder after a merged base, and a step whose check reads a line only the branch's progress holds
-When the step is run, after a plain merge and after a removal of the old copy in the base
+When the step is run after each of the six histories
 Then it matches and writes its mark, and the folder is gone after the run
 
 Covered: `projects/agent-kit/tests/task-flow-script-merge.test.sh`.

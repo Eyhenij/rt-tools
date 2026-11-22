@@ -54,9 +54,9 @@ export function restoreFolder(git, folder) {
     return restored;
 }
 
-/** The versions of a file in the history of the head, oldest first. */
+/** The versions of a file in its history up to the head, or up to `removedFrom` when the head lacks it, oldest first. */
 const versionsOf = (source, path) =>
-    (spawnSync('git', ['log', '--reverse', '--format=%H', 'HEAD', '--', path], { encoding: 'utf8' }).stdout ?? '').split('\n').filter(Boolean).map((sha) => source.versionAt(path, sha));
+    (spawnSync('git', ['log', '--reverse', '--format=%H', (!source.existsAtHead(path) && source.removedFrom?.(path)) || 'HEAD', '--', path], { encoding: 'utf8' }).stdout ?? '').split('\n').filter(Boolean).map((sha) => source.versionAt(path, sha));
 
 const doneLine = (number) => new RegExp(`^\\s*-\\s+\\[x\\]\\s+${number.replace('.', '\\.')}\\s`, 'm');
 

@@ -60,12 +60,22 @@ PLAN
         git add -A && c commit -q -m one
         printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Сделать раз\n- [x] 1.2 Увидеть свою меру\n\nмера: своя\n' > "$TM_F/progress.md"
         git add -A && c commit -q -m two
-        git rm -q -r "$TM_F" && printf 'запись\n' > docs/archive/rt-12.md && git add -A && c commit -q -m "folder taken apart"
-        git checkout -q "$TM_E" && c merge -q --no-ff -m "old copy" "$plan"
+        [ "$2" = in-merge ] || { git rm -q -r "$TM_F" && printf 'запись\n' > docs/archive/rt-12.md && git add -A && c commit -q -m "folder taken apart"; }
+        git checkout -q "$TM_E"
+        [ "$2" = onlyff ] || c merge -q --no-ff -m "old copy" "$plan"
         case "$2" in
+            onlyff) c merge -q --no-ff -m "task in" "$TM_B" && git checkout -q "$TM_B" && git merge -q --ff-only "$TM_E" ;;
             merge) git checkout -q "$TM_B" && c merge -q --no-ff -m "base in" "$TM_E" ;;
             ff) c merge -q --no-ff -m "task in" "$TM_B" && git checkout -q "$TM_B" && git merge -q --ff-only "$TM_E" ;;
             removed) git rm -q -r "$TM_F" && c commit -q -m "old copy gone" && git checkout -q "$TM_B" && c merge -q --no-ff -m "base in" "$TM_E" ;;
+            removed-ff)
+                git rm -q -r "$TM_F" && c commit -q -m "old copy gone" && git checkout -q "$TM_B" && c merge -q --no-ff -m "base in" "$TM_E"
+                git checkout -q "$TM_E" && c merge -q --no-ff -m "task in" "$TM_B" && git checkout -q "$TM_B" && git merge -q --ff-only "$TM_E"
+                ;;
+            in-merge)
+                git checkout -q "$TM_B" && git merge -q --no-ff --no-commit "$TM_E"
+                git rm -q -r "$TM_F" && printf 'запись\n' > docs/archive/rt-12.md && git add -A && c commit -q -m "base in, folder taken apart"
+                ;;
         esac
     ) >/dev/null 2>&1
     printf '%s' "$dir"
@@ -74,7 +84,11 @@ PLAN
 TM_MERGE="$(tm_repo merge-in merge)"
 TM_FF="$(tm_repo merge-ff ff)"
 TM_GONE="$(tm_repo merge-gone removed)"
-for tm in "$TM_MERGE" "$TM_FF" "$TM_GONE"; do
+TM_GONE_FF="$(tm_repo merge-gone-ff removed-ff)"
+TM_IN="$(tm_repo merge-in-merge in-merge)"
+TM_ONLY="$(tm_repo merge-only-ff onlyff)"
+for tm in "$TM_MERGE" "$TM_FF" "$TM_GONE" "$TM_GONE_FF" "$TM_IN" "$TM_ONLY"; do
+    test -e "$tm/docs/archive/rt-12.md" || echo "tm_repo: $tm is not built" >&2
     mkdir -p "$tm/.git/rt-kit/steps/$TM_B"
     printf '{"matched":true}\n' > "$tm/.git/rt-kit/steps/$TM_B/1.1.json"
     printf '{"matched":true}\n' > "$tm/.git/rt-kit/steps/$TM_B/1.2.json"
@@ -124,7 +138,9 @@ tm_report() {
 }
 
 # --- SC-AK-1827, SC-AK-1828 — влитая база, перемотка и удаление в базе -----------------------------
-for tm in "merge-in|$TM_MERGE|слияние базы" "merge-ff|$TM_FF|перемотка на базу" "merge-gone|$TM_GONE|удаление копии в базе"; do
+for tm in "merge-in|$TM_MERGE|слияние базы" "merge-ff|$TM_FF|перемотка на базу" "merge-gone|$TM_GONE|удаление копии в базе" \
+    "merge-gone-ff|$TM_GONE_FF|удаление копии в базе, затем перемотка" "merge-in-merge|$TM_IN|разбор папки в коммите слияния" \
+    "merge-only-ff|$TM_ONLY|перемотка на базу без старой копии"; do
     IFS='|' read -r _ dir name <<< "$tm"
     out="$(tm_measure "$dir" "merge: SC-AK-1827 — $name")"
     tm_report "$(printf '%s\n' "$out" | grep 'ход работы ветки')"
@@ -138,12 +154,27 @@ console.log(String(open().lastVersion('docs/tasks/RT-99-none/progress.md')));
 
 # --- SC-AK-1829 — команда шага после влитой базы меряет шаг по своему ходу работы -------------------
 tm_step() { (cd "$1" && rm -f ".git/rt-kit/steps/$TM_B/$2.json" && RT_FLOW_STEP_LIMIT_MS=5000 node "$TESTS/../assets/checks/task-flow-script.mjs" step "$2" 2>&1); }
-got="$(tm_step "$TM_MERGE" 1.2)"
-report "merge: SC-AK-1829 — после влитой базы шаг совпал на своём ходе работы" \
-    "$(printf '%s' "$got" | grep -c '· совпало$')|$(test -e "$TM_MERGE/.git/rt-kit/steps/$TM_B/1.2.json" && echo есть)" '1|есть'
-got="$(tm_step "$TM_GONE" 1.2)"
-report "merge: SC-AK-1829 — после удаления копии в базе шаг совпал на своём ходе работы" \
-    "$(printf '%s' "$got" | grep -c '· совпало$')|$(test -d "$TM_GONE/$TM_F" && echo есть || echo нет)" '1|нет'
+for tm in "$TM_MERGE|влитой базы" "$TM_GONE|удаления копии в базе" "$TM_FF|перемотки" "$TM_GONE_FF|удаления копии в базе и перемотки" \
+    "$TM_IN|разбора папки в коммите слияния" "$TM_ONLY|перемотки без старой копии"; do
+    dir="${tm%%|*}"
+    got="$(tm_step "$dir" 1.2)"
+    report "merge: SC-AK-1829 — после ${tm#*|} шаг совпал на своём ходе работы, метка есть, папки нет" \
+        "$(printf '%s' "$got" | grep -c '· совпало$')|$(test -e "$dir/.git/rt-kit/steps/$TM_B/1.2.json" && echo есть)|$(test -d "$dir/$TM_F" && echo есть || echo нет)" '1|есть|нет'
+done
+
+# Удаление, которое уже лежит в main, файла не даёт; без ссылки на main удаление ветки находится.
+git -C "$TM_ONLY" update-ref refs/remotes/origin/main HEAD
+report "merge: SC-AK-1827 — удаление, которое уже лежит в main, файла не даёт" \
+    "$(cd "$TM_ONLY" && node --input-type=module -e "
+import { open } from '$TESTS/../assets/task-flow/source/git.mjs';
+console.log(String(open().lastVersion('$TM_F/progress.md')));
+" 2>&1)" 'null'
+git -C "$TM_MERGE" update-ref -d refs/remotes/origin/main
+report "merge: SC-AK-1827 — без ссылки на main ход работы читается у родителя разбора ветки" \
+    "$(cd "$TM_MERGE" && node --input-type=module -e "
+import { open } from '$TESTS/../assets/task-flow/source/git.mjs';
+console.log(String(/мера: своя/.test(open().lastVersion('$TM_F/progress.md') ?? '')));
+" 2>&1)" 'true'
 
 if [ -n "${TF_ALONE:-}" ]; then
     rm -rf "$TF_DIR"

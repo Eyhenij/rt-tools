@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · checks/flow-step.mjs · 0e33dec849a6 · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/flow-step.mjs · bfcbacdad7c2 · правится надстройкой, не здесь
 /**
  * A step of the plan measured by its check — the engine command `step`.
  *
@@ -55,9 +55,9 @@ export function restoreFolder(git, folder) {
     return restored;
 }
 
-/** The versions of a file in the history of the head, oldest first. */
+/** The versions of a file in its history up to the head, or up to `removedFrom` when the head lacks it, oldest first. */
 const versionsOf = (source, path) =>
-    (spawnSync('git', ['log', '--reverse', '--format=%H', 'HEAD', '--', path], { encoding: 'utf8' }).stdout ?? '').split('\n').filter(Boolean).map((sha) => source.versionAt(path, sha));
+    (spawnSync('git', ['log', '--reverse', '--format=%H', (!source.existsAtHead(path) && source.removedFrom?.(path)) || 'HEAD', '--', path], { encoding: 'utf8' }).stdout ?? '').split('\n').filter(Boolean).map((sha) => source.versionAt(path, sha));
 
 const doneLine = (number) => new RegExp(`^\\s*-\\s+\\[x\\]\\s+${number.replace('.', '\\.')}\\s`, 'm');
 

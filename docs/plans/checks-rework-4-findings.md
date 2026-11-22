@@ -193,6 +193,22 @@ The task ran outside the epic; the owner added its findings to the epic on 21.11
   root ignore list is not read from there. **Address:** this tree — an ignore list of the formatter
   in the package directory itself, with the line `assets/`.
 
+## RT-3425 — a merged base does not roll a taken-apart task back
+
+- **The footprint exit passes on the commits a merged base brought.** `measure/footprint.mjs`
+  counts every commit after the plan, those of the base included: the row of `flow-step.mjs` in the
+  plan of RT-3425 was met by commits of RT-3434 before this branch touched the file. **Address:**
+  rules layer — `assets/task-flow/measure/footprint.mjs` counts only the commits reachable from the
+  head along the branch's own line, not those a merge brought.
+- **The revert move names a merge commit when the folder is taken apart inside a merge.** `git
+  revert --no-edit <merge>` refuses without `-m`, and `-m 1` takes the whole base back. **Address:**
+  rules layer — `revertMove` of `assets/checks/flow-step.mjs` names `git revert -m 1` and the files
+  of the folder, or `git checkout <parent> -- <folder>`, when the removal is a merge.
+- **The history double keeps the reading the source dropped.** `tests/flow-doubles.mjs` answers
+  `lastVersion` with the newest snapshot that holds the path and has no `removedAt`; a line of
+  snapshots cannot hold a merge, so the merge cases live on real repositories. **Address:** rules
+  layer — the double drops `lastVersion` for a removed path or names that it reads a straight line.
+
 ## Left unresolved
 
 - **The commit hook does not check the pipeline files.** `lint-staged` in `package.json` does not
