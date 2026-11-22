@@ -2,17 +2,19 @@
 
 ## Где мы
 
-- **State:** `задача-взята`
-- **Stage:** нет — план написан и закоммичен, роли его прочли; одобрение владельца утром
-- **Done:** разведка: как движок выбирает последнюю версию файла задачи и кто её читает; план в два этапа переписан по находкам `goal-critic` и `product-strategist`, `plan-check` — код 0
-- **Next step:** утром — «Одобряю план RT-3425» и `plan-red`
+- **State:** `замысел-записан`
+- **Stage:** 1 — The last version of a removed file is read before its removal
+- **Done:** план одобрен владельцем 22.11 ответом «Одобряю план RT-3425», отметка `plan-red` записана; ветка вобрала RT-3434 после её разбора папки
+- **Next step:** шаг 1.1
 - **Uncommitted:** nothing
-- **Waiting for the owner:** одобрение плана утром — заход автономный
 - **PR:** not open yet
 
 ## Шаги
 
-Появятся вместе с планом.
+- [>] 1.1 The last version of a file the head does not hold is read at the parent of the commit that removed it
+- [ ] 1.2 A merged base, a fast-forward and a removal in the base do not roll the state below «папка-разобрана»
+- [ ] 1.3 The step command on a taken-apart folder after a merged base measures the step by the branch's own progress
+- [ ] 2.1 The scenarios stand in the description
 
 ## Решения по ходу
 
