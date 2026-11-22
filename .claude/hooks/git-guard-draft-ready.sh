@@ -43,6 +43,12 @@
 # going, and such a draft is lawful. The machine account's name is taken from the tree's profile; a
 # tree that did not name it gets no second tier at all.
 #
+# A draft whose branch is checked out in another working copy is not judged either. The machine
+# account is shared by every session of the tree, and such a draft belongs to the session working in
+# that copy: one session was refused six times on 21.11 for a draft its neighbour was leading. A
+# draft its own session left behind is still caught: once the session moves to the next branch, no
+# copy holds the old one.
+#
 # The host's answer is put into a cache for a minute: the guard fires at every end of a turn, and a
 # network call on each of them is paid for with the owner's time.
 #
@@ -274,6 +280,9 @@ judge_abandoned() {
     [ -z "$list_json" ] && return 0
     printf '%s' "$list_json" | jq -e 'type == "array"' >/dev/null 2>&1 || return 0
 
+    # The branches checked out in the working copies of this repository, this one included.
+    held="$(git worktree list --porcelain 2>/dev/null | sed -n 's|^branch refs/heads/||p')"
+
     left=''
     count=0
     while IFS='	' read -r number ref sha; do
@@ -281,6 +290,8 @@ judge_abandoned() {
         [ -n "$ref" ] || continue
         [ -n "$sha" ] || continue
         [ "$ref" = "$branch" ] && continue
+        # Another copy holds the branch: the draft is that copy's session's work.
+        printf '%s\n' "$held" | grep -qxF -- "$ref" && continue
 
         [ "$(carries_folder "$ref")" = "no" ] || continue
         [ "$(run_verdict "$ref" "$sha")" = "green" ] || continue
