@@ -2,10 +2,10 @@
 
 ## Где мы
 
-- **State:** `этап-идёт`
-- **Stage:** 3 — The description
-- **Done:** этап 1 — набор выхода из хода 201 ok; этап 2: второй ярус проверки черновика не судит черновик ветки, взятой в другой копии — новый набор 5 ok, на прежнем хуке 3 провала; `check-hooks` 17 сценариев сошлись
-- **Next step:** шаг 3.1
+- **State:** `этапы-кончились`
+- **Stage:** все три этапа закрыты
+- **Done:** этап 1 — набор выхода из хода 201 ok; этап 2 — новый набор проверки черновика 5 ok, на прежнем хуке 3 провала, `check-hooks` 17 сценариев сошлись; этап 3 — пять сценариев и правило меню в описании, `check-specs` и `check:spec-coverage` зелёные
+- **Next step:** живая проверка на записях, затем два круга ревью
 - **Uncommitted:** nothing
 - **PR:** not open yet
 
@@ -17,8 +17,8 @@
 - [x] 1.4 A refusal of the engine and of the model check in one stop, then a stop with no call, give the menu
 - [x] 1.5 A refusal of the model check with no name is no idle one
 - [x] 2.1 A draft of a branch checked out in another copy passes, a draft of a branch no copy holds is refused
-- [>] 3.1 The scenarios stand in the description
-- [ ] 3.2 The rule of the menu names the engine's own refusal
+- [x] 3.1 The scenarios stand in the description
+- [x] 3.2 The rule of the menu names the engine's own refusal
 
 ## Решения по ходу
 

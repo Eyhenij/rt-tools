@@ -56,7 +56,9 @@ not by a person.
 - **A release on a wait is written to the journal with the session.**
 - **The session source and the source of the records read a record by pieces and never hold it as one string.**
 - **The forecast judges a background task by the time of the stop it replays and names the longest run of held stops in a row; a released stop and a word of the owner break a run.**
-- **When another check refused the same step twice for the same reason, or the executor stopped again with no call after a refusal, the one move is the owner's menu.**
+- **When another check refused the same step twice for the same reason, or the executor stopped again with no call after a refusal of the engine itself, the one move is the owner's menu.**
+- **A refusal of a stop names the hook that refused: the name after «BLOCKED by» in its first line, the model check of a stop for its opening with no name, and none for a line with neither.**
+- **A stop again with no call, after refusals of a stop by other hooks only, is no idle one: the refusal names the last of those hooks and the move of the state, with no owner's menu.**
 - **The menu of a refusal carries exactly the options of the description: «отложить RT-N» with the task number and «стоп».**
 - **The owner's choice is carried out: a deferral marks the task «отложено» and the next unblocked task is taken; «стоп» releases the turn.**
 - **An engine that fails, runs past its limit or cannot be called releases the turn and writes «движок упал» to the journal.**
@@ -220,3 +222,9 @@ None.
   case. The refusal names the run and its ready command. The stop word passes a fresh head only.
   The read of a red run shows the last 200
   lines of its failed log: the error of a failed step stands at its end, past the cut of a tool.
+- 2026-11-22 — a stop with no call after a refusal of another stop hook is no idle one: the engine
+  names that hook in one line and the move of the state. On 20–21.11 the draft check refused a stop
+  over a draft another session was leading, and the idle measure called the owner's menu three
+  times. The measure judges every refusal of a stop after the last call: in a stop the model check
+  answers after the engine, and the last refusal alone would drop the menu of the engine's series.
+  The model check's refusal with no name is its own, not the engine's.

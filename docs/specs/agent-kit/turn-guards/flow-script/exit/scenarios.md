@@ -478,3 +478,47 @@ And the refusal of the PR opening names the command of each unmatched step by it
 And a step the plan names and the progress lacks is the one the stage waits for
 
 Covered: `projects/agent-kit/tests/task-flow-script-archive.test.sh`.
+
+### SC-AK-1830 — a refusal of a stop names the hook that refused
+
+Given refusals of a stop: «BLOCKED by <name>» at the start of the line or after the opening of the model check, that opening with no name, and a line with neither
+When the record is read
+Then the first two name their hook, the third names the model check, and the last names none
+And a name below the first line is not taken
+
+Covered: `projects/agent-kit/tests/turn-exit-guard-foreign.test.sh`.
+
+### SC-AK-1831 — a stop after a refusal of the draft check names it, not the menu
+
+Given a write, then a refusal of a stop by the draft check, and no background task
+When the executor stops again with no call
+Then the stop is no idle one
+And the refusal names the draft check and the next step, with no owner's menu
+
+Covered: `projects/agent-kit/tests/turn-exit-guard-foreign.test.sh`.
+
+### SC-AK-1832 — a stop after a refusal of the engine itself is still idle
+
+Given a write, then a refusal of a stop by the engine, or a refusal that names no hook
+When the executor stops again with no call
+Then the stop is idle, as before
+
+Covered: `projects/agent-kit/tests/turn-exit-guard-foreign.test.sh`.
+
+### SC-AK-1836 — refusals of the engine and of the model check in one stop give the menu
+
+Given a write, then refusals of one stop by the engine and by the model check
+When the executor stops again with no call
+Then the stop is idle, and the refusal names the owner's menu
+And a refusal of the engine before the last call is not counted
+
+Covered: `projects/agent-kit/tests/turn-exit-guard-foreign.test.sh`.
+
+### SC-AK-1837 — a refusal of the model check with no name is no idle one
+
+Given a write, then a refusal of a stop with the opening of the model check and no name
+When the executor stops again with no call
+Then the stop is no idle one, and the refusal names the model check
+And a refusal with neither a name nor that opening is idle, as before
+
+Covered: `projects/agent-kit/tests/turn-exit-guard-foreign.test.sh`.
