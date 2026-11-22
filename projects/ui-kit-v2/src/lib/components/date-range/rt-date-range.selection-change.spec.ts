@@ -125,6 +125,19 @@ describe('RtDateRangeComponent — selectionChange', (): void => {
         expect(fixture.componentInstance.control.value).toEqual(PERIOD);
     });
 
+    it('SC-UKV-1706 — обработчик события, вернувший форме прежнее значение, видит его в поле', (): void => {
+        const fixture: ComponentFixture<DateRangeSelectionHostComponent> = setupHost();
+        fixture.componentInstance.control.setValue(PERIOD);
+        fixture.detectChanges();
+        const range: RtDateRangeComponent = fixture.debugElement.children[0].componentInstance as RtDateRangeComponent;
+        range.selectionChange.subscribe((): void => fixture.componentInstance.control.setValue(PERIOD));
+
+        type(fixture, '01.08.2026 — 15.08.2026');
+
+        expect(fixture.componentInstance.control.value).toEqual(PERIOD);
+        expect((qa(fixture, 'date-range-control')?.nativeElement as HTMLInputElement).value).toBe('12.10.2026 — 15.10.2026');
+    });
+
     describe('панель', (): void => {
         beforeEach((): void => {
             jest.useFakeTimers({ now: new Date(2026, 8, 30, 10, 37), doNotFake: ['queueMicrotask', 'requestAnimationFrame'] });

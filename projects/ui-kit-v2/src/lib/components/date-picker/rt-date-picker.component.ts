@@ -153,10 +153,14 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
      */
     public readonly selectionChange: OutputEmitterRef<string> = output<string>();
 
-    /** Значение из формы снимает ошибку набора: в поле теперь стоит оно. */
+    /**
+     * Значение из формы снимает ошибку набора и пишет свой текст в поле: в поле теперь стоит оно.
+     * Текст пишется сам, а не привязкой: форма может вернуть значение, равное прежнему, после того
+     * как человек набрал другое, и привязка с неизменным текстом поле бы не тронула.
+     */
     public override writeValue(value: string | null): void {
         super.writeValue(value);
-        this.textInvalid.set(false);
+        this.#accept(this.value());
     }
 
     protected getEmptyValue(): string {
@@ -220,8 +224,9 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
     #commit(value: string): void {
         this.value.set(value);
         this.emitChange(value);
-        this.selectionChange.emit(value);
         this.#accept(value);
+        // Событие последним: обработчик, который вернёт форме другое значение, увидит его в поле.
+        this.selectionChange.emit(value);
     }
 
     /** Текст в поле — принятое значение, ошибки набора нет. */

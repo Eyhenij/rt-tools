@@ -158,7 +158,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/date-range/rt-date-range.selecti
 Given a multiselect bound to a form
 When a person picks an option by the mouse or the keys, removes a chip or presses the cross
 Then `selectionChange` carries the array the form got, `[]` after the cross; a value written by the
-form and the cross of a disabled field raise nothing
+form, a signal form model set from outside and the cross of a disabled field raise nothing
 
 Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect.selection-change.spec.ts`.
 

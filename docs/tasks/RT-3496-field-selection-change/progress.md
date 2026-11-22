@@ -6,10 +6,10 @@ Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
 - **Stage:** 2 of 2 — texts and the built declarations, done
-- **Done:** all five steps matched; the kit's unit tests 4126 of 4126 green; the build carries the
-  event in the three declarations
-- **Next step:** the live check in the showcase, then two review rounds
-- **Uncommitted:** none after the stage commit
+- **Done:** all five steps matched; the live check and review round one with its fixes; the kit's
+  unit tests 4129 of 4129 green
+- **Next step:** review round two
+- **Uncommitted:** none after the round commit
 - **PR:** not open yet
 
 ## Steps
@@ -34,6 +34,17 @@ Rewritten by every session, not appended to.
   a bump in the PR would make it twice. Affected stage: none.
 - **The merge and the release follow the PR** — the owner's word «затем выпусти кит»; the merge
   needs the owner's word about this PR. Affected stage: none.
+- **Round one: a handler that hands the form back its old value left the typed text in the field**
+  — confirmed by a spec of both date fields. `writeValue` now writes its own text into the field,
+  and the event goes after the text is accepted. Affected stage: 1.
+- **Round one: the multiselect got a signal form case and the three overviews a usage line with
+  `(selectionChange)`** — the same reason as the date fields; `rt-select` shows its event in the
+  usage sample. Affected stage: 1, 2.
+- **Round one, written off: an event on a value equal to the previous one, and on a branch of only
+  disabled leaves** — the event carries exactly what goes to the form's `onChange`, the owner's
+  requirement; `rt-select` emits on a repeated pick too. Affected stage: none.
+- **Round one, written off: the disabled guard returns before `stopPropagation`** — the sample
+  `rt-select` does the same, and a disabled field shows no cross. Affected stage: none.
 
 ## Sessions
 
@@ -41,3 +52,9 @@ Rewritten by every session, not appended to.
 
 - The plan approved by the owner («Одобряю план RT-3496»); `plan-red` showed all five checks red.
 - The epic RT-3497 declared for this one task; its branch is pushed, the task card is its sub-issue.
+- Live check in the showcase on port 6007, the stories `Playground` of the three fields, through
+  the component instance: `writeValue` gave 0 events at each field. Typing, a panel pick, a removed
+  chip and the cross gave events equal to the form values: the range 2 of 2, the date 3 of 3, the
+  multiselect 3 of 3, and the multiselect passes the same array. After round one, a handler that
+  hands back the old value leaves «10.03.2026» and «12.10.2026 — 15.10.2026» in the fields.
+- Mutation check: without `emit` in `#commit` the range spec fails 4 of 7.

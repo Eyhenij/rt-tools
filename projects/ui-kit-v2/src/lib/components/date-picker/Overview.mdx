@@ -13,6 +13,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 </rt-field>
 
 <rt-date-picker type="datetime-local" ariaLabel="Начало смены" [formControl]="startsAt" />
+
+<rt-date-picker [formField]="filter.day" (selectionChange)="store.setDay($event)" />
 ```
 
 ## Когда применять

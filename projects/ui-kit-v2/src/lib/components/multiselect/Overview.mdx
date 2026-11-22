@@ -12,6 +12,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 <rt-field label="Города">
     <rt-multiselect [options]="cities" [maxChips]="3" [formControl]="selectedCities" />
 </rt-field>
+
+<rt-multiselect [options]="cities" [formField]="filter.cities" (selectionChange)="store.setCities($event)" />
 ```
 
 ## Когда применять

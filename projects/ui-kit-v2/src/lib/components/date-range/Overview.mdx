@@ -11,6 +11,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 <rt-field label="Период">
     <rt-date-range min="2026-01-01" max="2026-12-31" [formControl]="period" />
 </rt-field>
+
+<rt-date-range [formField]="filter.period" (selectionChange)="store.setPeriod($event)" />
 ```
 
 ## Когда применять

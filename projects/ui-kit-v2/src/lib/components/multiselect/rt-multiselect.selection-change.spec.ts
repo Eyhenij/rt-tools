@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { signal, ChangeDetectionStrategy, Component, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FieldTree, FormField, form } from '@angular/forms/signals';
 
 import { createRtFixture, el, qa } from '../../../testing/rt-kit-testing';
 import { IRtSelect } from '../select/rt-select.model';
@@ -21,6 +22,24 @@ const OPTIONS: ReadonlyArray<IRtSelect.Option<string>> = [
 })
 class MultiselectSelectionHostComponent {
     public readonly control: FormControl<ReadonlyArray<string> | null> = new FormControl<ReadonlyArray<string> | null>([]);
+    public readonly opts: ReadonlyArray<IRtSelect.Option<string>> = OPTIONS;
+    public readonly events: Array<ReadonlyArray<string>> = [];
+}
+
+interface IFilter {
+    cities: ReadonlyArray<string>;
+}
+
+/** Поле под сигнальной формой: модель задаётся снаружи, как её задаёт хранилище. */
+@Component({
+    selector: 'rt-multiselect-selection-signal-host',
+    template: '<rt-multiselect [formField]="filter.cities" [options]="opts" (selectionChange)="events.push($event)" />',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtMultiselectComponent, FormField],
+})
+class MultiselectSelectionSignalHostComponent {
+    public readonly model: WritableSignal<IFilter> = signal<IFilter>({ cities: [] });
+    public readonly filter: FieldTree<IFilter> = form(this.model);
     public readonly opts: ReadonlyArray<IRtSelect.Option<string>> = OPTIONS;
     public readonly events: Array<ReadonlyArray<string>> = [];
 }
@@ -117,5 +136,19 @@ describe('RtMultiselectComponent — selectionChange', (): void => {
 
         expect(fixture.componentInstance.events).toEqual([]);
         expect(fixture.componentInstance.control.value).toEqual(['msk']);
+    });
+
+    it('SC-UKV-1707 — модель сигнальной формы, заданная снаружи, события не даёт, снятый чип — даёт', (): void => {
+        const fixture: ComponentFixture<MultiselectSelectionSignalHostComponent> = createRtFixture(MultiselectSelectionSignalHostComponent);
+
+        fixture.componentInstance.model.set({ cities: ['msk', 'msq'] });
+        fixture.detectChanges();
+        expect(fixture.componentInstance.events).toEqual([]);
+
+        el(fixture, '[qa-dataid="tag-close"] [qa-dataid="icon-button-control"]')?.nativeElement.click();
+        fixture.detectChanges();
+
+        expect(fixture.componentInstance.events).toEqual([['msq']]);
+        expect(fixture.componentInstance.model().cities).toEqual(['msq']);
     });
 });
