@@ -94,18 +94,19 @@ const STOP_FEEDBACK = /^Stop hook feedback:/;
  * names itself is taken by its name; the rest are named here.
  */
 const CHECK_TABLE = [
-    // The dispatcher of the command hooks failed as a shell script — a conflict marker or a syntax
-    // error in it: no guard ran, and the text is the error of the shell.
-    [/\/hooks\/dispatch\.sh: line \d+: /, () => 'dispatch-broken'],
     // A model check speaks in the frame of the harness, and each event holds one model check: the
     // frame names it, its failure to find or read its own file included. A verdict that quotes the
-    // refusal of another guard is still its own.
-    [/^Stop hook feedback:\s*Agent hook condition was not met: /, () => 'turn-judge'],
-    [/^PreToolUse:AskUserQuestion hook error: Agent hook condition was not met: /, () => 'ask-judge'],
+    // refusal of another guard or a shell error is still its own.
+    [/^\s*Stop hook feedback:\s*Agent hook condition was not met: /, () => 'turn-judge'],
+    [/^\s*PreToolUse:AskUserQuestion hook error: Agent hook condition was not met: /, () => 'ask-judge'],
     // A neighbouring guard that names the load of a rule is the same round as the gate refusal,
     // only under another hook name, so it is counted as the gate before its own name is read.
     [/The named move is held by the rules gate/, () => 'skill-gate'],
     [/BLOCKED by ([a-z0-9][a-z0-9-]*):/, (m) => m[1]],
+    // The dispatcher of the command hooks failed as a shell script — a conflict marker or a syntax
+    // error in it: no guard ran, and the text is the error of the shell. A guard that named itself
+    // above keeps its name even when a line of the dispatcher stands in its text.
+    [/\/hooks\/dispatch\.sh: line \d+: /, () => 'dispatch-broken'],
     [/Refused by the rules gate/, () => 'skill-gate'],
     [/Refused: the epic is over/, () => 'epic-over'],
     // The guards below name no check in their texts; each is told by the opening of its own text.

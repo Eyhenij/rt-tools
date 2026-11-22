@@ -216,6 +216,32 @@ CMD
 )"
 d "shell: SC-AK-1820 — сценарий, записанный и запущенный одной командой, отказан" "$(shell_input "$C7" "$R")" deny
 
+# Ложные отказы, найденные ревью: запись во временный каталог рядом с именем охраняемого файла.
+S0=/private/tmp/claude-501/scratchpad
+d "shell: SC-AK-1819 — запись в черновик через переменную и git add хода работы проходят" "$(shell_input "S=$S0; printf 'm' > \$S/c.txt; git add docs/tasks/$B/progress.md" "$R")" PASS
+d "shell: SC-AK-1819 — вывод grep по ходу работы в \$TMPDIR проходит" "$(shell_input "grep -n State docs/tasks/$B/progress.md > \"\$TMPDIR/out.txt\"" "$R")" PASS
+d "shell: SC-AK-1819 — копия плана в черновик через переменную проходит" "$(shell_input "S=$S0; cp docs/tasks/$B/plan.md \$S/plan.md" "$R")" PASS
+C9="$(sc <<CMD
+Q=$S0; cat > \$Q/x.mjs <<'EOF'
+const p = 'docs/tasks/$B/progress.md';
+EOF
+CMD
+)"
+d "shell: SC-AK-1819 — текст here-document, называющий ход работы, проходит" "$(shell_input "$C9" "$R")" PASS
+d "shell: SC-AK-1819 — prettier --check по ходу работы и движку проходит" "$(shell_input "pnpm exec prettier --check docs/tasks/$B/progress.md tools/flow-guard.mjs" "$R")" PASS
+
+# Дыры, найденные ревью, по одной на семейство: каждая пишет ход работы и отказана.
+d "shell: SC-AK-1820 — os.system в сценарии отказан" "$(shell_input "python3 -c \"import os; os.system('echo x > docs/tasks/$B/progress.md')\"" "$R")" deny
+d "shell: SC-AK-1820 — текст, переданный в bash по конвейеру, отказан" "$(shell_input "printf 'echo x > docs/tasks/$B/progress.md' | bash" "$R")" deny
+d "shell: SC-AK-1820 — копия в папку задачи без косой черты отказана" "$(shell_input "cp $S0/progress.md docs/tasks/$B" "$R")" deny
+d "shell: SC-AK-1820 — запись в подстановке процесса отказана" "$(shell_input "echo x | tee >(cat > docs/tasks/$B/progress.md)" "$R")" deny
+d "shell: SC-AK-1820 — dd of= отказан" "$(shell_input "dd if=$S0/x of=docs/tasks/$B/progress.md" "$R")" deny
+d "shell: SC-AK-1820 — tee за nice -n 10 отказан" "$(shell_input "echo x | nice -n 10 tee docs/tasks/$B/progress.md" "$R")" deny
+d "shell: SC-AK-1820 — запись после cd /tmp; cd - отказана" "$(shell_input "cd /tmp; cd -; echo x > docs/tasks/$B/progress.md" "$R")" deny
+d "shell: SC-AK-1820 — sed -i по пути из переменной той же команды отказан" "$(shell_input "P=docs/tasks/$B/progress.md; sed -i '' 's/a/b/' \$P" "$R")" deny
+d "shell: SC-AK-1820 — перенаправление >! отказано" "$(shell_input "echo x >! docs/tasks/$B/progress.md" "$R")" deny
+expect_reason "shell: SC-AK-1820 — отказ называет путь не буквой" "$GUARD" "$(shell_input "F=\$(ls -t ~/Downloads/*.md | head -1); cp \"\$F\" docs/tasks/$B/ && head -3 docs/tasks/$B/progress.md" "$R")" 'write the path as a literal'
+
 # --- legacy: планы, которые движок не мерил ----------------------------------------------------
 B2=RT-8-bare
 R2="$(task_repo "$B2" bare)"

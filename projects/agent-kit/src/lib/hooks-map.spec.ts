@@ -346,7 +346,7 @@ describe('модельные проверки', () => {
                 JSON.stringify(record).includes(check.path)
             );
 
-            expect(JSON.stringify(agentRecord(check))).toMatch(new RegExp(`Read the file ${path} and .*holds \\.claude/\\.`));
+            expect(JSON.stringify(agentRecord(check))).toMatch(new RegExp(`Read the file ${path} and .*where the file itself lies\\.`));
             expect(JSON.stringify(agentRecord(check))).toMatch(/On no file or no read — .*\{\\"ok\\": true\} and judge nothing else/);
             expect(standing).toHaveLength(1);
             expect(agentRecord(check)).toEqual(standing[0]);

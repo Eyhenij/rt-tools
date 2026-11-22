@@ -134,6 +134,16 @@ report "SC-AK-1817 — браузер не выбран или выбран да
     "$(named 14 16)" "browser-guard-require-select browser-guard-require-select"
 report "SC-AK-1817 — браузерные проверки профиля, списка, вопроса и чужого драйвера" \
     "$(named 16 20)" "browser-guard-device-id browser-guard-no-listing browser-guard-no-asking browser-guard-no-other-drivers"
+check_of() { node --input-type=module -e "import { checkOf } from '$ASSETS/checks/record-count.mjs'; process.stdout.write(checkOf(process.argv[1]));" "$1"; }
+report "SC-AK-1817 — a guard that names itself keeps its name over a line of the dispatcher" \
+    "$(check_of 'PreToolUse:Bash hook error: [/u/.claude/hooks/dispatch.sh PreToolUse]: BLOCKED by git-guard-push-tests: /u/.claude/hooks/dispatch.sh: line 12: jq: command not found')" \
+    "git-guard-push-tests"
+report "SC-AK-1817 — a model check frame keeps its name over a quoted shell error of the dispatcher" \
+    "$(check_of 'Stop hook feedback:
+Agent hook condition was not met: /u/.claude/hooks/dispatch.sh: line 4: syntax error')" "turn-judge"
+report "SC-AK-1817 — a model check frame after a leading newline is still named" \
+    "$(check_of '
+PreToolUse:AskUserQuestion hook error: Agent hook condition was not met: BLOCKED by grill-gate: x')" "ask-judge"
 
 # --- pairs, interrupts, corrections -------------------------------------------------------------------
 cat > "$WORK/pairs.jsonl" <<'EOF'

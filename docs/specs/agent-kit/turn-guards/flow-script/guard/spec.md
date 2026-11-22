@@ -87,15 +87,16 @@ Not applicable: one call is judged at a time.
   its mark, and a whole rewrite of the progress is judged by the difference.
 - **The state is measured only when an edit moves the state line.** A measurement reads git and the
   hosting, and an ordinary edit of the progress does not pay for it.
-- **A shell command is refused only when it writes to a guarded file.** A read, a run of the engine,
-  an inline script that only reads, `git restore --staged` and a file name inside the text of a
-  commit message pass. A write by a literal path is judged by that path; a literal path under a
-  temporary directory is outside the tree.
-- **A write whose target is not a literal path errs towards firing.** A target built by a variable or
-  a substitution, a copy or a removal of a directory that holds guarded files, and an interpreter
-  script with a write call are refused when the command names a guarded file; a script with no
-  write call passes. The path of the script an interpreter runs is not such a name. The price: a
-  script that edits another file and quotes a guarded name in its text is refused too.
+- **A shell command is refused only when it writes to a guarded file.** A simple command whose text
+  names no guarded file passes, unless it copies into, moves or removes a directory that holds
+  them. One that names a guarded file passes only when it reads: a reader such as `cat`, `grep`,
+  `sed` without `-i` or `jq` with no write to a path in the tree, `git` reading subcommands, `git add`,
+  `git commit` and `git restore --staged`, a run of the engine, or an interpreter script with no
+  sign of a write. The text of a command takes in its heredoc, what a pipe feeds into an interpreter
+  and a script the same call wrote; a variable assigned a literal in the call is read as that literal.
+- **A write whose target is not a literal path errs towards firing.** The refusal names the target
+  and asks for the path as a literal. The price, measured on 13 067 shell calls of 15–21.11: a
+  script that reads a guarded file and writes another one is refused too — 7 calls.
 
 ## Open questions
 

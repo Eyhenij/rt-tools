@@ -236,9 +236,11 @@ and no dead end over a working day — is read from the same numbers.
 - **The report prints the dead ends of each day by check.** A dead end belongs to the day of the
   last refusal of its series; the checks go by the number of dead ends, most first, and a day with
   none prints «нет».
-- **The milestone of the epic is reached by three days in a row.** Each of them holds at least 1500
-  calls, fewer than five refusals per hundred and no dead end. Otherwise the report names each day
-  that does not hold it and by what: too few calls, the rate, the dead ends or no record.
+- **The milestone of the epic is reached by three days in a row.** Each of them is a working day —
+  a session record and at least 1500 calls — with fewer than five refusals per hundred and no dead
+  end. A day that is not a working day is skipped: it neither counts nor breaks the run, by the
+  owner's choice of 22.11.2026. Otherwise the report names each day that does not hold it and by
+  what: too few calls, the rate, the dead ends or no record, and marks a skipped one.
 - **The report with no `--until` takes today.** The day is the calendar day in UTC of the moment of
   the run.
 

@@ -181,15 +181,21 @@ export function milestoneMissesOf(d) {
     return misses;
 }
 
+/** A working day of milestone G: a session record and at least MILESTONE_G_CALLS calls. */
+const workingDay = (d) => Boolean(d.recorded) && d.calls >= MILESTONE_G_CALLS;
+
 /**
- * Milestone G of the epic over the days of a period, oldest first: reached when MILESTONE_G_DAYS days
- * in a row each hold it. `run` names the first such days; `misses` names every day that does not hold
- * it and by what.
+ * Milestone G of the epic over the days of a period, oldest first: reached when MILESTONE_G_DAYS
+ * working days in a row each hold it. A day that is not a working day is skipped: it neither counts
+ * nor breaks the run, by the owner's choice of 22.11.2026. `run` names the first such days; `misses`
+ * names every day that does not hold it and by what, the skipped ones marked.
  */
 export function epicMilestoneOf(days) {
-    const misses = days.map((d) => ({ day: d.day, why: milestoneMissesOf(d) })).filter((m) => m.why.length > 0);
+    const misses = days
+        .map((d) => ({ day: d.day, why: milestoneMissesOf(d), skipped: !workingDay(d) }))
+        .filter((m) => m.why.length > 0);
     let run = [];
-    for (const d of days) {
+    for (const d of days.filter(workingDay)) {
         run = milestoneMissesOf(d).length > 0 ? [] : [...run, d.day];
         if (run.length === MILESTONE_G_DAYS) return { reached: true, run, misses };
     }
@@ -198,10 +204,10 @@ export function epicMilestoneOf(days) {
 
 /** The lines of the verdict on milestone G of the epic. */
 export function epicMilestoneLines(milestone, dayCount) {
-    const rule = `${MILESTONE_G_DAYS} дня подряд: от ${MILESTONE_G_CALLS} вызовов, отказов меньше ${MILESTONE_G_LIMIT} на сто, ни одного тупика`;
+    const rule = `${MILESTONE_G_DAYS} рабочих дня подряд: от ${MILESTONE_G_CALLS} вызовов, отказов меньше ${MILESTONE_G_LIMIT} на сто, ни одного тупика`;
     if (milestone.reached) return [`  Веха G эпика: достигнута — ${milestone.run.join(', ')} (${rule})`];
     const lines = [`  Веха G эпика: не достигнута (нужно ${rule})`];
-    for (const m of milestone.misses) lines.push(`    ${m.day}: ${m.why.join(', ')}`);
+    for (const m of milestone.misses) lines.push(`    ${m.day}: ${m.why.join(', ')}${m.skipped ? ' — не рабочий день, пропущен' : ''}`);
     if (milestone.misses.length === 0) lines.push(`    в отрезке ${dayCount} дн., нужно ${MILESTONE_G_DAYS} подряд`);
     return lines;
 }
@@ -262,7 +268,10 @@ export function linesOf(result) {
     lines.push(`  Цель не достигнута: ${sum('goalNotMet')}`);
     for (const [task, n] of byCountThenName(Object.entries(verdicts))) lines.push(`    ${task}: ${n}`);
     for (const d of result.days) lines.push(result.days.length === 1 ? `  ${milestoneOf(d)}` : `  ${d.day} ${milestoneOf(d)}`);
-    lines.push(...epicMilestoneLines(result.milestone ?? epicMilestoneOf(result.days), result.days.length));
+    // The epic milestone asks for days in a row: a shorter period has nothing to judge it by.
+    if (result.days.length >= MILESTONE_G_DAYS) {
+        lines.push(...epicMilestoneLines(result.milestone ?? epicMilestoneOf(result.days), result.days.length));
+    }
     lines.push('  Повторы ошибок: считается в приёмнике');
     return lines;
 }

@@ -135,12 +135,13 @@ line of the second reads «нет»
 
 ### SC-AK-1835 — the milestone of the epic is judged by three days in a row
 
-Given three days in a row of at least 1500 calls, fewer than five refusals per hundred and no dead
-end; and a period where a day has exactly five per hundred, a day has no record and a day misses
-by three signs
+Given three working days in a row of at least 1500 calls, fewer than five refusals per hundred and
+no dead end; a period where a day has exactly five per hundred, a day has no record and a day
+misses by three signs; and a run of working days broken by a day of 800 calls
 When the report is printed
-Then the first reads the milestone reached, and the second reads it not reached and names each day
-that does not hold it with every sign it misses
+Then the first reads the milestone reached, the second reads it not reached and names each day
+that does not hold it with every sign it misses, the days that are not working days marked
+skipped, and the third reads it reached over the light day
 
 ### SC-AK-1656 — a report for a named day does not judge the dead rules
 

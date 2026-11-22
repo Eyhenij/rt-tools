@@ -101,6 +101,21 @@ The task ran outside the epic; the owner added its findings to the epic on 21.11
   starts from `steps: {}`. **Address:** rules layer — `assets/checks/push-inputs.mjs` keeps the other
   rows when steps come on stdin, and its header says so.
 
+## RT-3423 — every refusal named, the step guard judges only a write
+
+- **The first filter of the step guard hook does not know the task folders.** The pattern on line
+  35 of `assets/hooks/flow-step-guard.sh` lets `rm -rf docs/tasks/<x>`, `git restore
+  docs/tasks/<x>/`, `git checkout <rev> -- docs/tasks/<x>` and `cp "$F" docs/tasks/<x>/` pass before
+  the guard reads them; the guard itself refuses them. **Address:** rules layer — the pattern of
+  the first filter in `assets/hooks/flow-step-guard.sh` with a scenario per form.
+- **A script written by an earlier call and run with a guarded path is not judged.** `python3
+  /tmp/w.py docs/tasks/<x>/progress.md` and `source /tmp/w.sh` pass: the code of the script is not in
+  the call. The old guard let them through too. **Address:** rules layer — the step guard reads a
+  script file under a temporary directory named by the call.
+- **The whole directory of epic plans is guarded, findings files included.** `sed -i` on a findings
+  file next to the epic plan is refused as an edit of the epic plan. **Address:** rules layer — the
+  guarded path of the epic plan in `assets/checks/flow-guard.mjs`.
+
 ## Left unresolved
 
 - **The commit hook does not check the pipeline files.** `lint-staged` in `package.json` does not
