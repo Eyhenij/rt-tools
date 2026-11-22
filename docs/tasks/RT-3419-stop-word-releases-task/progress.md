@@ -53,6 +53,11 @@
 
 ## Решения по ходу
 
+- **Проверка шага 2.2 заменена:** `grep -rhE 'saidStop|saysStop|stopWord|stopExcept|holdAfter|a stop word of the owner' projects/agent-kit docs/specs .claude/skills/*/implementation.md --exclude-dir=fixtures --exclude-dir=node_modules | grep -vi retired | wc -l` → = 0
+- **Причина замены проверки шага 2.2.** Второй круг ревью: надстройка старой редакции с ключами
+  `stop`, `stopExcept`, `holdAfter` роняла проверку выхода. Ключи сняты, движок их называет — четыре
+  строки называют их намеренно, каждая со словом «retired». Прежняя проверка считала и их.
+
 - **Ветка в цепочке от RT-3468.** Ночная цепочка: RT-3469 → RT-3423 → RT-3434 → RT-3425 →
   RT-3468 → RT-3419.
 - **Номера сценариев SC-AK-1838–1842.** Меньшие номера взяты планами задач ниже по цепочке.

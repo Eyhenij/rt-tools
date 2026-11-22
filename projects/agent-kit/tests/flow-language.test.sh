@@ -354,7 +354,7 @@ d="$(fl_data "{ menu: ['стоп', 3] }")"
 report "data: SC-AK-1518 — вариант меню не строка отказан" "$(fl_model_refused_with "$d" 'words.menu: a list of non-empty strings')" 'да'
 d="$(fl_data "{ nudge: '(продолжай' }")"
 report "data: SC-AK-1518 — образец, который не собирается, отказан" "$(fl_model_refused_with "$d" 'words.nudge: the pattern does not compile')" 'да'
-d="$(fl_data "{ stop: ['стоп'], stopExcept: ['не стоп'], holdAfter: ['подожди'], menu: ['отложить RT-N'] }")"
+d="$(fl_data "{ stop: ['стоп'], stopExcept: ['не стоп'], holdAfter: ['подожди'], menu: ['отложить RT-N'] }")"  # the retired keys
 report "data: SC-AK-1849 — снятые ключи слов описание не роняют, движок их называет" \
     "$(fl_data_call "$d" "d.retiredLines(m).length + ' ' + d.retiredLines(m)[0]")" \
     '"3 retired by the package: words.stop — the owner stops a turn by Esc, and the key does nothing"'

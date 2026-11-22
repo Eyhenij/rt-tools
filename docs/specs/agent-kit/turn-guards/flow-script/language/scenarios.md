@@ -438,7 +438,7 @@ Covered: `projects/agent-kit/tests/flow-language-sync.test.sh`, also run by `pro
 
 ### SC-AK-1849 — a retired key of `words` does not break the description
 
-Given a description whose `words` set `stop`, `stopExcept` and `holdAfter` next to `menu`
+Given a description whose `words` set the retired keys `stop`, `stopExcept` and `holdAfter` next to `menu`
 When the model is built
 Then it builds, and the engine names each of the three keys as retired by the package
 
