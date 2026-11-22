@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · checks/flow-verdict.mjs · 6507d86cd5e2 · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/flow-verdict.mjs · 7d4d34fdc274 · правится надстройкой, не здесь
 /**
  * The verdict at the end of a turn — the engine command `verdict`, called by the hook on Stop.
  *
@@ -8,8 +8,9 @@
  * the command that measures it.
  *
  * When another check refused the same step twice for the same reason, or the executor stopped again
- * with no call after the previous refusal,
+ * with no call after a refusal of the engine itself,
  * the one move is the owner's menu: the options of `words.menu`, with the number of the task put in.
+ * A stop again after refusals of other stop hooks only names the last of them and the move instead.
  *
  * The case of the silent hosting counts only when the measurement itself stopped on the silence: a
  * read that failed for a state passed over says nothing when a later local exit is unmet. Any other
@@ -98,8 +99,8 @@ export function releaseCase(model, read, result) {
  * Why the next move is the owner's menu: { by: '<guard>' }, { idle: true }, or null. A measurer the
  * description does not declare, or the hosting could not answer, names no cause. An unread
  * background task comes first, { unread: { task, output, agent } }: while it is unread the move is to
- * read it, and no menu is offered. A stop refused only by other hooks gives { foreign: '<hook>' }: the
- * hold names that refusal and the move of the state, not the menu.
+ * read it, and no menu is offered. A stop refused only by other hooks gives { foreign: ['<hook>', …] }:
+ * the hold names those hooks and the move of the state, not the menu.
  */
 export function menuCause(read) {
     const answer = (name) => {
@@ -115,7 +116,8 @@ export function menuCause(read) {
     if (by) return { by: String(by) };
     const idle = answer(MENU_CAUSES.idle);
     // A stop refused only by other hooks is no idle one: no menu, the refusal is named in one line.
-    if (idle && typeof idle === 'object' && idle.foreign) return { foreign: String(idle.foreign) };
+    const foreign = idle && typeof idle === 'object' ? [idle.foreign ?? []].flat().filter(Boolean).map(String) : [];
+    if (foreign.length > 0) return { foreign };
     return idle ? { idle: true } : null;
 }
 
@@ -194,7 +196,8 @@ export function holdReason(model, result, step, menu = null) {
             lines.push('The first move is to read that output and act on it: a red result is fixed now. No owner\'s menu is offered while the task is unread.');
         }
     } else if (menu?.cause?.foreign) {
-        lines.push(`The previous refusal came from \`${menu.cause.foreign}\` and is not about your work: name it in one line and make the move of the state. No owner's menu is offered for it.`);
+        const hooks = menu.cause.foreign.map((hook) => `\`${hook}\``).join(', ');
+        lines.push(`The previous refusal came from ${hooks}, not from this check: do what it named, or say in one line why it is not yours. No owner's menu is offered for it.`);
     } else if (menu?.cause) {
         lines.push(
             menu.cause.idle

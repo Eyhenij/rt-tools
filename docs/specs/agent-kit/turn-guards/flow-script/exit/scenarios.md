@@ -485,6 +485,7 @@ Given refusals of a stop: «BLOCKED by <name>» at the start of the line or afte
 When the record is read
 Then the first two name their hook, the third names the model check, and the last names none
 And a name below the first line is not taken
+And a refusal of the model check that quotes another hook further in its text is the model check's
 
 Covered: `projects/agent-kit/tests/turn-exit-guard-foreign.test.sh`.
 
@@ -494,6 +495,7 @@ Given a write, then a refusal of a stop by the draft check, and no background ta
 When the executor stops again with no call
 Then the stop is no idle one
 And the refusal names the draft check and the next step, with no owner's menu
+And refusals of the draft check and of the model check in one stop are both named
 
 Covered: `projects/agent-kit/tests/turn-exit-guard-foreign.test.sh`.
 
@@ -511,6 +513,7 @@ Given a write, then refusals of one stop by the engine and by the model check
 When the executor stops again with no call
 Then the stop is idle, and the refusal names the owner's menu
 And a refusal of the engine before the last call is not counted
+And a stop with no call after the hold that named a foreign refusal is idle: the engine refused it
 
 Covered: `projects/agent-kit/tests/turn-exit-guard-foreign.test.sh`.
 

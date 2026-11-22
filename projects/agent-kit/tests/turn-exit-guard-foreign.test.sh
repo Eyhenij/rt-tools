@@ -1,11 +1,26 @@
 #!/usr/bin/env bash
 # Сценарии отказа чужой проверки остановки: событие отказа называет проверку, мера простоя судит
 # все отказы остановки после последнего вызова, удержание называет чужой отказ одной строкой без
-# меню владельцу. Файл подключается из `turn-exit-guard.test.sh` и берёт его обвязку: `te_run`,
-# `transcript`, `say`, `edited`, `input_stop`, `expect_stop` и `expect_reason`.
+# меню владельцу. Файл подключается из `turn-exit-guard.test.sh` и берёт его обвязку; бегун пакета
+# зовёт его и сам по себе — тогда обвязку он поднимает сам.
 if [ -z "${TESTS:-}" ]; then
-    echo "набор подключается из turn-exit-guard.test.sh" >&2
-    return 1 2>/dev/null || exit 1
+    . "$(dirname "${BASH_SOURCE[0]}")/turn-exit-lib.sh"
+    TESTS="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    TE_FOREIGN_ALONE=1
+    echo "отказ чужой проверки остановки"
+fi
+if ! declare -F te_run >/dev/null; then
+    te_run() {
+        local out label got want code
+        out="$(cd "$TESTS" && node --input-type=module 2>&1)"
+        code=$?
+        report "блок случаев отработал без ошибки" "$code" 0
+        [ "$code" -eq 0 ] || printf '%s\n' "$out" | grep -v '|' | head -5 >&2
+        while IFS='|' read -r label got want; do
+            [ -n "$label" ] || continue
+            report "$label" "$got" "$want"
+        done <<< "$out"
+    }
 fi
 
 # --- событие отказа и мера простоя, над двойниками ------------------------------------------------
@@ -32,6 +47,7 @@ out('menu: SC-AK-1830 — имя после префикса модельной 
 out('menu: SC-AK-1830 — префикс модельной проверки без имени — модельная проверка', refusalBy(JUDGE_BARE), 'turn-judge');
 out('menu: SC-AK-1830 — отказ без всякого имени — null', String(refusalBy(BROKEN)), 'null');
 out('menu: SC-AK-1830 — имя ниже первой строки не берётся', String(refusalBy(feedback('нет имени\nBLOCKED by x-guard: y'))), 'null');
+out('menu: SC-AK-1830 — модельная проверка, цитирующая другую проверку, — своя', refusalBy(feedback('Agent hook condition was not met: the agent ignored BLOCKED by turn-exit-guard: x')), 'turn-judge');
 const recorded = eventsOf([{ type: 'user', message: { content: DRAFT } }]).find((event) => event.kind === 'refusal');
 out('menu: SC-AK-1830 — событие записи несёт имя проверки', recorded?.by, 'git-guard-draft-ready');
 
@@ -46,7 +62,9 @@ const step = { number: '1.2', name: 'x', left: 3 };
 const hold = (list) => holdReason(model, stage, step, { cause: menuCause((name) => (name === 'measure.session.idle' ? idle(list) : false)), task: '7' });
 
 const draftHold = hold([called('Edit'), refusal(DRAFT)]);
-out('menu: SC-AK-1831 — после отказа проверки черновика — не простой', shown(idle([called('Edit'), refusal(DRAFT)])), '{"foreign":"git-guard-draft-ready"}');
+out('menu: SC-AK-1831 — после отказа проверки черновика — не простой', shown(idle([called('Edit'), refusal(DRAFT)])), '{"foreign":["git-guard-draft-ready"]}');
+const twoHold = hold([called('Edit'), refusal(DRAFT), refusal(JUDGE)]);
+out('menu: SC-AK-1831 — две чужие проверки в одну остановку — названы обе', String(twoHold.includes('`git-guard-draft-ready`, `turn-judge`') && !twoHold.includes('«стоп»')), 'true');
 out('menu: SC-AK-1831 — удержание называет чужой отказ и шаг, без меню', String(draftHold.includes('`git-guard-draft-ready`') && draftHold.includes('The next move is step 1.2') && !draftHold.includes('«стоп»')), 'true');
 out('menu: SC-AK-1831 — при идущей фоновой задаче — ожидание, не чужой отказ', shown(idle([{ kind: 'background', id: 'a', task: 't', at: NOW - 60_000 }, refusal(DRAFT)])), 'false');
 
@@ -56,9 +74,10 @@ out('menu: SC-AK-1832 — запись без имени — простой, к�
 const bothHold = hold([called('Edit'), refusal(ENGINE), refusal(JUDGE)]);
 out('menu: SC-AK-1836 — отказ движка и модельной проверки в одну остановку — простой', shown(idle([called('Edit'), refusal(ENGINE), refusal(JUDGE)])), 'true');
 out('menu: SC-AK-1836 — такой простой называет меню', String(bothHold.includes("owner's menu") && bothHold.includes('«стоп»')), 'true');
-out('menu: SC-AK-1836 — отказ движка до последнего вызова не считается', shown(idle([refusal(ENGINE), called('Read'), refusal(DRAFT)])), '{"foreign":"git-guard-draft-ready"}');
+out('menu: SC-AK-1836 — отказ движка до последнего вызова не считается', shown(idle([refusal(ENGINE), called('Read'), refusal(DRAFT)])), '{"foreign":["git-guard-draft-ready"]}');
+out('menu: SC-AK-1836 — после удержания с чужой строкой ещё одна остановка без вызова — меню', shown(idle([called('Edit'), refusal(DRAFT), refusal(ENGINE)])), 'true');
 
-out('menu: SC-AK-1837 — отказ модельной проверки без имени — не простой', shown(idle([called('Edit'), refusal(JUDGE_BARE)])), '{"foreign":"turn-judge"}');
+out('menu: SC-AK-1837 — отказ модельной проверки без имени — не простой', shown(idle([called('Edit'), refusal(JUDGE_BARE)])), '{"foreign":["turn-judge"]}');
 out('menu: SC-AK-1837 — отказ без всякого имени — простой', shown(idle([called('Edit'), refusal(BROKEN)])), 'true');
 JS
 
@@ -72,3 +91,5 @@ case "$foreign_menu" in
     *'«стоп»'*) report "menu: SC-AK-1831 — запись 20.11 меню владельцу не называет" "меню" "без меню" ;;
     *) report "menu: SC-AK-1831 — запись 20.11 меню владельцу не называет" "без меню" "без меню" ;;
 esac
+
+[ -n "${TE_FOREIGN_ALONE:-}" ] && suite_result "отказ чужой проверки остановки"

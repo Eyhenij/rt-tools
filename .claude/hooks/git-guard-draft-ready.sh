@@ -43,11 +43,12 @@
 # going, and such a draft is lawful. The machine account's name is taken from the tree's profile; a
 # tree that did not name it gets no second tier at all.
 #
-# A draft whose branch is checked out in another working copy is not judged either. The machine
-# account is shared by every session of the tree, and such a draft belongs to the session working in
-# that copy: one session was refused six times on 21.11 for a draft its neighbour was leading. A
-# draft its own session left behind is still caught: once the session moves to the next branch, no
-# copy holds the old one.
+# The machine account is shared by every session of the tree, so the second tier judges only the
+# drafts this copy left behind: a branch its own journal of HEAD shows checked out. On 20–21.11 one
+# session was refused 17 times for #3453, whose branch it never had: the neighbour that led it had
+# moved on along its chain. A draft whose head lies in a branch another working copy holds — the
+# branch itself or a later branch of its chain — is not judged either: that copy's session leads it
+# now. A copy whose directory is gone holds nothing. A draft of a removed copy is judged by nobody.
 #
 # The host's answer is put into a cache for a minute: the guard fires at every end of a turn, and a
 # network call on each of them is paid for with the owner's time.
@@ -280,8 +281,22 @@ judge_abandoned() {
     [ -z "$list_json" ] && return 0
     printf '%s' "$list_json" | jq -e 'type == "array"' >/dev/null 2>&1 || return 0
 
-    # The branches checked out in the working copies of this repository, this one included.
-    held="$(git worktree list --porcelain 2>/dev/null | sed -n 's|^branch refs/heads/||p')"
+    # The branches checked out in the other working copies of this repository. This copy is left
+    # out: a draft its own chain left behind stays its own. A copy marked `prunable` has lost its
+    # directory: no session works there, and it holds nothing.
+    here="$(git rev-parse --show-toplevel 2>/dev/null)"
+    held="$(git worktree list --porcelain 2>/dev/null | awk -v here="$here" '
+        function out() { if (b != "" && !p && w != here) print b }
+        /^worktree / { out(); w = substr($0, 10); b = ""; p = 0; next }
+        /^branch refs\/heads\// { b = substr($0, 19); next }
+        /^prunable/ { p = 1 }
+        END { out() }')"
+
+    # The branches this copy has had checked out, by its own journal of HEAD: both sides of every
+    # switch. A copy created on its branch writes no name, and that branch shows up as the side a
+    # later switch leaves.
+    taken="$(git reflog show --format=%gs HEAD 2>/dev/null | awk '
+        /^checkout: moving from / { sub(/^checkout: moving from /, ""); i = index($0, " to "); if (i) { print substr($0, 1, i - 1); print substr($0, i + 4) } }')"
 
     left=''
     count=0
@@ -290,8 +305,19 @@ judge_abandoned() {
         [ -n "$ref" ] || continue
         [ -n "$sha" ] || continue
         [ "$ref" = "$branch" ] && continue
-        # Another copy holds the branch: the draft is that copy's session's work.
+        # This copy never had the branch: the draft is another session's work.
+        printf '%s\n' "$taken" | grep -qxF -- "$ref" || continue
+        # Another copy holds the branch, or a branch of the chain built on it: the draft is that
+        # copy's session's work.
         printf '%s\n' "$held" | grep -qxF -- "$ref" && continue
+        on_chain=''
+        while IFS= read -r other; do
+            [ -n "$other" ] || continue
+            git merge-base --is-ancestor "$sha" "refs/heads/$other" 2>/dev/null && on_chain=yes && break
+        done <<HELD
+$held
+HELD
+        [ -n "$on_chain" ] && continue
 
         [ "$(carries_folder "$ref")" = "no" ] || continue
         [ "$(run_verdict "$ref" "$sha")" = "green" ] || continue

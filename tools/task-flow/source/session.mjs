@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · task-flow/source/session.mjs · 29a7d544e451 · правится надстройкой, не здесь
+// rt-kit v0.38.0 · task-flow/source/session.mjs · 734dd59c0ac8 · правится надстройкой, не здесь
 /**
  * The source «source.session» of the task flow description: what this session did, read from the
  * record of the conversation the hook names in `RT_FLOW_TRANSCRIPT`, and the role it runs as, named
@@ -34,11 +34,15 @@ const MODEL_CHECK = 'turn-judge';
 
 /**
  * The hook that refused a stop, read from the first line after the feedback header: the name of
- * «BLOCKED by <name>» anywhere in the line, the model check for its opening with no name, or null.
+ * «BLOCKED by <name>» anywhere in the line, or null. After the opening of the model check only a
+ * name right after it counts, and with none the refusal is the model check's: its free text may
+ * quote another hook.
  */
 export function refusalBy(text) {
     const line = String(text ?? '').replace(STOP_FEEDBACK, '').replace(/^\s+/, '').split('\n')[0];
-    return line.match(BLOCKED_BY)?.[1] ?? (MODEL_HOOK.test(line) ? MODEL_CHECK : null);
+    const rest = line.replace(MODEL_HOOK, '');
+    if (rest !== line) return rest.match(/^\s*BLOCKED by ([\w-]+)/)?.[1] ?? MODEL_CHECK;
+    return line.match(BLOCKED_BY)?.[1] ?? null;
 }
 
 /** A hook refused a call: the result of the call names the guard that refused it. */

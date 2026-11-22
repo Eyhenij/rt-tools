@@ -275,6 +275,19 @@ RT-3425 and RT-3468. What each plan took in is written in its grill; below is wh
   snapshots cannot hold a merge, so the merge cases live on real repositories. **Address:** rules
   layer — the double drops `lastVersion` for a removed path or names that it reads a straight line.
 
+## RT-3468 — a refusal of another stop check calls no menu
+
+- **The forecast counts a foreign refusal as a named menu.** `menuNamed` in
+  `assets/checks/flow-forecast.mjs` is true for any cause but an unread task, so the cause
+  `{ foreign }` skips the next stop. The live engine judges that stop: its own hold stands after the
+  last call, and the stop is idle. The forecast now counts fewer held stops than the engine gives.
+  The file stands outside the footprint of RT-3468. **Address:** rules layer — `flow-forecast.mjs`
+  treats `cause.foreign` like `cause.unread`: a move, not the menu.
+- **A stop feedback whose first part is not text is not read as a refusal.** `feedbackText` of
+  `assets/task-flow/source/session.mjs` joins the parts with a line break, so a leading image part
+  puts `\n` before «Stop hook feedback:», and the anchored pattern misses it. No such entry stands
+  in the November records. **Address:** rules layer — `feedbackText` trims the joined text.
+
 ## Left unresolved
 
 - **The commit hook does not check the pipeline files.** `lint-staged` in `package.json` does not
