@@ -8,9 +8,11 @@
  *   branch()            the name of the checked-out branch, '' when the head is detached
  *   commits()           [{ sha, added, deleted, modified }] — the paths each commit changed
  *   versionAt(path, sha) the text of the file at that commit, null where it is absent
- *   lastVersion(path)   the text at the newest commit of the branch that holds the file
+ *   lastVersion(path)   the text at the head, or for a file the head lacks at `removedFrom`
  *   addedBy(path)       the sha of the oldest commit of the branch that added the file, or null
- *   removedAt(path)     the sha of the newest commit of the head that removed the path, or null
+ *   removedAt(path)     the sha of the removal of the path whose parent holds its last version, or null:
+ *                       a merge counts, a copy that stood earlier in another candidate's history not
+ *   removedFrom(path)   the parent of that removal, which holds the last version
  *   everExisted(path)   the path, a file or a directory, stood in a commit of the branch or of the
  *                       main branch on the server
  *   existsAtHead(path)  the path stands in the head commit
@@ -56,31 +58,69 @@ export function open() {
         return cached;
     };
     const versionAt = (path, sha) => run(['show', `${sha}:${path}`]);
+    const existsAtHead = (path) => run(['cat-file', '-e', `HEAD:${path.replace(/\/$/, '')}`]) !== null;
+    const limit = run(['rev-parse', '--verify', '--quiet', BASE]) === null ? [] : ['--not', BASE];
+    /** The object of the path at each commit, `missing` where it is absent; one call for the list. */
+    const objects = (shas, path) =>
+        (spawnSync('git', ['cat-file', '--batch-check=%(objectname)'], { encoding: 'utf8', input: shas.map((sha) => `${sha}:${path}\n`).join('') }).stdout ?? '')
+            .split('\n')
+            .slice(0, shas.length)
+            .map((line) => (line.endsWith(' missing') ? 'missing' : line));
+    /** Of candidates `{ sha, parent, object }`, newest first: a copy whose object stood earlier in another one's history is old. */
+    const freshest = (found, bare) => {
+        if (found.length < 2) return found[0] ?? null;
+        const histories = found.map((c) => new Set(objects((run(['log', '--full-history', '--format=%H', c.parent, ...limit, '--', bare]) ?? '').split('\n').filter(Boolean), bare)));
+        return found.find((c) => !found.some((other, j) => other.object !== c.object && histories[j].has(c.object))) ?? found[0];
+    };
+    const removals = new Map();
+    /**
+     * The removal of the path whose parent holds its last version: `{ sha, parent }` or null. Every
+     * removal in the branch is a candidate, a merge against any parent included. The branch's own
+     * taking-apart — a commit whose own change removed the path and added an archive record, as exit 9
+     * reads it — wins over a merged base, whatever the base did to its copy. Without one, an old copy
+     * is passed over by `freshest`. Kept per path for the life of the source.
+     */
+    const removal = (path) => {
+        const bare = path.replace(/\/$/, '');
+        if (removals.has(bare)) return removals.get(bare);
+        const shas = [...new Set((run(['log', '--full-history', '-m', '--diff-filter=D', '--format=%H', 'HEAD', ...limit, '--', bare]) ?? '').split('\n').filter(Boolean))];
+        const own = shas.filter((sha) => {
+            const change = parseStatus(run(['show', '--no-renames', '--name-status', '--format=', sha]) ?? '');
+            return change.deleted.some((p) => p === bare || p.startsWith(`${bare}/`)) && change.added.some((p) => p.startsWith('docs/archive/'));
+        });
+        const candidates = (list) =>
+            list.flatMap((sha) => {
+                const parents = (run(['rev-parse', `${sha}^@`]) ?? '').split('\n').filter(Boolean);
+                const [after, ...held] = objects([sha, ...parents], bare);
+                return after === 'missing' ? parents.map((parent, i) => ({ sha, parent, object: held[i] })).filter((c) => c.object !== 'missing') : [];
+            });
+        const mine = candidates(own.slice(0, 1));
+        const result = mine.length > 0 ? freshest(mine, bare) : freshest(candidates(shas), bare);
+        removals.set(bare, result);
+        return result;
+    };
+    const removedAt = (path) => removal(path)?.sha ?? null;
     return {
         branch: () => (run(['branch', '--show-current']) ?? '').trim(),
         commits,
         versionAt,
         lastVersion(path) {
-            for (const c of [...commits()].reverse()) {
-                const text = versionAt(path, c.sha);
-                if (text !== null) return text;
-            }
-            return null;
+            // A file the head lacks is read before the commit of this branch that removed it: a merged
+            // base with an older copy must not answer for it.
+            if (existsAtHead(path)) return versionAt(path, 'HEAD');
+            const removed = removal(path);
+            return removed ? versionAt(path, removed.parent) : null;
         },
         addedBy(path) {
             return commits().find((c) => c.added.includes(path))?.sha ?? null;
         },
-        removedAt(path) {
-            const bare = path.replace(/\/$/, '');
-            return (run(['log', '-1', '--format=%H', '--diff-filter=D', 'HEAD', '--', bare]) ?? '').trim() || null;
-        },
+        removedAt,
+        removedFrom: (path) => removal(path)?.parent ?? null,
         everExisted(path) {
-            const bare = path.replace(/\/$/, '');
-            return (run(['log', '--format=%H', '-1', 'HEAD', BASE, '--', bare]) ?? '').trim() !== '';
+            const find = (...extra) => (run(['log', '--format=%H', '-1', ...extra, 'HEAD', BASE, '--', path.replace(/\/$/, '')]) ?? '').trim() !== '';
+            return find() || find('--full-history');
         },
-        existsAtHead(path) {
-            return run(['cat-file', '-e', `HEAD:${path.replace(/\/$/, '')}`]) !== null;
-        },
+        existsAtHead,
         branches(prefix) {
             return (run(['for-each-ref', '--format=%(refname:short)\t%(objectname)', `refs/heads/${prefix}*`]) ?? '')
                 .split('\n')
@@ -152,7 +192,7 @@ export function putBack(source, folder) {
         return removedBy ? { stray: readdirSync(folder, { recursive: true }).map(String), removedBy } : null;
     }
     if (!removedBy) return null;
-    const at = `${removedBy}^`;
+    const at = source.removedFrom?.(folder) ?? `${removedBy}^`;
     const texts = source.filesAt(folder, at).map((path) => [path, source.versionAt(path, at)]).filter(([, text]) => text !== null);
     const root = (run(['rev-parse', '--show-toplevel']) ?? '').trim();
     writeEntry({ pid: process.pid, root, folder, files: Object.fromEntries(texts.map(([path, text]) => [path, [digest(text)]])) });
