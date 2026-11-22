@@ -43,14 +43,20 @@ export function pastedElementsOf(html: string): Element[] {
 const EDITABLE_ALLOWED_TAGS: string[] = [...PASTE_ALLOWED_TAGS, 'b', 'i', 's', 'u', 'strong', 'em', 'br'];
 
 /**
+ * The attributes the HTML of a block keeps: those of a paste and the target of an internal link —
+ * a paste brings no internal link, while a block the editor wrote does.
+ */
+const EDITABLE_ALLOWED_ATTRIBUTES: string[] = [...PASTE_ALLOWED_ATTRIBUTES, ELinkAttribute.ContentTypeId, ELinkAttribute.ContentItemId];
+
+/**
  * The HTML of a block, cleaned by the allow list of a paste and given as nodes for the editable
  * element. A script, an event handler and a `javascript:` link do not pass; the emphasis `span`
- * keeps its `style`, and a link keeps its address, target and kind.
+ * keeps its `style`, and a link keeps its address, target, kind and the page it leads to.
  */
 export function editableNodesOf(html: string): DocumentFragment {
     return DOMPurify.sanitize(html, {
         ALLOWED_TAGS: EDITABLE_ALLOWED_TAGS,
-        ALLOWED_ATTR: PASTE_ALLOWED_ATTRIBUTES,
+        ALLOWED_ATTR: EDITABLE_ALLOWED_ATTRIBUTES,
         RETURN_DOM_FRAGMENT: true,
     });
 }

@@ -261,4 +261,5 @@ Given a stored block whose HTML holds a script, an event handler or a script lin
 emphasis and links
 When the block opens in the editor
 Then the script, the handler and the script address are gone, while the emphasis style, the line
-break and the address, target and kind of a link stay; text without letters still clears the block
+break and the address, target and kind of a link stay, an internal link keeping the page it leads
+to; text without letters still clears the block

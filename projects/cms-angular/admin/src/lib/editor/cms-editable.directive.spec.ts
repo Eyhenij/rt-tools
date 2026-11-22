@@ -52,6 +52,17 @@ describe('the editable block HTML', () => {
         ]);
     });
 
+    it('SC-CMS-80 — an internal link keeps the page it leads to', async () => {
+        const { element } = await editableWith('<a linkType="internal" contentTypeId="t1" contentItemId="c9" href="">Page</a>');
+
+        const link: HTMLAnchorElement | null = element.querySelector('a');
+        expect([link?.getAttribute('linkType'), link?.getAttribute('contentTypeId'), link?.getAttribute('contentItemId')]).toEqual([
+            'internal',
+            't1',
+            'c9',
+        ]);
+    });
+
     it('SC-CMS-80 — text without letters goes out empty and clears the element', async () => {
         const { element, host } = await editableWith('<b>x</b>');
         element.replaceChildren(element.ownerDocument.createTextNode('  '));
