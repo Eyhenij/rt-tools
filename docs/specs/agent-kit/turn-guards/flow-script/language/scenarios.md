@@ -244,14 +244,6 @@ Then the exit is met by the answers, and an absent result counts as unmet
 
 Covered: `projects/agent-kit/tests/flow-language.test.sh`.
 
-### SC-AK-1516 — the exceptions of the stop words are taken from `words`
-
-Given a description whose `words` name the stop words and their exceptions
-When a message of the owner is judged, and a second description names other words
-Then a stop word says stop, an exception lifts it, a word inside another word does not count, and a list that is not a list or an unknown key is refused
-
-Covered: `projects/agent-kit/tests/flow-language.test.sh`.
-
 ### SC-AK-1517 — the write commands of case 3 are taken from `words`
 
 Given a description whose `words.write` names two commands
@@ -273,6 +265,14 @@ Covered: `projects/agent-kit/tests/flow-language.test.sh`.
 Given a description with the forms `exit`, `line`, `regex` and `number`
 When runs are compared with expected texts of each form
 Then each form compares by its way, a non-zero code fails a text, an unknown text has no form, and an unknown way is refused
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1843 — a number with blanks before it is read, as `wc -l` prints it
+
+Given the expected result «= 0» and an output whose last line is «0» with seven blanks before it, as `wc -l` of macOS prints it
+When the run is compared with the expected result
+Then the form is `number`, and it is matched
 
 Covered: `projects/agent-kit/tests/flow-language.test.sh`.
 

@@ -33,11 +33,11 @@ There is no interface: the refusal is read by the executor and names the run and
 - **The CI hold is read before the release cases and the menu: a CI run nobody watches or a red run nobody read holds the stop, at the end of the scenario too.**
 - **The CI hold judges the open PRs whose base wakes the pipeline and whose branch is the current one, the epic branch of the work, or one pushed in this record.**
 - **A running run holds the stop until an open background task watches it by the hosting client, naming the run, the PR, the branch or the head; the watch lifts the hold, and the release cases decide the turn.**
-- **A watch of a CI run is no wait: it releases no stop of the scenario.**
+- **A watch of a CI run is a wait like any other background task of the session.**
 - **A red run holds the stop until a call of the hosting client after its end, neither refused nor failed, names it, or a command or a read takes the output of its watch.**
 - **A head with no run holds the stop for two minutes after the result of its push or the opening of its PR.**
 - **A hosting that does not answer about the CI holds nothing.**
-- **The owner's stop word passes a fresh head only: a running run still asks for one background watch, and a red run holds until it is read.**
+- **No word of the owner passes the CI hold: a fresh head with no run holds the stop whatever the owner said.**
 - **The host adapter reads the open PRs and the runs of the PR pipeline file on a head past the clock.**
 - **A call event carries its time and the branch of its record entry, and a background event the command of its call.**
 
@@ -94,20 +94,19 @@ Every open PR the session answers for is judged; the first run that holds names 
   with no call of the session, and a session that switched branches still answers for the PR it
   pushed. A PR into a base the pipeline does not wake for never gets a run: waiting for one is a
   dead end.
-- **The watch lifts the hold and releases nothing by itself.** CI here runs 15 to 41 minutes; the
-  twenty-minute bound of a wait would drop a live watch, and a released wait in «работа-отдана»
-  would stop the session instead of the next task.
+- **The watch lifts the hold, and the scenario decides the stop.** CI here runs 15 to 41 minutes,
+  under the ninety-minute bound of a wait. In «работа-отдана» a wait releases nothing: a released
+  stop there would stop the session instead of the next task.
 - **A read is counted after the end of the attempt.** The call that starts the watch names the run
   before it ends and reads nothing. The red run of PR #3460 on 20.11 (44810853234) was named by no
   record for twelve hours.
-- **The stop lifts the wait, not the watch.** The owner chose so by two menu answers on 21.11. The
-  first: a red result after «стоп» holds until one read, «so the red does not wait for you till
-  morning». The second, asked when review found that only a watch wakes the session: after «стоп»
-  the session starts one background watch, and an unread red run holds before the word and after
-  it. A fresh head still passes: the watch of a run not yet shown has nothing to name.
-- **A watch of a CI run is no wait.** The hold asks for the watch after every merge into the epic
-  branch, and CI runs for up to forty minutes there. Counted as a wait, the watch would release the
-  stops of the next stage, and the session would wait instead of working.
+- **No word of the owner passes the hold.** On 21.11 the owner chose by two menu answers that a red
+  run holds until one read and a running run asks for one background watch, after «стоп» too. On
+  22.11 no typed word releases a turn any more, and a fresh head lost its pass with it: the owner
+  stops the work by Esc.
+- **A watch of a CI run is a wait.** The owner named CI as the first long process the agent waits
+  for: the agent waits, and after the notice it goes on with the current step. One watch releases
+  one stop, as any task does.
 
 ## Open questions
 
@@ -122,3 +121,5 @@ None.
   lines of its failed log: the error of a failed step stands at its end, past the cut of a tool.
 - 2026-11-22 — the rules of the CI hold moved here from the guard of the exits of a turn: its
   scenario file outgrew the length limit.
+- 2026-11-22 — the hold reads no word of the owner, and a watch of a CI run is a wait. Scenario 1813
+  is removed with its test: no typed word stops the work, the owner stops it by Esc.

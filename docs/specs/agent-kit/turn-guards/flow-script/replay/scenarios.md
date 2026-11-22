@@ -79,7 +79,7 @@ Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
 Given the folder taken apart and the push refused by another check, then the menus of a refusal held by the menu hook
 When the hook on Stop reads the turn with the refused push, and the turn whose menu was held twice in a row
-Then the first refusal names the menu «отложить RT-101», «стоп», the second turn is released as a menu that did not reach the owner, and the menu hook lets that menu leave
+Then the first refusal names the menu «отложить RT-101», «подскажу путь», the second turn is released as a menu that did not reach the owner, and the menu hook lets that menu leave
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
@@ -91,19 +91,19 @@ Then the turn is released by the case of a session with no write
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
-### SC-AK-1457 — RT-3276: «не сейчас» is released
+### SC-AK-1457 — RT-3276: «не сейчас» holds the turn
 
-Given a session that edited a file, and the owner's last word «не сейчас»
+Given a stage going on, a session that edited a file, and the owner's last word «не сейчас»
 When the hook on Stop reads the turn
-Then the turn is released by the stop word of the owner
+Then the turn is held, and the refusal names the running stage and the current step
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
-### SC-AK-1458 — RT-3276: «стоп» is released
+### SC-AK-1458 — RT-3276: «стоп» holds the turn
 
-Given a session that edited a file, and the owner's last word «стоп»
+Given a stage going on, a session that edited a file, and the owner's last word «стоп»
 When the hook on Stop reads the turn
-Then the turn is released by the stop word of the owner
+Then the turn is held, and the refusal names the running stage and the current step
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
@@ -115,11 +115,11 @@ Then the turn is released by the case of a session with no write
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
-### SC-AK-1460 — RT-3276: the menu after a refusal answered «стоп» is released
+### SC-AK-1460 — RT-3276: the menu after a refusal answered «стоп» holds the turn
 
-Given the push refused by another check, the menu of the refusal, and the owner's choice «стоп»
+Given the folder taken apart, the push refused by another check, the menu of the refusal, and the owner's answer «стоп»
 When the hook on Stop reads the turn
-Then the turn is released by the stop word of the owner
+Then the turn is held, and the refusal names the state of the taken-apart folder
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
@@ -147,10 +147,10 @@ Then the turn is held, and the menu hook holds such an option in any menu, the m
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
-### SC-AK-1548 — the recorded stop words of the owner release the turn
+### SC-AK-1548 — the recorded stop words of the owner hold the turn
 
 Given the five stop messages of the measurement of 15 November — «Стой», «жди конца набора», «жди соседа», «Остановись на логической точке» and «Не сейчас» as a free answer to a menu
 When the hook on Stop reads each turn
-Then every turn is released by the stop word of the owner
+Then every turn is held, and the refusal names the state its tree stands in: the running stage with its step, the handed-in work or the taken task
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
