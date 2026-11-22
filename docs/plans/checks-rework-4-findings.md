@@ -29,6 +29,50 @@ The task ran outside the epic; the owner added its findings to the epic on 21.11
   `.claude/skills/task-delivery-loop/GUARDS.md`; rules layer — the refusal text of the hook
   `git-guard-push-ahead.sh` lists the files of `git status --porcelain`.
 
+## RT-3467 — the turn end holds a CI run without a watch and an unread red one
+
+- **A reviewer's finding against an answer the owner already gave has no move of its own.** Round
+  two changed the «стоп» behaviour before a menu, reverted it, then asked. **Address:** names of
+  this tree — the article «A finding about the diff is never parked in a file.» of
+  `.claude/skills/task-delivery-loop/SKILL.md`: a finding the recorded answer does not cover goes
+  to a menu before any edit, the recorded answer as its first option. **Metric:** review commits
+  that change and revert an answer chosen by menu, 1 here, target 0.
+- **An edit of the progress demands three rules together past the host limit, and none arrives.**
+  Three Edit refusals on 21.11. **Address:** names of this tree — a branch for
+  `*/docs/tasks/*/progress.md` in `.claude/rt-kit/gate-map.sh` with only the default rules.
+  **Metric:** `gate-deny` events with `why: together` on the loop rule, 20 over 18–21.11, target 0.
+- **A pipe after a check hides its verdict line.** `git commit … 2>&1 | tail -1` kept only «husky -
+  commit-msg script failed»: the cause was `subject-case` on a subject starting with «RT», not a
+  missing key at the end. **Address:** names of this tree — a section «Common misses» in
+  `.claude/skills/task-delivery-loop-run/SKILL.md`; the run ahead half is RT-3469.
+- **An inline script that only reads a guarded path is refused as a write.** Four refusals of the
+  flow-step guard and one of the host classifier on 21.11. **Address:** names of this tree — a
+  section «Shell commands» in `.claude/skills/task-delivery-loop/GUARDS.md`: a read-only probe goes
+  into a scratchpad script file, the progress and the plan are edited by the Edit tool.
+- **The rule `turn-conduct` says the stop word releases a turn; the CI hold now holds it.**
+  **Address:** rules layer — the article «Until the scenario is over a turn ends only by the
+  owner's stop word or by a release case.» of `assets/rules/turn-conduct.md`; names of this tree —
+  three «Not checked» bindings of `.claude/skills/turn-conduct/implementation.md` now bound to
+  `tools/task-flow/measure/ci.mjs:hold`.
+
+## RT-3469 — the run ahead started in the background ends with the code of the set
+
+- **The exit code 3 of the run ahead means both «did not start» and «three red checks».** The
+  script exits with the number of red checks, at most 100, and with 3 when the run did not start.
+  A session that reads the code alone takes a red set for one that did not start. **Address:**
+  rules layer — the exit codes of `assets/hooks/git-guard-push-ahead.sh`, a code for «did not
+  start» above 100, and the Contract section of `docs/specs/agent-kit/push-gate-ahead/spec.md`.
+- **A retry loop that exits 0 on green and 1 after the loop is refused.** The form `if set; then …;
+  exit 0; fi; done; …; exit 1` ends red on red, but the guard reads only the set and its next
+  command. Three calls of 17.11; the ready form passes. **Address:** rules layer — the judge of
+  `assets/hooks/push-ahead-call-guard.sh`. **Metric:** refusals of the guard on calls whose last
+  command is `exit N` with a nonzero N, 3 over 14–21.11, target 0.
+- **The scenario suites of the hooks write observations into the real tree.** A run of a suite or
+  of a hook by hand with no `CLAUDE_PROJECT_DIR` appends `guard-deny` lines to the observations of
+  the day: 458 lines of this guard on 22.11 came from review runs. The report of the tree does not
+  count them, `agent-kit stats` does. **Address:** rules layer — `tests/lib.sh` of the package sets
+  `CLAUDE_PROJECT_DIR` to a temporary directory.
+
 ## Left unresolved
 
 - **The commit hook does not check the pipeline files.** `lint-staged` in `package.json` does not

@@ -94,10 +94,21 @@ node tools/check-specs.mjs; node tools/check-doc-paths.mjs
 pnpm exec nx affected -t test-hooks --base=origin/<base>    # the guard scenarios, when a hook moved
 ```
 
-The heavy steps run ahead by a call of their own, in the background, on a clean copy:
+The heavy steps run ahead by a call of their own, in the background, on a clean copy. The output
+goes to a log outside the working copy, named by the copy, and nothing stands after the set: the
+notice carries the code of the last command of the call, and a tail after the set — even
+`echo "exit=$?"` — turns red into «exit code 0». A log in the tree makes the copy dirty, and the
+set does not start:
 
 ```bash
-bash .claude/hooks/git-guard-push-ahead.sh
+bash .claude/hooks/git-guard-push-ahead.sh > "${TMPDIR:-/tmp}/push-ahead-$(basename "$PWD").log" 2>&1
+```
+
+The verdict is the code of the notice. The log says it in its last line `push ahead:`, and on red
+the lines after that line name the red checks:
+
+```bash
+sed -n '/^push ahead: red/,$p' "${TMPDIR:-/tmp}/push-ahead-$(basename "$PWD").log"
 ```
 
 The push is a separate call after it; the push guard reads the marks the run ahead left, and a
