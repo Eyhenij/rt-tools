@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — about one turn. Load when a turn is being ended — what it ends with, what the owner is told about a step that is theirs, what backs a statement about the tree, what the guards watch. Pattern task-flow-handoff. The whole course of work — rule task-flow.
 ---
-<!-- rt-kit v0.38.0 · rules/turn-conduct.md · fca08236a6ea · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · rules/turn-conduct.md · 1d85481c180d · правится надстройкой, не здесь -->
 
 # Turn conduct — how it works here
 
@@ -37,7 +37,7 @@ every other turn with the one move that comes next, unless a release case below 
 The engine lets a turn end before the scenario does when a case is met, asked in this order:
 
 - **1** · the end of the scenario — `any(measure.epic.finished, all(measure.copy.outsideEpic, measure.pr.handed))`
-- **2** · a stop word of the owner — `measure.owner.saidStop`
+- **2** · the owner interrupted the turn — `measure.owner.interrupted`
 - **3** · a background task of the session runs — `all(measure.session.waiting, not(measure.pr.handed))`
 - **4** · no write to the tree, or a branch outside the scenario — `any(measure.copy.outOfScenario, all(not(measure.session.wrote), not(measure.owner.nudged)))`
 - **5** · a role session — `measure.session.role`

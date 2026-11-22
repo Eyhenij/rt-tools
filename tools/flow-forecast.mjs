@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · checks/flow-forecast.mjs · e2d6e65dece6 · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/flow-forecast.mjs · 41f34c96d8dc · правится надстройкой, не здесь
 /**
  * The forecast of refusals — the engine command `forecast`, run before the hooks are laid out.
  *
@@ -39,7 +39,7 @@ import { callsOf, readCopies, windowOf } from './owner-nudges.mjs';
 
 /** The measurers a record answers. */
 const FROM_RECORD = new Set([
-    'measure.owner.saidStop',
+    'measure.owner.interrupted',
     'measure.owner.nudged',
     'measure.session.wrote',
     'measure.session.role',

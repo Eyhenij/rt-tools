@@ -16,11 +16,11 @@
 - [x] 1.1 The bound of the wait is 90 minutes, and the hold names a hung task
 - [x] 1.2 A CI watch is a wait, a server is none
 - [x] 1.3 A read notice with no step holds the stop and names the step
-- [>] 2.1 The hook on a branch in `этап-идёт` holds the turn after «стоп» and releases it after Esc
-- [ ] 2.2 The engine and its tests hold no stop word
-- [ ] 3.1 The hold names the new menu and the free field
-- [ ] 3.2 The model checks name the new menu and no stop word
-- [ ] 3.3 `turn-judge` lets a turn end on a wait for its own background task
+- [x] 2.1 The hook on a branch in `этап-идёт` holds the turn after «стоп» and releases it after Esc
+- [>] 2.2 The engine and its tests hold no stop word
+- [x] 3.1 The hold names the new menu and the free field
+- [x] 3.2 The model checks name the new menu and no stop word
+- [x] 3.3 `turn-judge` lets a turn end on a wait for its own background task
 - [ ] 4.1 The rules and the texts of the package name no stop word and no bound of twenty minutes
 - [ ] 4.2 The descriptions hold no removed scenario
 

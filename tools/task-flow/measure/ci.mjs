@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · task-flow/measure/ci.mjs · eeeb783cb7a2 · правится надстройкой, не здесь
+// rt-kit v0.38.0 · task-flow/measure/ci.mjs · eac37b70ffef · правится надстройкой, не здесь
 /**
  * The measurer «measure.ci» — the CI runs the session answers for. The hold is read before the
  * release cases: a turn does not end over a run nobody watches or a red run nobody read.
@@ -16,12 +16,10 @@
  *     watch of it — the read; a watch call stands before the end and reads nothing;
  *   - there is no run yet, and the head was pushed or the PR opened less than `FRESH_MINUTES` ago.
  *
- * The owner's stop word passes a fresh head and nothing else. It lifts the wait, not the watch: a
- * running run still asks for one background watch, whose notice wakes the session when the run
- * ends, and a red run holds until one call reads it — before the word or after it.
+ * No word of the owner passes the hold: a running run asks for one background watch, whose notice
+ * wakes the session when the run ends, and a red run holds until one call reads it.
  */
 import { epicOfWork } from './epic-of.mjs';
-import { saidStop } from './owner.mjs';
 
 /** How long a head without a run holds the stop, in minutes: the hosting shows a run within seconds. */
 export const FRESH_MINUTES = 2;
@@ -148,7 +146,7 @@ const wakes = (bases, base) =>
  * headRefOid, base }; `run` — { id, attempt, conclusion, endedAt }, null for a fresh head; `file` —
  * the pipeline file.
  */
-export function hold({ git, host, tree, session, owner }) {
+export function hold({ git, host, tree, session }) {
     return (data) => {
         const events = session.events();
         const pushes = pushedHeads(events);
@@ -166,7 +164,6 @@ export function hold({ git, host, tree, session, owner }) {
         if (Array.isArray(bases) && bases.length === 0) return false;
         const pulls = host.openPulls().filter((p) => heads.has(p.head) && wakes(bases, p.base));
         if (pulls.length === 0) return false;
-        const stopped = saidStop({ owner })(data);
         const now = typeof session.now === 'function' ? session.now() : Date.now();
         const tasks = openTasks(events);
         for (const pr of pulls) {
@@ -175,7 +172,7 @@ export function hold({ git, host, tree, session, owner }) {
             if (red) return { kind: 'red', pr, run: red, file };
             const running = runs.find((run) => run.status !== 'completed');
             if (running && !tasks.some((task) => watches(task, running, pr))) return { kind: 'running', pr, run: running, file };
-            if (runs.length === 0 && !stopped) {
+            if (runs.length === 0) {
                 const since = Math.max(pushes.get(pr.head) ?? -Infinity, Number.isFinite(pr.createdAt) ? pr.createdAt : -Infinity);
                 if (now - since < FRESH_MINUTES * 60_000 && !tasks.some((task) => watches(task, null, pr))) return { kind: 'fresh', pr, run: null, file };
             }

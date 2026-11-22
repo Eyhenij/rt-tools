@@ -26,13 +26,13 @@ fi
 # --- событие отказа и мера простоя, над двойниками ------------------------------------------------
 te_run <<'JS'
 import { buildModel } from '../assets/checks/flow-model.mjs';
-import { isWriteCommand, saysStop } from '../assets/checks/flow-data.mjs';
+import { isWriteCommand } from '../assets/checks/flow-data.mjs';
 import { holdReason, menuCause } from '../assets/checks/flow-verdict.mjs';
 import { eventsOf, refusalBy } from '../assets/task-flow/source/session.mjs';
 import * as session from '../assets/task-flow/measure/session.mjs';
 
 const model = buildModel(new URL('../assets/task-flow/flow.js', import.meta.url).pathname);
-const data = { words: model.words, expect: model.expect, rules: { saysStop, isWriteCommand } };
+const data = { words: model.words, expect: model.expect, rules: { isWriteCommand } };
 const out = (label, got, want) => console.log(`${label}|${got}|${want}`);
 
 const feedback = (body) => `Stop hook feedback:\n${body}`;
@@ -74,7 +74,9 @@ out('menu: SC-AK-1832 — запись без имени — простой, к�
 
 const bothHold = hold([called('Edit'), refusal(ENGINE), refusal(JUDGE)]);
 out('menu: SC-AK-1836 — отказ движка и модельной проверки в одну остановку — простой', shown(idle([called('Edit'), refusal(ENGINE), refusal(JUDGE)])), 'true');
-out('menu: SC-AK-1836 — такой простой называет меню', String(bothHold.includes("owner's menu") && bothHold.includes('«стоп»')), 'true');
+out('menu: SC-AK-1836 — такой простой называет меню', String(bothHold.includes("owner's menu") && bothHold.includes('«подскажу путь»')), 'true');
+out('menu: SC-AK-1842 — меню простоя: «отложить RT-7» и «подскажу путь», без «стоп»', String(bothHold.includes('«отложить RT-7», «подскажу путь»') && !bothHold.includes('«стоп»')), 'true');
+out('menu: SC-AK-1842 — путь владелец пишет в свободное поле того же меню', String(bothHold.includes('the way goes into its free field')), 'true');
 out('menu: SC-AK-1836 — отказ движка до последнего вызова не считается', shown(idle([refusal(ENGINE), called('Read'), refusal(DRAFT)])), '{"foreign":["git-guard-draft-ready"]}');
 out('menu: SC-AK-1836 — после удержания с чужой строкой ещё одна остановка без вызова — меню', shown(idle([called('Edit'), refusal(DRAFT), refusal(ENGINE)])), 'true');
 
@@ -89,7 +91,7 @@ expect_stop "menu: SC-AK-1831 — запись 20.11 держит останов
 expect_reason "menu: SC-AK-1831 — запись 20.11 называет чужой отказ" "$FOREIGN" 'The previous refusal came from `git-guard-draft-ready`'
 foreign_menu="$(printf '%s' "$FOREIGN" | "$HOOKS/turn-exit-guard.sh" 2>/dev/null | jq -r '.reason // ""' 2>/dev/null)"
 case "$foreign_menu" in
-    *'«стоп»'*) report "menu: SC-AK-1831 — запись 20.11 меню владельцу не называет" "меню" "без меню" ;;
+    *'«подскажу путь»'*) report "menu: SC-AK-1831 — запись 20.11 меню владельцу не называет" "меню" "без меню" ;;
     *) report "menu: SC-AK-1831 — запись 20.11 меню владельцу не называет" "без меню" "без меню" ;;
 esac
 

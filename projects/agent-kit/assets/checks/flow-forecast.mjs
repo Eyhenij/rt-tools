@@ -38,7 +38,7 @@ import { callsOf, readCopies, windowOf } from './owner-nudges.mjs';
 
 /** The measurers a record answers. */
 const FROM_RECORD = new Set([
-    'measure.owner.saidStop',
+    'measure.owner.interrupted',
     'measure.owner.nudged',
     'measure.session.wrote',
     'measure.session.role',

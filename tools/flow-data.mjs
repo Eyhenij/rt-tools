@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// rt-kit v0.38.0 · checks/flow-data.mjs · 41309d23d6ef · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/flow-data.mjs · 79122b35fde0 · правится надстройкой, не здесь
 /**
  * The data of the task flow description: the literals of `words`, the forms of `expect` and the
- * order of the release cases. A new stop word, a new write command, a new menu option or a new form
+ * order of the release cases. A new nudge, a new write command, a new menu option or a new form
  * of the expected result is a line of the description, not an edit of a guard.
  *
  * `words` holds only the keys of `WORD_KEYS`: lists of non-empty strings, and `nudge` — the pattern
@@ -16,7 +16,7 @@
 import { Call, Ref } from './flow-syntax.mjs';
 
 /** The keys of `words`; `nudge` is a pattern, the rest are lists of strings. */
-export const WORD_KEYS = ['stop', 'stopExcept', 'holdAfter', 'nudge', 'write', 'menu', 'legacyBranches'];
+export const WORD_KEYS = ['nudge', 'write', 'menu', 'legacyBranches'];
 
 /** The ways a form of the expected result is compared with a run. */
 export const COMPARE = ['exit', 'line', 'regex', 'number'];
@@ -70,25 +70,6 @@ export function releaseOrder(release, fail) {
         .sort((a, b) => a.order - b.order);
 }
 
-const alternatives = (list) => list.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
-
-/**
- * A message of the owner says stop: it begins with a word of `words.stop`, and the rest of it does
- * not hold the turn — no word of `words.stopExcept` without «не» before it, and no word beginning
- * with an entry of `words.holdAfter` («хватит останавливаться» asks to go on).
- */
-export function saysStop(message, words) {
-    const stop = words.stop ?? [];
-    if (stop.length === 0) return false;
-    const text = message.trim().replace(/^[\s\p{P}]+/u, '');
-    const head = text.match(new RegExp(`^(?:${alternatives(stop)})(?![\\p{L}])`, 'iu'));
-    if (!head) return false;
-    const rest = text.slice(head[0].length);
-    const hold = words.holdAfter ?? [];
-    if (hold.length > 0 && new RegExp(`(?<![\\p{L}])(?:${alternatives(hold)})`, 'iu').test(rest)) return false;
-    const except = words.stopExcept ?? [];
-    return except.length === 0 || !new RegExp(`(?<![\\p{L}])(?<!не )(?:${alternatives(except)})(?![\\p{L}])`, 'iu').test(rest);
-}
 
 /**
  * A part of a shell command as it is judged: the leading assignments of variables (`NAME=value`) and
@@ -128,8 +109,10 @@ export function compareExpected(expect, expected, code, output) {
         if (code !== 0) return { form, matched: false };
         if (compare === 'line') return { form, matched: last === m[1] };
         if (compare === 'regex') return { form, matched: new RegExp(m[1]).test(last) };
-        if (!/^-?\d+$/.test(last)) return { form, matched: false };
-        const got = Number(last);
+        // A number is read with the blanks before it: `wc -l` of macOS pads its count on the left.
+        const number = last.trim();
+        if (!/^-?\d+$/.test(number)) return { form, matched: false };
+        const got = Number(number);
         const want = Number(m[2]);
         return { form, matched: m[1] === '=' ? got === want : m[1] === '>=' ? got >= want : got <= want };
     }

@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · checks/flow-verdict.mjs · f47ce6ffad2b · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/flow-verdict.mjs · a1f6481eb47c · правится надстройкой, не здесь
 /**
  * The verdict at the end of a turn — the engine command `verdict`, called by the hook on Stop.
  *
@@ -213,8 +213,8 @@ export function holdReason(model, result, step, menu = null) {
                 : `The check \`${menu.cause.by}\` refused the same step twice for the same reason.`,
         );
         const options = menuOptions(model.words, menu.task);
-        lines.push(`The one move is the owner's menu: ask through the question tool with exactly these options — ${options.map((o) => `«${o}»`).join(', ')}.`);
-        lines.push('Then do what the owner chose: a deferral marks the task «отложено» in the plan of the epic and takes the next unblocked task; «стоп» ends the turn.');
+        lines.push(`The one move is the owner's menu: ask through the question tool with exactly these options — ${options.map((o) => `«${o}»`).join(', ')} — and say in the question that the way goes into its free field.`);
+        lines.push('Then do what the owner chose: a deferral marks the task «отложено» in the plan of the epic and takes the next unblocked task; a way written by the owner is taken in the same step. A bare «подскажу путь» with no text is followed by one question with a free field only.');
         return lines.join('\n');
     }
     if (step && state?.key === 'stage') {

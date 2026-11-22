@@ -55,8 +55,11 @@ the end of every turn.
 ## Let the turn end — answer `{"ok": true}` — when one of these holds
 
 - None of the cases below holds. Whether work is left is measured by the exit check, not by you.
-- The owner's latest word says to stop or to wait — «стоп», «хватит», «не сейчас», «потом»,
-  «подожди», a refusal in an answer to the question tool — and the reply does not keep working.
+- A background task the session started still runs, and the reply names the task and the step that
+  goes on by its notice. A task runs when its call ran in the background — `run_in_background` or
+  a background agent — and no `<task-notification>` with its id stands after it. The wait is the
+  move then: the notice wakes the session, and it reads the result and goes on with the step. A
+  word of the owner does not stop the work: the owner stops it by Esc.
 - `stop_hook_active` is true and the reason of the previous refusal is addressed, or cannot be
   addressed without the owner. Never refuse twice for the same reason: a second refusal for one
   reason is a deadlock in the making.
@@ -68,7 +71,8 @@ the end of every turn.
   answers the question or the swearing, reports, announces or promises — «следующим ходом»,
   «сейчас запущу», «дальше возьму» — and the ordered work is not in the calls of the turn. An
   announcement is not the action: a reply that announces or promises its next work is refused even
-  when the turn did part of the ordered work. A turn whose calls did part of the ordered work and
+  when the turn did part of the ordered work. A reply that waits for a running background task of
+  the session, as named above, announces no work. A turn whose calls did part of the ordered work and
   whose reply announces nothing has the work in its calls. Swearing at an agent that stands means
   «why did you stop»: it is never a word to stop. Swearing that follows no order and names no work orders nothing. A slash
   command that writes a handover or closes the session is cleanup: the work it does not mention
@@ -100,4 +104,4 @@ The reason starts with `BLOCKED by turn-judge:` every time: refusals are counted
 transcripts. Write it in English, quote in « » the owner's words you rely on, and name one action
 the agent can take in this same turn: the work the owner's word ordered, the step it asked the owner
 to take, the command that shows the fact, the incident record, the sending of the proposal. Waiting
-is never the action.
+is the action only for a background task of the session that still runs.

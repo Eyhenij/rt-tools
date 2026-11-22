@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · task-flow/source/owner.mjs · ee4a7fdb41b2 · правится надстройкой, не здесь
+// rt-kit v0.38.0 · task-flow/source/owner.mjs · 1958ee57484f · правится надстройкой, не здесь
 /**
  * The source «source.owner» of the task flow description: the words of the owner in this session,
  * read from the record of the conversation the hook names in `RT_FLOW_TRANSCRIPT`.
@@ -9,7 +9,7 @@
  *                 or null
  *
  * A message of a hook, a summary of a compaction and a meta entry are no word of the owner. Without a
- * record the owner said nothing: a stop word not found keeps the turn held — the stricter reading.
+ * record the owner said nothing: an interrupt not found keeps the turn held — the stricter reading.
  */
 import { existsSync, readFileSync } from 'node:fs';
 
