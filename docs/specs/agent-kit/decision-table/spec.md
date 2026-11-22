@@ -145,6 +145,7 @@ a hook with a decision, and marks a context hook and a git-side hook as helpers.
 | `profile-check.sh` | — | helper | — | — | — |
 | `prose-style-guard.sh` | PreToolUse Edit\|Write\|MultiEdit\|Bash\|webstorm | guard | prose_clean (only .md in the tree, not docs/tasks, not docs/archive) | Edit:md, Bash:md-write | deny |
 | `pull-outcomes.sh` | — | helper | — | — | — |
+| `push-ahead-call-guard.sh` | PreToolUse Bash\|webstorm | guard | push_ahead_code_visible | Bash:push-ahead-run | deny |
 | `push-set.sh` | — | helper | push_marks_green | — | — |
 | `push-sign.sh` | — | helper | push_plain_single | — | — |
 | `qa-dataid-guard.sh` | PreToolUse Edit\|Write\|MultiEdit\|create_new_file\|Bash\|webstorm | guard | edit_is_app_code, qa_anchors_present | Edit:html, Bash:html-write | deny |

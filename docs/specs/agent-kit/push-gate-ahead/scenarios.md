@@ -293,3 +293,40 @@ Then the refusal names both red lines and the tail of each output. The green one
 heavy one is not started and is named as held
 
 Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+
+### SC-AK-1814 — a call that hides the exit code of the run ahead is refused
+
+Given a call that runs the set ahead
+When `;`, a newline or `||` follows the set and the next command prints no `$?`, or a pipe follows it
+with no `PIPESTATUS` and no `set -o pipefail`, or the set stands under `&` or `!`, or a chain of `&&`
+after it ends with `;` and no `$?`
+Then the call is refused, and the refusal names what hid the code, the ready form with a log outside
+the working copy and the read of the `push ahead:` line
+
+Covered: `projects/agent-kit/tests/push-ahead-call-guard.test.sh`.
+
+### SC-AK-1815 — a call whose code of the run ahead shows passes
+
+Given a call that runs the set ahead
+When the set stands alone, with its output redirected, chained by `&&` to the end of the call,
+followed by `$?`, or piped with `PIPESTATUS` after it or `set -o pipefail` before it
+Then the call passes
+
+Covered: `projects/agent-kit/tests/push-ahead-call-guard.test.sh`.
+
+### SC-AK-1816 — a text that only names the run ahead passes
+
+Given a call that names the script without running it — a search, a read, a heredoc, `printf` into a
+file, a quoted commit message, `bash -n`
+When the guard judges the call
+Then the call passes; a run inside `bash -c` is judged by its inner text
+
+Covered: `projects/agent-kit/tests/push-ahead-call-guard.test.sh`.
+
+### SC-AK-1821 — a red set in the ready form ends with a nonzero code
+
+Given a tree whose set holds a red check
+When the set runs ahead in the ready form, its output in a log
+Then the call ends with a nonzero code, and the last `push ahead:` line of the log says red
+
+Covered: `projects/agent-kit/tests/push-ahead-call-guard.test.sh`.

@@ -1,4 +1,4 @@
-# rt-kit v0.38.0 · checks/decision-table.json · ed04ea5aaf9a · правится надстройкой, не здесь
+# rt-kit v0.38.0 · checks/decision-table.json · bf86abe7d52b · правится надстройкой, не здесь
 {
     "areas": {
         "browser": {
@@ -183,6 +183,10 @@
                 "steps_remeasured": [
                     "yes",
                     "no"
+                ],
+                "push_ahead_code_visible": [
+                    "yes",
+                    "no"
                 ]
             },
             "actions": [
@@ -233,7 +237,8 @@
                 "edit_doc",
                 "ask_owner",
                 "pr_create_side_base",
-                "load_rule"
+                "load_rule",
+                "push_ahead_run"
             ],
             "ask": "ask_owner"
         },
@@ -927,6 +932,10 @@
             "file": "write-targets.sh",
             "kind": "helper",
             "reason": "hooks into no agent event; guards source it"
+        },
+        {
+            "file": "push-ahead-call-guard.sh",
+            "kind": "guard"
         }
     ],
     "rows": [
@@ -1416,6 +1425,23 @@
                 "input": "input_cmd \"cd \\\"$H/second\\\" && git push origin RT-7-second\" Bash \"$T\" | jq --arg r \"$T/.tmp/turn.jsonl\" '. + {transcript_path: $r}'"
             },
             "text": "BLOCKED: the call goes from a second working copy — «{moved_root}», while the session stands in «{here_root}». The gate set runs where the session was started, not where the call was made: someone else's uncommitted work refuses it, and the contribution actually leaving passes unchecked. The second copy is for reading; bring the result of the merge back and send from the copy the session stands in. Before that push run the heavy steps by `{ahead_cmd}` (the Bash call with run_in_background) and push after their end: the push is refused until they have a green mark.",
+            "tail": true
+        },
+        {
+            "area": "delivery",
+            "hook": "push-ahead-call-guard.sh",
+            "when": {
+                "push_ahead_code_visible": "no"
+            },
+            "action": "push_ahead_run",
+            "decision": "deny",
+            "move": "push_ahead",
+            "says": "Run it in the ready form",
+            "probe": {
+                "setup": "T=\"$(fixture_tree)\"\ncd \"$T\"",
+                "input": "input_cmd 'bash .claude/hooks/git-guard-push-ahead.sh | tail -5' Bash \"$T\""
+            },
+            "text": "BLOCKED by push-ahead-call-guard: this call runs the push set ahead and hides its exit code — {tail}. A background notice carries the code of the last command of the call, not of the set, so a red set comes back as «exit code 0». Run it in the ready form: `{ahead_cmd} > {log} 2>&1` as the Bash call with run_in_background, nothing after it. The log lies outside the working copy: a file in the tree makes the copy dirty, and the set does not start. The verdict is the code of the notice and `grep '^push ahead:' {log}`; on red the last line of the log names the red check.",
             "tail": true
         },
         {

@@ -2,21 +2,21 @@
 
 ## Где мы
 
-- **State:** `задача-взята`
-- **Stage:** нет — план написан, роли его прочли; одобрение владельца утром
-- **Done:** разведка, разбор, план в три этапа, правки плана по находкам `goal-critic` и `product-strategist`
-- **Next step:** утром — «Одобряю план RT-3469» и `plan-red`, затем этап 1
+- **State:** `этап-идёт`
+- **Stage:** 2 — готовая форма в текстах отказов и в шаблоне цикла
+- **Done:** этап 1: проверка `push-ahead-call-guard.sh`, строка таблицы решений, набор — 31 ok, 0 провалов; сверка таблицы — 517 ok; описание набора вперёд держит SC-AK-1814…1816 и 1821 (вперёд этапа 3: сверка покрытия не пускает ресурс без описания)
+- **Next step:** шаг 2.1 — 11 текстов таблицы с `{ahead_cmd}` называют готовую форму
 - **Uncommitted:** nothing
 - **PR:** not open yet
 
 ## Шаги
 
-- [>] 1.1 A run ahead whose tail hides its code and prints no `$?` is refused with the ready form
-- [ ] 1.2 A run ahead alone, redirected, chained by `&&` to the end or followed by `$?` passes
-- [ ] 1.3 A text that only names the script passes, a run inside `bash -c` is judged by its inner text
-- [ ] 1.4 A red set in the ready form ends with a nonzero code
-- [ ] 1.5 The refusal is a row of the decision table
-- [ ] 2.1 The refusals of the table that name the run ahead name the ready form
+- [x] 1.1 A run ahead whose tail hides its code and prints no `$?` is refused with the ready form
+- [x] 1.2 A run ahead alone, redirected, chained by `&&` to the end or followed by `$?` passes
+- [x] 1.3 A text that only names the script passes, a run inside `bash -c` is judged by its inner text
+- [x] 1.4 A red set in the ready form ends with a nonzero code
+- [x] 1.5 The refusal is a row of the decision table
+- [>] 2.1 The refusals of the table that name the run ahead name the ready form
 - [ ] 2.2 The two texts of the epic delivery guard name the ready form
 - [ ] 2.3 The pattern of the delivery loop gives the ready form of the run ahead
 - [ ] 3.1 The scenarios stand in the description of the run ahead
