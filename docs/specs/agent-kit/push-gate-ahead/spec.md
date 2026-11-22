@@ -64,9 +64,11 @@ There is no interface: the guard answers with a refusal text, the run ahead with
   form.** A background notice carries the code of the last command of the call, and a code printed
   into the output is no substitute for it. Only a background call is judged: a call in the
   foreground returns its output in the result. Refused: any command after the set by `;`, a newline
-  or `||` other than `exit`, `exit $?` or `rc=$?` with `exit $rc` at the end; a pipe with no
-  `exit ${PIPESTATUS[0]}` after it, unless `set -o pipefail` stands before it and it ends the
-  call; `&`; `!`; a chain of `&&` that ends with `;`, a newline or `||` and no `exit $?`. The set
+  or `||` other than `exit`, `exit $?`, `rc=$?` with `exit $rc` at the end or `|| exit N` with a
+  nonzero N, unless `set -e` stands before the set; a pipe, unless `set -o pipefail` stands before
+  it and it ends the call; `&`; `!`, except `if ! …; then …; exit N`; a run inside `$(…)`; a chain
+  of `&&` that ends with `;`, a newline or `||` and no `exit $?`. `exit ${PIPESTATUS[0]}` does not
+  count: the calls of the host run in zsh, which has no such array, and the call exits with 0. The set
   alone, with its output redirected or chained by `&&` to the end of the call passes; loops and
   groups closing after the set pass its code on. A text that only names the script passes, and a
   run inside `bash -c` or `eval` is judged by its inner text. The ready form is the set alone with
@@ -131,8 +133,10 @@ The surface is the push guard's decision on a push call and the exit code of the
 
 ### Refusal codes
 
-Not applicable: the guard answers with a refusal text. The run ahead exits with 0 — green, 1 — a
-red check, 3 — the run did not start. Not 2: to a hook that code means "refuse".
+Not applicable: the guard answers with a refusal text. The run ahead exits with 0 — green, the
+number of red checks, at most 100, — red, 3 — the run did not start. A code of 3 is also three red
+checks: the last `push ahead:` line of the output tells them apart. Not 2: to a hook that code means
+"refuse".
 
 ## Data
 

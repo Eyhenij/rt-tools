@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/push-ahead-call-guard.sh · 007fb8fa0807 · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/push-ahead-call-guard.sh · f1e7419e0069 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash
 # Requires: hooks/deny-tail.sh, hooks/decide.sh
 # Guard of the call of the run ahead: the notice of a background call carries the exit code of the
@@ -12,11 +12,14 @@
 # «exit=1» in the output and still read the notice «exit code 0» as green. A code printed into the
 # output is no substitute for the code of the notice, so the guard refuses every call whose last
 # command is not the set:
-#   - any command after the set by `;`, a newline or `||`, unless it is `exit`, `exit $?` or
-#     `rc=$?; …; exit $rc` at the end of the call;
-#   - a pipe after the set, unless `exit ${PIPESTATUS[0]}` follows it or `set -o pipefail` stands
-#     before it and the pipe ends the call;
-#   - the set sent to the background by `&` or put under `!`;
+#   - any command after the set by `;`, a newline or `||`, unless it is `exit`, `exit $?`,
+#     `rc=$?; …; exit $rc` at the end of the call, `|| exit N` with a nonzero N, or `set -e` stands
+#     before the set;
+#   - a pipe after the set, unless `set -o pipefail` stands before it and the pipe ends the call.
+#     `exit ${PIPESTATUS[0]}` does not count: the calls of this host run in zsh, which has no such
+#     array, and the exit is 0;
+#   - the set sent to the background by `&`, put under `!` (except `if ! set; then exit N`) or run
+#     inside `$(…)`;
 #   - a chain of `&&` after the set that ends with `;`, a newline or `||` and no `exit $?` after it.
 # A set alone, a set with its own output redirected and a chain of `&&` to the end of the call pass:
 # on red each ends the call with the code of the set. A text that only names the script — a search,
@@ -157,7 +160,9 @@ const lex = (s) => {
                     const j = s.indexOf("\n", i);
                     const line = s.slice(i, j < 0 ? s.length : j);
                     i = j < 0 ? s.length : j + 1;
-                    if ((h.tabs ? line.replace(/^\t+/, "") : line) === h.word || j < 0) break;
+                    if ((h.tabs ? line.replace(/^\t+/, "") : line) === h.word) break;
+                    h.body += line + "\n";
+                    if (j < 0) break;
                 }
             }
             continue;
@@ -174,8 +179,9 @@ const lex = (s) => {
             word = null;
             i += redir[0].length;
             if (redir[1] === "<<" || redir[1] === "<<-") {
-                heredocs.push({ tabs: redir[1] === "<<-", word: delimiter() });
-                toks.push({ t: "r", v: fd + redir[1], target: false });
+                const h = { tabs: redir[1] === "<<-", word: delimiter(), body: "" };
+                heredocs.push(h);
+                toks.push({ t: "r", v: fd + redir[1], target: false, heredoc: h });
                 continue;
             }
             const full = /&$/.test(redir[1]) && redir[2] !== undefined;
@@ -194,10 +200,14 @@ const lex = (s) => {
 // Simple commands with the separator that follows each.
 const commands = (toks) => {
     const list = [];
-    let cur = { words: [], sep: null };
+    let cur = { words: [], sep: null, heredocs: [] };
     let skipTarget = false;
     for (const tok of toks) {
-        if (tok.t === "r") { skipTarget = tok.target; continue; }
+        if (tok.t === "r") {
+            skipTarget = tok.target;
+            if (tok.heredoc) cur.heredocs.push(tok.heredoc);
+            continue;
+        }
         if (tok.t === "w") {
             if (skipTarget) { skipTarget = false; continue; }
             cur.words.push(tok.v);
@@ -206,7 +216,7 @@ const commands = (toks) => {
         if (tok.v === "(" || tok.v === ")") continue;
         cur.sep = tok.v === ";;" ? ";" : tok.v;
         list.push(cur);
-        cur = { words: [], sep: null };
+        cur = { words: [], sep: null, heredocs: [] };
     }
     list.push(cur);
     return list.filter((c) => c.words.length > 0 || c.sep === "&" || c.sep === "|");
@@ -214,7 +224,47 @@ const commands = (toks) => {
 
 const isStatus = (w) => w === "$?" || w === "${?}" || w === OUTER;
 const isCloser = (c) => c !== undefined && c.words.length === 1 && CLOSERS.has(c.words[0]);
-const pipefailIn = (c) => c.words[0] === "set" && c.words.some((w, k) => /^-[a-zA-Z]*o$/.test(w) && c.words[k + 1] === "pipefail");
+// The pipefail state the commands before the set leave: the last `set -o pipefail` or
+// `set +o pipefail` wins.
+const pipefailAfter = (list, start) => {
+    let on = start;
+    for (const c of list) {
+        if (c.words[0] !== "set") continue;
+        c.words.forEach((w, k) => {
+            if (c.words[k + 1] !== "pipefail") return;
+            if (/^-[a-zA-Z]*o$/.test(w)) on = true;
+            if (/^\+[a-zA-Z]*o$/.test(w)) on = false;
+        });
+    }
+    return on;
+};
+// The errexit state the commands before the set leave: `set -e`, `set -o errexit` and their `+`.
+const errexitAfter = (list, start) => {
+    let on = start;
+    for (const c of list) {
+        if (c.words[0] !== "set") continue;
+        c.words.forEach((w, k) => {
+            if (/^-[a-zA-Z]*o$/.test(w) && c.words[k + 1] === "errexit") on = true;
+            else if (/^\+[a-zA-Z]*o$/.test(w) && c.words[k + 1] === "errexit") on = false;
+            else if (/^-[a-zA-Z]*e/.test(w)) on = true;
+            else if (/^\+[a-zA-Z]*e/.test(w)) on = false;
+        });
+    }
+    return on;
+};
+// `exit N` with a nonzero number, after the words that only open a command: on red the call ends red.
+const exitsRed = (c) => {
+    if (c === undefined) return false;
+    const w = c.words.filter((x, k) => !(k === 0 && (x === "then" || x === "{" || x === "else")));
+    return w[0] === "exit" && /^[0-9]+$/.test(w[1] ?? "") && Number(w[1]) !== 0;
+};
+// A command substitution that runs the set keeps its code inside: the call never sees it.
+const substitutes = (c) => c.words.some((w) => {
+    for (const m of w.matchAll(/\$\(([\s\S]*)\)|`([^`]*)`/g)) {
+        if (judge(m[1] ?? m[2] ?? "", false, false).ran) return true;
+    }
+    return false;
+});
 
 // Words before the command itself: assignments, `!`, `env`, `time`, `timeout`, `nice`,
 // `caffeinate`, `pnpm exec`, `npx` and the words that only open a command.
@@ -233,12 +283,15 @@ const strip = (words) => {
         if (h === undefined) break;
         if (h === "!") { neg = true; w = w.slice(1); continue; }
         if (/^[A-Za-z_][A-Za-z0-9_]*=/.test(h)) { w = w.slice(1); continue; }
-        if (OPENERS.has(h)) { w = w.slice(1); continue; }
-        if (h === "env") { w = w.slice(1); dropOptions(["-u", "-C", "-S"]); continue; }
+        if (OPENERS.has(h)) { w = w.slice(1); dropOptions([]); continue; }
+        if (base(h) === "env") { w = w.slice(1); dropOptions(["-u", "-C", "-S"]); continue; }
+        if (h === "sudo") { w = w.slice(1); dropOptions(["-u", "-g", "-C"]); continue; }
+        if (h === "stdbuf") { w = w.slice(1); dropOptions(["-i", "-o", "-e"]); continue; }
         if (h === "time") { w = w.slice(1); dropOptions([]); continue; }
         if (h === "timeout") { w = w.slice(1); dropOptions(["-s", "-k"]); w = w.slice(1); continue; }
         if (h === "nice") { w = w.slice(1); dropOptions(["-n"]); continue; }
         if (h === "caffeinate") { w = w.slice(1); dropOptions(["-t", "-w"]); continue; }
+        if (base(h) === "script") { w = w.slice(1); dropOptions(["-F", "-t"]); w = w.slice(1); continue; }
         if (h === "npx") { w = w.slice(1); dropOptions([]); continue; }
         if ((h === "pnpm" || h === "npm") && w[1] === "exec") { w = w.slice(2); dropOptions([]); continue; }
         break;
@@ -253,17 +306,18 @@ const runOf = (c) => {
     if (w.length === 0) return null;
     if (base(w[0]) === SCRIPT) return { neg };
     if ((w[0] === "source" || w[0] === ".") && w[1] !== undefined && base(w[1]) === SCRIPT) return { neg };
-    const inner = (text, pipefail) => {
-        const v = judge(text.split(OUTER).join("0"), pipefail);
+    const inner = (text, pipefail, errexit) => {
+        const v = judge(text.split(OUTER).join("0"), pipefail, errexit);
         if (v.hide) return { neg, hide: v.hide };
         return v.ran ? { neg } : null;
     };
-    if (w[0] === "eval") return inner(w.slice(1).join(" "), false);
+    if (w[0] === "eval") return inner(w.slice(1).join(" "), false, false);
     if (!SHELLS.has(base(w[0]))) return null;
     let k = 1;
     let check = false;
     let hasC = false;
     let pipefail = false;
+    let errexit = false;
     while (k < w.length && /^[-+]/.test(w[k])) {
         const o = w[k];
         if (o.startsWith("--")) {
@@ -273,38 +327,57 @@ const runOf = (c) => {
         const letters = o.slice(1);
         if (o[0] === "-" && letters.includes("n")) check = true;
         if (letters.includes("c")) hasC = true;
+        if (o[0] === "-" && /^[a-zA-Z]*e/.test(letters) && !/[oO]$/.test(letters.split("e")[0])) errexit = true;
         if (/[oO]$/.test(letters)) {
             if (o[0] === "-" && w[k + 1] === "pipefail") pipefail = true;
+            if (o[0] === "-" && w[k + 1] === "errexit") errexit = true;
             k += 2;
             continue;
         }
         k++;
     }
     if (check) return null;
-    if (hasC) return inner(w[k] ?? "", pipefail);
+    if (hasC) return inner(w[k] ?? "", pipefail, errexit);
+    // A shell with no script and no `-c` reads its commands from a heredoc.
+    if (w[k] === undefined && c.heredocs.length > 0) return inner(c.heredocs.map((h) => h.body).join("\n"), pipefail, errexit);
     return w[k] !== undefined && base(w[k]) === SCRIPT ? { neg } : null;
 };
 
 const describe = {
     "!": "the set stands under `!`, and the call reports the opposite of its code",
     "&": "the set goes to the background by `&`, and the call ends before it",
-    "|": "the set is piped into the next command, and no `exit ${PIPESTATUS[0]}` follows the pipe",
+    "|": "the set is piped into the next command, and the call does not end with that pipe under `set -o pipefail`",
+    "$(": "the set runs inside a command substitution `$(…)`, and its code stays inside",
     ";": "a command follows the set by `;` or a newline, and the call ends with the code of that command",
     "||": "a command follows the set by `||`, and on red the call ends with the code of that command",
     "&&;": "a chain of `&&` after the set ends with `;`, a newline or `||`, and no `exit $?` follows it",
 };
 
-function judge(text, pipefailAtStart) {
+function judge(text, pipefailAtStart, errexitAtStart) {
     const cmds = commands(lex(text));
     const last = cmds[cmds.length - 1];
     const exitsWith = (c, accept) => c !== undefined && c.words[0] === "exit" && (c.words.length === 1 || accept(c.words[1]));
     const endsWithExit = (c) => exitsWith(c, isStatus);
+    // The `then` branch from `start` runs its commands by `;` and reaches `exit N` before `fi`.
+    const thenExitsRed = (start) => {
+        for (let j = start; cmds[j] !== undefined; j++) {
+            const w0 = cmds[j].words[0];
+            if (j > start && (w0 === "fi" || w0 === "else" || w0 === "elif")) return false;
+            if (exitsRed(cmds[j])) return true;
+            if (cmds[j].sep !== ";") return false;
+        }
+        return false;
+    };
     let ran = false;
     for (let k = 0; k < cmds.length; k++) {
+        if (substitutes(cmds[k])) return { hide: describe["$("], ran: true };
         const run = runOf(cmds[k]);
         if (run === null) continue;
         if (run.hide) return { hide: run.hide, ran: true };
         ran = true;
+        // `if ! set; then exit 1; fi`: on red the call ends red.
+        const head = cmds[k].words[0];
+        if (run.neg && (head === "if" || head === "elif") && cmds[k].sep === ";" && cmds[k + 1]?.words[0] === "then" && thenExitsRed(k + 1)) continue;
         if (run.neg) return { hide: describe["!"], ran };
         // Loops and groups closing after the set pass its code on.
         let sep = cmds[k].sep;
@@ -313,13 +386,19 @@ function judge(text, pipefailAtStart) {
         if (sep === null) continue;
         if (sep === "&") return { hide: describe["&"], ran };
         if ((sep === ";" || sep === "||") && cmds[i] === undefined) continue;
+        // `set || exit 1`: on red the call ends red, whatever follows on green.
+        if (sep === "||" && exitsRed(cmds[i])) continue;
+        // Under errexit a red set ends the call with its own code, unless it is a condition.
+        const condition = ["if", "elif", "while", "until"].includes(head);
+        if (sep === ";" && !condition && errexitAfter(cmds.slice(0, k), errexitAtStart)) continue;
         if (sep === "|" || sep === "|&") {
             let m = i;
             while (cmds[m] !== undefined && ["|", "|&"].includes(cmds[m].sep)) m++;
-            const pipefail = pipefailAtStart || cmds.slice(0, k).some(pipefailIn);
+            // `PIPESTATUS` is no help: the calls of this host run in zsh, where the array is absent
+            // and `exit ${PIPESTATUS[0]}` exits with 0. Only pipefail carries a red set out.
+            const pipefail = pipefailAfter(cmds.slice(0, k), pipefailAtStart);
             const end = cmds[m]?.sep ?? null;
-            if (pipefail && (end === null || cmds[m + 1] === undefined)) continue;
-            if ((end === ";" || end === "||") && exitsWith(cmds[m + 1], (a) => /PIPESTATUS\[0\]/.test(a) || (pipefail && isStatus(a)))) continue;
+            if (pipefail && end !== "&" && end !== "||" && end !== "&&" && (cmds[m + 1] === undefined || endsWithExit(cmds[m + 1]))) continue;
             return { hide: describe["|"], ran };
         }
         if (sep === "&&") {
@@ -328,8 +407,8 @@ function judge(text, pipefailAtStart) {
             let end = cmds[m]?.sep ?? null;
             // `set && break; done` in a retry loop: the loop ends with the code of the last set.
             while ((end === ";" || end === "\n") && isCloser(cmds[m + 1])) { m++; end = cmds[m].sep; }
-            if (end === null || cmds[m + 1] === undefined) continue;
             if (end === "&") return { hide: describe["&"], ran };
+            if (end === null || cmds[m + 1] === undefined) continue;
             if (endsWithExit(cmds[m + 1])) continue;
             return { hide: describe["&&;"], ran };
         }
@@ -337,13 +416,15 @@ function judge(text, pipefailAtStart) {
         const next = cmds[i];
         if (endsWithExit(next)) continue;
         const saved = next.words.length === 1 ? next.words[0].match(/^([A-Za-z_][A-Za-z0-9_]*)=(\$\?|\$\{\?\}|\u0001)$/) : null;
-        if (saved && next !== last && exitsWith(last, (a) => a === "$" + saved[1] || a === "${" + saved[1] + "}")) continue;
+        // `exit $rc` counts only as the last command, reached unconditionally after a `;`.
+        const before = cmds[cmds.length - 2];
+        if (saved && next !== last && before?.sep === ";" && exitsWith(last, (a) => a === "$" + saved[1] || a === "${" + saved[1] + "}")) continue;
         return { hide: describe[sep === "||" ? "||" : ";"], ran };
     }
     return { ran };
 }
 
-const v = judge(process.env.RT_CALL ?? "", false);
+const v = judge(process.env.RT_CALL ?? "", false, false);
 process.stdout.write(v.hide ? `hide\t${v.hide}` : "pass");
 ' 2>/dev/null)"
 

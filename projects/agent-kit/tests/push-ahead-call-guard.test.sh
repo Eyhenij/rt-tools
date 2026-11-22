@@ -45,6 +45,22 @@ d "SC-AK-1814 — \`env -i\` and \`caffeinate -i\` before the shell are runs" "e
 d "SC-AK-1814 — \`bash -o pipefail -c\` is judged by its inner text" "bash -o pipefail -c '$SET; tail -3 /tmp/a.log'" deny
 d "SC-AK-1814 — \`\$?\` in double quotes of \`bash -c\` is the outer code" "bash -c \"$SET > /tmp/a.log 2>&1; exit \$?\"" deny
 d "SC-AK-1814 — \`eval\` is judged by its inner text" "eval \"$SET | tail -5\"" deny
+d "SC-AK-1814 — \`exit \${PIPESTATUS[0]}\` is refused: zsh has no such array and exits 0" \
+    "$SET 2>&1 | tail -5; exit \"\${PIPESTATUS[0]}\"" deny
+d "SC-AK-1814 — a pipe under pipefail followed by \`;\` and a tail is refused" "set -o pipefail; $SET | tail -5; echo done" deny
+d "SC-AK-1814 — a pipe under pipefail sent to the background is refused" "set -o pipefail; $SET | tail -5 &" deny
+d "SC-AK-1814 — a pipe under pipefail followed by \`||\` is refused" "set -o pipefail; $SET | tee /tmp/a.log || echo red" deny
+d "SC-AK-1814 — pipefail switched off again keeps the pipe refused" "set -o pipefail; set +o pipefail; $SET | tail -5" deny
+d "SC-AK-1814 — a chain of \`&&\` sent to the background is refused" "cd /tmp && $SET > /tmp/a.log 2>&1 &" deny
+d "SC-AK-1814 — the set inside \`\$(…)\` is refused" "out=\$($SET 2>&1); echo \"\$out\" | tail -5" deny
+d "SC-AK-1814 — a shell reading a heredoc is judged by its body" "bash <<'EOF'
+$SET | tail -5
+EOF" deny
+d "SC-AK-1814 — \`exit \$rc\` reached only on one branch is refused" "$SET > /tmp/a.log 2>&1; rc=\$?; tail -3 /tmp/a.log || exit \$rc" deny
+d "SC-AK-1814 — \`/usr/bin/env bash\` is a run" "/usr/bin/env bash .claude/hooks/git-guard-push-ahead.sh; echo done" deny
+d "SC-AK-1814 — \`stdbuf\` and \`script\` before the shell are runs" "stdbuf -oL $SET | tee /tmp/a.log" deny
+d "SC-AK-1814 — \`script -q /dev/null\` before the shell is a run" "script -q /dev/null $SET | tail -5" deny
+d "SC-AK-1814 — \`set -e\` does not cover a set under \`if\`" "set -e; if $SET; then :; fi; tail -3 /tmp/a.log" deny
 d "SC-AK-1814 — a heredoc word inside quotes opens no heredoc" "echo \"use <<EOF in heredocs\"
 $SET 2>&1 | tail -5" deny
 expect_reason "SC-AK-1814 — the refusal names the ready form" push-ahead-call-guard.sh \
@@ -66,7 +82,11 @@ d "SC-AK-1815 — a chain of \`&&\` to the end of the call passes" \
     "cd /tmp && $SET > /tmp/a.log 2>&1 && tail -3 /tmp/a.log" PASS
 d "SC-AK-1815 — \`exit \$?\` right after the set passes" "$SET > /tmp/a.log 2>&1; exit \$?" PASS
 d "SC-AK-1815 — \`rc=\$?\` and \`exit \$rc\` at the end pass" "$SET > /tmp/a.log 2>&1; rc=\$?; tail -3 /tmp/a.log; exit \$rc" PASS
-d "SC-AK-1815 — a pipe with \`exit \${PIPESTATUS[0]}\` after it passes" "$SET 2>&1 | tail -5; exit \"\${PIPESTATUS[0]}\"" PASS
+d "SC-AK-1815 — \`|| exit 1\` after the set passes: on red the call ends red" "$SET > /tmp/a.log 2>&1 || exit 1; tail -3 /tmp/a.log" PASS
+d "SC-AK-1815 — \`if ! set; then …; exit 1\` passes" "if ! $SET > /tmp/a.log 2>&1; then tail -3 /tmp/a.log; exit 1; fi" PASS
+d "SC-AK-1815 — \`if ! set; then exit 1; fi\` passes" "if ! $SET > /tmp/a.log 2>&1; then exit 1; fi; tail -3 /tmp/a.log" PASS
+d "SC-AK-1815 — \`set -e\` before the set lets a tail follow" "set -e; $SET > /tmp/a.log 2>&1; tail -3 /tmp/a.log" PASS
+d "SC-AK-1815 — \`bash -e -c\` lets a tail follow inside" "bash -e -c '$SET > /tmp/a.log 2>&1; tail -3 /tmp/a.log'" PASS
 d "SC-AK-1815 — a pipe that ends the call under \`set -o pipefail\` passes" "set -o pipefail; $SET 2>&1 | tail -5" PASS
 d "SC-AK-1815 — a trailing \`;\` with nothing after it passes" "$SET > /tmp/a.log 2>&1;" PASS
 d "SC-AK-1815 — a set in a loop with nothing after it passes" "for i in 1; do $SET > /tmp/a.log 2>&1; done" PASS

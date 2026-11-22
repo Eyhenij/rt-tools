@@ -298,8 +298,8 @@ Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 
 Given a background call that runs the set ahead, `; echo "exit=$?"` after it among them
 When a command other than `exit $?` follows the set by `;`, a newline or `||`, or a pipe follows it
-with no `exit ${PIPESTATUS[0]}`, or the set stands under `&` or `!`, or a chain of `&&` after it
-ends with `;`, a newline or `||` and no `exit $?`
+outside `set -o pipefail` (`exit ${PIPESTATUS[0]}` included), or the set stands under `&` or `!` or
+inside `$(…)`, or a chain of `&&` after it ends with `;`, a newline or `||` and no `exit $?`
 Then the call is refused, and the refusal names what hid the code, the ready form with a log of the
 copy outside the working copy and the read of the last `push ahead:` line
 
@@ -309,9 +309,9 @@ Covered: `projects/agent-kit/tests/push-ahead-call-guard.test.sh`.
 
 Given a call that runs the set ahead
 When the set stands alone, with its output redirected, chained by `&&` to the end of the call,
-followed by `exit $?` or by `rc=$?` with `exit $rc` at the end, piped with
-`exit ${PIPESTATUS[0]}` after the pipe or ending the call under `set -o pipefail`, or closed by a
-loop with nothing after it — or the call runs in the foreground, where its output stands in the
+followed by `exit $?`, by `rc=$?` with `exit $rc` at the end or by `|| exit N`, under
+`if ! …; then …; exit N`, after `set -e`, piped and ending the call under `set -o pipefail`, or
+closed by a loop with nothing after it — or the call runs in the foreground, where its output stands in the
 result
 Then the call passes
 
