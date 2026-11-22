@@ -38,10 +38,12 @@ There is no interface: the description is read by the engine and by the executor
 - **The history of the branch is the commits the main branch on the server does not hold, and a fact read from it stays true in later states.**
 - **The last version of a file the head lacks is read at the parent of the commit of the branch that removed it.**
   A merged base, a fast-forward onto the base and a removal of an old copy in the base do not answer
-  for it, alone or one after another. Every removal in the branch counts, a merge against any parent
-  included. A copy whose object stood earlier in the history of another candidate is an old one and
-  is passed over. A removal the main branch already holds gives no file. A file the head holds is
-  read at the head.
+  for it, alone or one after another, nor an edit the base made to its copy. The branch's own
+  taking-apart wins: the commit whose own change removed the path and added an archive record. Of
+  its parents holding the path, an old copy is passed over. Without such a commit every removal is a
+  candidate, a merge against any parent included. A copy whose object stood earlier in another
+  candidate's history is passed over, and the newest of the rest wins. A removal the main branch
+  already holds gives no file. A file the head holds is read at the head.
 - **The parsing of the steps reaches a measurer through a source, by the module every reader of the steps shares.**
 - **Exit 1 is met by a grill of the branch or of a draft that holds the owner's request as a quote and an answer.**
 - **Exit 3 is met by a line of the grill or the plan naming the agreement directory found on disk or in the history, or the reason there is none.**

@@ -411,14 +411,16 @@ Given a branch that took its task folder apart, and an epic branch holding an ol
 When the branch merges the base, is fast-forwarded onto the base, or merges a base that removed its old copy later
 Then the last progress is the one of the branch, every step done
 And so after the base removed its copy and the branch was fast-forwarded, after the folder is taken apart in the merge commit, and after a fast-forward with no old copy
+And so after the base edited the grill or the progress of its copy, after the branch rewrote the commit the base copied, and after the base took the folder apart in its own merge of the task
 And a file no commit of the branch held reads as absent, and so does a removal the main branch already holds
 And without a reference to the main branch the progress is read at the parent of the branch's removal
+And a folder that lived only in the branch is found after a fast-forward, and a file the head holds is read at the head
 
 Covered: `projects/agent-kit/tests/task-flow-script-merge.test.sh`.
 
 ### SC-AK-1828 — a merged base does not roll a taken-apart task back
 
-Given the same six histories
+Given the same histories but the one where the base took the folder apart in its own merge
 When the states are measured
 Then the state is not below «папка-разобрана», and the exits of the grill, the agreement, the plan, the footprint and the folder are met
 
@@ -427,7 +429,8 @@ Covered: `projects/agent-kit/tests/task-flow-script-merge.test.sh`.
 ### SC-AK-1829 — the step command after a merged base measures by the branch's own progress
 
 Given a taken-apart folder after a merged base, and a step whose check reads a line only the branch's progress holds
-When the step is run after each of the six histories
+When the step is run after each of the ten histories
 Then it matches and writes its mark, and the folder is gone after the run
+And the rerun before a PR matches both done steps after each of them
 
 Covered: `projects/agent-kit/tests/task-flow-script-merge.test.sh`.

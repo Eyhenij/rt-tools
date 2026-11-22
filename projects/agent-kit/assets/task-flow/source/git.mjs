@@ -66,28 +66,38 @@ export function open() {
             .split('\n')
             .slice(0, shas.length)
             .map((line) => (line.endsWith(' missing') ? 'missing' : line));
+    /** Of candidates `{ sha, parent, object }`, newest first: a copy whose object stood earlier in another one's history is old. */
+    const freshest = (found, bare) => {
+        if (found.length < 2) return found[0] ?? null;
+        const histories = found.map((c) => new Set(objects((run(['log', '--full-history', '--format=%H', c.parent, ...limit, '--', bare]) ?? '').split('\n').filter(Boolean), bare)));
+        return found.find((c) => !found.some((other, j) => other.object !== c.object && histories[j].has(c.object))) ?? found[0];
+    };
+    const removals = new Map();
     /**
      * The removal of the path whose parent holds its last version: `{ sha, parent }` or null. Every
-     * removal in the branch counts, a merge against any parent included. A copy whose object already
-     * stood earlier in the history of another candidate is an old one — a merged base, a fast-forward
-     * onto it, or a removal of that copy in the base brings it — and is passed over; of the rest the
-     * newest wins.
+     * removal in the branch is a candidate, a merge against any parent included. The branch's own
+     * taking-apart — a commit whose own change removed the path and added an archive record, as exit 9
+     * reads it — wins over a merged base, whatever the base did to its copy. Without one, an old copy
+     * is passed over by `freshest`. Kept per path for the life of the source.
      */
     const removal = (path) => {
         const bare = path.replace(/\/$/, '');
+        if (removals.has(bare)) return removals.get(bare);
         const shas = [...new Set((run(['log', '--full-history', '-m', '--diff-filter=D', '--format=%H', 'HEAD', ...limit, '--', bare]) ?? '').split('\n').filter(Boolean))];
-        const found = shas.flatMap((sha) => {
-            const parents = (run(['rev-parse', `${sha}^@`]) ?? '').split('\n').filter(Boolean);
-            const [own, ...held] = objects([sha, ...parents], bare);
-            return own === 'missing' ? parents.map((parent, i) => ({ sha, parent, object: held[i] })).filter((c) => c.object !== 'missing') : [];
+        const own = shas.filter((sha) => {
+            const change = parseStatus(run(['show', '--no-renames', '--name-status', '--format=', sha]) ?? '');
+            return change.deleted.some((p) => p === bare || p.startsWith(`${bare}/`)) && change.added.some((p) => p.startsWith('docs/archive/'));
         });
-        const earlier = (c) => {
-            const before = (run(['log', '--full-history', '--format=%H', c.parent, '--', bare]) ?? '').split('\n').filter(Boolean);
-            return new Set(objects(before, bare));
-        };
-        const histories = found.map(earlier);
-        const fresh = found.filter((c) => !found.some((other, j) => other.object !== c.object && histories[j].has(c.object)));
-        return fresh[0] ?? found[0] ?? null;
+        const candidates = (list) =>
+            list.flatMap((sha) => {
+                const parents = (run(['rev-parse', `${sha}^@`]) ?? '').split('\n').filter(Boolean);
+                const [after, ...held] = objects([sha, ...parents], bare);
+                return after === 'missing' ? parents.map((parent, i) => ({ sha, parent, object: held[i] })).filter((c) => c.object !== 'missing') : [];
+            });
+        const mine = candidates(own.slice(0, 1));
+        const result = mine.length > 0 ? freshest(mine, bare) : freshest(candidates(shas), bare);
+        removals.set(bare, result);
+        return result;
     };
     const removedAt = (path) => removal(path)?.sha ?? null;
     return {
@@ -182,7 +192,7 @@ export function putBack(source, folder) {
         return removedBy ? { stray: readdirSync(folder, { recursive: true }).map(String), removedBy } : null;
     }
     if (!removedBy) return null;
-    const at = source.removedFrom(folder);
+    const at = source.removedFrom?.(folder) ?? `${removedBy}^`;
     const texts = source.filesAt(folder, at).map((path) => [path, source.versionAt(path, at)]).filter(([, text]) => text !== null);
     const root = (run(['rev-parse', '--show-toplevel']) ?? '').trim();
     writeEntry({ pid: process.pid, root, folder, files: Object.fromEntries(texts.map(([path, text]) => [path, [digest(text)]])) });

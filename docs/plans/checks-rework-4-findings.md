@@ -201,9 +201,22 @@ The task ran outside the epic; the owner added its findings to the epic on 21.11
   rules layer — `assets/task-flow/measure/footprint.mjs` counts only the commits reachable from the
   head along the branch's own line, not those a merge brought.
 - **The revert move names a merge commit when the folder is taken apart inside a merge.** `git
-  revert --no-edit <merge>` refuses without `-m`, and `-m 1` takes the whole base back. **Address:**
-  rules layer — `revertMove` of `assets/checks/flow-step.mjs` names `git revert -m 1` and the files
-  of the folder, or `git checkout <parent> -- <folder>`, when the removal is a merge.
+  revert --no-edit <merge>` refuses without `-m`, and `-m 1` takes the whole base back. After round
+  two this happens only when the taking-apart itself is a merge. **Address:** rules layer —
+  `revertMove` of `assets/checks/flow-step.mjs` names `git checkout <parent> -- <folder>` and a
+  commit when the removal is a merge.
+- **A clean merge can bring a taken-apart folder back to the head.** When the base holds a copy
+  from commits the branch lacks — a cherry-pick, a rewritten branch such as the local
+  `*-grill-2011` ones — the common ancestor has no folder, and the merge adds it silently; the
+  engine reads it as live work. **Address:** rules layer — the delivery guard refuses a merge that
+  re-adds a folder the branch took apart, or the engine treats such a folder as taken apart.
+- **Exit 9 does not see a taking-apart inside the base's own merge of the task.**
+  `measure/folder.mjs` reads the combined diff, and a merge whose first parent lacks the folder
+  shows no removal. **Address:** rules layer — `assets/task-flow/measure/folder.mjs` reads the
+  removal against each parent.
+- **A shallow clone hides the history that marks a copy as old.** With `--depth 2` the fallback
+  picks the base's copy. **Address:** rules layer — `assets/task-flow/source/git.mjs` names a
+  shallow repository and refuses the fallback.
 - **The history double keeps the reading the source dropped.** `tests/flow-doubles.mjs` answers
   `lastVersion` with the newest snapshot that holds the path and has no `removedAt`; a line of
   snapshots cannot hold a merge, so the merge cases live on real repositories. **Address:** rules
