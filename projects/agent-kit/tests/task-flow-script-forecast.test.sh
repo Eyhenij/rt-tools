@@ -70,7 +70,7 @@ out('forecast: SC-AK-1765 — вторая остановка на той же �
 const finished = await run([owner(B, 'делай RT-7'), EDIT(), bg('w1'), bgStarted('w1'), bgOver('w1'), say(B), stop(B)]);
 out('forecast: SC-AK-1765 — задача кончилась — остановка держится', `${finished.stops} ${finished.held}`, '1 1');
 out('forecast: SC-AK-1797 — названная непрочитанная задача — не меню, остановки считаются дальше', await run([owner(B, 'делай RT-7'), EDIT(), bg('w1'), bgStarted('w1'), bgOver('w1'), say(B), stop(B), feedback(B), say(B), stop(B), feedback(B), say(B), stop(B), feedback(B)]).then((r) => `${r.stops} ${r.held}`), '3 3');
-const stale = await run([owner(B, 'делай RT-7'), EDIT(), bg('w1'), bgStarted('w1', '2026-11-02T09:00:00Z'), say(B), stop(B)]);
+const stale = await run([owner(B, 'делай RT-7'), EDIT(), bg('w1'), bgStarted('w1', '2026-11-02T08:00:00Z'), say(B), stop(B)]);
 out('forecast: SC-AK-1765 — задача старше границы по времени остановки — держится', `${stale.stops} ${stale.held}`, '1 1');
 const series = await run([owner(B, 'делай RT-7'), EDIT(), say(B), stop(B), EDIT(), say(B), stop(B), EDIT(), say(B), stop(B), owner(B, 'дальше'), EDIT(), say(B), stop(B), bg('w2'), bgStarted('w2'), say(B), stop(B), EDIT(), say(B), stop(B)]);
 out('forecast: SC-AK-1765 — серию рвут слово владельца и отпущенная остановка', `${series.held} ${series.longest}`, '4 3');

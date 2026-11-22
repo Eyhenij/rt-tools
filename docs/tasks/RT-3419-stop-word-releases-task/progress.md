@@ -2,7 +2,7 @@
 
 ## Где мы
 
-- **State:** `замысел-записан`
+- **State:** `этап-идёт`
 - **Stage:** 1 из 4 — ожидание до границы зависшей задачи
 - **Done:** владелец 22.11 переопределил задачу и одобрил план: «Одобряю план RT-3419»; `plan-red` — 10 из 10 красные, отметка одобрения записана
 - **Next step:** шаг 1.1
@@ -13,10 +13,10 @@
 
 - `[x]` done · `[>]` going on right now · `[ ]` not begun
 
-- [>] 1.1 The bound of the wait is 90 minutes, and the hold names a hung task
-- [ ] 1.2 A CI watch is a wait, a server is none
-- [ ] 1.3 A read notice with no step holds the stop and names the step
-- [ ] 2.1 The hook on a branch in `этап-идёт` holds the turn after «стоп» and releases it after Esc
+- [x] 1.1 The bound of the wait is 90 minutes, and the hold names a hung task
+- [x] 1.2 A CI watch is a wait, a server is none
+- [x] 1.3 A read notice with no step holds the stop and names the step
+- [>] 2.1 The hook on a branch in `этап-идёт` holds the turn after «стоп» and releases it after Esc
 - [ ] 2.2 The engine and its tests hold no stop word
 - [ ] 3.1 The hold names the new menu and the free field
 - [ ] 3.2 The model checks name the new menu and no stop word

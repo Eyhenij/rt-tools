@@ -45,6 +45,7 @@
       idle: { session: source.session },
       unread: { session: source.session },
       waiting: { session: source.session },
+      hung: { session: source.session },
     },
     host: { silent: { host: source.host } },
     // Read by the verdict before the release cases: a CI run nobody watches or a red run nobody read

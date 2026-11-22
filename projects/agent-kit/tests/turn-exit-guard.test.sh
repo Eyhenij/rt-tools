@@ -159,9 +159,9 @@ out('end: SC-AK-1761 — одна из двух задач ещё идёт — �
 out('end: SC-AK-1761 — без фоновых задач — не ждёт', waits([called('Edit'), refused]), 'false');
 out('end: SC-AK-1761 — ожидающий ход отпущен своим случаем', released(WAITING), 'a background task of the session runs');
 out('end: SC-AK-1761 — слово остановки спрашивается раньше', released({ ...WAITING, 'measure.owner.saidStop': true }), 'a stop word of the owner');
-out('end: SC-AK-1762 — задача старше границы — не ждёт', waits([BG, started('a', 21)]), 'false');
-out('end: SC-AK-1762 — задача моложе границы — ждёт', waits([BG, started('a', 19)]), 'true');
-out('end: SC-AK-1762 — граница — двадцать минут', String(session.BACKGROUND_BOUND), '20');
+out('end: SC-AK-1762 — задача старше границы — не ждёт', waits([BG, started('a', 91)]), 'false');
+out('end: SC-AK-1762 — задача моложе границы — ждёт', waits([BG, started('a', 58)]), 'true');
+out('end: SC-AK-1762 — граница — девяносто минут', String(session.BACKGROUND_BOUND), '90');
 out('end: SC-AK-1762 — задача без времени начала — не ждёт', waits([BG, { kind: 'background', id: 'a', task: 't', at: NaN }]), 'false');
 out('end: SC-AK-1762 — второй конец хода на той же задаче без вызова — не ждёт', waits([BG, started('a', 5), ended]), 'false');
 out('end: SC-AK-1762 — вызов после конца хода — снова ждёт', waits([BG, started('a', 5), ended, called('Read')]), 'true');
@@ -203,7 +203,7 @@ out('menu: SC-AK-1797 — не своя или снятая: конец зада
 const forbiddenOverUnread = menuCause((name) => (name === 'measure.session.unread' ? unreadAt([BG, withOut('a', 4), over('a')]) : forbiddenBy(name)));
 out('menu: SC-AK-1797 — запрет другой проверки над непрочитанной задачей меню не зовёт', String(Boolean(forbiddenOverUnread?.unread) && !forbiddenOverUnread.by), 'true');
 out('menu: SC-AK-1797 — запрет другой проверки после прочтения снова зовёт меню', String(session.forbidden(timed([BG, started('a', 4), over('a'), called('Read'), blockedBy('git-guard-delivery', 'r'), blockedBy('git-guard-delivery', 'r')]))(data)), 'git-guard-delivery');
-out('menu: SC-AK-1797 — старше предела: идущая задача не названа, простой как прежде', `${unreadOf([BG, withOut('a', 30), refused])} ${idlesAt([BG, started('a', 30), refused])}`, 'false true');
+out('menu: SC-AK-1797 — старше предела: идущая задача не названа, простой как прежде', `${unreadOf([BG, withOut('a', 95), refused])} ${idlesAt([BG, started('a', 95), refused])}`, 'false true');
 out('menu: SC-AK-1797 — простой без кончившейся задачи по-прежнему зовёт меню', `${idlesAt([called('Edit'), refused])} ${unreadOf([called('Edit'), refused])}`, 'true false');
 out('end: SC-AK-1764 — в состоянии «работа-отдана» ожидание не отпускает', released({ ...WAITING, 'measure.pr.handed': true }), 'held');
 out('end: SC-AK-1764 — молчащий хостинг на вопросе о PR ожидание не держит', releaseCase(model, (name) => { if (name === 'measure.pr.handed') throw Object.assign(new Error('silent'), { name: 'HostSilent' }); return WAITING[name] ?? false; }, held)?.log ?? 'held', 'a background task of the session runs');
@@ -271,7 +271,7 @@ out('end: SC-AK-1802 — слежение за номером PR тоже сле
 out('end: SC-AK-1802 — фоновая задача с номером PR в имени журнала — не слежение', kindOf(holdOf({ host: onHead(goingRun), events: [bgStart('w3', 'pnpm run check:all > /tmp/pr-3472.log 2>&1', T0)], now: T0 + 120_000 })), `running ${RUN}`);
 out('end: SC-AK-1802 — фоновый вызов клиента без watch — не слежение', kindOf(holdOf({ host: onHead(goingRun), events: [bgStart('w4', 'gh pr comment 3472 --body ok', T0)], now: T0 + 120_000 })), `running ${RUN}`);
 out('end: SC-AK-1802 — слежение по имени ветки PR — слежение', kindOf(holdOf({ host: onHead(goingRun), events: [bgStart('w5', `id=$(gh run list --branch ${PR.head} --limit 1 --json databaseId --jq '.[0].databaseId'); gh run watch "$id" --exit-status`, T0)], now: T0 + 120_000 })), 'none');
-out('end: SC-AK-1802 — слежение за CI не отпускает остановку как ожидание', String(session.waiting({ session: { events: () => watching, now: () => T0 + 120_000 } })()), 'false');
+out('end: SC-AK-1840 — слежение за CI отпускает остановку как ожидание', String(session.waiting({ session: { events: () => watching, now: () => T0 + 120_000 } })()), 'true');
 out('end: SC-AK-1802 — снятое удержание не отпускает ход в «работа-отдана»', String(decide(model, ciReader({ ...WROTE, 'measure.session.waiting': true, 'measure.pr.handed': true }), stageState)), 'null');
 
 // SC-AK-1803 — красный непрочитанный запуск держит ход с номером
@@ -381,7 +381,7 @@ report "end: SC-AK-1761 — отпуск на ожидании пишется в
 expect_stop "end: SC-AK-1761 — задача кончилась — ход держится через хук" \
     "$(input_stop "$(transcript "$(say 'делай')" "$(edited)" "$(bg_run)" "$(bg_started 2)" "$(bg_over)")")" BLOCK
 expect_stop "end: SC-AK-1762 — задача старше границы — ход держится через хук" \
-    "$(input_stop "$(transcript "$(say 'делай')" "$(edited)" "$(bg_run)" "$(bg_started 25)")")" BLOCK
+    "$(input_stop "$(transcript "$(say 'делай')" "$(edited)" "$(bg_run)" "$(bg_started 95)")")" BLOCK
 
 # Стенограмма вида 21.11: набор в фоне, правка, отказ остановки другой проверки, конец набора.
 bg_refused() { jq -c -n '{type:"user",message:{content:"Stop hook feedback:\nBLOCKED by git-guard-draft-ready: снять черновик"}}'; }
@@ -452,5 +452,6 @@ expect_stop "end: SC-AK-1434 — сессия роли отпускает ход
     "$(input_role reader "$(transcript "$(say 'разбери')" "$(edited)")")" PASS
 
 . "$TESTS/turn-exit-guard-foreign.test.sh"
+. "$TESTS/turn-exit-guard-wait.test.sh"
 
 suite_result "проверка выхода из хода"

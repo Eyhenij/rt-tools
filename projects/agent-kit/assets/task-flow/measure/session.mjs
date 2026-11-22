@@ -109,17 +109,24 @@ export function unread({ session }) {
     return () => unreadOf(session.events()) ?? false;
 }
 
-/** The command of a background watch of a CI run: the hosting client with `run watch` or `--watch`. */
-const CI_WATCH = /\bgh\b[\s\S]*(?:\brun\s+watch\b|--watch\b)/;
+/**
+ * The command of a server started in the background: a stand, a showcase, a dev server. It never
+ * ends by itself and sends no notice, so it is no wait.
+ */
+const SERVER = /(?:\bserve:[\w-]+|(?<![\w-])storybook(?::[\w-]+)?\b|\b(?:nx|ng)\s+serve\b)/;
 
-/** A background task older than this releases nothing and counts as no task, in minutes. */
-export const BACKGROUND_BOUND = 20;
+/**
+ * A background task older than this releases nothing: it is hung, in minutes. The longest command of
+ * the records of 14–22.11 ran 58 minutes; 3 of 810 tasks, all agents, ran longer than 90.
+ */
+export const BACKGROUND_BOUND = 90;
 
 const timeOf = (session) => (typeof session.now === 'function' ? session.now() : Date.now());
 
 /**
  * The background tasks of the session that have a start, no end, and are younger than the bound at
- * `now`, and how many of the open tasks have released their stop: { tasks, spent }.
+ * `now`, the ones older than it, and how many of the open tasks have released their stop:
+ * { tasks, hung, spent }. A watch of a CI run counts like any other task.
  */
 function running(events, now) {
     const open = new Map();
@@ -134,8 +141,8 @@ function running(events, now) {
         return true;
     };
     for (const event of events) {
-        // A watch of a CI run is no wait: the CI hold asks for it, and the work goes on while it runs.
-        if (event.kind === 'background' && CI_WATCH.test(event.command ?? '')) continue;
+        // A server never ends by itself: no wait, and no hung task either.
+        if (event.kind === 'background' && SERVER.test(event.command ?? '')) continue;
         if (event.kind === 'background') {
             if (!over.has(event.id)) open.set(event.id, event);
         } else if (event.kind === 'backgroundEnd') {
@@ -149,8 +156,22 @@ function running(events, now) {
     }
     // A start stamped ahead of the clock by more than a minute is no start to wait for.
     const age = (task) => now - task.at;
-    const tasks = [...open.values()].filter((task) => Number.isFinite(task.at) && age(task) < BACKGROUND_BOUND * 60_000 && age(task) > -60_000);
-    return { tasks, spent };
+    const timed = [...open.values()].filter((task) => Number.isFinite(task.at) && age(task) > -60_000);
+    const tasks = timed.filter((task) => age(task) < BACKGROUND_BOUND * 60_000);
+    const hung = timed.filter((task) => age(task) >= BACKGROUND_BOUND * 60_000).map((task) => ({ task: task.task ?? task.id, minutes: Math.floor(age(task) / 60_000), output: task.output ?? null }));
+    return { tasks, hung, spent };
+}
+
+/**
+ * The measurer «measure.session.hung»: the oldest background task of the session that runs past the
+ * bound with no notice, { task, minutes, output }, or false. The hold names it, and the move is to
+ * read its output and stop or restart it, not to wait.
+ */
+export function hung({ session }) {
+    return () => {
+        const { hung: over } = running(session.events(), timeOf(session));
+        return over.sort((a, b) => b.minutes - a.minutes)[0] ?? false;
+    };
 }
 
 /**

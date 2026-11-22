@@ -47,6 +47,7 @@ const FROM_RECORD = new Set([
     'measure.session.idle',
     'measure.session.unread',
     'measure.session.waiting',
+    'measure.session.hung',
 ]);
 
 /** The calls the guard of the course of work judges. */

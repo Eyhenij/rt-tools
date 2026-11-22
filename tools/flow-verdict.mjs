@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · checks/flow-verdict.mjs · b24181c7f92f · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/flow-verdict.mjs · f47ce6ffad2b · правится надстройкой, не здесь
 /**
  * The verdict at the end of a turn — the engine command `verdict`, called by the hook on Stop.
  *
@@ -23,7 +23,7 @@ import { stepsOfPlan, stepsOfProgress } from './work-steps-lib.mjs';
 const SILENCE = 'measure.host.silent';
 
 /** The measurers that name why the next move is the owner's menu. */
-const MENU_CAUSES = { unread: 'measure.session.unread', forbidden: 'measure.session.forbidden', idle: 'measure.session.idle' };
+const MENU_CAUSES = { unread: 'measure.session.unread', hung: 'measure.session.hung', forbidden: 'measure.session.forbidden', idle: 'measure.session.idle' };
 
 /** The measurer of the CI hold, read before the release cases and before the cause of the menu. */
 const CI_HOLD = 'measure.ci.hold';
@@ -112,6 +112,9 @@ export function menuCause(read) {
     };
     const unread = answer(MENU_CAUSES.unread);
     if (unread) return { unread };
+    // A task past the bound of the wait is hung: the move is to deal with it, not the owner's menu.
+    const hung = answer(MENU_CAUSES.hung);
+    if (hung && typeof hung === 'object') return { hung };
     const by = answer(MENU_CAUSES.forbidden);
     if (by) return { by: String(by) };
     const idle = answer(MENU_CAUSES.idle);
@@ -195,6 +198,11 @@ export function holdReason(model, result, step, menu = null) {
             lines.push(`The background task \`${task}\` ended after the last call, and its notice has not been read${where}.`);
             lines.push('The first move is to read that output and act on it: a red result is fixed now. No owner\'s menu is offered while the task is unread.');
         }
+    } else if (menu?.cause?.hung) {
+        const { task, minutes, output } = menu.cause.hung;
+        const where = output ? ` — its output is \`${output}\`` : '';
+        lines.push(`The background task \`${task}\` runs ${minutes} minutes with no notice, past the bound of the wait: it is hung${where}.`);
+        lines.push('The first move is to read its output, then stop it or start it again, and go on with the step. No owner\'s menu is offered while it hangs.');
     } else if (menu?.cause?.foreign) {
         const hooks = menu.cause.foreign.map((hook) => `\`${hook}\``).join(', ');
         lines.push(`The previous refusal came from ${hooks}, not from this check, and no owner's menu is offered for it. Do what it named; when it is not yours, say so in one line and make the move below in the same turn: a stop with no call after this refusal gives the menu.`);
