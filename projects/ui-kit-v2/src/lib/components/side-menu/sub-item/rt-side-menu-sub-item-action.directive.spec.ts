@@ -33,7 +33,7 @@ function menuHost(): IRtSideMenuHost {
         menuId: signal('menu'),
         menuItems: signal<ReadonlyArray<IRtSideMenu.Item>>([]),
         shownSubMenu: signal<IRtSideMenu.Item[]>([]),
-        favoritesCount: signal<IRtSideMenu.FavoritesCount>(5),
+        favoritesCount: signal<IRtSideMenu.FavoritesCount>('collapsed'),
         isFavoritesSearchShown: signal(true),
         ownIconTpl: signal(undefined),
         subMenuTooltipsShown: signal(false),
