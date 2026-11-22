@@ -4,6 +4,7 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
+    contentChildren,
     ErrorHandler,
     inject,
     input,
@@ -12,6 +13,7 @@ import {
     output,
     OutputEmitterRef,
     Signal,
+    TemplateRef,
     ViewEncapsulation,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -21,7 +23,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { RtExpansionPanelComponent, RtExpansionPanelContentDirective } from '@rt-tools/ui-kit-v2/expansion-panel';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
-import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { rtKitLabel, rtSlotTemplates } from '@rt-tools/ui-kit-v2/core';
 import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { sideMenuFavoritesSection } from '../rt-side-menu-favorites.logic';
@@ -32,6 +34,7 @@ import { RtSideMenuTitlePartsPipe } from '../rt-side-menu-title-parts.pipe';
 import { sideMenuPressOpensInBrowser } from '../rt-side-menu.logic';
 import { IRtSideMenu } from '../rt-side-menu.model';
 import { IRtSideMenuHost, RT_SIDE_MENU } from '../rt-side-menu.tokens';
+import { RtSideMenuSubItemActionDirective } from './rt-side-menu-sub-item-action.directive';
 
 const BEM_BLOCK: string = 'rt-side-menu-sub-item';
 /** Строка блока избранного и кнопка избранного в ней: фокус уходит на соседнюю до удаления строки. */
@@ -43,7 +46,7 @@ const FAVORITE_BUTTON: string = '.rt-side-menu-sub-item__favorite button';
  * строка берёт у меню — своего состояния у неё нет.
  *
  * В разделе, где приложение включило избранное, у пункта со ссылкой стоит звезда; в строке блока
- * избранного — кнопка «убрать» и слот `[rtSideMenuSubItemAction]`, куда блок кладёт ручку.
+ * избранного — кнопка «убрать» и шаблон `rtSideMenuSubItemAction`, куда блок кладёт ручку.
  */
 @Component({
     selector: 'rt-side-menu-sub-item',
@@ -75,6 +78,11 @@ export class RtSideMenuSubItemComponent {
 
     protected readonly menuRef: IRtSideMenuHost = inject(RT_SIDE_MENU);
     protected readonly narrow: Signal<boolean> = inject(BreakpointsService).narrow;
+    /** Действия строки, переданные владельцем шаблонами: только у строки-ссылки глубины ноль. */
+    protected readonly actionSlots: Signal<readonly RtSideMenuSubItemActionDirective[]> = contentChildren(RtSideMenuSubItemActionDirective);
+    protected readonly actions: Signal<TemplateRef<unknown>[]> = computed((): TemplateRef<unknown>[] =>
+        rtSlotTemplates(this.actionSlots())
+    );
     /** Значки кнопок избранного: из настроек провайдера, иначе из набора кита. */
     protected readonly favoritesIcons: RtSideMenuSettingsService['favoritesIcons'] | null = this.#settings?.favoritesIcons ?? null;
     protected readonly addLabel: Signal<string> = rtKitLabel('sideMenuFavoriteAdd');

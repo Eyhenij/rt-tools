@@ -8,8 +8,10 @@
         title="№12 Анна Смирнова"
         subtitle="WhatsApp · +66 81 234 5678"
         [messages]="messages()">
-        @if (editing) {
-            <app-chat-edit-bar rtChatComposerBar />
-        }
+        <ng-template rtChatComposerBar>
+            @if (editing) {
+                <app-chat-edit-bar />
+            }
+        </ng-template>
     </rt-chat>
 </div>

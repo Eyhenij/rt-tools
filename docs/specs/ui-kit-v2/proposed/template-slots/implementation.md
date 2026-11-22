@@ -43,19 +43,19 @@ The former default slots that warn are only the named ones and the menu: other d
 the component nothing to find the former content by, and nothing is checked for them.
 
 - **Scenario** — Test
-- **`SC-UKV-1711`** — no test
-- **`SC-UKV-1712`** — no test
-- **`SC-UKV-1713`** — no test
-- **`SC-UKV-1714`** — no test
-- **`SC-UKV-1715`** — no test
-- **`SC-UKV-1716`** — no test
-- **`SC-UKV-1717`** — no test
-- **`SC-UKV-1718`** — no test
-- **`SC-UKV-1719`** — no test
-- **`SC-UKV-1720`** — no test
-- **`SC-UKV-1721`** — no test
-- **`SC-UKV-1722`** — no test
-- **`SC-UKV-1723`** — no test
+- **`SC-UKV-1711`** — `projects/ui-kit-v2/src/lib/components/field/rt-field.component.spec.ts`
+- **`SC-UKV-1712`** — `projects/ui-kit-v2/src/lib/components/expansion-panel/rt-expansion-panel-additions.spec.ts`
+- **`SC-UKV-1713`** — `projects/ui-kit-v2/src/lib/components/expansion-panel/rt-expansion-panel-additions.spec.ts`
+- **`SC-UKV-1714`** — `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header.slots.spec.ts`
+- **`SC-UKV-1715`** — `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header.slots.spec.ts`
+- **`SC-UKV-1716`** — `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header.slots.spec.ts`
+- **`SC-UKV-1717`** — `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header.slots.spec.ts`
+- **`SC-UKV-1718`** — `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.slots.spec.ts`
+- **`SC-UKV-1719`** — `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.slots.spec.ts`
+- **`SC-UKV-1720`** — `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.slots.spec.ts`
+- **`SC-UKV-1721`** — `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.slots.spec.ts`
+- **`SC-UKV-1722`** — `projects/ui-kit-v2/src/lib/components/side-menu/sub-item/rt-side-menu-sub-item-action.spec.ts`
+- **`SC-UKV-1723`** — `projects/ui-kit-v2/src/lib/components/side-menu/sub-item/rt-side-menu-sub-item-action.spec.ts`
 - **`SC-UKV-1724`** — no test
 - **`SC-UKV-1725`** — no test
 - **`SC-UKV-1726`** — no test
@@ -66,16 +66,16 @@ the component nothing to find the former content by, and nothing is checked for 
 - **`SC-UKV-1731`** — no test
 - **`SC-UKV-1732`** — no test
 - **`SC-UKV-1733`** — no test
-- **`SC-UKV-1734`** — no test
-- **`SC-UKV-1735`** — no test
-- **`SC-UKV-1736`** — no test
-- **`SC-UKV-1737`** — no test
-- **`SC-UKV-1738`** — no test
+- **`SC-UKV-1734`** — `projects/ui-kit-v2/src/lib/components/side-menu/sub-item/rt-side-menu-sub-item-action.spec.ts`
+- **`SC-UKV-1735`** — `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.slots.spec.ts`
+- **`SC-UKV-1736`** — `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header.slots.spec.ts`
+- **`SC-UKV-1737`** — `projects/ui-kit-v2/src/lib/components/expansion-panel/rt-expansion-panel-additions.spec.ts`
+- **`SC-UKV-1738`** — `projects/ui-kit-v2/src/lib/components/expansion-panel/rt-expansion-panel-additions.spec.ts`
 - **`SC-UKV-1739`** — no test
 - **`SC-UKV-1740`** — no test
 - **`SC-UKV-1741`** — no test
 - **`SC-UKV-1742`** — no test
 - **`SC-UKV-1743`** — no test
 - **`SC-UKV-1744`** — no test
-- **`SC-UKV-1745`** — no test
+- **`SC-UKV-1745`** — `projects/ui-kit-v2/src/lib/components/field/rt-field.component.spec.ts`
 - **`SC-UKV-1746`** — no test

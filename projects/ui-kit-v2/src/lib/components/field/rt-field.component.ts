@@ -1,8 +1,10 @@
 import { BooleanInput } from '@angular/cdk/coercion';
+import { NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     computed,
     contentChild,
+    contentChildren,
     effect,
     inject,
     input,
@@ -14,13 +16,14 @@ import {
     InputSignal,
     InputSignalWithTransform,
     Signal,
+    TemplateRef,
     ViewEncapsulation,
 } from '@angular/core';
 import { ValidationErrors } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelKey, TRtKitLabelMap, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RT_KIT_LABELS, TRtKitLabelKey, TRtKitLabelMap, rtKitLabel, rtSlotTemplates } from '@rt-tools/ui-kit-v2/core';
 import { rtNotchWidth, RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
@@ -61,6 +64,7 @@ function nextAutoId(): string {
     encapsulation: ViewEncapsulation.None,
     imports: [
         // standalone components / directives
+        NgTemplateOutlet,
         RtIconComponent,
         RtPopoverDirective,
         RtSkeletonWrapperComponent,
@@ -84,9 +88,11 @@ export class RtFieldComponent implements AfterContentInit {
 
     protected readonly projectedControl: Signal<RtFormControlBase<unknown> | undefined> = contentChild(RtFormControlBase);
 
-    // Проецируемый hint (с разметкой) — если присутствует, рендерится вместо
-    // строкового [hint].
-    protected readonly projectedHint: Signal<RtFieldHintDirective | undefined> = contentChild(RtFieldHintDirective);
+    // Шаблоны подсказки (с разметкой) — если есть, рисуются вместо строкового [hint], все по порядку.
+    protected readonly hintSlots: Signal<readonly RtFieldHintDirective[]> = contentChildren(RtFieldHintDirective);
+    protected readonly hintTemplates: Signal<TemplateRef<unknown>[]> = computed((): TemplateRef<unknown>[] =>
+        rtSlotTemplates(this.hintSlots())
+    );
 
     readonly #autoId: string = nextAutoId();
 

@@ -47,20 +47,21 @@
                                 [inFavorites]="true"
                                 (clickSubMenuAction)="clickSubMenuAction.emit($event)"
                                 (clickSubMenuAdditionalAction)="clickSubMenuAdditionalAction.emit($event)">
-                                <rt-icon-button
-                                    #handle
-                                    rtSideMenuSubItemAction
-                                    cdkDragHandle
-                                    rtElem="handle"
-                                    qa-dataid="side-menu-favorite-handle"
-                                    size="sm"
-                                    aria-keyshortcuts="ArrowUp ArrowDown"
-                                    [icon]="dragIcon"
-                                    [ariaLabel]="dragLabel()"
-                                    [tooltip]="narrow() ? '' : dragLabel()"
-                                    (clicked)="onHandleClick($event)"
-                                    (keydown.arrowup)="onHandleKey($event, $index, -1)"
-                                    (keydown.arrowdown)="onHandleKey($event, $index, 1)" />
+                                <ng-template rtSideMenuSubItemAction>
+                                    <rt-icon-button
+                                        #handle
+                                        cdkDragHandle
+                                        rtElem="handle"
+                                        qa-dataid="side-menu-favorite-handle"
+                                        size="sm"
+                                        aria-keyshortcuts="ArrowUp ArrowDown"
+                                        [icon]="dragIcon"
+                                        [ariaLabel]="dragLabel()"
+                                        [tooltip]="narrow() ? '' : dragLabel()"
+                                        (clicked)="onHandleClick($event)"
+                                        (keydown.arrowup)="onHandleKey($event, $index, -1)"
+                                        (keydown.arrowdown)="onHandleKey($event, $index, 1)" />
+                                </ng-template>
                             </rt-side-menu-sub-item>
                         </div>
                     }

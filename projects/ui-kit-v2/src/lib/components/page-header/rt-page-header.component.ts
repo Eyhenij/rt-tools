@@ -4,6 +4,7 @@ import {
     afterRenderEffect,
     booleanAttribute,
     computed,
+    contentChildren,
     effect,
     inject,
     input,
@@ -30,7 +31,15 @@ import { filter, map } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective, WINDOW } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RT_KIT_TRANSLATOR, RtKitLabelPipe, TRtKitLabelMap, TRtKitTranslator, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import {
+    RT_KIT_LABELS,
+    RT_KIT_TRANSLATOR,
+    RtKitLabelPipe,
+    TRtKitLabelMap,
+    TRtKitTranslator,
+    rtKitLabel,
+    RtSlotOutletDirective,
+} from '@rt-tools/ui-kit-v2/core';
 import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
 
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
@@ -39,6 +48,15 @@ import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtPageHeaderMoreComponent } from './more/rt-page-header-more.component';
 import { RtPageRailComponent } from './rail/rt-page-rail.component';
 import { RtPageHeaderUserComponent } from './user/rt-page-header-user.component';
+import {
+    RT_PAGE_HEADER_SLOT_HOST,
+    RtCompactCenterDirective,
+    RtCompactLeftDirective,
+    RtCompactRightDirective,
+    RtPageHeaderBellDirective,
+    RtRailLogoDirective,
+    RtRailPageDirective,
+} from './rt-page-header-slots.directive';
 import {
     activeSectionIds,
     compactSectionsOf,
@@ -95,6 +113,7 @@ const PAGE_HEADER_MOBILE_BACKDROP: string = 'rt-page-header-mobile-backdrop';
         RtIconComponent,
         RtPopoverDirective,
         RtTooltipDirective,
+        RtSlotOutletDirective,
         RtPageHeaderMoreComponent,
         RtPageRailComponent,
         RtPageHeaderUserComponent,
@@ -108,6 +127,8 @@ const PAGE_HEADER_MOBILE_BACKDROP: string = 'rt-page-header-mobile-backdrop';
         '[class.rt-page-header--is-compact]': 'compact()',
         '[class.rt-page-header--vertical]': 'isVertical()',
     },
+    // Слоты шапки узнают её над собой: прежняя форма колокольчика предупреждает только здесь.
+    providers: [{ provide: RT_PAGE_HEADER_SLOT_HOST, useValue: true }],
 })
 export class RtPageHeaderComponent {
     readonly #router: Router = inject(Router);
@@ -136,6 +157,14 @@ export class RtPageHeaderComponent {
         equal: (a: ReadonlySet<string>, b: ReadonlySet<string>): boolean =>
             a.size === b.size && [...a].every((id: string): boolean => b.has(id)),
     });
+
+    /** Шаблоны слотов: рисуются только в своём виде шапки, все по порядку записи. */
+    protected readonly railLogoSlots: Signal<readonly RtRailLogoDirective[]> = contentChildren(RtRailLogoDirective);
+    protected readonly railPageSlots: Signal<readonly RtRailPageDirective[]> = contentChildren(RtRailPageDirective);
+    protected readonly compactLeftSlots: Signal<readonly RtCompactLeftDirective[]> = contentChildren(RtCompactLeftDirective);
+    protected readonly compactCenterSlots: Signal<readonly RtCompactCenterDirective[]> = contentChildren(RtCompactCenterDirective);
+    protected readonly compactRightSlots: Signal<readonly RtCompactRightDirective[]> = contentChildren(RtCompactRightDirective);
+    protected readonly bellSlots: Signal<readonly RtPageHeaderBellDirective[]> = contentChildren(RtPageHeaderBellDirective);
 
     protected readonly navRef: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('nav');
 

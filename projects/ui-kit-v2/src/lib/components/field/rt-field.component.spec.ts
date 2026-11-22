@@ -46,17 +46,65 @@ class FieldHostComponent {
     template: `
         <rt-field label="Имя" hint="Строковая подсказка">
             <rt-input [formControl]="control" />
-            <span rtFieldHint>
+            <ng-template rtFieldHint>
                 Не короче
                 <strong>трёх</strong>
                 символов
-            </span>
+            </ng-template>
         </rt-field>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RtFieldComponent, RtInputComponent, RtFieldHintDirective, ReactiveFormsModule],
 })
 class ProjectedHintHostComponent {
+    public readonly control: FormControl<string | null> = new FormControl<string | null>('');
+}
+
+/** Компонент внутри шаблона подсказки: считает, сколько раз его построили. */
+@Component({
+    selector: 'rt-field-hint-probe',
+    template: `
+        <em>Подсказка</em>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+})
+class HintProbeComponent {
+    public static built: number = 0;
+
+    constructor() {
+        HintProbeComponent.built += 1;
+    }
+}
+
+/** Шаблон подсказки с компонентом при поле, которое уже показывает ошибку. */
+@Component({
+    selector: 'rt-field-hint-under-error-host',
+    template: `
+        <rt-field label="Имя">
+            <rt-input [formControl]="control" />
+            <ng-template rtFieldHint><rt-field-hint-probe /></ng-template>
+        </rt-field>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtFieldComponent, RtInputComponent, RtFieldHintDirective, HintProbeComponent, ReactiveFormsModule],
+})
+class HintUnderErrorHostComponent {
+    public readonly control: FormControl<string | null> = new FormControl<string | null>('', [Validators.required]);
+}
+
+/** Прежняя форма: подсказка элементом с атрибутом слота. */
+@Component({
+    selector: 'rt-field-former-hint-host',
+    template: `
+        <rt-field label="Имя">
+            <rt-input [formControl]="control" />
+            <span rtFieldHint>Прежняя подсказка</span>
+        </rt-field>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtFieldComponent, RtInputComponent, RtFieldHintDirective, ReactiveFormsModule],
+})
+class FormerHintHostComponent {
     public readonly control: FormControl<string | null> = new FormControl<string | null>('');
 }
 
@@ -299,11 +347,42 @@ describe('RtFieldComponent', (): void => {
             expect(qa(fixture, 'field-hint')?.attributes['aria-hidden']).toBe('true');
         });
 
-        it('проецируемая подсказка с разметкой важнее строковой', (): void => {
+        it('шаблон подсказки с разметкой важнее строковой', (): void => {
             const fixture: ComponentFixture<ProjectedHintHostComponent> = createRtFixture(ProjectedHintHostComponent);
 
             expect(textOf(qa(fixture, 'field-hint'))).toContain('Не короче');
             expect(el(fixture, '[qa-dataid="field-hint"] strong')).not.toBeNull();
+        });
+
+        it('SC-UKV-1711: шаблон подсказки не создаётся под ошибкой', (): void => {
+            HintProbeComponent.built = 0;
+            const fixture: ComponentFixture<HintUnderErrorHostComponent> = createRtFixture(HintUnderErrorHostComponent);
+            expect(HintProbeComponent.built).toBe(1);
+
+            fixture.componentInstance.control.markAsTouched();
+            fixture.componentInstance.control.updateValueAndValidity();
+            fixture.detectChanges();
+
+            expect(qa(fixture, 'field-hint')).toBeNull();
+            expect(qa(fixture, 'field-error')).not.toBeNull();
+            expect(el(fixture, 'rt-field-hint-probe')).toBeNull();
+
+            HintProbeComponent.built = 0;
+            fixture.detectChanges();
+            expect(HintProbeComponent.built).toBe(0);
+        });
+
+        it('SC-UKV-1745: прежняя форма подсказки не рисуется и предупреждает в режиме разработки', (): void => {
+            const warn: jest.SpyInstance = jest.spyOn(console, 'warn').mockImplementation((): void => undefined);
+
+            const fixture: ComponentFixture<FormerHintHostComponent> = createRtFixture(FormerHintHostComponent);
+
+            expect(qa(fixture, 'field-hint')).toBeNull();
+            expect((fixture.nativeElement as HTMLElement).textContent).not.toContain('Прежняя подсказка');
+            const message: string = warn.mock.calls.map((call: unknown[]): string => String(call[0])).join('\n');
+            expect(message).toContain('rt-field');
+            expect(message).toContain('<ng-template rtFieldHint>');
+            warn.mockRestore();
         });
     });
 

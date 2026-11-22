@@ -59,7 +59,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 **Сжатая полоса — отдельная история.** С `stickyCompact` шапка липнет к верху и, прилипнув,
 сжимается в полосу: кнопка «ещё», круги первых разделов с иконкой и три слота потребителя —
-`[rtCompactLeft]`, `[rtCompactCenter]`, `[rtCompactRight]`. Прилипание наступает только на
+шаблоны `rtCompactLeft`, `rtCompactCenter`, `rtCompactRight`. Прилипание наступает только на
 прокрутке, поэтому история ставит шапку в прокручиваемую обёртку и прокручивает её шагом `play`.
 Содержимое слотов — крошки, переключатель, действия — рисует потребитель.
 
@@ -125,7 +125,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 `avatar` — заранее посчитанный инициал (одна буква); без него берётся первая буква имени.
 
-При `layout="vertical"` слот `[rtRailLogo]` принимает логотип, слот `[rtRailPage]` — содержимое строки
+При `layout="vertical"` шаблон `rtRailLogo` принимает логотип, шаблон `rtRailPage` — содержимое строки
 телефона. Компактная шапка страницы — отдельная часть `rt-page-bar`: входы `pageTitle`, `actions`,
 `filtersActive`, выходы `actionClick` и `filtersApply`, шаблоны `rtPageBarSearch` и `rtPageBarFilter`: полям в строке
 задаётся `size="sm"`, кнопки действий шапка держит высотой 32 сама. Кнопки в ряду с вкладками — `rt-page-actions`.

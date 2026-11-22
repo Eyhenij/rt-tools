@@ -29,6 +29,7 @@ import {
 } from '../../../../../../lib/components/workspace/rt-workspace.directives';
 import { RtWorkspaceComponent } from '../../../../../../lib/components/workspace/rt-workspace.component';
 import { RtChatMessageActionsDirective, RtChatMessageButtonsDirective } from '../../rt-chat-message-actions.directive';
+import { RtChatComposerBarDirective, RtChatComposerToolsDirective, RtChatHeaderActionsDirective } from '../../rt-chat-slots.directive';
 import { RtChatComponent } from '../../rt-chat.component';
 import { ERtChatMessageStatus, IRtChat } from '../../rt-chat.model';
 import { TestRtChatEditBarComponent } from './test-chat-edit-bar.component';
@@ -96,6 +97,9 @@ function today(hours: number, minutes: number): string {
 
         // components
         RtChatComponent,
+        RtChatComposerBarDirective,
+        RtChatComposerToolsDirective,
+        RtChatHeaderActionsDirective,
         RtChatMessageActionsDirective,
         RtChatMessageButtonsDirective,
         RtIconButtonComponent,

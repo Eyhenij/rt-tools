@@ -11,8 +11,6 @@ Given a field with a hint template holding a component, without `reserveHintSpac
 When the field shows an error
 Then the component of the hint is not built and the hint zone holds the error alone
 
-Not covered: the template slots are not made yet.
-
 ### SC-UKV-1712 — the actions template of a panel stands in the header row outside the toggle
 
 Given an expansion panel with an actions template
@@ -20,15 +18,11 @@ When the panel is drawn and the action is pressed
 Then the action stands between the title and the chevron outside the header button, and the panel
 does not expand
 
-Not covered: the template slots are not made yet.
-
 ### SC-UKV-1713 — the actions template of a nested panel stays with the nested panel
 
 Given an expansion panel whose body holds a second panel with an actions template
 When both panels are expanded
 Then the actions stand in the header row of the nested panel and the outer header has none
-
-Not covered: the template slots are not made yet.
 
 ### SC-UKV-1714 — the horizontal page header builds no rail templates
 
@@ -36,23 +30,17 @@ Given a page header in the horizontal layout with a rail logo template and a rai
 When the header is drawn
 Then neither template's content is built
 
-Not covered: the template slots are not made yet.
-
 ### SC-UKV-1715 — the vertical page header draws the rail templates in the rail
 
 Given a page header with `layout="vertical"`, a rail logo template and a rail page template
 When the header is drawn
 Then the logo stands at the top of the rail and the page content in the page place of the rail
 
-Not covered: the template slots are not made yet.
-
 ### SC-UKV-1716 — the vertical page header builds no compact and bell templates
 
 Given a page header with `layout="vertical"`, three compact templates and a bell template
 When the header is drawn
 Then none of the four templates' content is built
-
-Not covered: the template slots are not made yet.
 
 ### SC-UKV-1717 — two bell templates stand at the header end in the order written
 
@@ -61,15 +49,11 @@ second, and a user
 When the header is drawn
 Then the assistant button, the bell and the profile button stand at the end in this order
 
-Not covered: the template slots are not made yet.
-
 ### SC-UKV-1718 — a hidden chat header builds no header actions
 
 Given a chat with a header actions template and the header switched off
 When the chat is drawn
 Then the content of the header actions template is not built
-
-Not covered: the template slots are not made yet.
 
 ### SC-UKV-1719 — a chat without a reply builds no composer bar
 
@@ -77,15 +61,11 @@ Given a chat with a composer bar template and a reason that forbids a reply
 When the chat is drawn
 Then the content of the composer bar template is not built and the reason is shown
 
-Not covered: the template slots are not made yet.
-
 ### SC-UKV-1720 — composer tools are built only in the messenger field
 
 Given a chat with a composer tools template and the plain reply field
 When the chat is drawn
 Then the content of the composer tools template is not built
-
-Not covered: the template slots are not made yet.
 
 ### SC-UKV-1721 — a thread read with an error builds no chat footer
 
@@ -93,15 +73,11 @@ Given a chat with a footer template and a thread whose reading failed
 When the chat is drawn
 Then the error is shown and the content of the footer template is not built
 
-Not covered: the template slots are not made yet.
-
 ### SC-UKV-1722 — the favourites handle given by a template still reorders the rows
 
 Given the favourites block of the side menu with two rows
 When the handle of the second row is focused and the up arrow is pressed
 Then the second row becomes the first
-
-Not covered: the template slots are not made yet.
 
 ### SC-UKV-1723 — a folder row and its children draw no action
 
@@ -109,8 +85,6 @@ Given a side menu row for a folder without its own address, with two child pages
 template
 When the row is expanded and drawn
 Then neither the folder row nor the rows of its children hold the action
-
-Not covered: the template slots are not made yet.
 
 ### SC-UKV-1724 — a closed menu builds no items
 
@@ -198,15 +172,11 @@ Given the favourites block with two rows and the focus on the handle of the seco
 When the up arrow is pressed
 Then the focus stands on the handle of the row that became the first
 
-Not covered: the template slots are not made yet.
-
 ### SC-UKV-1735 — the chat footer is drawn while the thread loads
 
 Given a chat with a footer template and an open thread being loaded
 When the chat is drawn
 Then the content of the footer template is drawn under the reply field
-
-Not covered: the template slots are not made yet.
 
 ### SC-UKV-1736 — switching the header to the vertical layout destroys the bell
 
@@ -214,23 +184,17 @@ Given a horizontal page header with a bell template whose content is built
 When `layout` becomes `vertical` on the live page
 Then the content of the bell template is destroyed
 
-Not covered: the template slots are not made yet.
-
 ### SC-UKV-1737 — two actions templates of a panel stand in the order written
 
 Given an expansion panel with two actions templates
 When the panel is drawn
 Then both actions stand in the header row, the first written first
 
-Not covered: the template slots are not made yet.
-
 ### SC-UKV-1738 — a collapsed panel keeps its body node in the page, hidden and inert
 
 Given a collapsed expansion panel with a body node holding a form field
 When the panel is drawn
 Then the body node is in the page, hidden and inert, and the field is a member of the outer form
-
-Not covered: the template slots are not made yet.
 
 ### SC-UKV-1739 — an empty side panel builds no content
 
@@ -285,8 +249,6 @@ Not covered: the template slots are not made yet.
 Given a field whose hint is written as an element with `rtFieldHint`, in development mode
 When the field is drawn
 Then the console holds a warning naming `rt-field`, `rtFieldHint` and the template form
-
-Not covered: the template slots are not made yet.
 
 ### SC-UKV-1746 — a menu item outside the content template warns in development mode
 

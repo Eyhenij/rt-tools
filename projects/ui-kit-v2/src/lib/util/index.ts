@@ -23,3 +23,5 @@ export * from './table-csv';
 export * from './table-data';
 export * from './table.schema';
 export * from './material-preset';
+export * from './slot-template';
+export * from './rt-slot-outlet.directive';

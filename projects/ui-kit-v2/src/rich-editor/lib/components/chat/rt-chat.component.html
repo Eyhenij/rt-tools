@@ -36,7 +36,7 @@
                             [tooltip]="expandLabel()"
                             (clicked)="toggleExpand()" />
                     }
-                    <ng-content select="[rtChatHeaderActions]" />
+                    <ng-container [rtSlotOutlet]="headerActionSlots()" />
                 </ng-template>
             </rt-toolbar>
         }
@@ -254,7 +254,9 @@
 
             @if (canReply()) {
                 <!-- Содержимое потребителя над рамкой поля; пустой слот места не занимает -->
-                <div rtElem="composer-bar" qa-dataid="chat-composer-bar"><ng-content select="[rtChatComposerBar]" /></div>
+                <div rtElem="composer-bar" qa-dataid="chat-composer-bar">
+                    <ng-container [rtSlotOutlet]="composerBarSlots()" />
+                </div>
                 @if (messenger()) {
                     <!-- Поле ответа мессенджера: одна рамка, скрепка и кнопки потребителя внутри неё слева -->
                     <input
@@ -286,9 +288,7 @@
                             [tooltip]="t().chatAttachTooltip"
                             [disabled]="composerDisabled()"
                             (clicked)="openFilePicker()" />
-                        <ng-container ngProjectAs="[rtPromptInputStart]">
-                            <ng-content select="[rtChatComposerTools]" />
-                        </ng-container>
+                        <ng-container ngProjectAs="[rtPromptInputStart]" [rtSlotOutlet]="composerToolSlots()" />
                     </rt-ai-prompt-input>
                 } @else if (richComposer()) {
                     <rt-message-composer
@@ -376,7 +376,7 @@
             <!-- Слот доменных действий потребителя под композером: в fullscreen
                  попадает внутрь overlay, поэтому кнопки остаются видны. -->
             <div rtElem="footer-slot" qa-dataid="chat-footer" [rtMod]="{ blocked: fetching() }" [attr.inert]="fetching() ? '' : null">
-                <ng-content select="[rtChatFooter]" />
+                <ng-container [rtSlotOutlet]="footerSlots()" />
             </div>
         }
 

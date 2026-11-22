@@ -9,8 +9,9 @@
         [footItems]="railActions()"
         (itemClick)="onItemClick($event)"
         (userClick)="onUserClick()">
-        <ng-content select="[rtRailLogo]" ngProjectAs="[rtRailLogo]" />
-        <ng-content select="[rtRailPage]" ngProjectAs="[rtRailPage]" />
+        <!-- Рейл держит свои слоты-элементы: шапка отдаёт в них нарисованные шаблоны потребителя. -->
+        <ng-container ngProjectAs="[rtRailLogo]" [rtSlotOutlet]="railLogoSlots()" />
+        <ng-container ngProjectAs="[rtRailPage]" [rtSlotOutlet]="railPageSlots()" />
     </rt-page-rail>
 } @else {
     <ng-container rtBlock="rt-page-header">
@@ -283,9 +284,15 @@
                     }
                 }
             </div>
-            <div rtElem="compact-slot" [rtMod]="{ left: true }"><ng-content select="[rtCompactLeft]" /></div>
-            <div rtElem="compact-slot" [rtMod]="{ center: true }"><ng-content select="[rtCompactCenter]" /></div>
-            <div rtElem="compact-slot" [rtMod]="{ right: true }"><ng-content select="[rtCompactRight]" /></div>
+            <div rtElem="compact-slot" [rtMod]="{ left: true }">
+                <ng-container [rtSlotOutlet]="compactLeftSlots()" />
+            </div>
+            <div rtElem="compact-slot" [rtMod]="{ center: true }">
+                <ng-container [rtSlotOutlet]="compactCenterSlots()" />
+            </div>
+            <div rtElem="compact-slot" [rtMod]="{ right: true }">
+                <ng-container [rtSlotOutlet]="compactRightSlots()" />
+            </div>
         </div>
 
         <ng-template #mobileNavTpl>
@@ -471,7 +478,7 @@
         </ng-template>
 
         <div rtElem="end" qa-dataid="header-end">
-            <ng-content select="[rtHeaderBell]" />
+            <ng-container [rtSlotOutlet]="bellSlots()" />
 
             @if (user(); as u) {
                 <rt-page-header-user
