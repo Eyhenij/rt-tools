@@ -76,7 +76,7 @@ RT-3425 and RT-3468. What each plan took in is written in its grill; below is wh
   a reader takes 3 for a crash. **Address:** RT-3469 names the verdict line `push ahead:` as the
   one to read; the code stays.
 - **The footprint exit passes falsely after a merged base.** `measure/footprint.mjs` counts every
-  commit of `origin/main..HEAD` after the plan, the ones the base brought among them; in a chain a
+  commit after the plan that the main branch lacks, the ones the base brought among them; in a chain a
   footprint row edited by a lower task counts for the upper one. The progress exit reads the same
   way. **Address:** a measure of the branch's own commits after the plan, with the scenario «the
   base edits a footprint row».
