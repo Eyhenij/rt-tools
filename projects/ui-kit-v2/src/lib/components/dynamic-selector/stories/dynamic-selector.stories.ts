@@ -10,6 +10,7 @@ export default {
         draggable: { control: { type: 'boolean' } },
         invitation: { control: { type: 'boolean' } },
         multiToggleShown: { control: { type: 'boolean' } },
+        sheet: { control: { type: 'boolean' } },
     },
 } as Meta<TestRtDynamicSelectorComponent>;
 
@@ -23,5 +24,6 @@ export const Playground: TStory = {
         draggable: true,
         invitation: false,
         multiToggleShown: false,
+        sheet: true,
     },
 };

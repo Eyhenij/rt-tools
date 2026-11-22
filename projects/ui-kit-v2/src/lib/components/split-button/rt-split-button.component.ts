@@ -58,6 +58,11 @@ export class RtSplitButtonComponent {
     /** Своё имя каретки важнее умолчания: экран знает, что за действия в меню */
     protected readonly menuAriaText: Signal<string> = computed((): string => this.menuAriaLabel() || this.#t_uiMoreActions());
 
+    /** На телефоне панель открывается в нижней шторке кита; `false` оставляет её у кнопки. */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
     /** Подпись основного действия («лицо»). */
     public readonly label: InputSignal<string> = input.required<string>();
 

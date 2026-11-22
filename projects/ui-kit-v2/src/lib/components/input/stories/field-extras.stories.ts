@@ -48,5 +48,11 @@ export const IconActions: TStory = {
     parameters: { pseudo: STORY_PSEUDO_PARAMETERS },
 };
 
+/** Постоянный текст до значения и после него: шесть состояний макета, в узком поле суффикс цел. */
+export const Affixes: TStory = {
+    args: { part: 'affixes' },
+    parameters: { pseudo: STORY_PSEUDO_PARAMETERS },
+};
+
 /** Крестик в порядке обхода — по `clearTabbable`; рядом поле как прежде. */
 export const ClearTabbable: TStory = { args: { part: 'clear' } };

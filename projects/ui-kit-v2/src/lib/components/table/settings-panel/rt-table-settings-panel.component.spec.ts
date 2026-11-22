@@ -41,11 +41,20 @@ describe('RtTableSettingsPanelComponent', (): void => {
         expect(classesOf(rowOf(fixture, 'city'))).not.toContain('rt-table-settings-panel__row--hidden');
     });
 
-    it('закреплённую колонку не перетащить и не спрятать', (): void => {
+    it('закреплённую колонку не перетащить и не спрятать, ручка показана отключённой', (): void => {
         const fixture: ComponentFixture<RtTableSettingsPanelComponent> = setup();
         const locked: HTMLElement = rowOf(fixture, 'title');
 
-        expect(locked.querySelector('[qa-dataid="table-settings-drag"]')).toBeNull();
+        const lockedHandle: HTMLButtonElement = locked.querySelector('[qa-dataid="table-settings-drag"]') as HTMLButtonElement;
+        const cityHandle: HTMLButtonElement = rowOf(fixture, 'city').querySelector(
+            '[qa-dataid="table-settings-drag"]'
+        ) as HTMLButtonElement;
+
+        expect(lockedHandle.tagName).toBe('BUTTON');
+        expect(lockedHandle.disabled).toBe(true);
+        expect(classesOf(lockedHandle)).toContain('rt-table-settings-panel__handle--disabled');
+        expect(cityHandle.disabled).toBe(false);
+        expect(classesOf(cityHandle)).not.toContain('rt-table-settings-panel__handle--disabled');
         expect((locked.querySelector('[qa-dataid="table-settings-toggle"] button') as HTMLButtonElement).disabled).toBe(true);
     });
 

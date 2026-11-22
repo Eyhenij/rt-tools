@@ -16,6 +16,7 @@ export default {
         label: { control: { type: 'text' } },
         closeOnSelect: { control: { type: 'boolean' } },
         disabled: { control: { type: 'boolean' } },
+        sheet: { control: { type: 'boolean' } },
     },
 } as Meta<TestRtSpeedMenuComponent>;
 
@@ -32,5 +33,6 @@ export const Playground: TStory = {
         label: 'Масштаб',
         closeOnSelect: false,
         disabled: false,
+        sheet: true,
     },
 };

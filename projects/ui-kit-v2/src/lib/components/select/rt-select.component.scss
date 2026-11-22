@@ -8,7 +8,6 @@
         --rt-select-radius: var(--rt-input-radius);
         --rt-select-fill-radius: var(--rt-radius-sm);
         --rt-select-caret-transition-duration: var(--rt-duration-fast);
-        --rt-select-own-outline-width: var(--rt-border-width-medium);
         --rt-select-floating-label-color: var(--rt-input-color-text-placeholder);
         --rt-select-floating-label-color-focus: var(--rt-input-color-border-focus);
         --rt-select-floating-label-color-error: var(--rt-input-color-border-error);
@@ -128,8 +127,8 @@
                меряется. :focus-visible, а не :focus: щелчку мышью примета не нужна, её даёт
                разметка потребителя. */
             &:focus-visible {
-                outline: var(--rt-select-own-outline-width) solid var(--rt-input-color-border-focus);
-                outline-offset: var(--rt-input-focus-outline-offset);
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: var(--rt-focus-ring-offset);
             }
         }
 

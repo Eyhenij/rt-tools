@@ -39,7 +39,7 @@ function menu(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<
                 provideRouter([{ path: '**', children: [] }]),
                 provideRtSideMenuSettings(),
                 { provide: LOCAL_STORAGE, useValue: window.localStorage },
-                { provide: BreakpointsService, useValue: { narrow: signal(false) } },
+                { provide: BreakpointsService, useValue: { narrow: signal(false), viewportNarrow: signal(false), phone: signal(false) } },
             ] as never[],
         }
     );

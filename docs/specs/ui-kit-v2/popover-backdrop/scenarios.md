@@ -22,7 +22,7 @@ Then the menu closes
 
 ### SC-UKV-1080 — on a narrow screen the profile menu stands on the mobile menu backdrop, and a press on it closes the menu
 
-Given the page header on a narrow screen with a user and a profile menu
+Given the page header on a narrow screen with a user, a profile menu and the bottom sheet switched off
 When the user button opens the profile menu and the backdrop is pressed
 Then the menu stood on the backdrop of the mobile menu and closes
 

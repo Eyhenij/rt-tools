@@ -27,6 +27,7 @@ import { RtAutocompleteComponent } from '../../rt-autocomplete.component';
             [minLength]="minLength"
             [iconLeft]="iconLeft"
             [openOnFocus]="openOnFocus"
+            [sheet]="sheet"
             [attr.data-story-trigger]="triggerAttribute" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -43,6 +44,7 @@ export class TestRtAutocompleteComponent {
     public minLength: number = 1;
     public iconLeft: IRtIcon.Name | null = null;
     public openOnFocus: boolean = false;
+    public sheet: boolean = true;
 
     // Поле-стрелка линтер считает методом, поэтому оно стоит после остальных.
     public displayWith: (item: string | null) => string = (item: string | null): string => String(item ?? '');

@@ -9,18 +9,19 @@
 <ng-template #tpl><div>Содержимое панели</div></ng-template>
 ```
 
-| вход (алиас)                            | тип                              | умолчание |
-| --------------------------------------- | -------------------------------- | --------- |
-| `rtPopover`                             | `TemplateRef \| null`            | `null`    |
-| `rtPopoverTrigger`                      | `'click' \| 'hover' \| 'manual'` | `'click'` |
-| `rtPopoverWidth`                        | `'trigger' \| 'auto'`            | `'auto'`  |
-| `rtPopoverAlign`                        | `'start' \| 'end'`               | `'start'` |
-| `rtPopoverFitViewport`                  | `boolean`                        | `false`   |
-| `rtPopoverOffsetY` / `rtPopoverOffsetX` | `number`                         | `4` / `0` |
-| `rtPopoverPanelClass`                   | `string`                         | `''`      |
-| `rtPopoverBackdropClass`                | `string`                         | `''`      |
-| `rtPopoverContext`                      | `unknown`                        | `null`    |
-| `rtPopoverDisabled`                     | `boolean`                        | `false`   |
+| вход (алиас)                            | тип                              | умолчание     |
+| --------------------------------------- | -------------------------------- | ------------- |
+| `rtPopover`                             | `TemplateRef \| null`            | `null`        |
+| `rtPopoverTrigger`                      | `'click' \| 'hover' \| 'manual'` | `'click'`     |
+| `rtPopoverWidth`                        | `'trigger' \| 'auto'`            | `'auto'`      |
+| `rtPopoverAlign`                        | `'start' \| 'end'`               | `'start'`     |
+| `rtPopoverFitViewport`                  | `boolean`                        | `false`       |
+| `rtPopoverOffsetY` / `rtPopoverOffsetX` | `number`                         | `4` / `0`     |
+| `rtPopoverOrigin` — узел места и ширины | `HTMLElement \| null`            | `null` — host |
+| `rtPopoverPanelClass`                   | `string`                         | `''`          |
+| `rtPopoverBackdropClass`                | `string`                         | `''`          |
+| `rtPopoverContext`                      | `unknown`                        | `null`        |
+| `rtPopoverDisabled`                     | `boolean`                        | `false`       |
 
 Выходы: `rtPopoverOpened`, `rtPopoverClosed`. Публичное API: `open()`, `close()`, `toggle()`,
 `isOpen()` — работают **во всех режимах**; `trigger` определяет только автоматические слушатели.

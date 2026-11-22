@@ -31,6 +31,9 @@ import { IRtInput } from '@rt-tools/ui-kit-v2/core';
 
 const BEM_BLOCK: string = 'rt-input';
 
+/** Знак, которым браузер рисует скрытый пароль. */
+const RT_INPUT_PASSWORD_MASK: string = '•';
+
 let floatingLabelSeed: number = 0;
 
 function nextFloatingLabelId(): string {
@@ -55,7 +58,7 @@ function nextFloatingLabelId(): string {
 @Component({
     selector: 'rt-input',
     templateUrl: './rt-input.component.html',
-    styleUrls: ['./rt-input.component.scss', './rt-input-floating-label.scss', './rt-input-icons.scss'],
+    styleUrls: ['./rt-input.component.scss', './rt-input-floating-label.scss', './rt-input-icons.scss', './rt-input-affixes.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
@@ -86,8 +89,11 @@ function nextFloatingLabelId(): string {
         '[class.rt-input--with-icon-right]': 'hasIconRight()',
         '[class.rt-input--floating]': '!!floatingLabel()',
         '[class.rt-input--clearable]': 'clearable()',
+        '[class.rt-input--with-prefix]': '!!prefix()',
+        '[class.rt-input--with-suffix]': '!!suffix()',
         '[style.--rt-input-notch-width]': "notchWidth() + 'px'",
         '[class.rt-input--filled]': 'hasValue()',
+        '[class.rt-input--label-raised]': 'labelRaised()',
         '(mousedown)': 'onHostMousedown($event)',
     },
 })
@@ -108,6 +114,42 @@ export class RtInputComponent extends RtFormControlBase<string> {
 
     /** Id подписи на рамке: на него ссылается `aria-labelledby` поля. */
     protected readonly floatingLabelId: string = nextFloatingLabelId();
+
+    /**
+     * Подпись на рамке поднята и при пустом поле, если у него есть постоянный текст: в покое она
+     * легла бы поверх приставки. Так же ведёт себя поле Material с приставкой. Свой класс
+     * `--label-raised`, а `--filled` по-прежнему значит «есть значение»: на него могут опираться
+     * стили приложения.
+     */
+    protected readonly labelRaised: Signal<boolean> = computed((): boolean => this.hasValue() || !!this.prefix() || !!this.suffix());
+
+    /** Id постоянного текста до и после значения: поле ссылается на них описанием. */
+    protected readonly prefixId: string = `${this.floatingLabelId}-prefix`;
+    protected readonly suffixId: string = `${this.floatingLabelId}-suffix`;
+
+    /** Описание поля — постоянный текст до и после значения, чтобы диктор прочёл адрес целиком. */
+    protected readonly affixDescribedBy: Signal<string | null> = computed((): string | null => {
+        const ids: string[] = [this.prefix() ? this.prefixId : '', this.suffix() ? this.suffixId : ''].filter(Boolean);
+        return ids.length > 0 ? ids.join(' ') : null;
+    });
+
+    /**
+     * Текст, по ширине которого поле с суффиксом растёт: набранное, а у пустого поля — подсказка.
+     * Скрытый пароль браузер рисует точками, и копия меряет столько же точек, а не сами знаки.
+     */
+    protected readonly sizingText: Signal<string> = computed((): string => {
+        const value: string = this.value();
+        if (value && this.effectiveType() === 'password') {
+            return RT_INPUT_PASSWORD_MASK.repeat([...value].length);
+        }
+        return value || this.placeholder();
+    });
+
+    /** Значение только для чтения — целиком, с постоянным текстом; пустое — прочерк без него. */
+    protected readonly readonlyText: Signal<string> = computed((): string => {
+        const text: string = this.displayText();
+        return text ? `${this.prefix() ?? ''}${text}${this.suffix() ?? ''}` : '—';
+    });
 
     /** Подпись на рамке называет поле, только когда явного `ariaLabel` нет. */
     protected readonly labelledBy: Signal<string | null> = computed((): string | null =>
@@ -149,6 +191,9 @@ export class RtInputComponent extends RtFormControlBase<string> {
     });
     public readonly autocomplete: InputSignal<string | null> = input<string | null>(null);
 
+    /** Поле — строка поиска над списком: ставит роль `combobox` и связи со списком. `null` — обычное поле. */
+    public readonly combobox: InputSignal<IRtInput.Combobox | null> = input<IRtInput.Combobox | null>(null);
+
     /**
      * Предел длины значения: уходит атрибутом `maxlength` на поле, и браузер не даёт набрать лишний
      * знак. `null` — предела нет. Проверку формы вход не заменяет: значение, записанное кодом,
@@ -157,6 +202,18 @@ export class RtInputComponent extends RtFormControlBase<string> {
     public readonly maxlength: InputSignalWithTransform<number | null, NumberInput> = input<number | null, NumberInput>(null, {
         transform: rtMaxlength,
     });
+
+    /**
+     * Постоянный текст перед значением, например начало адреса `site.ru/team/`. В значение не
+     * входит: форма получает только набранное. `null` — текста нет.
+     */
+    public readonly prefix: InputSignal<string | null> = input<string | null>(null);
+
+    /**
+     * Постоянный текст сразу после значения, например `.site.ru`. В значение не входит. Идёт следом
+     * за набранным текстом, а не у правого края; длинное значение обрезается, суффикс остаётся целым.
+     */
+    public readonly suffix: InputSignal<string | null> = input<string | null>(null);
 
     /** Видимая подпись на рамке поля. `null` — подписи нет, поле как прежде. */
     public readonly floatingLabel: InputSignal<string | null> = input<string | null>(null);
@@ -243,6 +300,23 @@ export class RtInputComponent extends RtFormControlBase<string> {
         }
         event.preventDefault();
         field.focus();
+        this.#caretToAffix(field, target);
+    }
+
+    /**
+     * Нажатие на суффикс ставит курсор в конец значения, на приставку — в начало. У поля почты
+     * выделения нет (`selectionStart` равен `null`), и курсор там остаётся, где был.
+     */
+    #caretToAffix(field: HTMLInputElement, target: HTMLElement): void {
+        if (field.selectionStart === null) {
+            return;
+        }
+        const atSuffix: boolean = target.closest('.rt-input__suffix') !== null;
+        const atPrefix: boolean = target.closest('.rt-input__prefix') !== null;
+        if (atSuffix || atPrefix) {
+            const at: number = atSuffix ? field.value.length : 0;
+            field.setSelectionRange(at, at);
+        }
     }
 
     protected onInput(event: Event): void {

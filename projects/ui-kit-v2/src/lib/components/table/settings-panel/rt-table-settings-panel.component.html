@@ -7,13 +7,16 @@
             [attr.data-key]="item.key"
             [rtMod]="{ locked: item.locked === true, hidden: item.hidden }"
             [cdkDragDisabled]="item.locked === true">
-            @if (item.locked === true) {
-                <span rtElem="handle" rtMod="placeholder" aria-hidden="true"></span>
-            } @else {
-                <button rtElem="handle" qa-dataid="table-settings-drag" type="button" cdkDragHandle [attr.aria-label]="t().uiDragColumn">
-                    <rt-icon name="bars" size="sm" color="muted" />
-                </button>
-            }
+            <button
+                rtElem="handle"
+                qa-dataid="table-settings-drag"
+                type="button"
+                cdkDragHandle
+                [rtMod]="{ disabled: item.locked === true }"
+                [disabled]="item.locked === true"
+                [attr.aria-label]="t().uiDragColumn">
+                <rt-icon name="bars" size="sm" color="muted" />
+            </button>
 
             <span rtElem="label" qa-dataid="table-settings-label">{{ item.label }}</span>
 

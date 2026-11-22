@@ -86,16 +86,17 @@ Material, под указателем 4. Без темы Material круг се�
 
 ## Входы
 
-| вход            | тип                              | умолчание   | что делает                                     |
-| --------------- | -------------------------------- | ----------- | ---------------------------------------------- |
-| `actions`       | `readonly IRtSpeedMenu.Action[]` | —           | действия: `value`, `icon`, `label`, `disabled` |
-| `icon`          | `string`                         | `'menu'`    | значок кнопки: имя кита или Material           |
-| `label`         | `string`                         | `''`        | имя кнопки; пусто — ярлык кита «Actions»       |
-| `direction`     | `IRtSpeedMenu.Direction`         | `'up'`      | сторона, на которую раскрываются действия      |
-| `size`          | `IRtSpeedMenu.Size`              | `'lg'`      | ступень кнопки меню                            |
-| `variant`       | `IRtSpeedMenu.Variant`           | `'primary'` | палитра кнопки меню                            |
-| `closeOnSelect` | `boolean`                        | `false`     | закрывать меню после выбора                    |
-| `disabled`      | `boolean`                        | `false`     | меню не открывается, открытое закрывается      |
+| вход            | тип                              | умолчание                   | что делает                                                                           |
+| --------------- | -------------------------------- | --------------------------- | ------------------------------------------------------------------------------------ |
+| `actions`       | `readonly IRtSpeedMenu.Action[]` | —                           | действия: `value`, `icon`, `label`, `disabled`                                       |
+| `icon`          | `string`                         | `'menu'`                    | значок кнопки: имя кита или Material                                                 |
+| `label`         | `string`                         | `''`                        | имя кнопки; пусто — ярлык кита «Actions»                                             |
+| `direction`     | `IRtSpeedMenu.Direction`         | `'up'`                      | сторона, на которую раскрываются действия                                            |
+| `size`          | `IRtSpeedMenu.Size`              | `'lg'`                      | ступень кнопки меню                                                                  |
+| `variant`       | `IRtSpeedMenu.Variant`           | `'primary'`                 | палитра кнопки меню                                                                  |
+| `closeOnSelect` | `boolean`                        | `false`                     | закрывать меню после выбора                                                          |
+| `disabled`      | `boolean`                        | `false`                     | меню не открывается, открытое закрывается                                            |
+| `sheet`         | `boolean`                        | `true` → шторка на телефоне | на телефоне панель открывается в нижней шторке кита; `false` оставляет её у триггера |
 
 ## Выходы
 

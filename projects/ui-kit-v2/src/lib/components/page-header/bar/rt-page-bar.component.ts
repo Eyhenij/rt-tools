@@ -1,6 +1,7 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import {
+    afterNextRender,
     afterRenderEffect,
     booleanAttribute,
     computed,
@@ -16,6 +17,7 @@ import {
     Component,
     DestroyRef,
     ElementRef,
+    Injector,
     InputSignal,
     InputSignalWithTransform,
     OutputEmitterRef,
@@ -26,13 +28,13 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective, WINDOW } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { BreakpointsService, RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
 
 import { RtBottomSheetComponent } from '@rt-tools/ui-kit-v2/bottom-sheet';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtMenuComponent, RtMenuItemComponent } from '@rt-tools/ui-kit-v2/menu';
-import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { RT_POPOVER_SHEET, RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { RtPageBarFilterDirective, RtPageBarSearchDirective } from './rt-page-bar-slots.directive';
 import { actionsWidthOf, pageBarFit, IRtPageBarFit } from './rt-page-bar.logic';
 import { IRtPageBar } from './rt-page-bar.model';
@@ -68,6 +70,11 @@ export class RtPageBarComponent {
     readonly #host: HTMLElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
 
     readonly #window: Window & typeof globalThis = inject(WINDOW) as Window & typeof globalThis;
+
+    readonly #phone: Signal<boolean> = inject(BreakpointsService).phone;
+    /** Приложение выключает шторку токеном `RT_POPOVER_SHEET` для всего под ним, отборы тоже. */
+    readonly #sheetAllowed: boolean = inject(RT_POPOVER_SHEET);
+    readonly #injector: Injector = inject(Injector);
 
     readonly #width: WritableSignal<number> = signal<number>(0);
 
@@ -106,11 +113,20 @@ export class RtPageBarComponent {
         (): ReadonlyArray<RtPageBarFilterDirective> => this.filters().slice(this.#fit().rowFilters)
     );
 
+    /** Отборы узкого вида открываются шторкой только на телефоне; шире — панелью у кнопки. */
+    protected readonly filtersInSheet: Signal<boolean> = computed(
+        (): boolean => this.isNarrow() && this.sheet() && this.#sheetAllowed && this.#phone()
+    );
+
     /** Шторка отборов узкого вида: смена вида её закрывает, и при возврате в узкий она не открывается сама. */
     protected readonly sheetOpen: WritableSignal<boolean> = linkedSignal<boolean, boolean>({
-        source: this.isNarrow,
+        source: this.filtersInSheet,
         computation: (): boolean => false,
     });
+
+    protected readonly filtersPopover: Signal<RtPopoverDirective | undefined> = viewChild('filtersPopover', { read: RtPopoverDirective });
+
+    protected readonly filtersPanelBox: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('filtersPanelBox');
 
     public readonly pageTitle: InputSignal<string> = input.required<string>();
 
@@ -118,6 +134,14 @@ export class RtPageBarComponent {
 
     /** Отборы применены: на кнопке отборов узкого вида горит точка. */
     public readonly filtersActive: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /**
+     * Нижняя шторка отборов на телефоне. Включена по умолчанию; `false` открывает отборы панелью у
+     * кнопки на любой ширине.
+     */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
 
@@ -156,8 +180,23 @@ export class RtPageBarComponent {
         });
     }
 
+    /** Кнопка отборов: на телефоне открывает шторку, шире панель открывает сама подсказка-панель. */
+    protected onFiltersClick(): void {
+        if (this.filtersInSheet()) {
+            // Панель, открытая на широком окне, при переходе на телефон сама не закрылась бы.
+            this.filtersPopover()?.close();
+            this.sheetOpen.set(true);
+        }
+    }
+
+    /** Панель стоит в перекрытии в конце страницы: фокус переходит в неё, иначе Tab уходит мимо отборов. */
+    protected onPanelOpened(): void {
+        afterNextRender((): void => this.filtersPanelBox()?.nativeElement.focus(), { injector: this.#injector });
+    }
+
     protected onApply(): void {
         this.filtersApply.emit();
         this.sheetOpen.set(false);
+        this.filtersPopover()?.close();
     }
 }

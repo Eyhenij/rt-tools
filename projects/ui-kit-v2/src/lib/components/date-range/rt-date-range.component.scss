@@ -6,6 +6,11 @@
         --rt-date-range-fill-radius: var(--rt-radius-sm);
         --rt-date-range-color-border-hover: var(--rt-color-text-primary);
 
+        /* Кнопка открытия — коробка размера sm вокруг значка sm: значок стоит на 8px глубже края
+           отступа, чем шеврон выбора. Кнопку выдвигаем на полразности коробки и значка (размер её
+           один при любой высоте поля), и правый край значка ложится на отступ поля. */
+        --rt-date-range-open-offset: calc((var(--rt-control-height-sm) - var(--rt-size-4)) / -2);
+
         position: relative;
         display: inline-flex;
         width: 100%;
@@ -111,6 +116,10 @@
         &__clear,
         &__open {
             flex-shrink: 0;
+        }
+
+        &__open {
+            margin-inline-end: var(--rt-date-range-open-offset);
         }
 
         /* Поверхность панели в поповере: она рисуется в CDK Overlay, вне поддерева блока. */

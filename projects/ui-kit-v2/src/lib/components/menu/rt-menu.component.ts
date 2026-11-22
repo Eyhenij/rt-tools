@@ -1,13 +1,16 @@
 import { FocusKeyManager } from '@angular/cdk/a11y';
 import { BooleanInput } from '@angular/cdk/coercion';
-import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedPosition, OverlayModule } from '@angular/cdk/overlay';
+import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedPosition, Overlay, OverlayModule } from '@angular/cdk/overlay';
+import { NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
+    DestroyRef,
     ElementRef,
     inject,
+    Injector,
     input,
     InputSignal,
     InputSignalWithTransform,
@@ -15,17 +18,29 @@ import {
     OutputEmitterRef,
     Signal,
     signal,
+    TemplateRef,
     viewChild,
+    ViewContainerRef,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+import { Observable, Subject, switchMap } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
-import { carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
+import { BreakpointsService, carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
 import { IRtIconButton, RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import {
+    IRtPopoverSheetOpened,
+    RT_POPOVER_SHEET,
+    rtClosePopoverSheet,
+    rtOpenPopoverSheet,
+    rtPopoverSheetDismissals,
+} from '@rt-tools/ui-kit-v2/popover';
 import { IRtMenu } from './rt-menu.model';
 
 const BEM_BLOCK: string = 'rt-menu';
@@ -89,6 +104,7 @@ const POSITION_ABOVE_START: ConnectedPosition = {
     imports: [
         // @angular/cdk
         OverlayModule,
+        NgTemplateOutlet,
 
         // standalone components / directives
         RtIconButtonComponent,
@@ -104,6 +120,15 @@ const POSITION_ABOVE_START: ConnectedPosition = {
 export class RtMenuComponent {
     readonly #host: ElementRef<HTMLElement> = inject<ElementRef<HTMLElement>>(ElementRef);
     readonly #t_uiActions: Signal<string> = rtKitLabel('uiActions');
+    readonly #overlayService: Overlay = inject(Overlay);
+    readonly #viewContainerRef: ViewContainerRef = inject(ViewContainerRef);
+    readonly #injector: Injector = inject(Injector);
+    readonly #narrow: Signal<boolean> = inject(BreakpointsService).phone;
+    readonly #sheetAllowed: boolean = inject(RT_POPOVER_SHEET);
+    readonly #sheetOpenedSource: Subject<IRtPopoverSheetOpened> = new Subject<IRtPopoverSheetOpened>();
+
+    /** Нижняя шторка, пока меню открыто в ней. */
+    #sheet: IRtPopoverSheetOpened | null = null;
 
     /** Ход стрелками по пунктам открытой панели; у закрытой его нет. */
     #keyManager: FocusKeyManager<IRtMenu.Focusable> | null = null;
@@ -111,7 +136,18 @@ export class RtMenuComponent {
     protected readonly overlay: Signal<CdkConnectedOverlay> = viewChild.required(CdkConnectedOverlay);
     protected readonly trigger: Signal<CdkOverlayOrigin> = viewChild.required(CdkOverlayOrigin);
 
+    protected readonly panelTpl: Signal<TemplateRef<unknown>> = viewChild.required<TemplateRef<unknown>>('panelTpl');
+
     protected readonly isOpen: WritableSignal<boolean> = signal<boolean>(false);
+
+    /** Меню откроется (или открыто) в нижней шторке: режим включён входом и токеном, экран узкий. */
+    protected readonly inSheet: Signal<boolean> = computed((): boolean => this.sheet() && this.#sheetAllowed && this.#narrow());
+
+    /**
+     * Меню открыто в шторке. Берётся в минуту открытия: порог ширины, пересечённый при открытом меню,
+     * не должен рисовать вторую панель рядом с триггером поверх шторки.
+     */
+    protected readonly openedInSheet: WritableSignal<boolean> = signal<boolean>(false);
 
     /** Класс набора, найденный над меню при открытии: панель лежит вне контейнера с признаком. */
     protected readonly presetClasses: WritableSignal<string[]> = signal<string[]>([]);
@@ -153,6 +189,11 @@ export class RtMenuComponent {
     /** Размер панели: компактная — у меню действий строки таблицы. */
     public readonly size: InputSignal<IRtMenu.Size> = input<IRtMenu.Size>('md');
 
+    /** На телефоне меню открывается в нижней шторке кита; `false` оставляет его у кнопки. */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
     /** Триггер отключён — меню не открыть. */
     public readonly disabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
@@ -160,6 +201,17 @@ export class RtMenuComponent {
 
     /** Панель открылась (`true`) или закрылась (`false`); повтор того же состояния не приходит. */
     public readonly openedChange: OutputEmitterRef<boolean> = output<boolean>();
+
+    constructor() {
+        // Шторка создаётся на каждое открытие: её подложка, ручка и Escape закрывают меню.
+        this.#sheetOpenedSource
+            .pipe(
+                switchMap((sheet: IRtPopoverSheetOpened): Observable<unknown> => rtPopoverSheetDismissals(sheet)),
+                takeUntilDestroyed(inject(DestroyRef))
+            )
+            .subscribe((): void => this.close());
+        inject(DestroyRef).onDestroy((): void => this.#closeSheet());
+    }
 
     protected toggle(event: MouseEvent): void {
         // Клик по триггеру не должен активировать строку таблицы под ним.
@@ -184,20 +236,20 @@ export class RtMenuComponent {
         // страницы. Зовётся на каждом открытии — кусок вокруг кнопки мог смениться.
         carryThemeScope(pane, this.trigger().elementRef.nativeElement);
 
-        const nodes: HTMLElement[] = Array.from(pane.querySelectorAll<HTMLElement>('[role="menuitem"]'));
-        const focusables: IRtMenu.Focusable[] = nodes.map((node: HTMLElement): IRtMenu.Focusable => ({
-            disabled: node.getAttribute('aria-disabled') === 'true',
-            focus: (): void => node.focus(),
-        }));
-
-        this.#keyManager = new FocusKeyManager<IRtMenu.Focusable>(focusables).withWrap().withHomeAndEnd();
-        this.#keyManager.setFirstItemActive();
+        this.#activateKeys(pane);
     }
 
     /** Выбранный пункт закрывает панель и возвращает фокус кнопке, откуда меню открыли. */
     protected onSelect(): void {
         this.close();
         this.#focusTrigger();
+    }
+
+    /** Клавиши в шторке: у панели рядом с триггером их шлёт оверлей, а у шторки — сама панель. */
+    protected onSheetKeydown(event: KeyboardEvent): void {
+        if (this.openedInSheet()) {
+            this.onKeydown(event);
+        }
     }
 
     protected onKeydown(event: KeyboardEvent): void {
@@ -222,6 +274,52 @@ export class RtMenuComponent {
         this.#keyManager?.onKeydown(event);
     }
 
+    #openSheet(): void {
+        const sheet: IRtPopoverSheetOpened = rtOpenPopoverSheet({
+            overlay: this.#overlayService,
+            host: this.#host.nativeElement,
+            viewContainerRef: this.#viewContainerRef,
+            injector: this.#injector,
+            template: this.panelTpl(),
+            context: null,
+            title: this.ariaText(),
+            // Пункты на месте и `inert` снят, когда шторка открылась: ход стрелками и фокус — тогда же.
+            onOpened: (): void => this.#activateKeys(this.#sheet?.overlayRef.overlayElement ?? null),
+        });
+        this.#sheet = sheet;
+        this.#sheetOpenedSource.next(sheet);
+    }
+
+    /** Ход стрелками по пунктам панели и фокус на первом из них — для панели у кнопки и для шторки. */
+    #activateKeys(pane: HTMLElement | null): void {
+        if (pane === null || !this.isOpen()) {
+            return;
+        }
+        const nodes: HTMLElement[] = Array.from(pane.querySelectorAll<HTMLElement>('[role="menuitem"]'));
+        const focusables: IRtMenu.Focusable[] = nodes.map((node: HTMLElement): IRtMenu.Focusable => ({
+            disabled: node.getAttribute('aria-disabled') === 'true',
+            focus: (): void => node.focus(),
+        }));
+
+        this.#keyManager?.destroy();
+        this.#keyManager = new FocusKeyManager<IRtMenu.Focusable>(focusables).withWrap().withHomeAndEnd();
+        this.#keyManager.setFirstItemActive();
+    }
+
+    /** Закрытие по жесту уводит шторку вниз и возвращает фокус кнопке; снос компонента снимает её сразу. */
+    #closeSheet(byGesture: boolean = false): void {
+        const sheet: IRtPopoverSheetOpened | null = this.#sheet;
+        this.#sheet = null;
+        if (sheet === null) {
+            return;
+        }
+        if (byGesture) {
+            rtClosePopoverSheet(sheet, this.trigger().elementRef.nativeElement.querySelector('button'));
+        } else {
+            sheet.overlayRef.dispose();
+        }
+    }
+
     #focusTrigger(): void {
         this.trigger().elementRef.nativeElement.querySelector('button')?.focus();
     }
@@ -231,11 +329,17 @@ export class RtMenuComponent {
             if (!open) {
                 this.#keyManager?.destroy();
                 this.#keyManager = null;
+                this.#closeSheet(true);
+                this.openedInSheet.set(false);
             }
             if (open) {
                 this.presetClasses.set(materialPresetClassesOf(this.#host.nativeElement));
+                this.openedInSheet.set(this.inSheet());
             }
             this.isOpen.set(open);
+            if (open && this.openedInSheet()) {
+                this.#openSheet();
+            }
             this.openedChange.emit(open);
         }
     }

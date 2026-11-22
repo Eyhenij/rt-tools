@@ -1,0 +1,20 @@
+<div
+    style="box-sizing: border-box; display: flex; flex-direction: column; inline-size: 375px; height: 640px"
+    [attr.data-story-trigger]="triggerAttribute">
+    <rt-thread-list searchPlaceholder="Поиск" [rows]="rows" [activeId]="2" [sheet]="sheet">
+        <ng-template rtThreadListFilters>
+            <div style="display: grid; gap: 0.5rem">
+                <strong>Канал</strong>
+                <span>Сайт</span>
+                <span>Телефон</span>
+                <span>Почта</span>
+            </div>
+        </ng-template>
+        <ng-template rtThreadListRow let-row>
+            <div style="display: grid; gap: 0.125rem; min-inline-size: 0">
+                <strong>{{ row.title }}</strong>
+                <span style="color: var(--rt-color-text-muted); font-size: var(--rt-text-sm)">{{ row.meta }}</span>
+            </div>
+        </ng-template>
+    </rt-thread-list>
+</div>

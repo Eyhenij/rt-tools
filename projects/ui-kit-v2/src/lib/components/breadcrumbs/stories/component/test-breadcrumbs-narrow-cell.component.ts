@@ -13,7 +13,12 @@ import { IRtBreadcrumbs } from '../../rt-breadcrumbs.model';
     selector: 'app-breadcrumbs-narrow-cell',
     templateUrl: './test-breadcrumbs-narrow-cell.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [{ provide: BreakpointsService, useValue: { narrow: signal<boolean>(true) } }],
+    providers: [
+        {
+            provide: BreakpointsService,
+            useValue: { narrow: signal<boolean>(true), viewportNarrow: signal<boolean>(true), phone: signal<boolean>(true) },
+        },
+    ],
     imports: [
         // components
         RtBreadcrumbsComponent,
