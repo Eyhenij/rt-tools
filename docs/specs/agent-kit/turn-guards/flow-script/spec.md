@@ -36,6 +36,10 @@ There is no interface: the description is read by the engine and by the executor
 - **The engine reads the description that lies next to it and names the states of the scenario in their order.**
 - **A factory of a source or a measurer that is not written yet throws, so an unmeasured exit is never read as met.**
 - **The history of the branch is the commits the main branch on the server does not hold, and a fact read from it stays true in later states.**
+- **The last version of a file the head lacks is read at the parent of the commit of the branch that removed it.**
+  A merged base, a fast-forward onto the base and a removal of an old copy in the base do not answer
+  for it. The removing commit is found by the path search of the history with its default
+  simplification, then by the full history; a removal the main branch already holds gives no file.
 - **The parsing of the steps reaches a measurer through a source, by the module every reader of the steps shares.**
 - **Exit 1 is met by a grill of the branch or of a draft that holds the owner's request as a quote and an answer.**
 - **Exit 3 is met by a line of the grill or the plan naming the agreement directory found on disk or in the history, or the reason there is none.**

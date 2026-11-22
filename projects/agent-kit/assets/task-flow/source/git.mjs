@@ -8,9 +8,10 @@
  *   branch()            the name of the checked-out branch, '' when the head is detached
  *   commits()           [{ sha, added, deleted, modified }] — the paths each commit changed
  *   versionAt(path, sha) the text of the file at that commit, null where it is absent
- *   lastVersion(path)   the text at the newest commit of the branch that holds the file
+ *   lastVersion(path)   the text at the head, or for a file the head lacks at the parent of `removedAt`
  *   addedBy(path)       the sha of the oldest commit of the branch that added the file, or null
- *   removedAt(path)     the sha of the newest commit of the head that removed the path, or null
+ *   removedAt(path)     the sha of the commit of the branch that removed the path, by the path search
+ *                       with the default simplification, then the full history; or null
  *   everExisted(path)   the path, a file or a directory, stood in a commit of the branch or of the
  *                       main branch on the server
  *   existsAtHead(path)  the path stands in the head commit
@@ -56,11 +57,25 @@ export function open() {
         return cached;
     };
     const versionAt = (path, sha) => run(['show', `${sha}:${path}`]);
+    const existsAtHead = (path) => run(['cat-file', '-e', `HEAD:${path.replace(/\/$/, '')}`]) !== null;
+    // The default simplification first: the full history, or a walk by date, takes a later removal of
+    // an old copy in the base; the full history only when that answers nothing.
+    const removedAt = (path) => {
+        const find = (...extra) =>
+            (run(['log', '-1', '--format=%H', '--diff-filter=D', ...extra, 'HEAD', '--not', BASE, '--', path.replace(/\/$/, '')]) ?? '').trim() || null;
+        return find() ?? find('--full-history');
+    };
     return {
         branch: () => (run(['branch', '--show-current']) ?? '').trim(),
         commits,
         versionAt,
         lastVersion(path) {
+            // A file the head lacks is read before the commit of this branch that removed it: a merged
+            // base with an older copy must not answer for it.
+            if (!existsAtHead(path)) {
+                const removed = removedAt(path);
+                return removed ? versionAt(path, `${removed}^`) : null;
+            }
             for (const c of [...commits()].reverse()) {
                 const text = versionAt(path, c.sha);
                 if (text !== null) return text;
@@ -70,17 +85,12 @@ export function open() {
         addedBy(path) {
             return commits().find((c) => c.added.includes(path))?.sha ?? null;
         },
-        removedAt(path) {
-            const bare = path.replace(/\/$/, '');
-            return (run(['log', '-1', '--format=%H', '--diff-filter=D', 'HEAD', '--', bare]) ?? '').trim() || null;
-        },
+        removedAt,
         everExisted(path) {
-            const bare = path.replace(/\/$/, '');
-            return (run(['log', '--format=%H', '-1', 'HEAD', BASE, '--', bare]) ?? '').trim() !== '';
+            const find = (...extra) => (run(['log', '--format=%H', '-1', ...extra, 'HEAD', BASE, '--', path.replace(/\/$/, '')]) ?? '').trim() !== '';
+            return find() || find('--full-history');
         },
-        existsAtHead(path) {
-            return run(['cat-file', '-e', `HEAD:${path.replace(/\/$/, '')}`]) !== null;
-        },
+        existsAtHead,
         branches(prefix) {
             return (run(['for-each-ref', '--format=%(refname:short)\t%(objectname)', `refs/heads/${prefix}*`]) ?? '')
                 .split('\n')

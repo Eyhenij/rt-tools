@@ -441,11 +441,12 @@ console.log(String(open().approval('RT-1-x')));
 " 2>&1)"
 report "local: SC-AK-1371 — метка не JSON читается отсутствующей" "$got" 'null'
 
-# --- Шаг плана, одобрение плана, фоновые задачи сессии, прогноз и шаг после разбора папки --------
+# --- Шаг плана, одобрение, фоновые задачи, прогноз, шаг после разбора папки и влитая база ---------
 . "$TESTS/task-flow-script-steps.test.sh"
 . "$TESTS/task-flow-script-session.test.sh"
 . "$TESTS/task-flow-script-forecast.test.sh"
 . "$TESTS/task-flow-script-archive.test.sh"
+. "$TESTS/task-flow-script-merge.test.sh"
 
 rm -rf "$TF_DIR"
 suite_result "сценарий task flow"

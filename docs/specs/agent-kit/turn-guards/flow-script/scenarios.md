@@ -404,3 +404,28 @@ When the forecast replays the session
 Then the stops before the call are not counted, and the stop after the call is counted again
 
 Covered: `projects/agent-kit/tests/task-flow-script-forecast.test.sh`.
+
+### SC-AK-1827 — the last version of a removed file is read before its removal
+
+Given a branch that took its task folder apart, and an epic branch holding an older copy of the folder
+When the branch merges the base, is fast-forwarded onto the base, or merges a base that removed its old copy later
+Then the last progress is the one of the branch, every step done
+And a file no commit of the branch held reads as absent
+
+Covered: `projects/agent-kit/tests/task-flow-script-merge.test.sh`.
+
+### SC-AK-1828 — a merged base does not roll a taken-apart task back
+
+Given the same three histories
+When the states are measured
+Then the state is not below «папка-разобрана», and the exits of the grill, the agreement, the plan, the footprint and the folder are met
+
+Covered: `projects/agent-kit/tests/task-flow-script-merge.test.sh`.
+
+### SC-AK-1829 — the step command after a merged base measures by the branch's own progress
+
+Given a taken-apart folder after a merged base, and a step whose check reads a line only the branch's progress holds
+When the step is run, after a plain merge and after a removal of the old copy in the base
+Then it matches and writes its mark, and the folder is gone after the run
+
+Covered: `projects/agent-kit/tests/task-flow-script-merge.test.sh`.

@@ -2,19 +2,19 @@
 
 ## Где мы
 
-- **State:** `замысел-записан`
-- **Stage:** 1 — The last version of a removed file is read before its removal
-- **Done:** план одобрен владельцем 22.11 ответом «Одобряю план RT-3425», отметка `plan-red` записана; ветка вобрала RT-3434 после её разбора папки
-- **Next step:** шаг 1.1
+- **State:** `этапы-кончились`
+- **Stage:** нет — этапы 1–2 сделаны, все четыре шага совпали на `step N.M`
+- **Done:** `removedAt` ищет удаливший коммит внутри истории ветки с упрощением по умолчанию, затем по полной истории; `lastVersion` читает удалённый файл у его родителя; `everExisted` с тем же запасным поиском; набор `task-flow-script-merge.test.sh` — 12 ok, на прежнем `git.mjs` — 9 провалов; набор движка — 273 ok; сценарии SC-AK-1827…1829 в описании
+- **Next step:** живая проверка, затем первый круг ревью
 - **Uncommitted:** nothing
 - **PR:** not open yet
 
 ## Шаги
 
-- [>] 1.1 The last version of a file the head does not hold is read at the parent of the commit that removed it
-- [ ] 1.2 A merged base, a fast-forward and a removal in the base do not roll the state below «папка-разобрана»
-- [ ] 1.3 The step command on a taken-apart folder after a merged base measures the step by the branch's own progress
-- [ ] 2.1 The scenarios stand in the description
+- [x] 1.1 The last version of a file the head does not hold is read at the parent of the commit that removed it
+- [x] 1.2 A merged base, a fast-forward and a removal in the base do not roll the state below «папка-разобрана»
+- [x] 1.3 The step command on a taken-apart folder after a merged base measures the step by the branch's own progress
+- [x] 2.1 The scenarios stand in the description
 
 ## Решения по ходу
 
@@ -27,3 +27,8 @@
   ошибается: перемотку и удаление старой копии в базе; стратег показал, что число 16 не про эту
   причину, и что поиск нужен и команде шага RT-3434. План ищет через `removedAt`, сценарии — три
   истории и шаг после влитой базы.
+- **Команда шага и перемер правки не потребовали.** После RT-3434 оба берут папку через `putBack`,
+  а он зовёт `removedAt`: правило стоит в одном месте, `flow-step.mjs` не тронут.
+- **Шаг 1.3 зелёный и на прежнем `git.mjs`.** Прежний поиск без `--not` с упрощением по умолчанию
+  тоже находил разбор ветки в двух историях набора; шаг держит поведение, а не ловит старую ошибку.
+  Красными на прежнем коде были девять случаев 1.1 и 1.2.
