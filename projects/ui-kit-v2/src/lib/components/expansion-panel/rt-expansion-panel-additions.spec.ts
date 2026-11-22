@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, viewChild, Signal, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
+import { FormsModule, NgForm } from '@angular/forms';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -15,9 +16,11 @@ import { RtExpansionPanelComponent } from './rt-expansion-panel.component';
     template: `
         <rt-expansion-panel qa-dataid="with-actions" [(expanded)]="actionsOpen">
             <span>Номера</span>
-            <span rtExpansionPanelActions>
-                <button type="button" qa-dataid="host-action" (click)="pressed.set(pressed() + 1)">Добавить</button>
-            </span>
+            <ng-template rtExpansionPanelActions>
+                <span>
+                    <button type="button" qa-dataid="host-action" (click)="pressed.set(pressed() + 1)">Добавить</button>
+                </span>
+            </ng-template>
             <p rtExpansionPanelBody>Тело</p>
         </rt-expansion-panel>
 
@@ -31,7 +34,9 @@ import { RtExpansionPanelComponent } from './rt-expansion-panel.component';
                 <div rtExpansionPanelBody>
                     <rt-expansion-panel qa-dataid="nested" [(expanded)]="nested">
                         <span>Вложенная</span>
-                        <span rtExpansionPanelActions><button type="button" qa-dataid="nested-action">Ещё</button></span>
+                        <ng-template rtExpansionPanelActions>
+                            <span><button type="button" qa-dataid="nested-action">Ещё</button></span>
+                        </ng-template>
                     </rt-expansion-panel>
                 </div>
             </rt-expansion-panel>
@@ -50,6 +55,21 @@ import { RtExpansionPanelComponent } from './rt-expansion-panel.component';
             </div>
         </rt-expansion-panel>
 
+        <rt-expansion-panel qa-dataid="two-actions">
+            <span>Два действия</span>
+            <ng-template rtExpansionPanelActions><button type="button" qa-dataid="first-action">Первое</button></ng-template>
+            <ng-template rtExpansionPanelActions><button type="button" qa-dataid="second-action">Второе</button></ng-template>
+        </rt-expansion-panel>
+
+        <form #outer="ngForm">
+            <rt-expansion-panel qa-dataid="form-panel">
+                <span>Адрес</span>
+                <div rtExpansionPanelBody>
+                    <input name="city" qa-dataid="form-city" ngModel />
+                </div>
+            </rt-expansion-panel>
+        </form>
+
         <rt-expansion-panel qa-dataid="kept" preserveContent [(expanded)]="kept">
             <span>Фильтр</span>
             <ng-template rtExpansionPanelContent>
@@ -63,9 +83,11 @@ import { RtExpansionPanelComponent } from './rt-expansion-panel.component';
         RtExpansionPanelActionsDirective,
         RtExpansionPanelContentDirective,
         RtExpansionPanelGroupDirective,
+        FormsModule,
     ],
 })
 class AdditionsHostComponent {
+    public readonly outer: Signal<NgForm> = viewChild.required<NgForm>('outer');
     public readonly actionsOpen: WritableSignal<boolean> = signal(false);
     public readonly pressed: WritableSignal<number> = signal(0);
     public readonly multi: WritableSignal<boolean> = signal(false);
@@ -126,6 +148,44 @@ describe('RtExpansionPanelComponent — дополнения', (): void => {
             (within(fixture, 'with-actions', 'expansion-panel-chevron') as HTMLElement).click();
             fixture.detectChanges();
             expect(fixture.componentInstance.actionsOpen()).toBe(false);
+        });
+
+        it('SC-UKV-1712 — шаблон действий стоит в строке заголовка вне кнопки, нажатие не раскрывает', (): void => {
+            const fixture: ComponentFixture<AdditionsHostComponent> = setup();
+            const head: HTMLElement = (within(fixture, 'with-actions', 'expansion-panel-header') as HTMLElement)
+                .parentElement as HTMLElement;
+            const order: (string | null)[] = Array.from(head.children).map((node: Element): string | null =>
+                node.getAttribute('qa-dataid')
+            );
+
+            expect(order).toEqual(['expansion-panel-header', 'expansion-panel-actions', 'expansion-panel-chevron']);
+
+            (qa(fixture, 'host-action')?.nativeElement as HTMLButtonElement).click();
+            fixture.detectChanges();
+            expect(fixture.componentInstance.actionsOpen()).toBe(false);
+        });
+
+        it('SC-UKV-1713 — шаблон действий вложенной панели остаётся у неё', (): void => {
+            const fixture: ComponentFixture<AdditionsHostComponent> = setup();
+
+            pressHeader(fixture, 'group-c');
+            pressHeader(fixture, 'nested');
+
+            const nestedActions: HTMLElement = within(fixture, 'nested', 'expansion-panel-actions') as HTMLElement;
+            expect(nestedActions.querySelector('[qa-dataid="nested-action"]')).not.toBeNull();
+            const outerHead: HTMLElement = (within(fixture, 'group-c', 'expansion-panel-header') as HTMLElement)
+                .parentElement as HTMLElement;
+            expect(outerHead.querySelector(':scope > [qa-dataid="expansion-panel-actions"]')).toBeNull();
+        });
+
+        it('SC-UKV-1737 — два шаблона действий стоят оба, в порядке записи', (): void => {
+            const fixture: ComponentFixture<AdditionsHostComponent> = setup();
+            const actions: HTMLElement = within(fixture, 'two-actions', 'expansion-panel-actions') as HTMLElement;
+            const order: (string | null)[] = Array.from(actions.querySelectorAll('button')).map((node: Element): string | null =>
+                node.getAttribute('qa-dataid')
+            );
+
+            expect(order).toEqual(['first-action', 'second-action']);
         });
 
         it('без действий шеврон остаётся внутри кнопки, как прежде', (): void => {
@@ -197,10 +257,10 @@ describe('RtExpansionPanelComponent — дополнения', (): void => {
     });
 
     describe('сохранение тела', (): void => {
-        it('SC-UKV-929 — до первого раскрытия тела нет, после сворачивания оно остаётся с набранным текстом', (): void => {
+        it('SC-UKV-929 — до первого раскрытия ленивого тела нет, после сворачивания оно остаётся с набранным текстом', (): void => {
             const fixture: ComponentFixture<AdditionsHostComponent> = setup();
 
-            expect(within(fixture, 'kept', 'expansion-panel-body')).toBeNull();
+            expect(qa(fixture, 'kept-input')).toBeNull();
 
             pressHeader(fixture, 'kept');
             const input: HTMLInputElement = qa(fixture, 'kept-input')?.nativeElement as HTMLInputElement;
@@ -231,13 +291,25 @@ describe('RtExpansionPanelComponent — дополнения', (): void => {
             expect(header.getAttribute('aria-controls')).toBe((within(fixture, 'kept', 'expansion-panel-body') as HTMLElement).id);
         });
 
-        it('без preserveContent свёрнутая панель тело убирает, как прежде', (): void => {
+        it('без preserveContent свёрнутая панель ленивое тело убирает, как прежде', (): void => {
             const fixture: ComponentFixture<AdditionsHostComponent> = setup();
 
-            pressHeader(fixture, 'group-a');
-            pressHeader(fixture, 'group-a');
+            pressHeader(fixture, 'wrapped');
+            expect(qa(fixture, 'wrapped-body')).not.toBeNull();
+            pressHeader(fixture, 'wrapped');
 
-            expect(qaAll(fixture, 'expansion-panel-body').length).toBe(0);
+            expect(qa(fixture, 'wrapped-body')).toBeNull();
+        });
+
+        it('SC-UKV-1738 — свёрнутая панель держит узел тела в странице скрытым и inert, поле в нём — во внешней форме', async (): Promise<void> => {
+            const fixture: ComponentFixture<AdditionsHostComponent> = setup();
+            const body: HTMLElement = within(fixture, 'form-panel', 'expansion-panel-body') as HTMLElement;
+
+            expect(body.contains(qa(fixture, 'form-city')?.nativeElement as HTMLElement)).toBe(true);
+            expect(body.classList).toContain('rt-expansion-panel__body--collapsed');
+            expect(body.hasAttribute('inert')).toBe(true);
+            await fixture.whenStable();
+            expect(fixture.componentInstance.outer().controls['city']).toBeDefined();
         });
     });
 

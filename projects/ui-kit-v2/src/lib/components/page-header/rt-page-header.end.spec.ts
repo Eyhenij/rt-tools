@@ -6,6 +6,7 @@ import { WINDOW } from '@rt-tools/core';
 
 import { createRtFixture, el, IRtFixtureOptions, qa } from '../../../testing/rt-kit-testing';
 import { IRtPageHeader } from './rt-page-header.model';
+import { RtPageHeaderBellDirective } from './rt-page-header.component';
 import { RtPageHeaderComponent } from './rt-page-header.component';
 
 const ITEMS: ReadonlyArray<IRtPageHeader.Item> = [{ id: 'tours', label: 'Туры', route: '/tours', icon: 'book' }];
@@ -27,17 +28,17 @@ function windowDouble(): Window & typeof globalThis {
 
 const PROVIDERS: IRtFixtureOptions = { providers: [provideRouter([]), { provide: WINDOW, useFactory: windowDouble }] };
 
-/** Кнопки шапки приходят в слот `[rtHeaderBell]` — нужна host-обёртка. */
+/** Кнопки шапки приходят шаблонами `rtHeaderBell` — нужна host-обёртка. */
 @Component({
     selector: 'rt-page-header-end-host',
     template: `
         <rt-page-header [items]="items" [user]="user">
-            <button rtHeaderBell type="button" qa-dataid="host-assistant">Помощник</button>
-            <button rtHeaderBell type="button" qa-dataid="host-bell">Уведомления</button>
+            <ng-template rtHeaderBell><button type="button" qa-dataid="host-assistant">Помощник</button></ng-template>
+            <ng-template rtHeaderBell><button type="button" qa-dataid="host-bell">Уведомления</button></ng-template>
         </rt-page-header>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtPageHeaderComponent],
+    imports: [RtPageHeaderComponent, RtPageHeaderBellDirective],
 })
 class PageHeaderEndHostComponent {
     public readonly items: ReadonlyArray<IRtPageHeader.Item> = ITEMS;

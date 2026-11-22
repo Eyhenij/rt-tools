@@ -15,18 +15,20 @@ import {
     viewChild,
     ViewEncapsulation,
     WritableSignal,
+    contentChildren,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { BreakpointsService, rtKitLabel, TRtKitLabelParams } from '@rt-tools/ui-kit-v2/core';
+import { BreakpointsService, rtKitLabel, TRtKitLabelParams, RtSlotOutletDirective } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
-import { RtMenuComponent, RtMenuItemComponent } from '@rt-tools/ui-kit-v2/menu';
+import { RtMenuComponent, RtMenuContentDirective, RtMenuItemComponent } from '@rt-tools/ui-kit-v2/menu';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 
 import { rtBreadcrumbsFits, rtBreadcrumbsFold } from './rt-breadcrumbs.logic';
 import { IRtBreadcrumbs } from './rt-breadcrumbs.model';
+import { RtBreadcrumbsContentDirective } from './rt-breadcrumbs-content.directive';
 
 const BEM_BLOCK: string = 'rt-breadcrumbs';
 
@@ -44,6 +46,7 @@ const BEM_BLOCK: string = 'rt-breadcrumbs';
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
+        RtSlotOutletDirective,
         // angular
         RouterLink,
 
@@ -53,6 +56,7 @@ const BEM_BLOCK: string = 'rt-breadcrumbs';
         ModDirective,
         RtIconComponent,
         RtMenuComponent,
+        RtMenuContentDirective,
         RtMenuItemComponent,
         RtTooltipDirective,
     ],
@@ -64,6 +68,9 @@ const BEM_BLOCK: string = 'rt-breadcrumbs';
     },
 })
 export class RtBreadcrumbsComponent {
+    /** Шаблоны после заголовка: рисуются только в виде заголовка с текущей страницей. */
+    protected readonly contents: Signal<readonly RtBreadcrumbsContentDirective[]> = contentChildren(RtBreadcrumbsContentDirective);
+
     #itemsWatch: ResizeObserver | null = null;
 
     readonly #narrow: Signal<boolean> = inject(BreakpointsService).narrow;

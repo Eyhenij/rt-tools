@@ -7,6 +7,7 @@ import { LOCAL_STORAGE } from '@rt-tools/core';
 
 import { BreakpointsService } from '../../platform';
 import { createRtFixture, qa, qaAll } from '../../../testing/rt-kit-testing';
+import { RtIconButtonContentDirective } from '../icon-button/rt-icon-button-content.directive';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 import { provideRtSideMenuSettings, RtSideMenuSettingsService } from './rt-side-menu-settings.service';
@@ -163,16 +164,20 @@ describe('Переключатели бокового меню', (): void => {
 @Component({
     selector: 'rt-icon-button-content-host',
     template: `
-        <rt-icon-button ariaLabel="Свой рисунок" [icon]="null"><i class="own-picture"></i></rt-icon-button>
-        <rt-icon-button ariaLabel="Значок кита" icon="ico-plus"><i class="ignored"></i></rt-icon-button>
+        <rt-icon-button ariaLabel="Свой рисунок" [icon]="null">
+            <ng-template rtIconButtonContent><i class="own-picture"></i></ng-template>
+        </rt-icon-button>
+        <rt-icon-button ariaLabel="Значок кита" icon="ico-plus">
+            <ng-template rtIconButtonContent><i class="ignored"></i></ng-template>
+        </rt-icon-button>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtIconButtonComponent],
+    imports: [RtIconButtonComponent, RtIconButtonContentDirective],
 })
 class IconButtonContentHostComponent {}
 
 describe('Содержимое кнопки-иконки', (): void => {
-    it('SC-UKV-623 — кнопка без имени значка показывает вложенное, со значком — значок', (): void => {
+    it('SC-UKV-623 — кнопка без имени значка показывает шаблон содержимого, со значком — значок', (): void => {
         TestBed.configureTestingModule({ providers: PROVIDERS as never[] });
         const fixture: ComponentFixture<IconButtonContentHostComponent> = TestBed.createComponent(IconButtonContentHostComponent);
         fixture.detectChanges();

@@ -4,6 +4,8 @@ import {
     afterRenderEffect,
     booleanAttribute,
     computed,
+    contentChildren,
+    Directive,
     effect,
     inject,
     input,
@@ -15,6 +17,7 @@ import {
     Component,
     DestroyRef,
     ElementRef,
+    InjectionToken,
     InputSignal,
     InputSignalWithTransform,
     OutputEmitterRef,
@@ -30,7 +33,16 @@ import { filter, map } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective, WINDOW } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RT_KIT_TRANSLATOR, RtKitLabelPipe, TRtKitLabelMap, TRtKitTranslator, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import {
+    RT_KIT_LABELS,
+    RT_KIT_TRANSLATOR,
+    RtKitLabelPipe,
+    TRtKitLabelMap,
+    TRtKitTranslator,
+    rtKitLabel,
+    rtSlotTemplate,
+    RtSlotOutletDirective,
+} from '@rt-tools/ui-kit-v2/core';
 import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
 
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
@@ -52,10 +64,61 @@ import {
 } from './rt-page-header.logic';
 import { IRtPageHeader } from './rt-page-header.model';
 
+/**
+ * Метка шапки страницы над слотом. Колокольчик `[rtHeaderBell]` остаётся слотом-элементом
+ * `rt-header`, и прежняя форма предупреждает только в `rt-page-header`.
+ */
 const BEM_BLOCK: string = 'rt-page-header';
+const SLOT_HOST: string = BEM_BLOCK;
+
+/** Признак шапки страницы над слотом: прежняя форма колокольчика предупреждает только в ней. */
+export const RT_PAGE_HEADER_SLOT_HOST: InjectionToken<boolean> = new InjectionToken<boolean>('RT_PAGE_HEADER_SLOT_HOST');
 
 /** Подложка узкой шапки: её вид задан в `rt-page-header-mobile.scss`, класс ставит и бургер */
 const PAGE_HEADER_MOBILE_BACKDROP: string = 'rt-page-header-mobile-backdrop';
+
+/** Логотип рейла: `<ng-template rtRailLogo>`, рисуется только при `layout="vertical"`. */
+@Directive({ selector: '[rtRailLogo]' })
+class RtRailLogoDirective {
+    public readonly template: TemplateRef<unknown> | null = rtSlotTemplate(SLOT_HOST, 'rtRailLogo');
+}
+
+/** Содержимое строки страницы рейла: `<ng-template rtRailPage>`, только при `layout="vertical"`. */
+@Directive({ selector: '[rtRailPage]' })
+class RtRailPageDirective {
+    public readonly template: TemplateRef<unknown> | null = rtSlotTemplate(SLOT_HOST, 'rtRailPage');
+}
+
+/** Левая часть компактной полосы: `<ng-template rtCompactLeft>`, только в горизонтальном виде. */
+@Directive({ selector: '[rtCompactLeft]' })
+class RtCompactLeftDirective {
+    public readonly template: TemplateRef<unknown> | null = rtSlotTemplate(SLOT_HOST, 'rtCompactLeft');
+}
+
+/** Середина компактной полосы: `<ng-template rtCompactCenter>`, только в горизонтальном виде. */
+@Directive({ selector: '[rtCompactCenter]' })
+class RtCompactCenterDirective {
+    public readonly template: TemplateRef<unknown> | null = rtSlotTemplate(SLOT_HOST, 'rtCompactCenter');
+}
+
+/** Правая часть компактной полосы: `<ng-template rtCompactRight>`, только в горизонтальном виде. */
+@Directive({ selector: '[rtCompactRight]' })
+class RtCompactRightDirective {
+    public readonly template: TemplateRef<unknown> | null = rtSlotTemplate(SLOT_HOST, 'rtCompactRight');
+}
+
+/**
+ * Кнопки у правого края шапки страницы: `<ng-template rtHeaderBell>`, только в горизонтальном виде.
+ * Несколько шаблонов встают все, в порядке записи, перед профилем.
+ */
+@Directive({ selector: '[rtHeaderBell]' })
+class RtPageHeaderBellDirective {
+    public readonly template: TemplateRef<unknown> | null = rtSlotTemplate(
+        SLOT_HOST,
+        'rtHeaderBell',
+        inject(RT_PAGE_HEADER_SLOT_HOST, { optional: true }) === true
+    );
+}
 
 /**
  * Верхняя горизонтальная плашка-навигация для первого уровня доменных страниц.
@@ -95,6 +158,7 @@ const PAGE_HEADER_MOBILE_BACKDROP: string = 'rt-page-header-mobile-backdrop';
         RtIconComponent,
         RtPopoverDirective,
         RtTooltipDirective,
+        RtSlotOutletDirective,
         RtPageHeaderMoreComponent,
         RtPageRailComponent,
         RtPageHeaderUserComponent,
@@ -108,6 +172,8 @@ const PAGE_HEADER_MOBILE_BACKDROP: string = 'rt-page-header-mobile-backdrop';
         '[class.rt-page-header--is-compact]': 'compact()',
         '[class.rt-page-header--vertical]': 'isVertical()',
     },
+    // Слоты шапки узнают её над собой: прежняя форма колокольчика предупреждает только здесь.
+    providers: [{ provide: RT_PAGE_HEADER_SLOT_HOST, useValue: true }],
 })
 export class RtPageHeaderComponent {
     readonly #router: Router = inject(Router);
@@ -136,6 +202,14 @@ export class RtPageHeaderComponent {
         equal: (a: ReadonlySet<string>, b: ReadonlySet<string>): boolean =>
             a.size === b.size && [...a].every((id: string): boolean => b.has(id)),
     });
+
+    /** Шаблоны слотов: рисуются только в своём виде шапки, все по порядку записи. */
+    protected readonly railLogoSlots: Signal<readonly RtRailLogoDirective[]> = contentChildren(RtRailLogoDirective);
+    protected readonly railPageSlots: Signal<readonly RtRailPageDirective[]> = contentChildren(RtRailPageDirective);
+    protected readonly compactLeftSlots: Signal<readonly RtCompactLeftDirective[]> = contentChildren(RtCompactLeftDirective);
+    protected readonly compactCenterSlots: Signal<readonly RtCompactCenterDirective[]> = contentChildren(RtCompactCenterDirective);
+    protected readonly compactRightSlots: Signal<readonly RtCompactRightDirective[]> = contentChildren(RtCompactRightDirective);
+    protected readonly bellSlots: Signal<readonly RtPageHeaderBellDirective[]> = contentChildren(RtPageHeaderBellDirective);
 
     protected readonly navRef: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('nav');
 
@@ -413,3 +487,12 @@ export class RtPageHeaderComponent {
         this.closeNavPanels();
     }
 }
+
+export {
+    RtRailLogoDirective,
+    RtRailPageDirective,
+    RtCompactLeftDirective,
+    RtCompactCenterDirective,
+    RtCompactRightDirective,
+    RtPageHeaderBellDirective,
+};

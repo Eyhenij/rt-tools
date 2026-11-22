@@ -1,5 +1,6 @@
 import { afterNextRender, computed, input, viewChild, ChangeDetectionStrategy, Component, InputSignal, Signal } from '@angular/core';
 
+import { RtChatComposerBarDirective } from '../../rt-chat-states.directive';
 import { RtChatComponent } from '../../rt-chat.component';
 import { ERtChatMessageStatus, IRtChat } from '../../rt-chat.model';
 import { TestRtChatEditBarComponent } from './test-chat-edit-bar.component';
@@ -17,7 +18,7 @@ function today(hours: number, minutes: number): string {
  */
 @Component({
     selector: 'app-chat-scheduled',
-    imports: [RtChatComponent, TestRtChatEditBarComponent],
+    imports: [RtChatComponent, RtChatComposerBarDirective, TestRtChatEditBarComponent],
     templateUrl: './test-chat-scheduled.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })

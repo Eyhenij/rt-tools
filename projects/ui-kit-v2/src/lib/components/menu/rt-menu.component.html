@@ -15,16 +15,23 @@
     cdkConnectedOverlayHasBackdrop
     cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
     [cdkConnectedOverlayOrigin]="trigger"
-    [cdkConnectedOverlayOpen]="isOpen()"
+    [cdkConnectedOverlayOpen]="isOpen() || confirming() > 0"
     [cdkConnectedOverlayPositions]="overlayPositions()"
     [cdkConnectedOverlayPanelClass]="panelClasses()"
-    (backdropClick)="close()"
+    (backdropClick)="onBackdropClick()"
     (attach)="onAttach()"
     (detach)="close()"
     (overlayKeydown)="onKeydown($event)">
     <ng-container rtBlock="rt-menu">
-        <div rtElem="panel" qa-dataid="menu-panel" role="menu" [rtMod]="{ size: size() }" (rtMenuSelect)="onSelect()">
-            <ng-content />
+        <!-- Закрытое меню, чей пункт ждёт подтверждения, держит панель скрытой до ответа. -->
+        <div
+            rtElem="panel"
+            qa-dataid="menu-panel"
+            role="menu"
+            [rtMod]="{ size: size(), held: !isOpen() }"
+            (rtMenuSelect)="onSelect()"
+            (rtMenuConfirm)="onConfirm($event)">
+            <ng-container [rtSlotOutlet]="contents()" />
         </div>
     </ng-container>
 </ng-template>

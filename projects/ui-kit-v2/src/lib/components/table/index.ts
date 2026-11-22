@@ -1,5 +1,6 @@
 export * from './copy-cell/rt-copy-cell.component';
 export * from './sort-header/rt-table-sort-header.component';
+export * from './sort-header/rt-table-sort-header-content.directive';
 export * from './rt-table-card.directive';
 export * from './rt-table-row-actions.directive';
 export * from './rt-table-row-actions.logic';

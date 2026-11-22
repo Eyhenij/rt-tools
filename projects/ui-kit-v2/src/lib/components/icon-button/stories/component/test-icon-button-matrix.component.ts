@@ -7,6 +7,7 @@ import { IStoryState, STORY_STATES, storyStateLabel } from '../../../../../showc
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { IRtIcon } from '../../../icon/rt-icon.model';
 import { RT_RADIUS_STEPS, TRtRadius } from '../../../radius/rt-radius.model';
+import { RtIconButtonContentDirective } from '../../rt-icon-button-content.directive';
 import { RtIconButtonComponent } from '../../rt-icon-button.component';
 import { IRtIconButton } from '../../rt-icon-button.model';
 
@@ -129,11 +130,13 @@ interface IIconButtonFlagCase {
                             <ng-template let-variant let-own="col">
                                 @if (own) {
                                     <rt-icon-button [icon]="null" [ariaLabel]="variant" [variant]="variant">
-                                        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-                                            <path
-                                                fill="currentColor"
-                                                d="M3 3h8v8H3zm2 2v4h4V5zm8-2h8v8h-8zm2 2v4h4V5zM3 13h8v8H3zm2 2v4h4v-4zm8-2h2v2h-2zm4 0h4v2h-4zm-4 4h4v4h-4zm6 2h2v2h-2z" />
-                                        </svg>
+                                        <ng-template rtIconButtonContent>
+                                            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                                                <path
+                                                    fill="currentColor"
+                                                    d="M3 3h8v8H3zm2 2v4h4V5zm8-2h8v8h-8zm2 2v4h4V5zM3 13h8v8H3zm2 2v4h4v-4zm8-2h2v2h-2zm4 0h4v2h-4zm-4 4h4v4h-4zm6 2h2v2h-2z" />
+                                            </svg>
+                                        </ng-template>
                                     </rt-icon-button>
                                 } @else {
                                     <rt-icon-button icon="pencil" [ariaLabel]="variant" [variant]="variant" />
@@ -241,6 +244,7 @@ interface IIconButtonFlagCase {
     imports: [
         // components
         RtIconButtonComponent,
+        RtIconButtonContentDirective,
 
         // showcase
         StoryGridComponent,

@@ -8,6 +8,7 @@ import { IUsage } from '@rt/message-bus-admin/usage/util';
 import { USAGE_SORTABLE } from '@rt/message-bus-common';
 import {
     RtAsideComponent,
+    RtAsideContentDirective,
     RtAsideFooterComponent,
     RtAsideHeaderComponent,
     RtButtonDirective,
@@ -39,6 +40,7 @@ const BEM_BLOCK: string = 'admin-usage-sessions-aside';
         // components
         AdminUsageSessionsViewComponent,
         RtAsideComponent,
+        RtAsideContentDirective,
         RtAsideFooterComponent,
         RtAsideHeaderComponent,
         RtButtonDirective,

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { IRtIcon } from '../../../icon/rt-icon.model';
 import { RtMenuItemComponent } from '../../rt-menu-item.component';
+import { RtMenuContentDirective } from '../../rt-menu-content.directive';
 import { RtMenuComponent } from '../../rt-menu.component';
 import { IRtMenu } from '../../rt-menu.model';
 
@@ -17,21 +18,24 @@ import { IRtMenu } from '../../rt-menu.model';
     selector: 'app-menu',
     template: `
         <rt-menu [icon]="icon" [ariaLabel]="ariaLabel" [align]="align" [disabled]="disabled">
-            <rt-menu-item label="Открыть" icon="ico-eye" />
-            <rt-menu-item label="Изменить" icon="ico-edit" />
-            <rt-menu-item label="Скопировать" icon="ico-copy" [disabled]="true" />
-            <rt-menu-item
-                label="Удалить"
-                icon="ico-trash"
-                confirmMessage="Удалить запись? Действие необратимо."
-                confirmTitle="Удаление"
-                [danger]="true" />
+            <ng-template rtMenuContent>
+                <rt-menu-item label="Открыть" icon="ico-eye" />
+                <rt-menu-item label="Изменить" icon="ico-edit" />
+                <rt-menu-item label="Скопировать" icon="ico-copy" [disabled]="true" />
+                <rt-menu-item
+                    label="Удалить"
+                    icon="ico-trash"
+                    confirmMessage="Удалить запись? Действие необратимо."
+                    confirmTitle="Удаление"
+                    [danger]="true" />
+            </ng-template>
         </rt-menu>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
         RtMenuComponent,
+        RtMenuContentDirective,
         RtMenuItemComponent,
     ],
 })

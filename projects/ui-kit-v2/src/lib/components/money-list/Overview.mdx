@@ -9,9 +9,9 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ```html
 <rt-money-list>
-    <rt-money-row label="Работы">120 000 ₽</rt-money-row>
-    <rt-money-row label="Материалы" [loading]="pending()">28 000 ₽</rt-money-row>
-    <rt-money-row total label="Итого">148 000 ₽</rt-money-row>
+    <rt-money-row label="Работы"><ng-template rtMoneyRowContent>120 000 ₽</ng-template></rt-money-row>
+    <rt-money-row label="Материалы" [loading]="pending()"><ng-template rtMoneyRowContent>28 000 ₽</ng-template></rt-money-row>
+    <rt-money-row total label="Итого"><ng-template rtMoneyRowContent>148 000 ₽</ng-template></rt-money-row>
 </rt-money-list>
 ```
 

@@ -4,14 +4,16 @@
 
 ```html
 <rt-menu ariaLabel="Действия со строкой" align="end">
-    <rt-menu-item label="Открыть" icon="ico-eye" (selected)="open()" />
-    <rt-menu-item
-        label="Удалить"
-        icon="ico-trash"
-        confirmMessage="Удалить запись? Действие необратимо."
-        confirmTitle="Удаление"
-        [danger]="true"
-        (selected)="remove()" />
+    <ng-template rtMenuContent>
+        <rt-menu-item label="Открыть" icon="ico-eye" (selected)="open()" />
+        <rt-menu-item
+            label="Удалить"
+            icon="ico-trash"
+            confirmMessage="Удалить запись? Действие необратимо."
+            confirmTitle="Удаление"
+            [danger]="true"
+            (selected)="remove()" />
+    </ng-template>
 </rt-menu>
 ```
 

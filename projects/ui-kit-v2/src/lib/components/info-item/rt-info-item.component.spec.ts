@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, WritableSignal, signal } from '@ang
 import { ComponentFixture } from '@angular/core/testing';
 
 import { createRtFixture, el, hostClasses, qa, setInputs, textOf } from '../../../testing/rt-kit-testing';
+import { RtInfoItemContentDirective } from './rt-info-item-content.directive';
 import { RtInfoItemComponent } from './rt-info-item.component';
 
 /**
@@ -11,9 +12,10 @@ import { RtInfoItemComponent } from './rt-info-item.component';
  */
 @Component({
     selector: 'rt-info-item-host',
-    template: '<rt-info-item [label]="label()" [loading]="loading()" [grow]="grow()">{{ value() }}</rt-info-item>',
+    template:
+        '<rt-info-item [label]="label()" [loading]="loading()" [grow]="grow()"><ng-template rtInfoItemContent>{{ value() }}</ng-template></rt-info-item>',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtInfoItemComponent],
+    imports: [RtInfoItemComponent, RtInfoItemContentDirective],
 })
 class InfoItemHostComponent {
     public readonly label: WritableSignal<string> = signal<string>('Тариф');

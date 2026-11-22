@@ -20,6 +20,7 @@ import { RtPageBarFilterDirective, RtPageBarSearchDirective } from '../../bar/rt
 import { RtPageBarComponent } from '../../bar/rt-page-bar.component';
 import { IRtPageBar } from '../../bar/rt-page-bar.model';
 import { RtPageActionsComponent } from '../../rail/rt-page-actions.component';
+import { RtRailLogoDirective, RtRailPageDirective } from '../../rt-page-header.component';
 import { RtPageHeaderComponent } from '../../rt-page-header.component';
 import { IRtPageHeader } from '../../rt-page-header.model';
 import {
@@ -66,6 +67,8 @@ const SHORT_TAB_LIST: number = 5;
         RtPageBarFilterDirective,
         RtPageBarSearchDirective,
         RtPageHeaderComponent,
+        RtRailLogoDirective,
+        RtRailPageDirective,
         RtPageActionsComponent,
         RtProfileMenuComponent,
         RtSelectComponent,

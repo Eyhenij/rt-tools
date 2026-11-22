@@ -6,6 +6,7 @@ import { IRtIcon } from '../icon/rt-icon.model';
 import { RtAsideFooterComponent } from './footer/rt-aside-footer.component';
 import { RtAsideHeaderComponent } from './header/rt-aside-header.component';
 import { RtAsideEmptyDirective } from './rt-aside-empty.directive';
+import { RtAsideContentDirective } from './rt-aside-content.directive';
 import { RtAsideComponent } from './rt-aside.component';
 
 /** Панель с шапкой, содержимым и подвалом; пустота и заглушка — сигналами хозяина. */
@@ -14,7 +15,9 @@ import { RtAsideComponent } from './rt-aside.component';
     template: `
         <rt-aside [empty]="empty()" [emptyIcon]="emptyIcon()" [emptyTitle]="emptyTitle()" [emptyDescription]="emptyDescription()">
             <rt-aside-header title="События" />
-            <p qa-dataid="aside-body">Запись</p>
+            <ng-template rtAsideContent>
+                <p qa-dataid="aside-body">Запись</p>
+            </ng-template>
             @if (ownTemplate()) {
                 <ng-template rtAsideEmpty>
                     <p qa-dataid="own-empty">Событий нет</p>
@@ -26,7 +29,7 @@ import { RtAsideComponent } from './rt-aside.component';
         </rt-aside>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtAsideComponent, RtAsideHeaderComponent, RtAsideFooterComponent, RtAsideEmptyDirective],
+    imports: [RtAsideComponent, RtAsideContentDirective, RtAsideHeaderComponent, RtAsideFooterComponent, RtAsideEmptyDirective],
 })
 class AsideEmptyHostComponent {
     public readonly empty: WritableSignal<boolean> = signal<boolean>(false);

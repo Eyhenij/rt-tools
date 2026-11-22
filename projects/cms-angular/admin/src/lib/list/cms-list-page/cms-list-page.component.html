@@ -4,7 +4,7 @@
             <!-- Filters and search on the left, actions over the list on the right: mixed, they read as
              one set of buttons, and it is unclear what changes what is shown. -->
             <ng-template rtToolbarLeft>
-                <ng-content select="[rtCmsListToolbarLeft]" />
+                <ng-container [rtSlotOutlet]="leftSlots()" />
 
                 <!-- A list the server does not search has no search: an empty hint means there is
                  nothing to search by. The field stands after the filters: it answers "where among
@@ -23,7 +23,7 @@
             </ng-template>
 
             <ng-template rtToolbarRight>
-                <ng-content select="[rtCmsListToolbarRight]" />
+                <ng-container [rtSlotOutlet]="rightSlots()" />
 
                 <rt-icon-button
                     icon="sync"
@@ -39,7 +39,8 @@
         <!-- The table comes from the screen whole: its columns are collected by its own content query,
          and a wrapper would not carry them to it. -->
         <div rtElem="scroll">
-            <ng-content />
+            <!-- Elements of the former bar form do not land here: they are not drawn and only warn. -->
+            <ng-content select=":not([rtCmsListToolbarLeft]):not([rtCmsListToolbarRight])" />
         </div>
 
         <rt-pagination

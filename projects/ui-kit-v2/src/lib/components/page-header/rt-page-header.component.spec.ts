@@ -7,6 +7,7 @@ import { WINDOW } from '@rt-tools/core';
 import { BreakpointsService } from '../../platform';
 import { createRtFixture, el, hostClasses, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
 import { IRtPageHeader } from './rt-page-header.model';
+import { RtCompactCenterDirective, RtCompactLeftDirective, RtCompactRightDirective } from './rt-page-header.component';
 import { RtPageHeaderComponent } from './rt-page-header.component';
 
 const ITEMS: ReadonlyArray<IRtPageHeader.Item> = [
@@ -91,18 +92,18 @@ function navItems(fixture: ComponentFixture<RtPageHeaderComponent>): HTMLElement
     return qaAll(fixture, 'header-nav-item').map((node: DebugElement): HTMLElement => node.nativeElement as HTMLElement);
 }
 
-/** Слоты сжатой полосы приходят проекцией — нужна host-обёртка. */
+/** Слоты сжатой полосы приходят шаблонами — нужна host-обёртка. */
 @Component({
     selector: 'rt-page-header-host',
     template: `
         <rt-page-header stickyCompact [items]="items">
-            <span rtCompactLeft qa-dataid="host-crumbs">Туры / Лето</span>
-            <span rtCompactCenter qa-dataid="host-filter">Все</span>
-            <span rtCompactRight qa-dataid="host-actions">Действия</span>
+            <ng-template rtCompactLeft><span qa-dataid="host-crumbs">Туры / Лето</span></ng-template>
+            <ng-template rtCompactCenter><span qa-dataid="host-filter">Все</span></ng-template>
+            <ng-template rtCompactRight><span qa-dataid="host-actions">Действия</span></ng-template>
         </rt-page-header>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtPageHeaderComponent],
+    imports: [RtPageHeaderComponent, RtCompactLeftDirective, RtCompactCenterDirective, RtCompactRightDirective],
 })
 class PageHeaderHostComponent {
     public readonly items: ReadonlyArray<IRtPageHeader.Item> = ITEMS;

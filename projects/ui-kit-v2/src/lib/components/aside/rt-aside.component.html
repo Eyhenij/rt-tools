@@ -24,7 +24,7 @@
                 }
             </div>
         } @else {
-            <ng-content />
+            <ng-container [rtSlotOutlet]="contents()" />
         }
     </div>
 

@@ -3,13 +3,14 @@ import { Router } from '@angular/router';
 
 import { RtNotificationsBellComponent } from '../../../notifications-bell/rt-notifications-bell.component';
 import { IRtPageHeader } from '../../rt-page-header.model';
+import { RtPageHeaderBellDirective } from '../../rt-page-header.component';
 import { RtPageHeaderComponent } from '../../rt-page-header.component';
 
 /** Тема показа: кадры макета нарисованы во всю ширину окна, светлые и тёмные отдельно. */
 export type TPageHeaderEndTheme = 'light' | 'dark';
 
 /**
- * Правая группа `rt-page-header`: кнопки слота `[rtHeaderBell]` и профиль у правого края. Две
+ * Правая группа `rt-page-header`: кнопки шаблонов `rtHeaderBell` и профиль у правого края. Две
  * шапки одна под другой — с одним колокольчиком и с кнопкой помощника перед ним.
  *
  * Пары наборов и тем здесь нет нарочно: кадр сравнивается с кадром макета той же ширины окна, а
@@ -27,6 +28,7 @@ export type TPageHeaderEndTheme = 'light' | 'dark';
     imports: [
         // components
         RtPageHeaderComponent,
+        RtPageHeaderBellDirective,
         RtNotificationsBellComponent,
     ],
 })

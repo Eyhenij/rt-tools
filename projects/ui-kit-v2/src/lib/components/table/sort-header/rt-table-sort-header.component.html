@@ -1,7 +1,3 @@
-<ng-template #label>
-    <ng-content />
-</ng-template>
-
 <ng-container rtBlock="rt-table-sort-header">
     @if (sortable()) {
         <button
@@ -12,10 +8,10 @@
             [attr.data-direction]="direction()"
             [rtMod]="{ active: direction() !== null }"
             (click)="onToggle()">
-            <ng-container [ngTemplateOutlet]="label" />
+            <ng-container [rtSlotOutlet]="contents()" />
             <rt-icon rtElem="icon" size="xs" [name]="icon()" />
         </button>
     } @else {
-        <ng-container [ngTemplateOutlet]="label" />
+        <ng-container [rtSlotOutlet]="contents()" />
     }
 </ng-container>

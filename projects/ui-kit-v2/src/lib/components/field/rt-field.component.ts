@@ -1,8 +1,10 @@
 import { BooleanInput } from '@angular/cdk/coercion';
+import { NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     computed,
     contentChild,
+    contentChildren,
     effect,
     inject,
     input,
@@ -14,17 +16,18 @@ import {
     InputSignal,
     InputSignalWithTransform,
     Signal,
+    TemplateRef,
     ViewEncapsulation,
 } from '@angular/core';
 import { ValidationErrors } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelKey, TRtKitLabelMap, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RT_KIT_LABELS, TRtKitLabelKey, TRtKitLabelMap, rtKitLabel, rtSlotTemplates } from '@rt-tools/ui-kit-v2/core';
 import { rtNotchWidth, RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
-import { RtSkeletonWrapperComponent } from '@rt-tools/ui-kit-v2/skeleton-wrapper';
+import { RtSkeletonComponent } from '@rt-tools/ui-kit-v2/skeleton';
 import { RtFieldHintDirective } from './rt-field-hint.directive';
 import { RT_FIELD_DEFAULT_ERROR_KEYS, RT_FIELD_EMPTY_VALUE, IRtField } from './rt-field.model';
 
@@ -50,7 +53,7 @@ function nextAutoId(): string {
  *
  * Читает контрол через contentChild(RtFormControlBase): авто-связывает label[for],
  * прокидывает read-only режим, показывает текст ошибки/required-маркер. На loading
- * оборачивает зону контрола в rt-skeleton-wrapper (label/hint остаются видимыми) —
+ * ставит заглушку на место контрола и прячет его, не убирая из формы (label/hint видимы) —
  * нужно для route-aside, где поля рендерятся до прихода данных.
  */
 @Component({
@@ -61,9 +64,10 @@ function nextAutoId(): string {
     encapsulation: ViewEncapsulation.None,
     imports: [
         // standalone components / directives
+        NgTemplateOutlet,
         RtIconComponent,
         RtPopoverDirective,
-        RtSkeletonWrapperComponent,
+        RtSkeletonComponent,
         BlockDirective,
         ElemDirective,
         ModDirective,
@@ -84,9 +88,11 @@ export class RtFieldComponent implements AfterContentInit {
 
     protected readonly projectedControl: Signal<RtFormControlBase<unknown> | undefined> = contentChild(RtFormControlBase);
 
-    // Проецируемый hint (с разметкой) — если присутствует, рендерится вместо
-    // строкового [hint].
-    protected readonly projectedHint: Signal<RtFieldHintDirective | undefined> = contentChild(RtFieldHintDirective);
+    // Шаблоны подсказки (с разметкой) — если есть, рисуются вместо строкового [hint], все по порядку.
+    protected readonly hintSlots: Signal<readonly RtFieldHintDirective[]> = contentChildren(RtFieldHintDirective);
+    protected readonly hintTemplates: Signal<TemplateRef<unknown>[]> = computed((): TemplateRef<unknown>[] =>
+        rtSlotTemplates(this.hintSlots())
+    );
 
     readonly #autoId: string = nextAutoId();
 
