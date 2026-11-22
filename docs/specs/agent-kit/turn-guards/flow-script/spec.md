@@ -85,7 +85,8 @@ counter-conditions is the subdomain `docs/specs/agent-kit/turn-guards/flow-scrip
 recorded turns run through the hook on Stop are the subdomain
 `docs/specs/agent-kit/turn-guards/flow-script/replay/`. The guard at the end of a turn that asks
 the engine for its verdict, its release cases and the owner's menu are the subdomain
-`docs/specs/agent-kit/turn-guards/flow-script/exit/`. Exits 11, 12 and 13 of the end of an epic are
+`docs/specs/agent-kit/turn-guards/flow-script/exit/`; the CI hold it reads first is the subdomain
+`docs/specs/agent-kit/turn-guards/flow-script/exit-ci/`. Exits 11, 12 and 13 of the end of an epic are
 the subdomain `docs/specs/agent-kit/turn-guards/flow-script/epic/`: there exit 12 reads every task
 with a merged PR of its branch on the hosting. The guards of the end of a turn that judge the conversation are in the domain next to it. The check
 that the steps of the plan and of the progress match is the subdomain `docs/specs/agent-kit/work-steps/`.
