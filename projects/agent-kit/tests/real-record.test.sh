@@ -47,12 +47,11 @@ report "SC-AK-1606 — consent: последнее слово владельца
 # --- foreign answers: what is no word of the owner ------------------------------------------------
 report "SC-AK-1607 — foreign answer: ни одно сообщение хука не читается словом владельца" \
     "$(reading 'owner messages with a hook refusal')" "0"
-# The reminder measure counts by the shared rule of the owner's words: a message pasted by the owner
-# and one queued during a turn count, a wrapper of the harness does not. The owner source of the
-# engine reads the queued messages too since 22.11, and still reads the wrappers of user entries as
-# words: its move to the shared rule is a task of its own.
-report "SC-AK-1607 — foreign answer: owner.mjs считает 287 сообщений набранными, owner-nudges по общему правилу — 198" \
-    "$(reading 'owner typed messages') $(reading 'owner-nudges typed')" "287 198"
+# The reminder measure and the owner source of the engine count by one shared rule of the owner's
+# words: a message pasted by the owner and one queued during a turn count, a wrapper of the harness
+# does not.
+report "SC-AK-1607 — foreign answer: owner.mjs и owner-nudges по общему правилу считают по 198 набранных сообщений" \
+    "$(reading 'owner typed messages') $(reading 'owner-nudges typed')" "198 198"
 report "SC-AK-1607 — foreign answer: ответ меню «ты нашёл причину?» не одобряет план — planApproval RT-3268" \
     "$(reading 'planApproval RT-3268')" "null"
 report "SC-AK-1607 — foreign answer: «Одобряю, делай» без имени плана не одобряет его — planApproval RT-3269" \

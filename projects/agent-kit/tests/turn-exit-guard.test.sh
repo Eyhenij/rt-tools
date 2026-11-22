@@ -355,8 +355,12 @@ expect_stop "end: SC-AK-1839 — Esc отпускает ход через хук
     "$(input_stop "$(transcript "$(edited)" "$(say '[Request interrupted by user]')")")" PASS
 queued() { jq -c -n --arg t "$1" '{type:"attachment",attachment:{type:"queued_command",prompt:$t,origin:{kind:"human"}}}'; }
 said_at() { jq -c -n --arg t "$1" --arg at "$2" '{type:"user",timestamp:$at,message:{content:[{type:"text",text:$t}]}}'; }
-expect_stop "end: SC-AK-1839 — Esc через секунду после поручения его доставляет — ход держится" \
-    "$(input_stop "$(transcript "$(edited)" "$(said_at 'делай задачу' 2026-11-16T00:27:54.000Z)" "$(said_at '[Request interrupted by user]' 2026-11-16T00:27:55.500Z)")")" BLOCK
+expect_stop "end: SC-AK-1839 — Esc через полторы секунды после поручения останавливает и его — ход отпущен" \
+    "$(input_stop "$(transcript "$(edited)" "$(said_at 'делай задачу' 2026-11-16T00:27:54.000Z)" "$(said_at '[Request interrupted by user]' 2026-11-16T00:27:55.500Z)")")" PASS
+expect_stop "end: SC-AK-1839 — вставленный текст в очереди после Esc — слово, ход держится" \
+    "$(input_stop "$(transcript "$(edited)" "$(say '[Request interrupted by user]')" "$(queued '<pasted_content id="p1">разбор: делай шаг 2</pasted_content>')")")" BLOCK
+expect_stop "end: SC-AK-1839 — обёртка команды оболочки после Esc — не слово, ход отпущен" \
+    "$(input_stop "$(transcript "$(edited)" "$(say '[Request interrupted by user]')" "$(say '<bash-input>git status</bash-input>')")")" PASS
 expect_stop "end: SC-AK-1839 — Esc через минуту после поручения — остановка, ход отпущен" \
     "$(input_stop "$(transcript "$(edited)" "$(said_at 'делай задачу' 2026-11-16T00:27:54.000Z)" "$(said_at '[Request interrupted by user]' 2026-11-16T00:28:54.000Z)")")" PASS
 expect_stop "end: SC-AK-1839 — слово, набранное после Esc во время хода, снова держит ход" \

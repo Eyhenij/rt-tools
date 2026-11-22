@@ -17,6 +17,21 @@ import { Call, Ref } from './flow-syntax.mjs';
 /** The keys of `words`; `nudge` is a pattern, the rest are lists of strings. */
 export const WORD_KEYS = ['nudge', 'write', 'menu', 'legacyBranches'];
 
+/**
+ * The keys of `words` the package retired: the owner stops a turn by Esc, and a typed word releases
+ * none. A tree override written for an older edition may still set them; the engine reads them as
+ * nothing and names them, and the description builds — a refusal would leave the exit guard failing
+ * open with no message.
+ */
+export const RETIRED_WORD_KEYS = ['stop', 'stopExcept', 'holdAfter'];
+
+/** The lines the engine prints for the retired word keys the description still sets. */
+export function retiredLines(model) {
+    return RETIRED_WORD_KEYS.filter((key) => key in (model.words ?? {})).map(
+        (key) => `retired by the package: words.${key} — the owner stops a turn by Esc, and the key does nothing`,
+    );
+}
+
 /** The ways a form of the expected result is compared with a run. */
 export const COMPARE = ['exit', 'line', 'regex', 'number'];
 
@@ -34,6 +49,7 @@ const pattern = (text, flags, where, fail) => {
 /** Checks the section `words`. */
 export function checkWords(words, fail) {
     for (const [key, value] of Object.entries(words)) {
+        if (RETIRED_WORD_KEYS.includes(key)) continue;
         if (!WORD_KEYS.includes(key)) fail(`words.${key}: not a word list of the description — ${WORD_KEYS.join(', ')}`);
         if (key === 'nudge') {
             if (typeof value !== 'string' || value === '') fail('words.nudge: the pattern is a non-empty string');

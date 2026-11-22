@@ -43,7 +43,7 @@ import { evaluateCondition } from './flow-condition.mjs';
 import { runForecast } from './flow-forecast.mjs';
 import { judgeCall } from './flow-guard.mjs';
 import { callOf, guardContext } from './flow-guard-run.mjs';
-import { isWriteCommand } from './flow-data.mjs';
+import { isWriteCommand, retiredLines } from './flow-data.mjs';
 import { FlowModelError, buildModel } from './flow-model.mjs';
 import { overridePath, removedLines } from './flow-override.mjs';
 import { planProblems, readRecord, runPlanRed } from './flow-plan.mjs';
@@ -304,7 +304,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
             process.exit(runPlanRed(sources, model, readRecord(process.env.RT_FLOW_TRANSCRIPT)));
         } else {
             const result = measureStates(model, await openReaders(model, dirname(path)));
-            console.log(json ? JSON.stringify(measureJson(model, result)) : [...measureLines(model, result), ...removedLines(model)].join('\n'));
+            console.log(json ? JSON.stringify(measureJson(model, result)) : [...measureLines(model, result), ...removedLines(model), ...retiredLines(model)].join('\n'));
         }
     } catch (error) {
         if (error instanceof FlowSyntaxError) {

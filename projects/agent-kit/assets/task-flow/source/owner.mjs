@@ -8,10 +8,20 @@
  *   last()        the owner's last word: the last message typed or the options chosen in a menu,
  *                 or null
  *
- * A message of a hook, a summary of a compaction and a meta entry are no word of the owner. Without a
+ * What the owner typed is read by the shared rule of the owner's words, `typedOf` of the laid-out
+ * `record-count.mjs`: a message typed before a turn or queued during one, a pasted text included; a
+ * wrapper or a notice of the harness, a message of a hook, a summary of a compaction and a meta entry
+ * are no word. The mark of Esc is a word of its own here: it is the owner's interrupt. Without a
  * record the owner said nothing: an interrupt not found keeps the turn held — the stricter reading.
  */
 import { existsSync, readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+// Next to the laid-out engine one level up, or among the checks of the package.
+const SHARED = [join(HERE, '..', '..', 'record-count.mjs'), join(HERE, '..', '..', 'checks', 'record-count.mjs')].find((p) => existsSync(p));
+const { typedOf } = await import(pathToFileURL(SHARED).href);
 
 /** The menu answer as the text of a tool result carries it. */
 const ANSWERED = /^(?:The user answered|Your questions have been answered):/;
@@ -19,46 +29,28 @@ const ANSWERED = /^(?:The user answered|Your questions have been answered):/;
 /** The mark the host writes when the owner presses Esc. */
 const INTERRUPT_MARK = /^\[Request interrupted by user/;
 
-/**
- * How long after a typed message a mark of Esc only delivers it, in milliseconds: over 14–22.11, 10
- * of 154 marks stood within five seconds of a typed message, sent mid-turn.
- */
-const DELIVERY_MS = 5_000;
-
-/** A message of a hook arrives as a user entry with this beginning. */
-const HOOK_MESSAGE = /^(?:Stop hook feedback|PreToolUse:|PostToolUse:)/;
-
 const ownerEntry = (entry) =>
     entry?.type === 'user' && !entry.isMeta && !entry.isCompactSummary && (entry.origin?.kind ?? 'human') === 'human';
 
 const resultText = (content) =>
     typeof content === 'string' ? content : Array.isArray(content) ? content.map((part) => (typeof part === 'object' ? (part.text ?? '') : '')).join(' ') : '';
 
-const typedText = (content) => {
-    if (typeof content === 'string') return HOOK_MESSAGE.test(content) ? null : content;
-    if (!Array.isArray(content) || content.some((part) => part?.type === 'tool_result')) return null;
-    return content.filter((part) => part?.type === 'text').map((part) => part.text).join('\n') || null;
+/** The mark of Esc of a user entry, or null. */
+const interruptOf = (entry) => {
+    if (!ownerEntry(entry)) return null;
+    const content = entry.message?.content;
+    const text = typeof content === 'string' ? content : Array.isArray(content) ? content.filter((part) => part?.type === 'text').map((part) => part.text).join('\n') : '';
+    return INTERRUPT_MARK.test(text.trim()) ? text : null;
 };
 
-/**
- * A message the owner typed while a turn ran: the host writes it as an `attachment` entry of the kind
- * `queued_command` from a person, with no `user` entry. A wrapper that begins with `<` is no word.
- */
-const queuedText = (entry) => {
-    const queued = entry?.type === 'attachment' && !entry.isMeta ? entry.attachment : null;
-    if (queued?.type !== 'queued_command' || queued.origin?.kind !== 'human') return null;
-    const text = typedText(queued.prompt);
-    return text && !text.trimStart().startsWith('<') ? text : null;
-};
-
-/** The word of one entry of the record: typed text or chosen options; null when it carries neither. */
+/** The word of one entry of the record: typed text, the mark of Esc or chosen options; null when it carries none. */
 export function wordOf(entry) {
-    const queued = queuedText(entry);
-    if (queued) return queued;
+    const typed = typedOf(entry);
+    if (typed) return typed.text;
+    const mark = interruptOf(entry);
+    if (mark) return mark;
     if (!ownerEntry(entry)) return null;
     if (entry.toolUseResult?.answers) return Object.values(entry.toolUseResult.answers).join('\n');
-    const typed = typedText(entry.message?.content);
-    if (typed) return typed;
     const content = entry.message?.content;
     if (!Array.isArray(content)) return null;
     const answers = content
@@ -86,27 +78,17 @@ export function open() {
     const entries = () => (cached ??= parse(process.env.RT_FLOW_TRANSCRIPT));
     const messages = () =>
         entries()
-            .map((entry) => queuedText(entry) ?? (ownerEntry(entry) ? typedText(entry.message?.content) : null))
+            .map((entry) => typedOf(entry)?.text ?? null)
             .filter(Boolean);
+    // Esc stops the order typed just before it too: the host sends no queued message after the mark,
+    // and over 14–22.11 none of 17 marks within five seconds of a word was followed by it again.
     const last = () => {
         const all = entries();
-        let mark = null;
         for (let index = all.length - 1; index >= 0; index -= 1) {
             const word = wordOf(all[index]);
-            if (word === null) continue;
-            if (mark === null && INTERRUPT_MARK.test(word.trim())) {
-                mark = { word, at: Date.parse(all[index].timestamp ?? '') };
-                continue;
-            }
-            // The host writes the mark of Esc right after a message the owner sent mid-turn: within
-            // a few seconds of it the mark delivers the message, and the message is the last word.
-            if (mark !== null) {
-                const at = Date.parse(all[index].timestamp ?? '');
-                return Number.isFinite(at) && Number.isFinite(mark.at) && mark.at - at >= 0 && mark.at - at <= DELIVERY_MS ? word : mark.word;
-            }
-            return word;
+            if (word !== null) return word;
         }
-        return mark?.word ?? null;
+        return null;
     };
     return { messages, said: (quote) => messages().some((text) => text.includes(quote)), last };
 }

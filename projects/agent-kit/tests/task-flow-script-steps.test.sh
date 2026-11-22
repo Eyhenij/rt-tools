@@ -146,7 +146,7 @@ printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Совпасть\n- [>
 # SC-AK-1506 — форма ожидаемого, добавленная в описание, принимается step без правки движка
 mkdir -p "$TF_DIR/kit"
 cp -R "$TESTS/../assets/task-flow" "$TF_DIR/kit/task-flow"
-cp "$TESTS/../assets/checks/work-steps-lib.mjs" "$TF_DIR/kit/"
+cp "$TESTS/../assets/checks/work-steps-lib.mjs" "$TESTS/../assets/checks/record-count.mjs" "$TF_DIR/kit/"
 node -e "
 const fs = require('fs');
 const f = process.argv[1];

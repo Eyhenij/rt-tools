@@ -46,9 +46,9 @@ not by a person.
   revert move only for a fix inside the folder.
 - **The owner's interrupt releases the turn: their last word is the mark of Esc, and no typed word releases a turn.**
   A turn a background notice wakes after Esc is released until the owner writes again. A message
-  typed mid-turn counts as writing: the host keeps it as a queued command, not as a user entry. A
-  mark within five seconds after a typed message only delivers it, and the message stays the last
-  word. A word typed to stop and an option chosen in a menu are words like any other: the turn is
+  typed mid-turn counts as writing: the host keeps it as a queued command, not as a user entry. Esc
+  stops an order sent a second before it too: the host does not send a queued message after the
+  mark. A word typed to stop and an option chosen in a menu are words like any other: the turn is
   judged by the scenario.
 - **A session that wrote nothing to the tree releases the turn unless the owner's last word pushes the work on, and a branch outside the scenario releases it always.**
 - **A role session with no edit tool ends with its report.**
@@ -60,6 +60,9 @@ not by a person.
   An agent past the bound counts as no task: one that handed its report back while its own work ran
   ends with no notice the record reads.
 - **A server started in the background is no wait and is never hung; a watch of a CI run and any other command are waits.**
+  A command is a server when its last part starts a server. A package script whose body starts its
+  containers detached ends by itself and is a wait. A command of nothing but pauses and prints is
+  no wait either: it waits for nothing.
 - **The model hook on Stop lets a turn end while a background task of the session still runs and the reply names the task and the step that goes on by its notice.**
 - **One background task releases one stop: a second stop with no call of a tool between the two is held.**
 - **A turn has ended when the record holds something after the agent closed it, other than the feedback of a stop hook.**

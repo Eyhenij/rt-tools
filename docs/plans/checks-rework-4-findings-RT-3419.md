@@ -13,16 +13,15 @@
   **Address:** `projects/agent-kit/assets/task-flow/source/session.mjs:taskOver` reads a
   `task_status` with a final status as the end of the task, with a scenario.
   **Metric:** stops with an agent open past its report, from 391 over 14–22.11 down to 0.
-- **A tree whose override names the removed word keys loses the exit guard with no message.**
-  `WORD_KEYS` no longer holds `stop`, `stopExcept`, `holdAfter`, and the release case `stopWord` is
-  gone. An override that sets or removes them now raises `FlowModelError`, and the exit guard fails
-  open. This tree has no such override. **Address:** the release notes of the package edition name
-  the removed keys, or the model reads them as retired with a warning. **Metric:** trees on the new
+- **A tree whose override names the removed release case loses the exit guard with no message.**
+  The word keys `stop`, `stopExcept` and `holdAfter` are retired in RT-3419 itself: the model reads
+  them as nothing and the engine names them. The release case `stopWord` is not: an override that
+  removes it by `null` is refused by `flow-override.mjs` (outside the footprint), «null removes
+  nothing», and one that sets it names the gone measurer `measure.owner.saidStop`. Then the exit
+  guard fails open. This tree has no such override. **Address:**
+  `projects/agent-kit/assets/checks/flow-override.mjs:mergeOverride` drops a retired release key
+  with a line, as `flow-data.mjs:retiredLines` does for the words. **Metric:** trees on the new
   edition whose exit guard fails open, down to 0.
-- **A chained server command is read as a server.** `pnpm run serve:auth && pnpm run
-  check:auth-stand` ends by itself, yet the pattern `SERVER` of `measure/session.mjs` takes it as a
-  server: in the background it releases no stop. **Address:** a server is a command whose last part
-  is a server. **Metric:** background commands misread as servers, down to 0.
 - **The bindings of two model-check cases name common words.** `ask-judge.md:bare` and
   `turn-judge.md:notice` pass the anchor check while the case they bind is gone. **Address:**
   an anchor the check finds only in the case itself, or a marker comment next to the case.

@@ -435,3 +435,11 @@ When `--check` runs, after the override changes, and after it is removed
 Then it prints `flow sync: 6 views match`, then refuses the view of the override, then prints `flow sync: 5 views match`
 
 Covered: `projects/agent-kit/tests/flow-language-sync.test.sh`, also run by `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1849 — a retired key of `words` does not break the description
+
+Given a description whose `words` set `stop`, `stopExcept` and `holdAfter` next to `menu`
+When the model is built
+Then it builds, and the engine names each of the three keys as retired by the package
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.

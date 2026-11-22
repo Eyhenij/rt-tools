@@ -29,8 +29,11 @@ And through the hook after a write «Стоп, хватит» and «не сей�
 And «стоп» does not lift the CI hold of a fresh head with no run
 And after Esc neither a red run nor a running one with no watch holds the stop, and a new word of the owner brings the hold back
 And a message typed mid-turn, kept as a queued command from a person, is the owner's word, and after Esc it holds the turn again; a queued notice of a task or a wrapper is no word
-And a mark of Esc a second and a half after a typed order delivers it and the turn is held; a minute after the order it releases the turn
+And a mark of Esc a second and a half or a minute after a typed order releases the turn
+And a pasted text queued after Esc is a word and holds the turn again, and a wrapper of a shell or a command after Esc is none
 And the text of the model hook on Stop names no «стоп»
+And the pattern of the owner's words in that hook takes the mark of Esc from a record of the owner and not from a request blob that repeats it next to a newer word
+And that hook reads an order sent a second before the mark as stopped by it
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`, `projects/agent-kit/tests/turn-replay.test.sh`.
 
@@ -264,6 +267,9 @@ Covered: `projects/agent-kit/tests/turn-exit-guard-wait.test.sh`.
 Given a background watch of a CI run, the servers `serve:stand`, `storybook:ui-kit-v2` and `nx serve`, and a showcase build `build-storybook`
 When the wait is measured five minutes after each start
 Then the watch and the showcase build are waits, and each server is no wait
+And a script `serve:db` or `serve:auth` whose body runs `docker compose up -d` is a wait, alone and chained before a check
+And a stand raised in the background before a test run, and a search that names a server, are waits; a server as the last part, after a variable, a `cd` or before a pipe, is none
+And a bare `sleep` with an `echo` is no wait and not hung, and a pause before a test run is a wait
 And a server two hundred minutes old is not hung
 And a watch of a CI run that lifts the CI hold also releases the stop as a wait
 

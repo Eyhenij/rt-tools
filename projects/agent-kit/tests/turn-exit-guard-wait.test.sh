@@ -78,6 +78,22 @@ for (const command of ['pnpm run serve:stand', 'pnpm run storybook:ui-kit-v2', '
 for (const command of ['pnpm exec storybook build', 'npx storybook@8 build', 'eslint projects/ui-kit-v2/.storybook', 'grep -rn storybook docs']) {
     out(`wait: SC-AK-1840 — «${command}» — не сервер, ожидание`, String(measure('waiting', [called('Bash'), started('b', 5, command)])), 'true');
 }
+const SCRIPTS = JSON.stringify({ scripts: { 'serve:db': 'docker compose up -d db', 'serve:auth': 'pnpm run build:theme && docker compose -f deploy/auth/compose.yml up -d --wait', 'serve:api': 'nx serve api' } });
+const withTree = (name, list) => session[name]({ ...timed(list), tree: { read: (path) => (path === 'package.json' ? SCRIPTS : null) } })(data);
+for (const command of ['pnpm run serve:db', 'pnpm run serve:auth', 'pnpm run serve:auth && pnpm run check:auth-stand']) {
+    out(`wait: SC-AK-1840 — скрипт «${command}» с контейнерами в фоне кончается сам — ожидание`, String(withTree('waiting', [called('Bash'), started('d', 5, command)])), 'true');
+}
+out('wait: SC-AK-1840 — скрипт сервера по телу «nx serve» — не ожидание', String(withTree('waiting', [called('Bash'), started('d', 5, 'pnpm run serve:api')])), 'false');
+for (const command of ['sleep 120; echo done', 'sleep 300 && echo "проверю"', 'sleep 90']) {
+    out(`wait: SC-AK-1840 — пауза «${command}» — не ожидание и не зависшая`, `${measure('waiting', [called('Bash'), started('p', 5, command)])} ${measure('hung', [called('Bash'), started('p', 95, command)])}`, 'false false');
+}
+out('wait: SC-AK-1840 — пауза перед делом — ожидание', String(measure('waiting', [called('Bash'), started('p', 5, 'sleep 30; pnpm test')])), 'true');
+for (const command of ['pnpm run serve:stand > /tmp/stand.log & sleep 20; pnpm exec playwright test', 'grep -rn "pnpm run serve:admin" docs']) {
+    out(`wait: SC-AK-1840 — «${command}» кончается последней частью — ожидание`, String(measure('waiting', [called('Bash'), started('e', 5, command)])), 'true');
+}
+for (const command of ['PORT=3310 pnpm run serve:api', 'pnpm run serve:api | tee /tmp/api.log', 'cd apps && npx nx serve admin']) {
+    out(`wait: SC-AK-1840 — сервер последней частью «${command.replace('|', 'в трубу')}» — не ожидание`, String(measure('waiting', [called('Bash'), started('e', 5, command)])), 'false');
+}
 out('wait: SC-AK-1840 — сервер старше границы — не зависший', String(measure('hung', [called('Bash'), started('s', 200, 'pnpm run serve:stand')])), 'false');
 out('wait: SC-AK-1840 — сборка витрины — ожидание', String(measure('waiting', [called('Bash'), started('b', 5, 'pnpm exec build-storybook')])), 'true');
 

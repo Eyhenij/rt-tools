@@ -42,10 +42,10 @@
       role: { session: source.session },
       menuLost: { session: source.session },
       forbidden: { session: source.session },
-      idle: { session: source.session },
+      idle: { session: source.session, tree: source.tree },
       unread: { session: source.session },
-      waiting: { session: source.session },
-      hung: { session: source.session },
+      waiting: { session: source.session, tree: source.tree },
+      hung: { session: source.session, tree: source.tree },
     },
     host: { silent: { host: source.host } },
     // Read by the verdict before the release cases: a CI run nobody watches or a red run nobody read

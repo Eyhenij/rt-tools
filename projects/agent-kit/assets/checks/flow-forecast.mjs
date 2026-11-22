@@ -234,12 +234,14 @@ export async function forecastCopies({ copies, window, model, base, openReaders,
                         if (/· совпало/.test(text) && !/не совпало/.test(text)) marks.add(`${branch}:${pending.get(part.tool_use_id)}`);
                         pending.delete(part.tool_use_id);
                     }
-                    const word = wordOf(entry);
-                    if (word !== null) {
-                        live.last = word;
-                        if (!entry.toolUseResult) live.messages.push(word);
-                        run = 0;
-                    }
+                }
+                // A queued message is an entry of its own, not of the type `user`: the word is read
+                // from every entry, as the owner source of the engine reads it.
+                const word = wordOf(entry);
+                if (word !== null) {
+                    live.last = word;
+                    if (!entry.toolUseResult) live.messages.push(word);
+                    run = 0;
                 }
 
                 if (!isStopEntry(entry)) continue;

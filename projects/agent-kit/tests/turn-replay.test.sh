@@ -361,6 +361,16 @@ report "replay: SC-AK-1758 — шаблон первого круга в объ�
 report "replay: SC-AK-1758 — шаблон OWNER в тексте найден" "$([ -n "$OWNER_IN_TEXT" ] && echo есть || echo нет)" есть
 report "replay: SC-AK-1758 — the declaration of the judge file carries the first-round template" "$([ -n "$OWNER_DECLARED" ] && echo есть || echo нет)" есть
 
+# --- отметка Esc: запись владельца — слово, блоб запроса с той же отметкой — нет ---------------------------
+ESC_USER='{"parentUuid":"p1","promptId":"q1","type":"user","message":{"role":"user","content":[{"type":"text","text":"[Request interrupted by user]"}]},"timestamp":"2026-11-14T01:36:30.000Z"}'
+ESC_BLOB='{"type":"api-request-blob","sessionId":"s1","message":{"role":"user","content":[{"tool_use_id":"t1","type":"tool_result","content":"x"},{"type":"text","text":"[Request interrupted by user]"},{"type":"text","text":"новое слово"}]}}'
+report "replay: SC-AK-1839 — OWNER судьи берёт отметку Esc из записи владельца" \
+    "$(printf '%s\n' "$ESC_USER" | grep -cE "$OWNER_IN_TEXT")" 1
+report "replay: SC-AK-1839 — OWNER судьи не берёт отметку из блоба запроса" \
+    "$(printf '%s\n' "$ESC_BLOB" | grep -cE "$OWNER_IN_TEXT")" 0
+report "replay: SC-AK-1839 — судья: поручение за секунду до Esc ничего не поручает" \
+    "$(grep -c 'one sent a second before the mark included' "$ASSETS/hooks/turn-judge.md")" 1
+
 # --- живой счёт: объявление, ветка, таймаут без длительности -----------------------------------------
 L="$WORK/live"
 mkdir -p "$L/tree/.claude" "$L/records"

@@ -62,7 +62,7 @@ const ENGINE_HOOK = 'turn-exit-guard';
  * background task of the session runs the stop is a wait, not an idle one: the executor has a move,
  * and it is to wait.
  */
-export function idle({ session }) {
+export function idle({ session, tree }) {
     return () => {
         const events = session.events();
         let refusals = [];
@@ -70,7 +70,7 @@ export function idle({ session }) {
             if (event.kind === 'call' || event.kind === 'menu') refusals = [];
             else if (event.kind === 'refusal') refusals.push(event);
         }
-        if (refusals.length === 0 || running(events, timeOf(session)).tasks.length > 0 || unreadOf(events) !== null) return false;
+        if (refusals.length === 0 || running(events, timeOf(session), scriptsOf(tree)).tasks.length > 0 || unreadOf(events) !== null) return false;
         if (refusals.some((refusal) => !refusal.by || refusal.by === ENGINE_HOOK)) return true;
         return { foreign: [...new Set(refusals.map((refusal) => refusal.by))] };
     };
@@ -118,6 +118,42 @@ export function unread({ session }) {
 const SERVER =
     /\b(?:pnpm|npm|yarn)\s+(?:run\s+)?(?:serve|storybook)(?::[\w-]+)?(?![\w:-])|\bstorybook\s+dev\b|\b(?:nx|ng)\s+serve\b|\bnx\s+run\s+[\w@./-]+:serve\b|\bnx\s+run-many\b[^|;&]*?(?:-t|--targets?)[=\s]+serve\b|\bstand\/up\.mjs\b/;
 
+/** A server at the start of a part of a command: a search that only names one is no server. */
+const SERVER_AT_START = new RegExp(`^(?:(?:npx|pnpm\\s+exec|pnpm\\s+dlx)\\s+|node\\s+\\S*?)?(?:${SERVER.source})`);
+
+/** The package script a server command runs: `serve:db` of `pnpm run serve:db`. */
+const SCRIPT = /\b(?:pnpm|npm|yarn)\s+(?:run\s+)?((?:serve|storybook)(?::[\w-]+)?)(?![\w:-])/;
+
+/** A script body that starts containers detached and ends by itself: `docker compose up -d`. */
+const DETACHED = /\bup\b[^|;&]*?\s(?:-d|--detach)\b/;
+
+/** A command of nothing but pauses and prints: `sleep 120; echo done`. It waits for nothing. */
+const PAUSE = /^(?:sleep\s+[\d.]+[smhd]?|echo\b[^;&|]*|true|:)$/;
+
+/**
+ * A background command that is no wait: a server, which never ends by itself, or a bare pause. A
+ * package script whose body in `scripts` starts its containers detached ends by itself and is a
+ * wait like any other command.
+ */
+function noWait(command, scripts) {
+    const parts = command.split(/;|&&|\|\||(?<!&)&(?!&)/).map((part) => part.trim()).filter(Boolean);
+    if (parts.length > 0 && parts.every((part) => PAUSE.test(part))) return true;
+    // The command runs as long as its last part: a stand raised before a test run ends with the run.
+    const last = (parts.at(-1) ?? '').split('|')[0].trim().replace(/^(?:[A-Z_][A-Z0-9_]*=\S*\s+)+/, '');
+    if (!SERVER_AT_START.test(last)) return false;
+    const body = scripts?.[SCRIPT.exec(last)?.[1]];
+    return !(typeof body === 'string' && DETACHED.test(body));
+}
+
+/** The `scripts` of the package file at the tree root, or null. */
+function scriptsOf(tree) {
+    try {
+        return JSON.parse(tree?.read?.('package.json') ?? 'null')?.scripts ?? null;
+    } catch {
+        return null;
+    }
+}
+
 /**
  * A background task older than this releases nothing: it is hung, in minutes. The longest command of
  * the records of 14–22.11 ran 58 minutes; 3 of 810 tasks, all agents, ran longer than 90.
@@ -131,7 +167,7 @@ const timeOf = (session) => (typeof session.now === 'function' ? session.now() :
  * `now`, the ones older than it, and how many of the open tasks have released their stop:
  * { tasks, hung, spent }. A watch of a CI run counts like any other task.
  */
-function running(events, now) {
+function running(events, now, scripts = null) {
     const open = new Map();
     // The calls whose end stands in the record before their start: a command that finished at once.
     const over = new Set();
@@ -144,8 +180,8 @@ function running(events, now) {
         return true;
     };
     for (const event of events) {
-        // A server never ends by itself: no wait, and no hung task either.
-        if (event.kind === 'background' && SERVER.test(event.command ?? '')) continue;
+        // A server never ends by itself, and a pause waits for nothing: no wait, and no hung task.
+        if (event.kind === 'background' && noWait(event.command ?? '', scripts)) continue;
         if (event.kind === 'background') {
             if (!over.has(event.id)) open.set(event.id, event);
         } else if (event.kind === 'backgroundEnd') {
@@ -172,9 +208,9 @@ function running(events, now) {
  * bound with no notice, { task, minutes, output }, or false. The hold names it, and the move is to
  * read its output and stop or restart it, not to wait.
  */
-export function hung({ session }) {
+export function hung({ session, tree }) {
     return () => {
-        const { hung: over } = running(session.events(), timeOf(session));
+        const { hung: over } = running(session.events(), timeOf(session), scriptsOf(tree));
         return over.sort((a, b) => b.minutes - a.minutes)[0] ?? false;
     };
 }
@@ -184,9 +220,9 @@ export function hung({ session }) {
  * no call since. One task releases one stop — a chain of waits does not keep a turn released, and
  * two tasks release two stops: the notice of the first wakes the session while the second runs.
  */
-export function waiting({ session }) {
+export function waiting({ session, tree }) {
     return () => {
-        const { tasks, spent } = running(session.events(), timeOf(session));
+        const { tasks, spent } = running(session.events(), timeOf(session), scriptsOf(tree));
         return tasks.length > spent;
     };
 }

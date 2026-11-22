@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · checks/flow-forecast.mjs · 8a3f45d2c48d · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/flow-forecast.mjs · 32e160fe3948 · правится надстройкой, не здесь
 /**
  * The forecast of refusals — the engine command `forecast`, run before the hooks are laid out.
  *
@@ -235,12 +235,14 @@ export async function forecastCopies({ copies, window, model, base, openReaders,
                         if (/· совпало/.test(text) && !/не совпало/.test(text)) marks.add(`${branch}:${pending.get(part.tool_use_id)}`);
                         pending.delete(part.tool_use_id);
                     }
-                    const word = wordOf(entry);
-                    if (word !== null) {
-                        live.last = word;
-                        if (!entry.toolUseResult) live.messages.push(word);
-                        run = 0;
-                    }
+                }
+                // A queued message is an entry of its own, not of the type `user`: the word is read
+                // from every entry, as the owner source of the engine reads it.
+                const word = wordOf(entry);
+                if (word !== null) {
+                    live.last = word;
+                    if (!entry.toolUseResult) live.messages.push(word);
+                    run = 0;
                 }
 
                 if (!isStopEntry(entry)) continue;
