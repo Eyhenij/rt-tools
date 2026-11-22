@@ -63,6 +63,7 @@ const hold = (list) => holdReason(model, stage, step, { cause: menuCause((name) 
 
 const draftHold = hold([called('Edit'), refusal(DRAFT)]);
 out('menu: SC-AK-1831 — после отказа проверки черновика — не простой', shown(idle([called('Edit'), refusal(DRAFT)])), '{"foreign":["git-guard-draft-ready"]}');
+out('menu: SC-AK-1831 — удержание требует хода в том же ходе и предупреждает о меню', String(draftHold.includes('make the move below in the same turn') && draftHold.includes('a stop with no call after this refusal gives the menu')), 'true');
 const twoHold = hold([called('Edit'), refusal(DRAFT), refusal(JUDGE)]);
 out('menu: SC-AK-1831 — две чужие проверки в одну остановку — названы обе', String(twoHold.includes('`git-guard-draft-ready`, `turn-judge`') && !twoHold.includes('«стоп»')), 'true');
 out('menu: SC-AK-1831 — удержание называет чужой отказ и шаг, без меню', String(draftHold.includes('`git-guard-draft-ready`') && draftHold.includes('The next move is step 1.2') && !draftHold.includes('«стоп»')), 'true');

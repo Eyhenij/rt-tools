@@ -9,7 +9,7 @@
  * When another check refused the same step twice for the same reason, or the executor stopped again
  * with no call after a refusal of the engine itself,
  * the one move is the owner's menu: the options of `words.menu`, with the number of the task put in.
- * A stop again after refusals of other stop hooks only names the last of them and the move instead.
+ * A stop again after refusals of other stop hooks only names those hooks and the move instead.
  *
  * The case of the silent hosting counts only when the measurement itself stopped on the silence: a
  * read that failed for a state passed over says nothing when a later local exit is unmet. Any other
@@ -196,7 +196,7 @@ export function holdReason(model, result, step, menu = null) {
         }
     } else if (menu?.cause?.foreign) {
         const hooks = menu.cause.foreign.map((hook) => `\`${hook}\``).join(', ');
-        lines.push(`The previous refusal came from ${hooks}, not from this check: do what it named, or say in one line why it is not yours. No owner's menu is offered for it.`);
+        lines.push(`The previous refusal came from ${hooks}, not from this check, and no owner's menu is offered for it. Do what it named; when it is not yours, say so in one line and make the move below in the same turn: a stop with no call after this refusal gives the menu.`);
     } else if (menu?.cause) {
         lines.push(
             menu.cause.idle
