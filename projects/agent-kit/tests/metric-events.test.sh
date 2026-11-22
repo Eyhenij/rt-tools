@@ -389,8 +389,9 @@ for hook in "$HOOKS"/*.sh; do
     [ -z "$rule" ] || ls "$ASSETS/rules/$rule".* >/dev/null 2>&1 || unknown=$((unknown + 1))
 done
 report "правило: объявлено только существующее" "$unknown" "0"
-# Двадцать четвёртый — страж хода работы `flow-step-guard.sh`, правило `task-flow`.
-report "правило: объявление есть у проверок" "$(grep -l '^RT_GUARD_RULE=' "$HOOKS"/*.sh | wc -l | tr -d ' ')" "24"
+# Двадцать четвёртый — страж хода работы `flow-step-guard.sh`, правило `task-flow`; двадцать
+# пятый — проверка вызова набора вперёд `push-ahead-call-guard.sh`, правило `git-workflow`.
+report "правило: объявление есть у проверок" "$(grep -l '^RT_GUARD_RULE=' "$HOOKS"/*.sh | wc -l | tr -d ' ')" "25"
 
 tree="$(fixture_tree)"
 gate_in() {

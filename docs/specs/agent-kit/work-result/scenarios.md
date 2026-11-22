@@ -36,10 +36,19 @@ Then the refusals are three, and the exit, the turned-down call and the interrup
 ### SC-AK-1645 — a refusal text gives its check by the table
 
 Given refusals that open with `PreToolUse:Edit hook error: Refused by the rules gate`, `Refused:
-the epic is over`, `BLOCKED by grill-gate:`, `BLOCKED: creating a branch` and a denial by the auto
-mode classifier
+the epic is over`, `BLOCKED by grill-gate:`, a `BLOCKED:` text that no table line names and a
+denial by the auto mode classifier
 When the turn is counted
 Then their checks are `skill-gate`, `epic-over`, `grill-gate`, `unnamed` and `permission`
+
+### SC-AK-1817 — a refusal text that names no check is named by its kind
+
+Given refusals of the delivery, push, main branch, tree assignment, documents, reuse and browser
+guards that name no check, a shell error of the hook dispatcher, and the frames of the turn-end and
+the menu model checks with a verdict that their file was not found
+When the turn is counted
+Then each refusal carries the name of its guard, `dispatch-broken`, `turn-judge` and `ask-judge`,
+and a model check verdict that quotes another guard is still the model check's own
 
 ### SC-AK-1646 — a stop refusal is counted once, from the feedback entry
 
@@ -110,6 +119,29 @@ Then the day carries the counts of one recount, and the sending sends the day li
 Given observations of 12 and 13 November 2026
 When `agent-kit metrics --day 2026-11-13` is printed
 Then the report counts 13 November only
+
+### SC-AK-1818 — the report with no `--until` takes today
+
+Given observations of today and of earlier days
+When the report runs with no `--until`, and again with `--until` naming an earlier day
+Then the first report ends on today in UTC, and the second ends on the named day
+
+### SC-AK-1834 — the report prints the dead ends of a day by check
+
+Given a day with dead ends of two checks and a day with none
+When the report is printed
+Then the line of the first day names each check with its number of dead ends, most first, and the
+line of the second reads «нет»
+
+### SC-AK-1835 — the milestone of the epic is judged by three days in a row
+
+Given three working days in a row of at least 1500 calls, fewer than five refusals per hundred and
+no dead end; a period where a day has exactly five per hundred, a day has no record and a day
+misses by three signs; and a run of working days broken by a day of 800 calls
+When the report is printed
+Then the first reads the milestone reached, the second reads it not reached and names each day
+that does not hold it with every sign it misses, the days that are not working days marked
+skipped, and the third reads it reached over the light day
 
 ### SC-AK-1656 — a report for a named day does not judge the dead rules
 
