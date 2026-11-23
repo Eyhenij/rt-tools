@@ -188,3 +188,45 @@ is needed.
 Not proposed: `pipefail` in the step engine — it would flip the verdicts of approved plans; the
 folder `task:new --epic-of` lays into the current working copy — the reviewer needs to know what
 it broke.
+
+## RT-3518 — the review of 23 November 2026
+
+Loaded: `task-delivery-loop`, `task-flow` with its parts, `doc-style`, `testing`,
+`typescript-conventions`, `git-workflow` with its parts, `kit-approval`, `epic-flow`. No edit of
+the gate map is needed.
+
+1. **The gate rearm text promises a delivery that does not come** — package,
+   `hooks/skill-gate-rearm.sh`, the `context=` line: «Every rule within the host limit comes back
+   by itself, whole, at the next edit of its area — unless the rules one edit demands pass the
+   limit together: then the gate delivers none of them and names them all in one refusal, and
+   they are loaded by the tool Skill in one turn.» Here after the compaction an edit of the
+   progress was refused for four rules at once. A second case of RT-3480 item 5; worth raising
+   from low while `task-delivery-loop` weighs 9.4 thousand characters.
+2. **A counted step measure grows after review** — package, `pitfalls/task-flow.2.md`, after
+   «A file holds neighbouring sets too.»: «A review round adds to the same set after the step's
+   mark: the count is taken over a sign only the step's own items carry — a scenario id range, a
+   label prefix — and what a round adds carries a sign of its own and an entry in the progress.
+   Rewording the added items so the frozen number holds hides them from the count instead of
+   bounding it.» Here the rounds added eight scenarios named «a pass…» beside the ten «the pass…»
+   step 1.1 counts.
+3. **Fast tree checks at the stage, not at the push** — tree,
+   `.claude/skills/task-delivery-loop/SKILL.md` step 5: «Tests, lint and types over what is
+   touched, and `node tools/check-file-size.mjs; node tools/check-doc-paths.mjs; pnpm run
+   check:unused` — the linter after an edit does not judge `tools/` and texts, and the push set is
+   too late for them»; the article «No guard counts the rounds» leaves as a repeat of «What of the
+   law is not here», with its companion line, to keep the rule under the gate's delivery limit.
+   Replaces RT-3478 item 1. Here the 579 lines of `check-ngdoctor.mjs`, the knip refusal and a
+   backticked branch name surfaced only in review and in the push set.
+4. **A parser of a tool's output is tested on output the tool printed** — package,
+   `rules/testing.md`, after «An absence test is green even on the wrong target.»: «Synthetic
+   output lacks the fields its author did not think of: an empty file, a finding on a
+   directory.»; companion `.claude/skills/testing/implementation.md` marks it not checked. Here a
+   finding with an empty `file` resolved to the tree root and gave a false «outside the list»;
+   only the live check found it.
+5. **The doc path check reads a remote branch as a path** — package, `checks/check-doc-paths.mjs`,
+   `looksLikePath`: a candidate starting with a remote name and a slash is a ref, not an address;
+   a scenario with a backticked remote main branch gives no divergence.
+
+Not proposed: knip on `const require = createRequire(...)` — one case, and item 3 catches it at the
+stage; the step and source guard refusals on combined commands — to be sent by `/feedback` with the
+command verbatim; the kit approval demand for other tasks' files — RT-3514 item 3 already.
