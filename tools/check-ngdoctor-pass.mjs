@@ -1,8 +1,10 @@
 /**
  * The pass of `tools/check-ngdoctor.mjs` over the files Angular Doctor scanned. The tool drops a file
  * silently three ways: oxlint that fails prints nothing, a template the linter cannot parse yields
- * a message without a rule, and a file it cannot read is skipped. So the check walks the same files
- * with the tool's own modules and names the file it lost. What the pass judges is written in the
+ * a message without a rule, and a file it cannot read is skipped. Apart from its file list it also
+ * reads `package.json` files and, with tailwindcss 4 or later, stylesheets, and skips one it cannot
+ * read or parse. So the check walks the same files with the tool's own modules and names the file it
+ * lost. What the pass judges is written in the
  * header of the check; this file holds the walk only.
  *
  * The modules are resolved from the tool's package, not from the tree: the tree resolves other
@@ -56,7 +58,15 @@ function tailwindMajor(pkg, semver) {
 async function packagesOf(fromTool, root, failures) {
     const glob = fromTool('fast-glob');
     const semver = fromTool('semver');
-    const packages = await glob(PASS_PACKAGE_GLOB, { cwd: root, absolute: true, ignore: PASS_TOOL_IGNORE, dot: false });
+    const listed = async (pattern, options) => {
+        try {
+            return await glob(pattern, { cwd: root, absolute: true, ignore: PASS_TOOL_IGNORE, ...options });
+        } catch (error) {
+            failures.push(`the pass cannot list the ${pattern} files of ${root}: ${error.code ?? error.message}`);
+            return [];
+        }
+    };
+    const packages = await listed(PASS_PACKAGE_GLOB, { dot: false });
     let tailwind4 = false;
     for (const f of packages) {
         const relative = f.replace(`${root}/`, '');
@@ -78,7 +88,7 @@ async function packagesOf(fromTool, root, failures) {
         if (major !== null && major >= 4) tailwind4 = true;
     }
     if (!tailwind4) return { packages: packages.length, stylesheets: 0 };
-    const sheets = await glob(PASS_STYLE_GLOB, { cwd: root, absolute: true, ignore: PASS_TOOL_IGNORE });
+    const sheets = await listed(PASS_STYLE_GLOB, {});
     for (const f of sheets) {
         try {
             readFileSync(f, 'utf8');

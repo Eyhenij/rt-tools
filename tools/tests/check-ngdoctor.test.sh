@@ -386,14 +386,26 @@ printf '%s\n' '.x { color: red; }' > "$PASS/sub/x.scss"
 chmod 000 "$PASS/sub/x.scss"
 printf '%s\n' '{"devDependencies": {"tailwindcss": "^4.1.0"}}' > "$PASS/package.json"
 pass_says "the pass with tailwindcss 4 names a stylesheet it cannot read" "the pass cannot read sub/x.scss"
-printf '%s\n' '{"devDependencies": {"tailwindcss": "~3.4.0"}}' > "$PASS/package.json"
+# The first section that names tailwindcss decides, as in 0.3.0: 3 in dependencies outweighs 4 below.
+printf '%s\n' '{"dependencies": {"tailwindcss": "~3.4.0"}, "devDependencies": {"tailwindcss": "^4.1.0"}}' > "$PASS/package.json"
 pass_green "the pass with tailwindcss 3 leaves an unreadable stylesheet alone" --pass-root "$PASS"
+# A package.json in a dot directory is outside the tool's glob, unreadable or not.
+mkdir -p "$PASS/.hidden"
+printf '%s\n' '{"name": "hidden"}' > "$PASS/.hidden/package.json"
+chmod 000 "$PASS/.hidden/package.json"
 printf '%s\n' '{"name": "pass"}' > "$PASS/package.json"
 pass_green "the pass without tailwindcss leaves an unreadable stylesheet alone" --pass-root "$PASS"
-chmod 644 "$PASS/sub/x.scss"
+chmod 644 "$PASS/.hidden/package.json" "$PASS/sub/x.scss"
+rm -rf "$PASS/.hidden"
 
 node "$CHECK" --input "$WORK/pass-out.json" --threshold "$WORK/pass-threshold.json" --pass-root "$PASS" > "$WORK/said.txt" 2>&1
-if grep -q "oxlint 2 files, 2 package.json, 0 stylesheets" "$WORK/said.txt"; then got="counted"; else got="not counted"; fi
+got="not counted"
+if grep -q "oxlint 2 files, 2 package.json, 0 stylesheets" "$WORK/said.txt"; then
+    # With tailwindcss 4 the pass reads the stylesheets, and the count says so.
+    printf '%s\n' '{"devDependencies": {"tailwindcss": "^4.1.0"}}' > "$PASS/package.json"
+    node "$CHECK" --input "$WORK/pass-out.json" --threshold "$WORK/pass-threshold.json" --pass-root "$PASS" > "$WORK/said.txt" 2>&1
+    grep -q "oxlint 2 files, 2 package.json, 1 stylesheets" "$WORK/said.txt" && got="counted"
+fi
 report "the pass counts its package.json files and stylesheets" "$got" "counted"
 rm -rf "$PASS/sub" "$PASS/coverage" "$PASS/package.json"
 
