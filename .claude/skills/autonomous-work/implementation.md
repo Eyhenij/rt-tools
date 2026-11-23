@@ -35,7 +35,7 @@ article.
 - **A default is written where the owner's answer would have been written.** — **Not checked.** It is written into the section «Decisions» of the grill — `docs/tasks/RT-<number>-<slug>/grill.md`; the completeness of the section is not judged by a machine
 - **The readiness sign is named as a command before the stage begins.** — **Not checked.** The step guard `.claude/hooks/flow-step-guard.sh` refuses a step marked done without the mark that `tools/task-flow-script.mjs step` writes after its check passed. A plan step without a check line it lets through, and the minute the command was named it does not read
 - **A red run is fixed in the same branch, not postponed.** — **Not checked.** The push gate set (`.claude/rt-kit/project.sh:rt_push_checks`) only lists commands, and its callers run on a push — and at night nothing is pushed. Even on a push it refuses red; it cannot tell a fix in the same branch from a postponed one
-- **A guard's refusal is a work step, not the end of the session.** — **Not checked.** A refusal is no release case: the turn-exit guard (`.claude/hooks/turn-exit-guard.sh`) holds the turn after it until the scenario is over or the owner's last word is a stop word. Whether the skipped step the refusal named was done nobody judges
+- **A guard's refusal is a work step, not the end of the session.** — **Not checked.** A refusal is no release case: the turn-exit guard (`.claude/hooks/turn-exit-guard.sh`) holds the turn after it until the scenario is over or the owner presses Esc. Whether the skipped step the refusal named was done nobody judges
 - **The morning list is written along the way, not recalled at the end.** — **Not checked.** The file is created by the command `/night`; that it was appended in time is invisible to a machine
 - **The session is started by the command `/night`, and the time boundary goes to it as an argument.** — **Not checked.** The command `.claude/commands/night.md` takes the boundary in `ARGUMENTS` and writes it into the head of the list; that a night is started by this command and not by words alone nothing judges
 - **The command called without a boundary asks the owner for one and starts nothing.** — **Not checked.** No guard reads the arguments of a command; it is held by the text of the command
@@ -54,7 +54,7 @@ article.
 - The turn-exit guard holds a working turn until the scenario of the task flow is over or a release
   case of its description is met (`.claude/hooks/turn-exit-guard.sh`, `tools/flow-verdict.mjs`).
   The boundary from `/night` is not among them: the night ends with the end of the scenario or with
-  a stop word of the owner.
+  the owner's Esc.
 
 ## What this is checked by
 

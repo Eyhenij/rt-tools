@@ -51,11 +51,11 @@ Then nothing in the refusal names steps that are not done
 
 Covered: `projects/agent-kit/tests/work-steps-guard.test.sh`.
 
-### SC-AK-1014 — the word of the owner about a stop lifts the refusal
+### SC-AK-1014 — the owner's Esc lifts the refusal, a typed word does not
 
-Given steps are not done and the owner said to stop
-When the turn ends
-Then the guard lets it through
+Given steps are not done, and the owner's last word is the mark of Esc or «Стоп, дальше не надо»
+When the interrupt is measured and the turn ends in the running stage
+Then only the mark of Esc is an interrupt, and the guard lets that turn through as «the owner interrupted the turn»
 
 Covered: `projects/agent-kit/tests/work-steps-guard.test.sh`.
 

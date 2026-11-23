@@ -268,24 +268,25 @@ hold 1454-offers-new-session stage "replay: SC-AK-1454 — предложени�
 
 # Тупик RT-3304: папка разобрана, отправку запрещает другая проверка. Отказ называет меню владельцу,
 # а меню, которое хук меню задержал второй раз подряд, отпускает ход.
-hold 1455-deadlock-push-refused archived "replay: SC-AK-1455 — тупик RT-3304: отказ называет меню владельцу" 'папка-разобрана' '«отложить RT-101»' '«стоп»'
+hold 1455-deadlock-push-refused archived "replay: SC-AK-1455 — тупик RT-3304: отказ называет меню владельцу" 'папка-разобрана' '«отложить RT-101»' '«подскажу путь»'
 release 1455-deadlock-menus-held archived "replay: SC-AK-1455 — тупик RT-3304: меню задержано второй раз подряд" 'the menu did not reach the owner'
 
 # --- шесть живых ходов RT-3276 ----------------------------------------------------------------------
 release 1456-rt3276-question stage "replay: SC-AK-1456 — RT-3276: вопрос в сессии без записи" 'no write to the tree, or a branch outside the scenario'
-release 1457-rt3276-not-now stage "replay: SC-AK-1457 — RT-3276: «не сейчас»" 'a stop word of the owner'
-release 1458-rt3276-stop stage "replay: SC-AK-1458 — RT-3276: «стоп»" 'a stop word of the owner'
+hold 1457-rt3276-not-now stage "replay: SC-AK-1457 — RT-3276: «не сейчас»" "$STAGE" "$STEP"
+hold 1458-rt3276-stop stage "replay: SC-AK-1458 — RT-3276: «стоп»" "$STAGE" "$STEP"
 release 1459-rt3276-abuse stage "replay: SC-AK-1459 — RT-3276: ругань без поручения" 'no write to the tree, or a branch outside the scenario'
-release 1460-rt3276-menu-after-refusal archived "replay: SC-AK-1460 — RT-3276: меню после отказа, ответ «стоп»" 'a stop word of the owner'
+hold 1460-rt3276-menu-after-refusal archived "replay: SC-AK-1460 — RT-3276: меню после отказа, ответ «стоп»" 'папка-разобрана'
 hold 1461-rt3276-promise stage "replay: SC-AK-1461 — RT-3276: обещание без запуска" "$STAGE" "$STEP"
 
 # --- законные концы хода ----------------------------------------------------------------------------
 release 1462-epic-end epicEnd "replay: SC-AK-1462 — конец эпика по истории последнего закрытого эпика" 'the end of the scenario'
-release 1548-stop-hold stage "replay: SC-AK-1548 — записанное слово «Стой»" 'a stop word of the owner'
-release 1548-wait-for-suite stage "replay: SC-AK-1548 — записанное слово «жди конца набора»" 'a stop word of the owner'
-release 1548-wait-for-neighbour handed "replay: SC-AK-1548 — записанное слово «жди соседа»" 'a stop word of the owner'
-release 1548-stop-at-point stage "replay: SC-AK-1548 — записанное слово «Остановись на логической точке»" 'a stop word of the owner'
-release 1548-not-now taken "replay: SC-AK-1548 — записанное слово «Не сейчас»" 'a stop word of the owner'
+# Слово владельца ход не отпускает: остановить работу может только Esc.
+hold 1548-stop-hold stage "replay: SC-AK-1548 — записанное слово «Стой»" "$STAGE" "$STEP"
+hold 1548-wait-for-suite stage "replay: SC-AK-1548 — записанное слово «жди конца набора»" "$STAGE" "$STEP"
+hold 1548-wait-for-neighbour handed "replay: SC-AK-1548 — записанное слово «жди соседа»" 'работа-отдана'
+hold 1548-stop-at-point stage "replay: SC-AK-1548 — записанное слово «Остановись на логической точке»" "$STAGE" "$STEP"
+hold 1548-not-now taken "replay: SC-AK-1548 — записанное слово «Не сейчас»" 'задача-взята'
 
 # --- хуки модели: их текст ----------------------------------------------------------------------------
 TURN_JUDGE="$ASSETS/hooks/turn-judge.md"
@@ -296,6 +297,9 @@ report "replay: SC-AK-1451 — хук модели на Stop держит воп
 report "replay: SC-AK-1451 — хук модели на Stop не судит открытую работу" "$(has "$TURN_JUDGE" 'Open work is not yours to judge')" есть
 report "replay: SC-AK-1455 — хук меню пропускает меню отказа проверки выхода" "$(has "$ASK_JUDGE" 'The question is the menu named by a refusal of the exit check')" есть
 report "replay: SC-AK-1455 — меню отказа — ровно два варианта" "$(has "$ASK_JUDGE" 'The options are exactly two: «отложить RT-N» with the task number')" есть
+report "replay: SC-AK-1842 — хук меню пропускает «подскажу путь» и вопрос о пути" "$(has "$ASK_JUDGE" 'answered that menu with a bare «подскажу путь»')" есть
+report "replay: SC-AK-1841 — хук модели на Stop отпускает ожидание своей фоновой задачи" "$(has "$TURN_JUDGE" 'A background task the session started still runs')" есть
+report "replay: SC-AK-1839 — хук модели на Stop не отпускает по слову владельца" "$(has "$TURN_JUDGE" '«стоп»')" нет
 report "replay: SC-AK-1470 — хук меню задерживает вариант, который снимает проверку" "$(has "$ASK_JUDGE" 'removes, disables or weakens a hook or a check')" есть
 report "replay: SC-AK-1470 — и в меню отказа проверки выхода" "$(has "$ASK_JUDGE" 'Hold it in any menu, the menu of')" есть
 hold 1470-menu-lifts-check archived "replay: SC-AK-1470 — меню задержано один раз — ход держится" 'папка-разобрана'
@@ -356,6 +360,16 @@ report "replay: SC-AK-1758 — шаблон первого круга в объ�
     "$([ -z "$OWNER_DECLARED" ] || [ "$OWNER_DECLARED" = "$OWNER_IN_TEXT" ] && echo совпадает || echo расходится)" совпадает
 report "replay: SC-AK-1758 — шаблон OWNER в тексте найден" "$([ -n "$OWNER_IN_TEXT" ] && echo есть || echo нет)" есть
 report "replay: SC-AK-1758 — the declaration of the judge file carries the first-round template" "$([ -n "$OWNER_DECLARED" ] && echo есть || echo нет)" есть
+
+# --- отметка Esc: запись владельца — слово, блоб запроса с той же отметкой — нет ---------------------------
+ESC_USER='{"parentUuid":"p1","promptId":"q1","type":"user","message":{"role":"user","content":[{"type":"text","text":"[Request interrupted by user]"}]},"timestamp":"2026-11-14T01:36:30.000Z"}'
+ESC_BLOB='{"type":"api-request-blob","sessionId":"s1","message":{"role":"user","content":[{"tool_use_id":"t1","type":"tool_result","content":"x"},{"type":"text","text":"[Request interrupted by user]"},{"type":"text","text":"новое слово"}]}}'
+report "replay: SC-AK-1839 — OWNER судьи берёт отметку Esc из записи владельца" \
+    "$(printf '%s\n' "$ESC_USER" | grep -cE "$OWNER_IN_TEXT")" 1
+report "replay: SC-AK-1839 — OWNER судьи не берёт отметку из блоба запроса" \
+    "$(printf '%s\n' "$ESC_BLOB" | grep -cE "$OWNER_IN_TEXT")" 0
+report "replay: SC-AK-1839 — судья: поручение за секунду до Esc ничего не поручает" \
+    "$(grep -c 'one sent a second before the mark included' "$ASSETS/hooks/turn-judge.md")" 1
 
 # --- живой счёт: объявление, ветка, таймаут без длительности -----------------------------------------
 L="$WORK/live"

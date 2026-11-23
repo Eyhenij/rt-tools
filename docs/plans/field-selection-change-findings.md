@@ -18,7 +18,7 @@ Loaded over the task: `task-delivery-loop`, `task-flow`, `task-flow-plan`, `task
   RT-3390. **Address:** package — `task-flow/measure/epic.mjs` (the exit passes on the card line of
   work outside an epic) and `hooks/facts-flow.sh` (both states join the list of states without
   code). Until then, tree — a section «Work outside an epic» in `task-delivery-loop/GUARDS.md` and a
-  caveat at step 2 of `task-delivery-loop/SKILL.md`: one task on the owner's word becomes an epic of
+  caveat at step 2 of `task-delivery-loop/pitfalls.md`: one task on the owner's word becomes an epic of
   one task.
 - **The assignment row is written on the owner's word, quoted in it.** The session's permission
   check refused the row as a change of its own authority until the owner said «Впиши сам».

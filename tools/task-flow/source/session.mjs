@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · task-flow/source/session.mjs · 50771d9f9e95 · правится надстройкой, не здесь
+// rt-kit v0.39.0 · task-flow/source/session.mjs · 734dd59c0ac8 · правится надстройкой, не здесь
 /**
  * The source «source.session» of the task flow description: what this session did, read from the
  * record of the conversation the hook names in `RT_FLOW_TRANSCRIPT`, and the role it runs as, named
@@ -6,10 +6,13 @@
  *
  *   toolUses()       the calls of the agent, oldest first: { name, input }
  *   events()         what happened in the record, oldest first: a refusal at the end of a turn
- *                    { kind: 'refusal', text }, a menu { kind: 'menu', answered }, a call of a tool
- *                    { kind: 'call', name, input, blocked }, a refusal of a call by a hook
- *                    { kind: 'blocked', by, reason }, the start of a background task
- *                    { kind: 'background', id, task, at, output, agent }, its end { kind: 'backgroundEnd', id,
+ *                    { kind: 'refusal', text, by } — `by` is the hook that refused, see `refusalBy`
+ *                    — a menu { kind: 'menu', answered }, a call of a tool
+ *                    { kind: 'call', id, name, input, blocked, at, branch, doneAt, failed } — `branch` is
+ *                    the branch of its record entry, `doneAt` the time of its result, `failed` an
+ *                    error result — a refusal of a call by a hook { kind: 'blocked', by, reason }, the
+ *                    start of a background task { kind: 'background', id, task, at, output, agent,
+ *                    command } — `command` is the command of its call — its end { kind: 'backgroundEnd', id,
  *                    task, output, status, stopped } — `stopped` when the session stopped it itself —
  *                    and a turn that ended { kind: 'ended' }
  *   now()            the time the session is judged at, in milliseconds
@@ -23,6 +26,25 @@ import { join } from 'node:path';
 
 /** The text a refusal at the end of a turn arrives with. */
 const STOP_FEEDBACK = /^Stop hook feedback:/;
+/** The name of a hook in a refusal; the opening of a refusal of the model check of a stop, which may name nothing. */
+const BLOCKED_BY = /BLOCKED by ([\w-]+)/;
+const MODEL_HOOK = /^Agent hook condition was not met:/;
+/** The model check of a stop: its refusal with no name of a hook is still its own. */
+const MODEL_CHECK = 'turn-judge';
+
+/**
+ * The hook that refused a stop, read from the first line after the feedback header: the name of
+ * «BLOCKED by <name>» anywhere in the line, or null. After the opening of the model check only a
+ * name right after it counts, and with none the refusal is the model check's: its free text may
+ * quote another hook.
+ */
+export function refusalBy(text) {
+    const line = String(text ?? '').replace(STOP_FEEDBACK, '').replace(/^\s+/, '').split('\n')[0];
+    const rest = line.replace(MODEL_HOOK, '');
+    if (rest !== line) return rest.match(/^\s*BLOCKED by ([\w-]+)/)?.[1] ?? MODEL_CHECK;
+    return line.match(BLOCKED_BY)?.[1] ?? null;
+}
+
 /** A hook refused a call: the result of the call names the guard that refused it. */
 const CALL_REFUSAL = /hook error:[\s\S]*?BLOCKED by ([\w-]+):\s*([^\n]*)/;
 
@@ -98,7 +120,15 @@ const resultText = (part) =>
 
 /** The notice of background tasks that are over: [{ id, task }], or null. */
 const taskOver = (entry) => {
-    const content = entry?.type === 'queue-operation' ? entry.content : entry?.type === 'user' ? entry.message?.content : null;
+    // A notice comes as a queue operation, as a message, or as a queued command attached to the record.
+    const content =
+        entry?.type === 'queue-operation'
+            ? entry.content
+            : entry?.type === 'user'
+              ? entry.message?.content
+              : entry?.type === 'attachment' && entry.attachment?.type === 'queued_command'
+                ? entry.attachment.prompt
+                : null;
     const text = typeof content === 'string' ? content : '';
     if (!text.includes('<task-notification>') || !TASK_OVER.test(text) || STILL_RUNNING.test(text)) return null;
     const id = text.match(/<tool-use-id>([^<]+)</)?.[1] ?? null;
@@ -153,7 +183,8 @@ export function eventsOf(entries) {
         if (entry?.type === 'user' && !entry.isMeta && feedbackText(entry) === null) ended();
         const over = taskOver(entry);
         if (over) {
-            for (const task of over) events.push({ kind: 'backgroundEnd', ...task });
+            const at = Date.parse(entry.timestamp ?? '');
+            for (const task of over) events.push({ kind: 'backgroundEnd', ...task, ...(Number.isFinite(at) ? { at } : {}) });
             continue;
         }
         if (entry?.type === 'assistant') {
@@ -167,7 +198,7 @@ export function eventsOf(entries) {
                     events.push(event);
                     continue;
                 }
-                const call = { kind: 'call', name: part.name, input: part.input ?? {}, blocked: false };
+                const call = { kind: 'call', id: part.id, name: part.name, input: part.input ?? {}, blocked: false, at: Date.parse(entry.timestamp ?? ''), branch: entry.gitBranch ?? null };
                 calls.set(part.id, call);
                 events.push(call);
                 if (STOP_TOOLS.has(part.name)) {
@@ -181,7 +212,7 @@ export function eventsOf(entries) {
         const refusal = feedbackText(entry);
         if (refusal) {
             closing = false;
-            events.push({ kind: 'refusal', text: refusal });
+            events.push({ kind: 'refusal', text: refusal, by: refusalBy(refusal) });
             continue;
         }
         for (const part of parts(entry)) {
@@ -193,11 +224,17 @@ export function eventsOf(entries) {
             if (started !== null) {
                 const output = outputOf(resultText(part));
                 const agent = !entry.toolUseResult.backgroundTaskId;
-                events.push({ kind: 'background', id: part.tool_use_id, task: started || null, at: Date.parse(entry.timestamp ?? ''), output, agent });
+                const command = calls.get(part.tool_use_id)?.input?.command ?? null;
+                events.push({ kind: 'background', id: part.tool_use_id, task: started || null, at: Date.parse(entry.timestamp ?? ''), output, agent, command });
+            }
+            const call = calls.get(part.tool_use_id);
+            if (call) {
+                // The result of a call: when it came, and whether the call failed.
+                call.doneAt = Date.parse(entry.timestamp ?? '');
+                call.failed = Boolean(part.is_error);
             }
             const refused = part.is_error ? resultText(part).match(CALL_REFUSAL) : null;
             if (!refused) continue;
-            const call = calls.get(part.tool_use_id);
             if (call) call.blocked = true;
             events.push({ kind: 'blocked', by: refused[1], reason: refused[2].trim() });
         }

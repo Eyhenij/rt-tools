@@ -1,7 +1,7 @@
 // The record of a conversation built from a recorded turn of `fixtures/turn-replay/`.
 //
 // A fixture keeps only what the hooks read: the role of an entry, its time, the name of a call, its
-// answer code, and the owner's word as a class label or a short phrase with a stop word. The labels
+// answer code, and the owner's word as a class label or a short phrase typed to stop. The labels
 // become synthetic texts here, so the public fixture carries no text the owner typed. The record is
 // written in the shape Claude Code writes it: a user entry with text parts, an assistant entry with a
 // tool use, a tool result with `is_error`, a menu answer with `toolUseResult.answers`, a refusal at the
@@ -11,7 +11,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-/** The synthetic text of each class label. Nothing here matches the stop words of the description. */
+/** The synthetic text of each class label. Nothing here is a nudge of the description. */
 const LABEL_TEXT = {
     '<nudge>': 'ну что там?',
     '<question>': 'что лежит в ветке сейчас?',
@@ -30,7 +30,8 @@ export function ownerText(word, options = []) {
 /** The text of a refusal at the end of a turn: one move, or the menu of the owner. */
 export function stopFeedback(kind, task) {
     const head = 'Stop hook feedback:\n[turn-exit-guard.sh]: BLOCKED by turn-exit-guard: The scenario is not over.';
-    if (kind === 'menu') return `${head} The step is refused by another check. Ask the owner one menu: «отложить RT-${task}», «стоп».`;
+    if (kind === 'menu')
+        return `${head} The step is refused by another check. Ask the owner one menu: «отложить RT-${task}», «подскажу путь».`;
     return `${head} The next move is the current step of the progress.`;
 }
 

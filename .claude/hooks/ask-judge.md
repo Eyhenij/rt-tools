@@ -1,4 +1,4 @@
-<!-- rt-kit v0.38.0 · hooks/ask-judge.md · 71a2d47b1452 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · hooks/ask-judge.md · 5b36f0692eb7 · правится надстройкой, не здесь -->
 # Ask judge
 <!-- rt-hook-agent event=PreToolUse pattern=AskUserQuestion limit=60 -->
 
@@ -37,8 +37,10 @@ after any refusal of another check. Avoid both.
   could be done. A refusal elsewhere is never a reason to hold the question.
 - The question is the menu named by a refusal of the exit check. Another check
   refused the step twice. The options are exactly two: «отложить RT-N» with the task number and
-  «стоп». The owner's answer to it is their word, so a next step named in the
-  progress does not hold it.
+  «подскажу путь», and the question says the way goes into its free field. The owner's answer to
+  it is their word, so a next step named in the progress does not hold it.
+- The owner answered that menu with a bare «подскажу путь» and no text, and the question is one
+  question with a free field that asks for the way. It is part of the same menu.
 
 ## Hold the question — answer `{"ok": false, "reason": "BLOCKED by ask-judge: …"}` — only when
 

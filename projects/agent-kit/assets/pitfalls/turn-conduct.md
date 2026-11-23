@@ -128,7 +128,7 @@ The rule is `turn-conduct`; the articles that hold the law stand there.
   roles sent to the background and the line "the roles are working"; the owner read it as a stop.
   The guard counted the launch as work — there were edits in the turn, and the last action was not
   a wait. Now the last call is not read at all. A turn is released on a wait only by the record: a
-  background task of the session with a start and no end, younger than twenty minutes, and once
+  background task of the session with a start and no end, younger than ninety minutes, and once
   per task. A turn that only says it waits is held.
 
 - **"A promise to do the work in the next turn": an offer to object is part of it.** An offer to the

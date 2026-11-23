@@ -25,11 +25,11 @@ rule() {
     } > "$TREE/.claude/skills/task-flow/SKILL.md"
 }
 
-# Чем ход кончается: конец сценария и слово остановки владельца.
+# Чем ход кончается: конец сценария и прерывание владельца.
 ends_ru() {
     printf '\n## Чем ход кончается\n\n'
     printf -- '- **конец сценария** — движок его измерил\n'
-    printf -- '- **слово остановки владельца** — им начинается его последнее сообщение\n'
+    printf -- '- **прерывание владельца** — он нажал Esc\n'
 }
 
 # Карта списком: та форма, ради которой из текста ушли пробелы выравнивания.
@@ -103,7 +103,7 @@ map_list_en() {
         done
         printf '\n## What a turn ends with\n\n'
         printf -- '- **the end of the scenario** — measured by the engine\n'
-        printf -- '- **a stop word of the owner** — their last message begins with it\n'
+        printf -- '- **the owner interrupted the turn** — they pressed Esc\n'
     } > "$TREE/.claude/rt-kit/defaults/turn-map.md"
 }
 
