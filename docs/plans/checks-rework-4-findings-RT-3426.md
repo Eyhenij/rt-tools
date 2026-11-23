@@ -20,3 +20,32 @@ decision: a task of its own or none.
   scenario sends a removal through the push check. **Address:** package — a scenario of a push
   that removes a branch in `docs/specs/agent-kit/push-gate-ahead/scenarios.md` and its run in the
   suite of the base. **Metric:** refusals of a removal of a merged branch, down.
+
+## Rules review by `skill-curator`
+
+The proposals of RT-3465 in `docs/plans/checks-rework-4-findings-RT-3465.md` are not applied yet;
+RT-3426 is a second case for its proposal of a fresh reading after round two and for its proposal
+about the package suites. The new ones:
+
+- **A step check is red before the work, and the plan is read from the commit that added it.**
+  Step 1.5 of RT-3426 counted the former cases and was green before the work; `plan-red` refused
+  it, and a later commit that corrected the plan was not seen: the engine reads plan.md from the
+  oldest commit of the branch that added it. Two unpushed commits were squashed. **Address:**
+  package — two paragraphs in the sample `projects/agent-kit/assets/samples/tasks/_template/plan.md`:
+  a check of what stays true goes to «Verified by»; a plan corrected before the push is corrected
+  by rewriting its commit. **Metric:** refusals «a check is green before the work» per plan, down.
+- **The state guard reads a code path anywhere in a shell command that writes.** A commit message
+  written by a heredoc into the scratchpad in the same call as `git commit` was refused as a code
+  edit in the state that follows the written plan. **Address:** tree — a line in
+  `.claude/skills/task-delivery-loop/GUARDS.md`; package — the refusal names the path it judged
+  (`facts-flow.sh`, the `?edit_code` rows of the decision table). **Metric:** state refusals of
+  shell calls that write outside the tree, down.
+- **The mandatory action of the state after the written plan contradicts its refusal.** The
+  refusal says «do the first stage» while it refuses the first edit: the state is left only by a
+  committed progress that mirrors the plan's steps. **Address:** package — «commit the progress
+  with the plan's steps, then do the first stage» in the five places the state table lives
+  (`task-flow/flow.js` needs the owner's word). **Metric:** state refusals in that state, down.
+- **A suite near the code limit takes new cases in a part it sources.** The suite of the base
+  reached 491 of 500 lines, and fourteen cases moved into `git-guard-push-base-copy-lib.sh` after
+  they were written. **Address:** tree — a pitfall in `agent-kit-source`. **Metric:** suite moves
+  forced by the size check, down.

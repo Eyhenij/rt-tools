@@ -2,20 +2,23 @@
 
 ## Где мы
 
-- **State:** `задача-взята`
-- **Stage:** нет — план ждёт одобрения владельца
-- **Done:** разведка; роли прочли план 22.11: набор вперёд, отказ строкой у двух вызывающих, отказ
-  только при несовпадении node и живая отправка добавлены. 23.11 ветка пересобрана на вершине
-  RT-3426, скрипт живой отправки охраняет свой временный путь; пробная отправка на текущем коде
-  даёт 1 строку неверной node
-- **Next step:** одобрение плана владельцем, затем `plan-red`
+- **State:** `замысел-записан`
+- **Stage:** 1 — The steps of the set run on the pinned node
+- **Done:** план одобрен владельцем 23.11 («Одобряю план RT-3466»), plan-red: все шесть проверок
+  красные; пробная отправка на текущем коде даёт 1 строку неверной node
+- **Next step:** 1.1 — общая функция закреплённой node и случаи SC-AK-1846
 - **Uncommitted:** nothing
-- **Waiting for the owner:** одобрение плана
+- **Waiting for the owner:** nothing
 - **PR:** not open yet
 
 ## Шаги
 
-Появятся вместе с закоммиченным планом.
+- [>] 1.1 A step of the set and of the run ahead sees the pinned node when another stands first in PATH
+- [ ] 1.2 A pin of a major takes the highest installed match; an alias and a tree without a pin run as before
+- [ ] 1.3 A pinned node not installed with another node in PATH refuses the push by one line in the guard and in the git hook
+- [ ] 1.4 A pinned node not installed with the same node in PATH runs the steps as before
+- [ ] 1.5 A real push from a clone with node 20 first goes through the git hook with no line of a wrong node
+- [ ] 2.1 The scenarios stand in the description
 
 ## Решения по ходу
 
