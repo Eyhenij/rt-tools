@@ -152,14 +152,21 @@ export class RtBottomSheetComponent {
         });
     }
 
-    protected onEscape(): void {
-        if (!this.open() || this.covered() || this.#inOverlay()) {
-            return;
-        }
+    /**
+     * Escape: открытый вопрос он снимает, иначе просит закрыть шторку — с неприменённым выбором через
+     * вопрос. Шторке в оверлее клавишу отдаёт её оверлей, остальным — слушатель документа.
+     */
+    public closeByEscape(): void {
         if (this.confirming()) {
             this.confirming.set(false);
         } else {
             this.dismiss();
+        }
+    }
+
+    protected onEscape(): void {
+        if (this.open() && !this.covered() && !this.#inOverlay()) {
+            this.closeByEscape();
         }
     }
 

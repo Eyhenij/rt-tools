@@ -129,14 +129,18 @@
         <rt-empty-state rtElem="empty" qa-dataid="dynamic-selector-no-results" icon="search" [title]="emptyText()" />
     }
 
-    <div rtElem="foot" [rtMod]="{ nav: isNavShown() }">
+    <!--
+        В шторке «Применить» стоит в её шапке, а закрывает кнопка шторки: своих кнопок окно там не
+        рисует, и подвал без ссылки пуст — он прячется целиком.
+    -->
+    <div rtElem="foot" [rtMod]="{ nav: isNavShown(), empty: settings.inSheet() && !isNavShown() }">
         @if (isNavShown()) {
             <a rtElem="nav" qa-dataid="dynamic-selector-nav" [routerLink]="settings.navigateLink()" [rtTooltip]="settings.navigateTitle()">
                 {{ settings.navigateTitle() }}
             </a>
         }
 
-        <div rtElem="actions">
+        <div rtElem="actions" [rtMod]="{ hidden: settings.inSheet() }">
             <button
                 rtButton
                 appearance="text"

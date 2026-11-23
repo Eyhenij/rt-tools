@@ -128,6 +128,9 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     /** Список открыт в шторке: набор идёт в поле поиска наверху шторки, а не в поле под ней. Не меняется, пока шторка открыта. */
     protected readonly openedInSheet: Signal<boolean> = computed((): boolean => this.popover().openedInSheet());
 
+    /** Фокус стоит в поиске шторки: на телефоне открыта клавиатура, и шторка встаёт во всю высоту. */
+    protected readonly searchFocused: WritableSignal<boolean> = signal<boolean>(false);
+
     /** Подсказки рисуются карточками: список открыт в шторке, и вход `sheetCards` их не выключил. */
     protected readonly cards: Signal<boolean> = computed((): boolean => this.sheetCards() && this.openedInSheet());
 

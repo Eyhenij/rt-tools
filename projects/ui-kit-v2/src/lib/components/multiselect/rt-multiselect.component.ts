@@ -142,6 +142,9 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
     /** Список открыт в нижней шторке: под ним стоит подвал «Выбрано · Сбросить · Готово». */
     protected readonly openedInSheet: Signal<boolean> = computed((): boolean => this.popover().openedInSheet());
 
+    /** Фокус стоит в поиске списка: на телефоне открыта клавиатура, и шторка встаёт во всю высоту. */
+    protected readonly searchFocused: WritableSignal<boolean> = signal<boolean>(false);
+
     /** Список рисуется карточками: он открыт в шторке, и вход `sheetCards` их не выключил. */
     protected readonly cards: Signal<boolean> = computed((): boolean => this.sheetCards() && this.openedInSheet());
 

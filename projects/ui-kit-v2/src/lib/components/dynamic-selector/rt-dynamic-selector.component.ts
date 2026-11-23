@@ -42,6 +42,7 @@ import {
     sameDynamicKeys,
     sameDynamicKeySet,
     dynamicEntitiesOf,
+    dynamicLabelCase,
     dynamicListRows,
     selectableDynamicItems,
 } from './rt-dynamic-selector.logic';
@@ -91,9 +92,17 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
     readonly #loadState: RtDynamicSelectorLoadStateDirective = inject(RtDynamicSelectorLoadStateDirective, { self: true });
     /* Умолчания входов считаются из настроек кита при объявлении: вход в разметке перебивает их. */
     readonly #defaults: IRtDynamicSelectorDefaults = rtDynamicSelectorDefaults();
+    readonly #applyKitLabel: Signal<string> = rtKitLabel('dynamicSelectorApply');
 
     protected readonly addLabel: Signal<string> = rtKitLabel('dynamicSelectorAdd');
     protected readonly nothingToChooseLabel: Signal<string> = rtKitLabel('dynamicSelectorNothingToChoose');
+    /** Подпись «Применить» в шапке шторки — та же, что у кнопки окна выбора. */
+    protected readonly applyText: Signal<string> = computed((): string =>
+        dynamicLabelCase(this.applyLabel() || this.#applyKitLabel(), this.applyLabelCase())
+    );
+    /** Ключи, отмеченные в открытом окне и ещё не применённые: с ними шторка спрашивает перед закрытием. */
+    protected readonly pendingKeys: Signal<unknown[]> = this.#parts.ticked;
+    protected readonly sheetUnsaved: Signal<boolean> = computed((): boolean => this.pendingKeys().length > 0);
 
     /** Всплывающий выбор открывается от нажатой кнопки добавления: у полосы и у приглашения — свой. */
     protected readonly popovers: Signal<readonly RtPopoverDirective[]> = viewChildren(RtPopoverDirective);
@@ -167,8 +176,10 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
         transform: booleanAttribute,
     });
     /** Окно рисует карточки: оно открыто в шторке, и вход `sheetCards` их не выключил. Читает окно выбора. */
-    public readonly cards: Signal<boolean> = computed(
-        (): boolean => this.sheetCards() && this.popovers().some((popover: RtPopoverDirective): boolean => popover.openedInSheet())
+    public readonly cards: Signal<boolean> = computed((): boolean => this.sheetCards() && this.inSheet());
+    /** Окно выбора открыто в нижней шторке. Читает окно выбора: его кнопки уходят в шапку шторки. */
+    public readonly inSheet: Signal<boolean> = computed((): boolean =>
+        this.popovers().some((popover: RtPopoverDirective): boolean => popover.openedInSheet())
     );
     public readonly addShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
         transform: booleanAttribute,
@@ -316,6 +327,13 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
                 ? keys.slice(0, 1)
                 : [...this.value(), ...keys.filter((key: unknown): boolean => !this.value().includes(key))]
         );
+    }
+
+    /** «Применить» в шапке шторки и ответ «Применить» на её вопрос: уходят отметки открытого окна. */
+    protected onSheetApply(): void {
+        if (this.pendingKeys().length > 0) {
+            this.onApplied([...this.pendingKeys()]);
+        }
     }
 
     protected onCancelled(): void {

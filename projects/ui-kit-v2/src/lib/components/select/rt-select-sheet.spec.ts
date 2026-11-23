@@ -374,6 +374,36 @@ describe('Карточки выбора селекта в шторке (вход
         expect(all('select-option-description')).toEqual([]);
     });
 
+    it('SC-UKV-1711 — кнопка закрытия закрывает шторку и возвращает фокус полю', (): void => {
+        const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true);
+        press(fixture, 'select-trigger');
+        const close: HTMLButtonElement = document.querySelector('[qa-dataid="bottom-sheet-close"] button') as HTMLButtonElement;
+        close.focus();
+
+        close.click();
+        settle(fixture);
+
+        expect(sheetOpen()).toBe(false);
+        expect(document.activeElement).toBe(qa(fixture, 'select-trigger')?.nativeElement);
+    });
+
+    it('SC-UKV-1721 — шторка с поиском встаёт во всю высоту, пока фокус в поиске, и возвращается без него', (): void => {
+        const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { filter: true });
+        press(fixture, 'select-trigger');
+        const panel: HTMLElement = document.querySelector('[qa-dataid="bottom-sheet-panel"]') as HTMLElement;
+        const search: HTMLElement = document.querySelector('[qa-dataid="select-filter"]') as HTMLElement;
+
+        expect(panel.classList).not.toContain('rt-bottom-sheet__panel--full');
+
+        search.dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
+        settle(fixture);
+        expect(panel.classList).toContain('rt-bottom-sheet__panel--full');
+
+        search.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+        settle(fixture);
+        expect(panel.classList).not.toContain('rt-bottom-sheet__panel--full');
+    });
+
     it('SC-UKV-1717 — sheetCards=false возвращает в шторку строки, какими список стоит у поля', (): void => {
         const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { sheetCards: false, options: DESCRIBED });
         fixture.componentInstance.writeValue('approve');

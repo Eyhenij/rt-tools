@@ -68,6 +68,19 @@ describe('Карточки выбора мультиселекта в шторк
         expect(all('multiselect-option-checkbox')).toEqual([]);
     });
 
+    it('SC-UKV-1713 — «Готово» стоит справа в шапке шторки, в подвале остаются счётчик и сброс', (): void => {
+        setup();
+
+        const done: HTMLElement = all('multiselect-sheet-done')[0];
+        expect(done.closest('[qa-dataid="bottom-sheet-action"]')).not.toBeNull();
+        expect(done.classList).not.toContain('rt-button--outlined');
+        expect(done.classList).not.toContain('rt-button--text');
+        const footer: HTMLElement = all('multiselect-sheet-footer')[0];
+        expect(footer.querySelector('[qa-dataid="multiselect-sheet-count"]')).not.toBeNull();
+        expect(footer.querySelector('[qa-dataid="multiselect-sheet-reset"]')).not.toBeNull();
+        expect(footer.querySelector('[qa-dataid="multiselect-sheet-done"]')).toBeNull();
+    });
+
     it('SC-UKV-1716 — пояснение опции стоит второй строкой карточки', (): void => {
         setup();
 

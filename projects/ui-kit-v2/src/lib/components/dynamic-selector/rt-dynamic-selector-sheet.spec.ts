@@ -41,6 +41,12 @@ function open(inputs: Readonly<Record<string, unknown>> = {}): TFixture {
     return fixture;
 }
 
+function settle(fixture: TFixture): void {
+    fixture.detectChanges();
+    TestBed.inject(ApplicationRef).tick();
+    fixture.detectChanges();
+}
+
 /** Шторка и её пункты живут в оверлее CDK — ищем их в документе. */
 function inSheet(selector: string): HTMLElement[] {
     return Array.from(document.querySelectorAll<HTMLElement>(`.rt-popover-sheet ${selector}`));
@@ -75,6 +81,56 @@ describe('Динамический селектор в нижней шторке
         expect(rows).toHaveLength(3);
         expect(rows.every((row: HTMLElement): boolean => row.classList.contains('rt-dynamic-selector-popup__row--card'))).toBe(true);
         expect(inSheet('.rt-radio-button--card')).toEqual([]);
+    });
+
+    it('шторка открыта во всю высоту, «Применить» стоит в её шапке, своих кнопок окно не рисует', (): void => {
+        open();
+
+        expect(inSheet('[qa-dataid="bottom-sheet-panel"]')[0].classList).toContain('rt-bottom-sheet__panel--full');
+        const apply: HTMLButtonElement = inSheet(
+            '[qa-dataid="bottom-sheet-action"] [qa-dataid="dynamic-selector-sheet-apply"]'
+        )[0] as HTMLButtonElement;
+        expect(apply.disabled).toBe(true);
+        expect(inSheet('.rt-dynamic-selector-popup__foot--empty')).toHaveLength(1);
+    });
+
+    it('SC-UKV-1727 — с отметками шторка спрашивает перед закрытием, «Применить» вопроса пишет выбор', (): void => {
+        const fixture: TFixture = open();
+        inSheet('[qa-dataid="dynamic-selector-option"] [role="checkbox"]')[1].click();
+        settle(fixture);
+
+        (inSheet('[qa-dataid="bottom-sheet-close"] button')[0] as HTMLButtonElement).click();
+        settle(fixture);
+
+        expect(inSheet('[qa-dataid="bottom-sheet-confirm"]')).toHaveLength(1);
+        expect(fixture.componentInstance.value()).toEqual([]);
+
+        inSheet('[qa-dataid="bottom-sheet-confirm-apply"]')[0].click();
+        settle(fixture);
+
+        expect(fixture.componentInstance.value()).toEqual([2]);
+    });
+
+    it('SC-UKV-1725 — без отметок кнопка закрытия закрывает шторку сразу', (): void => {
+        const fixture: TFixture = open();
+
+        (inSheet('[qa-dataid="bottom-sheet-close"] button')[0] as HTMLButtonElement).click();
+        settle(fixture);
+
+        expect(inSheet('[qa-dataid="bottom-sheet-confirm"]')).toEqual([]);
+        expect(document.querySelector('.rt-popover-sheet .rt-bottom-sheet--open')).toBeNull();
+    });
+
+    it('«Применить» в шапке пишет отмеченное и закрывает шторку', (): void => {
+        const fixture: TFixture = open();
+        inSheet('[qa-dataid="dynamic-selector-option"] [role="checkbox"]')[0].click();
+        settle(fixture);
+
+        inSheet('[qa-dataid="dynamic-selector-sheet-apply"]')[0].click();
+        settle(fixture);
+
+        expect(fixture.componentInstance.value()).toEqual([1]);
+        expect(document.querySelector('.rt-popover-sheet .rt-bottom-sheet--open')).toBeNull();
     });
 
     it('SC-UKV-1717 — sheetCards=false оставляет в шторке пункты, какими окно стоит у кнопки', (): void => {

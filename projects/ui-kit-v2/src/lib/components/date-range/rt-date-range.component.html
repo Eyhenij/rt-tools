@@ -54,6 +54,10 @@
 
         @if (useSheet()) {
             <rt-bottom-sheet qa-dataid="date-range-sheet" [open]="sheetOpen()" (openChange)="sheetOpen.set($event)">
+                <!-- Заголовок шторки — подпись поля или его доступное имя; без них в шапке остаётся кнопка закрытия. -->
+                @if (sheetTitle()) {
+                    <span sheetHeader rtElem="sheet-title" qa-dataid="date-range-sheet-title">{{ sheetTitle() }}</span>
+                }
                 @if (sheetOpen()) {
                     <rt-date-range-panel
                         sheet

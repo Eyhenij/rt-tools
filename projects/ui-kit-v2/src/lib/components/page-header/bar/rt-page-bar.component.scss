@@ -103,10 +103,6 @@
             padding-inline: var(--rt-space-5);
         }
 
-        &__apply {
-            flex: 1 1 auto;
-        }
-
         /* Узкий вид: заголовок забирает остаток и усекается, кнопки с экрана не уходят. */
         &--narrow &__row {
             height: 32px;

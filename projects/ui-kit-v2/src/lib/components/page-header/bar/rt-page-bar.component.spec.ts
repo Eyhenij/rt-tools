@@ -1,9 +1,10 @@
 import { signal, ChangeDetectionStrategy, Component, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 
 import { WINDOW } from '@rt-tools/core';
 
-import { createRtFixture, qa, qaAll } from '../../../../testing/rt-kit-testing';
+import { classesOf, createRtFixture, qa, qaAll } from '../../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../../platform';
 import { RT_POPOVER_SHEET } from '../../popover/rt-popover-sheet.token';
 import { RtPageBarFilterDirective, RtPageBarSearchDirective } from './rt-page-bar-slots.directive';
@@ -121,6 +122,70 @@ describe('rt-page-bar', (): void => {
         (qa(fixture, 'page-bar-filters')?.nativeElement as HTMLElement).click();
         fixture.detectChanges();
         (qa(fixture, 'page-bar-apply')?.nativeElement as HTMLElement).click();
+        fixture.detectChanges();
+
+        expect(qa(fixture, 'page-bar-sheet')).toBeNull();
+    });
+
+    it('SC-UKV-1722 — the filters sheet takes the full height, the apply button stands in its header', (): void => {
+        const fixture: ComponentFixture<PageBarHostComponent> = setup(375);
+
+        (qa(fixture, 'page-bar-filters')?.nativeElement as HTMLElement).click();
+        fixture.detectChanges();
+
+        expect(classesOf(qa(fixture, 'bottom-sheet-panel'))).toContain('rt-bottom-sheet__panel--full');
+        const apply: HTMLElement = qa(fixture, 'page-bar-apply')?.nativeElement as HTMLElement;
+        expect(apply.closest('[qa-dataid="bottom-sheet-action"]')).not.toBeNull();
+        // Залитая кнопка — та, у которой нет ни рамочного, ни текстового вида.
+        expect(apply.classList).not.toContain('rt-button--outlined');
+        expect(apply.classList).not.toContain('rt-button--text');
+    });
+
+    it('SC-UKV-1723 — an input made in the sheet makes it ask before closing, apply reports the filters', (): void => {
+        const fixture: ComponentFixture<PageBarHostComponent> = setup(375);
+        let applied: number = 0;
+        (fixture.debugElement.query(By.directive(RtPageBarComponent)).componentInstance as RtPageBarComponent).filtersApply.subscribe(
+            (): void => {
+                applied += 1;
+            }
+        );
+        (qa(fixture, 'page-bar-filters')?.nativeElement as HTMLElement).click();
+        fixture.detectChanges();
+
+        (qa(fixture, 'page-bar-sheet')?.nativeElement as HTMLElement).dispatchEvent(new Event('input', { bubbles: true }));
+        fixture.detectChanges();
+        (qa(fixture, 'bottom-sheet-close')?.nativeElement as HTMLElement).querySelector('button')?.click();
+        fixture.detectChanges();
+
+        expect(qa(fixture, 'bottom-sheet-confirm')).not.toBeNull();
+        expect(qa(fixture, 'page-bar-sheet')).not.toBeNull();
+
+        (qa(fixture, 'bottom-sheet-confirm-apply')?.nativeElement as HTMLElement).click();
+        fixture.detectChanges();
+
+        expect(applied).toBe(1);
+        expect(qa(fixture, 'page-bar-sheet')).toBeNull();
+    });
+
+    it('SC-UKV-1725 — with nothing changed the close button closes the filters sheet at once', (): void => {
+        const fixture: ComponentFixture<PageBarHostComponent> = setup(375);
+        (qa(fixture, 'page-bar-filters')?.nativeElement as HTMLElement).click();
+        fixture.detectChanges();
+
+        (qa(fixture, 'bottom-sheet-close')?.nativeElement as HTMLElement).querySelector('button')?.click();
+        fixture.detectChanges();
+
+        expect(qa(fixture, 'bottom-sheet-confirm')).toBeNull();
+        expect(qa(fixture, 'page-bar-sheet')).toBeNull();
+    });
+
+    // Прокрутку страницы держит общая оболочка шторки; её блокировку проверяет спека самой оболочки.
+    it('SC-UKV-1726 — Escape closes the filters sheet', (): void => {
+        const fixture: ComponentFixture<PageBarHostComponent> = setup(375);
+        (qa(fixture, 'page-bar-filters')?.nativeElement as HTMLElement).click();
+        fixture.detectChanges();
+
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
         fixture.detectChanges();
 
         expect(qa(fixture, 'page-bar-sheet')).toBeNull();

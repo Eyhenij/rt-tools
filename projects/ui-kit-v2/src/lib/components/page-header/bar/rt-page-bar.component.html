@@ -68,9 +68,30 @@
     }
 
     @if (filtersInSheet() && sheetOpen()) {
-        <rt-bottom-sheet [open]="true" (openChange)="sheetOpen.set($event)">
+        <!--
+            В отборах печатают в нескольких полях: шторка открыта во всю высоту, «Применить» стоит
+            справа в шапке. Ввод, сделанный после открытия, шторка не теряет молча: на просьбу
+            закрыть она спрашивает, применить ли его.
+        -->
+        <rt-bottom-sheet
+            fullHeight
+            qa-dataid="page-bar-bottom-sheet"
+            [open]="true"
+            [unsaved]="sheetUnsaved()"
+            (applyRequest)="filtersApply.emit()"
+            (openChange)="sheetOpen.set($event)">
             <span sheetHeader>{{ t().uiPageFilters }}</span>
-            <div rtElem="sheet" qa-dataid="page-bar-sheet">
+            <button
+                sheetAction
+                rtButton
+                type="button"
+                size="sm"
+                appearance="filled"
+                qa-dataid="page-bar-apply"
+                [label]="t().uiApply"
+                [attr.aria-label]="t().uiApply"
+                (click)="onApply()"></button>
+            <div rtElem="sheet" qa-dataid="page-bar-sheet" (input)="sheetTouched.set(true)" (change)="sheetTouched.set(true)">
                 @if (search(); as searchSlot) {
                     <ng-container [ngTemplateOutlet]="searchSlot.templateRef" />
                 }
@@ -78,9 +99,6 @@
                     <ng-container [ngTemplateOutlet]="filter.templateRef" />
                 }
             </div>
-            <button sheetFooter rtButton rtElem="apply" type="button" qa-dataid="page-bar-apply" (click)="onApply()">
-                {{ t().uiApply }}
-            </button>
         </rt-bottom-sheet>
     }
 

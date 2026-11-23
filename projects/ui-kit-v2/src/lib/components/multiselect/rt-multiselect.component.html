@@ -12,6 +12,8 @@
         [rtPopover]="panelTpl"
         [rtPopoverDisabled]="isDisabled()"
         [rtPopoverSheet]="sheet()"
+        [rtPopoverSheetFull]="searchFocused()"
+        [rtPopoverSheetAction]="sheetDoneTpl"
         [rtPopoverSheetTitle]="sheetTitle()"
         [attr.id]="effectiveControlId()"
         [attr.aria-label]="ariaLabel()"
@@ -110,7 +112,8 @@
             -->
             <!-- eslint-disable @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
             @if (filter()) {
-                <div rtElem="filter">
+                <!-- Фокус в поиске — открытая клавиатура: шторка на это время встаёт во всю высоту. -->
+                <div rtElem="filter" (focusin)="searchFocused.set(true)" (focusout)="searchFocused.set(false)">
                     <rt-input
                         qa-dataid="multiselect-filter"
                         iconLeft="ico-search"
@@ -233,7 +236,7 @@
                 }
             </ul>
             @if (openedInSheet() && look() === 'list') {
-                <!-- Подвал шторки: выбор пишется по каждому нажатию, «Готово» только закрывает шторку. -->
+                <!-- Подвал шторки: счётчик выбранного и сброс. «Готово» стоит в шапке шторки. -->
                 <div rtElem="sheet-footer" qa-dataid="multiselect-sheet-footer">
                     <span rtElem="sheet-count" qa-dataid="multiselect-sheet-count">{{ selectedLabel() }}</span>
                     <button
@@ -247,17 +250,21 @@
                         [attr.aria-label]="t().uiReset"
                         [disabled]="!canReset()"
                         (click)="resetChoice()"></button>
-                    <button
-                        rtButton
-                        rtElem="sheet-done"
-                        qa-dataid="multiselect-sheet-done"
-                        type="button"
-                        size="sm"
-                        [label]="t().uiDone"
-                        [attr.aria-label]="t().uiDone"
-                        (click)="closeSheet()"></button>
                 </div>
             }
         </div>
+    </ng-template>
+
+    <!-- «Готово» в шапке шторки: выбор пишется по каждому нажатию, кнопка только закрывает шторку. -->
+    <ng-template #sheetDoneTpl>
+        <button
+            rtButton
+            qa-dataid="multiselect-sheet-done"
+            type="button"
+            size="sm"
+            appearance="filled"
+            [label]="t().uiDone"
+            [attr.aria-label]="t().uiDone"
+            (click)="closeSheet()"></button>
     </ng-template>
 </ng-container>

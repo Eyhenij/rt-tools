@@ -124,6 +124,15 @@ export class RtPageBarComponent {
         computation: (): boolean => false,
     });
 
+    /** В шторке отборов что-то ввели после открытия: событие ввода или смены значения от её полей. */
+    protected readonly sheetTouched: WritableSignal<boolean> = linkedSignal<boolean, boolean>({
+        source: this.sheetOpen,
+        computation: (): boolean => false,
+    });
+
+    /** Отборы изменены и не применены: по вводу в шторке или по слову приложения во входе `filtersChanged`. */
+    protected readonly sheetUnsaved: Signal<boolean> = computed((): boolean => this.sheetTouched() || this.filtersChanged());
+
     protected readonly filtersPopover: Signal<RtPopoverDirective | undefined> = viewChild('filtersPopover', { read: RtPopoverDirective });
 
     protected readonly filtersPanelBox: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('filtersPanelBox');
@@ -142,6 +151,15 @@ export class RtPageBarComponent {
      * кнопки на любой ширине.
      */
     public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
+    /**
+     * Отборы в шторке изменены и не применены — слово приложения. Шторка сама видит ввод в полях с
+     * событиями `input` и `change`; выбор в списке кита таких событий не шлёт, и о нём говорит
+     * приложение. С неприменённым вводом шторка перед закрытием спрашивает, применить ли его.
+     */
+    public readonly filtersChanged: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
 

@@ -223,6 +223,12 @@
             gap: var(--rt-space-sm);
         }
 
+        /* В шторке действия окна уходят в её шапку: кнопки и пустой подвал не рисуются. */
+        &__actions--hidden,
+        &__foot--empty {
+            display: none;
+        }
+
         &__actions .rt-button {
             --rt-btn-height: var(--rt-dynamic-selector-popup-button-height, var(--rt-dynamic-selector-popup-button-height-default));
             --rt-btn-font-size: var(

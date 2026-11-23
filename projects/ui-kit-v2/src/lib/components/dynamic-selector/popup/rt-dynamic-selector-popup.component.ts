@@ -3,6 +3,7 @@ import {
     booleanAttribute,
     computed,
     DestroyRef,
+    effect,
     ElementRef,
     inject,
     Injector,
@@ -307,6 +308,12 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
         }
         // Выбор живёт в шаблоне и создаётся заново при каждом открытии: запрос начинается с входа.
         this.query.set(this.settings.searchTerm());
+        // Корень видит отметки открытого окна: по ним шторка спрашивает перед закрытием и применяет.
+        if (this.#parts !== null && !this.#standalone) {
+            const parts: RtDynamicSelectorPartsService<TEntity> = this.#parts;
+            effect((): void => parts.ticked.set(this.ticked()), { injector: this.#injector });
+            this.#destroyRef.onDestroy((): void => parts.ticked.set([]));
+        }
         this.#source.temporaryChoice([]);
         this.#searchSource
             .pipe(debounceTime(RT_DYNAMIC_SELECTOR_SEARCH_DEBOUNCE), takeUntilDestroyed(this.#destroyRef))
@@ -442,6 +449,7 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
                 titleWrap: computed((): boolean => this.titleWrap()),
                 highlightSearch: computed((): boolean => this.highlightSearch()),
                 cards: computed((): boolean => this.cards()),
+                inSheet: signal<boolean>(false),
             },
             apply: (keys: unknown[]): void => this.applied.emit(keys),
             cancel: (): void => this.cancelled.emit(),
