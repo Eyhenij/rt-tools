@@ -211,9 +211,9 @@ the gate map is needed.
    step 1.1 counts.
 3. **Fast tree checks at the stage, not at the push** — tree,
    `.claude/skills/task-delivery-loop/SKILL.md` step 5: «Tests, lint and types over what is
-   touched, and `node tools/check-file-size.mjs; node tools/check-doc-paths.mjs; pnpm run
-   check:unused` — the linter after an edit does not judge `tools/` and texts, and the push set is
-   too late for them»; the article «No guard counts the rounds» leaves as a repeat of «What of the
+   touched, and `node tools/check-file-size.mjs; node tools/check-doc-paths.mjs` with
+   `pnpm run check:unused` — the linter after an edit does not judge `tools/` and texts, and the
+   push set is too late for them»; the article «No guard counts the rounds» leaves as a repeat of «What of the
    law is not here», with its companion line, to keep the rule under the gate's delivery limit.
    Replaces RT-3478 item 1. Here the 579 lines of `check-ngdoctor.mjs`, the knip refusal and a
    backticked branch name surfaced only in review and in the push set.
