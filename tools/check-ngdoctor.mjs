@@ -28,16 +28,29 @@
  * rather than narrow the check. A task that adds a model to the storage schema adds a generated
  * file and its finding, and writes the threshold.
  *
+ * A source the threshold no longer holds is silent unseen by the tree's run. So before the verdict
+ * the tool runs on a probe — a one-component project written into the temporary directory, outside
+ * the tree's scan — and every source must fire its named rule there: the tool itself
+ * `missing-spec-file` (a file rule: `project-layout` fires on the probe even when the file rules
+ * are silent), oxlint `eqeqeq`, the template linter `button-has-type`. The probe's own run is judged
+ * degraded the same way as the tree's. A red probe means the source does not start, or the version
+ * of the tool dropped the rule and the probe is to be updated; `--write` refuses it too. The probe
+ * shows that a source starts, not that it passed every file of the tree: oxlint that fails on one
+ * file of the tree and prints nothing stays unseen here.
+ *
  * The tool is run here, not piped in: with a temporary directory of its own, removed after the run,
  * because the tool writes its oxlint settings into the shared temporary directory once and reads
  * them from there in every later run of any version.
  *
- *   node tools/check-ngdoctor.mjs                        run the tool and judge the result
- *   node tools/check-ngdoctor.mjs --write                run the tool and write the threshold
- *   node tools/check-ngdoctor.mjs --input <json> [--threshold <json>]   judge a saved output
+ *   node tools/check-ngdoctor.mjs                        run the probe and the tool, judge the result
+ *   node tools/check-ngdoctor.mjs --write                the same, then write the threshold
+ *   node tools/check-ngdoctor.mjs --input <json> [--threshold <json>]   judge a saved output, no probe
+ *     --probe-input <json>                               judge a saved output of the probe as well
+ *     --probe-real [--probe-omit <source>]               run the real probe, without the construct
+ *                                                        of the named source
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -51,23 +64,96 @@ function flag(name) {
     return at === -1 ? null : (process.argv[at + 1] ?? null);
 }
 
+/** The rule each source of findings must fire on the probe. */
+const PROBE_RULES = {
+    'angular-doctor': 'angular-doctor/missing-spec-file',
+    oxlint: 'oxlint/eqeqeq',
+    'template-eslint': 'template-eslint/button-has-type',
+};
+
 /** The JSON text of a run of the tool, with its own temporary directory; `null` text on a failure. */
-function runTool() {
+function runTool(own, args) {
+    const run = spawnSync('pnpm', ['run', '-s', 'ngdoctor', '--json', ...args], {
+        cwd: ROOT,
+        env: { ...process.env, TMPDIR: own },
+        encoding: 'utf8',
+        maxBuffer: 256 * 1024 * 1024,
+    });
+    if (run.error || run.status !== 0) {
+        return { text: null, why: `angular-doctor did not finish: ${run.error?.message ?? `exit ${run.status}`} ${(run.stderr ?? '').trim()}` };
+    }
+    return { text: run.stdout, why: null };
+}
+
+/** A run of the tool in a temporary directory of its own, removed after it. */
+function withOwnTmp(run) {
     const own = mkdtempSync(join(tmpdir(), 'ngdoctor-'));
     try {
-        const run = spawnSync('pnpm', ['run', '-s', 'ngdoctor', '--json'], {
-            cwd: ROOT,
-            env: { ...process.env, TMPDIR: own },
-            encoding: 'utf8',
-            maxBuffer: 256 * 1024 * 1024,
-        });
-        if (run.error || run.status !== 0) {
-            return { text: null, why: `angular-doctor did not finish: ${run.error?.message ?? `exit ${run.status}`} ${(run.stderr ?? '').trim()}` };
-        }
-        return { text: run.stdout, why: null };
+        return run(own);
     } finally {
         rmSync(own, { recursive: true, force: true });
     }
+}
+
+/** The version a manifest gives: its own, or that of the named dependency. */
+function versionOf(manifest, name) {
+    const pkg = JSON.parse(readFileSync(manifest, 'utf8'));
+    return (name ? (pkg.dependencies?.[name] ?? pkg.devDependencies?.[name]) : pkg.version) ?? '';
+}
+
+const TOOL_VERSION = versionOf(join(ROOT, 'node_modules', '@abiramcodes', 'angular-doctor', 'package.json'));
+
+/**
+ * Writes the probe into a directory of its own inside `own` and returns its path: one component
+ * without a spec, a button without a type, a loose comparison. `omit` drops the construct of one
+ * source, so that the real probe can be seen red.
+ */
+function writeProbe(own, omit) {
+    const dir = join(own, 'probe');
+    mkdirSync(join(dir, 'src', 'app'), { recursive: true });
+    const angular = versionOf(join(ROOT, 'package.json'), '@angular/core');
+    writeFileSync(join(dir, 'angular.json'), JSON.stringify({ version: 1, projects: { probe: { root: '', sourceRoot: 'src', projectType: 'application' } } }));
+    writeFileSync(join(dir, 'package.json'), JSON.stringify({ name: 'probe', version: '0.0.0', dependencies: { '@angular/core': angular } }));
+    const button = omit === 'template-eslint' ? '<button type="button" (click)="press()">press</button>' : '<button (click)="press()">press</button>';
+    const compare = omit === 'oxlint' ? '===' : '==';
+    writeFileSync(
+        join(dir, 'src', 'app', 'probe.component.ts'),
+        [
+            "import { Component } from '@angular/core';",
+            '',
+            `@Component({ selector: 'app-probe', template: '${button}' })`,
+            'export class ProbeComponent {',
+            '    public value: string | null = null;',
+            '',
+            '    public press(): boolean {',
+            `        return this.value ${compare} null;`,
+            '    }',
+            '}',
+            '',
+        ].join('\n'),
+    );
+    if (omit === 'angular-doctor') {
+        writeFileSync(join(dir, 'src', 'app', 'probe.component.spec.ts'), "import { ProbeComponent } from './probe.component';\n\nexport const probe: ProbeComponent = new ProbeComponent();\n");
+    }
+    return dir;
+}
+
+/** The JSON text of the tool's run on the probe. */
+function runProbe(omit) {
+    return withOwnTmp((own) => runTool(own, [writeProbe(own, omit)]));
+}
+
+/** What the probe says against the sources: an empty list when every source fired its rule. */
+function probeFailures(text) {
+    const result = resultOf(text);
+    if (result.problem) return [`the probe: ${result.problem}`];
+    const missed = Object.entries(PROBE_RULES)
+        .filter(([, rule]) => !result.rules[rule])
+        .map(
+            ([source, rule]) =>
+                `the probe: the source «${source}» did not fire ${rule} at angular-doctor ${TOOL_VERSION} — either the source does not start, or the version dropped the rule and the probe is to be updated`,
+        );
+    return [...result.degraded.map((s) => `the probe: ${s}`), ...missed];
 }
 
 /** The result of a run: the score and the count of findings by rule, or the reason it is no result. */
@@ -160,13 +246,35 @@ function newFindingsOf(text, threshold, result) {
         .map((d) => `  ${d.ruleId} ${String(d.file).replace(`${ROOT}/`, '')}:${d.line} — ${d.message}`);
 }
 
+/**
+ * The probe's verdict: `null` when the probe is not run (a saved output without probe flags), else
+ * `{ ok, lines }`.
+ */
+function probeVerdict(input) {
+    const probeInput = flag('--probe-input');
+    if (input && !probeInput && !process.argv.includes('--probe-real')) return null;
+    const { text, why } = probeInput ? { text: readFileSync(probeInput, 'utf8'), why: null } : runProbe(flag('--probe-omit'));
+    const failures = text === null ? [`the probe: ${why}`] : probeFailures(text);
+    if (failures.length > 0) {
+        return { ok: false, lines: ['check-ngdoctor: a source of findings does not run on the probe, the result says nothing:', ...failures.map((s) => `  ${s}`)] };
+    }
+    return { ok: true, lines: [`check-ngdoctor: the sources ${Object.keys(PROBE_RULES).join(', ')} run — the probe fired ${Object.values(PROBE_RULES).join(', ')}`] };
+}
+
 function main() {
     const input = flag('--input');
-    const { text, why } = input ? { text: readFileSync(input, 'utf8'), why: null } : runTool();
+    const probe = probeVerdict(input);
+    if (probe && !probe.ok) {
+        for (const l of probe.lines) console.error(l);
+        if (process.argv.includes('--write')) console.error('check-ngdoctor: nothing written');
+        return 1;
+    }
+    const { text, why } = input ? { text: readFileSync(input, 'utf8'), why: null } : withOwnTmp((own) => runTool(own, []));
     if (text === null) {
         console.error(`check-ngdoctor: ${why}`);
         return 1;
     }
+    if (probe) console.log(probe.lines[0]);
     const result = resultOf(text);
     const thresholdPath = flag('--threshold') ?? THRESHOLD_FILE;
     const threshold = existsSync(thresholdPath) ? JSON.parse(readFileSync(thresholdPath, 'utf8')) : { score: 0, rules: {} };
