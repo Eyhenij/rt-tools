@@ -218,15 +218,30 @@ misuse "a package.json that is not JSON leaves its angularDoctor field unjudged 
 misuse "--package naming no file is refused" "--package names no file" "${T[@]}" --package "$WORK/no-such.json"
 misuse "--package without a saved output is refused" "give --input too" --package "$WORK/package.json"
 misuse "--config without a saved output is refused" "give --input too" --config "$WORK/config.json"
-# Without the flag the check judges the package.json of its own root, the one the tool reads.
-OWN="$(mktemp -d)"
+misuse "--config naming no file is refused" "--config names no file" "${T[@]}" --config "$WORK/no-such.json"
+printf '{"name": "t", "angularDoctor": {"reportDirectory": "tmp"}}' > "$WORK/package.json"
+misuse "an angularDoctor field with a key other than the report path is refused" "package.json#angularDoctor holds «reportDirectory»" "${T[@]}" --package "$WORK/package.json"
+# Without the flags the check judges the settings of its own root, the ones the tool reads: beside a
+# saved output, in the check of the tree and in --write alike. The settings are judged before the
+# probe and the tool run, so the copy of the check refuses at once.
+OWN="$WORK/own"
 mkdir -p "$OWN/tools"
 cp "$CHECK" "$TOOLS/check-ngdoctor-pass.mjs" "$TOOLS/check-ngdoctor-settings.mjs" "$OWN/tools/"
-printf '{"name": "t", "angularDoctor": {"rules": {"angular-doctor/inner-html": "off"}}}' > "$OWN/package.json"
 CHECK_OWN="$OWN/tools/check-ngdoctor.mjs"
-if node "$CHECK_OWN" "${T[@]}" > "$WORK/said.txt" 2>&1; then got="green"
-elif grep -qF "package.json#angularDoctor holds «rules»" "$WORK/said.txt"; then got="refused"; else got="red, other reason"; fi
-report "an angularDoctor field in the root package.json is judged without the flag" "$got" "refused"
+own_refuses() {
+    local label="$1" reason="$2" got
+    shift 2
+    if node "$CHECK_OWN" "$@" > "$WORK/said.txt" 2>&1; then got="green"
+    elif grep -qF -- "$reason" "$WORK/said.txt"; then got="refused"; else got="red, other reason"; fi
+    report "$label" "$got" "refused"
+}
+printf '{"name": "t", "angularDoctor": {"rules": {"angular-doctor/inner-html": "off"}}}' > "$OWN/package.json"
+own_refuses "an angularDoctor field in the root package.json is judged without the flag" "package.json#angularDoctor holds «rules»" "${T[@]}"
+own_refuses "an angularDoctor field in the root package.json is judged in the check of the tree" "package.json#angularDoctor holds «rules»"
+own_refuses "an angularDoctor field in the root package.json is judged by --write" "package.json#angularDoctor holds «rules»" --write
+printf '{"name": "t"}' > "$OWN/package.json"
+printf '{"rules": {"angular-doctor/inner-html": "off"}}' > "$OWN/angular-doctor.config.json"
+own_refuses "the settings file of the root is judged in the check of the tree" "hold «rules»"
 rm -rf "$OWN"
 
 printf '%s' "$(output 90 "${PROBE[@]/oxlint*/angular-doctor/project-layout}")" > "$WORK/probe.json"
