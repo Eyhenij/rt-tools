@@ -1,11 +1,51 @@
 #!/usr/bin/env bash
-# Сценарии базы набора перед пушем по веткам, которые держит хостинг. Не самостоятельный набор:
-# его подключает `git-guard-push-tests.test.sh`, и он пишет в общий счёт этого набора. Помощники
-# `report`, `fixture_*`, `push_base` и `$HOOKS` — оттуда и из `lib.sh`.
+# Сценарии базы набора перед пушем: ветки, которые держит хостинг, и запись базы прогона вперёд,
+# которую берут проверка отправки и хук git. Помощник выбора базы — `git-guard-push-marks.sh`,
+# проверка отправки — `git-guard-push-tests.sh`, прогон вперёд — `git-guard-push-ahead.sh`.
 #
 # 21.11 набор взял базой ссылку ветки, которую хостинг снял после слияния, и шёл 1 895 с. Через
 # шесть минут соседняя сессия почистила ссылки копии, проверка отправки выбрала главную ветку и
 # отказала: «No green mark for this tree and base». Набор и отправка считали базу каждый сам.
+#
+# Набор самостоятельный: бегун пакета зовёт каждый `*.test.sh` сам по себе. Каждая фикстура живёт
+# во временном каталоге, и пустой путь к ней останавливает набор: `git -C ""` работает в текущей
+# копии.
+. "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
+
+echo "база набора перед пушем"
+
+push_base() {
+    [ -n "$1" ] || return 1
+    (cd "$1" && . "$HOOKS/git-guard-push-marks.sh" && rt_push_base main)
+}
+gate() {
+    local label="$1" dir="$2" cmd="$3" want="$4" out
+    out="$(CLAUDE_PROJECT_DIR="$dir" input_cmd "$cmd" Bash "$dir" \
+        | CLAUDE_PROJECT_DIR="$dir" "$HOOKS/git-guard-push-tests.sh" 2>/dev/null \
+        | jq -r '.hookSpecificOutput.permissionDecision // "PASS"' 2>/dev/null)"
+    report "$label" "${out:-PASS}" "$want"
+}
+gate_says() {
+    CLAUDE_PROJECT_DIR="$1" input_cmd "$2" Bash "$1" \
+        | CLAUDE_PROJECT_DIR="$1" "$HOOKS/git-guard-push-tests.sh" 2>/dev/null \
+        | jq -r '.hookSpecificOutput.permissionDecisionReason // ""' 2>/dev/null
+}
+ahead() { (cd "$1" && bash "$HOOKS/git-guard-push-ahead.sh" >/dev/null 2>&1); }
+fixture() {
+    local dir
+    dir="$(fixture_repo_branched main "$1")"
+    case "$dir" in /*) [ -d "$dir/.git" ] && printf '%s' "$dir" && return 0 ;; esac
+    echo "фикстура не создана — набор остановлен" >&2
+    exit 1
+}
+# Профиль с тяжёлым шагом, который называет базу, как профиль дерева: отправка с другой базой ищет
+# отметку другой строки и не находит её. Тяжёлый шаг не читает каталог `notes`.
+profile() {
+    fixture_commit "$1" .claude/rt-kit/project.sh "RT_PUSH_HEAVY_AHEAD=1
+rt_push_check_heavy() { case \"\$1\" in *heavy*) return 0 ;; esac; return 1; }
+rt_push_check_unread() { case \"\$1\" in *heavy*) printf '%s\\n' ':(top,exclude)notes' ;; esac; }
+rt_push_checks() { printf '%s\\n' 'true' \"echo heavy \$1 >> $2\"; }" 'chore: профиль'
+}
 
 # Цепочка как в эпике: главная, ветка эпика, нижняя задача и верхняя, все на сервере.
 live_git() {
@@ -13,7 +53,7 @@ live_git() {
 }
 LIVE_REMOTE="$(mktemp -d)"
 git init -q --bare "$LIVE_REMOTE" 2>/dev/null
-LIVE="$(fixture_repo_branched main RT-90-epic)"
+LIVE="$(fixture RT-90-epic)"
 git -C "$LIVE" remote add origin "$LIVE_REMOTE"
 fixture_commit "$LIVE" epic.txt эпик 'feat: ветка эпика'
 live_git push -q origin main RT-90-epic 2>/dev/null
@@ -53,16 +93,53 @@ case "$live_ahead_says" in
 esac
 rm -rf "$LIVE" "$LIVE_REMOTE"
 
-# --- SC-AK-1852. Отправка берёт базу прогона вперёд, пока дерево то же ----------------------------
-# Строка тяжёлого шага называет базу, как в профиле дерева: отправка с другой базой ищет отметку
-# другой строки и не находит её.
+# --- SC-AK-1850. Случай карточки: голова — ветка эпика, влитая задача снята -----------------------
+# Хостинг влил задачу в ветку эпика и снял её; ветка эпика в копии взяла слияние вторым родителем,
+# ссылка задачи в копии осталась. Набор и проверка отправки берут главную ветку.
+card_git() {
+    git -C "$CARD" -c user.name=probe -c user.email=probe@example.invalid -c commit.gpgsign=false "$@"
+}
+CARD_REMOTE="$(mktemp -d)"
+CARD_RUNS="$(mktemp)"
+git init -q --bare "$CARD_REMOTE" 2>/dev/null
+CARD="$(fixture RT-70-epic)"
+card_git remote add origin "$CARD_REMOTE"
+card_git checkout -q main 2>/dev/null
+profile "$CARD" "$CARD_RUNS"
+card_git push -q origin main 2>/dev/null
+card_git checkout -q RT-70-epic 2>/dev/null
+card_git merge -q --ff-only main 2>/dev/null
+fixture_commit "$CARD" epic.txt эпик 'feat: ветка эпика'
+card_git push -q origin RT-70-epic 2>/dev/null
+card_git checkout -q -b RT-71-task RT-70-epic 2>/dev/null
+fixture_commit "$CARD" task.txt задача 'feat: задача'
+card_git push -q origin RT-71-task 2>/dev/null
+card_git checkout -q -b host-side origin/RT-70-epic 2>/dev/null
+GIT_COMMITTER_NAME=GitHub GIT_COMMITTER_EMAIL=noreply@github.com \
+    card_git merge -q --no-ff -m 'Merge pull request: задача' RT-71-task 2>/dev/null
+card_git push -q origin host-side:RT-70-epic 2>/dev/null
+git -C "$CARD_REMOTE" update-ref -d refs/heads/RT-71-task 2>/dev/null
+card_git checkout -q RT-70-epic 2>/dev/null
+card_git branch -q -D RT-71-task host-side 2>/dev/null
+fixture_commit "$CARD" local.txt своё 'feat: своя правка ветки эпика'
+card_git fetch -q --no-prune origin 2>/dev/null
+card_git merge -q --no-ff -m 'merge origin epic' origin/RT-70-epic 2>/dev/null
+report "SC-AK-1850 — карточка: ссылка снятой задачи в копии, база — главная" "$(push_base "$CARD")" origin/main
+ahead "$CARD"
+report "SC-AK-1850 — карточка: набор шёл от главной" "$(grep -c 'heavy origin/main' "$CARD_RUNS")" 1
+gate "SC-AK-1850 — карточка: отправка проходит по отметкам" "$CARD" 'git push origin RT-70-epic' PASS
+card_git branch -q -D -r origin/RT-71-task 2>/dev/null
+gate "SC-AK-1850 — карточка: после чистки ссылок отправка проходит" "$CARD" 'git push origin RT-70-epic' PASS
+rm -rf "$CARD" "$CARD_REMOTE" "$CARD_RUNS"
+
+# --- SC-AK-1852. Отправка берёт базу прогона вперёд, пока запись подходит голове ------------------
 pin_git() {
     git -C "$PIN" -c user.name=probe -c user.email=probe@example.invalid -c commit.gpgsign=false "$@"
 }
 PIN_REMOTE="$(mktemp -d)"
 PIN_RUNS="$(mktemp)"
 git init -q --bare "$PIN_REMOTE" 2>/dev/null
-PIN="$(fixture_repo_branched main RT-95-epic)"
+PIN="$(fixture RT-95-epic)"
 git -C "$PIN" remote add origin "$PIN_REMOTE"
 fixture_commit "$PIN" epic.txt эпик 'feat: ветка эпика'
 pin_git push -q origin main RT-95-epic 2>/dev/null
@@ -70,14 +147,13 @@ pin_git checkout -q -b RT-96-low RT-95-epic 2>/dev/null
 fixture_commit "$PIN" low.txt низ 'feat: нижняя ветка'
 pin_git push -q origin RT-96-low 2>/dev/null
 pin_git checkout -q -b RT-97-top RT-96-low 2>/dev/null
-fixture_commit "$PIN" .claude/rt-kit/project.sh "RT_PUSH_HEAVY_AHEAD=1
-rt_push_check_heavy() { case \"\$1\" in *heavy*) return 0 ;; esac; return 1; }
-rt_push_checks() { printf '%s\\n' 'true' \"echo heavy \$1 >> $PIN_RUNS\"; }" 'chore: профиль'
-(cd "$PIN" && bash "$HOOKS/git-guard-push-ahead.sh" >/dev/null 2>&1)
+profile "$PIN" "$PIN_RUNS"
+ahead "$PIN"
 report "SC-AK-1852 — прогон вперёд от нижней ветки зелёный" "$?" 0
+low_sha="$(pin_git rev-parse RT-96-low)"
 
 # Хостинг влил нижнюю ветку в ветку эпика и снял её, пока шёл набор.
-git -C "$PIN_REMOTE" update-ref refs/heads/RT-95-epic "$(pin_git rev-parse RT-96-low)" 2>/dev/null
+git -C "$PIN_REMOTE" update-ref refs/heads/RT-95-epic "$low_sha" 2>/dev/null
 git -C "$PIN_REMOTE" update-ref -d refs/heads/RT-96-low 2>/dev/null
 report "SC-AK-1852 — заново выбранная база была бы веткой эпика" "$(push_base "$PIN")" origin/RT-95-epic
 gate "SC-AK-1852 — нижняя ветка влита и снята во время набора: отправка проходит по отметкам" \
@@ -86,11 +162,17 @@ gate "SC-AK-1852 — нижняя ветка влита и снята во вр�
 pin_git branch -q -D -r origin/RT-96-low 2>/dev/null
 gate "SC-AK-1852 — ссылка базы снята чисткой: отправка проходит по отметкам" \
     "$PIN" 'git push origin RT-97-top' PASS
+report "SC-AK-1852 — ссылка базы стоит на записанном коммите" \
+    "$(pin_git rev-parse --verify --quiet origin/RT-96-low)" "$low_sha"
+# Коммит пути, который тяжёлый шаг не читает: запись подходит голове над записанной, отметка в силе.
+fixture_commit "$PIN" notes/n.md заметка 'docs: заметка после набора'
+gate "SC-AK-1852 — коммит непрочитанного пути после набора: отправка проходит по отметкам" \
+    "$PIN" 'git push origin RT-97-top' PASS
 report "SC-AK-1852 — тяжёлый шаг прогнан один раз" "$(grep -c heavy "$PIN_RUNS")" 1
 
 # Новое дерево — новый прогон, база — ветка эпика. Во время набора на хостинге встаёт ветка ближе.
 fixture_commit "$PIN" more.txt ещё 'feat: ещё правка'
-(cd "$PIN" && bash "$HOOKS/git-guard-push-ahead.sh" >/dev/null 2>&1)
+ahead "$PIN"
 report "SC-AK-1852 — прогон вперёд от ветки эпика зелёный" "$?" 0
 pin_git push -q origin 'HEAD~1:refs/heads/RT-98-mid' 2>/dev/null
 report "SC-AK-1852 — заново выбранная база была бы ближней веткой" "$(push_base "$PIN")" origin/RT-98-mid
@@ -98,15 +180,44 @@ gate "SC-AK-1852 — ближняя ветка встала во время на
     "$PIN" 'git push origin RT-97-top' PASS
 
 # --- SC-AK-1853. Отказ называет обе базы -----------------------------------------------------------
-# Дерево сменилось после прогона: база выбрана заново, отметок нет, и отказ называет базу отправки
-# и базу последнего прогона в этой копии.
-fixture_commit "$PIN" late.txt поздно 'feat: правка после прогона'
-pin_says="$(CLAUDE_PROJECT_DIR="$PIN" input_cmd 'git push origin RT-97-top' Bash "$PIN" \
-    | CLAUDE_PROJECT_DIR="$PIN" "$HOOKS/git-guard-push-tests.sh" 2>/dev/null \
-    | jq -r '.hookSpecificOutput.permissionDecisionReason // ""' 2>/dev/null)"
+# Последний коммит переписан: запись голове не подходит, база выбрана заново, отметок нет, и отказ
+# называет базу отправки и базу последнего прогона этой ветки.
+printf 'иначе\n' > "$PIN/more.txt"
+pin_git commit -q -a --amend -m 'feat: ещё правка, переписана' 2>/dev/null
+pin_says="$(gate_says "$PIN" 'git push origin RT-97-top')"
 case "$pin_says" in
-    *'The base of this push: origin/RT-98-mid.'*'The base of the last run ahead in this copy: origin/RT-95-epic (another tree).'*)
+    *'The base of this push: origin/RT-98-mid.'*'The base of the last run ahead of this branch: origin/RT-95-epic (another history).'*)
         report "SC-AK-1853 — отказ «No green mark» называет базу отправки и базу прогона" да да ;;
     *) report "SC-AK-1853 — отказ «No green mark» называет базу отправки и базу прогона" нет да ;;
 esac
 rm -rf "$PIN" "$PIN_REMOTE" "$PIN_RUNS"
+
+# --- SC-AK-1852. Две ветки цепочки по очереди в одной копии ---------------------------------------
+# Запись у каждой ветки своя: прогон верхней ветки не затирает запись нижней.
+two_git() {
+    git -C "$TWO" -c user.name=probe -c user.email=probe@example.invalid -c commit.gpgsign=false "$@"
+}
+TWO_REMOTE="$(mktemp -d)"
+TWO_RUNS="$(mktemp)"
+git init -q --bare "$TWO_REMOTE" 2>/dev/null
+TWO="$(fixture RT-60-epic)"
+two_git remote add origin "$TWO_REMOTE"
+profile "$TWO" "$TWO_RUNS"
+two_git push -q origin main RT-60-epic 2>/dev/null
+two_git checkout -q -b RT-61-low RT-60-epic 2>/dev/null
+fixture_commit "$TWO" low.txt низ 'feat: нижняя ветка'
+two_git push -q origin RT-61-low 2>/dev/null
+two_git checkout -q -b RT-62-a RT-61-low 2>/dev/null
+fixture_commit "$TWO" a.txt а 'feat: ветка а'
+ahead "$TWO"
+two_git checkout -q -b RT-63-b RT-62-a 2>/dev/null
+fixture_commit "$TWO" b.txt б 'feat: ветка б'
+ahead "$TWO"
+git -C "$TWO_REMOTE" update-ref refs/heads/RT-60-epic "$(two_git rev-parse RT-61-low)" 2>/dev/null
+git -C "$TWO_REMOTE" update-ref -d refs/heads/RT-61-low 2>/dev/null
+two_git checkout -q RT-62-a 2>/dev/null
+gate "SC-AK-1852 — две ветки по очереди: нижняя проходит по отметкам своего прогона" \
+    "$TWO" 'git push origin RT-62-a' PASS
+rm -rf "$TWO" "$TWO_REMOTE" "$TWO_RUNS"
+
+suite_result "база набора перед пушем"

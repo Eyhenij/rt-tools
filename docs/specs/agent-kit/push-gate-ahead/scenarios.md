@@ -352,6 +352,12 @@ Given the host holds a branch whose name begins with the name of the removed one
 When the base is picked
 Then the removed branch is still no base: the name is matched whole
 
+Given the head is the branch of an epic, the host merged a task into it and removed the task, the
+branch of the epic took that merge in as a second parent, and the copy still holds the ref of the
+task
+When the set runs ahead and the push follows, before and after a prune of the refs
+Then the set and the push both take the main branch, and the push passes from the marks
+
 Covered: `projects/agent-kit/tests/git-guard-push-base-live.test.sh`.
 
 ### SC-AK-1851 — with no answer from the host the refs of the copy decide
@@ -366,7 +372,7 @@ Then its output says the host did not answer
 
 Covered: `projects/agent-kit/tests/git-guard-push-base-live.test.sh`.
 
-### SC-AK-1852 — the push takes the base of the run ahead for the same tree
+### SC-AK-1852 — the push takes the base of the run ahead while the record fits the head
 
 Given the run ahead judged the tree against the lower branch, and the host merged and removed that
 branch during the set
@@ -377,18 +383,27 @@ Given a neighbouring copy also pruned the ref of that base
 When the tree is pushed
 Then the ref is put back at the recorded commit, and the push passes from the marks
 
+Given a commit of a path the heavy step does not read, made after the run ahead
+When the head is pushed
+Then the record fits the head, and the push passes from the marks
+
 Given the run ahead judged the tree against the branch of the epic, and a nearer branch appeared
 on the host during the set
 When the tree is pushed
 Then the base stays the branch of the epic, and the push passes from the marks
 
+Given two branches of a chain ran ahead one after another in one copy, and the host merged and
+removed the branch under them
+When the lower of the two is pushed
+Then it takes the base of its own run ahead, and passes from the marks
+
 Covered: `projects/agent-kit/tests/git-guard-push-base-live.test.sh`.
 
 ### SC-AK-1853 — the refusal «No green mark» names both bases
 
-Given a commit made after the run ahead, so that the tree of the push is another one
+Given the last commit was rewritten after the run ahead, so that the record does not fit the head
 When the push is refused for a heavy step with no mark
-Then the refusal names the base of the push and the base of the last run ahead in this copy,
-marked as another tree
+Then the refusal names the base of the push and the base of the last run ahead of this branch,
+marked as another history
 
 Covered: `projects/agent-kit/tests/git-guard-push-base-live.test.sh`.
