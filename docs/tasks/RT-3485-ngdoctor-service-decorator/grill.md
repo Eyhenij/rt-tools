@@ -20,17 +20,19 @@
   только из списка провайдеров. Все пакеты дерева требуют `@angular/core` `^22.0.0`, так что
   потребитель получает `@Service` вместе с пакетом.
 - Angular даёт миграцию `@angular/core:service`
-  (`node_modules/@angular/core/schematics/bundles/service-migration.cjs`): она меняет
-  `@Injectable()` и `@Injectable({ providedIn: 'root' })` на `@Service()` и пропускает класс, у
+  (`node_modules/@angular/core/schematics/bundles/service-migration.cjs:54`): она меняет
+  `@Injectable({ providedIn: 'root' })` на `@Service()`, а `@Injectable()` — на
+  `@Service({ autoProvided: false })`, и пропускает класс, у
   которого есть другие свойства декоратора или конструктор с параметрами в цепочке наследования.
-  У всех 60 классов декоратор — только `{ providedIn: 'root' }`, параметров конструктора нет: 21
-  хранилище наследует базу хранилищ с собственным конструктором без параметров, стратегия
-  заголовка админки наследует `TitleStrategy` роутера.
+  В 60 файлах 62 класса (по два — в `media-api.service.ts` и `media-folders-api.service.ts` cms);
+  у всех декоратор — только `{ providedIn: 'root' }`, параметров конструктора нет: 16 хранилищ
+  наследуют базу хранилищ и объявляют свой конструктор без параметров, стратегия заголовка админки
+  наследует `TitleStrategy` роутера.
 - Собственное правило линтера `require-suffix-declaration`
   (`tools/eslint-rules/rules/require-suffix-declaration.ts`, `PROMISES.service`) обещает в файле
-  `*.service.ts` метку `@Injectable` или класс с именем на `Service`. Три класса держатся только
-  меткой: `NotificationBus` (`notification-bus.service.ts` кита), `MediaApiFacade` и
-  `MediaFoldersApiFacade` (`api/*.service.ts` cms). С `@Service` правило их отвергнет.
+  `*.service.ts` метку `@Injectable` или класс с именем на `Service`. Одним признаком метки
+  держится `NotificationBus` (`notification-bus.service.ts` кита): с `@Service` правило его
+  отвергнет.
 - Образцы пакета правил учат писать `@Injectable({ providedIn: 'root' })`:
   `patterns/angular-patterns-state.md`, `patterns/api-layer-pair.md`,
   `patterns/platform-access-di.md`; `patterns/entity-store.md` — `@Injectable()`. README пакета
@@ -57,7 +59,9 @@
 - **Все 60 классов получают `@Service()` вместо `@Injectable({ providedIn: 'root' })`.** Поведение
   то же: класс доступен из корня. Импорт `Injectable` убирается, где он больше не нужен.
 - **Правило линтера `require-suffix-declaration` принимает метку `@Service` наравне с
-  `@Injectable`.** Иначе три класса с именем не на `Service` станут красными.
+  `@Injectable`.** Иначе `NotificationBus` станет красным.
+- **Образец `entity-store` остаётся на `@Injectable()`.** Его хранилище даётся списком провайдеров
+  экрана; `@Service()` сделал бы его общим на всё приложение.
 - **Образцы пакета правил и README `@rt-tools/store` учат `@Service()`.** Тестовое хранилище спеки
   — тоже, чтобы образец и код не расходились.
 - **`@Injectable` без `providedIn: 'root'` и NestJS не трогаются.** Правило их не судит.
