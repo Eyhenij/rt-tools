@@ -2,23 +2,28 @@
 
 ## Где мы
 
-- **State:** `этап-идёт`
-- **Stage:** 1 — The steps of the set run on the pinned node
+- **State:** `этапы-кончились`
+- **Stage:** 2 — The description (последний; `step --done`: 6 из 6 совпали)
 - **Done:** план одобрен владельцем 23.11 («Одобряю план RT-3466»), plan-red: все шесть проверок
-  красные; пробная отправка на текущем коде даёт 1 строку неверной node
-- **Next step:** 1.1 — общая функция закреплённой node и случаи SC-AK-1846
+  красные; пробная отправка на текущем коде даёт 1 строку неверной node. Этапы 1 и 2 — коммит
+  cc4283a2d, шаги 1.1–2.1 совпали. Живая проверка 23.11: клон с node 20 первой — 0 строк неверной
+  node, git-хук прошёл за 62 с; клон с закреплённой node, спрятанной от хука, — одна строка
+  «node v22.22.3 is pinned in .nvmrc and not installed; PATH gives v20.11.0 — nvm install 22.22.3»
+  и отказ за 4 с, ни один шаг не шёл. Новые случаи шагов 1.1 и 1.3 красные на коде до правки
+  (7 из 10), соседние наборы пакета зелёные (16 наборов, 0 провалов)
+- **Next step:** первый круг ревью
 - **Uncommitted:** nothing
 - **Waiting for the owner:** nothing
 - **PR:** not open yet
 
 ## Шаги
 
-- [>] 1.1 A step of the set and of the run ahead sees the pinned node when another stands first in PATH
-- [ ] 1.2 A pin of a major takes the highest installed match; an alias and a tree without a pin run as before
-- [ ] 1.3 A pinned node not installed with another node in PATH refuses the push by one line in the guard and in the git hook
-- [ ] 1.4 A pinned node not installed with the same node in PATH runs the steps as before
-- [ ] 1.5 A real push from a clone with node 20 first goes through the git hook with no line of a wrong node
-- [ ] 2.1 The scenarios stand in the description
+- [x] 1.1 A step of the set and of the run ahead sees the pinned node when another stands first in PATH
+- [x] 1.2 A pin of a major takes the highest installed match; an alias and a tree without a pin run as before
+- [x] 1.3 A pinned node not installed with another node in PATH refuses the push by one line in the guard and in the git hook
+- [x] 1.4 A pinned node not installed with the same node in PATH runs the steps as before
+- [x] 1.5 A real push from a clone with node 20 first goes through the git hook with no line of a wrong node
+- [x] 2.1 The scenarios stand in the description
 
 ## Решения по ходу
 
