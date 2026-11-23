@@ -178,40 +178,6 @@ describe('RtToolbarComponent — панель отборов у приложен
         expect(fixture.componentInstance.applied).toBe(0);
         expect(fixture.componentInstance.resets).toBe(0);
     });
-
-    it('SC-UKV-1713 — отборы вернулись в полосу на широком месте: панель приложения просит закрыть её', async (): Promise<void> => {
-        const { fixture, breakpoints } = setup();
-        await openRoute(fixture);
-        expect(fixture.componentInstance.dismisses).toBe(0);
-
-        breakpoints.narrow.set(false);
-        await settle(fixture);
-
-        expect(fixture.componentInstance.dismisses).toBe(1);
-    });
-
-    it('SC-UKV-1713 — полоса ушла со страницы: панель приложения просит закрыть её', async (): Promise<void> => {
-        const { fixture } = setup();
-        await openRoute(fixture);
-
-        fixture.componentInstance.toolbarShown.set(false);
-        await settle(fixture);
-
-        expect(fixture.componentInstance.dismisses).toBe(1);
-    });
-
-    it('SC-UKV-1713 — маршрут панели, вставший раньше полосы, не закрывается и берёт её отборы', async (): Promise<void> => {
-        const { fixture } = setup();
-        fixture.componentInstance.toolbarShown.set(false);
-        await openRoute(fixture);
-        expect(fixture.componentInstance.dismisses).toBe(0);
-
-        fixture.componentInstance.toolbarShown.set(true);
-        await settle(fixture);
-
-        expect(fixture.componentInstance.dismisses).toBe(0);
-        expect(route(fixture)?.querySelector('[qa-dataid="slot-filter"]')?.getAttribute('data-place')).toBe('panel');
-    });
 });
 
 /** Двойник наблюдателя размера: смена ширины места подаётся вызовом `resize`. */

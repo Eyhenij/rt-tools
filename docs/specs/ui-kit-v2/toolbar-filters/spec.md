@@ -26,7 +26,7 @@ behind a button that opens a panel.
 | Indicator     | the dot in the corner of the filter button icon: some filter is on                     |
 | Filters panel | `rt-aside` opened by the filter button, with the filters slot in its body              |
 | Narrow screen | the place under 1080 points — `BreakpointsService.belowNarrow`                         |
-| App panel     | `rt-toolbar-filters-panel` drawn by the application in its own route                   |
+| App panel     | `rt-toolbar-filters-route-aside` opened by the application route in the outlet `ro`     |
 
 ### What it is called in the interface
 
@@ -38,7 +38,8 @@ behind a button that opens a panel.
 ## Rules
 
 - **On a narrow screen the toolbar shows the filters slot as one filter button.** The button stands
-  first in one row with the buttons of the right part; the fields themselves are not drawn in the
+  last in one row with the buttons of the right part, after the table settings, and the row keeps to
+  the right edge at any width; the fields themselves are not drawn in the
   toolbar.
 - **On a wide screen the filters slot stands in the left part of the toolbar, after its content.**
   No filter button is drawn.
@@ -70,13 +71,20 @@ behind a button that opens a panel.
   the other components.
 - **With `filtersPanel` set to `app` the filter button opens no panel of its own and reports
   `filtersOpen`.** By default (`kit`) the toolbar opens its own panel as before.
-- **The application panel draws the filters of the toolbar.** `rt-toolbar-filters-panel` in a
-  component of the application route draws the same header, the filters slot with the context
-  `panel` and the footer; «Сбросить» reaches `filtersReset` of the toolbar, «Применить» reaches
-  `filtersApply`.
-- **The application panel asks to be closed by `dismiss`.** It reports it on the back arrow, after
-  «Применить», when the filters return to the row and when the toolbar leaves the page; «Сбросить»
-  reports nothing. A panel that stood before its toolbar appeared stays open and takes its filters.
+- **The application panel draws the filters of the toolbar.** `rt-toolbar-filters-route-aside`,
+  a route component of the kit in the outlet `ro`, draws the same header, the filters slot with the
+  context `panel` and the footer; «Сбросить» reaches `filtersReset` of the toolbar and keeps the
+  panel open, «Применить» reaches `filtersApply` and closes it.
+- **The application panel closes on the shared path of the route panels.** The back arrow,
+  «Применить», a press beside the panel and Esc close it; it closes itself when the filters return
+  to the row and when the toolbar leaves the page. It decides that only once the panel of the frame
+  is ready: before that the place is not measured. A panel that stood before its toolbar appeared
+  waits for it and takes its filters.
+- **«Применить» that started a navigation closes the application panel after that navigation.** A
+  second navigation started at once would cancel the first, and the applied filter would not reach
+  the address.
+- **In the row each filter keeps the width of its own content.** A select in the left part is as
+  wide as its placeholder or value and cuts nothing with an ellipsis while the row has room.
 
 ## What is out of scope
 
@@ -101,7 +109,7 @@ Not applicable.
 | State              | What is visible                                                                      |
 | ------------------ | ------------------------------------------------------------------------------------ |
 | Wide screen        | the filter fields in the left part of the toolbar, as before                         |
-| Narrow, filter off | the filter button first in the row of buttons, no dot                                |
+| Narrow, filter off | the filter button last in the row of buttons, no dot                                 |
 | Narrow, filter on  | the same button with the dot in the icon corner, the dot whole                       |
 | Panel open         | the aside at full width: header, the fields one under another, footer of two buttons |
 
@@ -137,7 +145,11 @@ Not applicable.
 - **The application panel takes the filters through a root hub, not through an input.** The
   argument: the panel stands in a route outlet and does not see the toolbar of the list; the
   toolbar hands its template and its two presses to the hub while it lives. The price: with two
-  toolbars in `app` mode on one page the panel draws the filters of the last one.
+  toolbars in `app` mode on one page the panel draws the filters of the last one, and a toolbar the
+  page re-creates while the panel is open closes the panel as one that left.
+- **The application panel is a route component of the kit, not a part inside the application's.**
+  The argument: the kit already has the route panel base and a sample of it, the column settings of
+  the table; a panel built on it closes by the frame's readiness and keeps Esc and the backdrop.
 - **The slot template gets the place it is drawn in as its context: `bar` or `panel`.** The argument:
   a field in the panel needs a label above it, a field in a row does not.
 

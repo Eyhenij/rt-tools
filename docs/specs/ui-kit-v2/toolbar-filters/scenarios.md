@@ -7,7 +7,7 @@ the titles of the tests refer to them.
 
 Given a toolbar with a filters slot and a right part of buttons
 When the place is narrow
-Then the toolbar draws the filter button first in the row and no filter field
+Then the toolbar draws the filter button last in the row of buttons and no filter field
 
 ### SC-UKV-1087 — on a wide screen the filters stand in the left part
 
@@ -98,26 +98,40 @@ Then `filtersOpen` is reported, and no panel of the kit opens
 
 ### SC-UKV-1712 — the application panel draws the filters of the toolbar
 
-Given a narrow toolbar with `filtersPanel="app"` and `rt-toolbar-filters-panel` in another place
-When the panel is drawn and its footer pressed
-Then it shows the title «Фильтры», the back arrow, the slot with the context `panel` and the footer;
-«Сбросить» reaches `filtersReset`, «Применить» reaches `filtersApply` and the panel reports `dismiss`
+Given a narrow toolbar with `filtersPanel="app"` and `rt-toolbar-filters-route-aside` in the outlet
+`ro` of the frame
+When the panel is ready and its footer pressed
+Then it shows the slot with the context `panel`; «Сбросить» reaches `filtersReset` and the panel
+stays, «Применить» reaches `filtersApply` and the panel closes
 
-### SC-UKV-1713 — the application panel asks to be closed when its filters leave it
+### SC-UKV-1713 — the application panel closes when its filters leave it
 
 Given an open application panel
 When the place widens, or the toolbar leaves the page
-Then the panel reports `dismiss`; a panel that stood before the toolbar appeared reports nothing and
-takes its filters
+Then the panel closes; before the frame's panel is ready a wide place closes nothing, and a panel
+that stood before the toolbar appeared stays and takes its filters
 
 ### SC-UKV-1714 — the back arrow of the application panel
 
 Given an open application panel
 When the back arrow is pressed
-Then the panel reports `dismiss`, and neither `filtersApply` nor `filtersReset` is reported
+Then the panel closes, and neither `filtersApply` nor `filtersReset` is reported
 
 ### SC-UKV-1715 — the default mode opens the panel of the kit
 
 Given a narrow toolbar without `filtersPanel`
 When the filter button is pressed
 Then the panel of the kit opens, and `filtersOpen` is not reported
+
+### SC-UKV-1716 — «Применить» that changed the address closes the panel after it
+
+Given an open application panel and an application that answers `filtersApply` with a navigation
+When «Применить» is pressed
+Then the panel stays until that navigation ends, the filter reaches the address, then the panel
+closes
+
+### SC-UKV-1717 — each filter in the row is as wide as its content
+
+Given a toolbar at 1080 points with the selects «Все» and «Любая оплата» in the row
+When it is drawn
+Then each select is as wide as its own placeholder and no placeholder is cut with an ellipsis

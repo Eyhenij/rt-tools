@@ -3,7 +3,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
-    effect,
     inject,
     input,
     InputSignal,
@@ -11,7 +10,6 @@ import {
     OutputEmitterRef,
     Signal,
     TemplateRef,
-    untracked,
     ViewEncapsulation,
 } from '@angular/core';
 
@@ -29,19 +27,17 @@ const BEM_BLOCK: string = 'rt-toolbar-filters-panel';
  * Содержимое панели отборов полосы `rt-toolbar`: шапка «Фильтры» со стрелкой, поля слота
  * `rtToolbarFilters` с контекстом `panel` и подвал «Сбросить» / «Применить».
  *
- * Приложение, которое открывает панели маршрутом, ставит полосе `filtersPanel="app"` и рисует эту
- * часть в компоненте своего маршрута: поля берутся из шаблона полосы, «Сбросить» и «Применить»
- * доходят до её выходов `filtersReset` и `filtersApply`. Закрывает панель приложение по `dismiss`.
+ * Её рисуют обе панели отборов: панель кита (`filtersPanel="kit"`) отдаёт отборы входом `filters`,
+ * маршрутная панель `rt-toolbar-filters-route-aside` (`filtersPanel="app"`) — без входа, и тогда
+ * отборы берутся у полосы, отдавшей их последней. «Сбросить» и «Применить» доходят до выходов
+ * `filtersReset` и `filtersApply` полосы.
  *
- * `dismiss` сообщает, что панель пора закрыть: нажата стрелка или «Применить», отборы вернулись в
- * полосу на широком месте, полоса уничтожена. «Сбросить» оставляет панель открытой.
- *
- * Вход `filters` отдаёт отборы прямо — так эту часть рисует панель самого кита. Без него отборы
- * берутся у полосы, отдавшей их последней.
+ * `dismiss` сообщает, что панель пора закрыть: нажата стрелка или «Применить». «Сбросить» оставляет
+ * панель открытой.
  *
  * @example
  * ```html
- * <rt-toolbar-filters-panel (dismiss)="closeRoute()" />
+ * <rt-toolbar-filters-panel [filters]="data" (dismiss)="close()" />
  * ```
  */
 @Component({
@@ -85,31 +81,8 @@ export class RtToolbarFiltersPanelComponent {
     /** Отборы, отданные прямо; без них панель берёт отборы полосы с `filtersPanel="app"`. */
     public readonly filters: InputSignal<IRtToolbar.IFiltersPanelData | null> = input<IRtToolbar.IFiltersPanelData | null>(null);
 
-    /** Панель пора закрыть: стрелка, «Применить», отборы вернулись в полосу, полоса уничтожена. */
+    /** Панель пора закрыть: нажата стрелка или «Применить». */
     public readonly dismiss: OutputEmitterRef<void> = output<void>();
-
-    constructor() {
-        // Отборы полосы живут в одном месте: вернулись в полосу на широком месте или полоса ушла со
-        // страницы — панель просит закрыть себя. Полоса, ещё не отдавшая отборы, панель не закрывает:
-        // при загрузке страницы по ссылке маршрут панели встаёт раньше полосы списка
-        let seen: boolean = false;
-        effect((): void => {
-            if (this.filters() !== null) {
-                return;
-            }
-            const source: IRtToolbar.IFiltersSource | null = this.#hub.current();
-            if (source === null) {
-                if (seen) {
-                    untracked((): void => this.dismiss.emit());
-                }
-                return;
-            }
-            seen = true;
-            if (!source.collapsed()) {
-                untracked((): void => this.dismiss.emit());
-            }
-        });
-    }
 
     protected onReset(): void {
         this.#source()?.reset();

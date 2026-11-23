@@ -101,12 +101,12 @@ describe('RtToolbarComponent — отборы за кнопкой', (): void => 
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1086 — на узком месте отборы стоят за одной кнопкой, первой в ряду кнопок', (): void => {
+    it('SC-UKV-1086 — на узком месте отборы стоят за одной кнопкой, последней в ряду кнопок', (): void => {
         const { fixture } = setup(true);
         const right: HTMLElement | null = root(fixture).querySelector('[data-slot="right"]');
 
         expect(root(fixture).querySelector('[qa-dataid="slot-filter"]')).toBeNull();
-        expect(right?.firstElementChild?.getAttribute('qa-dataid')).toBe('toolbar-filters-trigger');
+        expect(right?.lastElementChild?.getAttribute('qa-dataid')).toBe('toolbar-filters-trigger');
         expect(root(fixture).querySelector('rt-toolbar')?.classList).toContain('rt-toolbar--filters-collapsed');
     });
 

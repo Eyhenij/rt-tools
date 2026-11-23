@@ -4,9 +4,7 @@
     <rt-toolbar
         qa-dataid="story-toolbar-filters"
         style="--rt-toolbar-padding-top: 12px; --rt-toolbar-padding-bottom: 12px; --rt-toolbar-padding-inline: 12px"
-        [filtersActive]="part !== 'off'"
-        [filtersPanel]="panel"
-        (filtersOpen)="routeOpen.set(true)">
+        [filtersActive]="part !== 'off'">
         <ng-template rtToolbarFilters let-place>
             @if (place === 'panel') {
                 <rt-field label="Статус">
@@ -27,12 +25,4 @@
             <rt-icon-button icon="sliders-v" variant="primary" ariaLabel="Настроить колонки" />
         </ng-template>
     </rt-toolbar>
-
-    <!-- Маршрут приложения: панель отборов стоит вне полосы, у правого края окна, как панель в
-         именованном аутлете. Её открывает выход filtersOpen, закрывает dismiss -->
-    @if (routeOpen()) {
-        <div qa-dataid="story-filters-route" style="position: fixed; inset: 0 0 0 auto; display: flex; z-index: 1">
-            <rt-toolbar-filters-panel (dismiss)="routeOpen.set(false)" />
-        </div>
-    }
 </div>

@@ -5,8 +5,8 @@
 - **State:** `эпик-заведён`
 - **Stage:** 3 of 3 — Поставка
 - **Done:** порог, режим `filtersPanel="app"`, `rt-toolbar-filters-panel`, история, тексты
-- **Next step:** первый круг ревью по диффу ветки
-- **Uncommitted:** нет
+- **Next step:** одобрение макета владельцем, затем первый круг ревью по диффу ветки
+- **Uncommitted:** правки после первого круга ревью, кнопка фильтров последней в ряду
 - **PR:** not open yet
 
 ## Steps
@@ -22,6 +22,11 @@
 - **Панель кита рисует ту же часть `rt-toolbar-filters-panel`.** Шапка, поля и подвал не
   повторяются в двух шаблонах; хост новой части — `display: contents`, рамка панели стоит там же.
   Затронутый этап: 2.
+- **Кнопка фильтров стоит последней в ряду кнопок, после настроек таблицы, и ряд прижат к правому
+  краю на любой ширине.** Слово владельца 23.11: «кнопку фильтров ставь справа после настроек
+  таблицы». Прежний порядок ставил её первой и уводил ряд к левому краю ниже 768. Затронутый этап: 2.
+- **В наборе Toolbar в Figma зазор между зонами 8, как в коде.** Распределение «Space between»
+  стирало зазор, и поле поиска стояло вплотную к кнопке. Затронутый этап: 2.
 
 ## Sessions
 
@@ -34,3 +39,54 @@
   рамка 0,0,375×812, поля 24,104,327×140, «Сбросить» 24,748,118×40, «Применить» 219,748,132×40,
   фокус на блоке полей. В панели приложения «Применить» закрыл маршрут, кнопка открыла его снова,
   стрелка закрыла; панель кита не открывалась ни разу.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/eyhenij/WebstormProjects/rt-tools/.claude/worktrees/formfield-undefined-inputs-7ce857
+**Branch:** RT-3528-toolbar-filters-route
+
+### Where we stand at the minute of the compaction
+
+- **State:** `эпик-заведён`
+- **Stage:** 3 of 3 — Поставка
+- **Next step:** первый круг ревью по диффу ветки
+- **PR:** not open yet
+
+The progress in full — `docs/tasks/RT-3528-toolbar-filters-route/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+ M docs/specs/ui-kit-v2/toolbar-filters/implementation.md
+ M docs/specs/ui-kit-v2/toolbar-filters/scenarios.md
+ M docs/specs/ui-kit-v2/toolbar-filters/spec.md
+ M projects/ui-kit-v2/src/lib/components/toolbar/CONTEXT.md
+ M projects/ui-kit-v2/src/lib/components/toolbar/Overview.mdx
+ M projects/ui-kit-v2/src/lib/components/toolbar/filters-panel/rt-toolbar-filters-panel.component.ts
+ M projects/ui-kit-v2/src/lib/components/toolbar/index.ts
+ M projects/ui-kit-v2/src/lib/components/toolbar/rt-toolbar-filters-app.spec.ts
+ M projects/ui-kit-v2/src/lib/components/toolbar/rt-toolbar.component.scss
+ M projects/ui-kit-v2/src/lib/components/toolbar/stories/component/test-toolbar-filters.component.html
+ M projects/ui-kit-v2/src/lib/components/toolbar/stories/component/test-toolbar-filters.component.ts
+ M projects/ui-kit-v2/src/lib/components/toolbar/stories/toolbar-filters.stories.ts
+ M tools/kit-coverage-allowlist.json
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-table-toolbarfilters--button-at-1079.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-table-toolbarfilters--in-row-at-1080.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-table-toolbarfiltersroute--app-panel-open.png
+?? projects/ui-kit-v2/src/lib/components/toolbar/filters-route-aside/
+?? projects/ui-kit-v2/src/lib/components/toolbar/rt-toolbar.styles.spec.ts
+?? projects/ui-kit-v2/src/lib/components/toolbar/stories/component/test-toolbar-filters-route.component.ts
+?? projects/ui-kit-v2/src/lib/components/toolbar/stories/toolbar-filters-route.stories.ts
+```
+
+### Commits over the main branch
+
+```
+07e5cef40 feat(rt:ui-kit-v2): панель отборов полосы открывается маршрутом приложения, кнопка фильтров с 1079 (RT-3528)
+f5563d823 docs(rt:ui-kit-v2): папка задачи RT-3528 — панель отборов полосы маршрутом приложения
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.
