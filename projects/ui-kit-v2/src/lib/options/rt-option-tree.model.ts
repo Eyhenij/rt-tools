@@ -8,6 +8,8 @@ export namespace IRtOptionTree {
         label: string;
         value: TValue;
         disabled?: boolean;
+        /** Пояснение к опции. Его рисует карточка выбора в шторке; строка у поля его не показывает. */
+        description?: string;
         /** Дети опции того же вида. Хотя бы одна опция с детьми делает список деревом. */
         children?: ReadonlyArray<Option<TValue>>;
     }
