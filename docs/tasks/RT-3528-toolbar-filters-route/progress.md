@@ -7,8 +7,8 @@
 - **Done:** порог, режим `filtersPanel="app"`, `rt-toolbar-filters-panel`, маршрутная панель,
   два круга ревью, сквозные тесты SC-MB-457 и SC-UKV-1608/1610, свежий main влит, набор перед
   отправкой зелёный на дереве `9955211e0`
-- **Next step:** отправка ветки и PR-черновик. Страж отправки сессии ждёт отметок в старой форме
-  `--base=origin/main`, а профиль ветки после слияния main пишет базу закреплённой ссылкой
+- **Next step:** ветка эпика RT-3566 `RT-3566-toolbar-filters-app-route` от главной с планом,
+  слияние её в эту ветку, набор перед отправкой, PR задачи в ветку эпика
 - **Uncommitted:** нет
 - **PR:** not open yet
 
@@ -61,7 +61,7 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `эпик-заведён`
 - **Stage:** 3 of 3 — Поставка
-- **Next step:** первый круг ревью по диффу ветки
+- **Next step:** отправка ветки и PR-черновик. Страж отправки сессии ждёт отметок в старой форме
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-3528-toolbar-filters-route/progress.md`; the plan lies next to it.
@@ -69,31 +69,22 @@ The progress in full — `docs/tasks/RT-3528-toolbar-filters-route/progress.md`;
 ### Uncommitted
 
 ```
- M docs/specs/ui-kit-v2/toolbar-filters/implementation.md
- M docs/specs/ui-kit-v2/toolbar-filters/scenarios.md
- M docs/specs/ui-kit-v2/toolbar-filters/spec.md
- M projects/ui-kit-v2/src/lib/components/toolbar/CONTEXT.md
- M projects/ui-kit-v2/src/lib/components/toolbar/Overview.mdx
- M projects/ui-kit-v2/src/lib/components/toolbar/filters-panel/rt-toolbar-filters-panel.component.ts
- M projects/ui-kit-v2/src/lib/components/toolbar/index.ts
- M projects/ui-kit-v2/src/lib/components/toolbar/rt-toolbar-filters-app.spec.ts
- M projects/ui-kit-v2/src/lib/components/toolbar/rt-toolbar.component.scss
- M projects/ui-kit-v2/src/lib/components/toolbar/stories/component/test-toolbar-filters.component.html
- M projects/ui-kit-v2/src/lib/components/toolbar/stories/component/test-toolbar-filters.component.ts
- M projects/ui-kit-v2/src/lib/components/toolbar/stories/toolbar-filters.stories.ts
- M tools/kit-coverage-allowlist.json
-?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-table-toolbarfilters--button-at-1079.png
-?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-table-toolbarfilters--in-row-at-1080.png
-?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-table-toolbarfiltersroute--app-panel-open.png
-?? projects/ui-kit-v2/src/lib/components/toolbar/filters-route-aside/
-?? projects/ui-kit-v2/src/lib/components/toolbar/rt-toolbar.styles.spec.ts
-?? projects/ui-kit-v2/src/lib/components/toolbar/stories/component/test-toolbar-filters-route.component.ts
-?? projects/ui-kit-v2/src/lib/components/toolbar/stories/toolbar-filters-route.stories.ts
+none
 ```
 
 ### Commits over the main branch
 
 ```
+342cdf1f8 docs(rt:ui-kit-v2): ход работы RT-3528 — набор зелёный, отправка стоит (RT-3528)
+ded25b611 docs: записи архива старше недели удалены (RT-3528)
+336884089 Merge remote-tracking branch 'origin/main' into RT-3528-toolbar-filters-route
+544b67d5e fix(rt:agent-kit): сценарии стража выхода из хода не читают общую временную папку машины (RT-3528)
+a86569104 test(rt:auth): выбор языка страницы входа открывается шторкой на телефоне (RT-3528)
+29f2f4103 test(rt:message-bus): кнопки полосы списка на узком экране стоят у правого края (RT-3528)
+b1219943c fix(rt:agent-kit): проверка путей пропускает черновик под игнором и с кириллическим именем (RT-3528)
+8924262e2 fix(rt:ui-kit-v2): шаблоны обёртки витрины маршрутной панели в своих файлах (RT-3528)
+b82ca40cb fix(rt:ui-kit-v2): панель отборов в маршруте не закрывается до замера места после второго круга ревью (RT-3528)
+be393a74c fix(rt:ui-kit-v2): панель отборов маршрутом и кнопка фильтров после первого круга ревью (RT-3528)
 07e5cef40 feat(rt:ui-kit-v2): панель отборов полосы открывается маршрутом приложения, кнопка фильтров с 1079 (RT-3528)
 f5563d823 docs(rt:ui-kit-v2): папка задачи RT-3528 — панель отборов полосы маршрутом приложения
 ```
