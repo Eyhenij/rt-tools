@@ -273,7 +273,9 @@ Several working copies share the marks: a key holds the tree and the base, not t
   this one passes for a base in two more histories: the host merged this one into it — the
   button that brings a request up to its base, or a request taken from the newer copy — or this
   one was pushed again after the branch above was taken from it, and the host merged a branch
-  into that one. Git cannot tell either from the epic a request carried the copy into. The first
+  into that one. Git cannot tell either from the epic a request carried the copy into. A
+  neighbour that took the epic in after the copy came, as near as the epic and earlier by name,
+  takes its place: the set reads the same commits, and only the pinned base names the neighbour. The first
   and the last two let a branch reach the main branch checked only by the pipeline of its
   request; the other two cost a full set.
 - **The count is a few calls of git per remote branch, and one call to the host per pick.** Twenty

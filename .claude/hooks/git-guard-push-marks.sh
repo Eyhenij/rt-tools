@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/git-guard-push-marks.sh · cd24d0fec813 · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/git-guard-push-marks.sh · 690b9787eaa1 · правится надстройкой, не здесь
 # The base of the push set and the marks of a green run, shared by the push guard and by the
 # command that runs the set ahead (`git-guard-push-ahead.sh`).
 #
@@ -19,7 +19,7 @@
 # still lies at the tip it was taken from. The lists are held in variables and matched by `case`,
 # so a caller with `pipefail` gets the same answer.
 rt_push_base_on_copy() {
-    local ref="$1" own host="$3" line merge
+    local ref="$1" own host="$3" line merge parent
     own="$(git rev-parse --verify --quiet "$2")" || return 1
     [ "$own" != "$(git rev-parse --verify --quiet "$ref")" ] || return 1
     git merge-base --is-ancestor "$ref" HEAD 2>/dev/null && return 1
@@ -30,7 +30,10 @@ rt_push_base_on_copy() {
     # base: a session that synced its epic with the remote one merged the host's merge in as is.
     for merge in $(git rev-list --merges --fixed-strings --committer="$host" "$ref" --not "$own" 2>/dev/null); do
         git merge-base --is-ancestor "$own" "$merge^1" 2>/dev/null && continue
-        git merge-base --is-ancestor "$own" "$merge^2" 2>/dev/null && return 1
+        line="$(git rev-parse "$merge^@" 2>/dev/null)"
+        for parent in ${line#*$'\n'}; do
+            git merge-base --is-ancestor "$own" "$parent" 2>/dev/null && return 1
+        done
     done
     return 0
 }
@@ -54,7 +57,7 @@ rt_push_base_on_copy() {
 # Three kinds of branches are no base, because they are this branch's own content:
 #   - its own remote copy — the set answers for the whole contribution, not for the last commit;
 #   - a branch that stands on that copy — it holds the copy on its first-parent line or took it in
-#     by a merge not of the host, and lies neither under the head nor at it;
+#     with no merge of the host bringing it, and lies neither under the head nor at it;
 #   - a branch the host merged into this one by a request. Without that the branch of an epic was
 #     counted against its last merged task, and nothing checked the epic against the main branch
 #     before the push. The host's merge is told by the committer of the commit: the host signs
