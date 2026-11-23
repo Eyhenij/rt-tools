@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.38.0 · checks/check-doc-paths.mjs · e91840ae9811 · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/check-doc-paths.mjs · f615d6487919 · правится надстройкой, не здесь
 /**
  * The check that the addresses named in the documentation exist.
  *
@@ -107,8 +107,10 @@ function droppedByGit(docs) {
         return new Set();
     }
 
-    // `--stdin` instead of arguments: the list is longer than the command line limit
-    const ignored = spawnSync('git', ['check-ignore', '--stdin'], {
+    // `--stdin` instead of arguments: the list is longer than the command line limit. Paths come
+    // back unquoted: by default git quotes a non-ASCII name with octal escapes, and a draft named in
+    // Cyrillic was never matched and held the push gate
+    const ignored = spawnSync('git', ['-c', 'core.quotePath=false', 'check-ignore', '--stdin'], {
         cwd: ROOT,
         encoding: 'utf8',
         input: docs.join('\n'),
