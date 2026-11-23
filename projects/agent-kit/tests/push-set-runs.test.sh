@@ -147,10 +147,11 @@ t_minor="$(node_tree 22.1)"
 t_newer="$(node_tree 22.20.0)"
 t_noted="$(node_tree "$(printf '\357\273\277# the node of the tree\n\tv22.22.3 ')")"
 t_above="$(node_tree 22.25.0)"
+t_zeros="$(node_tree 20.11.00)"
 t_served="$(node_tree 20)"
 t_patch="$(node_tree 20.5.0)"
 trap 'rm -rf "$tree" "$set_tree" "$node_box" "$t_exact" "$t_ahead" "$t_major" "$t_alias" "$t_none" "$t_same" "$t_other" \
-    "$t_minor" "$t_newer" "$t_noted" "$t_served" "$t_patch" "$t_above"' EXIT
+    "$t_minor" "$t_newer" "$t_noted" "$t_served" "$t_patch" "$t_above" "$t_zeros"' EXIT
 
 report "SC-AK-1846 — the set sees the pinned node" "$(set_node "$t_exact")" "$(pinned_bin 22.22.3)"
 report "SC-AK-1846 — the run ahead sees the pinned node" "$(ahead_node "$t_ahead")" "0 $(pinned_bin 22.22.3)"
@@ -164,6 +165,10 @@ report "SC-AK-1846 — .nvmrc with a byte order mark, a comment line and a tab r
 report "SC-AK-1846 — the set gives PATH back" "$(set_trace "$t_exact" | cut -d'|' -f2)" yes
 report "SC-AK-1847 — PATH serving a pin of the major runs the steps" "$(set_node "$t_served" "$node_box/nvm-empty")" "$node_box/other/node"
 report "SC-AK-1847 — a newer node of the pinned major in PATH runs the steps" "$(set_node "$t_patch" "$node_box/nvm-empty")" "$node_box/other/node"
+report "SC-AK-1847 — a pin with leading zeros is served by the same version in PATH" \
+    "$(set_node "$t_zeros" "$node_box/nvm-empty")" "$node_box/other/node"
+report "SC-AK-1846 — a pin no install serves does not stop a caller under set -e" \
+    "$(NVM_DIR="$node_box/nvm" bash -e -c '. "$1/facts.sh"; rt_node_pinned_dir "$2" >/dev/null; echo survived' _ "$HOOKS" "$t_above" 2>/dev/null)" survived
 report "SC-AK-1847 — a full pin above every install of its major starts no step" \
     "$(set_trace "$t_above" | cut -d'|' -f3)" none
 report "SC-AK-1847 — a newer major in PATH starts no step" \

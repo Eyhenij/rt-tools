@@ -16,7 +16,8 @@ decision: a task of its own or none.
 - **A guard of the session reaches no decision with no node in `PATH`.** Every guard asks the
   decision table through a node, and with none, or with one too old to run it, it lets the call
   through. The push guard and the git hook say the line of a missing pinned node themselves; the
-  other guards do not. **Address:** package — the answer of a guard when no node is reachable, in
+  other guards do not, and neither does the refusal of a red set: a step red on the pinned node
+  passes when the node of `PATH` cannot run the decider, as it did before the pin. **Address:** package — the answer of a guard when no node is reachable, in
   `projects/agent-kit/assets/hooks/decide.sh`. **Metric:** calls let through with no verdict,
   down.
 - **The package manager is not pinned with the node.** The directory of the pinned node goes first
