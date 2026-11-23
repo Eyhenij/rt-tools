@@ -260,3 +260,27 @@ with its parts, `kit-approval`. No edit of the gate map is needed.
 Not proposed: the refused progress edit after compaction — GUARDS.md already names it; the tool
 taking a component by the text `@Component\s*\(` — a quirk of version 0.3.0, written into the
 archive record of RT-3483.
+
+## RT-3525 — the review of 23 November 2026
+
+Loaded: `task-delivery-loop`, `task-flow` with its parts, `doc-style`, `git-workflow` with its
+parts, `testing`, `kit-approval`, `epic-flow`. No edit of the gate map is needed.
+
+1. **A task of an epic answers for the kit files its epic branch carries** — a code task:
+   `tools/check-kit-approval.mjs:answerersOf` counts the merge of the epic branch into a task branch
+   as the branch's own work, so a tool-only task needs the no-look line; RT-3514, RT-3518, RT-3525
+   and RT-3526 hit it. Until then — tree, `kit-approval`, «How the law applies here», and
+   `task-delivery-loop`, step 4: the no-look question goes with the plan when the epic branch
+   carries kit files.
+2. **The base of a chain is read again before the PR opens** — package, the pitfalls of the pattern `git-workflow-pr`:
+   the host keeps a merged branch, so `git ls-remote` does not show that the base merged; ask
+   `gh pr list --head <base> --state merged`. Tree, `task-delivery-loop-run` «11–12», the same call.
+   Here the previous branch's PR merged meanwhile, and the first `gh pr create` named it.
+3. **The merge of the base is signed by the machine account** — tree, `task-delivery-loop-run`
+   «11–12»: its ready merge line has no identity, while `git-workflow-merge` pitfalls require it. A
+   re-signing amend goes by a call of its own: the push guard judges the commits before the amend.
+4. **The PR opens after the push has answered** — tree, `task-delivery-loop-run` «13»: two calls of
+   one message run at once, and a refused push left the PR on a head the host did not have.
+
+Not proposed: a test file edited by a script — `testing` names it, a miss of carrying out; mutants
+that survived the first suite — the review rounds caught them, as they exist to.

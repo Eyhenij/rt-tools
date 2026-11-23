@@ -41,13 +41,13 @@ pnpm run check:all
 
 # The Angular Doctor result of the tree — the score and the count of findings of every rule —
 # against `tools/ngdoctor-threshold.json`; red on any other result, on a degraded run, on a field of
-# `angular-doctor.config.json` other than `reportPath`, and when a source of findings — the tool,
-# oxlint, the template linter — does not fire its rules on a two-component probe run before the
-# tree, or when the tool lost a file of the tree silently: a pass after the scan reads every file,
-# parses every template, runs oxlint on the same files and reads the package.json files and the
-# stylesheets the tool reads apart from its list. A step of `check:all`, of the pipeline
-# and of the push set. `--verbose` lists the files of a rule that grew; a fix writes the threshold
-# by `node tools/check-ngdoctor.mjs --write`
+# `angular-doctor.config.json` or of `package.json#angularDoctor` other than `reportPath`, and when
+# a source of findings — the tool, oxlint, the template linter — does not fire its rules on a
+# two-component probe run before the tree, or when the tool lost a file of the tree silently: a
+# pass after the scan reads every file, parses every template, runs oxlint on the same files and
+# reads the package.json files and the stylesheets the tool reads apart from its list. A step of
+# `check:all`, of the pipeline and of the push set. `--verbose` lists the files of a rule that
+# grew; a fix writes the threshold by `node tools/check-ngdoctor.mjs --write`
 pnpm run check:ngdoctor
 
 # Files, dependencies and exports nobody uses, by knip over every project; settings in `knip.json`.
