@@ -7,4 +7,6 @@
 
 - **Без вида:** «Подтверждаю, вид не меняется»
 
-Смена JSON публичной схемы `RT_AI_CHAT_CHART_SCHEMA`: «Подтверждаю смену JSON (Recommended)».
+Смена JSON публичной схемы `RT_AI_CHAT_CHART_SCHEMA` — и вместе с ней схемы блока
+`RT_AI_CHAT_CHART_BLOCK_SCHEMA`, которая встраивает её полем `spec`: «Подтверждаю смену JSON
+(Recommended)».

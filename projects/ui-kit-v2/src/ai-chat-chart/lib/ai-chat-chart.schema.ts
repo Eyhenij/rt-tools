@@ -33,7 +33,8 @@ function seriesOf(x: object, y: object): object {
 
 /**
  * «Если условие — то следствие» в записи `anyOf`: условие не выполнено, или выполнено следствие.
- * Валидатор судит так же, как пару `if`/`then`.
+ * Валидатор принимает и отклоняет те же значения, что с парой `if`/`then`; список ошибок отказа
+ * длиннее: в нём и ветка `not`, и сам `anyOf`.
  */
 function implies(condition: object, consequence: object): object {
     return { anyOf: [{ not: condition }, consequence] };
