@@ -323,7 +323,7 @@ Loaded: `task-delivery-loop`, `task-flow` with its parts, `doc-style`, `agent-ki
    look does not change; no question of its own. Replaces the tree block of the RT-3480 proposals.
 2. **A claim about how a dependency behaves names the file and line of its installed code** —
    package, the rule `task-flow-plan`. Here the grill and the approved plan called own `srcset`
-   next to `ngSrc` forbidden by Angular; the second review round read `common.mjs` and found only
+   next to `ngSrc` forbidden by Angular; the second review round read the installed code of `@angular/common` and found only
    `srcset` with `ngSrcset` conflicts.
 3. **An epic found mid-task is declared and pushed from a second working tree on the main branch**
    — package, the pattern `epic-flow-declare`, widening RT-3526 item 5: the push hook refuses a
