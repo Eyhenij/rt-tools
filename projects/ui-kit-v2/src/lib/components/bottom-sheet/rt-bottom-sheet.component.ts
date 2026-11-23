@@ -1,5 +1,5 @@
 import { BooleanInput } from '@angular/cdk/coercion';
-import { ScrollStrategy, ScrollStrategyOptions } from '@angular/cdk/overlay';
+import { OverlayContainer, ScrollStrategy, ScrollStrategyOptions } from '@angular/cdk/overlay';
 import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
@@ -95,6 +95,7 @@ export class RtBottomSheetComponent {
     readonly #host: HTMLElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
     /** Блокировка прокрутки страницы — та же, что держит оверлей у шторки панели выбора. */
     readonly #scrollLock: ScrollStrategy = inject(ScrollStrategyOptions).block();
+    readonly #overlayContainer: OverlayContainer = inject(OverlayContainer);
     readonly #onDragMove: (event: PointerEvent) => void = (event: PointerEvent): void => this.#handleDragMove(event);
     readonly #onDragEnd: () => void = (): void => this.#handleDragEnd();
     readonly #requestClose: () => void = (): void => this.dismiss();
@@ -304,7 +305,9 @@ export class RtBottomSheetComponent {
 
     protected onConfirmCancel(): void {
         this.confirming.set(false);
-        this.#askedFrom?.focus({ preventScroll: true });
+        // Закрыть просили подложкой или свайпом — узла с фокусом не было: фокус берёт панель шторки,
+        // иначе он упал бы на страницу под открытой шторкой.
+        (this.#askedFrom ?? this.#host.querySelector<HTMLElement>('[role="dialog"]'))?.focus({ preventScroll: true });
         this.#askedFrom = null;
     }
 
@@ -353,6 +356,9 @@ export class RtBottomSheetComponent {
         }
         this.#locked = locked;
         if (locked) {
+            // Правило блокировки лежит в стилях оверлея CDK, а они грузятся с первым оверлеем
+            // страницы. Шторка в шаблоне страницы может открыться раньше любого оверлея.
+            this.#overlayContainer.getContainerElement();
             this.#scrollLock.enable();
         } else {
             this.#scrollLock.disable();

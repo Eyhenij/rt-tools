@@ -111,7 +111,7 @@ interface IPresetView {
     host: {
         class: BEM_BLOCK,
         '[class.rt-date-range-panel--sheet]': 'sheet()',
-        '(keydown.escape)': 'onEscape()',
+        '(keydown.escape)': 'onEscape($event)',
     },
 })
 export class RtDateRangePanelComponent {
@@ -346,13 +346,21 @@ export class RtDateRangePanelComponent {
     }
 
     /** Escape в сетке годов или месяцев возвращает на вид назад; в днях закрывает панель. */
-    protected onEscape(): void {
+    protected onEscape(event: Event): void {
         const back: TView | null = ESCAPE_BACK[this.view()];
-        if (back === null) {
-            this.closed.emit();
+        if (back !== null) {
+            // В шторке клавиша дальше не идёт: она вернула вид назад, и шторка по ней не закрывается.
+            if (this.sheet()) {
+                event.stopPropagation();
+            }
+            this.view.set(back);
             return;
         }
-        this.view.set(back);
+        // С кнопкой снаружи панель себя не закрывает: клавиша доходит до шторки, и та сначала
+        // спросит о выбранном и не применённом.
+        if (!this.applyOutside()) {
+            this.closed.emit();
+        }
     }
 
     protected reset(): void {

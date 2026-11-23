@@ -60,7 +60,11 @@ checkbox or a switch on the right. The question before closing offers «Apply»,
   returns to the chosen one. The wheel turns without an end: the first value follows the last
   one. A field without a time starts the wheel at the current time rounded down to the step of
   minutes; one input of the field starts it at midnight instead, and a start time outside the
-  bounds gives way to the first allowed one. The start time is not a choice: the sheet closes
+  bounds gives way to the first allowed one, counted anew by the bounds of a day once it is
+  picked. A minute off the step, typed in the field or given by the form, has a row of its own
+  in the wheel. The Tab key stands on the chosen value alone, and the arrows step the choice by
+  one around the circle; a finger resting on the wheel chooses nothing until it lifts. The start
+  time is not a choice: the sheet closes
   without a question, and the done button writes it. Next to a field on a wide screen the
   columns stay lists with no time until one is pressed.
 - **The sheet of the page filters has a reset in its footer.** The reset reports to the
@@ -104,7 +108,10 @@ checkbox or a switch on the right. The question before closing offers «Apply»,
 - **Every sheet locks the scroll of the page and closes by Escape.** The sheets of the date fields
   and of the page filters do it the same as a panel of choice. Escape pressed inside a sheet goes
   no further: a side panel or a dialog around the sheet does not close by it. Escape already
-  taken by a layer above the sheet does not close the sheet.
+  taken by a layer above the sheet does not close the sheet. Escape pressed inside the panel of
+  a date sheet goes the same way as its close button: in the grid of months or years it steps a
+  view back and closes nothing. A sheet that stands in the template of a page loads the styles
+  of the scroll lock itself: no other layer may have been opened before it.
 - **With reduced motion asked by the system the sheet appears without sliding.**
 - **An application replaces the header and the footer of a sheet by its own templates.** The header
   template stands in place of the close button, the title and the action; the handle stays. The
@@ -184,3 +191,5 @@ None.
 |            | and the question of the date sheets, the time wheel, the place above the keyboard, the mark of a      |
 |            | hint, the apply request of a template, scenarios 1756…1767 (RT-3531)                                  |
 | 2026-11-23 | The wheel turns without an end and starts at the current time, scenarios 1768, 1769 (RT-3531)         |
+| 2026-11-23 | A minute off the step, the keys of the wheel, Escape inside a date panel, scenarios 1770, 1771        |
+|            | (RT-3531)                                                                                             |

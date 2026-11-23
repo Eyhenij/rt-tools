@@ -294,6 +294,23 @@ at 00:00, and a start time outside the bounds gives way to the first allowed one
 Covered: `projects/ui-kit-v2/src/lib/components/date-picker/rt-date-picker-sheet.spec.ts`,
 `projects/ui-kit-v2/src/lib/components/date-picker/rt-date-panel.logic.spec.ts`.
 
+### SC-UKV-1770 — a minute off the step has a row of its own in the wheel
+
+Given a time field with the value 09:37 and the step of minutes 5, on a phone
+When its sheet is opened
+Then the minute 37 stands under the band, between 35 and 40
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/rt-date-picker-sheet.spec.ts`.
+
+### SC-UKV-1771 — the keys of the wheel: Tab on the chosen value, the arrows around the circle
+
+Given the sheet of a time field with the hour 00 under the band
+When the up arrow is pressed in the wheel of hours, then the down arrow twice
+Then the hour 23 is chosen, then 01; one row of the wheel alone stands in the Tab order, the
+chosen one
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/rt-date-picker-sheet.spec.ts`.
+
 ### SC-UKV-1763 — the sheet of a period has the apply button in its header and asks before it closes
 
 Given a field of a period on a phone

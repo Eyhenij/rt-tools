@@ -29,10 +29,10 @@
                 font-size: var(--rt-text-xl);
                 font-weight: var(--rt-font-weight-semibold);
                 inset-block-start: calc(var(--rt-date-panel-wheel-row) * 2);
-                inset-inline-start: 50%;
+                inset-inline: 0;
                 line-height: var(--rt-date-panel-wheel-row);
                 pointer-events: none;
-                transform: translateX(-50%);
+                text-align: center;
             }
         }
 

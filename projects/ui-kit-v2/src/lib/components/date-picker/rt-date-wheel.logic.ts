@@ -12,7 +12,11 @@ export interface IRtDateWheelRow<T> {
     readonly pressed: boolean;
     /** Копия спрятана от скринридера и от Tab: значение называет один раз домашний круг. */
     readonly hidden: 'true' | null;
-    readonly tabindex: -1 | null;
+    /**
+     * В барабане Tab стоит только на выбранном значении, остальные меняют стрелки: обход всех строк
+     * прокручивал бы колонку и менял выбор сам. В списке строки стоят в обходе как обычные кнопки.
+     */
+    readonly tabindex: 0 | -1 | null;
 }
 
 /**
@@ -77,14 +81,16 @@ export function rtDateWheelRows<T extends { readonly value: number }>(
     return Array.from({ length: turns * cells.length }, (_: unknown, key: number): IRtDateWheelRow<T> => {
         const cell: T = cells[key % cells.length];
         const home: boolean = Math.floor(key / cells.length) === homeTurn;
+        const pressed: boolean = home && cell.value === chosen;
+        const inWheel: 0 | -1 = pressed ? 0 : -1;
 
         return {
             cell,
             key,
+            pressed,
             qa: home ? qa : `${qa}-copy`,
-            pressed: home && cell.value === chosen,
             hidden: home ? null : 'true',
-            tabindex: home ? null : -1,
+            tabindex: wheel ? inWheel : null,
         };
     });
 }

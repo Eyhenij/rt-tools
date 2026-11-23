@@ -31,6 +31,11 @@ const FALLBACK_ROW_PX: number = 40;
     selector: '[rtDateWheel]',
     host: {
         '(scroll)': 'onScroll()',
+        '(touchstart)': 'onTouch(true)',
+        '(touchend)': 'onTouch(false)',
+        '(touchcancel)': 'onTouch(false)',
+        '(keydown.arrowdown)': 'onStep(1, $event)',
+        '(keydown.arrowup)': 'onStep(-1, $event)',
     },
 })
 export class RtDateWheelDirective {
@@ -39,6 +44,8 @@ export class RtDateWheelDirective {
     #timer: ReturnType<typeof setTimeout> | null = null;
     /** Колонка уже вставала под полосу: первый раз она встаёт сразу, дальше подкручивается плавно. */
     #aligned: boolean = false;
+    /** Палец лежит на колонке: пока он не отпущен, значение под полосой выбранным не считается. */
+    #touching: boolean = false;
 
     public readonly enabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         alias: 'rtDateWheel',
@@ -64,6 +71,7 @@ export class RtDateWheelDirective {
             if (this.enabled() && this.index() >= 0) {
                 this.#align(this.index(), this.#aligned ? 'smooth' : 'auto');
                 this.#aligned = true;
+                this.#followFocus();
             }
         });
         inject(DestroyRef).onDestroy((): void => this.#clearTimer());
@@ -77,7 +85,31 @@ export class RtDateWheelDirective {
         this.#timer = setTimeout((): void => this.#settle(), SETTLE_MS);
     }
 
+    /** Палец лёг на колонку или отпущен. Отпущенный, он запускает ожидание остановки заново. */
+    protected onTouch(down: boolean): void {
+        this.#touching = down;
+        if (!down) {
+            this.onScroll();
+        }
+    }
+
+    /**
+     * Стрелка вверх или вниз сдвигает выбор на одно значение по кругу. Tab в барабане стоит только
+     * на выбранном значении: обход всех строк прокручивал бы колонку и менял выбор сам.
+     */
+    protected onStep(delta: number, event: Event): void {
+        const count: number = this.#count();
+        if (!this.enabled() || this.index() < 0 || count <= 0) {
+            return;
+        }
+        event.preventDefault();
+        this.pick.emit((this.index() + delta + count) % count);
+    }
+
     #settle(): void {
+        if (this.#touching) {
+            return;
+        }
         const under: number = this.#under();
         // Выключенная строка — значение за границей: его не выбрать, и колонка возвращается к выбранному.
         if (this.#column.children.item(under)?.hasAttribute('disabled') ?? true) {
@@ -107,10 +139,28 @@ export class RtDateWheelDirective {
         return this.loop() > 0 ? this.loop() : this.#column.children.length;
     }
 
-    #align(at: number, behavior: ScrollBehavior): void {
+    /** Фокус, стоявший в колонке, идёт за выбранным значением: стрелки меняют его, не теряя места. */
+    #followFocus(): void {
+        const active: Element | null = this.#column.ownerDocument.activeElement;
+        const chosen: HTMLElement | null = this.#column.querySelector<HTMLElement>('[aria-pressed="true"]');
+        if (chosen !== null && !chosen.contains(active) && this.#column.contains(active)) {
+            chosen.focus({ preventScroll: true });
+        }
+    }
+
+    /** Система просит убрать движение — колонка встаёт на место сразу, без подкрутки. */
+    #calm(behavior: ScrollBehavior): ScrollBehavior {
+        const view: Window | null = this.#column.ownerDocument.defaultView;
+        const reduced: boolean = typeof view?.matchMedia === 'function' && view.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        return reduced ? 'auto' : behavior;
+    }
+
+    #align(at: number, asked: ScrollBehavior): void {
         if (at < 0) {
             return;
         }
+        const behavior: ScrollBehavior = this.#calm(asked);
         const count: number = this.#count();
         const turns: number = Math.max(1, Math.round(this.#column.children.length / Math.max(1, count)));
         // Сразу колонка встаёт в домашний круг; плавно подъезжает к ближайшей строке со значением.

@@ -8,7 +8,12 @@ export interface IRtSheetKeyboardBox {
 export interface IRtSheetViewport {
     readonly height: number;
     readonly offsetTop: number;
+    /** Увеличение страницы щипком: `1` — без увеличения. Браузер без поля считается неувеличенным. */
+    readonly scale?: number;
 }
+
+/** Больше этого увеличения видимая область мала из-за щипка, а не из-за клавиатуры. */
+const ZOOM_MAX: number = 1.01;
 
 /** На столько видимая область должна быть ниже окна, чтобы это считалось клавиатурой, а не полосой браузера. */
 const KEYBOARD_MIN_PX: number = 120;
@@ -17,9 +22,10 @@ const KEYBOARD_MIN_PX: number = 120;
  * Место над экранной клавиатурой. Клавиатура телефона окно раскладки не сжимает: она ложится
  * поверх, а меньше становится только видимая область — и ещё она может уехать вниз, когда браузер
  * подвигает страницу к полю. Без клавиатуры видимая область равна окну, и места считать не надо.
+ * Страница, увеличенная щипком, тоже видна не вся — но это не клавиатура, и шторка стоит как стояла.
  */
 export function rtSheetKeyboardBox(windowHeight: number, viewport: IRtSheetViewport | null): IRtSheetKeyboardBox | null {
-    if (viewport === null || windowHeight - viewport.height < KEYBOARD_MIN_PX) {
+    if (viewport === null || (viewport.scale ?? 1) > ZOOM_MAX || windowHeight - viewport.height < KEYBOARD_MIN_PX) {
         return null;
     }
 

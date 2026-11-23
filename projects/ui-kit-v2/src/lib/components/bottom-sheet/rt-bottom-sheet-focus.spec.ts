@@ -159,6 +159,29 @@ describe('RtBottomSheetComponent — фокус и Escape', (): void => {
         expect(fixture.componentInstance.open()).toBe(true);
     });
 
+    it('SC-UKV-1756 — закрыть просили свайпом: после «Отмены» фокус берёт панель шторки, а не страница под ней', (): void => {
+        const fixture: TFixture = setup(true);
+        const handle: HTMLElement = raw(fixture, 'bottom-sheet-handle');
+
+        handle.dispatchEvent(new MouseEvent('pointerdown', { clientY: 100, bubbles: true }));
+        document.dispatchEvent(new MouseEvent('pointermove', { clientY: 400 }));
+        document.dispatchEvent(new MouseEvent('pointerup', { clientY: 400 }));
+        settle(fixture);
+        press(fixture, 'bottom-sheet-confirm-cancel');
+
+        expect(document.activeElement).toBe(raw(fixture, 'bottom-sheet-panel'));
+    });
+
+    it('SC-UKV-1726 — открытая шторка в шаблоне страницы сама подгружает стили блокировки прокрутки', (): void => {
+        document.querySelector('.cdk-overlay-container')?.remove();
+
+        setup();
+
+        // Правило блокировки лежит в стилях оверлея CDK; их грузит контейнер оверлеев. Сама
+        // блокировка в среде без раскладки не ставится: странице там нечего прокручивать.
+        expect(document.querySelector('.cdk-overlay-container')).not.toBeNull();
+    });
+
     it('SC-UKV-1721 — высота под клавиатуру держится до закрытия и следующему открытию не достаётся', (): void => {
         const fixture: TFixture = setup();
         const panel: HTMLElement = raw(fixture, 'bottom-sheet-panel');

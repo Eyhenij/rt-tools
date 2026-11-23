@@ -264,14 +264,15 @@ export function rtDateTimeColumns(ctx: IRtDatePicker.TimeContext): IRtDatePicker
         disabled: (low !== null && rank(`${pad(h)}:59`) < rank(low)) || (high !== null && rank(`${pad(h)}:00`) > rank(high)),
     }));
     const step: number = Math.max(1, Math.floor(ctx.step));
-    const minutes: IRtDatePicker.TimeCell[] = Array.from(
-        { length: Math.ceil(60 / step) },
-        (_: unknown, i: number): IRtDatePicker.TimeCell => {
-            const minute: number = i * step;
+    const onStep: number[] = Array.from({ length: Math.ceil(60 / step) }, (_: unknown, i: number): number => i * step);
+    // Минута не по шагу — набранная в поле или пришедшая из формы — встаёт в колонку своей строкой по порядку.
+    const extra: number[] = typeof ctx.minute === 'number' && !onStep.includes(ctx.minute) ? [ctx.minute] : [];
+    const minutes: IRtDatePicker.TimeCell[] = [...onStep, ...extra]
+        .sort((a: number, b: number): number => a - b)
+        .map((minute: number): IRtDatePicker.TimeCell => {
             const time: string = `${pad(ctx.hour ?? 0)}:${pad(minute)}`;
             return { value: minute, label: pad(minute), disabled: ctx.hour !== null && !rtDateInBounds(time, low, high) };
-        }
-    );
+        });
     return { hours, minutes };
 }
 

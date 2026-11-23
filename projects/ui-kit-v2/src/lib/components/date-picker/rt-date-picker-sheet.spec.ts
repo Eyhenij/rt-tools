@@ -153,6 +153,68 @@ describe('RtDatePickerComponent — шторка: действие в шапке
         expect(sheetOpen(untouched)).toBe(false);
     });
 
+    it('SC-UKV-1761 — Escape внутри панели шторку мимо вопроса не закрывает', (): void => {
+        const fixture: TFixture = openSheet('time', '09:30');
+        spin(fixture, 'date-panel-minutes', 0);
+
+        (node(fixture, 'date-panel-hours') as HTMLElement).dispatchEvent(
+            new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true })
+        );
+        settle(fixture);
+
+        expect(node(fixture, 'bottom-sheet-confirm')).not.toBeNull();
+        expect(sheetOpen(fixture)).toBe(true);
+        expect(written(fixture)).toBe('09:30');
+    });
+
+    it('SC-UKV-1770 — минута не по шагу стоит в барабане своей строкой под полосой', (): void => {
+        const fixture: TFixture = openSheet('time', '09:37');
+        const minutes: HTMLElement = node(fixture, 'date-panel-minutes') as HTMLElement;
+        const labels: string[] = Array.from(minutes.querySelectorAll('[qa-dataid="date-panel-minute"]')).map(
+            (cell: Element): string => cell.textContent?.trim() ?? ''
+        );
+
+        expect(minutes.querySelector('[aria-pressed="true"]')?.textContent?.trim()).toBe('37');
+        expect(labels.slice(7, 10)).toEqual(['35', '37', '40']);
+    });
+
+    it('SC-UKV-1771 — Tab в барабане стоит только на выбранном значении, стрелки сдвигают выбор по кругу', (): void => {
+        const fixture: TFixture = openSheet('time', '00:30');
+        const hours: HTMLElement = node(fixture, 'date-panel-hours') as HTMLElement;
+        const key: (name: string) => void = (name: string): void => {
+            hours.dispatchEvent(new KeyboardEvent('keydown', { key: name, bubbles: true, cancelable: true }));
+            settle(fixture);
+        };
+        const chosen: () => string = (): string => hours.querySelector('[aria-pressed="true"]')?.textContent?.trim() ?? '';
+
+        expect(hours.querySelectorAll('[tabindex="0"]')).toHaveLength(1);
+        expect(hours.querySelector('[tabindex="0"]')?.getAttribute('aria-pressed')).toBe('true');
+
+        key('ArrowUp');
+        expect(chosen()).toBe('23');
+
+        key('ArrowDown');
+        key('ArrowDown');
+        expect(chosen()).toBe('01');
+    });
+
+    it('SC-UKV-1769 — у даты со временем стартовое время считается по границам выбранного дня', (): void => {
+        jest.setSystemTime(new Date(2026, 8, 27, 14, 37));
+        const fixture: TFixture = createRtFixture(
+            RtDatePickerComponent,
+            { type: 'datetime-local', min: '2026-09-27T14:40' },
+            { providers: [RU_LOCALE, { provide: BreakpointsService, useClass: NarrowBreakpointsService }] }
+        );
+        (el(fixture, '[qa-dataid="date-picker-open"] [qa-dataid="icon-button-control"]')?.nativeElement as HTMLButtonElement).click();
+        settle(fixture);
+
+        (el(fixture, '[qa-dataid="calendar-day"]:not([disabled])')?.nativeElement as HTMLElement).click();
+        settle(fixture);
+        press(fixture, 'date-picker-sheet-apply');
+
+        expect(written(fixture)).toContain('14:40');
+    });
+
     it('SC-UKV-1768 — барабан крутится по кругу: за 23 идёт 00, и остановившись, колонка встаёт в домашний круг', (): void => {
         const fixture: TFixture = openSheet('time', '23:30');
         const column: HTMLElement = node(fixture, 'date-panel-hours') as HTMLElement;

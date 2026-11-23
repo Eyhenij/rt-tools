@@ -21,6 +21,11 @@ describe('Шторка — место над экранной клавиатур
         expect(rtSheetKeyboardBox(812, null)).toBeNull();
     });
 
+    it('SC-UKV-1764 — страница, увеличенная щипком, видна не вся, но это не клавиатура', (): void => {
+        expect(rtSheetKeyboardBox(812, { height: 406, offsetTop: 100, scale: 2 })).toBeNull();
+        expect(rtSheetKeyboardBox(812, { height: 476, offsetTop: 0, scale: 1 })).toEqual({ top: 0, height: 476 });
+    });
+
     it('SC-UKV-1764 — слежение сообщает место при каждой смене видимой области и молчит после отписки', (): void => {
         const viewport: FakeViewport = new FakeViewport();
         const seen: (IRtSheetKeyboardBox | null)[] = [];

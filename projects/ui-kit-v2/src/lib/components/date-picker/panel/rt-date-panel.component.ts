@@ -97,7 +97,7 @@ const ESCAPE_BACK: Readonly<Record<TView, TView | null>> = { days: null, months:
         class: BEM_BLOCK,
         '[class.rt-date-panel--sheet]': 'sheet()',
         '[class.rt-date-panel--with-time]': "type() !== 'date'",
-        '(keydown.escape)': 'onEscape()',
+        '(keydown.escape)': 'onEscape($event)',
     },
 })
 export class RtDatePanelComponent {
@@ -110,16 +110,7 @@ export class RtDatePanelComponent {
      * Время, с которого барабан шторки начинает у поля без времени: под полосой барабана всегда стоит
      * значение, и пустым он быть не может. У списков поля на широком экране такого времени нет.
      */
-    readonly #startTime: Signal<string | null> = computed((): string | null =>
-        this.sheet() && this.type() !== 'date'
-            ? rtDateStartTime(this.timeStart(), this.now() ?? this.#openedAt, {
-                  step: this.minuteStep(),
-                  day: rtDateSplit(this.value(), this.type()).day,
-                  min: this.min(),
-                  max: this.max(),
-              })
-            : null
-    );
+    readonly #startTime: Signal<string | null> = computed((): string | null => this.#startFor(rtDateSplit(this.value(), this.type()).day));
     /** В черновике стоит только время, с которого барабан начал: человек ещё ничего не выбрал. */
     readonly #startOnly: Signal<boolean> = computed((): boolean => {
         const value: { day: string | null; time: string | null } = rtDateSplit(this.value(), this.type());
@@ -203,7 +194,15 @@ export class RtDatePanelComponent {
     protected readonly draftHour: Signal<number | null> = computed((): number | null => this.#part(0));
     protected readonly draftMinute: Signal<number | null> = computed((): number | null => this.#part(1));
     protected readonly columns: Signal<IRtDatePicker.TimeColumns> = computed((): IRtDatePicker.TimeColumns =>
-        rtDateTimeColumns({ step: this.minuteStep(), hour: this.draftHour(), day: this.draftDay(), min: this.min(), max: this.max() })
+        rtDateTimeColumns({
+            step: this.minuteStep(),
+            hour: this.draftHour(),
+            // Под полосой барабана всегда стоит значение: минута не по шагу встаёт в колонку своей строкой.
+            minute: this.sheet() ? this.draftMinute() : null,
+            day: this.draftDay(),
+            min: this.min(),
+            max: this.max(),
+        })
     );
 
     /** Номера выбранных часа и минуты в своих колонках: по ним барабан шторки держит значение под полосой. */
@@ -336,7 +335,13 @@ export class RtDatePanelComponent {
             this.#emit(day.key);
             return;
         }
+        // Время, с которого барабан начал сам, считается заново по границам выбранного дня: у
+        // пустого поля оно считалось без дня, и граница этого дня могла оставить его снаружи.
+        const start: string | null = this.#startOnly() ? this.#startFor(day.key) : null;
         this.draftDay.set(day.key);
+        if (start !== null) {
+            this.draftTime.set(start);
+        }
     }
 
     protected pickToday(): void {
@@ -402,13 +407,21 @@ export class RtDatePanelComponent {
     }
 
     /** Escape в сетке годов или месяцев возвращает на вид назад; в днях закрывает панель. */
-    protected onEscape(): void {
+    protected onEscape(event: Event): void {
         const back: TView | null = ESCAPE_BACK[this.view()];
-        if (back === null) {
-            this.closed.emit();
+        if (back !== null) {
+            // В шторке клавиша дальше не идёт: она вернула вид назад, и шторка по ней не закрывается.
+            if (this.sheet()) {
+                event.stopPropagation();
+            }
+            this.view.set(back);
             return;
         }
-        this.view.set(back);
+        // С кнопкой снаружи панель себя не закрывает: клавиша доходит до шторки, и та сначала
+        // спросит о выбранном и не применённом.
+        if (!this.applyOutside()) {
+            this.closed.emit();
+        }
     }
 
     /** «Сбросить»: значение становится пустым, панель закрывается. */
@@ -424,6 +437,18 @@ export class RtDatePanelComponent {
     #draftValue(): string {
         const value: string = rtDateWrite(this.type(), this.draftDay(), this.draftTime());
         return value !== '' && rtDateInBounds(value, this.min(), this.max()) ? value : '';
+    }
+
+    /** Время, с которого барабан шторки начинает у этого дня; вне шторки и у даты без времени его нет. */
+    #startFor(day: string | null): string | null {
+        return this.sheet() && this.type() !== 'date'
+            ? rtDateStartTime(this.timeStart(), this.now() ?? this.#openedAt, {
+                  day,
+                  step: this.minuteStep(),
+                  min: this.min(),
+                  max: this.max(),
+              })
+            : null;
     }
 
     #part(index: number): number | null {

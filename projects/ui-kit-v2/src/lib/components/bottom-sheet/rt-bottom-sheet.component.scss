@@ -46,6 +46,9 @@
             border-radius: var(--rt-bottom-sheet-radius) var(--rt-bottom-sheet-radius) 0 0;
             background: var(--rt-color-bg-surface);
             box-shadow: var(--rt-bottom-sheet-shadow);
+
+            /* Панель берёт фокус только кодом, после отмены вопроса: кольца у неё нет. */
+            outline: 0;
             transform: translateY(100%);
             transition: transform var(--rt-bottom-sheet-transition-duration) ease;
 

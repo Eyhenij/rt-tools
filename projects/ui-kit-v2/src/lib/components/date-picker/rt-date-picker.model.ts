@@ -70,6 +70,8 @@ export namespace IRtDatePicker {
     export interface TimeContext {
         step: number;
         hour: number | null;
+        /** Выбранная минута, которой колонка обязана иметь строку, даже когда она не на шаге. */
+        minute?: number | null;
         day: string | null;
         min: string | null;
         max: string | null;
