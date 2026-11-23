@@ -277,14 +277,15 @@ describe('Панель выбора в нижней шторке', (): void => {
         expect(hostClasses(fixture)).not.toContain('rt-select--open');
     });
 
-    it('SC-UKV-1677 — подвал шторки мультиселекта считает выбранное', (): void => {
+    it('SC-UKV-1677 — подвал шторки мультиселекта считает выбранное, готовность стоит в шапке', (): void => {
         const fixture: ComponentFixture<RtMultiselectComponent<string>> = setupMultiselect(['msk', 'kzn']);
 
         press(fixture, 'multiselect-trigger');
 
         expect(document.querySelector('[qa-dataid="multiselect-sheet-count"]')?.textContent?.trim()).toBe('Selected: 2');
         expect(document.querySelector('[qa-dataid="multiselect-sheet-reset"]')).not.toBeNull();
-        expect(document.querySelector('[qa-dataid="multiselect-sheet-done"]')).not.toBeNull();
+        expect(document.querySelector('[qa-dataid="bottom-sheet-footer"] [qa-dataid="multiselect-sheet-done"]')).toBeNull();
+        expect(document.querySelector('[qa-dataid="bottom-sheet-action"] [qa-dataid="multiselect-sheet-done"]')).not.toBeNull();
     });
 
     it('SC-UKV-1678 — сброс в подвале снимает весь выбор и оставляет шторку открытой', (): void => {
@@ -302,7 +303,7 @@ describe('Панель выбора в нижней шторке', (): void => {
         expect(sheetOpen()).toBe(true);
     });
 
-    it('SC-UKV-1679 — кнопка готовности в подвале закрывает шторку', (): void => {
+    it('SC-UKV-1679 — кнопка готовности в шапке закрывает шторку', (): void => {
         const fixture: ComponentFixture<RtMultiselectComponent<string>> = setupMultiselect(['msk']);
         press(fixture, 'multiselect-trigger');
 
