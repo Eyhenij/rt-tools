@@ -249,7 +249,13 @@ ran="$rt_push_set_ran"
 # set must not read as a green one. One line names both versions and the install command.
 if [ -n "${rt_push_set_node:-}" ]; then
     rt_push_gate_note node
-    push_refuse push '{"push_node_pinned":"no"}' "$(jq -cn --arg l "$rt_push_set_node" '{node_line:$l}')"
+    said="$(push_refuse push '{"push_node_pinned":"no"}' "$(jq -cn --arg l "$rt_push_set_node" '{node_line:$l}')")"
+    # The decider runs on the node of PATH — the very node that may be too old to run it, or absent:
+    # then it answers nothing, and the refusal is said here, or the push would pass unjudged.
+    [ -n "$said" ] || said="$(jq -cn --arg r "BLOCKED: ${rt_push_set_node}. No step of the push set ran. Install the pinned node by that command and push again." \
+        '{hookSpecificOutput:{hookEventName:"PreToolUse", permissionDecision:"deny", permissionDecisionReason:$r}}')"
+    printf '%s\n' "$said"
+    exit 0
 fi
 
 # Heavy steps with no mark are named in one refusal together with the red light ones: the command

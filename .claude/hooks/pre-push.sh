@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/pre-push.sh · 7c81c9ea9162 · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/pre-push.sh · 12fe5af4ee29 · правится надстройкой, не здесь
 # The checks before a push, as a hook of git itself, not of the agent.
 #
 # Requires: hooks/push-set.sh, hooks/git-guard-push-marks.sh, hooks/facts.sh, hooks/decide.sh
@@ -118,6 +118,12 @@ fi
 printf 'pre-push: running the checks before the push, %s of them\n' "$total" >&2
 
 rt_push_set_run "$base"
+
+# The set judged the node once more and ran no step: an empty set is not a green one.
+if [ -n "${rt_push_set_node:-}" ]; then
+    printf 'pre-push: refused — %s. No step of the set ran.\n' "$rt_push_set_node" >&2
+    exit 1
+fi
 
 [ -n "$rt_push_set_skipped" ] && printf 'pre-push: these checks had nothing to look at:\n%s\n' "$rt_push_set_skipped" >&2
 

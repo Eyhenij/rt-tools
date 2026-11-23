@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/facts.sh · e2ffa55afb9b · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/facts.sh · e96353f9f05b · правится надстройкой, не здесь
 # The facts of the state the guards decide by, each computed in one place. NOT a guard: it has no
 # `rt-hook:` declaration and hooks into no agent event. A guard sources it and calls `rt_fact_*`.
 #
@@ -316,15 +316,17 @@ rt_move_rules() {
 # `node` — and a tree with no `.nvmrc` give nothing.
 rt_node_pin() {
     local pin
-    pin="$({ sed -e 's/#.*//' -e 's/[[:space:]]//g' "${1:-.}/.nvmrc" | grep -m 1 .; } 2>/dev/null)"
+    # A byte order mark ahead of the version is dropped with the rest of the blank.
+    pin="$({ LC_ALL=C sed -e "s/^$(printf '\357\273\277')//" -e 's/#.*//' -e 's/[[:space:]]//g' "${1:-.}/.nvmrc" | grep -m 1 .; } 2>/dev/null)"
     pin="${pin#v}"
     case "$pin" in '' | *[!0-9.]* | .* | *..* | *.) return 0 ;; esac
     printf '%s' "$pin"
 }
 
-# Whether version $1 is not lower than version $2, part by part.
+# Whether version $1 is not lower than version $2, part by part as numbers: 22.01 equals 22.1.
 rt_node_at_least() {
-    [ "$(printf '%s\n%s\n' "$1" "$2" | sort -t. -k1,1n -k2,2n -k3,3n | head -n 1)" = "$2" ]
+    awk -v a="$1" -v b="$2" 'BEGIN { n = split(a, x, "."); m = split(b, y, "."); if (m > n) n = m
+        for (i = 1; i <= n; i++) { if (x[i] + 0 > y[i] + 0) exit 0; if (x[i] + 0 < y[i] + 0) exit 1 } exit 0 }'
 }
 
 # Whether node $1 serves pin $2: the pinned version itself; for a major or a major and a minor, any
@@ -352,7 +354,7 @@ rt_node_pinned_dir() {
         printf '%s\n' "${version##*/v}"
     done | grep -E '^[0-9]+(\.[0-9]+)*$' | sort -t. -k1,1nr -k2,2nr -k3,3nr | while IFS= read -r version; do
         rt_node_serves "$version" "$pin" && printf '%s' "$base/v$version/bin" && break
-    done
+    done || true
     return 0
 }
 

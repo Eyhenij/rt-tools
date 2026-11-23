@@ -87,8 +87,8 @@ There is no interface: the guard answers with a refusal text, the run ahead with
   before.
 - **No installed node serves the pin and `PATH` does not either: no step starts.** The push guard
   and the git hook refuse by one line: the pinned version, the one `PATH` gives and the command
-  that installs it. The git hook refuses before it counts the steps, and with no node in `PATH` it
-  prints the line itself, since the decision table needs a node. The run ahead says the same line
+  that installs it. The git hook refuses before it counts the steps. When `PATH` gives no node, or
+  one too old to run the decision table, both say the line themselves. The run ahead says the same line
   and ends with the code of a run that did not start. An empty set does not let such a push
   through.
 - **A call that runs the set ahead and does not end with its exit code is refused with the ready

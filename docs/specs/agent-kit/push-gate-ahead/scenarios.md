@@ -366,12 +366,12 @@ Given a tree pins node 22.22.3 in `.nvmrc`, nvm holds it, and node 20 stands fir
 When the set or the run ahead runs a step
 Then the step finds the pinned node
 
-Given nvm holds 22.1.5, 22.9.0, 22.10.0 and 22.22.3, and the tree pins the major 22, the minor
-22.1 or the version 22.20.0 nvm does not hold
+Given nvm holds 22.1.5, 22.9.0, 22.10.0, 22.22.3, 22.23.2 and 24.15.0, and the tree pins 22, 22.1
+or 22.20.0
 When the set runs a step
-Then the step finds 22.22.3, 22.1.5 and 22.22.3 in turn
+Then the step finds 22.23.2, 22.1.5 and 22.23.2 in turn; a pin of 22.22.3 finds 22.22.3
 
-Given `.nvmrc` starts with a comment line and holds the version after a tab
+Given `.nvmrc` starts with a byte order mark and a comment line, and holds the version after a tab
 When the set runs a step
 Then the step finds the pinned node
 
@@ -383,14 +383,15 @@ Covered: `projects/agent-kit/tests/push-set-runs.test.sh`.
 
 ### SC-AK-1847 — a pinned node that is not installed
 
-Given a tree pins a node nvm does not hold, and `PATH` gives another one
+Given no installed node serves the pin — none of its major, or all below a full pin — and `PATH`
+gives another node, a newer major included
 When the tree is pushed through the push guard or the git hook
 Then no step runs, and the push is refused by one line that names both versions and
 `nvm install <version>`; the git hook says it before it counts the steps
 
-Given the same tree, and git is started with no node in `PATH`
+Given the same tree, and `PATH` gives no node or one too old to run the decision table
 When the tree is pushed
-Then the git hook prints the line itself and refuses the push
+Then the git hook and the push guard print the line themselves and refuse the push
 
 Given the same tree
 When the set runs ahead

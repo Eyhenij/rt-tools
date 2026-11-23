@@ -304,13 +304,30 @@ report "SC-AK-1847 — not installed: the git hook refuses by one line" \
     "$code $(printf '%s\n' "$said" | grep -c "pre-push: refused — $node_line") $(printf '%s\n' "$said" | grep -c 'red checks\|running the checks') $([ -e "$NO_NVM/ran" ] && echo ran || echo none)" \
     "1 1 0 none"
 # A client that starts git with no node in PATH reaches no decider: the hook says the line itself.
-mkdir -p "$NO_NVM/bin"
+# So does the guard of the session, and with a node too old to run the decider as well. A runner
+# whose system directories hold a node has no PATH without one: the case is named as not run there.
+mkdir -p "$NO_NVM/bin" "$NO_NVM/old"
 ln -s "$(command -v jq)" "$NO_NVM/bin/jq"
-said="$(cd "$NODELESS" && RT_RAN="$NO_NVM/ran" NVM_DIR="$NO_NVM" PATH="$NO_NVM/bin:/usr/bin:/bin" env -u CI git push origin RT-90-hook 2>&1)"
-code=$?
-report "SC-AK-1847 — no node in PATH: the git hook still refuses" \
-    "$code $(printf '%s\n' "$said" | grep -c "pre-push: refused — $node_line; PATH gives no node") $([ -e "$NO_NVM/ran" ] && echo ran || echo none)" \
-    "1 1 none"
+printf '#!/bin/sh\necho v18.0.0\nexit 1\n' > "$NO_NVM/old/node"
+chmod +x "$NO_NVM/old/node"
+guard_says() {
+    CLAUDE_PROJECT_DIR="$NODELESS" input_cmd 'git push origin RT-90-hook' Bash "$NODELESS" \
+        | CLAUDE_PROJECT_DIR="$NODELESS" NVM_DIR="$NO_NVM" PATH="$1" "$HOOKS/git-guard-push-tests.sh" 2>/dev/null \
+        | jq -r '.hookSpecificOutput | "\(.permissionDecision) \(.permissionDecisionReason)"' 2>/dev/null
+}
+report "SC-AK-1847 — a node too old for the decider: the guard still refuses" \
+    "$(guard_says "$NO_NVM/old:$PATH" | grep -c "^deny BLOCKED: $node_line; PATH gives v18.0.0")" 1
+if PATH=/usr/bin:/bin command -v node >/dev/null 2>&1; then
+    report "SC-AK-1847 — no node in PATH: not run, the system directories hold a node" none none
+else
+    said="$(cd "$NODELESS" && RT_RAN="$NO_NVM/ran" NVM_DIR="$NO_NVM" PATH="$NO_NVM/bin:/usr/bin:/bin" env -u CI git push origin RT-90-hook 2>&1)"
+    code=$?
+    report "SC-AK-1847 — no node in PATH: the git hook still refuses" \
+        "$code $(printf '%s\n' "$said" | grep -c "pre-push: refused — $node_line; PATH gives no node") $([ -e "$NO_NVM/ran" ] && echo ran || echo none)" \
+        "1 1 none"
+    report "SC-AK-1847 — no node in PATH: the guard still refuses" \
+        "$(guard_says "$NO_NVM/bin:/usr/bin:/bin" | grep -c "^deny BLOCKED: $node_line; PATH gives no node")" 1
+fi
 said="$(CLAUDE_PROJECT_DIR="$NODELESS" input_cmd 'git push origin RT-90-hook' Bash "$NODELESS" \
     | CLAUDE_PROJECT_DIR="$NODELESS" NVM_DIR="$NO_NVM" "$HOOKS/git-guard-push-tests.sh" 2>/dev/null \
     | jq -r '.hookSpecificOutput | "\(.permissionDecision) \(.permissionDecisionReason)"' 2>/dev/null)"

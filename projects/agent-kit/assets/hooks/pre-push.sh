@@ -118,6 +118,12 @@ printf 'pre-push: running the checks before the push, %s of them\n' "$total" >&2
 
 rt_push_set_run "$base"
 
+# The set judged the node once more and ran no step: an empty set is not a green one.
+if [ -n "${rt_push_set_node:-}" ]; then
+    printf 'pre-push: refused — %s. No step of the set ran.\n' "$rt_push_set_node" >&2
+    exit 1
+fi
+
 [ -n "$rt_push_set_skipped" ] && printf 'pre-push: these checks had nothing to look at:\n%s\n' "$rt_push_set_skipped" >&2
 
 if [ -z "$rt_push_set_failed" ]; then
