@@ -82,6 +82,15 @@ export const SubmenuSheet: TStory = {
     },
 };
 
+/** Узкий экран: меню разделов `rt-page-header-mobile` в шторке с подписью меню в заголовке. Нажатием на бургер. */
+export const NavSheet: TStory = {
+    args: { part: 'submenu', sheet: true },
+    parameters: { snapshot: { fullPage: true, overlay: SHEET_OVERLAY, viewport: PHONE_WINDOW } },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openStoryOverlay(canvasElement, { within: '[qa-dataid="header-nav-burger"]' });
+    },
+};
+
 /** Узкий экран с `[sheet]="false"`: шторки нет, меню профиля стоит рядом с именем на подложке. */
 export const SheetOff: TStory = {
     args: { part: 'user-menu', sheet: false },

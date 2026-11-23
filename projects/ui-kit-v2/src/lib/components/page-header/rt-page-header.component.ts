@@ -45,6 +45,7 @@ import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
+import { RtPageHeaderMobileComponent } from './mobile/rt-page-header-mobile.component';
 import { RtPageHeaderMoreComponent } from './more/rt-page-header-more.component';
 import { RtPageRailComponent } from './rail/rt-page-rail.component';
 import { RtPageHeaderUserComponent } from './user/rt-page-header-user.component';
@@ -114,6 +115,7 @@ const PAGE_HEADER_MOBILE_BACKDROP: string = 'rt-page-header-mobile-backdrop';
         RtPopoverDirective,
         RtTooltipDirective,
         RtSlotOutletDirective,
+        RtPageHeaderMobileComponent,
         RtPageHeaderMoreComponent,
         RtPageRailComponent,
         RtPageHeaderUserComponent,

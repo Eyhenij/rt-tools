@@ -151,7 +151,9 @@
     "ng-template[rtTableSortHeaderContent]": "projects/ui-kit-v2/src/lib/components/table/sort-header/stories/table-sort-header.stories.ts",
     "[rtChatHeaderActions]": "projects/ui-kit-v2/src/rich-editor/lib/components/chat/stories/chat-states.stories.ts",
     "[rtChatComposerBar]": "projects/ui-kit-v2/src/rich-editor/lib/components/chat/stories/chat-page.stories.ts",
-    "[rtChatComposerTools]": "projects/ui-kit-v2/src/rich-editor/lib/components/chat/stories/chat-matrix.stories.ts"
+    "[rtChatComposerTools]": "projects/ui-kit-v2/src/rich-editor/lib/components/chat/stories/chat-matrix.stories.ts",
+    "[rtMultiselectExtra]": "projects/ui-kit-v2/src/lib/components/multiselect/stories/multiselect-matrix.stories.ts",
+    "rt-page-header-mobile": "projects/ui-kit-v2/src/lib/components/page-header/stories/page-header-sheet.stories.ts"
   },
   "noPlayground": {
     "toolbar": "Содержимое панели приходит проекцией шаблонов в три места, и страница с входами их не задаёт: витрина умеет подставлять значения, а не разметку. Единственный вход — плотность — показан своей осью."
