@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { readOne } from '@rt/message-bus-admin/common/core/api';
 import { IMonthRecord, MonthRecordMapper, SUMMARIES_PATH } from '@rt/message-bus-admin/summaries/util';
 import { map, Observable } from 'rxjs';
@@ -11,7 +11,7 @@ import { map, Observable } from 'rxjs';
  * одна запись: её читает панель подробностей, и переводится ответ тем же маппером, каким
  * переводится строка списка.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class SummariesApiService {
     readonly #http: HttpClient = inject(HttpClient);
     readonly #mapper: MonthRecordMapper = new MonthRecordMapper();

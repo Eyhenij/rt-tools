@@ -50,7 +50,7 @@ the code.
 Outward — reading only:
 
 ```typescript
-@Injectable({ providedIn: 'root' })
+@Service()
 export class DomainStateService {
     readonly #items: WritableSignal<Item[]> = signal<Item[]>([]);
 

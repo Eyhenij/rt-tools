@@ -2,10 +2,11 @@
 
 ## Where we stand
 
-- **State:** `задача-взята`
+- **State:** `этап-идёт`
 - **Stage:** 1 of 1 — Метка @Service для синглтонов
-- **Done:** план одобрен словом «Одобряю plan.md RT-3485»
-- **Next step:** plan-red, затем правило линтера
+- **Done:** план одобрен словом «Одобряю plan.md RT-3485»; plan-red: 1.1 → red, 1.2 → 60, 1.3 → 6,
+  1.4 → red
+- **Next step:** правило линтера принимает метку `@Service`
 - **Uncommitted:** нет
 - **PR:** not open yet
 

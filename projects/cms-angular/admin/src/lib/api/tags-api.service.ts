@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { map, Observable } from 'rxjs';
 
@@ -9,7 +9,7 @@ import { tagNodeOf } from './cms-contract-mapping.function';
 import { TagsApiFacade } from './tags-api.facade';
 
 /** The tags in the CMS notions. The contract type does not go past this class. */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class TagsApiService {
     readonly #facade: TagsApiFacade = inject(TagsApiFacade);
 

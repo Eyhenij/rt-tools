@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { from, map, Observable } from 'rxjs';
 
@@ -16,7 +16,7 @@ import { CMS_TRANSPORT, IMediaFolder } from '@rt-tools/cms-angular';
  * The way out to the media folders contract. The CMS service serves the folders, while the notion
  * belongs to the media library: files lie in folders, and its screen walks them.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class MediaFoldersApiFacade {
     readonly #client: Client<typeof CmsService> = createClient(CmsService, inject(CMS_TRANSPORT));
 
@@ -40,7 +40,7 @@ function folderOf(folder: MediaFolder): IMediaFolder {
 }
 
 /** The media folders in the media library notions. The contract type does not go past this class. */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class MediaFoldersApiService {
     readonly #facade: MediaFoldersApiFacade = inject(MediaFoldersApiFacade);
 

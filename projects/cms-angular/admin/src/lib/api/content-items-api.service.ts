@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { map, Observable } from 'rxjs';
 
@@ -26,7 +26,7 @@ export interface ILockAnswer {
 const SEARCH_PAGE_SIZE: number = 20;
 
 /** The pages in the CMS notions. The contract type does not go past this class. */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class ContentItemsApiService {
     readonly #facade: ContentItemsApiFacade = inject(ContentItemsApiFacade);
 

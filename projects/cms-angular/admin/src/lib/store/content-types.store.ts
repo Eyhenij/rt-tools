@@ -1,4 +1,4 @@
-import { DestroyRef, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { DestroyRef, inject, Signal, signal, WritableSignal, Service } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { catchError, of, Subject, switchMap, tap } from 'rxjs';
@@ -10,7 +10,7 @@ import { ContentTypesApiService } from '../api/content-types-api.service';
 import { cmsRefusalOf, labelNow } from './cms-refusal.function';
 
 /** The content type list. There are few types, and the server gives them all at once, without pages. */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class ContentTypesStore {
     readonly #api: ContentTypesApiService = inject(ContentTypesApiService);
     readonly #notifications: NotificationBus = inject(NotificationBus);

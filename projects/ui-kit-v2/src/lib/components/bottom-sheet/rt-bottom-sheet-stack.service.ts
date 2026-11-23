@@ -1,10 +1,10 @@
-import { computed, Injectable, signal, Signal, WritableSignal } from '@angular/core';
+import { computed, signal, Signal, WritableSignal, Service } from '@angular/core';
 
 /**
  * Порядок открытых шторок кита. Шторка, открытая из другой шторки, подменяет её: видна только
  * верхняя, а закрытие верхней снова показывает предыдущую.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class RtBottomSheetStackService {
     readonly #open: WritableSignal<ReadonlyArray<object>> = signal<ReadonlyArray<object>>([]);
 

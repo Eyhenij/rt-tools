@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, Signal } from '@angular/core';
+import { computed, inject, Signal, Service } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { detailsInitialState, IDetailsState, IReadFault } from '@rt/message-bus-admin/common/core/util';
 import { ProposalsApiService } from '@rt/message-bus-admin/proposals/api';
@@ -23,7 +23,7 @@ const INITIAL_STATE: TProposalState = detailsInitialState<IProposal.State>();
  * `switchMap`: человек открывает соседнюю строку, не дождавшись первой, и увидеть он должен ту,
  * которую назвал последней.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class ProposalStore extends BaseAsyncStoreService<TProposalState, TProposalMessage> {
     readonly #api: ProposalsApiService = inject(ProposalsApiService);
     readonly #readSource: Subject<string> = new Subject<string>();

@@ -1,4 +1,4 @@
-import { DestroyRef, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { DestroyRef, inject, Signal, signal, WritableSignal, Service } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { catchError, concatMap, EMPTY, map, Observable, of, Subject, switchMap } from 'rxjs';
@@ -26,7 +26,7 @@ function folderRefusalOf(error: unknown, otherwise: TCmsLabelKey): TCmsLabelKey 
  * children to the root, and only the server knows where they are now. A deletion gives the folder id:
  * the screen leaves it.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class MediaFoldersStore {
     readonly #api: MediaFoldersApiService = inject(MediaFoldersApiService);
     readonly #notifications: NotificationBus = inject(NotificationBus);

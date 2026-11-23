@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { computed, DestroyRef, effect, Injectable, Injector, Signal, WritableSignal, inject, signal } from '@angular/core';
+import { computed, DestroyRef, effect, Injector, Signal, WritableSignal, inject, signal, Service } from '@angular/core';
 
 import { PlatformService, StorageService, WINDOW } from '@rt-tools/core';
 
@@ -23,7 +23,7 @@ const DARK_QUERY: string = '(prefers-color-scheme: dark)';
  * записанное тёмным видом, перестало бы идти за машиной с первой же
  * перезагрузки, и на экране ничто бы об этом не сказало.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class ThemeService {
     readonly #storage: StorageService = inject(StorageService);
     readonly #doc: Document = inject(DOCUMENT);

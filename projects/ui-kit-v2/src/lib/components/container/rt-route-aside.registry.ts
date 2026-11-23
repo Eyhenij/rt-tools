@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 import { ActivatedRouteSnapshot, Route } from '@angular/router';
 
 import { Observable } from 'rxjs';
@@ -35,7 +35,7 @@ export interface IRtAsideDeactivate {
  * пережила бы запрос при отдаче страницы сервером и оказалась бы общей на два
  * приложения, поднятых на одной странице.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class RtRouteAsideRegistry {
     readonly #panels: Map<Route, IRtAsideDeactivate> = new Map<Route, IRtAsideDeactivate>();
 
