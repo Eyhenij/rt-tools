@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 import { AdminListStoreBase } from '@rt/message-bus-admin/common/core/data-access';
 import { IProposal, ProposalShortMapper, PROPOSALS_PATH } from '@rt/message-bus-admin/proposals/util';
 
@@ -11,7 +11,7 @@ import { IProposal, ProposalShortMapper, PROPOSALS_PATH } from '@rt/message-bus-
  * Один экземпляр на приложение: список делят экран и панель подробностей, и закрытая панель
  * возвращает тот же список, а не перечитывает его заново.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class ProposalsStore extends AdminListStoreBase<IProposal.Short.State, IProposal.Short.Api> {
     readonly #mapper: ProposalShortMapper = new ProposalShortMapper();
 

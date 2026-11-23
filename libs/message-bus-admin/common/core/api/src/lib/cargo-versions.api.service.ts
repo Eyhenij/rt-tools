@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { ECargoKind } from '@rt/message-bus-common';
 import { catchError, Observable, timeout } from 'rxjs';
 
@@ -17,7 +17,7 @@ const CARGO_VERSIONS_PATH: string = '/api/cargo/versions';
  * Род груза обязателен: наборы у разборов и у предложений разные, и версия, встретившаяся у
  * одних, у других в отборе стоять не должна.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class CargoVersionsApiService {
     readonly #http: HttpClient = inject(HttpClient);
 

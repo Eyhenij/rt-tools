@@ -1,7 +1,7 @@
 import { registerLocaleData } from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
 import { provideHttpClient } from '@angular/common/http';
-import { computed, Injectable, provideZonelessChangeDetection, signal, Signal, WritableSignal } from '@angular/core';
+import { computed, provideZonelessChangeDetection, signal, Signal, WritableSignal, Service } from '@angular/core';
 import { provideRouter, withHashLocation } from '@angular/router';
 
 import { applicationConfig, Decorator, Preview } from '@storybook/angular';
@@ -60,7 +60,7 @@ const showcaseTranslator: Signal<TRtKitTranslator> = computed((): TRtKitTranslat
  * приложение, — ключом через `| transloco`. Компонентам кита он не нужен и ничего им не меняет:
  * свои подписи кит берёт функцией-переводчиком из `provideRtKitLabels`.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 class ShowcaseTranslocoLoader implements TranslocoLoader {
     public getTranslation(): Observable<Translation> {
         return of(SHOWCASE_MESSAGES_RU);

@@ -1,4 +1,4 @@
-import { computed, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { computed, Signal, signal, WritableSignal, Service } from '@angular/core';
 
 import { IRtTable } from './rt-table.model';
 
@@ -23,7 +23,7 @@ export interface IRtTableSettingsRegistration {
  * раньше `rt-table`, и синхронный промах по пустому реестру не должен быть
  * финальным — асайд дожидается регистрации через `effect` (фикс F-16).
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class RtTableSettingsRegistry {
     readonly #registrations: WritableSignal<ReadonlyMap<string, IRtTableSettingsRegistration>> = signal<
         ReadonlyMap<string, IRtTableSettingsRegistration>

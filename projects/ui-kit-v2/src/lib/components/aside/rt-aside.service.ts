@@ -1,7 +1,7 @@
 import { ComponentType, Overlay, OverlayConfig, OverlayRef, PositionStrategy } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { DOCUMENT } from '@angular/common';
-import { inject, DestroyRef, Injectable, Injector, Renderer2, RendererFactory2, Signal } from '@angular/core';
+import { inject, DestroyRef, Injector, Renderer2, RendererFactory2, Signal, Service } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { EMPTY, map, merge, mergeMap, Observable, Subject, Subscriber, takeUntil } from 'rxjs';
@@ -113,7 +113,7 @@ interface IRtAsideOpenContext {
  * }
  * \`\`\`
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class RtAsideService {
     readonly #overlay: Overlay = inject(Overlay);
     readonly #injector: Injector = inject(Injector);

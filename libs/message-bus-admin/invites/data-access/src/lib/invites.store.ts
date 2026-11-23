@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AdminListStoreBase } from '@rt/message-bus-admin/common/core/data-access';
 import { AdminTextService, IReadFault } from '@rt/message-bus-admin/common/core/util';
@@ -28,7 +28,7 @@ import { catchError, EMPTY, exhaustMap, map, Observable, Subject, tap } from 'rx
  *
  * Один экземпляр на приложение: список читает экран, а отзыв зовёт его же меню строки.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class InvitesStore extends AdminListStoreBase<IInvite.Short.State, IInvite.Short.Api> {
     readonly #api: InvitesApiService = inject(InvitesApiService);
     readonly #text: AdminTextService = inject(AdminTextService);

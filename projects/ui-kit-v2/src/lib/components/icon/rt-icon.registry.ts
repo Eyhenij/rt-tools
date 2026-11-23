@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Injectable, InjectionToken, inject } from '@angular/core';
+import { InjectionToken, inject, Service } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { EMPTY, Observable, Subject, catchError, map, mergeMap, tap } from 'rxjs';
@@ -35,7 +35,7 @@ export const RT_ICONS_MATERIAL_BASE_URL: InjectionToken<string> = new InjectionT
     factory: (): string => '/icons-material',
 });
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class RtIconRegistry {
     readonly #http: HttpClient = inject(HttpClient);
     readonly #doc: Document = inject(DOCUMENT);

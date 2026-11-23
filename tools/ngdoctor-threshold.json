@@ -6,7 +6,6 @@
     "angular-doctor/filename-class-mismatch": 526,
     "angular-doctor/missing-spec-file": 538,
     "angular-doctor/prefer-ng-optimized-image": 11,
-    "angular-doctor/prefer-service-decorator": 60,
     "angular-doctor/prefer-signal-forms": 97,
     "angular-doctor/project-layout": 4,
     "angular-doctor/security-bypass": 1,

@@ -2,7 +2,7 @@ import { FocusTrap, FocusTrapFactory } from '@angular/cdk/a11y';
 import { ComponentType, Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { DOCUMENT } from '@angular/common';
-import { afterNextRender, inject, Injectable, Injector, Signal } from '@angular/core';
+import { afterNextRender, inject, Injector, Signal, Service } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { EMPTY, map, merge, mergeMap, Observable, Subject, take, takeUntil } from 'rxjs';
@@ -120,7 +120,7 @@ interface IRtDialogOpenContext {
  * }
  * \`\`\`
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class RtDialogService {
     readonly #overlay: Overlay = inject(Overlay);
     readonly #injector: Injector = inject(Injector);

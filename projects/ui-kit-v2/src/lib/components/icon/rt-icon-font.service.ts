@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Injectable, InjectionToken, Signal, WritableSignal, inject, signal } from '@angular/core';
+import { InjectionToken, Signal, WritableSignal, inject, signal, Service } from '@angular/core';
 
 import { PlatformService } from '@rt-tools/core';
 
@@ -25,7 +25,7 @@ export const RT_ICON_GLYPH_STRATEGY: InjectionToken<IRtIcon.GlyphStrategy> = new
  * а не загрузку одной семьи. На сервере шрифтов нет — лигатура там скрыта. Браузер без интерфейса
  * шрифтов ждать нечем, и лигатура показывается сразу.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class RtIconFontService {
     readonly #ready: WritableSignal<boolean> = signal<boolean>(false);
 

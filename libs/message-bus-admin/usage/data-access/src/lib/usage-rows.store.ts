@@ -1,4 +1,4 @@
-import { computed, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { computed, Signal, signal, WritableSignal, Service } from '@angular/core';
 import { AdminListStoreBase } from '@rt/message-bus-admin/common/core/data-access';
 import { IUsage, USAGE_PATH, UsageRowMapper } from '@rt/message-bus-admin/usage/util';
 import { IPage, IUsagePage } from '@rt/message-bus-common';
@@ -21,7 +21,7 @@ const NO_PERIOD: IUsageCountedPeriod = { from: '', to: '' };
  * Один экземпляр на приложение: список делят экран и панель сессий, и закрытая панель
  * возвращает тот же список, а не перечитывает его заново.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class UsageRowsStore extends AdminListStoreBase<IUsage.Row.State, IUsage.Row.Api> {
     readonly #mapper: UsageRowMapper = new UsageRowMapper();
     readonly #period: WritableSignal<IUsageCountedPeriod> = signal<IUsageCountedPeriod>(NO_PERIOD);
