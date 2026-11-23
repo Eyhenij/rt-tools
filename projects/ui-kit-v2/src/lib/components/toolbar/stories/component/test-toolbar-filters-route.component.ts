@@ -24,33 +24,7 @@ const PAYMENT_OPTIONS: ReadonlyArray<IRtSelect.Option<string>> = [
 /** Список раздела: полоса с отборами, кнопка фильтров открывает маршрут панели. */
 @Component({
     selector: 'app-toolbar-filters-route-list',
-    template: `
-        <rt-toolbar
-            qa-dataid="story-toolbar-filters-route"
-            filtersPanel="app"
-            filtersActive
-            style="--rt-toolbar-padding-top: 12px; --rt-toolbar-padding-bottom: 12px; --rt-toolbar-padding-inline: 12px"
-            (filtersOpen)="openFilters()">
-            <ng-template rtToolbarFilters let-place>
-                @if (place === 'panel') {
-                    <rt-field label="Статус">
-                        <rt-select placeholder="Все" [options]="statusOptions" />
-                    </rt-field>
-                    <rt-field label="Оплата">
-                        <rt-select placeholder="Любая оплата" [options]="paymentOptions" />
-                    </rt-field>
-                } @else {
-                    <rt-select placeholder="Все" aria-label="Статус" [options]="statusOptions" />
-                    <rt-select placeholder="Любая оплата" aria-label="Оплата" [options]="paymentOptions" />
-                }
-            </ng-template>
-
-            <ng-template rtToolbarRight>
-                <rt-icon-button icon="ico-plus" variant="primary" ariaLabel="Добавить" />
-                <rt-icon-button icon="sync" variant="primary" ariaLabel="Обновить" />
-            </ng-template>
-        </rt-toolbar>
-    `,
+    templateUrl: './test-toolbar-filters-route-list.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         RtToolbarComponent,
@@ -89,16 +63,7 @@ const ROUTES: Routes = [
  */
 @Component({
     selector: 'app-toolbar-filters-route',
-    template: `
-        <rt-container>
-            <ng-container *rtContainerContent>
-                <router-outlet />
-            </ng-container>
-            <ng-container *rtContainerRightSidenav>
-                <router-outlet name="ro" />
-            </ng-container>
-        </rt-container>
-    `,
+    templateUrl: './test-toolbar-filters-route.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RouterOutlet, RtContainerComponent, RtContainerContentDirective, RtContainerRightSidenavDirective],
 })
