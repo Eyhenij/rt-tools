@@ -107,3 +107,44 @@ tools/check-specs.mjs` gives no write target. Here the plan's step 1.5 check cou
 5. **The gate delivers what fits** (low) — package, `hooks/skill-gate.sh`, branch
    `gate_why="together"`: when the rules of a call fit one by one but not together, the gate
    delivers as many as fit in order and refuses only for the rest, by name.
+
+## RT-3481 — the review of 23 November 2026
+
+Loaded: `task-delivery-loop`, `task-flow` with its parts, `task-flow-archive`, `kit-approval`,
+`git-workflow` with its parts, `epic-flow`, `doc-style`, `rt-tools-storybook`, `lib-layers`,
+`typescript-conventions`, `agent-kit`, `spec-driven`. No edit of the gate map is needed. The
+unnamed red set of the push refusal repeats point 4 of the RT-3480 review.
+
+1. **Code reshaped so the scanner stops recognising a construct is the same taking-out** —
+   package, `laws/verifiability.md`, article «A red check means wrong code, not a wrong check.»,
+   after «…and nobody has a signal about it any more.»: «Code reshaped so that the check stops
+   recognising a construct that is still there — a key assembled from parts, a call through an
+   alias, a value hidden from the parser — is the same taking-out: the construct stays, and the
+   signal goes.» Here the first plan proposed a helper that assembled the key `then` past the
+   scanner; goal-critic and the question judge stopped it, not a text.
+2. **The step engine freezes the whole task folder, the rule names only the plan** — package,
+   `checks/flow-step.mjs:changedSincePlan` and `rules/task-flow-plan.md` after «Done work is
+   marked only in the progress.». Choice A (recommended): the engine judges only the plan and the
+   grill, and the tree names other growing records in the engine words; the article «After the
+   plan's commit the plan and the grill stay as they were; the progress and the records the tree
+   names grow.» Choice B: the article «After the plan's commit only the progress moves in the task
+   folder.», with a pitfall in `pitfalls/task-flow.2.md`. Here an approval line appended by the
+   kit-approval rule after the first review round refused the rerun before the PR.
+3. **Bringing the folder back after an engine refusal** — package,
+   `pitfalls/task-flow-archive.md`, after «No plan on disk after the taking-apart, and the folder
+   is not assembled again.»: the one exception is the refusal «the task folder differs from the
+   commit of the plan» — the folder comes back whole from the plan's commit by a commit of its
+   own, the rerun passes, and the folder is taken apart again; one file brought back is not
+   enough. Here the first attempt brought back only the approvals and was refused for the missing
+   grill and plan.
+4. **The machine identity in zsh** — tree, `.claude/skills/task-delivery-loop-run/SKILL.md`,
+   section «8, 9. Commit as the machine account», at its end: «The four variables are written out
+   in the command, never packed into one: zsh does not split `$E` into words, so
+   `env $E git commit` passes one argument, and the commit leaves under the local identity.» Here
+   two commits
+   left under the local identity and the identity guard caught them.
+5. **The prose guard reads a long command as one sentence** — package,
+   `hooks/prose-style-guard.sh`, branch `Bash`, line `[ -z "$added" ] && added="$cmd"`: without a
+   heredoc only the quoted arguments of `printf` and `echo` that end in the redirect are judged; a
+   command that brings no text of its own gives nothing to judge. Scenario: a `sed -i` and check
+   chain over 60 words passes, `printf` with bureaucratic prose into a `.md` is still refused.
