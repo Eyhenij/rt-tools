@@ -178,7 +178,7 @@ is needed.
    branch's own record; `answerersOf` gives a commit to the task its subject ends with `(RT-N)`, a
    merge to its `[RT-N]`; a commit naming no task needs the branch record; scenarios in
    `tools/tests/check-kit-approval.test.sh`; companion `.claude/skills/kit-approval/implementation.md`.
-   The base stays `origin/main` and no file loses its judge. Here RT-3514, stacked on RT-3481,
+   The base stays the remote main branch and no file loses its judge. Here RT-3514, stacked on RT-3481,
    was asked for 170 kit files of RT-3480 and RT-3481. Needs the owner's word.
 4. **The epic line of a card says «план»** — package, `checks/task-new.github.mjs:284`, the hints
    in `checks/board-epics.github.mjs` and the test `task-new-epic.test.sh`: «Задача эпика #N,
