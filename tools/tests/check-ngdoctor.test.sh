@@ -118,7 +118,10 @@ verdict "the written threshold makes the same run green" "$(cat "$WORK/out.json"
 cp "$WORK/before.json" "$WORK/threshold.json"
 printf '%s' "$(output 80 "${SAME[@]}")" > "$WORK/tree.json"
 
-# Whether the check is red on a probe without the named finding and names its rule and file.
+# Whether the check is red on a probe without the named finding and names its rule and file. The
+# source name is matched inside its word, not between «»: the push set runs with LC_ALL=C.UTF-8,
+# where bash 3.2 breaks a variable glued to «» and the macOS grep refuses the pattern, and in the C
+# locale a quote is two bytes, not one character.
 probe_misses() {
     local label="$1" finding="$2" got kept=() rule
     rule="${finding%%@*}"
@@ -126,7 +129,7 @@ probe_misses() {
     printf '%s' "$(output 90 "${kept[@]}")" > "$WORK/probe.json"
     if node "$CHECK" --input "$WORK/tree.json" --threshold "$WORK/threshold.json" --probe-input "$WORK/probe.json" > "$WORK/said.txt" 2>&1; then
         got="green"
-    elif grep -q "«${rule%%/*}» did not fire $rule in ${finding##*/}" "$WORK/said.txt"; then got="red, named"; else got="red, unnamed"; fi
+    elif grep -q "source [^ ]*${rule%%/*}[^ ]* did not fire $rule in ${finding##*/}" "$WORK/said.txt"; then got="red, named"; else got="red, unnamed"; fi
     report "$label" "$got" "red, named"
 }
 
@@ -206,7 +209,7 @@ real_misses() {
     local label="$1" source="$2" count="$3" got
     if node "$CHECK" --input "$WORK/tree.json" --threshold "$WORK/threshold.json" --probe-real --probe-omit "$source" > "$WORK/said.txt" 2>&1; then
         got="green"
-    elif [ "$(grep -c "«$source» did not fire" "$WORK/said.txt")" = "$count" ]; then got="red, named"; else got="red, unnamed"; fi
+    elif [ "$(grep -c "source [^ ]*$source[^ ]* did not fire" "$WORK/said.txt")" = "$count" ]; then got="red, named"; else got="red, unnamed"; fi
     report "$label" "$got" "red, named"
 }
 real_misses "the probe run for real without the button type rule is red" template-eslint 2
