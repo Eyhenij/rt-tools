@@ -72,6 +72,15 @@ branch higher in the stack into it
 When the push guard picks the base for this branch after one more commit
 Then that branch is not the base: it holds the own copy on its first-parent line
 
+Given a branch above this one, or a neighbour taken from a newer tip of the epic, took the newer
+copy of this branch in by a merge of its own, not of the host
+When the push guard picks the base for this branch after one more commit
+Then that branch is not the base
+
+Given this branch took in a branch taken from it, so that one lies under the head
+When the push guard picks the base
+Then the base is that branch: what the head holds already passed the set
+
 Given a head that is no branch
 When the push guard picks the base
 Then the base is the remote main branch

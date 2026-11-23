@@ -26,7 +26,8 @@
 #
 # Three kinds of branches are no base, because they are this branch's own content:
 #   - its own remote copy — the set answers for the whole contribution, not for the last commit;
-#   - a branch that stands on that copy — it carries this branch inside itself;
+#   - a branch that stands on that copy — it holds the copy on its first-parent line or took it in
+#     by a merge not of the host, and lies neither under the head nor at it;
 #   - a branch the host merged into this one by a request. Without that the branch of an epic was
 #     counted against its last merged task, and nothing checked the epic against the main branch
 #     before the push. The host's merge is told by the committer of the commit: the host signs
@@ -44,6 +45,32 @@
 # the push another once a neighbour pruned the copy: a green set of half an hour was refused as
 # «No green mark». With no answer from the host the refs of the copy decide, and a line on stderr
 # says so.
+# Whether a remote branch stands on this one by the own copy `$2`. It does when the copy lies on
+# its first-parent line — it was taken from this one and went on by plain commits — or when a merge
+# not of the host brought the copy in: a neighbour took this one in itself. A copy a merge of the
+# host brought in leaves it a base: that is the branch of an epic a request carried the copy into.
+# A branch under the head or at it is no branch standing on this one: what the head holds already
+# passed the set; nor is one at the commit of the copy: a branch pushed before its first commit
+# still lies at the tip it was taken from. The lists are captured, not piped: a caller with
+# `pipefail` would read a matched `grep -q` as a miss and keep a branch above this one.
+rt_push_base_on_copy() {
+    local ref="$1" own host="$3" line merge
+    own="$(git rev-parse --verify --quiet "$2")" || return 1
+    [ "$own" != "$(git rev-parse --verify --quiet "$ref")" ] || return 1
+    git merge-base --is-ancestor "$ref" HEAD 2>/dev/null && return 1
+    git merge-base --is-ancestor "$own" "$ref" 2>/dev/null || return 1
+    line="$(git rev-list --first-parent "$ref" --not "$own^@" 2>/dev/null)"
+    case "$line" in *"$own"*) return 0 ;; esac
+    # The merge that brought the copy in: the newest on the first-parent line whose first parent
+    # does not hold the copy yet.
+    for merge in $(git rev-list --first-parent --merges "$ref" --not "$own" 2>/dev/null); do
+        git merge-base --is-ancestor "$own" "$merge^1" 2>/dev/null && continue
+        [ -z "$(git rev-list -n 1 --fixed-strings --committer="$host" "$merge^!" 2>/dev/null)" ]
+        return
+    done
+    return 1
+}
+
 rt_push_base() {
     local main="$1" branch own ref name count best best_count merge merged='' host live answered=1
     host="${RT_PUSH_HOST_COMMITTER:-GitHub <noreply@github.com>}"
@@ -83,15 +110,7 @@ $(git for-each-ref --merged "$merge^2" --no-merged "$merge^1" --format='%(refnam
         printf '%s\n' "$merged" | grep -qxF -- "$ref" && continue
         # A branch the host no longer holds is no base: its ref outlives it in the copy.
         [ "$answered" = 0 ] || printf '%s\n' "$live" | grep -qxF -- "refs/heads/$name" || continue
-        # A branch stands on this one when the own copy lies on its first-parent line: it was taken
-        # from this one and went on by plain commits. A copy brought in by a merge — of the host or
-        # of anyone — does not drop it, nor does the branch lying under the head or at it: what
-        # the head holds already passed the set. A branch at the commit of the copy stays too: a
-        # branch pushed before its first commit still lies at the tip it was taken from.
-        [ -n "$own" ] && [ "$(git rev-parse "$own")" != "$(git rev-parse "$ref")" ] &&
-            ! git merge-base --is-ancestor "$ref" HEAD 2>/dev/null &&
-            git rev-list --first-parent "$ref" --not "$own^@" 2>/dev/null |
-            grep -qxF -- "$(git rev-parse "$own")" && continue
+        [ -n "$own" ] && rt_push_base_on_copy "$ref" "$own" "$host" && continue
         if ! git merge-base --is-ancestor "$ref" HEAD 2>/dev/null; then
             [ -n "$(git rev-list -n 1 --first-parent --merges --fixed-strings --committer="$host" \
                 "HEAD..$ref" 2>/dev/null)" ] || continue

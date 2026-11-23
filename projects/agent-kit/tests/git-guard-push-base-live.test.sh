@@ -409,6 +409,33 @@ above_git checkout -q RT-81-task 2>/dev/null
 fixture_commit "$ABOVE" task3.txt правка 'feat: правка ревью задачи'
 report "SC-AK-1340 — ветка, взятая от этой, не база и после слияния хоста сверху" \
     "$(push_base "$ABOVE")" origin/RT-80-epic
+# Ветка выше приняла новую копию этой слиянием сессии: копия пришла не слиянием хоста, ветка не база.
+above_git push -q origin RT-81-task 2>/dev/null
+above_git checkout -q RT-82-above 2>/dev/null
+above_git merge -q -m 'feat: ветка выше приняла задачу' origin/RT-81-task 2>/dev/null
+above_git push -q origin RT-82-above 2>/dev/null
+above_git checkout -q RT-81-task 2>/dev/null
+fixture_commit "$ABOVE" task4.txt правка 'feat: правка после приёма сверху'
+report "SC-AK-1340 — ветка выше приняла эту слиянием сессии: не база" "$(push_base "$ABOVE")" origin/RT-80-epic
+# Сосед взят с новой вершины эпика и принял эту ветку сам: он ближе эпика, но базой не бывает.
+above_git checkout -q -b RT-84-side origin/RT-80-epic 2>/dev/null
+fixture_commit "$ABOVE" side.txt сбоку 'feat: соседняя задача'
+above_git push -q origin RT-84-side 2>/dev/null
+above_git checkout -q RT-80-epic 2>/dev/null
+GIT_COMMITTER_NAME=GitHub GIT_COMMITTER_EMAIL=noreply@github.com \
+    above_git merge -q --no-ff -m 'feat: заявка 84 влита' RT-84-side 2>/dev/null
+above_git push -q origin RT-80-epic 2>/dev/null
+above_git checkout -q -b RT-85-near origin/RT-80-epic 2>/dev/null
+fixture_commit "$ABOVE" near.txt рядом 'feat: сосед с новой вершины эпика'
+above_git merge -q -m 'feat: сосед принял задачу' origin/RT-81-task 2>/dev/null
+above_git push -q origin RT-85-near 2>/dev/null
+above_git checkout -q RT-81-task 2>/dev/null
+fixture_commit "$ABOVE" task5.txt правка 'feat: правка после приёма соседом'
+report "SC-AK-1340 — сосед принял эту слиянием сессии: не база" "$(push_base "$ABOVE")" origin/RT-80-epic
+# Задача приняла ветку выше: та лежит под вершиной, её содержимое прошло набор, и она база.
+above_git merge -q -m 'feat: задача приняла ветку выше' origin/RT-82-above 2>/dev/null
+fixture_commit "$ABOVE" task6.txt правка 'feat: правка после приёма ветки выше'
+report "SC-AK-1340 — задача приняла ветку выше: та под вершиной и база" "$(push_base "$ABOVE")" origin/RT-82-above
 rm -rf "$ABOVE" "$ABOVE_REMOTE"
 
 suite_result "база набора перед пушем"
