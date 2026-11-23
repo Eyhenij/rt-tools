@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/git-guard-push-tests.sh · 04124c70d2eb · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/git-guard-push-tests.sh · 9da27a6e952d · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__terminal__run_in_terminal
 # rt-hook-timeout: 1800
 # Requires: checks/decide.mjs, hooks/decide.sh, hooks/facts.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/push-sign.sh, hooks/push-set.sh, hooks/git-guard-push-marks.sh
@@ -253,8 +253,13 @@ if [ -n "${rt_push_set_node:-}" ]; then
     said="$(push_refuse push '{"push_node_pinned":"no"}' "$(jq -cn --arg l "$rt_push_set_node" '{node_line:$l}')")"
     # The decider runs on the node of PATH — the very node that may be too old to run it, or absent:
     # then it answers nothing, and the refusal is said here, or the push would pass unjudged.
-    [ -n "$said" ] || said="$(jq -cn --arg r "BLOCKED: ${rt_push_set_node}. No step of the push set ran. Install the pinned node by that command and push again." \
-        '{hookSpecificOutput:{hookEventName:"PreToolUse", permissionDecision:"deny", permissionDecisionReason:$r}}')"
+    if [ -z "$said" ]; then
+        # shellcheck disable=SC1091
+        command -v rt_deny_tail >/dev/null 2>&1 || . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
+        command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+        said="$(jq -cn --arg r "BLOCKED: ${rt_push_set_node}. No step of the push set ran. Install the pinned node by that command and push again. $(rt_deny_tail)" \
+            '{hookSpecificOutput:{hookEventName:"PreToolUse", permissionDecision:"deny", permissionDecisionReason:$r}}')"
+    fi
     printf '%s\n' "$said"
     exit 0
 fi

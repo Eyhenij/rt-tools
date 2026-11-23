@@ -252,8 +252,13 @@ if [ -n "${rt_push_set_node:-}" ]; then
     said="$(push_refuse push '{"push_node_pinned":"no"}' "$(jq -cn --arg l "$rt_push_set_node" '{node_line:$l}')")"
     # The decider runs on the node of PATH — the very node that may be too old to run it, or absent:
     # then it answers nothing, and the refusal is said here, or the push would pass unjudged.
-    [ -n "$said" ] || said="$(jq -cn --arg r "BLOCKED: ${rt_push_set_node}. No step of the push set ran. Install the pinned node by that command and push again." \
-        '{hookSpecificOutput:{hookEventName:"PreToolUse", permissionDecision:"deny", permissionDecisionReason:$r}}')"
+    if [ -z "$said" ]; then
+        # shellcheck disable=SC1091
+        command -v rt_deny_tail >/dev/null 2>&1 || . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
+        command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+        said="$(jq -cn --arg r "BLOCKED: ${rt_push_set_node}. No step of the push set ran. Install the pinned node by that command and push again. $(rt_deny_tail)" \
+            '{hookSpecificOutput:{hookEventName:"PreToolUse", permissionDecision:"deny", permissionDecisionReason:$r}}')"
+    fi
     printf '%s\n' "$said"
     exit 0
 fi
