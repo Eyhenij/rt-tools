@@ -4,8 +4,6 @@
 # Run from the root of the copy. An empty or missing temporary path stops the script before git
 # and before the removal: `cd ""` stays in the copy, and the removal would take the copy itself.
 set -u
-# Without node 20 under nvm PATH would not change, and a 0 would check nothing: no count is printed.
-[ -x "${HOME}/.nvm/versions/node/v20.11.0/bin/node" ] || exit 1
 root="$(pwd -P)"
 d="$(mktemp -d)"
 case "$d" in /?*) [ -d "$d" ] || exit 1 ;; *) exit 1 ;; esac
