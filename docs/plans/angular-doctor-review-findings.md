@@ -40,3 +40,34 @@ Loaded: `task-delivery-loop`, `task-flow`, `task-flow-plan`, `doc-style`, `types
    the work. An option that changes what the product sanitizes or allows is a product choice and
    leaves.» Doubtful: the judge may have been right to stop a weaker sanitizer. Here the question
    whether to keep `<style>` and animation in a consumer's icons did not reach the owner.
+
+## RT-3508 — the review of 23 November 2026
+
+Loaded: `task-delivery-loop`, `task-flow`, `task-flow-plan`, `task-flow-handover`,
+`task-flow-archive`, `task-flow-close`, `doc-style`, `kit-approval`, `kit-approval-record`,
+`git-workflow` with `-push`, `-hosting`, `-pr`, `-pr-body`, `epic-flow`, `component-structure`,
+`angular-patterns`, `reuse-first`, `testing`, `ui-component-tests`, `ui-component-tests-screens`,
+`rt-tools-storybook`, `spec-driven`. No edit of the gate map is needed.
+
+1. **The delivery guard reads a shell redirect as the base of a new branch** — package,
+   `hooks/git-guard-delivery.sh`, after `base_arg=…`: a base argument with `>` or `<` in it is
+   emptied. A scenario in the package guard tests creates a task branch by a command that ends in
+   `2>&1`. Here `2>` was judged a base that does not carry the epic.
+2. **Where repairs go when the main branch merges into the epic with conflicts** — package, rule
+   `git-workflow`, after «The main branch is merged into the epic branch…»: «A merge of the main
+   branch that needs repairs leaves the epic branch with the merge commit alone; the task branch is
+   taken from that tip before the first repair. The folder is created in the task branch, named by
+   it.» The same sentence closes the refusal `epic_has_main_tip` of
+   `hooks/git-guard-delivery-epic.sh`. Here the repairs and the folder lay on the epic branch; the
+   folder was moved by a rename, and the approval mark of the plan stayed with the old name — the
+   engine reads RT-3508 as a task without an approved plan.
+3. **The order of steps 11–12 of the delivery loop** — tree, the same proposal as RT-3478 item 1,
+   now repeated: the push set run after the take-apart found two reds, and their fixes came after
+   the take-apart commit.
+4. **What squeezing is** — package, rule `component-structure`, after «A component that grew past
+   the file limit is split, not squeezed.»: «Moving comments out, dropping blank lines and joining
+   lines are squeezing: the limit is met and the component is as large as before.»
+5. **A story brings a reference** (optional) — tree, rule `rt-tools-storybook`, after «A component
+   is counted apart from its family…»: «A component without a story gets a story or a named reason,
+   and a story brings a snapshot reference. Where the plan keeps the references, the component is
+   named in the component list with its reason, and its story is work of its own.»

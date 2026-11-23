@@ -6,7 +6,6 @@ import {
     computed,
     DestroyRef,
     ElementRef,
-    HostListener,
     inject,
     input,
     InputSignal,
@@ -71,6 +70,10 @@ const DRAG_LEAVE_DEBOUNCE_MS: number = 80;
     hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
+        '(dragenter)': 'onDragOver($event)',
+        '(dragover)': 'onDragOver($event)',
+        '(dragleave)': 'onDragLeave($event)',
+        '(drop)': 'onDrop($event)',
     },
 })
 export class RtFileDropComponent {
@@ -117,8 +120,6 @@ export class RtFileDropComponent {
         this.#destroyRef.onDestroy((): void => this.#clearLeaveTimer());
     }
 
-    @HostListener('dragenter', ['$event'])
-    @HostListener('dragover', ['$event'])
     protected onDragOver(event: DragEvent): void {
         if (this.disabled() || !this.#isFileDrag(event)) {
             return;
@@ -135,7 +136,6 @@ export class RtFileDropComponent {
         }
     }
 
-    @HostListener('dragleave', ['$event'])
     protected onDragLeave(event: DragEvent): void {
         if (!this.isDragging()) {
             return;
@@ -148,7 +148,6 @@ export class RtFileDropComponent {
         }, DRAG_LEAVE_DEBOUNCE_MS);
     }
 
-    @HostListener('drop', ['$event'])
     protected onDrop(event: DragEvent): void {
         if (this.disabled() || !this.#isFileDrag(event)) {
             return;

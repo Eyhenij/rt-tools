@@ -56,6 +56,9 @@ import {
 
 const BEM_BLOCK: string = 'rt-data-table';
 
+/** Ключ записи по умолчанию — свойство `id`. */
+const DEFAULT_KEY_EXP: string = 'id';
+
 /**
  * Таблица записей первого кита во втором — без Material.
  *
@@ -156,7 +159,7 @@ export class RtDataTableComponent<
     });
 
     /** Свойство, которым записи отличаются друг от друга. */
-    public readonly keyExp: InputSignal<NonNullable<KEY>> = input('id' as NonNullable<KEY>);
+    public readonly keyExp: InputSignal<NonNullable<KEY>> = input(DEFAULT_KEY_EXP as NonNullable<KEY>);
 
     public readonly entities: InputSignalWithTransform<ENTITY_TYPE[], ENTITY_TYPE[] | null | undefined> = input.required<
         ENTITY_TYPE[],
