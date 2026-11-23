@@ -43,6 +43,14 @@
 # going, and such a draft is lawful. The machine account's name is taken from the tree's profile; a
 # tree that did not name it gets no second tier at all.
 #
+# The machine account is shared by every session of the tree, so the second tier skips a draft of
+# another copy's work: a branch this copy's journal of HEAD never shows and another copy's journal
+# does. On 20–21.11 one session was refused 17 times for #3453, whose branch it never had: the
+# neighbour that led it had moved on along its chain. A draft whose head lies in a task branch
+# another working copy holds — the branch itself or a later branch of its chain — is skipped too:
+# that copy's session leads it now. A copy whose directory is gone holds nothing, and a branch no
+# copy remembers is judged as before.
+#
 # The host's answer is put into a cache for a minute: the guard fires at every end of a turn, and a
 # network call on each of them is paid for with the owner's time.
 #
@@ -60,6 +68,13 @@ active="$(printf '%s' "$input" | jq -r '.stop_hook_active // false' 2>/dev/null)
 [ "$active" = "true" ] && exit 0
 
 root="${CLAUDE_PROJECT_DIR:-.}"
+# The copy the session works in is the directory the hook input names: a session of a linked copy
+# may run with the project directory of the main one, and its own journal of HEAD lies in its copy.
+dir="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)"
+if [ -n "$dir" ] && [ -d "$dir" ]; then
+    top="$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null)"
+    [ -n "$top" ] && root="$top"
+fi
 cd "$root" 2>/dev/null || exit 0
 git rev-parse --git-dir >/dev/null 2>&1 || exit 0
 
@@ -274,6 +289,34 @@ judge_abandoned() {
     [ -z "$list_json" ] && return 0
     printf '%s' "$list_json" | jq -e 'type == "array"' >/dev/null 2>&1 || return 0
 
+    # The branches checked out in the other working copies of this repository. This copy is left
+    # out: a draft its own chain left behind stays its own. A copy marked `prunable` has lost its
+    # directory: no session works there, and it holds nothing.
+    here="$(git rev-parse --show-toplevel 2>/dev/null)"
+    # Each other copy as «directory TAB branch»; the branch is empty on a detached head.
+    copies="$(git worktree list --porcelain 2>/dev/null | awk -v here="$here" '
+        function out() { if (w != "" && !p && w != here) print w "\t" b }
+        /^worktree / { out(); w = substr($0, 10); b = ""; p = 0; next }
+        /^branch refs\/heads\// { b = substr($0, 19); next }
+        /^prunable/ { p = 1 }
+        END { out() }')"
+    # Only a task branch holds a chain: a copy of a role cut from a draft's head leads nothing.
+    held="$(printf '%s\n' "$copies" | cut -f2 | grep -E '^[A-Z]+-[0-9]+-' || true)"
+
+    # The branches a copy has had checked out, by its journal of HEAD: both sides of every switch.
+    # A copy created on its branch writes no name, and that branch shows up as the side a later
+    # switch leaves.
+    journal() {
+        git -C "$1" reflog show --format=%gs HEAD 2>/dev/null | awk '
+            /^checkout: moving from / { sub(/^checkout: moving from /, ""); i = index($0, " to "); if (i) { print substr($0, 1, i - 1); print substr($0, i + 4) } }'
+    }
+    taken="$(journal .)"
+    elsewhere="$(printf '%s\n' "$copies" | while IFS='	' read -r dir current; do
+        [ -n "$dir" ] || continue
+        [ -n "$current" ] && printf '%s\n' "$current"
+        journal "$dir"
+    done)"
+
     left=''
     count=0
     while IFS='	' read -r number ref sha; do
@@ -281,6 +324,22 @@ judge_abandoned() {
         [ -n "$ref" ] || continue
         [ -n "$sha" ] || continue
         [ "$ref" = "$branch" ] && continue
+        # This copy never had the branch, and another copy did: the draft is that copy's work. A
+        # branch no copy remembers is judged, as before.
+        if ! printf '%s\n' "$taken" | grep -qxF -- "$ref"; then
+            printf '%s\n' "$elsewhere" | grep -qxF -- "$ref" && continue
+        fi
+        # Another copy holds the branch, or a branch of the chain built on it: the draft is that
+        # copy's session's work.
+        printf '%s\n' "$held" | grep -qxF -- "$ref" && continue
+        on_chain=''
+        while IFS= read -r other; do
+            [ -n "$other" ] || continue
+            git merge-base --is-ancestor "$sha" "refs/heads/$other" 2>/dev/null && on_chain=yes && break
+        done <<HELD
+$held
+HELD
+        [ -n "$on_chain" ] && continue
 
         [ "$(carries_folder "$ref")" = "no" ] || continue
         [ "$(run_verdict "$ref" "$sha")" = "green" ] || continue

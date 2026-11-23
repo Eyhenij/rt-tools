@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.38.0 · checks/check-state-next.mjs · 2bf9e61be360 · правится надстройкой, не здесь
+// rt-kit v0.39.0 · checks/check-state-next.mjs · 2bf9e61be360 · правится надстройкой, не здесь
 /**
  * The check that the section of a state names the next move.
  *

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.38.0 · pitfalls/git-workflow-secrets.md · 969b342766c5 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · pitfalls/git-workflow-secrets.md · 969b342766c5 · правится надстройкой, не здесь -->
 # Keys of external services — cold part
 
 The pattern `git-workflow-secrets` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.

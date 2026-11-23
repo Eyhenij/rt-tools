@@ -1,6 +1,6 @@
 # The measures of the executable scenario
 
-**Status:** in force · **Revision:** 2026-11-15 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-22 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `work-conduct`, `verifiability`
 **Procedures:** none
@@ -129,3 +129,5 @@ None.
   deadlocks.
 - 2026-11-15 — the count of missed stops after the layout: a branch without the engine is not
   judged by it.
+- 2026-11-22 — a turn the owner ended by Esc is no missed stop, since Esc releases the turn; a typed
+  word to stop releases none.

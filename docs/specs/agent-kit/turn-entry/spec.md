@@ -1,6 +1,6 @@
 # The handover of a session and the entry into a new one
 
-**Status:** in force · **Revision:** 2026-08-21 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-22 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Procedures:** none
 **Laws:** `work-conduct`, `verifiability`
@@ -73,7 +73,7 @@ session.
   translated by tasks of their own; a tree with a Russian map of its own is not left without the
   check at a new edition of the package. Either of the two names is enough.
 - **The map names the mandatory action of every state and the two ends of a turn: the end of the
-  scenario and the owner's stop word.** A list of the states without the mandatory actions answers
+  scenario and the owner's interrupt by Esc.** A list of the states without the mandatory actions answers
   the question "where are we", while the answer needed is to the question "what to do"; without the
   ends of a turn it reads as permission to stop anywhere.
 - **A map that names a former exit of a turn as an item is refused.** A question, a guard's refusal,
@@ -207,6 +207,8 @@ from the root of the current tree.
 
 ## History of changes
 
+- 2026-11-22 — the second end of a turn in the map is the owner's interrupt by Esc, «the owner
+  interrupted the turn», in place of the stop word: no typed word stops the work.
 - 2026-11-15 — the map names two ends of a turn instead of four exits, and a map that lists a former
   exit is refused: scenario `SC-AK-1547`.
 - 2026-09-15 — the last run of the main branch at the launch: two rules, scenarios `SC-AK-1105` and `SC-AK-1106`, the bindings.

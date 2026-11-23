@@ -1,4 +1,4 @@
-<!-- rt-kit v0.38.0 · pitfalls/spec-driven.md · 0ef87848cda2 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · pitfalls/spec-driven.md · 0ef87848cda2 · правится надстройкой, не здесь -->
 # Project documentation — cold part
 
 Pitfalls: traps already stepped on. Loaded not with the rule but on demand — an ordinary

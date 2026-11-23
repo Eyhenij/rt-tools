@@ -93,7 +93,7 @@ Covered: `projects/agent-kit/tests/turn-entry-load.test.sh`.
 
 Given the map has arrived in the context
 When the session looks in it for what a turn ends with
-Then it sees both ends — the end of the scenario and the stop word — and what each is confirmed by
+Then it finds both ends — the end of the scenario and the interrupt by Esc — and what each is confirmed by
 
 Covered: `projects/agent-kit/tests/turn-entry-load.test.sh`.
 

@@ -1,6 +1,6 @@
 # The recorded turns
 
-**Status:** in force · **Revision:** 2026-11-15 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-22 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `work-conduct`, `verifiability`
 **Procedures:** none
@@ -21,8 +21,7 @@ the hook shows at once which stop it lets through again and which lawful end it 
   one turn with their role, time, the name of a call, its answer code and the owner's word.
 - **A class label** — the owner's word written as its class: `<nudge>`, `<question>`, `<abuse>`,
   `<order:RT-N>`, `<refusal>`, `<menu-answer:N>`.
-- **A lawful end** — a turn the owner ended: a stop word, typed or chosen in a menu, or the end of the
-  epic measured by its history.
+- **A lawful end** — a turn the owner ended by Esc, or the end of the epic measured by its history.
 - **The state of a fixture tree** — the state of the scenario a fixture tree is built in: the request
   not opened, the task taken, a stage going on, the folder taken apart, the work handed in, the end
   of the epic.
@@ -36,13 +35,13 @@ silent.
 
 - **A turn that wrote to the tree and stops while the scenario is open is held, whatever its last words are.**
 - **The refusal of a held turn names the measured state and one move: the current step with its command, or the action of the state.**
-- **A stop word of the owner, typed or chosen in a menu, releases the turn.**
+- **A word of the owner that asks to stop or to wait, typed or chosen in a menu, releases no turn that wrote while the scenario is open.**
 - **A session that wrote nothing releases the turn on a question or on swearing of the owner.**
 - **The end of the epic releases the turn: every task lies in the epic branch, and the PR of the epic into the main branch exists.**
 - **A menu of a refusal held twice in a row releases the turn; held once, it does not.**
 - **The menu hook lets the menu of the exit check through and holds an option that removes or weakens a check.**
 - **The model hook on Stop does not judge open work and holds a question whose answer is already given.**
-- **A recorded turn carries no text the owner typed: the word is a class label or a phrase of at most four words that starts with a stop word.**
+- **A recorded turn carries no text the owner typed: the word is a class label or a phrase of at most four words that asks to stop or to wait.**
 
 ## What is out of scope
 
@@ -102,11 +101,14 @@ Not applicable: one turn is run at a time.
 
 ## Open questions
 
-- Q-1. When another check refuses the next step twice, the refusal names one menu
-  to the owner with the options «отложить RT-N» and «стоп». The engine does not name it
-  yet; step 3.8 of RT-3329 writes it, and the case of the deadlock of RT-3304 stays red until then.
+None. Q-1, the menu of a step another check refuses twice, is closed: the engine names it, and
+the case of the deadlock of RT-3304 checks it. Its number is not given again.
 
 ## History of changes
 
 - 2026-11-15 — the subdomain was started with the stop kinds, the six live turns of RT-3276 and the
   lawful ends of a turn.
+- 2026-11-22 — the recorded words «не сейчас», «стоп», «Стой», «жди конца набора», «жди соседа»,
+  «Остановись на логической точке» and «Не сейчас», and the menu answer «стоп», now hold the turn:
+  no typed word stops the work, and the owner stops it by Esc. The menu of a refusal offers
+  «отложить RT-N» and «подскажу путь».
