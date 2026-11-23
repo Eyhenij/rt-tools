@@ -362,5 +362,6 @@ says each copy installs its own; the plan's «10» for 11 — a one-off typo.
    a bare file name of `@angular/common` in a findings file turned the push set red.
 6. **The tree's PR call prompts at night** — tree, `task-delivery-loop-run`.
 7. **An analysis is written by `cargo-writer` from the template and sent in the same turn** —
-   package, `rules/turn-conduct.md` and `hooks/turn-judge.md`; both incidents of this night lie in
-   the analyses directory.
+   package, `rules/turn-conduct.md` and `hooks/turn-judge.md`; the two incidents of this night are
+   «В автономной работе исполнитель возвращал решения владельцу…» and «Разбор написан в обход роли
+   и шаблона и не ушёл в приёмник», both dated 23 November 2026 in the analyses directory.
