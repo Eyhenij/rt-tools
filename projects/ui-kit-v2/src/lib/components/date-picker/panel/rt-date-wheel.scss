@@ -49,7 +49,7 @@
         .rt-date-panel__column {
             height: calc(var(--rt-date-panel-wheel-row) * 5);
             gap: 0;
-            mask-image: linear-gradient(transparent, #000 40%, #000 60%, transparent);
+            mask-image: linear-gradient(transparent, black 40%, black 60%, transparent);
             max-block-size: none;
             padding-block: calc(var(--rt-date-panel-wheel-row) * 2);
             scroll-snap-type: y mandatory;

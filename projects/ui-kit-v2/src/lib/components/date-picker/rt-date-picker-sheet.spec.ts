@@ -18,7 +18,7 @@ class NarrowBreakpointsService {
 type TFixture = ComponentFixture<RtDatePickerComponent>;
 
 /** Сколько барабан ждёт без прокрутки, прежде чем счесть значение выбранным, — с запасом. */
-const SETTLE_MS: number = 200;
+const WHEEL_WAIT_MS: number = 200;
 /** Высота строки барабана в окружении без раскладки. */
 const ROW_PX: number = 40;
 const HOURS: number = 24;
@@ -57,7 +57,7 @@ function spin(fixture: TFixture, id: string, index: number): void {
     const column: HTMLElement = node(fixture, id) as HTMLElement;
     column.scrollTop = index * ROW_PX;
     column.dispatchEvent(new Event('scroll'));
-    jest.advanceTimersByTime(SETTLE_MS);
+    jest.advanceTimersByTime(WHEEL_WAIT_MS);
     settle(fixture);
 }
 

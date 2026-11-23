@@ -16,7 +16,7 @@ import {
 import { rtDateWheelHome, rtDateWheelIndex, rtDateWheelNearest, rtDateWheelTop, rtDateWheelValue } from '../rt-date-wheel.logic';
 
 /** Сколько колонка должна простоять без прокрутки, чтобы значение под полосой считалось выбранным. */
-const SETTLE_MS: number = 120;
+const WHEEL_SETTLE_MS: number = 120;
 /** Высота строки барабана там, где её нечем измерить: в окружении без раскладки. */
 const FALLBACK_ROW_PX: number = 40;
 
@@ -82,7 +82,7 @@ export class RtDateWheelDirective {
             return;
         }
         this.#clearTimer();
-        this.#timer = setTimeout((): void => this.#settle(), SETTLE_MS);
+        this.#timer = setTimeout((): void => this.#settle(), WHEEL_SETTLE_MS);
     }
 
     /** Палец лёг на колонку или отпущен. Отпущенный, он запускает ожидание остановки заново. */
