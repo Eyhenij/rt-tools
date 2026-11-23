@@ -3,20 +3,22 @@
 ## Где мы
 
 - **State:** `этап-идёт`
-- **Stage:** 1 — база берётся из веток, которые держит хостинг
-- **Done:** план одобрен 23.11 меню «Одобряю план RT-3465»; `plan-red` — все шесть проверок
-  красные; ветка пересобрана на вершине RT-3427
-- **Next step:** шаг 1.1 — сценарий ссылки удалённой ветки и чистки ссылок между набором и отправкой
-- **Uncommitted:** ход работы после одобрения
+- **Stage:** 2 — отправка судит дерево от базы своего набора
+- **Done:** этап 1 — выбор базы один раз за вызов спрашивает `git ls-remote --heads` и сверяет
+  имя целиком; без ответа хостинга база по ссылкам копии и строка на stderr; SC-AK-1850 — 4 ok,
+  SC-AK-1851 — 2 ok, набор отправки — 90 ok, 0 провалов; SC-AK-1340 о ссылке снятой ветки
+  переписан
+- **Next step:** шаг 2.1 — запись базы набора и её коммита, проверка отправки берёт их
+- **Uncommitted:** nothing
 - **PR:** not open yet
 
 ## Шаги
 
 - `[x]` done · `[>]` going on right now · `[ ]` not begun
 
-- [>] 1.1 A ref of a branch removed on the host is no base, and a prune between the set and the push changes nothing
-- [ ] 1.2 With no answer from the host the run ahead takes the refs of the copy and prints the line
-- [ ] 2.1 The push guard takes the base of the run ahead for the same tree when the lower branch is merged and removed or a nearer branch appears during the set
+- [x] 1.1 A ref of a branch removed on the host is no base, and a prune between the set and the push changes nothing
+- [x] 1.2 With no answer from the host the run ahead takes the refs of the copy and prints the line
+- [>] 2.1 The push guard takes the base of the run ahead for the same tree when the lower branch is merged and removed or a nearer branch appears during the set
 - [ ] 2.2 The refusal «No green mark» names the base of the push and the base of the last run ahead
 - [ ] 3.1 The scenarios stand in the description
 - [ ] 3.2 No scenario keeps the ref of a removed branch as the base

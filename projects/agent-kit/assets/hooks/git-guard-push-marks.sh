@@ -34,13 +34,25 @@
 #     A tree whose host signs otherwise names the signature in `RT_PUSH_HOST_COMMITTER`.
 #
 # What this trusts: a branch on the remote got there through this set. The answer is read from the
-# remote refs of the working copy after one fetch: no call to the host, and it works on the first
-# push, when no request is open yet. A head that is no branch gets the main branch.
+# remote refs of the working copy after one fetch, and it works on the first push, when no request
+# is open yet. A head that is no branch gets the main branch.
+#
+# A ref of the copy is a candidate only while the host still holds its branch: one call of
+# `git ls-remote --heads` per call of this function, the name matched whole. The fetch keeps
+# `--no-prune` — a prune in one copy changes what a neighbouring copy measures — so a branch the
+# host removed after its merge stays as a ref here. Taken as the base, it gave the set one base and
+# the push another once a neighbour pruned the copy: a green set of half an hour was refused as
+# «No green mark». With no answer from the host the refs of the copy decide, and a line on stderr
+# says so.
 rt_push_base() {
-    local main="$1" branch own ref name count best best_count merge merged='' host
+    local main="$1" branch own ref name count best best_count merge merged='' host live answered=1
     host="${RT_PUSH_HOST_COMMITTER:-GitHub <noreply@github.com>}"
     git fetch --quiet --no-prune origin 2>/dev/null
     git rev-parse --verify --quiet "refs/remotes/origin/$main" >/dev/null 2>&1 || return 0
+    live="$(git ls-remote --heads origin 2>/dev/null)" || answered=0
+    live="$(printf '%s\n' "$live" | cut -f2)"
+    [ "$answered" = 1 ] ||
+        printf 'push base: the host did not answer — the base is taken from the refs of the copy\n' >&2
 
     best="origin/$main"
     best_count="$(git rev-list --count "refs/remotes/origin/$main..HEAD" 2>/dev/null)"
@@ -69,6 +81,8 @@ $(git for-each-ref --merged "$merge^2" --no-merged "$merge^1" --format='%(refnam
             '' | HEAD | "$main" | "$branch" | *[!A-Za-z0-9._/-]*) continue ;;
         esac
         printf '%s\n' "$merged" | grep -qxF -- "$ref" && continue
+        # A branch the host no longer holds is no base: its ref outlives it in the copy.
+        [ "$answered" = 0 ] || printf '%s\n' "$live" | grep -qxF -- "refs/heads/$name" || continue
         # A branch that carries the own copy stands on this one — unless the two are one commit:
         # a branch pushed before its first commit still lies at the tip it was taken from.
         [ -n "$own" ] && [ "$(git rev-parse "$own")" != "$(git rev-parse "$ref")" ] &&
