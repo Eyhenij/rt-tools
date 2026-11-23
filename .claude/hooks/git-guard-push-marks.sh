@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/git-guard-push-marks.sh · 923fab610e8f · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/git-guard-push-marks.sh · 63b7a2b915da · правится надстройкой, не здесь
 # The base of the push set and the marks of a green run, shared by the push guard and by the
 # command that runs the set ahead (`git-guard-push-ahead.sh`).
 #
@@ -84,10 +84,15 @@ $(git for-each-ref --merged "$merge^2" --no-merged "$merge^1" --format='%(refnam
         printf '%s\n' "$merged" | grep -qxF -- "$ref" && continue
         # A branch the host no longer holds is no base: its ref outlives it in the copy.
         [ "$answered" = 0 ] || printf '%s\n' "$live" | grep -qxF -- "refs/heads/$name" || continue
-        # A branch that carries the own copy stands on this one — unless the two are one commit:
-        # a branch pushed before its first commit still lies at the tip it was taken from.
+        # A branch stands on this one when the own copy lies on its first-parent line: it was taken
+        # from this one and went on by plain commits. A copy brought in by a merge — of the host or
+        # of anyone — does not drop it, nor does the branch lying under the head or at it: what
+        # the head holds already passed the set. A branch at the commit of the copy stays too: a
+        # branch pushed before its first commit still lies at the tip it was taken from.
         [ -n "$own" ] && [ "$(git rev-parse "$own")" != "$(git rev-parse "$ref")" ] &&
-            git merge-base --is-ancestor "$own" "$ref" 2>/dev/null && continue
+            ! git merge-base --is-ancestor "$ref" HEAD 2>/dev/null &&
+            git rev-list --first-parent "$ref" --not "$own^@" 2>/dev/null |
+            grep -qxF -- "$(git rev-parse "$own")" && continue
         if ! git merge-base --is-ancestor "$ref" HEAD 2>/dev/null; then
             [ -n "$(git rev-list -n 1 --first-parent --merges --fixed-strings --committer="$host" \
                 "HEAD..$ref" 2>/dev/null)" ] || continue

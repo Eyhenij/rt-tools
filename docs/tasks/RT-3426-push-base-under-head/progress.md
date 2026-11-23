@@ -2,23 +2,24 @@
 
 ## Где мы
 
-- **State:** `замысел-записан`
-- **Stage:** 1 — A branch carries the own copy by a merge or under the head, and it stays a base
+- **State:** `этап-идёт`
+- **Stage:** 2 — The description
 - **Done:** план одобрен владельцем 23.11 («Одобряю план RT-3426»), plan-red: все семь проверок
-  красные, отметка одобрения записана
-- **Next step:** 1.1 — случаи в наборе базы, затем условие в `rt_push_base`
+  красные. Этап 1: 8 новых случаев в наборе базы, шесть из них красные на коде до правки; после
+  правки набор базы 39 ok, набор отправки 84 ok, общий счёт SC-AK-1340 — 28
+- **Next step:** 2.1 — правило описания называет новое условие
 - **Uncommitted:** nothing
 - **Waiting for the owner:** nothing
 - **PR:** not open yet
 
 ## Шаги
 
-- [>] 1.1 The epic under the head that carries the copy is the base
-- [ ] 1.2 The epic ahead of the head that carries the copy by a host merge is the base, whether the task took the epic in or not
-- [ ] 1.3 The head at the commit of the epic takes the epic as the base, and the copy removed on the host changes nothing
-- [ ] 1.4 A branch taken from this one by plain commits stays dropped, a host merge of a higher branch into it included
-- [ ] 1.5 No former case of the scenario is lost: the 20 cases of the push suite and the 8 new ones
-- [ ] 2.1 The rule of the description names the new condition
+- [x] 1.1 The epic under the head that carries the copy is the base
+- [x] 1.2 The epic ahead of the head that carries the copy by a host merge is the base, whether the task took the epic in or not
+- [x] 1.3 The head at the commit of the epic takes the epic as the base, and the copy removed on the host changes nothing
+- [x] 1.4 A branch taken from this one by plain commits stays dropped, a host merge of a higher branch into it included
+- [x] 1.5 No former case of the scenario is lost: the 20 cases of the push suite and the 8 new ones
+- [>] 2.1 The rule of the description names the new condition
 - [ ] 2.2 The scenario names the cases
 
 ## Решения по ходу

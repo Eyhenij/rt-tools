@@ -307,4 +307,108 @@ gate "SC-AK-1852 — база сдвинулась во время шага: о�
 report "SC-AK-1852 — тяжёлый шаг при сдвиге базы прогнан один раз" "$(grep -c heavy "$MOVE_RUNS")" 1
 rm -rf "$MOVE" "$MOVE_REMOTE" "$MOVE_RUNS"
 
+# --- SC-AK-1340. Ветка эпика несёт свою копию ветки, а база — она ----------------------------------
+# 19.11 копия ветки задачи на сервере попала в ветку эпика слиянием хоста чужой заявки, и выбор
+# отбросил ветку эпика как стоящую на этой: набор считался от главной и шёл полностью. Ветка
+# отбрасывается за свою копию, только когда копия лежит на её линии первых родителей и ветка не
+# под вершиной.
+copy_git() {
+    git -C "$COPY" -c user.name=probe -c user.email=probe@example.invalid -c commit.gpgsign=false "$@"
+}
+copy_host_merge() {
+    GIT_COMMITTER_NAME=GitHub GIT_COMMITTER_EMAIL=noreply@github.com copy_git merge -q --no-ff -m "$@" 2>/dev/null
+}
+COPY_REMOTE="$(bare_remote)" || exit 1
+COPY="$(fixture RT-60-epic)"
+copy_git remote add origin "$COPY_REMOTE"
+fixture_commit "$COPY" epic.txt эпик 'feat: ветка эпика'
+copy_git push -q origin main RT-60-epic 2>/dev/null
+copy_git checkout -q -b RT-61-task RT-60-epic 2>/dev/null
+fixture_commit "$COPY" task61.txt задача 'feat: задача'
+copy_git push -q origin RT-61-task 2>/dev/null
+copy_git checkout -q RT-60-epic 2>/dev/null
+copy_host_merge 'feat: заявка 61 влита' RT-61-task
+copy_git push -q origin RT-60-epic 2>/dev/null
+copy_git checkout -q RT-61-task 2>/dev/null
+fixture_commit "$COPY" task61b.txt правка 'feat: правка после заявки'
+report "SC-AK-1340 — эпик впереди несёт копию слиянием хоста: задача эпик не принимала" \
+    "$(push_base "$COPY")" origin/RT-60-epic
+# Копию принесла в эпик чужая заявка, взятая от копии этой ветки, — как 19.11.
+copy_git checkout -q -b RT-63-task origin/RT-60-epic 2>/dev/null
+fixture_commit "$COPY" task63.txt задача 'feat: вторая задача'
+copy_git push -q origin RT-63-task 2>/dev/null
+copy_git checkout -q -b RT-64-other origin/RT-63-task 2>/dev/null
+fixture_commit "$COPY" other.txt чужая 'feat: чужая заявка от копии задачи'
+copy_git push -q origin RT-64-other 2>/dev/null
+copy_git checkout -q RT-60-epic 2>/dev/null
+copy_git merge -q --ff-only origin/RT-60-epic 2>/dev/null
+copy_host_merge 'feat: заявка 64 влита' RT-64-other
+copy_git push -q origin RT-60-epic 2>/dev/null
+copy_git checkout -q RT-63-task 2>/dev/null
+fixture_commit "$COPY" task63b.txt правка 'feat: правка второй задачи'
+report "SC-AK-1340 — эпик впереди несёт копию слиянием хоста чужой заявки: база — ветка эпика" \
+    "$(push_base "$COPY")" origin/RT-60-epic
+copy_git merge -q -m 'feat: задача приняла ветку эпика' origin/RT-60-epic 2>/dev/null
+fixture_commit "$COPY" task63c.txt правка 'feat: правка после приёма эпика'
+report "SC-AK-1340 — эпик под вершиной несёт копию: база — ветка эпика" "$(push_base "$COPY")" origin/RT-60-epic
+copy_git checkout -q -b RT-65-side origin/RT-60-epic 2>/dev/null
+fixture_commit "$COPY" side.txt сосед 'feat: соседняя задача'
+copy_git push -q origin RT-65-side 2>/dev/null
+copy_git checkout -q RT-60-epic 2>/dev/null
+copy_git merge -q --ff-only origin/RT-60-epic 2>/dev/null
+copy_host_merge 'feat: заявка 65 влита' RT-65-side
+copy_git push -q origin RT-60-epic 2>/dev/null
+copy_git checkout -q RT-63-task 2>/dev/null
+fixture_commit "$COPY" task63d.txt правка 'feat: правка после ухода эпика'
+report "SC-AK-1340 — эпик впереди несёт копию слиянием хоста: задача эпик принимала" \
+    "$(push_base "$COPY")" origin/RT-60-epic
+# Хостинг снял копию после слияния, ссылка в копии осталась: решает линия первых родителей.
+git -C "$COPY_REMOTE" update-ref -d refs/heads/RT-63-task 2>/dev/null
+report "SC-AK-1340 — копия снята на хостинге, ссылка осталась: база — ветка эпика" \
+    "$(push_base "$COPY")" origin/RT-60-epic
+# Вершина стоит на коммите ветки эпика, которая несёт копию: база — ветка эпика, набор пуст.
+copy_git checkout -q -b RT-66-flat origin/RT-60-epic 2>/dev/null
+fixture_commit "$COPY" flat.txt ровно 'feat: задача, влитая целиком'
+copy_git push -q origin RT-66-flat 2>/dev/null
+copy_git checkout -q RT-60-epic 2>/dev/null
+copy_git merge -q --ff-only origin/RT-60-epic 2>/dev/null
+copy_host_merge 'feat: заявка 66 влита' RT-66-flat
+copy_git push -q origin RT-60-epic 2>/dev/null
+copy_git checkout -q RT-66-flat 2>/dev/null
+copy_git reset -q --hard origin/RT-60-epic 2>/dev/null
+report "SC-AK-1340 — вершина на эпике: база — ветка эпика" "$(push_base "$COPY")" origin/RT-60-epic
+rm -rf "$COPY" "$COPY_REMOTE"
+
+# Ветка, взятая от этой обычными коммитами, несёт копию на своей линии первых родителей: она не
+# база, и после того, как хост влил в неё ветку выше по стопке, — тоже.
+above_git() {
+    git -C "$ABOVE" -c user.name=probe -c user.email=probe@example.invalid -c commit.gpgsign=false "$@"
+}
+ABOVE_REMOTE="$(bare_remote)" || exit 1
+ABOVE="$(fixture RT-80-epic)"
+above_git remote add origin "$ABOVE_REMOTE"
+fixture_commit "$ABOVE" epic.txt эпик 'feat: ветка эпика'
+above_git push -q origin main RT-80-epic 2>/dev/null
+above_git checkout -q -b RT-81-task RT-80-epic 2>/dev/null
+fixture_commit "$ABOVE" task.txt задача 'feat: задача'
+above_git push -q origin RT-81-task 2>/dev/null
+above_git checkout -q -b RT-82-above RT-81-task 2>/dev/null
+fixture_commit "$ABOVE" above.txt выше 'feat: ветка над задачей'
+above_git push -q origin RT-82-above 2>/dev/null
+above_git checkout -q RT-81-task 2>/dev/null
+fixture_commit "$ABOVE" task2.txt правка 'feat: правка задачи'
+report "SC-AK-1340 — ветка, взятая от этой, не база: база — ветка эпика" "$(push_base "$ABOVE")" origin/RT-80-epic
+above_git checkout -q -b RT-83-higher RT-82-above 2>/dev/null
+fixture_commit "$ABOVE" higher.txt ещё 'feat: ветка выше по стопке'
+above_git push -q origin RT-83-higher 2>/dev/null
+above_git checkout -q RT-82-above 2>/dev/null
+GIT_COMMITTER_NAME=GitHub GIT_COMMITTER_EMAIL=noreply@github.com \
+    above_git merge -q --no-ff -m 'feat: заявка 83 влита' RT-83-higher 2>/dev/null
+above_git push -q origin RT-82-above 2>/dev/null
+above_git checkout -q RT-81-task 2>/dev/null
+fixture_commit "$ABOVE" task3.txt правка 'feat: правка ревью задачи'
+report "SC-AK-1340 — ветка, взятая от этой, не база и после слияния хоста сверху" \
+    "$(push_base "$ABOVE")" origin/RT-80-epic
+rm -rf "$ABOVE" "$ABOVE_REMOTE"
+
 suite_result "база набора перед пушем"
