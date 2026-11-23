@@ -100,7 +100,7 @@
         <div
             rtElem="panel"
             qa-dataid="multiselect-panel"
-            [rtMod]="{ toggles: look() === 'toggles', sheet: openedInSheet() }"
+            [rtMod]="{ toggles: look() === 'toggles', sheet: openedInSheet(), cards: cards() }"
             [attr.role]="look() === 'toggles' ? null : 'listbox'"
             [style.--rt-multiselect-panel-max-height]="panelMaxHeight()"
             [attr.aria-label]="look() === 'toggles' ? null : ariaLabel()">
@@ -183,7 +183,7 @@
                                 <span rtElem="toggle-space"></span>
                             }
                         }
-                        @if (look() === 'list') {
+                        @if (look() === 'list' && !cards()) {
                             <input
                                 rtElem="checkbox"
                                 qa-dataid="multiselect-option-checkbox"
@@ -192,7 +192,26 @@
                                 [checked]="rowChecks()[i] === 'all'"
                                 [indeterminate]="rowChecks()[i] === 'some'" />
                         }
-                        <span rtElem="option-label" qa-dataid="multiselect-option-label">{{ row.option.label }}</span>
+                        <!-- Обёртка подписи и пояснения: у поля она прозрачна для раскладки, в карточке — столбец слева. -->
+                        <span rtElem="option-text">
+                            <span rtElem="option-label" qa-dataid="multiselect-option-label">{{ row.option.label }}</span>
+                            @if (cards() && row.option.description) {
+                                <span rtElem="option-description" qa-dataid="multiselect-option-description">
+                                    {{ row.option.description }}
+                                </span>
+                            }
+                        </span>
+                        @if (look() === 'list' && cards()) {
+                            <!-- Флажок кита только показывает выбор: нажатие принимает карточка, клавиши ведёт поле. -->
+                            <rt-checkbox
+                                rtElem="mark"
+                                qa-dataid="multiselect-option-mark"
+                                aria-hidden="true"
+                                inert
+                                [indeterminate]="rowChecks()[i] === 'some'"
+                                [ngModel]="rowChecks()[i] === 'all'"
+                                [ngModelOptions]="{ standalone: true }" />
+                        }
                         @if (look() === 'toggles') {
                             <!-- Переключатель только показывает выбор: нажатие принимает строка, как у флажка. -->
                             <rt-toggle-switch

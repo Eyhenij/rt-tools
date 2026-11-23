@@ -92,7 +92,13 @@
     }
 
     <ng-template #panelTpl>
-        <div rtElem="panel" role="listbox" [style.--rt-select-panel-max-height]="panelMaxHeight()" [attr.aria-label]="ariaLabel()">
+        <div
+            rtElem="panel"
+            qa-dataid="select-panel"
+            role="listbox"
+            [rtMod]="{ cards: cards() }"
+            [style.--rt-select-panel-max-height]="panelMaxHeight()"
+            [attr.aria-label]="ariaLabel()">
             @if (filter()) {
                 <div rtElem="filter">
                     <rt-input
@@ -143,16 +149,31 @@
                                 <span rtElem="toggle-space"></span>
                             }
                         }
-                        @if (optionTpl(); as tpl) {
-                            <span rtElem="option-content" qa-dataid="select-option-content">
-                                <ng-container
-                                    [ngTemplateOutlet]="tpl.templateRef"
-                                    [ngTemplateOutletContext]="{ $implicit: row.option, selected: row.option.value === value() }" />
-                            </span>
-                        } @else {
-                            <span rtElem="option-label">{{ row.option.label }}</span>
-                        }
-                        @if (row.option.value === value()) {
+                        <!-- Обёртка подписи и пояснения: у поля она прозрачна для раскладки, в карточке — столбец слева. -->
+                        <span rtElem="option-text">
+                            @if (optionTpl(); as tpl) {
+                                <span rtElem="option-content" qa-dataid="select-option-content">
+                                    <ng-container
+                                        [ngTemplateOutlet]="tpl.templateRef"
+                                        [ngTemplateOutletContext]="{ $implicit: row.option, selected: row.option.value === value() }" />
+                                </span>
+                            } @else {
+                                <span rtElem="option-label">{{ row.option.label }}</span>
+                            }
+                            @if (cards() && row.option.description) {
+                                <span rtElem="option-description" qa-dataid="select-option-description">{{ row.option.description }}</span>
+                            }
+                        </span>
+                        @if (cards()) {
+                            <!-- Радиокнопка кита только показывает выбор: нажатие принимает карточка, клавиши ведёт поле. -->
+                            <rt-radio-button
+                                rtElem="mark"
+                                qa-dataid="select-option-mark"
+                                aria-hidden="true"
+                                inert
+                                [value]="row.option.value"
+                                [checked]="row.option.value === value()" />
+                        } @else if (row.option.value === value()) {
                             <rt-icon rtElem="check" name="check" size="sm" aria-hidden="true" />
                         }
                     </li>

@@ -20,6 +20,57 @@
     line-height: var(--rt-leading-snug);
 }
 
+/// Список карточек выбора в нижней шторке: карточки стоят столбцом с одним зазором.
+@mixin sheet-card-list {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+    gap: var(--rt-space-sm);
+    list-style: none;
+}
+
+/// Карточка выбора в нижней шторке: рамка, подпись слева, отметка справа. Один вид на все списки
+/// выбора кита — у поля выбора, выбора нескольких, подсказок и видов сравнения он один и тот же.
+/// Высота 56px собрана из ступеней кита: габарит 48 и отступ 8.
+@mixin sheet-card {
+    display: flex;
+    min-height: calc(var(--rt-size-12) + var(--rt-space-sm));
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--rt-space-sm) var(--rt-space-md);
+    border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+    border-radius: var(--rt-radius-lg);
+    background: var(--rt-color-bg-surface);
+    color: var(--rt-color-text-primary);
+    cursor: pointer;
+    font-size: var(--rt-text-sm);
+    font-weight: var(--rt-font-weight-medium);
+    gap: var(--rt-space-md);
+}
+
+/// Выбранная карточка: рамка цвета действия, как у карточки радиокнопки.
+@mixin sheet-card-chosen {
+    border-color: var(--rt-color-action-primary);
+    background: var(--rt-color-bg-surface);
+}
+
+/// Подпись и пояснение карточки: столбец слева, пояснение второй строкой.
+@mixin sheet-card-text {
+    display: flex;
+    min-width: 0;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--rt-space-xs);
+}
+
+@mixin sheet-card-description {
+    color: var(--rt-color-text-muted);
+    font-size: var(--rt-text-xs);
+    font-weight: var(--rt-font-weight-regular);
+}
+
 /// Шаги скругления кита и их токены — те же шаги, что у типа `TRtRadius`. Токены названы
 /// целиком, а не склеены из шага: проверка графа токенов ищет имя, а не его начало.
 $radius-steps: (

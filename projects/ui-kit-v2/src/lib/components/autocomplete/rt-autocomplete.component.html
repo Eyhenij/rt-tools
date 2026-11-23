@@ -74,6 +74,7 @@
             rtElem="panel"
             qa-dataid="autocomplete-panel"
             role="listbox"
+            [rtMod]="{ cards: cards() }"
             [id]="panelId"
             [attr.aria-busy]="loading() || null"
             (scroll)="onPanelScroll($event)">

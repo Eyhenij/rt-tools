@@ -324,3 +324,66 @@ describe('Панель выбора в нижней шторке', (): void => {
         expect(pane?.style.width).toBe('');
     });
 });
+
+const DESCRIBED: ReadonlyArray<IRtSelect.Option<string>> = [
+    { label: 'Одобрить', value: 'approve', description: 'Правки можно вливать' },
+    { label: 'Комментарий', value: 'comment' },
+];
+
+function all(anchor: string): HTMLElement[] {
+    return Array.from(document.querySelectorAll<HTMLElement>(`[qa-dataid="${anchor}"]`));
+}
+
+describe('Карточки выбора селекта в шторке (вход sheetCards)', (): void => {
+    afterEach((): void => {
+        document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
+    });
+
+    it('SC-UKV-1714 — каждая опция — карточка с радиокнопкой кита справа, выбранная отмечена', (): void => {
+        const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true);
+        fixture.componentInstance.writeValue('msq');
+
+        press(fixture, 'select-trigger');
+
+        expect(document.querySelector('[qa-dataid="select-panel"]')?.classList).toContain('rt-select__panel--cards');
+        const marks: HTMLElement[] = all('select-option-mark');
+        expect(marks.length).toBe(3);
+        expect(
+            marks.map((mark: HTMLElement): string | null | undefined => mark.querySelector('[role="radio"]')?.getAttribute('aria-checked'))
+        ).toEqual(['false', 'true', 'false']);
+        // Отметка стоит после подписи: в строке карточки она справа.
+        const option: HTMLElement = all('select-option')[0];
+        expect(option.lastElementChild?.getAttribute('qa-dataid')).toBe('select-option-mark');
+        expect(option.querySelector('.rt-select__check')).toBeNull();
+    });
+
+    it('SC-UKV-1716 — пояснение опции стоит второй строкой карточки, у поля его нет', (): void => {
+        const inSheet: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { options: DESCRIBED });
+        press(inSheet, 'select-trigger');
+
+        expect(all('select-option-description').map((node: HTMLElement): string => node.textContent?.trim() ?? '')).toEqual([
+            'Правки можно вливать',
+        ]);
+
+        document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
+        TestBed.resetTestingModule();
+        const bySide: ComponentFixture<RtSelectComponent<string>> = setupSelect(false, { options: DESCRIBED });
+        press(bySide, 'select-trigger');
+
+        expect(all('select-option').length).toBe(2);
+        expect(all('select-option-description')).toEqual([]);
+    });
+
+    it('SC-UKV-1717 — sheetCards=false возвращает в шторку строки, какими список стоит у поля', (): void => {
+        const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { sheetCards: false, options: DESCRIBED });
+        fixture.componentInstance.writeValue('approve');
+
+        press(fixture, 'select-trigger');
+
+        expect(sheetOpen()).toBe(true);
+        expect(document.querySelector('[qa-dataid="select-panel"]')?.classList).not.toContain('rt-select__panel--cards');
+        expect(all('select-option-mark')).toEqual([]);
+        expect(all('select-option-description')).toEqual([]);
+        expect(all('select-option')[0].querySelector('.rt-select__check')).not.toBeNull();
+    });
+});

@@ -286,6 +286,11 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
         transform: booleanAttribute,
     });
 
+    /** Пункты карточками с отметкой справа — вид нижней шторки. Внутри корня решает корень. */
+    public readonly cards: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
+
     /* События окна самого по себе; внутри корня о действиях узнаёт корень и они молчат. */
     /** Применённые ключи в порядке отметок. */
     public readonly applied: OutputEmitterRef<unknown[]> = output<unknown[]>();
@@ -436,6 +441,7 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
                 autofocusSearch: computed((): boolean => this.autofocusSearch()),
                 titleWrap: computed((): boolean => this.titleWrap()),
                 highlightSearch: computed((): boolean => this.highlightSearch()),
+                cards: computed((): boolean => this.cards()),
             },
             apply: (keys: unknown[]): void => this.applied.emit(keys),
             cancel: (): void => this.cancelled.emit(),

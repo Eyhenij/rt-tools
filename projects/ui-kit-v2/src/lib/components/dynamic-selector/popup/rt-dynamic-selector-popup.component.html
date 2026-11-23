@@ -52,9 +52,18 @@
             <rt-spinner [diameter]="24" />
         </div>
     } @else if (hasRows()) {
-        <div rtElem="list" qa-dataid="dynamic-selector-options">
+        <div rtElem="list" qa-dataid="dynamic-selector-options" [rtMod]="{ cards: settings.cards() }">
             @for (row of rowItems(); track row.key) {
-                <div rtElem="row" [rtMod]="{ separated: row.separated, nowrap: !settings.titleWrap(), own: isSingle() && ownLabel() }">
+                <div
+                    rtElem="row"
+                    qa-dataid="dynamic-selector-row"
+                    [rtMod]="{
+                        separated: row.separated,
+                        nowrap: !settings.titleWrap(),
+                        own: isSingle() && ownLabel(),
+                        card: settings.cards() && isSingle() && ownLabel(),
+                        checked: row.ticked,
+                    }">
                     @if (isSingle()) {
                         <!-- Без переноса и при подсветке поиска подпись рисует окно рядом с кнопкой: подсказка
                              меряет обрезку своего узла, а подпись внутри кнопки окну недоступна. -->
@@ -62,6 +71,7 @@
                             rtElem="option"
                             qa-dataid="dynamic-selector-option"
                             [value]="row.key"
+                            [card]="settings.cards() && !ownLabel()"
                             [checked]="row.ticked"
                             [label]="ownLabel() ? '' : row.label"
                             [ariaLabel]="ownLabel() ? row.label : null"
@@ -83,6 +93,7 @@
                         <rt-checkbox
                             rtElem="option"
                             qa-dataid="dynamic-selector-option"
+                            [card]="settings.cards()"
                             [ngModel]="row.ticked"
                             [ngModelOptions]="{ standalone: true }"
                             (click)="onRowClick($event, row.entity)">

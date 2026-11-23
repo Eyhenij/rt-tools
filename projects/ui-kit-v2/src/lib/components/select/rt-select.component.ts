@@ -32,6 +32,7 @@ import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { IRtPopover } from '@rt-tools/ui-kit-v2/popover';
+import { RtRadioButtonComponent } from '@rt-tools/ui-kit-v2/radio-button';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtOptionList, TRtOptionListAction } from '@rt-tools/ui-kit-v2/core';
 import { rtTreeFind, rtTreeIsTree, rtTreeOpenFor, rtTreeRows, rtTreeSideKey, rtTreeToggle } from '@rt-tools/ui-kit-v2/core';
@@ -81,6 +82,7 @@ function nextPanelId(): number {
         RtIconComponent,
         RtInputComponent,
         RtPopoverDirective,
+        RtRadioButtonComponent,
         BlockDirective,
         ElemDirective,
         ModDirective,
@@ -130,6 +132,9 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
     protected readonly openBranches: WritableSignal<ReadonlySet<TValue>> = signal<ReadonlySet<TValue>>(new Set<TValue>());
 
     protected readonly isOpen: Signal<boolean> = computed((): boolean => this.popover().isOpen());
+
+    /** Список рисуется карточками: он открыт в шторке, и вход `sheetCards` их не выключил. */
+    protected readonly cards: Signal<boolean> = computed((): boolean => this.sheetCards() && this.popover().openedInSheet());
 
     /** Клавиатура списка: подсветка, клавиши открытия, id для `aria-activedescendant`, прокрутка к опции. */
     protected readonly optionList: RtOptionList = new RtOptionList({
@@ -245,6 +250,14 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
      * умолчанию; `false` оставляет список у поля на любой ширине.
      */
     public readonly sheet: InputSignalWithTransform<boolean, TBooleanInput> = input<boolean, TBooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
+    /**
+     * Карточки выбора в шторке: каждая опция — карточка с подписью, пояснением и радиокнопкой кита
+     * справа. Включены по умолчанию; `false` возвращает в шторку строки, какими список стоит у поля.
+     */
+    public readonly sheetCards: InputSignalWithTransform<boolean, TBooleanInput> = input<boolean, TBooleanInput>(true, {
         transform: booleanAttribute,
     });
 

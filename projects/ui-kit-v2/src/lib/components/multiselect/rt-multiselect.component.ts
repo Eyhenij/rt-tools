@@ -34,7 +34,7 @@ import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { IRtPopover } from '@rt-tools/ui-kit-v2/popover';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
-import { RtOptionList, TRtOptionListAction } from '@rt-tools/ui-kit-v2/core';
+import { RtOptionList } from '@rt-tools/ui-kit-v2/core';
 import {
     rtTreeBranchState,
     rtTreeFind,
@@ -50,6 +50,8 @@ import { RtMultiselectEmptyDirective } from './rt-multiselect-empty.directive';
 import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
 import { RtTagComponent } from '@rt-tools/ui-kit-v2/tag';
 import { RtToggleSwitchComponent } from '@rt-tools/ui-kit-v2/toggle-switch';
+import { RtCheckboxComponent } from '@rt-tools/ui-kit-v2/checkbox';
+import { rtMultiselectOpenKey } from './rt-multiselect-keys.logic';
 import { RtMultiselectLabelPipe } from './rt-multiselect-label.pipe';
 import { IRtMultiselectSummary, TRtMultiselectLook, rtMultiselectKnownCount } from './rt-multiselect-toggles.logic';
 import { RtMultiselectTogglesView } from './rt-multiselect-toggles.view';
@@ -89,6 +91,7 @@ function nextPanelId(): number {
         RtPopoverDirective,
         RtTagComponent,
         RtToggleSwitchComponent,
+        RtCheckboxComponent,
         BlockDirective,
         ElemDirective,
         ModDirective,
@@ -138,6 +141,9 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
 
     /** Список открыт в нижней шторке: под ним стоит подвал «Выбрано · Сбросить · Готово». */
     protected readonly openedInSheet: Signal<boolean> = computed((): boolean => this.popover().openedInSheet());
+
+    /** Список рисуется карточками: он открыт в шторке, и вход `sheetCards` их не выключил. */
+    protected readonly cards: Signal<boolean> = computed((): boolean => this.sheetCards() && this.openedInSheet());
 
     /** «Выбрано: N» в подвале шторки — подпись с подстановкой, потому берётся вызовом. */
     protected readonly selectedLabel: Signal<string> = rtKitLabel(
@@ -275,6 +281,15 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
      * закрывает её. Включена по умолчанию; `false` оставляет список у поля на любой ширине.
      */
     public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
+    /**
+     * Карточки выбора в шторке: каждая опция — карточка с подписью, пояснением и флажком кита
+     * справа; у вида переключателей справа остаётся переключатель. Включены по умолчанию; `false`
+     * возвращает в шторку строки, какими список стоит у поля.
+     */
+    public readonly sheetCards: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
 
@@ -426,37 +441,11 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
     }
 
     #handleOpenKeydown(event: KeyboardEvent): void {
-        const action: TRtOptionListAction = this.optionList.actionOf(event.key);
-        if (action === 'none') {
-            return;
-        }
-        event.preventDefault();
-        switch (action) {
-            case 'next':
-                this.optionList.move(1);
-                break;
-            case 'previous':
-                this.optionList.move(-1);
-                break;
-            case 'first':
-                this.optionList.first();
-                break;
-            case 'last':
-                this.optionList.last();
-                break;
-            case 'choose':
-                this.#toggleActive();
-                break;
-            case 'close':
-                // Escape закрывает один слой: панель. Без остановки событие всплывает до document,
-                // и оверлей под панелью — боковая панель, окно — закрывается вместе с ней.
-                event.stopPropagation();
-                this.popover().close();
-                break;
-            case 'side':
-                this.#sideKey(event.key);
-                break;
-        }
+        rtMultiselectOpenKey(event, this.optionList, {
+            choose: (): void => this.#toggleActive(),
+            close: (): void => this.popover().close(),
+            side: (key: string): void => this.#sideKey(key),
+        });
     }
 
     #checkOf(row: IRtSelect.Row<TValue>): IRtSelect.TBranchState {

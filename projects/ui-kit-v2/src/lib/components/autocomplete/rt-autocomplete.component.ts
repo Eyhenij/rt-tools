@@ -128,6 +128,9 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     /** Список открыт в шторке: набор идёт в поле поиска наверху шторки, а не в поле под ней. Не меняется, пока шторка открыта. */
     protected readonly openedInSheet: Signal<boolean> = computed((): boolean => this.popover().openedInSheet());
 
+    /** Подсказки рисуются карточками: список открыт в шторке, и вход `sheetCards` их не выключил. */
+    protected readonly cards: Signal<boolean> = computed((): boolean => this.sheetCards() && this.openedInSheet());
+
     /** Поле поиска в шторке — ему отдаётся фокус, когда шторка открылась. */
     protected readonly sheetSearch: Signal<RtInputComponent | undefined> = viewChild(RtInputComponent);
 
@@ -174,6 +177,11 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
 
     /** На телефоне список открывается в нижней шторке с полем поиска; `false` оставляет его у поля. */
     public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
+    /** Карточки в шторке: каждая подсказка — карточка. `false` возвращает строки, какими список стоит у поля. */
+    public readonly sheetCards: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
     /**

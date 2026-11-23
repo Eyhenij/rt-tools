@@ -163,4 +163,21 @@ describe('Автокомплит в нижней шторке', (): void => {
         expect(sheetSearch()).toBeNull();
         expect(document.querySelectorAll('[qa-dataid="autocomplete-option"]').length).toBe(3);
     });
+
+    it('SC-UKV-1719 — подсказки в шторке стоят карточками', (): void => {
+        const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup();
+
+        tapField(fixture);
+
+        expect(document.querySelector('[qa-dataid="autocomplete-panel"]')?.classList).toContain('rt-autocomplete__panel--cards');
+    });
+
+    it('SC-UKV-1717 — sheetCards=false оставляет в шторке строки, какими подсказки стоят у поля', (): void => {
+        const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup({ sheetCards: false });
+
+        tapField(fixture);
+
+        expect(document.querySelector('.rt-popover-sheet')).not.toBeNull();
+        expect(document.querySelector('[qa-dataid="autocomplete-panel"]')?.classList).not.toContain('rt-autocomplete__panel--cards');
+    });
 });
