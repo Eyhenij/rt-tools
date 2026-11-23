@@ -313,51 +313,7 @@
             display: contents;
         }
 
-        /* Карточки выбора в шторке: каждая опция — карточка с подписью слева и радиокнопкой справа. */
-        &__panel--cards .rt-select__list {
-            @include kv.sheet-card-list;
-        }
-
-        /* Поиск над карточками: стоит сразу под шапкой шторки во всю ширину списка, без черты —
-           до карточек тот же зазор, что между ними. */
-        &__panel--cards .rt-select__filter {
-            padding: 0 0 var(--rt-space-2);
-            border-block-end: none;
-        }
-
-        &__panel--cards .rt-select__option {
-            @include kv.sheet-card;
-
-            padding-inline-start: calc(var(--rt-space-md) + var(--rt-select-tree-indent) * var(--rt-select-tree-level));
-        }
-
-        &__panel--cards .rt-select__option--selected {
-            @include kv.sheet-card-chosen;
-        }
-
-        &__panel--cards .rt-select__option--active {
-            @include kv.sheet-card-active;
-        }
-
-        /* Недоступная карточка на наведение не отвечает: правило карточки сильнее правила строки. */
-        &__panel--cards .rt-select__option--disabled,
-        &__panel--cards .rt-select__option--disabled:hover {
-            background: var(--rt-sheet-card-bg, var(--rt-color-bg-surface-subtle));
-            cursor: not-allowed;
-        }
-
-        &__panel--cards .rt-select__option-text {
-            @include kv.sheet-card-text;
-        }
-
-        &__option-description {
-            @include kv.sheet-card-description;
-        }
-
-        &__mark {
-            flex-shrink: 0;
-        }
-
+        /* Карточки выбора в шторке — в листе `rt-select-cards.scss`. */
         &__option-label {
             min-width: 0;
             flex: 1 1 auto;

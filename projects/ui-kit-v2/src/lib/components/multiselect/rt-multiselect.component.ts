@@ -75,7 +75,7 @@ function nextPanelId(): number {
 @Component({
     selector: 'rt-multiselect',
     templateUrl: './rt-multiselect.component.html',
-    styleUrl: './rt-multiselect.component.scss',
+    styleUrls: ['./rt-multiselect.component.scss', './rt-multiselect-views.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [

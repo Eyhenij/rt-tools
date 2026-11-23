@@ -69,7 +69,13 @@ function nextPanelId(): number {
 @Component({
     selector: 'rt-select',
     templateUrl: './rt-select.component.html',
-    styleUrls: ['./rt-select.component.scss', './rt-select-floating-label.scss', './rt-select-clear.scss', './rt-select-material.scss'],
+    styleUrls: [
+        './rt-select.component.scss',
+        './rt-select-cards.scss',
+        './rt-select-floating-label.scss',
+        './rt-select-clear.scss',
+        './rt-select-material.scss',
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
