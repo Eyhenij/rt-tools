@@ -329,10 +329,6 @@
             @include kv.sheet-card;
 
             padding-inline-start: calc(var(--rt-space-md) + var(--rt-select-tree-indent) * var(--rt-select-tree-level));
-
-            &:hover {
-                background-color: var(--rt-color-bg-surface);
-            }
         }
 
         &__panel--cards .rt-select__option--selected {
@@ -340,7 +336,7 @@
         }
 
         &__panel--cards .rt-select__option--active {
-            background-color: var(--rt-color-bg-hover);
+            @include kv.sheet-card-active;
         }
 
         &__panel--cards .rt-select__option-text {

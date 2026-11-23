@@ -1,14 +1,20 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import {
     booleanAttribute,
+    computed,
     Directive,
+    inject,
     input,
     InputSignal,
     InputSignalWithTransform,
     output,
     OutputEmitterRef,
+    Signal,
     TemplateRef,
 } from '@angular/core';
+
+import { IRtSheetTemplateContext } from '@rt-tools/ui-kit-v2/bottom-sheet';
+import { RtSheetTemplatesDirective } from './rt-sheet-templates.directive';
 
 /**
  * Входы нижней шторки у `[rtPopover]`: высота, действие в шапке и неприменённый выбор. Директива
@@ -21,7 +27,7 @@ import {
  * <button
  *     [rtPopover]="panelTpl"
  *     [rtPopoverSheet]="true"
- *     [rtPopoverSheetFull]="searchFocused()"
+ *     [rtPopoverSheetFull]="longForm()"
  *     [rtPopoverSheetAction]="doneTpl"
  *     [rtPopoverSheetUnsaved]="changed()"
  *     (rtPopoverSheetApply)="apply()"></button>
@@ -31,6 +37,27 @@ import {
     selector: '[rtPopoverSheetOptions]',
 })
 export class RtPopoverSheetOptionsDirective {
+    /** Шаблоны компонента, в чьём шаблоне стоит панель: его входы `sheetHeaderTemplate` и `sheetFooterTemplate`. */
+    readonly #hostTemplates: RtSheetTemplatesDirective | null = inject(RtSheetTemplatesDirective, { optional: true, host: true });
+
+    /** Своя шапка шторки: шаблон панели, а без него — шаблон компонента вокруг неё. */
+    public readonly header: Signal<TemplateRef<IRtSheetTemplateContext> | null> = computed(
+        (): TemplateRef<IRtSheetTemplateContext> | null => this.rtPopoverSheetHeader() ?? this.#hostTemplates?.sheetHeaderTemplate() ?? null
+    );
+
+    /** Свой подвал шторки: шаблон панели, а без него — шаблон компонента вокруг неё. */
+    public readonly footer: Signal<TemplateRef<IRtSheetTemplateContext> | null> = computed(
+        (): TemplateRef<IRtSheetTemplateContext> | null => this.rtPopoverSheetFooter() ?? this.#hostTemplates?.sheetFooterTemplate() ?? null
+    );
+
+    /** Своя шапка шторки: шаблон встаёт на место кнопки закрытия, заголовка и действия. */
+    public readonly rtPopoverSheetHeader: InputSignal<TemplateRef<IRtSheetTemplateContext> | null> =
+        input<TemplateRef<IRtSheetTemplateContext> | null>(null);
+
+    /** Свой подвал шторки: шаблон стоит под панелью и не прокручивается. */
+    public readonly rtPopoverSheetFooter: InputSignal<TemplateRef<IRtSheetTemplateContext> | null> =
+        input<TemplateRef<IRtSheetTemplateContext> | null>(null);
+
     /** Шторка во всю высоту экрана: для содержимого, в котором человек печатает. */
     public readonly rtPopoverSheetFull: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,

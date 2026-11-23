@@ -35,7 +35,7 @@ import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
-import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { RtPopoverDirective, RtSheetTemplatesDirective } from '@rt-tools/ui-kit-v2/popover';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtOptionList, TRtOptionListAction } from '@rt-tools/ui-kit-v2/core';
 import { RtAutocompleteEmptyDirective, RtAutocompleteErrorDirective } from './rt-autocomplete-states.directive';
@@ -94,7 +94,10 @@ function nextPanelId(): number {
         // Алиас базового токена — для contentChild(RtFormControlBase) в rt-field.
         { provide: RtFormControlBase, useExisting: forwardRef(() => RtAutocompleteComponent) },
     ],
-    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
+    hostDirectives: [
+        { directive: RtRadiusDirective, inputs: ['radius'] },
+        { directive: RtSheetTemplatesDirective, inputs: ['sheetHeaderTemplate', 'sheetFooterTemplate'] },
+    ],
     host: {
         class: BEM_BLOCK,
         '[class.rt-autocomplete--open]': 'isOpen()',
@@ -127,9 +130,6 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
 
     /** Список открыт в шторке: набор идёт в поле поиска наверху шторки, а не в поле под ней. Не меняется, пока шторка открыта. */
     protected readonly openedInSheet: Signal<boolean> = computed((): boolean => this.popover().openedInSheet());
-
-    /** Фокус стоит в поиске шторки: на телефоне открыта клавиатура, и шторка встаёт во всю высоту. */
-    protected readonly searchFocused: WritableSignal<boolean> = signal<boolean>(false);
 
     /** Подсказки рисуются карточками: список открыт в шторке, и вход `sheetCards` их не выключил. */
     protected readonly cards: Signal<boolean> = computed((): boolean => this.sheetCards() && this.openedInSheet());

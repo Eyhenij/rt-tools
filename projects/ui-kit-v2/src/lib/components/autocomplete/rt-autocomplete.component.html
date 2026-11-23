@@ -8,7 +8,6 @@
         rtPopoverWidth="trigger"
         [rtPopover]="panelTpl"
         [rtPopoverSheet]="sheet()"
-        [rtPopoverSheetFull]="searchFocused()"
         [rtPopoverSheetTitle]="sheetTitle()"
         (rtPopoverSheetOpened)="onSheetOpened()"
         (rtPopoverClosed)="onClosed()">
@@ -53,11 +52,7 @@
     <ng-template #panelTpl>
         @if (openedInSheet()) {
             <!-- Поиск наверху шторки: на телефоне набирают здесь, поле под шторкой закрыто ею. -->
-            <div
-                rtElem="sheet-search"
-                qa-dataid="autocomplete-sheet-search"
-                (focusin)="searchFocused.set(true)"
-                (focusout)="searchFocused.set(false)">
+            <div rtElem="sheet-search" qa-dataid="autocomplete-sheet-search">
                 <rt-input
                     iconLeft="ico-search"
                     [clearable]="true"

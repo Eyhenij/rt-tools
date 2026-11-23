@@ -1,11 +1,12 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import { ScrollStrategy, ScrollStrategyOptions } from '@angular/cdk/overlay';
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
+    contentChild,
     DestroyRef,
     effect,
     ElementRef,
@@ -17,6 +18,7 @@ import {
     OutputEmitterRef,
     signal,
     Signal,
+    TemplateRef,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
@@ -29,7 +31,10 @@ import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtBottomSheetStackService } from './rt-bottom-sheet-stack.service';
-import { clampDragDelta, shouldDismissDrag } from './rt-bottom-sheet.logic';
+import { clampDragDelta, isTypingTarget, shouldDismissDrag } from './rt-bottom-sheet.logic';
+import { IRtSheetTemplateContext } from './rt-bottom-sheet.model';
+import { RtSheetFooterDirective } from './rt-sheet-footer.directive';
+import { RtSheetHeaderDirective } from './rt-sheet-header.directive';
 
 const BEM_BLOCK: string = 'rt-bottom-sheet';
 
@@ -48,6 +53,9 @@ function takeConfirmId(): string {
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
+        // @angular
+        NgTemplateOutlet,
+
         // rt-tools
         BlockDirective,
         ElemDirective,
@@ -81,6 +89,7 @@ export class RtBottomSheetComponent {
     readonly #scrollLock: ScrollStrategy = inject(ScrollStrategyOptions).block();
     readonly #onDragMove: (event: PointerEvent) => void = (event: PointerEvent): void => this.#handleDragMove(event);
     readonly #onDragEnd: () => void = (): void => this.#handleDragEnd();
+    readonly #requestClose: () => void = (): void => this.dismiss();
 
     #dragStartY: number = 0;
     #locked: boolean = false;
@@ -90,12 +99,35 @@ export class RtBottomSheetComponent {
     protected readonly dragDeltaY: WritableSignal<number> = signal<number>(0);
     protected readonly dragging: WritableSignal<boolean> = signal<boolean>(false);
 
+    /**
+     * Фокус стоит в поле, в которое печатают. На сенсорном экране это открытая клавиатура: шторка
+     * на это время встаёт во всю высоту, и содержимое остаётся видно над клавиатурой. Там, где
+     * указатель точный, клавиатуры нет, и стили высоту не меняют.
+     */
+    protected readonly typing: WritableSignal<boolean> = signal<boolean>(false);
+
     /** Вопрос перед закрытием показан: шторку просили закрыть при неприменённом выборе. */
     protected readonly confirming: WritableSignal<boolean> = signal<boolean>(false);
     protected readonly confirmTitleId: string = takeConfirmId();
 
     /** Открыта, но поверх неё открыта шторка из неё самой: эта спрятана до закрытия верхней. */
     protected readonly covered: Signal<boolean> = computed((): boolean => this.open() && this.#stack.top() !== this);
+
+    protected readonly ownHeader: Signal<RtSheetHeaderDirective | undefined> = contentChild(RtSheetHeaderDirective);
+    protected readonly ownFooter: Signal<RtSheetFooterDirective | undefined> = contentChild(RtSheetFooterDirective);
+
+    /** Своя шапка: шаблон из входа сильнее шаблона директивы в содержимом. Пусто — шапка шторки. */
+    protected readonly headerTpl: Signal<TemplateRef<IRtSheetTemplateContext> | null> = computed(
+        (): TemplateRef<IRtSheetTemplateContext> | null => this.headerTemplate() ?? this.ownHeader()?.template ?? null
+    );
+
+    /** Свой подвал: шаблон из входа сильнее шаблона директивы в содержимом. Пусто — узлы `sheetFooter`. */
+    protected readonly footerTpl: Signal<TemplateRef<IRtSheetTemplateContext> | null> = computed(
+        (): TemplateRef<IRtSheetTemplateContext> | null => this.footerTemplate() ?? this.ownFooter()?.template ?? null
+    );
+
+    /** Своему шаблону шторка отдаёт просьбу закрыть — ту же, что зовёт её кнопка «×». */
+    protected readonly templateContext: IRtSheetTemplateContext = { $implicit: this.#requestClose, close: this.#requestClose };
 
     public readonly open: InputSignalWithTransform<boolean, BooleanInput> = input.required<boolean, BooleanInput>({
         transform: booleanAttribute,
@@ -120,6 +152,17 @@ export class RtBottomSheetComponent {
     public readonly unsaved: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
+
+    /**
+     * Своя шапка шаблоном: встаёт на место кнопки закрытия, заголовка и действия. Тот же шаблон
+     * в разметке задаёт `<ng-template rtSheetHeader>`; вход нужен тому, кто открывает шторку кодом.
+     */
+    public readonly headerTemplate: InputSignal<TemplateRef<IRtSheetTemplateContext> | null> =
+        input<TemplateRef<IRtSheetTemplateContext> | null>(null);
+
+    /** Свой подвал шаблоном; в разметке его задаёт `<ng-template rtSheetFooter>`. */
+    public readonly footerTemplate: InputSignal<TemplateRef<IRtSheetTemplateContext> | null> =
+        input<TemplateRef<IRtSheetTemplateContext> | null>(null);
 
     public readonly openChange: OutputEmitterRef<boolean> = output<boolean>();
 
@@ -168,6 +211,10 @@ export class RtBottomSheetComponent {
         if (this.open() && !this.covered() && !this.#inOverlay()) {
             this.closeByEscape();
         }
+    }
+
+    protected onFocusIn(event: FocusEvent): void {
+        this.typing.set(isTypingTarget(event.target));
     }
 
     protected onConfirmApply(): void {

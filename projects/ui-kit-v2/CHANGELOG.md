@@ -3,14 +3,18 @@
 ### Features
 
 - **rt:ui-kit-v2:** у шторки `rt-bottom-sheet` в шапке всегда стоит кнопка закрытия слева, заголовок — по центру, слот `[sheetAction]` ставит действие справа (RT-3531)
-- **rt:ui-kit-v2:** входы шторки `fullHeight` и `unsaved`, событие `applyRequest`: шторка во всю высоту и вопрос «применить / не применять / отмена» перед закрытием (RT-3531)
+- **rt:ui-kit-v2:** входы шторки `fullHeight` и `unsaved`, событие `applyRequest`: шторка во всю высоту по слову приложения и вопрос «применить / не применять / отмена» перед закрытием (RT-3531)
+- **rt:ui-kit-v2:** каждая шторка открыта по высоте содержимого и встаёт во всю высоту, только пока человек печатает в её поле на сенсорном экране; с мышью высота прежняя. Шторка замечает это сама: списки с поиском, `rt-dynamic-selector`, отборы `rt-page-bar` и `rt-thread-list` входы `fullHeight` и `rtPopoverSheetFull` не ставят (RT-3531)
+- **rt:ui-kit-v2:** карточка выбора под указателем берёт более плотную заливку; заливки меняют ручки `--rt-sheet-card-bg` и `--rt-sheet-card-bg-hover` (RT-3531)
 - **rt:ui-kit-v2:** шторка вне оверлея сама держит прокрутку страницы и закрывается по Escape; при просьбе системы убрать движение появляется без выезда (RT-3531)
 - **rt:ui-kit-v2:** у `[rtPopover]` входы `rtPopoverSheetFull`, `rtPopoverSheetAction`, `rtPopoverSheetUnsaved` и событие `rtPopoverSheetApply` (RT-3531)
 - **rt:ui-kit-v2:** списки `rt-select`, `rt-multiselect`, `rt-autocomplete`, `rt-dynamic-selector` и `rt-table-filter-header` рисуют в шторке карточки с радиокнопкой, флажком или переключателем кита справа; вход `sheetCards` со значением `false` возвращает прежние строки, у отдельного `rt-dynamic-selector-popup` — вход `cards` (RT-3531)
 - **rt:ui-kit-v2:** у опции необязательное `description` — вторая строка карточки в шторке; у `rt-checkbox` входы `description` и `card` (RT-3531)
+- **rt:ui-kit-v2:** свои шапка и подвал шторки шаблонами: `<ng-template rtSheetHeader>` и `<ng-template rtSheetFooter>` у `rt-bottom-sheet`, входы `rtPopoverSheetHeader` и `rtPopoverSheetFooter` у `[rtPopover]`, входы `sheetHeaderTemplate` и `sheetFooterTemplate` у списков выбора; шаблон получает просьбу закрыть (RT-3531)
 - **rt:ui-kit-v2:** «Готово» у `rt-multiselect` стоит в шапке шторки, в подвале остались счётчик и сброс (RT-3531)
 - **rt:ui-kit-v2:** у `rt-dynamic-selector` в шторке «Применить» стоит в шапке, шторка спрашивает перед закрытием с неприменёнными отметками (RT-3531)
-- **rt:ui-kit-v2:** шторка отборов `rt-page-bar` открыта во всю высоту, «Применить» стоит в её шапке, перед закрытием с неприменённым вводом она спрашивает; новый вход `filtersChanged` (RT-3531)
+- **rt:ui-kit-v2:** у шторки отборов `rt-page-bar` «Применить» стоит в шапке, перед закрытием с неприменённым вводом она спрашивает; новый вход `filtersChanged` (RT-3531)
+- **rt:ui-kit-v2:** в подвале шторки отборов `rt-page-bar` стоит «Сбросить», новое событие `filtersReset`; шторка после сброса остаётся открытой (RT-3531)
 - **rt:ui-kit-v2:** у шторки `rt-date-picker` и `rt-date-range` есть заголовок — подпись поля или его доступное имя (RT-3531)
 
 # [0.51.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.50.0...rt-ui-kit-v2%400.51.0) (2026-11-22)

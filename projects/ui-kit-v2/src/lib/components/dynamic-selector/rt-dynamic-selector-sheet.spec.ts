@@ -91,10 +91,10 @@ describe('Динамический селектор в нижней шторке
         expect(inSheet('.rt-radio-button--card')).toEqual([]);
     });
 
-    it('шторка открыта во всю высоту, «Применить» стоит в её шапке, своих кнопок окно не рисует', (): void => {
+    it('шторка открыта по высоте содержимого, «Применить» стоит в её шапке, своих кнопок окно не рисует', (): void => {
         open();
 
-        expect(inSheet('[qa-dataid="bottom-sheet-panel"]')[0].classList).toContain('rt-bottom-sheet__panel--full');
+        expect(inSheet('[qa-dataid="bottom-sheet-panel"]')[0].classList).not.toContain('rt-bottom-sheet__panel--full');
         const apply: HTMLButtonElement = inSheet(
             '[qa-dataid="bottom-sheet-action"] [qa-dataid="dynamic-selector-sheet-apply"]'
         )[0] as HTMLButtonElement;

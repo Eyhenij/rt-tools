@@ -12,7 +12,6 @@
         [rtPopover]="panelTpl"
         [rtPopoverDisabled]="isDisabled()"
         [rtPopoverSheet]="sheet()"
-        [rtPopoverSheetFull]="searchFocused()"
         [rtPopoverSheetTitle]="sheetTitle()"
         [attr.id]="effectiveControlId()"
         [attr.aria-label]="ariaLabel()"
@@ -101,8 +100,7 @@
             [style.--rt-select-panel-max-height]="panelMaxHeight()"
             [attr.aria-label]="ariaLabel()">
             @if (filter()) {
-                <!-- Фокус в поиске — открытая клавиатура: шторка на это время встаёт во всю высоту. -->
-                <div rtElem="filter" qa-dataid="select-filter" (focusin)="searchFocused.set(true)" (focusout)="searchFocused.set(false)">
+                <div rtElem="filter" qa-dataid="select-filter">
                     <rt-input
                         iconLeft="ico-search"
                         [placeholder]="filterPlaceholderText()"

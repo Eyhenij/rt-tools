@@ -328,10 +328,6 @@
             @include kv.sheet-card;
 
             padding-inline-start: calc(var(--rt-space-md) + var(--rt-multiselect-tree-indent) * var(--rt-multiselect-tree-level));
-
-            &:hover {
-                background-color: var(--rt-color-bg-surface);
-            }
         }
 
         &__panel--cards &__option--selected {
@@ -339,7 +335,13 @@
         }
 
         &__panel--cards &__option--active {
-            background-color: var(--rt-color-bg-hover);
+            @include kv.sheet-card-active;
+        }
+
+        /* Подвал шторки стоит в зазоре карточек от последней из них: без него черта подвала
+           касалась бы карточки. */
+        &__panel--cards &__sheet-footer {
+            margin-block-start: var(--rt-space-2);
         }
 
         &__panel--cards &__option-text {

@@ -33,7 +33,7 @@ import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtInputNumberComponent } from '@rt-tools/ui-kit-v2/input-number';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { RtMenuItemComponent } from '@rt-tools/ui-kit-v2/menu';
-import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { RtPopoverDirective, RtSheetTemplatesDirective } from '@rt-tools/ui-kit-v2/popover';
 import { RtRadioButtonComponent } from '@rt-tools/ui-kit-v2/radio-button';
 import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
 import { RtSelectComponent } from '@rt-tools/ui-kit-v2/select';
@@ -132,6 +132,7 @@ const ALL_OPERATORS: readonly TFilterOperatorType[] = Object.freeze([
         RtRadioButtonComponent,
         RtSelectComponent,
     ],
+    hostDirectives: [{ directive: RtSheetTemplatesDirective, inputs: ['sheetHeaderTemplate', 'sheetFooterTemplate'] }],
     host: {
         class: BEM_BLOCK,
     },

@@ -31,7 +31,7 @@ import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
-import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { RtPopoverDirective, RtSheetTemplatesDirective } from '@rt-tools/ui-kit-v2/popover';
 import { IRtPopover } from '@rt-tools/ui-kit-v2/popover';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtOptionList } from '@rt-tools/ui-kit-v2/core';
@@ -103,7 +103,10 @@ function nextPanelId(): number {
         // Алиас базового токена — для contentChild(RtFormControlBase) в rt-field.
         { provide: RtFormControlBase, useExisting: forwardRef(() => RtMultiselectComponent) },
     ],
-    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
+    hostDirectives: [
+        { directive: RtRadiusDirective, inputs: ['radius'] },
+        { directive: RtSheetTemplatesDirective, inputs: ['sheetHeaderTemplate', 'sheetFooterTemplate'] },
+    ],
     host: {
         class: BEM_BLOCK,
         '[class.rt-multiselect--open]': 'isOpen()',
@@ -141,9 +144,6 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
 
     /** Список открыт в нижней шторке: под ним стоит подвал «Выбрано · Сбросить · Готово». */
     protected readonly openedInSheet: Signal<boolean> = computed((): boolean => this.popover().openedInSheet());
-
-    /** Фокус стоит в поиске списка: на телефоне открыта клавиатура, и шторка встаёт во всю высоту. */
-    protected readonly searchFocused: WritableSignal<boolean> = signal<boolean>(false);
 
     /** Список рисуется карточками: он открыт в шторке, и вход `sheetCards` их не выключил. */
     protected readonly cards: Signal<boolean> = computed((): boolean => this.sheetCards() && this.openedInSheet());

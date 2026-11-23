@@ -47,20 +47,27 @@ checkbox or a switch on the right. The question before closing offers «Apply»,
   selector draws no buttons of its own: the apply button of the header is off while nothing is
   marked, and the close button of the sheet cancels. The footer stays for what an application
   puts there.
+- **The sheet of the page filters has a reset in its footer.** The reset reports to the
+  application, which clears the filters; the sheet stays open and no longer counts an input as not
+  applied. With no filter set and nothing typed the reset is off.
 - **A list of choice in the sheet is drawn as cards.** A card holds the label and an optional
   description on the left and the mark on the right: the kit radio button for a choice of one
   value, the kit checkbox for a choice of several, the kit switch in the toggles look. The lists
   are those of the select, the multiselect, the dynamic selector, the hints of the autocomplete
   and the comparison kinds of a table column filter. One input of the part returns the rows the
-  panel has next to its trigger.
+  panel has next to its trigger. A card under the pointer takes a denser fill; the keyboard
+  position of a list takes it only where a pointer exists. Two handles override the fills:
+  `--rt-sheet-card-bg` and `--rt-sheet-card-bg-hover`.
 - **An option carries an optional description.** It is the second line of a card in the sheet;
   next to the trigger the row does not show it.
-- **A sheet with a search opens by the height of its content and takes the full height while the
-  focus is in its search.** The lists with a search are those of the select, of the multiselect
-  with its filter and of the autocomplete. The list stays visible above the keyboard. With the
-  focus gone from the search the sheet returns to the height of its content.
-- **The dynamic selector, the page filters and the filters of a thread list open at full height.**
-  A person searches a long list or types in several fields there.
+- **A sheet opens by the height of its content and takes the full height while a person types in
+  it on a touch screen.** The sheet itself notices the focus in a text field, a search or an
+  editable node of its panel. The sign is the pointer, not the width of the window: on a touch
+  screen that focus opens the keyboard, and the list or the fields stay visible above it; with a
+  mouse the height stays by the content. With the focus gone from the field the sheet returns to
+  the height of its content. It holds alike for the search of a list, the page filters, the
+  filters of a thread list and the dynamic selector. The full-height input of a sheet stays as a
+  switch of the application; no part of the kit sets it.
 - **A sheet whose choice reaches the application only by a button asks before it closes with a
   choice not applied.** The dynamic selector asks with marks set. The page filters ask after any
   input made in the fields of the sheet since it opened, and when the application says the filters
@@ -71,6 +78,12 @@ checkbox or a switch on the right. The question before closing offers «Apply»,
 - **Every sheet locks the scroll of the page and closes by Escape.** The sheets of the date fields
   and of the page filters do it the same as a panel of choice.
 - **With reduced motion asked by the system the sheet appears without sliding.**
+- **An application replaces the header and the footer of a sheet by its own templates.** The header
+  template stands in place of the close button, the title and the action; the handle stays. The
+  footer template stands in the footer. Both get the request to close, and a sheet with a choice
+  not applied asks on it as on its own close button. A panel of choice takes the two templates by
+  its own inputs, and a list of choice of the kit hands them over from its inputs. Without a
+  template the sheet draws its own header.
 
 ## What is out of scope
 
@@ -134,3 +147,6 @@ None.
 | Date       | What changed                                                                                          |
 | ---------- | ----------------------------------------------------------------------------------------------------- |
 | 2026-11-23 | The subdomain is written with scenarios 1710…1727, moved from the subdomain `popover-sheet` (RT-3531) |
+| 2026-11-23 | The templates of the header and the footer of a sheet, scenarios 1750…1754 (RT-3531)                  |
+| 2026-11-23 | The reset in the footer of the page filters sheet, scenario 1755 (RT-3531)                            |
+| 2026-11-23 | One height rule, by typing on a touch screen; the fill of a card under the pointer (RT-3531)          |

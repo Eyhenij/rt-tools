@@ -66,13 +66,6 @@ export const Sheet: TStory = {
     play: open,
 };
 
-/** Вход `sheetCards="false"`: в шторке строки, какими список стоит у поля, без пояснений. */
-export const SheetRows: TStory = {
-    args: { sheet: true, sheetCards: false },
-    parameters: { snapshot: { fullPage: true, overlay: OPEN_SHEET, viewport: PHONE_WINDOW } },
-    play: open,
-};
-
 /** Список с поиском: шторка открыта по высоте содержимого. */
 export const SheetSearch: TStory = {
     args: { sheet: true, filter: true },
@@ -80,10 +73,13 @@ export const SheetSearch: TStory = {
     play: open,
 };
 
-/** Фокус в поиске — открытая клавиатура: шторка стоит во всю высоту экрана. */
+/**
+ * Фокус в поиске: кольцо фокуса видно целиком. Во всю высоту шторка встаёт только на сенсорном
+ * экране, где фокус в поле открывает клавиатуру; с мышью высота остаётся по содержимому.
+ */
 export const SheetSearchFocused: TStory = {
     args: { sheet: true, filter: true },
-    parameters: { snapshot: { fullPage: true, overlay: '.rt-popover-sheet .rt-bottom-sheet__panel--full', viewport: PHONE_WINDOW } },
+    parameters: { snapshot: { fullPage: true, overlay: '.rt-popover-sheet .rt-bottom-sheet__panel--typing', viewport: PHONE_WINDOW } },
     play: openAndSearch,
 };
 

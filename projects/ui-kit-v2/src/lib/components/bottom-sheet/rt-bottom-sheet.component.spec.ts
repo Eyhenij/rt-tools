@@ -257,11 +257,15 @@ describe('RtBottomSheetComponent', (): void => {
 
         it('без спроецированного подвала элемент пуст — правило :empty убирает его из раскладки', (): void => {
             // Ни пробела, ни перевода строки: текстовый узел снял бы с элемента :empty,
-            // и пустой подвал занял бы место с линией сверху.
+            // и пустой подвал занял бы место с линией сверху. Узел-комментарий ветки шаблона :empty не
+            // снимает: он не элемент и не текст.
             const fixture: ComponentFixture<BottomSheetHostComponent> = createRtFixture(BottomSheetHostComponent);
             const footer: HTMLElement = qa(fixture, 'bottom-sheet-footer')?.nativeElement as HTMLElement;
+            const drawn: ChildNode[] = Array.from(footer.childNodes).filter(
+                (node: ChildNode): boolean => node.nodeType !== Node.COMMENT_NODE
+            );
 
-            expect(footer.childNodes.length).toBe(0);
+            expect(drawn.length).toBe(0);
             expect(footer.matches(':empty')).toBe(true);
         });
 

@@ -29,7 +29,7 @@ import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
 import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
 import { IButton, IRtIcon, IRtInput } from '@rt-tools/ui-kit-v2/core';
-import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { RtPopoverDirective, RtSheetTemplatesDirective } from '@rt-tools/ui-kit-v2/popover';
 import { TRtRadius } from '@rt-tools/ui-kit-v2/core';
 import { RtDynamicSelectorListComponent } from './list/rt-dynamic-selector-list.component';
 import { RtDynamicSelectorPopupComponent } from './popup/rt-dynamic-selector-popup.component';
@@ -82,7 +82,10 @@ const BEM_BLOCK: string = 'rt-dynamic-selector';
         { provide: RtFormControlBase, useExisting: forwardRef(() => RtDynamicSelectorComponent) },
         RtDynamicSelectorPartsService,
     ],
-    hostDirectives: [{ directive: RtDynamicSelectorLoadStateDirective, inputs: ['error', 'errorDescription'], outputs: ['retry'] }],
+    hostDirectives: [
+        { directive: RtDynamicSelectorLoadStateDirective, inputs: ['error', 'errorDescription'], outputs: ['retry'] },
+        { directive: RtSheetTemplatesDirective, inputs: ['sheetHeaderTemplate', 'sheetFooterTemplate'] },
+    ],
     host: { class: BEM_BLOCK },
 })
 export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormControlBase<unknown[]> {

@@ -218,6 +218,8 @@
     "--rt-stepper-mark-neutral-color": "the digit of such a mark; the default is --rt-color-text-inverse",
     "--rt-ai-chat-font-family": "the font family of the chat feed and the answer text; unset, the feed inherits the page family and the answer text keeps --rt-font-family-sans",
     "--rt-ai-chat-rating-active-bg": "the fill of a chosen rating button of the chat answer; unset, the fill of the icon button",
-    "--rt-ai-chat-rating-active-color": "the icon colour of a chosen rating button; unset, the colour of the icon button"
+    "--rt-ai-chat-rating-active-color": "the icon colour of a chosen rating button; unset, the colour of the icon button",
+    "--rt-sheet-card-bg": "the fill of a card of choice in a bottom sheet; unset, the subtle surface --rt-color-bg-surface-subtle",
+    "--rt-sheet-card-bg-hover": "the fill of a card of choice under the pointer and under the keyboard choice; unset, the hover over a subtle surface --rt-input-color-bg-hover"
   }
 }

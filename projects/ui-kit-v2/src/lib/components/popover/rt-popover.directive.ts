@@ -66,7 +66,7 @@ const HOVER_CLOSE_DELAY_MS: number = 100;
     hostDirectives: [
         {
             directive: RtPopoverSheetOptionsDirective,
-            inputs: ['rtPopoverSheetFull', 'rtPopoverSheetAction', 'rtPopoverSheetUnsaved'],
+            inputs: ['rtPopoverSheetFull', 'rtPopoverSheetAction', 'rtPopoverSheetUnsaved', 'rtPopoverSheetHeader', 'rtPopoverSheetFooter'],
             outputs: ['rtPopoverSheetApply'],
         },
     ],

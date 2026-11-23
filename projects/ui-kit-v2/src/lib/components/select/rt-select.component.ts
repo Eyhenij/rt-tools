@@ -30,7 +30,7 @@ import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
-import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { RtPopoverDirective, RtSheetTemplatesDirective } from '@rt-tools/ui-kit-v2/popover';
 import { IRtPopover } from '@rt-tools/ui-kit-v2/popover';
 import { RtRadioButtonComponent } from '@rt-tools/ui-kit-v2/radio-button';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
@@ -91,7 +91,10 @@ function nextPanelId(): number {
         // Алиас базового токена — для contentChild(RtFormControlBase) в rt-field.
         { provide: RtFormControlBase, useExisting: forwardRef(() => RtSelectComponent) },
     ],
-    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
+    hostDirectives: [
+        { directive: RtRadiusDirective, inputs: ['radius'] },
+        { directive: RtSheetTemplatesDirective, inputs: ['sheetHeaderTemplate', 'sheetFooterTemplate'] },
+    ],
     host: {
         class: BEM_BLOCK,
         '[class.rt-select--open]': 'isOpen()',
@@ -132,9 +135,6 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
     protected readonly openBranches: WritableSignal<ReadonlySet<TValue>> = signal<ReadonlySet<TValue>>(new Set<TValue>());
 
     protected readonly isOpen: Signal<boolean> = computed((): boolean => this.popover().isOpen());
-
-    /** Фокус стоит в поиске списка: на телефоне открыта клавиатура, и шторка встаёт во всю высоту. */
-    protected readonly searchFocused: WritableSignal<boolean> = signal<boolean>(false);
 
     /** Список рисуется карточками: он открыт в шторке, и вход `sheetCards` их не выключил. */
     protected readonly cards: Signal<boolean> = computed((): boolean => this.sheetCards() && this.popover().openedInSheet());

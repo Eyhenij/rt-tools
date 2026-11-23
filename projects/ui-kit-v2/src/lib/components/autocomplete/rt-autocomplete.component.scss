@@ -168,14 +168,10 @@
 
         &__panel--cards .rt-autocomplete__option {
             @include kv.sheet-card;
-
-            &:hover {
-                background-color: var(--rt-color-bg-surface);
-            }
         }
 
         &__panel--cards .rt-autocomplete__option--active {
-            background-color: var(--rt-color-bg-hover);
+            @include kv.sheet-card-active;
         }
 
         &__panel--cards .rt-autocomplete__option[aria-selected='true'] {

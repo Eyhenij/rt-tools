@@ -44,18 +44,41 @@
     padding: calc(var(--rt-space-2) + var(--rt-space-1)) var(--rt-space-4);
     border: none;
     border-radius: var(--rt-radius-lg);
-    background: var(--rt-color-bg-surface-subtle);
+    background: var(--rt-sheet-card-bg, var(--rt-color-bg-surface-subtle));
     color: var(--rt-color-text-primary);
     cursor: pointer;
     font-size: var(--rt-text-sm);
     font-weight: var(--rt-font-weight-medium);
     gap: calc(var(--rt-space-2) + var(--rt-space-1));
     line-height: var(--rt-space-5);
+
+    // Под указателем заливка плотнее: в светлой теме темнее, в тёмной светлее — шаг берётся у
+    // наведения на приглушённую поверхность. На сенсорном экране наведения нет, и заливка не залипает.
+    @media (hover: hover) {
+        &:hover {
+            @include sheet-card-hover;
+        }
+    }
+}
+
+/// Заливка карточки под указателем. Обе заливки карточки приложение переопределяет свойствами
+/// `--rt-sheet-card-bg` и `--rt-sheet-card-bg-hover` на шторке или выше неё.
+@mixin sheet-card-hover {
+    background: var(--rt-sheet-card-bg-hover, var(--rt-input-color-bg-hover));
+}
+
+/// Карточка, на которой стоит выбор с клавиатуры: та же заливка, что под указателем, и только там,
+/// где указатель есть. На сенсорном экране клавиатурой по списку не ходят, и карточка, с которой
+/// список открылся, не выделяется: выбор показывает отметка.
+@mixin sheet-card-active {
+    @media (hover: hover) {
+        @include sheet-card-hover;
+    }
 }
 
 /// Выбранная карточка заливку не меняет: выбор показывает отметка справа.
 @mixin sheet-card-chosen {
-    background: var(--rt-color-bg-surface-subtle);
+    background: var(--rt-sheet-card-bg, var(--rt-color-bg-surface-subtle));
     font-weight: var(--rt-font-weight-medium);
 }
 

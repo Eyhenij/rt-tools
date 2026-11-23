@@ -388,21 +388,34 @@ describe('Карточки выбора селекта в шторке (вход
         expect(document.activeElement).toBe(qa(fixture, 'select-trigger')?.nativeElement);
     });
 
-    it('SC-UKV-1721 — шторка с поиском встаёт во всю высоту, пока фокус в поиске, и возвращается без него', (): void => {
+    it('SC-UKV-1721 — шторка с поиском открыта по содержимому и помечена «печатают», пока фокус в поиске', (): void => {
         const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { filter: true });
         press(fixture, 'select-trigger');
         const panel: HTMLElement = document.querySelector('[qa-dataid="bottom-sheet-panel"]') as HTMLElement;
-        const search: HTMLElement = document.querySelector('[qa-dataid="select-filter"]') as HTMLElement;
+        const search: HTMLElement = document.querySelector('[qa-dataid="select-filter"] input') as HTMLElement;
 
         expect(panel.classList).not.toContain('rt-bottom-sheet__panel--full');
+        expect(panel.classList).not.toContain('rt-bottom-sheet__panel--typing');
 
         search.dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
         settle(fixture);
-        expect(panel.classList).toContain('rt-bottom-sheet__panel--full');
+        expect(panel.classList).toContain('rt-bottom-sheet__panel--typing');
+        expect(panel.classList).not.toContain('rt-bottom-sheet__panel--full');
 
         search.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
         settle(fixture);
-        expect(panel.classList).not.toContain('rt-bottom-sheet__panel--full');
+        expect(panel.classList).not.toContain('rt-bottom-sheet__panel--typing');
+    });
+
+    it('SC-UKV-1721 — фокус на карточке «печатают» не ставит: в неё не печатают', (): void => {
+        const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { filter: true });
+        press(fixture, 'select-trigger');
+        const panel: HTMLElement = document.querySelector('[qa-dataid="bottom-sheet-panel"]') as HTMLElement;
+
+        all('select-option')[0].dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
+        settle(fixture);
+
+        expect(panel.classList).not.toContain('rt-bottom-sheet__panel--typing');
     });
 
     it('SC-UKV-1717 — sheetCards=false возвращает в шторку строки, какими список стоит у поля', (): void => {

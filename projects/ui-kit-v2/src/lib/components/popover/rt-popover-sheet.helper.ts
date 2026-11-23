@@ -58,6 +58,8 @@ function bindSheetOptions(sheetRef: ComponentRef<RtPopoverSheetComponent>, optio
             sheetRef.setInput('fullHeight', options.rtPopoverSheetFull());
             sheetRef.setInput('action', options.rtPopoverSheetAction());
             sheetRef.setInput('unsaved', options.rtPopoverSheetUnsaved());
+            sheetRef.setInput('header', options.header());
+            sheetRef.setInput('footer', options.footer());
         },
         { injector: sheetRef.injector }
     );

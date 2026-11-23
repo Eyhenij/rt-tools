@@ -7,6 +7,8 @@ import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtBottomSheetComponent } from '../../rt-bottom-sheet.component';
+import { RtSheetFooterDirective } from '../../rt-sheet-footer.directive';
+import { RtSheetHeaderDirective } from '../../rt-sheet-header.directive';
 import { OwnSheetStackDirective } from './own-sheet-stack.directive';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
@@ -137,6 +139,35 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'header' | 'footer' | 
                                                 <button rtButton label="Статус" aria-label="Статус" appearance="text"></button>
                                             </rt-bottom-sheet>
                                         }
+                                        @case ('свои шапка и подвал') {
+                                            <rt-bottom-sheet [open]="true">
+                                                <ng-template rtSheetHeader let-close>
+                                                    <button
+                                                        rtButton
+                                                        size="sm"
+                                                        appearance="text"
+                                                        label="Назад"
+                                                        aria-label="Назад"
+                                                        (click)="close()"></button>
+                                                    <strong style="flex: 1 1 auto; text-align: center">Свой заголовок</strong>
+                                                    <button
+                                                        rtButton
+                                                        size="sm"
+                                                        appearance="outlined"
+                                                        label="Сбросить"
+                                                        aria-label="Сбросить"></button>
+                                                </ng-template>
+                                                <button rtButton label="Статус" aria-label="Статус" appearance="text"></button>
+                                                <ng-template rtSheetFooter let-close>
+                                                    <button
+                                                        rtButton
+                                                        label="Показать 12"
+                                                        aria-label="Показать 12"
+                                                        style="flex: 1 1 auto"
+                                                        (click)="close()"></button>
+                                                </ng-template>
+                                            </rt-bottom-sheet>
+                                        }
                                     }
                                 </div>
                             </ng-template>
@@ -210,6 +241,8 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'header' | 'footer' | 
     imports: [
         // components
         RtBottomSheetComponent,
+        RtSheetFooterDirective,
+        RtSheetHeaderDirective,
 
         // directives
         RtButtonDirective,
@@ -230,8 +263,11 @@ export class TestRtBottomSheetMatrixComponent {
 
     public readonly opens: readonly boolean[] = [false, true];
     public readonly contents: readonly string[] = ['без шапки', 'с шапкой', 'длинное содержимое', 'пусто'];
-    /** Шапка с действием, шторка во всю высоту ящика и вопрос, который история открывает нажатием «×». */
-    public readonly headers: readonly string[] = ['действие справа', 'во всю высоту', 'вопрос перед закрытием'];
+    /**
+     * Шапка с действием, шторка во всю высоту ящика, вопрос, который история открывает нажатием «×»,
+     * и шторка со своими шаблонами шапки и подвала.
+     */
+    public readonly headers: readonly string[] = ['действие справа', 'во всю высоту', 'вопрос перед закрытием', 'свои шапка и подвал'];
 
     public readonly manyActions: readonly string[] = ['Скачать', 'Отправить', 'Переименовать', 'Дублировать', 'Архивировать', 'Удалить'];
 

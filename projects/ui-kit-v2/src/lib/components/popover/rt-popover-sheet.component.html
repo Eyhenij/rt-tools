@@ -5,6 +5,8 @@
         [ariaLabelledby]="title() ? titleId : null"
         [fullHeight]="fullHeight()"
         [unsaved]="unsaved()"
+        [headerTemplate]="header()"
+        [footerTemplate]="footer()"
         (applyRequest)="applyRequest.emit()"
         (openChange)="openChange($event)">
         @if (title()) {

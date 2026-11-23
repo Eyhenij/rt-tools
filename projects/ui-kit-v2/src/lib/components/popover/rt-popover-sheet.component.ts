@@ -18,7 +18,7 @@ import {
 // rt-tools
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RtBottomSheetComponent } from '@rt-tools/ui-kit-v2/bottom-sheet';
+import { IRtSheetTemplateContext, RtBottomSheetComponent } from '@rt-tools/ui-kit-v2/bottom-sheet';
 
 const BEM_BLOCK: string = 'rt-popover-sheet';
 
@@ -78,6 +78,15 @@ export class RtPopoverSheetComponent {
     public readonly unsaved: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
+
+    /** Своя шапка шторки шаблоном. Пусто — шапка шторки с заголовком и действием. */
+    public readonly header: InputSignal<TemplateRef<IRtSheetTemplateContext> | null> = input<TemplateRef<IRtSheetTemplateContext> | null>(
+        null
+    );
+    /** Свой подвал шторки шаблоном. Пусто — подвала нет. */
+    public readonly footer: InputSignal<TemplateRef<IRtSheetTemplateContext> | null> = input<TemplateRef<IRtSheetTemplateContext> | null>(
+        null
+    );
 
     public readonly dismissed: OutputEmitterRef<void> = output<void>();
     /** Человек ответил на вопрос «Применить»: следом придёт `dismissed`. */

@@ -29,10 +29,16 @@
 | ----------------------- | ----------------------------------------------- | --------- |
 | `rtPopoverSheetFull`    | `boolean` — шторка во всю высоту экрана         | `false`   |
 | `rtPopoverSheetAction`  | `TemplateRef \| null` — действие справа в шапке | `null`    |
+| `rtPopoverSheetHeader`  | `TemplateRef \| null` — своя шапка шторки       | `null`    |
+| `rtPopoverSheetFooter`  | `TemplateRef \| null` — свой подвал шторки      | `null`    |
 | `rtPopoverSheetUnsaved` | `boolean` — спросить перед закрытием            | `false`   |
 
 Выход `rtPopoverSheetApply` — в вопросе шторки нажали «Применить». Сама шторка —
 [`rt-bottom-sheet`](../bottom-sheet/CONTEXT.md).
+
+`rtPopoverSheetFull` — переключатель приложения, списки кита его не ставят: шторка открыта по
+высоте содержимого и сама встаёт во всю высоту, пока в ней печатают на сенсорном экране. Панель
+внутри шторки не прокручивается: прокручивает тело шторки, и кольцо фокуса поиска не обрезано.
 
 Выходы: `rtPopoverOpened`, `rtPopoverClosed`. Публичное API: `open()`, `close()`, `toggle()`,
 `isOpen()` — работают **во всех режимах**; `trigger` определяет только автоматические слушатели.

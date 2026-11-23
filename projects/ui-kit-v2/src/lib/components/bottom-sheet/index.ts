@@ -1,1 +1,4 @@
 export * from './rt-bottom-sheet.component';
+export * from './rt-bottom-sheet.model';
+export * from './rt-sheet-footer.directive';
+export * from './rt-sheet-header.directive';
