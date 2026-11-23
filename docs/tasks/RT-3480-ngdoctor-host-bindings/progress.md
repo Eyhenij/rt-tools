@@ -18,6 +18,20 @@
 - [x] 1.4 Значение keyExp по умолчанию и текст правила линтера не читаются инструментом как имя входа и привязка класса
 - [x] 1.5 Порог Angular Doctor равен результату, не держит семи правил задачи и не вырос ни в одном другом правиле; проверка спек зелёная; эталоны витрины те же; тесты core, кита, auth-import и правил линтера зелёные
 
+## Live check
+
+23.11.2026, витрина на порту 6007:
+
+- `atoms-feedback-skeleton--shape`: классы `rt-skeleton--rectangle|circle`, `--sm|md|lg`,
+  `--animated` на хосте; круг 10×10, 15×15, 20×20 — ширина и высота из привязок `host`;
+- `atoms-feedback-toast--severity`: на хосте `rt-toast` и модификаторы `--severity--*`, `--filled`,
+  `--front`, `--mounted`; стиль хоста несёт `--index`, `--offset`, `--z-index`, `--initial-height`;
+- `atoms-buttons-button--appearance` и `--pressed`: `rt-ripple rt-button` с модификаторами вида,
+  `aria-pressed` null, false и true с `rt-button--pressed`; нажатие кнопки без положения не ставит
+  атрибута;
+- `organisms-material-dynamic-list-datatable--actions`: атрибут `rt-data-table-stop-row-click` на 6
+  частях строк, ячеек действий 18.
+
 ## Decisions along the way
 
 ## Sessions
