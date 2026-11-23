@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/git-guard-push-ahead.sh · 0095987693af · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/git-guard-push-ahead.sh · 3e6bfe889ef4 · правится надстройкой, не здесь
 # The push set run ahead of the push: every check of `rt_push_checks <base>`, a green mark for each
 # that passed. The push guard then reads the marks instead of running the steps again.
 #
@@ -61,6 +61,9 @@ rt_push_mark_clean || {
 
 base="$(rt_push_base "${RT_MAIN_BRANCH:-main}")"
 skip_code="${RT_SKIP_CODE:-7}"
+# The push takes this base and its commit from the record while the tree stays the same: a branch
+# merged, removed or put next to this one during the set changes nothing for the push.
+command -v rt_push_base_record >/dev/null 2>&1 && rt_push_base_record "$base"
 
 if command -v rt_push_adds_nothing >/dev/null 2>&1 && rt_push_adds_nothing "$base"; then
     printf 'push ahead: the head adds no commit to %s — there is nothing to run, the push passes\n' "$base"

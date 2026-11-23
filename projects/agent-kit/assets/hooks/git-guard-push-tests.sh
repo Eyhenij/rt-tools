@@ -261,8 +261,15 @@ Red among the light checks:
 ${failed}
 
 $(printf '%s' "$output" | tr -d '\000')"
+    # Both bases are named: a mark is keyed by its base, and a push that chose another base than
+    # the run ahead looks the same as one with no run at all.
+    last_base=""
+    command -v rt_push_base_last >/dev/null 2>&1 && last_base="$(rt_push_base_last)"
+    base_line="
+
+The base of this push: ${base:-none}. The base of the last run ahead in this copy: ${last_base:-none recorded}."
     push_refuse push '{"push_marks_green":"no"}' "$(jq -cn --arg a "$ahead" --arg c "$ahead_cmd" --arg d "$dirty_line" --arg r "$red_line" \
-        '{ahead:$a, ahead_cmd:$c, dirty_line:$d, red_line:$r}')"
+        --arg b "$base_line" '{ahead:$a, ahead_cmd:$c, dirty_line:$d, red_line:$r, base_line:$b}')"
 fi
 
 # What was skipped is named aloud even when the set passed: silence about it is exactly the

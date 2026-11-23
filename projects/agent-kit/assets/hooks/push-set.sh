@@ -54,6 +54,8 @@ rt_push_set_profile() {
 
 rt_push_set_base() {
     local main_branch="${RT_MAIN_BRANCH:-main}"
+    # The tree the run ahead judged is pushed against the base that run took.
+    command -v rt_push_base_recorded >/dev/null 2>&1 && rt_push_base_recorded && return 0
     if command -v rt_push_base >/dev/null 2>&1; then
         rt_push_base "$main_branch"
         return 0

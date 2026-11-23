@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/git-guard-push-marks.sh · 53241d57606d · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/git-guard-push-marks.sh · 5768a8584d16 · правится надстройкой, не здесь
 # The base of the push set and the marks of a green run, shared by the push guard and by the
 # command that runs the set ahead (`git-guard-push-ahead.sh`).
 #
@@ -159,7 +159,12 @@ rt_push_mark_key() {
     else
         tree="$(git rev-parse --verify --quiet 'HEAD^{tree}' 2>/dev/null)" || return 1
     fi
-    [ -n "$2" ] && base_sha="$(git rev-parse --verify --quiet "$2" 2>/dev/null)"
+    # The base taken from the record of the run ahead is keyed by the commit recorded with it: the
+    # branch may have moved or gone since, and the set judged the tree against that commit.
+    if [ -n "$2" ]; then
+        base_sha="$(rt_push_base_pinned "$2")"
+        [ -n "$base_sha" ] || base_sha="$(git rev-parse --verify --quiet "$2" 2>/dev/null)"
+    fi
     printf '%s\n%s\n%s\n' "$1" "$tree" "$base_sha" | git hash-object --stdin 2>/dev/null
 }
 
@@ -169,6 +174,77 @@ rt_push_mark_dir() {
     local common
     common="$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)" || return 1
     printf '%s/rt-kit/push-green' "$common"
+}
+
+# The base of the run ahead, pinned to the tree it judged. The run ahead writes the tree of the
+# head, the base and the commit of the base; the push guard and the git hook take the base and the
+# commit from the record when their tree is the same one, and choose the base anew otherwise.
+#
+# Without the record the push chose its base by itself. On 21.11 a set of half an hour judged the
+# tree against a lower branch; the host merged and removed that branch during the set, a
+# neighbouring copy pruned the refs, and the push chose the epic branch and refused the push as
+# «No green mark». The record lies in the directory of the working copy, not in the shared one: a
+# neighbouring copy runs its own set.
+rt_push_base_record_path() {
+    local dir
+    dir="$(git rev-parse --path-format=absolute --git-dir 2>/dev/null)" || return 1
+    printf '%s/rt-kit/push-base' "$dir"
+}
+
+# Writes the record for the tree of the head. The marks of this tree are then keyed by the commit
+# the base had when the set began, not by where its ref stands later.
+rt_push_base_record() {
+    local path tree sha
+    [ -n "$1" ] || return 0
+    tree="$(git rev-parse --verify --quiet 'HEAD^{tree}' 2>/dev/null)" || return 0
+    sha="$(git rev-parse --verify --quiet "$1^{commit}" 2>/dev/null)" || return 0
+    path="$(rt_push_base_record_path)" || return 0
+    mkdir -p "${path%/*}" 2>/dev/null && printf '%s\n%s\n%s\n' "$tree" "$1" "$sha" > "$path" 2>/dev/null
+    return 0
+}
+
+# The commit recorded for the base `$1` when the record is for the tree of the head, or nothing.
+# Read from the file on every call: the callers take the base in a subshell.
+rt_push_base_pinned() {
+    local path tree name sha
+    path="$(rt_push_base_record_path)" || return 0
+    [ -f "$path" ] || return 0
+    { IFS= read -r tree && IFS= read -r name && IFS= read -r sha; } < "$path" || return 0
+    [ "$name" = "$1" ] || return 0
+    [ "$tree" = "$(git rev-parse --verify --quiet 'HEAD^{tree}' 2>/dev/null)" ] || return 0
+    git cat-file -e "$sha^{commit}" 2>/dev/null || return 0
+    printf '%s' "$sha"
+}
+
+# Prints the recorded base when the record is for the tree of the head. A ref the copy lost to a
+# prune is put back at the recorded commit: the steps of the set name the base by its ref, and the
+# filter of live branches in `rt_push_base` still takes no such ref. Another tree, no record or a
+# commit the copy does not hold — no answer.
+rt_push_base_recorded() {
+    local path name sha
+    path="$(rt_push_base_record_path)" || return 1
+    [ -f "$path" ] || return 1
+    name="$(sed -n 2p "$path" 2>/dev/null)"
+    case "$name" in origin/?*) ;; *) return 1 ;; esac
+    sha="$(rt_push_base_pinned "$name")"
+    [ -n "$sha" ] || return 1
+    git rev-parse --verify --quiet "refs/remotes/$name" >/dev/null 2>&1 ||
+        git update-ref "refs/remotes/$name" "$sha" 2>/dev/null || return 1
+    printf '%s' "$name"
+}
+
+# The base the last run ahead in this copy judged, for the refusal: the base, and «another tree»
+# when the record is not for the tree of the head. No record — nothing.
+rt_push_base_last() {
+    local path tree name
+    path="$(rt_push_base_record_path)" || return 0
+    [ -f "$path" ] || return 0
+    { IFS= read -r tree && IFS= read -r name; } < "$path" || return 0
+    if [ "$tree" = "$(git rev-parse --verify --quiet 'HEAD^{tree}' 2>/dev/null)" ]; then
+        printf '%s' "$name"
+    else
+        printf '%s (another tree)' "$name"
+    fi
 }
 
 rt_push_mark_has() {

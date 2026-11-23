@@ -60,6 +60,9 @@ rt_push_mark_clean || {
 
 base="$(rt_push_base "${RT_MAIN_BRANCH:-main}")"
 skip_code="${RT_SKIP_CODE:-7}"
+# The push takes this base and its commit from the record while the tree stays the same: a branch
+# merged, removed or put next to this one during the set changes nothing for the push.
+command -v rt_push_base_record >/dev/null 2>&1 && rt_push_base_record "$base"
 
 if command -v rt_push_adds_nothing >/dev/null 2>&1 && rt_push_adds_nothing "$base"; then
     printf 'push ahead: the head adds no commit to %s — there is nothing to run, the push passes\n' "$base"
