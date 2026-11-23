@@ -22,6 +22,8 @@ import {
     WritableSignal,
 } from '@angular/core';
 
+import { FormsModule } from '@angular/forms';
+
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
@@ -31,6 +33,7 @@ import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
@@ -73,12 +76,14 @@ function nextPanelId(): number {
     imports: [
         // Angular
         NgTemplateOutlet,
+        FormsModule,
 
         // standalone components / directives
         RtButtonDirective,
         RtEmptyStateComponent,
         RtIconButtonComponent,
         RtIconComponent,
+        RtInputComponent,
         RtPopoverDirective,
         RtSpinnerComponent,
         BlockDirective,
@@ -116,6 +121,15 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     protected readonly inputText: WritableSignal<string> = signal<string>('');
 
     protected readonly isOpen: Signal<boolean> = computed((): boolean => this.popover().isOpen());
+
+    /** Список откроется в нижней шторке: так решает нажатие на поле — по текущей ширине экрана. */
+    protected readonly inSheet: Signal<boolean> = computed((): boolean => this.popover().inSheet());
+
+    /** Список открыт в шторке: набор идёт в поле поиска наверху шторки, а не в поле под ней. Не меняется, пока шторка открыта. */
+    protected readonly openedInSheet: Signal<boolean> = computed((): boolean => this.popover().openedInSheet());
+
+    /** Поле поиска в шторке — ему отдаётся фокус, когда шторка открылась. */
+    protected readonly sheetSearch: Signal<RtInputComponent | undefined> = viewChild(RtInputComponent);
 
     /** Клавиатура списка: подсветка, клавиши открытия, id для `aria-activedescendant`, прокрутка к опции. */
     protected readonly optionList: RtOptionList = new RtOptionList({
@@ -157,6 +171,11 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     );
 
     public readonly placeholder: InputSignal<string> = input<string>('');
+
+    /** На телефоне список открывается в нижней шторке с полем поиска; `false` оставляет его у поля. */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
     /**
      * Со скольких букв запроса открываются подсказки. `undefined` пишет сигнальная форма, когда не
      * задала `minLength`: тогда — с первой буквы, как по умолчанию.
@@ -232,6 +251,10 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     }
 
     protected focusAfterClear(): void {
+        // В шторке фокус в поле открыл бы шторку снова: нажатие на крестик только очищает.
+        if (this.inSheet()) {
+            return;
+        }
         this.fieldEl()?.nativeElement.focus();
     }
 
@@ -242,22 +265,37 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     }
 
     protected onInput(event: Event): void {
-        const target: HTMLInputElement = event.target as HTMLInputElement;
-        const query: string = target.value;
-        this.inputText.set(query);
-        this.activeIndex.set(-1);
-        // Новый запрос — новый список: его первая страница той же длины, что прошлый список, снова
-        // сообщает о дне, иначе подгрузка нового запроса не началась бы вовсе.
-        this.#endReportedAt = -1;
-        if (query.length >= this.minLength()) {
-            this.complete.emit({ query, originalEvent: event });
-            this.popover().open();
-        } else {
-            this.popover().close();
-        }
+        this.#search((event.target as HTMLInputElement).value, event);
+    }
+
+    /** Набор в поле поиска шторки: тот же запрос, но шторка не закрывается от короткого текста. */
+    protected onSheetQuery(query: string): void {
+        this.#search(query, new Event('input'));
+    }
+
+    /**
+     * Шторка открылась и больше не `inert`: клавиатура уходит в поле поиска наверху, а не в поле под
+     * шторкой. Раньше в закрытую шторку фокус не встаёт.
+     */
+    protected onSheetOpened(): void {
+        this.sheetSearch()?.focus();
     }
 
     protected onFocus(): void {
+        // На телефоне нажатие на поле открывает шторку сразу: набирают уже в ней.
+        if (this.inSheet()) {
+            this.fieldEl()?.nativeElement.blur();
+            // Закрытая шторка возвращает фокус полю — это не нажатие: запрос и открытие не повторяются.
+            if (this.isOpen()) {
+                return;
+            }
+            // Запрос уходит, только когда текст не короче `minLength`, как у набора в поле; шторка открывается всегда.
+            if (this.inputText().length >= this.minLength()) {
+                this.complete.emit({ query: this.inputText(), originalEvent: new Event('focus') });
+            }
+            this.popover().open();
+            return;
+        }
         if (!this.openOnFocus()) {
             return;
         }
@@ -266,6 +304,11 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     }
 
     protected onBlur(): void {
+        // В шторке поле теряет фокус, когда его отдают поиску шторки: это не уход человека. Касание
+        // ставит закрытие шторки.
+        if (this.openedInSheet()) {
+            return;
+        }
         this.markTouched();
     }
 
@@ -283,6 +326,9 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
 
     protected onClosed(): void {
         this.activeIndex.set(-1);
+        if (this.openedInSheet()) {
+            this.markTouched();
+        }
     }
 
     protected onSelect(item: TItem): void {
@@ -322,6 +368,23 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
                 event.stopPropagation();
                 this.popover().close();
                 break;
+        }
+    }
+
+    #search(query: string, originalEvent: Event): void {
+        this.inputText.set(query);
+        this.activeIndex.set(-1);
+        // Новый запрос — новый список: его первая страница той же длины, что прошлый список, снова
+        // сообщает о дне, иначе подгрузка нового запроса не началась бы вовсе.
+        this.#endReportedAt = -1;
+        if (query.length >= this.minLength()) {
+            this.complete.emit({ query, originalEvent });
+            this.popover().open();
+            return;
+        }
+        // Короткий запрос закрывает панель у поля; шторку он не закрывает — в ней набирают дальше.
+        if (!this.openedInSheet()) {
+            this.popover().close();
         }
     }
 

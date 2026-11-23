@@ -9,6 +9,12 @@ import { RtConfirmPopoverComponent } from '../../rt-confirm-popover.component';
 import { IRtConfirmPopover } from '../../rt-confirm-popover.model';
 import { RtConfirmDirective } from '../../rt-confirm.directive';
 
+/** Короткая подпись кнопки подтверждения — у всех случаев наполнения, кроме длинной. */
+const SHORT_CONFIRM: string = 'Удалить';
+
+/** Короткий вопрос — у всех случаев наполнения, кроме длинного. */
+const SHORT_QUESTION: string = 'Удалить запись? Действие необратимо.';
+
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TConfirmMatrixPart = 'tone' | 'content' | 'presets' | 'themes' | 'panel';
 
@@ -23,6 +29,8 @@ interface IConfirmContentCase {
     readonly name: string;
     readonly title: string | null;
     readonly message: string;
+    /** Подпись кнопки подтверждения: длинная раздвигает панель. */
+    readonly confirmLabel: string;
 }
 
 /**
@@ -43,7 +51,7 @@ interface IConfirmContentCase {
             @case ('tone') {
                 <app-story-presets caption="Тон подтверждения в обоих наборах">
                     <ng-template>
-                        <app-story-row [items]="toneCases" [itemLabel]="caseLabel" [slotWidth]="panelWidth">
+                        <app-story-row [items]="toneCases" [itemLabel]="caseLabel">
                             <ng-template let-toneCase>
                                 <rt-confirm-popover
                                     title="Удаление"
@@ -60,11 +68,13 @@ interface IConfirmContentCase {
             @case ('content') {
                 <app-story-presets caption="Наполнение панели в обоих наборах">
                     <ng-template>
-                        <app-story-row [items]="contentCases" [itemLabel]="caseLabel" [slotWidth]="panelWidth">
+                        <!-- Ширину ячейке не задаём: панель берёт ширину по кнопкам сама, и ячейка по
+                             содержимому получает именно её. -->
+                        <app-story-row [items]="contentCases" [itemLabel]="caseLabel">
                             <ng-template let-contentCase>
                                 <rt-confirm-popover
-                                    confirmLabel="Удалить"
                                     cancelLabel="Отмена"
+                                    [confirmLabel]="contentCase.confirmLabel"
                                     [title]="contentCase.title"
                                     [message]="contentCase.message" />
                             </ng-template>
@@ -143,9 +153,6 @@ export class TestRtConfirmMatrixComponent {
 
     public readonly triggerAttribute: string = STORY_TRIGGER_ATTRIBUTE;
 
-    /** Ширина ячейки: панель ровно 280 px, ячейка по содержимому её и получит. */
-    public readonly panelWidth: string = '17.5rem';
-
     public readonly toneCases: readonly IConfirmToneCase[] = [
         { name: 'danger', tone: 'danger' },
         { name: 'warning', tone: 'warning' },
@@ -153,12 +160,19 @@ export class TestRtConfirmMatrixComponent {
     ];
 
     public readonly contentCases: readonly IConfirmContentCase[] = [
-        { name: 'с заголовком', title: 'Удаление', message: 'Удалить запись? Действие необратимо.' },
-        { name: 'без заголовка', title: null, message: 'Удалить запись? Действие необратимо.' },
+        { name: 'с заголовком', title: 'Удаление', message: SHORT_QUESTION, confirmLabel: SHORT_CONFIRM },
+        { name: 'без заголовка', title: null, message: SHORT_QUESTION, confirmLabel: SHORT_CONFIRM },
         {
             name: 'длинный вопрос',
             title: 'Удаление',
             message: 'Запись будет удалена вместе с приложенными файлами и историей изменений. Восстановить её будет нельзя.',
+            confirmLabel: SHORT_CONFIRM,
+        },
+        {
+            name: 'длинная подпись кнопки',
+            title: 'Удаление',
+            message: SHORT_QUESTION,
+            confirmLabel: 'Удалить без возможности восстановления',
         },
     ];
 

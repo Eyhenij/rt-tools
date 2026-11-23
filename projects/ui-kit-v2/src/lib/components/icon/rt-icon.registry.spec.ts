@@ -128,7 +128,7 @@ describe('RtIconRegistry', (): void => {
         expect(symbolsInSprite()).toEqual([`${RT_ICON_SYMBOL_ID_PREFIX}check`, `${RT_ICON_SYMBOL_ID_PREFIX}wallet`]);
     });
 
-    it('SC-UKV-1709 — символ спрайта несёт рисунок файла, а скрипт, вложенный HTML и обработчики в него не попадают', (): void => {
+    it('SC-UKV-1748 — символ спрайта несёт рисунок файла, а скрипт, вложенный HTML и обработчики в него не попадают', (): void => {
         const harness: IHarness = setup();
         const hostile: string = [
             '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" onload="window.hit=1">',
@@ -149,7 +149,7 @@ describe('RtIconRegistry', (): void => {
         expect(symbol?.querySelector('a')?.hasAttribute('href')).toBe(false);
     });
 
-    it('SC-UKV-1709 — стиль, анимация атрибутов, HTML в описании, внешняя картинка и схема скрипта, разбитая знаками, в символ не попадают', (): void => {
+    it('SC-UKV-1748 — стиль, анимация атрибутов, HTML в описании, внешняя картинка и схема скрипта, разбитая знаками, в символ не попадают', (): void => {
         const harness: IHarness = setup();
         const hostile: string = [
             '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">',
@@ -170,7 +170,7 @@ describe('RtIconRegistry', (): void => {
         expect(symbol?.querySelector('a')?.hasAttribute('href')).toBe(false);
     });
 
-    it('SC-UKV-1709 — файл с прологом XML и объявлением типа разбирается так же', (): void => {
+    it('SC-UKV-1748 — файл с прологом XML и объявлением типа разбирается так же', (): void => {
         const harness: IHarness = setup();
 
         serve(

@@ -1,3 +1,4 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import { NgTemplateOutlet } from '@angular/common';
 import {
     computed,
@@ -12,6 +13,8 @@ import {
     OutputEmitterRef,
     Signal,
     ViewEncapsulation,
+    booleanAttribute,
+    InputSignalWithTransform,
 } from '@angular/core';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
@@ -63,6 +66,11 @@ export class RtTabsMoreComponent {
     protected readonly hasError: Signal<boolean> = computed((): boolean =>
         this.tabs().some((tab: RtTabDirective): boolean => tab.invalid())
     );
+
+    /** На телефоне панель открывается в нижней шторке кита; `false` оставляет её у кнопки. */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
 
     /** Вкладки меню в порядке объявления. Пустой список прячет пункт, но оставляет его для замера. */
     public readonly tabs: InputSignal<readonly RtTabDirective[]> = input<readonly RtTabDirective[]>([]);

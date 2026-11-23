@@ -34,7 +34,7 @@ Given a page header in the horizontal layout with a rail logo template and a rai
 When the header is drawn
 Then neither template's content is built
 
-Covered: `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header.slots.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header-slots.directive.spec.ts`.
 
 ### SC-UKV-1715 — the vertical page header draws the rail templates in the rail
 
@@ -42,7 +42,7 @@ Given a page header with `layout="vertical"`, a rail logo template and a rail pa
 When the header is drawn
 Then the logo stands at the top of the rail and the page content in the page place of the rail
 
-Covered: `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header.slots.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header-slots.directive.spec.ts`.
 
 ### SC-UKV-1716 — the vertical page header builds no compact and bell templates
 
@@ -50,7 +50,7 @@ Given a page header with `layout="vertical"`, three compact templates and a bell
 When the header is drawn
 Then none of the four templates' content is built
 
-Covered: `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header.slots.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header-slots.directive.spec.ts`.
 
 ### SC-UKV-1717 — two bell templates stand at the header end in the order written
 
@@ -59,7 +59,7 @@ second, and a user
 When the header is drawn
 Then the assistant button, the bell and the profile button stand at the end in this order
 
-Covered: `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header.slots.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header-slots.directive.spec.ts`.
 
 ### SC-UKV-1718 — a hidden chat header builds no header actions
 
@@ -213,7 +213,7 @@ Given a horizontal page header with a bell template whose content is built
 When `layout` becomes `vertical` on the live page
 Then the content of the bell template is destroyed
 
-Covered: `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header.slots.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header-slots.directive.spec.ts`.
 
 ### SC-UKV-1737 — two actions templates of a panel stand in the order written
 
@@ -285,9 +285,11 @@ Covered: `projects/ui-kit-v2/src/lib/components/info-item/rt-info-item-content.d
 
 Given a field whose hint is written as an element with `rtFieldHint`, in development mode
 When the field is drawn
-Then the console holds a warning naming `rt-field`, `rtFieldHint` and the template form
+Then the console holds a warning naming `rt-field`, `rtFieldHint` and the template form; the
+element form of `rtMultiselectExtra` warns the same way, naming `rt-multiselect`
 
-Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field.component.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field.component.spec.ts`,
+`projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-extra.directive.spec.ts`.
 
 ### SC-UKV-1746 — a menu item outside the content template warns in development mode
 

@@ -30,7 +30,6 @@ import {
     input,
     InputSignal,
     InputSignalWithTransform,
-    linkedSignal,
     numberAttribute,
     output,
     OutputEmitterRef,
@@ -65,9 +64,10 @@ import { RtTableEmptyStateDirective, RtTableErrorDirective } from './rt-table-st
 import { RtRowHasActionsPipe } from './rt-table-row-actions.pipe';
 import { RtTableColumnSettings } from './rt-table-column-settings';
 import { displayedColumnKeys } from './rt-table-columns.logic';
+import { rtTableHostRoleOf } from './rt-table-host.logic';
 import { filterCellsOf } from './rt-table-filter.logic';
 import { IRtTablePinnedEdges, RtTablePinnedEdges } from './rt-table-pinned-edges';
-import { nextSort } from './rt-table-sort.logic';
+import { RtTableSortState } from './rt-table-sort.state';
 import { IRtTable } from './rt-table.model';
 
 const BEM_BLOCK: string = 'rt-table';
@@ -158,22 +158,11 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
 
     readonly #dataSourceVersion: WritableSignal<number> = signal<number>(0);
 
-    /** Под какой закреплённой колонкой есть прокрученное содержимое — по нему видна тень у края. */
-    readonly #hiddenEdges: WritableSignal<IRtTablePinnedEdges> = signal<IRtTablePinnedEdges>(
-        { start: false, end: false },
-        { equal: (a: IRtTablePinnedEdges, b: IRtTablePinnedEdges): boolean => a.start === b.start && a.end === b.end }
-    );
-
     /** Следит за прокруткой контейнера потребителя: таблица сама вбок не прокручивается. */
-    readonly #pinnedEdges: RtTablePinnedEdges = new RtTablePinnedEdges((edges: IRtTablePinnedEdges): void => this.#hiddenEdges.set(edges));
+    readonly #pinnedEdges: RtTablePinnedEdges = new RtTablePinnedEdges();
 
-    /**
-     * Выбранная сортировка. Заводится от входа `[sort]` и переключается заголовками:
-     * таблица показывает порядок и без потребителя, который его слушает.
-     */
-    readonly #sort: WritableSignal<ISortModel<string> | null> = linkedSignal<ISortModel<string> | null>((): ISortModel<string> | null =>
-        this.sort()
-    );
+    /** Выбранная сортировка: от входа `[sort]`, переключается заголовками. */
+    readonly #sort: RtTableSortState = new RtTableSortState((): ISortModel<string> | null => this.sort());
 
     /** Настройка колонок: применённые настройки, реестр панели, загрузка и запись. */
     readonly #columnSettings: RtTableColumnSettings = new RtTableColumnSettings(
@@ -194,16 +183,11 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
     @ViewChild(CdkHeaderCellDef, { static: true })
     private readonly actionsHeaderCellDef?: CdkHeaderCellDef;
 
-    /**
-     * Роль хоста: у native `<table rt-table>` она есть от самого тега, а элементному
-     * `<rt-table>` её ставим сами. Без неё скрин-ридер читает список строками текста: роли
-     * строк и ячеек CDK проставляет сам, а роли самой таблицы у него нет, и проставленные
-     * остаются висеть вне таблицы. Считается один раз — тег хоста по ходу жизни не меняется.
-     */
-    protected readonly hostRole: 'table' | null = (inject(ElementRef).nativeElement as HTMLElement).tagName === 'RT-TABLE' ? 'table' : null;
+    /** Роль хоста: элементному `<rt-table>` её ставим сами, у native `<table>` она от тега. Считается один раз. */
+    protected readonly hostRole: 'table' | null = rtTableHostRoleOf(inject(ElementRef).nativeElement as HTMLElement);
 
     /** Скрытые края для модификаторов хоста `--hidden-start` и `--hidden-end`. */
-    protected readonly hiddenEdges: Signal<IRtTablePinnedEdges> = this.#hiddenEdges.asReadonly();
+    protected readonly hiddenEdges: Signal<IRtTablePinnedEdges> = this.#pinnedEdges.hidden;
 
     /** `true` когда initial-load в полёте и entities ещё нет — skeleton rows; при `error` их нет. */
     protected readonly isInitialLoading: Signal<boolean> = computed(
@@ -356,6 +340,11 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
         transform: booleanAttribute,
     });
 
+    /** На телефоне панель условий отбора открывается в нижней шторке кита; `false` оставляет её у кнопки. */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
     /** Набор условий, по которому нарисованы ячейки отбора. Держит его потребитель. */
     public readonly filters: InputSignal<ReadonlyArray<IFilterModel<string>>> = input<ReadonlyArray<IFilterModel<string>>>([]);
 
@@ -372,7 +361,7 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
     public readonly retry: OutputEmitterRef<void> = output<void>();
 
     /** Текущая сортировка — её читают заголовки колонок (`rtSortHeader`). */
-    public readonly currentSort: Signal<ISortModel<string> | null> = this.#sort.asReadonly();
+    public readonly currentSort: Signal<ISortModel<string> | null> = this.#sort.current;
 
     /**
      * Разрешённые колонки настраиваемой таблицы: `[columnsConfig]` в применённом
@@ -464,9 +453,7 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
      * Выбранное состояние уходит наружу — выборку делает потребитель.
      */
     public toggleSort(propertyName: string): void {
-        const selected: ISortModel<string> | null = nextSort(this.#sort(), propertyName);
-        this.#sort.set(selected);
-        this.sortChange.emit(selected);
+        this.sortChange.emit(this.#sort.toggle(propertyName));
     }
 
     /** Ячейка отбора сообщила новый набор условий — таблица отдаёт его наружу целиком. */

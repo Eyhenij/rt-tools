@@ -144,6 +144,23 @@ there is no icon
 
 Covered by the component spec of the multiselect family.
 
+### SC-UKV-1633 — the multiselect search works in the sheet and keeps the choice
+
+Given a multiselect with a search, open in the sheet, with «Москва» chosen
+When «Каз» is typed in the search and «Казань» is pressed
+Then only «Казань» is left in the list, and the value holds both «Москва» and «Казань»
+
+Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
+
+### SC-UKV-1634 — the multiselect search stands next to the field and is empty at the next opening
+
+Given a multiselect with a search wider than a phone
+When «Мин» is typed in the search, the list is closed and opened again
+Then the search stands in the panel by the field, leaves one option while typed, and all three
+options are back after the reopening
+
+Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
+
 ### SC-UKV-1706 — the date range field announces a person's change and not a value from outside
 
 Given a date range field bound to a form
@@ -170,3 +187,12 @@ Then `selectionChange` carries the string the form got, `''` after the cross; a 
 the form, a signal form model set from outside and the cross of a disabled field raise nothing
 
 Covered: `projects/ui-kit-v2/src/lib/components/date-picker/rt-date-picker.selection-change.spec.ts`.
+
+### SC-UKV-1709 — the multiselect announces «Показать все» and the sheet's «Сбросить»
+
+Given a multiselect bound to a form, with a disabled option among the chosen values
+When a person presses «Показать все» in the `toggles` look twice, or «Сбросить» in the phone sheet
+Then each press raises `selectionChange` with the array the form got, and the disabled value stays
+in it
+
+Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-bulk.selection-change.spec.ts`.

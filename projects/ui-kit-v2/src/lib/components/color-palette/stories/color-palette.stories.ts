@@ -12,6 +12,7 @@ export default {
         disabled: { control: { type: 'boolean' } },
         customAllowed: { control: { type: 'boolean' } },
         channels: { control: { type: 'boolean' } },
+        sheet: { control: { type: 'boolean' } },
     },
 } as Meta<TestRtColorPaletteComponent>;
 
@@ -25,5 +26,6 @@ export const Playground: TStory = {
         disabled: false,
         customAllowed: true,
         channels: false,
+        sheet: true,
     },
 };

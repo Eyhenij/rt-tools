@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 import { RtNotificationsBellComponent } from '../../../notifications-bell/rt-notifications-bell.component';
 import { IRtPageHeader } from '../../rt-page-header.model';
-import { RtPageHeaderBellDirective } from '../../rt-page-header.component';
+import { RtPageHeaderBellDirective } from '../../rt-page-header-slots.directive';
 import { RtPageHeaderComponent } from '../../rt-page-header.component';
 
 /** Тема показа: кадры макета нарисованы во всю ширину окна, светлые и тёмные отдельно. */

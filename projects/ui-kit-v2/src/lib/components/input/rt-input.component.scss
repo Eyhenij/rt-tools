@@ -241,9 +241,10 @@
                 background-color: var(--rt-input-color-bg-hover);
             }
 
+            /* Одна рамка фокуса у всех элементов кита: кнопка внутри поля — тоже. */
             &:focus-visible {
-                outline: var(--rt-input-border-width) solid var(--rt-input-color-border-focus);
-                outline-offset: var(--rt-input-focus-outline-offset);
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: var(--rt-focus-ring-offset);
             }
         }
 

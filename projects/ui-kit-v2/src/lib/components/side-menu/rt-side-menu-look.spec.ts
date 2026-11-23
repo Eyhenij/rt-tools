@@ -36,7 +36,10 @@ function menu(inputs: Readonly<Record<string, unknown>> = {}, narrow: boolean = 
                 provideRouter([{ path: '**', children: [] }]),
                 provideRtSideMenuSettings(),
                 { provide: LOCAL_STORAGE, useValue: window.localStorage },
-                { provide: BreakpointsService, useValue: { narrow: signal(narrow) } },
+                {
+                    provide: BreakpointsService,
+                    useValue: { narrow: signal(narrow), viewportNarrow: signal(narrow), phone: signal(narrow) },
+                },
             ] as never[],
         }
     );

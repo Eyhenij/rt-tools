@@ -40,3 +40,14 @@ When it is drawn
 Then the filter stands as a list, as on a narrow screen
 
 Not covered: a test has no layout — the look is seen by the showcase frame of the container place.
+
+### SC-UKV-1635 — the page container marks the root and keeps the mark while another stands
+
+Given two page containers on one page
+When the first is drawn, the second is drawn and then each is removed in turn
+Then the root carries the place class from the first drawing until the last container leaves, and
+the window threshold of the styles asks no `:has()`
+
+A page without a container is checked on the entry example by
+`apps/auth-example-e2e/src/place-root.spec.ts`: the root carries no place class, and no style rule
+asks `:has()` of the container.

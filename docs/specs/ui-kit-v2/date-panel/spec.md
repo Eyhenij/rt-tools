@@ -37,7 +37,7 @@ kit. The mockup draws a panel of its own for all three types, the same in every 
 
 - **The field shows the date in the order of the interface language.** Under `ru` the text is
   `01.08.2026`, under `en-US` it is «08/01/2026»; the time is `HH:mm` in every language. The hint in
-  the empty field is the same shape in the kit's letters, `дд.мм.гггг` under the Russian labels.
+  the empty field is the same shape as a mask of dashes, `--.--.----`, one for every language.
   Only the text in the field changes: the value of the form stays the ISO string.
 
 - **Typed text becomes the value only when it reads as one within the bounds.** The text is read in
@@ -92,9 +92,9 @@ kit. The mockup draws a panel of its own for all three types, the same in every 
 - **The keys in the month move the day like a grid.** The arrows move by a day and a week, PageUp and
   PageDown by a month, Home and End to the edges of the week, Enter chooses, Escape closes.
 
-- **On a narrow screen the panel opens in the kit's bottom sheet, with days of 44px under a finger.**
-  For a date with time a switch «Дата | Время» shows the month or the columns. The narrow sign is
-  the breakpoints service's, as elsewhere in the kit.
+- **On a phone the panel opens in the kit's bottom sheet, with days of 44px under a finger.**
+  For a date with time a switch «Дата | Время» shows the month or the columns. The phone sign is
+  the breakpoints service's, as elsewhere in the kit; the input `sheet` switches the sheet off.
 
 - **In the bottom sheet the panel keeps the 20px side padding of the sheet header and footer.** The
   body of the sheet has no side padding of its own, and without it the days and the arrows touch

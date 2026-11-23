@@ -71,6 +71,8 @@ const PHONE_MENU: string = 'rt-page-phone-menu';
 
 const TABS_MORE: string = '[qa-dataid="tabs-more"]';
 
+const FILTERS: string = '[qa-dataid="page-bar-filters"]';
+
 function openOn(selector: string): TPlay {
     return async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await openStoryOverlay(canvasElement, { within: selector, wait: 200 });
@@ -208,13 +210,39 @@ export const PhoneFilters: TStory = {
     globals: PHONE,
     parameters: openedAt('[qa-dataid="page-bar-sheet"]', PHONE_VIEW),
     args: { bar: true, tabs: 5, overlay: true },
-    play: openOn('[qa-dataid="page-bar-filters"]'),
+    play: openOn(FILTERS),
 };
 
-/** Меню действий и точка на кнопке отборов: отборы применены. */
+/** Окно кадра планшета: узкий вид шапки, но шире телефона. */
+const TABLET_VIEW: IShotSize = { width: 768, height: 720 };
+
+/** Узкий вид шире телефона: отборы открываются панелью у кнопки, а не шторкой. */
+export const NarrowFiltersPanel: TStory = {
+    globals: { viewport: { value: 'tablet' } },
+    parameters: openedAt('[qa-dataid="page-bar-filters-panel"]', TABLET_VIEW),
+    args: { bar: true, tabs: 5, overlay: true },
+    play: openOn(FILTERS),
+};
+
+/** Селект в шторке отборов открывает свой список шторкой вместо неё; закрытие вернёт отборы. */
+export const PhoneFilterSelect: TStory = {
+    globals: PHONE,
+    // Кадра 768 нет: шире телефона шторки отборов нет, и шаг истории открыть было бы нечего.
+    parameters: { snapshot: { ...openedAt('.rt-popover-sheet .rt-bottom-sheet--open', PHONE_VIEW).snapshot, widths: [] } },
+    args: { bar: true, tabs: 5, overlay: true },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openStoryOverlay(canvasElement, { within: FILTERS, wait: 200 });
+        await openStoryOverlay(canvasElement, { within: '[qa-dataid="page-bar-sheet"] [qa-dataid="select-trigger"]', wait: 400 });
+    },
+};
+
+/**
+ * Меню действий и точка на кнопке отборов: отборы применены. На телефоне меню стоит в шторке, и съёмке
+ * называется её открытый лист: коробка оверлея шторки нулевой ширины.
+ */
 export const PhoneActions: TStory = {
     globals: PHONE,
-    parameters: openedAt('.rt-page-bar-menu', PHONE_VIEW),
+    parameters: openedAt('.rt-popover-sheet .rt-bottom-sheet--open', PHONE_VIEW),
     args: { bar: true, tabs: 5, filtersActive: true, overlay: true },
     play: openOn('[qa-dataid="page-bar-actions-menu"] button'),
 };

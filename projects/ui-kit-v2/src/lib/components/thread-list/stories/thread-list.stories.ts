@@ -15,6 +15,7 @@ export default {
         fetching: { control: { type: 'boolean' } },
         hasMore: { control: { type: 'boolean' } },
         filtersActive: { control: { type: 'boolean' } },
+        sheet: { control: { type: 'boolean' } },
     },
 } as Meta<TestRtThreadListComponent>;
 
@@ -30,5 +31,6 @@ export const Playground: TStory = {
         fetching: false,
         hasMore: false,
         filtersActive: false,
+        sheet: true,
     },
 };

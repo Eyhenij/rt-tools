@@ -3,6 +3,9 @@ import { ComponentFixture } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { RT_KIT_LOCALE } from '../../i18n';
+import { By } from '@angular/platform-browser';
+
+import { RT_POPOVER_SHEET, RtPopoverDirective } from '../popover';
 import { BreakpointsService } from '../../platform';
 import { createRtFixture, el, hostClasses, qa, textOf } from '../../../testing/rt-kit-testing';
 import { RtDatePickerComponent } from './rt-date-picker.component';
@@ -23,6 +26,7 @@ class DatePickerHostComponent {
 /** Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. */
 class NarrowBreakpointsService {
     public readonly viewportNarrow: () => boolean = (): boolean => true;
+    public readonly phone: () => boolean = (): boolean => true;
 }
 
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtDatePickerComponent> {
@@ -57,11 +61,18 @@ describe('RtDatePickerComponent', (): void => {
         expect(hostClasses(setup())).toContain('rt-date-picker');
     });
 
+    it('SC-UKV-1665 — панель даты встаёт по корню поля, а не по кнопке календаря', (): void => {
+        const fixture: ComponentFixture<RtDatePickerComponent> = setup();
+        const popover: RtPopoverDirective = fixture.debugElement.query(By.directive(RtPopoverDirective)).injector.get(RtPopoverDirective);
+
+        expect(popover.origin()).toBe(fixture.nativeElement);
+    });
+
     it('SC-UKV-467 — поле текстовое, подсказка показывает форму текста в порядке локали', (): void => {
         expect(field(setup()).getAttribute('type')).toBe('text');
-        expect(field(setup()).getAttribute('placeholder')).toBe('dd.mm.yyyy');
-        expect(field(setup({ type: 'time' })).getAttribute('placeholder')).toBe('hh:mm');
-        expect(field(setup({ type: 'datetime-local' })).getAttribute('placeholder')).toBe('dd.mm.yyyy hh:mm');
+        expect(field(setup()).getAttribute('placeholder')).toBe('--.--.----');
+        expect(field(setup({ type: 'time' })).getAttribute('placeholder')).toBe('--:--');
+        expect(field(setup({ type: 'datetime-local' })).getAttribute('placeholder')).toBe('--.--.---- --:--');
     });
 
     it('ширина поля в знаках равна длине формы значения', (): void => {
@@ -73,7 +84,7 @@ describe('RtDatePickerComponent', (): void => {
     it('пустое поле показывает форму значения при наведении, заполненное — нет', (): void => {
         const fixture: ComponentFixture<DatePickerHostComponent> = setupHost();
 
-        expect(field(fixture).getAttribute('title')).toBe('dd.mm.yyyy');
+        expect(field(fixture).getAttribute('title')).toBe('--.--.----');
 
         fixture.componentInstance.control.setValue('2026-03-15');
         fixture.detectChanges();
@@ -203,6 +214,40 @@ describe('RtDatePickerComponent', (): void => {
             expect(sheet.querySelector('rt-date-panel')?.classList).toContain('rt-date-panel--sheet');
             expect(sheet.querySelector('[qa-dataid="date-panel-tabs"]')).not.toBeNull();
             expect(popup()).toBeNull();
+        });
+
+        it('SC-UKV-1595 — на узком экране с sheet=false панель открывается поповером у поля, шторки нет', (): void => {
+            const fixture: ComponentFixture<RtDatePickerComponent> = createRtFixture(
+                RtDatePickerComponent,
+                { sheet: false },
+                { providers: [RU_LOCALE, { provide: BreakpointsService, useClass: NarrowBreakpointsService }] }
+            );
+
+            openButton(fixture).click();
+            fixture.detectChanges();
+
+            expect(qa(fixture, 'date-picker-sheet')).toBeNull();
+            expect(popup()).not.toBeNull();
+        });
+
+        it('SC-UKV-1611 — токен RT_POPOVER_SHEET со значением false на телефоне оставляет поповер у поля, шторки нет', (): void => {
+            const fixture: ComponentFixture<RtDatePickerComponent> = createRtFixture(
+                RtDatePickerComponent,
+                {},
+                {
+                    providers: [
+                        RU_LOCALE,
+                        { provide: BreakpointsService, useClass: NarrowBreakpointsService },
+                        { provide: RT_POPOVER_SHEET, useValue: false },
+                    ],
+                }
+            );
+
+            openButton(fixture).click();
+            fixture.detectChanges();
+
+            expect(qa(fixture, 'date-picker-sheet')).toBeNull();
+            expect(popup()).not.toBeNull();
         });
     });
 

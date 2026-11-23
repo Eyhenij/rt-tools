@@ -15,7 +15,12 @@ import { TestRtSideMenuCellComponent } from './test-side-menu-cell.component';
     templateUrl: './test-side-menu-cell.component.html',
     styleUrls: ['./test-side-menu-cell.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [{ provide: BreakpointsService, useValue: { narrow: signal<boolean>(true) } }],
+    providers: [
+        {
+            provide: BreakpointsService,
+            useValue: { narrow: signal<boolean>(true), viewportNarrow: signal<boolean>(true), phone: signal<boolean>(true) },
+        },
+    ],
     imports: [RtSideMenuComponent, RtSideMenuHeaderDirective, RtSideMenuFooterDirective],
 })
 export class TestRtSideMenuNarrowCellComponent extends TestRtSideMenuCellComponent {}

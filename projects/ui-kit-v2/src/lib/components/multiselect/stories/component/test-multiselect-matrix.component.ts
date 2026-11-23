@@ -11,10 +11,13 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtFieldComponent } from '../../../field/rt-field.component';
 import { IRtInput } from '../../../input/rt-input.model';
 import { IRtSelect } from '../../../select/rt-select.model';
+import { RtToggleSwitchComponent } from '../../../toggle-switch/rt-toggle-switch.component';
+import { RtMultiselectExtraDirective } from '../../rt-multiselect-extra.directive';
 import { RtMultiselectComponent } from '../../rt-multiselect.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TMultiselectMatrixPart = 'size' | 'chips' | 'bordered' | 'states' | 'presets' | 'themes' | 'panel';
+export type TMultiselectMatrixPart =
+    'size' | 'chips' | 'bordered' | 'states' | 'presets' | 'themes' | 'panel' | 'toggles' | 'toggles-panel' | 'sheet';
 
 /** Что показывает открытая панель: набор вариантов или его отсутствие. */
 export type TMultiselectPanelCase = 'options' | 'empty' | 'tree';
@@ -46,6 +49,12 @@ interface IMultiselectStateCase {
 interface IMultiselectThemeCase {
     readonly name: string;
     readonly disabled: boolean;
+    readonly control: FormControl<readonly string[] | null>;
+}
+
+/** Поле вида `toggles`: подпись под ним и выбор, из которого сводка складывает «Все» или «N из M». */
+interface IMultiselectTogglesCase {
+    readonly name: string;
     readonly control: FormControl<readonly string[] | null>;
 }
 
@@ -225,6 +234,60 @@ function invalid(): FormControl<readonly string[] | null> {
                         [formControl]="panel === 'tree' ? treeControl : panelControl" />
                 </div>
             }
+
+            @case ('toggles') {
+                <app-story-row [items]="togglesCases" [itemLabel]="caseLabel" [slotWidth]="togglesWidth">
+                    <ng-template let-togglesCase>
+                        <rt-multiselect
+                            look="toggles"
+                            placeholder="Категории"
+                            [ariaLabel]="togglesCase.name"
+                            [options]="categories"
+                            [formControl]="togglesCase.control" />
+                    </ng-template>
+                </app-story-row>
+            }
+
+            @case ('toggles-panel') {
+                <div class="app-multiselect-matrix__toggles-slot">
+                    <rt-multiselect
+                        look="toggles"
+                        ariaLabel="Категории · открыто"
+                        placeholder="Категории"
+                        [attr.data-story-trigger]="triggerAttribute"
+                        [options]="categories"
+                        [formControl]="togglesPanelControl">
+                        <!-- Строка приложения собрана как строки кита: подпись слева, переключатель справа -->
+                        <ng-template rtMultiselectExtra>
+                            <label
+                                for="story-hide-empty-input"
+                                style="display: flex; min-height: var(--rt-size-10); box-sizing: border-box; align-items: center; justify-content: space-between; padding: var(--rt-space-sm) var(--rt-space-md); color: var(--rt-color-text-primary); cursor: pointer; font-size: var(--rt-input-font-size); gap: var(--rt-space-sm)">
+                                Скрыть пустые
+                                <rt-toggle-switch
+                                    qa-dataid="story-hide-empty"
+                                    inputId="story-hide-empty-input"
+                                    ariaLabel="Скрыть пустые"
+                                    [formControl]="hideEmptyControl" />
+                            </label>
+                        </ng-template>
+                    </rt-multiselect>
+                </div>
+            }
+
+            @case ('sheet') {
+                <!-- Рамка 375 даёт экран макета телефона: шторка берёт заголовок у подписи rt-field -->
+                <div style="box-sizing: border-box; inline-size: 375px; padding: 16px">
+                    <rt-field label="Города">
+                        <!-- Поиск над списком — как в макете 6068:1250. -->
+                        <rt-multiselect
+                            placeholder="Выберите города"
+                            filter
+                            [attr.data-story-trigger]="triggerAttribute"
+                            [options]="options"
+                            [formControl]="sheetControl" />
+                    </rt-field>
+                </div>
+            }
         }
     `,
     styles: `
@@ -233,6 +296,12 @@ function invalid(): FormControl<readonly string[] | null> {
         .app-multiselect-matrix__panel-slot {
             width: 15rem;
             padding-bottom: 18rem;
+        }
+
+        /* Ширина поля из макета мультиселекта с переключателями — 280. */
+        .app-multiselect-matrix__toggles-slot {
+            width: 17.5rem;
+            padding-bottom: 22rem;
         }
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -243,6 +312,10 @@ function invalid(): FormControl<readonly string[] | null> {
         // components
         RtFieldComponent,
         RtMultiselectComponent,
+        RtToggleSwitchComponent,
+
+        // directives
+        RtMultiselectExtraDirective,
 
         // showcase
         StoryPresetsComponent,
@@ -283,6 +356,32 @@ export class TestRtMultiselectMatrixComponent {
 
     /** Выбор открытой панели: по нему видно, чем отмеченная опция отличается от прочих. */
     public readonly panelControl: FormControl<readonly string[] | null> = chosen(['spb', 'nsk']);
+
+    /** Ширина поля из макета: 280. */
+    public readonly togglesWidth: string = '17.5rem';
+
+    /** Категории макета: Продукты, Хозтовары и Связь включены, Ремонт и Транспорт выключены. */
+    public readonly categories: ReadonlyArray<IRtSelect.Option<string>> = [
+        { label: 'Продукты', value: 'food' },
+        { label: 'Хозтовары', value: 'household' },
+        { label: 'Ремонт', value: 'repair' },
+        { label: 'Связь', value: 'telecom' },
+        { label: 'Транспорт', value: 'transport' },
+    ];
+
+    public readonly togglesCases: readonly IMultiselectTogglesCase[] = [
+        { name: 'Категории · все включены', control: chosen(['food', 'household', 'repair', 'telecom', 'transport']) },
+        { name: 'Категории · часть', control: chosen(['food', 'household', 'telecom']) },
+        { name: 'Категории · открыто', control: chosen(['food', 'household', 'telecom']) },
+    ];
+
+    /** Выбор шторки списка: два значения, по ним читается «Выбрано: 2» в подвале. */
+    public readonly sheetControl: FormControl<readonly string[] | null> = chosen(['spb', 'nsk']);
+
+    public readonly togglesPanelControl: FormControl<readonly string[] | null> = chosen(['food', 'household', 'telecom']);
+
+    /** Свой переключатель приложения в слоте `rtMultiselectExtra`: включён, как в макете. */
+    public readonly hideEmptyControl: FormControl<boolean | null> = new FormControl<boolean | null>(true);
 
     public readonly chipsCases: readonly IMultiselectChipsCase[] = [
         { name: 'пусто', maxChips: 3, control: chosen([]) },

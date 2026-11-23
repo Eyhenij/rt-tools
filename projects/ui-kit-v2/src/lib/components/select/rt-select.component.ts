@@ -241,6 +241,14 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
     public readonly panelWidth: InputSignal<IRtPopover.Width> = input<IRtPopover.Width>('trigger-min');
 
     /**
+     * Нижняя шторка на телефоне: на узком экране список открывается в ней, а не у поля. Включена по
+     * умолчанию; `false` оставляет список у поля на любой ширине.
+     */
+    public readonly sheet: InputSignalWithTransform<boolean, TBooleanInput> = input<boolean, TBooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
+    /**
      * Предел высоты панели — длина как в стилях, например `20rem`. Пусто — предел кита
      * `--rt-input-panel-max-height`, и длинный список прокручивается внутри панели: без предела
      * он уходил за нижний край экрана, и пункты за краем были недостижимы. `none` снимает предел —
@@ -256,6 +264,10 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
         if (disabled) {
             this.popover().close();
         }
+    }
+
+    protected override ownLabel(): string | null {
+        return this.floatingLabel();
     }
 
     protected getEmptyValue(): TValue | null {

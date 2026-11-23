@@ -22,11 +22,12 @@ export default {
         },
         selected: { control: { type: 'number', min: 0 } },
         total: { control: { type: 'number', min: 0 } },
+        sheet: { control: { type: 'boolean' } },
     },
 } as Meta<TestRtActionBarComponent>;
 
 type TStory = StoryObj<TestRtActionBarComponent>;
 
 export const Playground: TStory = {
-    args: { selected: 3, total: 128, kind: 'plain' },
+    args: { selected: 3, total: 128, kind: 'plain', sheet: true },
 };

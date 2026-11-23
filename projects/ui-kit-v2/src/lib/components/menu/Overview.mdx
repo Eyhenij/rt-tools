@@ -128,29 +128,30 @@ Ctrl/Cmd-click, Shift-click и средняя кнопка открывают н
 
 Таблица одна на оба компонента папки — колонка «чей» говорит, к какому из них вход относится.
 
-| вход                 | чей            | тип                                  | умолчание               |
-| -------------------- | -------------- | ------------------------------------ | ----------------------- |
-| `icon`               | оба            | `IRtIcon.Name` / `\| null` у пункта  | `'ellipsis-h'` / `null` |
-| `ariaLabel`          | `rt-menu`      | `string`                             | `''` → `uiActions`      |
-| `align`              | `rt-menu`      | `'start' \| 'end'`                   | `'end'`                 |
-| `panelClass`         | `rt-menu`      | `string \| string[]`                 | `[]`                    |
-| `size`               | `rt-menu`      | `'md' \| 'sm'`                       | `'md'`                  |
-| `triggerSize`        | `rt-menu`      | `IRtIconButton.Size`                 | `'md'`                  |
-| `disabled`           | оба            | `boolean`                            | `false`                 |
-| `label`              | `rt-menu-item` | `string`                             | `''`                    |
-| `danger`             | `rt-menu-item` | `boolean`                            | `false`                 |
-| `success`            | `rt-menu-item` | `boolean`                            | `false`                 |
-| `glyph`              | `rt-menu-item` | `string \| null`                     | `null`                  |
-| `current`            | `rt-menu-item` | `boolean`                            | `false`                 |
-| `confirmMessage`     | `rt-menu-item` | `string`                             | `''`                    |
-| `confirmTitle`       | `rt-menu-item` | `string \| null`                     | `null`                  |
-| `confirmLabel`       | `rt-menu-item` | `string`                             | `''` → словарь кита     |
-| `confirmCancelLabel` | `rt-menu-item` | `string`                             | `''` → словарь кита     |
-| `confirmTone`        | `rt-menu-item` | `'danger' \| 'warning' \| 'primary'` | `'danger'`              |
-| `link`               | `rt-menu-item` | `RouterLink['routerLink']`           | `null`                  |
-| `fill`               | `rt-menu-item` | `boolean`                            | `false`                 |
-| `radius`             | `rt-menu-item` | `TRtRadius \| null`                  | `null` → `sm` у пункта  |
-| `tooltip`            | `rt-menu-item` | `string`                             | `''` — подсказки нет    |
+| вход                 | чей            | тип                                  | умолчание                   |
+| -------------------- | -------------- | ------------------------------------ | --------------------------- |
+| `icon`               | оба            | `IRtIcon.Name` / `\| null` у пункта  | `'ellipsis-h'` / `null`     |
+| `ariaLabel`          | `rt-menu`      | `string`                             | `''` → `uiActions`          |
+| `align`              | `rt-menu`      | `'start' \| 'end'`                   | `'end'`                     |
+| `panelClass`         | `rt-menu`      | `string \| string[]`                 | `[]`                        |
+| `size`               | `rt-menu`      | `'md' \| 'sm'`                       | `'md'`                      |
+| `triggerSize`        | `rt-menu`      | `IRtIconButton.Size`                 | `'md'`                      |
+| `disabled`           | оба            | `boolean`                            | `false`                     |
+| `label`              | `rt-menu-item` | `string`                             | `''`                        |
+| `danger`             | `rt-menu-item` | `boolean`                            | `false`                     |
+| `success`            | `rt-menu-item` | `boolean`                            | `false`                     |
+| `glyph`              | `rt-menu-item` | `string \| null`                     | `null`                      |
+| `current`            | `rt-menu-item` | `boolean`                            | `false`                     |
+| `confirmMessage`     | `rt-menu-item` | `string`                             | `''`                        |
+| `confirmTitle`       | `rt-menu-item` | `string \| null`                     | `null`                      |
+| `confirmLabel`       | `rt-menu-item` | `string`                             | `''` → словарь кита         |
+| `confirmCancelLabel` | `rt-menu-item` | `string`                             | `''` → словарь кита         |
+| `confirmTone`        | `rt-menu-item` | `'danger' \| 'warning' \| 'primary'` | `'danger'`                  |
+| `link`               | `rt-menu-item` | `RouterLink['routerLink']`           | `null`                      |
+| `fill`               | `rt-menu-item` | `boolean`                            | `false`                     |
+| `radius`             | `rt-menu-item` | `TRtRadius \| null`                  | `null` → `sm` у пункта      |
+| `tooltip`            | `rt-menu-item` | `string`                             | `''` — подсказки нет        |
+| `sheet`              | `rt-menu`      | `boolean`                            | `true` → шторка на телефоне |
 
 Пункт несёт ещё вход подсказки `tooltip` — он приходит от
 [`[rtTooltip]`](./?path=/docs/atoms-tooltip-overview--docs), навешенной директивой хоста,

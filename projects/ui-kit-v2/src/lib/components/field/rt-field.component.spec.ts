@@ -5,6 +5,7 @@ import { By } from '@angular/platform-browser';
 
 import { createRtFixture, el, hostClasses, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
 import { RtInputComponent } from '../input/rt-input.component';
+import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 import { RtFieldHintDirective } from './rt-field-hint.directive';
 import { RtFieldComponent } from './rt-field.component';
 import { IRtField } from './rt-field.model';
@@ -400,13 +401,46 @@ describe('RtFieldComponent', (): void => {
             expect(qa(fixture, 'field-help')?.attributes['aria-label']).toBe('Hint');
         });
 
-        it('текст пояснения лежит в поповере и до наведения не отрисован', (): void => {
+        it('SC-UKV-1669: пояснение открывает подсказку кита, своей карточки нет', (): void => {
             const fixture: ComponentFixture<FieldHostComponent> = setup();
 
             fixture.componentInstance.help.set('Как в документе');
             fixture.detectChanges();
 
-            expect(qa(fixture, 'field-help-popover')).toBeNull();
+            const tooltip: RtTooltipDirective = fixture.debugElement
+                .query(By.directive(RtTooltipDirective))
+                .injector.get(RtTooltipDirective);
+            expect(tooltip.text()).toBe('Как в документе');
+        });
+
+        it('SC-UKV-1671: знак вопроса описан текстом пояснения для программы чтения экрана', (): void => {
+            const fixture: ComponentFixture<FieldHostComponent> = setup();
+
+            fixture.componentInstance.help.set('Как в документе');
+            fixture.detectChanges();
+
+            const id: string = (qa(fixture, 'field-help')?.nativeElement as HTMLElement).getAttribute('aria-describedby') ?? '';
+            expect(id).not.toBe('');
+            const described: HTMLElement | null = (fixture.nativeElement as HTMLElement).querySelector(`[id="${id}"]`);
+            expect(described?.textContent?.trim()).toBe('Как в документе');
+        });
+
+        it('SC-UKV-1670: нажатие по знаку вопроса открывает подсказку с пояснением', (): void => {
+            const fixture: ComponentFixture<FieldHostComponent> = setup();
+
+            fixture.componentInstance.help.set('Как в документе');
+            fixture.detectChanges();
+
+            expect(document.querySelector('rt-tooltip')).toBeNull();
+
+            // Касание: браузер шлёт вход указателя и сразу клик.
+            const help: HTMLElement = qa(fixture, 'field-help')?.nativeElement as HTMLElement;
+            help.dispatchEvent(new Event('mouseenter'));
+            help.click();
+            fixture.detectChanges();
+
+            expect(document.querySelector('rt-tooltip')?.textContent?.trim()).toBe('Как в документе');
+            document.querySelectorAll('.cdk-overlay-container').forEach((container: Element): void => container.remove());
         });
     });
 

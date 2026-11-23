@@ -20,7 +20,7 @@ import { RtPageBarFilterDirective, RtPageBarSearchDirective } from '../../bar/rt
 import { RtPageBarComponent } from '../../bar/rt-page-bar.component';
 import { IRtPageBar } from '../../bar/rt-page-bar.model';
 import { RtPageActionsComponent } from '../../rail/rt-page-actions.component';
-import { RtRailLogoDirective, RtRailPageDirective } from '../../rt-page-header.component';
+import { RtRailLogoDirective, RtRailPageDirective } from '../../rt-page-header-slots.directive';
 import { RtPageHeaderComponent } from '../../rt-page-header.component';
 import { IRtPageHeader } from '../../rt-page-header.model';
 import {
@@ -93,6 +93,17 @@ export class TestRtPageHeaderVerticalComponent {
     protected readonly profileLocales: typeof PROFILE_MENU_LOCALES = PROFILE_MENU_LOCALES;
 
     protected readonly options: ReadonlyArray<IRtSelect.Option<string>> = [{ value: 'all', label: 'Все' }];
+
+    /** Первый отбор — статус брони: его шторка на телефоне названа «Статус», как в кадре 8497:17962. */
+    protected readonly statusLabel: string = 'Статус';
+
+    protected readonly statusOptions: ReadonlyArray<IRtSelect.Option<string>> = [
+        { value: 'all', label: 'Все' },
+        { value: 'pending', label: 'Ожидает' },
+        { value: 'confirmed', label: 'Подтверждена' },
+        { value: 'declined', label: 'Отклонена' },
+        { value: 'cancelled', label: 'Отменена' },
+    ];
 
     protected readonly assistantMessages: readonly IRtAiChat.Message[] = ASSISTANT_MESSAGES;
 

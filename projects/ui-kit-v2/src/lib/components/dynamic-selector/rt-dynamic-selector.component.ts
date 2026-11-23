@@ -37,10 +37,11 @@ import { RtDynamicSelectorRowControlsDirective, RtDynamicSelectorRowTitleDirecti
 import { RtDynamicSelectorLoadStateDirective } from './rt-dynamic-selector-load-state.directive';
 import {
     clearDynamicKeys,
-    dynamicSelectorLabel,
     moveDynamicKey,
     sameDynamicKeys,
     sameDynamicKeySet,
+    dynamicEntitiesOf,
+    dynamicListRows,
     selectableDynamicItems,
 } from './rt-dynamic-selector.logic';
 import { IRtDynamicSelector } from './rt-dynamic-selector.model';
@@ -163,16 +164,14 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
 
     /** Выбранные записи в порядке значения; ключ, которого нет среди записей, строки не рисует. */
     protected readonly chosen: Signal<TEntity[]> = computed((): TEntity[] => this.#entitiesOf(this.value()));
-    protected readonly rows: Signal<IRtDynamicSelector.ListRow<TEntity>[]> = computed((): IRtDynamicSelector.ListRow<TEntity>[] => {
-        const locked: ReadonlyArray<unknown> = this.readonlyKeys();
-
-        return this.chosen().map((item: TEntity): IRtDynamicSelector.ListRow<TEntity> => ({
-            item,
-            key: this.#keyOf(item),
-            label: dynamicSelectorLabel(item, (entity: TEntity): unknown => this.#labelOf(entity)) ?? '',
-            locked: locked.includes(this.#keyOf(item)),
-        }));
-    });
+    protected readonly rows: Signal<IRtDynamicSelector.ListRow<TEntity>[]> = computed((): IRtDynamicSelector.ListRow<TEntity>[] =>
+        dynamicListRows(
+            this.chosen(),
+            this.readonlyKeys(),
+            (item: TEntity): unknown => this.#keyOf(item),
+            (item: TEntity): unknown => this.#labelOf(item)
+        )
+    );
     /** Что предлагает всплывающий выбор: ещё не выбранное, в порядке вызывающего или по алфавиту. */
     protected readonly offered: Signal<TEntity[]> = computed((): TEntity[] =>
         selectableDynamicItems(
@@ -209,6 +208,10 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
     public readonly mode: InputSignal<IRtDynamicSelector.Mode> = input<IRtDynamicSelector.Mode>('multi');
     /** Название кнопки добавления; пустое — «Add» из словаря кита. */
     public readonly buttonTitle: InputSignal<string> = input<string>('');
+    /** На телефоне выбор открывается в нижней шторке; `false` оставляет его у кнопки. */
+    public readonly sheet: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
     public readonly addShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
         transform: booleanAttribute,
     });
@@ -481,10 +484,7 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
 
     /** Запись ищется среди предложенных, а затем среди пришедших входом `chosenEntities`. */
     #entitiesOf(keys: ReadonlyArray<unknown>): TEntity[] {
-        const known: ReadonlyArray<TEntity> = [...this.entities(), ...this.chosenEntities()];
-        return keys
-            .map((key: unknown): TEntity | undefined => known.find((item: TEntity): boolean => this.#keyOf(item) === key))
-            .filter((item: TEntity | undefined): item is TEntity => item !== undefined);
+        return dynamicEntitiesOf(keys, [...this.entities(), ...this.chosenEntities()], (item: TEntity): unknown => this.#keyOf(item));
     }
 
     /** Ключ записи — по имени поля, которое назвал вызывающий. */

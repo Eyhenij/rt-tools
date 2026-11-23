@@ -17,6 +17,8 @@ import { IRtSideMenu } from './rt-side-menu.model';
 
 class StubBreakpointsService {
     public readonly narrow: WritableSignal<boolean> = signal(false);
+    public readonly viewportNarrow: WritableSignal<boolean> = this.narrow;
+    public readonly phone: WritableSignal<boolean> = this.viewportNarrow;
 }
 
 const ITEMS: IRtSideMenu.Item[] = [

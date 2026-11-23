@@ -21,7 +21,9 @@
                 rtPopoverAlign="end"
                 [ariaLabel]="t().uiFilters"
                 [indicator]="filtersActive()"
-                [rtPopover]="filtersPanel" />
+                [rtPopover]="filtersPanel"
+                [rtPopoverSheet]="sheet()"
+                [rtPopoverSheetTitle]="t().uiFilters" />
         }
     </header>
 

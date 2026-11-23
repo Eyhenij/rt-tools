@@ -157,5 +157,16 @@
         background-color: var(--rt-overlay-menu-bg);
         box-shadow: var(--rt-page-bar-more-shadow);
         gap: var(--rt-space-2);
+
+        /* Фокус на панели — только вход для Tab к её полям: сама она не элемент управления, и рамки
+           фокуса у неё нет. Рамку несут поля и кнопка внутри. */
+        &:focus {
+            outline: none;
+        }
+
+        /* «Применить» в панели отборов узкого вида — во всю ширину панели, как отборы над ней. */
+        &__apply {
+            align-self: stretch;
+        }
     }
 }

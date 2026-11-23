@@ -8,6 +8,8 @@
     "radius": "projects/ui-kit-v2/src/showcase/stories/radius.stories.ts"
   },
   "notShownComponents": {
+    "rt-page-header-mobile": "меню разделов узкого экрана шапки страницы: его открывают только бургер и «ещё» сжатой полосы, и ни одна история шапки его не открывает — так было и до того, как меню стало отдельным компонентом. История с кадром требует нового эталона и идёт работой своей, после слияния главной в эпик, которое держит эталоны главной",
+    "rt-popover-sheet": "шторка панели выбора: её создаёт только директива `rtPopover` на телефоне, отдельно в разметку она не ставится. Показана через каждую историю `*Sheet` семейств с режимом шторки, например `Molecules/Forms/SelectSheet`",
     "[rtContainerContentPanel]": "маркер проекции содержимого: своей разметки у него нет вовсе. В кадре виден не маркер, а то, как каркас разложил содержимое, и это показывает история семейства `container`",
     "[rtContainerContent]": "маркер проекции содержимого: своей разметки у него нет вовсе. В кадре виден не маркер, а то, как каркас разложил содержимое, и это показывает история семейства `container`",
     "[rtContainerHeader]": "маркер проекции содержимого: своей разметки у него нет вовсе. В кадре виден не маркер, а то, как каркас разложил содержимое, и это показывает история семейства `container`",
@@ -150,7 +152,8 @@
     "ng-template[rtTableSortHeaderContent]": "projects/ui-kit-v2/src/lib/components/table/sort-header/stories/table-sort-header.stories.ts",
     "[rtChatHeaderActions]": "projects/ui-kit-v2/src/rich-editor/lib/components/chat/stories/chat-states.stories.ts",
     "[rtChatComposerBar]": "projects/ui-kit-v2/src/rich-editor/lib/components/chat/stories/chat-page.stories.ts",
-    "[rtChatComposerTools]": "projects/ui-kit-v2/src/rich-editor/lib/components/chat/stories/chat-matrix.stories.ts"
+    "[rtChatComposerTools]": "projects/ui-kit-v2/src/rich-editor/lib/components/chat/stories/chat-matrix.stories.ts",
+    "[rtMultiselectExtra]": "projects/ui-kit-v2/src/lib/components/multiselect/stories/multiselect-matrix.stories.ts"
   },
   "noPlayground": {
     "toolbar": "Содержимое панели приходит проекцией шаблонов в три места, и страница с входами их не задаёт: витрина умеет подставлять значения, а не разметку. Единственный вход — плотность — показан своей осью."

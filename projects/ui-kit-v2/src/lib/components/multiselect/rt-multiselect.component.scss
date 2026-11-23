@@ -4,7 +4,6 @@
     .rt-multiselect {
         --rt-multiselect-radius: var(--rt-input-radius);
         --rt-multiselect-caret-transition-duration: var(--rt-duration-fast);
-        --rt-multiselect-own-outline-width: var(--rt-border-width-medium);
         --rt-multiselect-color-border-hover: var(--rt-color-text-primary);
 
         position: relative;
@@ -87,8 +86,8 @@
                меряется. :focus-visible, а не :focus: щелчку мышью примета не нужна, её даёт
                разметка потребителя. */
             &:focus-visible {
-                outline: var(--rt-multiselect-own-outline-width) solid var(--rt-input-color-border-focus);
-                outline-offset: var(--rt-input-focus-outline-offset);
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: var(--rt-focus-ring-offset);
             }
         }
 
@@ -241,6 +240,11 @@
             overflow-y: auto;
         }
 
+        &__filter {
+            padding: var(--rt-space-sm);
+            border-block-end: var(--rt-input-border-width) solid var(--rt-color-border-subtle);
+        }
+
         &__list {
             padding: var(--rt-space-2xs) 0;
             margin: 0;
@@ -314,6 +318,112 @@
             padding: var(--rt-space-sm) var(--rt-space-md);
             color: var(--rt-input-color-text-placeholder);
             font-style: italic;
+        }
+
+        /* Подвал шторки на телефоне: держится у нижнего края, пока список прокручивается над ним.
+           Отступы и черта — как у подвала самой шторки. Он живёт в оверлее, вне поддерева блока,
+           поэтому своё свойство объявляет на себе. */
+        &__sheet-footer {
+            --rt-multiselect-sheet-divider-width: var(--rt-border-width-thin);
+
+            position: sticky;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            padding: var(--rt-space-4) var(--rt-space-5) calc(var(--rt-space-4) + env(safe-area-inset-bottom));
+            border-top: var(--rt-multiselect-sheet-divider-width) solid var(--rt-color-border-default);
+            background-color: var(--rt-color-bg-surface);
+            gap: var(--rt-space-2);
+        }
+
+        &__sheet-count {
+            min-width: 0;
+            flex: 1 1 auto;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-input-font-size);
+            overflow-wrap: anywhere;
+        }
+
+        &__sheet-reset,
+        &__sheet-done {
+            flex-shrink: 0;
+        }
+
+        /* Вид `toggles`: сводка в поле вместо чипов. Цвет — основной текст, пока выбор есть. */
+        &__summary {
+            overflow: hidden;
+            min-width: 0;
+            flex: 1 1 auto;
+            color: var(--rt-color-text-primary);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            &--empty {
+                color: var(--rt-input-color-text-placeholder);
+            }
+        }
+
+        /* Верх панели с переключателями: «Показать все» и свои переключатели приложения. Панель
+           живёт в оверлее, вне поддерева блока, поэтому класс вида хоста до неё не доходит:
+           она несёт собственный модификатор. */
+        &__panel--toggles {
+            padding: var(--rt-space-2xs) 0;
+        }
+
+        /* В шторке поиск стоит по краю её содержимого, без черты: так в макете 6068:1250. Отступ
+           снизу доводит первый пункт до 20 под полем. */
+        &__panel--sheet &__filter {
+            padding: 0 0 calc(var(--rt-space-sm) + var(--rt-space-2xs));
+            border-block-end: none;
+        }
+
+        &__panel--toggles &__list {
+            padding: 0;
+        }
+
+        &__panel--toggles &__option,
+        &__toggle-row {
+            min-height: var(--rt-size-10);
+            box-sizing: border-box;
+        }
+
+        &__toggle-row {
+            display: flex;
+            align-items: center;
+            padding: var(--rt-space-sm) var(--rt-space-md);
+            color: var(--rt-color-text-primary);
+            cursor: pointer;
+            font-size: var(--rt-input-font-size);
+            gap: var(--rt-space-sm);
+
+            &:hover,
+            &:focus-visible,
+            &--active {
+                background-color: var(--rt-color-bg-hover);
+            }
+
+            &[aria-disabled='true'] {
+                cursor: not-allowed;
+                opacity: var(--rt-input-disabled-opacity);
+            }
+        }
+
+        /* Переключатель только показывает состояние: нажатие принимает строка. */
+        &__switch {
+            flex-shrink: 0;
+            pointer-events: none;
+        }
+
+        &__divider {
+            --rt-multiselect-divider-width: var(--rt-border-width-thin);
+
+            height: 0;
+            border-top: var(--rt-multiselect-divider-width) solid var(--rt-color-border-default);
+            margin: var(--rt-space-1) 0;
+        }
+
+        &__toggles-head {
+            display: block;
         }
 
         /* Свой вид пустого — разметка приложения: строка держит только место в списке, без

@@ -5,6 +5,8 @@
         --rt-table-settings-panel-row-radius: var(--rt-radius-md);
         --rt-table-settings-panel-row-border-width: var(--rt-border-width-thin);
         --rt-table-settings-panel-row-shadow: var(--rt-shadow-card);
+        --rt-table-settings-panel-handle-disabled-opacity: var(--rt-icon-button-disabled-opacity);
+        --rt-table-settings-panel-handle-disabled-color: var(--rt-icon-button-disabled-color);
 
         &__list {
             display: flex;
@@ -57,12 +59,19 @@
             background: none;
             cursor: grab;
 
-            &:active {
+            &:active:not(:disabled) {
                 cursor: grabbing;
             }
 
-            &--placeholder {
+            &--disabled {
                 cursor: default;
+                opacity: var(--rt-table-settings-panel-handle-disabled-opacity);
+
+                /* Цвет иконки задан на её узле встроенным стилем, потому ложится на сам svg — так же,
+                   как отключённую кнопку-иконку красит `--rt-icon-button-disabled-color`. */
+                .rt-icon svg {
+                    color: var(--rt-table-settings-panel-handle-disabled-color);
+                }
             }
         }
 

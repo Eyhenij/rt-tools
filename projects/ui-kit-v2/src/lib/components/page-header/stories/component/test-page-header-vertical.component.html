@@ -91,9 +91,13 @@
             <ng-template rtPageBarSearch>
                 <rt-input iconLeft="search" [placeholder]="searchPlaceholder" [size]="phone() ? 'md' : 'sm'" />
             </ng-template>
-            @for (name of shownFilters; track name) {
+            @for (name of shownFilters; track name; let first = $first) {
                 <ng-template rtPageBarFilter>
-                    <rt-select [placeholder]="name" [options]="options" [size]="phone() ? 'md' : 'sm'" />
+                    <rt-select
+                        [placeholder]="name"
+                        [ariaLabel]="first ? statusLabel : name"
+                        [options]="first ? statusOptions : options"
+                        [size]="phone() ? 'md' : 'sm'" />
                 </ng-template>
             }
         </rt-page-bar>

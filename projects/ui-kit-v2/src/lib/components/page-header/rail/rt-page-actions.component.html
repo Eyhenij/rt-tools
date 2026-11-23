@@ -23,6 +23,6 @@
         </button>
     }
     @if (user(); as u) {
-        <rt-page-user [placement]="placement()" [user]="u" [userMenu]="userMenu()" (userClick)="userClick.emit()" />
+        <rt-page-user [placement]="placement()" [sheet]="sheet()" [user]="u" [userMenu]="userMenu()" (userClick)="userClick.emit()" />
     }
 </ng-container>

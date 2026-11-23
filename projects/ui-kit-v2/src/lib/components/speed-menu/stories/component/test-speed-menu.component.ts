@@ -22,6 +22,7 @@ export class TestRtSpeedMenuComponent {
     public label: string = 'Масштаб';
     public closeOnSelect: boolean = false;
     public disabled: boolean = false;
+    public sheet: boolean = true;
 
     public readonly actions: readonly IRtSpeedMenu.Action[] = SPEED_MENU_ZOOM;
 

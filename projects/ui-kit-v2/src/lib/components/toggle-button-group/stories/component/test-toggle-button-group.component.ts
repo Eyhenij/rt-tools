@@ -19,7 +19,8 @@ import { IRtToggleButtonGroup } from '../../rt-toggle-button-group.model';
             [disabled]="disabled"
             [fullWidth]="fullWidth"
             [appearance]="appearance"
-            [checkmark]="checkmark" />
+            [checkmark]="checkmark"
+            [fold]="fold" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -36,4 +37,5 @@ export class TestRtToggleButtonGroupComponent {
     public fullWidth: boolean = false;
     public appearance: IRtToggleButtonGroup.Appearance = 'segmented';
     public checkmark: boolean = false;
+    public fold: boolean = true;
 }

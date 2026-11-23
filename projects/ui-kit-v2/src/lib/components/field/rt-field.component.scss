@@ -82,19 +82,27 @@
             }
         }
 
+        /* Значок «?» выше строки подписи (16 против 14, под материальным набором против 12), и
+           строка с ним выходила выше соседней: поле стояло на 2px ниже соседнего без подсказки.
+           Кнопка тянется на высоту строки, которую задаёт подпись, а значок стоит в ней
+           абсолютно по середине: он выступает поровну сверху и снизу и высоты строке не даёт. */
         &__help {
+            position: relative;
             display: inline-flex;
+            align-self: stretch;
             padding: 0;
             border: none;
             margin: 0;
             background: none;
             cursor: help;
+            inline-size: var(--rt-size-4);
         }
 
-        &__help-popover {
-            display: block;
-            max-width: 240px;
-            font-size: var(--rt-field-hint-font-size);
+        &__help > .rt-icon {
+            position: absolute;
+            inset-block-start: 50%;
+            inset-inline-start: 0;
+            translate: 0 -50%;
         }
 
         /* Зона сообщений под контролом. С резервом (reserveHintSpace) hint и ошибка

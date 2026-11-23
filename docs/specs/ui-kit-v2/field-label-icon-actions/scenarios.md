@@ -215,3 +215,36 @@ When the person presses Tab from the trigger and then Enter
 Then the focus lands on the cross, a button outside the trigger, and Enter clears the choice without opening the list; without `clearTabbable` the cross stays out of the Tab order
 
 Covered: `projects/ui-kit-v2/src/lib/components/form-control/rt-clear-tabbable.spec.ts`.
+
+### SC-UKV-1669 — the help of a field opens the kit tooltip
+
+Given a field with a label and a help text
+When the field is drawn
+Then the question mark carries the kit tooltip with the help text, and no card of its own is drawn
+
+Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field.component.spec.ts`.
+
+### SC-UKV-1670 — the help of a field opens on a tap
+
+Given a field with a help text on a touch screen
+When the person taps the question mark
+Then the tooltip with the help text opens: its trigger shows on a tap, not only on hover
+
+Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field.component.spec.ts`.
+
+### SC-UKV-1671 — the question mark is described by the help text
+
+Given a field with a help text
+When a screen reader reaches the question mark
+Then the button is described by the help text: the tooltip lives in the overlay, and the text is read from a hidden node next to the button
+
+Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field.component.spec.ts`.
+
+### SC-UKV-1636 — a field with help stands level with a field without it
+
+Given two fields side by side, one with a help text and one without
+When they are drawn in the kit look and under the material preset
+Then their label rows are equally high, 14 and 12 points, and the controls start at the same height
+
+Coverage: partial — the spec reads the rules of the question mark from the built styles; the rows
+were measured in the showcase story of the field anatomy in both presets.

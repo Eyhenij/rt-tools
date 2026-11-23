@@ -26,8 +26,8 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { RT_KIT_LABELS, TRtKitLabelKey, TRtKitLabelMap, rtKitLabel, rtSlotTemplates } from '@rt-tools/ui-kit-v2/core';
 import { rtNotchWidth, RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
-import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { RtSkeletonComponent } from '@rt-tools/ui-kit-v2/skeleton';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtFieldHintDirective } from './rt-field-hint.directive';
 import { RT_FIELD_DEFAULT_ERROR_KEYS, RT_FIELD_EMPTY_VALUE, IRtField } from './rt-field.model';
 
@@ -42,7 +42,7 @@ function nextAutoId(): string {
 }
 
 /**
- * Обёртка единой анатомии поля: label (+ опц. help-иконка с popover, + авто «*»
+ * Обёртка единой анатомии поля: label (+ опц. help-иконка с подсказкой кита, + авто «*»
  * для required) сверху, спроецированный rt-контрол посередине, hint/error снизу.
  * `required` объявляет поле обязательным там, где валидатора на контроле нет (шаблонная форма).
  * `hideRequiredMark` глушит авто-«*» — для форм, где все поля обязательны и
@@ -66,7 +66,7 @@ function nextAutoId(): string {
         // standalone components / directives
         NgTemplateOutlet,
         RtIconComponent,
-        RtPopoverDirective,
+        RtTooltipDirective,
         RtSkeletonComponent,
         BlockDirective,
         ElemDirective,
@@ -95,6 +95,9 @@ export class RtFieldComponent implements AfterContentInit {
     );
 
     readonly #autoId: string = nextAutoId();
+
+    /** id узла с текстом пояснения: им кнопка «?» описана для программы чтения экрана. */
+    protected readonly helpId: string = `${this.#autoId}-help`;
 
     /** Строка подписи: по её ширине материальный набор вырезает разрыв в рамке. `#`-поле `viewChild` не принимает. */
     protected readonly labelRow: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('labelRow');
@@ -193,6 +196,9 @@ export class RtFieldComponent implements AfterContentInit {
         });
         effect((): void => {
             this.projectedControl()?.setRequired(this.required());
+        });
+        effect((): void => {
+            this.projectedControl()?.setFieldLabel(this.label());
         });
     }
 

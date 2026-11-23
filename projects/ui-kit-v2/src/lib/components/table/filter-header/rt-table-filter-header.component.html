@@ -11,7 +11,9 @@
             qa-dataid="table-filter-operator"
             [attr.aria-label]="operatorAriaLabel()"
             [rtMod]="{ set: clearable() }"
-            [rtPopover]="operatorsTpl">
+            [rtPopover]="operatorsTpl"
+            [rtPopoverSheet]="sheet()"
+            [rtPopoverSheetTitle]="operatorAriaLabel()">
             {{ operatorLabel() }}
         </button>
 
