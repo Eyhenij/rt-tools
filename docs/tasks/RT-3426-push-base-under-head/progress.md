@@ -2,19 +2,24 @@
 
 ## Где мы
 
-- **State:** `задача-взята`
-- **Stage:** нет — план ждёт одобрения владельца
-- **Done:** разведка; роли прочли план 22.11: условие — линия первых родителей, случай стопки и
-  общий счёт сценария добавлены. 23.11 ветка пересобрана на вершине RT-3465, новые случаи
-  перенесены в набор базы, прежние 20 случаев SC-AK-1340 пересчитаны
-- **Next step:** одобрение плана владельцем, затем `plan-red`
+- **State:** `замысел-записан`
+- **Stage:** 1 — A branch carries the own copy by a merge or under the head, and it stays a base
+- **Done:** план одобрен владельцем 23.11 («Одобряю план RT-3426»), plan-red: все семь проверок
+  красные, отметка одобрения записана
+- **Next step:** 1.1 — случаи в наборе базы, затем условие в `rt_push_base`
 - **Uncommitted:** nothing
-- **Waiting for the owner:** одобрение плана
+- **Waiting for the owner:** nothing
 - **PR:** not open yet
 
 ## Шаги
 
-Появятся вместе с закоммиченным планом.
+- [>] 1.1 The epic under the head that carries the copy is the base
+- [ ] 1.2 The epic ahead of the head that carries the copy by a host merge is the base, whether the task took the epic in or not
+- [ ] 1.3 The head at the commit of the epic takes the epic as the base, and the copy removed on the host changes nothing
+- [ ] 1.4 A branch taken from this one by plain commits stays dropped, a host merge of a higher branch into it included
+- [ ] 1.5 No former case of the scenario is lost: the 20 cases of the push suite and the 8 new ones
+- [ ] 2.1 The rule of the description names the new condition
+- [ ] 2.2 The scenario names the cases
 
 ## Решения по ходу
 
