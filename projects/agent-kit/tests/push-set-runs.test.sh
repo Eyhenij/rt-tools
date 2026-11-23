@@ -84,4 +84,70 @@ rm -rf "$set_marks"
 report "SC-AK-1657 — the runner ahead writes seven fields for every step" \
     "$(awk '{ print NF }' "$set_marks"/runs-* 2>/dev/null | sort -u | tr '\n' ' ')" "7 "
 
+# --- SC-AK-1846, SC-AK-1847 — the steps run on the node the tree pins ----------------------------
+# A node of its own stands first in PATH, as the hook inherits it; the pinned one lies in a directory
+# of nvm. The only step writes which node it found.
+node_box="$(mktemp -d)"
+trap 'rm -rf "$tree" "$set_tree" "$node_box"' EXIT
+fake_node() {
+    mkdir -p "$1"
+    printf '#!/bin/sh\necho v%s\n' "$2" >"$1/node"
+    chmod +x "$1/node"
+}
+fake_node "$node_box/other" 20.11.0
+for v in 22.22.3 22.9.0 20.1.0; do fake_node "$node_box/nvm/versions/node/v$v/bin" "$v"; done
+mkdir -p "$node_box/nvm-empty"
+seen="$node_box/seen"
+
+# A tree with the pin and a commit over its start. No pin — no .nvmrc.
+node_tree() {
+    local t
+    t="$(fixture_repo_branched main work)"
+    mkdir -p "$t/.claude/rt-kit"
+    printf '.claude/\n' >"$t/.gitignore"
+    printf '%s\n' "rt_push_checks() { printf '%s\\n' 'command -v node >\"\$RT_SEEN\"'; }" >"$t/.claude/rt-kit/project.sh"
+    [ -n "$1" ] && printf '%s\n' "$1" >"$t/.nvmrc"
+    git -C "$t" add -A 2>/dev/null
+    git -C "$t" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q -m 'chore: pin' 2>/dev/null
+    printf '%s' "$t"
+}
+# How the set ran in that tree: the node the step found, or the line of a missing pin.
+set_node() {
+    local t="$1" nvm="${2:-$node_box/nvm}"
+    rm -f "$seen"
+    (cd "$t" && PATH="$node_box/other:$PATH" NVM_DIR="$nvm" RT_SEEN="$seen" CLAUDE_PROJECT_DIR="$t" \
+        bash -c '. "$1/push-set.sh"; rt_push_set_profile "$1" "$PWD"; rt_push_set_run ""; printf "%s" "$rt_push_set_node"' _ "$HOOKS" 2>/dev/null)
+    cat "$seen" 2>/dev/null
+}
+ahead_node() {
+    local t="$1" nvm="${2:-$node_box/nvm}" code
+    rm -f "$seen"
+    (cd "$t" && PATH="$node_box/other:$PATH" NVM_DIR="$nvm" RT_SEEN="$seen" CLAUDE_PROJECT_DIR="$t" \
+        bash "$HOOKS/git-guard-push-ahead.sh" >/dev/null 2>&1)
+    code=$?
+    printf '%s %s' "$code" "$(cat "$seen" 2>/dev/null || printf none)"
+}
+pinned_bin() { printf '%s/nvm/versions/node/v%s/bin/node' "$node_box" "$1"; }
+
+t_exact="$(node_tree 22.22.3)"
+# A green step leaves a mark for its tree, and the next runner skips it: the run ahead gets a tree of its own.
+t_ahead="$(node_tree 22.22.3)"
+t_major="$(node_tree 22)"
+t_alias="$(node_tree 'lts/*')"
+t_none="$(node_tree '')"
+t_same="$(node_tree 20.11.0)"
+t_other="$(node_tree 99.0.0)"
+trap 'rm -rf "$tree" "$set_tree" "$node_box" "$t_exact" "$t_ahead" "$t_major" "$t_alias" "$t_none" "$t_same" "$t_other"' EXIT
+
+report "SC-AK-1846 — the set sees the pinned node" "$(set_node "$t_exact")" "$(pinned_bin 22.22.3)"
+report "SC-AK-1846 — the run ahead sees the pinned node" "$(ahead_node "$t_ahead")" "0 $(pinned_bin 22.22.3)"
+report "SC-AK-1846 — a major pin takes the highest installed match" "$(set_node "$t_major")" "$(pinned_bin 22.22.3)"
+report "SC-AK-1846 — an alias pin runs on the node of PATH" "$(set_node "$t_alias")" "$node_box/other/node"
+report "SC-AK-1846 — no pin runs on the node of PATH" "$(set_node "$t_none")" "$node_box/other/node"
+report "SC-AK-1847 — same node in PATH runs the steps" "$(set_node "$t_same" "$node_box/nvm-empty")" "$node_box/other/node"
+report "SC-AK-1847 — the set starts no step without the pinned node" \
+    "$(set_node "$t_other" | sed -E 's/PATH gives .*/PATH gives …/')" \
+    "node v99.0.0 is pinned in .nvmrc and not installed; PATH gives …"
+report "SC-AK-1847 — the run ahead starts no step without the pinned node" "$(ahead_node "$t_other")" "3 none"
+
 suite_result "the run line of a push set step"

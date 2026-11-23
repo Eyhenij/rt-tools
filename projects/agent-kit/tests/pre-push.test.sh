@@ -289,9 +289,26 @@ else
     report "SC-AK-1246 — пакет собран: pnpm exec nx build @rt-tools/agent-kit" нет да
 fi
 
+# --- SC-AK-1847 — the pinned node is not installed ------------------------------------------------
+# The tree pins a node the machine does not have, and PATH gives another: no step runs, and both the
+# session guard and the git hook refuse by one line with the install command, not by red steps.
+NODELESS="$(hooked_repo true)"
+NO_NVM="$(mktemp -d)"
+fixture_commit "$NODELESS" .nvmrc 99.0.0 'chore: pin'
+node_line='node v99.0.0 is pinned in .nvmrc and not installed'
+said="$(cd "$NODELESS" && NVM_DIR="$NO_NVM" env -u CI git push origin RT-90-hook 2>&1)"
+code=$?
+report "SC-AK-1847 — not installed: the git hook refuses by one line" \
+    "$code $(printf '%s\n' "$said" | grep -c "pre-push: refused — $node_line") $(printf '%s\n' "$said" | grep -c 'red checks')" "1 1 0"
+said="$(CLAUDE_PROJECT_DIR="$NODELESS" input_cmd 'git push origin RT-90-hook' Bash "$NODELESS" \
+    | CLAUDE_PROJECT_DIR="$NODELESS" NVM_DIR="$NO_NVM" "$HOOKS/git-guard-push-tests.sh" 2>/dev/null \
+    | jq -r '.hookSpecificOutput | "\(.permissionDecision) \(.permissionDecisionReason)"' 2>/dev/null)"
+report "SC-AK-1847 — not installed: the guard refuses by one line" \
+    "$(printf '%s\n' "$said" | grep -c "^deny BLOCKED: $node_line; PATH gives .* — nvm install 99.0.0. No step of the push set ran")" 1
+
 git -C "$SHARED" worktree remove --force "$SECOND" 2>/dev/null
 rm -rf "$RED" "$GREEN" "$MARKED" "$GUARD_GREEN" "$GUARD_RED" "$OTHER" "$MANY" "$DELETE" "$PIPE" "$BARE_TREE" \
     "$LAYERED" "$ROOTED" "$ELSEWHERE" "$HEAVY" "$SKIPPED" "$KNIFE" "$DIRTY" "$CLEAN" "$SHARED" "${SECOND%/second}" \
-    "$MANAGED" "$ALONE" "$LAID" "$PACKAGE" "$PER_CHECK" "$AHEAD"
+    "$MANAGED" "$ALONE" "$LAID" "$PACKAGE" "$PER_CHECK" "$AHEAD" "$NODELESS" "$NO_NVM"
 
 suite_result "git-хук перед пушем"

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # The checks before a push, as a hook of git itself, not of the agent.
 #
-# Requires: hooks/push-set.sh, hooks/git-guard-push-marks.sh
+# Requires: hooks/push-set.sh, hooks/git-guard-push-marks.sh, hooks/facts.sh, hooks/decide.sh
 #
 # NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The version control
 # calls it before every push, whatever sent it: the session guard of the push stands only on the
@@ -100,6 +100,15 @@ total="$(rt_push_checks "$base" | grep -c .)"
 printf 'pre-push: running the checks before the push, %s of them\n' "$total" >&2
 
 rt_push_set_run "$base"
+
+# The node the tree pins is not on the machine, and PATH gives another one: no step ran.
+if [ -n "${rt_push_set_node:-}" ]; then
+    # shellcheck disable=SC1091
+    . "$hooks_dir/decide.sh" 2>/dev/null
+    command -v rt_decide >/dev/null 2>&1 || exit 0
+    rt_decide pre-push.sh push '{"push_sends_tip":"yes","push_node_pinned":"no"}' "$(jq -cn --arg l "$rt_push_set_node" '{node_line:$l}')" git
+    exit $?
+fi
 
 [ -n "$rt_push_set_skipped" ] && printf 'pre-push: these checks had nothing to look at:\n%s\n' "$rt_push_set_skipped" >&2
 

@@ -360,6 +360,39 @@ Then the call ends with a nonzero code, and the last `push ahead:` line of the l
 
 Covered: `projects/agent-kit/tests/push-ahead-call-guard.test.sh`.
 
+### SC-AK-1846 — the steps of the set run on the pinned node
+
+Given a tree pins node 22.22.3 in `.nvmrc`, nvm holds it, and node 20 stands first in `PATH`
+When the set or the run ahead runs a step
+Then the step finds the pinned node
+
+Given the tree pins only the major 22, and nvm holds 22.9.0 and 22.22.3
+When the set runs a step
+Then the step finds 22.22.3
+
+Given the tree pins an alias, or has no `.nvmrc`
+When the set runs a step
+Then the step finds the node of `PATH`, as before
+
+Covered: `projects/agent-kit/tests/push-set-runs.test.sh`.
+
+### SC-AK-1847 — a pinned node that is not installed
+
+Given a tree pins a node nvm does not hold, and `PATH` gives another one
+When the tree is pushed through the push guard or the git hook
+Then no step runs, and the push is refused by one line that names both versions and
+`nvm install <version>`
+
+Given the same tree
+When the set runs ahead
+Then no step runs, the line is printed, and the run ends with the code of a run that did not start
+
+Given a tree pins a node nvm does not hold, and `PATH` gives the same version
+When the set runs
+Then the steps run on the node of `PATH`, as before
+
+Covered: `projects/agent-kit/tests/pre-push.test.sh`, `projects/agent-kit/tests/push-set-runs.test.sh`.
+
 ### SC-AK-1850 — a ref of a branch the host removed is no base
 
 Given the host holds the lower branch

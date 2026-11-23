@@ -245,6 +245,13 @@ held="$rt_push_set_held"
 ahead="$rt_push_set_ahead"
 ran="$rt_push_set_ran"
 
+# The node the tree pins is not on the machine, and PATH gives another one: no step ran, and an empty
+# set must not read as a green one. One line names both versions and the install command.
+if [ -n "${rt_push_set_node:-}" ]; then
+    rt_push_gate_note node
+    push_refuse push '{"push_node_pinned":"no"}' "$(jq -cn --arg l "$rt_push_set_node" '{node_line:$l}')"
+fi
+
 # Heavy steps with no mark are named in one refusal together with the red light ones: the command
 # that runs them ahead goes to the background, where no hook limit cuts it, and the push after it
 # passes from the marks.

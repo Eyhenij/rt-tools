@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/facts.sh · 31f03b65a811 · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/facts.sh · 572343beef39 · правится надстройкой, не здесь
 # The facts of the state the guards decide by, each computed in one place. NOT a guard: it has no
 # `rt-hook:` declaration and hooks into no agent event. A guard sources it and calls `rt_fact_*`.
 #
@@ -32,6 +32,9 @@
 #                                    the facts the neighbours judge a named move by, as JSON: the
 #                                    exam, the window, the rules the gate wants for the move, the
 #                                    rule of the course of work and the entry from a handover
+#   rt_node_pinned_dir [root]        the bin directory of the node `.nvmrc` pins, installed by nvm
+#   rt_node_pin_mismatch [root]      one line when the pinned node is not installed and the node
+#                                    of PATH is another one; empty otherwise
 #
 # FAIL-OPEN: a fact that cannot be read is empty. The guard decides by an empty fact as it did when
 # its own call failed.
@@ -306,4 +309,47 @@ rt_move_rules() {
                 ;;
         esac
     ) | tr '\n' ' '
+}
+
+# The version `.nvmrc` of the tree pins, without the `v`: a full version, a major or a major and a
+# minor. An alias — `lts/*`, `node` — and a tree with no `.nvmrc` give nothing.
+rt_node_pin() {
+    local pin
+    pin="$({ tr -d ' \r\n' < "${1:-.}/.nvmrc"; } 2>/dev/null)"
+    pin="${pin#v}"
+    case "$pin" in '' | *[!0-9.]* | .* | *..* | *.) return 0 ;; esac
+    printf '%s' "$pin"
+}
+
+# The bin directory of the pinned node under nvm. A full version names its own directory; a major or
+# a major and a minor takes the highest installed version that matches. The steps of a set run on
+# it: the node the hook inherits may be another one, and a tree that demands its node refuses that.
+rt_node_pinned_dir() {
+    local pin base best
+    pin="$(rt_node_pin "${1:-.}")"
+    [ -n "$pin" ] || return 0
+    base="${NVM_DIR:-$HOME/.nvm}/versions/node"
+    case "$pin" in
+        *.*.*) best="$pin" ;;
+        *) best="$(ls -1 "$base" 2>/dev/null | sed -n "s/^v\(${pin//./\\.}\.[0-9.]*\)$/\1/p" |
+            sort -t. -k1,1n -k2,2n -k3,3n | tail -n 1)" ;;
+    esac
+    [ -n "$best" ] && [ -x "$base/v$best/bin/node" ] && printf '%s' "$base/v$best/bin"
+    return 0
+}
+
+# One line when the pinned node is not installed and the node of PATH is another one: no step of a
+# set runs then, and the line names the command that installs it. A node of PATH that is the pinned
+# one, or matches a major pin, runs the steps as before.
+rt_node_pin_mismatch() {
+    local root="${1:-.}" pin have shown
+    pin="$(rt_node_pin "$root")"
+    [ -n "$pin" ] || return 0
+    [ -n "$(rt_node_pinned_dir "$root")" ] && return 0
+    have="$(node --version 2>/dev/null)"
+    have="${have#v}"
+    case "$have" in "$pin" | "$pin".*) return 0 ;; esac
+    shown="${have:+v$have}"
+    printf 'node v%s is pinned in .nvmrc and not installed; PATH gives %s — nvm install %s' \
+        "$pin" "${shown:-no node}" "$pin"
 }
