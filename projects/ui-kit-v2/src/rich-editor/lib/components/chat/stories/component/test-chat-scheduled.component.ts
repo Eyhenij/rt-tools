@@ -1,4 +1,15 @@
-import { afterNextRender, computed, input, viewChild, ChangeDetectionStrategy, Component, InputSignal, Signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import {
+    afterNextRender,
+    inject,
+    computed,
+    input,
+    viewChild,
+    ChangeDetectionStrategy,
+    Component,
+    InputSignal,
+    Signal,
+} from '@angular/core';
 
 import { RtChatComposerBarDirective } from '../../rt-chat-states.directive';
 import { RtChatComponent } from '../../rt-chat.component';
@@ -23,6 +34,8 @@ function today(hours: number, minutes: number): string {
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TestRtChatScheduledComponent {
+    readonly #doc: Document = inject(DOCUMENT);
+
     protected readonly chat: Signal<RtChatComponent | undefined> = viewChild(RtChatComponent);
 
     public width: number = 375;
@@ -83,7 +96,7 @@ export class TestRtChatScheduledComponent {
         afterNextRender((): void => {
             if (this.editing) {
                 this.chat()?.setDraft('Да, поздний выезд до 14:00 подтверждаю.');
-                (document.activeElement as HTMLElement | null)?.blur();
+                (this.#doc.activeElement as HTMLElement | null)?.blur();
             }
         });
     }

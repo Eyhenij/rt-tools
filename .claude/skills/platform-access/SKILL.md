@@ -4,7 +4,7 @@ kind: rule
 law: frontend-application
 description: Rule under the frontend-application law. Load when an edit touches the global object or the runtime — window, globalThis, PLATFORM_ID, localStorage. Names the DI tokens and the pitfalls of server-side page rendering. Does not apply under libs/api and apps/api. Pattern platform-access-di.
 ---
-<!-- rt-kit v0.39.0 · rules/platform-access.md · 2967a2636a41 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · rules/platform-access.md · 369de5a0ff11 · правится надстройкой, не здесь -->
 
 # Browser environment — how it works here
 
@@ -33,7 +33,7 @@ Rule under the law `docs/constitution/frontend-application.md`. Cold part: `pitf
   needs none: `StorageService` falls back to memory.
 - **A direct call to the global object is refused by the linter.** Sixteen names on front-end trees;
   deliberate places sit in the config, never disabled per line. Banned by name, not path:
-  `this.#document.defaultView` on an injected document is lawful; a bypass looks alike.
+  `this.#doc.defaultView` on an injected document is lawful; a bypass looks alike.
 
 ## What of the law is not here
 

@@ -95,7 +95,7 @@ export class RtAsideComponent {
     protected readonly contents: Signal<readonly RtAsideContentDirective[]> = contentChildren(RtAsideContentDirective);
 
     readonly #focusTrapFactory: FocusTrapFactory = inject(FocusTrapFactory);
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
 
     readonly #t_uiEmptyTitle: Signal<string> = rtKitLabel('uiEmptyTitle');
 
@@ -175,7 +175,7 @@ export class RtAsideComponent {
         if (this.#focusTrap !== null) {
             return;
         }
-        const focused: Element | null = this.#document.activeElement;
+        const focused: Element | null = this.#doc.activeElement;
         this.#restoreFocusTo = focused instanceof HTMLElement ? focused : null;
         this.#focusTrap = this.#focusTrapFactory.create(frame);
         void this.#focusTrap.focusInitialElementWhenReady();

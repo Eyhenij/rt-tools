@@ -26,7 +26,7 @@ const DARK_QUERY: string = '(prefers-color-scheme: dark)';
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
     readonly #storage: StorageService = inject(StorageService);
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
     readonly #platform: PlatformService = inject(PlatformService);
     /**
      * Окно берётся не полем, а в `#watchMachine`, под проверкой среды: фабрика `WINDOW` бросает
@@ -69,7 +69,7 @@ export class ThemeService {
             if (!this.#platform.isPlatformBrowser) {
                 return;
             }
-            this.#document.documentElement.dataset['theme'] = mode;
+            this.#doc.documentElement.dataset['theme'] = mode;
             this.#storage.setItem(ERtStorageKeys.Theme, choice);
         });
     }
@@ -96,7 +96,7 @@ export class ThemeService {
      * странице, и выбор обязан идти за ней без перезагрузки.
      */
     #watchMachine(): void {
-        if (!this.#platform.isPlatformBrowser || !this.#document.defaultView) {
+        if (!this.#platform.isPlatformBrowser || !this.#doc.defaultView) {
             return;
         }
 

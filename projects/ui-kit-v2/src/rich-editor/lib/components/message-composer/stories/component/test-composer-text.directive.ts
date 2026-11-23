@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common';
 import { afterNextRender, inject, input, Directive, ElementRef, InputSignal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { auditTime, fromEvent } from 'rxjs';
@@ -16,6 +17,7 @@ import { auditTime, fromEvent } from 'rxjs';
 })
 export class TestComposerTextDirective {
     readonly #host: ElementRef<HTMLElement> = inject(ElementRef);
+    readonly #doc: Document = inject(DOCUMENT);
 
     public readonly rtStoryComposerText: InputSignal<string> = input<string>('');
 
@@ -34,7 +36,7 @@ export class TestComposerTextDirective {
             }
             // Автовысота меряет текст в момент набора и потом не перемеряет: набранный до загрузки
             // шрифта, он лёг бы запасным начертанием, и поле осталось бы на строку ниже нужного.
-            void document.fonts.ready.then((): void => {
+            void this.#doc.fonts.ready.then((): void => {
                 field.value = text;
                 field.dispatchEvent(new Event('input', { bubbles: true }));
                 requestAnimationFrame((): void => this.#scrollToEnd());

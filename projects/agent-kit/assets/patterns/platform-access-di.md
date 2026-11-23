@@ -26,7 +26,7 @@ import { PlatformService, WINDOW } from '@rt-tools/core';
 
 @Injectable({ providedIn: 'root' })
 export class SomeService {
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
     readonly #platform: PlatformService = inject(PlatformService);
     readonly #window: Window = inject(WINDOW);
 }
