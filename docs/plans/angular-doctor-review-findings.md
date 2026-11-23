@@ -17,7 +17,7 @@ Loaded: `task-delivery-loop`, `task-flow`, `task-flow-plan`, `doc-style`, `types
    after the folder was taken apart, and the archive commit was made twice. Proposed: step 11 —
    close the texts and run the push set until green; step 12 — take the folder apart by the last
    commit and push. At the end of step 9: «Before the round's commit run `node tools/check-dupes.mjs;
-   pnpm run check:unused; node tools/check-doc-paths.mjs` — their findings join the round.»
+pnpm run check:unused; node tools/check-doc-paths.mjs` — their findings join the round.»
 2. **The form of an expected number and the count of tests** — package, `rules/task-flow-plan.md`,
    after the article «Every step of the plan carries a check…»: «**An expected number is written
    bare; backticks mean a whole line.** `>= 12` compares the last line as an integer, `` `12` ``
@@ -71,3 +71,39 @@ Loaded: `task-delivery-loop`, `task-flow`, `task-flow-plan`, `task-flow-handover
    is counted apart from its family…»: «A component without a story gets a story or a named reason,
    and a story brings a snapshot reference. Where the plan keeps the references, the component is
    named in the component list with its reason, and its story is work of its own.»
+
+## RT-3480 — the review of 23 November 2026
+
+Loaded: `task-delivery-loop`, `task-flow`, `task-flow-plan`, `task-flow-start`,
+`task-flow-archive`, `task-flow-close`, `doc-style`, `doc-style-human`, `kit-approval`,
+`kit-approval-record`, `git-workflow` with its parts, `ui-component-tests`, `agent-kit-extend`. No
+edit of the gate map is needed. The language miss already went out as an incident with proposals
+for `hooks/turn-judge.md` and `hooks/ask-judge.md`.
+
+1. **The language of every line to the owner** — package, `patterns/doc-style-human.md`, section
+   «The language of the text», instead of its second sentence: «A session that has just read a
+   rule writes the task, the PR and every line to the owner between two tool calls in the rule's
+   words and language, so the addressee is checked before the first line of each, together with
+   the register. The owner's remark about the language holds for every later message of the
+   session, not for the one it answered.» With the sample `✗ Running the push set ahead` /
+   `✓ Запускаю набор перед отправкой`.
+2. **A step check names a commit, not a branch that moves** — package, `pitfalls/task-flow.2.md`,
+   article «Every step of the plan carries a check…», after «Written by a guess, it fails at the
+   step itself.»: «A check that compares with another branch names its commit, taken by
+   `git rev-parse --short <branch>` while the plan is written: the plan is not edited after
+   approval, and the branch merges or moves meanwhile.» Here step 1.5 kept comparing with the
+   RT-3508 branch after it merged into the epic.
+3. **A comparison inside interpreter code is not a write** — package, `hooks/write-targets.sh`,
+   function `writes()`: `>` counts as a redirect only after a space or the line start and before a
+   path with `/` or an extension. Scenario: `node -e "process.exit(a>b?1:0)" && node
+tools/check-specs.mjs` gives no write target. Here the plan's step 1.5 check could not run as
+   one command.
+4. **A red set in the push refusal is named** — tree, `tools/tests/run.sh`: the last line names
+   the red sets and those that left no exit code — `SETS WITH FAILURES: 1 — <set> (code 1)` or
+   `(no code)`. Package, `hooks/git-guard-push-ahead.sh`: the full output of a red step is kept in
+   a file of the session's temporary directory, and the refusal names its path beside the last 25
+   lines. Here the guard twice refused with one red set unnamed, every manual run was green, and
+   the rerun overwrote the evidence; the cause stays unknown.
+5. **The gate delivers what fits** (low) — package, `hooks/skill-gate.sh`, branch
+   `gate_why="together"`: when the rules of a call fit one by one but not together, the gate
+   delivers as many as fit in order and refuses only for the rest, by name.
