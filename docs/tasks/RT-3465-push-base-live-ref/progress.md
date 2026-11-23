@@ -2,17 +2,23 @@
 
 ## Где мы
 
-- **State:** `этап-идёт`
-- **Stage:** 3 — описание отправки говорит то же, что код
+- **State:** `этапы-кончились`
+- **Stage:** все три этапа закрыты; живая проверка, круги ревью
 - **Done:** этап 1 — выбор базы один раз за вызов спрашивает `git ls-remote --heads` и сверяет
   имя целиком; без ответа хостинга база по ссылкам копии и строка на stderr; SC-AK-1850 — 4 ok,
   SC-AK-1851 — 2 ok; SC-AK-1340 о ссылке снятой ветки переписан. Этап 2 — прогон вперёд пишет
   дерево, базу и её коммит в каталог рабочей копии; проверка отправки и хук git берут их для того
   же дерева, ссылку после чистки ставят обратно, ключ отметки — по записанному коммиту; отказ
   называет обе базы. SC-AK-1852 — 8 ok, SC-AK-1853 — 1 ok, набор отправки — 99 ok, 0 провалов;
-  без чтения записи три сценария отправки SC-AK-1852 красные
-- **Next step:** шаг 3.1 — сценарии SC-AK-1850…1853 в описании отправки
-- **Uncommitted:** этап 2
+  без чтения записи три сценария отправки SC-AK-1852 красные. Этап 3 — SC-AK-1850…1853 в
+  описании, «Then the base is that ref» — 0, правила, данные, решения и привязки переписаны.
+- **Живая проверка 23.11:** PR #3512 влит в ветку эпика в 02:10, хостинг снял ветку RT-3427, ссылка
+  на неё в копии осталась. В копии 30 ссылок, хостинг держит 7 веток, мёртвых ссылок 22. Прежний
+  код взял базой `origin/RT-3427-long-rules-fit-2`, новый — `origin/RT-3471-checks-rework-4`, за
+  3 с с одним вызовом хостинга. Запись базы на этой копии написана и прочитана: дерево, база,
+  коммит; `rt_push_base_recorded` и `rt_push_base_last` отвечают веткой эпика.
+- **Next step:** первый круг ревью
+- **Uncommitted:** этап 3
 - **PR:** not open yet
 
 ## Шаги
@@ -23,8 +29,8 @@
 - [x] 1.2 With no answer from the host the run ahead takes the refs of the copy and prints the line
 - [x] 2.1 The push guard takes the base of the run ahead for the same tree when the lower branch is merged and removed or a nearer branch appears during the set
 - [x] 2.2 The refusal «No green mark» names the base of the push and the base of the last run ahead
-- [>] 3.1 The scenarios stand in the description
-- [ ] 3.2 No scenario keeps the ref of a removed branch as the base
+- [x] 3.1 The scenarios stand in the description
+- [x] 3.2 No scenario keeps the ref of a removed branch as the base
 
 ## Решения по ходу
 
@@ -33,6 +39,7 @@
 - **Проверка шага 2.1 заменена:** `VERBOSE=1 bash projects/agent-kit/tests/git-guard-push-tests.test.sh 2>&1 | grep -c 'ok .*SC-AK-1852'` → >= 3 · слово владельца: «Одобряю план RT-3465»
 - **Проверка шага 2.2 заменена:** `VERBOSE=1 bash projects/agent-kit/tests/git-guard-push-tests.test.sh 2>&1 | grep -c 'ok .*SC-AK-1853'` → >= 1 · слово владельца: «Одобряю план RT-3465»
 - **Проверка шага 3.1 заменена:** `grep -c -E '^### SC-AK-185[0-3]' docs/specs/agent-kit/push-gate-ahead/scenarios.md` → = 4 · слово владельца: «Одобряю план RT-3465»
+- **Проверка шага 3.2 заменена:** `grep -c 'Then the base is that ref' docs/specs/agent-kit/push-gate-ahead/scenarios.md || true` → = 0 · слово владельца: «Одобряю план RT-3465»
 - **Номера сценариев — SC-AK-1850…1853, а не 1842…1845.** План ночи 22.11 взял 1842…1845, но
   RT-3419 после этого заняла 1842 и 1843 сценариями хода; номер сценария выдаётся один раз.
   Проверки пяти шагов заменены только номерами, ожидаемые числа те же.

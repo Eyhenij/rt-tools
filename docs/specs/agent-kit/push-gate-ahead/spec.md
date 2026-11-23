@@ -1,6 +1,6 @@
 # The push set against its base, from its marks and ahead
 
-**Status:** in force · **Revision:** 2026-11-13 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-23 · **Scenario prefix:** `SC-AK`
 **Depends on:** the subdomain of the delivery guards and the push gate
 **Laws:** `delivery`, `verifiability`
 **Procedures:** none
@@ -42,6 +42,15 @@ There is no interface: the guard answers with a refusal text, the run ahead with
   the head is a candidate only when a merge of the host moved it past the head. Three kinds of
   branches are no base: the branch's own remote copy, a branch that stands on that copy, and a
   branch a merge of the host brought into this one. A head that is no branch gets the main branch.
+- **A ref of a branch the host no longer holds is no base.** The host is asked for its branches once
+  per pick, and the name is matched whole. With no answer from the host the refs of the copy decide,
+  and a line on stderr says so.
+- **The push takes the base of the run ahead while the tree is the same.** The run ahead records
+  the tree of the head, the base and the commit of the base; the push guard and the git hook take
+  the base from the record, and a mark is keyed by the recorded commit. A ref a prune took away is
+  put back at that commit. Another tree, or no record, and the base is picked anew.
+- **The refusal «No green mark» names the base of the push and the base of the last run ahead.** A
+  record of another tree is named so.
 - **A head that adds no commit to its base is pushed with no check run.** Every commit of it
   already lies in that branch on the remote. The guard, the run ahead and the git hook all answer
   so; a head with no base on a remote is judged as before. The guard answers so only for a push of
@@ -143,6 +152,10 @@ checks: the last `push ahead:` line of the output tells them apart. Not 2: to a 
 The marks lie in `<git common dir>/rt-kit/push-green/`, a file per key, the check line inside. They
 are shared by every working copy of the repository and never land in history.
 
+The record of the run ahead lies in `<git dir of the copy>/rt-kit/push-base`: three lines — the tree
+of the head, the base, the commit of the base. It belongs to one working copy: a neighbouring copy
+runs a set of its own.
+
 ## Screens and states
 
 There are no screens.
@@ -178,10 +191,15 @@ Several working copies share the marks: a key holds the tree and the base, not t
   remote sent every branch above it to the main branch, and a branch of texts then ran two
   snapshot sets, the end-to-end suites and two image builds — forty to sixty minutes. A request
   is a call to the host on every push, and the first push of a branch has no request yet.
-- **The refs of branches removed from the remote are not pruned by the guard.** A lower branch
-  merged and removed stays the nearest one for the branch above it until the branch it was merged
-  into comes nearer. The fetch names that outright: a copy whose settings prune on every fetch
-  would lose the ref in silence.
+- **The refs of branches removed from the remote are not pruned by the guard, and they are no
+  base.** A prune in one copy changes what a neighbouring copy measures, so the fetch keeps
+  `--no-prune`. On 21.11 a set of half an hour took a removed lower branch as its base, a neighbour
+  pruned the refs, and the push picked the branch of the epic and refused as «No green mark». The
+  host is asked which branches it holds: one call per pick.
+- **The push takes its base from the run ahead, not from a pick of its own.** A pick at the push
+  sees the host as it is then: a lower branch merged and removed during the set, or a nearer branch
+  pushed meanwhile, gives another base and refuses a green set. The record belongs to the tree it
+  judged; a new commit picks anew.
 - **The main branch is a candidate even when its tip is outside the history of the head.** Left
   out once it moved ahead, it gave its place to the stale ref of a branch merged long ago, and a
   branch of texts taken from the main one was charged for the snapshots of that branch.
@@ -191,15 +209,17 @@ Several working copies share the marks: a key holds the tree and the base, not t
 - **A branch outside the history of the head needs a merge of the host to be a candidate.** Git
   alone cannot tell which of two branches was taken from the other: the branch of an epic moved
   by a merged neighbour and a task that stands on an old tip of this branch look the same. The
-  merge of the host is the one sign that tells them apart without a call to the host.
+  merge of the host is the one sign that tells them apart: the list of the host's branches says
+  which exist, not which was taken from which.
 - **The host's merge is told by its committer, not by its subject.** The subject of a merge here
   is the title of the request. A tree whose host signs otherwise names the signature itself.
 - **What the base trusts.** A branch on the remote got there through this set, so the commits it
   holds are not checked again. A branch that reached the remote past the set — pushed from a
   terminal with no hook, edited on the host — lifts its content from the set of every branch
   that takes it in. The pipeline of a request into the main branch still runs over the whole.
-- **The answer depends on the remote refs the copy holds.** Working copies of one repository
-  share them; a fresh clone holds no ref of a branch removed earlier and takes the next nearest.
+- **The answer depends on the remote refs the copy holds and the branches the host holds.**
+  Working copies of one repository share the refs; a ref of a branch the host removed counts in
+  none of them, so a prune in a neighbour changes no pick.
 - **The own copy is told by the name of the branch, not by what the branch tracks.** A branch
   taken straight from a remote one tracks that one, and the branch of the epic would pass for the
   own copy. The price: a branch pushed under another name is counted against that copy, by its
@@ -212,9 +232,9 @@ Several working copies share the marks: a key holds the tree and the base, not t
   host, is no candidate for a task on its older tip until the task takes it in. The first lets
   the whole of an epic reach the main branch checked only by the pipeline of its request; the
   other two cost a full set.
-- **The count is one call of git per remote branch.** Twenty branches take two seconds, three
-  hundred take a quarter of a minute; the refs of removed branches pile up, since they are never
-  pruned here.
+- **The count is one call of git per remote branch, and one call to the host per pick.** Twenty
+  branches take two seconds, three hundred take a quarter of a minute; a ref of a removed branch
+  is dropped before the count.
 - **The key holds the tree, not the commit.** An amended commit with the same content does not pay
   again.
 - **Light checks without a mark still run inside the guard.** They take seconds, and the refusal
@@ -248,3 +268,6 @@ None.
 - 2026-11-22 — a call of the run ahead that does not end with the exit code of the set is refused
   with the ready form. A red set run with `; echo "exit=$?"` after it came back as «exit code 0».
   Task RT-3469.
+- 2026-11-23 — a ref of a branch the host removed is no base, and the push takes the base of the
+  run ahead while the tree is the same. A green set of half an hour was refused as «No green mark»
+  after a neighbour pruned the refs. Task RT-3465.

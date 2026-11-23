@@ -32,7 +32,7 @@ Then that copy is not the base
 
 Given the lower branch was removed from the remote, and the working copy still holds its ref
 When the push guard picks the base
-Then the base is that ref
+Then that ref is no base: the base is the branch of the epic
 
 Given the lower branch was merged into the branch of the epic by the host and removed from the
 remote, and the working copy holds no ref of it
@@ -333,3 +333,62 @@ When the set runs ahead in the ready form, its output in a log
 Then the call ends with a nonzero code, and the last `push ahead:` line of the log says red
 
 Covered: `projects/agent-kit/tests/push-ahead-call-guard.test.sh`.
+
+### SC-AK-1850 — a ref of a branch the host removed is no base
+
+Given the host holds the lower branch
+When the base is picked
+Then the base is the lower branch
+
+Given the host removed the lower branch, and the copy still holds its ref
+When the base is picked
+Then the base is the branch of the epic
+
+Given a neighbouring copy pruned the refs between the set and the push
+When the base is picked
+Then the base is the same as before the prune
+
+Given the host holds a branch whose name begins with the name of the removed one
+When the base is picked
+Then the removed branch is still no base: the name is matched whole
+
+Covered: `projects/agent-kit/tests/git-guard-push-base-live.test.sh`.
+
+### SC-AK-1851 — with no answer from the host the refs of the copy decide
+
+Given the host does not answer
+When the base is picked
+Then the base is the nearest ref of the copy, as before the filter of live branches
+
+Given the host does not answer
+When the set runs ahead
+Then its output says the host did not answer
+
+Covered: `projects/agent-kit/tests/git-guard-push-base-live.test.sh`.
+
+### SC-AK-1852 — the push takes the base of the run ahead for the same tree
+
+Given the run ahead judged the tree against the lower branch, and the host merged and removed that
+branch during the set
+When the tree is pushed
+Then the push takes the base and its commit from the run ahead, and passes from the marks
+
+Given a neighbouring copy also pruned the ref of that base
+When the tree is pushed
+Then the ref is put back at the recorded commit, and the push passes from the marks
+
+Given the run ahead judged the tree against the branch of the epic, and a nearer branch appeared
+on the host during the set
+When the tree is pushed
+Then the base stays the branch of the epic, and the push passes from the marks
+
+Covered: `projects/agent-kit/tests/git-guard-push-base-live.test.sh`.
+
+### SC-AK-1853 — the refusal «No green mark» names both bases
+
+Given a commit made after the run ahead, so that the tree of the push is another one
+When the push is refused for a heavy step with no mark
+Then the refusal names the base of the push and the base of the last run ahead in this copy,
+marked as another tree
+
+Covered: `projects/agent-kit/tests/git-guard-push-base-live.test.sh`.

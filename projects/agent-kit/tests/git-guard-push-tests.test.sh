@@ -325,8 +325,7 @@ stack_git push -q origin RT-92-top 2>/dev/null
 fixture_commit "$STACK" top3.txt ещё 'feat: вторая правка верхней ветки'
 report "SC-AK-1340 — своя копия ветки на сервере базой не считается" "$(push_base "$STACK")" origin/RT-91-low
 
-# Сервер снял нижнюю ветку, а ссылка на неё в копии осталась. Базой она не бывает: соседняя чистка
-# ссылок развела бы базы набора и отправки (SC-AK-1850).
+# Сервер снял нижнюю ветку, ссылка на неё в копии осталась: базой она не бывает (SC-AK-1850).
 git -C "$STACK_REMOTE" update-ref -d refs/heads/RT-91-low 2>/dev/null
 report "SC-AK-1340 — ссылка снятой с сервера ветки базой не считается" "$(push_base "$STACK")" origin/RT-90-epic
 
