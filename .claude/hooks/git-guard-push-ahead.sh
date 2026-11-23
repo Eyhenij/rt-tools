@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/git-guard-push-ahead.sh · 0095987693af · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/git-guard-push-ahead.sh · 3873a5f1e5dd · правится надстройкой, не здесь
 # The push set run ahead of the push: every check of `rt_push_checks <base>`, a green mark for each
 # that passed. The push guard then reads the marks instead of running the steps again.
 #
@@ -61,13 +61,18 @@ rt_push_mark_clean || {
 
 base="$(rt_push_base "${RT_MAIN_BRANCH:-main}")"
 skip_code="${RT_SKIP_CODE:-7}"
+# The steps run against a ref pinned at the commit of the base, and the push takes that ref while the
+# record fits its head: a branch merged, removed, moved or put next to this one during the set
+# changes nothing for the push.
+command -v rt_push_base_pin >/dev/null 2>&1 && base="$(rt_push_base_pin "$base")"
+command -v rt_push_base_label >/dev/null 2>&1 || rt_push_base_label() { printf '%s' "${1:-none}"; }
 
 if command -v rt_push_adds_nothing >/dev/null 2>&1 && rt_push_adds_nothing "$base"; then
-    printf 'push ahead: the head adds no commit to %s — there is nothing to run, the push passes\n' "$base"
+    printf 'push ahead: the head adds no commit to %s — there is nothing to run, the push passes\n' "$(rt_push_base_label "$base")"
     exit 0
 fi
 
-printf 'push ahead: base %s, tree %s\n' "${base:-none}" "$(git rev-parse --short 'HEAD^{tree}')"
+printf 'push ahead: base %s, tree %s\n' "$(rt_push_base_label "$base")" "$(git rev-parse --short 'HEAD^{tree}')"
 sign="$(rt_tree_sign .)"
 # Whether the change touched the subject of each step, for the run lines; a step the selection
 # drops leaves a line of its own.

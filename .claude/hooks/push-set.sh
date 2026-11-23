@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/push-set.sh · ef6be49a94e4 · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/push-set.sh · 905bb5e0831f · правится надстройкой, не здесь
 # The gate set before a push, one way for both who run it. NOT a guard: it has no `rt-hook:`
 # declaration and hooks into no agent event. The session guard of the push and the git hook
 # `pre-push` source it and call its functions.
@@ -55,8 +55,14 @@ rt_push_set_profile() {
 
 rt_push_set_base() {
     local main_branch="${RT_MAIN_BRANCH:-main}"
+    # The tree the run ahead judged is pushed against the base that run took.
+    command -v rt_push_base_recorded >/dev/null 2>&1 && rt_push_base_recorded && return 0
     if command -v rt_push_base >/dev/null 2>&1; then
-        rt_push_base "$main_branch"
+        if command -v rt_push_base_same >/dev/null 2>&1; then
+            rt_push_base_same "$(rt_push_base "$main_branch")"
+        else
+            rt_push_base "$main_branch"
+        fi
         return 0
     fi
     if git fetch --quiet origin "$main_branch" 2>/dev/null && git rev-parse --verify --quiet "origin/$main_branch" >/dev/null 2>&1; then

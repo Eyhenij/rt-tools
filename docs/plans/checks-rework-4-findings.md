@@ -101,6 +101,12 @@ RT-3425 and RT-3468. What each plan took in is written in its grill; below is wh
   area, or the map stops laying `doc-style` over the task folder and the three rules of a PR body
   are cut below 3 000. **Address:** `hooks/skill-gate.sh` around the «do not fit» refusal, or
   `.claude/rt-kit/gate-map.sh`. **Metric:** `gate-deny` with `why: together`, 29 over 14–21.11.
+- **The choice of the base finds a branch the host merged only on the first-parent line.** A local
+  merge of the epic branch carries the merge of the host to the second parent, and the merged task
+  stays a candidate: 10 of 148 runs ahead since 14.11 took a base already removed on the host.
+  Here the host deletes merged branches, and RT-3465 filters by live branches; a tree without the
+  deletion keeps the hole. **Address:** `hooks/git-guard-push-marks.sh:rt_push_base`, the loop of
+  merges.
 
 ## RT-3469 — the run ahead started in the background ends with the code of the set
 
