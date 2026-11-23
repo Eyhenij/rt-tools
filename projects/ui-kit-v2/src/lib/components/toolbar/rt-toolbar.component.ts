@@ -25,6 +25,7 @@ import {
 import { firstValueFrom } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+import { isNil } from '@rt-tools/utils';
 
 import { BreakpointsService, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { RtAsideRef, RtAsideService } from '@rt-tools/ui-kit-v2/aside';
@@ -259,7 +260,7 @@ export class RtToolbarComponent {
         }
         // Кнопка, с которой панель открыли, на широком месте уже снята, и вернуть фокус панели
         // некуда: он уходит в левую секцию полосы, куда вернулись поля отборов
-        const focusInPanel: boolean = this.#document.activeElement?.closest('rt-toolbar-filters-aside') != null;
+        const focusInPanel: boolean = !isNil(this.#document.activeElement?.closest('rt-toolbar-filters-aside'));
         this.#filtersRef.close();
         this.#filtersRef = null;
         if (focusInPanel) {
