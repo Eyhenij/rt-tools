@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/pre-push.sh · 1117fab6f891 · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/pre-push.sh · 7c81c9ea9162 · правится надстройкой, не здесь
 # The checks before a push, as a hook of git itself, not of the agent.
 #
 # Requires: hooks/push-set.sh, hooks/git-guard-push-marks.sh, hooks/facts.sh, hooks/decide.sh
@@ -98,18 +98,26 @@ fi
 total="$(rt_push_checks "$base" | grep -c .)"
 [ "${total:-0}" -eq 0 ] && exit 0
 
+# No installed node serves the pin of the tree, and PATH gives another one or none: no step runs,
+# and the push stops before the line that counts the steps.
+node_line="$(rt_node_pin_mismatch "$repo_root")"
+if [ -n "$node_line" ]; then
+    # shellcheck disable=SC1091
+    . "$hooks_dir/decide.sh" 2>/dev/null
+    if command -v rt_decide >/dev/null 2>&1; then
+        rt_decide pre-push.sh push '{"push_sends_tip":"yes","push_node_pinned":"no"}' "$(jq -cn --arg l "$node_line" '{node_line:$l}')" git
+        code=$?
+        [ "$code" -ne 0 ] && exit "$code"
+    fi
+    # The decider needs a node, and a client that starts git with no node in PATH reaches none: the
+    # line is printed here, and the push stops all the same.
+    printf 'pre-push: refused — %s. No step of the set ran.\n' "$node_line" >&2
+    exit 1
+fi
+
 printf 'pre-push: running the checks before the push, %s of them\n' "$total" >&2
 
 rt_push_set_run "$base"
-
-# The node the tree pins is not on the machine, and PATH gives another one: no step ran.
-if [ -n "${rt_push_set_node:-}" ]; then
-    # shellcheck disable=SC1091
-    . "$hooks_dir/decide.sh" 2>/dev/null
-    command -v rt_decide >/dev/null 2>&1 || exit 0
-    rt_decide pre-push.sh push '{"push_sends_tip":"yes","push_node_pinned":"no"}' "$(jq -cn --arg l "$rt_push_set_node" '{node_line:$l}')" git
-    exit $?
-fi
 
 [ -n "$rt_push_set_skipped" ] && printf 'pre-push: these checks had nothing to look at:\n%s\n' "$rt_push_set_skipped" >&2
 

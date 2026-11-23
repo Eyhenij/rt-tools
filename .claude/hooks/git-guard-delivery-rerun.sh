@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/git-guard-delivery-rerun.sh · 5d82c20ad45d · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/git-guard-delivery-rerun.sh · 1438fee6ecfd · правится надстройкой, не здесь
 # The rerun of the done steps before a PR opens, for the delivery guard. NOT a guard: it has no
 # `rt-hook:` declaration and hooks into no agent event. The delivery guard sources it and calls
 # `rt_delivery_rerun` on a PR opening, before it names what is unmet.
@@ -10,6 +10,8 @@
 # closed. The engine puts a taken-apart task folder back from the history for the run.
 #
 # FAIL-OPEN: no node, no engine, a branch with no plan or a plan with no checks — nothing is judged.
+#
+# Requires: hooks/facts.sh
 
 rt_delivery_rerun() {
     command -v node >/dev/null 2>&1 || return 0

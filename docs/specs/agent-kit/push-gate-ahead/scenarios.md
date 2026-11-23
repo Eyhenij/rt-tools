@@ -366,13 +366,18 @@ Given a tree pins node 22.22.3 in `.nvmrc`, nvm holds it, and node 20 stands fir
 When the set or the run ahead runs a step
 Then the step finds the pinned node
 
-Given the tree pins only the major 22, and nvm holds 22.9.0 and 22.22.3
+Given nvm holds 22.1.5, 22.9.0, 22.10.0 and 22.22.3, and the tree pins the major 22, the minor
+22.1 or the version 22.20.0 nvm does not hold
 When the set runs a step
-Then the step finds 22.22.3
+Then the step finds 22.22.3, 22.1.5 and 22.22.3 in turn
+
+Given `.nvmrc` starts with a comment line and holds the version after a tab
+When the set runs a step
+Then the step finds the pinned node
 
 Given the tree pins an alias, or has no `.nvmrc`
 When the set runs a step
-Then the step finds the node of `PATH`, as before
+Then the step finds the node of `PATH`, as before, and the set gives `PATH` back as it was
 
 Covered: `projects/agent-kit/tests/push-set-runs.test.sh`.
 
@@ -381,13 +386,18 @@ Covered: `projects/agent-kit/tests/push-set-runs.test.sh`.
 Given a tree pins a node nvm does not hold, and `PATH` gives another one
 When the tree is pushed through the push guard or the git hook
 Then no step runs, and the push is refused by one line that names both versions and
-`nvm install <version>`
+`nvm install <version>`; the git hook says it before it counts the steps
+
+Given the same tree, and git is started with no node in `PATH`
+When the tree is pushed
+Then the git hook prints the line itself and refuses the push
 
 Given the same tree
 When the set runs ahead
 Then no step runs, the line is printed, and the run ends with the code of a run that did not start
 
-Given a tree pins a node nvm does not hold, and `PATH` gives the same version
+Given a tree pins a node nvm does not hold, and `PATH` gives the same version, a version under a
+pinned major, or a newer version of the pinned major
 When the set runs
 Then the steps run on the node of `PATH`, as before
 

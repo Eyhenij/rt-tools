@@ -95,8 +95,9 @@ fake_node() {
     chmod +x "$1/node"
 }
 fake_node "$node_box/other" 20.11.0
-for v in 22.22.3 22.9.0 20.1.0; do fake_node "$node_box/nvm/versions/node/v$v/bin" "$v"; done
-mkdir -p "$node_box/nvm-empty"
+for v in 22.22.3 22.9.0 22.10.0 22.1.5 20.1.0; do fake_node "$node_box/nvm/versions/node/v$v/bin" "$v"; done
+# A half-done install: the highest 22 has no node, and the next one down serves the pin.
+mkdir -p "$node_box/nvm/versions/node/v22.30.0/bin" "$node_box/nvm-empty"
 seen="$node_box/seen"
 
 # A tree with the pin and a commit over its start. No pin — no .nvmrc.
@@ -111,14 +112,17 @@ node_tree() {
     git -C "$t" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q -m 'chore: pin' 2>/dev/null
     printf '%s' "$t"
 }
-# How the set ran in that tree: the node the step found, or the line of a missing pin.
-set_node() {
+# How the set ran in that tree: the line of a missing pin, whether PATH came back as it was, and the
+# node the step found — «none» when no step ran.
+set_trace() {
     local t="$1" nvm="${2:-$node_box/nvm}"
     rm -f "$seen"
     (cd "$t" && PATH="$node_box/other:$PATH" NVM_DIR="$nvm" RT_SEEN="$seen" CLAUDE_PROJECT_DIR="$t" \
-        bash -c '. "$1/push-set.sh"; rt_push_set_profile "$1" "$PWD"; rt_push_set_run ""; printf "%s" "$rt_push_set_node"' _ "$HOOKS" 2>/dev/null)
-    cat "$seen" 2>/dev/null
+        bash -c '. "$1/push-set.sh"; rt_push_set_profile "$1" "$PWD"; before="$PATH"; rt_push_set_run ""
+            [ "$PATH" = "$before" ] && back=yes || back=no; printf "%s|%s|" "$rt_push_set_node" "$back"' _ "$HOOKS" 2>/dev/null)
+    cat "$seen" 2>/dev/null || printf none
 }
+set_node() { set_trace "$@" | cut -d'|' -f3; }
 ahead_node() {
     local t="$1" nvm="${2:-$node_box/nvm}" code
     rm -f "$seen"
@@ -137,7 +141,13 @@ t_alias="$(node_tree 'lts/*')"
 t_none="$(node_tree '')"
 t_same="$(node_tree 20.11.0)"
 t_other="$(node_tree 99.0.0)"
-trap 'rm -rf "$tree" "$set_tree" "$node_box" "$t_exact" "$t_ahead" "$t_major" "$t_alias" "$t_none" "$t_same" "$t_other"' EXIT
+t_minor="$(node_tree 22.1)"
+t_newer="$(node_tree 22.20.0)"
+t_noted="$(node_tree "$(printf '# the node of the tree\n\tv22.22.3 ')")"
+t_served="$(node_tree 20)"
+t_patch="$(node_tree 20.5.0)"
+trap 'rm -rf "$tree" "$set_tree" "$node_box" "$t_exact" "$t_ahead" "$t_major" "$t_alias" "$t_none" "$t_same" "$t_other" \
+    "$t_minor" "$t_newer" "$t_noted" "$t_served" "$t_patch"' EXIT
 
 report "SC-AK-1846 — the set sees the pinned node" "$(set_node "$t_exact")" "$(pinned_bin 22.22.3)"
 report "SC-AK-1846 — the run ahead sees the pinned node" "$(ahead_node "$t_ahead")" "0 $(pinned_bin 22.22.3)"
@@ -145,9 +155,15 @@ report "SC-AK-1846 — a major pin takes the highest installed match" "$(set_nod
 report "SC-AK-1846 — an alias pin runs on the node of PATH" "$(set_node "$t_alias")" "$node_box/other/node"
 report "SC-AK-1846 — no pin runs on the node of PATH" "$(set_node "$t_none")" "$node_box/other/node"
 report "SC-AK-1847 — same node in PATH runs the steps" "$(set_node "$t_same" "$node_box/nvm-empty")" "$node_box/other/node"
+report "SC-AK-1846 — a minor pin takes its own minor, not a longer one" "$(set_node "$t_minor")" "$(pinned_bin 22.1.5)"
+report "SC-AK-1846 — a full pin not installed takes a newer one of its major" "$(set_node "$t_newer")" "$(pinned_bin 22.22.3)"
+report "SC-AK-1846 — .nvmrc with a comment line and a tab reads the version" "$(set_node "$t_noted")" "$(pinned_bin 22.22.3)"
+report "SC-AK-1846 — the set gives PATH back" "$(set_trace "$t_exact" | cut -d'|' -f2)" yes
+report "SC-AK-1847 — PATH serving a pin of the major runs the steps" "$(set_node "$t_served" "$node_box/nvm-empty")" "$node_box/other/node"
+report "SC-AK-1847 — a newer node of the pinned major in PATH runs the steps" "$(set_node "$t_patch" "$node_box/nvm-empty")" "$node_box/other/node"
 report "SC-AK-1847 — the set starts no step without the pinned node" \
-    "$(set_node "$t_other" | sed -E 's/PATH gives .*/PATH gives …/')" \
-    "node v99.0.0 is pinned in .nvmrc and not installed; PATH gives …"
+    "$(set_trace "$t_other" | sed -E 's/PATH gives [^|]*/PATH gives …/')" \
+    "node v99.0.0 is pinned in .nvmrc and not installed; PATH gives …|yes|none"
 report "SC-AK-1847 — the run ahead starts no step without the pinned node" "$(ahead_node "$t_other")" "3 none"
 
 suite_result "the run line of a push set step"

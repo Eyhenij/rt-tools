@@ -9,6 +9,8 @@
 # closed. The engine puts a taken-apart task folder back from the history for the run.
 #
 # FAIL-OPEN: no node, no engine, a branch with no plan or a plan with no checks — nothing is judged.
+#
+# Requires: hooks/facts.sh
 
 rt_delivery_rerun() {
     command -v node >/dev/null 2>&1 || return 0

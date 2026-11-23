@@ -294,12 +294,23 @@ fi
 # session guard and the git hook refuse by one line with the install command, not by red steps.
 NODELESS="$(hooked_repo true)"
 NO_NVM="$(mktemp -d)"
+# The only step leaves a file: a step that ran is seen whatever its verdict.
+printf '%s\n' "rt_push_checks() { printf '%s\\n' 'touch \"\$RT_RAN\"'; }" > "$NODELESS/.claude/rt-kit/project.sh"
 fixture_commit "$NODELESS" .nvmrc 99.0.0 'chore: pin'
 node_line='node v99.0.0 is pinned in .nvmrc and not installed'
-said="$(cd "$NODELESS" && NVM_DIR="$NO_NVM" env -u CI git push origin RT-90-hook 2>&1)"
+said="$(cd "$NODELESS" && RT_RAN="$NO_NVM/ran" NVM_DIR="$NO_NVM" env -u CI git push origin RT-90-hook 2>&1)"
 code=$?
 report "SC-AK-1847 — not installed: the git hook refuses by one line" \
-    "$code $(printf '%s\n' "$said" | grep -c "pre-push: refused — $node_line") $(printf '%s\n' "$said" | grep -c 'red checks')" "1 1 0"
+    "$code $(printf '%s\n' "$said" | grep -c "pre-push: refused — $node_line") $(printf '%s\n' "$said" | grep -c 'red checks\|running the checks') $([ -e "$NO_NVM/ran" ] && echo ran || echo none)" \
+    "1 1 0 none"
+# A client that starts git with no node in PATH reaches no decider: the hook says the line itself.
+mkdir -p "$NO_NVM/bin"
+ln -s "$(command -v jq)" "$NO_NVM/bin/jq"
+said="$(cd "$NODELESS" && RT_RAN="$NO_NVM/ran" NVM_DIR="$NO_NVM" PATH="$NO_NVM/bin:/usr/bin:/bin" env -u CI git push origin RT-90-hook 2>&1)"
+code=$?
+report "SC-AK-1847 — no node in PATH: the git hook still refuses" \
+    "$code $(printf '%s\n' "$said" | grep -c "pre-push: refused — $node_line; PATH gives no node") $([ -e "$NO_NVM/ran" ] && echo ran || echo none)" \
+    "1 1 none"
 said="$(CLAUDE_PROJECT_DIR="$NODELESS" input_cmd 'git push origin RT-90-hook' Bash "$NODELESS" \
     | CLAUDE_PROJECT_DIR="$NODELESS" NVM_DIR="$NO_NVM" "$HOOKS/git-guard-push-tests.sh" 2>/dev/null \
     | jq -r '.hookSpecificOutput | "\(.permissionDecision) \(.permissionDecisionReason)"' 2>/dev/null)"
