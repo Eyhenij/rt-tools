@@ -1,10 +1,12 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+    booleanAttribute,
     inject,
     ChangeDetectionStrategy,
     Component,
     DestroyRef,
     InputSignal,
+    InputSignalWithTransform,
     Signal,
     ViewEncapsulation,
     WritableSignal,
@@ -158,18 +160,24 @@ export class TestRtPageHeaderVerticalComponent {
         this.assistantOpen() ? 'Поиск по гостю' : 'Поиск по гостю и почте'
     );
 
-    public readonly bar: InputSignal<boolean> = input<boolean>(false);
+    public readonly bar: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });
     public readonly pageTitle: InputSignal<string> = input<string>('Все брони');
     public readonly filterCount: InputSignal<number> = input<number>(3);
-    public readonly filtersActive: InputSignal<boolean> = input<boolean>(false);
+    public readonly filtersActive: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
     public readonly tabs: InputSignal<number> = input<number>(0);
-    public readonly assistant: InputSignal<boolean> = input<boolean>(false);
+    public readonly assistant: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });
     public readonly overflow: InputSignal<IRtTabs.Overflow> = input<IRtTabs.Overflow>('more');
-    public readonly disabledSection: InputSignal<boolean> = input<boolean>(false);
-    public readonly manySections: InputSignal<boolean> = input<boolean>(false);
+    public readonly disabledSection: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
+    public readonly manySections: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
     public readonly screenHeight: InputSignal<number | null> = input<number | null>(null);
     /** История открывает панель жестом: съёмка ждёт её и не снимает кадр без неё. */
-    public readonly overlay: InputSignal<boolean> = input<boolean>(false);
+    public readonly overlay: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });
     public readonly user: InputSignal<IRtPageHeader.User> = input<IRtPageHeader.User>({ name: 'Анна' });
 
     constructor() {

@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, InputSignal, Signal, computed, input } from '@angular/core';
+import {
+    booleanAttribute,
+    ChangeDetectionStrategy,
+    Component,
+    InputSignal,
+    InputSignalWithTransform,
+    Signal,
+    computed,
+    input,
+} from '@angular/core';
 
 import { RtBreadcrumbsComponent } from '../../rt-breadcrumbs.component';
 import { IRtBreadcrumbs } from '../../rt-breadcrumbs.model';
@@ -24,6 +33,6 @@ export class TestRtBreadcrumbsComponent {
 
     public readonly depth: InputSignal<number> = input<number>(3);
     public readonly look: InputSignal<IRtBreadcrumbs.Look> = input<IRtBreadcrumbs.Look>('inline');
-    public readonly back: InputSignal<boolean> = input<boolean>(true);
+    public readonly back: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, { transform: booleanAttribute });
     public readonly separator: InputSignal<string> = input<string>('/');
 }
