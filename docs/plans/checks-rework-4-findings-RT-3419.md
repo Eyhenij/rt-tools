@@ -1,8 +1,8 @@
-# Находки RT-3419 — ожидание долгой задачи вместо «стоп»
+# Findings of RT-3419 — a wait of a long task instead of a stop word
 
-Продолжение файла `docs/plans/checks-rework-4-findings.md`: он дошёл до предела длины. Здесь —
-находки ревью RT-3419, которые лежат вне следа её одобренного плана. Каждая ждёт решения владельца:
-отдельная задача или нет.
+The continuation of `docs/plans/checks-rework-4-findings.md`, which reached the length limit. Here
+are the review findings of RT-3419 that lie outside the footprint of its approved plan. Each waits
+for the owner's decision: a task of its own or none.
 
 ## RT-3419 — a wait of the session's own long task instead of a stop word
 
@@ -26,38 +26,43 @@
   `turn-judge.md:notice` pass the anchor check while the case they bind is gone. **Address:**
   an anchor the check finds only in the case itself, or a marker comment next to the case.
 
-## Разбор правил после RT-3419 — skill-curator, 22.11
+## Rules review after RT-3419 — skill-curator, 22.11
 
-Пять предложений роли; каждое ждёт решения владельца.
+Five proposals of the role; each waits for the owner's decision.
 
-- **Сделанные шаги перемеряются до разбора папки.** Правка второго круга нарочно назвала снятые
-  ключи слов, и проверка шага 2.2 дала 4 вместо 0. Это выяснилось только на отказе открытия PR и
-  стоило отката разбора, замены проверки и повторного разбора — три коммита. **Address:** пакет,
-  `projects/agent-kit/assets/patterns/task-flow-archive.md` и холодная часть
-  `projects/agent-kit/assets/pitfalls/task-flow-archive.md`, состояние `разбор-кончился`: вход —
-  ещё и `task-flow-script.mjs step --done` по всем сделанным шагам; дерево — строка
-  `node tools/task-flow-script.mjs step --done` в блоке 11–12 правила
-  `.claude/skills/task-delivery-loop-run/SKILL.md`. **Metric:** отказы открытия PR по перемеру
-  шагов, вниз до 0.
-- **Переопределённая задача сохраняет `[RT-N]` в заголовке.** Заголовок карточки переписан при
-  переопределении, номер пропал; проверка доставки назвала это только на открытии PR. **Address:**
-  пакет, «Common misses» в `projects/agent-kit/assets/pitfalls/task-flow-start.md`. **Metric:**
-  отказы `task_title_numbered` при открытии PR, вниз.
-- **Тело PR читается проверкой по заголовкам профиля.** Таблица критика стояла под заголовком,
-  скопированным из прошлого PR цепочки, и не засчиталась под «Цель». Абзац «тело машиной не
-  проверяется» в `projects/agent-kit/assets/pitfalls/git-workflow-pr-body.github.md` устарел.
-  **Address:** заменить абзац правилом о `RT_PULL_BODY_SECTION`, `RT_PULL_POINTS_SECTION` и
-  `RT_PULL_GOAL_SECTION`; по желанию отказ `git-guard-delivery-body.sh` называет заголовок цели.
-  **Metric:** отказы `pr_create_thin_body`, вниз.
-- **Правило цикла расходится с проверкой шагов.** Статья «A finding about the diff is never parked
-  in a file», а `flow-step-guard` запрещает правку файла вне следа плана, и находка ушла в файл
-  находок. **Address:** дерево, `.claude/skills/task-delivery-loop/SKILL.md` и строка его
-  `implementation.md`: правка, которую запрещает проверка шагов, идёт в файл находок эпика с
-  адресом и метрикой и называется в теле PR. **Metric:** расхождений правила и проверки, 1 → 0.
-- **Находка о поведении хоста считается по записям до правки.** Первый круг добавил правило
-  доставки Esc за 5 секунд по рассуждению; второй сосчитал 17 отметок и снял его. **Address:**
-  дерево, статья «A finding is checked against the code before it is fixed» правила
-  `task-delivery-loop`: находка о том, что хост шлёт или пишет, сверяется с записями машины, число
-  идёт в коммит круга. **Metric:** правки круга, снятые следующим кругом, вниз.
-- **Без правки:** вызов набора с хвостом после него — правило `task-delivery-loop-run` это уже
-  запрещает, проверка сработала как задумано.
+- **Done steps are measured again before the folder is taken apart.** A fix of the second round
+  named the retired word keys on purpose, and the check of step 2.2 gave 4 instead of 0. It showed
+  only on the refusal to open the PR and cost a revert of the taking-apart, a replaced check and a
+  second taking-apart: three commits. **Address:** package,
+  `projects/agent-kit/assets/patterns/task-flow-archive.md` and the cold part
+  `projects/agent-kit/assets/pitfalls/task-flow-archive.md`, state `разбор-кончился`: its entry
+  also runs `task-flow-script.mjs step --done` over all done steps; tree — the line
+  `node tools/task-flow-script.mjs step --done` in block 11–12 of
+  `.claude/skills/task-delivery-loop-run/SKILL.md`. **Metric:** PR-opening refusals by a step
+  measured again, down to 0.
+- **A redefined task keeps `[RT-N]` in its title.** The card title was rewritten when the task was
+  redefined and the number was lost; the delivery check named it only when the PR opened.
+  **Address:** package, «Common misses» in `projects/agent-kit/assets/pitfalls/task-flow-start.md`.
+  **Metric:** `task_title_numbered` refusals when a PR opens, down.
+- **The PR body is read by the check by the headings of the profile.** The critic's table stood
+  under a heading copied from the previous PR of the chain and did not count under «Цель». The
+  paragraph «the body is not checked by a machine» in
+  `projects/agent-kit/assets/pitfalls/git-workflow-pr-body.github.md` is out of date.
+  **Address:** replace the paragraph with a rule about `RT_PULL_BODY_SECTION`,
+  `RT_PULL_POINTS_SECTION` and `RT_PULL_GOAL_SECTION`; optionally the refusal of
+  `git-guard-delivery-body.sh` names the goal heading. **Metric:** `pr_create_thin_body` refusals,
+  down.
+- **The loop rule diverges from the step check.** The article says «A finding about the diff is
+  never parked in a file», while `flow-step-guard` refuses an edit of a file outside the plan's
+  footprint, and the finding went to the findings file. **Address:** tree,
+  `.claude/skills/task-delivery-loop/SKILL.md` and the line of its `implementation.md`: an edit the
+  step check refuses goes to the epic's findings file with an address and a metric and is named in
+  the PR body. **Metric:** divergences of the rule and the check, 1 → 0.
+- **A finding about the host's behaviour is counted from the records before the fix.** Round one
+  added the Esc delivery rule of 5 seconds by reasoning; round two counted 17 marks and removed it.
+  **Address:** tree, the article «A finding is checked against the code before it is fixed» of the
+  rule `task-delivery-loop`: a finding about what the host sends or writes is checked against the
+  machine's records, and the number goes into the round's commit. **Metric:** fixes of a round
+  removed by the next round, down.
+- **No edit:** a call of the push set with a tail after it — the rule `task-delivery-loop-run`
+  already forbids it; the check worked as meant.

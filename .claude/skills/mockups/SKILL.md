@@ -4,7 +4,7 @@ kind: rule
 law: mockups
 description: Rule under the mockups law. Load when a screen is drawn or changed in a design tool, before the mockups are shown to the owner and when a design file is audited. Names the kit copy, the spec read before drawing, the agreement checked against mockups. Pattern mockups-measure.
 ---
-<!-- rt-kit v0.38.0 · rules/mockups.needs-mockups.md · 12b2d993da90 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · rules/mockups.needs-mockups.md · 0bf8a69d1820 · правится надстройкой, не здесь -->
 
 # Mockups — how it works here
 
@@ -16,10 +16,10 @@ table in `implementation.md` next to it.
 | In the law | Here |
 | --- | --- |
 | mockup | a frame on a sheet of the design tool |
-| the screen the mockup draws | the same-named page or panel of the application |
+| the screen the mockup draws | the page or panel in the application that carries the same name |
 | a sheet of the design file | a file page, never a page of the application |
 | the description of the behaviour | the domain spec in `docs/specs/<domain>/` |
-| the agreement | the task's product agreement, `docs/specs/<domain>/proposed/<feature>/` |
+| the agreement | the product agreement of the task, `docs/specs/<domain>/proposed/<feature>/` |
 | approved | shown to the owner and accepted in their words |
 
 ## How the law applies here

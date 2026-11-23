@@ -4,13 +4,13 @@ kind: rule
 law: frontend-application
 description: Rule under the frontend-application law. Load when an edit touches the global object or the runtime — window, globalThis, PLATFORM_ID, localStorage. Names the DI tokens and the pitfalls of server-side page rendering. Does not apply under libs/api and apps/api. Pattern platform-access-di.
 ---
-<!-- rt-kit v0.38.0 · rules/platform-access.md · 60423ec040e1 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · rules/platform-access.md · 9ba3d44edd57 · правится надстройкой, не здесь -->
 
 # Browser environment — how it works here
 
-Rule under the law `docs/constitution/frontend-application.md`. Cold part: `pitfalls.md`; where it
-lives — `implementation.md`. Not for `libs/api/**` and `apps/api/**`: NestJS. Same law: state, file,
-styles, server layer — `angular-patterns`, `component-structure`, `styling-bem`, `api-layer`.
+Rule under the law `docs/constitution/frontend-application.md`. Cold part: `pitfalls.md`; paths:
+`implementation.md`. Not for `libs/api/**` and `apps/api/**`: NestJS. Same law:
+`angular-patterns`, `component-structure`, `styling-bem`, `api-layer`.
 
 ## What it is called here
 
@@ -32,8 +32,9 @@ styles, server layer — `angular-patterns`, `component-structure`, `styling-bem
 - **The environment is checked through `PlatformService`, not through `typeof window`.** Storage
   needs none: `StorageService` falls back to memory.
 - **A direct call to the global object is refused by the linter.** Sixteen names on front-end trees;
-  deliberate places are listed in the config, never disabled per line. Banned by name, not path:
-  `this.#document.defaultView` passes; only reading tells it from a bypass.
+  deliberate places sit in the config, never disabled per line. Banned by name, not path:
+  `this.#document.defaultView` on an injected document is lawful; only reading tells it from a
+  bypass.
 
 ## What of the law is not here
 
@@ -43,11 +44,11 @@ Direct access stays in three places: the theme script in `index.html`, the start
 ## Pitfalls
 
 - **The `WINDOW` factory throws if the document has no `defaultView`.** `Window is not
-  available`. SSR has one: a root service's field inject is safe; else take it in a method under an
-  environment check.
+  available`. SSR has one: a root service's field inject is safe; a DOM-less service takes it in a method
+  under an environment check.
 - **A service created at startup that gains `WINDOW` is checked on a running SSR server too.**
 - **An end-to-end spec does not prepare state by writing to storage.** It walks the user's steps.
 
 ## Patterns
 
-- `platform-access-di` — ready-made injects and checks.
+- `platform-access-di` — ready injects and checks.

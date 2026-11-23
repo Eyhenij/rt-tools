@@ -93,7 +93,8 @@ RT-3425 and RT-3468. What each plan took in is written in its grill; below is wh
   `measure/owner.mjs:saidStop` with a bound «no call of the agent after the word».
 - **A set of rules longer than the host limit is refused whole even when every rule fits alone.**
   An edit of a progress, a grill or a plan of a task folder and the commands with a body of a PR
-  or a card (`gh pr create`, `gh pr edit`, `gh issue create`, `task:new`) demand five or six rules;
+  or a card (`gh pr create`, `gh pr edit`, `gh issue create`, `task:new --epic`) demand four to six rules;
+  `task:new --outside-epic` passes at 9 481;
   `gh pr create --body-file` sums 12 018 characters with the two rules RT-3427 compresses at zero.
   24 of the 28 refusals by length since 19.11 are `task-delivery-loop` together. A product choice
   for the owner: the gate delivers the rules that fit and the rest with the next call of the same

@@ -4,12 +4,14 @@
 
 - **State:** `этапы-кончились`
 - **Stage:** все три этапа закрыты, шаги 1.1–3.2 измерены `step N.M`
-- **Done:** проба — 43 «pass» из 43 (было 37); сверка смысла — 0 потерь; размеры после пакета:
-  observability 4791, platform-access 2699, epic-flow 2987, queue-audit 2981, mockups 2754,
-  task-flow 2999, task-flow-owner 2992, doc-style-human 2997, task-delivery-loop 2995;
-  пересказ вслепую — шесть правил без потерь, 15 потерь у трёх правил в находке эпика
-- **Next step:** первый круг ревью — `qa-engineer`, `product-strategist`, `goal-critic` по diff ветки
-- **Uncommitted:** возврат потерь в горячие части, `retell.md`, находка RT-3427
+- **Done:** проба — 43 «pass» из 43 (было 37), самая полная строка — кнопка кита, 9 988 из
+  10 000; сверка смысла — 0 потерь, и у исправленной копии с таблицей имён тоже 0; размеры после
+  пакета: observability 4791, platform-access 2685, epic-flow 2996, queue-audit 2981, mockups 2775,
+  task-flow 2999, task-flow-owner 2992, doc-style-human 2991, task-delivery-loop 2995; пересказ
+  вслепую, четыре круга — восемь правил без потерь, 9 потерь у observability в находке эпика;
+  первый круг ревью проведён, находки исправлены
+- **Next step:** коммит первого круга, затем второй круг ревью
+- **Uncommitted:** правки первого круга ревью
 - **PR:** not open yet
 
 ## Шаги
@@ -27,12 +29,13 @@
 
 ## Решения по ходу
 
-- **Проверка шага 3.2 заменена:** `[ "$(grep '^- loss:' docs/tasks/RT-3427-long-rules-fit-2/retell.md | grep -cvE '^- loss: (observability|epic-flow|task-delivery-loop) ')" = 0 ] && grep -c '^- rule: .* — losses 0$' docs/tasks/RT-3427-long-rules-fit-2/retell.md | tr -d ' '` → = 6
-  Три круга пересказа вслепую. Всё, что влезало в пределы шагов, возвращено в горячие части. У
-  observability (4791 из 4800), epic-flow (2987 из 3000) и task-delivery-loop (2995 из 3000)
-  остаются 15 потерь: места для них нет. Эти потери стоят целиком в холодных частях правил. Выбор
-  между делением observability, подъёмом пределов и потерями в холодной части остаётся за
-  владельцем, находка — `docs/plans/checks-rework-4-findings-RT-3427.md`.
+- **Проверка шага 3.2 заменена:** `[ "$(grep -c '^- loss:' docs/tasks/RT-3427-long-rules-fit-2/retell.md)" = 9 ] && [ "$(grep '^- loss:' docs/tasks/RT-3427-long-rules-fit-2/retell.md | grep -cv '^- loss: observability ')" = 0 ] && grep -c '^- rule: .* — losses 0$' docs/tasks/RT-3427-long-rules-fit-2/retell.md | tr -d ' '` → = 8
+  После первого круга ревью и четвёртого круга пересказа потери остались у одного правила:
+  observability, 9 штук. Проверка ловит любую новую потерю: число потерь закреплено.
+
+- **Прежняя замена шага 3.2 снята первым кругом ревью.** После трёх кругов пересказа она ждала
+  6 правил без потерь и не считала три правила с 15 потерями; ревью показало, что новая потеря её
+  не роняет. epic-flow и task-delivery-loop после этого вернули свои потери в горячую часть.
 
 - **Ветка в цепочке от RT-3419.** Ночная цепочка: RT-3469 → RT-3423 → RT-3434 → RT-3425 →
   RT-3468 → RT-3419 → RT-3427.

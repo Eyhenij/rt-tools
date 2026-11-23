@@ -2,13 +2,13 @@
 name: task-delivery-loop
 kind: rule
 law: work-conduct
-description: This tree's loop of one task, loaded first on every task. A live check on the stand or the showcase, two review rounds by three roles with the fixes, the push set, then one PR and the rules review. The course from request to merge is rule task-flow.
+description: This tree's loop of one task, loaded first on every task. A live check, two review rounds by three roles, the push set, one PR, the rules review. Request to merge: rule task-flow.
 ---
 
 # Every task through a live check and two review rounds
 
-A tree rule under `work-conduct`, on top of `task-flow`. Cold part, the steps whole: `pitfalls.md`;
-guards: `GUARDS.md`; bindings: `implementation.md`.
+Tree rule under `work-conduct`, over `task-flow`. Cold part, steps whole: `pitfalls.md`; guards:
+`GUARDS.md`; bindings: `implementation.md`.
 
 | In the law | Here |
 | --- | --- |
@@ -23,21 +23,21 @@ guards: `GUARDS.md`; bindings: `implementation.md`.
 - **The skill is loaded as the first action of work on a task.** Before `task:new`, the epic, the
   branch; then `task-flow`.
 - **The loop has no exceptions.** Texts, configs, hooks and an epic's first task too.
-- **Every change is checked live before the first review round.** The task's subject is reproduced and measured; numbers
-  in the progress.
-- **Every change passes two review rounds before the push.** Fresh readers get the branch diff,
-  their inputs, never the executor's conclusions.
-- **A finding is checked against the code before it is fixed.** One that fails is written off with
+- **Every change is checked live before the first review round.** The task's subject is
+  reproduced and measured; numbers in the progress.
+- **Every change passes two review rounds before the push.** Fresh readers get the whole branch
+  diff against its base and their inputs, never the executor's conclusions.
+- **A finding is checked against the code before it is fixed.** A failing one is written off with
   its reason; a confirmed one, fixed in the branch.
-- **A finding about the diff is never parked in a file.** Fixed or written off. One named by no
-  exit condition of the plan goes to «not done here» and its own task; a product choice
-  goes to the owner by menu before the fix.
+- **A finding about the diff is never parked in a file.** Fixed or written off. One outside the
+  plan's exit conditions goes to «not done here» and its own task; a product choice goes to
+  the owner by menu first.
 - **The fixes of a round go as one commit named by the round.** «… после первого/второго круга
-  ревью (RT-N)»: the one place a later commit of a branch corrects an earlier one.
+  ревью (RT-N)»: the one place a later commit corrects an earlier one.
 - **The push set runs once per branch, after round two.** Base merged in once, nothing touched
   until the push; a fix after the PR reruns it.
-- **Unattended work keeps the loop and the night rule both.** The owner's screen becomes the
-  session's measurement; push and PR wait for the owner.
+- **Unattended work keeps the loop and the night rule both.** By `autonomous-work` the owner's
+  screen becomes a measurement; push and PR wait where it keeps all local.
 - **No guard counts the rounds.** Nor the live check: the gate demands the loop loaded; round
   commits and PR body words show the rest.
 
@@ -45,9 +45,10 @@ guards: `GUARDS.md`; bindings: `implementation.md`.
 
 - A PR into `main` is a draft, into an epic branch ready.
 - `goal-critic` never gets the plan.
-- The owner sees a screen before closing; texts, numbers in the PR body.
+- Before closing, a kit or admin change shows the owner address, screen, width; the turn waits.
+  Texts, rules, tools: numbers in the PR body.
 - After a merge, the next task in the same turn.
-- The executor merges only what the owner said to merge.
+- The executor merges only on the owner's word.
 
 ## Patterns
 
