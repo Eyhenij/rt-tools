@@ -29,12 +29,15 @@
  * file and its finding, and writes the threshold.
  *
  * A source the threshold no longer holds is silent unseen by the tree's run. So before the verdict
- * the tool runs on a probe — a one-component project written into the temporary directory, outside
- * the tree's scan — and every source must fire its named rule there: the tool itself
- * `missing-spec-file` (a file rule: `project-layout` fires on the probe even when the file rules
- * are silent), oxlint `eqeqeq`, the template linter `button-has-type`. The probe's own run is judged
+ * the tool runs on a probe — a two-component project written into the temporary directory, outside
+ * the tree's scan — and every source must fire its named rule in the named file there. The tool
+ * itself fires `missing-spec-file` on a class (a file rule: `project-layout` fires on the probe even
+ * when the file rules are silent) and `getter-in-template` in an external template; oxlint fires
+ * `eqeqeq`; the template linter fires `button-has-type` both in an inline and in an external
+ * template, because the tool reads the two by separate passes. The probe's own run is judged
  * degraded the same way as the tree's. A red probe means the source does not start, or the version
- * of the tool dropped the rule and the probe is to be updated; `--write` refuses it too. The probe
+ * of the tool dropped the rule and the probe is to be updated; `--write` refuses it too. A saved
+ * output given by `--input` is judged without the probe unless a probe flag comes with it. The probe
  * shows that a source starts, not that it passed every file of the tree: oxlint that fails on one
  * file of the tree and prints nothing stays unseen here.
  *
@@ -64,12 +67,17 @@ function flag(name) {
     return at === -1 ? null : (process.argv[at + 1] ?? null);
 }
 
-/** The rule each source of findings must fire on the probe. */
-const PROBE_RULES = {
-    'angular-doctor': 'angular-doctor/missing-spec-file',
-    oxlint: 'oxlint/eqeqeq',
-    'template-eslint': 'template-eslint/button-has-type',
-};
+/** The findings each source of findings must give on the probe: the rule and the file it is in. */
+const PROBE_FINDINGS = [
+    { source: 'angular-doctor', rule: 'angular-doctor/missing-spec-file', file: 'probe.component.ts' },
+    { source: 'angular-doctor', rule: 'angular-doctor/getter-in-template', file: 'probe-page.component.html' },
+    { source: 'oxlint', rule: 'oxlint/eqeqeq', file: 'probe.component.ts' },
+    { source: 'template-eslint', rule: 'template-eslint/button-has-type', file: 'probe.component.ts' },
+    { source: 'template-eslint', rule: 'template-eslint/button-has-type', file: 'probe-page.component.html' },
+];
+
+/** The sources the probe judges, in order. */
+const PROBE_SOURCES = [...new Set(PROBE_FINDINGS.map((f) => f.source))];
 
 /** The JSON text of a run of the tool, with its own temporary directory; `null` text on a failure. */
 function runTool(own, args) {
@@ -101,27 +109,36 @@ function versionOf(manifest, name) {
     return (name ? (pkg.dependencies?.[name] ?? pkg.devDependencies?.[name]) : pkg.version) ?? '';
 }
 
-const TOOL_VERSION = versionOf(join(ROOT, 'node_modules', '@abiramcodes', 'angular-doctor', 'package.json'));
+/** The installed version of the tool, read when a refusal names it: a saved output needs no install. */
+function toolVersion() {
+    try {
+        return versionOf(join(ROOT, 'node_modules', '@abiramcodes', 'angular-doctor', 'package.json'));
+    } catch {
+        return 'not installed';
+    }
+}
 
 /**
- * Writes the probe into a directory of its own inside `own` and returns its path: one component
- * without a spec, a button without a type, a loose comparison. `omit` drops the construct of one
- * source, so that the real probe can be seen red.
+ * Writes the probe into a directory of its own inside `own` and returns its path. One component has
+ * an inline template with a button without a type, a loose comparison and no spec; the other has an
+ * external template with a button without a type and a getter read in it. `omit` drops the
+ * constructs of one source, so that the real probe can be seen red.
  */
 function writeProbe(own, omit) {
     const dir = join(own, 'probe');
-    mkdirSync(join(dir, 'src', 'app'), { recursive: true });
+    const app = join(dir, 'src', 'app');
+    mkdirSync(app, { recursive: true });
     const angular = versionOf(join(ROOT, 'package.json'), '@angular/core');
     writeFileSync(join(dir, 'angular.json'), JSON.stringify({ version: 1, projects: { probe: { root: '', sourceRoot: 'src', projectType: 'application' } } }));
     writeFileSync(join(dir, 'package.json'), JSON.stringify({ name: 'probe', version: '0.0.0', dependencies: { '@angular/core': angular } }));
-    const button = omit === 'template-eslint' ? '<button type="button" (click)="press()">press</button>' : '<button (click)="press()">press</button>';
+    const type = omit === 'template-eslint' ? ' type="button"' : '';
     const compare = omit === 'oxlint' ? '===' : '==';
     writeFileSync(
-        join(dir, 'src', 'app', 'probe.component.ts'),
+        join(app, 'probe.component.ts'),
         [
             "import { Component } from '@angular/core';",
             '',
-            `@Component({ selector: 'app-probe', template: '${button}' })`,
+            `@Component({ selector: 'app-probe', template: '<button${type} (click)="press()">press</button>' })`,
             'export class ProbeComponent {',
             '    public value: string | null = null;',
             '',
@@ -132,8 +149,14 @@ function writeProbe(own, omit) {
             '',
         ].join('\n'),
     );
+    const label = omit === 'angular-doctor' ? ["    public readonly label: string = 'press';"] : ['    public get label(): string {', "        return 'press';", '    }'];
+    writeFileSync(
+        join(app, 'probe-page.component.ts'),
+        ["import { Component } from '@angular/core';", '', "@Component({ selector: 'app-probe-page', templateUrl: './probe-page.component.html' })", 'export class ProbePageComponent {', ...label, '}', ''].join('\n'),
+    );
+    writeFileSync(join(app, 'probe-page.component.html'), `<button${type}>{{ label }}</button>\n`);
     if (omit === 'angular-doctor') {
-        writeFileSync(join(dir, 'src', 'app', 'probe.component.spec.ts'), "import { ProbeComponent } from './probe.component';\n\nexport const probe: ProbeComponent = new ProbeComponent();\n");
+        writeFileSync(join(app, 'probe.component.spec.ts'), "import { ProbeComponent } from './probe.component';\n\nexport const probe: ProbeComponent = new ProbeComponent();\n");
     }
     return dir;
 }
@@ -143,16 +166,15 @@ function runProbe(omit) {
     return withOwnTmp((own) => runTool(own, [writeProbe(own, omit)]));
 }
 
-/** What the probe says against the sources: an empty list when every source fired its rule. */
+/** What the probe says against the sources: an empty list when every source gave its findings. */
 function probeFailures(text) {
     const result = resultOf(text);
     if (result.problem) return [`the probe: ${result.problem}`];
-    const missed = Object.entries(PROBE_RULES)
-        .filter(([, rule]) => !result.rules[rule])
-        .map(
-            ([source, rule]) =>
-                `the probe: the source «${source}» did not fire ${rule} at angular-doctor ${TOOL_VERSION} — either the source does not start, or the version dropped the rule and the probe is to be updated`,
-        );
+    const given = new Set(JSON.parse(text).diagnostics.map((d) => `${d.ruleId} ${String(d.file).split('/').pop()}`));
+    const missed = PROBE_FINDINGS.filter((f) => !given.has(`${f.rule} ${f.file}`)).map(
+        (f) =>
+            `the probe: the source «${f.source}» did not fire ${f.rule} in ${f.file} at angular-doctor ${toolVersion()} — either the source does not start, or the version dropped the rule and the probe is to be updated`,
+    );
     return [...result.degraded.map((s) => `the probe: ${s}`), ...missed];
 }
 
@@ -253,16 +275,50 @@ function newFindingsOf(text, threshold, result) {
 function probeVerdict(input) {
     const probeInput = flag('--probe-input');
     if (input && !probeInput && !process.argv.includes('--probe-real')) return null;
-    const { text, why } = probeInput ? { text: readFileSync(probeInput, 'utf8'), why: null } : runProbe(flag('--probe-omit'));
+    let read = { text: null, why: null };
+    if (probeInput) {
+        try {
+            read = { text: readFileSync(probeInput, 'utf8'), why: null };
+        } catch (error) {
+            read = { text: null, why: `the saved output of the probe is not read: ${error.message}` };
+        }
+    } else {
+        read = runProbe(flag('--probe-omit'));
+    }
+    const { text, why } = read;
     const failures = text === null ? [`the probe: ${why}`] : probeFailures(text);
     if (failures.length > 0) {
         return { ok: false, lines: ['check-ngdoctor: a source of findings does not run on the probe, the result says nothing:', ...failures.map((s) => `  ${s}`)] };
     }
-    return { ok: true, lines: [`check-ngdoctor: the sources ${Object.keys(PROBE_RULES).join(', ')} run — the probe fired ${Object.values(PROBE_RULES).join(', ')}`] };
+    return { ok: true, lines: [`check-ngdoctor: the sources ${PROBE_SOURCES.join(', ')} run — the probe gave ${PROBE_FINDINGS.length} findings of ${PROBE_FINDINGS.length} named`] };
+}
+
+/**
+ * What is wrong with the probe flags, or `null`. A flag that went unheard would leave the check
+ * green on a probe it never ran, so every misuse is refused; a saved probe output replaces the real
+ * probe only beside a saved output of the tree, never in the check of the tree itself.
+ */
+function probeFlagsProblem(input) {
+    const valued = ['--input', '--threshold', '--source-gone', '--probe-input', '--probe-omit'];
+    const empty = valued.find((name) => process.argv.includes(name) && (flag(name) === null || flag(name).startsWith('--')));
+    if (empty) return `${empty} takes a value`;
+    const real = process.argv.includes('--probe-real');
+    const probeInput = flag('--probe-input');
+    const omit = flag('--probe-omit');
+    if (probeInput && !input) return '--probe-input judges a saved probe beside a saved output of the tree, give --input too';
+    if (probeInput && real) return '--probe-input and --probe-real are two probes, give one';
+    if (omit && !real) return '--probe-omit drops a construct of the real probe, give --probe-real too';
+    if (omit && !PROBE_SOURCES.includes(omit)) return `--probe-omit takes one of ${PROBE_SOURCES.join(', ')}, not «${omit}»`;
+    return null;
 }
 
 function main() {
     const input = flag('--input');
+    const misuse = probeFlagsProblem(input);
+    if (misuse) {
+        console.error(`check-ngdoctor: ${misuse}`);
+        return 1;
+    }
     const probe = probeVerdict(input);
     if (probe && !probe.ok) {
         for (const l of probe.lines) console.error(l);
