@@ -79,7 +79,7 @@ info-миграции — «Все четыре»; проверка — «Да, 
 | 8а  | RT-3525 — `check:ngdoctor` видит, что инструмент не прочитал `package.json` или файл стилей          | готово    |
 | 8б  | RT-3526 — `check:ngdoctor` судит настройку в поле `angularDoctor` файла `package.json`               | готово    |
 | 9   | RT-3484 — токен `DOCUMENT`, `NgOptimizedImage`                                                       | в ревью   |
-| 10  | RT-3485 — `@Service` вместо `@Injectable`                                                            | впереди   |
+| 10  | RT-3485 — `@Service` вместо `@Injectable`                                                            | в ревью   |
 | 11  | RT-3486 — signal forms в ките                                                                        | впереди   |
 | 12  | RT-3487 — signal forms в cms, админке и теме входа                                                   | впереди   |
 | 13  | RT-3488 — имена файлов по именам классов                                                             | впереди   |

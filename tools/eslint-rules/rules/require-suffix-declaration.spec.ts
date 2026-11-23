@@ -100,6 +100,12 @@ ruleTester.run(RULE_NAME, rule, {
             code: 'export class LinkBookingProcedure {}',
             errors: [{ messageId: 'missingDeclaration' }],
         },
+        // a service with neither the mark nor the name — the second accepted mark lets nothing more through
+        {
+            filename: 'notification-bus.service.ts',
+            code: 'export class NotificationBus {}',
+            errors: [{ messageId: 'missingDeclaration' }],
+        },
         // a file of logic holds constants alone
         {
             filename: 'quote.logic.ts',

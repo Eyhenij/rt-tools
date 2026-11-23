@@ -101,6 +101,10 @@ interface TransportFailure {
 
 @Service()
 export class UsersStore extends BaseAsyncStoreService<UsersState, string, TransportFailure> {
+    constructor() {
+        super(INITIAL_STATE, { name: 'UsersStore', devTools: true });
+    }
+
     // handleError(error?: TransportFailure, callbackFn?: () => void): void
     // setLoadingFailure(error: TransportFailure, config?: ISetPropertiesConfig): Observable<never>
 }
