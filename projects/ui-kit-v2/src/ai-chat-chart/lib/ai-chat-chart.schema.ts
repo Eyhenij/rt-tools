@@ -32,6 +32,19 @@ function seriesOf(x: object, y: object): object {
 }
 
 /**
+ * «Если условие — то следствие» в записи `anyOf`: условие не выполнено, или выполнено следствие.
+ * Валидатор судит так же, как пару `if`/`then`.
+ */
+function implies(condition: object, consequence: object): object {
+    return { anyOf: [{ not: condition }, consequence] };
+}
+
+/** «Если условие — то одно, иначе другое» в записи `anyOf`, как тройка `if`/`then`/`else`. */
+function either(condition: object, consequence: object, alternative: object): object {
+    return { anyOf: [{ allOf: [condition, consequence] }, { allOf: [{ not: condition }, alternative] }] };
+}
+
+/**
  * JSON-схема спецификации графика (JSON Schema 2020-12). Приложение отдаёт её модели как параметры
  * инструмента. Схема не считает различные листья дерева и не сравнивает X внутри ряда: эти два
  * отказа делает только проверка блока.
@@ -64,35 +77,25 @@ export const RT_AI_CHAT_CHART_SCHEMA: Readonly<Record<string, unknown>> = {
         },
     },
     allOf: [
-        {
-            if: { properties: { format: { const: ERtAiChatChartFormat.CURRENCY } }, required: ['format'] },
-            then: { required: ['currency'] },
-        },
-        {
-            if: { properties: { kind: { enum: TREE_KINDS } } },
-            then: { required: ['hierarchy'] },
-            else: { required: ['series'] },
-        },
-        {
-            if: { properties: { kind: { enum: CATEGORY_KINDS.filter((kind: string): boolean => !NON_NEGATIVE_KINDS.includes(kind)) } } },
-            then: { properties: { series: seriesOf({ type: 'string' }, { type: 'number' }) } },
-        },
-        {
-            if: { properties: { kind: { enum: CATEGORY_KINDS.filter((kind: string): boolean => NON_NEGATIVE_KINDS.includes(kind)) } } },
-            then: { properties: { series: seriesOf({ type: 'string' }, { type: 'number', minimum: 0 }) } },
-        },
-        {
-            if: { properties: { kind: { const: ERtAiChatChartKind.SCATTER } } },
-            then: { properties: { series: seriesOf({ type: 'number' }, { type: 'number' }) } },
-        },
-        {
-            if: { properties: { kind: { const: ERtAiChatChartKind.HISTOGRAM } } },
-            then: { properties: { series: { ...seriesOf({ type: 'number' }, { type: 'number', minimum: 0 }), minItems: 1, maxItems: 1 } } },
-        },
-        {
-            if: { properties: { kind: { const: ERtAiChatChartKind.PIE } } },
-            then: { properties: { series: { type: 'array', maxItems: 1 } } },
-        },
+        implies({ properties: { format: { const: ERtAiChatChartFormat.CURRENCY } }, required: ['format'] }, { required: ['currency'] }),
+        either({ properties: { kind: { enum: TREE_KINDS } } }, { required: ['hierarchy'] }, { required: ['series'] }),
+        implies(
+            { properties: { kind: { enum: CATEGORY_KINDS.filter((kind: string): boolean => !NON_NEGATIVE_KINDS.includes(kind)) } } },
+            { properties: { series: seriesOf({ type: 'string' }, { type: 'number' }) } }
+        ),
+        implies(
+            { properties: { kind: { enum: CATEGORY_KINDS.filter((kind: string): boolean => NON_NEGATIVE_KINDS.includes(kind)) } } },
+            { properties: { series: seriesOf({ type: 'string' }, { type: 'number', minimum: 0 }) } }
+        ),
+        implies(
+            { properties: { kind: { const: ERtAiChatChartKind.SCATTER } } },
+            { properties: { series: seriesOf({ type: 'number' }, { type: 'number' }) } }
+        ),
+        implies(
+            { properties: { kind: { const: ERtAiChatChartKind.HISTOGRAM } } },
+            { properties: { series: { ...seriesOf({ type: 'number' }, { type: 'number', minimum: 0 }), minItems: 1, maxItems: 1 } } }
+        ),
+        implies({ properties: { kind: { const: ERtAiChatChartKind.PIE } } }, { properties: { series: { type: 'array', maxItems: 1 } } }),
     ],
 };
 
