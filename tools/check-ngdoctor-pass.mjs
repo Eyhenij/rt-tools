@@ -1,9 +1,11 @@
 /**
  * The pass of `tools/check-ngdoctor.mjs` over the files Angular Doctor scanned. The tool drops a file
  * silently three ways: oxlint that fails prints nothing, a template the linter cannot parse yields
- * a message without a rule, and a file it cannot read is skipped. So the check walks the same files
- * with the tool's own modules and names the file it lost. What the pass judges is written in the
- * header of the check; this file holds the walk only.
+ * a message without a rule, and a file it cannot read is skipped. Apart from its file list it also
+ * reads `package.json` files, skipping one it cannot read or parse, and, with tailwindcss 4 or later,
+ * stylesheets, skipping one it cannot read. So the check walks the same files with the tool's own
+ * modules and names the file it lost. What the pass judges is written in the header of the check;
+ * this file holds the walk only.
  *
  * The modules are resolved from the tool's package, not from the tree: the tree resolves other
  * versions of the parser and eslint, and does not resolve oxlint and fast-glob at all.
@@ -25,6 +27,78 @@ export const PASS_OXLINT_SETTINGS = {
     rules: { 'typescript/no-explicit-any': 'warn', 'typescript/no-unused-vars': 'warn', eqeqeq: 'warn' },
 };
 const PASS_TEMPLATE_FILES = ['**/*.html', '/**/*.html', '**/*.ts', '/**/*.ts'];
+/**
+ * What `deprecated-animations` and `tailwind-v3-syntax` of 0.3.0 read apart from the file list: their
+ * own globs and a shorter ignore list — `coverage/` is not in it.
+ */
+const PASS_PACKAGE_GLOB = '**/package.json';
+const PASS_STYLE_GLOB = '**/*.{css,scss}';
+const PASS_TOOL_IGNORE = ['**/node_modules/**', '**/dist/**', '**/.angular/**'];
+
+/**
+ * The major version of `tailwindcss` a package names, as 0.3.0 takes it: the first section that
+ * names it by a string decides, even when the string does not parse; a section that names it by
+ * another value is passed over.
+ */
+function tailwindMajor(pkg, semver) {
+    for (const section of ['dependencies', 'devDependencies', 'peerDependencies']) {
+        const deps = pkg[section];
+        if (!deps || typeof deps !== 'object' || !('tailwindcss' in deps)) continue;
+        const raw = deps.tailwindcss;
+        if (typeof raw !== 'string') continue;
+        return semver.coerce(raw.replace(/^[\^~]/, ''))?.major ?? null;
+    }
+    return null;
+}
+
+/**
+ * The package.json files and the stylesheets the tool reads silently. A package.json it cannot read
+ * or parse yields no finding of `deprecated-animations`; the stylesheets are read only when a package
+ * names tailwindcss 4 or later. Returns the counts.
+ */
+async function packagesOf(fromTool, root, failures) {
+    const glob = fromTool('fast-glob');
+    const semver = fromTool('semver');
+    const listed = async (pattern, options) => {
+        try {
+            return await glob(pattern, { cwd: root, absolute: true, ignore: PASS_TOOL_IGNORE, ...options });
+        } catch (error) {
+            failures.push(`the pass cannot list the ${pattern} files of ${root}: ${error.code ?? error.message}`);
+            return [];
+        }
+    };
+    const packages = await listed(PASS_PACKAGE_GLOB, { dot: false });
+    let tailwind4 = false;
+    for (const f of packages) {
+        const relative = f.replace(`${root}/`, '');
+        let text;
+        try {
+            text = readFileSync(f, 'utf8');
+        } catch (error) {
+            failures.push(`the pass cannot read ${relative}: ${error.code ?? error.message}`);
+            continue;
+        }
+        let pkg;
+        try {
+            pkg = JSON.parse(text);
+        } catch {
+            failures.push(`${relative} is not JSON: angular-doctor reads no finding from it`);
+            continue;
+        }
+        const major = pkg !== null && typeof pkg === 'object' ? tailwindMajor(pkg, semver) : null;
+        if (major !== null && major >= 4) tailwind4 = true;
+    }
+    if (!tailwind4) return { packages: packages.length, stylesheets: 0 };
+    const sheets = await listed(PASS_STYLE_GLOB, {});
+    for (const f of sheets) {
+        try {
+            readFileSync(f, 'utf8');
+        } catch (error) {
+            failures.push(`the pass cannot read ${f.replace(`${root}/`, '')}: ${error.code ?? error.message}`);
+        }
+    }
+    return { packages: packages.length, stylesheets: sheets.length };
+}
 
 /** A module's default export or the module itself, as the tool takes it. */
 async function importOf(fromTool, name) {
@@ -144,5 +218,9 @@ export async function passOver({ root, text, tool, version, settings, binary }) 
     const templates = await templatesOf(fromTool, root, contents, failures);
     const ts = files.filter((f) => f.endsWith('.ts'));
     const linted = oxlintOver(fromTool, root, settings, binary, ts, report, failures);
-    return { failures, line: `check-ngdoctor: the pass read every file: ${files.length} files, ${templates} templates, oxlint ${linted} files` };
+    const { packages, stylesheets } = await packagesOf(fromTool, root, failures);
+    return {
+        failures,
+        line: `check-ngdoctor: the pass read every file: ${files.length} files, ${templates} templates, oxlint ${linted} files, ${packages} package.json, ${stylesheets} stylesheets`,
+    };
 }

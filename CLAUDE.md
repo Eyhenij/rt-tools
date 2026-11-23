@@ -44,7 +44,8 @@ pnpm run check:all
 # `angular-doctor.config.json` other than `reportPath`, and when a source of findings — the tool,
 # oxlint, the template linter — does not fire its rules on a two-component probe run before the
 # tree, or when the tool lost a file of the tree silently: a pass after the scan reads every file,
-# parses every template and runs oxlint on the same files. A step of `check:all`, of the pipeline
+# parses every template, runs oxlint on the same files and reads the package.json files and the
+# stylesheets the tool reads apart from its list. A step of `check:all`, of the pipeline
 # and of the push set. `--verbose` lists the files of a rule that grew; a fix writes the threshold
 # by `node tools/check-ngdoctor.mjs --write`
 pnpm run check:ngdoctor
