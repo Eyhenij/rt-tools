@@ -264,6 +264,10 @@ rm -f "$DISPATCH_DIR/aaa_denies.sh" "$DISPATCH_DIR/zzz_says.sh"
 # считается, а молчание его читается как согласие.
 # Страж зовёт движок task flow, который лежит в пакете, а не рядом с копией диспетчера: путь к
 # нему передаётся явно. Дерево фикстуры получает коммит — движку нужна история ветки.
+# Своя временная папка: страж читает в ней метку окна по номеру сессии `tests`, и метка с этим
+# номером, оставленная в общей папке машины чем угодно ещё, отпускала бы ход раньше решения
+export TMPDIR="$DISPATCH_DIR/tmp/"
+mkdir -p "$TMPDIR"
 cp "$ASSETS/hooks/turn-exit-guard.sh" "$ASSETS/hooks/turn-exit-role.sh" "$ASSETS/hooks/facts.sh" \
     "$ASSETS/hooks/decide.sh" "$ASSETS/hooks/deny-tail.sh" "$DISPATCH_DIR/" 2>/dev/null
 # Решение стража берётся из таблицы: решатель лежит в пакете, путь к нему передаётся так же явно.
