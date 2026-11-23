@@ -43,11 +43,24 @@
  * of the tool dropped the rule and the probe is to be updated; `--write` refuses it too. A saved
  * output given by `--input` is judged without the probe unless a probe flag comes with it; a source
  * is written away by `--source-gone` only beside a probe that shows the source running. The probe
- * shows that a source starts, not that it passed every file of the tree. Three losses of one file
- * stay unseen here, and the task RT-3518 is about them: oxlint that fails on a file and prints
- * nothing, the template linter that cannot parse a template (the tool drops a message without a
- * rule), and a file the tool cannot read — version 0.3.0 writes `filesScanned` and `filesTotal` as
- * the same number, so the check of a partial scan above never fires for it.
+ * shows that a source starts, not that it passed every file of the tree.
+ *
+ * The tool loses one file of the tree silently three ways: oxlint that fails on a file prints
+ * nothing, and the tool reads that as no findings; a template the linter cannot parse yields a
+ * message without a rule, and the tool drops it; a file it cannot read is skipped — version 0.3.0
+ * writes `filesScanned` and `filesTotal` as the same number, so the check of a partial scan above
+ * never fires for it. So after the scan the check walks the same files itself, with the tool's own
+ * modules — the tree resolves other versions of them, or none. It builds the file list by the
+ * globs and the ignore list of 0.3.0 and is red when the count differs from `filesScanned`, when a
+ * finding lies in an existing file outside the list, or when the tool is of another version. It
+ * reads every file, parses every external and inline template with the tool's parser (red on a
+ * fatal message only: an `eslint-disable` comment is no loss), and runs oxlint by the tool's binary
+ * with the settings the tool wrote into the shared temporary directory, on the same `.ts` files.
+ * oxlint is red when it prints no JSON — then the list is halved until the file it fails on is
+ * named — or when it lints fewer files than it got. Its finding count is compared with the tool's:
+ * this guards the two runs against each other, and with no findings it is blind. So the pass shows
+ * that oxlint passed every file in its own run; a failure in the tool's run that did not repeat in
+ * the pass stays unseen. A pass that lost a file refuses `--write` too. About a second.
  *
  * The tool is run here, not piped in: with a temporary directory of its own, removed after the run,
  * because the tool writes its oxlint settings into the shared temporary directory once and reads
@@ -59,12 +72,15 @@
  *     --probe-input <json>                               judge a saved output of the probe as well
  *     --probe-real [--probe-omit <source>]               run the real probe, without the construct
  *                                                        of the named source
+ *     --pass-root <dir> [--pass-oxlint <script.mjs>]     walk a directory as the tree, oxlint
+ *                                                        replaced by a node script
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const THRESHOLD_FILE = join(ROOT, 'tools', 'ngdoctor-threshold.json');
@@ -184,6 +200,120 @@ function writeProbe(own, omit) {
 /** The JSON text of the tool's run on the probe. */
 function runProbe(omit) {
     return withOwnTmp((own) => runTool(own, [writeProbe(own, omit)]));
+}
+
+/** The version of the tool whose file list, ignore list and oxlint settings the pass copies. */
+const PASS_VERSION = '0.3.0';
+const PASS_GLOBS = ['**/*.ts', '**/*.html'];
+const PASS_IGNORE = ['**/node_modules/**', '**/dist/**', '**/.angular/**', '**/coverage/**', '**/*.spec.ts', '**/angular-doctor-report.html'];
+/** The oxlint settings version 0.3.0 writes; the pass uses them beside a saved output only. */
+const PASS_OXLINT_SETTINGS = {
+    $schema: './node_modules/oxlint/configuration_schema.json',
+    env: { browser: true, es2022: true, node: true },
+    rules: { 'typescript/no-explicit-any': 'warn', 'typescript/no-unused-vars': 'warn', eqeqeq: 'warn' },
+};
+const PASS_TEMPLATE_FILES = ['**/*.html', '/**/*.html', '**/*.ts', '/**/*.ts'];
+
+/** A require that resolves what the tool itself resolves: the tree holds other versions or none. */
+function toolRequire() {
+    return createRequire(realpathSync(join(ROOT, 'node_modules', '@abiramcodes', 'angular-doctor', 'package.json')));
+}
+
+/** A module's default export or the module itself, as the tool takes it. */
+async function importOf(require, name) {
+    const module = await import(pathToFileURL(require.resolve(name)).href);
+    return module.default ?? module;
+}
+
+/**
+ * Runs oxlint on files the way the tool does, by `node` on its binary. Returns `{ json, why }`: the
+ * parsed output, or the reason there is none.
+ */
+function runOxlint(binary, settings, root, files) {
+    const run = spawnSync(process.execPath, [binary, '--format', 'json', '-c', settings, ...files], { cwd: root, encoding: 'utf8', maxBuffer: 20971520 });
+    if (run.error) return { json: null, why: `oxlint did not start: ${run.error.code ?? run.error.message}` };
+    try {
+        return { json: JSON.parse(run.stdout), why: null };
+    } catch {
+        return { json: null, why: `oxlint printed no JSON, exit ${run.status ?? run.signal}` };
+    }
+}
+
+/** The files oxlint fails on, found by halving the list until one file fails alone. */
+function oxlintCulprits(binary, settings, root, files) {
+    if (files.length === 1) return [files[0]];
+    const half = Math.ceil(files.length / 2);
+    return [files.slice(0, half), files.slice(half)].flatMap((part) =>
+        runOxlint(binary, settings, root, part).json === null ? oxlintCulprits(binary, settings, root, part) : [],
+    );
+}
+
+/**
+ * The pass over the files the tool scanned. The tool drops a file silently three ways — oxlint that
+ * fails prints nothing, a template the linter cannot parse yields a message without a rule, a file
+ * it cannot read is skipped — so the check walks the same files with the tool's own modules.
+ * Returns `{ failures, line }`.
+ */
+async function passOver(root, text, settings, binaryOverride) {
+    const failures = [];
+    const version = toolVersion();
+    if (version !== PASS_VERSION) {
+        failures.push(`the pass copies the file list of angular-doctor ${PASS_VERSION}, the tree has ${version}: compare the globs and the ignore list of the new version and update the pass`);
+    }
+    const require = toolRequire();
+    const files = await require('fast-glob')(PASS_GLOBS, { cwd: root, absolute: true, ignore: PASS_IGNORE, dot: false });
+    const report = JSON.parse(text);
+    if (files.length !== report.filesScanned) {
+        failures.push(`the pass found ${files.length} files, angular-doctor scanned ${report.filesScanned}: the file lists differ`);
+    }
+    const listed = new Set(files);
+    // A finding without a file (oxlint/unknown gives "") or on a directory names no file of the list.
+    const outside = [...new Set(report.diagnostics.filter((d) => d.file).map((d) => resolve(root, String(d.file))))].filter(
+        (f) => !listed.has(f) && existsSync(f) && statSync(f).isFile(),
+    );
+    for (const f of outside) failures.push(`a finding of angular-doctor lies in ${f.replace(`${root}/`, '')}, outside the file list of the pass`);
+
+    const contents = new Map();
+    for (const f of files) {
+        try {
+            contents.set(f, readFileSync(f, 'utf8'));
+        } catch (error) {
+            failures.push(`the pass cannot read ${f.replace(`${root}/`, '')}: ${error.code ?? error.message}`);
+        }
+    }
+
+    const { Linter } = await import(pathToFileURL(require.resolve('eslint')).href);
+    const plugin = await importOf(require, '@angular-eslint/eslint-plugin-template');
+    const parser = await importOf(require, '@angular-eslint/template-parser');
+    const config = [{ files: PASS_TEMPLATE_FILES, languageOptions: { parser, parserOptions: { ecmaVersion: 2022, sourceType: 'module' } } }];
+    const linter = new Linter();
+    const inline = plugin.processors['extract-inline-html'];
+    let templates = 0;
+    for (const [file, content] of contents) {
+        const relative = file.replace(`${root}/`, '');
+        const blocks = file.endsWith('.html') ? [{ text: content, filename: relative }] : inline.preprocess(content, file).filter((b) => typeof b !== 'string');
+        for (const block of blocks) {
+            templates += 1;
+            const fatal = linter.verify(block.text, config, String(block.filename).replace(`${root}/`, '')).find((m) => m.fatal === true);
+            if (fatal) failures.push(`the template linter cannot parse ${relative}: ${fatal.message}`);
+        }
+    }
+
+    const ts = files.filter((f) => f.endsWith('.ts'));
+    const binary = binaryOverride ?? join(dirname(require.resolve('oxlint/package.json')), 'bin', 'oxlint');
+    const { json, why } = runOxlint(binary, settings, root, ts);
+    let linted = 0;
+    if (json === null) {
+        const culprits = why.startsWith('oxlint did not start') ? [] : oxlintCulprits(binary, settings, root, ts);
+        failures.push(`${why}${culprits.length > 0 ? ` — it fails on ${culprits.map((f) => f.replace(`${root}/`, '')).join(', ')}` : ''}`);
+    } else {
+        linted = json.number_of_files;
+        if (linted !== ts.length) failures.push(`oxlint linted ${linted} files of ${ts.length}: it skipped a file silently`);
+        const ours = (Array.isArray(json) ? json : (json.diagnostics ?? [])).length;
+        const theirs = report.diagnostics.filter((d) => String(d.ruleId).startsWith('oxlint/')).length;
+        if (ours !== theirs) failures.push(`oxlint gave ${ours} findings in the pass, ${theirs} in the run of angular-doctor: the two runs differ`);
+    }
+    return { failures, line: `check-ngdoctor: the pass read every file: ${files.length} files, ${templates} templates, oxlint ${linted} files` };
 }
 
 /** What the probe says against the sources: an empty list when every source gave its findings. */
@@ -319,7 +449,7 @@ function probeVerdict(input) {
  * probe only beside a saved output of the tree, never in the check of the tree itself.
  */
 function probeFlagsProblem(input) {
-    const valued = ['--input', '--threshold', '--config', '--source-gone', '--probe-input', '--probe-omit'];
+    const valued = ['--input', '--threshold', '--config', '--source-gone', '--probe-input', '--probe-omit', '--pass-root', '--pass-oxlint'];
     const bare = ['--write', '--verbose', '--probe-real'];
     const args = process.argv.slice(2);
     for (let i = 0; i < args.length; i += 1) {
@@ -335,6 +465,8 @@ function probeFlagsProblem(input) {
     const real = process.argv.includes('--probe-real');
     const probeInput = flag('--probe-input');
     const omit = flag('--probe-omit');
+    if (flag('--pass-root') && !input) return '--pass-root walks a directory beside a saved output, give --input too: the check of the tree walks the tree';
+    if (flag('--pass-oxlint') && !flag('--pass-root')) return '--pass-oxlint replaces oxlint of a pass over --pass-root, give --pass-root too';
     const gone = flag('--source-gone');
     if (gone && !process.argv.includes('--write')) return '--source-gone names a source for --write, give --write too';
     if (gone && !PROBE_SOURCES.includes(gone)) return `--source-gone takes one of ${PROBE_SOURCES.join(', ')}, not «${gone}»`;
@@ -360,7 +492,7 @@ function configProblem(path) {
     return `the settings of angular-doctor hold ${extra.map((k) => `«${k}»`).join(', ')}: only ${CONFIG_FIELDS.join(', ')} is allowed — rules stay on by the owner's word, and the probe does not read these settings`;
 }
 
-function main() {
+async function main() {
     const input = flag('--input');
     const misuse = probeFlagsProblem(input);
     if (misuse) {
@@ -378,12 +510,40 @@ function main() {
         if (process.argv.includes('--write')) console.error('check-ngdoctor: nothing written');
         return 1;
     }
-    const { text, why } = input ? { text: readFileSync(input, 'utf8'), why: null } : withOwnTmp((own) => runTool(own, []));
-    if (text === null) {
-        console.error(`check-ngdoctor: ${why}`);
+    // The run of the tree and the pass share one temporary directory: the pass reads the oxlint
+    // settings the tool wrote there. Beside a saved output the pass runs only on `--pass-root`.
+    const own = mkdtempSync(join(tmpdir(), 'ngdoctor-'));
+    let text;
+    let pass = null;
+    try {
+        const run = input ? { text: readFileSync(input, 'utf8'), why: null } : runTool(own, []);
+        if (run.text === null) {
+            console.error(`check-ngdoctor: ${run.why}`);
+            return 1;
+        }
+        text = run.text;
+        const passRoot = input ? flag('--pass-root') : ROOT;
+        if (passRoot !== null && resultOf(text).problem === undefined) {
+            let settings = join(own, 'angular-doctor', 'oxlintrc.json');
+            if (input) {
+                mkdirSync(dirname(settings), { recursive: true });
+                writeFileSync(settings, JSON.stringify(PASS_OXLINT_SETTINGS));
+            }
+            pass = existsSync(settings)
+                ? await passOver(resolve(passRoot), text, settings, flag('--pass-oxlint') ? resolve(flag('--pass-oxlint')) : undefined)
+                : { failures: [`angular-doctor wrote no oxlint settings into ${dirname(settings)}`], line: '' };
+        }
+    } finally {
+        rmSync(own, { recursive: true, force: true });
+    }
+    if (pass && pass.failures.length > 0) {
+        console.error('check-ngdoctor: angular-doctor lost a file of the tree silently, the result says nothing:');
+        for (const f of pass.failures) console.error(`  ${f}`);
+        if (process.argv.includes('--write')) console.error('check-ngdoctor: nothing written');
         return 1;
     }
     if (probe) console.log(probe.lines[0]);
+    if (pass) console.log(pass.line);
     const result = resultOf(text);
     const thresholdPath = flag('--threshold') ?? THRESHOLD_FILE;
     const threshold = existsSync(thresholdPath) ? JSON.parse(readFileSync(thresholdPath, 'utf8')) : { score: 0, rules: {} };
@@ -415,4 +575,4 @@ function main() {
     return ok ? 0 : 1;
 }
 
-process.exit(main());
+process.exit(await main());
