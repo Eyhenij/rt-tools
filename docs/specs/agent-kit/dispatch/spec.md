@@ -123,6 +123,14 @@ edit guards and the turn-closing guards.
   comment of its own file; the layout holds no list of model checks. The record does not go through
   the dispatcher, so a tree that did not take the dispatcher gets it too, and a moved directory of
   hooks is named in it. A host that runs no hooks of the kind `agent` names the check in `skip`.
+- **A model check that finds no file of its own, or whose read is refused, lets the call through.**
+  The words of its call name its own file, tell the model to look for it in the directory of the
+  session and then upwards to the root, taking the first directory where the file itself lies — a
+  stray `.claude/` in a subdirectory does not stop the search — and say: no file or no read, shown
+  only by its own Read by absolute path, lets the call through and judges nothing else. A copy where
+  the check is not laid out has nothing to judge by: on 15–21.11 a model check that did not find or
+  read its file refused calls in a row. The price: a session whose permission mode refuses the Read
+  runs with the check off, and nothing records it.
 - **A record that stands is neither doubled nor rewritten, and one that differs is named.** The
   settings are a file of the tree. Other words, another pattern and a limit below the declared one
   are named and refused by the check of the layout; another model and a higher limit are named only,
@@ -203,6 +211,7 @@ Not applicable.
 
 ## History of changes
 
+- 2026-11-22 — task RT-3423: a model check with no file of its own or with a refused read lets the call through.
 - 2026-11-20 — the layout writes the records of the model checks from the declaration in the file of each check: the rules and the scenarios SC-AK-1766 to SC-AK-1774.
 - 2026-11-15 — the scenario of the line about a failure at the start of the next turn left for the
   subdomain `docs/specs/agent-kit/turn-guards/flow-script/exit/` with its number; the rule stays

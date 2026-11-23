@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — about one turn. Load when a turn is being ended — what it ends with, what the owner is told about a step that is theirs, what backs a statement about the tree, what the guards watch. Pattern task-flow-handoff. The whole course of work — rule task-flow.
 ---
-<!-- rt-kit v0.38.0 · rules/turn-conduct.md · fca08236a6ea · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · rules/turn-conduct.md · 86f601973b03 · правится надстройкой, не здесь -->
 
 # Turn conduct — how it works here
 
@@ -20,7 +20,7 @@ demand, not with the rule.
 | In the law | Here |
 | --- | --- |
 | turn | one pass of the agent: from the owner's message to the reply |
-| a turn exit | the end of the scenario or the owner's stop word; the other release cases of the task flow description |
+| a turn exit | the end of the scenario or the owner's Esc; the other release cases of the task flow description |
 | the guard of turn exits | a guard at the turn's end: asks the engine to measure the branch by the task flow description |
 | the agent hook of the turn's end | a model at the turn's end: reads the owner's last message, the reply and the calls of the turn |
 | a statement about the state of the tree | a word in the reply to the owner backed by a command of the same turn and its output |
@@ -29,15 +29,16 @@ demand, not with the rule.
 
 ## Turn exits
 
-A turn ends when the scenario is over or when the owner's last word is a stop word. The owner put it
-so: «Только твоё «стоп»». The exit guard measures the branch by the task flow description and holds
-every other turn with the one move that comes next, unless a release case below is met.
+A turn ends when the scenario is over or when the owner pressed Esc. No typed word stops the work:
+the owner wants no command that lets the agent do nothing, and a wait for a long process of its own
+is a release case, not a stop. The exit guard measures the branch by the task flow description and
+holds every other turn with the one move that comes next, unless a release case below is met.
 
 <!-- flow:turn-end -->
 The engine lets a turn end before the scenario does when a case is met, asked in this order:
 
 - **1** · the end of the scenario — `any(measure.epic.finished, all(measure.copy.outsideEpic, measure.pr.handed))`
-- **2** · a stop word of the owner — `measure.owner.saidStop`
+- **2** · the owner interrupted the turn — `measure.owner.interrupted`
 - **3** · a background task of the session runs — `all(measure.session.waiting, not(measure.pr.handed))`
 - **4** · no write to the tree, or a branch outside the scenario — `any(measure.copy.outOfScenario, all(not(measure.session.wrote), not(measure.owner.nudged)))`
 - **5** · a role session — `measure.session.role`
@@ -48,7 +49,8 @@ The engine lets a turn end before the scenario does when a case is met, asked in
 A question to the owner, a guard's refusal, a handover and handed-in work do not end a turn. A
 question waits for its answer inside the turn, a refusal is answered by the next call, and handed-in
 work is followed by the next task. A step that another guard refuses twice
-goes to the owner as one menu with the options of the description: «отложить RT-N», «стоп».
+goes to the owner as one menu with the options of the description: «отложить RT-N», «подскажу
+путь»; the owner writes the way in its free field, and the agent goes on with the same step by it.
 
 The queue is asked by a command in the same turn: "there are no tasks" is a statement about the
 tree, and the executor's memory does not confirm it.
@@ -75,11 +77,11 @@ One turn: what it ends with, what is checked before its end and what the owner i
 flowchart TD
     A[The turn is going] --> B{The engine measures the branch}
     B -->|The scenario is over| L[The epic table shown]
-    B -->|The owner's last word is a stop word| I
+    B -->|The owner pressed Esc| I
     B -->|Another release case of the description| I
     B -->|None| D{The next move}
     D -->|The executor's step| G[Done in the same turn: a question, a refusal, a handover never end it]
-    D -->|Another guard refuses it twice| M[One menu: «отложить RT-N», «стоп»]
+    D -->|Another guard refuses it twice| M[One menu: «отложить RT-N», «подскажу путь»]
     M --> A
     G --> A
     L --> I{The reply speaks of the tree}
@@ -166,7 +168,7 @@ flowchart TD
   over is held whatever stood last, unless a release case is met.
 - **Waiting for someone else's step is never the last action of a turn.** While they are waited for,
   the work stays where it stood. The last action is judged: waiting mid-turn is lawful, and so is a
-  launch in the background mid-turn. Standing last, it ends the turn only as a wait the record shows: a background task of the session with no end, younger than twenty minutes, once per task and not after the work is handed over. What does not depend on it is done first.
+  launch in the background mid-turn. Standing last, it ends the turn only as a wait the record shows: a background task of the session with no end, younger than ninety minutes, once per task and not after the work is handed over. A watch of a CI run is such a task, a server is not; an older task is hung, and the hold names it. What does not depend on it is done first.
 - **The handover is written even where the branch has no name.** All of it lies in the tree and is
   reachable on a detached head; one file needs a name, and a short snapshot of the head gives it.
   Otherwise compaction comes without a handover, and the next session starts from a blank.
@@ -185,22 +187,23 @@ flowchart TD
 - **A step of the plan that is not done forbids a stop, and a report about the done is not an
   exception.** The engine counts the steps by their marks, and a running stage holds the turn
   whatever the report says.
-- **The word about a stop the guard reads from the owner, not from the executor.** Otherwise the
-  stop is declared by whoever finds it convenient, and the ban holds until the first inconvenience.
-- **Until the scenario is over a turn ends only by the owner's stop word or by a release case.** A question, a refusal, a
-  handover and a second pass are the turn going on: the exit guard returns each with the next move
-  named. The other release cases of the description are not the executor's to choose.
-- **The owner's word about a stop is read from the record of the session, not from the progress.**
-  A stop written on disk by the executor is a retelling. The guard reads the owner's last message,
-  typed or the free text of a menu answer, and a stop word holds only while that message is the last.
+- **The stop is read from the owner's Esc, not from the executor.** Otherwise the stop is declared
+  by whoever finds it convenient, and the ban holds until the first inconvenience.
+- **Until the scenario is over a turn ends only by the owner's Esc or by a release case.** A
+  question, a refusal, a handover and a second pass are the turn going on: the exit guard returns
+  each with the next move named. A typed word stops nothing. The other release cases of the
+  description are not the executor's to choose.
+- **The owner's Esc is read from the record of the session, not from the progress.** A stop written
+  on disk by the executor is a retelling. The host writes Esc into the record as the owner's entry,
+  and it releases the turns a background notice wakes only while it is the owner's last word.
 - **The session is ended by the owner and by nobody else.** The tool that closes the conversation is
   refused by a guard always, with no lawful form of bypass: an assignment stands until the owner
   cancels it, and a session that must close is closed by them.
 - **A refusal of a guard never ends the turn.** It is answered by the next call: the condition met,
   another step taken, or the owner's menu put to them. A refused stop — the
   closing tool — is no exit either.
-- **The phrase "waiting for your word" is a stop declared by the executor.** Without the owner's stop
-  word, waiting for their word is a report, not work. A decision that is theirs goes to them as a
+- **The phrase "waiting for your word" is a stop declared by the executor.** Without the owner's
+  Esc, waiting for their word is a report, not work. A decision that is theirs goes to them as a
   menu, and the turn waits for the answer inside itself. The agent hook judges it by meaning.
 - **A statement about the tree's state is watched by the agent hook, not by the executor's
   memory.** Everything the reply says about the tree carries a command and its output; said without

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/push-set.sh · ef6be49a94e4 · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/push-set.sh · 4332df2377cb · правится надстройкой, не здесь
 # The gate set before a push, one way for both who run it. NOT a guard: it has no `rt-hook:`
 # declaration and hooks into no agent event. The session guard of the push and the git hook
 # `pre-push` source it and call its functions.
@@ -15,7 +15,10 @@
 #
 # What `rt_push_set_run` found is left in the variables `rt_push_set_failed`, `_output`, `_skipped`,
 # `_held` and `_ahead` (one check per line) and in the counters `rt_push_set_ran` and
-# `rt_push_set_passed`.
+# `rt_push_set_passed`. `rt_push_set_node` holds the line about a pinned node that is not installed:
+# then no step ran, and the caller refuses by that line.
+#
+# Requires: hooks/facts.sh
 
 # The tree profile: first the package default, over it the project override. A function declared in
 # the override replaces the default whole and may call it back by the `_default` suffix. The root is
@@ -45,6 +48,11 @@ rt_push_set_profile() {
     command -v rt_push_subjects >/dev/null 2>&1 || rt_push_subjects() { cat >/dev/null; }
     command -v rt_push_subject_of >/dev/null 2>&1 || rt_push_subject_of() { printf unknown; }
     command -v rt_push_note_not_run >/dev/null 2>&1 || rt_push_note_not_run() { return 0; }
+    # The node the tree pins. No helper — the steps run on the node of PATH, as before.
+    # shellcheck disable=SC1091
+    command -v rt_node_pinned_dir >/dev/null 2>&1 || { [ -f "$hooks_dir/facts.sh" ] && . "$hooks_dir/facts.sh" 2>/dev/null; }
+    command -v rt_node_pinned_dir >/dev/null 2>&1 || rt_node_pinned_dir() { return 0; }
+    command -v rt_node_pin_mismatch >/dev/null 2>&1 || rt_node_pin_mismatch() { return 0; }
     # The line of a run for the metrics. No file — the set runs and records nothing.
     # shellcheck disable=SC1091
     [ -f "$hooks_dir/metric-marks.sh" ] && . "$hooks_dir/metric-marks.sh" 2>/dev/null
@@ -55,8 +63,14 @@ rt_push_set_profile() {
 
 rt_push_set_base() {
     local main_branch="${RT_MAIN_BRANCH:-main}"
+    # The tree the run ahead judged is pushed against the base that run took.
+    command -v rt_push_base_recorded >/dev/null 2>&1 && rt_push_base_recorded && return 0
     if command -v rt_push_base >/dev/null 2>&1; then
-        rt_push_base "$main_branch"
+        if command -v rt_push_base_same >/dev/null 2>&1; then
+            rt_push_base_same "$(rt_push_base "$main_branch")"
+        else
+            rt_push_base "$main_branch"
+        fi
         return 0
     fi
     if git fetch --quiet origin "$main_branch" 2>/dev/null && git rev-parse --verify --quiet "origin/$main_branch" >/dev/null 2>&1; then
@@ -78,14 +92,9 @@ rt_push_set_base() {
 # variable empty and runs the step itself.
 rt_push_set_run() {
     local base="$1" check out status key_before skip_code="${RT_SKIP_CODE:-7}" sign started set_started set_took set_over over marked="" subjects
+    local node_dir hook_path="$PATH"
     case "$skip_code" in '' | 0 | 1 | *[!0-9]*) skip_code=7 ;; esac
     command -v rt_push_check_heavy >/dev/null 2>&1 || rt_push_check_heavy() { return 1; }
-    sign="$(rt_tree_sign .)"
-    # Whether the change touched the subject of each step, for the run lines; a step the selection
-    # drops leaves a line of its own.
-    subjects="$(rt_push_checks "$base" | rt_push_subjects "$base")"
-    rt_push_note_not_run "$sign" "$base" "$subjects"
-
     rt_push_set_failed=""
     rt_push_set_output=""
     rt_push_set_skipped=""
@@ -93,6 +102,19 @@ rt_push_set_run() {
     rt_push_set_ahead=""
     rt_push_set_ran=0
     rt_push_set_passed=0
+    # The steps and their choice run on the node the tree pins: the hook may inherit another one,
+    # and a tree that demands its node turns every step red on it. A pinned node that is not
+    # installed, with another node in PATH, runs no step — the caller refuses by one line.
+    rt_push_set_node="$(rt_node_pin_mismatch "${CLAUDE_PROJECT_DIR:-.}")"
+    [ -n "$rt_push_set_node" ] && return 0
+    node_dir="$(rt_node_pinned_dir "${CLAUDE_PROJECT_DIR:-.}")"
+    [ -n "$node_dir" ] && PATH="$node_dir:$PATH"
+    sign="$(rt_tree_sign .)"
+    # Whether the change touched the subject of each step, for the run lines; a step the selection
+    # drops leaves a line of its own.
+    subjects="$(rt_push_checks "$base" | rt_push_subjects "$base")"
+    rt_push_note_not_run "$sign" "$base" "$subjects"
+
     set_started="$(date +%s 2>/dev/null)"
     while IFS= read -r check; do
         [ -z "$check" ] && continue
@@ -159,6 +181,7 @@ EOF
 }── the whole set
 ${set_over}"
     fi
+    PATH="$hook_path"
     return 0
 }
 

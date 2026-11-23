@@ -31,6 +31,9 @@
 #                                    the facts the neighbours judge a named move by, as JSON: the
 #                                    exam, the window, the rules the gate wants for the move, the
 #                                    rule of the course of work and the entry from a handover
+#   rt_node_pinned_dir [root]        the bin directory of the node `.nvmrc` pins, installed by nvm
+#   rt_node_pin_mismatch [root]      one line when no installed node serves the pin and the node
+#                                    of PATH does not either; empty otherwise
 #
 # FAIL-OPEN: a fact that cannot be read is empty. The guard decides by an empty fact as it did when
 # its own call failed.
@@ -305,4 +308,67 @@ rt_move_rules() {
                 ;;
         esac
     ) | tr '\n' ' '
+}
+
+# The version `.nvmrc` of the tree pins, without the `v`: a full version, a major or a major and a
+# minor. The first line that is not a comment counts, spaces and tabs aside. An alias — `lts/*`,
+# `node` — and a tree with no `.nvmrc` give nothing.
+rt_node_pin() {
+    local pin
+    # A byte order mark ahead of the version is dropped with the rest of the blank.
+    pin="$({ LC_ALL=C sed -e "s/^$(printf '\357\273\277')//" -e 's/#.*//' -e 's/[[:space:]]//g' "${1:-.}/.nvmrc" | grep -m 1 .; } 2>/dev/null)"
+    pin="${pin#v}"
+    case "$pin" in '' | *[!0-9.]* | .* | *..* | *.) return 0 ;; esac
+    printf '%s' "$pin"
+}
+
+# Whether version $1 is not lower than version $2, part by part as numbers: 22.01 equals 22.1.
+rt_node_at_least() {
+    awk -v a="$1" -v b="$2" 'BEGIN { n = split(a, x, "."); m = split(b, y, "."); if (m > n) n = m
+        for (i = 1; i <= n; i++) { if (x[i] + 0 > y[i] + 0) exit 0; if (x[i] + 0 < y[i] + 0) exit 1 } exit 0 }'
+}
+
+# Whether node $1 serves pin $2: the pinned version itself; for a major or a major and a minor, any
+# version under it; for a full version, a newer one of the same major too.
+rt_node_serves() {
+    local have="$1" pin="$2"
+    case "$have" in "$pin" | "$pin".*) return 0 ;; esac
+    case "$pin" in *.*.*) [ "${have%%.*}" = "${pin%%.*}" ] && rt_node_at_least "$have" "$pin" ;; *) return 1 ;; esac
+}
+
+# The bin directory of the pinned node under nvm. A full version takes its own directory, and with
+# none — the highest installed one of the same major above it; a major or a major and a minor takes
+# the highest installed version under it. An install with no executable node is passed over. The
+# steps of a set run on it: the node the hook inherits may be another one, and a tree that demands
+# its node refuses that.
+rt_node_pinned_dir() {
+    local pin base found version
+    pin="$(rt_node_pin "${1:-.}")"
+    [ -n "$pin" ] || return 0
+    base="${NVM_DIR:-$HOME/.nvm}/versions/node"
+    [ -x "$base/v$pin/bin/node" ] && printf '%s' "$base/v$pin/bin" && return 0
+    for found in "$base"/v*/bin/node; do
+        [ -x "$found" ] || continue
+        version="${found%/bin/node}"
+        printf '%s\n' "${version##*/v}"
+    done | grep -E '^[0-9]+(\.[0-9]+)*$' | sort -t. -k1,1nr -k2,2nr -k3,3nr | while IFS= read -r version; do
+        rt_node_serves "$version" "$pin" && printf '%s' "$base/v$version/bin" && break
+    done || true
+    return 0
+}
+
+# One line when no installed node serves the pin and the node of PATH does not serve it either: no
+# step of a set runs then, and the line names the command that installs it. A node of PATH that
+# serves the pin runs the steps as before.
+rt_node_pin_mismatch() {
+    local root="${1:-.}" pin have shown
+    pin="$(rt_node_pin "$root")"
+    [ -n "$pin" ] || return 0
+    [ -n "$(rt_node_pinned_dir "$root")" ] && return 0
+    have="$(node --version 2>/dev/null)"
+    have="${have#v}"
+    [ -n "$have" ] && rt_node_serves "$have" "$pin" && return 0
+    shown="${have:+v$have}"
+    printf 'node v%s is pinned in .nvmrc and not installed; PATH gives %s — nvm install %s' \
+        "$pin" "${shown:-no node}" "$pin"
 }

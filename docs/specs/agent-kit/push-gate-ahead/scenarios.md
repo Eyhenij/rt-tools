@@ -32,7 +32,7 @@ Then that copy is not the base
 
 Given the lower branch was removed from the remote, and the working copy still holds its ref
 When the push guard picks the base
-Then the base is that ref
+Then that ref is no base: the base is the branch of the epic
 
 Given the lower branch was merged into the branch of the epic by the host and removed from the
 remote, and the working copy holds no ref of it
@@ -59,6 +59,32 @@ Then the base is the branch of the epic
 Given a remote branch that stands on this one
 When the push guard picks the base
 Then that branch is not the base
+
+Given the branch of the epic holds the own copy of the branch, brought in by a merge — of this
+branch's request or of another request taken from the copy — and lies ahead of the head, under it
+or at its commit, whether or not the host still holds the copy
+When the push guard picks the base
+Then the base is the branch of the epic: the own copy on its first-parent line drops a branch, a
+merge of the host that brought the copy does not
+
+Given a branch taken from this one by plain commits and pushed, before and after the host merged a
+branch higher in the stack into it
+When the push guard picks the base for this branch after one more commit
+Then that branch is not the base: it holds the own copy on its first-parent line
+
+Given the session of the epic synced it with the remote epic, so that the merge of the host that
+brought the copy in lies behind a merge of the session, and the host merged one more request after
+When the push guard picks the base for this branch
+Then the base is the branch of the epic
+
+Given a branch above this one, or a neighbour taken from a newer tip of the epic, took the newer
+copy of this branch in by a merge of its own, not of the host
+When the push guard picks the base for this branch after one more commit
+Then that branch is not the base
+
+Given this branch took in a branch taken from it, so that one lies under the head
+When the push guard picks the base
+Then the base is that branch: what the head holds already passed the set
 
 Given a head that is no branch
 When the push guard picks the base
@@ -88,7 +114,7 @@ Given a branch moved past the head by a plain push, not by a merge of the host
 When the push guard picks the base
 Then that branch is not the base
 
-Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`, `projects/agent-kit/tests/git-guard-push-base-live.test.sh`.
 
 ### SC-AK-1241 — a check green on the same tree is not run again
 
@@ -293,3 +319,181 @@ Then the refusal names both red lines and the tail of each output. The green one
 heavy one is not started and is named as held
 
 Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+
+### SC-AK-1814 — a call that does not end with the exit code of the run ahead is refused
+
+Given a background call that runs the set ahead, `; echo "exit=$?"` after it among them
+When a command other than `exit $?` follows the set by `;`, a newline or `||`, or a pipe follows it
+outside `set -o pipefail` (`exit ${PIPESTATUS[0]}` included), or the set stands under `&` or `!` or
+inside `$(…)`, or a chain of `&&` after it ends with `;`, a newline or `||` and no `exit $?`
+Then the call is refused, and the refusal names what hid the code, the ready form with a log of the
+copy outside the working copy and the read of the last `push ahead:` line
+
+Covered: `projects/agent-kit/tests/push-ahead-call-guard.test.sh`.
+
+### SC-AK-1815 — a call that ends with the exit code of the run ahead passes
+
+Given a call that runs the set ahead
+When the set stands alone, with its output redirected, chained by `&&` to the end of the call,
+followed by `exit $?`, by `rc=$?` with `exit $rc` at the end or by `|| exit N`, under
+`if ! …; then …; exit N`, after `set -e`, piped and ending the call under `set -o pipefail`, or
+closed by a loop with nothing after it — or the call runs in the foreground, where its output stands in the
+result
+Then the call passes
+
+Covered: `projects/agent-kit/tests/push-ahead-call-guard.test.sh`.
+
+### SC-AK-1816 — a text that only names the run ahead passes
+
+Given a call that names the script without running it — a search, a read, a heredoc, `printf` into a
+file, a quoted commit message, `bash -n`
+When the guard judges the call
+Then the call passes; a run inside `bash -c` or `eval` is judged by its inner text
+
+Covered: `projects/agent-kit/tests/push-ahead-call-guard.test.sh`.
+
+### SC-AK-1821 — a red set in the ready form ends with a nonzero code
+
+Given a tree whose set holds a red check
+When the set runs ahead in the ready form, its output in a log
+Then the call ends with a nonzero code, and the last `push ahead:` line of the log says red
+
+Covered: `projects/agent-kit/tests/push-ahead-call-guard.test.sh`.
+
+### SC-AK-1846 — the steps of the set run on the pinned node
+
+Given a tree pins node 22.22.3 in `.nvmrc`, nvm holds it, and node 20 stands first in `PATH`
+When the set or the run ahead runs a step
+Then the step finds the pinned node
+
+Given nvm holds 22.1.5, 22.9.0, 22.10.0, 22.22.3, 22.23.2 and 24.15.0, and the tree pins 22, 22.1
+or 22.20.0
+When the set runs a step
+Then the step finds 22.23.2, 22.1.5 and 22.23.2 in turn; a pin of 22.22.3 finds 22.22.3
+
+Given `.nvmrc` starts with a byte order mark and a comment line, and holds the version after a tab
+When the set runs a step
+Then the step finds the pinned node
+
+Given the tree pins an alias, or has no `.nvmrc`
+When the set runs a step
+Then the step finds the node of `PATH`, as before, and the set gives `PATH` back as it was
+
+Covered: `projects/agent-kit/tests/push-set-runs.test.sh`.
+
+### SC-AK-1847 — a pinned node that is not installed
+
+Given no installed node serves the pin — none of its major, or all below a full pin — and `PATH`
+gives another node, a newer major included
+When the tree is pushed through the push guard or the git hook
+Then no step runs, and the push is refused by one line that names both versions and
+`nvm install <version>`; the git hook says it before it counts the steps
+
+Given the same tree, and `PATH` gives no node or one too old to run the decision table
+When the tree is pushed
+Then the git hook and the push guard print the line themselves and refuse the push
+
+Given the same tree
+When the set runs ahead
+Then no step runs, the line is printed, and the run ends with the code of a run that did not start
+
+Given a tree pins a node nvm does not hold, and `PATH` gives the same version, a version under a
+pinned major, or a newer version of the pinned major
+When the set runs
+Then the steps run on the node of `PATH`, as before
+
+Covered: `projects/agent-kit/tests/pre-push.test.sh`, `projects/agent-kit/tests/push-set-runs.test.sh`.
+
+### SC-AK-1850 — a ref of a branch the host removed is no base
+
+Given the host holds the lower branch
+When the base is picked
+Then the base is the lower branch
+
+Given the host removed the lower branch, and the copy still holds its ref
+When the base is picked
+Then the base is the branch of the epic
+
+Given a neighbouring copy pruned the refs between the set and the push
+When the base is picked
+Then the base is the same as before the prune
+
+Given the host holds a branch whose name begins with the name of the removed one
+When the base is picked
+Then the removed branch is still no base: the name is matched whole
+
+Given the head is the branch of an epic, the host merged a task into it and removed the task, the
+branch of the epic took that merge in as a second parent, and the copy still holds the ref of the
+task
+When the set runs ahead and the push follows, before and after a prune of the refs
+Then the set and the push both take the main branch, and the push passes from the marks
+
+Covered: `projects/agent-kit/tests/git-guard-push-base-live.test.sh`.
+
+### SC-AK-1851 — with no answer from the host the refs of the copy decide
+
+Given the host does not answer
+When the base is picked
+Then the base is the nearest ref of the copy, as before the filter of live branches
+
+Given the host does not answer
+When the set runs ahead
+Then its output says the host did not answer
+
+Covered: `projects/agent-kit/tests/git-guard-push-base-live.test.sh`.
+
+### SC-AK-1852 — the push takes the base of the run ahead while the record fits the head
+
+Given the run ahead judged the tree against the lower branch, and the host merged and removed that
+branch during the set
+When the tree is pushed
+Then the push takes the base and its commit from the run ahead, and passes from the marks
+
+Given a neighbouring copy also pruned the ref of that base
+When the tree is pushed
+Then the pinned ref still stands at the recorded commit, the removed branch does not come back
+into the remote refs, and the push passes from the marks
+
+Given a commit of a path the heavy step does not read, made after the run ahead
+When the head is pushed
+Then the record fits the head, and the push passes from the marks
+
+Given the run ahead judged the tree against the branch of the epic, and a nearer branch appeared
+on the host during the set
+When the tree is pushed
+Then the base stays the branch of the epic, and the push passes from the marks
+
+Given two branches of a chain ran ahead one after another in one copy, and the host merged and
+removed the branch under them
+When the lower of the two is pushed
+Then it takes the base of its own run ahead, and passes from the marks
+
+Given the branch of the epic moved on the host after the run ahead, and the head took it in by a
+merge
+When the base of the push is taken
+Then the record does not fit, and the base is picked anew: the branch of the epic
+
+Given the recorded head commit was amended with a path the heavy step does not read, and the base
+did not move
+When the head is pushed
+Then the base picked anew is the recorded one at the recorded commit, the pinned ref is taken, and
+the push passes from the marks
+
+Given a branch name carries words the profile reads in the lines of the set
+When the base is pinned
+Then the name of the pinned ref carries none of them
+
+Given a step of the set moved the remote ref of the base while it ran
+When the head is pushed
+Then the step ran against the pinned ref, its mark is written, and the push passes from the marks
+
+Covered: `projects/agent-kit/tests/git-guard-push-base-live.test.sh`.
+
+### SC-AK-1853 — the refusal «No green mark» names both bases
+
+Given the last commit was rewritten after the run ahead, so that the record does not fit the head
+When the push is refused for a heavy step with no mark
+Then the refusal names the base of the push and the base of the last run ahead of this branch,
+marked as another history
+
+Covered: `projects/agent-kit/tests/git-guard-push-base-live.test.sh`.

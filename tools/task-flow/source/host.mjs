@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · task-flow/source/host.mjs · 7f9c88b2b9f7 · правится надстройкой, не здесь
+// rt-kit v0.38.0 · task-flow/source/host.mjs · 7512fd78a200 · правится надстройкой, не здесь
 /**
  * The source «source.host» of the task flow description: the hosting and the work queue, read by
  * the board module of the tree and by `git` against the server.
@@ -17,6 +17,12 @@
  *   pulls(head)              [{ number, state, base, reviewers, headRefOid }] — the PRs of a branch
  *   mergedPulls()            [{ number, head, headRefOid, base, mergedAt }] — the merged PRs of the repository
  *   inRemote(sha, branch)    the commit lies in `origin/<branch>`
+ *   openPulls()              [{ number, head, headRefOid, base, createdAt }] — the open PRs of the
+ *                            repository, read past the clock: a push moves a head within the minute
+ *   runs(sha)                [{ id, attempt, status, conclusion, endedAt }] — the runs of the PR
+ *                            pipeline file on a head, read past the clock
+ *   pipeline()               { file, bases } — the PR pipeline file of the tree and the bases a PR
+ *                            wakes it for: null for every base, [] when it does not listen to PRs
  *   remember(key) / recalled(key)   a met exit kept for the life of the branch
  *   silent()                 a read failed twice
  *   reset()                  drop the answers that live by the clock
@@ -51,6 +57,74 @@ try {
 } catch {
     // A board module that does not load is the same as none: a read of the hosting then refuses aloud.
     board = null;
+}
+
+const CONFIG_FILE = [join(HERE, '..', '..', 'rt-kit-checks.config.mjs'), join(process.cwd(), 'tools', 'rt-kit-checks.config.mjs')].find((p) => existsSync(p));
+let config = null;
+try {
+    config = CONFIG_FILE ? await import(pathToFileURL(CONFIG_FILE).href) : null;
+} catch {
+    // A settings module that does not load names no pipeline: no run is judged then.
+    config = null;
+}
+
+/**
+ * The bases a PR wakes the pipeline for, read from the `on` block of its file: the list of
+ * `pull_request.branches`, null when the key has no list — every base — and [] when the pipeline
+ * does not listen to PRs.
+ */
+export function pullRequestBases(text) {
+    // A comment is no part of a key or a name: `- main # base` names `main`.
+    const lines = String(text ?? '')
+        .split('\n')
+        .map((line) => line.replace(/\s+#.*$/, '').replace(/^\s*#.*$/, ''));
+    const indentOf = (line) => line.length - line.trimStart().length;
+    const below = (list, index) => {
+        const depth = indentOf(list[index]);
+        const body = [];
+        for (let i = index + 1; i < list.length; i += 1) {
+            if (list[i].trim() !== '' && indentOf(list[i]) <= depth) break;
+            body.push(list[i]);
+        }
+        return body;
+    };
+    const onIndex = lines.findIndex((line) => /^["']?on["']?:\s*(#.*)?$/.test(line));
+    if (onIndex === -1) return lines.some((line) => /^["']?on["']?:\s*(\[.*\bpull_request\b(?!_).*\]|\{.*\bpull_request\b(?!_).*\}|pull_request)\s*(#.*)?$/.test(line)) ? null : [];
+    const on = below(lines, onIndex);
+    const prIndex = on.findIndex((line) => /^\s+pull_request:/.test(line));
+    if (prIndex === -1) return [];
+    const pr = below(on, prIndex);
+    const branchesIndex = pr.findIndex((line) => /^\s+branches:/.test(line));
+    if (branchesIndex === -1) return null;
+    const inline = /^\s+branches:\s*\[(.*)\]/.exec(pr[branchesIndex]);
+    // The items of the list stand deeper than the key, or at its own indent: both are YAML.
+    const depth = indentOf(pr[branchesIndex]);
+    const items = [];
+    for (const line of pr.slice(branchesIndex + 1)) {
+        if (line.trim() === '') continue;
+        if (/^\s*-\s/.test(line) && indentOf(line) >= depth) items.push(line.replace(/^\s*-\s*/, ''));
+        else break;
+    }
+    const names = inline ? inline[1].split(',') : items;
+    return names.map((name) => name.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean);
+}
+
+/**
+ * The runs of the pipeline file among the runs of a head, as the hosting answers
+ * `actions/runs?head_sha=`: the runs of other workflow files are dropped, and a run ends at its
+ * last update once it is completed.
+ */
+export function pipelineRuns(answer, file) {
+    if (!file) return [];
+    return (answer?.workflow_runs ?? [])
+        .filter((run) => String(run.path ?? '').split('@')[0] === file)
+        .map((run) => ({
+            id: run.id,
+            attempt: run.run_attempt ?? 1,
+            status: run.status,
+            conclusion: run.conclusion ?? null,
+            endedAt: run.status === 'completed' ? Date.parse(run.updated_at ?? '') : null,
+        }));
 }
 
 /** A read repeated once; failed twice, it throws `HostSilent` and calls `onSilent`. */
@@ -116,6 +190,9 @@ const heads = (text) =>
             return { name: ref.replace('refs/heads/', ''), sha };
         });
 
+/** The PR pipeline file the tree names in its settings, or '' when it names none. */
+const pipelineFile = () => config?.CONFIG?.pushGate?.pipelineFile ?? '';
+
 /** The key of a column by its name on the board. */
 const columnKey = (name) => Object.entries(board?.STATUS_OPTIONS ?? {}).find(([, option]) => option.name === name)?.[0] ?? name;
 
@@ -160,6 +237,34 @@ export function open() {
                 })),
             ),
         inRemote: (sha, branch) => git(['merge-base', '--is-ancestor', sha, `origin/${branch}`]).status === 0,
+        openPulls: () =>
+            attempt(
+                () =>
+                    (need().ghJson(['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,headRefName,headRefOid,baseRefName,createdAt']) ?? []).map((p) => ({
+                        number: p.number,
+                        head: p.headRefName,
+                        headRefOid: p.headRefOid,
+                        base: p.baseRefName,
+                        createdAt: Date.parse(p.createdAt ?? ''),
+                    })),
+                () => (silent = true),
+            ),
+        runs: (sha) =>
+            attempt(
+                () => pipelineRuns(need().ghJson(['api', `repos/${need().OWNER}/${need().REPO}/actions/runs?head_sha=${sha}&per_page=30`]), pipelineFile()),
+                () => (silent = true),
+            ),
+        pipeline: () => {
+            const file = pipelineFile();
+            const root = config?.ROOT ?? process.cwd();
+            let text = '';
+            try {
+                text = file ? readFileSync(join(root, file), 'utf8') : '';
+            } catch {
+                text = '';
+            }
+            return { file, bases: text ? pullRequestBases(text) : [] };
+        },
         remember(key) {
             const file = metFile(key);
             if (!file) return;

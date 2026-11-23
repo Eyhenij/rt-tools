@@ -146,7 +146,7 @@ printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Совпасть\n- [>
 # SC-AK-1506 — форма ожидаемого, добавленная в описание, принимается step без правки движка
 mkdir -p "$TF_DIR/kit"
 cp -R "$TESTS/../assets/task-flow" "$TF_DIR/kit/task-flow"
-cp "$TESTS/../assets/checks/work-steps-lib.mjs" "$TF_DIR/kit/"
+cp "$TESTS/../assets/checks/work-steps-lib.mjs" "$TESTS/../assets/checks/record-count.mjs" "$TF_DIR/kit/"
 node -e "
 const fs = require('fs');
 const f = process.argv[1];
@@ -471,6 +471,14 @@ got="$(
     rt_delivery_rerun
 )"
 report "pr: SC-AK-1740 — перемер зовёт node из .nvmrc дерева" "$(printf '%s' "$got" | grep -c 'pinned node')" 1
+printf 'v99.0.5\n' > "$TF_DIR/pinned-tree/.nvmrc"
+got="$(
+    unmet() { printf '%s %s\n' "$1" "$3"; }
+    rt_hooks_dir="$TESTS/../assets/hooks" root="$TF_DIR/pinned-tree" NVM_DIR="$TF_NVM"
+    . "$TESTS/../assets/hooks/git-guard-delivery-rerun.sh"
+    rt_delivery_rerun
+)"
+report "pr: SC-AK-1740 — без точной версии перемер берёт более новую той же главной" "$(printf '%s' "$got" | grep -c 'pinned node')" 1
 rm "$TF_DIR/pinned-tree/.nvmrc"
 got="$(
     unmet() { printf '%s %s\n' "$1" "$3"; }
