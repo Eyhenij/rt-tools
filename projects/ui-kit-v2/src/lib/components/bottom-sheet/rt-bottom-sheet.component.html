@@ -11,11 +11,24 @@
         role="dialog"
         aria-modal="true"
         [attr.aria-labelledby]="ariaLabelledby()"
-        [rtMod]="{ dragging: dragging() }"
+        [rtMod]="{ dragging: dragging(), full: fullHeight() }"
         [style.transform]="dragging() ? 'translateY(' + dragDeltaY() + 'px)' : null">
         <div rtElem="handle" qa-dataid="bottom-sheet-handle" (pointerdown)="onDragStart($event)"></div>
         <div rtElem="header" qa-dataid="bottom-sheet-header">
-            <ng-content select="[sheetHeader]" />
+            <div rtElem="start">
+                <rt-icon-button
+                    qa-dataid="bottom-sheet-close"
+                    icon="ico-close"
+                    variant="secondary"
+                    [ariaLabel]="t().bottomSheetClose"
+                    (clicked)="dismiss()" />
+            </div>
+            <div rtElem="title" qa-dataid="bottom-sheet-title">
+                <ng-content select="[sheetHeader]" />
+            </div>
+            <div rtElem="action" qa-dataid="bottom-sheet-action">
+                <ng-content select="[sheetAction]" />
+            </div>
         </div>
         <div rtElem="body" qa-dataid="bottom-sheet-body">
             <ng-content />

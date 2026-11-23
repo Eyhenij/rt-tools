@@ -47,6 +47,14 @@
             &--dragging {
                 transition: none;
             }
+
+            /* Шторка во всю высоту: панель занимает экран целиком, сверху остаётся полоса, в которой
+               видны скруглённые углы. Высота берётся от видимой области (`dvh`), чтобы панель не
+               уходила под полосы браузера на телефоне. */
+            &--full {
+                height: calc(100dvh - var(--rt-space-4));
+                max-height: none;
+            }
         }
 
         &__handle {
@@ -60,12 +68,35 @@
             touch-action: none;
         }
 
+        /* Шапка: кнопка закрытия слева, заголовок по центру, действие справа. Крайние колонки равны
+           (`1fr`), поэтому заголовок стоит по центру панели, что бы ни стояло по бокам. Края шапки
+           совпадают с краями содержимого шторки. */
         &__header {
-            display: flex;
-            justify-content: center;
+            display: grid;
+            flex-shrink: 0;
+            align-items: center;
             padding: 0 var(--rt-space-5) var(--rt-space-4);
             color: var(--rt-color-text-primary);
             font-weight: var(--rt-font-weight-semibold);
+            gap: var(--rt-space-2);
+            grid-template-columns: minmax(max-content, 1fr) auto minmax(max-content, 1fr);
+        }
+
+        &__start {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        &__title {
+            display: flex;
+            min-width: 0;
+            justify-content: center;
+            text-align: center;
+        }
+
+        &__action {
+            display: flex;
+            justify-content: flex-end;
         }
 
         /* Тело — единственная прокручиваемая зона: панель упирается в предел высоты, а ручка,
@@ -123,6 +154,14 @@
 
             .rt-bottom-sheet__panel {
                 transform: translateY(100%);
+            }
+        }
+
+        /* Человек просил систему убавить движение: шторка появляется и уходит без выезда. */
+        @media (prefers-reduced-motion: reduce) {
+            &__backdrop,
+            &__panel {
+                transition: none;
             }
         }
 

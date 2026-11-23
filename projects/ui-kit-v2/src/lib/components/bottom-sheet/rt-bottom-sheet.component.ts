@@ -1,4 +1,5 @@
 import { BooleanInput } from '@angular/cdk/coercion';
+import { ScrollStrategy, ScrollStrategyOptions } from '@angular/cdk/overlay';
 import { DOCUMENT } from '@angular/common';
 import {
     booleanAttribute,
@@ -7,6 +8,7 @@ import {
     computed,
     DestroyRef,
     effect,
+    ElementRef,
     inject,
     input,
     InputSignal,
@@ -23,6 +25,7 @@ import {
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtBottomSheetStackService } from './rt-bottom-sheet-stack.service';
 import { clampDragDelta, shouldDismissDrag } from './rt-bottom-sheet.logic';
@@ -41,7 +44,8 @@ const BEM_BLOCK: string = 'rt-bottom-sheet';
         ElemDirective,
         ModDirective,
 
-        // transloco
+        // kit
+        RtIconButtonComponent,
     ],
     hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
@@ -56,15 +60,20 @@ const BEM_BLOCK: string = 'rt-bottom-sheet';
         // Шторка, подменённая открытой из неё, `inert` не получает: в ней стоит указатель поля,
         // открывшего верхнюю, и его клавиши ведут список верхней. С `inert` фокус падал на страницу.
         '[attr.inert]': 'open() ? null : ""',
+        '(document:keydown.escape)': 'onEscape()',
     },
 })
 export class RtBottomSheetComponent {
     readonly #document: Document = inject(DOCUMENT);
     readonly #stack: RtBottomSheetStackService = inject(RtBottomSheetStackService);
+    readonly #host: HTMLElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+    /** Блокировка прокрутки страницы — та же, что держит оверлей у шторки панели выбора. */
+    readonly #scrollLock: ScrollStrategy = inject(ScrollStrategyOptions).block();
     readonly #onDragMove: (event: PointerEvent) => void = (event: PointerEvent): void => this.#handleDragMove(event);
     readonly #onDragEnd: () => void = (): void => this.#handleDragEnd();
 
     #dragStartY: number = 0;
+    #locked: boolean = false;
 
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
@@ -81,6 +90,14 @@ export class RtBottomSheetComponent {
     /** Идентификатор узла с названием диалога: без него `role="dialog"` читается без имени. */
     public readonly ariaLabelledby: InputSignal<string | null> = input<string | null>(null);
 
+    /**
+     * Шторка во всю высоту экрана: для содержимого, в котором человек печатает. По умолчанию
+     * панель растёт по содержимому до своего предела.
+     */
+    public readonly fullHeight: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
     public readonly openChange: OutputEmitterRef<boolean> = output<boolean>();
 
     constructor() {
@@ -92,7 +109,21 @@ export class RtBottomSheetComponent {
                 this.#stack.remove(this);
             }
         });
-        inject(DestroyRef).onDestroy((): void => this.#stack.remove(this));
+        // Прокрутку страницы шторка держит сама, пока открыта. Шторке внутри оверлея это не нужно:
+        // её оверлей уже держит прокрутку и слушает Escape, и второй раз они сработать не должны.
+        effect((): void => {
+            this.#setScrollLock(this.open() && !this.#inOverlay());
+        });
+        inject(DestroyRef).onDestroy((): void => {
+            this.#stack.remove(this);
+            this.#setScrollLock(false);
+        });
+    }
+
+    protected onEscape(): void {
+        if (this.open() && !this.covered() && !this.#inOverlay()) {
+            this.dismiss();
+        }
     }
 
     protected onDragStart(event: PointerEvent): void {
@@ -105,6 +136,22 @@ export class RtBottomSheetComponent {
 
     protected dismiss(): void {
         this.openChange.emit(false);
+    }
+
+    #inOverlay(): boolean {
+        return this.#host.closest('.cdk-overlay-container') !== null;
+    }
+
+    #setScrollLock(locked: boolean): void {
+        if (locked === this.#locked) {
+            return;
+        }
+        this.#locked = locked;
+        if (locked) {
+            this.#scrollLock.enable();
+        } else {
+            this.#scrollLock.disable();
+        }
     }
 
     #handleDragMove(event: PointerEvent): void {
