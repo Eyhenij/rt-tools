@@ -15,6 +15,7 @@ import { IButton } from '../../rt-button.model';
         <!-- Подпись рисует директива через Renderer2, поэтому разметка пуста;
              статическая метка нужна проверке содержимого элемента. -->
         <button
+            type="button"
             rtButton
             aria-label="Кнопка витрины"
             [label]="label"

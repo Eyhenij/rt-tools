@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, InputSignal, Signal, computed, input } from '@angular/core';
 
 import { RtBreadcrumbsComponent } from '../../rt-breadcrumbs.component';
 import { IRtBreadcrumbs } from '../../rt-breadcrumbs.model';
@@ -18,12 +18,12 @@ import { STORY_BREADCRUMBS_PATH } from './story-breadcrumbs';
     ],
 })
 export class TestRtBreadcrumbsComponent {
-    public depth: number = 3;
-    public look: IRtBreadcrumbs.Look = 'inline';
-    public back: boolean = true;
-    public separator: string = '/';
+    protected readonly crumbs: Signal<readonly IRtBreadcrumbs.Crumb[]> = computed((): readonly IRtBreadcrumbs.Crumb[] =>
+        STORY_BREADCRUMBS_PATH.slice(0, this.depth())
+    );
 
-    public get crumbs(): readonly IRtBreadcrumbs.Crumb[] {
-        return STORY_BREADCRUMBS_PATH.slice(0, this.depth);
-    }
+    public readonly depth: InputSignal<number> = input<number>(3);
+    public readonly look: InputSignal<IRtBreadcrumbs.Look> = input<IRtBreadcrumbs.Look>('inline');
+    public readonly back: InputSignal<boolean> = input<boolean>(true);
+    public readonly separator: InputSignal<string> = input<string>('/');
 }

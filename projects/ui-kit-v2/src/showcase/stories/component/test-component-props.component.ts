@@ -26,7 +26,7 @@ export interface IRtPropOverride {
         <app-story-row caption="Своё свойство, объявленное потребителем" [items]="items" [itemLabel]="labelOf">
             <ng-template let-item>
                 <div [class]="item.cellClass">
-                    <button rtButton aria-label="Кнопка витрины" [label]="'Сохранить'"></button>
+                    <button type="button" rtButton aria-label="Кнопка витрины" [label]="'Сохранить'"></button>
                 </div>
             </ng-template>
         </app-story-row>

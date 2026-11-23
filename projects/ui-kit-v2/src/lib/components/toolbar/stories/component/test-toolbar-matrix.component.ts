@@ -48,30 +48,30 @@ interface IToolbarLayoutCase {
                                     @case ('только левый') {
                                         <rt-toolbar>
                                             <ng-template rtToolbarLeft>
-                                                <button rtButton label="Назад" aria-label="Назад" appearance="text"></button>
+                                                <button type="button" rtButton label="Назад" aria-label="Назад" appearance="text"></button>
                                             </ng-template>
                                         </rt-toolbar>
                                     }
                                     @case ('левый и правый') {
                                         <rt-toolbar>
                                             <ng-template rtToolbarLeft>
-                                                <button rtButton label="Назад" aria-label="Назад" appearance="text"></button>
+                                                <button type="button" rtButton label="Назад" aria-label="Назад" appearance="text"></button>
                                             </ng-template>
                                             <ng-template rtToolbarRight>
-                                                <button rtButton label="Сохранить" aria-label="Сохранить"></button>
+                                                <button type="button" rtButton label="Сохранить" aria-label="Сохранить"></button>
                                             </ng-template>
                                         </rt-toolbar>
                                     }
                                     @case ('все три') {
                                         <rt-toolbar>
                                             <ng-template rtToolbarLeft>
-                                                <button rtButton label="Назад" aria-label="Назад" appearance="text"></button>
+                                                <button type="button" rtButton label="Назад" aria-label="Назад" appearance="text"></button>
                                             </ng-template>
                                             <ng-template rtToolbarCenter>
                                                 <span>Договор №2024-118</span>
                                             </ng-template>
                                             <ng-template rtToolbarRight>
-                                                <button rtButton label="Сохранить" aria-label="Сохранить"></button>
+                                                <button type="button" rtButton label="Сохранить" aria-label="Сохранить"></button>
                                             </ng-template>
                                         </rt-toolbar>
                                     }
@@ -91,35 +91,40 @@ interface IToolbarLayoutCase {
                                     @case ('по кнопке') {
                                         <rt-toolbar>
                                             <ng-template rtToolbarLeft>
-                                                <button rtButton label="Назад" aria-label="Назад" appearance="text"></button>
+                                                <button type="button" rtButton label="Назад" aria-label="Назад" appearance="text"></button>
                                             </ng-template>
                                             <ng-template rtToolbarRight>
-                                                <button rtButton label="Сохранить" aria-label="Сохранить"></button>
+                                                <button type="button" rtButton label="Сохранить" aria-label="Сохранить"></button>
                                             </ng-template>
                                         </rt-toolbar>
                                     }
                                     @case ('несколько кнопок') {
                                         <rt-toolbar>
                                             <ng-template rtToolbarLeft>
-                                                <button rtButton label="Назад" aria-label="Назад" appearance="text"></button>
+                                                <button type="button" rtButton label="Назад" aria-label="Назад" appearance="text"></button>
                                             </ng-template>
                                             <ng-template rtToolbarRight>
-                                                <button rtButton label="Отменить" aria-label="Отменить" appearance="outlined"></button>
-                                                <button rtButton label="Сохранить" aria-label="Сохранить"></button>
-                                                <button rtButton label="Удалить" aria-label="Удалить" theme="danger"></button>
+                                                <button
+                                                    type="button"
+                                                    rtButton
+                                                    label="Отменить"
+                                                    aria-label="Отменить"
+                                                    appearance="outlined"></button>
+                                                <button type="button" rtButton label="Сохранить" aria-label="Сохранить"></button>
+                                                <button type="button" rtButton label="Удалить" aria-label="Удалить" theme="danger"></button>
                                             </ng-template>
                                         </rt-toolbar>
                                     }
                                     @case ('длинный текст в центре') {
                                         <rt-toolbar>
                                             <ng-template rtToolbarLeft>
-                                                <button rtButton label="Назад" aria-label="Назад" appearance="text"></button>
+                                                <button type="button" rtButton label="Назад" aria-label="Назад" appearance="text"></button>
                                             </ng-template>
                                             <ng-template rtToolbarCenter>
                                                 <span>Дополнительное соглашение №4 к договору от 14 марта 2024 года</span>
                                             </ng-template>
                                             <ng-template rtToolbarRight>
-                                                <button rtButton label="Сохранить" aria-label="Сохранить"></button>
+                                                <button type="button" rtButton label="Сохранить" aria-label="Сохранить"></button>
                                             </ng-template>
                                         </rt-toolbar>
                                     }
@@ -137,13 +142,13 @@ interface IToolbarLayoutCase {
                             <ng-template let-value>
                                 <rt-toolbar [dense]="value">
                                     <ng-template rtToolbarLeft>
-                                        <button rtButton label="Назад" aria-label="Назад" appearance="text"></button>
+                                        <button type="button" rtButton label="Назад" aria-label="Назад" appearance="text"></button>
                                     </ng-template>
                                     <ng-template rtToolbarCenter>
                                         <span>Договор №2024-118</span>
                                     </ng-template>
                                     <ng-template rtToolbarRight>
-                                        <button rtButton label="Сохранить" aria-label="Сохранить"></button>
+                                        <button type="button" rtButton label="Сохранить" aria-label="Сохранить"></button>
                                     </ng-template>
                                 </rt-toolbar>
                             </ng-template>
@@ -163,7 +168,12 @@ interface IToolbarLayoutCase {
                                             <strong>{{ title }}</strong>
                                         </ng-template>
                                         <ng-template rtToolbarRight>
-                                            <button rtButton label="Обновить" aria-label="Обновить" appearance="text"></button>
+                                            <button
+                                                type="button"
+                                                rtButton
+                                                label="Обновить"
+                                                aria-label="Обновить"
+                                                appearance="text"></button>
                                         </ng-template>
                                     </rt-toolbar>
                                 </div>
@@ -180,13 +190,13 @@ interface IToolbarLayoutCase {
                             <ng-template let-layoutCase>
                                 <rt-toolbar [style]="layoutCase.style">
                                     <ng-template rtToolbarLeft>
-                                        <button rtButton label="Назад" aria-label="Назад" appearance="text"></button>
+                                        <button type="button" rtButton label="Назад" aria-label="Назад" appearance="text"></button>
                                     </ng-template>
                                     <ng-template rtToolbarCenter>
                                         <span>Договор №2024-118</span>
                                     </ng-template>
                                     <ng-template rtToolbarRight>
-                                        <button rtButton label="Сохранить" aria-label="Сохранить"></button>
+                                        <button type="button" rtButton label="Сохранить" aria-label="Сохранить"></button>
                                     </ng-template>
                                 </rt-toolbar>
                             </ng-template>
@@ -202,13 +212,13 @@ interface IToolbarLayoutCase {
                             <ng-template>
                                 <rt-toolbar>
                                     <ng-template rtToolbarLeft>
-                                        <button rtButton label="Назад" aria-label="Назад" appearance="text"></button>
+                                        <button type="button" rtButton label="Назад" aria-label="Назад" appearance="text"></button>
                                     </ng-template>
                                     <ng-template rtToolbarCenter>
                                         <span>Договор №2024-118</span>
                                     </ng-template>
                                     <ng-template rtToolbarRight>
-                                        <button rtButton label="Сохранить" aria-label="Сохранить"></button>
+                                        <button type="button" rtButton label="Сохранить" aria-label="Сохранить"></button>
                                     </ng-template>
                                 </rt-toolbar>
                             </ng-template>
