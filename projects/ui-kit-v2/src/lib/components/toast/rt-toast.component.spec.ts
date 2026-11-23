@@ -42,6 +42,7 @@ describe('RtToastComponent', (): void => {
     it('важность и заливка объявлены модификаторами на самой плашке', (): void => {
         const fixture: ComponentFixture<RtToastComponent> = setup({ ...TOAST, severity: 'danger', filled: true });
 
+        expect(hostClasses(fixture)).toContain('rt-toast');
         expect(hostClasses(fixture)).toContain('rt-toast--severity--danger');
         expect(hostClasses(fixture)).toContain('rt-toast--filled');
     });
