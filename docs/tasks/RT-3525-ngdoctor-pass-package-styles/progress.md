@@ -2,35 +2,24 @@
 
 ## Where we stand
 
-Rewritten by every session, not appended to.
-
-- **State:** `<name from the state list of rule task-flow>`
-- **Stage:** <number> of <total> — <name>
-- **Done:** <briefly>
-- **Next step:** <what is done first in the new session>
-- **Uncommitted:** <what lies in the tree outside the index>
-- **PR:** <number and state, or "not open yet">
+- **State:** `замысел-записан`
+- **Stage:** 1 of 1 — Проход по package.json и стилям
+- **Done:** план одобрен словом «Одобряю plan.md RT-3525», plan-red: 1.1 → 1, 1.2 → 0
+- **Next step:** семь сценариев в наборе `check-ngdoctor`, затем проход
+- **Uncommitted:** нет
+- **PR:** not open yet
 
 ## Steps
 
-The steps of the plan, all of them, with a mark each. Rewritten by every turn that moves the work.
-
-- `[x]` done · `[>]` going on right now · `[ ]` not begun
-
-Exactly one step carries `[>]`. The numbers and the names are copied from the plan and not
-reworded: a check matches the two lists, and the turn exit guard counts what is not done yet.
-
-- [x] 1.1 <name of the first step of the first stage>
-- [>] 1.2 <name of the second step of the first stage>
-- [ ] 2.1 <name of the first step of the second stage>
+- [>] 1.1 Проход читает package.json и стили, как инструмент; сценарии называют каждую потерю и каждую границу
+- [ ] 1.2 Проверка Angular Doctor зелёная на дереве и считает 15 package.json, наборы проверок дерева зелёные
 
 ## Decisions along the way
 
-- **<decision>** — <reason>. Affected stage of the plan: <number>.
-
 ## Sessions
 
-### <date>
+### 23.11.2026
 
-- <what was done, in numbers: files, commits, what is green>
-- <what we stumbled on and what caught it>
+- Задача заведена по слову владельца «Да, завести обе». Ответ на вопрос о потере — «Как читает
+  инструмент». План прочли стратег и критик цели до одобрения: убраны чтение `tailwind.config.*`
+  и корневой `package.json` как случай сценариев, добавлены границы `tailwindcss` 3 и `coverage/`.
