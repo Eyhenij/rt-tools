@@ -194,12 +194,10 @@ rt_push_gate_note() {
     [ -f "$rt_hooks_dir/observe.sh" ] && . "$rt_hooks_dir/observe.sh" 2>/dev/null
     command -v rt_note >/dev/null 2>&1 || return 0
     sid="$(printf '%s' "$input" | jq -r '.session_id // empty' 2>/dev/null)"
-    # The base is named: a push against a ref the run ahead pinned and a push that picked its own base
-    # are told apart in the record, not only in the text of a refusal.
     if [ -n "$sid" ]; then
-        rt_note push-gate "res=$outcome" "sid=$sid" ${base:+"base=$base"}
+        rt_note push-gate "res=$outcome" "sid=$sid"
     else
-        rt_note push-gate "res=$outcome" ${base:+"base=$base"}
+        rt_note push-gate "res=$outcome"
     fi
     return 0
 }

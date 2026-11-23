@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/git-guard-push-tests.sh · 1f2165141a29 · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/git-guard-push-tests.sh · 9a13ba290a58 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__terminal__run_in_terminal
 # rt-hook-timeout: 1800
 # Requires: checks/decide.mjs, hooks/decide.sh, hooks/facts.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/push-sign.sh, hooks/push-set.sh, hooks/git-guard-push-marks.sh
@@ -195,12 +195,10 @@ rt_push_gate_note() {
     [ -f "$rt_hooks_dir/observe.sh" ] && . "$rt_hooks_dir/observe.sh" 2>/dev/null
     command -v rt_note >/dev/null 2>&1 || return 0
     sid="$(printf '%s' "$input" | jq -r '.session_id // empty' 2>/dev/null)"
-    # The base is named: a push against a ref the run ahead pinned and a push that picked its own base
-    # are told apart in the record, not only in the text of a refusal.
     if [ -n "$sid" ]; then
-        rt_note push-gate "res=$outcome" "sid=$sid" ${base:+"base=$base"}
+        rt_note push-gate "res=$outcome" "sid=$sid"
     else
-        rt_note push-gate "res=$outcome" ${base:+"base=$base"}
+        rt_note push-gate "res=$outcome"
     fi
     return 0
 }

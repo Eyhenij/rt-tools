@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/git-guard-push-marks.sh · c0eb8ca12626 · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/git-guard-push-marks.sh · 923fab610e8f · правится надстройкой, не здесь
 # The base of the push set and the marks of a green run, shared by the push guard and by the
 # command that runs the set ahead (`git-guard-push-ahead.sh`).
 #
@@ -173,14 +173,14 @@ rt_push_mark_dir() {
     printf '%s/rt-kit/push-green' "$common"
 }
 
-# The base of the run ahead, pinned for the branch. The run ahead picks the base, puts the ref
-# `refs/rt-kit/push-base/<branch>` at its commit and gives the steps of the set that ref, not the
-# remote one: a remote ref moves with every fetch and vanishes with a prune, the pinned one stands
-# until the next run ahead of the branch. A record next to it keeps the tree of the head, the name
-# of the base, its commit and the head commit. The push guard and the git hook take the pinned ref
-# while the record fits the head, and pick the base anew otherwise. A record fits a head with the
-# same tree or a head that lies over the recorded one: a commit after the set — the task folder
-# taken apart, a line in a plan — keeps the marks of the steps that do not read it.
+# The base of the run ahead, pinned for the branch. The run ahead picks the base, puts a ref of its
+# own at its commit and gives the steps of the set that ref, not the remote one: a remote ref moves
+# with every fetch and vanishes with a prune, the pinned one stands until the next run ahead of the
+# branch. A record next to it keeps the tree of the head, the name of the base, its commit and the
+# head commit. The push guard and the git hook take the pinned ref while the record fits the head,
+# and pick the base anew otherwise. A record fits a head with the same tree or a head that lies over
+# the recorded one: a commit after the set — the task folder taken apart, a line in a plan — keeps
+# the marks of the steps that do not read it.
 #
 # Without the record the push picked its base by itself. On 21.11 a set of half an hour took the
 # ref of a branch the host had removed as its base; a neighbouring copy pruned the refs, the push
@@ -191,6 +191,30 @@ rt_push_base_branch() {
     # shellcheck disable=SC1091
     command -v rt_fact_branch >/dev/null 2>&1 || . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
     rt_fact_branch 2>/dev/null
+}
+
+# The pinned ref of a branch. It is named by a number, not by the branch: the ref stands in every
+# line of the set that names the base, and the profile reads those lines by words — `visual-gate`,
+# `e2e` — that a branch name may carry. A line of light checks then passed for a heavy one, and its
+# mark outlived a commit of the paths a heavy step does not read.
+rt_push_base_ref() {
+    [ -n "$1" ] || return 1
+    printf 'refs/rt-kit/push-base/%s' "$(printf '%s' "$1" | cksum | cut -d' ' -f1)"
+}
+
+# Removes the records and the refs of branches the copy no longer holds: nothing else removes them,
+# and a pinned ref keeps its commits from the collection of garbage.
+rt_push_base_sweep() {
+    local dir file branch
+    dir="$(git rev-parse --path-format=absolute --git-dir 2>/dev/null)/rt-kit/push-base.d"
+    [ -d "$dir" ] || return 0
+    find "$dir" -type f 2>/dev/null | while IFS= read -r file; do
+        branch="${file#"$dir"/}"
+        git show-ref --verify --quiet "refs/heads/$branch" 2>/dev/null && continue
+        git update-ref -d "$(rt_push_base_ref "$branch")" 2>/dev/null
+        rm -f "$file" 2>/dev/null
+    done
+    return 0
 }
 
 rt_push_base_record_path() {
@@ -211,7 +235,8 @@ rt_push_base_pin() {
     head="$(git rev-parse --verify --quiet HEAD 2>/dev/null)"
     sha="$(git rev-parse --verify --quiet "$1^{commit}" 2>/dev/null)"
     path="$(rt_push_base_record_path)"
-    ref="refs/rt-kit/push-base/$branch"
+    ref="$(rt_push_base_ref "$branch")"
+    rt_push_base_sweep
     if [ -z "$branch" ] || [ -z "$tree" ] || [ -z "$head" ] || [ -z "$sha" ] || [ -z "$path" ] ||
         ! mkdir -p "${path%/*}" 2>/dev/null ||
         ! git update-ref "$ref" "$sha" 2>/dev/null ||
@@ -242,15 +267,36 @@ rt_push_base_fits() {
 }
 
 # Prints the pinned ref of the branch when the record fits the head, with the ref put back at the
-# recorded commit if anything moved it. No record, or one that does not fit — no answer.
+# recorded commit if anything moved it. The remote refs are fetched first, as a pick does: light
+# steps read the main branch by its remote ref. No record, or one that does not fit — no answer.
 rt_push_base_recorded() {
     local fit sha ref
     fit="$(rt_push_base_fits)" || return 1
     sha="$(printf '%s\n' "$fit" | sed -n 2p)"
-    ref="refs/rt-kit/push-base/$(rt_push_base_branch)"
+    ref="$(rt_push_base_ref "$(rt_push_base_branch)")" || return 1
+    git fetch --quiet --no-prune origin 2>/dev/null
     [ "$(git rev-parse --verify --quiet "$ref" 2>/dev/null)" = "$sha" ] ||
         git update-ref "$ref" "$sha" 2>/dev/null || return 1
     printf '%s' "$ref"
+}
+
+# The base `$1` picked anew, or the pinned ref when the record names that very base at the commit
+# it stands on now: a record that stopped fitting — an amended commit of unread paths — keeps its
+# marks while the base did not move.
+rt_push_base_same() {
+    local path name sha ref
+    path="$(rt_push_base_record_path)" || { printf '%s' "$1"; return 0; }
+    name="$(sed -n 2p "$path" 2>/dev/null)"
+    sha="$(sed -n 3p "$path" 2>/dev/null)"
+    ref="$(rt_push_base_ref "$(rt_push_base_branch)")"
+    if [ -n "$1" ] && [ "$name" = "$1" ] && [ -n "$sha" ] &&
+        [ "$(git rev-parse --verify --quiet "$1^{commit}" 2>/dev/null)" = "$sha" ] &&
+        { [ "$(git rev-parse --verify --quiet "$ref" 2>/dev/null)" = "$sha" ] ||
+            git update-ref "$ref" "$sha" 2>/dev/null; }; then
+        printf '%s' "$ref"
+        return 0
+    fi
+    printf '%s' "$1"
 }
 
 # A base as a person reads it: a pinned ref is named by the remote branch it stands for and its

@@ -403,6 +403,16 @@ merge
 When the base of the push is taken
 Then the record does not fit, and the base is picked anew: the branch of the epic
 
+Given the recorded head commit was amended with a path the heavy step does not read, and the base
+did not move
+When the head is pushed
+Then the base picked anew is the recorded one at the recorded commit, the pinned ref is taken, and
+the push passes from the marks
+
+Given a branch name carries words the profile reads in the lines of the set
+When the base is pinned
+Then the name of the pinned ref carries none of them
+
 Given a step of the set moved the remote ref of the base while it ran
 When the head is pushed
 Then the step ran against the pinned ref, its mark is written, and the push passes from the marks

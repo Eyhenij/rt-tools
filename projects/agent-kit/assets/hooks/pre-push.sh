@@ -89,7 +89,8 @@ command -v rt_push_checks >/dev/null 2>&1 || exit 0
 base="$(rt_push_set_base)"
 
 if command -v rt_push_adds_nothing >/dev/null 2>&1 && rt_push_adds_nothing "$base"; then
-    printf 'pre-push: the head adds no commit to %s — the set is not run\n' "$base" >&2
+    printf 'pre-push: the head adds no commit to %s — the set is not run\n' \
+        "$(command -v rt_push_base_label >/dev/null 2>&1 && rt_push_base_label "$base" || printf '%s' "$base")" >&2
     exit 0
 fi
 

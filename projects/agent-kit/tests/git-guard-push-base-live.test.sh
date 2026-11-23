@@ -52,6 +52,14 @@ bare_remote() {
     git init -q --bare "$dir" 2>/dev/null
     printf '%s' "$dir"
 }
+# Закреплённая ссылка ветки — тем же числом, что и в помощнике.
+pinned_ref() { (. "$HOOKS/git-guard-push-marks.sh" && rt_push_base_ref "$1"); }
+# Имя закреплённой ссылки не несёт слов ветки: профиль читает строки набора по словам.
+case "$(pinned_ref RT-1-visual-gate-e2e-fix)" in
+    *visual* | *e2e* | *RT-1*) report "SC-AK-1852 — имя закреплённой ссылки без слов ветки" нет да ;;
+    refs/rt-kit/push-base/[0-9]*) report "SC-AK-1852 — имя закреплённой ссылки без слов ветки" да да ;;
+    *) report "SC-AK-1852 — имя закреплённой ссылки без слов ветки" нет да ;;
+esac
 # Строка записи прогона вперёд для ветки копии: 2 — имя базы, 3 — её коммит.
 record_line() {
     sed -n "${3}p" "$(git -C "$1" rev-parse --path-format=absolute --git-dir)/rt-kit/push-base.d/$2" 2>/dev/null
@@ -144,7 +152,7 @@ report "SC-AK-1850 — карточка: ссылка снятой задачи 
 ahead "$CARD"
 report "SC-AK-1850 — карточка: набор шёл от главной" "$(record_line "$CARD" RT-70-epic 2)" origin/main
 report "SC-AK-1850 — карточка: закреплённая база стоит на главной" \
-    "$(card_git rev-parse --verify --quiet refs/rt-kit/push-base/RT-70-epic)" "$(card_git rev-parse origin/main)"
+    "$(card_git rev-parse --verify --quiet "$(pinned_ref RT-70-epic)")" "$(card_git rev-parse origin/main)"
 gate "SC-AK-1850 — карточка: отправка проходит по отметкам" "$CARD" 'git push origin RT-70-epic' PASS
 card_git branch -q -D -r origin/RT-71-task 2>/dev/null
 gate "SC-AK-1850 — карточка: после чистки ссылок отправка проходит" "$CARD" 'git push origin RT-70-epic' PASS
@@ -180,7 +188,7 @@ pin_git branch -q -D -r origin/RT-96-low 2>/dev/null
 gate "SC-AK-1852 — ссылка базы снята чисткой: отправка проходит по отметкам" \
     "$PIN" 'git push origin RT-97-top' PASS
 report "SC-AK-1852 — закреплённая база стоит на записанном коммите" \
-    "$(pin_git rev-parse --verify --quiet refs/rt-kit/push-base/RT-97-top)" "$low_sha"
+    "$(pin_git rev-parse --verify --quiet "$(pinned_ref RT-97-top)")" "$low_sha"
 report "SC-AK-1852 — ссылка снятой ветки в общие ссылки не вернулась" \
     "$(pin_git rev-parse --verify --quiet refs/remotes/origin/RT-96-low)" ""
 # Коммит пути, который тяжёлый шаг не читает: запись подходит голове над записанной, отметка в силе.
@@ -247,6 +255,31 @@ two_git merge -q --no-edit origin/RT-60-epic 2>/dev/null
 report "SC-AK-1852 — после слияния ветки эпика база выбрана заново" \
     "$(cd "$TWO" && . "$HOOKS/push-set.sh" && . "$HOOKS/git-guard-push-marks.sh" && rt_push_set_base)" origin/RT-60-epic
 rm -rf "$TWO" "$TWO_REMOTE" "$TWO_RUNS"
+
+# --- SC-AK-1852. Записанный коммит переписан непрочитанным путём ----------------------------------
+# Запись голове не подходит, база выбрана заново, но это та же ветка на том же коммите: отправка
+# берёт закреплённую ссылку, и отметка тяжёлого шага в силе.
+amend_git() {
+    git -C "$AMEND" -c user.name=probe -c user.email=probe@example.invalid -c commit.gpgsign=false "$@"
+}
+AMEND_REMOTE="$(bare_remote)" || exit 1
+AMEND_RUNS="$(tmp_path)" || exit 1
+AMEND="$(fixture RT-40-epic)"
+amend_git remote add origin "$AMEND_REMOTE"
+amend_git push -q origin main RT-40-epic 2>/dev/null
+amend_git checkout -q -b RT-41-low RT-40-epic 2>/dev/null
+fixture_commit "$AMEND" low.txt низ 'feat: нижняя ветка'
+amend_git push -q origin RT-41-low 2>/dev/null
+amend_git checkout -q -b RT-42-top RT-41-low 2>/dev/null
+profile "$AMEND" "$AMEND_RUNS"
+ahead "$AMEND"
+mkdir -p "$AMEND/notes" && printf 'заметка\n' > "$AMEND/notes/n.md"
+amend_git add notes/n.md 2>/dev/null
+amend_git commit -q --amend --no-edit 2>/dev/null
+gate "SC-AK-1852 — переписанный записанный коммит непрочитанным путём: отправка проходит по отметкам" \
+    "$AMEND" 'git push origin RT-42-top' PASS
+report "SC-AK-1852 — после переписанного коммита тяжёлый шаг прогнан один раз" "$(grep -c heavy "$AMEND_RUNS")" 1
+rm -rf "$AMEND" "$AMEND_REMOTE" "$AMEND_RUNS"
 
 # --- SC-AK-1852. Ссылка базы сдвинулась во время шага ---------------------------------------------
 # Тяжёлый шаг сам двигает ссылку базы, как выборка соседа во время набора: шаг шёл от закреплённой

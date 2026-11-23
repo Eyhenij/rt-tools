@@ -50,10 +50,11 @@ There is no interface: the guard answers with a refusal text, the run ahead with
   the remote ref, and a record of the tree of the head, the head commit, the base and its commit.
   The push guard and the git hook take the pinned ref while the record fits the head: the same
   tree, or a head over the recorded one by plain commits. No record, one that does not fit, or a
-  merge over the recorded head, and the base is picked anew.
+  merge over the recorded head, and the base is picked anew; a new pick of the recorded branch at
+  the recorded commit takes the pinned ref again.
 - **The refusal «No green mark» names the base of the push and the base of the last run ahead.** A
   pinned base is named by its remote branch and commit; a record that does not fit the head is
-  named «another history». The observation line of the push names its base too.
+  named «another history».
 - **A head that adds no commit to its base is pushed with no check run.** Every commit of it
   already lies in that branch on the remote. The guard, the run ahead and the git hook all answer
   so; a head with no base on a remote is judged as before. The guard answers so only for a push of
@@ -155,10 +156,11 @@ checks: the last `push ahead:` line of the output tells them apart. Not 2: to a 
 The marks lie in `<git common dir>/rt-kit/push-green/`, a file per key, the check line inside. They
 are shared by every working copy of the repository and never land in history.
 
-The pinned base is the ref `refs/rt-kit/push-base/<branch>` in the shared refs. Its record lies in
-`<git dir of the copy>/rt-kit/push-base.d/<branch>`: four lines — the tree of the head, the name of
-the base, the commit of the base, the head commit. Both belong to one branch: the branches of a
-chain run ahead one after another in one copy.
+The pinned base is the ref `refs/rt-kit/push-base/<number>` in the shared refs, the number being
+the `cksum` of the branch name. Its record lies in `<git dir of the copy>/rt-kit/push-base.d/<branch>`:
+four lines — the tree of the head, the name of the base, the commit of the base, the head commit.
+Both belong to one branch: the branches of a chain run ahead one after another in one copy. A run
+ahead removes the records and the refs of branches the copy no longer holds.
 
 ## Screens and states
 
@@ -207,6 +209,12 @@ Several working copies share the marks: a key holds the tree and the base, not t
   moves with a fetch of any copy and vanishes with a prune; a step that read it while it moved left
   no mark, and the push was refused after a green run. A ref of the run's own stands until the next
   run ahead of the branch, and nothing of the remote refs is written back.
+- **The pinned ref is named by a number, not by the branch.** It stands in every line of the set
+  that names the base, and the profile reads those lines by words a branch name may carry —
+  `visual-gate`, `e2e`. Named by the branch, a light line passed for a heavy one, and its mark
+  outlived a commit of paths a heavy step does not read.
+- **The base is not written into the observation line.** The record of observations leaves the
+  tree and holds no names of it; the refusal carries both bases.
 - **A record fits a head over the recorded one by plain commits, not only the same tree.** The
   marks of the heavy steps outlive a commit of paths they do not read — the task folder taken
   apart, a line in a plan. A record bound to the tree alone dropped the base after such a commit,
