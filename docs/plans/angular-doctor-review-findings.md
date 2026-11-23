@@ -284,3 +284,28 @@ parts, `testing`, `kit-approval`, `epic-flow`. No edit of the gate map is needed
 
 Not proposed: a test file edited by a script — `testing` names it, a miss of carrying out; mutants
 that survived the first suite — the review rounds caught them, as they exist to.
+
+## RT-3526 — the review of 23 November 2026
+
+Loaded: `task-delivery-loop`, `task-flow` with its parts, `doc-style`, `git-workflow` with its
+parts, `testing`, `kit-approval`, `epic-flow`, `agent-kit-extend`. No edit of the gate map is needed.
+
+1. **The task card answers like the code** — package, the pattern `task-flow-start`: an option of
+   a grill question that repeats the card means the question is not asked. Here the executor asked
+   what the card already said; the proposal of that day should be cut to this and written in
+   English.
+2. **The plan is committed after its last reading** — package, the pitfalls of `task-flow-start`:
+   the step engine reads the plan of the commit that added it, and a correction committed apart is
+   not seen. Here the history was rebuilt before the push.
+3. **A count the review rounds may grow is a lower bound** — package, the role `project-manager`:
+   `>= N`, not `= N`. Here `= 5` met 12 at the re-measure before the PR, and the folder came back
+   for a replacement line.
+4. **The length check runs at the stage** — tree, `task-delivery-loop-run` «5–6»:
+   `node tools/check-file-size.mjs`. Here the check file reached 520 lines and only the first
+   review round saw it.
+5. **An epic found mid-task is declared from a second working tree on the main branch** — package,
+   the pattern `epic-flow-declare`: `task:new --epic` lays the draft into the working tree it runs
+   in, where the flow guard refuses to move it.
+
+Not proposed: «без вида» at the push — `kit-approval` names it, and RT-3525 item 1 holds the rest;
+`--no-verify` — its guard refused as it should.
