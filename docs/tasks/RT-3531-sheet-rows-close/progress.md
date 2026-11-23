@@ -5,8 +5,8 @@
 - **State:** `этап-идёт`
 - **Stage:** 6 of 6 — Витрина и тексты
 - **Done:** план и макет одобрены; спека и сценарии SC-UKV-1710…1727 записаны; этап 3 сделан — у `rt-bottom-sheet` кнопка «×», слот `[sheetAction]`, вход `fullHeight`, блокировка прокрутки, Escape, появление без выезда, вход `unsaved` и выход `applyRequest` с вопросом внизу экрана; 681 тест шторки и её пользователей зелёный; этап 4 — у опции поле `description`, у `rt-checkbox` входы `description` и `card`, пять списков рисуют в шторке карточки, вход `sheetCards` возвращает прежние строки; этап 5 — у `[rtPopover]` входы шторки `rtPopoverSheetFull`, `rtPopoverSheetAction`, `rtPopoverSheetUnsaved` и выход `rtPopoverSheetApply`, высоты и действия по таблице плана, вопрос у `rt-dynamic-selector` и `rt-page-bar`; 4322 теста кита зелёные
-- **Next step:** шаг 6.3 — витрина показана владельцу, ждёт его ответа «одобряете?»; после ответа строка «Витрина» в записи одобрений, шаг 6.4 и два круга ревью
-- **Uncommitted:** нет
+- **Next step:** правки первого круга ревью и решения владельца после него сделаны в коде и текстах (действие в шапке и вопрос у шторок дат, барабан времени, место над клавиатурой, отметка подсказки); дальше — сверка чисел новых макетов с витриной, показ витрины владельцу и его «одобряете?», коммит первого круга, второй круг ревью
+- **Uncommitted:** правки первого круга ревью — код, тесты, тексты
 - **PR:** not open yet
 
 ## Steps
@@ -129,6 +129,23 @@
   шторки, четыре из них новые истории без эталона. Пересняты 36 кадров, сняты 4 новых; повторный
   прогон — 1264 снимка из 1264, обход `pnpm run -s test:stories:v2` — 1238 историй и 124 страницы
   без ошибок.
+- **Решения владельца по находкам первого круга ревью, 23.11.2026.** Шторки даты, времени и
+  периода: действие в шапку и вопрос перед закрытием — «Сделать в этой задаче». Клавиатура
+  телефона: «На десктопе отступ не нужен на мобилке нужен, найди решение как это чекать и
+  реализуй». Подсказки автодополнения: «Отмечать и покажи на макете». Кнопки окна вопроса —
+  большие: при показе макета владелец сказал «вопрос оставить с большими кнопками». Макет правится первым,
+  одобрение макета и витрины берётся заново. Affected stage of the plan: 3, 4, 5, 6.
+- **Выбор времени барабаном — по слову владельца при показе макета дат, 23.11.2026:** «включи в
+  задачу сделать тайм пикер как в ios». Понято так: в шторке на телефоне часы и минуты
+  прокручиваются под полосой выбора по центру; панель у поля на широком экране остаётся списками.
+  Affected stage of the plan: 3, 6.
+- **Барабан крутится по кругу и начинает с текущего времени — по слову владельца при показе
+  витрины, 23.11.2026:** «шрифт тот? должно крутится по кругу и стартовать с текущего времени,
+  опционально можно чтобы стартовалос 00:))». Сделано: за 23 идёт 00; у поля без времени под
+  полосой стоит текущее время, округлённое вниз до шага, вход `timeStart="midnight"` начинает с
+  00:00. Моё решение: стартовое время выбранным не считается — шторка закрывается без вопроса, а
+  «Готово» его пишет. Шрифт сверен: цифры барабана — Montserrat 600 / 400, 20 и 18 px, как в
+  макете. Affected stage of the plan: 3, 6.
 - **Свои шаблоны шапки и подвала — по слову владельца при показе витрины** («Добавить в эту
   задачу»). `<ng-template rtSheetHeader>` и `<ng-template rtSheetFooter>` у `rt-bottom-sheet`, входы
   `rtPopoverSheetHeader` и `rtPopoverSheetFooter` у `[rtPopover]`, входы `sheetHeaderTemplate` и
@@ -238,13 +255,32 @@ The progress in full — `docs/tasks/RT-3531-sheet-rows-close/progress.md`; the 
 ### Uncommitted
 
 ```
+ M docs/specs/ui-kit-v2/sheet-header-cards/implementation.md
+ M docs/specs/ui-kit-v2/sheet-header-cards/scenarios.md
+ M docs/specs/ui-kit-v2/sheet-header-cards/spec.md
  M docs/tasks/RT-3531-sheet-rows-close/approvals.md
  M docs/tasks/RT-3531-sheet-rows-close/progress.md
+ M projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-sheet.spec.ts
+ M projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete.component.html
+ M projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete.component.scss
+ M projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete.component.ts
+ M projects/ui-kit-v2/src/lib/components/autocomplete/stories/component/test-autocomplete-sheet.component.html
+ M projects/ui-kit-v2/src/lib/components/autocomplete/stories/component/test-autocomplete-sheet.component.ts
+ M projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.component.html
+ M projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.component.scss
+ M projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.component.ts
+ M projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.logic.ts
+ M projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.model.ts
+ M projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.html
+ M projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.ts
+ M projects/ui-kit-v2/src/lib/components/date-picker/rt-date-picker.component.html
+ M projects/ui-kit-v2/src/lib/components/date-picker/rt-date-picker.component.ts
 ```
 
 ### Commits over the main branch
 
 ```
+f4997bbdb docs(rt:ui-kit-v2): витрина шторок одобрена владельцем, шаги этапа отмечены (RT-3531)
 04522f54b fix(rt:ui-kit-v2): «Сбросить» в шторке отборов страницы — маленькая кнопка, как «Применить» (RT-3531)
 bdc2288a6 feat(rt:ui-kit-v2): свои шаблоны шапки и подвала шторки, правки по показу витрины (RT-3531)
 688f6f468 test(rt:ui-kit-v2): снимки шторок пересняты под новую шапку и карточки, сценарии готовности называют шапку (RT-3531)

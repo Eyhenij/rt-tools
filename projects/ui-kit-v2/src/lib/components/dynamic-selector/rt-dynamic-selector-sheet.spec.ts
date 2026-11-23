@@ -141,6 +141,19 @@ describe('Динамический селектор в нижней шторке
         expect(document.querySelector('.rt-popover-sheet .rt-bottom-sheet--open')).toBeNull();
     });
 
+    it('SC-UKV-1767 — пока список загружается, «Применить» в шапке выключена и с отметками', (): void => {
+        const fixture: TFixture = open();
+        inSheet('[qa-dataid="dynamic-selector-option"] [role="checkbox"]')[0].click();
+        settle(fixture);
+        const apply: HTMLButtonElement = inSheet('[qa-dataid="dynamic-selector-sheet-apply"]')[0] as HTMLButtonElement;
+        expect(apply.disabled).toBe(false);
+
+        fixture.componentRef.setInput('loading', true);
+        settle(fixture);
+
+        expect(apply.disabled).toBe(true);
+    });
+
     it('SC-UKV-1717 — sheetCards=false оставляет в шторке пункты, какими окно стоит у кнопки', (): void => {
         open({ sheetCards: false });
 

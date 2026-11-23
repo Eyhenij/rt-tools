@@ -61,19 +61,46 @@
         </ng-template>
 
         @if (useSheet()) {
-            <rt-bottom-sheet qa-dataid="date-picker-sheet" [open]="sheetOpen()" (openChange)="sheetOpen.set($event)">
+            <rt-bottom-sheet
+                qa-dataid="date-picker-sheet"
+                [open]="sheetOpen()"
+                [ariaLabel]="sheetTitle() || null"
+                [unsaved]="sheetPanel()?.dirty() ?? false"
+                (applyRequest)="sheetPanel()?.apply()"
+                (openChange)="sheetOpen.set($event)">
                 <!-- Заголовок шторки — подпись поля или его доступное имя; без них в шапке остаётся кнопка закрытия. -->
                 @if (sheetTitle()) {
                     <span sheetHeader rtElem="sheet-title" qa-dataid="date-picker-sheet-title">{{ sheetTitle() }}</span>
                 }
+                <!--
+                    Время и дата со временем уходят значением по кнопке: она стоит справа в шапке шторки,
+                    и набранное без неё шторка перед закрытием спрашивает. Дата без времени выбирается
+                    касанием дня, кнопки у неё нет.
+                -->
+                @if (type() !== 'date') {
+                    <button
+                        sheetAction
+                        rtButton
+                        type="button"
+                        size="sm"
+                        appearance="filled"
+                        qa-dataid="date-picker-sheet-apply"
+                        [label]="type() === 'time' ? t().uiDone : t().uiApply"
+                        [attr.aria-label]="type() === 'time' ? t().uiDone : t().uiApply"
+                        [disabled]="!(sheetPanel()?.canApply() ?? false)"
+                        (click)="sheetPanel()?.apply()"></button>
+                }
                 @if (sheetOpen()) {
                     <rt-date-panel
+                        #sheetPanel
                         sheet
+                        applyOutside
                         [type]="type()"
                         [value]="value()"
                         [min]="min()"
                         [max]="max()"
                         [minuteStep]="minuteStep()"
+                        [timeStart]="timeStart()"
                         (picked)="onPicked($event)"
                         (closed)="closePanel()" />
                 }

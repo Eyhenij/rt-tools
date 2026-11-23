@@ -50,7 +50,7 @@
     </div>
 
     <ng-template #panelTpl>
-        @if (openedInSheet()) {
+        @if (shownInSheet()) {
             <!-- Поиск наверху шторки: на телефоне набирают здесь, поле под шторкой закрыто ею. -->
             <div rtElem="sheet-search" qa-dataid="autocomplete-sheet-search">
                 <rt-input
@@ -94,10 +94,22 @@
                         [rtMod]="{ active: i === activeIndex() }"
                         [attr.aria-selected]="item === value()"
                         (click)="onSelect(item)">
-                        @if (itemTemplate(); as tpl) {
-                            <ng-container *ngTemplateOutlet="tpl; context: { $implicit: item }" />
-                        } @else {
-                            {{ displayWith()(item) }}
+                        <span rtElem="option-text">
+                            @if (itemTemplate(); as tpl) {
+                                <ng-container *ngTemplateOutlet="tpl; context: { $implicit: item }" />
+                            } @else {
+                                {{ displayWith()(item) }}
+                            }
+                        </span>
+                        @if (cards()) {
+                            <!-- Радиокнопка кита только показывает подсказку, совпавшую со значением поля: нажатие принимает карточка. -->
+                            <rt-radio-button
+                                rtElem="mark"
+                                qa-dataid="autocomplete-option-mark"
+                                aria-hidden="true"
+                                inert
+                                [value]="i"
+                                [checked]="item === value()" />
                         }
                     </li>
                 } @empty {

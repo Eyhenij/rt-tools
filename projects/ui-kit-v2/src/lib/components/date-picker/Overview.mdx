@@ -50,7 +50,10 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 показывает оба места: `Popover`, `PopoverFromIconButton` с кнопкой-иконкой, `BottomSheet`,
 `BottomSheetDateTime` с заголовком шторки от потребителя, `BottomSheetTime` на вкладке «Время» и
 `BottomSheetWithoutToday` без кнопки «Сегодня». Входы: `type`, `value`, `min`, `max`, `minuteStep`, `sheet`,
-`isTodayButtonShown`. Выходы: `picked` со значением и `closed` с просьбой закрыть панель.
+`isTodayButtonShown`, `applyOutside` (кнопку «Готово» или «Применить» рисует тот, кто держит
+панель). Выходы: `picked` со значением и `closed` с просьбой закрыть панель. Раздел
+`Molecules/Forms/DateSheet` показывает шторку самого поля: `Time` и `DateTime` с барабаном времени
+и действием в шапке, `Range` — период.
 Панель создают заново на каждое открытие, а фон и рамку поповера даёт потребитель.
 
 **Границы в покое не видны на самом поле.** `min` и `max` проявляются в панели — её показывает
@@ -89,15 +92,16 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход         | тип                                                                      | умолчание                 |
-| ------------ | ------------------------------------------------------------------------ | ------------------------- |
-| `appearance` | `'outline' \| 'fill'`                                                    | `'outline'`               |
-| `type`       | `'date' \| 'datetime-local' \| 'time'`                                   | `'date'`                  |
-| `sheet`      | `boolean` — на телефоне панель в нижней шторке; `false` — поповер у поля | `true`                    |
-| `min`        | `string \| null` — форма значения                                        | `null`                    |
-| `max`        | `string \| null` — форма значения                                        | `null`                    |
-| `minuteStep` | `number` — шаг колонки минут                                             | `5`                       |
-| `radius`     | `TRtRadius \| null`                                                      | `null` → скругление полей |
+| вход         | тип                                                                                 | умолчание                 |
+| ------------ | ----------------------------------------------------------------------------------- | ------------------------- |
+| `appearance` | `'outline' \| 'fill'`                                                               | `'outline'`               |
+| `type`       | `'date' \| 'datetime-local' \| 'time'`                                              | `'date'`                  |
+| `sheet`      | `boolean` — на телефоне панель в нижней шторке; `false` — поповер у поля            | `true`                    |
+| `min`        | `string \| null` — форма значения                                                   | `null`                    |
+| `max`        | `string \| null` — форма значения                                                   | `null`                    |
+| `minuteStep` | `number` — шаг колонки минут                                                        | `5`                       |
+| `timeStart`  | `'now' \| 'midnight'` — с какого времени барабан шторки начинает у поля без времени | `'now'`                   |
+| `radius`     | `TRtRadius \| null`                                                                 | `null` → скругление полей |
 
 ## Входы от основы полей
 

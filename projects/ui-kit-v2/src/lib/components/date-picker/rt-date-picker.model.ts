@@ -21,6 +21,9 @@ export namespace IRtDatePicker {
         minute: string;
     }
 
+    /** С какого времени барабан шторки начинает у поля без значения: с текущего или с `00:00`. */
+    export type TimeStart = 'now' | 'midnight';
+
     /** Ячейка колонки часов или минут. */
     export interface TimeCell {
         value: number;

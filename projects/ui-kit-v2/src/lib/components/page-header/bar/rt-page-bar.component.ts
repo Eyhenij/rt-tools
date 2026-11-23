@@ -174,6 +174,12 @@ export class RtPageBarComponent {
     /** Нажата «Сбросить» в шторке отборов узкого вида: приложение очищает отборы. */
     public readonly filtersReset: OutputEmitterRef<void> = output<void>();
 
+    /**
+     * На вопрос перед закрытием шторки отборов ответили «Не применять»: приложение возвращает полям
+     * применённые значения. Поля отборов принадлежат приложению, и сама шапка вернуть их не может.
+     */
+    public readonly filtersDiscard: OutputEmitterRef<void> = output<void>();
+
     constructor() {
         const destroyRef: DestroyRef = inject(DestroyRef);
         let watch: ResizeObserver | null = null;

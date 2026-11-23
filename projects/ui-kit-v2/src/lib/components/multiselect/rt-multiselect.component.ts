@@ -143,7 +143,7 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
     protected readonly popover: Signal<RtPopoverDirective> = viewChild.required(RtPopoverDirective);
 
     /** Список открыт в нижней шторке: под ним стоит подвал «Выбрано · Сбросить · Готово». */
-    protected readonly openedInSheet: Signal<boolean> = computed((): boolean => this.popover().openedInSheet());
+    protected readonly openedInSheet: Signal<boolean> = computed((): boolean => this.popover().shownInSheet());
 
     /** Список рисуется карточками: он открыт в шторке, и вход `sheetCards` их не выключил. */
     protected readonly cards: Signal<boolean> = computed((): boolean => this.sheetCards() && this.openedInSheet());

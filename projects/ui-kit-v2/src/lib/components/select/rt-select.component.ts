@@ -137,7 +137,7 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
     protected readonly isOpen: Signal<boolean> = computed((): boolean => this.popover().isOpen());
 
     /** Список рисуется карточками: он открыт в шторке, и вход `sheetCards` их не выключил. */
-    protected readonly cards: Signal<boolean> = computed((): boolean => this.sheetCards() && this.popover().openedInSheet());
+    protected readonly cards: Signal<boolean> = computed((): boolean => this.sheetCards() && this.popover().shownInSheet());
 
     /** Клавиатура списка: подсветка, клавиши открытия, id для `aria-activedescendant`, прокрутка к опции. */
     protected readonly optionList: RtOptionList = new RtOptionList({

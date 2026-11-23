@@ -24,7 +24,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { Observable, Subject, switchMap } from 'rxjs';
+import { Observable, Subject, switchMap, take } from 'rxjs';
 
 import { BreakpointsService, carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
 import { rtPopoverCloseIntents } from './rt-popover-intents.logic';
@@ -90,6 +90,7 @@ export class RtPopoverDirective implements OnDestroy {
 
     readonly #overlayCreatedSource: Subject<OverlayRef> = new Subject<OverlayRef>();
     readonly #sheetCreatedSource: Subject<IRtPopoverSheetOpened> = new Subject<IRtPopoverSheetOpened>();
+    readonly #sheetLeavingSource: Subject<IRtPopoverSheetOpened> = new Subject<IRtPopoverSheetOpened>();
 
     #overlayRef: OverlayRef | null = null;
     #sheet: IRtPopoverSheetOpened | null = null;
@@ -109,6 +110,8 @@ export class RtPopoverDirective implements OnDestroy {
 
     /** Панель открыта в шторке: берётся в минуту открытия, и порог ширины не меняет открытую панель. */
     protected readonly openedInSheetState: WritableSignal<boolean> = signal<boolean>(false);
+    /** Шторка закрыта и уезжает вниз: её содержимое ещё на экране. */
+    protected readonly sheetLeavingState: WritableSignal<boolean> = signal<boolean>(false);
 
     public readonly template: InputSignal<TemplateRef<unknown> | null> = input<TemplateRef<unknown> | null>(null, { alias: 'rtPopover' });
 
@@ -216,6 +219,13 @@ export class RtPopoverDirective implements OnDestroy {
      */
     public readonly openedInSheet: Signal<boolean> = this.openedInSheetState.asReadonly();
 
+    /**
+     * Панель нарисована в шторке: открыта в ней или ещё уезжает вниз после закрытия. По нему панель
+     * выбирает свой вид в шторке — карточки, поиск, подвал: по `openedInSheet` вид сменился бы на
+     * глазах, пока шторка закрывается. Поведение — фокус, клавиши, закрытие — читает `openedInSheet`.
+     */
+    public readonly shownInSheet: Signal<boolean> = computed((): boolean => this.openedInSheetState() || this.sheetLeavingState());
+
     public readonly opened: OutputEmitterRef<void> = output<void>({ alias: 'rtPopoverOpened' });
 
     /** Шторка открыта и больше не `inert`: с этой минуты в неё можно ставить фокус. Сама панель у триггера его не шлёт. */
@@ -244,6 +254,14 @@ export class RtPopoverDirective implements OnDestroy {
                 takeUntilDestroyed(this.#destroyRef)
             )
             .subscribe((): void => this.close());
+
+        // Закрытая шторка ещё уезжает вниз: признак «нарисована в шторке» снимается, когда её снесли.
+        this.#sheetLeavingSource
+            .pipe(
+                switchMap((sheet: IRtPopoverSheetOpened): Observable<void> => sheet.overlayRef.detachments().pipe(take(1))),
+                takeUntilDestroyed(this.#destroyRef)
+            )
+            .subscribe((): void => this.sheetLeavingState.set(false));
     }
 
     public ngOnDestroy(): void {
@@ -282,6 +300,12 @@ export class RtPopoverDirective implements OnDestroy {
             return;
         }
         this.#overlayRef?.detach();
+        // Шторка уезжает вниз со своим содержимым, и признак «нарисована в шторке» живёт до её сноса.
+        const leaving: IRtPopoverSheetOpened | null = this.#sheet;
+        if (leaving !== null) {
+            this.sheetLeavingState.set(true);
+            this.#sheetLeavingSource.next(leaving);
+        }
         this.#closeSheet(true);
         this.isOpenState.set(false);
         this.closed.emit();

@@ -388,7 +388,7 @@ describe('Карточки выбора селекта в шторке (вход
         expect(document.activeElement).toBe(qa(fixture, 'select-trigger')?.nativeElement);
     });
 
-    it('SC-UKV-1721 — шторка с поиском открыта по содержимому и помечена «печатают», пока фокус в поиске', (): void => {
+    it('SC-UKV-1721 — шторка с поиском открыта по содержимому и помечена «печатают» с фокуса в поиске до закрытия', (): void => {
         const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { filter: true });
         press(fixture, 'select-trigger');
         const panel: HTMLElement = document.querySelector('[qa-dataid="bottom-sheet-panel"]') as HTMLElement;
@@ -402,9 +402,11 @@ describe('Карточки выбора селекта в шторке (вход
         expect(panel.classList).toContain('rt-bottom-sheet__panel--typing');
         expect(panel.classList).not.toContain('rt-bottom-sheet__panel--full');
 
+        // Уход фокуса высоту не снимает: сожмись шторка сейчас, карточка уехала бы из-под пальца.
         search.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+        all('select-option')[0].dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
         settle(fixture);
-        expect(panel.classList).not.toContain('rt-bottom-sheet__panel--typing');
+        expect(panel.classList).toContain('rt-bottom-sheet__panel--typing');
     });
 
     it('SC-UKV-1721 — фокус на карточке «печатают» не ставит: в неё не печатают', (): void => {

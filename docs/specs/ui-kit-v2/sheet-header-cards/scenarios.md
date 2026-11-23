@@ -96,13 +96,13 @@ Then the kinds are cards with the kit radio button, and the current one is check
 
 Covered: `projects/ui-kit-v2/src/lib/components/table/filter-header/rt-table-filter-header.component.spec.ts`.
 
-### SC-UKV-1721 — a sheet with a search is open by the height of its content and marked as typed in while the focus is in its search
+### SC-UKV-1721 — a sheet with a search is open by the height of its content and marked as typed in from the focus in its search until it closes
 
 Given a select with a search open in the sheet by the height of its content
 When the search takes the focus
 Then the sheet is marked as typed in, which on a touch screen gives it the full height, and the mark
-leaves with the focus; the focus on a card, a checkbox, a radio button, a button or a read-only
-field does not set the mark: nobody types there
+stays when the focus leaves the search and is gone at the next opening; the focus on a card, a
+checkbox, a radio button, a button or a read-only field does not set the mark: nobody types there
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`; which node is
 typed in — by `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.logic.spec.ts`.
@@ -153,10 +153,11 @@ Covered: `projects/ui-kit-v2/src/lib/components/date-picker/rt-date-picker.compo
 ### SC-UKV-1727 — the dynamic selector with marks set asks before it closes
 
 Given a dynamic selector open in the sheet with marks changed and not applied
-When the sheet is dragged down
+When the sheet is asked to close by its close button or dragged down
 Then the question before closing is shown
 
-Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-sheet.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-sheet.spec.ts`;
+the drag — by `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-focus.spec.ts`.
 
 ### SC-UKV-1750 — a header template stands in place of the close button, the title and the action
 
@@ -207,3 +208,132 @@ Then the application is told to reset the filters, the sheet stays open and clos
 question; with no filter set and nothing typed the reset is off
 
 Covered: `projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.component.spec.ts`.
+
+### SC-UKV-1756 — the question takes the focus, the sheet under it is out of reach
+
+Given a sheet with a choice not applied and the focus on its close button
+When the close button is pressed
+Then the focus stands on the first answer of the question and the panel and the backdrop of the
+sheet are inert; the cancel answer returns the focus to the close button
+
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-focus.spec.ts`.
+
+### SC-UKV-1757 — a closed sheet returns the focus to the node it was opened from
+
+Given a sheet that stands in the template of a part, opened by a button next to it
+When the sheet is closed with the focus inside it
+Then the focus stands on that button; a focus already moved elsewhere is left where it is
+
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-focus.spec.ts`.
+
+### SC-UKV-1758 — Escape inside a sheet closes it and goes no further
+
+Given an open sheet inside a layer that listens to Escape
+When Escape is pressed with the focus in the sheet
+Then the sheet closes and the layer does not get the key; Escape already taken by a layer above
+the sheet does not close it
+
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-focus.spec.ts`.
+
+### SC-UKV-1759 — the answer "do not apply" is reported apart from the closing
+
+Given a sheet with a choice not applied and the question shown
+When the answer "do not apply" is pressed
+Then the sheet reports that the input is dropped and closes; the page filters pass it to the
+application
+
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-focus.spec.ts`,
+`projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.component.spec.ts`.
+
+### SC-UKV-1760 — the action of a date sheet stands in its header
+
+Given a field of a time, of a date with time or of a date, on a phone
+When its sheet is opened
+Then the time shows the done button and the date with time the apply button in the header of the
+sheet, the footer of the panel keeps no such button, and the date without time has no action
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/rt-date-picker-sheet.spec.ts`.
+
+### SC-UKV-1761 — a date sheet with a value chosen and not applied asks before it closes
+
+Given the sheet of a time field with the time changed and not applied
+When the close button is pressed
+Then the question is shown; the apply answer writes the value and closes, the answer "do not
+apply" closes and keeps the value; with nothing changed the sheet closes at once
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/rt-date-picker-sheet.spec.ts`.
+
+### SC-UKV-1762 — the value that stopped under the band of the wheel is the chosen one
+
+Given the sheet of a time field with the wheels of hours and minutes
+When the wheel of hours is scrolled and stops
+Then the hour under the band is the chosen one and the button of the header writes it; an hour
+outside the bounds is not taken
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/rt-date-picker-sheet.spec.ts`; which
+value stands under the band — by `projects/ui-kit-v2/src/lib/components/date-picker/rt-date-wheel.logic.spec.ts`.
+
+### SC-UKV-1768 — the wheel turns without an end
+
+Given the sheet of a time field with the hour 23 under the band
+When the wheel of hours is scrolled one value further
+Then the hour 00 is the chosen one, and the stopped wheel stands at the same value in the middle
+of its column, so it turns on both ways; the copies of the values are hidden from a screen reader
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/rt-date-picker-sheet.spec.ts`,
+`projects/ui-kit-v2/src/lib/components/date-picker/rt-date-wheel.logic.spec.ts`.
+
+### SC-UKV-1769 — a field without a time starts the wheel at the current time
+
+Given a time field without a value, on a phone
+When its sheet is opened
+Then the current time rounded down to the step stands under the band, the sheet closes without a
+question, and the done button writes that time; with the start set to midnight the wheel starts
+at 00:00, and a start time outside the bounds gives way to the first allowed one
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/rt-date-picker-sheet.spec.ts`,
+`projects/ui-kit-v2/src/lib/components/date-picker/rt-date-panel.logic.spec.ts`.
+
+### SC-UKV-1763 — the sheet of a period has the apply button in its header and asks before it closes
+
+Given a field of a period on a phone
+When its sheet is opened and both ends are chosen
+Then the apply button of the header is on, the panel has neither an apply button in its footer
+nor a title of its own, and the close button asks before closing; the apply answer writes the
+period
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-range/rt-date-range.component.spec.ts`.
+
+### SC-UKV-1764 — with the keyboard open the sheet stands in the part of the window above it
+
+Given a sheet in which a person types on a touch screen
+When the visible part of the window becomes lower than the window by the height of a keyboard
+Then the sheet gets the top and the height of the visible part; without a keyboard, on a server
+or in a browser that does not report the visible part nothing is set
+
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-keyboard.spec.ts`.
+
+### SC-UKV-1765 — a hint card carries the mark, the hint equal to the value is marked
+
+Given an autocomplete with a value, open in the sheet
+When the hints are shown
+Then every hint card has the radio button on its right, and only the hint equal to the value of
+the field is marked
+
+Covered: `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-sheet.spec.ts`.
+
+### SC-UKV-1766 — a header template gets the request to apply, its sheet is named by the title
+
+Given a panel of choice with a title and a header template, open in the sheet
+When a button of the template calls the request to apply
+Then the panel reports the apply and stays open; the dialog is named by the title as a string
+
+Covered: `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet-templates.spec.ts`.
+
+### SC-UKV-1767 — the apply button of the dynamic selector is off while the list is loading
+
+Given a dynamic selector open in the sheet with marks set
+When the list starts loading
+Then the apply button of the header is off
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-sheet.spec.ts`.

@@ -172,6 +172,28 @@ describe('rt-page-bar', (): void => {
         expect(qa(fixture, 'bottom-sheet-confirm')).toBeNull();
     });
 
+    it('SC-UKV-1759 — the answer "do not apply" reports that the input is dropped and closes the sheet', (): void => {
+        const fixture: ComponentFixture<PageBarHostComponent> = setup(375);
+        let dropped: number = 0;
+        (fixture.debugElement.query(By.directive(RtPageBarComponent)).componentInstance as RtPageBarComponent).filtersDiscard.subscribe(
+            (): void => {
+                dropped += 1;
+            }
+        );
+        (qa(fixture, 'page-bar-filters')?.nativeElement as HTMLElement).click();
+        fixture.detectChanges();
+        (qa(fixture, 'page-bar-sheet')?.nativeElement as HTMLElement).dispatchEvent(new Event('input', { bubbles: true }));
+        fixture.detectChanges();
+
+        (qa(fixture, 'bottom-sheet-close')?.nativeElement as HTMLElement).querySelector('button')?.click();
+        fixture.detectChanges();
+        (qa(fixture, 'bottom-sheet-confirm-discard')?.nativeElement as HTMLElement).click();
+        fixture.detectChanges();
+
+        expect(dropped).toBe(1);
+        expect(qa(fixture, 'page-bar-sheet')).toBeNull();
+    });
+
     it('SC-UKV-1723 — an input made in the sheet makes it ask before closing, apply reports the filters', (): void => {
         const fixture: ComponentFixture<PageBarHostComponent> = setup(375);
         let applied: number = 0;

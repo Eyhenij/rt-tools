@@ -2,7 +2,8 @@
     <rt-bottom-sheet
         qa-dataid="popover-sheet"
         [open]="open()"
-        [ariaLabelledby]="title() ? titleId : null"
+        [ariaLabelledby]="title() && !header() ? titleId : null"
+        [ariaLabel]="title() && header() ? title() : null"
         [fullHeight]="fullHeight()"
         [unsaved]="unsaved()"
         [headerTemplate]="header()"

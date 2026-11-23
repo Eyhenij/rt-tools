@@ -212,7 +212,7 @@ export class RtTableFilterHeaderComponent {
 
     /** Виды сравнения рисуются карточками: список открыт в шторке, и вход `sheetCards` их не выключил. */
     protected readonly cards: Signal<boolean> = computed(
-        (): boolean => this.sheetCards() && (this.operatorPopover()?.openedInSheet() ?? false)
+        (): boolean => this.sheetCards() && (this.operatorPopover()?.shownInSheet() ?? false)
     );
 
     /** Список видов сравнения с подписями: шаблон читает готовое, а не зовёт словарь сам. */

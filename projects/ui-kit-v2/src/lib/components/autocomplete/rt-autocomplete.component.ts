@@ -36,6 +36,7 @@ import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
 import { RtPopoverDirective, RtSheetTemplatesDirective } from '@rt-tools/ui-kit-v2/popover';
+import { RtRadioButtonComponent } from '@rt-tools/ui-kit-v2/radio-button';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtOptionList, TRtOptionListAction } from '@rt-tools/ui-kit-v2/core';
 import { RtAutocompleteEmptyDirective, RtAutocompleteErrorDirective } from './rt-autocomplete-states.directive';
@@ -85,6 +86,7 @@ function nextPanelId(): number {
         RtIconComponent,
         RtInputComponent,
         RtPopoverDirective,
+        RtRadioButtonComponent,
         RtSpinnerComponent,
         BlockDirective,
         ElemDirective,
@@ -132,7 +134,9 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     protected readonly openedInSheet: Signal<boolean> = computed((): boolean => this.popover().openedInSheet());
 
     /** Подсказки рисуются карточками: список открыт в шторке, и вход `sheetCards` их не выключил. */
-    protected readonly cards: Signal<boolean> = computed((): boolean => this.sheetCards() && this.openedInSheet());
+    /** Список нарисован в шторке — открытой или ещё уезжающей вниз: по нему выбирается вид, а не поведение. */
+    protected readonly shownInSheet: Signal<boolean> = computed((): boolean => this.popover().shownInSheet());
+    protected readonly cards: Signal<boolean> = computed((): boolean => this.sheetCards() && this.shownInSheet());
 
     /** Поле поиска в шторке — ему отдаётся фокус, когда шторка открылась. */
     protected readonly sheetSearch: Signal<RtInputComponent | undefined> = viewChild(RtInputComponent);

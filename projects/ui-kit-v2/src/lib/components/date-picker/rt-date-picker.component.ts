@@ -2,6 +2,7 @@ import { NumberInput } from '@angular/cdk/coercion';
 import {
     booleanAttribute,
     computed,
+    effect,
     forwardRef,
     inject,
     input,
@@ -11,6 +12,7 @@ import {
     viewChild,
     ChangeDetectionStrategy,
     Component,
+    EffectRef,
     ElementRef,
     InputSignal,
     InputSignalWithTransform,
@@ -28,6 +30,7 @@ import { RtBottomSheetComponent } from '@rt-tools/ui-kit-v2/bottom-sheet';
 import { RtFormControlBase, rtBoundOrNull } from '@rt-tools/ui-kit-v2/form-control';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { IRtInput } from '@rt-tools/ui-kit-v2/core';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RT_POPOVER_SHEET, RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
@@ -61,6 +64,7 @@ const BEM_BLOCK: string = 'rt-date-picker';
     imports: [
         // standalone components / directives
         RtBottomSheetComponent,
+        RtButtonDirective,
         RtDatePanelComponent,
         RtIconButtonComponent,
         RtPopoverDirective,
@@ -97,11 +101,20 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
     protected readonly phone: Signal<boolean> = inject(BreakpointsService).phone;
     /** Приложение разрешает шторку токеном `RT_POPOVER_SHEET` (по умолчанию да); `false` оставляет поповер у поля везде под ним. */
     readonly #sheetAllowed: boolean = inject(RT_POPOVER_SHEET);
+    /** Панель шторки доходит до шапки шторки следующим проходом — когда её входы уже заданы. */
+    protected readonly panelSync: EffectRef = effect((): void => this.sheetPanel.set(this.sheetPanelRef()));
     /** Шторка включена входом `sheet`, токеном и экраном телефона (`BreakpointsService.phone`, до 480 px); иначе панель открывается поповером у поля. */
     protected readonly useSheet: Signal<boolean> = computed((): boolean => this.#sheetAllowed && this.phone() && this.sheet());
 
     protected readonly fieldEl: Signal<ElementRef<HTMLInputElement> | undefined> = viewChild<ElementRef<HTMLInputElement>>('fieldEl');
     protected readonly popover: Signal<RtPopoverDirective | undefined> = viewChild(RtPopoverDirective);
+    protected readonly sheetPanelRef: Signal<RtDatePanelComponent | undefined> = viewChild<RtDatePanelComponent>('sheetPanel');
+    /**
+     * Панель в шторке: кнопка в шапке шторки зовёт её и читает, есть ли что применять. Сигнал
+     * отстаёт от запроса на один проход: в проходе, где панель создана, её входы ещё не заданы, и
+     * чтение её черновика из шапки шторки упало бы на обязательном входе.
+     */
+    protected readonly sheetPanel: WritableSignal<RtDatePanelComponent | undefined> = signal<RtDatePanelComponent | undefined>(undefined);
 
     /** Набранный текст не читается как значение в границах: поле помечено ошибкой. */
     protected readonly textInvalid: WritableSignal<boolean> = signal(false);
@@ -148,6 +161,11 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
     public readonly minuteStep: InputSignalWithTransform<number, NumberInput> = input<number, NumberInput>(5, {
         transform: numberAttribute,
     });
+    /**
+     * С какого времени барабан шторки начинает у поля без времени: `now` — с текущего, `midnight` —
+     * с `00:00`. У списков поля на широком экране время до выбора пусто.
+     */
+    public readonly timeStart: InputSignal<IRtDatePicker.TimeStart> = input<IRtDatePicker.TimeStart>('now');
 
     /**
      * Смена значения человеком: выбор в панели, набор текста, крестик. Несёт ту же строку, что уходит

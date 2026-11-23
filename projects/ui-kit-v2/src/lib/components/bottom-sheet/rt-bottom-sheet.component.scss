@@ -13,6 +13,10 @@
         --rt-bottom-sheet-footer-border-width: var(--rt-border-width-thin);
         --rt-bottom-sheet-confirm-radius: var(--rt-radius-xl);
 
+        /* Место над клавиатурой телефона: оба свойства шторка пишет сама, пока клавиатура открыта. */
+        --rt-bottom-sheet-keyboard-top: 0;
+        --rt-bottom-sheet-keyboard-height: 100%;
+
         position: fixed;
         z-index: 1000;
         inset: 0;
@@ -198,6 +202,21 @@
             flex-direction: column;
             margin-top: calc(var(--rt-space-2) + var(--rt-space-1));
             gap: var(--rt-space-2);
+        }
+
+        /* Экранная клавиатура открыта: шторка встаёт в видимую часть окна над ней. Клавиатура ложится
+           поверх окна и его не сжимает, поэтому место над ней приходит числами от самой шторки.
+           Только там, где указатель — палец: у окна с мышью экранной клавиатуры нет. */
+        @media (pointer: coarse) {
+            &--keyboard {
+                top: var(--rt-bottom-sheet-keyboard-top);
+                bottom: auto;
+                height: var(--rt-bottom-sheet-keyboard-height);
+            }
+
+            &--keyboard &__panel--typing {
+                max-height: calc(100% - var(--rt-space-2) - var(--rt-space-1));
+            }
         }
 
         &--open {

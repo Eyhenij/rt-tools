@@ -4,17 +4,20 @@
         rtElem="backdrop"
         qa-dataid="bottom-sheet-backdrop"
         [attr.aria-label]="t().bottomSheetClose"
+        [attr.inert]="confirming() ? '' : null"
         (click)="dismiss()"></button>
+    <!-- Пока показан вопрос, панель под ним недоступна: Tab ходит только по ответам. -->
     <div
         rtElem="panel"
         qa-dataid="bottom-sheet-panel"
         role="dialog"
         aria-modal="true"
         [attr.aria-labelledby]="ariaLabelledby()"
+        [attr.aria-label]="ariaLabel()"
+        [attr.inert]="confirming() ? '' : null"
         [rtMod]="{ dragging: dragging(), full: fullHeight(), typing: typing() }"
         [style.transform]="dragging() ? 'translateY(' + dragDeltaY() + 'px)' : null"
-        (focusin)="onFocusIn($event)"
-        (focusout)="typing.set(false)">
+        (focusin)="onFocusIn($event)">
         <div rtElem="handle" qa-dataid="bottom-sheet-handle" (pointerdown)="onDragStart($event)"></div>
         @if (headerTpl(); as ownHeader) {
             <div rtElem="header" qa-dataid="bottom-sheet-header" [rtMod]="{ own: true }">
@@ -59,6 +62,7 @@
                 <p rtElem="confirm-message" qa-dataid="bottom-sheet-confirm-message">{{ t().bottomSheetUnsavedMessage }}</p>
                 <div rtElem="confirm-actions">
                     <button
+                        #confirmFirst
                         rtButton
                         qa-dataid="bottom-sheet-confirm-apply"
                         type="button"

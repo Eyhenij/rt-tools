@@ -30,13 +30,15 @@ const OPTIONS: ReadonlyArray<IRtSelect.Option<string>> = [
             rtPopoverSheetTitle="Выбор"
             [rtPopover]="panelTpl"
             [rtPopoverSheetHeader]="headerTpl"
-            [rtPopoverSheetFooter]="footerTpl">
+            [rtPopoverSheetFooter]="footerTpl"
+            (rtPopoverSheetApply)="applied = applied + 1">
             Открыть
         </button>
         <rt-select [options]="options" [sheetHeaderTemplate]="headerTpl" [sheetFooterTemplate]="footerTpl" />
         <ng-template #panelTpl><p qa-dataid="own-panel">Панель</p></ng-template>
-        <ng-template #headerTpl let-close>
+        <ng-template #headerTpl let-close let-apply="apply">
             <button type="button" qa-dataid="own-header-close" (click)="close()">Назад</button>
+            <button type="button" qa-dataid="own-header-apply" (click)="apply()">Применить</button>
         </ng-template>
         <ng-template #footerTpl><span qa-dataid="own-footer">Подвал</span></ng-template>
     `,
@@ -45,6 +47,7 @@ const OPTIONS: ReadonlyArray<IRtSelect.Option<string>> = [
 })
 class TemplatesHostComponent {
     public readonly options: ReadonlyArray<IRtSelect.Option<string>> = OPTIONS;
+    public applied: number = 0;
 }
 
 type TFixture = ComponentFixture<TemplatesHostComponent>;
@@ -95,6 +98,26 @@ describe('Нижняя шторка поповера — свои шаблоны
         settle(fixture);
 
         expect(document.querySelector('.rt-popover-sheet .rt-bottom-sheet--open')).toBeNull();
+    });
+
+    it('SC-UKV-1766 — своя шапка получает просьбу применить: она уходит наружу тем же событием, что ответ «Применить»', (): void => {
+        const fixture: TFixture = setup();
+        press(fixture, 'own-trigger');
+
+        (inSheet('own-header-apply') as HTMLElement).click();
+        settle(fixture);
+
+        expect(fixture.componentInstance.applied).toBe(1);
+        expect(document.querySelector('.rt-popover-sheet .rt-bottom-sheet--open')).not.toBeNull();
+    });
+
+    it('SC-UKV-1766 — шторка со своей шапкой названа строкой заголовка: узла заголовка в разметке нет', (): void => {
+        const fixture: TFixture = setup();
+        press(fixture, 'own-trigger');
+        const dialog: HTMLElement = inSheet('bottom-sheet-panel') as HTMLElement;
+
+        expect(dialog.getAttribute('aria-label')).toBe('Выбор');
+        expect(dialog.hasAttribute('aria-labelledby')).toBe(false);
     });
 
     it('SC-UKV-1754 — поле выбора отдаёт шторке шаблоны своих входов sheetHeaderTemplate и sheetFooterTemplate', (): void => {

@@ -170,6 +170,21 @@
             @include kv.sheet-card;
         }
 
+        /* Обёртка подсказки: у поля она прозрачна для раскладки, в карточке забирает место слева от отметки. */
+        &__option-text {
+            display: contents;
+        }
+
+        &__panel--cards .rt-autocomplete__option-text {
+            display: block;
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+
+        &__mark {
+            flex-shrink: 0;
+        }
+
         &__panel--cards .rt-autocomplete__option--active {
             @include kv.sheet-card-active;
         }

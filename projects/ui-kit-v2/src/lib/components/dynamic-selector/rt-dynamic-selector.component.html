@@ -81,7 +81,7 @@
             qa-dataid="dynamic-selector-sheet-apply"
             [label]="applyText()"
             [attr.aria-label]="applyText()"
-            [disabled]="!sheetUnsaved()"
+            [disabled]="!sheetUnsaved() || loading()"
             (click)="onSheetApply()"></button>
     </ng-template>
 </ng-container>

@@ -1,5 +1,5 @@
 <ng-container rtBlock="rt-date-range-panel">
-    @if (sheet()) {
+    @if (sheet() && !applyOutside()) {
         <p rtElem="title" qa-dataid="date-range-title">{{ t().uiPeriod }}</p>
     }
 
@@ -145,14 +145,16 @@
             [label]="t().uiReset"
             [attr.aria-label]="t().uiReset"
             (click)="reset()"></button>
-        <button
-            rtButton
-            qa-dataid="date-range-apply"
-            size="sm"
-            type="button"
-            [label]="t().uiApply"
-            [attr.aria-label]="t().uiApply"
-            [disabled]="draft() === null"
-            (click)="apply()"></button>
+        @if (!applyOutside()) {
+            <button
+                rtButton
+                qa-dataid="date-range-apply"
+                size="sm"
+                type="button"
+                [label]="t().uiApply"
+                [attr.aria-label]="t().uiApply"
+                [disabled]="!canApply()"
+                (click)="apply()"></button>
+        }
     </div>
 </ng-container>

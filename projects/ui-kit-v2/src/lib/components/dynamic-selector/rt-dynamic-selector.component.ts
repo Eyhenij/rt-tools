@@ -182,7 +182,7 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
     public readonly cards: Signal<boolean> = computed((): boolean => this.sheetCards() && this.inSheet());
     /** Окно выбора открыто в нижней шторке. Читает окно выбора: его кнопки уходят в шапку шторки. */
     public readonly inSheet: Signal<boolean> = computed((): boolean =>
-        this.popovers().some((popover: RtPopoverDirective): boolean => popover.openedInSheet())
+        this.popovers().some((popover: RtPopoverDirective): boolean => popover.shownInSheet())
     );
     public readonly addShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
         transform: booleanAttribute,

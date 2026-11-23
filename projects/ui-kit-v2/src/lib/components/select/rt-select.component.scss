@@ -339,6 +339,13 @@
             @include kv.sheet-card-active;
         }
 
+        /* Недоступная карточка на наведение не отвечает: правило карточки сильнее правила строки. */
+        &__panel--cards .rt-select__option--disabled,
+        &__panel--cards .rt-select__option--disabled:hover {
+            background: var(--rt-sheet-card-bg, var(--rt-color-bg-surface-subtle));
+            cursor: not-allowed;
+        }
+
         &__panel--cards .rt-select__option-text {
             @include kv.sheet-card-text;
         }

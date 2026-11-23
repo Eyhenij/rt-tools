@@ -275,6 +275,28 @@ export function rtDateTimeColumns(ctx: IRtDatePicker.TimeContext): IRtDatePicker
     return { hours, minutes };
 }
 
+/** Желаемое значение колонки, когда оно допустимо; иначе первое допустимое, а без него — желаемое. */
+function freeValue(cells: readonly IRtDatePicker.TimeCell[], want: number): number {
+    const free: IRtDatePicker.TimeCell[] = cells.filter((cell: IRtDatePicker.TimeCell): boolean => !cell.disabled);
+    const kept: boolean = free.some((cell: IRtDatePicker.TimeCell): boolean => cell.value === want);
+
+    return kept ? want : (free[0]?.value ?? Math.max(0, want));
+}
+
+/**
+ * Время, с которого барабан начинает у поля без значения: текущее, округлённое вниз до шага, или
+ * `00:00`. Час за границей заменяет первый допустимый час, минуту за границей — первая допустимая
+ * минута этого часа; когда допустимого часа нет, время остаётся как есть.
+ */
+export function rtDateStartTime(start: IRtDatePicker.TimeStart, now: Date, ctx: Omit<IRtDatePicker.TimeContext, 'hour'>): string {
+    const [wantHour, wantMinute]: number[] = start === 'now' ? nums(rtDateNow(now, Math.max(1, Math.floor(ctx.step))).time) : [0, 0];
+    const hours: readonly IRtDatePicker.TimeCell[] = rtDateTimeColumns({ ...ctx, hour: null }).hours;
+    const hour: number = freeValue(hours, wantHour);
+    const minutes: readonly IRtDatePicker.TimeCell[] = rtDateTimeColumns({ ...ctx, hour }).minutes;
+
+    return rtDateTime(hour, hour === wantHour ? freeValue(minutes, wantMinute) : freeValue(minutes, -1));
+}
+
 function shiftMonth(day: string, delta: number): string {
     const target: string = rtDateAddMonths(day.slice(0, MONTH_LEN), delta);
     const [y, m]: number[] = nums(target);

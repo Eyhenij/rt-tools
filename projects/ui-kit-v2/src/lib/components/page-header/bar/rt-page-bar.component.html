@@ -76,8 +76,10 @@
         <rt-bottom-sheet
             qa-dataid="page-bar-bottom-sheet"
             [open]="true"
+            [ariaLabel]="t().uiPageFilters"
             [unsaved]="sheetUnsaved()"
             (applyRequest)="filtersApply.emit()"
+            (discardRequest)="filtersDiscard.emit()"
             (openChange)="sheetOpen.set($event)">
             <span sheetHeader>{{ t().uiPageFilters }}</span>
             <button

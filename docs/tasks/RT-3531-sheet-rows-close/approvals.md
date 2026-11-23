@@ -1,5 +1,8 @@
 # Одобрения владельца
 
 - **Макет:** «Одобряю макет» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8559-2180 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8559-2226 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8559-2262 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8559-2330 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8565-2265 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8559-2413 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8559-2449 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8559-2506 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8559-2525 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8559-2552 (шторка на телефоне: «×» и заголовок, залитое действие справа, карточки с радиокнопкой и чекбоксом кита, список с поиском по высоте содержимого и во всю высоту при клавиатуре, отборы во всю высоту, вопрос внизу экрана, меню действий, дата, шторка без заголовка)
+- **Макет:** «Одобряю макет» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8559-2525 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8588-2994 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8584-2270 (после первого круга ревью: шторка даты и времени с барабаном как в iOS и «Применить» в шапке, шторка периода с «Применить» в шапке, подсказки автодополнения с кружком справа; окно вопроса — «вопрос оставить с большими кнопками»)
 - **Совпадение:** 91 из 91 чисел
+- **Совпадение:** 43 из 43 чисел
+- **Витрина:** «если матчится с макетами то ок»
 - **Витрина:** «Одобряю витрину»
