@@ -37,4 +37,41 @@
             <ng-content select="[sheetFooter]" />
         </div>
     </div>
+    @if (confirming()) {
+        <div rtElem="confirm" qa-dataid="bottom-sheet-confirm" role="alertdialog" aria-modal="true" [attr.aria-labelledby]="confirmTitleId">
+            <div rtElem="confirm-card">
+                <h2 rtElem="confirm-title" qa-dataid="bottom-sheet-confirm-title" [attr.id]="confirmTitleId">
+                    {{ t().bottomSheetUnsavedTitle }}
+                </h2>
+                <p rtElem="confirm-message" qa-dataid="bottom-sheet-confirm-message">{{ t().bottomSheetUnsavedMessage }}</p>
+                <div rtElem="confirm-actions">
+                    <button
+                        rtButton
+                        qa-dataid="bottom-sheet-confirm-apply"
+                        type="button"
+                        appearance="filled"
+                        [label]="t().uiApply"
+                        [attr.aria-label]="t().uiApply"
+                        (click)="onConfirmApply()"></button>
+                    <button
+                        rtButton
+                        qa-dataid="bottom-sheet-confirm-discard"
+                        type="button"
+                        theme="secondary"
+                        appearance="outlined"
+                        [label]="t().bottomSheetUnsavedDiscard"
+                        [attr.aria-label]="t().bottomSheetUnsavedDiscard"
+                        (click)="onConfirmDiscard()"></button>
+                    <button
+                        rtButton
+                        qa-dataid="bottom-sheet-confirm-cancel"
+                        type="button"
+                        appearance="text"
+                        [label]="t().uiCancel"
+                        [attr.aria-label]="t().uiCancel"
+                        (click)="onConfirmCancel()"></button>
+                </div>
+            </div>
+        </div>
+    }
 </ng-container>

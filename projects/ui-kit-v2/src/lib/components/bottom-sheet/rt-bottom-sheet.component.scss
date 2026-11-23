@@ -11,6 +11,7 @@
         --rt-bottom-sheet-shadow: var(--rt-shadow-card-soft);
         --rt-bottom-sheet-transition-duration: var(--rt-duration-base);
         --rt-bottom-sheet-footer-border-width: var(--rt-border-width-thin);
+        --rt-bottom-sheet-confirm-radius: var(--rt-radius-xl);
 
         position: fixed;
         z-index: 1000;
@@ -129,6 +130,50 @@
             &:empty {
                 display: none;
             }
+        }
+
+        /* Вопрос перед закрытием стоит в нижней части экрана поверх шторки и затемняет её. Нижний
+           отступ прибавляет вырез экрана. */
+        &__confirm {
+            position: absolute;
+            display: flex;
+            align-items: flex-end;
+            padding: var(--rt-space-4) var(--rt-space-4) calc(var(--rt-space-6) + env(safe-area-inset-bottom));
+            background: var(--rt-overlay-black-50);
+            inset: 0;
+        }
+
+        &__confirm-card {
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+            padding: var(--rt-space-5);
+            border-radius: var(--rt-bottom-sheet-confirm-radius);
+            background: var(--rt-color-bg-surface);
+            box-shadow: var(--rt-bottom-sheet-shadow);
+            gap: var(--rt-space-2);
+        }
+
+        &__confirm-title {
+            margin: 0;
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-md);
+            font-weight: var(--rt-font-weight-semibold);
+            line-height: var(--rt-leading-normal);
+        }
+
+        &__confirm-message {
+            margin: 0;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+            line-height: var(--rt-leading-normal);
+        }
+
+        &__confirm-actions {
+            display: flex;
+            flex-direction: column;
+            margin-top: var(--rt-space-2);
+            gap: var(--rt-space-2);
         }
 
         &--open {

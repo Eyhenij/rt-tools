@@ -25,12 +25,21 @@ import {
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtBottomSheetStackService } from './rt-bottom-sheet-stack.service';
 import { clampDragDelta, shouldDismissDrag } from './rt-bottom-sheet.logic';
 
 const BEM_BLOCK: string = 'rt-bottom-sheet';
+
+let nextConfirmId: number = 0;
+
+function takeConfirmId(): string {
+    nextConfirmId += 1;
+
+    return `rt-bottom-sheet-confirm-${nextConfirmId}`;
+}
 
 @Component({
     selector: 'rt-bottom-sheet',
@@ -45,6 +54,7 @@ const BEM_BLOCK: string = 'rt-bottom-sheet';
         ModDirective,
 
         // kit
+        RtButtonDirective,
         RtIconButtonComponent,
     ],
     hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
@@ -80,6 +90,10 @@ export class RtBottomSheetComponent {
     protected readonly dragDeltaY: WritableSignal<number> = signal<number>(0);
     protected readonly dragging: WritableSignal<boolean> = signal<boolean>(false);
 
+    /** Вопрос перед закрытием показан: шторку просили закрыть при неприменённом выборе. */
+    protected readonly confirming: WritableSignal<boolean> = signal<boolean>(false);
+    protected readonly confirmTitleId: string = takeConfirmId();
+
     /** Открыта, но поверх неё открыта шторка из неё самой: эта спрятана до закрытия верхней. */
     protected readonly covered: Signal<boolean> = computed((): boolean => this.open() && this.#stack.top() !== this);
 
@@ -98,7 +112,19 @@ export class RtBottomSheetComponent {
         transform: booleanAttribute,
     });
 
+    /**
+     * Выбор в шторке изменён и не применён. Шторка с таким выбором на просьбу закрыть — кнопкой,
+     * подложкой, свайпом или Escape — сначала спрашивает: применить, не применять или остаться.
+     * Ставит его тот, у кого выбор уходит в приложение только по кнопке.
+     */
+    public readonly unsaved: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
     public readonly openChange: OutputEmitterRef<boolean> = output<boolean>();
+
+    /** Человек ответил на вопрос «Применить»: выбор нужно применить, следом придёт просьба закрыть. */
+    public readonly applyRequest: OutputEmitterRef<void> = output<void>();
 
     constructor() {
         // Порядок открытия — общий для всех шторок страницы; шторка встаёт в него с открытием.
@@ -114,6 +140,12 @@ export class RtBottomSheetComponent {
         effect((): void => {
             this.#setScrollLock(this.open() && !this.#inOverlay());
         });
+        // Закрытая шторка вопроса за собой не оставляет: следующее открытие начинается без него.
+        effect((): void => {
+            if (!this.open()) {
+                this.confirming.set(false);
+            }
+        });
         inject(DestroyRef).onDestroy((): void => {
             this.#stack.remove(this);
             this.#setScrollLock(false);
@@ -121,9 +153,29 @@ export class RtBottomSheetComponent {
     }
 
     protected onEscape(): void {
-        if (this.open() && !this.covered() && !this.#inOverlay()) {
+        if (!this.open() || this.covered() || this.#inOverlay()) {
+            return;
+        }
+        if (this.confirming()) {
+            this.confirming.set(false);
+        } else {
             this.dismiss();
         }
+    }
+
+    protected onConfirmApply(): void {
+        this.confirming.set(false);
+        this.applyRequest.emit();
+        this.openChange.emit(false);
+    }
+
+    protected onConfirmDiscard(): void {
+        this.confirming.set(false);
+        this.openChange.emit(false);
+    }
+
+    protected onConfirmCancel(): void {
+        this.confirming.set(false);
     }
 
     protected onDragStart(event: PointerEvent): void {
@@ -134,8 +186,13 @@ export class RtBottomSheetComponent {
         this.#document.addEventListener('pointerup', this.#onDragEnd);
     }
 
+    /** Просьба закрыть: с неприменённым выбором сначала вопрос, без него — сразу наружу. */
     protected dismiss(): void {
-        this.openChange.emit(false);
+        if (this.unsaved()) {
+            this.confirming.set(true);
+        } else {
+            this.openChange.emit(false);
+        }
     }
 
     #inOverlay(): boolean {
@@ -163,7 +220,7 @@ export class RtBottomSheetComponent {
         this.#document.removeEventListener('pointermove', this.#onDragMove);
         this.#document.removeEventListener('pointerup', this.#onDragEnd);
         if (shouldDismissDrag(this.dragDeltaY())) {
-            this.openChange.emit(false);
+            this.dismiss();
         }
         this.dragDeltaY.set(0);
     }
