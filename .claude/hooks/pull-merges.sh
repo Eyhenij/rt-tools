@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/pull-merges.sh · ac6cf4167215 · правится надстройкой, не здесь
+# rt-kit v0.39.0 · hooks/pull-merges.sh · ac6cf4167215 · правится надстройкой, не здесь
 # The merges of requests and the editions of packages, read from the hosting and the registry into
 # the observations. NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The
 # sending calls it.

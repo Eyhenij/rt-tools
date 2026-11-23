@@ -1,4 +1,4 @@
-<!-- rt-kit v0.38.0 · hooks/turn-judge.md · 6a1c0d46c2c7 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · hooks/turn-judge.md · 6a1c0d46c2c7 · правится надстройкой, не здесь -->
 # Turn judge
 <!-- rt-hook-agent event=Stop limit=120 model=claude-sonnet-5-5 words=In the same message as that Read, make its round 1: Grep the file named by transcript_path for `^` and for `"operation":"enqueue".*"content":"[^<]|"content":"The user answered: |"type":"user","message":\{"role":"user","content":\[\{"type":"text","text":"\[Request interrupted by user` with output_mode count. -->
 

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.38.0 · pitfalls/queue-audit.github.md · 94dfee8dc495 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · pitfalls/queue-audit.github.md · 94dfee8dc495 · правится надстройкой, не здесь -->
 # Work queue audit — how it works here — cold part
 
 What the rule `queue-audit` handed over when cut to its statements, every article whole.

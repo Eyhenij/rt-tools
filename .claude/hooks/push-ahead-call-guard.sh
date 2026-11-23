@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/push-ahead-call-guard.sh · f1e7419e0069 · правится надстройкой, не здесь
+# rt-kit v0.39.0 · hooks/push-ahead-call-guard.sh · f1e7419e0069 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash
 # Requires: hooks/deny-tail.sh, hooks/decide.sh
 # Guard of the call of the run ahead: the notice of a background call carries the exit code of the

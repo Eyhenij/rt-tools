@@ -1,4 +1,4 @@
-<!-- rt-kit v0.38.0 · defaults/turn-map.md · 7daff970d0ce · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · defaults/turn-map.md · 7daff970d0ce · правится надстройкой, не здесь -->
 # Turn map
 
 This is not the rule but its short digest: the rule explains, the map names. The full text is

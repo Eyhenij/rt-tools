@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/record-turn.sh · 5c0ec01f3b86 · правится надстройкой, не здесь
+# rt-kit v0.39.0 · hooks/record-turn.sh · 5c0ec01f3b86 · правится надстройкой, не здесь
 # rt-hook: Stop
 # rt-hook: SessionEnd
 # Requires: hooks/observe.sh, hooks/hook-input.sh, hooks/metric-marks.sh, hooks/owner-corrections.sh, checks/record-turn.mjs, checks/record-count.mjs

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/git-guard-delivery-rerun.sh · 1438fee6ecfd · правится надстройкой, не здесь
+# rt-kit v0.39.0 · hooks/git-guard-delivery-rerun.sh · 1438fee6ecfd · правится надстройкой, не здесь
 # The rerun of the done steps before a PR opens, for the delivery guard. NOT a guard: it has no
 # `rt-hook:` declaration and hooks into no agent event. The delivery guard sources it and calls
 # `rt_delivery_rerun` on a PR opening, before it names what is unmet.

@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · checks/flow-guard.mjs · 8fafb056b985 · правится надстройкой, не здесь
+// rt-kit v0.39.0 · checks/flow-guard.mjs · 8fafb056b985 · правится надстройкой, не здесь
 /**
  * The guard of the course of work — the engine command `guard`, called by the hook `flow-step-guard.sh`
  * before Edit, Write, MultiEdit and a shell command. It refuses what would move the scenario by a

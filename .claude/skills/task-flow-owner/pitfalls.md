@@ -1,4 +1,4 @@
-<!-- rt-kit v0.38.0 · pitfalls/task-flow-owner.md · f7658685bf36 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · pitfalls/task-flow-owner.md · f7658685bf36 · правится надстройкой, не здесь -->
 # Work conduct — the owner's word and the session — cold part
 
 This part of the rule `task-flow` keeps its statements hot and its explanation in the cold part

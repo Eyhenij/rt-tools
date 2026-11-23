@@ -1,4 +1,4 @@
-<!-- rt-kit v0.38.0 · pitfalls/mockups.needs-mockups.md · a6dd9b82ff30 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · pitfalls/mockups.needs-mockups.md · a6dd9b82ff30 · правится надстройкой, не здесь -->
 # Mockups — how it works here — cold part
 
 What the rule `mockups` handed over when cut to its statements, every article whole.

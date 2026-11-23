@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.38.0 · checks/flow-data.mjs · 4b48e168fb4a · правится надстройкой, не здесь
+// rt-kit v0.39.0 · checks/flow-data.mjs · 4b48e168fb4a · правится надстройкой, не здесь
 /**
  * The data of the task flow description: the literals of `words`, the forms of `expect` and the
  * order of the release cases. A new nudge, a new write command, a new menu option or a new form

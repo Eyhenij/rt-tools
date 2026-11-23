@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the work states. Load at the start of any work, on any edit of a task folder and on return to unfinished work. Its parts: task-flow-plan, -owner, -handover. Patterns task-flow-start, -graph.
 ---
-<!-- rt-kit v0.38.0 · rules/task-flow.md · e12fd61b3380 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · rules/task-flow.md · e12fd61b3380 · правится надстройкой, не здесь -->
 
 # Work conduct — the states
 

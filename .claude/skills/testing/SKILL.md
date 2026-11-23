@@ -4,7 +4,7 @@ kind: rule
 law: verifiability
 description: Rule under the verifiability law. Load when editing any test file or end-to-end suite. Patterns testing-unit, testing-e2e.
 ---
-<!-- rt-kit v0.38.0 · rules/testing.md · 9ea5e32306c2 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · rules/testing.md · 9ea5e32306c2 · правится надстройкой, не здесь -->
 
 # Verifiability — how it works here
 

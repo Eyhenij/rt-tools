@@ -1,4 +1,4 @@
-<!-- rt-kit v0.38.0 · pitfalls/observability.needs-app.md · e9c5a502c0a6 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · pitfalls/observability.needs-app.md · e9c5a502c0a6 · правится надстройкой, не здесь -->
 # Observability — how it works here — cold part
 
 What the rule `observability` handed over when cut to its statements, every article whole.

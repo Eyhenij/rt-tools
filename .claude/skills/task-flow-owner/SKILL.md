@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the owner's word and the session. Load before asking the owner, when replying to an order and at the start of a session. Pattern task-flow-cycle.
 ---
-<!-- rt-kit v0.38.0 · rules/task-flow-owner.md · 334dd9d6923c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · rules/task-flow-owner.md · 334dd9d6923c · правится надстройкой, не здесь -->
 
 # Work conduct — the owner's word and the session
 

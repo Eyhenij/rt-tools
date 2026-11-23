@@ -1,4 +1,4 @@
-<!-- rt-kit v0.38.0 · pitfalls/epic-flow.md · 9c959ae06b3a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · pitfalls/epic-flow.md · 9c959ae06b3a · правится надстройкой, не здесь -->
 # Epics — how it works here — cold part
 
 What the rule `epic-flow` handed over when cut to its statements, every article whole.
