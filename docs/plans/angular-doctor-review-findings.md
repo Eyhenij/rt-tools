@@ -343,3 +343,24 @@ Loaded: `task-delivery-loop`, `task-flow` with its parts, `doc-style`, `agent-ki
 
 Not proposed: the `node_modules` link in a second copy — the companion of `git-workflow` already
 says each copy installs its own; the plan's «10» for 11 — a one-off typo.
+
+## RT-3485 — the review of 23 November 2026
+
+1. **The owner's named allowance lifts the night ban on outside actions** — package, the law
+   `autonomous-work`, the rule, the pattern `autonomous-work-run` and the command `night`: push, PR
+   and merge are done at night exactly where the owner named them when leaving; the allowance goes
+   into the head of the morning list. The executor wavered between the ban and the owner's order.
+2. **Every allowed night call passes without a permission prompt, checked before the owner
+   leaves** — package, the rule `autonomous-work`: a `$(…)` substitution or a chain prompts; the
+   PR call stalled until the owner came back.
+3. **An interrupted call and a guard's menu do not end the night** — package, the rule
+   `autonomous-work` and `hooks/turn-exit-guard.sh`: a default goes into the morning list instead
+   of a menu.
+4. **The merge article of `git-workflow-hosting` accepts the night allowance** — package; squash
+   merges are off here, so the call is `gh pr merge <pr> --merge`.
+5. **A file of an installed dependency is named by its package** — package, `pitfalls/doc-style.md`:
+   a bare file name of `@angular/common` in a findings file turned the push set red.
+6. **The tree's PR call prompts at night** — tree, `task-delivery-loop-run`.
+7. **An analysis is written by `cargo-writer` from the template and sent in the same turn** —
+   package, `rules/turn-conduct.md` and `hooks/turn-judge.md`; both incidents of this night lie in
+   the analyses directory.
