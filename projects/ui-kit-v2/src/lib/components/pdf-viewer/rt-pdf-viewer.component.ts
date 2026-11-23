@@ -395,7 +395,7 @@ export class RtPdfViewerComponent {
         this.currentPage.set(visiblePageIndex(tops, heights, scrollTop, clientHeight));
 
         const keep: Set<number> = new Set<number>(pagesToRender(tops, heights, scrollTop, clientHeight, KEEP_OVERSCAN));
-        for (const index of [...this.#rendered.keys()]) {
+        for (const index of this.#rendered.keys()) {
             if (!keep.has(index)) {
                 this.#clearPage(index);
             }
