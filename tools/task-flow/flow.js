@@ -1,4 +1,4 @@
-// rt-kit v0.39.0 · task-flow/flow.js · 2aa3e1903564 · правится надстройкой, не здесь
+// rt-kit v0.39.0 · task-flow/flow.js · 167563f291a4 · правится надстройкой, не здесь
 // The task flow as an executable scenario: the data language of `flow-syntax.mjs`, nothing here runs.
 // A state is left when its exit is measured; the first state whose exit is unmet is where the work
 // stands. A release case says when a turn may end before the scenario does. A new fact is a new
@@ -81,7 +81,7 @@
     },
     taken: {
       title: 'задача-взята',
-      action: 'write the plan',
+      action: 'write the plan; once the owner approves it, run plan-red',
       pattern: 'task-flow-start',
       exit: measure.plan.approved,
     },

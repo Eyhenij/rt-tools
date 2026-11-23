@@ -340,6 +340,54 @@ Then the step is named green before the work, and no mark is written
 
 Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
+### SC-AK-1870 — the answers of a window are judged apart
+
+Given a window of two questions answered «До 18:00» and «Одобряю план RT-12», «Одобряю» and the number in two answers, and an approving line inside an answer
+When the rule of approval reads them for RT-12
+Then the second answer and the inner line approve, and two answers are never joined into one
+
+Covered: `projects/agent-kit/tests/flow-approval.test.sh`.
+
+### SC-AK-1871 — only the own task and the plan are approved
+
+Given «RT-12» against RT-123, «RT-312» and «XRT-12», «plan.md» with another number, a bare «plan.md», a bare answer to a question naming the plan of the task or another task, «Одобряю макет», «не одобряю», «потом одобряю» and a quote
+When the rule of approval reads them for the task
+Then only the own bounded number, the bare «plan.md» and the plan question of the task approve
+
+Covered: `projects/agent-kit/tests/flow-approval.test.sh`.
+
+### SC-AK-1872 — a typed message is judged by the same rule
+
+Given «одобряю план RT-12» typed in lower case, a menu answer «…, Одобряю RT-12 и RT-13», a message queued during a turn, a bare typed «Одобряю» and an entry of the agent
+When the rule of approval reads them
+Then the first three approve their tasks and the last two approve nothing
+
+Covered: `projects/agent-kit/tests/flow-approval.test.sh`.
+
+### SC-AK-1873 — plan-red takes a typed approval and names both kinds of answer
+
+Given a plan with red checks, both roles called and then no approving answer, then a typed «одобряю план RT-2»
+When the approval is asked
+Then the refusal names a menu option and a typed message, and the typed answer writes the mark with its place
+
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+
+### SC-AK-1874 — the mark check counts the answer of a second question
+
+Given an approval mark whose place is a window of two answers with the approval second, a typed lower-case approval, and «Одобряю plan.md RT-7»
+When an edit of the engine is judged in task RT-9
+Then the first two let it pass and the third is refused
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1875 — a refused approval sends to plan-red
+
+Given an approval mark whose place holds no entry
+When an edit of the engine is refused
+Then the refusal says to run plan-red and to ask the owner only when it finds none, and never to ask again
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
 ### SC-AK-1413 — a replacement of the older form is measured
 
 Given a progress that replaces the check of a step and quotes the owner in the older form

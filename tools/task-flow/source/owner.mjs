@@ -1,4 +1,4 @@
-// rt-kit v0.39.0 · task-flow/source/owner.mjs · 266b66748c53 · правится надстройкой, не здесь
+// rt-kit v0.39.0 · task-flow/source/owner.mjs · 2d6a41588757 · правится надстройкой, не здесь
 /**
  * The source «source.owner» of the task flow description: the words of the owner in this session,
  * read from the record of the conversation the hook names in `RT_FLOW_TRANSCRIPT`.
@@ -58,6 +58,55 @@ export function wordOf(entry) {
         .filter((part) => part?.type === 'tool_result' && ANSWERED.test(resultText(part.content)))
         .map((part) => [...resultText(part.content).matchAll(/"=\s*"([^"]*)"/g)].map((match) => match[1]).join('\n'));
     return answers.length > 0 ? answers.join('\n') : null;
+}
+
+/**
+ * The word that approves, in any case, opening the line or a clause after a comma, a semicolon, a
+ * colon or a full stop: «потом одобряю», «не одобряю» and a quoted «Одобряю» approve nothing.
+ */
+const APPROVING = /(?:^|[,;:.])\s*одобряю(?![\p{L}])/iu;
+
+/** The key of any task, `<KEY>-<number>`, bounded on both sides. */
+const ANY_TASK = /(?<![\p{L}\d-])\p{Lu}+-\d+(?!\d)/u;
+
+/** The words that name the plan itself. */
+const PLAN_WORD = /(?<![\p{L}])(?:план|plan|замысел)/iu;
+
+const escapeRe = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/** The answers of one owner entry as pairs; a typed message has no question. */
+const answersOf = (entry) => {
+    const typed = typedOf(entry);
+    if (typed) return [{ question: '', answer: typed.text }];
+    if (!ownerEntry(entry)) return [];
+    if (entry.toolUseResult?.answers) return Object.entries(entry.toolUseResult.answers).map(([question, answer]) => ({ question, answer: String(answer) }));
+    const content = entry.message?.content;
+    if (!Array.isArray(content)) return [];
+    return content
+        .filter((part) => part?.type === 'tool_result' && ANSWERED.test(resultText(part.content)))
+        .flatMap((part) => [...resultText(part.content).matchAll(/"([^"]*)"=\s*"([^"]*)"/g)].map((match) => ({ question: match[1], answer: match[2] })));
+};
+
+/**
+ * The line by which the owner approves the plan of `task`, or null. One rule for a menu option and
+ * a typed message: every answer of a menu and every line of an answer are judged alone. A line
+ * approves when a clause of it opens with «одобряю» and it names the task, the number bounded on
+ * both sides. A line that names no task approves when it names `plan.md`, or when the menu question
+ * names the task and the line or the question names the plan. A line that names only another task
+ * approves nothing.
+ */
+export function approvalOf(entry, task) {
+    const own = new RegExp(`(?<![\\p{L}\\d-])${escapeRe(task)}(?!\\d)`, 'u');
+    for (const { question, answer } of answersOf(entry)) {
+        for (const line of answer.split('\n')) {
+            if (!APPROVING.test(line)) continue;
+            if (own.test(line)) return line.trim();
+            if (ANY_TASK.test(line)) continue;
+            if (/plan\.md/.test(line)) return line.trim();
+            if (own.test(question) && (PLAN_WORD.test(line) || PLAN_WORD.test(question))) return line.trim();
+        }
+    }
+    return null;
 }
 
 const parse = (file) => {
