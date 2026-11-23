@@ -1,5 +1,19 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { inject, ChangeDetectionStrategy, Component, DestroyRef, ViewEncapsulation, WritableSignal, signal } from '@angular/core';
+import {
+    booleanAttribute,
+    inject,
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    InputSignal,
+    InputSignalWithTransform,
+    Signal,
+    ViewEncapsulation,
+    WritableSignal,
+    computed,
+    input,
+    signal,
+} from '@angular/core';
 import { Router } from '@angular/router';
 
 import { WINDOW } from '@rt-tools/core';
@@ -115,19 +129,56 @@ export class TestRtPageHeaderVerticalComponent {
         { id: 'columns', label: 'Настроить колонки', icon: 'sliders-v' },
     ];
 
-    public bar: boolean = false;
-    public pageTitle: string = 'Все брони';
-    public filterCount: number = 3;
-    public filtersActive: boolean = false;
-    public tabs: number = 0;
-    public assistant: boolean = false;
-    public overflow: IRtTabs.Overflow = 'more';
-    public disabledSection: boolean = false;
-    public manySections: boolean = false;
-    public screenHeight: number | null = null;
+    protected readonly tabList: Signal<readonly number[]> = computed((): readonly number[] =>
+        Array.from({ length: this.tabs() }, (_: unknown, index: number): number => index + 1)
+    );
+
+    protected readonly tabLabels: Signal<readonly string[]> = computed((): readonly string[] =>
+        this.tabs() > SHORT_TAB_LIST ? TAB_LABELS_LONG : TAB_LABELS_SHORT
+    );
+
+    protected readonly assistantOpen: Signal<boolean> = computed((): boolean => this.assistantPicked() ?? this.assistant());
+
+    protected readonly sections: Signal<ReadonlyArray<IRtPageHeader.Item>> = computed((): ReadonlyArray<IRtPageHeader.Item> => {
+        if (this.disabledSection()) {
+            return PAGE_SECTIONS_DISABLED;
+        }
+        return this.manySections() ? PAGE_SECTIONS_MANY : PAGE_SECTIONS;
+    });
+
+    protected readonly railActions: Signal<ReadonlyArray<IRtPageHeader.Item>> = computed((): ReadonlyArray<IRtPageHeader.Item> => [
+        { id: ASSISTANT_ACTION, label: 'Ассистент', icon: 'sparkle', active: this.assistantOpen() },
+        { id: 'bell', label: 'Уведомления', icon: 'bell', unread: true },
+    ]);
+
+    /** С открытым ассистентом и во второй строке кадры берут короткие подписи. */
+    protected readonly shownFilters: Signal<readonly string[]> = computed((): readonly string[] =>
+        (this.filterCount() > FILTERS_IN_ONE_ROW || this.assistantOpen() ? FILTERS_NARROW : FILTERS).slice(0, this.filterCount())
+    );
+
+    protected readonly searchPlaceholder: Signal<string> = computed((): string =>
+        this.assistantOpen() ? 'Поиск по гостю' : 'Поиск по гостю и почте'
+    );
+
+    public readonly bar: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });
+    public readonly pageTitle: InputSignal<string> = input<string>('Все брони');
+    public readonly filterCount: InputSignal<number> = input<number>(3);
+    public readonly filtersActive: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
+    public readonly tabs: InputSignal<number> = input<number>(0);
+    public readonly assistant: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });
+    public readonly overflow: InputSignal<IRtTabs.Overflow> = input<IRtTabs.Overflow>('more');
+    public readonly disabledSection: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
+    public readonly manySections: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
+    public readonly screenHeight: InputSignal<number | null> = input<number | null>(null);
     /** История открывает панель жестом: съёмка ждёт её и не снимает кадр без неё. */
-    public overlay: boolean = false;
-    public user: IRtPageHeader.User = { name: 'Анна' };
+    public readonly overlay: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });
+    public readonly user: InputSignal<IRtPageHeader.User> = input<IRtPageHeader.User>({ name: 'Анна' });
 
     constructor() {
         // Любой адрес витрины отвечает пустым экраном: пункты меню переходят, и подсветка идёт за ними.
@@ -137,44 +188,9 @@ export class TestRtPageHeaderVerticalComponent {
         inject(DestroyRef).onDestroy((): void => this.#phoneQuery.removeEventListener('change', follow));
     }
 
-    protected get tabList(): readonly number[] {
-        return Array.from({ length: this.tabs }, (_: unknown, index: number): number => index + 1);
-    }
-
-    protected get tabLabels(): readonly string[] {
-        return this.tabs > SHORT_TAB_LIST ? TAB_LABELS_LONG : TAB_LABELS_SHORT;
-    }
-
-    protected get assistantOpen(): boolean {
-        return this.assistantPicked() ?? this.assistant;
-    }
-
-    protected get sections(): ReadonlyArray<IRtPageHeader.Item> {
-        if (this.disabledSection) {
-            return PAGE_SECTIONS_DISABLED;
-        }
-        return this.manySections ? PAGE_SECTIONS_MANY : PAGE_SECTIONS;
-    }
-
-    protected get railActions(): ReadonlyArray<IRtPageHeader.Item> {
-        return [
-            { id: ASSISTANT_ACTION, label: 'Ассистент', icon: 'sparkle', active: this.assistantOpen },
-            { id: 'bell', label: 'Уведомления', icon: 'bell', unread: true },
-        ];
-    }
-
-    /** С открытым ассистентом и во второй строке кадры берут короткие подписи. */
-    protected get shownFilters(): readonly string[] {
-        return (this.filterCount > FILTERS_IN_ONE_ROW || this.assistantOpen ? FILTERS_NARROW : FILTERS).slice(0, this.filterCount);
-    }
-
-    protected get searchPlaceholder(): string {
-        return this.assistantOpen ? 'Поиск по гостю' : 'Поиск по гостю и почте';
-    }
-
     protected onAction(id: string): void {
         if (id === ASSISTANT_ACTION) {
-            this.assistantPicked.set(!this.assistantOpen);
+            this.assistantPicked.set(!this.assistantOpen());
         }
     }
 }
