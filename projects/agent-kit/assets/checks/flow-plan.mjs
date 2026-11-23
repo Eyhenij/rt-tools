@@ -34,7 +34,7 @@ import { STEP_LIMIT_MS, StepRefused, openRecords, planOfBranch, runCheck } from 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const OWNER = [join(HERE, 'task-flow/source/owner.mjs'), join(HERE, '../task-flow/source/owner.mjs')].find((path) => existsSync(path));
 if (!OWNER) throw new Error(`flow-plan: the engine source task-flow/source/owner.mjs is not laid out next to ${HERE}`);
-const { approvalOf } = await import(pathToFileURL(OWNER).href);
+const { approvalOf, wordOf } = await import(pathToFileURL(OWNER).href);
 
 /** The roles whose verdicts precede the approval. */
 export const ROLES = ['product-strategist', 'goal-critic'];
@@ -71,31 +71,30 @@ const roleCalls = (entry) =>
         : [];
 
 /**
- * The approving answer of the owner after the last call of the roles and not before `since`, the
- * time of the plan commit in milliseconds: a menu option or a typed message that approves the plan
- * of the task by `approvalOf`. An answer older than the plan commit approved another text of it. An
- * entry without a time is judged by its place alone. Null when there is none or a role was never
- * called.
+ * The latest approving answer of the owner with both roles called before it: a menu option or a
+ * typed message that approves the plan of the task by `approvalOf`. The roles called again in a
+ * review round later do not hide it. Null when there is none.
  */
-export function approvingEntry(entries, task, since = 0) {
-    let lastRole = -1;
+export function approvingEntry(entries, task) {
     const called = new Set();
-    entries.forEach((entry, index) => {
-        for (const role of roleCalls(entry)) {
-            if (ROLES.includes(role)) {
-                called.add(role);
-                lastRole = index;
-            }
-        }
-    });
-    if (ROLES.some((role) => !called.has(role))) return null;
-    for (const entry of entries.slice(lastRole + 1)) {
-        if (entry.timestamp && Date.parse(entry.timestamp) < since) continue;
+    let found = null;
+    for (const entry of entries) {
+        for (const role of roleCalls(entry)) if (ROLES.includes(role)) called.add(role);
+        if (ROLES.some((role) => !called.has(role))) continue;
         const answer = approvalOf(entry, task);
-        if (answer) return { answer, uuid: entry.uuid ?? null };
+        if (answer) found = { answer, uuid: entry.uuid ?? null };
+    }
+    return found;
+}
+
+/** The last word of the owner holding «одобр» that the rule did not count, for the refusal to quote. */
+const uncounted = (entries) => {
+    for (let index = entries.length - 1; index >= 0; index -= 1) {
+        const word = wordOf(entries[index]);
+        if (word && /одобр/iu.test(word)) return word.replace(/\s+/g, ' ').trim().slice(0, 160);
     }
     return null;
-}
+};
 
 /** The text of the approving answer, or null — the same test as `approvingEntry`. */
 export const approvingAnswer = (entries, task) => approvingEntry(entries, task)?.answer ?? null;
@@ -198,11 +197,11 @@ export function runPlanRed({ git, steps, marks }, model, record, limitMs = STEP_
         console.log(`plan-red: the record «${file}» is not a session record of this repository; no mark`);
         return 1;
     }
-    const since = Number(gitOut(['show', '-s', '--format=%ct', plan.sha]).stdout.trim()) * 1000 || 0;
-    const found = approvingEntry(record, task, since);
+    const found = approvingEntry(record, task);
     if (found === null || !found.uuid) {
+        const word = uncounted(record);
         console.log(
-            `plan-red: no approving answer of the owner after the plan commit and the calls of ${ROLES.join(' and ')} — a menu option or a typed message with «Одобряю» naming ${task} and no condition; ask the owner one menu question naming ${task} and its plan, never ask them to type a phrase; no mark`
+            `plan-red: no approving answer of the owner after the calls of ${ROLES.join(' and ')} — a menu option or a typed message with «Одобряю» naming ${task} and no condition${word ? `; the last word with «одобр», not counted: «${word}»` : ''}; ask the owner one menu question naming ${task} and its plan, never ask them to type a phrase; no mark`
         );
         return 1;
     }

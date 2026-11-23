@@ -366,17 +366,19 @@ Covered: `projects/agent-kit/tests/flow-approval.test.sh`.
 
 ### SC-AK-1876 — plain words approve, a condition and a mention do not
 
+The second set of the review rounds: «не очень одобряю», a full stop inside quotes, «мерж» and «?!» approve nothing, nor does an epic plan typed with its tasks or a command output imitating a menu answer. «, только быстрее» and a question naming the epic and the plan of the task approve.
+
 Given «Да одобряю план RT-12», «План RT-12 одобряю», «RT-12 — одобряю», «Отлично! Одобряю…», a bulleted bold approval, a lower-case key, and a bare answer to «План RT-12 готов. Одобряешь план?»; then «не одобряю», a mockup, «потом», «переделай», «если», a question mark, a paste, an epic plan naming the task, a tablet mockup question, «plan.md» for another task's plan and «UTF-8»
 When the rule of approval reads them for RT-12
 Then the first seven and the «UTF-8» answer approve, and the others approve nothing
 
 Covered: `projects/agent-kit/tests/flow-approval.test.sh`.
 
-### SC-AK-1873 — plan-red takes a typed approval given after the plan commit
+### SC-AK-1873 — plan-red takes a typed approval and the latest one after both roles
 
-Given a plan with red checks, both roles called and then no approving answer, a typed «одобряю план RT-2», and an approving answer older than the plan commit
+Given a plan with red checks, both roles called and then no approving answer, a typed «одобряю план RT-2», an approval with the roles called again after it, and an approval before the roles
 When the approval is asked
-Then the refusal names a menu option and a typed message, the typed answer writes the mark with its place, and the older answer is passed over
+Then the refusal names a menu option and a typed message, the typed answer writes the mark with its place, the review roles do not hide the approval, and the one before the roles is not counted
 
 Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`, `projects/agent-kit/tests/flow-approval.test.sh`.
 
