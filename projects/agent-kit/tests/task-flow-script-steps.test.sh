@@ -471,6 +471,14 @@ got="$(
     rt_delivery_rerun
 )"
 report "pr: SC-AK-1740 — перемер зовёт node из .nvmrc дерева" "$(printf '%s' "$got" | grep -c 'pinned node')" 1
+printf 'v99.0.5\n' > "$TF_DIR/pinned-tree/.nvmrc"
+got="$(
+    unmet() { printf '%s %s\n' "$1" "$3"; }
+    rt_hooks_dir="$TESTS/../assets/hooks" root="$TF_DIR/pinned-tree" NVM_DIR="$TF_NVM"
+    . "$TESTS/../assets/hooks/git-guard-delivery-rerun.sh"
+    rt_delivery_rerun
+)"
+report "pr: SC-AK-1740 — без точной версии перемер берёт более новую той же главной" "$(printf '%s' "$got" | grep -c 'pinned node')" 1
 rm "$TF_DIR/pinned-tree/.nvmrc"
 got="$(
     unmet() { printf '%s %s\n' "$1" "$3"; }

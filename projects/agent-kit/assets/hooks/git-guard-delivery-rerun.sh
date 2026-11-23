@@ -9,6 +9,8 @@
 # closed. The engine puts a taken-apart task folder back from the history for the run.
 #
 # FAIL-OPEN: no node, no engine, a branch with no plan or a plan with no checks — nothing is judged.
+#
+# Requires: hooks/facts.sh
 
 rt_delivery_rerun() {
     command -v node >/dev/null 2>&1 || return 0
@@ -19,10 +21,12 @@ rt_delivery_rerun() {
     [ -n "$engine" ] || return 0
     local dir="${root:-${CLAUDE_PROJECT_DIR:-.}}" pinned run_path="$PATH"
     # The checks run on the node the tree pins in .nvmrc, as they ran when measured: the session may
-    # carry another default, and a tree with an engines field refuses it.
-    pinned="$({ tr -d ' \n' < "$dir/.nvmrc"; } 2>/dev/null)"
-    pinned="${NVM_DIR:-$HOME/.nvm}/versions/node/v${pinned#v}/bin"
-    [ -x "$pinned/node" ] && run_path="$pinned:$PATH"
+    # carry another default, and a tree with an engines field refuses it. The same function names the
+    # directory for the push set.
+    # shellcheck disable=SC1091
+    command -v rt_node_pinned_dir >/dev/null 2>&1 || { [ -f "$rt_hooks_dir/facts.sh" ] && . "$rt_hooks_dir/facts.sh" 2>/dev/null; }
+    command -v rt_node_pinned_dir >/dev/null 2>&1 && pinned="$(rt_node_pinned_dir "$dir")"
+    [ -n "$pinned" ] && run_path="$pinned:$PATH"
     out="$(cd "$dir" && PATH="$run_path" node "$engine" step --done --pr 2>&1)"
     code=$?
     [ "$code" -eq 0 ] && return 0

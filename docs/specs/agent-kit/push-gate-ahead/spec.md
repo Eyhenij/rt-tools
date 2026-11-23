@@ -76,6 +76,21 @@ There is no interface: the guard answers with a refusal text, the run ahead with
 - **The run ahead runs the whole set, writes a mark for every green check and starts only on a
   clean copy.** A red set exits with a nonzero code, and the last `push ahead:` line of its output
   names the red checks.
+- **The steps of the set run on the node the tree pins.** The set, the run ahead and the rerun of
+  done steps before a PR put the directory of the node named in `.nvmrc` first in `PATH`, for the
+  steps and for their selection alike. The first line of `.nvmrc` that is not a comment counts. A
+  full version takes its own directory, and with none the highest installed version of the same
+  major above it; a pin of a major or a minor takes the highest installed match; an install with no
+  executable node is passed over. An alias and a tree without `.nvmrc` run on the node of `PATH`, as
+  before. With no installed node that serves the pin, a node of `PATH` that serves it — the same
+  version, one under a pinned major or minor, a newer one of a pinned major — runs the steps as
+  before.
+- **No installed node serves the pin and `PATH` does not either: no step starts.** The push guard
+  and the git hook refuse by one line: the pinned version, the one `PATH` gives and the command
+  that installs it. The git hook refuses before it counts the steps. When `PATH` gives no node, or
+  one too old to run the decision table, both say the line themselves. The run ahead says the same line
+  and ends with the code of a run that did not start. An empty set does not let such a push
+  through.
 - **A call that runs the set ahead and does not end with its exit code is refused with the ready
   form.** A background notice carries the code of the last command of the call, and a code printed
   into the output is no substitute for it. Only a background call is judged: a call in the
@@ -321,3 +336,6 @@ None.
   line or no merge of the host brought it, and the branch is not under the head. The branch of an
   epic that a request merge brought the copy into was dropped, and the set ran against the main
   branch. Task RT-3426.
+- 2026-11-23 — the steps of the set run on the node the tree pins; a pinned node that is not
+  installed refuses the push by one line. The push guard ran the light steps on node 20 of the
+  hook and showed four red ones that are green on node 22. Task RT-3466.

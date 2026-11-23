@@ -1,4 +1,4 @@
-# rt-kit v0.38.0 · checks/decision-table.json · bb47989dcdc3 · правится надстройкой, не здесь
+# rt-kit v0.38.0 · checks/decision-table.json · 53803e98029a · правится надстройкой, не здесь
 {
     "areas": {
         "browser": {
@@ -187,6 +187,10 @@
                 "push_ahead_code_visible": [
                     "yes",
                     "no"
+                ],
+                "push_node_pinned": [
+                    "yes",
+                    "no"
                 ]
             },
             "actions": [
@@ -238,7 +242,8 @@
                 "ask_owner",
                 "pr_create_side_base",
                 "load_rule",
-                "push_ahead_run"
+                "push_ahead_run",
+                "install_node"
             ],
             "ask": "ask_owner"
         },
@@ -15103,6 +15108,42 @@
                 "setup": "T=\"$(fixture_repo_branched main RT-7-probe)\"\ncd \"$T\"\nprintf \".p/\\n.tmp/\\n.claude/\\ntools/\\n\" > .gitignore\ngit add .gitignore && git -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q -m \"chore: ignore\"\ngit update-ref refs/remotes/origin/main main\nmkdir -p .claude/rt-kit/defaults .p .tmp/claude-skill-gate\ncp \"$DEFAULTS/gate-map.sh\" .claude/rt-kit/defaults/\nfor r in git-workflow task-flow epic-flow turn-conduct; do mkdir -p .claude/skills/$r; printf -- \"---\\nname: %s\\nkind: rule\\n---\\n\" $r > .claude/skills/$r/SKILL.md; done\nprintf '%s' '{\"exists\":true,\"open\":true,\"onBoard\":true,\"assigned\":true,\"numbered\":true,\"status\":\"In progress\"}' > .p/state\ncat > .claude/rt-kit/project.sh <<'PROFILE'\nrt_task_state() { if [ -f \"$CLAUDE_PROJECT_DIR/.p/state-$1\" ]; then cat \"$CLAUDE_PROJECT_DIR/.p/state-$1\"; else cat \"$CLAUDE_PROJECT_DIR/.p/state\"; fi; }\nrt_pull_state() { cat \"$CLAUDE_PROJECT_DIR/.p/pull\" 2>/dev/null || return 1; }\nrt_conflicting_pulls() { cat \"$CLAUDE_PROJECT_DIR/.p/conflicts\" 2>/dev/null; return 0; }\nrt_pull_merged() { cat \"$CLAUDE_PROJECT_DIR/.p/merged\" 2>/dev/null; }\nrt_report_body() { :; }\nrt_push_checks() { printf \"%s\\n\" true; }\n[ -f \"$CLAUDE_PROJECT_DIR/.p/extra.sh\" ] && . \"$CLAUDE_PROJECT_DIR/.p/extra.sh\"\nPROFILE\nexport CLAUDE_PROJECT_DIR=\"$T\" TMPDIR=\"$T/.tmp/\"\nprintf '%s\\n' git-workflow task-flow epic-flow turn-conduct > .tmp/claude-skill-gate/tests.loaded\nturn() { : > .tmp/turn.jsonl; jq -cn '{type:\"assistant\",message:{content:[{type:\"tool_use\",name:\"Skill\",input:{skill:\"git-workflow\"}}]}}' >> .tmp/turn.jsonl; [ -n \"$1\" ] && jq -cn --arg t \"EXAM: passed $1 of 5\" '{type:\"user\",message:{content:[{type:\"tool_result\",content:$t}]}}' >> .tmp/turn.jsonl; return 0; }\nturn 5\nprintf '%s\\n' 'rt_push_checks() { printf \"%s\\n\" false; }' >> .p/extra.sh\nprintf x > own.txt && git add own.txt && git -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q -m \"feat: own\"\nprintf '%s\\n' 'rt_push_checks() { printf \"%s\\n\" false; }' >> .p/extra.sh",
                 "input": "printf 'refs/heads/RT-7-probe %s refs/heads/RT-7-probe 0000000000000000000000000000000000000000\\n' \"$(git rev-parse RT-7-probe)\""
             }
+        },
+        {
+            "area": "delivery",
+            "hook": "pre-push.sh",
+            "action": "push",
+            "when": {
+                "push_sends_tip": "yes",
+                "push_node_pinned": "no"
+            },
+            "decision": "deny",
+            "move": "install_node",
+            "tail": false,
+            "says": "No step of the set ran",
+            "text": "pre-push: refused — {node_line}. No step of the set ran: on another node the steps turn red for a reason that is not in the code. Install the pinned node by that command and push again.",
+            "probe": {
+                "setup": "T=\"$(fixture_repo_branched main RT-7-probe)\"\ncd \"$T\"\nprintf \".p/\\n.tmp/\\n.claude/\\ntools/\\n\" > .gitignore\ngit add .gitignore && git -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q -m \"chore: ignore\"\ngit update-ref refs/remotes/origin/main main\nmkdir -p .claude/rt-kit/defaults .p .tmp/claude-skill-gate\ncp \"$DEFAULTS/gate-map.sh\" .claude/rt-kit/defaults/\nfor r in git-workflow task-flow epic-flow turn-conduct; do mkdir -p .claude/skills/$r; printf -- \"---\\nname: %s\\nkind: rule\\n---\\n\" $r > .claude/skills/$r/SKILL.md; done\nprintf '%s' '{\"exists\":true,\"open\":true,\"onBoard\":true,\"assigned\":true,\"numbered\":true,\"status\":\"In progress\"}' > .p/state\ncat > .claude/rt-kit/project.sh <<'PROFILE'\nrt_task_state() { if [ -f \"$CLAUDE_PROJECT_DIR/.p/state-$1\" ]; then cat \"$CLAUDE_PROJECT_DIR/.p/state-$1\"; else cat \"$CLAUDE_PROJECT_DIR/.p/state\"; fi; }\nrt_pull_state() { cat \"$CLAUDE_PROJECT_DIR/.p/pull\" 2>/dev/null || return 1; }\nrt_conflicting_pulls() { cat \"$CLAUDE_PROJECT_DIR/.p/conflicts\" 2>/dev/null; return 0; }\nrt_pull_merged() { cat \"$CLAUDE_PROJECT_DIR/.p/merged\" 2>/dev/null; }\nrt_report_body() { :; }\nrt_push_checks() { printf \"%s\\n\" true; }\n[ -f \"$CLAUDE_PROJECT_DIR/.p/extra.sh\" ] && . \"$CLAUDE_PROJECT_DIR/.p/extra.sh\"\nPROFILE\nexport CLAUDE_PROJECT_DIR=\"$T\" TMPDIR=\"$T/.tmp/\"\nprintf '%s\\n' git-workflow task-flow epic-flow turn-conduct > .tmp/claude-skill-gate/tests.loaded\nturn() { : > .tmp/turn.jsonl; jq -cn '{type:\"assistant\",message:{content:[{type:\"tool_use\",name:\"Skill\",input:{skill:\"git-workflow\"}}]}}' >> .tmp/turn.jsonl; [ -n \"$1\" ] && jq -cn --arg t \"EXAM: passed $1 of 5\" '{type:\"user\",message:{content:[{type:\"tool_result\",content:$t}]}}' >> .tmp/turn.jsonl; return 0; }\nturn 5\nprintf x > own.txt && printf '99.0.0\\n' > .nvmrc && git add own.txt .nvmrc && git -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q -m \"feat: own\"\nmkdir -p .nvm-empty\nexport NVM_DIR=\"$T/.nvm-empty\"",
+                "input": "printf 'refs/heads/RT-7-probe %s refs/heads/RT-7-probe 0000000000000000000000000000000000000000\\n' \"$(git rev-parse RT-7-probe)\""
+            }
+        },
+        {
+            "area": "delivery",
+            "hook": "git-guard-push-tests.sh",
+            "when": {
+                "rule_loaded": "yes",
+                "push_node_pinned": "no"
+            },
+            "action": "push",
+            "decision": "deny",
+            "move": "install_node",
+            "says": "No step of the push set ran",
+            "probe": {
+                "setup": "T=\"$(fixture_repo_branched main RT-7-probe)\"\ncd \"$T\"\nprintf \".p/\\n.tmp/\\n.claude/\\ntools/\\n\" > .gitignore\ngit add .gitignore && git -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q -m \"chore: ignore\"\ngit update-ref refs/remotes/origin/main main\nmkdir -p .claude/rt-kit/defaults .p .tmp/claude-skill-gate\ncp \"$DEFAULTS/gate-map.sh\" .claude/rt-kit/defaults/\nfor r in git-workflow task-flow epic-flow turn-conduct; do mkdir -p .claude/skills/$r; printf -- \"---\\nname: %s\\nkind: rule\\n---\\n\" $r > .claude/skills/$r/SKILL.md; done\nprintf '%s' '{\"exists\":true,\"open\":true,\"onBoard\":true,\"assigned\":true,\"numbered\":true,\"status\":\"In progress\"}' > .p/state\ncat > .claude/rt-kit/project.sh <<'PROFILE'\nrt_task_state() { if [ -f \"$CLAUDE_PROJECT_DIR/.p/state-$1\" ]; then cat \"$CLAUDE_PROJECT_DIR/.p/state-$1\"; else cat \"$CLAUDE_PROJECT_DIR/.p/state\"; fi; }\nrt_pull_state() { cat \"$CLAUDE_PROJECT_DIR/.p/pull\" 2>/dev/null || return 1; }\nrt_conflicting_pulls() { cat \"$CLAUDE_PROJECT_DIR/.p/conflicts\" 2>/dev/null; return 0; }\nrt_pull_merged() { cat \"$CLAUDE_PROJECT_DIR/.p/merged\" 2>/dev/null; }\nrt_report_body() { :; }\nrt_push_checks() { printf \"%s\\n\" true; }\n[ -f \"$CLAUDE_PROJECT_DIR/.p/extra.sh\" ] && . \"$CLAUDE_PROJECT_DIR/.p/extra.sh\"\nPROFILE\nexport CLAUDE_PROJECT_DIR=\"$T\" TMPDIR=\"$T/.tmp/\"\nprintf '%s\\n' git-workflow task-flow epic-flow turn-conduct > .tmp/claude-skill-gate/tests.loaded\nturn() { : > .tmp/turn.jsonl; jq -cn '{type:\"assistant\",message:{content:[{type:\"tool_use\",name:\"Skill\",input:{skill:\"git-workflow\"}}]}}' >> .tmp/turn.jsonl; [ -n \"$1\" ] && jq -cn --arg t \"EXAM: passed $1 of 5\" '{type:\"user\",message:{content:[{type:\"tool_result\",content:$t}]}}' >> .tmp/turn.jsonl; return 0; }\nturn 5\nprintf '99.0.0\\n' > .nvmrc && git add .nvmrc && git -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q -m \"chore: pin\"\nmkdir -p .nvm-empty\nexport NVM_DIR=\"$T/.nvm-empty\"",
+                "input": "input_cmd 'git push origin RT-7-probe' Bash \"$T\" | jq --arg r \"$T/.tmp/turn.jsonl\" '. + {transcript_path: $r}'"
+            },
+            "text": "BLOCKED: {node_line}. No step of the push set ran: on another node the steps turn red for a reason that is not in the code, and an empty set would read as a green one. Install the pinned node by that command and push again; nvm puts it where the set finds it.",
+            "tail": true
         },
         {
             "area": "delivery",

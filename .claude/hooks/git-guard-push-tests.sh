@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/git-guard-push-tests.sh · 9a13ba290a58 · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/git-guard-push-tests.sh · 9da27a6e952d · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__terminal__run_in_terminal
 # rt-hook-timeout: 1800
 # Requires: checks/decide.mjs, hooks/decide.sh, hooks/facts.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/push-sign.sh, hooks/push-set.sh, hooks/git-guard-push-marks.sh
@@ -245,6 +245,24 @@ skipped="$rt_push_set_skipped"
 held="$rt_push_set_held"
 ahead="$rt_push_set_ahead"
 ran="$rt_push_set_ran"
+
+# The node the tree pins is not on the machine, and PATH gives another one: no step ran, and an empty
+# set must not read as a green one. One line names both versions and the install command.
+if [ -n "${rt_push_set_node:-}" ]; then
+    rt_push_gate_note node
+    said="$(push_refuse push '{"push_node_pinned":"no"}' "$(jq -cn --arg l "$rt_push_set_node" '{node_line:$l}')")"
+    # The decider runs on the node of PATH — the very node that may be too old to run it, or absent:
+    # then it answers nothing, and the refusal is said here, or the push would pass unjudged.
+    if [ -z "$said" ]; then
+        # shellcheck disable=SC1091
+        command -v rt_deny_tail >/dev/null 2>&1 || . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
+        command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+        said="$(jq -cn --arg r "BLOCKED: ${rt_push_set_node}. No step of the push set ran. Install the pinned node by that command and push again. $(rt_deny_tail)" \
+            '{hookSpecificOutput:{hookEventName:"PreToolUse", permissionDecision:"deny", permissionDecisionReason:$r}}')"
+    fi
+    printf '%s\n' "$said"
+    exit 0
+fi
 
 # Heavy steps with no mark are named in one refusal together with the red light ones: the command
 # that runs them ahead goes to the background, where no hook limit cuts it, and the push after it
