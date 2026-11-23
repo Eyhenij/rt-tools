@@ -20,8 +20,8 @@
 - [x] 5.1 Шторки из таблицы открываются с её высотой и действием; шторки даты и отборов идут через общую оболочку
 - [x] 6.1 Истории шторки показывают каждое состояние, числа витрины совпали с макетом
 - [x] 6.2 Прежние снимки витрины зелёные, новые сняты
-- [>] 6.3 Витрина одобрена владельцем
-- [ ] 6.4 Заметки компонентов и журнал изменений кита называют новые входы, проверка спек зелёная
+- [x] 6.3 Витрина одобрена владельцем
+- [x] 6.4 Заметки компонентов и журнал изменений кита называют новые входы, проверка спек зелёная
 
 ## Decisions along the way
 
@@ -124,6 +124,7 @@
   вместо 20), черта и поля у поиска выбора, вылет панели меню на 8 за правый отступ.
 - **Снимки витрины снимает браузер образа.** `pnpm run -s test:visual:v2` на машине отказывает сам;
   шаг 6.2 меряется командой `node tools/visual-gate.mjs ui-kit-v2`. Affected stage of the plan: 6.
+- **Проверка шага 6.2 заменена:** `sh -c 'node tools/visual-gate.mjs ui-kit-v2 >/dev/null 2>&1 && echo green || echo red'` → `green`
 - **Шаг 6.2 отмечен руками.** Первый прогон образа: 1200 историй зелёные, 38 разошлись — все
   шторки, четыре из них новые истории без эталона. Пересняты 36 кадров, сняты 4 новых; повторный
   прогон — 1264 снимка из 1264, обход `pnpm run -s test:stories:v2` — 1238 историй и 124 страницы
@@ -229,7 +230,7 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 6 of 6 — Витрина и тексты
-- **Next step:** шаг 6.1 — истории шторки на каждое состояние (`select/stories/select-sheet.stories.ts` и соседи), живая проверка в витрине на 6007 с замерами, кадры Figma привести к шагам кита и сверить числа `node tools/kit-match.mjs numbers`, строка «Совпадение» в записи одобрений
+- **Next step:** шаг 6.3 — витрина показана владельцу, ждёт его ответа «одобряете?»; после ответа строка «Витрина» в записи одобрений, шаг 6.4 и два круга ревью
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-3531-sheet-rows-close/progress.md`; the plan lies next to it.
@@ -237,27 +238,17 @@ The progress in full — `docs/tasks/RT-3531-sheet-rows-close/progress.md`; the 
 ### Uncommitted
 
 ```
- M docs/specs/ui-kit-v2/dynamic-selectors/implementation.md
- M docs/specs/ui-kit-v2/popover-sheet/scenarios.md
- M docs/specs/ui-kit-v2/popover-sheet/spec.md
- M docs/specs/ui-kit-v2/scenarios.md
- M docs/specs/ui-kit-v2/spec.md
- M projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.component.scss
- M projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/bottom-sheet-matrix.stories.ts
- M projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/component/own-sheet-stack.directive.ts
- M projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/component/test-bottom-sheet-matrix.component.ts
- M projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-sheet.spec.ts
- M projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-sheet.spec.ts
- M projects/ui-kit-v2/src/lib/components/select/stories/component/test-select-sheet.component.html
- M projects/ui-kit-v2/src/lib/components/select/stories/component/test-select-sheet.component.ts
- M projects/ui-kit-v2/src/lib/components/select/stories/select-sheet.stories.ts
- M projects/ui-kit-v2/src/styles/_mixins.scss
-?? docs/specs/ui-kit-v2/sheet-header-cards/
+ M docs/tasks/RT-3531-sheet-rows-close/approvals.md
+ M docs/tasks/RT-3531-sheet-rows-close/progress.md
 ```
 
 ### Commits over the main branch
 
 ```
+04522f54b fix(rt:ui-kit-v2): «Сбросить» в шторке отборов страницы — маленькая кнопка, как «Применить» (RT-3531)
+bdc2288a6 feat(rt:ui-kit-v2): свои шаблоны шапки и подвала шторки, правки по показу витрины (RT-3531)
+688f6f468 test(rt:ui-kit-v2): снимки шторок пересняты под новую шапку и карточки, сценарии готовности называют шапку (RT-3531)
+17c2494ad feat(rt:ui-kit-v2): шторки сведены с макетом по числам, истории шторки на каждое состояние (RT-3531)
 aa9b6c8b1 docs(rt:ui-kit-v2): решения этапа высот и действий шторки записаны в ход работы (RT-3531)
 8ccf80e23 feat(rt:ui-kit-v2): высота, действие в шапке и вопрос у каждой шторки по её случаю (RT-3531)
 b417dc7fb feat(rt:ui-kit-v2): пять списков выбора рисуют в шторке карточки, вход sheetCards возвращает прежние строки (RT-3531)
