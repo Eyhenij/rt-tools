@@ -47,11 +47,11 @@ report "SC-AK-1606 — consent: последнее слово владельца
 # --- foreign answers: what is no word of the owner ------------------------------------------------
 report "SC-AK-1607 — foreign answer: ни одно сообщение хука не читается словом владельца" \
     "$(reading 'owner messages with a hook refusal')" "0"
-# The reminder measure counts by the shared rule of the owner's words: a message pasted by the owner
-# and one queued during a turn count, a wrapper of the harness does not. The owner source of the
-# engine still reads the wrappers as words, and its move to the shared rule is a task of its own.
-report "SC-AK-1607 — foreign answer: owner.mjs считает 213 сообщений набранными, owner-nudges по общему правилу — 198" \
-    "$(reading 'owner typed messages') $(reading 'owner-nudges typed')" "213 198"
+# The reminder measure and the owner source of the engine count by one shared rule of the owner's
+# words: a message pasted by the owner and one queued during a turn count, a wrapper of the harness
+# does not.
+report "SC-AK-1607 — foreign answer: owner.mjs и owner-nudges по общему правилу считают по 198 набранных сообщений" \
+    "$(reading 'owner typed messages') $(reading 'owner-nudges typed')" "198 198"
 report "SC-AK-1607 — foreign answer: ответ меню «ты нашёл причину?» не одобряет план — planApproval RT-3268" \
     "$(reading 'planApproval RT-3268')" "null"
 report "SC-AK-1607 — foreign answer: «Одобряю, делай» без имени плана не одобряет его — planApproval RT-3269" \
@@ -117,6 +117,96 @@ report "SC-AK-1632 — пересчёт 13.11 по сохранённой зап
 RESULT_LINES="$(node "$HERE/../assets/checks/work-result.mjs" --observations "$WORK/recounted" --until 2026-11-13 | jq -r '.lines[]')"
 report "SC-AK-1618 — отчёт за 13.11: переспросили 3" \
     "$(printf '%s\n' "$RESULT_LINES" | grep -E '^  Переспросили: ')" "  Переспросили: 3"
+
+# --- the dead ends by check and milestone G of the epic over made-up days ------------------------------
+# One day of observations as the hook writes them: CALLS calls of one session, REFUSALS refusals each of
+# a check of its own (no series), and three refusals in a row a few minutes apart for every check named
+# after them — one dead end each; an empty name is a refusal with no check.
+observe() {
+    node -e '
+const fs = require("fs");
+const [dir, day, calls, refusals, ...ends] = process.argv.slice(1);
+const at = (s) => new Date(Date.parse(`${day}T00:00:00Z`) + s * 1000).toISOString();
+const line = (s, ev, more = {}) => ({ t: at(s), ev, sid: "s1", task: "RT-1-made-up", ...more });
+const out = [];
+for (let i = 0; i < Number(calls); i++) out.push(line(i * 20, "record-call"));
+for (let i = 0; i < Number(refusals); i++) out.push(line(3600 + i * 600 + 5, "record-refusal", { kind: "hook", check: `check-${i}` }));
+ends.forEach((check, k) => {
+    for (let j = 0; j < 3; j++) out.push(line(60000 + k * 3600 + j * 60, "record-refusal", { kind: "hook", check }));
+});
+fs.mkdirSync(dir, { recursive: true });
+fs.appendFileSync(`${dir}/${day}.jsonl`, out.map((o) => JSON.stringify(o)).join("\n") + "\n");' "$@"
+}
+report_lines() { node "$HERE/../assets/checks/work-result.mjs" --observations "$1" "${@:2}" | jq -r '.lines[]'; }
+
+ENDS="$WORK/dead-ends"
+observe "$ENDS" 2026-11-15 100 2 flow-step-guard flow-step-guard ""
+observe "$ENDS" 2026-11-16 100 2
+ENDS_LINES="$(report_lines "$ENDS" --until 2026-11-16 --days 2)"
+report "SC-AK-1834 — тупики дня по проверкам: имя проверки и число серий, без имени — unnamed" \
+    "$(printf '%s\n' "$ENDS_LINES" | grep -A1 '^  Тупики по проверкам:' | sed -n 2p)" "    2026-11-15: flow-step-guard 2, unnamed 1"
+report "SC-AK-1834 — день без тупиков называет «нет»" \
+    "$(printf '%s\n' "$ENDS_LINES" | grep -A2 '^  Тупики по проверкам:' | sed -n 3p)" "    2026-11-16: нет"
+
+REACHED="$WORK/milestone-reached"
+observe "$REACHED" 2026-11-15 1499 0
+observe "$REACHED" 2026-11-16 1500 74
+observe "$REACHED" 2026-11-17 2000 0
+observe "$REACHED" 2026-11-18 1600 10
+observe "$REACHED" 2026-11-19 1000 0
+report "SC-AK-1835 — веха G эпика достигнута: три дня подряд от 1500 вызовов, меньше пяти на сто, без тупиков" \
+    "$(report_lines "$REACHED" --until 2026-11-19 --days 5 | grep '^  Веха G эпика:' | sed 's/ (.*//')" \
+    "  Веха G эпика: достигнута — 2026-11-16, 2026-11-17, 2026-11-18"
+
+MISSED="$WORK/milestone-missed"
+observe "$MISSED" 2026-11-15 1500 0
+observe "$MISSED" 2026-11-16 1500 0
+observe "$MISSED" 2026-11-17 1600 0 flow-step-guard
+observe "$MISSED" 2026-11-18 1500 75
+observe "$MISSED" 2026-11-19 1200 0
+observe "$MISSED" 2026-11-21 1000 60 push-guard
+MISSED_LINES="$(report_lines "$MISSED" --until 2026-11-21 --days 7)"
+report "SC-AK-1835 — веха G эпика не достигнута, когда подряд держат только два дня" \
+    "$(printf '%s\n' "$MISSED_LINES" | grep '^  Веха G эпика:' | sed 's/ (.*//')" "  Веха G эпика: не достигнута"
+report "SC-AK-1835 — не достигнута: названы дни и чем каждый её не держит, ровно пять на сто тоже" \
+    "$(printf '%s\n' "$MISSED_LINES" | grep -A5 '^  Веха G эпика:' | sed -n '2,6p' | paste -sd '|' -)" \
+    "    2026-11-17: тупиков 1 > 0|    2026-11-18: отказов 5.00 на сто ≥ 5|    2026-11-19: вызовов 1200 < 1500 — не рабочий день, пропущен|    2026-11-20: записи сессий нет — не рабочий день, пропущен|    2026-11-21: вызовов 1000 < 1500, отказов 6.30 на сто ≥ 5, тупиков 1 > 0 — не рабочий день, пропущен"
+
+SKIPPED="$WORK/milestone-skipped"
+observe "$SKIPPED" 2026-11-15 1500 0
+observe "$SKIPPED" 2026-11-16 800 40 push-guard
+observe "$SKIPPED" 2026-11-18 1600 0
+observe "$SKIPPED" 2026-11-19 2000 0
+report "SC-AK-1835 — a day under 1500 calls or with no record is skipped: it neither counts nor breaks the run" \
+    "$(report_lines "$SKIPPED" --until 2026-11-19 --days 5 | grep '^  Веха G эпика:' | sed 's/ (.*//')" \
+    "  Веха G эпика: достигнута — 2026-11-15, 2026-11-18, 2026-11-19"
+SHORT="$WORK/milestone-short"
+observe "$SHORT" 2026-11-16 1500 0
+observe "$SHORT" 2026-11-17 700 0
+observe "$SHORT" 2026-11-18 1600 0
+report "SC-AK-1835 — a run too short to reach the milestone says how many working days hold it" \
+    "$(report_lines "$SHORT" --until 2026-11-18 --days 3 | grep -A3 '^  Веха G эпика:' | grep 'рабочих дней подряд' | sed 's/^ *//')" \
+    "рабочих дней подряд держат веху: 2 из 3 (в отрезке 3 дн.)"
+LIGHT="$WORK/milestone-light"
+observe "$LIGHT" 2026-11-17 1500 0
+observe "$LIGHT" 2026-11-18 800 0
+observe "$LIGHT" 2026-11-19 1600 0
+report "SC-AK-1835 — the day line of a reached light day names it no working day of the epic milestone" \
+    "$(report_lines "$LIGHT" --until 2026-11-19 --days 3 | grep '^  2026-11-18 веха G:' | sed 's/.* — //')" \
+    "достигнута (не рабочий день для вехи эпика)"
+
+# --- the report with no --until takes today ---------------------------------------------------------------
+report "SC-AK-1818 — без --until последний день отрезка — день момента запуска" \
+    "$(node -e 'import(process.argv[2]).then((m) => console.log(m.untilOf(["--days", "7"], new Date("2026-11-21T23:30:00Z"))))' \
+        "$WORK" "$HERE/../assets/checks/work-result.mjs")" "2026-11-21"
+report "SC-AK-1818 — названный --until берёт верх над моментом" \
+    "$(node -e 'import(process.argv[2]).then((m) => console.log(m.untilOf(["--until", "2026-11-13"], new Date("2026-11-21T23:30:00Z"))))' \
+        "$WORK" "$HERE/../assets/checks/work-result.mjs")" "2026-11-13"
+TODAY_DAY="$(date -u +%F)"
+observe "$WORK/today" "$TODAY_DAY" 3 0
+TODAY_OUT="$(node "$HERE/../assets/checks/work-result.mjs" --observations "$WORK/today")"
+report "SC-AK-1818 — команда без --until печатает отчёт за сегодня: код 0, день и его вызовы" \
+    "$?:$(printf '%s' "$TODAY_OUT" | jq -r '"\(.result.days[0].day) \(.result.days[0].calls)"')" "0:$TODAY_DAY 3"
 
 # --- the epic windows of 13.11 ------------------------------------------------------------------------
 # The observations the hook writes from the cut, with the merges the hosting gave that day.

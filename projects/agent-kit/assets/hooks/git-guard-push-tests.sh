@@ -226,7 +226,8 @@ push_sends_head() {
 # A head that adds nothing to its base is not judged: the set has nothing new to look at.
 if command -v rt_push_adds_nothing >/dev/null 2>&1 && push_sends_head && rt_push_adds_nothing "$base"; then
     rt_push_gate_note nothing-new
-    printf 'the push gate: the head adds no commit to %s — the set is not run\n' "$base" >&2
+    printf 'the push gate: the head adds no commit to %s — the set is not run\n' \
+        "$(command -v rt_push_base_label >/dev/null 2>&1 && rt_push_base_label "$base" || printf '%s' "$base")" >&2
     exit 0
 fi
 
@@ -243,6 +244,24 @@ skipped="$rt_push_set_skipped"
 held="$rt_push_set_held"
 ahead="$rt_push_set_ahead"
 ran="$rt_push_set_ran"
+
+# The node the tree pins is not on the machine, and PATH gives another one: no step ran, and an empty
+# set must not read as a green one. One line names both versions and the install command.
+if [ -n "${rt_push_set_node:-}" ]; then
+    rt_push_gate_note node
+    said="$(push_refuse push '{"push_node_pinned":"no"}' "$(jq -cn --arg l "$rt_push_set_node" '{node_line:$l}')")"
+    # The decider runs on the node of PATH — the very node that may be too old to run it, or absent:
+    # then it answers nothing, and the refusal is said here, or the push would pass unjudged.
+    if [ -z "$said" ]; then
+        # shellcheck disable=SC1091
+        command -v rt_deny_tail >/dev/null 2>&1 || . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
+        command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+        said="$(jq -cn --arg r "BLOCKED: ${rt_push_set_node}. No step of the push set ran. Install the pinned node by that command and push again. $(rt_deny_tail)" \
+            '{hookSpecificOutput:{hookEventName:"PreToolUse", permissionDecision:"deny", permissionDecisionReason:$r}}')"
+    fi
+    printf '%s\n' "$said"
+    exit 0
+fi
 
 # Heavy steps with no mark are named in one refusal together with the red light ones: the command
 # that runs them ahead goes to the background, where no hook limit cuts it, and the push after it
@@ -261,8 +280,16 @@ Red among the light checks:
 ${failed}
 
 $(printf '%s' "$output" | tr -d '\000')"
+    # Both bases are named: a mark is keyed by its base, and a push that chose another base than
+    # the run ahead looks the same as one with no run at all.
+    last_base=""
+    command -v rt_push_base_last >/dev/null 2>&1 && last_base="$(rt_push_base_last)"
+    command -v rt_push_base_label >/dev/null 2>&1 || rt_push_base_label() { printf '%s' "${1:-none}"; }
+    base_line="
+
+The base of this push: $(rt_push_base_label "$base"). The base of the last run ahead of this branch: ${last_base:-none recorded}."
     push_refuse push '{"push_marks_green":"no"}' "$(jq -cn --arg a "$ahead" --arg c "$ahead_cmd" --arg d "$dirty_line" --arg r "$red_line" \
-        '{ahead:$a, ahead_cmd:$c, dirty_line:$d, red_line:$r}')"
+        --arg b "$base_line" '{ahead:$a, ahead_cmd:$c, dirty_line:$d, red_line:$r, base_line:$b}')"
 fi
 
 # What was skipped is named aloud even when the set passed: silence about it is exactly the

@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub — branches, the epic, the chain and history. Load for a branch, a commit, a merge or a rebase. Its parts: git-workflow-queue, -push, -hosting. Patterns git-workflow-merge, -stack. Rollout — deploy-flow.
 ---
-<!-- rt-kit v0.38.0 · rules/git-workflow.github.md · 0dba9c444c4d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · rules/git-workflow.github.md · 0dba9c444c4d · правится надстройкой, не здесь -->
 
 # Delivery — branches, the epic, the chain and history
 

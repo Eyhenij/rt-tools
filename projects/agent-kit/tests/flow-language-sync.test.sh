@@ -27,8 +27,8 @@ fl_pkg() {
     taken: { title: 'задача-взята', action: 'write the plan', pattern: 'task-flow-start', exit: measure.plan.approved },
     planned: { title: 'замысел-записан', action: 'do the first stage', pattern: 'task-flow-resume', exit: { not: measure.plan.approved } },
   },
-  release: { stop: { when: measure.plan.approved, order: 1, log: 'a stop word of the owner' } },
-  words: { stop: ['стоп'] },
+  release: { esc: { when: measure.plan.approved, order: 1, log: 'the owner interrupted the turn' } },
+  words: { write: ['git commit'] },
   expect: { number: { pattern: '^(=|>=|<=) ?(-?\\d+)$', compare: 'number' } },
 });
 FLOW
@@ -102,7 +102,7 @@ report "sync: SC-AK-1501 — строка карты: состояние, дей
 
 # --- SC-AK-1502 — раздел о конце хода правила `turn-conduct` генерируется --------------------------
 report "sync: SC-AK-1502 — случай отпуска с порядком и условием" \
-    "$(grep -c '^- \*\*1\*\* · a stop word of the owner — `measure.plan.approved`$' "$p/assets/rules/turn-conduct.md")" '1'
+    "$(grep -c '^- \*\*1\*\* · the owner interrupted the turn — `measure.plan.approved`$' "$p/assets/rules/turn-conduct.md")" '1'
 
 # --- SC-AK-1503 — таблица форм ожидаемого шаблона плана генерируется -------------------------------
 report "sync: SC-AK-1503 — форма с образцом и способом сравнения" \

@@ -1,6 +1,6 @@
 # The guard of the exits of a turn
 
-**Status:** in force · **Revision:** 2026-11-20 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-22 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `work-conduct`
 **Procedures:** none
@@ -23,6 +23,10 @@ case of the description says it may.
   too.
 - **A service message** — a record entry under the role of the owner that the owner did not write:
   the load of a rule, the summary of a compaction, the feedback of a guard of the stop.
+- **The interrupt** — the mark `[Request interrupted by user…]` the host writes into the record
+  under the role of the owner when the owner presses Esc.
+- **A hung task** — a background task of the session that runs past the bound of a wait with no
+  notice of its end.
 
 ### What it is called in the interface
 
@@ -34,13 +38,32 @@ not by a person.
 - **A turn ends with the scenario: the engine measures the branch, and a turn whose scenario is not over is held.**
 - **A turn is released by the first release case of the description that is met, in the order of the cases.**
 - **A held turn names one move: the action of the measured state, and in a running stage the current step with the command that measures it.**
-- **The owner's last word releases the turn when it begins with a stop word and nothing after it asks to go on.**
+- **A held turn in a running stage with no current step names by its number the first step of the plan not done or without a matched mark.**
+  On a taken-apart folder the progress comes from the history, and the refusal adds the move `git
+  revert` of the commit that took it apart; a folder a live step run put back is read from the history too.
+  The history is asked only in the state of a running stage. A step the plan names and the progress
+  lacks counts as not done. A step done with no matched mark gets the measuring command, and the
+  revert move only for a fix inside the folder.
+- **The owner's interrupt releases the turn: their last word is the mark of Esc, and no typed word releases a turn.**
+  A turn a background notice wakes after Esc is released until the owner writes again. A message
+  typed mid-turn counts as writing: the host keeps it as a queued command, not as a user entry. Esc
+  stops an order sent a second before it too: the host does not send a queued message after the
+  mark. A word typed to stop and an option chosen in a menu are words like any other: the turn is
+  judged by the scenario.
 - **A session that wrote nothing to the tree releases the turn unless the owner's last word pushes the work on, and a branch outside the scenario releases it always.**
 - **A role session with no edit tool ends with its report.**
 - **The silent hosting releases the turn only when the measurement itself stopped on the silence.**
 - **A menu of a refusal that did not reach the owner a second time in a row releases the turn.**
 - **The session source names the background tasks of a record: the start of a command or an agent sent to the background, and its end by a notice with a final status or by a call that stops it.**
-- **A turn that waits for a background task of its own session is released while the task has a start, no end, and is younger than twenty minutes.**
+- **A turn that waits for a background task of its own session is released while the task has a start, no end, and is younger than ninety minutes.**
+- **A background command older than ninety minutes with no notice is hung: the hold names it with its minutes and its output, and offers no owner's menu unless another check refused the step twice.**
+  An agent past the bound counts as no task: one that handed its report back while its own work ran
+  ends with no notice the record reads.
+- **A server started in the background is no wait and is never hung; a watch of a CI run and any other command are waits.**
+  A command is a server when its last part starts a server. A package script whose body starts its
+  containers detached ends by itself and is a wait. A command of nothing but pauses and prints is
+  no wait either: it waits for nothing.
+- **The model hook on Stop lets a turn end while a background task of the session still runs and the reply names the task and the step that goes on by its notice.**
 - **One background task releases one stop: a second stop with no call of a tool between the two is held.**
 - **A turn has ended when the record holds something after the agent closed it, other than the feedback of a stop hook.**
 - **A wait releases nothing once the work is handed over: the state whose action sends work to the background goes on by itself.**
@@ -50,15 +73,20 @@ not by a person.
 - **A release on a wait is written to the journal with the session.**
 - **The session source and the source of the records read a record by pieces and never hold it as one string.**
 - **The forecast judges a background task by the time of the stop it replays and names the longest run of held stops in a row; a released stop and a word of the owner break a run.**
-- **When another check refused the same step twice for the same reason, or the executor stopped again with no call after a refusal, the one move is the owner's menu.**
-- **The menu of a refusal carries exactly the options of the description: «отложить RT-N» with the task number and «стоп».**
-- **The owner's choice is carried out: a deferral marks the task «отложено» and the next unblocked task is taken; «стоп» releases the turn.**
+- **When another check refused the same step twice for the same reason, or the executor stopped again with no call after a refusal of the engine itself, the one move is the owner's menu.**
+- **A refusal of a stop names the hook after «BLOCKED by» in its first line; after the opening of the model check only a name right after it counts, else the model check; otherwise none.**
+- **A stop again with no call, after refusals of a stop by other hooks only, is no idle one: the refusal names those hooks and the move of the state, with no owner's menu.**
+- **The menu of a refusal carries exactly the options of the description: «отложить RT-N» with the task number and «подскажу путь», and the question says the way goes into its free field.**
+- **The owner's choice is carried out: a deferral marks the task «отложено» and the next unblocked task is taken; a way the owner wrote is taken in the same step.**
+- **The menu hook lets exactly this menu through, and one question with a free field after a bare «подскажу путь».**
 - **An engine that fails, runs past its limit or cannot be called releases the turn and writes «движок упал» to the journal.**
 - **The eighth refusal in a row is written to the journal.**
 - **A service message is no word of the owner.**
 - **The engine measures the copy the session works in, and a worktree copy whose branch does not carry the engine is not judged.**
-
 ## What is out of scope
+
+The CI hold, read before the release cases, is the subdomain
+`docs/specs/agent-kit/turn-guards/flow-script/exit-ci/`.
 
 The description, its measurers and the measured state are the subdomain one level up,
 `docs/specs/agent-kit/turn-guards/flow-script/`. The guard of the conversation, the guard of the
@@ -118,12 +146,22 @@ Not applicable: the guard judges one turn of one session.
   runs in the background» with no background task in the record is held as before. Over 14–19.11
   169 of 251 refusals of the engine at turn ends fell on a turn whose own background task ran.
 - **A released wait is woken only by the notice of the task.** In the replay of 14–18.11 every
-  released wait had a task that got its notice later, half of them within four minutes; eight
-  waited longer than twenty minutes. A task that does not end by itself — a showcase, a stand —
-  sends none: a turn that ends within twenty minutes of its start is released, and the session
-  stands until the owner writes. The bound is read only at a stop and wakes nothing. Each release
-  on a wait is written to the journal with the session, and the records of that session show what
-  woke it; no command counts such stands yet.
+  released wait had a task that got its notice later, half of them within four minutes. The bound
+  is ninety minutes: in the records of 14–22.11 the longest command ran 58 minutes, and 3 of 810
+  tasks, all agents, ran longer than 90. A task past the bound is hung, and the hold names it in
+  place of the owner's menu. A server — a showcase, a stand — never ends by itself and sends no
+  notice, so it is no wait at all. The bound is read only at a stop and wakes nothing. Each release
+  on a wait is written to the journal with the session.
+- **A watch of a CI run is a wait like any other task.** The owner named CI as the first long
+  process the agent waits for. The CI hold still asks for the watch, and its notice wakes the
+  session when the run ends.
+- **No typed word stops the work; Esc does.** On 22 November 2026 the owner chose «Ожидание и
+  убрать «стоп»»: a command that lets the agent do nothing is not wanted. On 20.11 after «стоп» the
+  session was woken seven times and made 44 calls before the owner's next word. Esc ends a turn
+  with no stop check, and a turn a notice wakes after it is released.
+- **The stuck menu asks for a way, not for a stop.** With «стоп» gone, the second option
+  «подскажу путь» takes the owner's way in the free field of the same menu. A bare answer gets one
+  more question with a free field; otherwise the next idle stop gives the same menu again.
 - **The forecast leans to the better side.** In the records a refused stop spends no task, so the
   replay releases every recorded stop of a wait, and the live engine releases one per task.
 
@@ -176,3 +214,23 @@ None.
   task or its files — named tasks hundreds of calls old on real records and doubled the held stops
   of the forecast; it was dropped. A task the session stopped itself, one the harness killed, or one
   with no start in the record holds nothing.
+- 2026-11-21 — the CI hold: a CI run of a PR the session answers for, running with no watch, red
+  with no read, or not there yet within two minutes of the push, holds the stop before every release
+  case. The refusal names the run and its ready command. The stop word passes a fresh head only.
+  The read of a red run shows the last 200
+  lines of its failed log: the error of a failed step stands at its end, past the cut of a tool.
+- 2026-11-22 — a stop with no call after a refusal of another stop hook is no idle one: the engine
+  names that hook in one line and the move of the state. On 20–21.11 the draft check refused a stop
+  over a draft another session was leading, and the idle measure called the owner's menu three
+  times. The measure judges every refusal of a stop after the last call: in a stop the model check
+  answers after the engine, and the last refusal alone would drop the menu of the engine's series.
+  The model check's refusal with no name is its own, not the engine's. The rules of the CI hold
+  moved to the subdomain `exit-ci`: the scenario file outgrew the length limit.
+- 2026-11-22 — no typed word of the owner releases a turn: the owner stops the work by Esc, and the
+  release case of the interrupt replaces the case of the stop word. Scenarios 1429, 1430, 1431,
+  1463, 1505 and 1556 are removed with their tests. Scenario 1445 is removed too: scenario 1842
+  carries its menu, now «отложить RT-N» and «подскажу путь». The bound of a wait is ninety minutes,
+  and a task past it is hung and named by the hold. A server is no wait; a watch of a CI run is one.
+- 2026-11-22 — after the first review round: a message typed mid-turn is the owner's word; a mark
+  of Esc within five seconds after a typed message delivers it; an agent past the bound is not hung;
+  a step another check refused twice comes before a hung task; Esc lifts the CI hold.

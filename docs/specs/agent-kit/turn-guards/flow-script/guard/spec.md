@@ -87,8 +87,20 @@ Not applicable: one call is judged at a time.
   its mark, and a whole rewrite of the progress is judged by the difference.
 - **The state is measured only when an edit moves the state line.** A measurement reads git and the
   hosting, and an ordinary edit of the progress does not pay for it.
-- **A shell command errs towards firing.** A command that copies a file away from the progress is
-  refused too: a refusal seen at once is fixed, a write never seen is not.
+- **A shell command is refused only when it writes to a guarded file.** A simple command whose text
+  names no guarded file passes, unless it copies into, moves or removes a directory that holds
+  them. One that names a guarded file passes only when it reads: a reader such as `cat`, `grep`,
+  `sed` without `-i` or `jq` with no write to a path in the tree, `git` reading subcommands, `git add`,
+  `git commit` and `git restore --staged`, a run of the engine, or an interpreter script with no
+  sign of a write. The text of a command takes in its heredoc, what a pipe feeds into an interpreter
+  and a script the same call wrote; a variable assigned a literal in the call is read as that literal.
+- **A write whose target is not a literal path errs towards firing.** The refusal names the target
+  and asks for the path as a literal. Removing or moving away a whole task folder and copying the
+  template into a new one pass: they mark no step. The price, measured on 22 460 calls of 15–21.11:
+  15 calls refused falsely — a script that reads a guarded file and writes another one by a path
+  from its arguments or a variable, and a function of a sourced file given a guarded path. The old
+  guard refused 139 calls the new one passes, and the new one refuses 51 true writes the old one
+  passed.
 
 ## Open questions
 
@@ -100,3 +112,5 @@ None.
   and the description.
 - 2026-11-15 — the engine merges the tree override, and an override that does not build no longer
   lifts the hooks: they judge by the package description.
+- 2026-11-22 — task RT-3423: a shell command is refused only when it writes to a guarded file;
+  scenarios SC-AK-1819 and SC-AK-1820.

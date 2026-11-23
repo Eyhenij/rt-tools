@@ -124,6 +124,150 @@ d "guard: SC-AK-1419 — Edit в каталоге меток отказан" "$(
 
 d "guard: SC-AK-1420 — запись оболочкой в план эпика отказана" "$(shell_input "printf 'x' >> docs/plans/epic.md" "$R")" deny
 
+# --- shell: отказ только на запись в охраняемый файл --------------------------------------------
+# Команды взяты из записей 15–21.11 слово в слово, где их отказали; путь записи разговора и путь
+# черновика сессии заменены нейтральными. Чтение, запуск движка и имя файла в тексте проходят.
+sc() { cat; }
+C1="$(sc <<'CMD'
+grep -c 'Check of step' docs/tasks/RT-3277-checks-real-record/progress.md; node -e "
+const re=/^-\s+\*\*(?:Проверка шага|Check of step)\s+(\d+\.\d+)\s+(?:заменена|replaced):\*\*\s+\`(.+)\`\s+→\s+(.+?)\s+·\s+(?:слово владельца|the owner's word):\s+«(.+)»\s*$/u;
+for(const l of require('fs').readFileSync('docs/tasks/RT-3277-checks-real-record/progress.md','utf8').split('\n')){const m=l.match(re);if(m)console.log(m[1],'|',m[3]);}"
+CMD
+)"
+d "shell: SC-AK-1819 — чтение хода работы с разбором в node -e проходит" "$(shell_input "$C1" "$R")" PASS
+d "shell: SC-AK-1819 — grep -ln по планам эпиков проходит" "$(shell_input "grep -ln 'RT-3420' docs/plans/*.md; grep -n 'RT-3420' docs/plans/*.md | head -3 | cut -c1-200" "$R")" PASS
+d "shell: SC-AK-1819 — запуск движка проходит" "$(shell_input "perl -e 'select(undef,undef,undef,8)'; node tools/task-flow-script.mjs measure 2>&1 | head -2; grep -n 'status' tools/task-flow/source/host.mjs | head -8" "$R")" PASS
+C2="$(sc <<'CMD'
+node --input-type=module -e "
+import { compareExpected } from './tools/flow-data.mjs';
+import { readFileSync } from 'node:fs';
+const src = readFileSync('projects/agent-kit/assets/task-flow/flow.js','utf8');
+const m = src.match(/expect[\s\S]{0,800}/); console.log(m[0].slice(0,700));
+"
+CMD
+)"
+d "shell: SC-AK-1819 — импорт файла движка для чтения проходит" "$(shell_input "$C2" "$R")" PASS
+d "shell: SC-AK-1819 — git restore --staged плана проходит" "$(shell_input "git reset -q --soft HEAD~1 && git restore --staged docs/tasks/RT-3421-kit-lays-out-model-checks/plan.md && git status --short | head -3; git log --oneline -1" "$R")" PASS
+d "shell: SC-AK-1819 — копия шаблона хода работы в черновик проходит" "$(shell_input "cp docs/tasks/_template/progress.md /private/tmp/claude-501/scratchpad/progress-template.md && cat docs/tasks/_template/progress.md" "$R")" PASS
+C3="$(sc <<'CMD'
+python3 - <<'EOF'
+p='docs/specs/agent-kit/decision-table/spec.md'
+s=open(p).read()
+a='one place per fact. Hook files: 83 before, 87 after —'
+assert s.count(a)==1
+s=s.replace(a,'one place per fact. The count of hook files: 83 before, 87 after —')
+open(p,'w').write(s)
+EOF
+node tools/task-flow-script.mjs step 6.1 2>&1 | tail -2
+CMD
+)"
+d "shell: SC-AK-1819 — правка другого файла сценарием и запуск движка проходят" "$(shell_input "$C3" "$R")" PASS
+C4="$(sc <<'CMD'
+export PATH="$HOME/.nvm/versions/node/v22.22.3/bin:$PATH" && git add docs/plans/checks-rework-3.md && git diff --cached --stat && PATH="$HOME/.nvm/versions/node/v22.22.3/bin:$PATH" git commit -q -F - <<'EOF'
+docs(rt:agent-kit): план эпика RT-3302 — эпик закрыт, шесть задач отложены в четвёртую часть RT-3471
+
+Слово владельца: «Закрыть эпик сейчас», «Отложить RT-3419, RT-3423, RT-3425, RT-3426, RT-3427,
+RT-3434». Задачи 17, 19–21 и RT-3463 влиты.
+EOF
+git log --oneline -1; export RT_FLOW_TRANSCRIPT=$HOME/.claude/projects/-tree/session.jsonl; timeout 110 node tools/task-flow-script.mjs measure 2>&1 | head -2
+CMD
+)"
+d "shell: SC-AK-1819 — коммит с именами файлов в тексте и путь записи для чтения проходят" "$(shell_input "$C4" "$R")" PASS
+C5="$(sc <<'CMD'
+node -e "
+import('./projects/agent-kit/tests/judge-replay.mjs').then(j=>{const r=j.liveRuns(process.cwd(), require('os').homedir()+'/.claude/projects/-tree'); console.log(JSON.stringify(r,null,0).slice(0,800))})"; ls -la ~/.claude/projects/-tree/session.jsonl | awk '{print $5}'
+CMD
+)"
+d "shell: SC-AK-1819 — чтение записи разговора сценарием проходит" "$(shell_input "$C5" "$R")" PASS
+d "shell: SC-AK-1819 — сценарий без вызова записи, назвавший план, проходит" "$(shell_input "python3 -c \"print(open('docs/tasks/$B/plan.md').read()[:200])\"" "$R")" PASS
+
+# Запись буквальным путём отказана, как и прежде: команды из записей, где отказ был верным.
+d "shell: SC-AK-1417 — sed -i по ходу работы из записи отказан" "$(shell_input "sed -i '' 's/^- \\*\\*State:\\*\\* \`<name from the state list of rule task-flow>\`/- **State:** \`задача-взята\`/' docs/tasks/RT-3350-workspace-details-single/progress.md; grep -n \"State:\" docs/tasks/RT-3350-workspace-details-single/progress.md" "$R")" deny
+d "shell: SC-AK-1417 — git checkout -- плана из записи отказан" "$(shell_input "git checkout -- docs/tasks/RT-3420-menu-without-self-option/plan.md && git status --short | head -3; echo clean" "$R")" deny
+d "shell: SC-AK-1417 — rm плана и хода работы из записи отказан" "$(shell_input "rm docs/tasks/RT-3418-flow-engine-stop-refusals/grill.md docs/tasks/RT-3418-flow-engine-stop-refusals/plan.md docs/tasks/RT-3418-flow-engine-stop-refusals/progress.md && ls docs/tasks/RT-3418-flow-engine-stop-refusals/ | wc -l" "$R")" deny
+d "shell: SC-AK-1417 — git restore плана в рабочей копии отказан" "$(shell_input "git restore docs/tasks/$B/plan.md" "$R")" deny
+
+# Запись, чья цель — не путь буквой, отказана, когда команда называет охраняемый файл.
+C8="$(sc <<'CMD'
+node -e "import('./tools/board-task-dirs.mjs').then(async m=>{const fs=await import('node:fs');fs.cpSync('docs/tasks/_template','docs/tasks/RT-3467-ci-watch-after-push',{recursive:true});console.log(m.unstampFolder('docs/tasks/RT-3467-ci-watch-after-push'))})" && ls docs/tasks/RT-3467-ci-watch-after-push && head -3 docs/tasks/RT-3467-ci-watch-after-push/plan.md
+CMD
+)"
+d "shell: SC-AK-1820 — копия шаблона в папку задачи сценарием из записи отказана" "$(shell_input "$C8" "$R")" deny
+d "shell: SC-AK-1820 — путь, собранный подстановкой, отказан" "$(shell_input "P=\$(ls docs/tasks/*/progress.md | head -1); sed -i '' 's/a/b/' \"\$P\"" "$R")" deny
+d "shell: SC-AK-1820 — путь, собранный в сценарии, отказан" "$(shell_input "python3 -c \"import os; open(os.path.join(os.environ['TASK'], 'progress.md'), 'a').write('x')\"" "$R")" deny
+d "shell: SC-AK-1820 — копия в каталог хода работы отказана" "$(shell_input "cp /private/tmp/claude-501/scratchpad/progress.md docs/tasks/$B/" "$R")" deny
+d "shell: SC-AK-1820 — копия файла без имени в каталог задачи, назвавшая ход работы, отказана" "$(shell_input "F=\$(ls -t ~/Downloads/*.md | head -1); cp \"\$F\" docs/tasks/$B/ && head -3 docs/tasks/$B/progress.md" "$R")" deny
+C6="$(sc <<CMD
+python3 - <<'EOF'
+p='docs/tasks/$B/progress.md'
+s=open(p).read()
+open(p,'w').write(s.replace('- [>] 1.1','- [x] 1.1'))
+EOF
+CMD
+)"
+d "shell: SC-AK-1820 — сценарий с вызовом записи, назвавший ход работы, отказан" "$(shell_input "$C6" "$R")" deny
+C7="$(sc <<'CMD'
+cat > /private/tmp/claude-501/scratchpad/w.py <<'EOF'
+import sys
+open(sys.argv[1], 'w').write('x')
+EOF
+python3 /private/tmp/claude-501/scratchpad/w.py docs/tasks/RT-7-probe/progress.md
+CMD
+)"
+d "shell: SC-AK-1820 — сценарий, записанный и запущенный одной командой, отказан" "$(shell_input "$C7" "$R")" deny
+
+# Ложные отказы, найденные ревью: запись во временный каталог рядом с именем охраняемого файла.
+S0=/private/tmp/claude-501/scratchpad
+d "shell: SC-AK-1819 — запись в черновик через переменную и git add хода работы проходят" "$(shell_input "S=$S0; printf 'm' > \$S/c.txt; git add docs/tasks/$B/progress.md" "$R")" PASS
+d "shell: SC-AK-1819 — вывод grep по ходу работы в \$TMPDIR проходит" "$(shell_input "grep -n State docs/tasks/$B/progress.md > \"\$TMPDIR/out.txt\"" "$R")" PASS
+d "shell: SC-AK-1819 — копия плана в черновик через переменную проходит" "$(shell_input "S=$S0; cp docs/tasks/$B/plan.md \$S/plan.md" "$R")" PASS
+C9="$(sc <<CMD
+Q=$S0; cat > \$Q/x.mjs <<'EOF'
+const p = 'docs/tasks/$B/progress.md';
+EOF
+CMD
+)"
+d "shell: SC-AK-1819 — текст here-document, называющий ход работы, проходит" "$(shell_input "$C9" "$R")" PASS
+d "shell: SC-AK-1819 — prettier --check по ходу работы и движку проходит" "$(shell_input "pnpm exec prettier --check docs/tasks/$B/progress.md tools/flow-guard.mjs" "$R")" PASS
+
+# Дыры, найденные ревью, по одной на семейство: каждая пишет ход работы и отказана.
+d "shell: SC-AK-1820 — os.system в сценарии отказан" "$(shell_input "python3 -c \"import os; os.system('echo x > docs/tasks/$B/progress.md')\"" "$R")" deny
+d "shell: SC-AK-1820 — текст, переданный в bash по конвейеру, отказан" "$(shell_input "printf 'echo x > docs/tasks/$B/progress.md' | bash" "$R")" deny
+d "shell: SC-AK-1820 — копия в папку задачи без косой черты отказана" "$(shell_input "cp $S0/progress.md docs/tasks/$B" "$R")" deny
+d "shell: SC-AK-1820 — запись в подстановке процесса отказана" "$(shell_input "echo x | tee >(cat > docs/tasks/$B/progress.md)" "$R")" deny
+d "shell: SC-AK-1820 — dd of= отказан" "$(shell_input "dd if=$S0/x of=docs/tasks/$B/progress.md" "$R")" deny
+d "shell: SC-AK-1820 — tee за nice -n 10 отказан" "$(shell_input "echo x | nice -n 10 tee docs/tasks/$B/progress.md" "$R")" deny
+d "shell: SC-AK-1820 — запись после cd /tmp; cd - отказана" "$(shell_input "cd /tmp; cd -; echo x > docs/tasks/$B/progress.md" "$R")" deny
+d "shell: SC-AK-1820 — sed -i по пути из переменной той же команды отказан" "$(shell_input "P=docs/tasks/$B/progress.md; sed -i '' 's/a/b/' \$P" "$R")" deny
+d "shell: SC-AK-1820 — перенаправление >! отказано" "$(shell_input "echo x >! docs/tasks/$B/progress.md" "$R")" deny
+# Разбор папки задачи по паттерну task-flow-archive и папка из шаблона проходят; запись внутрь — нет.
+C10="$(sc <<CMD
+cat docs/tasks/$B/grill.md > docs/archive/probe-decision.md
+rm -r docs/tasks/$B
+test ! -e docs/tasks/$B/plan.md
+CMD
+)"
+d "shell: SC-AK-1819 — разбор папки задачи командой паттерна проходит" "$(shell_input "$C10" "$R")" PASS
+d "shell: SC-AK-1819 — папка новой задачи из шаблона проходит" "$(shell_input "cp -r docs/tasks/_template docs/tasks/RT-9-new && ls docs/tasks/RT-9-new/progress.md" "$R")" PASS
+d "shell: SC-AK-1819 — xxd по ходу работы проходит" "$(shell_input "xxd docs/tasks/$B/progress.md | head -3" "$R")" PASS
+d "shell: SC-AK-1819 — sys.stdout.write плана проходит" "$(shell_input "python3 -c \"import sys; sys.stdout.write(open('docs/tasks/$B/plan.md').read())\"" "$R")" PASS
+d "shell: SC-AK-1819 — сценарий, пишущий во временный файл, проходит" "$(shell_input "node -e \"const fs=require('fs'); fs.writeFileSync('/tmp/out.txt', fs.readFileSync('docs/tasks/$B/plan.md'))\"" "$R")" PASS
+d "shell: SC-AK-1819 — find -exec ls по меткам проходит" "$(shell_input "find .git/rt-kit -name '*.json' -exec ls -l {} +" "$R")" PASS
+d "shell: SC-AK-1820 — sed -i в подстановке \$(…) отказан" "$(shell_input "echo \"\$(sed -i '' s/a/b/ docs/tasks/$B/progress.md)\"" "$R")" deny
+d "shell: SC-AK-1820 — rm в подстановке присваивания отказан" "$(shell_input "X=\$(rm -f docs/tasks/$B/progress.md)" "$R")" deny
+d "shell: SC-AK-1820 — awk print > в ход работы отказан" "$(shell_input "awk '{print > \"docs/tasks/$B/progress.md\"}' /tmp/x" "$R")" deny
+d "shell: SC-AK-1820 — os.replace в ход работы отказан" "$(shell_input "python3 -c \"import os; os.replace('/tmp/x','docs/tasks/$B/progress.md')\"" "$R")" deny
+C11="$(sc <<CMD
+tee /tmp/w.sh >/dev/null <<'EOF'
+echo x > docs/tasks/$B/progress.md
+EOF
+bash /tmp/w.sh
+CMD
+)"
+d "shell: SC-AK-1820 — сценарий, записанный tee и запущенный той же командой, отказан" "$(shell_input "$C11" "$R")" deny
+d "shell: SC-AK-1820 — find -exec sed -i по папке задачи отказан" "$(shell_input "find docs/tasks/$B -name progress.md -exec sed -i '' s/a/b/ {} +" "$R")" deny
+expect_reason "shell: SC-AK-1820 — отказ называет путь не буквой" "$GUARD" "$(shell_input "F=\$(ls -t ~/Downloads/*.md | head -1); cp \"\$F\" docs/tasks/$B/ && head -3 docs/tasks/$B/progress.md" "$R")" 'write the path as a literal'
+
 # --- legacy: планы, которые движок не мерил ----------------------------------------------------
 B2=RT-8-bare
 R2="$(task_repo "$B2" bare)"

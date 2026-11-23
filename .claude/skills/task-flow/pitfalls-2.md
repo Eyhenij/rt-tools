@@ -1,4 +1,4 @@
-<!-- rt-kit v0.38.0 · pitfalls/task-flow.2.md · e8d8f0134ab2 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · pitfalls/task-flow.2.md · 0c915f02354e · правится надстройкой, не здесь -->
 # Work conduct — cold part, second file
 
 The sections the rule `task-flow` handed over when it was cut to its statements and split in
@@ -302,3 +302,18 @@ nothing counts; it is held by reading both texts in a row on every such edit.
 - `task-flow-cycle` — an edit chosen by the report and judged by the next one.
 - `task-flow-graph` — where the tree names the trait `graph`: the freshness check, the domain inventory and
   what the graph never answers.
+
+## The delivery loop, the section whole
+
+What the tree's section «Every task goes through the delivery loop» of the rule `task-flow` handed
+over when cut to its statements, word for word.
+
+The tree's own section, by the owner's word of 19.11.2026: the package rule names no review
+before the push, and the rule `task-delivery-loop` adds it on top of the states and guards here.
+
+- **The rule `task-delivery-loop` is loaded as the first action of work on a task.** The gate
+  demands it on an edit of a task folder or an epic plan and on the delivery commands.
+- **Every change passes a live check and two review rounds before the push.** Fresh readers take
+  the whole diff against the base; confirmed findings are fixed in the same branch.
+- **The loop has no exceptions.** A task of texts, a config or a tool goes through it like one with
+  screens, and so does the task that opens an epic.

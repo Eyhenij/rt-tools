@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · task-flow/measure/progress.mjs · d1f867ef09ce · правится надстройкой, не здесь
+// rt-kit v0.39.0 · task-flow/measure/progress.mjs · d1f867ef09ce · правится надстройкой, не здесь
 /**
  * The measurer «measure.progress».
  *
