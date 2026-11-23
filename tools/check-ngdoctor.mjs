@@ -50,8 +50,9 @@
  * message without a rule, and the tool drops it; a file it cannot read is skipped — version 0.3.0
  * writes `filesScanned` and `filesTotal` as the same number, so the check of a partial scan above
  * never fires for it. The tool also reads `package.json` files and stylesheets apart from its file
- * list. A root `package.json` it cannot read leaves the Angular version unknown, and the run is
- * degraded above; a nested one it cannot read or parse yields no finding of
+ * list. A root `package.json` that cannot be read or parsed stops this check before the tool runs:
+ * the check reads the versions from it and names the file; a nested one the tool cannot read or
+ * parse yields no finding of
  * `deprecated-animations`, and stylesheets are read only when a package names tailwindcss 4 or later.
  * So after the scan the check walks the same files itself, with the tool's own
  * modules — the tree resolves other versions of them, or none. It builds the file list by the
@@ -151,7 +152,12 @@ function withOwnTmp(run) {
 
 /** The version a manifest gives: its own, or that of the named dependency. */
 function versionOf(manifest, name) {
-    const pkg = JSON.parse(readFileSync(manifest, 'utf8'));
+    let pkg;
+    try {
+        pkg = JSON.parse(readFileSync(manifest, 'utf8'));
+    } catch (error) {
+        throw new Error(`check-ngdoctor cannot read the versions of ${manifest}: ${error.code ?? error.message}`);
+    }
     return (name ? (pkg.dependencies?.[name] ?? pkg.devDependencies?.[name]) : pkg.version) ?? '';
 }
 

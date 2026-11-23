@@ -362,8 +362,8 @@ chmod 755 "$PASS/src/locked"
 rmdir "$PASS/src/locked"
 
 # The package.json files and the stylesheets the tool reads apart from its file list (RT-3525). The
-# lost file is a nested one: a root package.json the tool cannot read leaves the Angular version
-# unknown, and the degraded run is red without the pass.
+# lost file is a nested one: a root package.json that cannot be read or parsed stops the check before
+# the tool runs, since the check reads the versions from it.
 pass_tree
 printf '%s' "$(pass_output 3)" > "$WORK/pass-out.json"
 mkdir -p "$PASS/sub" "$PASS/coverage"
@@ -394,17 +394,19 @@ mkdir -p "$PASS/.hidden"
 printf '%s\n' '{"name": "hidden"}' > "$PASS/.hidden/package.json"
 chmod 000 "$PASS/.hidden/package.json"
 printf '%s\n' '{"name": "pass"}' > "$PASS/package.json"
-pass_green "the pass without tailwindcss leaves an unreadable stylesheet alone" --pass-root "$PASS"
+pass_green "the pass without tailwindcss leaves an unreadable stylesheet and a dot-directory package.json alone" --pass-root "$PASS"
 chmod 644 "$PASS/.hidden/package.json" "$PASS/sub/x.scss"
 rm -rf "$PASS/.hidden"
 
 node "$CHECK" --input "$WORK/pass-out.json" --threshold "$WORK/pass-threshold.json" --pass-root "$PASS" > "$WORK/said.txt" 2>&1
 got="not counted"
 if grep -q "oxlint 2 files, 2 package.json, 0 stylesheets" "$WORK/said.txt"; then
-    # With tailwindcss 4 the pass reads the stylesheets, and the count says so.
-    printf '%s\n' '{"devDependencies": {"tailwindcss": "^4.1.0"}}' > "$PASS/package.json"
+    # With tailwindcss 4 the pass reads both kinds of stylesheet, and the count says so. A version
+    # that is not a string is passed over, as in 0.3.0, and peerDependencies decides.
+    printf '%s\n' '.y { color: red; }' > "$PASS/sub/y.css"
+    printf '%s\n' '{"dependencies": {"tailwindcss": 4}, "peerDependencies": {"tailwindcss": ">=4"}}' > "$PASS/package.json"
     node "$CHECK" --input "$WORK/pass-out.json" --threshold "$WORK/pass-threshold.json" --pass-root "$PASS" > "$WORK/said.txt" 2>&1
-    grep -q "oxlint 2 files, 2 package.json, 1 stylesheets" "$WORK/said.txt" && got="counted"
+    grep -q "oxlint 2 files, 2 package.json, 2 stylesheets" "$WORK/said.txt" && got="counted"
 fi
 report "the pass counts its package.json files and stylesheets" "$got" "counted"
 rm -rf "$PASS/sub" "$PASS/coverage" "$PASS/package.json"

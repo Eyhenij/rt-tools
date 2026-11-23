@@ -2,10 +2,10 @@
  * The pass of `tools/check-ngdoctor.mjs` over the files Angular Doctor scanned. The tool drops a file
  * silently three ways: oxlint that fails prints nothing, a template the linter cannot parse yields
  * a message without a rule, and a file it cannot read is skipped. Apart from its file list it also
- * reads `package.json` files and, with tailwindcss 4 or later, stylesheets, and skips one it cannot
- * read or parse. So the check walks the same files with the tool's own modules and names the file it
- * lost. What the pass judges is written in the
- * header of the check; this file holds the walk only.
+ * reads `package.json` files, skipping one it cannot read or parse, and, with tailwindcss 4 or later,
+ * stylesheets, skipping one it cannot read. So the check walks the same files with the tool's own
+ * modules and names the file it lost. What the pass judges is written in the header of the check;
+ * this file holds the walk only.
  *
  * The modules are resolved from the tool's package, not from the tree: the tree resolves other
  * versions of the parser and eslint, and does not resolve oxlint and fast-glob at all.
@@ -37,7 +37,8 @@ const PASS_TOOL_IGNORE = ['**/node_modules/**', '**/dist/**', '**/.angular/**'];
 
 /**
  * The major version of `tailwindcss` a package names, as 0.3.0 takes it: the first section that
- * names it decides, even when its version does not parse.
+ * names it by a string decides, even when the string does not parse; a section that names it by
+ * another value is passed over.
  */
 function tailwindMajor(pkg, semver) {
     for (const section of ['dependencies', 'devDependencies', 'peerDependencies']) {
