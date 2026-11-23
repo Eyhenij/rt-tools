@@ -1,26 +1,29 @@
 # Blind retelling and critic — RT-3427, step 3.2
 
-Four rounds, 22–23.11.2026. In each round a reader saw only the new hot parts
+Five rounds, 22–23.11.2026. In each round a reader saw only the new hot parts
 (`.claude/skills/<rule>/SKILL.md`) and retold them. A critic then compared the retelling with the
 old hot part whole (`old/<rule>.md`, taken before compression) and named every requirement,
 boundary, exception, sign or row of names that the reader could not know. Every loss that fits
-went back into the hot part, in the critic's own wording. Round four ran on the final text of the
-seven rules changed after round three; observability and task-flow-owner did not change after it.
+went back into the hot part, in the critic's own wording. Round four ran on the seven rules
+changed after round three; round five on the two rules changed after round four.
 
-Losses per round, round two → three → four, «fixed» where a round's losses went back afterwards:
-observability 14 → 9 · platform-access 2 → 1 → 1, fixed · epic-flow 2 → 2 → 0 · mockups 0 → 0 → 0
-· queue-audit 0 → 2 → 0 · doc-style-human 1 → 1 → 0 · task-flow 2 → 1 → 0 · task-flow-owner
-0 → 0 · task-delivery-loop 4 → 4 → 2, fixed.
+Losses per round, round two → three → four → five; «fixed» where the losses of the last round went
+back in the critic's wording and no round ran after it: observability 14 → 9 · platform-access
+2 → 1 → 1 → 2, one fixed · epic-flow 2 → 2 → 0 · mockups 0 → 0 → 0 · queue-audit 0 → 2 → 0 ·
+doc-style-human 1 → 1 → 0 · task-flow 2 → 1 → 0 · task-flow-owner 0 → 0 · task-delivery-loop
+4 → 4 → 2 → 1, fixed.
 
-The losses still listed do not fit. observability stands at 4791 of 4800 characters, and an edit
-of a receiver service that reads the environment delivers it at 9 947 of 10 000; putting the
-losses back weighs about 760. Each loss stands whole in the rule's cold part, `pitfalls.md`. The
-finding next to the epic plan names them.
+The losses still listed do not fit. observability stands at 4793 of 4800 characters, and an edit
+of a receiver service that reads the environment delivers it at 9 949 of 10 000; putting the
+losses back weighs about 760. platform-access is delivered on an edit of a kit component at 9 977;
+its sign weighs about 50. Each loss stands whole in the rule's cold part, `pitfalls.md`. They go
+back by RT-3510, the task of the epic the owner chose on 23.11.
 
 - rule: mockups — losses 0
 - rule: queue-audit — losses 0
 - rule: doc-style-human — losses 0
-- rule: platform-access — losses 0
+- rule: platform-access — losses 1
+- loss: platform-access · A service created at startup that gains `WINDOW` is checked on a running SSR server too · sign lost: besides the build a running SSR server is needed, because the failure shows only there, and the linter does not see it · The linter misses it; only a running SSR server shows the failure.
 - rule: task-flow — losses 0
 - rule: task-flow-owner — losses 0
 - rule: epic-flow — losses 0

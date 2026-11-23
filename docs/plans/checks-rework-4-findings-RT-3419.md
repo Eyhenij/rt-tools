@@ -46,7 +46,7 @@ Five proposals of the role; each waits for the owner's decision.
   **Metric:** `task_title_numbered` refusals when a PR opens, down.
 - **The PR body is read by the check by the headings of the profile.** The critic's table stood
   under a heading copied from the previous PR of the chain and did not count under «Цель». The
-  paragraph «the body is not checked by a machine» in
+  paragraph «There is nothing to check the body by machine» in
   `projects/agent-kit/assets/pitfalls/git-workflow-pr-body.github.md` is out of date.
   **Address:** replace the paragraph with a rule about `RT_PULL_BODY_SECTION`,
   `RT_PULL_POINTS_SECTION` and `RT_PULL_GOAL_SECTION`; optionally the refusal of

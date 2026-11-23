@@ -55,7 +55,7 @@ Rule under the law `docs/constitution/observability.md`. Cold part: `pitfalls.md
 
 By hand, unchecked: a lower-level name joins the selected list; an environment-read feature
 joins the digest, or is in no list; the level. A failure before startup stays in container output.
-Serialising a log line never throws. An unwrapped stream's failure never reaches the logs.
+Serialising a log line must not throw. An unwrapped stream's failure never reaches the logs.
 
 ## Patterns
 

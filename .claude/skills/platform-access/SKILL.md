@@ -4,7 +4,7 @@ kind: rule
 law: frontend-application
 description: Rule under the frontend-application law. Load when an edit touches the global object or the runtime — window, globalThis, PLATFORM_ID, localStorage. Names the DI tokens and the pitfalls of server-side page rendering. Does not apply under libs/api and apps/api. Pattern platform-access-di.
 ---
-<!-- rt-kit v0.38.0 · rules/platform-access.md · 9ba3d44edd57 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · rules/platform-access.md · 2967a2636a41 · правится надстройкой, не здесь -->
 
 # Browser environment — how it works here
 
@@ -33,19 +33,18 @@ Rule under the law `docs/constitution/frontend-application.md`. Cold part: `pitf
   needs none: `StorageService` falls back to memory.
 - **A direct call to the global object is refused by the linter.** Sixteen names on front-end trees;
   deliberate places sit in the config, never disabled per line. Banned by name, not path:
-  `this.#document.defaultView` on an injected document is lawful; only reading tells it from a
-  bypass.
+  `this.#document.defaultView` on an injected document is lawful; a bypass looks alike.
 
 ## What of the law is not here
 
-Direct access stays in three places: the theme script in `index.html`, the startup handler in
-`main.ts`, `page.evaluate` in end-to-end specs. A new one needs the owner's word.
+Direct access stays in three places: the inline theme script in `index.html`, the startup failure
+handler in `main.ts`, `page.evaluate` in end-to-end specs. A new one: the owner's word.
 
 ## Pitfalls
 
 - **The `WINDOW` factory throws if the document has no `defaultView`.** `Window is not
   available`. SSR has one: a root service's field inject is safe; a DOM-less service takes it in a method
-  under an environment check.
+  under a platform check.
 - **A service created at startup that gains `WINDOW` is checked on a running SSR server too.**
 - **An end-to-end spec does not prepare state by writing to storage.** It walks the user's steps.
 

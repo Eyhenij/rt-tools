@@ -4,7 +4,7 @@ kind: rule
 law: observability
 description: Rule under the observability law. Load when editing the logger, the request context, the failures and alerts domain, when adding a new log line and when deciding what the owner learns about a failure. Pattern observability-record.
 ---
-<!-- rt-kit v0.38.0 · rules/observability.needs-app.md · da9325343bcb · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · rules/observability.needs-app.md · e1dd364f8a6c · правится надстройкой, не здесь -->
 
 # Observability — how it works here
 
@@ -56,7 +56,7 @@ Rule under the law `docs/constitution/observability.md`. Cold part: `pitfalls.md
 
 By hand, unchecked: a lower-level name joins the selected list; an environment-read feature
 joins the digest, or is in no list; the level. A failure before startup stays in container output.
-Serialising a log line never throws. An unwrapped stream's failure never reaches the logs.
+Serialising a log line must not throw. An unwrapped stream's failure never reaches the logs.
 
 ## Patterns
 

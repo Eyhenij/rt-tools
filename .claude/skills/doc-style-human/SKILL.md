@@ -2,9 +2,9 @@
 name: doc-style-human
 kind: pattern
 rule: doc-style
-description: Pattern of rule doc-style. Load when writing a task in the work queue, a PR description and a chat reply to the owner. A sample for each text and the words that get replaced in them. The shape of a status reply is named by rule status-report.
+description: Pattern of rule doc-style. Load when writing a task in the work queue, a PR description and a chat reply to the owner. Samples and the words to replace; a status reply — rule status-report.
 ---
-<!-- rt-kit v0.38.0 · patterns/doc-style-human.md · c3ecc5fa9c3f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · patterns/doc-style-human.md · dd40b0bc8c0f · правится надстройкой, не здесь -->
 
 # A task, a PR description and a reply to the owner
 
@@ -17,11 +17,11 @@ the rules. Cold part: `pitfalls.md`.
 
 ## Words that get replaced
 
-| Layer word | To the owner |
+| Layer word | What to say to the owner |
 | --- | --- |
 | PR | the change that waits for your word |
 | run, suite | checks; "the checks passed", "the checks are red" |
-| guard, gate | what did not let it through, and why |
+| guard, gate | what exactly did not let it through, and why |
 | agreement | what was agreed about this screen |
 | change size | what changes on the screen and where |
 | resource layout | updating the rules on the machine |
@@ -32,10 +32,11 @@ The title names the subject, the body — what the person cannot do. The red che
 where to look, not why.
 
 > ✓ Раздел «Отчёты» не открывается у пользователя, и из-за этого не идёт выкатка.
+> Красная проверка — сквозной набор, шаг «отчёты».
 
 ## PR description
 
-First what changes for the person, then what confirms it; file names go at the end.
+First what changes for the person, then what confirms it; file names last.
 
 > ✗ Ярус личности вызова получил второй признак
 

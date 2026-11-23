@@ -2,7 +2,7 @@
 name: task-delivery-loop
 kind: rule
 law: work-conduct
-description: This tree's loop of one task, loaded first on every task. A live check, two review rounds by three roles, the push set, one PR, the rules review. Request to merge: rule task-flow.
+description: This tree's loop of one task, loaded first on every task. A live check, two review rounds, the push set, one PR, the rules review. From request to merge: rule task-flow.
 ---
 
 # Every task through a live check and two review rounds
@@ -33,22 +33,22 @@ Tree rule under `work-conduct`, over `task-flow`. Cold part, steps whole: `pitfa
   plan's exit conditions goes to «not done here» and its own task; a product choice goes to
   the owner by menu first.
 - **The fixes of a round go as one commit named by the round.** «… после первого/второго круга
-  ревью (RT-N)»: the one place a later commit corrects an earlier one.
+  ревью (RT-N)»: the one place a later commit fixes an earlier one.
 - **The push set runs once per branch, after round two.** Base merged in once, nothing touched
   until the push; a fix after the PR reruns it.
 - **Unattended work keeps the loop and the night rule both.** By `autonomous-work` the owner's
-  screen becomes a measurement; push and PR wait where it keeps all local.
+  screen becomes a measurement; push and PR wait for the owner's return where it keeps all local.
 - **No guard counts the rounds.** Nor the live check: the gate demands the loop loaded; round
-  commits and PR body words show the rest.
+  commits and the PR body show the rest.
 
 ## Duties of the steps
 
 - A PR into `main` is a draft, into an epic branch ready.
 - `goal-critic` never gets the plan.
 - Before closing, a kit or admin change shows the owner address, screen, width; the turn waits.
-  Texts, rules, tools: numbers in the PR body.
+  Texts, rules, tools: numbers in PR body.
 - After a merge, the next task in the same turn.
-- The executor merges only on the owner's word.
+- The executor merges only by the owner's word.
 
 ## Patterns
 
