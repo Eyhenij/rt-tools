@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub — the work queue audit. Load when editing the audit and its modules, or when its line has to be read. Names what the audit judges about columns, open PRs, runs and epics. Pattern queue-audit-read.
 ---
-<!-- rt-kit v0.38.0 · rules/queue-audit.github.md · 7e2793109152 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · rules/queue-audit.github.md · 8761b96077a2 · правится надстройкой, не здесь -->
 
 # Work queue audit — how it works here
 
@@ -24,13 +24,15 @@ table in `implementation.md` next to it. A task, a branch and a PR are the rule 
 - **A lagging column is found by the queue audit, not by eye.** Both ways: an open PR with the task
   not in review, and review with no open PR.
 - **A branch with an open PR lags behind its base silently.** The guard judges the base only at
-  opening; the audit counts the lag in a summary line and refuses nothing: the host merges a lag
-  without a conflict itself.
-- **The link between a task and an epic is read by the audit both ways.**
+  opening, and the run does not see what merged after. The audit counts the lag in a summary line
+  and refuses nothing: the host merges a lag without a conflict itself.
+- **The link between a task and an epic is read by the audit both ways.** The audit also judges the
+  base of a task's PR: a base past the epic branch and its chain takes the task out of the epic.
 - **Work that one session cannot close is marked in two places, and they are audited.** The board
-  label and the sessions line of the epic plan; only what legitimately does not split is marked.
+  label and the sessions line of the epic plan say the same; only what legitimately does not split is marked.
 - **The tip of an open PR without a run is seen by the work queue audit, unless the pipeline does
-  not wake for its base.** There the audit is silent about that PR.
+  not wake for its base.** There it is silent about that PR; one summary line counts all such PRs,
+  and it is not a discrepancy.
 - **A run pushed out of the pipeline queue gets a separate audit line.** It looks failed though it
   never checked the branch; the step count tells them apart.
 - **The last run of the main branch is judged by the audit too: red and pushed out get lines of
@@ -41,7 +43,10 @@ table in `implementation.md` next to it. A task, a branch and a PR are the rule 
 - **An open PR without a reviewer is a work queue audit discrepancy.** A request to the author does
   not count, so a PR opened by a person shows too; the author apart is not judged.
 
-The audit does not judge what a PR body says, and sees a column moved by hand only on the next run.
+## What of the law is not here
+
+The audit reads the queue and the host, not the tree: it does not judge a PR body, and sees a
+column moved by hand only on the next run.
 
 ## Patterns
 

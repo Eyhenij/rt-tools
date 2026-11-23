@@ -1,7 +1,6 @@
 ## The agent does the work of the task here
 
-The tree's own section, the owner's word of 19.11.2026; whole in `pitfalls.md`.
-
-- **Every step of a task is the executor's own, a step written as the owner's included.** Never a
-  menu option for the owner.
-- **The owner is asked only for decisions and approvals.** Never for code, tasks, checks or fixes.
+- **Every step of a task is the executor's own, a step written as the owner's included.** Its
+  progress line or epic row: done in the same work, never a menu option.
+- **The owner is asked only for decisions and approvals.** A product choice, a plan approval, a
+  guard's button for a person — not code, tasks, checks, fixes.

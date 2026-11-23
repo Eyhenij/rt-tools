@@ -4,7 +4,7 @@ kind: rule
 law: mockups
 description: Rule under the mockups law. Load when a screen is drawn or changed in a design tool, before the mockups are shown to the owner and when a design file is audited. Names the kit copy, the spec read before drawing, the agreement checked against mockups. Pattern mockups-measure.
 ---
-<!-- rt-kit v0.38.0 · rules/mockups.needs-mockups.md · 351c18bbed0d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · rules/mockups.needs-mockups.md · 12b2d993da90 · правится надстройкой, не здесь -->
 
 # Mockups — how it works here
 
@@ -26,16 +26,17 @@ table in `implementation.md` next to it.
 
 - **A kit component on a design-tool sheet is a copy of the kit, and the copy drifts.** The source
   of look is the kit's styles in code. Before the component goes into a mockup, it is measured in
-  the running showcase and compared with the bounds of the copy's nodes by numbers; a divergence is
-  a question to the owner, fixed once in the copy.
+  the running showcase, and its sizes, alignment and controls are compared with the bounds of the
+  copy's nodes by numbers; a divergence is a question to the owner, fixed once in the copy.
 - **A mockup of behaviour the tree already has starts with reading the spec of its domain.** The
-  spec is read before the first frame; the sample is asked per screen, not once for the whole set.
+  spec is read before the first frame. With a spec or without one, the sample is asked per screen,
+  not once for the whole set.
 - **The agreement is checked against the approved mockups before work by it.** Every visual rule is
   found on the mockup of each width; a rule the mockups do not show goes to the owner as a question.
 - **A mockup is measured by node coordinates before it is shown.** Pattern `mockups-measure`.
 - **An audit of a design file is accepted only when every file page that draws a kit component is
-  captured, measured and compared with the code of that component.** Names and variants do not show
-  what a node draws. Pattern `mockups-measure`.
+  captured, measured and compared with the code of that component.** Names, properties and variants
+  do not show what a node draws. Pattern `mockups-measure`.
 - **A design-tool call asks the rules gate for this rule,** like the browser driver does for its
   own: otherwise the measurement pattern stays unread.
 
