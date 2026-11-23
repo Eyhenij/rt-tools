@@ -1,4 +1,4 @@
-// rt-kit v0.39.0 · task-flow/source/owner.mjs · 2d6a41588757 · правится надстройкой, не здесь
+// rt-kit v0.39.0 · task-flow/source/owner.mjs · 98d5971c883a · правится надстройкой, не здесь
 /**
  * The source «source.owner» of the task flow description: the words of the owner in this session,
  * read from the record of the conversation the hook names in `RT_FLOW_TRANSCRIPT`.
@@ -60,19 +60,31 @@ export function wordOf(entry) {
     return answers.length > 0 ? answers.join('\n') : null;
 }
 
+/** The approving word, in any case; «не одобряю» approves nothing. */
+const APPROVING = /(?<![\p{L}])(?<!не\s)одобряю(?![\p{L}])/iu;
+
 /**
- * The word that approves, in any case, opening the line or a clause after a comma, a semicolon, a
- * colon or a full stop: «потом одобряю», «не одобряю» and a quoted «Одобряю» approve nothing.
+ * Words that make a line no plain approval: a condition, a part, a change asked for, a time after
+ * the answer, a dictated or quoted phrase. One of them anywhere in the line refuses the whole line.
  */
-const APPROVING = /(?:^|[,;:.])\s*одобряю(?![\p{L}])/iu;
+const HOLDS = /(?<![\p{L}])(?:если|когда|после|потом|позже|только|кроме|но|переделай|переделать|исправь|сначала|напиши|написал|сделай|вариант)(?![\p{L}])/iu;
 
-/** The key of any task, `<KEY>-<number>`, bounded on both sides. */
-const ANY_TASK = /(?<![\p{L}\d-])\p{Lu}+-\d+(?!\d)/u;
+/** The words that name the plan itself, in their cases; «планшет» and «plan-red» are not it. */
+const PLAN_WORD = /(?<![\p{L}])(?:план(?:а|у|ом|е)?|plan|замысел|замысла|замыслу|замыслом|замысле)(?![\p{L}-])/iu;
 
-/** The words that name the plan itself. */
-const PLAN_WORD = /(?<![\p{L}])(?:план|plan|замысел)/iu;
+/** Words that name another thing approved, not the plan. */
+const OTHER_THING = /(?<![\p{L}])(?:макет|витрин|дизайн|mockup|showcase)/iu;
 
 const escapeRe = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/** The pasted blocks of a typed message: a paste is no word of the owner about the plan. */
+const PASTED = /<pasted_content[^>]*>[\s\S]*?<\/pasted_content>/g;
+
+/** The clauses of a line with their ends; `plan.md` keeps its dot. */
+const clausesOf = (line) => [...line.replace(/plan\.md/gi, 'plan_md').matchAll(/[^,;.!?]+[,;.!?]*/g)].map((match) => match[0]);
+
+/** The word stands inside quotes. */
+const quoted = (clause) => /[«"“][^»"”]*одобряю/iu.test(clause);
 
 /** The answers of one owner entry as pairs; a typed message has no question. */
 const answersOf = (entry) => {
@@ -89,21 +101,35 @@ const answersOf = (entry) => {
 
 /**
  * The line by which the owner approves the plan of `task`, or null. One rule for a menu option and
- * a typed message: every answer of a menu and every line of an answer are judged alone. A line
- * approves when a clause of it opens with «одобряю» and it names the task, the number bounded on
- * both sides. A line that names no task approves when it names `plan.md`, or when the menu question
- * names the task and the line or the question names the plan. A line that names only another task
- * approves nothing.
+ * a typed message: every answer of a menu, every line and every clause — the part between commas,
+ * semicolons, full stops and marks — are judged alone, and a pasted block is no word. A clause
+ * approves when it holds «одобряю» outside quotes, does not end with «?», and its line holds no word
+ * of `HOLDS`. A clause naming tasks of the tree's key approves when one of them is this task and
+ * it names the plan or no other thing. A clause naming no task approves when the menu question names
+ * this task and no other one and the clause or the question names the plan, or when it says
+ * `plan.md` and the question names no task.
  */
 export function approvalOf(entry, task) {
-    const own = new RegExp(`(?<![\\p{L}\\d-])${escapeRe(task)}(?!\\d)`, 'u');
+    const own = task.toUpperCase();
+    const key = new RegExp(`(?<![\\p{L}\\d-])${escapeRe(task.split('-')[0])}-\\d+(?!\\d)`, 'giu');
+    const keysOf = (text) => [...text.matchAll(key)].map((match) => match[0].toUpperCase());
     for (const { question, answer } of answersOf(entry)) {
-        for (const line of answer.split('\n')) {
-            if (!APPROVING.test(line)) continue;
-            if (own.test(line)) return line.trim();
-            if (ANY_TASK.test(line)) continue;
-            if (/plan\.md/.test(line)) return line.trim();
-            if (own.test(question) && (PLAN_WORD.test(line) || PLAN_WORD.test(question))) return line.trim();
+        const asked = keysOf(question);
+        const askedOwn = asked.length > 0 && asked.every((name) => name === own);
+        for (const line of answer.replace(PASTED, '').split('\n')) {
+            if (HOLDS.test(line)) continue;
+            for (const clause of clausesOf(line)) {
+                if (!APPROVING.test(clause) || quoted(clause) || clause.trimEnd().endsWith('?')) continue;
+                const named = keysOf(clause);
+                const plan = PLAN_WORD.test(clause) || /plan_md/i.test(clause);
+                if (named.length > 0) {
+                    if (named.includes(own) && (plan || !OTHER_THING.test(clause))) return line.trim();
+                    continue;
+                }
+                if (OTHER_THING.test(clause) && !plan) continue;
+                if (askedOwn && (plan || PLAN_WORD.test(question))) return line.trim();
+                if (asked.length === 0 && /plan_md/i.test(clause)) return line.trim();
+            }
         }
     }
     return null;

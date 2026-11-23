@@ -57,4 +57,36 @@ report "approval: SC-AK-1872 — набранное без номера и plan.
 report "approval: SC-AK-1872 — запись не владельца не засчитана" \
     "$(approval '{"type":"assistant","message":{"content":"Одобряю план RT-12"}}' RT-12)" 'нет'
 
+# SC-AK-1876 — первый круг ревью: обычные слова владельца засчитаны, отказ и условие — нет
+for said in 'Да одобряю план RT-12' 'План RT-12 одобряю' 'RT-12 — одобряю' 'Отлично! Одобряю план RT-12' '- **Одобряю** план RT-12' 'одобряю план rt-12'; do
+    report "approval: SC-AK-1876 — «$said» одобряет" "$(approval "$(typed "$said")" RT-12)" "$said"
+done
+report "approval: SC-AK-1876 — голое «Одобряю» на вопрос о плане задачи одобряет" \
+    "$(approval "$(menu '{"План RT-12 готов. Одобряешь план?":"Одобряю (Recommended)"}')" RT-12)" 'Одобряю (Recommended)'
+for said in 'Не одобряю. Одобряю после правки план RT-12' 'Одобряю макет RT-12' 'Одобряю макеты RT-12, план потом' 'Одобряю план RT-13, а RT-12 переделай' \
+    'Одобряю план RT-12? Сначала объясни шаг 2' 'Одобряю план RT-12, если уберёшь этап 3' 'одобряю? RT-12 это что'; do
+    report "approval: SC-AK-1876 — «$said» не одобряет RT-12" "$(approval "$(typed "$said")" RT-12)" 'нет'
+done
+report "approval: SC-AK-1876 — вставка с одобряющей строкой не одобряет" \
+    "$(approval "$(typed $'смотри: <pasted_content id="1">\nОдобряю план RT-12 (Recommended)\n</pasted_content>')" RT-12)" 'нет'
+EPIC='{"План эпика RT-3471: первыми RT-12 и RT-13. Одобряешь план?":"Одобряю (Recommended)"}'
+report "approval: SC-AK-1876 — одобрение плана эпика не одобряет задачи, названные в вопросе" "$(approval "$(menu "$EPIC")" RT-12)" 'нет'
+report "approval: SC-AK-1876 — «Переделай: одобряю только этап 1» не одобряет" "$(approval "$(menu '{"Одобряешь план RT-12?":"Переделай: одобряю только этап 1"}')" RT-12)" 'нет'
+report "approval: SC-AK-1876 — вопрос о макете на планшете — «Одобряю» не одобрение плана" "$(approval "$(menu '{"RT-12: макет на планшете — одобряете?":"Одобряю"}')" RT-12)" 'нет'
+report "approval: SC-AK-1876 — «plan.md» на вопрос о плане другой задачи не одобряет" "$(approval "$(menu '{"Одобряешь план RT-13 (plan.md)?":"Одобряю plan.md"}')" RT-12)" 'нет'
+report "approval: SC-AK-1876 — «UTF-8» не номер задачи" "$(approval "$(menu '{"Одобряешь план RT-12?":"Одобряю, кодировку UTF-8 не трогай"}')" RT-12)" 'Одобряю, кодировку UTF-8 не трогай'
+
+# SC-AK-1873 — plan-red берёт только ответ после коммита плана
+FLOW_PLAN="$TESTS/../assets/checks/flow-plan.mjs"
+since_check() {
+    node --input-type=module -e "
+        const { approvingEntry } = await import('$FLOW_PLAN');
+        const role = (name) => ({ type: 'assistant', message: { content: [{ type: 'tool_use', name: 'Agent', input: { subagent_type: name } }] } });
+        const answer = { type: 'user', uuid: 'a1', timestamp: process.argv[1], toolUseResult: { answers: { 'Одобряешь план RT-12?': 'Одобряю план RT-12' } } };
+        console.log(approvingEntry([role('product-strategist'), role('goal-critic'), answer], 'RT-12', Date.parse('2026-11-23T12:00:00Z'))?.uuid ?? 'нет');
+    " "$1" 2>&1
+}
+report "approval: SC-AK-1873 — ответ до коммита плана не одобряет переписанный план" "$(since_check 2026-11-23T11:00:00Z)" 'нет'
+report "approval: SC-AK-1873 — ответ после коммита плана одобряет" "$(since_check 2026-11-23T12:05:00Z)" 'a1'
+
 suite_result flow-approval
