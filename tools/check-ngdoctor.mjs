@@ -24,6 +24,10 @@
  * that scanned fewer files than it found. A source whose last finding a task really removed is
  * written by `--write --source-gone <source>`.
  *
+ * The tree's settings of the tool hold `reportPath` and nothing else, and any other field is red: a
+ * rule switched off or a path ignored there would hide findings from the threshold and the probe
+ * alike.
+ *
  * Every file the tool reads is counted, ignored by git or not: the owner chose to fit the code
  * rather than narrow the check. A task that adds a model to the storage schema adds a generated
  * file and its finding, and writes the threshold.
@@ -32,14 +36,18 @@
  * the tool runs on a probe — a two-component project written into the temporary directory, outside
  * the tree's scan — and every source must fire its named rule in the named file there. The tool
  * itself fires `missing-spec-file` on a class (a file rule: `project-layout` fires on the probe even
- * when the file rules are silent) and `getter-in-template` in an external template; oxlint fires
- * `eqeqeq`; the template linter fires `button-has-type` both in an inline and in an external
- * template, because the tool reads the two by separate passes. The probe's own run is judged
+ * when the file rules are silent) and `getter-in-template` both in an inline and in an external
+ * template; oxlint fires `eqeqeq`; the template linter fires `button-has-type` in both templates
+ * too, because the tool reads the two by separate passes. The probe's own run is judged
  * degraded the same way as the tree's. A red probe means the source does not start, or the version
  * of the tool dropped the rule and the probe is to be updated; `--write` refuses it too. A saved
- * output given by `--input` is judged without the probe unless a probe flag comes with it. The probe
- * shows that a source starts, not that it passed every file of the tree: oxlint that fails on one
- * file of the tree and prints nothing stays unseen here.
+ * output given by `--input` is judged without the probe unless a probe flag comes with it; a source
+ * is written away by `--source-gone` only beside a probe that shows the source running. The probe
+ * shows that a source starts, not that it passed every file of the tree. Three losses of one file
+ * stay unseen here, and the task RT-3518 is about them: oxlint that fails on a file and prints
+ * nothing, the template linter that cannot parse a template (the tool drops a message without a
+ * rule), and a file the tool cannot read — version 0.3.0 writes `filesScanned` and `filesTotal` as
+ * the same number, so the check of a partial scan above never fires for it.
  *
  * The tool is run here, not piped in: with a temporary directory of its own, removed after the run,
  * because the tool writes its oxlint settings into the shared temporary directory once and reads
@@ -60,6 +68,14 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const THRESHOLD_FILE = join(ROOT, 'tools', 'ngdoctor-threshold.json');
+const CONFIG_FILE = join(ROOT, 'angular-doctor.config.json');
+
+/**
+ * The only field the tree's settings of the tool may hold. The owner's word keeps every rule on, and
+ * the probe reads the settings of its own directory, not of the tree: a rule switched off or a path
+ * ignored there would go unseen by the probe, and by the threshold too once it holds one rule.
+ */
+const CONFIG_FIELDS = ['reportPath'];
 
 /** The value of a flag that takes one. */
 function flag(name) {
@@ -70,6 +86,7 @@ function flag(name) {
 /** The findings each source of findings must give on the probe: the rule and the file it is in. */
 const PROBE_FINDINGS = [
     { source: 'angular-doctor', rule: 'angular-doctor/missing-spec-file', file: 'probe.component.ts' },
+    { source: 'angular-doctor', rule: 'angular-doctor/getter-in-template', file: 'probe.component.ts' },
     { source: 'angular-doctor', rule: 'angular-doctor/getter-in-template', file: 'probe-page.component.html' },
     { source: 'oxlint', rule: 'oxlint/eqeqeq', file: 'probe.component.ts' },
     { source: 'template-eslint', rule: 'template-eslint/button-has-type', file: 'probe.component.ts' },
@@ -133,14 +150,17 @@ function writeProbe(own, omit) {
     writeFileSync(join(dir, 'package.json'), JSON.stringify({ name: 'probe', version: '0.0.0', dependencies: { '@angular/core': angular } }));
     const type = omit === 'template-eslint' ? ' type="button"' : '';
     const compare = omit === 'oxlint' ? '===' : '==';
+    const caption = omit === 'angular-doctor' ? ["    public readonly caption: string = 'press';"] : ['    public get caption(): string {', "        return 'press';", '    }'];
     writeFileSync(
         join(app, 'probe.component.ts'),
         [
             "import { Component } from '@angular/core';",
             '',
-            `@Component({ selector: 'app-probe', template: '<button${type} (click)="press()">press</button>' })`,
+            `@Component({ selector: 'app-probe', template: \`<button${type} (click)="press()">{{ caption }}</button>\` })`,
             'export class ProbeComponent {',
             '    public value: string | null = null;',
+            '',
+            ...caption,
             '',
             '    public press(): boolean {',
             `        return this.value ${compare} null;`,
@@ -299,12 +319,26 @@ function probeVerdict(input) {
  * probe only beside a saved output of the tree, never in the check of the tree itself.
  */
 function probeFlagsProblem(input) {
-    const valued = ['--input', '--threshold', '--source-gone', '--probe-input', '--probe-omit'];
-    const empty = valued.find((name) => process.argv.includes(name) && (flag(name) === null || flag(name).startsWith('--')));
-    if (empty) return `${empty} takes a value`;
+    const valued = ['--input', '--threshold', '--config', '--source-gone', '--probe-input', '--probe-omit'];
+    const bare = ['--write', '--verbose', '--probe-real'];
+    const args = process.argv.slice(2);
+    for (let i = 0; i < args.length; i += 1) {
+        if (valued.includes(args[i])) {
+            if (args[i + 1] === undefined || args[i + 1].startsWith('--')) return `${args[i]} takes a value`;
+            i += 1;
+        } else if (!bare.includes(args[i])) {
+            return `«${args[i]}» is not a flag of this check`;
+        }
+    }
+    const twice = [...valued, ...bare].find((name) => args.filter((a) => a === name).length > 1);
+    if (twice) return `${twice} is given twice`;
     const real = process.argv.includes('--probe-real');
     const probeInput = flag('--probe-input');
     const omit = flag('--probe-omit');
+    const gone = flag('--source-gone');
+    if (gone && !process.argv.includes('--write')) return '--source-gone names a source for --write, give --write too';
+    if (gone && !PROBE_SOURCES.includes(gone)) return `--source-gone takes one of ${PROBE_SOURCES.join(', ')}, not «${gone}»`;
+    if (gone && input && !probeInput && !real) return '--source-gone writes a source away only beside the probe that shows it running, give --probe-input or --probe-real';
     if (probeInput && !input) return '--probe-input judges a saved probe beside a saved output of the tree, give --input too';
     if (probeInput && real) return '--probe-input and --probe-real are two probes, give one';
     if (omit && !real) return '--probe-omit drops a construct of the real probe, give --probe-real too';
@@ -312,11 +346,30 @@ function probeFlagsProblem(input) {
     return null;
 }
 
+/** What is wrong with the tree's settings of the tool, or `null`; no settings file is no problem. */
+function configProblem(path) {
+    if (!existsSync(path)) return null;
+    let config;
+    try {
+        config = JSON.parse(readFileSync(path, 'utf8'));
+    } catch (error) {
+        return `the settings of angular-doctor are not read: ${error.message}`;
+    }
+    const extra = Object.keys(config ?? {}).filter((key) => !CONFIG_FIELDS.includes(key));
+    if (extra.length === 0) return null;
+    return `the settings of angular-doctor hold ${extra.map((k) => `«${k}»`).join(', ')}: only ${CONFIG_FIELDS.join(', ')} is allowed — rules stay on by the owner's word, and the probe does not read these settings`;
+}
+
 function main() {
     const input = flag('--input');
     const misuse = probeFlagsProblem(input);
     if (misuse) {
         console.error(`check-ngdoctor: ${misuse}`);
+        return 1;
+    }
+    const settings = configProblem(flag('--config') ?? CONFIG_FILE);
+    if (settings) {
+        console.error(`check-ngdoctor: ${settings}`);
         return 1;
     }
     const probe = probeVerdict(input);

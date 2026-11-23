@@ -82,7 +82,22 @@ verdict "a broken input is red" "Error: something failed" "red"
 verdict "an input without a score is red" '{"diagnostics": []}' "red"
 verdict "an input without the findings is red" '{"score": 80}' "red"
 
-# --write: a degraded run is not written, a silent source is written only when named gone.
+# The output of the probe with every named finding of every source; the probe is judged below.
+INLINE=/p/src/app/probe.component.ts
+EXTERNAL=/p/src/app/probe-page.component.html
+PROBE=(
+    angular-doctor/project-layout
+    "angular-doctor/missing-spec-file@$INLINE"
+    "angular-doctor/getter-in-template@$INLINE"
+    "angular-doctor/getter-in-template@$EXTERNAL"
+    "oxlint/eqeqeq@$INLINE"
+    "template-eslint/button-has-type@$INLINE"
+    "template-eslint/button-has-type@$EXTERNAL"
+)
+printf '%s' "$(output 90 "${PROBE[@]}")" > "$WORK/live.json"
+
+# --write: a degraded run is not written, a silent source is written only when named gone, and only
+# beside a probe that shows the source running.
 cp "$WORK/threshold.json" "$WORK/before.json"
 printf '%s' "$(output 85 angular-doctor/inner-html angular-doctor/inner-html angular-doctor/missing-spec-file angular-doctor/missing-spec-file angular-doctor/missing-spec-file)" > "$WORK/out.json"
 if node "$CHECK" --input "$WORK/out.json" --threshold "$WORK/threshold.json" --write >/dev/null 2>&1; then got="written"; else got="refused"; fi
@@ -90,6 +105,9 @@ report "--write refuses a run with a silent source" "$got" "refused"
 if cmp -s "$WORK/threshold.json" "$WORK/before.json"; then got="kept"; else got="changed"; fi
 report "the refused --write leaves the threshold as it was" "$got" "kept"
 if node "$CHECK" --input "$WORK/out.json" --threshold "$WORK/threshold.json" --write --source-gone oxlint >/dev/null 2>&1; then got="written"; else got="refused"; fi
+if cmp -s "$WORK/threshold.json" "$WORK/before.json"; then got="$got, kept"; else got="$got, changed"; fi
+report "--write --source-gone on a saved output without a probe is refused" "$got" "refused, kept"
+if node "$CHECK" --input "$WORK/out.json" --threshold "$WORK/threshold.json" --probe-input "$WORK/live.json" --write --source-gone oxlint >/dev/null 2>&1; then got="written"; else got="refused"; fi
 report "--write --source-gone writes the source that is gone" "$got" "written"
 verdict "the written threshold makes the same run green" "$(cat "$WORK/out.json")" "green"
 
@@ -99,16 +117,6 @@ verdict "the written threshold makes the same run green" "$(cat "$WORK/out.json"
 # source.
 cp "$WORK/before.json" "$WORK/threshold.json"
 printf '%s' "$(output 80 "${SAME[@]}")" > "$WORK/tree.json"
-INLINE=/p/src/app/probe.component.ts
-EXTERNAL=/p/src/app/probe-page.component.html
-PROBE=(
-    angular-doctor/project-layout
-    "angular-doctor/missing-spec-file@$INLINE"
-    "angular-doctor/getter-in-template@$EXTERNAL"
-    "oxlint/eqeqeq@$INLINE"
-    "template-eslint/button-has-type@$INLINE"
-    "template-eslint/button-has-type@$EXTERNAL"
-)
 
 # Whether the check is red on a probe without the named finding and names its rule and file.
 probe_misses() {
@@ -125,13 +133,16 @@ probe_misses() {
 probe_misses "the probe without the file rule of angular-doctor is red" "angular-doctor/missing-spec-file@$INLINE"
 probe_misses "the probe without the rule of oxlint is red" "oxlint/eqeqeq@$INLINE"
 probe_misses "the probe without the rule of the template linter is red" "template-eslint/button-has-type@$INLINE"
+probe_misses "an inline template of the probe without the getter rule is red" "angular-doctor/getter-in-template@$INLINE"
 probe_misses "an external template of the probe without the getter rule is red" "angular-doctor/getter-in-template@$EXTERNAL"
 probe_misses "an external template of the probe without the button rule is red" "template-eslint/button-has-type@$EXTERNAL"
 
 # The rule fired in a file other than the named one does not count.
 printf '%s' "$(output 90 "${PROBE[@]/%@$EXTERNAL/@$INLINE}")" > "$WORK/probe.json"
-if node "$CHECK" --input "$WORK/tree.json" --threshold "$WORK/threshold.json" --probe-input "$WORK/probe.json" >/dev/null 2>&1; then got="green"; else got="red"; fi
-report "findings of the probe only in the inline component are red" "$got" "red"
+if node "$CHECK" --input "$WORK/tree.json" --threshold "$WORK/threshold.json" --probe-input "$WORK/probe.json" > "$WORK/said.txt" 2>&1; then
+    got="green"
+elif [ "$(grep -c "in probe-page.component.html" "$WORK/said.txt")" = 2 ]; then got="red, named"; else got="red, unnamed"; fi
+report "findings of the probe only in the inline component are red" "$got" "red, named"
 
 printf '%s' "$(output 90 "${PROBE[@]}")" > "$WORK/probe.json"
 if node "$CHECK" --input "$WORK/tree.json" --threshold "$WORK/threshold.json" --probe-input "$WORK/probe.json" >/dev/null 2>&1; then got="green"; else got="red"; fi
@@ -149,20 +160,37 @@ if node "$CHECK" --input "$WORK/tree.json" --threshold "$WORK/threshold.json" --
 elif grep -q "the probe: the output of angular-doctor is not JSON" "$WORK/said.txt"; then got="red, named"; else got="red, unnamed"; fi
 report "a probe output that is not JSON is red" "$got" "red, named"
 
-# A probe flag that went unheard would leave the check green on a probe it never ran.
+# A flag that went unheard would leave the check green on a probe it never ran: each misuse is
+# refused with its own reason.
 misuse() {
-    local label="$1" got
-    shift
-    if node "$CHECK" "$@" >/dev/null 2>&1; then got="green"; else got="red"; fi
-    report "$label" "$got" "red"
+    local label="$1" reason="$2" got
+    shift 2
+    if node "$CHECK" "$@" > "$WORK/said.txt" 2>&1; then
+        got="green"
+    elif grep -qF -- "$reason" "$WORK/said.txt"; then got="refused"; else got="red, other reason"; fi
+    report "$label" "$got" "refused"
 }
-printf '%s' "$(output 90 "${PROBE[@]}")" > "$WORK/probe.json"
-misuse "a saved probe without a saved tree output is refused" --probe-input "$WORK/probe.json" --threshold "$WORK/threshold.json"
-misuse "a saved probe and the real probe at once are refused" --input "$WORK/tree.json" --threshold "$WORK/threshold.json" --probe-input "$WORK/probe.json" --probe-real
-misuse "--probe-omit without --probe-real is refused" --input "$WORK/tree.json" --threshold "$WORK/threshold.json" --probe-omit oxlint
-misuse "--probe-omit of an unknown source is refused" --input "$WORK/tree.json" --threshold "$WORK/threshold.json" --probe-real --probe-omit bogus
-misuse "--probe-omit without a value is refused" --input "$WORK/tree.json" --threshold "$WORK/threshold.json" --probe-omit --probe-real
-misuse "--probe-input without a value is refused" --input "$WORK/tree.json" --threshold "$WORK/threshold.json" --probe-input
+T=(--input "$WORK/tree.json" --threshold "$WORK/threshold.json")
+L="$WORK/live.json"
+misuse "a saved probe without a saved tree output is refused" "give --input too" --probe-input "$L" --threshold "$WORK/threshold.json"
+misuse "a saved probe and the real probe at once are refused" "are two probes" "${T[@]}" --probe-input "$L" --probe-real
+misuse "--probe-omit without --probe-real is refused" "give --probe-real too" "${T[@]}" --probe-omit oxlint
+misuse "--probe-omit of an unknown source is refused" "not «bogus»" "${T[@]}" --probe-real --probe-omit bogus
+misuse "--probe-omit without a value is refused" "--probe-omit takes a value" "${T[@]}" --probe-omit --probe-real
+misuse "--probe-input without a value is refused" "--probe-input takes a value" "${T[@]}" --probe-input
+misuse "a mistyped flag is refused" "«--probe-inputs» is not a flag" "${T[@]}" --probe-inputs "$L"
+misuse "a flag given twice is refused" "--probe-input is given twice" "${T[@]}" --probe-input "$L" --probe-input "$L"
+misuse "--source-gone without --write is refused" "give --write too" "${T[@]}" --probe-input "$L" --source-gone oxlint
+misuse "--source-gone of an unknown source is refused" "not «oxlnt»" "${T[@]}" --probe-input "$L" --write --source-gone oxlnt
+
+# The settings of the tool hold the report path and nothing else.
+printf '{"reportPath": "tmp/r.md"}' > "$WORK/config.json"
+if node "$CHECK" "${T[@]}" --config "$WORK/config.json" >/dev/null 2>&1; then got="green"; else got="red"; fi
+report "settings with the report path only are green" "$got" "green"
+printf '{"reportPath": "tmp/r.md", "ignore": ["**/*.html"]}' > "$WORK/config.json"
+misuse "settings that ignore paths are refused" "hold «ignore»" "${T[@]}" --config "$WORK/config.json"
+printf '{"reportPath": "tmp/r.md", "rules": {"angular-doctor/inner-html": "off"}}' > "$WORK/config.json"
+misuse "settings that switch a rule off are refused" "hold «rules»" "${T[@]}" --config "$WORK/config.json"
 
 printf '%s' "$(output 90 "${PROBE[@]/oxlint*/angular-doctor/project-layout}")" > "$WORK/probe.json"
 if node "$CHECK" --input "$WORK/tree.json" --threshold "$WORK/threshold.json" --probe-input "$WORK/probe.json" --write --source-gone oxlint >/dev/null 2>&1; then got="written"; else got="refused"; fi
@@ -182,7 +210,7 @@ real_misses() {
     report "$label" "$got" "red, named"
 }
 real_misses "the probe run for real without the button type rule is red" template-eslint 2
-real_misses "a real probe without the constructs of angular-doctor is red" angular-doctor 2
+real_misses "a real probe without the constructs of angular-doctor is red" angular-doctor 3
 real_misses "a real probe without the loose comparison of oxlint is red" oxlint 1
 
 suite_result "check-ngdoctor"
