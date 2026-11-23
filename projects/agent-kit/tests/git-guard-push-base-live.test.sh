@@ -38,6 +38,24 @@ fixture() {
     echo "фикстура не создана — набор остановлен" >&2
     exit 1
 }
+# Каталог сервера и файл счёта: пустой путь останавливает набор так же, как у фикстуры.
+tmp_path() {
+    local path
+    path="$(mktemp "$@")"
+    case "$path" in /?*) [ -e "$path" ] && printf '%s' "$path" && return 0 ;; esac
+    echo "временный путь не создан — набор остановлен" >&2
+    exit 1
+}
+bare_remote() {
+    local dir
+    dir="$(tmp_path -d)" || exit 1
+    git init -q --bare "$dir" 2>/dev/null
+    printf '%s' "$dir"
+}
+# Строка записи прогона вперёд для ветки копии: 2 — имя базы, 3 — её коммит.
+record_line() {
+    sed -n "${3}p" "$(git -C "$1" rev-parse --path-format=absolute --git-dir)/rt-kit/push-base.d/$2" 2>/dev/null
+}
 # Профиль с тяжёлым шагом, который называет базу, как профиль дерева: отправка с другой базой ищет
 # отметку другой строки и не находит её. Тяжёлый шаг не читает каталог `notes`.
 profile() {
@@ -51,8 +69,7 @@ rt_push_checks() { printf '%s\\n' 'true' \"echo heavy \$1 >> $2\"; }" 'chore: п
 live_git() {
     git -C "$LIVE" -c user.name=probe -c user.email=probe@example.invalid -c commit.gpgsign=false "$@"
 }
-LIVE_REMOTE="$(mktemp -d)"
-git init -q --bare "$LIVE_REMOTE" 2>/dev/null
+LIVE_REMOTE="$(bare_remote)" || exit 1
 LIVE="$(fixture RT-90-epic)"
 git -C "$LIVE" remote add origin "$LIVE_REMOTE"
 fixture_commit "$LIVE" epic.txt эпик 'feat: ветка эпика'
@@ -99,9 +116,8 @@ rm -rf "$LIVE" "$LIVE_REMOTE"
 card_git() {
     git -C "$CARD" -c user.name=probe -c user.email=probe@example.invalid -c commit.gpgsign=false "$@"
 }
-CARD_REMOTE="$(mktemp -d)"
-CARD_RUNS="$(mktemp)"
-git init -q --bare "$CARD_REMOTE" 2>/dev/null
+CARD_REMOTE="$(bare_remote)" || exit 1
+CARD_RUNS="$(tmp_path)" || exit 1
 CARD="$(fixture RT-70-epic)"
 card_git remote add origin "$CARD_REMOTE"
 card_git checkout -q main 2>/dev/null
@@ -126,7 +142,9 @@ card_git fetch -q --no-prune origin 2>/dev/null
 card_git merge -q --no-ff -m 'merge origin epic' origin/RT-70-epic 2>/dev/null
 report "SC-AK-1850 — карточка: ссылка снятой задачи в копии, база — главная" "$(push_base "$CARD")" origin/main
 ahead "$CARD"
-report "SC-AK-1850 — карточка: набор шёл от главной" "$(grep -c 'heavy origin/main' "$CARD_RUNS")" 1
+report "SC-AK-1850 — карточка: набор шёл от главной" "$(record_line "$CARD" RT-70-epic 2)" origin/main
+report "SC-AK-1850 — карточка: закреплённая база стоит на главной" \
+    "$(card_git rev-parse --verify --quiet refs/rt-kit/push-base/RT-70-epic)" "$(card_git rev-parse origin/main)"
 gate "SC-AK-1850 — карточка: отправка проходит по отметкам" "$CARD" 'git push origin RT-70-epic' PASS
 card_git branch -q -D -r origin/RT-71-task 2>/dev/null
 gate "SC-AK-1850 — карточка: после чистки ссылок отправка проходит" "$CARD" 'git push origin RT-70-epic' PASS
@@ -136,9 +154,8 @@ rm -rf "$CARD" "$CARD_REMOTE" "$CARD_RUNS"
 pin_git() {
     git -C "$PIN" -c user.name=probe -c user.email=probe@example.invalid -c commit.gpgsign=false "$@"
 }
-PIN_REMOTE="$(mktemp -d)"
-PIN_RUNS="$(mktemp)"
-git init -q --bare "$PIN_REMOTE" 2>/dev/null
+PIN_REMOTE="$(bare_remote)" || exit 1
+PIN_RUNS="$(tmp_path)" || exit 1
 PIN="$(fixture RT-95-epic)"
 git -C "$PIN" remote add origin "$PIN_REMOTE"
 fixture_commit "$PIN" epic.txt эпик 'feat: ветка эпика'
@@ -162,8 +179,10 @@ gate "SC-AK-1852 — нижняя ветка влита и снята во вр�
 pin_git branch -q -D -r origin/RT-96-low 2>/dev/null
 gate "SC-AK-1852 — ссылка базы снята чисткой: отправка проходит по отметкам" \
     "$PIN" 'git push origin RT-97-top' PASS
-report "SC-AK-1852 — ссылка базы стоит на записанном коммите" \
-    "$(pin_git rev-parse --verify --quiet origin/RT-96-low)" "$low_sha"
+report "SC-AK-1852 — закреплённая база стоит на записанном коммите" \
+    "$(pin_git rev-parse --verify --quiet refs/rt-kit/push-base/RT-97-top)" "$low_sha"
+report "SC-AK-1852 — ссылка снятой ветки в общие ссылки не вернулась" \
+    "$(pin_git rev-parse --verify --quiet refs/remotes/origin/RT-96-low)" ""
 # Коммит пути, который тяжёлый шаг не читает: запись подходит голове над записанной, отметка в силе.
 fixture_commit "$PIN" notes/n.md заметка 'docs: заметка после набора'
 gate "SC-AK-1852 — коммит непрочитанного пути после набора: отправка проходит по отметкам" \
@@ -197,9 +216,8 @@ rm -rf "$PIN" "$PIN_REMOTE" "$PIN_RUNS"
 two_git() {
     git -C "$TWO" -c user.name=probe -c user.email=probe@example.invalid -c commit.gpgsign=false "$@"
 }
-TWO_REMOTE="$(mktemp -d)"
-TWO_RUNS="$(mktemp)"
-git init -q --bare "$TWO_REMOTE" 2>/dev/null
+TWO_REMOTE="$(bare_remote)" || exit 1
+TWO_RUNS="$(tmp_path)" || exit 1
 TWO="$(fixture RT-60-epic)"
 two_git remote add origin "$TWO_REMOTE"
 profile "$TWO" "$TWO_RUNS"
@@ -218,6 +236,42 @@ git -C "$TWO_REMOTE" update-ref -d refs/heads/RT-61-low 2>/dev/null
 two_git checkout -q RT-62-a 2>/dev/null
 gate "SC-AK-1852 — две ветки по очереди: нижняя проходит по отметкам своего прогона" \
     "$TWO" 'git push origin RT-62-a' PASS
+# В ветку эпика пришла чужая правка, и ветка её влила: запись не подходит, база выбрана заново.
+two_git fetch -q --no-prune origin 2>/dev/null
+two_git checkout -q -b host-side origin/RT-60-epic 2>/dev/null
+fixture_commit "$TWO" other.txt чужое 'feat: чужая задача'
+two_git push -q origin host-side:RT-60-epic 2>/dev/null
+two_git checkout -q RT-62-a 2>/dev/null
+two_git fetch -q --no-prune origin 2>/dev/null
+two_git merge -q --no-edit origin/RT-60-epic 2>/dev/null
+report "SC-AK-1852 — после слияния ветки эпика база выбрана заново" \
+    "$(cd "$TWO" && . "$HOOKS/push-set.sh" && . "$HOOKS/git-guard-push-marks.sh" && rt_push_set_base)" origin/RT-60-epic
 rm -rf "$TWO" "$TWO_REMOTE" "$TWO_RUNS"
+
+# --- SC-AK-1852. Ссылка базы сдвинулась во время шага ---------------------------------------------
+# Тяжёлый шаг сам двигает ссылку базы, как выборка соседа во время набора: шаг шёл от закреплённой
+# ссылки, отметка записана, отправка проходит.
+move_git() {
+    git -C "$MOVE" -c user.name=probe -c user.email=probe@example.invalid -c commit.gpgsign=false "$@"
+}
+MOVE_REMOTE="$(bare_remote)" || exit 1
+MOVE_RUNS="$(tmp_path)" || exit 1
+MOVE="$(fixture RT-50-epic)"
+move_git remote add origin "$MOVE_REMOTE"
+move_git push -q origin main RT-50-epic 2>/dev/null
+move_git checkout -q -b RT-51-low RT-50-epic 2>/dev/null
+fixture_commit "$MOVE" low.txt низ 'feat: нижняя ветка'
+move_git push -q origin RT-51-low 2>/dev/null
+move_git checkout -q -b RT-52-top RT-51-low 2>/dev/null
+fixture_commit "$MOVE" .claude/rt-kit/project.sh "RT_PUSH_HEAVY_AHEAD=1
+rt_push_check_heavy() { case \"\$1\" in *heavy*) return 0 ;; esac; return 1; }
+rt_push_checks() { printf '%s\\n' 'true' \"echo heavy \$1 >> $MOVE_RUNS; git update-ref refs/remotes/origin/RT-51-low HEAD\"; }" 'chore: профиль'
+ahead "$MOVE"
+report "SC-AK-1852 — ссылка базы сдвинута во время шага" \
+    "$(move_git rev-parse origin/RT-51-low)" "$(move_git rev-parse HEAD)"
+gate "SC-AK-1852 — база сдвинулась во время шага: отправка проходит по отметкам" \
+    "$MOVE" 'git push origin RT-52-top' PASS
+report "SC-AK-1852 — тяжёлый шаг при сдвиге базы прогнан один раз" "$(grep -c heavy "$MOVE_RUNS")" 1
+rm -rf "$MOVE" "$MOVE_REMOTE" "$MOVE_RUNS"
 
 suite_result "база набора перед пушем"

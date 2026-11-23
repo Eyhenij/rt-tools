@@ -381,7 +381,8 @@ Then the push takes the base and its commit from the run ahead, and passes from 
 
 Given a neighbouring copy also pruned the ref of that base
 When the tree is pushed
-Then the ref is put back at the recorded commit, and the push passes from the marks
+Then the pinned ref still stands at the recorded commit, the removed branch does not come back
+into the remote refs, and the push passes from the marks
 
 Given a commit of a path the heavy step does not read, made after the run ahead
 When the head is pushed
@@ -396,6 +397,15 @@ Given two branches of a chain ran ahead one after another in one copy, and the h
 removed the branch under them
 When the lower of the two is pushed
 Then it takes the base of its own run ahead, and passes from the marks
+
+Given the branch of the epic moved on the host after the run ahead, and the head took it in by a
+merge
+When the base of the push is taken
+Then the record does not fit, and the base is picked anew: the branch of the epic
+
+Given a step of the set moved the remote ref of the base while it ran
+When the head is pushed
+Then the step ran against the pinned ref, its mark is written, and the push passes from the marks
 
 Covered: `projects/agent-kit/tests/git-guard-push-base-live.test.sh`.
 

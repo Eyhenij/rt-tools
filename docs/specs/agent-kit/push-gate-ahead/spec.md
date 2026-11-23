@@ -46,14 +46,14 @@ There is no interface: the guard answers with a refusal text, the run ahead with
   per pick, and the name is matched whole. With no answer from the host the refs of the copy decide,
   and a line on stderr says so.
 - **The push takes the base of the run ahead while the record fits the head.** The run ahead of a
-  branch records the tree of the head, the head commit, the base and the commit of the base; the
-  push guard and the git hook take the base from the record, and a mark is keyed by the recorded
-  commit. The record fits a head with the same tree or one that lies over the recorded head. A ref
-  a prune took away is put back at the recorded commit. No record, or one that does not fit, and
-  the base is picked anew. A mark is not written when the ref of a recorded base no longer stands
-  at the recorded commit.
+  branch pins the base: a ref of its own at the commit of the base, which the steps get instead of
+  the remote ref, and a record of the tree of the head, the head commit, the base and its commit.
+  The push guard and the git hook take the pinned ref while the record fits the head: the same
+  tree, or a head over the recorded one by plain commits. No record, one that does not fit, or a
+  merge over the recorded head, and the base is picked anew.
 - **The refusal «No green mark» names the base of the push and the base of the last run ahead.** A
-  record that does not fit the head is named «another history».
+  pinned base is named by its remote branch and commit; a record that does not fit the head is
+  named «another history». The observation line of the push names its base too.
 - **A head that adds no commit to its base is pushed with no check run.** Every commit of it
   already lies in that branch on the remote. The guard, the run ahead and the git hook all answer
   so; a head with no base on a remote is judged as before. The guard answers so only for a push of
@@ -155,10 +155,10 @@ checks: the last `push ahead:` line of the output tells them apart. Not 2: to a 
 The marks lie in `<git common dir>/rt-kit/push-green/`, a file per key, the check line inside. They
 are shared by every working copy of the repository and never land in history.
 
-The record of the run ahead lies in `<git dir of the copy>/rt-kit/push-base/<branch>`, `/` in the
-name of the branch written as `%`: four lines — the tree of the head, the base, the commit of the
-base, the head commit. A record belongs to one branch in one working copy: the branches of a chain
-run ahead one after another in one copy, and a neighbouring copy runs a set of its own.
+The pinned base is the ref `refs/rt-kit/push-base/<branch>` in the shared refs. Its record lies in
+`<git dir of the copy>/rt-kit/push-base.d/<branch>`: four lines — the tree of the head, the name of
+the base, the commit of the base, the head commit. Both belong to one branch: the branches of a
+chain run ahead one after another in one copy.
 
 ## Screens and states
 
@@ -203,23 +203,22 @@ Several working copies share the marks: a key holds the tree and the base, not t
 - **The push takes its base from the run ahead, not from a pick of its own.** A pick at the push
   sees the host as it is then: a lower branch merged and removed during the set, or a nearer branch
   pushed meanwhile, gives another base and refuses a green set.
-- **A record fits a head that lies over the recorded one, not only the same tree.** The marks of
-  the heavy steps outlive a commit of paths they do not read — the task folder taken apart, a line
-  in a plan. A record bound to the tree alone dropped the base after such a commit, and the marks
-  keyed by it were lost. A later commit of code finds no mark of its own and runs against the
-  recorded base, whose contribution holds at least what the new pick would count.
+- **The steps run against a ref the run ahead pins, not against the remote ref.** A remote ref
+  moves with a fetch of any copy and vanishes with a prune; a step that read it while it moved left
+  no mark, and the push was refused after a green run. A ref of the run's own stands until the next
+  run ahead of the branch, and nothing of the remote refs is written back.
+- **A record fits a head over the recorded one by plain commits, not only the same tree.** The
+  marks of the heavy steps outlive a commit of paths they do not read — the task folder taken
+  apart, a line in a plan. A record bound to the tree alone dropped the base after such a commit,
+  and the marks keyed by it were lost. A merge over the recorded head brings other branches'
+  content, and counted from the old base it would pass for this branch's own: the base is then
+  picked anew. A branch the host removed without a merge keeps the pinned base until the next run
+  ahead; its commits reached the host through the set, as every base trusts.
 - **A record is kept per branch.** One record per copy was overwritten by the next branch of a
   chain run ahead in the same copy, and the lower branch lost its base.
-- **The ref put back after a prune goes into the shared remote refs.** The steps of the set name the
-  base by its ref. The price: the ref of a removed branch is back for every copy; a pick drops it
-  while the host answers, and a reader of the remote refs that does not ask the host sees it
-  until the next prune.
-- **A run ahead with no answer from the host records the base it picked from the refs of the copy.**
+- **A run ahead with no answer from the host pins the base it picked from the refs of the copy.**
   The push then takes that base too: the set and the push stay on one base, and the stderr line of
   the run names the cause.
-- **A mark is not written when the ref of a recorded base moved during the step.** The key holds
-  the recorded commit, so it is the same before and after the step; the position of the ref is
-  compared instead, as the key compared it before the record.
 - **The main branch is a candidate even when its tip is outside the history of the head.** Left
   out once it moved ahead, it gave its place to the stale ref of a branch merged long ago, and a
   branch of texts taken from the main one was charged for the snapshots of that branch.
@@ -289,5 +288,5 @@ None.
   with the ready form. A red set run with `; echo "exit=$?"` after it came back as «exit code 0».
   Task RT-3469.
 - 2026-11-23 — a ref of a branch the host removed is no base, and the push takes the base of the
-  run ahead while the tree is the same. A green set of half an hour was refused as «No green mark»
+  run ahead while its record fits the head. A green set of half an hour was refused as «No green mark»
   after a neighbour pruned the refs. Task RT-3465.

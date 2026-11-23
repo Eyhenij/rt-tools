@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/git-guard-push-tests.sh · fe8410764c90 · правится надстройкой, не здесь
+# rt-kit v0.38.0 · hooks/git-guard-push-tests.sh · 1f2165141a29 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__terminal__run_in_terminal
 # rt-hook-timeout: 1800
 # Requires: checks/decide.mjs, hooks/decide.sh, hooks/facts.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/push-sign.sh, hooks/push-set.sh, hooks/git-guard-push-marks.sh
@@ -195,10 +195,12 @@ rt_push_gate_note() {
     [ -f "$rt_hooks_dir/observe.sh" ] && . "$rt_hooks_dir/observe.sh" 2>/dev/null
     command -v rt_note >/dev/null 2>&1 || return 0
     sid="$(printf '%s' "$input" | jq -r '.session_id // empty' 2>/dev/null)"
+    # The base is named: a push against a ref the run ahead pinned and a push that picked its own base
+    # are told apart in the record, not only in the text of a refusal.
     if [ -n "$sid" ]; then
-        rt_note push-gate "res=$outcome" "sid=$sid"
+        rt_note push-gate "res=$outcome" "sid=$sid" ${base:+"base=$base"}
     else
-        rt_note push-gate "res=$outcome"
+        rt_note push-gate "res=$outcome" ${base:+"base=$base"}
     fi
     return 0
 }
@@ -227,7 +229,8 @@ push_sends_head() {
 # A head that adds nothing to its base is not judged: the set has nothing new to look at.
 if command -v rt_push_adds_nothing >/dev/null 2>&1 && push_sends_head && rt_push_adds_nothing "$base"; then
     rt_push_gate_note nothing-new
-    printf 'the push gate: the head adds no commit to %s — the set is not run\n' "$base" >&2
+    printf 'the push gate: the head adds no commit to %s — the set is not run\n' \
+        "$(command -v rt_push_base_label >/dev/null 2>&1 && rt_push_base_label "$base" || printf '%s' "$base")" >&2
     exit 0
 fi
 
@@ -266,9 +269,10 @@ $(printf '%s' "$output" | tr -d '\000')"
     # the run ahead looks the same as one with no run at all.
     last_base=""
     command -v rt_push_base_last >/dev/null 2>&1 && last_base="$(rt_push_base_last)"
+    command -v rt_push_base_label >/dev/null 2>&1 || rt_push_base_label() { printf '%s' "${1:-none}"; }
     base_line="
 
-The base of this push: ${base:-none}. The base of the last run ahead of this branch: ${last_base:-none recorded}."
+The base of this push: $(rt_push_base_label "$base"). The base of the last run ahead of this branch: ${last_base:-none recorded}."
     push_refuse push '{"push_marks_green":"no"}' "$(jq -cn --arg a "$ahead" --arg c "$ahead_cmd" --arg d "$dirty_line" --arg r "$red_line" \
         --arg b "$base_line" '{ahead:$a, ahead_cmd:$c, dirty_line:$d, red_line:$r, base_line:$b}')"
 fi
