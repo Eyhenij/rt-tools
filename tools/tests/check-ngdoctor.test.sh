@@ -361,6 +361,42 @@ pass_says "a pass over a directory it cannot list refuses" "the pass cannot list
 chmod 755 "$PASS/src/locked"
 rmdir "$PASS/src/locked"
 
+# The package.json files and the stylesheets the tool reads apart from its file list (RT-3525). The
+# lost file is a nested one: a root package.json the tool cannot read leaves the Angular version
+# unknown, and the degraded run is red without the pass.
+pass_tree
+printf '%s' "$(pass_output 3)" > "$WORK/pass-out.json"
+mkdir -p "$PASS/sub" "$PASS/coverage"
+printf '%s\n' '{"name": "sub"}' > "$PASS/sub/package.json"
+chmod 000 "$PASS/sub/package.json"
+pass_says "the pass names a nested package.json it cannot read" "the pass cannot read sub/package.json"
+chmod 644 "$PASS/sub/package.json"
+
+printf '%s\n' '{"name": ' > "$PASS/sub/package.json"
+pass_says "the pass names a package.json that is not JSON" "sub/package.json is not JSON"
+printf '%s\n' '{"name": "sub"}' > "$PASS/sub/package.json"
+
+printf '%s\n' '{"name": "coverage"}' > "$PASS/coverage/package.json"
+chmod 000 "$PASS/coverage/package.json"
+pass_says "the pass names a package.json under coverage it cannot read" "the pass cannot read coverage/package.json"
+chmod 644 "$PASS/coverage/package.json"
+rm -f "$PASS/coverage/package.json"
+
+printf '%s\n' '.x { color: red; }' > "$PASS/sub/x.scss"
+chmod 000 "$PASS/sub/x.scss"
+printf '%s\n' '{"devDependencies": {"tailwindcss": "^4.1.0"}}' > "$PASS/package.json"
+pass_says "the pass with tailwindcss 4 names a stylesheet it cannot read" "the pass cannot read sub/x.scss"
+printf '%s\n' '{"devDependencies": {"tailwindcss": "~3.4.0"}}' > "$PASS/package.json"
+pass_green "the pass with tailwindcss 3 leaves an unreadable stylesheet alone" --pass-root "$PASS"
+printf '%s\n' '{"name": "pass"}' > "$PASS/package.json"
+pass_green "the pass without tailwindcss leaves an unreadable stylesheet alone" --pass-root "$PASS"
+chmod 644 "$PASS/sub/x.scss"
+
+node "$CHECK" --input "$WORK/pass-out.json" --threshold "$WORK/pass-threshold.json" --pass-root "$PASS" > "$WORK/said.txt" 2>&1
+if grep -q "oxlint 2 files, 2 package.json, 0 stylesheets" "$WORK/said.txt"; then got="counted"; else got="not counted"; fi
+report "the pass counts its package.json files and stylesheets" "$got" "counted"
+rm -rf "$PASS/sub" "$PASS/coverage" "$PASS/package.json"
+
 misuse "--pass-root without a saved output is refused" "give --input too" --pass-root "$PASS"
 misuse "--pass-oxlint without --pass-root is refused" "give --pass-root too" "${T[@]}" --pass-oxlint "$WORK/fake-oxlint.mjs"
 misuse "--pass-version without --pass-root is refused" "give --pass-root too" "${T[@]}" --pass-version 0.4.0

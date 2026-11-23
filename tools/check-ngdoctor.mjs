@@ -49,8 +49,10 @@
  * nothing, and the tool reads that as no findings; a template the linter cannot parse yields a
  * message without a rule, and the tool drops it; a file it cannot read is skipped — version 0.3.0
  * writes `filesScanned` and `filesTotal` as the same number, so the check of a partial scan above
- * never fires for it. The tool also reads `package.json` and stylesheets for three of its rules and
- * skips an unreadable one silently; the pass does not read them, so a loss there stays unseen.
+ * never fires for it. The tool also reads `package.json` files and stylesheets apart from its file
+ * list. A root `package.json` it cannot read leaves the Angular version unknown, and the run is
+ * degraded above; a nested one it cannot read or parse yields no finding of
+ * `deprecated-animations`, and stylesheets are read only when a package names tailwindcss 4 or later.
  * So after the scan the check walks the same files itself, with the tool's own
  * modules — the tree resolves other versions of them, or none. It builds the file list by the
  * globs and the ignore list of 0.3.0 and is red when the count differs from `filesScanned`, when a
@@ -63,7 +65,11 @@
  * named — or when it lints fewer files than it got. Its finding count is compared with the tool's:
  * this guards the two runs against each other, and with no findings it is blind. So the pass shows
  * that oxlint passed every file in its own run; a failure in the tool's run that did not repeat in
- * the pass stays unseen. A pass that lost a file refuses `--write` too. About a second.
+ * the pass stays unseen. The pass then reads every `package.json` by the glob and the ignore list of
+ * `deprecated-animations` — `coverage/` is not excluded there — and is red on one it cannot read or
+ * parse; when a package names tailwindcss 4 or later, it reads every stylesheet too. It does not read
+ * `tailwind.config.*`: the tool only finds that file. A pass that lost a file refuses `--write` too.
+ * About a second.
  *
  * The tool is run here, not piped in: with a temporary directory of its own, removed after the run,
  * because the tool writes its oxlint settings into the shared temporary directory once and reads
