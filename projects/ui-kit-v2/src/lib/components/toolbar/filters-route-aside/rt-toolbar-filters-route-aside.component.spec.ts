@@ -27,6 +27,8 @@ class StubBreakpointsService {
     public readonly mobile: Signal<boolean> = this.phone;
     public readonly tablet: Signal<boolean> = signal(false);
     public readonly desktop: Signal<boolean> = signal(false);
+    /** Ширина места: `null`, пока каркас его не измерил. */
+    public readonly placeWidth: WritableSignal<number | null> = signal<number | null>(1000);
 
     public registerPlace(): void {
         return;
@@ -51,6 +53,9 @@ class ContainerDouble {
     public readonly rightOpen: Signal<boolean> = signal<boolean>(false);
 
     public closed: number = 0;
+    /** Адрес в момент каждого закрытия: закрытие, пришедшее раньше перехода приложения, его отменило бы. */
+    public readonly closedAt: string[] = [];
+    public url: () => string = (): string => '';
 
     public openRight(): void {
         return;
@@ -58,6 +63,7 @@ class ContainerDouble {
 
     public closeRight(): void {
         this.closed += 1;
+        this.closedAt.push(this.url());
     }
 }
 
@@ -84,14 +90,18 @@ class ToolbarFiltersRouteHostComponent {
 
     public readonly toolbarShown: WritableSignal<boolean> = signal(true);
     public readonly routeShown: WritableSignal<boolean> = signal(true);
-    public applyNavigates: boolean = false;
+    /** Как приложение меняет адрес в ответ на «Применить»: сразу, из микрозадачи или никак. */
+    public applyNavigates: 'no' | 'sync' | 'microtask' = 'no';
     public applied: number = 0;
     public resets: number = 0;
 
     public onApply(): void {
         this.applied += 1;
-        if (this.applyNavigates) {
+        if (this.applyNavigates === 'sync') {
             void this.#router.navigate([], { queryParams: { status: 'paid' } });
+        }
+        if (this.applyNavigates === 'microtask') {
+            void Promise.resolve().then((): Promise<boolean> => this.#router.navigate([], { queryParams: { status: 'paid' } }));
         }
     }
 }
@@ -123,6 +133,8 @@ function setup(narrow: boolean = true): ISetup {
         ],
     });
     const fixture: ComponentFixture<ToolbarFiltersRouteHostComponent> = TestBed.createComponent(ToolbarFiltersRouteHostComponent);
+    const router: Router = TestBed.inject(Router);
+    container.url = (): string => router.url;
     fixture.detectChanges();
 
     return { fixture, breakpoints, container };
@@ -136,8 +148,13 @@ function press(target: Element | null): void {
     (target?.querySelector('button') ?? (target as HTMLElement | null))?.click();
 }
 
+/** Отрисовка и одна макрозадача: решение о закрытии после «Применить» ждёт её. */
 async function settle(fixture: ComponentFixture<unknown>): Promise<void> {
     fixture.detectChanges();
+    await fixture.whenStable();
+    await new Promise<void>((resolve: () => void): void => {
+        setTimeout(resolve, 0);
+    });
     await fixture.whenStable();
     fixture.detectChanges();
 }
@@ -173,7 +190,7 @@ describe('RtToolbarFiltersRouteAsideComponent — панель отборов в
     it('SC-UKV-1716 — «Применить», сменивший адрес, закрывает маршрут после этого перехода', async (): Promise<void> => {
         const state: ISetup = setup();
         await ready(state);
-        state.fixture.componentInstance.applyNavigates = true;
+        state.fixture.componentInstance.applyNavigates = 'sync';
 
         press(route(state.fixture)?.querySelector('[qa-dataid="toolbar-filters-apply"]') ?? null);
         expect(state.container.closed).toBe(0);
@@ -181,6 +198,17 @@ describe('RtToolbarFiltersRouteAsideComponent — панель отборов в
         await settle(state.fixture);
         expect(TestBed.inject(Router).url).toBe('/?status=paid');
         expect(state.container.closed).toBe(1);
+    });
+
+    it('SC-UKV-1716 — переход, начатый приложением из микрозадачи, панель тоже дожидается', async (): Promise<void> => {
+        const state: ISetup = setup();
+        await ready(state);
+        state.fixture.componentInstance.applyNavigates = 'microtask';
+
+        press(route(state.fixture)?.querySelector('[qa-dataid="toolbar-filters-apply"]') ?? null);
+        await settle(state.fixture);
+
+        expect(state.container.closedAt).toEqual(['/?status=paid']);
     });
 
     it('SC-UKV-1714 — стрелка закрывает маршрут молча', async (): Promise<void> => {
@@ -215,6 +243,32 @@ describe('RtToolbarFiltersRouteAsideComponent — панель отборов в
         await ready(state);
 
         expect(state.container.closed).toBe(0);
+    });
+
+    it('SC-UKV-1713 — до замера места широкое окно маршрут не закрывает: перезагрузка с узким местом', async (): Promise<void> => {
+        const state: ISetup = setup(false);
+        state.breakpoints.placeWidth.set(null);
+        await ready(state);
+        expect(state.container.closed).toBe(0);
+
+        state.breakpoints.placeWidth.set(1000);
+        state.breakpoints.narrow.set(true);
+        await settle(state.fixture);
+
+        expect(state.container.closed).toBe(0);
+        expect(route(state.fixture)?.querySelector('[qa-dataid="slot-filter"]')?.getAttribute('data-place')).toBe('panel');
+    });
+
+    it('SC-UKV-1713 — отборы, уже стоявшие за кнопкой, закрывают маршрут возвратом в строку и до замера', async (): Promise<void> => {
+        const state: ISetup = setup();
+        state.breakpoints.placeWidth.set(null);
+        await ready(state);
+        expect(state.container.closed).toBe(0);
+
+        state.breakpoints.narrow.set(false);
+        await settle(state.fixture);
+
+        expect(state.container.closed).toBe(1);
     });
 
     it('SC-UKV-1713 — полоса ушла со страницы: маршрут закрывается', async (): Promise<void> => {

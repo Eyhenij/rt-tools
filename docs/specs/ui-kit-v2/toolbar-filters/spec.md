@@ -78,11 +78,16 @@ behind a button that opens a panel.
 - **The application panel closes on the shared path of the route panels.** The back arrow,
   «Применить», a press beside the panel and Esc close it; it closes itself when the filters return
   to the row and when the toolbar leaves the page. It decides that only once the panel of the frame
-  is ready: before that the place is not measured. A panel that stood before its toolbar appeared
-  waits for it and takes its filters.
+  is ready. Filters in the row close it only once the place is measured or once they stood behind
+  the button: before the frame measures the place the window gives the width, and a wide window
+  beside a narrow place would close the panel on a reload. A panel that stood before its toolbar
+  appeared waits for it and takes its filters; on a page with no toolbar in `app` mode it waits with
+  an empty body.
 - **«Применить» that started a navigation closes the application panel after that navigation.** A
   second navigation started at once would cancel the first, and the applied filter would not reach
-  the address.
+  the address. The panel decides one macrotask after the press: a navigation the application starts
+  in the handler, a microtask or an effect of its store is already going by then; one started later
+  is not waited for.
 - **In the row each filter keeps the width of its own content.** A select in the left part is as
   wide as its placeholder or value and cuts nothing with an ellipsis while the row has room.
 

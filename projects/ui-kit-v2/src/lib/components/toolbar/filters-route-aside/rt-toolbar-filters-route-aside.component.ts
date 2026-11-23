@@ -2,9 +2,10 @@ import { ChangeDetectionStrategy, Component, effect, inject, untracked, ViewEnca
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Event as RouterEvent, NavigationCancel, NavigationEnd, NavigationError } from '@angular/router';
 
-import { exhaustMap, filter, Observable, of, Subject, take } from 'rxjs';
+import { exhaustMap, filter, Observable, of, Subject, switchMap, take, timer } from 'rxjs';
 
 import { RtContainerRightSidenavPanelDirective, RtRouteAsideComponent } from '@rt-tools/ui-kit-v2/container';
+import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
 import { RtToolbarFiltersPanelComponent } from '../filters-panel/rt-toolbar-filters-panel.component';
 import { RtToolbarFiltersHub } from '../rt-toolbar-filters.hub';
 import { IRtToolbar } from '../rt-toolbar.model';
@@ -44,11 +45,15 @@ const BEM_BLOCK: string = 'rt-toolbar-filters-route-aside';
 })
 export class RtToolbarFiltersRouteAsideComponent extends RtRouteAsideComponent<never> {
     readonly #hub: RtToolbarFiltersHub = inject(RtToolbarFiltersHub);
+    readonly #breakpoints: BreakpointsService = inject(BreakpointsService);
 
     readonly #dismissSource: Subject<void> = new Subject<void>();
 
     /** Полоса уже отдала отборы: её уход со страницы закрывает панель. */
     #seen: boolean = false;
+
+    /** Отборы уже стояли за кнопкой: их возврат в строку закрывает панель и до замера места. */
+    #seenCollapsed: boolean = false;
 
     constructor() {
         super();
@@ -67,17 +72,29 @@ export class RtToolbarFiltersRouteAsideComponent extends RtRouteAsideComponent<n
                 return;
             }
             this.#seen = true;
-            if (!source.collapsed()) {
+            if (source.collapsed()) {
+                this.#seenCollapsed = true;
+                return;
+            }
+            // Каркас измеряет место страницы после первой отрисовки, позже маршрута панели. До замера
+            // ширину даёт окно, и широкое окно при узком месте закрыло бы панель на перезагрузке
+            if (this.#seenCollapsed || this.#breakpoints.placeWidth() !== null) {
                 untracked((): void => this.onClose());
             }
         });
 
         // Стрелка или «Применить». Отбор, применённый переходом по адресу, закрывается после этого
-        // перехода: второй переход, начатый сразу, отменил бы первый, и отбор не попал бы в адрес
+        // перехода: второй переход, начатый сразу, отменил бы первый, и отбор не попал бы в адрес.
+        // Решение ждёт одну макрозадачу: переход, начатый приложением из микрозадачи или эффекта
+        // хранилища, к этому времени уже идёт
         this.#dismissSource
             .pipe(
                 exhaustMap((): Observable<unknown> =>
-                    untracked(this.router.currentNavigation) === null ? of(null) : this.#navigationDone()
+                    timer(0).pipe(
+                        switchMap((): Observable<unknown> =>
+                            untracked(this.router.currentNavigation) === null ? of(null) : this.#navigationDone()
+                        )
+                    )
                 ),
                 takeUntilDestroyed(this.destroyRef)
             )

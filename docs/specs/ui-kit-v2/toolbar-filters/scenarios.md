@@ -108,8 +108,9 @@ stays, «Применить» reaches `filtersApply` and the panel closes
 
 Given an open application panel
 When the place widens, or the toolbar leaves the page
-Then the panel closes; before the frame's panel is ready a wide place closes nothing, and a panel
-that stood before the toolbar appeared stays and takes its filters
+Then the panel closes; before the frame's panel is ready a wide place closes nothing, before the
+place is measured a wide window closes nothing unless the filters already stood behind the button,
+and a panel that stood before the toolbar appeared stays and takes its filters
 
 ### SC-UKV-1714 — the back arrow of the application panel
 
@@ -125,7 +126,8 @@ Then the panel of the kit opens, and `filtersOpen` is not reported
 
 ### SC-UKV-1716 — «Применить» that changed the address closes the panel after it
 
-Given an open application panel and an application that answers `filtersApply` with a navigation
+Given an open application panel and an application that answers `filtersApply` with a navigation,
+started in the handler or in a microtask
 When «Применить» is pressed
 Then the panel stays until that navigation ends, the filter reaches the address, then the panel
 closes
