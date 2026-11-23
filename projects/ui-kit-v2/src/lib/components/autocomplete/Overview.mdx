@@ -100,23 +100,25 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход               | тип                                          | умолчание                   |
-| ------------------ | -------------------------------------------- | --------------------------- |
-| `suggestions`      | `ReadonlyArray<TItem>`                       | `[]`                        |
-| `displayWith`      | `(item: TItem \| null) => string`            | `String(item ?? '')`        |
-| `placeholder`      | `string`                                     | `''`                        |
-| `minLength`        | `number`                                     | `1`                         |
-| `iconLeft`         | `IRtIcon.Name \| null`                       | `null`                      |
-| `openOnFocus`      | `boolean`                                    | `false`                     |
-| `itemTemplate`     | `TemplateRef<{ $implicit: TItem }> \| null`  | `null`                      |
-| `radius`           | `TRtRadius \| null`                          | `null` → скругление полей   |
-| `loading`          | `boolean`                                    | `false`                     |
-| `emptyText`        | `string \| null`                             | `null` → подпись кита       |
-| `emptyTemplate`    | `TemplateRef<{ $implicit: string }> \| null` | `null`                      |
-| `error`            | `string \| null`                             | `null`                      |
-| `errorDescription` | `string`                                     | `''`                        |
-| `sheet`            | `boolean`                                    | `true` → шторка на телефоне |
-| `sheetCards`       | `boolean`                                    | `true` → карточки в шторке  |
+| вход                  | тип                                          | умолчание                    |
+| --------------------- | -------------------------------------------- | ---------------------------- |
+| `suggestions`         | `ReadonlyArray<TItem>`                       | `[]`                         |
+| `displayWith`         | `(item: TItem \| null) => string`            | `String(item ?? '')`         |
+| `placeholder`         | `string`                                     | `''`                         |
+| `minLength`           | `number`                                     | `1`                          |
+| `iconLeft`            | `IRtIcon.Name \| null`                       | `null`                       |
+| `openOnFocus`         | `boolean`                                    | `false`                      |
+| `itemTemplate`        | `TemplateRef<{ $implicit: TItem }> \| null`  | `null`                       |
+| `radius`              | `TRtRadius \| null`                          | `null` → скругление полей    |
+| `loading`             | `boolean`                                    | `false`                      |
+| `emptyText`           | `string \| null`                             | `null` → подпись кита        |
+| `emptyTemplate`       | `TemplateRef<{ $implicit: string }> \| null` | `null`                       |
+| `error`               | `string \| null`                             | `null`                       |
+| `errorDescription`    | `string`                                     | `''`                         |
+| `sheet`               | `boolean`                                    | `true` → шторка на телефоне  |
+| `sheetCards`          | `boolean`                                    | `true` → карточки в шторке   |
+| `sheetHeaderTemplate` | `TemplateRef \| null`                        | `null` → шапку рисует шторка |
+| `sheetFooterTemplate` | `TemplateRef \| null`                        | `null` → подвала нет         |
 
 ## Входы от основы полей
 

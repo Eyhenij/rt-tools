@@ -120,6 +120,19 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `rtPopoverSheetFooter`  | `TemplateRef \| null` | `null` — подвала нет                     |
 | `rtPopoverSheetUnsaved` | `boolean`             | `false` — шторка закрывается без вопроса |
 
+Те же входы по именам в классе директивы `RtPopoverSheetOptionsDirective` и входы своих шапки и
+подвала у списков выбора кита (`RtSheetTemplatesDirective`):
+
+| вход                  | тип                   | умолчание                                    |
+| --------------------- | --------------------- | -------------------------------------------- |
+| `fullHeight`          | `boolean`             | `false` — в разметке `rtPopoverSheetFull`    |
+| `action`              | `TemplateRef \| null` | `null` — в разметке `rtPopoverSheetAction`   |
+| `header`              | `TemplateRef \| null` | `null` — в разметке `rtPopoverSheetHeader`   |
+| `footer`              | `TemplateRef \| null` | `null` — в разметке `rtPopoverSheetFooter`   |
+| `unsaved`             | `boolean`             | `false` — в разметке `rtPopoverSheetUnsaved` |
+| `sheetHeaderTemplate` | `TemplateRef \| null` | `null` — своя шапка шторки у списка выбора   |
+| `sheetFooterTemplate` | `TemplateRef \| null` | `null` — свой подвал шторки у списка выбора  |
+
 С `rtPopoverSheetUnsaved` шторка перед закрытием спрашивает: применить, не применять, отмена.
 Ответ «Применить» приходит выходом `rtPopoverSheetApply`.
 
