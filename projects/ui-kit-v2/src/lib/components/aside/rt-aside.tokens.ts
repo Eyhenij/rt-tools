@@ -13,7 +13,7 @@ import { InjectionToken } from '@angular/core';
  *
  * @example
  * \`\`\`ts
- * @Component({...})
+ * // декоратор компонента опущен
  * export class GuestProfileAsideComponent {
  *   readonly data = inject(RT_ASIDE_DATA) as { userId: number };
  * }

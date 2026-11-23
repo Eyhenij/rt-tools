@@ -9,7 +9,6 @@ import {
     FAVORITES_STORY_ITEMS_LONG,
     sideMenuFavoritesStoryProviders,
 } from './component/side-menu-favorites-story-data';
-import { TestRtSideMenuMobileComponent } from './component/test-side-menu-mobile.component';
 import { TestRtSideMenuComponent } from './component/test-side-menu.component';
 import { openMobileSection } from './side-menu.play';
 
@@ -61,13 +60,13 @@ const PINNED_ARGS: NonNullable<TStory['args']> = {
 };
 
 /** Меню телефона: та же история в окне телефона, как у первого кита, раздел открыт нажатием. */
-const MOBILE_IMPORTS: ReturnType<typeof moduleMetadata> = moduleMetadata({ imports: [TestRtSideMenuMobileComponent] });
+const MOBILE_IMPORTS: ReturnType<typeof moduleMetadata> = moduleMetadata({ imports: [TestRtSideMenuComponent] });
 const MOBILE: Pick<TStory, 'decorators' | 'render' | 'globals'> = {
     globals: { viewport: { value: 'narrow' } },
     decorators: [MOBILE_IMPORTS],
     render: (args: Args): { props: Args; template: string } => ({
         props: args,
-        template: '<app-side-menu-mobile [items]="items" [menuId]="menuId" [activeIds]="activeIds" />',
+        template: '<app-side-menu [items]="items" [menuId]="menuId" [activeIds]="activeIds" />',
     }),
 };
 
