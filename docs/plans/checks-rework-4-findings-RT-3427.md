@@ -38,9 +38,8 @@ decision: a task of its own or none, unless it names one.
   commands. **Address:** a task of the epic for the delivery of rules in parts in
   `hooks/skill-gate.sh`, or an edit of the gate map. **Metric:** `gate-deny` with
   `why: together`, 29 over 14–21.11, counted apart by the kind of the edit.
-- **The meaning check of the task skipped the table of names.** In
-  `docs/tasks/RT-3427-long-rules-fit-2/meaning-check.mjs` the section regex ends at `$` under the
-  flag `m` and captures an empty table. A fixed copy found two reworded rows of `mockups`; they
+- **The meaning check of the task skipped the table of names.** In the task's meaning check script
+  the section regex ends at `$` under the flag `m` and captures an empty table. A fixed copy found two reworded rows of `mockups`; they
   are restored, and the fixed copy gives 0. The step check runs the file committed with the plan,
   so the fix lives only in the copy. It reads only the section «What it is called here», so the
   table of `doc-style-human` was compared by reading. **Address:** a meaning check of a later
