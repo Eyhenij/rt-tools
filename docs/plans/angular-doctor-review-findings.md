@@ -230,3 +230,33 @@ the gate map is needed.
 Not proposed: knip on `const require = createRequire(...)` — one case, and item 3 catches it at the
 stage; the step and source guard refusals on combined commands — to be sent by `/feedback` with the
 command verbatim; the kit approval demand for other tasks' files — RT-3514 item 3 already.
+
+## RT-3483 — the review of 23 November 2026
+
+Loaded: `task-delivery-loop`, `task-flow` with its parts, `doc-style`, `component-structure`,
+`angular-patterns`, `rt-tools-storybook`, `reuse-first`, `browser-verification`, `git-workflow`
+with its parts, `kit-approval`. No edit of the gate map is needed.
+
+1. **The quick checks of the push set run at the stage** — tree,
+   `.claude/skills/task-delivery-loop-run/SKILL.md`, section «5–6», after the line
+   `RT_SUITES_BASE=origin/<base> bash tools/tests/run.sh`; step 5 of the rule reads «Tests, lint,
+   types and the quick checks of the push set over what is touched». Here `check-boolean-inputs`
+   and a stale `tools/reuse-allowlist.json` line were found only by the push set, which ran again.
+2. **A wrapper that derives by `computed()` declares its args `input()`, a boolean one with
+   `booleanAttribute`** — tree, `.claude/skills/rt-tools-storybook-story/SKILL.md`, section «The
+   wrapper component», after «Plain public fields — these are the Storybook control surface.».
+   Here seven boolean inputs failed `check-boolean-inputs`. The comment at
+   `tools/check-boolean-inputs.mjs:33` says the stories lie outside `src/lib`; they do not.
+3. **The showcase frames have one road** — tree, `task-delivery-loop-run`, section «5–6»: only
+   `node tools/visual-gate.mjs ui-kit-v2`, the whole set, about eight minutes; a path sample is read
+   only after `--update`. A pointed match without `--update` is a code task.
+4. **The own showcase and stand are stopped before the run ahead** — tree,
+   `task-delivery-loop-run`, section «11–12». Here the admin end-to-end suite went red under the
+   showcase's load and was green alone and on rerun.
+5. **The pinned Chrome gave a network error for the local showcase while `curl` got 200** —
+   companion of `browser-verification`. The live check went through the desktop browser pane; two
+   reviewers met the same. Whether the pane is a lawful way in is the owner's decision.
+
+Not proposed: the refused progress edit after compaction — GUARDS.md already names it; the tool
+taking a component by the text `@Component\s*\(` — a quirk of version 0.3.0, written into the
+archive record of RT-3483.
