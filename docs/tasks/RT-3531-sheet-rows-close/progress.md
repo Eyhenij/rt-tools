@@ -18,8 +18,8 @@
 - [x] 4.1 У опции есть описание, у чекбокса — описание и вид карточки
 - [x] 4.2 Пять списков выбора рисуют в шторке карточки, вход возвращает прежние строки
 - [x] 5.1 Шторки из таблицы открываются с её высотой и действием; шторки даты и отборов идут через общую оболочку
-- [>] 6.1 Истории шторки показывают каждое состояние, числа витрины совпали с макетом
-- [ ] 6.2 Прежние снимки витрины зелёные, новые сняты
+- [x] 6.1 Истории шторки показывают каждое состояние, числа витрины совпали с макетом
+- [>] 6.2 Прежние снимки витрины зелёные, новые сняты
 - [ ] 6.3 Витрина одобрена владельцем
 - [ ] 6.4 Заметки компонентов и журнал изменений кита называют новые входы, проверка спек зелёная
 
@@ -191,8 +191,8 @@ Put together by a hook before the compaction of the context (auto).
 ### Where we stand at the minute of the compaction
 
 - **State:** `этап-идёт`
-- **Stage:** 5 of 6 — Высоты, действия и вопрос у каждой шторки
-- **Next step:** шаг 5.1 — высота и действие шторки по таблице плана: вход полной высоты у `[rtPopover]` (`rtPopoverSheetFull`) и действие в шапке, «Готово» мультиселекта в шапке, список с поиском во всю высоту при фокусе в поиске, отборы страницы и `rt-thread-list` во всю высоту, шторки даты и `rt-page-bar` через общую оболочку, `unsaved` и `applyRequest` у `rt-dynamic-selector` и `rt-page-bar`, Escape шторки в оверлее через тот же вопрос
+- **Stage:** 6 of 6 — Витрина и тексты
+- **Next step:** шаг 6.1 — истории шторки на каждое состояние (`select/stories/select-sheet.stories.ts` и соседи), живая проверка в витрине на 6007 с замерами, кадры Figma привести к шагам кита и сверить числа `node tools/kit-match.mjs numbers`, строка «Совпадение» в записи одобрений
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-3531-sheet-rows-close/progress.md`; the plan lies next to it.
@@ -200,12 +200,29 @@ The progress in full — `docs/tasks/RT-3531-sheet-rows-close/progress.md`; the 
 ### Uncommitted
 
 ```
-none
+ M docs/specs/ui-kit-v2/dynamic-selectors/implementation.md
+ M docs/specs/ui-kit-v2/popover-sheet/scenarios.md
+ M docs/specs/ui-kit-v2/popover-sheet/spec.md
+ M docs/specs/ui-kit-v2/scenarios.md
+ M docs/specs/ui-kit-v2/spec.md
+ M projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.component.scss
+ M projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/bottom-sheet-matrix.stories.ts
+ M projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/component/own-sheet-stack.directive.ts
+ M projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/component/test-bottom-sheet-matrix.component.ts
+ M projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-sheet.spec.ts
+ M projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-sheet.spec.ts
+ M projects/ui-kit-v2/src/lib/components/select/stories/component/test-select-sheet.component.html
+ M projects/ui-kit-v2/src/lib/components/select/stories/component/test-select-sheet.component.ts
+ M projects/ui-kit-v2/src/lib/components/select/stories/select-sheet.stories.ts
+ M projects/ui-kit-v2/src/styles/_mixins.scss
+?? docs/specs/ui-kit-v2/sheet-header-cards/
 ```
 
 ### Commits over the main branch
 
 ```
+aa9b6c8b1 docs(rt:ui-kit-v2): решения этапа высот и действий шторки записаны в ход работы (RT-3531)
+8ccf80e23 feat(rt:ui-kit-v2): высота, действие в шапке и вопрос у каждой шторки по её случаю (RT-3531)
 b417dc7fb feat(rt:ui-kit-v2): пять списков выбора рисуют в шторке карточки, вход sheetCards возвращает прежние строки (RT-3531)
 f52f280b2 feat(rt:ui-kit-v2): у опции описание, у флажка описание и вид карточки (RT-3531)
 f597a9e7f docs(rt:ui-kit-v2): передача по RT-3531 обновлена после этапа оболочки шторки (RT-3531)

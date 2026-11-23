@@ -110,6 +110,17 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 `rtPopoverBackdropClass`, `rtPopoverDisabled`, `rtPopoverOffsetY`, `rtPopoverOffsetX`, `rtPopoverOrigin`,
 `rtPopoverPositions`, `rtPopoverSheet`, `rtPopoverSheetTitle`.
 
+Вид шторки задают входы на том же узле:
+
+| вход                    | тип                   | умолчание                                |
+| ----------------------- | --------------------- | ---------------------------------------- |
+| `rtPopoverSheetFull`    | `boolean`             | `false` — высота по содержимому          |
+| `rtPopoverSheetAction`  | `TemplateRef \| null` | `null` — без действия справа в шапке     |
+| `rtPopoverSheetUnsaved` | `boolean`             | `false` — шторка закрывается без вопроса |
+
+С `rtPopoverSheetUnsaved` шторка перед закрытием спрашивает: применить, не применять, отмена.
+Ответ «Применить» приходит выходом `rtPopoverSheetApply`.
+
 Входы шторки `RtPopoverSheetComponent` — её директива создаёт сама, приложение их не задаёт:
 
 | вход    | тип       | умолчание                                                      |
@@ -141,6 +152,8 @@ providers: [{ provide: RT_POPOVER_SHEET, useValue: false }];
 | -------- | ------ | ----------------- | ---------------- |
 | `opened` | `void` | `rtPopoverOpened` | панель открылась |
 | `closed` | `void` | `rtPopoverClosed` | панель закрылась |
+
+Выход `rtPopoverSheetApply` (`void`) — в вопросе шторки нажали «Применить».
 
 ## Рядом
 

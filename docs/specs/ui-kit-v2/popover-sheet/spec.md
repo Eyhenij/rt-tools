@@ -26,7 +26,8 @@ rest did not. An application had to rebuild each panel in a sheet of its own.
 
 The person sees a panel that slides up from the bottom of the screen, with a handle, a close button
 on the left of the header, a title in its centre and, where the sheet has an action, a filled
-button on the right. Lists of choice inside it are drawn as cards.
+button on the right. Lists of choice inside it are drawn as cards. The header, the cards, the
+height of a sheet and the question before it closes are the subdomain `sheet-header-cards`.
 
 ## Rules
 
@@ -46,34 +47,6 @@ button on the right. Lists of choice inside it are drawn as cards.
   The count says how many values are chosen, the reset takes them all off and keeps the sheet
   open. The done button stands on the right of the sheet header and closes the sheet. The choice
   is written on every press, so the done button confirms nothing — it only closes.
-- **Every sheet of the kit has a close button on the left of its header.** The title stands in
-  the centre of the header whatever stands on its sides; a sheet with no title keeps the close
-  button. The close button asks to close the same way the backdrop does, and the focus returns to
-  the trigger. The sheets of the date fields and of the page filters have the header too.
-- **The action of a sheet stands on the right of its header as a filled button.** A choice of
-  several values shows the done button there, the dynamic selector and the page filters show the
-  apply button. The footer stays for what an application puts there.
-- **A list of choice in the sheet is drawn as cards.** A card holds the label and an optional
-  description on the left and the mark on the right: the kit radio button for a choice of one
-  value, the kit checkbox for a choice of several, the kit switch in the toggles look. The lists
-  are those of the select, the multiselect, the dynamic selector, the hints of the autocomplete
-  and the comparison kinds of a table column filter. One input of the part returns the rows the
-  panel has next to its trigger. The rows of an actions menu are not cards.
-- **An option carries an optional description.** It is the second line of a card in the sheet;
-  next to the trigger the row does not show it.
-- **A sheet with a search opens by the height of its content and takes the full height while the
-  keyboard is open.** The list stays visible above the keyboard. With the keyboard gone the sheet
-  returns to the height of its content.
-- **The page filters and the filters of a thread list open at full height.** A person types in
-  several fields there.
-- **A sheet whose choice reaches the application only by a button asks before it closes with a
-  choice not applied.** The dynamic selector with marks set and the page filters with any input
-  made since they opened ask: apply, do not apply, cancel. The question stands at the bottom of
-  the screen. With nothing changed the sheet closes at once. Every other sheet closes without a
-  question: its choice is written on every press, and what is typed in a search is not data.
-- **Every sheet locks the scroll of the page and closes by Escape.** The sheets of the date fields
-  and of the page filters do it the same as a panel of choice.
-- **With reduced motion asked by the system the sheet appears without sliding.**
 - **A field that searches as it is typed opens the sheet on a tap, and the typing goes to a search at the top of the sheet.**
   The field under the sheet gives its focus away; a query shorter than the minimum keeps the sheet
   open, since the person types on in it. A choice closes the sheet.
@@ -124,9 +97,8 @@ Not applicable.
 
 ### Mobile layout
 
-The subject of the subdomain: at width 375 a panel of choice opens in the bottom sheet. The
-header is 52 px high with a 40 px close button 12 px from the left edge; a card is 56 px high
-without a description, cards stand 8 px apart, and the mark ends 36 px from the edge of the screen.
+The subject of the subdomain: at width 375 a panel of choice opens in the bottom sheet. The sizes
+of the header and of a card are in the subdomain `sheet-header-cards`.
 
 ### Several objects
 
@@ -158,4 +130,4 @@ None.
 | 2026-11-19 | Tabs switch the sheet off for their menus, scenario 1461 (RT-3399)                                                                            |
 | 2026-11-20 | The sheet opens on a phone, ≤480 px, by the owner's word «До 480 px» (RT-3399)                                                                |
 | 2026-11-20 | Scenarios renumbered to 1554…1627 after main took 1385…1389 and 1436…1505; the toggle choice left for the subdomain `toggle-choice` (RT-3399) |
-| 2026-11-23 | The close button, the action in the header, cards of choice, the description of an option, the height by the keyboard, the question before closing, scenarios 1710…1727 (RT-3531) |
+| 2026-11-23 | The multiselect done button moved to the sheet header; the header, cards and height of a sheet are subdomain `sheet-header-cards` (RT-3531)   |

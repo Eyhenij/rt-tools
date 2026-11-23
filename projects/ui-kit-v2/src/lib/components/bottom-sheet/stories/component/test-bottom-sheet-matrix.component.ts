@@ -10,7 +10,7 @@ import { RtBottomSheetComponent } from '../../rt-bottom-sheet.component';
 import { OwnSheetStackDirective } from './own-sheet-stack.directive';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TBottomSheetMatrixPart = 'open' | 'content' | 'footer' | 'presets' | 'themes';
+export type TBottomSheetMatrixPart = 'open' | 'content' | 'header' | 'footer' | 'presets' | 'themes';
 
 /**
  * Матрицы состояний `rt-bottom-sheet` для витрины.
@@ -106,6 +106,45 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'footer' | 'presets' |
                 </app-story-presets>
             }
 
+            @case ('header') {
+                <app-story-presets caption="Шапка, высота и вопрос перед закрытием в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="23.4375rem" [items]="headers">
+                            <ng-template let-header>
+                                <div
+                                    rtStoryOwnSheetStack
+                                    style="position: relative; contain: paint; inline-size: 100%; height: 26rem; border: 1px dashed var(--rt-color-border-subtle)">
+                                    @switch (header) {
+                                        @case ('действие справа') {
+                                            <rt-bottom-sheet [open]="true">
+                                                <span sheetHeader>Каналы связи</span>
+                                                <button sheetAction rtButton size="sm" label="Готово" aria-label="Готово"></button>
+                                                <button rtButton label="Почта" aria-label="Почта" appearance="text"></button>
+                                                <button rtButton label="Телефон" aria-label="Телефон" appearance="text"></button>
+                                            </rt-bottom-sheet>
+                                        }
+                                        @case ('во всю высоту') {
+                                            <rt-bottom-sheet fullHeight [open]="true">
+                                                <span sheetHeader>Отборы</span>
+                                                <button sheetAction rtButton size="sm" label="Применить" aria-label="Применить"></button>
+                                                <button rtButton label="Статус" aria-label="Статус" appearance="text"></button>
+                                            </rt-bottom-sheet>
+                                        }
+                                        @case ('вопрос перед закрытием') {
+                                            <rt-bottom-sheet fullHeight unsaved data-story-ask [open]="true">
+                                                <span sheetHeader>Отборы</span>
+                                                <button sheetAction rtButton size="sm" label="Применить" aria-label="Применить"></button>
+                                                <button rtButton label="Статус" aria-label="Статус" appearance="text"></button>
+                                            </rt-bottom-sheet>
+                                        }
+                                    }
+                                </div>
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('footer') {
                 <app-story-presets caption="Подвал под длинным содержимым в обоих наборах">
                     <ng-template>
@@ -191,6 +230,8 @@ export class TestRtBottomSheetMatrixComponent {
 
     public readonly opens: readonly boolean[] = [false, true];
     public readonly contents: readonly string[] = ['без шапки', 'с шапкой', 'длинное содержимое', 'пусто'];
+    /** Шапка с действием, шторка во всю высоту ящика и вопрос, который история открывает нажатием «×». */
+    public readonly headers: readonly string[] = ['действие справа', 'во всю высоту', 'вопрос перед закрытием'];
 
     public readonly manyActions: readonly string[] = ['Скачать', 'Отправить', 'Переименовать', 'Дублировать', 'Архивировать', 'Удалить'];
 

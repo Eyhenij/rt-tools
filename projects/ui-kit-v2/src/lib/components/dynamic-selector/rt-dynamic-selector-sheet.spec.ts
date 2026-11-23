@@ -1,4 +1,4 @@
-import { ApplicationRef, Provider, signal, WritableSignal } from '@angular/core';
+import { ApplicationRef, EnvironmentProviders, Provider, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
@@ -27,7 +27,10 @@ class BreakpointsStub {
 type TFixture = ComponentFixture<RtDynamicSelectorComponent<IPerson>>;
 
 function open(inputs: Readonly<Record<string, unknown>> = {}): TFixture {
-    const providers: Provider[] = [{ provide: BreakpointsService, useValue: new BreakpointsStub() }, provideRouter([])];
+    const providers: Array<Provider | EnvironmentProviders> = [
+        { provide: BreakpointsService, useValue: new BreakpointsStub() },
+        provideRouter([]),
+    ];
     const fixture: TFixture = createRtFixture(
         RtDynamicSelectorComponent<IPerson>,
         { keyExp: 'id', displayExp: 'name', entities: PEOPLE, ...inputs },
@@ -39,6 +42,11 @@ function open(inputs: Readonly<Record<string, unknown>> = {}): TFixture {
     fixture.detectChanges();
 
     return fixture;
+}
+
+/** Значение поля закрыто от шаблона и снаружи: тест читает его так же, как форма, — по имени. */
+function valueOf(fixture: TFixture): unknown[] {
+    return (Reflect.get(fixture.componentInstance, 'value') as () => unknown[])();
 }
 
 function settle(fixture: TFixture): void {
@@ -103,12 +111,12 @@ describe('Динамический селектор в нижней шторке
         settle(fixture);
 
         expect(inSheet('[qa-dataid="bottom-sheet-confirm"]')).toHaveLength(1);
-        expect(fixture.componentInstance.value()).toEqual([]);
+        expect(valueOf(fixture)).toEqual([]);
 
         inSheet('[qa-dataid="bottom-sheet-confirm-apply"]')[0].click();
         settle(fixture);
 
-        expect(fixture.componentInstance.value()).toEqual([2]);
+        expect(valueOf(fixture)).toEqual([2]);
     });
 
     it('SC-UKV-1725 — без отметок кнопка закрытия закрывает шторку сразу', (): void => {
@@ -129,7 +137,7 @@ describe('Динамический селектор в нижней шторке
         inSheet('[qa-dataid="dynamic-selector-sheet-apply"]')[0].click();
         settle(fixture);
 
-        expect(fixture.componentInstance.value()).toEqual([1]);
+        expect(valueOf(fixture)).toEqual([1]);
         expect(document.querySelector('.rt-popover-sheet .rt-bottom-sheet--open')).toBeNull();
     });
 

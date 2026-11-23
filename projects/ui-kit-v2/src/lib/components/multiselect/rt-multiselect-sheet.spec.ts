@@ -95,7 +95,7 @@ describe('Карточки выбора мультиселекта в шторк
         all('multiselect-option')[0].click();
         fixture.detectChanges();
 
-        expect(fixture.componentInstance.value()).toEqual(['phone', 'mail']);
+        expect((Reflect.get(fixture.componentInstance, 'value') as () => ReadonlyArray<string>)()).toEqual(['phone', 'mail']);
         expect(document.querySelector('.rt-popover-sheet .rt-bottom-sheet--open')).not.toBeNull();
     });
 

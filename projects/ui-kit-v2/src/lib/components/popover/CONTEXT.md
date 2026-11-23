@@ -23,6 +23,17 @@
 | `rtPopoverContext`                      | `unknown`                        | `null`        |
 | `rtPopoverDisabled`                     | `boolean`                        | `false`       |
 
+Входы шторки, в которой панель открывается на телефоне:
+
+| вход (алиас)            | тип                                             | умолчание |
+| ----------------------- | ----------------------------------------------- | --------- |
+| `rtPopoverSheetFull`    | `boolean` — шторка во всю высоту экрана         | `false`   |
+| `rtPopoverSheetAction`  | `TemplateRef \| null` — действие справа в шапке | `null`    |
+| `rtPopoverSheetUnsaved` | `boolean` — спросить перед закрытием            | `false`   |
+
+Выход `rtPopoverSheetApply` — в вопросе шторки нажали «Применить». Сама шторка —
+[`rt-bottom-sheet`](../bottom-sheet/CONTEXT.md).
+
 Выходы: `rtPopoverOpened`, `rtPopoverClosed`. Публичное API: `open()`, `close()`, `toggle()`,
 `isOpen()` — работают **во всех режимах**; `trigger` определяет только автоматические слушатели.
 

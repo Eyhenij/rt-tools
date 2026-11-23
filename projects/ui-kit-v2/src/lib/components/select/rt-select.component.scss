@@ -318,6 +318,13 @@
             @include kv.sheet-card-list;
         }
 
+        /* Поиск над карточками: стоит сразу под шапкой шторки во всю ширину списка, без черты —
+           до карточек тот же зазор, что между ними. */
+        &__panel--cards .rt-select__filter {
+            padding: 0 0 var(--rt-space-2);
+            border-block-end: none;
+        }
+
         &__panel--cards .rt-select__option {
             @include kv.sheet-card;
 

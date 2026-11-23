@@ -132,6 +132,12 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `look`              | `'list' \| 'toggles'`                                   | `'list'`                    |
 | `allLabel`          | `string`                                                | `''` → `uiAll`              |
 | `radius`            | `TRtRadius \| null`                                     | `null` → скругление полей   |
+| `sheetCards`        | `boolean`                                               | `true` → карточки в шторке  |
+
+В шторке опция — карточка с флажком кита справа, в виде `toggles` — с переключателем.
+Необязательное поле опции `description` стоит второй строкой карточки. «Готово» стоит справа в
+шапке шторки, в подвале остались счётчик и сброс. `[sheetCards]="false"` возвращает прежние
+строки.
 
 ## Входы от основы полей
 
