@@ -216,4 +216,155 @@ real_misses "the probe run for real without the button type rule is red" templat
 real_misses "a real probe without the constructs of angular-doctor is red" angular-doctor 3
 real_misses "a real probe without the loose comparison of oxlint is red" oxlint 1
 
+# The pass: after the scan the check walks the scanned files itself, with the tool's own modules,
+# and names a file the tool lost silently. A pass directory stands in for the tree beside a saved
+# output; its file count is the output's filesScanned. A stand-in oxlint is a node script.
+PASS="$WORK/pass"
+mkdir -p "$PASS/src"
+printf '%s\n' '{"score": 90, "rules": {}}' > "$WORK/pass-threshold.json"
+pass_tree() {
+    rm -f "$PASS/src/"*
+    printf '%s\n' "import { Component } from '@angular/core';" "" "@Component({ selector: 'app-a', template: '<p>a</p>' })" 'export class AComponent {}' > "$PASS/src/a.component.ts"
+    printf '%s\n' "import { Component } from '@angular/core';" "" "@Component({ selector: 'app-b', templateUrl: './b.component.html' })" 'export class BComponent {}' > "$PASS/src/b.component.ts"
+    printf '%s\n' '<p>b</p>' > "$PASS/src/b.component.html"
+}
+# The saved output of the tool for the pass directory: its score, its file count, findings as rule@file.
+pass_output() {
+    local scanned="$1" first=1 rule file
+    shift
+    printf '{"score": 90, "filesScanned": %s, "filesTotal": %s, "skippedChecks": [], "diagnostics": [' "$scanned" "$scanned"
+    for entry in "$@"; do
+        [ "$first" = 1 ] || printf ','
+        first=0
+        rule="${entry%%@*}" file="${entry#*@}"
+        printf '{"ruleId": "%s", "file": "%s", "line": 1, "message": "m"}' "$rule" "$file"
+    done
+    printf ']}'
+}
+# Whether the pass is red and its refusal holds the reason.
+pass_says() {
+    local label="$1" reason="$2" got
+    shift 2
+    if node "$CHECK" --input "$WORK/pass-out.json" --threshold "$WORK/pass-threshold.json" --pass-root "$PASS" "$@" > "$WORK/said.txt" 2>&1; then
+        got="green"
+    elif grep -qF -- "$reason" "$WORK/said.txt"; then got="red, named"; else got="red, other reason"; fi
+    report "$label" "$got" "red, named"
+}
+# A stand-in oxlint: `crash` dies without output on a file named boom.ts, `skip` reports one file
+# fewer than it got.
+printf '%s\n' \
+    "const files = process.argv.slice(2).filter((a) => a.endsWith('.ts'));" \
+    "if (process.env.FAKE_OXLINT === 'crash' && files.some((f) => f.endsWith('boom.ts'))) process.exit(134);" \
+    "if (process.env.FAKE_OXLINT === 'always') process.exit(1);" \
+    "const skipped = process.env.FAKE_OXLINT === 'skip' ? 1 : 0;" \
+    "process.stdout.write(JSON.stringify({ diagnostics: [], number_of_files: files.length - skipped }));" > "$WORK/fake-oxlint.mjs"
+
+pass_tree
+printf '%s' "$(pass_output 3)" > "$WORK/pass-out.json"
+if node "$CHECK" --input "$WORK/pass-out.json" --threshold "$WORK/pass-threshold.json" --pass-root "$PASS" > "$WORK/said.txt" 2>&1 \
+    && grep -q "the pass read every file: 3 files, 2 templates, oxlint 2 files" "$WORK/said.txt"; then got="green, counted"; else got="not green"; fi
+report "the pass over a clean directory is green and counts" "$got" "green, counted"
+
+printf '%s' "$(pass_output 4)" > "$WORK/pass-out.json"
+pass_says "the pass over a list shorter than the scan is red" "the pass found 3 files, angular-doctor scanned 4"
+
+printf '%s' "$(pass_output 3 "template-eslint/button-has-type@$WORK/elsewhere/c.component.html")" > "$WORK/pass-out.json"
+mkdir -p "$WORK/elsewhere" && printf '<button></button>\n' > "$WORK/elsewhere/c.component.html"
+pass_says "the pass with a finding outside its list is red" "outside the file list of the pass"
+
+printf '%s' "$(pass_output 3)" > "$WORK/pass-out.json"
+printf '%s\n' '<p>use {x}</p>' > "$PASS/src/b.component.html"
+pass_says "the pass names an external template it cannot parse" "cannot parse src/b.component.html"
+
+pass_tree
+printf '%s\n' "import { Component } from '@angular/core';" "" "@Component({ selector: 'app-a', template: '<p>use {x}</p>' })" 'export class AComponent {}' > "$PASS/src/a.component.ts"
+pass_says "the pass names an inline template it cannot parse" "cannot parse src/a.component.ts"
+
+# oxlint of the tool reports an unreadable file as oxlint/unknown with an empty file: that finding
+# names no file of the list, and only the read failure is the reason.
+pass_tree
+printf '%s' "$(pass_output 3 "oxlint/unknown@")" > "$WORK/pass-out.json"
+chmod 000 "$PASS/src/b.component.html"
+if node "$CHECK" --input "$WORK/pass-out.json" --threshold "$WORK/pass-threshold.json" --pass-root "$PASS" > "$WORK/said.txt" 2>&1; then
+    got="green"
+elif grep -qF "cannot read src/b.component.html" "$WORK/said.txt" && ! grep -qF "outside the file list" "$WORK/said.txt"; then
+    got="red, named"
+else got="red, other reason"; fi
+chmod 644 "$PASS/src/b.component.html"
+report "the pass names a file it cannot read" "$got" "red, named"
+
+pass_tree
+printf '%s' "$(pass_output 3 "oxlint/eqeqeq@src/a.component.ts")" > "$WORK/pass-out.json"
+pass_says "the pass with another oxlint count than the tool is red" "oxlint gave 0 findings in the pass, 1 in the run"
+
+printf '%s' "$(pass_output 4)" > "$WORK/pass-out.json"
+printf 'export const boom = 1;\n' > "$PASS/src/boom.ts"
+FAKE_OXLINT=crash pass_says "the pass names the file oxlint fails on" "it fails on src/boom.ts" --pass-oxlint "$WORK/fake-oxlint.mjs"
+rm -f "$PASS/src/boom.ts"
+
+printf '%s' "$(pass_output 3)" > "$WORK/pass-out.json"
+FAKE_OXLINT=skip pass_says "the pass sees oxlint skip a file" "oxlint linted 1 files of 2" --pass-oxlint "$WORK/fake-oxlint.mjs"
+
+cp "$WORK/pass-threshold.json" "$WORK/pass-before.json"
+printf '%s\n' '<p>use {x}</p>' > "$PASS/src/b.component.html"
+if node "$CHECK" --input "$WORK/pass-out.json" --threshold "$WORK/pass-threshold.json" --pass-root "$PASS" --write > "$WORK/said.txt" 2>&1; then got="written"; else got="refused"; fi
+if cmp -s "$WORK/pass-threshold.json" "$WORK/pass-before.json" && grep -q "nothing written" "$WORK/said.txt"; then got="$got, kept"; else got="$got, changed"; fi
+report "the pass that lost a file refuses --write" "$got" "refused, kept"
+
+# The pairs of the refusals above — what the tool lawfully reports is no loss — and the refusals the
+# reviews added. Their labels start with "a pass", apart from the ten losses the plan counts.
+# Whether the pass is green: its line printed, no line of a loss. The exit code is not judged — the
+# findings of these outputs differ from the threshold, and that red is the threshold's, not the pass's.
+pass_green() {
+    local label="$1" got
+    shift
+    node "$CHECK" --input "$WORK/pass-out.json" --threshold "$WORK/pass-threshold.json" "$@" > "$WORK/said.txt" 2>&1
+    if grep -q "the pass read every file" "$WORK/said.txt" && ! grep -q "lost a file" "$WORK/said.txt"; then got="green"; else got="red"; fi
+    report "$label" "$got" "green"
+}
+pass_tree
+# A spec file the tool ignores, and a project-layout finding on a main.ts that does not exist.
+printf 'export const spec = 1;\n' > "$PASS/src/a.component.spec.ts"
+printf '%s' "$(pass_output 3 "template-eslint/button-has-type@$PASS/src/b.component.html" "angular-doctor/missing-spec-file@src/a.component.ts" "angular-doctor/project-layout@src/main.ts")" > "$WORK/pass-out.json"
+pass_green "a pass with findings on its own files, absolute and relative, is green" --pass-root "$PASS"
+rm -f "$PASS/src/a.component.spec.ts"
+
+printf '%s\n' '{"dependencies": {"zone.js": "0.15.0"}}' > "$PASS/package.json"
+printf '%s' "$(pass_output 3 "angular-doctor/zone-js@$PASS/package.json")" > "$WORK/pass-out.json"
+pass_green "a pass with a finding on package.json is green" --pass-root "$PASS"
+rm -f "$PASS/package.json"
+
+printf '%s\n' '<!-- eslint-disable -->' '<p>b</p>' > "$PASS/src/b.component.html"
+printf '%s' "$(pass_output 3)" > "$WORK/pass-out.json"
+pass_green "a pass over a template with an unused eslint-disable is green" --pass-root "$PASS"
+
+# Without a .ts file the tool does not start oxlint; oxlint given no file lints the whole directory.
+mkdir -p "$WORK/pass-html"
+printf '%s\n' '<p>h</p>' > "$WORK/pass-html/h.component.html"
+printf '%s\n' 'var x = 1; if (x == 2) {}' > "$WORK/pass-html/stray.js"
+printf '%s' "$(pass_output 1)" > "$WORK/pass-out.json"
+pass_green "a pass with no .ts file runs no oxlint and is green" --pass-root "$WORK/pass-html"
+
+pass_tree
+printf '%s' "$(pass_output 3)" > "$WORK/pass-out.json"
+pass_says "a pass of another tool version asks to update the pass" "the tree has 0.4.0: compare the globs" --pass-version 0.4.0
+
+printf 'export const boom = 1;\n' > "$PASS/src/boom.ts"
+printf '%s' "$(pass_output 4)" > "$WORK/pass-out.json"
+FAKE_OXLINT=always pass_says "a pass with oxlint failing on every part names the run, not a file" "every part of the list: the run fails, not a file" --pass-oxlint "$WORK/fake-oxlint.mjs"
+rm -f "$PASS/src/boom.ts"
+
+mkdir -p "$PASS/src/locked"
+chmod 000 "$PASS/src/locked"
+printf '%s' "$(pass_output 3)" > "$WORK/pass-out.json"
+pass_says "a pass over a directory it cannot list refuses" "the pass cannot list the files"
+chmod 755 "$PASS/src/locked"
+rmdir "$PASS/src/locked"
+
+misuse "--pass-root without a saved output is refused" "give --input too" --pass-root "$PASS"
+misuse "--pass-oxlint without --pass-root is refused" "give --pass-root too" "${T[@]}" --pass-oxlint "$WORK/fake-oxlint.mjs"
+misuse "--pass-version without --pass-root is refused" "give --pass-root too" "${T[@]}" --pass-version 0.4.0
+misuse "--pass-oxlint with an empty value is refused" "takes a value" "${T[@]}" --pass-root "$PASS" --pass-oxlint ""
+misuse "--pass-root naming no directory is refused" "names no directory" "${T[@]}" --pass-root "$WORK/nope"
+
 suite_result "check-ngdoctor"

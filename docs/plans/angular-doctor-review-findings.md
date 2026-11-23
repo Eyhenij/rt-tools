@@ -103,7 +103,8 @@ tools/check-specs.mjs` gives no write target. Here the plan's step 1.5 check cou
    `(no code)`. Package, `hooks/git-guard-push-ahead.sh`: the full output of a red step is kept in
    a file of the session's temporary directory, and the refusal names its path beside the last 25
    lines. Here the guard twice refused with one red set unnamed, every manual run was green, and
-   the rerun overwrote the evidence; the cause stays unknown.
+   the rerun overwrote the evidence. On RT-3514 the cause of the same refusal was found: the guard
+   runs the steps under `LC_ALL=C.UTF-8` — point 2 of the RT-3514 review below.
 5. **The gate delivers what fits** (low) — package, `hooks/skill-gate.sh`, branch
    `gate_why="together"`: when the rules of a call fit one by one but not together, the gate
    delivers as many as fit in order and refuses only for the rest, by name.
@@ -148,3 +149,42 @@ unnamed red set of the push refusal repeats point 4 of the RT-3480 review.
    heredoc only the quoted arguments of `printf` and `echo` that end in the redirect are judged; a
    command that brings no text of its own gives nothing to judge. Scenario: a `sed -i` and check
    chain over 60 words passes, `printf` with bureaucratic prose into a `.md` is still refused.
+
+## RT-3514 — the review of 23 November 2026
+
+Loaded: `task-delivery-loop`, `task-flow` with its parts, `doc-style`, `testing`, `git-workflow`
+with its parts, `component-structure` (by a probe file path), `epic-flow`. No edit of the gate map
+is needed.
+
+1. **The exit code of a step check is the whole line's** — package, `pitfalls/task-flow.2.md`,
+   article «Every step of the plan carries a check…», after «…a step marked done without its mark
+   is refused.»: «The verdict is the exit code of the whole line, and in a pipe that is the last
+   command's: `<check> | grep -c x` proves grep, not the check. The line puts `set -o pipefail;`
+   first or ends with the checked command. Output a variable switches on — `VERBOSE=1` and the
+   like — is set in the line itself, not taken from one's own terminal.» Companion
+   `.claude/skills/task-flow-plan/implementation.md`: the engine runs the line by `bash -c` without
+   `pipefail`. Here the first RT-3514 plan judged grep's exit code and counted names `report`
+   prints only with `VERBOSE`; strategist and goal-critic caught both.
+2. **The locale the push guard runs steps under** — package, `rules/git-workflow-push.github.md`
+   and `pitfalls/git-workflow.2.github.md`: «Guard and check scenarios set the git settings and
+   the locale themselves, not take them from the machine.», with «the push guard runs steps under
+   `C.UTF-8`, where macOS bash 3.2 breaks `$var»`»; `hooks/git-guard-push-ahead.sh` names `LC_ALL`
+   in the red line. Tree: `tools/tests/run.sh` exports `LC_ALL=C.UTF-8` before the sets, so a
+   terminal run sees what the guard sees; companion `.claude/skills/git-workflow-push/implementation.md`.
+   Here two refusals «SETS WITH FAILURES: 1» while manual runs were green; a temporary diagnostic
+   commit found «grep: illegal byte sequence».
+3. **The kit approval check gives a file to the task that edited it** — tree,
+   `tools/check-kit-approval.mjs`: `branchFaults` stops giving the whole visible set to the
+   branch's own record; `answerersOf` gives a commit to the task its subject ends with `(RT-N)`, a
+   merge to its `[RT-N]`; a commit naming no task needs the branch record; scenarios in
+   `tools/tests/check-kit-approval.test.sh`; companion `.claude/skills/kit-approval/implementation.md`.
+   The base stays the remote main branch and no file loses its judge. Here RT-3514, stacked on RT-3481,
+   was asked for 170 kit files of RT-3480 and RT-3481. Needs the owner's word.
+4. **The epic line of a card says «план»** — package, `checks/task-new.github.mjs:284`, the hints
+   in `checks/board-epics.github.mjs` and the test `task-new-epic.test.sh`: «Задача эпика #N,
+   план — <path>». The queue audit reads only «задача эпика #N». Here the prose guard refused the
+   word the package itself writes into the card.
+
+Not proposed: `pipefail` in the step engine — it would flip the verdicts of approved plans; the
+folder `task:new --epic-of` lays into the current working copy — the reviewer needs to know what
+it broke.
