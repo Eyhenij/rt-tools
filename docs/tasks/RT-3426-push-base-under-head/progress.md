@@ -3,11 +3,17 @@
 ## Где мы
 
 - **State:** `этап-идёт`
-- **Stage:** 2 — The description
+- **Stage:** этапы кончились
 - **Done:** план одобрен владельцем 23.11 («Одобряю план RT-3426»), plan-red: все семь проверок
   красные. Этап 1: 8 новых случаев в наборе базы, шесть из них красные на коде до правки; после
-  правки набор базы 39 ok, набор отправки 84 ok, общий счёт SC-AK-1340 — 28
-- **Next step:** 2.1 — правило описания называет новое условие
+  правки набор базы 39 ok, набор отправки 84 ok, общий счёт SC-AK-1340 — 28. Этап 2: правило,
+  решение, история и сценарий описания; check-specs и check-spec-coverage — exit 0
+- **Live check (23.11):** повтор 19.11 на настоящих коммитах — главная `6d78ddc38`, эпик
+  `5e50d8d3b`, копия `f58ca0746`. Голова `ce2bc11a3` (до приёма эпика): прежний код — главная,
+  330 коммитов в счёте; новый — ветка эпика, 5. Голова `37d057310` (эпик принят): прежний —
+  главная, 332; новый — ветка эпика, 6. На этой ветке оба кода дают ветку эпика, 4 коммита:
+  RT-3465 влита 23.11 в 05:20Z, её ветка снята
+- **Next step:** первый круг ревью
 - **Uncommitted:** nothing
 - **Waiting for the owner:** nothing
 - **PR:** not open yet
@@ -19,8 +25,8 @@
 - [x] 1.3 The head at the commit of the epic takes the epic as the base, and the copy removed on the host changes nothing
 - [x] 1.4 A branch taken from this one by plain commits stays dropped, a host merge of a higher branch into it included
 - [x] 1.5 No former case of the scenario is lost: the 20 cases of the push suite and the 8 new ones
-- [>] 2.1 The rule of the description names the new condition
-- [ ] 2.2 The scenario names the cases
+- [x] 2.1 The rule of the description names the new condition
+- [x] 2.2 The scenario names the cases
 
 ## Решения по ходу
 

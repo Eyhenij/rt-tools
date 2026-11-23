@@ -41,7 +41,10 @@ There is no interface: the guard answers with a refusal text, the run ahead with
   taken. A branch outside the history of
   the head is a candidate only when a merge of the host moved it past the head. Three kinds of
   branches are no base: the branch's own remote copy, a branch that stands on that copy, and a
-  branch a merge of the host brought into this one. A head that is no branch gets the main branch.
+  branch a merge of the host brought into this one. A branch stands on the copy when it holds its
+  own copy on its first-parent line and lies neither under the head nor at it; a copy a merge
+  brought in, or a branch under the head, leaves it a base. A head that is no branch gets the main
+  branch.
 - **A ref of a branch the host no longer holds is no base.** The host is asked for its branches once
   per pick, and the name is matched whole. With no answer from the host the refs of the copy decide,
   and a line on stderr says so.
@@ -213,6 +216,11 @@ Several working copies share the marks: a key holds the tree and the base, not t
   that names the base, and the profile reads those lines by words a branch name may carry —
   `visual-gate`, `e2e`. Named by the branch, a light line passed for a heavy one, and its mark
   outlived a commit of paths a heavy step does not read.
+- **A branch stands on this one by the own copy on its first-parent line, not by holding the copy
+  anywhere.** On 19.11 a request of another task carried the copy of a task branch into the branch
+  of its epic by a merge of the host; the epic was dropped, and the set ran about 33 minutes
+  against the main branch. A test of the host merge alone was tried and dropped: a branch above
+  this one that the host merged a higher branch into would then pass for a base.
 - **The base is not written into the observation line.** The record of observations leaves the
   tree and holds no names of it; the refusal carries both bases.
 - **A record fits a head over the recorded one by plain commits, not only the same tree.** The
@@ -256,9 +264,10 @@ Several working copies share the marks: a key holds the tree and the base, not t
   of an epic with a second epic taken from it is then counted against that one, not against the
   main branch. A merge the host made of the epic into a task makes the epic that task's content,
   and the task is counted against the main branch. An epic moved by a plain push, not by the
-  host, is no candidate for a task on its older tip until the task takes it in. The first lets
-  the whole of an epic reach the main branch checked only by the pipeline of its request; the
-  other two cost a full set.
+  host, is no candidate for a task on its older tip until the task takes it in. A branch above
+  this one that took it in by a merge, not by its first parent, and carries a merge of the host
+  passes for a base too. The first and the last let a branch reach the main branch checked only
+  by the pipeline of its request; the other two cost a full set.
 - **The count is one call of git per remote branch, and one call to the host per pick.** Twenty
   branches take two seconds, three hundred take a quarter of a minute; a ref of a removed branch
   is dropped before the count.
@@ -298,3 +307,6 @@ None.
 - 2026-11-23 — a ref of a branch the host removed is no base, and the push takes the base of the
   run ahead while its record fits the head. A green set of half an hour was refused as «No green mark»
   after a neighbour pruned the refs. Task RT-3465.
+- 2026-11-23 — a branch is dropped for the own copy only when the copy lies on its first-parent
+  line and the branch is not under the head. The branch of an epic that a request merge brought
+  the copy into was dropped, and the set ran against the main branch. Task RT-3426.

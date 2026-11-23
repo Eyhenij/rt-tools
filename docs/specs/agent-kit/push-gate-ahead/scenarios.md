@@ -60,6 +60,18 @@ Given a remote branch that stands on this one
 When the push guard picks the base
 Then that branch is not the base
 
+Given the branch of the epic holds the own copy of the branch, brought in by a merge — of this
+branch's request or of another request taken from the copy — and lies ahead of the head, under it
+or at its commit, whether or not the host still holds the copy
+When the push guard picks the base
+Then the base is the branch of the epic: the own copy on its first-parent line drops a branch, a
+merge does not
+
+Given a branch taken from this one by plain commits and pushed, before and after the host merged a
+branch higher in the stack into it
+When the push guard picks the base for this branch after one more commit
+Then that branch is not the base: it holds the own copy on its first-parent line
+
 Given a head that is no branch
 When the push guard picks the base
 Then the base is the remote main branch
@@ -88,7 +100,7 @@ Given a branch moved past the head by a plain push, not by a merge of the host
 When the push guard picks the base
 Then that branch is not the base
 
-Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`, `projects/agent-kit/tests/git-guard-push-base-live.test.sh`.
 
 ### SC-AK-1241 — a check green on the same tree is not run again
 
