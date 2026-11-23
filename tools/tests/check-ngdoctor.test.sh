@@ -195,6 +195,21 @@ misuse "settings that ignore paths are refused" "hold «ignore»" "${T[@]}" --co
 printf '{"reportPath": "tmp/r.md", "rules": {"angular-doctor/inner-html": "off"}}' > "$WORK/config.json"
 misuse "settings that switch a rule off are refused" "hold «rules»" "${T[@]}" --config "$WORK/config.json"
 
+# The tool lays the field angularDoctor of the root package.json over the settings file, and the
+# field is judged the same way: an object with the report path only (RT-3526).
+printf '{"reportPath": "tmp/r.md"}' > "$WORK/config.json"
+printf '{"name": "t", "angularDoctor": {"reportPath": "tmp/r.md"}}' > "$WORK/package.json"
+if node "$CHECK" "${T[@]}" --config "$WORK/config.json" --package "$WORK/package.json" >/dev/null 2>&1; then got="green"; else got="red"; fi
+report "an angularDoctor field with the report path only is green" "$got" "green"
+printf '{"name": "t", "angularDoctor": {"rules": {"angular-doctor/inner-html": "off"}}}' > "$WORK/package.json"
+misuse "an angularDoctor field that switches a rule off is refused" "package.json#angularDoctor holds «rules»" "${T[@]}" --package "$WORK/package.json"
+printf '{"name": "t", "angularDoctor": {"ignore": ["**/*.html"]}}' > "$WORK/package.json"
+misuse "an angularDoctor field that ignores paths is refused" "package.json#angularDoctor holds «ignore»" "${T[@]}" --package "$WORK/package.json"
+printf '{"name": "t", "angularDoctor": "off"}' > "$WORK/package.json"
+misuse "an angularDoctor field that is a string is refused" "package.json#angularDoctor is not an object" "${T[@]}" --package "$WORK/package.json"
+printf '{"name": "t", "angularDoctor": false}' > "$WORK/package.json"
+misuse "an angularDoctor field that is false is refused" "package.json#angularDoctor is not an object" "${T[@]}" --package "$WORK/package.json"
+
 printf '%s' "$(output 90 "${PROBE[@]/oxlint*/angular-doctor/project-layout}")" > "$WORK/probe.json"
 if node "$CHECK" --input "$WORK/tree.json" --threshold "$WORK/threshold.json" --probe-input "$WORK/probe.json" --write --source-gone oxlint >/dev/null 2>&1; then got="written"; else got="refused"; fi
 if cmp -s "$WORK/threshold.json" "$WORK/before.json"; then got="$got, kept"; else got="$got, changed"; fi
