@@ -49,7 +49,9 @@
  * nothing, and the tool reads that as no findings; a template the linter cannot parse yields a
  * message without a rule, and the tool drops it; a file it cannot read is skipped — version 0.3.0
  * writes `filesScanned` and `filesTotal` as the same number, so the check of a partial scan above
- * never fires for it. So after the scan the check walks the same files itself, with the tool's own
+ * never fires for it. The tool also reads `package.json` and stylesheets for three of its rules and
+ * skips an unreadable one silently; the pass does not read them, so a loss there stays unseen.
+ * So after the scan the check walks the same files itself, with the tool's own
  * modules — the tree resolves other versions of them, or none. It builds the file list by the
  * globs and the ignore list of 0.3.0 and is red when the count differs from `filesScanned`, when a
  * finding lies in an existing `.ts` or `.html` file outside the list, or when the tool is of another
@@ -79,7 +81,7 @@
  *                                                        for version <v>
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -345,7 +347,7 @@ function probeFlagsProblem(input) {
     const args = process.argv.slice(2);
     for (let i = 0; i < args.length; i += 1) {
         if (valued.includes(args[i])) {
-            if (args[i + 1] === undefined || args[i + 1].startsWith('--')) return `${args[i]} takes a value`;
+            if (args[i + 1] === undefined || args[i + 1] === '' || args[i + 1].startsWith('--')) return `${args[i]} takes a value`;
             i += 1;
         } else if (!bare.includes(args[i])) {
             return `«${args[i]}» is not a flag of this check`;
@@ -359,6 +361,7 @@ function probeFlagsProblem(input) {
     if (flag('--pass-root') && !input) return '--pass-root walks a directory beside a saved output, give --input too: the check of the tree walks the tree';
     if (flag('--pass-oxlint') && !flag('--pass-root')) return '--pass-oxlint replaces oxlint of a pass over --pass-root, give --pass-root too';
     if (flag('--pass-version') && !flag('--pass-root')) return '--pass-version names the tool version of a pass over --pass-root, give --pass-root too';
+    if (flag('--pass-root') && !(existsSync(flag('--pass-root')) && statSync(flag('--pass-root')).isDirectory())) return `--pass-root names no directory: «${flag('--pass-root')}»`;
     const gone = flag('--source-gone');
     if (gone && !process.argv.includes('--write')) return '--source-gone names a source for --write, give --write too';
     if (gone && !PROBE_SOURCES.includes(gone)) return `--source-gone takes one of ${PROBE_SOURCES.join(', ')}, not «${gone}»`;

@@ -42,17 +42,22 @@ function runOxlint(binary, settings, root, files) {
     try {
         return { json: JSON.parse(run.stdout), why: null };
     } catch {
-        return { json: null, why: `oxlint printed no JSON, exit ${run.status ?? run.signal}` };
+        const said = String(run.stderr ?? '').trim().split('\n')[0];
+        return { json: null, why: `oxlint printed no JSON, exit ${run.status ?? run.signal}${said ? ` (${said})` : ''}` };
     }
 }
 
-/** The files oxlint fails on, found by halving the list until one file fails alone. */
+/**
+ * The files oxlint fails on, found by halving the list until one file fails alone. `null` when
+ * both halves of the list fail: then the run fails, not a file, and halving would start oxlint
+ * twice per file of the tree only to name every one of them.
+ */
 function oxlintCulprits(binary, settings, root, files) {
     if (files.length <= 1) return files;
     const half = Math.ceil(files.length / 2);
-    return [files.slice(0, half), files.slice(half)].flatMap((part) =>
-        runOxlint(binary, settings, root, part).json === null ? oxlintCulprits(binary, settings, root, part) : [],
-    );
+    const failing = [files.slice(0, half), files.slice(half)].filter((part) => runOxlint(binary, settings, root, part).json === null);
+    if (failing.length === 2) return null;
+    return failing.flatMap((part) => oxlintCulprits(binary, settings, root, part) ?? part);
 }
 
 /** The files of the list that hold a finding of the tool; only a `.ts` or `.html` file can be in it. */
@@ -92,7 +97,8 @@ function oxlintOver(fromTool, root, settings, binaryOverride, ts, report, failur
     const { json, why } = runOxlint(binary, settings, root, ts);
     if (json === null) {
         const culprits = why.startsWith('oxlint did not start') ? [] : oxlintCulprits(binary, settings, root, ts);
-        failures.push(`${why}${culprits.length > 0 ? ` — it fails on ${culprits.map((f) => f.replace(`${root}/`, '')).join(', ')}` : ''}`);
+        const where = culprits === null ? ' — it fails on every part of the list: the run fails, not a file' : culprits.length > 0 ? ` — it fails on ${culprits.map((f) => f.replace(`${root}/`, '')).join(', ')}` : '';
+        failures.push(`${why}${where}`);
         return 0;
     }
     const linted = json.number_of_files;
@@ -115,7 +121,12 @@ export async function passOver({ root, text, tool, version, settings, binary }) 
     }
     const failures = [];
     const fromTool = createRequire(realpathSync(tool));
-    const files = await fromTool('fast-glob')(PASS_GLOBS, { cwd: root, absolute: true, ignore: PASS_IGNORE, dot: false });
+    let files;
+    try {
+        files = await fromTool('fast-glob')(PASS_GLOBS, { cwd: root, absolute: true, ignore: PASS_IGNORE, dot: false });
+    } catch (error) {
+        return { failures: [`the pass cannot list the files of ${root}: ${error.code ?? error.message}`], line: '' };
+    }
     const report = JSON.parse(text);
     if (files.length !== report.filesScanned) {
         failures.push(`the pass found ${files.length} files, angular-doctor scanned ${report.filesScanned}: the file lists differ, or the tree changed during the run`);

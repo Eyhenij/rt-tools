@@ -255,6 +255,7 @@ pass_says() {
 printf '%s\n' \
     "const files = process.argv.slice(2).filter((a) => a.endsWith('.ts'));" \
     "if (process.env.FAKE_OXLINT === 'crash' && files.some((f) => f.endsWith('boom.ts'))) process.exit(134);" \
+    "if (process.env.FAKE_OXLINT === 'always') process.exit(1);" \
     "const skipped = process.env.FAKE_OXLINT === 'skip' ? 1 : 0;" \
     "process.stdout.write(JSON.stringify({ diagnostics: [], number_of_files: files.length - skipped }));" > "$WORK/fake-oxlint.mjs"
 
@@ -310,8 +311,8 @@ if node "$CHECK" --input "$WORK/pass-out.json" --threshold "$WORK/pass-threshold
 if cmp -s "$WORK/pass-threshold.json" "$WORK/pass-before.json" && grep -q "nothing written" "$WORK/said.txt"; then got="$got, kept"; else got="$got, changed"; fi
 report "the pass that lost a file refuses --write" "$got" "refused, kept"
 
-# The pairs of the refusals above: what the tool lawfully reports is no loss. Their labels start
-# with "a pass", apart from the ten losses the plan counts.
+# The pairs of the refusals above — what the tool lawfully reports is no loss — and the refusals the
+# reviews added. Their labels start with "a pass", apart from the ten losses the plan counts.
 # Whether the pass is green: its line printed, no line of a loss. The exit code is not judged — the
 # findings of these outputs differ from the threshold, and that red is the threshold's, not the pass's.
 pass_green() {
@@ -322,8 +323,11 @@ pass_green() {
     report "$label" "$got" "green"
 }
 pass_tree
-printf '%s' "$(pass_output 3 "template-eslint/button-has-type@$PASS/src/b.component.html" "angular-doctor/missing-spec-file@src/a.component.ts")" > "$WORK/pass-out.json"
+# A spec file the tool ignores, and a project-layout finding on a main.ts that does not exist.
+printf 'export const spec = 1;\n' > "$PASS/src/a.component.spec.ts"
+printf '%s' "$(pass_output 3 "template-eslint/button-has-type@$PASS/src/b.component.html" "angular-doctor/missing-spec-file@src/a.component.ts" "angular-doctor/project-layout@src/main.ts")" > "$WORK/pass-out.json"
 pass_green "a pass with findings on its own files, absolute and relative, is green" --pass-root "$PASS"
+rm -f "$PASS/src/a.component.spec.ts"
 
 printf '%s\n' '{"dependencies": {"zone.js": "0.15.0"}}' > "$PASS/package.json"
 printf '%s' "$(pass_output 3 "angular-doctor/zone-js@$PASS/package.json")" > "$WORK/pass-out.json"
@@ -345,8 +349,22 @@ pass_tree
 printf '%s' "$(pass_output 3)" > "$WORK/pass-out.json"
 pass_says "a pass of another tool version asks to update the pass" "the tree has 0.4.0: compare the globs" --pass-version 0.4.0
 
+printf 'export const boom = 1;\n' > "$PASS/src/boom.ts"
+printf '%s' "$(pass_output 4)" > "$WORK/pass-out.json"
+FAKE_OXLINT=always pass_says "a pass with oxlint failing on every part names the run, not a file" "every part of the list: the run fails, not a file" --pass-oxlint "$WORK/fake-oxlint.mjs"
+rm -f "$PASS/src/boom.ts"
+
+mkdir -p "$PASS/src/locked"
+chmod 000 "$PASS/src/locked"
+printf '%s' "$(pass_output 3)" > "$WORK/pass-out.json"
+pass_says "a pass over a directory it cannot list refuses" "the pass cannot list the files"
+chmod 755 "$PASS/src/locked"
+rmdir "$PASS/src/locked"
+
 misuse "--pass-root without a saved output is refused" "give --input too" --pass-root "$PASS"
 misuse "--pass-oxlint without --pass-root is refused" "give --pass-root too" "${T[@]}" --pass-oxlint "$WORK/fake-oxlint.mjs"
 misuse "--pass-version without --pass-root is refused" "give --pass-root too" "${T[@]}" --pass-version 0.4.0
+misuse "--pass-oxlint with an empty value is refused" "takes a value" "${T[@]}" --pass-root "$PASS" --pass-oxlint ""
+misuse "--pass-root naming no directory is refused" "names no directory" "${T[@]}" --pass-root "$WORK/nope"
 
 suite_result "check-ngdoctor"
