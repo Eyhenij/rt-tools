@@ -14,7 +14,7 @@ of the progress mirrors it. Until the mandatory action is done, the work stays i
 - `эпик-заведён` — take the epic branch from the main branch; the epic card moves with the first task; leads `epic-flow-declare`
 - `разбор-закрыт` — write the product agreement, or the reason there is none; leads `task-flow-start`
 - `договорённость-записана` — create the task, the branch from the epic branch, and the folder; leads `task-flow-start`
-- `задача-взята` — write the plan; leads `task-flow-start`
+- `задача-взята` — write the plan; once the owner approves it, run plan-red; leads `task-flow-start`
 - `замысел-записан` — do the first stage; leads `task-flow-start`
 - `этап-идёт` — finish the stage: `step N.M` measures each step and marks it done; leads `task-flow-resume`
 - `этапы-кончились` — merge the agreement, bring the texts up to date, run the suite; leads `task-flow-close`
