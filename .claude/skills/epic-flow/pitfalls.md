@@ -1,4 +1,4 @@
-<!-- rt-kit v0.38.0 · pitfalls/epic-flow.md · 4c20f5dba911 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · pitfalls/epic-flow.md · 9c959ae06b3a · правится надстройкой, не здесь -->
 # Epics — how it works here — cold part
 
 What the rule `epic-flow` handed over when cut to its statements, every article whole.
@@ -87,3 +87,7 @@ rule is loaded there by its description.
 ## Patterns
 
 - `epic-flow-declare` — declaring an epic with its card, plan and tasks, then taking its branch.
+
+## Pitfalls
+
+No trap of this rule is recorded yet. A trap met on an edit lands here, under this heading.

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.38.0 · pitfalls/queue-audit.github.md · dc99225bdc81 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · pitfalls/queue-audit.github.md · 94dfee8dc495 · правится надстройкой, не здесь -->
 # Work queue audit — how it works here — cold part
 
 What the rule `queue-audit` handed over when cut to its statements, every article whole.
@@ -73,3 +73,7 @@ as text and does not judge. A column moved by hand between two runs is seen only
 ## Patterns
 
 - `queue-audit-read` — running the audit and acting on each of its lines.
+
+## Pitfalls
+
+No trap of this rule is recorded yet. A trap met on an edit lands here, under this heading.

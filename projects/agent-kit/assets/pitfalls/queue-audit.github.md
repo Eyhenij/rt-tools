@@ -72,3 +72,7 @@ as text and does not judge. A column moved by hand between two runs is seen only
 ## Patterns
 
 - `queue-audit-read` — running the audit and acting on each of its lines.
+
+## Pitfalls
+
+No trap of this rule is recorded yet. A trap met on an edit lands here, under this heading.

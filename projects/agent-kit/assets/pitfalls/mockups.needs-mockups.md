@@ -81,3 +81,7 @@ outside the tree, in the design tool and in the owner's words. The checks above 
 
 - `mockups-measure` — reading the bounds of frames and buttons in one call and what the numbers
   mean.
+
+## Pitfalls
+
+No trap of this rule is recorded yet. A trap met on an edit lands here, under this heading.

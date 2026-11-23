@@ -86,3 +86,7 @@ rule is loaded there by its description.
 ## Patterns
 
 - `epic-flow-declare` — declaring an epic with its card, plan and tasks, then taking its branch.
+
+## Pitfalls
+
+No trap of this rule is recorded yet. A trap met on an edit lands here, under this heading.
