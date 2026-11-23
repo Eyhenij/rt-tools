@@ -53,7 +53,7 @@ Covered: `projects/agent-kit/tests/owner-nudges.test.sh`.
 
 ### SC-AK-1552 — a turn ended with open work is a missed stop
 
-Given a session that wrote to a task branch, stopped with no refusal, and later stopped after «стоп»
+Given a session that wrote to a task branch, stopped with no refusal, and later stopped after the owner's mark of Esc
 When the missed stops are counted
 Then the first end is missed and the second is not
 And a stop refused by a hook, in the summary or in the feedback, ends no turn

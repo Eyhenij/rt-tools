@@ -86,6 +86,11 @@ RT-3425 and RT-3468. What each plan took in is written in its grill; below is wh
 - **A background run longer than 20 minutes no longer holds the menu.** On 20.11 the push set ran
   24 and 37 minutes, and the engine counted the stops idle. **Address:** `BACKGROUND_BOUND` of the
   engine against the measured length of the push set.
+- **A stop word of the owner releases every turn a background task wakes after it.** The engine
+  reads the owner's last word over the whole record, and a notice of a task carries no word. On
+  20.11 after «стоп» at 16:37 the session was woken 7 times and made 44 calls before the owner's
+  next word. Whether a stop lasts one turn is a product choice for the owner. **Address:**
+  `measure/owner.mjs:saidStop` with a bound «no call of the agent after the word».
 
 ## RT-3469 — the run ahead started in the background ends with the code of the set
 
@@ -287,6 +292,36 @@ RT-3425 and RT-3468. What each plan took in is written in its grill; below is wh
   `assets/task-flow/source/session.mjs` joins the parts with a line break, so a leading image part
   puts `\n` before «Stop hook feedback:», and the anchored pattern misses it. No such entry stands
   in the November records. **Address:** rules layer — `feedbackText` trims the joined text.
+- **The rules review: the plan's criterion is not run on the incident's records.** The exact branch
+  name would have removed 0 of 17 refusals; only round 1 saw it. Third case in this epic, after
+  RT-3469 and RT-3423. **Address:** package — `assets/agents/product-strategist.md`, mode Planning:
+  the criterion runs over the incident's records, and the count goes into the reply. It replaces
+  the RT-3425 proposal for the same file. **Metric:** plans approved without that count, down to 0.
+- **The rules review: a guard names its copy by the input `cwd`, raised to the top of the copy.**
+  A session of a linked copy runs with the main copy's project directory. **Address:** package —
+  an article in `assets/pitfalls/agent-kit-extend.md`; it covers the RT-3434 findings on the step
+  guard's directory too. **Metric:** refusals in a linked copy that judge the main copy's branch.
+- **The rules review: the footprint names the readers of a value whose meaning changes.** The new
+  cause `{ foreign }` is read by `flow-forecast.mjs`, which the plan did not name. **Address:**
+  package — section «Task footprint» of `assets/samples/tasks/_template/plan.md`, together with the
+  RT-3423 proposal for the same paragraph. **Metric:** findings left unfixed for a file outside the
+  footprint, down to 0.
+- **The rules review: a fix that narrows an approved plan rule goes to the owner.** The first fix
+  of round 1 narrowed «a draft no copy holds is refused»; round 2 restored it. **Address:** this
+  tree — the article «A finding about the diff is never parked in a file» of
+  `.claude/skills/task-delivery-loop/SKILL.md`, one edit with the RT-3467 proposal; the duplicate
+  article «No guard counts the rounds» goes. **Metric:** review commits that narrow and restore a
+  plan rule, down to 0.
+- **The rules review: size, specs and paths run before the folder is taken apart, and the lower PR
+  is read before the merge.** The size check repeats the RT-3434 finding: the archive commit was
+  reverted a second time. The PR open guard refused three conditions at once. **Address:** this
+  tree — sections 11–13 of `.claude/skills/task-delivery-loop-run/SKILL.md`: `gh pr list` of the
+  lower branch, `check-file-size` beside `check-specs`, «Цель» with the table of `goal-critic`.
+  **Metric:** reverted archive commits, conditions refused at a PR opening — both down to 0.
+- **The tree runner hides its red set.** `tools/tests/run.sh` prints «SETS WITH FAILURES: 1» last,
+  and the push guard shows only the tail. The package runner already names its red sets.
+  **Address:** this tree — `tools/tests/run.sh` names the red sets and their FAIL lines last.
+  **Metric:** red light runs whose set cannot be named from the output, down to 0.
 
 ## Left unresolved
 

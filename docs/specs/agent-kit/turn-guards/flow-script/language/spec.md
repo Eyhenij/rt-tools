@@ -1,6 +1,6 @@
 # The language of the task flow description
 
-**Status:** in force · **Revision:** 2026-11-15 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-22 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `work-conduct`
 **Procedures:** none
@@ -54,7 +54,10 @@ There is no interface: the description is read by the engine and by the executor
 - **A condition object has exactly one key — `all`, `any` or `not` — and a reference in it names a measurer capability of the description.**
 - **A condition is met by the results of the measurers, and an absent result counts as unmet.**
 - **The literals of `words` are lists of non-empty strings under known keys, and `nudge` is a pattern that compiles.**
+  A key the package retired — `stop`, `stopExcept`, `holdAfter` — is read as nothing, and the
+  engine names it in its output: an override of an older edition still builds.
 - **A form of the expected result is a pattern and a way of comparison of `exit`, `line`, `regex` or `number`.**
+- **A number is read from the last line of the output with the blanks around it, as `wc -l` prints it.**
 - **The release cases are asked in the order of the field `order`, and two cases never share one.**
 - **The override is merged with the package description key by key: an entry of a section is added or replaced whole.**
 - **A key of the package is removed only by `null` with a `reason` next to it, and `measure` prints every removed key.**
@@ -147,3 +150,8 @@ None.
 - 2026-11-15 — split from the subdomain one level up when its scenarios outgrew the length limit:
   the language, its parser, its model, its conditions and its data.
 - 2026-11-15 — the override of the tree, the stub generator and the text generator.
+- 2026-11-22 — `words` keeps the keys `nudge`, `write`, `menu` and `legacyBranches`: the stop words
+  and their exceptions are removed, since no typed word stops the work and the owner stops it by
+  Esc. Scenario 1516 is removed with its test. The form `number` reads the last line with the
+  blanks before it, as `wc -l` of macOS prints it. After the second review round the removed keys
+  are retired, not refused: a refusal failed the exit guard open with no message.

@@ -36,15 +36,16 @@
       outsideEpic: { git: source.git, host: source.host, tree: source.tree },
       outOfScenario: { git: source.git, host: source.host, tree: source.tree },
     },
-    owner: { saidStop: { owner: source.owner }, nudged: { owner: source.owner } },
+    owner: { interrupted: { owner: source.owner }, nudged: { owner: source.owner } },
     session: {
       wrote: { session: source.session },
       role: { session: source.session },
       menuLost: { session: source.session },
       forbidden: { session: source.session },
-      idle: { session: source.session },
+      idle: { session: source.session, tree: source.tree },
       unread: { session: source.session },
-      waiting: { session: source.session },
+      waiting: { session: source.session, tree: source.tree },
+      hung: { session: source.session, tree: source.tree },
     },
     host: { silent: { host: source.host } },
     // Read by the verdict before the release cases: a CI run nobody watches or a red run nobody read
@@ -140,7 +141,8 @@
       order: 1,
       log: 'the end of the scenario',
     },
-    stopWord: { when: measure.owner.saidStop, order: 2, log: 'a stop word of the owner' },
+    // No typed word stops the work; Esc does, and the turns a notice wakes after it are released.
+    interrupted: { when: measure.owner.interrupted, order: 2, log: 'the owner interrupted the turn' },
     // The state «работа-отдана» sends work to the background by its own action and goes on: there
     // the wait releases nothing.
     background: {
@@ -164,21 +166,12 @@
   },
 
   words: {
-    stop: [
-      'стоп', 'стой', 'хватит', 'остановись', 'прекрати', 'не сейчас', 'подожди', 'погоди', 'жди',
-      'пауза', 'отбой', 'на сегодня всё', 'stop', 'wait', 'not now', 'pause',
-    ],
-    stopExcept: [
-      'продолжай', 'делай', 'работай', 'доделывай', 'иди дальше', 'делай дальше', 'сначала', 'спрашивать',
-      'спрашивай', 'asking', 'keep going', 'go on',
-    ],
-    holdAfter: ['стоять', 'останавлива', 'ждать'],
     nudge: '(?<![\\p{L}])(?<!не )(продолжай|доделывай|работай|делай дальше|работаешь)(?![\\p{L}])|почему (ты )?(стоишь|встал|остановил)|что дальше|дальше\\?|^(ну )?(и )?что там|^ну и\\s*[?!.]|какого .*останов',
     write: [
       'git commit', 'git push', 'git add', 'git merge', 'git rm', 'git mv', 'sed -i', 'perl -pi', 'gh pr', 'npm run task:new', 'pnpm run task:new', 'npm run task:move',
       'pnpm run task:move', 'npm run agent-kit:sync', 'pnpm run agent-kit:sync',
     ],
-    menu: ['отложить RT-N', 'стоп'],
+    menu: ['отложить RT-N', 'подскажу путь'],
     legacyBranches: ['RT-3276-conversation-checks', 'RT-3329-task-flow-scenario'],
   },
 

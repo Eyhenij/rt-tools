@@ -42,7 +42,6 @@ And a session in «работа-отдана» is not released by the watch: the
 And a background task with no call of the hosting client, a log file named after the PR, is no watch
 And a call of the client with no watch, a comment on the PR, is no watch
 And a watch that finds the run by the branch of the PR is a watch
-And a watch of a CI run releases no stop as a wait
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
@@ -136,14 +135,5 @@ Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 Given an unread red run and a stop that follows a refusal with no call
 When the turn ends
 Then the refusal names the run and offers no owner's menu
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-1813 — the stop word passes a fresh head only
-
-Given the owner's «стоп»
-When the turn ends over a running run, a fresh head, and red runs that ended before and after the word
-Then the fresh head holds nothing, and the running run holds until one background watch starts
-And a red run holds the stop until it is read, whichever side of the word it ended on
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.

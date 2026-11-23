@@ -19,45 +19,23 @@ Then the first is released as the end of the scenario and the second is held
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-1429 — a stop word of the owner releases the turn
+### SC-AK-1839 — a typed word to stop releases no turn, and Esc releases it
 
-Given the owner's last word «Стоп, на сегодня хватит», and the same through the hook after a write
-When the turn ends
-Then it is released by the stop word
+Given the owner's last word «стоп», «Стоп, на сегодня хватит», «не сейчас» or «подожди», and the mark of Esc with and without a tool call
+When the interrupt is measured, and the release cases are read for a session that wrote
+Then only the mark of Esc is an interrupt, and only it releases the turn as «the owner interrupted the turn»
+And «стоп» in the running stage with a step not done holds the turn
+And through the hook after a write «Стоп, хватит» and «не сейчас» are held, and the mark of Esc is released
+And «стоп» does not lift the CI hold of a fresh head with no run
+And after Esc neither a red run nor a running one with no watch holds the stop, and a new word of the owner brings the hold back
+And a message typed mid-turn, kept as a queued command from a person, is the owner's word, and after Esc it holds the turn again; a queued notice of a task or a wrapper is no word
+And a mark of Esc a second and a half or a minute after a typed order releases the turn
+And a pasted text queued after Esc is a word and holds the turn again, and a wrapper of a shell or a command after Esc is none
+And the text of the model hook on Stop names no «стоп»
+And the pattern of the owner's words in that hook takes the mark of Esc from a record of the owner and not from a request blob that repeats it next to a newer word
+And that hook reads an order sent a second before the mark as stopped by it
 
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-1430 — «хватит останавливаться, продолжай» holds the turn
-
-Given the owner's last word «хватит останавливаться, продолжай»
-When the stop word is measured
-Then it is not a stop
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-1431 — «Стой, не туда — делай RT-N» holds the turn
-
-Given the owner's last word «Стой, не туда — делай RT-12»
-When the stop word is measured
-Then it is not a stop
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-1463 — «Стоп, не делай этого» releases the turn
-
-Given the owner's last word «Стоп, не делай этого»
-When the stop word is measured
-Then it is a stop: «делай» after «не» does not hold the turn
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-1505 — a stop word added to the description releases the turn without an edit of the engine
-
-Given a copy of the description with the stop word «шабаш» added
-When «Шабаш, на сегодня всё» is measured by the copy and by the package description
-Then the copy reads a stop and the package description does not
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`, `projects/agent-kit/tests/turn-replay.test.sh`.
 
 ### SC-AK-1432 — a session without a write releases the turn
 
@@ -167,23 +145,25 @@ Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
 Given the owner's menu
 When the refusal is read
-Then it says that a deferral takes the next unblocked task, and «стоп» ends the turn
+Then it says that a deferral takes the next unblocked task
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-1445 — the menu of a refusal carries the two options
+### SC-AK-1842 — the stuck and idle menu asks for a way, not for a stop
 
-Given a held turn on the branch of task 7 refused twice by another check, and the options without a task
+Given a held turn on the branch of task 7 refused twice by another check, an idle stop after refusals of the engine and of the model check, and the options without a task
 When the menu is named
-Then it carries «отложить RT-7» and «стоп»; without a task the first stays «отложить RT-N»
+Then it carries «отложить RT-7» and «подскажу путь» and no «стоп»; without a task the first stays «отложить RT-N»
+And the refusal says the way goes into the free field of the same menu, and names what follows a bare «подскажу путь»
+And the text of the menu hook lets one question with a free field through after a bare «подскажу путь»
 
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`, `projects/agent-kit/tests/turn-exit-guard-foreign.test.sh`, `projects/agent-kit/tests/turn-replay.test.sh`.
 
-### SC-AK-1467 — the option «стоп» releases the turn
+### SC-AK-1467 — an option of the menu is the owner's word and releases no turn
 
-Given the owner chose «стоп» in the menu
-When the owner's word and the stop word are read
-Then the word is «стоп», and it is a stop
+Given the owner chose «подскажу путь» in the menu
+When the owner's word and the interrupt are read
+Then the word is «подскажу путь», and it is no interrupt
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
@@ -221,14 +201,6 @@ Then each is a write, and `sed -n` is not
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-1556 — a stop word followed by an order of work holds the turn
-
-Given «хватит спрашивать, иди дальше», «не сейчас про это, сначала тесты» and «stop asking me»
-When the owner's last word is judged
-Then none of them releases the turn, and «стоп» alone still does
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
 ### SC-AK-1759 — the session source names the start and the end of a background task
 
 Given a record with a command sent to the background, an asynchronous agent, a notice of a task with a final status and a call that stops a task
@@ -259,7 +231,7 @@ Given a session that wrote to the tree and started a background task three minut
 When the hook on Stop measures the session
 Then the session waits, and the turn is released by the case of a background task
 And a task that ended, by its call or by its task, is no wait; one task of two still running is
-And a stop word of the owner is asked before the case
+And the interrupt of the owner by Esc is asked before the case
 And the hook writes the release to the journal
 And an end written before its start leaves no task running, and a late copy of the notice of a former run does not end a resumed agent
 
@@ -267,15 +239,50 @@ Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
 ### SC-AK-1762 — a background task past the bound releases nothing
 
-Given a background task started twenty-one minutes ago, or one with no time of its start
+Given a background task started ninety-one minutes ago, or one with no time of its start
 When the hook on Stop measures the session
-Then the session does not wait, and the turn that wrote is held; at nineteen minutes it waits
+Then the session does not wait, and the turn that wrote is held; at fifty-eight minutes it waits
+And the bound is ninety minutes
 And a turn that ended on the task spends it: a second stop with no call is held, and a call makes the task fresh
 And a refused stop does not spend the task
 And two running tasks release two stops, and the end of one gives its stop back
 And a task whose start is stamped ahead of the clock is no wait
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1838 — a background task past the bound is hung, and the hold names it
+
+Given a session that wrote and started a background task ninety-five minutes ago with no notice
+When the hung task is measured and the turn is held in the running stage
+Then the task is hung with its number, its ninety-five minutes and its output file
+And the hold names the task, its minutes and its output, and offers no owner's menu
+And after a refusal of a stop the hung task comes before the idle stop, and a step another check refused twice comes before the hung task
+And a task of fifty-eight minutes, or one that ended, is not hung
+And an agent of a hundred and five minutes is neither hung nor a wait
+
+Covered: `projects/agent-kit/tests/turn-exit-guard-wait.test.sh`.
+
+### SC-AK-1840 — a watch of a CI run is a wait, a server is not
+
+Given a background watch of a CI run, the servers `serve:stand`, `storybook:ui-kit-v2` and `nx serve`, and a showcase build `build-storybook`
+When the wait is measured five minutes after each start
+Then the watch and the showcase build are waits, and each server is no wait
+And a script `serve:db` or `serve:auth` whose body runs `docker compose up -d` is a wait, alone and chained before a check
+And a stand raised in the background before a test run, and a search that names a server, are waits; a server as the last part, after a variable, a `cd` or before a pipe, is none
+And a bare `sleep` with an `echo` is no wait and not hung, and a pause before a test run is a wait
+And a server two hundred minutes old is not hung
+And a watch of a CI run that lifts the CI hold also releases the stop as a wait
+
+Covered: `projects/agent-kit/tests/turn-exit-guard-wait.test.sh`, `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1841 — a read notice with no step holds the stop and names the step
+
+Given a session that wrote, started a background task, got its notice and read its output file
+When the hook on Stop measures the session in the running stage
+Then the session neither waits nor has an unread task, the stop is held, and the hold names the next step
+And the text of the model hook on Stop lets a turn end while a background task of the session still runs
+
+Covered: `projects/agent-kit/tests/turn-exit-guard-wait.test.sh`, `projects/agent-kit/tests/turn-replay.test.sh`.
 
 ### SC-AK-1763 — a waiting stop after a refusal names no owner's menu
 
@@ -296,7 +303,7 @@ Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
 ### SC-AK-1765 — the forecast lets a waiting stop go and names the longest run
 
-Given recorded sessions that wrote and stopped: with a background task running, twice on one task, with the task over, and with a task started an hour before the stop
+Given recorded sessions that wrote and stopped: with a background task running, twice on one task, with the task over, and with a task started two hours before the stop
 When the forecast replays them
 Then the first stop is released, and the second on the same task, the stop after the end and the stop past the bound are held
 And the line names the longest run of held stops in a row, which a word of the owner and a released stop break
@@ -315,7 +322,7 @@ And the first call or menu after the notice reads it, and a late copy of the not
 And the forecast takes a named unread task for a move, not for the menu
 And a task the session stopped itself, one the harness killed, or one with no start in the record holds nothing
 And a late copy of the notice of a former run does not end the run a message resumed
-And a task running past the bound is not named, and a stop with no call names the menu
+And a task running past the bound is not unread, and a stop with no call after a refusal is idle
 And a refusal with no unread task still names the menu
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`, `projects/agent-kit/tests/task-flow-script-session.test.sh`, `projects/agent-kit/tests/task-flow-script-forecast.test.sh`.

@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · checks/flow-forecast.mjs · 578c87905ec8 · правится надстройкой, не здесь
+// rt-kit v0.38.0 · checks/flow-forecast.mjs · 32e160fe3948 · правится надстройкой, не здесь
 /**
  * The forecast of refusals — the engine command `forecast`, run before the hooks are laid out.
  *
@@ -39,7 +39,7 @@ import { callsOf, readCopies, windowOf } from './owner-nudges.mjs';
 
 /** The measurers a record answers. */
 const FROM_RECORD = new Set([
-    'measure.owner.saidStop',
+    'measure.owner.interrupted',
     'measure.owner.nudged',
     'measure.session.wrote',
     'measure.session.role',
@@ -48,6 +48,7 @@ const FROM_RECORD = new Set([
     'measure.session.idle',
     'measure.session.unread',
     'measure.session.waiting',
+    'measure.session.hung',
 ]);
 
 /** The calls the guard of the course of work judges. */
@@ -234,12 +235,14 @@ export async function forecastCopies({ copies, window, model, base, openReaders,
                         if (/· совпало/.test(text) && !/не совпало/.test(text)) marks.add(`${branch}:${pending.get(part.tool_use_id)}`);
                         pending.delete(part.tool_use_id);
                     }
-                    const word = wordOf(entry);
-                    if (word !== null) {
-                        live.last = word;
-                        if (!entry.toolUseResult) live.messages.push(word);
-                        run = 0;
-                    }
+                }
+                // A queued message is an entry of its own, not of the type `user`: the word is read
+                // from every entry, as the owner source of the engine reads it.
+                const word = wordOf(entry);
+                if (word !== null) {
+                    live.last = word;
+                    if (!entry.toolUseResult) live.messages.push(word);
+                    run = 0;
                 }
 
                 if (!isStopEntry(entry)) continue;
@@ -273,7 +276,8 @@ export async function forecastCopies({ copies, window, model, base, openReaders,
                 counts.longest = Math.max(counts.longest, run);
                 // A named unread task is a move, not the menu: the next stop is judged as usual.
                 const cause = menuCause(answer);
-                menuNamed = cause !== null && !cause.unread;
+                // A hung task, like an unread one, names a move, not the owner's menu.
+                menuNamed = cause !== null && !cause.unread && !cause.hung;
             }
         }
     }

@@ -43,8 +43,8 @@ const run = async (entries) =>
     forecastCopies({ copies: [{ name: 'c', sessions: [{ id: 's', entries }] }], window, model, base: dirname(flow), openReaders, sessionSource, wordOf, tree: '/t', settings });
 
 const B = 'RT-7-x';
-const held = await run([owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), say(B), stop(B), say(B), owner(B, 'стоп'), say(B), stop(B)]);
-out('forecast: SC-AK-1549 — остановка после записи держится, «стоп» отпускает', `${held.stops} ${held.held}`, '2 1');
+const held = await run([owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), say(B), stop(B), say(B), owner(B, '[Request interrupted by user]'), say(B), stop(B)]);
+out('forecast: SC-AK-1549 — остановка после записи держится, Esc отпускает', `${held.stops} ${held.held}`, '2 1');
 out('forecast: SC-AK-1549 — на тысячу вызовов', perMille(held, false), '1000');
 const quiet = await run([owner('main-x', 'спасибо'), say('main-x'), stop('main-x')]);
 out('forecast: SC-AK-1549 — сессия без записи отпущена', `${quiet.stops} ${quiet.held}`, '1 0');
@@ -70,14 +70,14 @@ out('forecast: SC-AK-1765 — вторая остановка на той же �
 const finished = await run([owner(B, 'делай RT-7'), EDIT(), bg('w1'), bgStarted('w1'), bgOver('w1'), say(B), stop(B)]);
 out('forecast: SC-AK-1765 — задача кончилась — остановка держится', `${finished.stops} ${finished.held}`, '1 1');
 out('forecast: SC-AK-1797 — названная непрочитанная задача — не меню, остановки считаются дальше', await run([owner(B, 'делай RT-7'), EDIT(), bg('w1'), bgStarted('w1'), bgOver('w1'), say(B), stop(B), feedback(B), say(B), stop(B), feedback(B), say(B), stop(B), feedback(B)]).then((r) => `${r.stops} ${r.held}`), '3 3');
-const stale = await run([owner(B, 'делай RT-7'), EDIT(), bg('w1'), bgStarted('w1', '2026-11-02T09:00:00Z'), say(B), stop(B)]);
+const stale = await run([owner(B, 'делай RT-7'), EDIT(), bg('w1'), bgStarted('w1', '2026-11-02T08:00:00Z'), say(B), stop(B)]);
 out('forecast: SC-AK-1765 — задача старше границы по времени остановки — держится', `${stale.stops} ${stale.held}`, '1 1');
 const series = await run([owner(B, 'делай RT-7'), EDIT(), say(B), stop(B), EDIT(), say(B), stop(B), EDIT(), say(B), stop(B), owner(B, 'дальше'), EDIT(), say(B), stop(B), bg('w2'), bgStarted('w2'), say(B), stop(B), EDIT(), say(B), stop(B)]);
 out('forecast: SC-AK-1765 — серию рвут слово владельца и отпущенная остановка', `${series.held} ${series.longest}`, '4 3');
 out('forecast: SC-AK-1765 — без удержанных остановок серия нулевая', String(waited.longest), '0');
 out('forecast: SC-AK-1765 — строка называет самую длинную серию', String(forecastLine(series, false).endsWith('the longest run of held stops — 3')), 'true');
 
-out('missed: SC-AK-1552 — конец хода с открытой работой пропущен, конец по «стоп» нет', `${held.ended} ${held.missed}`, '2 1');
+out('missed: SC-AK-1552 — конец хода с открытой работой пропущен, конец по Esc нет', `${held.ended} ${held.missed}`, '2 1');
 out('missed: SC-AK-1552 — остановка с отказом хука ход не кончает', `${loop.ended} ${loop.missed}`, '0 0');
 out('missed: SC-AK-1552 — каждая остановка на ветке с движком входит в знаменатель', loop.laidStops, '3');
 const blocked = await run([owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), { ...stop(B), hookErrors: ['BLOCKED by turn-exit-guard: open'] }]);

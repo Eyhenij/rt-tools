@@ -12,12 +12,12 @@ TESTS="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 out="$(cd "$TESTS" && node --input-type=module 2>&1 <<'JS'
 import { buildModel } from '../assets/checks/flow-model.mjs';
-import { isWriteCommand, saysStop } from '../assets/checks/flow-data.mjs';
+import { isWriteCommand } from '../assets/checks/flow-data.mjs';
 import { currentStep, holdReason, releaseCase } from '../assets/checks/flow-verdict.mjs';
 import * as owner from '../assets/task-flow/measure/owner.mjs';
 
 const model = buildModel(new URL('../assets/task-flow/flow.js', import.meta.url).pathname);
-const data = { words: model.words, expect: model.expect, rules: { saysStop, isWriteCommand } };
+const data = { words: model.words, expect: model.expect, rules: { isWriteCommand } };
 const out = (label, got, want) => console.log(`${label}|${got}|${want}`);
 
 const progress = (...steps) => ['# Progress', '', '## Steps', '', ...steps, ''].join('\n');
@@ -37,11 +37,12 @@ const done = reason(progress('- [x] 1.1 поставить ярус', '- [x] 1.2
 out('SC-AK-1013 — отказ написан', String(done.includes('The scenario is not over')), 'true');
 out('SC-AK-1013 — при сделанных шагах о шагах ни слова', String(done.includes('steps of the plan are not done')), 'false');
 
-// --- SC-AK-1014 — слово владельца об остановке отпускает ход --------------------------------------
-const said = String(owner.saidStop({ owner: { last: () => 'Стоп, дальше не надо' } })(data));
-out('SC-AK-1014 — слово владельца — остановка', said, 'true');
-const read = (name) => name === 'measure.owner.saidStop' || name === 'measure.session.wrote';
-out('SC-AK-1014 — слово владельца отпускает ход при несделанных шагах', releaseCase(model, read, stage)?.log ?? 'held', 'a stop word of the owner');
+// --- SC-AK-1014 — Esc владельца отпускает ход при несделанных шагах, слово — нет -----------------
+const said = (word) => String(owner.interrupted({ owner: { last: () => word } })(data));
+out('SC-AK-1014 — Esc владельца — прерывание', said('[Request interrupted by user]'), 'true');
+out('SC-AK-1014 — «Стоп, дальше не надо» — не прерывание', said('Стоп, дальше не надо'), 'false');
+const read = (name) => name === 'measure.owner.interrupted' || name === 'measure.session.wrote';
+out('SC-AK-1014 — Esc отпускает ход при несделанных шагах', releaseCase(model, read, stage)?.log ?? 'held', 'the owner interrupted the turn');
 
 // --- SC-AK-1015 — ход работы без перечня шагов о шагах не судится -----------------------------------
 const bare = reason('# Progress\n\n## Where we stand\n\n- **Next step:** поставить ярус\n');

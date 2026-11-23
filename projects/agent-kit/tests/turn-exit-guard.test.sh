@@ -27,11 +27,8 @@ te_run() {
 
 # --- случаи отпуска и измерители, над двойниками --------------------------------------------------
 te_run <<'JS'
-import { mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
 import { buildModel } from '../assets/checks/flow-model.mjs';
-import { isWriteCommand, saysStop } from '../assets/checks/flow-data.mjs';
+import { isWriteCommand } from '../assets/checks/flow-data.mjs';
 import { releaseCase, holdReason, menuCause, menuOptions, decide } from '../assets/checks/flow-verdict.mjs';
 import * as ci from '../assets/task-flow/measure/ci.mjs';
 import { judgeCall } from '../assets/checks/flow-guard.mjs';
@@ -44,7 +41,7 @@ import * as host from '../assets/task-flow/measure/host.mjs';
 
 const path = new URL('../assets/task-flow/flow.js', import.meta.url).pathname;
 const model = buildModel(path);
-const data = { words: model.words, expect: model.expect, rules: { saysStop, isWriteCommand } };
+const data = { words: model.words, expect: model.expect, rules: { isWriteCommand } };
 const out = (label, got, want) => console.log(`${label}|${got}|${want}`);
 
 // Ответы измерителей по ссылкам; всё неназванное — «нет».
@@ -58,12 +55,13 @@ out('end: SC-AK-1428 — вне эпика выход 10 — отпущен', re
 out('end: SC-AK-1428 — вне эпика без PR — держится', released({ ...WROTE, 'measure.copy.outsideEpic': true }), 'held');
 
 const last = (word) => ({ owner: { last: () => word } });
-const stop = (word) => String(owner.saidStop(last(word))(data));
-out('end: SC-AK-1429 — слово остановки — отпущен', stop('Стоп, на сегодня хватит'), 'true');
-out('end: SC-AK-1430 — «хватит останавливаться, продолжай» — держится', stop('хватит останавливаться, продолжай'), 'false');
-out('end: SC-AK-1431 — «Стой, не туда — делай RT-N» — держится', stop('Стой, не туда — делай RT-12'), 'false');
-out('end: SC-AK-1463 — «Стоп, не делай этого» — отпущен', stop('Стоп, не делай этого'), 'true');
-out('end: SC-AK-1429 — случай отпуска по слову остановки', released({ ...WROTE, 'measure.owner.saidStop': true }), 'a stop word of the owner');
+const esc = (word) => String(owner.interrupted(last(word))(data));
+out('end: SC-AK-1839 — отметка Esc — прерывание', esc('[Request interrupted by user]'), 'true');
+out('end: SC-AK-1839 — отметка Esc во время вызова — прерывание', esc('[Request interrupted by user for tool use]'), 'true');
+for (const word of ['стоп', 'Стоп, на сегодня хватит', 'не сейчас', 'подожди']) out(`end: SC-AK-1839 — «${word}» — не прерывание`, esc(word), 'false');
+out('end: SC-AK-1839 — случай отпуска по Esc', released({ ...WROTE, 'measure.owner.interrupted': true }), 'the owner interrupted the turn');
+const ownerReader = (word) => (name) => (name === 'measure.owner.interrupted' ? owner.interrupted(last(word))(data) : (WROTE[name] ?? false));
+out('end: SC-AK-1839 — «стоп» в «этап-идёт» с несделанным шагом держит ход', String(decide(model, ownerReader('стоп'), { state: 'этап-идёт', index: 7, reason: null })), 'null');
 
 const uses = (list) => ({ session: { toolUses: () => list } });
 const wrote = (list) => String(session.wrote(uses(list))(data));
@@ -74,10 +72,6 @@ out('end: SC-AK-1555 — коммит с переменными впереди �
 out('end: SC-AK-1555 — коммит с параметрами git — запись', wrote([{ name: 'Bash', input: { command: 'git -c commit.gpgsign=false -C /t commit -q -F m.txt' } }]), 'true');
 out('end: SC-AK-1555 — правка файла через sed -i — запись', wrote([{ name: 'Bash', input: { command: "sed -i '' 's/a/b/' x.md" } }]), 'true');
 out('end: SC-AK-1555 — sed без -i — не запись', wrote([{ name: 'Bash', input: { command: "sed -n 1,5p x.md" } }]), 'false');
-out('end: SC-AK-1556 — «хватит спрашивать, иди дальше» — держится', stop('хватит спрашивать, иди дальше'), 'false');
-out('end: SC-AK-1556 — «не сейчас про это, сначала тесты» — держится', stop('не сейчас про это, сначала тесты'), 'false');
-out('end: SC-AK-1556 — «stop asking me» — держится', stop('stop asking me'), 'false');
-out('end: SC-AK-1556 — «стоп» — отпущен по-прежнему', stop('стоп'), 'true');
 out('end: SC-AK-1432 — сессия без записи — отпущена', released({}), 'no write to the tree, or a branch outside the scenario');
 const nudged = (word) => String(owner.nudged(last(word))(data));
 out('end: SC-AK-1433 — «ну что там?» — подталкивание', nudged('ну что там?'), 'true');
@@ -96,20 +90,9 @@ const onSilence = { state: 'договорённость-записана', inde
 out('end: SC-AK-1435 — хостинг дважды на выходе хостинга — отпущен с причиной', released({ ...WROTE, 'measure.host.silent': true }, onSilence), 'the host did not answer twice');
 out('end: SC-AK-1435 — молчание хостинга при невыполненном местном выходе — держится', released({ ...WROTE, 'measure.host.silent': true }), 'held');
 
-// Слово, добавленное в копию описания, отпускает ход без правки движка: копия лежит во временном
-// каталоге рядом со ссылками на измерители и источники пакета.
-const dir = mkdtempSync(join(tmpdir(), 'flow-'));
-const kit = new URL('../assets/task-flow/', import.meta.url).pathname;
-for (const sub of ['measure', 'source']) symlinkSync(join(kit, sub), join(dir, sub));
-writeFileSync(join(dir, 'flow.js'), readFileSync(path, 'utf8').replace("'стоп', ", "'шабаш', 'стоп', "));
-const copied = buildModel(join(dir, 'flow.js'));
-rmSync(dir, { recursive: true, force: true });
-const copiedData = { ...data, words: copied.words };
-out('end: SC-AK-1505 — слово остановки, добавленное в описание, отпускает ход без правки движка', String(owner.saidStop(last('Шабаш, на сегодня всё'))(copiedData)), 'true');
-out('end: SC-AK-1505 — пакетное описание этого слова не знает', stop('Шабаш, на сегодня всё'), 'false');
 
 const events = (list) => ({ session: { events: () => list } });
-const MENU = 'Ask the owner: «отложить RT-7», «стоп».';
+const MENU = 'Ask the owner: «отложить RT-7», «подскажу путь».';
 const lost = (list) => String(session.menuLost(events(list))(data));
 out('menu: SC-AK-1444 — меню не дошло второй раз подряд', lost([{ kind: 'refusal', text: MENU }, { kind: 'menu', answered: false }, { kind: 'refusal', text: MENU }, { kind: 'menu', answered: false }]), 'true');
 out('menu: SC-AK-1444 — меню не дошло один раз — не потеряно', lost([{ kind: 'refusal', text: MENU }, { kind: 'menu', answered: false }]), 'false');
@@ -158,10 +141,10 @@ out('end: SC-AK-1761 — конец по номеру задачи без ном
 out('end: SC-AK-1761 — одна из двух задач ещё идёт — ждёт', waits([BG, started('a', 9), BG, started('b', 2), over('a')]), 'true');
 out('end: SC-AK-1761 — без фоновых задач — не ждёт', waits([called('Edit'), refused]), 'false');
 out('end: SC-AK-1761 — ожидающий ход отпущен своим случаем', released(WAITING), 'a background task of the session runs');
-out('end: SC-AK-1761 — слово остановки спрашивается раньше', released({ ...WAITING, 'measure.owner.saidStop': true }), 'a stop word of the owner');
-out('end: SC-AK-1762 — задача старше границы — не ждёт', waits([BG, started('a', 21)]), 'false');
-out('end: SC-AK-1762 — задача моложе границы — ждёт', waits([BG, started('a', 19)]), 'true');
-out('end: SC-AK-1762 — граница — двадцать минут', String(session.BACKGROUND_BOUND), '20');
+out('end: SC-AK-1761 — Esc спрашивается раньше ожидания', released({ ...WAITING, 'measure.owner.interrupted': true }), 'the owner interrupted the turn');
+out('end: SC-AK-1762 — задача старше границы — не ждёт', waits([BG, started('a', 91)]), 'false');
+out('end: SC-AK-1762 — задача моложе границы — ждёт', waits([BG, started('a', 58)]), 'true');
+out('end: SC-AK-1762 — граница — девяносто минут', String(session.BACKGROUND_BOUND), '90');
 out('end: SC-AK-1762 — задача без времени начала — не ждёт', waits([BG, { kind: 'background', id: 'a', task: 't', at: NaN }]), 'false');
 out('end: SC-AK-1762 — второй конец хода на той же задаче без вызова — не ждёт', waits([BG, started('a', 5), ended]), 'false');
 out('end: SC-AK-1762 — вызов после конца хода — снова ждёт', waits([BG, started('a', 5), ended, called('Read')]), 'true');
@@ -203,19 +186,20 @@ out('menu: SC-AK-1797 — не своя или снятая: конец зада
 const forbiddenOverUnread = menuCause((name) => (name === 'measure.session.unread' ? unreadAt([BG, withOut('a', 4), over('a')]) : forbiddenBy(name)));
 out('menu: SC-AK-1797 — запрет другой проверки над непрочитанной задачей меню не зовёт', String(Boolean(forbiddenOverUnread?.unread) && !forbiddenOverUnread.by), 'true');
 out('menu: SC-AK-1797 — запрет другой проверки после прочтения снова зовёт меню', String(session.forbidden(timed([BG, started('a', 4), over('a'), called('Read'), blockedBy('git-guard-delivery', 'r'), blockedBy('git-guard-delivery', 'r')]))(data)), 'git-guard-delivery');
-out('menu: SC-AK-1797 — старше предела: идущая задача не названа, простой как прежде', `${unreadOf([BG, withOut('a', 30), refused])} ${idlesAt([BG, started('a', 30), refused])}`, 'false true');
+out('menu: SC-AK-1797 — старше предела: идущая задача не названа, простой как прежде', `${unreadOf([BG, withOut('a', 95), refused])} ${idlesAt([BG, started('a', 95), refused])}`, 'false true');
 out('menu: SC-AK-1797 — простой без кончившейся задачи по-прежнему зовёт меню', `${idlesAt([called('Edit'), refused])} ${unreadOf([called('Edit'), refused])}`, 'true false');
 out('end: SC-AK-1764 — в состоянии «работа-отдана» ожидание не отпускает', released({ ...WAITING, 'measure.pr.handed': true }), 'held');
 out('end: SC-AK-1764 — молчащий хостинг на вопросе о PR ожидание не держит', releaseCase(model, (name) => { if (name === 'measure.pr.handed') throw Object.assign(new Error('silent'), { name: 'HostSilent' }); return WAITING[name] ?? false; }, held)?.log ?? 'held', 'a background task of the session runs');
 
-out('menu: SC-AK-1443 — заблокированная задача — берётся следующая незаблокированная', String(ownerMenu.includes('takes the next unblocked task') && ownerMenu.includes('«стоп» ends the turn')), 'true');
+out('menu: SC-AK-1443 — заблокированная задача — берётся следующая незаблокированная', String(ownerMenu.includes('takes the next unblocked task')), 'true');
 
-out('menu: SC-AK-1445 — меню отказа несёт «отложить RT-N» и «стоп»', String(['«отложить RT-7»', '«стоп»'].every((option) => ownerMenu.includes(option))), 'true');
-out('menu: SC-AK-1445 — без номера задачи вариант остаётся «отложить RT-N»', menuOptions(model.words, null).join(', '), 'отложить RT-N, стоп');
+out('menu: SC-AK-1842 — меню отказа несёт «отложить RT-N» и «подскажу путь», без «стоп»', String(['«отложить RT-7»', '«подскажу путь»'].every((option) => ownerMenu.includes(option)) && !ownerMenu.includes('«стоп»')), 'true');
+out('menu: SC-AK-1842 — без номера задачи вариант остаётся «отложить RT-N»', menuOptions(model.words, null).join(', '), 'отложить RT-N, подскажу путь');
+out('menu: SC-AK-1842 — удержание просит путь в свободном поле того же меню', String(ownerMenu.includes('the way goes into its free field') && ownerMenu.includes('A bare «подскажу путь»')), 'true');
 
 const answered = (option) => sourceWordOf({ type: 'user', toolUseResult: { answers: { 'Что делать?': option } }, message: { content: [] } });
-out('menu: SC-AK-1467 — вариант «стоп» меню отказа — слово владельца', answered('стоп'), 'стоп');
-out('menu: SC-AK-1467 — вариант «стоп» меню отказа — отпущен', stop(answered('стоп')), 'true');
+out('menu: SC-AK-1467 — вариант меню отказа — слово владельца', answered('подскажу путь'), 'подскажу путь');
+out('menu: SC-AK-1467 — вариант меню отказа ход не отпускает', String(owner.interrupted(last(answered('подскажу путь')))(data)), 'false');
 
 const plan = '# Эпик\n\n| # | Задача | Состояние |\n| --- | --- | --- |\n| 1 | RT-7 — проба | идёт |\n| 2 | RT-8 — дальше | впереди |\n';
 const ctx = { tasksDir: 'docs/tasks', branch: 'RT-7-x', marksDir: '.git/rt-kit', plansDir: 'docs/plans', overridePath: 'o', protectedPaths: [], key: 'RT', read: () => plan };
@@ -271,7 +255,7 @@ out('end: SC-AK-1802 — слежение за номером PR тоже сле
 out('end: SC-AK-1802 — фоновая задача с номером PR в имени журнала — не слежение', kindOf(holdOf({ host: onHead(goingRun), events: [bgStart('w3', 'pnpm run check:all > /tmp/pr-3472.log 2>&1', T0)], now: T0 + 120_000 })), `running ${RUN}`);
 out('end: SC-AK-1802 — фоновый вызов клиента без watch — не слежение', kindOf(holdOf({ host: onHead(goingRun), events: [bgStart('w4', 'gh pr comment 3472 --body ok', T0)], now: T0 + 120_000 })), `running ${RUN}`);
 out('end: SC-AK-1802 — слежение по имени ветки PR — слежение', kindOf(holdOf({ host: onHead(goingRun), events: [bgStart('w5', `id=$(gh run list --branch ${PR.head} --limit 1 --json databaseId --jq '.[0].databaseId'); gh run watch "$id" --exit-status`, T0)], now: T0 + 120_000 })), 'none');
-out('end: SC-AK-1802 — слежение за CI не отпускает остановку как ожидание', String(session.waiting({ session: { events: () => watching, now: () => T0 + 120_000 } })()), 'false');
+out('end: SC-AK-1840 — слежение за CI отпускает остановку как ожидание', String(session.waiting({ session: { events: () => watching, now: () => T0 + 120_000 } })()), 'true');
 out('end: SC-AK-1802 — снятое удержание не отпускает ход в «работа-отдана»', String(decide(model, ciReader({ ...WROTE, 'measure.session.waiting': true, 'measure.pr.handed': true }), stageState)), 'null');
 
 // SC-AK-1803 — красный непрочитанный запуск держит ход с номером
@@ -342,12 +326,16 @@ out('end: SC-AK-1811 — три остановки — один отказ', Str
 const second = decide(model, ciReader({ 'measure.ci.hold': redHold, 'measure.session.idle': true }), stageState)?.block ?? '';
 out('end: SC-AK-1812 — вторая остановка без вызова называет запуск, не меню', `${second.startsWith(`The CI run ${RUN}`)} ${second.includes("The one move is the owner's menu")}`, 'true false');
 
-// SC-AK-1813 — «стоп» снимает только свежую вершину
-out('end: SC-AK-1813 — «стоп» не снимает слежение: идущий без слежения держит', kindOf(holdOf({ host: onHead(goingRun), word: 'стоп', now: T0 + 120_000 })), `running ${RUN}`);
-out('end: SC-AK-1813 — после «стоп» со слежением идущий не держит', kindOf(holdOf({ host: onHead(goingRun), events: watching, word: 'стоп', now: T0 + 120_000 })), 'none');
-out('end: SC-AK-1813 — «стоп» снимает свежую вершину без запуска', kindOf(holdOf({ events: [bash(`git push origin ${PR.head}`, END)], word: 'стоп', now: END + 60_000 })), 'none');
-out('end: SC-AK-1813 — красный после «стоп» держит до чтения', kindOf(holdOf({ host: onHead(redRun), word: 'стоп' })), `red ${RUN}`);
-out('end: SC-AK-1813 — непрочитанный красный до «стоп» тоже держит', kindOf(holdOf({ host: onHead(redRun), word: 'стоп', now: END + 600_000 })), `red ${RUN}`);
+// SC-AK-1839 — слово владельца удержание CI не снимает
+out('end: SC-AK-1839 — «стоп» не снимает свежую вершину без запуска', kindOf(holdOf({ events: [bash(`git push origin ${PR.head}`, END)], word: 'стоп', now: END + 60_000 })), 'fresh -');
+const ESC = '[Request interrupted by user]';
+const queuedEntry = (prompt, kind = 'human') => ({ type: 'attachment', attachment: { type: 'queued_command', prompt, origin: { kind } } });
+out('end: SC-AK-1839 — сообщение, набранное во время хода, — слово владельца', String(sourceWordOf(queuedEntry('нет, продолжай шаг 2'))), 'нет, продолжай шаг 2');
+out('end: SC-AK-1839 — уведомление задачи в очереди — не слово владельца', String(sourceWordOf(queuedEntry('<task-notification>x</task-notification>', 'task-notification'))), 'null');
+out('end: SC-AK-1839 — обёртка в очереди от человека — не слово', String(sourceWordOf(queuedEntry('<command-name>/x</command-name>'))), 'null');
+out('end: SC-AK-1839 — после Esc красный запуск ход не держит', kindOf(holdOf({ host: onHead(redRun), word: ESC })), 'none');
+out('end: SC-AK-1839 — после Esc идущий запуск без слежения ход не держит', kindOf(holdOf({ host: onHead(goingRun), word: ESC, now: T0 + 120_000 })), 'none');
+out('end: SC-AK-1839 — после нового слова владельца красный снова держит', kindOf(holdOf({ host: onHead(redRun), word: 'продолжай' })), `red ${RUN}`);
 
 JS
 
@@ -359,8 +347,24 @@ expect_stop "удержанный ход: сессия писала, сцена�
     "$(input_stop "$(transcript "$(say 'делай')" "$(edited)")")" BLOCK
 expect_reason "отказ называет измеренное состояние" \
     "$(input_stop "$(transcript "$(say 'делай')" "$(edited)")")" 'просьба-не-разобрана'
-expect_stop "end: SC-AK-1429 — слово остановки отпускает ход через хук" \
-    "$(input_stop "$(transcript "$(edited)" "$(say 'Стоп, хватит')")")" PASS
+expect_stop "end: SC-AK-1839 — «стоп» ход через хук не отпускает" \
+    "$(input_stop "$(transcript "$(edited)" "$(say 'Стоп, хватит')")")" BLOCK
+expect_stop "end: SC-AK-1839 — «не сейчас» ход через хук не отпускает" \
+    "$(input_stop "$(transcript "$(edited)" "$(say 'не сейчас')")")" BLOCK
+expect_stop "end: SC-AK-1839 — Esc отпускает ход через хук" \
+    "$(input_stop "$(transcript "$(edited)" "$(say '[Request interrupted by user]')")")" PASS
+queued() { jq -c -n --arg t "$1" '{type:"attachment",attachment:{type:"queued_command",prompt:$t,origin:{kind:"human"}}}'; }
+said_at() { jq -c -n --arg t "$1" --arg at "$2" '{type:"user",timestamp:$at,message:{content:[{type:"text",text:$t}]}}'; }
+expect_stop "end: SC-AK-1839 — Esc через полторы секунды после поручения останавливает и его — ход отпущен" \
+    "$(input_stop "$(transcript "$(edited)" "$(said_at 'делай задачу' 2026-11-16T00:27:54.000Z)" "$(said_at '[Request interrupted by user]' 2026-11-16T00:27:55.500Z)")")" PASS
+expect_stop "end: SC-AK-1839 — вставленный текст в очереди после Esc — слово, ход держится" \
+    "$(input_stop "$(transcript "$(edited)" "$(say '[Request interrupted by user]')" "$(queued '<pasted_content id="p1">разбор: делай шаг 2</pasted_content>')")")" BLOCK
+expect_stop "end: SC-AK-1839 — обёртка команды оболочки после Esc — не слово, ход отпущен" \
+    "$(input_stop "$(transcript "$(edited)" "$(say '[Request interrupted by user]')" "$(say '<bash-input>git status</bash-input>')")")" PASS
+expect_stop "end: SC-AK-1839 — Esc через минуту после поручения — остановка, ход отпущен" \
+    "$(input_stop "$(transcript "$(edited)" "$(said_at 'делай задачу' 2026-11-16T00:27:54.000Z)" "$(said_at '[Request interrupted by user]' 2026-11-16T00:28:54.000Z)")")" PASS
+expect_stop "end: SC-AK-1839 — слово, набранное после Esc во время хода, снова держит ход" \
+    "$(input_stop "$(transcript "$(edited)" "$(say '[Request interrupted by user]')" "$(queued 'нет, продолжай шаг 2')")")" BLOCK
 expect_stop "end: SC-AK-1432 — сессия без записи отпускает ход через хук" \
     "$(input_stop "$(transcript "$(say 'расскажи, что в ветке')" "$(reply)")")" PASS
 
@@ -381,7 +385,7 @@ report "end: SC-AK-1761 — отпуск на ожидании пишется в
 expect_stop "end: SC-AK-1761 — задача кончилась — ход держится через хук" \
     "$(input_stop "$(transcript "$(say 'делай')" "$(edited)" "$(bg_run)" "$(bg_started 2)" "$(bg_over)")")" BLOCK
 expect_stop "end: SC-AK-1762 — задача старше границы — ход держится через хук" \
-    "$(input_stop "$(transcript "$(say 'делай')" "$(edited)" "$(bg_run)" "$(bg_started 25)")")" BLOCK
+    "$(input_stop "$(transcript "$(say 'делай')" "$(edited)" "$(bg_run)" "$(bg_started 95)")")" BLOCK
 
 # Стенограмма вида 21.11: набор в фоне, правка, отказ остановки другой проверки, конец набора.
 bg_refused() { jq -c -n '{type:"user",message:{content:"Stop hook feedback:\nBLOCKED by git-guard-draft-ready: снять черновик"}}'; }
@@ -452,5 +456,6 @@ expect_stop "end: SC-AK-1434 — сессия роли отпускает ход
     "$(input_role reader "$(transcript "$(say 'разбери')" "$(edited)")")" PASS
 
 . "$TESTS/turn-exit-guard-foreign.test.sh"
+. "$TESTS/turn-exit-guard-wait.test.sh"
 
 suite_result "проверка выхода из хода"

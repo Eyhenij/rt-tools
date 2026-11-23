@@ -31,14 +31,16 @@ merge go on without the executor and do not get faster from being watched.
 ## What a turn ends with
 
 - **the end of the scenario** — the engine measured it; under an epic the table of its tasks is shown
-- **a stop word of the owner** — their last message begins with it, and nothing after it asks to go on
+- **the owner interrupted the turn** — they pressed Esc; a turn a background notice wakes after it
+  ends too, until they write again. No typed word stops the work
 
 The exit guard holds every other turn and names the one next move. The task flow description adds
 release cases that are not the executor's choice: no write to the tree, a branch outside the
 scenario, a role session, a silent host, a menu that did not reach the owner twice.
 
 A question, a guard's refusal, a handover and handed-in work do not end a turn. A step that
-another guard refuses twice goes to the owner as one menu: «отложить RT-N», «стоп». The menu waits for the answer inside the turn.
+another guard refuses twice goes to the owner as one menu: «отложить RT-N», «подскажу путь»; the
+way goes into its free field. The menu waits for the answer inside the turn.
 
 Where the tree has set the compaction threshold below the stop threshold, a filled window does
 not end the turn: the context is compacted, the handover arrives as the entry, and the work goes
