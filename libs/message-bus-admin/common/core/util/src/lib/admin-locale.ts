@@ -62,7 +62,7 @@ const noLabels: TRtKitTranslator = (): string => '';
 @Injectable({ providedIn: 'root' })
 export class AdminLocaleService {
     readonly #storage: StorageService = inject(StorageService);
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
 
     readonly #locale: WritableSignal<EAdminLocale> = signal<EAdminLocale>(this.#readOrDefault());
 
@@ -80,7 +80,7 @@ export class AdminLocaleService {
         // Страница объявляет тот язык, на котором написана: русский текст под английским
         // признаком синтезатор речи читает по английским правилам, и наоборот.
         effect((): void => {
-            this.#document.documentElement.lang = this.#locale();
+            this.#doc.documentElement.lang = this.#locale();
         });
     }
 

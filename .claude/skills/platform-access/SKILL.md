@@ -4,7 +4,7 @@ kind: rule
 law: frontend-application
 description: Rule under the frontend-application law. Load when an edit touches the global object or the runtime — window, globalThis, PLATFORM_ID, localStorage. Names the DI tokens and the pitfalls of server-side page rendering. Does not apply under libs/api and apps/api. Pattern platform-access-di.
 ---
-<!-- rt-kit v0.38.0 · rules/platform-access.md · 28138749f60c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.38.0 · rules/platform-access.md · 99ae1b748dd3 · правится надстройкой, не здесь -->
 
 # Browser environment — how it works here
 
@@ -70,7 +70,7 @@ flowchart TD
 
 ## What of the law is not here
 
-The ban acts on names, not on paths to them: the linter lets `this.#document.defaultView` through,
+The ban acts on names, not on paths to them: the linter lets `this.#doc.defaultView` through,
 because there is no global name in such a line. Such a call is lawful — the window there already
 came by injection — but a real bypass would look the same, and it can be seen only by reading.
 

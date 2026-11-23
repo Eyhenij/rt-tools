@@ -117,7 +117,7 @@ interface IRtAsideOpenContext {
 export class RtAsideService {
     readonly #overlay: Overlay = inject(Overlay);
     readonly #injector: Injector = inject(Injector);
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
     // Renderer2 нужен для манипуляции CSS-классами на overlay.hostElement.
     // В service нет ComponentRef, поэтому Renderer2 берём через factory.
     readonly #renderer: Renderer2 = inject(RendererFactory2).createRenderer(null, null);
@@ -184,7 +184,7 @@ export class RtAsideService {
             'rt-aside-overlay',
             `rt-aside-overlay--position-${position}`,
             'rt-aside-overlay--entering',
-            ...materialPresetClassesOfFocus(this.#document),
+            ...materialPresetClassesOfFocus(this.#doc),
         ];
 
         const overlayConfig: OverlayConfig = {
@@ -198,7 +198,7 @@ export class RtAsideService {
 
         const overlayRef: OverlayRef = this.#overlay.create(overlayConfig);
         // До attach: содержимое панели может забрать фокус, и кусок темы у кнопки будет потерян.
-        carryThemeScopeOfFocus(overlayRef.overlayElement, this.#document);
+        carryThemeScopeOfFocus(overlayRef.overlayElement, this.#doc);
         const closeRequests: Subject<TRtAsideCloseRequest> = new Subject<TRtAsideCloseRequest>();
         const asideRef: RtAsideRef<TResult> = new RtAsideRef<TResult>(overlayRef, this.#renderer, closeRequests);
 

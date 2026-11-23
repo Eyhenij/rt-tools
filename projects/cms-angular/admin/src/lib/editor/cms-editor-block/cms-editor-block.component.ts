@@ -155,7 +155,7 @@ function closestOf(node: Node, selector: string): HTMLElement | null {
     },
 })
 export class CmsEditorBlockComponent {
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
     readonly #host: HTMLElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
     readonly #clipboard: Clipboard = inject(Clipboard);
     readonly #dialogs: RtDialogService = inject(RtDialogService);
@@ -204,7 +204,7 @@ export class CmsEditorBlockComponent {
                 if (request.anchor) {
                     updateLink(request.anchor, link);
                 } else if (request.range) {
-                    insertLink(link, request.range, this.#document);
+                    insertLink(link, request.range, this.#doc);
                 } else {
                     return;
                 }
@@ -224,7 +224,7 @@ export class CmsEditorBlockComponent {
 
     protected convert(type: EBlockType): void {
         const text: string = this.text()?.nativeElement.textContent ?? '';
-        this.changed.emit(convertedBlockOf(this.block(), type, htmlOfText(text, this.#document)));
+        this.changed.emit(convertedBlockOf(this.block(), type, htmlOfText(text, this.#doc)));
     }
 
     protected duplicate(): void {
@@ -257,8 +257,8 @@ export class CmsEditorBlockComponent {
     protected applyStyle(action: TStyleAction): void {
         const range: Range | null = this.#selectedRange();
         if (range) {
-            toggleRangeStyle(range, action, this.#document);
-            this.#document.getSelection()?.removeAllRanges();
+            toggleRangeStyle(range, action, this.#doc);
+            this.#doc.getSelection()?.removeAllRanges();
             this.#notifyEdited(closestOf(range.commonAncestorContainer, '[contenteditable]'));
         }
         this.menu.set(null);
@@ -268,7 +268,7 @@ export class CmsEditorBlockComponent {
         const range: Range | null = this.#selectedRange();
         if (range) {
             this.#clipboard.copy(range.toString());
-            this.#document.getSelection()?.removeAllRanges();
+            this.#doc.getSelection()?.removeAllRanges();
         }
         this.menu.set(null);
     }
@@ -294,7 +294,7 @@ export class CmsEditorBlockComponent {
     protected paste(event: ClipboardEvent): void {
         event.preventDefault();
         const data: DataTransfer | null = event.clipboardData;
-        const selection: Selection | null = this.#document.getSelection();
+        const selection: Selection | null = this.#doc.getSelection();
         if (!data || !selection) {
             return;
         }
@@ -303,19 +303,19 @@ export class CmsEditorBlockComponent {
         const fromEditor: boolean = data.types.includes(EDITOR_CLIPBOARD_MARK);
         const hasContent: boolean = this.block().content.trim() !== '';
         if (this.isHeading() || isPlainPaste(elements, hasContent, fromEditor)) {
-            insertPlainText(selection, data.getData('text/plain'), this.#document);
+            insertPlainText(selection, data.getData('text/plain'), this.#doc);
             this.#notifyEdited(this.text()?.nativeElement ?? null);
             return;
         }
 
-        const blocks: IBlock.Base[] = pastedBlocksOf(elements, this.#document, newBlockId);
+        const blocks: IBlock.Base[] = pastedBlocksOf(elements, this.#doc, newBlockId);
         if (blocks.length > 0) {
             this.inserted.emit({ afterId: this.block().id, replace: true, blocks });
         }
     }
 
     #selectedRange(): Range | null {
-        const selection: Selection | null = this.#document.getSelection();
+        const selection: Selection | null = this.#doc.getSelection();
         if (!selection?.rangeCount) {
             return null;
         }

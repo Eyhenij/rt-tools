@@ -33,7 +33,7 @@ export class RtAuthService {
     readonly #keycloak: TRtKeycloak = inject(RT_KEYCLOAK);
     readonly #config: IRtAuthConfig = inject(RT_AUTH_CONFIG);
     readonly #organization: Signal<string | null> | null = inject(RT_AUTH_ORGANIZATION, { optional: true });
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
     readonly #caller: WritableSignal<ICaller | null> = signal<ICaller | null>(null);
 
     /** The person signed in, with the rights of the admin client; `null` while nobody is. */
@@ -51,8 +51,8 @@ export class RtAuthService {
         this.#keycloak.onAuthRefreshSuccess = (): void => this.#read();
         this.#keycloak.onAuthLogout = (): void => this.#caller.set(null);
         this.#keycloak.onTokenExpired = (): void => void this.refresh();
-        const href: string = this.#document.location?.href ?? this.#document.baseURI;
-        const plan: IRtAuthStartPlan = startPlan(this.#config, this.#document.baseURI, href);
+        const href: string = this.#doc.location?.href ?? this.#doc.baseURI;
+        const plan: IRtAuthStartPlan = startPlan(this.#config, this.#doc.baseURI, href);
         await withinLimit(this.#keycloak.init(plan.options), plan.limitMs);
         this.#read();
     }
@@ -64,7 +64,7 @@ export class RtAuthService {
 
     /** Whether a request to the address carries the token. */
     public isRecipient(url: string): boolean {
-        return isTokenRecipient(url, this.#config.tokenRecipients, this.#document.baseURI);
+        return isTokenRecipient(url, this.#config.tokenRecipients, this.#doc.baseURI);
     }
 
     /** Sends the person to the Keycloak entry; they come back to the address, by default this page. */
@@ -74,7 +74,7 @@ export class RtAuthService {
 
     /** Ends the session in Keycloak, not only on the page. */
     public logout(): Promise<void> {
-        return this.#keycloak.logout({ redirectUri: this.#config.logoutRedirectUri ?? this.#document.baseURI });
+        return this.#keycloak.logout({ redirectUri: this.#config.logoutRedirectUri ?? this.#doc.baseURI });
     }
 
     /** The token for a request, refreshed when it expires soon; `null` when nobody is signed in. */

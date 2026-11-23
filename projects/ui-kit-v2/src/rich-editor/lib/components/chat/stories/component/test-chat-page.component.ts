@@ -1,6 +1,6 @@
 import { ConnectedPosition } from '@angular/cdk/overlay';
-import { NgTemplateOutlet } from '@angular/common';
-import { afterNextRender, ChangeDetectionStrategy, Component, Signal, viewChild } from '@angular/core';
+import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
+import { afterNextRender, inject, ChangeDetectionStrategy, Component, Signal, viewChild } from '@angular/core';
 
 import { StoryPresetsComponent } from '../../../../../../showcase/story-presets.component';
 import { RtPopoverDirective } from '../../../../../../lib/components/popover/rt-popover.directive';
@@ -127,6 +127,8 @@ function today(hours: number, minutes: number): string {
     ],
 })
 export class TestRtChatPageComponent {
+    readonly #doc: Document = inject(DOCUMENT);
+
     protected readonly chat: Signal<RtChatComponent | undefined> = viewChild(RtChatComponent);
     protected readonly quickRepliesPopover: Signal<RtPopoverDirective | undefined> = viewChild(RtPopoverDirective);
 
@@ -264,7 +266,7 @@ export class TestRtChatPageComponent {
         afterNextRender((): void => {
             if (this.editing) {
                 this.chat()?.setDraft(SCHEDULED_TEXT);
-                (document.activeElement as HTMLElement | null)?.blur();
+                (this.#doc.activeElement as HTMLElement | null)?.blur();
             }
         });
     }

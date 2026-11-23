@@ -163,7 +163,7 @@ export class RtToolbarComponent {
     readonly #asideService: RtAsideService = inject(RtAsideService);
     readonly #injector: Injector = inject(Injector);
     readonly #host: HTMLElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
     readonly #interactivity: InteractivityChecker = inject(InteractivityChecker);
     readonly #filtersActiveLabel: Signal<string> = rtKitLabel('uiFiltersActive');
 
@@ -260,7 +260,7 @@ export class RtToolbarComponent {
         }
         // Кнопка, с которой панель открыли, на широком месте уже снята, и вернуть фокус панели
         // некуда: он уходит в левую секцию полосы, куда вернулись поля отборов
-        const focusInPanel: boolean = !isNil(this.#document.activeElement?.closest('rt-toolbar-filters-aside'));
+        const focusInPanel: boolean = !isNil(this.#doc.activeElement?.closest('rt-toolbar-filters-aside'));
         this.#filtersRef.close();
         this.#filtersRef = null;
         if (focusInPanel) {

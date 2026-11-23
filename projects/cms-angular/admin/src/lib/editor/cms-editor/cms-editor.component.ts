@@ -53,7 +53,7 @@ const BEM_BLOCK: string = 'rt-cms-editor';
     },
 })
 export class CmsEditorComponent extends RtFormControlBase<string> {
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
     /** The last string given to the form: the form gives the same one back, and there is no need to read it again. */
     #emitted: string | null = null;
 
@@ -94,12 +94,12 @@ export class CmsEditorComponent extends RtFormControlBase<string> {
      * as plain text rather than being parsed into blocks a second time.
      */
     protected copy(event: ClipboardEvent): void {
-        const selection: Selection | null = this.#document.getSelection();
+        const selection: Selection | null = this.#doc.getSelection();
         if (!selection?.rangeCount || !event.clipboardData) {
             return;
         }
         event.clipboardData.setData('text/plain', selection.toString());
-        event.clipboardData.setData('text/html', copiedHtmlOf(selection.getRangeAt(0).cloneContents(), this.#document));
+        event.clipboardData.setData('text/html', copiedHtmlOf(selection.getRangeAt(0).cloneContents(), this.#doc));
         event.clipboardData.setData(EDITOR_CLIPBOARD_MARK, EDITOR_CLIPBOARD_MARK);
         event.preventDefault();
     }
