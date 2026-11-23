@@ -8,6 +8,32 @@
 # FAIL-OPEN: no network, no remote, no git — the base falls back to the main branch or to nothing,
 # and a mark that cannot be read counts as absent. Either way the set runs, never less of it.
 
+# Whether a remote branch stands on this one by the own copy `$2`. It does when the copy lies on
+# its first-parent line — it was taken from this one and went on by plain commits — or when no
+# merge of the host brought the copy in: a neighbour took this one in itself. A copy a merge of the
+# host brought in leaves it a base, the merge reached by the first parent or through a merge of a
+# session: that is the branch of an epic a request carried the copy into.
+# A branch under the head or at it is no branch standing on this one: what the head holds already
+# passed the set; nor is one at the commit of the copy: a branch pushed before its first commit
+# still lies at the tip it was taken from. The lists are held in variables and matched by `case`,
+# so a caller with `pipefail` gets the same answer.
+rt_push_base_on_copy() {
+    local ref="$1" own host="$3" line merge
+    own="$(git rev-parse --verify --quiet "$2")" || return 1
+    [ "$own" != "$(git rev-parse --verify --quiet "$ref")" ] || return 1
+    git merge-base --is-ancestor "$ref" HEAD 2>/dev/null && return 1
+    git merge-base --is-ancestor "$own" "$ref" 2>/dev/null || return 1
+    line="$(git rev-list --first-parent "$ref" --not "$own^@" 2>/dev/null)"
+    case "$line" in *"$own"*) return 0 ;; esac
+    # A merge of the host anywhere in the branch whose second side brought the copy keeps it a
+    # base: a session that synced its epic with the remote one merged the host's merge in as is.
+    for merge in $(git rev-list --merges --fixed-strings --committer="$host" "$ref" --not "$own" 2>/dev/null); do
+        git merge-base --is-ancestor "$own" "$merge^1" 2>/dev/null && continue
+        git merge-base --is-ancestor "$own" "$merge^2" 2>/dev/null && return 1
+    done
+    return 0
+}
+
 # The base the contribution is counted against. Prints `origin/<branch>` or nothing.
 #
 # The base is the remote branch the head has the fewest commits over: what the head carries past
@@ -45,32 +71,6 @@
 # the push another once a neighbour pruned the copy: a green set of half an hour was refused as
 # «No green mark». With no answer from the host the refs of the copy decide, and a line on stderr
 # says so.
-# Whether a remote branch stands on this one by the own copy `$2`. It does when the copy lies on
-# its first-parent line — it was taken from this one and went on by plain commits — or when a merge
-# not of the host brought the copy in: a neighbour took this one in itself. A copy a merge of the
-# host brought in leaves it a base: that is the branch of an epic a request carried the copy into.
-# A branch under the head or at it is no branch standing on this one: what the head holds already
-# passed the set; nor is one at the commit of the copy: a branch pushed before its first commit
-# still lies at the tip it was taken from. The lists are captured, not piped: a caller with
-# `pipefail` would read a matched `grep -q` as a miss and keep a branch above this one.
-rt_push_base_on_copy() {
-    local ref="$1" own host="$3" line merge
-    own="$(git rev-parse --verify --quiet "$2")" || return 1
-    [ "$own" != "$(git rev-parse --verify --quiet "$ref")" ] || return 1
-    git merge-base --is-ancestor "$ref" HEAD 2>/dev/null && return 1
-    git merge-base --is-ancestor "$own" "$ref" 2>/dev/null || return 1
-    line="$(git rev-list --first-parent "$ref" --not "$own^@" 2>/dev/null)"
-    case "$line" in *"$own"*) return 0 ;; esac
-    # The merge that brought the copy in: the newest on the first-parent line whose first parent
-    # does not hold the copy yet.
-    for merge in $(git rev-list --first-parent --merges "$ref" --not "$own" 2>/dev/null); do
-        git merge-base --is-ancestor "$own" "$merge^1" 2>/dev/null && continue
-        [ -z "$(git rev-list -n 1 --fixed-strings --committer="$host" "$merge^!" 2>/dev/null)" ]
-        return
-    done
-    return 1
-}
-
 rt_push_base() {
     local main="$1" branch own ref name count best best_count merge merged='' host live answered=1
     host="${RT_PUSH_HOST_COMMITTER:-GitHub <noreply@github.com>}"

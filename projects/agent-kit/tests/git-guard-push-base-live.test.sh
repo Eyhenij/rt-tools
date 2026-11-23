@@ -379,6 +379,56 @@ copy_git reset -q --hard origin/RT-60-epic 2>/dev/null
 report "SC-AK-1340 — вершина на эпике: база — ветка эпика" "$(push_base "$COPY")" origin/RT-60-epic
 rm -rf "$COPY" "$COPY_REMOTE"
 
+# Сессия эпика свела свою ветку с серверной: слияние хоста, принёсшее копию, вошло в эпик через
+# слияние сессии, потом хост влил ещё заявку. Эпик по-прежнему база. Без второй заявки эпик ушёл
+# вперёд только слиянием сессии и кандидатом не бывает — это ограничение описания.
+sync_git() {
+    git -C "$SYNC" -c user.name=probe -c user.email=probe@example.invalid -c commit.gpgsign=false "$@"
+}
+SYNC_REMOTE="$(bare_remote)" || exit 1
+SYNC="$(fixture RT-30-epic)"
+sync_git remote add origin "$SYNC_REMOTE"
+fixture_commit "$SYNC" epic.txt эпик 'feat: ветка эпика'
+sync_git push -q origin main RT-30-epic 2>/dev/null
+sync_git checkout -q -b RT-31-task RT-30-epic 2>/dev/null
+fixture_commit "$SYNC" task.txt задача 'feat: задача'
+sync_git push -q origin RT-31-task 2>/dev/null
+sync_git checkout -q -b RT-32-other origin/RT-31-task 2>/dev/null
+fixture_commit "$SYNC" other.txt чужая 'feat: чужая заявка от копии задачи'
+sync_git push -q origin RT-32-other 2>/dev/null
+sync_git checkout -q -b host-side origin/RT-30-epic 2>/dev/null
+GIT_COMMITTER_NAME=GitHub GIT_COMMITTER_EMAIL=noreply@github.com \
+    sync_git merge -q --no-ff -m 'feat: заявка 32 влита' origin/RT-32-other 2>/dev/null
+sync_git push -q origin host-side:RT-30-epic 2>/dev/null
+sync_git checkout -q RT-30-epic 2>/dev/null
+fixture_commit "$SYNC" plan.txt план 'docs: отметка плана эпика'
+sync_git merge -q -m "Merge remote-tracking branch 'origin/RT-30-epic' into RT-30-epic" origin/RT-30-epic 2>/dev/null
+sync_git push -q origin RT-30-epic 2>/dev/null
+sync_git checkout -q -b RT-33-side origin/RT-30-epic 2>/dev/null
+fixture_commit "$SYNC" side.txt сосед 'feat: соседняя задача'
+sync_git push -q origin RT-33-side 2>/dev/null
+sync_git checkout -q RT-30-epic 2>/dev/null
+GIT_COMMITTER_NAME=GitHub GIT_COMMITTER_EMAIL=noreply@github.com \
+    sync_git merge -q --no-ff -m 'feat: заявка 33 влита' RT-33-side 2>/dev/null
+sync_git push -q origin RT-30-epic 2>/dev/null
+sync_git checkout -q RT-31-task 2>/dev/null
+fixture_commit "$SYNC" task2.txt правка 'feat: правка задачи'
+report "SC-AK-1340 — эпик принял копию синхронизацией сессии: база — ветка эпика" \
+    "$(push_base "$SYNC")" origin/RT-30-epic
+# Эпик без копии этой ветки, ушедший вперёд слиянием хоста, судится как прежде: он база.
+sync_git checkout -q -b RT-34-fresh origin/RT-30-epic 2>/dev/null
+fixture_commit "$SYNC" fresh.txt свежая 'feat: задача с вершины эпика'
+sync_git push -q origin RT-34-fresh 2>/dev/null
+sync_git checkout -q RT-30-epic 2>/dev/null
+GIT_COMMITTER_NAME=GitHub GIT_COMMITTER_EMAIL=noreply@github.com \
+    sync_git merge -q --no-ff -m 'feat: заявка 31 влита' RT-31-task 2>/dev/null
+sync_git push -q origin RT-30-epic 2>/dev/null
+sync_git checkout -q RT-34-fresh 2>/dev/null
+fixture_commit "$SYNC" fresh2.txt правка 'feat: правка свежей задачи'
+report "SC-AK-1340 — эпик без копии ушёл вперёд слиянием хоста: база — ветка эпика" \
+    "$(push_base "$SYNC")" origin/RT-30-epic
+rm -rf "$SYNC" "$SYNC_REMOTE"
+
 # Ветка, взятая от этой обычными коммитами, несёт копию на своей линии первых родителей: она не
 # база, и после того, как хост влил в неё ветку выше по стопке, — тоже.
 above_git() {
