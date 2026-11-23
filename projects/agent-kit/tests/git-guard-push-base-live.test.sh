@@ -307,4 +307,7 @@ gate "SC-AK-1852 — база сдвинулась во время шага: о�
 report "SC-AK-1852 — тяжёлый шаг при сдвиге базы прогнан один раз" "$(grep -c heavy "$MOVE_RUNS")" 1
 rm -rf "$MOVE" "$MOVE_REMOTE" "$MOVE_RUNS"
 
+# --- SC-AK-1340. Ветка сервера несёт свою копию этой ветки ----------------------------------------
+. "$(dirname "${BASH_SOURCE[0]}")/git-guard-push-base-copy-lib.sh"
+
 suite_result "база набора перед пушем"

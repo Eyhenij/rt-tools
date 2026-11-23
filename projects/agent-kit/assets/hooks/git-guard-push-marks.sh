@@ -8,6 +8,35 @@
 # FAIL-OPEN: no network, no remote, no git — the base falls back to the main branch or to nothing,
 # and a mark that cannot be read counts as absent. Either way the set runs, never less of it.
 
+# Whether a remote branch stands on this one by the own copy `$2`. It does when the copy lies on
+# its first-parent line — it was taken from this one and went on by plain commits — or when no
+# merge of the host brought the copy in: a neighbour took this one in itself. A copy a merge of the
+# host brought in leaves it a base, the merge reached by the first parent or through a merge of a
+# session: that is the branch of an epic a request carried the copy into.
+# A branch under the head or at it is no branch standing on this one: what the head holds already
+# passed the set; nor is one at the commit of the copy: a branch pushed before its first commit
+# still lies at the tip it was taken from. The lists are held in variables and matched by `case`,
+# so a caller with `pipefail` gets the same answer.
+rt_push_base_on_copy() {
+    local ref="$1" own host="$3" line merge parent
+    own="$(git rev-parse --verify --quiet "$2")" || return 1
+    [ "$own" != "$(git rev-parse --verify --quiet "$ref")" ] || return 1
+    git merge-base --is-ancestor "$ref" HEAD 2>/dev/null && return 1
+    git merge-base --is-ancestor "$own" "$ref" 2>/dev/null || return 1
+    line="$(git rev-list --first-parent "$ref" --not "$own^@" 2>/dev/null)"
+    case "$line" in *"$own"*) return 0 ;; esac
+    # A merge of the host anywhere in the branch whose second side brought the copy keeps it a
+    # base: a session that synced its epic with the remote one merged the host's merge in as is.
+    for merge in $(git rev-list --merges --fixed-strings --committer="$host" "$ref" --not "$own" 2>/dev/null); do
+        git merge-base --is-ancestor "$own" "$merge^1" 2>/dev/null && continue
+        line="$(git rev-parse "$merge^@" 2>/dev/null)"
+        for parent in ${line#*$'\n'}; do
+            git merge-base --is-ancestor "$own" "$parent" 2>/dev/null && return 1
+        done
+    done
+    return 0
+}
+
 # The base the contribution is counted against. Prints `origin/<branch>` or nothing.
 #
 # The base is the remote branch the head has the fewest commits over: what the head carries past
@@ -26,7 +55,8 @@
 #
 # Three kinds of branches are no base, because they are this branch's own content:
 #   - its own remote copy — the set answers for the whole contribution, not for the last commit;
-#   - a branch that stands on that copy — it carries this branch inside itself;
+#   - a branch that stands on that copy — it holds the copy on its first-parent line or took it in
+#     with no merge of the host bringing it, and lies neither under the head nor at it;
 #   - a branch the host merged into this one by a request. Without that the branch of an epic was
 #     counted against its last merged task, and nothing checked the epic against the main branch
 #     before the push. The host's merge is told by the committer of the commit: the host signs
@@ -83,10 +113,7 @@ $(git for-each-ref --merged "$merge^2" --no-merged "$merge^1" --format='%(refnam
         printf '%s\n' "$merged" | grep -qxF -- "$ref" && continue
         # A branch the host no longer holds is no base: its ref outlives it in the copy.
         [ "$answered" = 0 ] || printf '%s\n' "$live" | grep -qxF -- "refs/heads/$name" || continue
-        # A branch that carries the own copy stands on this one — unless the two are one commit:
-        # a branch pushed before its first commit still lies at the tip it was taken from.
-        [ -n "$own" ] && [ "$(git rev-parse "$own")" != "$(git rev-parse "$ref")" ] &&
-            git merge-base --is-ancestor "$own" "$ref" 2>/dev/null && continue
+        [ -n "$own" ] && rt_push_base_on_copy "$ref" "$own" "$host" && continue
         if ! git merge-base --is-ancestor "$ref" HEAD 2>/dev/null; then
             [ -n "$(git rev-list -n 1 --first-parent --merges --fixed-strings --committer="$host" \
                 "HEAD..$ref" 2>/dev/null)" ] || continue
