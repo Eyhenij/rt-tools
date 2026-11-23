@@ -22,6 +22,7 @@ import {
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { isNil } from '@rt-tools/utils';
 
 import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
 import { NotificationBus } from '@rt-tools/ui-kit-v2/core';
@@ -221,7 +222,7 @@ export class RtWorkspaceDetailsComponent {
         });
 
         effect((): void => {
-            if (this.transition()?.success != null) {
+            if (!isNil(this.transition()?.success)) {
                 this.transitionForm.reset();
             }
         });

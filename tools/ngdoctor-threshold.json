@@ -1,5 +1,5 @@
 {
-  "score": 84.25,
+  "score": 87.25,
   "rules": {
     "angular-doctor/component-file-set-mismatch": 8,
     "angular-doctor/file-hyphen-case": 23,
@@ -13,10 +13,6 @@
     "angular-doctor/prefer-signal-forms": 97,
     "angular-doctor/project-layout": 4,
     "angular-doctor/security-bypass": 1,
-    "oxlint/eqeqeq": 11,
-    "oxlint/no-extra-boolean-cast": 2,
-    "oxlint/no-thenable": 7,
-    "oxlint/no-useless-spread": 1,
     "template-eslint/button-has-type": 74,
     "template-eslint/click-events-have-key-events": 7
   }
