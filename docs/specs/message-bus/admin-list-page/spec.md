@@ -111,6 +111,8 @@ list:
 - **The page shows the state of the reading that the host named.** The busyness, the refusal, the number
   of the page and the total number of the records come from it, they are not put together by the page
   anew: two sides counting one and the same thing apart diverge at the very first refusal.
+- **The table of a list page is given as a template, `adminListPageContent`.** Under a refusal the
+  table is not built at all: its cells do not ask for what the failed reading never brought.
 - **The heading accepts a hint, and a section without a hint shows the name alone.** An empty place left
   under the hint shifts the heading at the sections that have none.
 - **The anchors of the elements of the common page are put together from the prefix the section names.**

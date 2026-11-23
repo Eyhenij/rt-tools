@@ -107,3 +107,9 @@ Given a person opened a section and the records lie in it
 When they switched the language in the popup of the profile
 Then the name of the section, the labels of the columns and the word of the state in a row become
 other, and the page is not reloaded
+
+### SC-MB-456 — a section whose reading failed builds no table
+
+Given a section whose reading failed, its table given by the template `adminListPageContent`
+When the list page is drawn
+Then the refusal is shown and the table of the section is not built

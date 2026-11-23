@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 import { AdminListStoreBase } from '@rt/message-bus-admin/common/core/data-access';
 import { IPostmortem, PostmortemShortMapper, POSTMORTEMS_PATH } from '@rt/message-bus-admin/postmortems/util';
 
@@ -11,7 +11,7 @@ import { IPostmortem, PostmortemShortMapper, POSTMORTEMS_PATH } from '@rt/messag
  * Один экземпляр на приложение: список делят экран и панель подробностей, и закрытая панель
  * возвращает тот же список, а не перечитывает его заново.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class PostmortemsStore extends AdminListStoreBase<IPostmortem.Short.State, IPostmortem.Short.Api> {
     readonly #mapper: PostmortemShortMapper = new PostmortemShortMapper();
 

@@ -15,7 +15,7 @@ import { FormsModule } from '@angular/forms';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { CMS_LABELS, ITagNode, MAX_TAG_DEPTH, TCmsLabelMap } from '@rt-tools/cms-angular';
-import { RtCheckboxComponent, RtMenuComponent, RtMenuItemComponent } from '@rt-tools/ui-kit-v2';
+import { RtCheckboxComponent, RtMenuComponent, RtMenuContentDirective, RtMenuItemComponent } from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'rt-cms-tag-tree';
 
@@ -44,6 +44,7 @@ export interface ITagPick {
         ElemDirective,
         RtCheckboxComponent,
         RtMenuComponent,
+        RtMenuContentDirective,
         RtMenuItemComponent,
     ],
     host: {

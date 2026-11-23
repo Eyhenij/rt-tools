@@ -93,6 +93,33 @@ test.describe('the correspondence of the records screen', () => {
         }
     });
 
+    test('SC-AUTH-120 — the sprite symbols of the records screen carry SVG shapes and nothing that runs', async ({ page }) => {
+        await signIn(page, 'reader');
+        await expect(page.getByTestId('records-chat')).toContainText('Can I check out at two?');
+        // The symbols arrive by request after the screen is drawn: the two buttons of the screen
+        // bring at least two of them.
+        const symbols: () => Promise<{ count: number; shapes: number; foreign: number; scripted: number }> = async () =>
+            page.evaluate(() => {
+                const sprite: Element | null = document.getElementById('rt-icon-sprite');
+                const all: Element[] = Array.from(sprite?.querySelectorAll('symbol *') ?? []);
+
+                return {
+                    count: sprite?.querySelectorAll('symbol').length ?? 0,
+                    shapes: all.filter((node: Element): boolean => ['path', 'circle', 'rect', 'polygon'].includes(node.localName)).length,
+                    foreign: all.filter((node: Element): boolean => node.namespaceURI !== 'http://www.w3.org/2000/svg').length,
+                    scripted: all.filter((node: Element): boolean =>
+                        Array.from(node.attributes).some((attribute: Attr): boolean => attribute.name.startsWith('on'))
+                    ).length,
+                };
+            });
+
+        await expect.poll(async (): Promise<number> => (await symbols()).count).toBeGreaterThanOrEqual(2);
+        const drawn: { count: number; shapes: number; foreign: number; scripted: number } = await symbols();
+
+        expect(drawn.shapes).toBeGreaterThan(0);
+        expect([drawn.foreign, drawn.scripted]).toEqual([0, 0]);
+    });
+
     test('SC-AUTH-107 — the send button of the correspondence is named by the kit dictionary', async ({ page }) => {
         await signIn(page, 'reader');
         const send: Locator = page.getByTestId('records-chat').getByRole('button', { name: 'Send message' });

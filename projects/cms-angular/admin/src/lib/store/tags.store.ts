@@ -1,4 +1,4 @@
-import { DestroyRef, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { DestroyRef, inject, Signal, signal, WritableSignal, Service } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { catchError, concatMap, EMPTY, Observable, of, Subject, switchMap, tap } from 'rxjs';
@@ -17,7 +17,7 @@ export interface ITagChange {
 }
 
 /** The tag tree. After an edit the tree is read again whole: the tag may have moved in it. */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class TagsStore {
     readonly #api: TagsApiService = inject(TagsApiService);
     readonly #notifications: NotificationBus = inject(NotificationBus);

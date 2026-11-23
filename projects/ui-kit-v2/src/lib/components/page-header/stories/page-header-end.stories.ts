@@ -4,7 +4,7 @@ import { storyWidthAtMost } from '../../../../showcase';
 import { TestRtPageHeaderEndComponent } from './component/test-page-header-end.component';
 
 /**
- * Правая группа шапки: кнопки слота `[rtHeaderBell]` и профиль стоят вместе у правого края через 8.
+ * Правая группа шапки: кнопки шаблонов `rtHeaderBell` и профиль стоят вместе у правого края через 8.
  * Кадр снимается на ширинах макета: 1440, 1080 — ряд ушёл в бургер, 768 и 375 — профиль одним
  * значком `user`.
  */

@@ -4,6 +4,7 @@ import { StoryPresetsComponent } from '../../../../../showcase/story-presets.com
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { IStoryState, STORY_CONTROL_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
+import { RtBreadcrumbsContentDirective } from '../../rt-breadcrumbs-content.directive';
 import { RtBreadcrumbsComponent } from '../../rt-breadcrumbs.component';
 import { IRtBreadcrumbs } from '../../rt-breadcrumbs.model';
 import { STORY_BREADCRUMBS_PATH, STORY_BREADCRUMBS_RECORD, STORY_BREADCRUMBS_SHORT } from './story-breadcrumbs';
@@ -33,6 +34,7 @@ interface IBreadcrumbsCase {
     imports: [
         // components
         RtBreadcrumbsComponent,
+        RtBreadcrumbsContentDirective,
         TestRtBreadcrumbsNarrowCellComponent,
 
         // showcase

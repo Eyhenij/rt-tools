@@ -66,8 +66,13 @@
                         (clicked)="onToggleFavorite(row, $event)" />
                 }
 
-                <!-- Действия, которые строке передаёт владелец: блок избранного кладёт сюда ручку. -->
-                <ng-content select="[rtSideMenuSubItemAction]" />
+                <!-- Действия, которые строке передаёт владелец: блок избранного кладёт сюда ручку. Только у
+                     строки глубины ноль: строки пунктов папки действий владельца не несут. -->
+                @if (depth === 0) {
+                    @for (action of actions(); track action) {
+                        <ng-container [ngTemplateOutlet]="action" />
+                    }
+                }
 
                 <!-- Кнопка потребителя видна всегда и стоит последней: кнопки избранного встают перед ней. -->
                 @if (row.iconButton?.icon; as buttonIcon) {
@@ -83,13 +88,15 @@
                         [iconFill]="menuRef.subItemIconFill()"
                         [ariaLabel]="row.name ?? ''"
                         (clicked)="onClickSubMenuAdditional(row, $event)">
-                        @if (buttonOwnTpl) {
-                            <span rtElem="own-icon" qa-dataid="side-menu-own-button-icon" aria-hidden="true">
-                                <ng-container
-                                    [ngTemplateOutlet]="buttonOwnTpl"
-                                    [ngTemplateOutletContext]="{ $implicit: row, icon: buttonIcon, slot: 'iconButton' }" />
-                            </span>
-                        }
+                        <ng-template rtIconButtonContent>
+                            @if (buttonOwnTpl) {
+                                <span rtElem="own-icon" qa-dataid="side-menu-own-button-icon" aria-hidden="true">
+                                    <ng-container
+                                        [ngTemplateOutlet]="buttonOwnTpl"
+                                        [ngTemplateOutletContext]="{ $implicit: row, icon: buttonIcon, slot: 'iconButton' }" />
+                                </span>
+                            }
+                        </ng-template>
                     </rt-icon-button>
                 }
             </a>

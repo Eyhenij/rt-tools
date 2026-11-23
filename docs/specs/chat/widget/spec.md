@@ -47,6 +47,10 @@ mark "Закрыто"; under the name of the operator stands "Служба по�
 - **The widget draws itself in a shadow tree of its own.** It stands in a foreign page, and the
   styles of that page must not reach it any more than its own reach the page: a widget repainted
   by a neighbour reads as broken, and the owner of the page has nothing to fix it with.
+- **What people and the service write reaches the page as text, never as markup.** A remark, a
+  name, a greeting and a word of a refusal are foreign input on a foreign page: drawn as markup, a
+  remark with a tag would run in the page of the consumer. The widget builds its nodes one by one,
+  and such text lies in them as text.
 - **The widget carries no kit of the tree.** The kit is an application of its own with a framework
   behind it, and it would travel into every page of every consumer. The widget is written by its
   own code, and what it shares with the tree is the shape of the answers, not the components.
@@ -252,3 +256,5 @@ One page belongs to one site. A visitor writing from two sites has two signs and
   task RT-2367; scenarios SC-CH-107…SC-CH-111.
 - 2026-09-30 — the closed talk and the next remark after it by the task RT-2364; scenarios
   SC-CH-112 and SC-CH-113.
+- 2026-11-22 — the widget builds its markup from nodes rather than from a string, by the task RT-3478
+  of the epic RT-3476; scenario SC-CH-118.

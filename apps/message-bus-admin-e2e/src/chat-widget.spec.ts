@@ -101,6 +101,19 @@ test.describe('виджет посетителя', () => {
         await expect(qa(page, 'widget-text')).toHaveValue('');
     });
 
+    test('SC-CH-118 — реплика с разметкой встаёт в ленту текстом и ничего не исполняет', async ({ page }: { page: Page }) => {
+        const planted: string = '<img src="x" onerror="window.planted=1"><b>жирно</b>';
+        await page.goto(widgetPage(CHAT.widget.key));
+        await unfold(page);
+
+        await say(page, planted);
+
+        await expect(qa(page, 'widget-message')).toHaveCount(1);
+        expect(await feedTexts(page)).toEqual([planted]);
+        await expect(qa(page, 'widget-message').locator('img, b')).toHaveCount(0);
+        expect(await page.evaluate((): unknown => Reflect.get(window, 'planted'))).toBeUndefined();
+    });
+
     test('SC-CH-52 — вернувшийся посетитель попадает в свою переписку', async ({ page }: { page: Page }) => {
         await page.goto(widgetPage(CHAT.widget.key));
         await unfold(page);

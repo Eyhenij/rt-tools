@@ -6,6 +6,7 @@ or the code holds what the spec is silent about.
 
 - **The widget is put in by one script, and the page names the site by its key.** — `apps/chat-widget/src/main.ts:WIDGET_TAG`
 - **The widget draws itself in a shadow tree of its own.** — `apps/chat-widget/src/lib/chat-widget.element.ts:ChatWidgetElement`
+- **What people and the service write reaches the page as text, never as markup.** — `apps/chat-widget/src/lib/chat-widget.view.ts:node` — every part of the widget is built by it, text goes in as a text node. Scenario `SC-CH-118`
 - **The widget carries no kit of the tree.** — `eslint/boundaries/domains/chat-widget.config.mjs:chatWidgetBoundaries`
 - **A page whose address is not in the list of the site gets no chat.** — `libs/message-bus-api/chat/util/src/lib/chat-origin.logic.ts:originAllowed`
 - **Before the first remark the widget shows the greeting of the site and the hours of answer.** — `apps/chat-widget/src/lib/chat-widget.api.ts:askSiteLook`
@@ -18,9 +19,9 @@ or the code holds what the spec is silent about.
 - **An answer of the operator arrives in the open widget without a reload.** — `apps/chat-widget/src/lib/chat-widget.element.ts:#listen`
 - **Outside the hours of answer the remark is taken in all the same, and the widget says when the answer comes.** — `libs/message-bus-api/chat/util/src/lib/chat-hours.logic.ts:chatAnswersAt`
 - **On a narrow screen the widget takes the whole screen, on a wide one it stands in the corner.** — `apps/chat-widget/src/lib/chat-widget.styles.ts:WIDGET_STYLES`
-- **The widget is folded into a bubble and unfolded by a press.** — `apps/chat-widget/src/lib/chat-widget.element.ts:#bubble`
+- **The widget is folded into a bubble and unfolded by a press.** — `apps/chat-widget/src/lib/chat-widget.view.ts:bubble`
 - **A remark of any length keeps the thread within its width.** — `apps/chat-widget/src/lib/chat-widget.styles.ts:WIDGET_STYLES`
-- **The folded widget is a round button with an icon, and the open one is a window of 380 px with a head of the accent colour.** — `apps/chat-widget/src/lib/chat-widget.element.ts:#bubble` — the head is drawn by `titleHead` of `chat-widget.view.ts`, the sizes and colours stand in `WIDGET_STYLES`. Scenario `SC-CH-99`
+- **The folded widget is a round button with an icon, and the open one is a window of 380 px with a head of the accent colour.** — `apps/chat-widget/src/lib/chat-widget.view.ts:bubble` — the head is drawn by `titleHead` of `chat-widget.view.ts`, the sizes and colours stand in `WIDGET_STYLES`. Scenario `SC-CH-99`
 - **A row of the list names the operator, the last remark, its time, the unread dot and the closed mark.** — `apps/chat-widget/src/lib/chat-widget.view.ts:talksList` — the day by `widgetDayText`. Scenario `SC-CH-107`
 - **The head of a talk names the operator who answered last.** — `apps/chat-widget/src/lib/chat-widget.view.ts:talkHead` — the name by `widgetLastAuthor`, the circle by `widgetInitials`. Scenario `SC-CH-111`
 - **The bubble of an answer names the first word of the operator's name.** — `apps/chat-widget/src/lib/chat-widget.view.ts:remarks` — the word by `widgetFirstName`. Scenario `SC-CH-111`

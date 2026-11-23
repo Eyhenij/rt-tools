@@ -2,7 +2,7 @@ import { FocusTrap, FocusTrapFactory } from '@angular/cdk/a11y';
 import { ComponentType, Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { DOCUMENT } from '@angular/common';
-import { afterNextRender, inject, Injectable, Injector, Signal } from '@angular/core';
+import { afterNextRender, inject, Injector, Signal, Service } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { EMPTY, map, merge, mergeMap, Observable, Subject, take, takeUntil } from 'rxjs';
@@ -120,11 +120,11 @@ interface IRtDialogOpenContext {
  * }
  * \`\`\`
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class RtDialogService {
     readonly #overlay: Overlay = inject(Overlay);
     readonly #injector: Injector = inject(Injector);
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
     readonly #focusTrapFactory: FocusTrapFactory = inject(FocusTrapFactory);
 
     readonly #openSource: Subject<IRtDialogOpenContext> = new Subject<IRtDialogOpenContext>();
@@ -190,11 +190,11 @@ export class RtDialogService {
             scrollStrategy: this.#overlay.scrollStrategies.block(),
             hasBackdrop: true,
             backdropClass: config?.backdropClass ?? 'rt-dialog-backdrop',
-            panelClass: [config?.panelClass ?? 'rt-dialog-overlay', materialPresetClassesOfFocus(this.#document)].flat(),
+            panelClass: [config?.panelClass ?? 'rt-dialog-overlay', materialPresetClassesOfFocus(this.#doc)].flat(),
             disposeOnNavigation: true,
         });
         // До attach: содержимое диалога может забрать фокус, и кусок темы у кнопки будет потерян.
-        carryThemeScopeOfFocus(overlayRef.overlayElement, this.#document);
+        carryThemeScopeOfFocus(overlayRef.overlayElement, this.#doc);
 
         const dialogRef: RtDialogRef<TResult> = new RtDialogRef<TResult>(overlayRef);
         const focus: IRtDialogFocusState = {
@@ -275,7 +275,7 @@ export class RtDialogService {
     }
 
     #focusedElement(): HTMLElement | null {
-        const active: Element | null = this.#document.activeElement;
-        return active instanceof HTMLElement && active !== this.#document.body ? active : null;
+        const active: Element | null = this.#doc.activeElement;
+        return active instanceof HTMLElement && active !== this.#doc.body ? active : null;
     }
 }

@@ -216,4 +216,66 @@ describe('RtWorkspaceDetailsComponent', (): void => {
             expect(emitted).toEqual([]);
         });
     });
+
+    describe('правка агента', (): void => {
+        const AGENT_ROWS: ReadonlyArray<IRtWorkspaceDetails.Row> = [{ label: 'Агент', value: 'Петров', agent: true }];
+
+        function agentEdit(currentAgentId: number): IRtWorkspaceDetails.AgentEdit {
+            return {
+                currentLabel: 'Петров',
+                currentAgentId,
+                options: [
+                    { value: 1, label: 'Петров' },
+                    { value: 2, label: 'Сидоров' },
+                ],
+                canEdit: true,
+                editTooltip: 'Сменить агента',
+                cannotEditTooltip: 'Нельзя',
+                loading: false,
+                confirmText: 'Сменить?',
+            };
+        }
+
+        function startEdit(fixture: ComponentFixture<RtWorkspaceDetailsComponent>): void {
+            el(fixture, '[qa-dataid="workspace-details-agent-edit"] [qa-dataid="icon-button-control"]')?.nativeElement.click();
+            fixture.detectChanges();
+        }
+
+        it('смена записи отменяет начатую правку агента', (): void => {
+            const fixture: ComponentFixture<RtWorkspaceDetailsComponent> = setup({
+                rows: AGENT_ROWS,
+                entityId: 1,
+                agentEdit: agentEdit(1),
+            });
+            startEdit(fixture);
+            const editing: boolean = qa(fixture, 'workspace-details-agent-select') !== null;
+
+            fixture.componentRef.setInput('entityId', 2);
+            fixture.detectChanges();
+
+            expect([editing, qa(fixture, 'workspace-details-agent-select'), qa(fixture, 'workspace-details-agent-name') !== null]).toEqual([
+                true,
+                null,
+                true,
+            ]);
+        });
+
+        it('смена текущего агента снаружи отменяет правку, а тот же агент её не трогает', (): void => {
+            const fixture: ComponentFixture<RtWorkspaceDetailsComponent> = setup({
+                rows: AGENT_ROWS,
+                entityId: 1,
+                agentEdit: agentEdit(1),
+            });
+            startEdit(fixture);
+
+            fixture.componentRef.setInput('agentEdit', { ...agentEdit(1), loading: false });
+            fixture.detectChanges();
+            const keptOnSameAgent: boolean = qa(fixture, 'workspace-details-agent-select') !== null;
+
+            fixture.componentRef.setInput('agentEdit', agentEdit(2));
+            fixture.detectChanges();
+
+            expect([keptOnSameAgent, qa(fixture, 'workspace-details-agent-select')]).toEqual([true, null]);
+        });
+    });
 });

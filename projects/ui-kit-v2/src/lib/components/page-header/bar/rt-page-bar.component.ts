@@ -33,7 +33,7 @@ import { BreakpointsService, RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-
 import { RtBottomSheetComponent } from '@rt-tools/ui-kit-v2/bottom-sheet';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
-import { RtMenuComponent, RtMenuItemComponent } from '@rt-tools/ui-kit-v2/menu';
+import { RtMenuComponent, RtMenuContentDirective, RtMenuItemComponent } from '@rt-tools/ui-kit-v2/menu';
 import { RT_POPOVER_SHEET, RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { RtPageBarFilterDirective, RtPageBarSearchDirective } from './rt-page-bar-slots.directive';
 import { actionsWidthOf, pageBarFit, IRtPageBarFit } from './rt-page-bar.logic';
@@ -58,6 +58,7 @@ const BEM_BLOCK: string = 'rt-page-bar';
         RtButtonDirective,
         RtIconButtonComponent,
         RtMenuComponent,
+        RtMenuContentDirective,
         RtMenuItemComponent,
         RtPopoverDirective,
         BlockDirective,

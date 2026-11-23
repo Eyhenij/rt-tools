@@ -4,7 +4,9 @@
 
 ```html
 <rt-file-list>
-    <rt-file-card *ngFor="…" … />
+    @for (file of files; track file.id) {
+        <rt-file-card … />
+    }
 </rt-file-list>
 ```
 

@@ -13,6 +13,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@a
 import { AdminListScreenBase } from '@rt/message-bus-admin/common/core/feature';
 import {
     AdminListPageComponent,
+    AdminListPageContentDirective,
     AdminListToolbarLeftDirective,
     AdminMomentPipe,
     AdminStateFilterComponent,
@@ -28,7 +29,13 @@ import {
 } from '@rt/message-bus-admin/common/core/util';
 import { ProposalsStore } from '@rt/message-bus-admin/proposals/data-access';
 import { IProposal, PROPOSALS_COLUMNS, PROPOSALS_TABLE_ID } from '@rt/message-bus-admin/proposals/util';
-import { IRtTable, RtTableComponent, RtTableRowDirective, RtTableSortHeaderComponent } from '@rt-tools/ui-kit-v2';
+import {
+    IRtTable,
+    RtTableComponent,
+    RtTableRowDirective,
+    RtTableSortHeaderComponent,
+    RtTableSortHeaderContentDirective,
+} from '@rt-tools/ui-kit-v2';
 import { ECargoKind, PROPOSAL_SORTABLE } from '@rt/message-bus-common';
 
 const BEM_BLOCK: string = 'admin-proposals-list';
@@ -71,6 +78,7 @@ const BEM_BLOCK: string = 'admin-proposals-list';
 
         // components
         AdminListPageComponent,
+        AdminListPageContentDirective,
         AdminListToolbarLeftDirective,
         AdminStateFilterComponent,
         AdminTreeFilterComponent,
@@ -78,6 +86,7 @@ const BEM_BLOCK: string = 'admin-proposals-list';
         RtTableComponent,
         RtTableRowDirective,
         RtTableSortHeaderComponent,
+        RtTableSortHeaderContentDirective,
 
         // pipes
         AdminMomentPipe,

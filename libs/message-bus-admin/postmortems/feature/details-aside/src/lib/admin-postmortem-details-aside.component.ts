@@ -5,6 +5,7 @@ import { AdminPostmortemViewComponent } from '@rt/message-bus-admin/postmortems/
 import { IPostmortem } from '@rt/message-bus-admin/postmortems/util';
 import {
     RtAsideComponent,
+    RtAsideContentDirective,
     RtAsideFooterComponent,
     RtAsideHeaderComponent,
     RtButtonDirective,
@@ -36,6 +37,7 @@ const BEM_BLOCK: string = 'admin-postmortem-details-aside';
         // components
         AdminPostmortemViewComponent,
         RtAsideComponent,
+        RtAsideContentDirective,
         RtAsideFooterComponent,
         RtAsideHeaderComponent,
         RtButtonDirective,

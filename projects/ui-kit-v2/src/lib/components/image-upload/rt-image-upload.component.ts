@@ -79,7 +79,7 @@ const BEM_BLOCK: string = 'rt-image-upload';
 export class RtImageUploadComponent {
     readonly #window: Window & typeof globalThis = inject(WINDOW) as Window & typeof globalThis;
 
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
 
     /** Адрес, сделанный загрузчиком под применённый файл: его и только его он отпускает */
     #ownUrl: string | null = null;
@@ -266,10 +266,10 @@ export class RtImageUploadComponent {
         if (url === null) {
             return;
         }
-        const link: HTMLAnchorElement = this.#document.createElement('a');
+        const link: HTMLAnchorElement = this.#doc.createElement('a');
         link.href = url;
         link.download = this.fileName();
-        this.#document.body.appendChild(link);
+        this.#doc.body.appendChild(link);
         link.click();
         link.remove();
         this.downloaded.emit();

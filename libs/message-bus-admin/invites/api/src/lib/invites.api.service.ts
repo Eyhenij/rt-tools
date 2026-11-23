@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { asReadFault, asSpokenFault, READ_TIMEOUT_MS } from '@rt/message-bus-admin/common/core/api';
 import { INVITES_PATH } from '@rt/message-bus-admin/invites/util';
 import { ITreeInviteIssued } from '@rt/message-bus-common';
@@ -16,7 +16,7 @@ import { catchError, Observable, timeout } from 'rxjs';
  * ожидание. `withCredentials` обязателен: на своей машине админка поднимается своим портом, и
  * без него браузер не пошлёт куку приёмнику вовсе.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class InvitesApiService {
     readonly #http: HttpClient = inject(HttpClient);
 

@@ -8,11 +8,13 @@
         [title]="title()"
         (dismiss)="onClose()" />
 
-    @if (record() !== null || reading()) {
-        <admin-month-record-view [entity]="record()" [reading]="reading()" />
-    } @else if (missingText(); as reason) {
-        <rt-empty-state qa-dataid="month-record-details-missing" icon="ico-warning" [title]="reason" />
-    }
+    <ng-template rtAsideContent>
+        @if (record() !== null || reading()) {
+            <admin-month-record-view [entity]="record()" [reading]="reading()" />
+        } @else if (missingText(); as reason) {
+            <rt-empty-state qa-dataid="month-record-details-missing" icon="ico-warning" [title]="reason" />
+        }
+    </ng-template>
 
     <rt-aside-footer>
         <button

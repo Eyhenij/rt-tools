@@ -1,4 +1,4 @@
-import { Injectable, StateKey, TransferState, inject, makeStateKey } from '@angular/core';
+import { StateKey, TransferState, inject, makeStateKey, Service } from '@angular/core';
 
 import { Client, createClient } from '@connectrpc/connect';
 
@@ -20,7 +20,7 @@ export interface ICmsStoredPage {
  * flicker the content when the page comes alive. The CMS server did not answer — the list is empty,
  * and a page counts as missing.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class SitePagesApiService {
     readonly #client: Client<typeof CmsPublicService> = createClient(CmsPublicService, inject(CMS_TRANSPORT));
     readonly #site: ISiteAddress = inject(CMS_SITE_ADDRESS);

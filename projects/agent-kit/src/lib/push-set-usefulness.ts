@@ -20,7 +20,7 @@ import { dayBefore } from './observations.js';
 import { callProfile, shellPath } from './push-gate.js';
 
 /** Отметка предмета в строке запуска. */
-export enum ESubjectMark {
+enum ESubjectMark {
     Touched = 'touched',
     Idle = 'idle',
     Unknown = 'unknown',
@@ -157,7 +157,7 @@ export function usefulnessOf(
 }
 
 /** Две суммы одной строки: под какой проверка пишется сейчас и под какой писалась до этой работы. */
-export interface ICheckSums {
+interface ICheckSums {
     /** Сумма команды без базы — `rt_check_id` хука. */
     readonly id: string;
     /** Сумма команды целиком, с базой внутри: так писала строка из четырёх полей. */

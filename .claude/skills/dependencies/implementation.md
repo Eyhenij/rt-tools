@@ -20,6 +20,7 @@ storage client and its adapter. The differences from the rule grow out of that.
 
 - **the tool dependencies** — `package.json`, `devDependencies`
 - **the peer dependencies of a published package** — `projects/<package>/package.json`
+- **the development copy of an optional peer only that package imports** — `projects/<package>/package.json`, `devDependencies`, by an exact number: the d3 packages of the kit chart and their types. Declared there, knip sees the import and the declaration in one workspace; the root copy was reported unused. `tools/check-dependencies.mjs` does not read this manifest, so the exactness is held by the author
 - **the substitutions and the waiting term** — `pnpm-workspace.yaml`
 - **the makeup of the workspaces** — `pnpm-workspace.yaml`, `packages`
 - **the check that the lock matches** — `.github/workflows/ci.yml` — installation with a frozen lock

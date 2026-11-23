@@ -5,6 +5,7 @@ import { InvitesStore } from '@rt/message-bus-admin/invites/data-access';
 import { IInvite } from '@rt/message-bus-admin/invites/util';
 import {
     RtAsideComponent,
+    RtAsideContentDirective,
     RtAsideFooterComponent,
     RtAsideHeaderComponent,
     RtButtonDirective,
@@ -43,6 +44,7 @@ const BEM_BLOCK: string = 'admin-invite-create-aside';
 
         // components
         RtAsideComponent,
+        RtAsideContentDirective,
         RtAsideFooterComponent,
         RtAsideHeaderComponent,
         RtButtonDirective,

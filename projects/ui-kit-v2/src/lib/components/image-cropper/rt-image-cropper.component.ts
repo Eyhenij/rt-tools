@@ -125,7 +125,7 @@ export class RtImageCropperComponent {
 
     readonly #window: Window & typeof globalThis = inject(WINDOW) as Window & typeof globalThis;
 
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
 
     readonly #platform: PlatformService = inject(PlatformService);
 
@@ -383,7 +383,7 @@ export class RtImageCropperComponent {
         this.#resultTicket++;
         const ticket: number = this.#resultTicket;
         const area: IRtImageCropper.Rect = cropArea(this.#frame(), this.#source());
-        const canvas: HTMLCanvasElement = this.#document.createElement('canvas');
+        const canvas: HTMLCanvasElement = this.#doc.createElement('canvas');
         canvas.width = area.width;
         canvas.height = area.height;
         const context: CanvasRenderingContext2D | null = canvas.getContext('2d');

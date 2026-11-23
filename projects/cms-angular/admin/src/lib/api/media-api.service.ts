@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { defer, from, map, Observable, switchMap } from 'rxjs';
 
@@ -12,7 +12,7 @@ import { IListQuery } from '../list/list-query.model';
 const KILOBYTE: number = 1024;
 
 /** The way out to the media library contract. The facade knows only the contract and gives the answer as is. */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class MediaApiFacade {
     readonly #client: Client<typeof CmsMediaService> = createClient(CmsMediaService, inject(CMS_TRANSPORT));
 
@@ -46,7 +46,7 @@ export function mediaFileRowOf(file: MediaFile): IMediaFileRow {
 }
 
 /** The media library in its own notions. The contract type does not go past this class. */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class MediaApiService {
     readonly #facade: MediaApiFacade = inject(MediaApiFacade);
 

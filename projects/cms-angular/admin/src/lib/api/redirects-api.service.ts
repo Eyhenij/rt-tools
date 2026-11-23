@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { map, Observable } from 'rxjs';
 
@@ -10,7 +10,7 @@ import { redirectRowOf, required } from './cms-contract-mapping.function';
 import { RedirectsApiFacade } from './redirects-api.facade';
 
 /** The redirects in the CMS notions. The contract type does not go past this class. */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class RedirectsApiService {
     readonly #facade: RedirectsApiFacade = inject(RedirectsApiFacade);
 

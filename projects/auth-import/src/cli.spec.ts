@@ -42,7 +42,7 @@ describe('run', () => {
     });
 
     it('SC-AUTH-44 — a file with an error is refused before the first write', async () => {
-        const double: KeycloakFetchDouble = new KeycloakFetchDouble({ 'orders-admin': ['orders:read'] });
+        const double: KeycloakFetchDouble = KeycloakFetchDouble.withClients({ 'orders-admin': ['orders:read'] });
         const io: TTestIo = ioOver(double, [
             { email: 'good@test' },
             { firstName: 'No address' },

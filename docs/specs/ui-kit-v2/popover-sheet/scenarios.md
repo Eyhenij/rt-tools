@@ -182,6 +182,16 @@ Then the sheet is closed, and the menu reports it opened and then closed
 
 Covered: `projects/ui-kit-v2/src/lib/components/menu/rt-menu-sheet.spec.ts`.
 
+### SC-UKV-1747 — an item with a confirmation in the sheet gives its choice only on «Подтвердить»
+
+Given the actions menu open in the bottom sheet, with the item «Удалить» asking for a confirmation
+When the item is pressed and the window answers «Подтвердить», or «Отмена»
+Then «Подтвердить» runs the item's action once and closes the sheet, and «Отмена» runs nothing and
+leaves the sheet with its items; the same holds when the menu closes while the window is open — the
+sheet is hidden until the answer, and no panel stands by the button
+
+Covered: `projects/ui-kit-v2/src/lib/components/menu/rt-menu-sheet.spec.ts`.
+
 ### SC-UKV-1690 — the actions menu stays by its button with the sheet off or on a wide screen
 
 Given the actions menu with the sheet switched off on a phone, then with it on on a wide screen

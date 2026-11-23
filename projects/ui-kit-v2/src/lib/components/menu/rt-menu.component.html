@@ -15,10 +15,10 @@
     cdkConnectedOverlayHasBackdrop
     cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
     [cdkConnectedOverlayOrigin]="trigger"
-    [cdkConnectedOverlayOpen]="isOpen() && !openedInSheet()"
+    [cdkConnectedOverlayOpen]="(isOpen() || confirming() > 0) && !openedInSheet()"
     [cdkConnectedOverlayPositions]="overlayPositions()"
     [cdkConnectedOverlayPanelClass]="panelClasses()"
-    (backdropClick)="close()"
+    (backdropClick)="onBackdropClick()"
     (attach)="onAttach()"
     (detach)="close()"
     (overlayKeydown)="onKeydown($event)">
@@ -28,15 +28,17 @@
 <!-- Панель одна: у кнопки на широком экране, в нижней шторке на телефоне. -->
 <ng-template #panelTpl>
     <ng-container rtBlock="rt-menu">
+        <!-- Закрытое меню, чей пункт ждёт подтверждения, держит панель скрытой до ответа. -->
         <div
             rtElem="panel"
             qa-dataid="menu-panel"
             role="menu"
             tabindex="-1"
-            [rtMod]="{ size: size() }"
-            (rtMenuSelect)="onSelect()"
+            [rtMod]="{ size: size(), held: !isOpen() && confirming() > 0 }"
+            (rtMenuSelect)="onSelect($event)"
+            (rtMenuConfirm)="onConfirm($event)"
             (keydown)="onSheetKeydown($event)">
-            <ng-content />
+            <ng-container [rtSlotOutlet]="contents()" />
         </div>
     </ng-container>
 </ng-template>
