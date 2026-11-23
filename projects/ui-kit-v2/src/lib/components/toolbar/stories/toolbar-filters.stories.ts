@@ -8,6 +8,16 @@ const PHONE_375: { width: number; height: number } = { width: 375, height: 812 }
 /** Узел, по которому видно, что панель отборов открыта: без него кадр снимался бы пустым. */
 const FILTERS_PANEL: string = 'rt-toolbar-filters-aside';
 
+/** Маршрут приложения с панелью отборов: он стоит вне полосы. */
+const FILTERS_ROUTE: string = '[qa-dataid="story-filters-route"]';
+
+async function pressFilters(canvasElement: HTMLElement): Promise<void> {
+    canvasElement.querySelector<HTMLElement>('[qa-dataid="toolbar-filters-trigger"] [qa-dataid="icon-button-control"]')?.click();
+    await new Promise<void>((resolve: () => void): void => {
+        setTimeout(resolve, 400);
+    });
+}
+
 /**
  * Отборы списка за кнопкой — три состояния узкого места: отбор выключен, включён с точкой в углу
  * значка, панель отборов открыта. Окно узкое с первого кадра: кнопку рисует служба ширины кита, и
@@ -37,10 +47,15 @@ export const FilterOn: TStory = { args: { part: 'on' } };
 export const PanelOpen: TStory = {
     args: { part: 'on' },
     parameters: { snapshot: { fullPage: true, viewport: PHONE_375, overlay: FILTERS_PANEL } },
-    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
-        canvasElement.querySelector<HTMLElement>('[qa-dataid="toolbar-filters-trigger"] [qa-dataid="icon-button-control"]')?.click();
-        await new Promise<void>((resolve: () => void): void => {
-            setTimeout(resolve, 400);
-        });
-    },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => pressFilters(canvasElement),
+};
+
+/**
+ * Панель открывает приложение своим маршрутом: `filtersPanel="app"`, кнопка сообщает `filtersOpen`, в
+ * маршруте стоит `rt-toolbar-filters-panel` — те же поля, шапка и подвал, SC-UKV-1711, SC-UKV-1712.
+ */
+export const AppPanelOpen: TStory = {
+    args: { part: 'on', panel: 'app' },
+    parameters: { snapshot: { fullPage: true, viewport: PHONE_375, overlay: FILTERS_ROUTE } },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => pressFilters(canvasElement),
 };

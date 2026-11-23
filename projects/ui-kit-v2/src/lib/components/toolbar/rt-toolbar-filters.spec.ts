@@ -11,6 +11,7 @@ class StubBreakpointsService {
     public readonly narrow: WritableSignal<boolean> = signal(true);
     public readonly phone: WritableSignal<boolean> = signal(true);
     public readonly viewportNarrow: Signal<boolean> = this.narrow;
+    public readonly belowNarrow: Signal<boolean> = this.narrow;
     public readonly mobile: Signal<boolean> = this.phone;
     public readonly tablet: Signal<boolean> = signal(false);
     public readonly desktop: Signal<boolean> = signal(false);

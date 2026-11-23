@@ -82,3 +82,42 @@ Then its frame is `role="dialog"` with `aria-modal="true"` and named «Филь�
 Given a narrow screen and the filter button
 When `filtersActive` turns on
 Then the button name for a screen reader reads «Фильтры, отбор включён» instead of «Фильтры»
+
+### SC-UKV-1710 — the filters threshold is 1080
+
+Given a toolbar with a filters slot
+When the place is exactly 1080 points wide, then 1079
+Then at 1080 the filters stand in the row and the shared `narrow` already says narrow; at 1079 the
+filter button stands instead of them
+
+### SC-UKV-1711 — with `filtersPanel="app"` the button reports `filtersOpen`
+
+Given a narrow toolbar with `filtersPanel="app"`
+When the filter button is pressed
+Then `filtersOpen` is reported, and no panel of the kit opens
+
+### SC-UKV-1712 — the application panel draws the filters of the toolbar
+
+Given a narrow toolbar with `filtersPanel="app"` and `rt-toolbar-filters-panel` in another place
+When the panel is drawn and its footer pressed
+Then it shows the title «Фильтры», the back arrow, the slot with the context `panel` and the footer;
+«Сбросить» reaches `filtersReset`, «Применить» reaches `filtersApply` and the panel reports `dismiss`
+
+### SC-UKV-1713 — the application panel asks to be closed when its filters leave it
+
+Given an open application panel
+When the place widens, or the toolbar leaves the page
+Then the panel reports `dismiss`; a panel that stood before the toolbar appeared reports nothing and
+takes its filters
+
+### SC-UKV-1714 — the back arrow of the application panel
+
+Given an open application panel
+When the back arrow is pressed
+Then the panel reports `dismiss`, and neither `filtersApply` nor `filtersReset` is reported
+
+### SC-UKV-1715 — the default mode opens the panel of the kit
+
+Given a narrow toolbar without `filtersPanel`
+When the filter button is pressed
+Then the panel of the kit opens, and `filtersOpen` is not reported
