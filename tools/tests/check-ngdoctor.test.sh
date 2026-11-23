@@ -265,7 +265,7 @@ if node "$CHECK" --input "$WORK/pass-out.json" --threshold "$WORK/pass-threshold
 report "the pass over a clean directory is green and counts" "$got" "green, counted"
 
 printf '%s' "$(pass_output 4)" > "$WORK/pass-out.json"
-pass_says "the pass over a list longer than the scan is red" "the pass found 3 files, angular-doctor scanned 4"
+pass_says "the pass over a list shorter than the scan is red" "the pass found 3 files, angular-doctor scanned 4"
 
 printf '%s' "$(pass_output 3 "template-eslint/button-has-type@$WORK/elsewhere/c.component.html")" > "$WORK/pass-out.json"
 mkdir -p "$WORK/elsewhere" && printf '<button></button>\n' > "$WORK/elsewhere/c.component.html"
@@ -310,7 +310,43 @@ if node "$CHECK" --input "$WORK/pass-out.json" --threshold "$WORK/pass-threshold
 if cmp -s "$WORK/pass-threshold.json" "$WORK/pass-before.json" && grep -q "nothing written" "$WORK/said.txt"; then got="$got, kept"; else got="$got, changed"; fi
 report "the pass that lost a file refuses --write" "$got" "refused, kept"
 
+# The pairs of the refusals above: what the tool lawfully reports is no loss. Their labels start
+# with "a pass", apart from the ten losses the plan counts.
+# Whether the pass is green: its line printed, no line of a loss. The exit code is not judged — the
+# findings of these outputs differ from the threshold, and that red is the threshold's, not the pass's.
+pass_green() {
+    local label="$1" got
+    shift
+    node "$CHECK" --input "$WORK/pass-out.json" --threshold "$WORK/pass-threshold.json" "$@" > "$WORK/said.txt" 2>&1
+    if grep -q "the pass read every file" "$WORK/said.txt" && ! grep -q "lost a file" "$WORK/said.txt"; then got="green"; else got="red"; fi
+    report "$label" "$got" "green"
+}
+pass_tree
+printf '%s' "$(pass_output 3 "template-eslint/button-has-type@$PASS/src/b.component.html" "angular-doctor/missing-spec-file@src/a.component.ts")" > "$WORK/pass-out.json"
+pass_green "a pass with findings on its own files, absolute and relative, is green" --pass-root "$PASS"
+
+printf '%s\n' '{"dependencies": {"zone.js": "0.15.0"}}' > "$PASS/package.json"
+printf '%s' "$(pass_output 3 "angular-doctor/zone-js@$PASS/package.json")" > "$WORK/pass-out.json"
+pass_green "a pass with a finding on package.json is green" --pass-root "$PASS"
+rm -f "$PASS/package.json"
+
+printf '%s\n' '<!-- eslint-disable -->' '<p>b</p>' > "$PASS/src/b.component.html"
+printf '%s' "$(pass_output 3)" > "$WORK/pass-out.json"
+pass_green "a pass over a template with an unused eslint-disable is green" --pass-root "$PASS"
+
+# Without a .ts file the tool does not start oxlint; oxlint given no file lints the whole directory.
+mkdir -p "$WORK/pass-html"
+printf '%s\n' '<p>h</p>' > "$WORK/pass-html/h.component.html"
+printf '%s\n' 'var x = 1; if (x == 2) {}' > "$WORK/pass-html/stray.js"
+printf '%s' "$(pass_output 1)" > "$WORK/pass-out.json"
+pass_green "a pass with no .ts file runs no oxlint and is green" --pass-root "$WORK/pass-html"
+
+pass_tree
+printf '%s' "$(pass_output 3)" > "$WORK/pass-out.json"
+pass_says "a pass of another tool version asks to update the pass" "the tree has 0.4.0: compare the globs" --pass-version 0.4.0
+
 misuse "--pass-root without a saved output is refused" "give --input too" --pass-root "$PASS"
 misuse "--pass-oxlint without --pass-root is refused" "give --pass-root too" "${T[@]}" --pass-oxlint "$WORK/fake-oxlint.mjs"
+misuse "--pass-version without --pass-root is refused" "give --pass-root too" "${T[@]}" --pass-version 0.4.0
 
 suite_result "check-ngdoctor"
