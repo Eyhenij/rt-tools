@@ -15,21 +15,25 @@ after, where it lives.
 - **The executor chooses modules, bounds, terms and patterns before the code and writes them in the
   plan.** The owner gives the goal; a gap is not a question to them.
 - **A chosen pattern is written with its place, its problem and the simpler way dropped.** SOLID,
-  GRASP, Gang of Four; no problem — «no pattern» and why. In the host's plan mode the table is
-  loaded by a call.
+  GRASP, Gang of Four; no problem — «no pattern» and why. For a new module, a split and the host's
+  plan mode the table is loaded by a call.
 - **Code is read first: who imports the module and whom it imports.**
 - **Coupling is counted before and after the edit.** Incoming, outgoing, cycles, imports past the
   entry; growth is named in the plan.
 - **A module has one duty, said in one sentence without «and».** Cohesion: two sentences are two
   modules.
-- **Isolation: a module is called through its entry and tested without its neighbours.**
+- **Isolation: from outside a module is called through its entry and tested without its
+  neighbours.**
 - **An import goes from the detail to the decision.** A decision reads no disk and no network: data
   comes as an argument.
 - **Only what a neighbour calls is exported.**
-- **A third copy of a condition becomes a function or a table.**
-- **A cycle is broken by moving the shared part out.** Not by a late import.
-- **Each input form is named and has a test case, a refused one too.**
-- **Bounds are written: the contracts, versions and safety that stay.**
+- **A decision lives in one module.** A place edited together with it moves there: a function or a
+  table; alike in form only is not a copy.
+- **A cycle between modules is broken by moving the shared part out.** Not by a late import; through
+  one's own entry — by importing the file.
+- **Each input form is named with its source and an example and has a test case, a refused one
+  too.**
+- **Bounds are written: contracts, versions and safety that stay, imports that are forbidden.**
 - **The priority is named: which of speed, memory, simplicity and reliability wins.**
 - **The budget is a number before the code: files, lines, dependencies.** An overrun is a decision
   in the progress.

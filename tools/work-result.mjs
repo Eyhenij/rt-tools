@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.39.1 · checks/work-result.mjs · 7088f5ad8173 · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/work-result.mjs · 507f79f42c4c · правится надстройкой, не здесь
 /**
  * The lines of the work result for the report, counted from the observations of the tree by the same
  * functions the hook at the end of a turn and the reading of merges use: the events of the records,
@@ -286,7 +286,7 @@ export function linesOf(result) {
 }
 
 /** The words of the report for the reasons of a gate refusal. */
-const GATE_WORDS = { 'too-long': 'слишком длинное', together: 'не помещаются вместе', 'not-read': 'не прочитано', none: 'без причины' };
+const GATE_WORDS = { 'too-long': 'слишком длинное', together: 'не помещаются вместе', 'not-read': 'не прочитано', before: 'читается до записи', none: 'без причины' };
 
 /** The rules gate over the period: its refusals by reason and the rules it delivered with no refusal. */
 export function gateLine(days) {

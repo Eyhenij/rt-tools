@@ -16,7 +16,9 @@ statement: a removed statement is removed together with its line.
 - **The rule of code design and its table come where the design is chosen.** — `projects/agent-kit/assets/hooks/skill-gate-layers.sh:code-design-choose` — scenario `SC-AK-1915`
 - **A module, a script and the entry file get the rule of code design alone.** — `projects/agent-kit/assets/hooks/skill-gate-layers.sh:code-design` — scenario `SC-AK-1916`
 - **The layer of code design is silent where there are no modules.** — `projects/agent-kit/assets/hooks/skill-gate-layers.sh:rt_layer_allowed` — the first branch of the layer; scenarios `SC-AK-1917`, `SC-AK-1918`
-- **A file written by a command gets the layers by path.** — `projects/agent-kit/assets/hooks/skill-gate.sh:gate_command` — scenario `SC-AK-1919`
+- **A document of design is refused until the rule and the table are loaded.** — `projects/agent-kit/assets/hooks/skill-gate.sh:gate_before` — `projects/agent-kit/assets/hooks/skill-gate-layers.sh:rt_layer_before`; scenario `SC-AK-1920`
+- **The path of the layer of code design is read from the root of the tree.** — `projects/agent-kit/assets/hooks/skill-gate-layers.sh:rt_design_root` — scenario `SC-AK-1921`
+- **The target of a write by a command gets the layers by path.** — `projects/agent-kit/assets/hooks/skill-gate.sh:rt_gate_is_target` — scenario `SC-AK-1919`
 - **The gate map counts as a command a call, not a mention.** — `projects/agent-kit/assets/defaults/gate-map.sh:rt_gate_invokes`
 - **A redirection into the empty device and into the error stream does not count as a write.** — `projects/agent-kit/assets/defaults/project.sh:rt_shell_writes_default`
 - **An arrow in the text of a command does not count as a redirection.** — `projects/agent-kit/assets/defaults/project.sh:rt_shell_writes_default` — scenario `SC-AK-675`

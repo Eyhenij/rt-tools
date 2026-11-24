@@ -21,6 +21,16 @@
 # general. A showcase file and a test file are not component files, and both branches must stand
 # before the general extension branch, and one's own specific before the call of the default.
 
+# Where a layer over the domain rule has nothing to say: the demonstration code of the showcase and
+# the linter settings have no modules to divide.
+skill_layer_skip() {
+    [ "$1" = "code-design" ] || return 1
+    case "$2" in
+        */stories/component/* | */src/showcase/* | */eslint/*) return 0 ;;
+    esac
+    return 1
+}
+
 skill_for() {
     kind="$1"
     target="$2"

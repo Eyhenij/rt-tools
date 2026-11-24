@@ -61,9 +61,21 @@ rt_gate_copy_path() {
     esac
 }
 
+# The path is the target of a write rather than a word of the command: a script that is run and a
+# file that is read stand in the same line. A body of an interpreter names no target.
+rt_gate_is_target() {
+    local path
+    path="$(printf '%s' "$2" | sed 's/[][\.*^$+?(){}|]/\\&/g')"
+    printf '%s\n' "$1" | tr "\"'" '  ' | grep -qE \
+        -e "(>|(^|[[:space:];&|])tee[[:space:]]([^;&|]*[[:space:]])?|sed -i[^;&]*[[:space:]])[[:space:]]*${path}([[:space:];&|)<>]|\$)" \
+        -e "(^|[[:space:];&|])(cp|mv)[[:space:]][^;&|]*[[:space:]]${path}[[:space:]]*([;&|)]|[0-9]?>|\$)"
+}
+
 req=""
 target=""
 kind=""
+# What the layers demand to be read before the text of this call is composed.
+rt_layer_before=""
 case "$tool" in
     # The environment tool creates a file with the same two pieces of data, only it calls them
     # differently — without this branch a file was created past the gate.
@@ -128,8 +140,10 @@ case "$tool" in
         done
         if command -v rt_shell_writes >/dev/null 2>&1 && command -v rt_shell_paths >/dev/null 2>&1 \
             && rt_shell_writes "$target"; then
+            gate_command="$target"
             while IFS= read -r written_path; do
                 [ -z "$written_path" ] && continue
+                gate_raw="$written_path"
                 case "$written_path" in
                     /*) ;;
                     *) written_path="${CLAUDE_PROJECT_DIR:-.}/$written_path" ;;
@@ -141,9 +155,9 @@ case "$tool" in
                 written_path="$(rt_gate_copy_path "$written_path")"
                 more="$(skill_for edit "$written_path" "" 2>/dev/null)"
                 [ -n "$more" ] && req="$req $more"
-                # The layers by path come to a file written by a command too; the layers by the text
-                # of the edit stay silent: the command carries no field of the text.
-                gate_command="$target"
+                # The layers by path come to the target of a write too. The layers by the text of the
+                # edit stay silent: the command carries no field of the text.
+                rt_gate_is_target "$gate_command" "$gate_raw" || continue
                 target="$written_path"
                 # shellcheck disable=SC1090
                 [ -f "$rt_hooks_dir/skill-gate-layers.sh" ] && . "$rt_hooks_dir/skill-gate-layers.sh" 2>/dev/null
@@ -253,6 +267,12 @@ for name in $req; do
     case " ${need[*]} " in *" $name "*) continue ;; esac
     need+=("$name")
 done
+# A rule a text is designed by is refused instead of being delivered: delivered, it arrives with the
+# write, when the design is already in it.
+gate_before=""
+for name in $rt_layer_before; do
+    case " ${need[*]} " in *" $name "*) gate_before=1 ;; esac
+done
 gate_unread=""
 gate_why=""
 if [ "$sid" != "nosession" ] && [ "${#need[@]}" -gt 0 ]; then
@@ -282,7 +302,7 @@ ${gate_body}")
         for k in "${!rules[@]}"; do text="${text}${rules[$k]}${comps[$k]}"; done
     }
     rt_gate_text
-    if [ -z "$gate_unread" ] && [ "${#text}" -le "$gate_limit" ]; then
+    if [ -z "$gate_unread" ] && [ -z "$gate_before" ] && [ "${#text}" -le "$gate_limit" ]; then
         # The companions go after the rules fit: a companion falls back to its path before a rule
         # is dropped. Each is placed whole right after its rule while the whole text still fits.
         for k in "${!need[@]}"; do
@@ -328,6 +348,8 @@ The companion of the rule — ${comp} — did not fit here and is read as a file
     if [ -n "$gate_unread" ]; then
         gate_why="not-read"
         want="$gate_unread"
+    elif [ -n "$gate_before" ]; then
+        gate_why="before"
     else
         gate_why="together"
         for k in "${!rules[@]}"; do
@@ -400,6 +422,11 @@ case "$gate_why" in
         ;;
     not-read)
         reason="${reason} The gate could not read ${rules_dir}/${req}/SKILL.md, so it did not put the rule into the session."
+        ;;
+    before)
+        names=""
+        for name in "${need[@]}"; do names="${names}${names:+, }«${name}»"; done
+        reason="Refused by the rules gate: the rules ${names} are read before this text is composed, and delivered with the write they come after the design: load all of them by the tool Skill in one turn and repeat the action. ${fallback}"
         ;;
     together)
         names=""

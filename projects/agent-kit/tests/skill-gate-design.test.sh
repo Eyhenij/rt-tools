@@ -36,6 +36,12 @@ d() {
     case " $(named "$2")" in *" $3 "*) got=да ;; esac
     report "$1" "$got" "$4"
 }
+# Ответ вызова: отказ или доставка.
+answer() {
+    printf '%s' "$1" | "$HOOKS/skill-gate.sh" 2>/dev/null \
+        | jq -r 'if .hookSpecificOutput.permissionDecision == "deny" then "отказ" else "доставка" end' 2>/dev/null
+    rm -f "${TMPDIR:-/tmp}/claude-skill-gate/tests.loaded"
+}
 edit() { d "$1" "$(input_edit "$TREE/$2")" "$3" "$4"; }
 cmd() { d "$1" "$(input_cmd "printf x > $TREE/$2")" "$3" "$4"; }
 
@@ -46,10 +52,41 @@ for doc in docs/tasks/RT-1-x/grill.md docs/tasks/RT-1-x/plan.md docs/tasks/_draf
 done
 first="$(named "$(input_edit "$TREE/docs/tasks/RT-1-x/plan.md")")"
 report "SC-AK-1915 — предметное правило папки остаётся первым" "${first%% *}" "task-flow"
+report "SC-AK-1915 — таблица идёт за правилом" "$(printf '%s' "$first" | grep -oE 'code-design[a-z-]*' | tr '\n' ' ')" \
+    "code-design code-design-choose "
+edit "SC-AK-1915 — папка задачи с именем теста своё правило получает" docs/tasks/RT-1-x-e2e/plan.md code-design-choose да
+edit "SC-AK-1915 — план эпика с именем настройки своё правило получает" docs/plans/jest.config.md code-design-choose да
+
+# --- SC-AK-1920 — документ проектирования отказан, пока правило и таблица не загружены ---------
+for doc in docs/tasks/RT-1-x/grill.md docs/tasks/RT-1-x/plan.md docs/plans/x.md; do
+    report "SC-AK-1920 — $doc отказан, хотя всё помещается" "$(answer "$(input_edit "$TREE/$doc")")" отказ
+done
+gate_session_load task-flow task-flow-plan doc-style code-design
+report "SC-AK-1920 — отказан и тогда, когда не загружена одна таблица" \
+    "$(answer "$(input_edit "$TREE/docs/tasks/RT-1-x/plan.md")")" отказ
+gate_session_load task-flow task-flow-plan doc-style code-design code-design-choose
+out="$(printf '%s' "$(input_edit "$TREE/docs/tasks/RT-1-x/plan.md")" | "$HOOKS/skill-gate.sh" 2>/dev/null)"
+report "SC-AK-1920 — загруженные правила запись отпускают" "${out:-тишина}" "тишина"
+gate_session_reset
+report "SC-AK-1920 — запись документа командой отказана тоже" \
+    "$(answer "$(input_cmd "printf x > $TREE/docs/plans/x.md")")" отказ
+report "SC-AK-1920 — на коде правило по-прежнему приходит доставкой" \
+    "$(answer "$(input_edit "$TREE/libs/x/src/lib/a.ts")")" доставка
+expect_reason "SC-AK-1920 — отказ говорит, почему не доставлено" skill-gate.sh \
+    "$(input_edit "$TREE/docs/plans/x.md")" 'before this text is composed'
+rm -rf "$TREE/.claude/rt-kit/observations"
+answer "$(input_edit "$TREE/docs/plans/x.md")" >/dev/null
+got="$(cat "$TREE"/.claude/rt-kit/observations/*.jsonl 2>/dev/null | grep -c '"why":"before"')"
+report "SC-AK-1920 — причина записана в наблюдение" "$got" 1
+gate_session_reset
 
 # --- SC-AK-1916 — правило приходит на код с поведением, скрипт и входной файл -----------------
+#
+# Слово теста или настройки внутри имени и каталога кода не прячет.
 for code in libs/x/src/lib/a.ts tools/a.mjs tools/a.cjs tools/a.js hooks/a.sh libs/x/src/index.ts \
-    libs/x/src/public-api.ts; do
+    libs/x/src/public-api.ts libs/x/a.mts libs/x/a.cts apps/x/a.tsx apps/x/a.jsx apps/x/src/app.config.ts \
+    tools/rt-checks.config.mjs libs/tests/src/lib/t.store.ts libs/specs/a.ts libs/x/contest.ts libs/x/claude.ts \
+    libs/x/latest-e2ee.ts; do
     edit "SC-AK-1916 — правило на $code" "$code" code-design да
 done
 edit "SC-AK-1916 — на коде таблица не приходит" libs/x/src/lib/a.ts code-design-choose нет
@@ -60,7 +97,9 @@ report "SC-AK-1916 — предметное правило кода остаёт
 for quiet in libs/x/src/lib/a.spec.ts libs/x/src/lib/a.stories.ts tools/a.test.mjs tests/a.sh \
     libs/x/src/lib/a.d.ts jest.config.ts eslint.config.mjs dist/x/a.ts node_modules/x/a.js \
     .claude/hooks/a.sh .claude/workflows/a.js apps/x-e2e/src/a.ts docs/tasks/RT-1-x/progress.md \
-    docs/specs/x/spec.md libs/x/src/lib/a.html libs/x/src/lib/a.scss; do
+    docs/specs/x/spec.md libs/x/src/lib/a.html libs/x/src/lib/a.scss libs/x/test-setup.ts jest.preset.js \
+    .eslintrc.js libs/x/a.mock.ts libs/x/a.fixture.ts libs/x/generated/a.ts .storybook/main.ts e2e/a.ts \
+    vite.config.ts docs/plans/x-findings.md docs/plans/x.json libs/x/grill.md libs/x/a.json libs/x/a.prisma; do
     edit "SC-AK-1917 — молчит на $quiet" "$quiet" code-design нет
 done
 
@@ -74,6 +113,39 @@ d "SC-AK-1919 — вторая запись команды не теряет с�
     "$(input_cmd "printf x > $TREE/libs/x/src/lib/b.spec.ts && printf x > $TREE/hooks/b.sh")" code-design да
 d "SC-AK-1919 — собранный файл не гасит слоя соседней записи" \
     "$(input_cmd "printf x > $TREE/dist/x/b.ts && printf x > $TREE/hooks/b.sh")" code-design да
+
+c() { d "$1" "$(input_cmd "$2")" code-design "$3"; }
+c "SC-AK-1919 — скрипт, который запускают с выводом в файл, не правка" "node $TREE/tools/a.mjs > /tmp/o.log" нет
+c "SC-AK-1919 — запуск с tee не правка скрипта" "node $TREE/tools/a.mjs 2>&1 | tee /tmp/o.log" нет
+c "SC-AK-1919 — копирование наружу не правка" "cp $TREE/hooks/a.sh /tmp/a.sh" нет
+c "SC-AK-1919 — удаление не правка" "rm $TREE/hooks/a.sh" нет
+c "SC-AK-1919 — tee на модуль правка" "printf x | tee $TREE/hooks/a.sh" да
+c "SC-AK-1919 — sed -i на модуль правка" "sed -i '' 's/a/b/' $TREE/hooks/a.sh" да
+c "SC-AK-1919 — копия на модуль правка" "cp /tmp/a.sh $TREE/hooks/a.sh" да
+c "SC-AK-1919 — документ в месте правка" "cat > $TREE/hooks/a.sh <<'E'
+x
+E" да
+c "SC-AK-1919 — путь в кавычках правка" "printf x > \"$TREE/hooks/a.sh\"" да
+c "SC-AK-1919 — путь от корня дерева правка" "printf x > hooks/a.sh" да
+c "SC-AK-1919 — путь мимо дерева не правка" "printf x > /tmp/hooks/a.sh" нет
+c "SC-AK-1919 — рабочая копия внутри дерева судится так же" "printf x > $TREE/.claude/worktrees/w/hooks/a.sh" да
+
+# --- SC-AK-1921 — путь читается от корня дерева -----------------------------------------------
+OUTER="$(mktemp -d)"
+for above in acme.test.app tests my-e2e x.config.d; do
+    mkdir -p "$OUTER/$above"
+    cp -R "$TREE" "$OUTER/$above/proj"
+    export CLAUDE_PROJECT_DIR="$OUTER/$above/proj"
+    d "SC-AK-1921 — модуль в дереве под папкой $above" "$(input_edit "$OUTER/$above/proj/libs/x/a.ts")" code-design да
+    d "SC-AK-1921 — план в дереве под папкой $above" "$(input_edit "$OUTER/$above/proj/docs/plans/x.md")" code-design-choose да
+done
+export CLAUDE_PROJECT_DIR="$TREE/.claude/worktrees/w"
+mkdir -p "$CLAUDE_PROJECT_DIR"
+cp -R "$TREE/.claude/skills" "$TREE/.claude/rt-kit" "$CLAUDE_PROJECT_DIR/" 2>/dev/null
+mkdir -p "$CLAUDE_PROJECT_DIR/.claude" && mv "$CLAUDE_PROJECT_DIR/skills" "$CLAUDE_PROJECT_DIR/rt-kit" "$CLAUDE_PROJECT_DIR/.claude/"
+d "SC-AK-1921 — модуль рабочей копии, открытой деревом" "$(input_edit "$CLAUDE_PROJECT_DIR/libs/x/a.ts")" code-design да
+export CLAUDE_PROJECT_DIR="$TREE"
+rm -rf "$OUTER"
 
 # --- SC-AK-1918 — дерево снимает слой прежней функцией ----------------------------------------
 printf 'skill_layer_skip() { [ "$1" = "code-design" ] && case "$2" in */hooks/c.sh|*/docs/plans/*) return 0 ;; esac; return 1; }\n' \

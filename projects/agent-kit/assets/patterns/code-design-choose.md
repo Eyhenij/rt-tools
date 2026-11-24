@@ -22,7 +22,7 @@ Pattern of the rule `code-design`. What must be true — the law
 | --- | --- | --- |
 | A module has two duties | Single Responsibility, high Cohesion: split by the reason to change | each duty is one sentence; the halves do not import each other |
 | A method has no clear home | Information Expert: to whoever holds the data | the method reads fields of its own module only |
-| Modules import each other | Indirection: the shared part moves to a third module | the cycle check is silent |
+| Modules import each other | Indirection: the shared part moves to a third module | the cycle check is silent where it reads these files; elsewhere the imports are read by hand |
 | A decision reads disk or network | Dependency Inversion: the source is an argument | the decision is tested without a file |
 | A chain of `if` by one sign grows | Strategy or a table of rows: Open–Closed | a new case adds a row and edits no branch |
 | A foreign shape leaks in | Adapter: the foreign type ends at the boundary | the foreign name is found in one file |
@@ -34,23 +34,38 @@ Pattern of the rule `code-design`. What must be true — the law
 | A wide interface is taken for one method | Interface Segregation: the type names what is used | the parameter type lists only the called members |
 | A change walks over neighbours | Protected Variations: the changing part behind a stable entry | the diff of the next change names one module |
 | A file is too long to read whole | Split by duty, not by lines | the module size is under the limit of the tree |
-| None of the above | No pattern: the plain function | the reason is one line of the plan |
+| A branch depends on what was done before | State: the states are a table | a forbidden move has a case |
+| A technical duty fits no domain module | Pure Fabrication: a module of its own | the domain module imports no disk or network |
+| A problem has no row here | the pattern by its name, with the same three columns | the third column is written |
+| There is no problem | No pattern: the plain function | the reason is one line of the plan |
 
 ## The words
 
-- **Coupling** — how many modules know a module and how many it knows; counted by imports.
-- **Cohesion** — the parts of a module serve one duty.
-- **Isolation** — a module is tested and changed without its neighbours.
+SOLID, GRASP and Gang of Four name the techniques of the table. Coupling, cohesion and isolation are
+defined in the glossary. Coupling is counted by a search over the sources:
+
+```bash
+grep -rlE "(from|import|require)[ (]+['\"][^'\"]*/<module>(\.[a-z]+)?['\"]" <sources>  # who knows a module
+grep -rlE "(^|[ \"/])<script>\.sh" <sources>                                           # who knows a script
+grep -cE "^(import|export .* from) |^\. " <module file>                               # whom it knows
+```
 
 ## The decision in the plan
 
-A row each: modules, dependencies, coupling now and after, patterns with `file:symbol` and the
-simpler way dropped, input forms, bounds, priority, budget. A row that does not apply says why.
+The section is named «Решение» in a tree that writes its plans in Russian and «Decision» otherwise. A
+row each; a row that does not apply says why. A module is named down to the class or the function
+that gets the edit, and a thing the goal does not need has no row.
 
 | Row | Example |
 | --- | --- |
-| Coupling | the parser has one caller, `run`; it stays one; imports past the entry: none |
-| Patterns | Adapter — `mail/reader.ts:readMail`, the mail format leaks into three callers; dropped: a cast at each |
+| Modules | `mail/reader.ts:readMail` — turns a letter into a record; shows `readMail` alone |
+| Dependencies | the reader imports the record; the record imports nobody; the screen never imports the reader |
+| Coupling | the reader has one caller now and one after; imports past the entry: none |
+| Patterns | Adapter — `mail/reader.ts:readMail`; the mail format leaks into three callers; dropped: a cast at each |
+| Terms | letter — what came by mail; record — what the domain keeps; both stand in the glossary |
+| Input | from the mail server: a letter with a file, a letter without one, a broken header — refused |
+| Bounds | the record keeps its fields; the old letters are read; no new network address |
+| Priority | reliability over speed: a lost letter costs more than a second |
 | Budget | two files, 120 lines, no dependency |
 
 ## Common misses

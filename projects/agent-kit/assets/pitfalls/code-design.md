@@ -64,12 +64,16 @@ with the same interface. The plan says «no pattern», the place and the dropped
 - **A split by lines.** The length passes the limit, and one duty lies in two files that know each
   other.
 - **A cycle broken by a late import.** The check is silent, the ring stays.
+- **An entry imported by its own file.** The ring goes through the entry; the file is imported, and
+  nothing moves out.
 - **Coupling counted only after the edit.** There is no first number to compare with.
 - **A helper exported «for the future».** The next reader relies on it, and the inside is shown.
 
 ## What of the law is not here
 
-- **The length and the names.** They are held by the rule of the language conventions.
-- **The borders between libraries.** They are held by the rule of the layout of libraries.
+- **The names, the types, the cast, the deprecation mark and the length.** They are held by the rule
+  `typescript-conventions`, where the tree has it.
+- **The borders between libraries.** They are held by the rule `lib-layers`; what is taken instead of
+  being written — by `reuse-first`.
 - **That a module has one duty and a pattern has its problem.** No check reads that: it is seen by a
   reader of the plan and of the diff.

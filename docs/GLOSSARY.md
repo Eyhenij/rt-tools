@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · docs/GLOSSARY.md · 15bae5e48b31 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · docs/GLOSSARY.md · 4042a86ec49c · правится надстройкой, не здесь -->
 # Project glossary
 
 Words that mean something definite in this tree. Read before writing a spec, a rule, a comment,
@@ -27,6 +27,7 @@ sections through the override; they merge here by heading, and a package edit do
 - **Product agreement** — how the product will behave, written before the code: the only place where a spec speaks of the future. After the rollout it merges into the domain spec
 - **Coupling** — how many modules know a module and how many it knows; counted by imports, before an edit and after it
 - **Cohesion** — how far the parts of a module serve one duty. Said as one sentence without «and»
+- **SOLID, GRASP, Gang of Four** — the sets of design techniques. One of them is taken for a named problem, by the table of the pattern `code-design-choose`
 - **Isolation** — a module is called through its entry, tested and changed without its neighbours
 - **Resource** — a unit of what the rules package ships: a law, a rule, a pattern, a guard, a check, a role, a command, a pipeline, a template, a default, a document
 - **Layout** — the transfer of a resource from the package into the tree, by its kind and by the layer settings

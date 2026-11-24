@@ -93,7 +93,8 @@ turn, as today.
   every one of them.** Nothing of the call is delivered, so the session loads them in one turn
   instead of meeting them one refusal at a time.
 - **A remaining refusal names why the rule was not delivered: longer than the host limit, not
-  fitting together with the other rules of the call, or not read.** The week report counts the
+  fitting together with the other rules of the call, not read, or read before the text is
+  composed.** The week report counts the
   refusals by this reason; without it the remaining refusals cannot be told from the old ones.
 
 ### The record
