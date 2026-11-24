@@ -392,5 +392,6 @@ When the sheet opens
 Then the panel takes the full height of the box under the strip of 12px, the header with «×» is
 seen and the body scrolls; short content keeps the sheet by its height
 
-Not covered: a test has no layout — the height is seen by the frame of the story
-`Organisms/Aside/BottomSheet` `Content` and by the match of the showcase with the mockup.
+Not covered: a test has no layout — the height is seen by the frame of the story `Content` in
+`projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/bottom-sheet-matrix.stories.ts` and by
+the match of the showcase with the mockup.
