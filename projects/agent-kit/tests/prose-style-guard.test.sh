@@ -72,6 +72,15 @@ c "SC-AK-1136 — текст после перенаправления суди�
 c "SC-AK-1136 — перенаправление перед печатью судится" "> docs/x.md echo '$BAD'" deny
 c "SC-AK-1136 — печать по полному пути судится" "/usr/bin/printf '%s' '$BAD' > docs/x.md" deny
 c "SC-AK-1136 — печать кодом awk судится" "awk 'BEGIN{print \"$BAD\"}' > docs/x.md" deny
+c "SC-AK-1136 — новый текст замены sed судится" "sed -i '' 's/старое/$BAD/' docs/x.md" deny
+c "SC-AK-1136 — прежняя редакция в замене sed не судится" "sed -i '' 's/$BAD/Этап закрыт./' docs/x.md" PASS
+c "SC-AK-1136 — печать sed в документ судится" "sed 's/^/$BAD/' docs/y.md > docs/x.md" deny
+c "SC-AK-1136 — текст export судится" "export T='$BAD'; echo \"\$T\" > docs/x.md" deny
+c "SC-AK-1136 — печать jq судится" "jq -rn '\"$BAD\"' > docs/x.md" deny
+c "SC-AK-1136 — формат git судится" "git log --format='$BAD' > docs/x.md" deny
+c "SC-AK-1136 — текст внутри подстановки процесса судится" "cat <(echo '$BAD') > docs/x.md" deny
+c "SC-AK-1136 — текст, отданный сценарию, судится" "bash gen.sh '$BAD' > docs/x.md" deny
+c "SC-AK-1136 — образец поиска не судится" "grep '$BAD' docs/y.md > docs/x.md" PASS
 c "SC-AK-1136 — апостроф в комментарии печать не прячет" "$(printf "# it's the note\nprintf '%%s' '%s' > docs/x.md" "$BAD")" deny
 
 # Текст берётся из тел heredoc: правка, несущая внутри команды прежнюю редакцию, отбивалась

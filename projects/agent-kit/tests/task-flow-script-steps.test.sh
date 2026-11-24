@@ -95,7 +95,7 @@ report "step: SC-AK-1407 — разбор правлен после плана �
     "$(tf_step 1.1 | grep -c 'differs from the commit of the plan: docs/tasks/RT-1-x/grill.md code=1')" 1
 printf 'один\n' > "$TF_STEP/docs/tasks/RT-1-x/grill.md"
 printf 'два\n' > "$TF_STEP/docs/tasks/RT-1-x/probe.txt"
-report "step: SC-AK-1407 — файл папки, который читает проверка шага, правлен после плана — отказ" \
+report "step: SC-AK-1407 — файл папки, который не текст, правлен после плана — отказ" \
     "$(tf_step 1.6 | grep -c 'differs from the commit of the plan: docs/tasks/RT-1-x/probe.txt code=1')" 1
 printf 'один\n' > "$TF_STEP/docs/tasks/RT-1-x/probe.txt"
 printf 'одобряю\n' >> "$TF_STEP/docs/tasks/RT-1-x/approvals.md"

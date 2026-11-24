@@ -46,10 +46,11 @@ pnpm exec nx affected -t lint typecheck test --parallel --base=origin/<base>
 RT_SUITES_BASE=origin/<base> bash tools/tests/run.sh   # the check scenarios the change reaches
 node tools/check-file-size.mjs; node tools/check-doc-paths.mjs; node tools/check-specs.mjs
 node tools/check-boolean-inputs.mjs; node tools/check-reuse.mjs; pnpm run check:unused
+node tools/check-dupes.mjs   # before the commit of a round
 ```
 
-The last two lines are the quick checks of the push set: the linter after an edit does not judge
-`tools/` and texts. They run at every stage and again before the commit of round two.
+The last three lines are the quick checks of the push set: the linter after an edit does not judge
+`tools/` and texts. They run at every stage and again before the commit of a round.
 
 End to end, the suites a change touches are the ones
 `bash -c '. .claude/rt-kit/project.sh; rt_push_touched origin/<base> HEAD'` answers for: `auth` —

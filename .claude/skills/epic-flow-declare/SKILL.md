@@ -4,7 +4,7 @@ kind: pattern
 rule: epic-flow
 description: Pattern of rule epic-flow. Load when the grill gave a series of tasks — declaring the epic with its card, plan and all its tasks at once, then taking its branch from the main branch. One task — pattern task-flow-start.
 ---
-<!-- rt-kit v0.39.0 · patterns/epic-flow-declare.md · 2475df466bde · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · patterns/epic-flow-declare.md · 773928229470 · правится надстройкой, не здесь -->
 
 # Declaring an epic
 
@@ -28,7 +28,8 @@ npm run task:new -- --epic --title '<Возможность, которая ра
 
 The call puts the epic label on the card, writes the path of the plan into its body, takes the epic
 branch from the main branch, and commits and pushes a draft of the plan into it from a temporary
-working tree: the working copy stays on its branch. The audit reads the plan by that path, and a card
+clone: the working copy stays on its branch. What its hooks need, the tree installs there by the
+setting `board.epicTreeInstall`. The audit reads the plan by that path, and a card
 without it points into emptiness. A refused push leaves the draft in the working copy. The push runs
 the whole set of the tree before it, so the call goes in the background; at night it is work visible
 from outside and waits for the owner's word. Everything the epic cannot be created without is asked before the card is

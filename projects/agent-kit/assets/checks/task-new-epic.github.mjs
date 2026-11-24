@@ -23,16 +23,19 @@
  * FAIL-OPEN: no repository or no remote main branch — the draft is laid in the working copy.
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmdirSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmdirSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { dirname, isAbsolute, join, resolve } from 'node:path';
 
 import { BOT, TASK_KEY } from './board.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 const MAIN = CONFIG.deploy?.mainBranch || 'main';
 
-const git = (args, cwd, env = process.env) => spawnSync('git', args, { cwd, env, encoding: 'utf8' });
+/** A push prints the whole set of the tree: past the default limit of the output the call would be killed. */
+const OUTPUT = { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 };
+
+const git = (args, cwd, env = process.env) => spawnSync('git', args, { cwd, env, ...OUTPUT });
 const said = (run) => (run.stderr || run.stdout || `exited ${run.status}`).trim().split('\n').slice(-5).join('\n');
 
 function draftOf({ title, number, branch }) {
@@ -95,7 +98,7 @@ function identity() {
 function prepare(tree, env) {
     const install = CONFIG.board?.epicTreeInstall;
     if (install) {
-        const run = spawnSync('bash', ['-c', install], { cwd: tree, env, encoding: 'utf8' });
+        const run = spawnSync('bash', ['-c', install], { cwd: tree, env, ...OUTPUT });
         return run.status === 0 ? null : `${install}: ${said(run)}`;
     }
     const own = join(ROOT, 'node_modules');
@@ -105,19 +108,30 @@ function prepare(tree, env) {
     return null;
 }
 
-/** Commits the draft in the temporary tree and pushes the branch; the reason of a failure, or null. */
-function commitAndPush(tree, { planPath, branch, number, text }, env) {
+/**
+ * Commits the draft in the clone and pushes the branch; the reason of a failure, or null. A plan the
+ * main branch already holds is not overwritten: over it the draft is not laid, and one written in the
+ * working copy that differs from it is not sent.
+ */
+function commitAndPush(tree, { planPath, branch, number, text, written }, env) {
     const unprepared = prepare(tree, env);
     if (unprepared) {
         return unprepared;
     }
-    mkdirSync(dirname(join(tree, planPath)), { recursive: true });
-    writeFileSync(join(tree, planPath), text);
-    for (const args of [
+    const plan = join(tree, planPath);
+    const held = existsSync(plan);
+    if (held && written && readFileSync(plan, 'utf8') !== text) {
+        return `the branch ${MAIN} of the host holds another ${planPath}`;
+    }
+    if (!held) {
+        mkdirSync(dirname(plan), { recursive: true });
+        writeFileSync(plan, text);
+    }
+    const commit = [
         ['add', '--', planPath],
         ['commit', '-q', '-m', `docs: план эпика ${TASK_KEY}-${number}`],
-        ['push', '-q', '-u', 'origin', branch],
-    ]) {
+    ];
+    for (const args of [...(held ? [] : commit), ['push', '-q', '-u', 'origin', branch]]) {
         const run = git(args, tree, env);
         if (run.status !== 0) {
             return `git ${args[0]}: ${said(run)}`;
@@ -148,15 +162,23 @@ function send(draft) {
     }
 }
 
-/** The temporary clone on the tip of the main branch of the host, with its hooks; the reason of a failure, or null. */
+/** The settings of the working copy a push from the clone rests on: who commits, by which road and through which hooks. */
+const CARRIED = /^(user|credential|url|http|https|commit|gpg|includeif)\.|^remote\.origin\.(url|pushurl)$|^core\.(sshcommand|hookspath)$/;
+
+/** A relative address of the host is read from the working copy, not from the clone. */
+const addressed = (key, value) => (/^remote\.origin\./.test(key) && /^\.{1,2}\//.test(value) ? resolve(ROOT, value) : value);
+
+/** The temporary clone on the tip of the main branch of the host, with its settings and hooks; the reason of a failure, or null. */
 function cloneAt(tree, branch) {
-    const url = git(['remote', 'get-url', 'origin'], ROOT).stdout.trim();
-    const hooks = git(['config', 'core.hooksPath'], ROOT).stdout.trim();
+    const entries = git(['config', '--local', '--null', '--list'], ROOT)
+        .stdout.split('\0')
+        .map((entry) => [entry.slice(0, entry.indexOf('\n')), entry.slice(entry.indexOf('\n') + 1)])
+        .filter(([key]) => CARRIED.test(key));
     for (const [args, cwd] of [
         [['clone', '-q', '--shared', '--no-checkout', ROOT, tree], ROOT],
-        [['remote', 'set-url', 'origin', url], tree],
+        [['config', '--unset-all', 'remote.origin.url'], tree],
+        ...entries.map(([key, value]) => [['config', '--add', key, addressed(key, value)], tree]),
         [['fetch', '-q', '--prune', 'origin', '+refs/heads/*:refs/remotes/origin/*'], tree],
-        ...(hooks ? [[['config', 'core.hooksPath', hooks], tree]] : []),
         [['checkout', '-q', '--no-track', '-b', branch, `origin/${MAIN}`], tree],
     ]) {
         const run = git(args, cwd);
@@ -164,7 +186,18 @@ function cloneAt(tree, branch) {
             return `git ${args[0]}: ${said(run)}`;
         }
     }
+    carryHooks(tree);
     return null;
+}
+
+/** Hooks history does not hold — those of `.git/hooks` and of a directory an install made — are copied into the clone. */
+function carryHooks(tree) {
+    const path = git(['config', 'core.hooksPath'], ROOT).stdout.trim();
+    const own = path ? resolve(ROOT, path) : resolve(ROOT, git(['rev-parse', '--git-path', 'hooks'], ROOT).stdout.trim());
+    const copy = path ? join(tree, path) : join(tree, '.git/hooks');
+    if (!isAbsolute(path) && existsSync(own) && !(path && existsSync(copy))) {
+        cpSync(own, copy, { recursive: true });
+    }
 }
 
 /**
@@ -181,7 +214,7 @@ export function layEpicPlan({ title, number, branch, planPath }) {
         writeFileSync(path, draftOf({ title, number, branch }));
     }
     const text = readFileSync(path, 'utf8');
-    const { sent, why } = send({ planPath, branch, number, text });
+    const { sent, why } = send({ planPath, branch, number, text, written });
     if (sent) {
         if (git(['ls-files', '--error-unmatch', '--', planPath], ROOT).status !== 0 && readFileSync(path, 'utf8') === text) {
             rmSync(path);

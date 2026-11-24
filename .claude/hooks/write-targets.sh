@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.0 · hooks/write-targets.sh · 601b6b161bd4 · правится надстройкой, не здесь
+# rt-kit v0.39.0 · hooks/write-targets.sh · b97588d1a34a · правится надстройкой, не здесь
 # Write targets named by the shell command outright: redirection, `tee`, an in-place edit, a copy
 # over the top, and for an interpreter — the paths from its body. Prints one per line.
 #
@@ -147,13 +147,14 @@ rt_write_targets() {
             # Inside a body that does write, all paths are still taken: the path and the write call
             # stand there on different lines, and there is nothing to tie them together with.
             #
-            # A redirect inside a body names a path with a slash — the caller is given no other. With
-            # an extension of a file it is a redirect anywhere but after `=` or `-`, without one only
-            # after a space, a quote or at the line start. `a>b`, `a > b.length` and `w > h/2` of the
-            # language compare and write nothing.
+            # A redirect inside a body names a file. With an extension of one it is a redirect
+            # anywhere but after `=` or `-`, and so is a variable of the shell; a path with a slash
+            # and no extension only after a space, a quote or at the line start, and not before a
+            # bracket. `a>b`, `a > b.length`, `w > h/2` and `(w > h/c)` of the language compare.
             function redirects(s) {
-                return s ~ /(^|[ \t\047\"&])[0-9]?>>?[ \t]*[A-Za-z0-9_.~$@-]*\/[A-Za-z_.~$@]/ \
-                    || s ~ /(^|[^=-])>[ \t]*[A-Za-z0-9_.~$@\/-]*\/[A-Za-z0-9_.@-]*\.(md|json|mjs|cjs|js|ts|tsx|sh|scss|css|html|yml|yaml|txt|xml|svg|toml|prisma|py)([^A-Za-z0-9]|$)/
+                return s ~ /(^|[ \t\047\"&])[0-9]?>>?[ \t]*[A-Za-z0-9_.~$@-]*\/[A-Za-z_.~$@][A-Za-z0-9_.~$@\/-]*([^A-Za-z0-9_.~$@\/)-]|$)/ \
+                    || s ~ /(^|[^=-])>[ \t]*[\047\"]?[$][{]?[A-Z]/ \
+                    || s ~ /(^|[^=-])>[ \t]*[A-Za-z0-9_.~$@\/-]*\.(md|json|mjs|cjs|js|ts|tsx|sh|scss|css|html|yml|yaml|txt|xml|svg|toml|prisma|py|lock|conf|ini|env|cfg)([^A-Za-z0-9]|$)/
             }
             function writes(s) {
                 return s ~ /open[ \t]*\([^)]*[\047\"](w|a|r\+|w\+|a\+)[\047\"]/ \

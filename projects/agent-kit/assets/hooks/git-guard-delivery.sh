@@ -273,7 +273,7 @@ if [ -n "$branch_arg" ]; then
         # checked, not the tip of the working copy: otherwise the command that takes the base fresh —
         # `git checkout -b <branch> origin/<main>` — would be forbidden.
         # A redirect is no base and hides none: it is cut out before the base is read.
-        base_arg="$(printf '%s' "$cmd" | sed -E 's/([[:space:]][0-9]+)?[<>]+(\&[0-9-]+|[[:space:]]*[^[:space:];\&|<>]+)/ /g' | sed -nE 's/.*git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]+[^[:space:];&|]+[[:space:]]+([^[:space:];&|-][^[:space:];&|]*).*/\4/p' | head -1)"
+        base_arg="$(printf '%s' "$cmd" | sed -E 's/([[:space:]][0-9]+)?[<>]+[|]?(\&[0-9-]+|[[:space:]]*("[^"]*"|[^[:space:];\&|<>]+))/ /g' | sed -nE 's/.*git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]+[^[:space:];&|]+[[:space:]]+([^[:space:];&|-][^[:space:];&|]*).*/\4/p' | head -1)"
         base_ref="${base_arg:-HEAD}"
         command -v rt_assignment_unmet >/dev/null 2>&1 && rt_assignment_unmet "$epic_arg" "the branch «${branch_arg}»"
         if [ -n "$epic_arg" ] && command -v rt_epic_base >/dev/null 2>&1; then

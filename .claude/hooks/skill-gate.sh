@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.0 · hooks/skill-gate.sh · 9c05c6b87fca · правится надстройкой, не здесь
+# rt-kit v0.39.0 · hooks/skill-gate.sh · cbdae73eb6e8 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__claude-in-chrome__.*|mcp__figma__use_figma
 # Requires: checks/decide.mjs, hooks/decide.sh, hooks/deny-tail.sh
 # The rules gate: it does not let a file be edited until the rule it falls under has been loaded.
@@ -420,7 +420,7 @@ fi
 # refusal; the rest are named all at once and loaded in one turn. The one longer than the limit is
 # named on top with its own move.
 if [ "${#given[@]}" -gt 0 ]; then
-    reason="Refused by the rules gate: the rules $(rt_gate_names "${given[@]}") of this call arrived below whole, the same as a load by the tool Skill. The rules $(rt_gate_names "${rest[@]}") do not fit the host limit of ${gate_limit} characters with them: repeat the action, and they arrive with it, or load all of these by the tool Skill first. ${fallback}"
+    reason="Refused by the rules gate: the rules $(rt_gate_names "${given[@]}") of this call arrived below whole, the same as a load by the tool Skill. The rules $(rt_gate_names "${rest[@]}") do not fit the host limit of ${gate_limit} characters with them: repeat the action, and what fits arrives with it, or load all of these by the tool Skill first. ${fallback}"
     [ "$gate_why" = together ] && gate_why=""
 fi
 case "$gate_why" in

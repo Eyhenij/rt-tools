@@ -65,18 +65,30 @@ rt_prose_heredoc_bodies() {
     '
 }
 
-# The text a command without a heredoc brings with it: the whole command, less its parts that bring
-# none — the commands of reading and moving named below, and an interpreter that runs a file. Each
-# part left is a paragraph of its own: a chain of `sed -i` and checks read as one long sentence. A
-# part not named is judged: an unknown form of a write must not become a way past the wording.
+# The text a command without a heredoc brings with it: the whole command, part by part, less the parts
+# of reading named below and the old wording of a `sed` replacement. Each part is a paragraph of its
+# own: a chain of `sed -i` and checks read as one long sentence. A part not named is judged: an
+# unknown form of a write must not become a way past the wording.
 rt_prose_printed() {
     awk -v q="'" '
+        # The text of a sed command without the patterns of its `s` replacements.
+        function replaced(s,   out, i, c, d, p) {
+            out = ""
+            for (i = 1; i <= length(s); i++) {
+                c = substr(s, i, 1); d = substr(s, i + 1, 1); p = substr(s, i - 1, 1)
+                if (c != "s" || d !~ /[\/|#,@!:]/ || (i > 1 && p !~ /[ \t;"0-9$\/}{]/ && p != q)) { out = out c; continue }
+                for (i += 2; i <= length(s) && substr(s, i, 1) != d; i++) { if (substr(s, i, 1) == "\\") { i++ } }
+                out = out " "
+            }
+            return out
+        }
         function flush(   head) {
             head = seg
-            sub(/^[ \t]*((then|do|else|if|while|until|time|!|[{(]|[A-Za-z_][A-Za-z0-9_]*=[^ \t"]*[ \t])[ \t]*)*/, "", head)
-            silent = head ~ /^(sed|grep|egrep|rg|find|ls|cat|head|tail|sort|wc|cd|git|npx|npm|pnpm|nx|diff|jq|test|\[|\[\[|true|false|sleep|mkdir|rm|mv|cp|touch|chmod|export|source|\.|set|done|fi|esac)([ \t]|$)/ \
-                || head ~ /^(node|python3?|perl|ruby|bash|sh)[ \t]+[^ \t-]/
-            if (!silent || head ~ /<<</) { gsub(/"/, "", seg); gsub(q, "", seg); print seg "\n" }
+            sub(/^[ \t]*((then|do|else|if|while|until|time|!|[{(]|[A-Za-z_][A-Za-z0-9_]*=[^ \t"\047]*[ \t])[ \t]*)*/, "", head)
+            if (head ~ /^sed[ \t]/) { seg = replaced(seg) }
+            if (head !~ /^(grep|egrep|rg|ls|cat|head|tail|sort|wc|cd|diff|test|\[|\[\[)([ \t]|$)/ || head ~ /<<<|[<>$]\(|`/) {
+                gsub(/"/, "", seg); gsub(q, "", seg); print seg "\n"
+            }
             seg = ""
         }
         { text = text $0 "\n" }

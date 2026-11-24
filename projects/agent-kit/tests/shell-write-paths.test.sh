@@ -102,7 +102,11 @@ INSHELL="$(printf "python3 - <<'PY'\nimport os\nos.system('echo x > docs/a.md')\
 report "SC-AK-1251 — перенаправление внутри os.system называет путь" "$(names "$INSHELL" 'docs/a.md')" 1
 TIGHT="$(printf "python3 - <<'PY'\nimport os\nos.system('cat y>docs/2026.md')\nPY\n")"
 report "SC-AK-1251 — перенаправление без пробела слева называет путь" "$(names "$TIGHT" 'docs/2026.md')" 1
-ARROWED="$(printf "node - <<'JS'\nconst f = (w) => w/2\nif (w>h/2) console.log('tools/b.mjs')\nJS\n")"
+SHELLVAR="$(printf "python3 - <<'PY'\nimport os\nos.system('F=docs/a.md; echo x >>\$F')\nPY\n")"
+report "SC-AK-1251 — перенаправление в переменную оболочки называет путь" "$(names "$SHELLVAR" 'docs/a.md')" 1
+LOCKED="$(printf "python3 - <<'PY'\nimport os\nos.system('cat y>docs/a.lock')\nPY\n")"
+report "SC-AK-1251 — файл замка называется целью" "$(names "$LOCKED" 'docs/a.lock')" 1
+ARROWED="$(printf "node - <<'JS'\nconst f = (w) => w/2\nif (w>h/2 || w > h/c) console.log('tools/b.mjs')\nJS\n")"
 report "SC-AK-1251 — деление справа от сравнения и стрелки путей не отдаёт" "$(count "$ARROWED")" 0
 
 report "SC-AK-1251 — стрелка в двойных кавычках путей не отдаёт" \

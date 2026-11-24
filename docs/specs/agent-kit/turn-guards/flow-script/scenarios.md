@@ -293,7 +293,7 @@ Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
 ### SC-AK-1407 — the plan or the grill edited after the commit of the plan refuses the step
 
-Given the grill or a file a check of the plan reads changed after the commit of the plan, and then only the progress and the approvals changed
+Given the grill or a file of the folder that is no text changed after the commit of the plan, and then only the progress and the approvals changed
 When the engine measures a step
 Then the first is refused naming the file, and the other records of the folder do not refuse it
 

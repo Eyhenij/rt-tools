@@ -10,7 +10,7 @@ The names and bindings of this tree, next to the rule `SKILL.md` beside it.
 
 ## Where it lives
 
-- **The epic plan** — `docs/plans/`, named by the key `plansDir` in `.claude/rt-kit/checks.json`: the creation command lays the draft of a plan there
+- **The epic plan** — `docs/plans/`, named by the key `plansDir` in `.claude/rt-kit/checks.json`: the creation command puts the draft of a plan there in the epic branch, and in the working copy when the push is refused
 - **The table of assignments** — `.claude/rt-kit/assignments.md`
 
 ## How the law applies here

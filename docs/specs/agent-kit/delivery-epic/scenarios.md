@@ -66,7 +66,7 @@ Then it lets it through: the merge is done, and the task branch carries the main
 
 Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
 
-### SC-AK-1936 — the draft of the epic plan goes to the host from a temporary tree
+### SC-AK-1936 — the draft of the epic plan goes to the host from a temporary clone
 
 Given the working copy stands on the branch of other work with edits of its own
 When the command of creating is called with the argument about an epic

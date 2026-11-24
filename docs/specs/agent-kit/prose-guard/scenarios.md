@@ -210,9 +210,8 @@ Then it judges the bodies of the heredocs alone and lets the call through
 
 Given a command without a heredoc
 When the guard of the wording checks the call
-Then it judges all of it but the parts that bring no text — the commands of reading and moving and an
-interpreter that runs a file: a long chain of edits and checks passes, and any other form of a write
-is judged
+Then it judges it part by part, but for the commands of reading and the old wording of a `sed`
+replacement: a long chain of edits and checks passes, and any other form of a write is judged
 
 Covered: `projects/agent-kit/tests/prose-style-guard.test.sh`.
 

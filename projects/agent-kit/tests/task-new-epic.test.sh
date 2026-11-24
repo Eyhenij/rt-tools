@@ -34,7 +34,8 @@ tn_config() {
         "statusOptions": { "backlog": { "id": "bb", "name": "Backlog" } },
         "taskKey": "RT",
         "bot": "bot",
-        "epicLabel": "${2-epic}"
+        "epicLabel": "${2-epic}",
+        "epicTreeInstall": "${3-}"
     }
 }
 CFG
@@ -240,14 +241,17 @@ tn_run_signed() {
         GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=commit.gpgsign GIT_CONFIG_VALUE_0=false \
         tn_run --epic --title 'Поставка идёт эпиками' --slug work-by-epics
 }
-TN_OUT="$(tn_run_signed)"
+TN_TMP="$(mktemp -d)"
+TN_OUT="$(TMPDIR="$TN_TMP" tn_run_signed)"
 got="$(git -C "$TN_HOST" show RT-4242-work-by-epics:docs/plans/work-by-epics.md 2>/dev/null | grep -c 'Ветка эпика:\*\* `RT-4242-work-by-epics`')"
 report "SC-AK-1936 — the epic draft goes from a temporary tree" "$got" 1
 report "SC-AK-1936 — коммит черновика стоит на вершине главной" \
     "$(git -C "$TN_HOST" log --format=%s main..RT-4242-work-by-epics 2>/dev/null)" 'docs: план эпика RT-4242'
 report "SC-AK-1936 — рабочая копия осталась на своей ветке, черновика в ней нет" \
     "$(git -C "$TN_TREE" branch --show-current)|$(cat "$TN_TREE/own.txt")|$(ls "$TN_TREE/docs" 2>/dev/null)" 'RT-7-other|своё|'
-report "SC-AK-1936 — временной копии после вызова нет" "$(git -C "$TN_TREE" worktree list | grep -c .)" 1
+report "SC-AK-1936 — временного клона после вызова нет" \
+    "$(printf '%s' "$TN_OUT" | grep -c "goes to the host from .*/rt-epic-")|$(find "$TN_TMP" -name 'rt-epic-*' | grep -c .)" '1|0'
+rm -rf "$TN_TMP"
 report "SC-AK-1936 — напечатана готовая ветка" "$(printf '%s' "$TN_OUT" | grep -c '^  git checkout RT-4242-work-by-epics$')" 1
 
 # Крючок отправки видит своё хранилище, а не хранилище рабочей копии.
@@ -262,6 +266,37 @@ report "SC-AK-1936 — крючок отправки запускается и �
     "$([ -s "$TN_HOST/hook-dir" ] && echo запущен)|$(git -C "$TN_TREE" config core.bare)" 'запущен|false'
 git -C "$TN_TREE" config --unset core.hooksPath
 rm -rf "$TN_HOOK_TMP"
+
+# Красный крючок останавливает отправку и там, где его история не знает: в `.git/hooks` и в каталоге,
+# который поставила установка.
+for TN_HOOKS in '' .live-hooks; do
+    git -C "$TN_HOST" branch -q -D RT-4242-work-by-epics 2>/dev/null
+    mkdir -p "$TN_TREE/${TN_HOOKS:-.git/hooks}"
+    printf '#!/bin/sh\necho "крючок отказал" >&2\nexit 1\n' > "$TN_TREE/${TN_HOOKS:-.git/hooks}/pre-push"
+    chmod +x "$TN_TREE/${TN_HOOKS:-.git/hooks}/pre-push"
+    [ -z "$TN_HOOKS" ] || git -C "$TN_TREE" config core.hooksPath "$TN_HOOKS"
+    TN_OUT="$(tn_run_signed)"
+    report "SC-AK-1936 — красный крючок «${TN_HOOKS:-.git/hooks}» останавливает отправку" \
+        "$(printf '%s' "$TN_OUT" | grep -c 'крючок отказал')|$(git -C "$TN_HOST" branch --list 'RT-4242*' | grep -c .)" '1|0'
+    rm -rf "$TN_TREE/${TN_HOOKS:-.git/hooks}/pre-push"
+    git -C "$TN_TREE" config --unset core.hooksPath
+done
+
+# Установка дерева идёт в клоне до крючков.
+tn_config docs/plans epic "pwd > '$TN_HOST/installed-in'"
+tn_run_signed >/dev/null
+report "SC-AK-1936 — команда установки дерева идёт в клоне" "$(grep -c 'rt-epic-' "$TN_HOST/installed-in" 2>/dev/null)" 1
+tn_config
+
+# План, который уже лежит в главной, не затирается: ветка уходит с ним, без коммита черновика.
+git -C "$TN_HOST" branch -q -D RT-4242-work-by-epics
+( cd "$TN_TREE" && git checkout -q main && mkdir -p docs/plans && printf '# План главной\n' > docs/plans/work-by-epics.md \
+    && git add docs && "${TN_G[@]}" commit -q -m plan && git push -q origin main && git checkout -q RT-7-other ) 2>/dev/null
+tn_run_signed >/dev/null
+report "SC-AK-1936 — план главной не затёрт черновиком" \
+    "$(git -C "$TN_HOST" show RT-4242-work-by-epics:docs/plans/work-by-epics.md 2>/dev/null)" '# План главной'
+( cd "$TN_TREE" && git checkout -q main && git reset -q --soft HEAD~1 && git rm -rq --cached docs && rm -rf docs \
+    && git push -qf origin main && git checkout -q RT-7-other ) 2>/dev/null
 
 # Плана, написанного до карточки, история не знает: отправленный, он уходит из рабочей копии, и
 # напечатанная строка его ветку берёт.

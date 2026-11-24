@@ -26,7 +26,7 @@
  * plans directory, because the card carries neither the makeup of the epic nor the order of its
  * tasks; and the path to that draft in the card body — the audit reads the plan by it, and a card
  * without the path points into emptiness. The branch of the epic is taken from the main branch,
- * committed with the draft and pushed from a temporary working tree: `task-new-epic.mjs`.
+ * committed with the draft and pushed from a temporary clone: `task-new-epic.mjs`.
  *
  * With `--epic-of <number>` the created task is a task of that epic: the body says so in the very
  * shape the audit reads the link by, and the printed branch line takes the branch of the epic as
@@ -404,7 +404,6 @@ function adoptDraft() {
     }
 }
 
-const epicSent = args.epic && layEpicPlan({ title: args.title, number, branch, planPath }).sent;
 if (!args.epic) {
     adoptDraft();
 }
@@ -418,6 +417,10 @@ const answer = confirmInQueue(number, token);
 for (const line of answer.lines) {
     (answer.ok ? console.log : console.error)(`task-new: ${line}`);
 }
+
+// The branch of an epic goes to the host last: its push runs the set of the tree, and a call cut short
+// there has already named the card.
+const epicSent = args.epic && layEpicPlan({ title: args.title, number, branch, planPath }).sent;
 
 /**
  * The branch of an epic is taken from the main branch, and the branches of its tasks from it: a
