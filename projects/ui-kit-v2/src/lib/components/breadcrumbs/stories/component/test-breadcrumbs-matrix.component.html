@@ -17,7 +17,9 @@
                 <div style="display: grid; gap: 24px">
                     <rt-breadcrumbs [crumbs]="shortPath" />
                     <rt-breadcrumbs look="heading" [crumbs]="shortPath" [back]="true">
-                        <span style="color: var(--rt-color-text-muted)">черновик</span>
+                        <ng-template rtBreadcrumbsContent>
+                            <span style="color: var(--rt-color-text-muted)">черновик</span>
+                        </ng-template>
                     </rt-breadcrumbs>
                     <rt-breadcrumbs look="heading" [crumbs]="path.slice(0, 1)" />
                 </div>

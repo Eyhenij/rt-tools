@@ -25,13 +25,15 @@
                 }
                 @if (actions().length > 0) {
                     <rt-menu qa-dataid="page-bar-actions-menu" triggerSize="sm" panelClass="rt-page-bar-menu" [ariaLabel]="t().uiActions">
-                        @for (action of actions(); track action.id) {
-                            <rt-menu-item
-                                [icon]="action.icon"
-                                [label]="action.label"
-                                [disabled]="action.disabled ?? false"
-                                (selected)="actionClick.emit(action.id)" />
-                        }
+                        <ng-template rtMenuContent>
+                            @for (action of actions(); track action.id) {
+                                <rt-menu-item
+                                    [icon]="action.icon"
+                                    [label]="action.label"
+                                    [disabled]="action.disabled ?? false"
+                                    (selected)="actionClick.emit(action.id)" />
+                            }
+                        </ng-template>
                     </rt-menu>
                 }
             }

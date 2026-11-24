@@ -1,5 +1,5 @@
 import { BreakpointObserver, BreakpointState, Breakpoints } from '@angular/cdk/layout';
-import { Injectable, Signal, WritableSignal, computed, inject, signal } from '@angular/core';
+import { Signal, WritableSignal, computed, inject, signal, Service } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 import { Observable, map } from 'rxjs';
@@ -31,7 +31,7 @@ export function rtNarrowByWidth(placeWidth: number | null, viewportNarrow: boole
  * Узкий вид считается от ширины места страницы: его объявляет `rt-container`, и рядом с
  * боковой панелью место уже окна. Без объявленного места вид считается от окна.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class BreakpointsService {
     readonly #observer: BreakpointObserver = inject(BreakpointObserver);
     readonly #window: Window & typeof globalThis = inject(WINDOW) as Window & typeof globalThis;

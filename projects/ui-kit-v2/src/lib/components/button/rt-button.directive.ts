@@ -9,7 +9,6 @@ import {
     Directive,
     effect,
     ElementRef,
-    HostBinding,
     inject,
     input,
     InputSignal,
@@ -68,6 +67,10 @@ const LOADING_FADE_OUT_BUFFER_MS: number = 50;
         { directive: RtRippleDirective, inputs: ['rippleDisabled'] },
         { directive: RtRadiusDirective, inputs: ['radius'] },
     ],
+    host: {
+        '[attr.aria-pressed]': 'ariaPressed',
+        '[class]': 'hostClasses',
+    },
     /* Шаг скругления без входа берётся из настроек кита: приложение, скруглившее все кнопки разом,
        называет шаг один раз, а вход на кнопке по-прежнему сильнее. */
     providers: [
@@ -185,14 +188,12 @@ export class RtButtonDirective {
     }
 
     /** Положение наружу: атрибута нет вовсе там, где положения у кнопки не бывает. */
-    @HostBinding('attr.aria-pressed')
     protected get ariaPressed(): string | null {
         const pressed: boolean | null = this.pressed();
 
         return pressed === null ? null : String(pressed);
     }
 
-    @HostBinding('class')
     protected get hostClasses(): Record<string, boolean> {
         const theme: IButton.Theme = this.#theme();
         const appearance: IButton.Appearance = this.#appearanceShown();

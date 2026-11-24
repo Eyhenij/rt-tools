@@ -4,8 +4,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 <Title>Menu — `rt-menu` и `rt-menu-item`</Title>
 
-Меню действий: иконочная кнопка, раскрывающая список пунктов. Пункты кладутся проекцией —
-`rt-menu-item` или свой компонент, лишь бы он бросал всплывающее событие выбора. Панель
+Меню действий: иконочная кнопка, раскрывающая список пунктов. Пункты кладутся шаблоном
+`<ng-template rtMenuContent>` и создаются при открытии — `rt-menu-item` или свой компонент, лишь бы он бросал всплывающее событие выбора. Панель
 рисуется в оверлее CDK и не режется `overflow: hidden` у таблицы или карточки.
 
 Страница одна на оба компонента: они живут в одной папке и порознь не применяются. Матрицы
@@ -13,8 +13,10 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ```html
 <rt-menu ariaLabel="Действия со строкой" align="end">
-    <rt-menu-item label="Открыть" icon="ico-eye" (selected)="open()" />
-    <rt-menu-item label="Удалить" icon="ico-trash" confirmMessage="Удалить запись?" [danger]="true" (selected)="remove()" />
+    <ng-template rtMenuContent>
+        <rt-menu-item label="Открыть" icon="ico-eye" (selected)="open()" />
+        <rt-menu-item label="Удалить" icon="ico-trash" confirmMessage="Удалить запись?" [danger]="true" (selected)="remove()" />
+    </ng-template>
 </rt-menu>
 ```
 

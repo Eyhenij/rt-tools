@@ -32,7 +32,7 @@ are invisible to them.
 - **A menu without submenu tooltips shows none on the submenu rows, and the accessible names stay.**
 - **A row button without a kit icon takes the menu's own template, which knows what it draws.**
 - **A row button with the own template is not warned about.**
-- **An icon button without an icon name shows its projected content.**
+- **An icon button without an icon name shows its content template.**
 - **Without the new inputs and template the menu and the icon button draw as before.**
 - **A rail without titles names its items by a tooltip on the right and by the accessible name.**
 - **The rail item tooltip obeys the submenu tooltip switch.**

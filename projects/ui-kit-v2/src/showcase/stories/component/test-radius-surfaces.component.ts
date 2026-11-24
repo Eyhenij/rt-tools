@@ -6,6 +6,7 @@ import { RtFileCardComponent } from '../../../lib/components/file-card/rt-file-c
 import { RtMarkdownTextComponent } from '../../../lib/components/markdown-text/rt-markdown-text.component';
 import { RtMessageComponent } from '../../../lib/components/message/rt-message.component';
 import { RtMoneyListComponent } from '../../../lib/components/money-list/rt-money-list.component';
+import { RtMoneyRowContentDirective } from '../../../lib/components/money-list/rt-money-row-content.directive';
 import { RtMoneyRowComponent } from '../../../lib/components/money-list/rt-money-row.component';
 import { RtNoteComponent } from '../../../lib/components/note/rt-note.component';
 import { RtSectionNavComponent } from '../../../lib/components/section-nav/rt-section-nav.component';
@@ -50,6 +51,7 @@ const ROWS: readonly string[] = [
         RtMessageComponent,
         RtMoneyListComponent,
         RtMoneyRowComponent,
+        RtMoneyRowContentDirective,
         RtNoteComponent,
 
         RtSectionNavComponent,

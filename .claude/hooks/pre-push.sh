@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/pre-push.sh · 1dceef278a61 · правится надстройкой, не здесь
+# rt-kit v0.39.0 · hooks/pre-push.sh · 12fe5af4ee29 · правится надстройкой, не здесь
 # The checks before a push, as a hook of git itself, not of the agent.
 #
-# Requires: hooks/push-set.sh, hooks/git-guard-push-marks.sh
+# Requires: hooks/push-set.sh, hooks/git-guard-push-marks.sh, hooks/facts.sh, hooks/decide.sh
 #
 # NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The version control
 # calls it before every push, whatever sent it: the session guard of the push stands only on the
@@ -90,16 +90,40 @@ command -v rt_push_checks >/dev/null 2>&1 || exit 0
 base="$(rt_push_set_base)"
 
 if command -v rt_push_adds_nothing >/dev/null 2>&1 && rt_push_adds_nothing "$base"; then
-    printf 'pre-push: the head adds no commit to %s — the set is not run\n' "$base" >&2
+    printf 'pre-push: the head adds no commit to %s — the set is not run\n' \
+        "$(command -v rt_push_base_label >/dev/null 2>&1 && rt_push_base_label "$base" || printf '%s' "$base")" >&2
     exit 0
 fi
 
 total="$(rt_push_checks "$base" | grep -c .)"
 [ "${total:-0}" -eq 0 ] && exit 0
 
+# No installed node serves the pin of the tree, and PATH gives another one or none: no step runs,
+# and the push stops before the line that counts the steps.
+node_line="$(rt_node_pin_mismatch "$repo_root")"
+if [ -n "$node_line" ]; then
+    # shellcheck disable=SC1091
+    . "$hooks_dir/decide.sh" 2>/dev/null
+    if command -v rt_decide >/dev/null 2>&1; then
+        rt_decide pre-push.sh push '{"push_sends_tip":"yes","push_node_pinned":"no"}' "$(jq -cn --arg l "$node_line" '{node_line:$l}')" git
+        code=$?
+        [ "$code" -ne 0 ] && exit "$code"
+    fi
+    # The decider needs a node, and a client that starts git with no node in PATH reaches none: the
+    # line is printed here, and the push stops all the same.
+    printf 'pre-push: refused — %s. No step of the set ran.\n' "$node_line" >&2
+    exit 1
+fi
+
 printf 'pre-push: running the checks before the push, %s of them\n' "$total" >&2
 
 rt_push_set_run "$base"
+
+# The set judged the node once more and ran no step: an empty set is not a green one.
+if [ -n "${rt_push_set_node:-}" ]; then
+    printf 'pre-push: refused — %s. No step of the set ran.\n' "$rt_push_set_node" >&2
+    exit 1
+fi
 
 [ -n "$rt_push_set_skipped" ] && printf 'pre-push: these checks had nothing to look at:\n%s\n' "$rt_push_set_skipped" >&2
 

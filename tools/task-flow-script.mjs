@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.38.0 · checks/task-flow-script.mjs · f5042940b2bf · правится надстройкой, не здесь
+// rt-kit v0.39.0 · checks/task-flow-script.mjs · fb38ee00083f · правится надстройкой, не здесь
 /**
  * The engine of the task flow: reads the description `flow.js` through the model and answers about
  * the scenario. The description lies next to the engine as `task-flow/flow.js` where the engine is
@@ -44,15 +44,17 @@ import { evaluateCondition } from './flow-condition.mjs';
 import { runForecast } from './flow-forecast.mjs';
 import { judgeCall } from './flow-guard.mjs';
 import { callOf, guardContext } from './flow-guard-run.mjs';
-import { isWriteCommand, saysStop } from './flow-data.mjs';
+import { isWriteCommand, retiredLines } from './flow-data.mjs';
 import { FlowModelError, buildModel } from './flow-model.mjs';
 import { overridePath, removedLines } from './flow-override.mjs';
 import { planProblems, readRecord, runPlanRed } from './flow-plan.mjs';
 import { runStepCommand } from './flow-step.mjs';
 import { FlowSyntaxError } from './flow-syntax.mjs';
-import { currentStep, holdReason, menuCause, releaseCase } from './flow-verdict.mjs';
+import { currentStep, decide, holdReason, menuCause, stageStep } from './flow-verdict.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
+// The history source puts a taken-apart folder back; it lies next to the laid-out engine, one level up in the package.
+const history = await import(pathToFileURL([join(HERE, 'task-flow/source/git.mjs'), join(HERE, '../task-flow/source/git.mjs')].find((path) => existsSync(path))).href);
 
 /** Where the description lies: next to the laid-out engine, or in the package. */
 export function flowPath(given) {
@@ -131,7 +133,7 @@ export async function openReaders(model, base, given = {}) {
     const source = await openSources(model, base, given);
     const modules = {};
     for (const m of model.measures) modules[m.entry] = await import(pathToFileURL(join(base, m.file)).href);
-    const data = { words: model.words, expect: model.expect, rules: { saysStop, isWriteCommand } };
+    const data = { words: model.words, expect: model.expect, rules: { isWriteCommand } };
     const caps = new Map(model.measures.map((m) => [m.entry, m.caps]));
     return (name) => {
         const [, entry, cap] = name.split('.');
@@ -215,14 +217,36 @@ async function runVerdict(model, base) {
         return cache.get(name);
     };
     const result = measureStates(model, measured);
-    const released = releaseCase(model, measured, result);
-    if (released) return { release: released.log ?? released.key };
+    const decided = decide(model, measured, result);
+    if (decided) return decided;
     const root = spawnSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8' }).stdout?.trim();
     const branch = spawnSync('git', ['rev-parse', '--abbrev-ref', 'HEAD'], { encoding: 'utf8' }).stdout?.trim();
     const progress = join(root ?? '.', GUARD_SETTINGS.tasksDir, branch ?? '', 'progress.md');
-    const step = currentStep(existsSync(progress) ? readFileSync(progress, 'utf8') : null);
+    const folder = `${GUARD_SETTINGS.tasksDir}/${branch}`;
+    // A folder a live step run put back is not the folder of the branch: its progress is an older one.
+    const text = existsSync(progress) && !history.liveRun(folder) ? readFileSync(progress, 'utf8') : null;
+    let step = currentStep(text);
+    // No current step: the first one of the plan not done or without a matched mark, from the history
+    // when the folder is taken apart.
+    if (!step && branch && model.states[result.index - 1]?.key === 'stage') {
+        const source = await openSources(model, base);
+        step = stageStep(source('git'), source('marks'), folder, branch, text);
+    }
     const task = branch?.match(/^[A-Z]+-(\d+)-/)?.[1] ?? null;
     return { block: holdReason(model, result, step, { cause: menuCause(measured), task }) };
+}
+
+/**
+ * Cleans the folder a broken step run put back, at a start of the engine, by `cleanBroken` of the
+ * history source: `{ verdict, folder }` or null. A folder kept because it was edited after the run is
+ * named on stderr, so nobody reads its older progress for the branch's own.
+ */
+export function cleanBrokenRun() {
+    const broken = history.cleanBroken();
+    if (broken?.verdict === 'kept' && broken.folder) {
+        console.error(`task-flow-script: ${broken.folder} is left by a broken step run and was edited after it — not removed; take it away by hand once read`);
+    }
+    return broken;
 }
 
 const COMMANDS = ['states', 'measure', 'step', 'plan-check', 'plan-red', 'guard', 'verdict', 'forecast'];
@@ -241,6 +265,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
         console.error(USAGE);
         process.exit(2);
     }
+    // A folder a broken step run put back is cleaned before any command; a live run keeps it.
+    cleanBrokenRun();
     try {
         const path = flowPath(given);
         const override = overridePath(overrideGiven, given);
@@ -279,7 +305,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
             process.exit(runPlanRed(sources, model, readRecord(process.env.RT_FLOW_TRANSCRIPT)));
         } else {
             const result = measureStates(model, await openReaders(model, dirname(path)));
-            console.log(json ? JSON.stringify(measureJson(model, result)) : [...measureLines(model, result), ...removedLines(model)].join('\n'));
+            console.log(json ? JSON.stringify(measureJson(model, result)) : [...measureLines(model, result), ...removedLines(model), ...retiredLines(model)].join('\n'));
         }
     } catch (error) {
         if (error instanceof FlowSyntaxError) {

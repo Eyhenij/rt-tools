@@ -1,14 +1,4 @@
-import {
-    booleanAttribute,
-    Directive,
-    ElementRef,
-    inject,
-    InjectionToken,
-    input,
-    InputSignal,
-    InputSignalWithTransform,
-    OnInit,
-} from '@angular/core';
+import { booleanAttribute, Directive, inject, InjectionToken, input, InputSignal, InputSignalWithTransform } from '@angular/core';
 import { BooleanInput } from '@angular/cdk/coercion';
 
 import { PlatformService } from '@rt-tools/core';
@@ -37,16 +27,14 @@ function isInsideStopNode(event: MouseEvent): boolean {
  */
 @Directive({
     selector: '[rtDataTableStopRowClick]',
+    host: {
+        // Имя атрибута — `RT_DATA_TABLE_STOP_ROW_CLICK_ATTRIBUTE`; ключ `host` берёт только строку.
+        '[attr.rt-data-table-stop-row-click]': 'stopAttribute',
+    },
 })
-export class RtDataTableStopRowClickDirective implements OnInit {
-    readonly #platformService: PlatformService = inject(PlatformService);
-    readonly #elementRef: ElementRef<HTMLElement> = inject(ElementRef<HTMLElement>);
-
-    public ngOnInit(): void {
-        if (this.#platformService.isPlatformBrowser) {
-            this.#elementRef.nativeElement.setAttribute(RT_DATA_TABLE_STOP_ROW_CLICK_ATTRIBUTE, '');
-        }
-    }
+export class RtDataTableStopRowClickDirective {
+    /** Атрибут ставится только в браузере: серверная разметка строки его не несёт, как и раньше. */
+    protected readonly stopAttribute: '' | null = inject(PlatformService).isPlatformBrowser ? '' : null;
 }
 
 /**

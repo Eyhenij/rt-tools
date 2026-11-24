@@ -4,7 +4,14 @@ import { ChangeDetectionStrategy, Component, inject, Signal, ViewEncapsulation }
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
 import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
-import { RT_ASIDE_DATA, RtAsideComponent, RtAsideFooterComponent, RtAsideHeaderComponent, RtAsideRef } from '@rt-tools/ui-kit-v2/aside';
+import {
+    RT_ASIDE_DATA,
+    RtAsideComponent,
+    RtAsideContentDirective,
+    RtAsideFooterComponent,
+    RtAsideHeaderComponent,
+    RtAsideRef,
+} from '@rt-tools/ui-kit-v2/aside';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { IRtToolbar } from '../rt-toolbar.model';
 
@@ -30,6 +37,7 @@ const BEM_BLOCK: string = 'rt-toolbar-filters-aside';
 
         // components
         RtAsideComponent,
+        RtAsideContentDirective,
         RtAsideFooterComponent,
         RtAsideHeaderComponent,
 

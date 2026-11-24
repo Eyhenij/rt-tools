@@ -109,13 +109,13 @@ export interface IMetricsOptions {
 }
 
 /** Отрезок отчёта: последний день и число дней. Названный день — отрезок из одного дня. */
-export interface IMetricsPeriod {
+interface IMetricsPeriod {
     readonly until: string;
     readonly days: number;
 }
 
 /** Отрезок, который читает отчёт: названный день или дни до сегодняшнего. */
-export function periodOf(options: IMetricsOptions): IMetricsPeriod {
+function periodOf(options: IMetricsOptions): IMetricsPeriod {
     return options.day ? { until: options.day, days: 1 } : { until: options.today, days: options.days };
 }
 

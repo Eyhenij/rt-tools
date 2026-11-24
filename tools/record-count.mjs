@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · checks/record-count.mjs · 4fe259de0c5a · правится надстройкой, не здесь
+// rt-kit v0.39.0 · checks/record-count.mjs · 39b7a76ff0e2 · правится надстройкой, не здесь
 /**
  * The counter of a session record: what the owner said and what the agent was refused, read from the
  * conversation record Claude Code keeps per session.
@@ -95,12 +95,39 @@ const STOP_FEEDBACK = /^Stop hook feedback:/;
  * names itself is taken by its name; the rest are named here.
  */
 const CHECK_TABLE = [
+    // A model check speaks in the frame of the harness, and each event holds one model check: the
+    // frame names it, its failure to find or read its own file included. A verdict that quotes the
+    // refusal of another guard or a shell error is still its own.
+    [/^\s*Stop hook feedback:\s*Agent hook condition was not met: /, () => 'turn-judge'],
+    [/^\s*PreToolUse:AskUserQuestion hook error: Agent hook condition was not met: /, () => 'ask-judge'],
     // A neighbouring guard that names the load of a rule is the same round as the gate refusal,
     // only under another hook name, so it is counted as the gate before its own name is read.
     [/The named move is held by the rules gate/, () => 'skill-gate'],
     [/BLOCKED by ([a-z0-9][a-z0-9-]*):/, (m) => m[1]],
+    // The dispatcher of the command hooks failed as a shell script — a conflict marker or a syntax
+    // error in it: no guard ran, and the text is the error of the shell. A guard that named itself
+    // above keeps its name even when a line of the dispatcher stands in its text.
+    [/\/hooks\/dispatch\.sh: line \d+: /, () => 'dispatch-broken'],
     [/Refused by the rules gate/, () => 'skill-gate'],
     [/Refused: the epic is over/, () => 'epic-over'],
+    // The guards below name no check in their texts; each is told by the opening of its own text.
+    [
+        /BLOCKED: the work is not ready for delivery|while a conflicting request of your own stands|is merged, and the branch has no open PR|Rewrite the signature before the push|BLOCKED: a request from the branch «|BLOCKED: the task folder /,
+        () => 'git-guard-delivery',
+    ],
+    [
+        /BLOCKED: (?:the heavy steps of this tree run ahead|a push without a green local run|several pushes by one command|the command names a push, and the guard cannot read|switching the branch and pushing by one command|the call goes from a second working copy)/,
+        () => 'git-guard-push-tests',
+    ],
+    [/Refused: a commit straight into «/, () => 'git-guard-main'],
+    [/Refused: this call takes work, and /, () => 'tree-assignment-guard'],
+    [/BLOCKED: the commit edits code but not the document that describes it/, () => 'docs-guard'],
+    [/BLOCKED: this is already written\. File: /, () => 'reuse-first-guard'],
+    [/No browser is selected in this session\.|The last browser selection was \d+ s ago/, () => 'browser-guard-require-select'],
+    [/The profile «[^»]*» is not the one pinned to the project/, () => 'browser-guard-device-id'],
+    [/Do not list and do not switch browsers/, () => 'browser-guard-no-listing'],
+    [/Do not ask which browser to use/, () => 'browser-guard-no-asking'],
+    [/Drive the browser by the pinned extension/, () => 'browser-guard-no-other-drivers'],
 ];
 
 /** The check a refusal text names, or `unnamed`. */

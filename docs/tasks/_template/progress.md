@@ -1,4 +1,4 @@
-<!-- rt-kit v0.38.0 · samples/tasks/_template/progress.md · 9fc1c8a987e3 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · samples/tasks/_template/progress.md · 9fc1c8a987e3 · правится надстройкой, не здесь -->
 # Progress
 
 ## Where we stand

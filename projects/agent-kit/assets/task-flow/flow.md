@@ -29,7 +29,7 @@ The engine asks the cases in this order, and a met case lets the turn end before
 | Order | Case | When | Log |
 | --- | --- | --- | --- |
 | 1 | `scenarioEnd` | `any(measure.epic.finished, all(measure.copy.outsideEpic, measure.pr.handed))` | the end of the scenario |
-| 2 | `stopWord` | `measure.owner.saidStop` | a stop word of the owner |
+| 2 | `interrupted` | `measure.owner.interrupted` | the owner interrupted the turn |
 | 3 | `background` | `all(measure.session.waiting, not(measure.pr.handed))` | a background task of the session runs |
 | 4 | `noWrite` | `any(measure.copy.outOfScenario, all(not(measure.session.wrote), not(measure.owner.nudged)))` | no write to the tree, or a branch outside the scenario |
 | 5 | `role` | `measure.session.role` | a role session |
@@ -55,16 +55,18 @@ The engine asks the cases in this order, and a met case lets the turn end before
 | `measure.pr.handed` | `source.git`, `source.host` |
 | `measure.copy.outsideEpic` | `source.git`, `source.host`, `source.tree` |
 | `measure.copy.outOfScenario` | `source.git`, `source.host`, `source.tree` |
-| `measure.owner.saidStop` | `source.owner` |
+| `measure.owner.interrupted` | `source.owner` |
 | `measure.owner.nudged` | `source.owner` |
 | `measure.session.wrote` | `source.session` |
 | `measure.session.role` | `source.session` |
 | `measure.session.menuLost` | `source.session` |
 | `measure.session.forbidden` | `source.session` |
-| `measure.session.idle` | `source.session` |
+| `measure.session.idle` | `source.session`, `source.tree` |
 | `measure.session.unread` | `source.session` |
-| `measure.session.waiting` | `source.session` |
+| `measure.session.waiting` | `source.session`, `source.tree` |
+| `measure.session.hung` | `source.session`, `source.tree` |
 | `measure.host.silent` | `source.host` |
+| `measure.ci.hold` | `source.git`, `source.host`, `source.tree`, `source.session`, `source.owner` |
 
 ## Sources
 
@@ -83,12 +85,9 @@ The engine asks the cases in this order, and a met case lets the turn end before
 
 | Key | Words |
 | --- | --- |
-| `stop` | стоп, стой, хватит, остановись, прекрати, не сейчас, подожди, погоди, жди, пауза, отбой, на сегодня всё, stop, wait, not now, pause |
-| `stopExcept` | продолжай, делай, работай, доделывай, иди дальше, делай дальше, сначала, спрашивать, спрашивай, asking, keep going, go on |
-| `holdAfter` | стоять, останавлива, ждать |
 | `nudge` | `(?<![\p{L}])(?<!не )(продолжай\|доделывай\|работай\|делай дальше\|работаешь)(?![\p{L}])\|почему (ты )?(стоишь\|встал\|остановил)\|что дальше\|дальше\?\|^(ну )?(и )?что там\|^ну и\s*[?!.]\|какого .*останов` |
 | `write` | git commit, git push, git add, git merge, git rm, git mv, sed -i, perl -pi, gh pr, npm run task:new, pnpm run task:new, npm run task:move, pnpm run task:move, npm run agent-kit:sync, pnpm run agent-kit:sync |
-| `menu` | отложить RT-N, стоп |
+| `menu` | отложить RT-N, подскажу путь |
 | `legacyBranches` | RT-3276-conversation-checks, RT-3329-task-flow-scenario |
 
 ## Expected forms

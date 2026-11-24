@@ -338,18 +338,6 @@ JS
 )"
 WRITE_WORDS="{ write: ['git commit', 'git push'] }"
 
-# --- SC-AK-1516 — исключения слов остановки берутся из `words` ----------------------------------
-d="$(fl_data "{ stop: ['стоп', 'хватит'], stopExcept: ['не стоп'] }")"
-report "data: SC-AK-1516 — слово остановки из words" "$(fl_data_call "$d" "d.saysStop('Стоп, дальше не надо', m.words)")" 'true'
-report "data: SC-AK-1516 — исключение из words снимает остановку" "$(fl_data_call "$d" "d.saysStop('не стоп, работай', m.words)")" 'false'
-report "data: SC-AK-1516 — слово внутри другого слова не считается" "$(fl_data_call "$d" "d.saysStop('стопка бумаги', m.words)")" 'false'
-d="$(fl_data "{ stop: ['стоп'], stopExcept: ['не стоп'] }")"
-report "data: SC-AK-1516 — другое описание — другие слова" "$(fl_data_call "$d" "d.saysStop('хватит', m.words)")" 'false'
-d="$(fl_data "{ stopExcept: 'не стоп' }")"
-report "data: SC-AK-1516 — исключения не списком отказаны" "$(fl_model_refused_with "$d" 'words.stopExcept: a list of non-empty strings')" 'да'
-d="$(fl_data "{ stopWords: ['стоп'] }")"
-report "data: SC-AK-1516 — чужой ключ words отказан" "$(fl_model_refused_with "$d" 'words.stopWords: not a word list')" 'да'
-
 # --- SC-AK-1517 — команды записи случая 3 берутся из `words` ------------------------------------
 d="$(fl_data "$WRITE_WORDS")"
 report "data: SC-AK-1517 — команда записи из words" "$(fl_data_call "$d" "d.isWriteCommand('git add -A && git commit -q -F msg', m.words)")" 'true'
@@ -366,6 +354,10 @@ d="$(fl_data "{ menu: ['стоп', 3] }")"
 report "data: SC-AK-1518 — вариант меню не строка отказан" "$(fl_model_refused_with "$d" 'words.menu: a list of non-empty strings')" 'да'
 d="$(fl_data "{ nudge: '(продолжай' }")"
 report "data: SC-AK-1518 — образец, который не собирается, отказан" "$(fl_model_refused_with "$d" 'words.nudge: the pattern does not compile')" 'да'
+d="$(fl_data "{ stop: ['стоп'], stopExcept: ['не стоп'], holdAfter: ['подожди'], menu: ['отложить RT-N'] }")"  # the retired keys
+report "data: SC-AK-1849 — снятые ключи слов описание не роняют, движок их называет" \
+    "$(fl_data_call "$d" "d.retiredLines(m).length + ' ' + d.retiredLines(m)[0]")" \
+    '"3 retired by the package: words.stop — the owner stops a turn by Esc, and the key does nothing"'
 
 # --- SC-AK-1519 — способ сравнения формы ожидаемого — поле `compare` ----------------------------
 d="$(fl_data '' "$FORMS")"
@@ -373,6 +365,7 @@ report "data: SC-AK-1519 — exit по коду" "$(fl_data_call "$d" "d.compare
 report "data: SC-AK-1519 — текст по последней строке" "$(fl_data_call "$d" "d.compareExpected(m.expect, '\`cond: missing 0 of 6\`', 0, 'a\ncond: missing 0 of 6\n\n')")" '{"form":"line","matched":true}'
 report "data: SC-AK-1519 — выражение по последней строке" "$(fl_data_call "$d" "d.compareExpected(m.expect, '/^[0-9]+ ok\$/', 0, '47 ok')")" '{"form":"regex","matched":true}'
 report "data: SC-AK-1519 — число со сравнением" "$(fl_data_call "$d" "d.compareExpected(m.expect, '>= 13', 0, '12')")" '{"form":"number","matched":false}'
+report "data: SC-AK-1843 — число с пробелами впереди, как у wc -l, читается" "$(fl_data_call "$d" "d.compareExpected(m.expect, '= 0', 0, '       0\n')")" '{"form":"number","matched":true}'
 report "data: SC-AK-1519 — ненулевой код проваливает текст" "$(fl_data_call "$d" "d.compareExpected(m.expect, '\`ok\`', 2, 'ok')")" '{"form":"line","matched":false}'
 report "data: SC-AK-1519 — нераспознанная форма" "$(fl_data_call "$d" "d.compareExpected(m.expect, 'примерно 13', 0, '13')")" 'null'
 d="$(fl_data '' "{ exit: { pattern: '^exit', compare: 'code' } }")"

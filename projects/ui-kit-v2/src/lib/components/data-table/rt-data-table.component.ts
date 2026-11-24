@@ -31,7 +31,7 @@ import { rtKitDefault } from '@rt-tools/ui-kit-v2/core';
 import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { IRtInput } from '@rt-tools/ui-kit-v2/core';
 import { RtCheckboxComponent } from '@rt-tools/ui-kit-v2/checkbox';
-import { RtMenuComponent } from '@rt-tools/ui-kit-v2/menu';
+import { RtMenuComponent, RtMenuContentDirective } from '@rt-tools/ui-kit-v2/menu';
 import { RtRadioButtonComponent } from '@rt-tools/ui-kit-v2/radio-button';
 import { RtDataTableCellComponent } from './cell/rt-data-table-cell.component';
 import { RtDataTableFilterCellComponent } from './filter-cell/rt-data-table-filter-cell.component';
@@ -56,6 +56,9 @@ import {
 
 const BEM_BLOCK: string = 'rt-data-table';
 
+/** Ключ записи по умолчанию — свойство `id`. */
+const DEFAULT_KEY_EXP: string = 'id';
+
 /**
  * Таблица записей первого кита во втором — без Material.
  *
@@ -77,6 +80,7 @@ const BEM_BLOCK: string = 'rt-data-table';
         RtDataTableFilterCellComponent,
         RtDataTableHeaderCellComponent,
         RtMenuComponent,
+        RtMenuContentDirective,
         RtRadioButtonComponent,
 
         // directives
@@ -155,7 +159,7 @@ export class RtDataTableComponent<
     });
 
     /** Свойство, которым записи отличаются друг от друга. */
-    public readonly keyExp: InputSignal<NonNullable<KEY>> = input('id' as NonNullable<KEY>);
+    public readonly keyExp: InputSignal<NonNullable<KEY>> = input(DEFAULT_KEY_EXP as NonNullable<KEY>);
 
     public readonly entities: InputSignalWithTransform<ENTITY_TYPE[], ENTITY_TYPE[] | null | undefined> = input.required<
         ENTITY_TYPE[],

@@ -1,4 +1,15 @@
-import { ChangeDetectionStrategy, Component, InputSignal, Signal, computed, inject, input } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    Directive,
+    InputSignal,
+    Signal,
+    TemplateRef,
+    computed,
+    contentChildren,
+    inject,
+    input,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
@@ -7,9 +18,11 @@ import {
     RtIconButtonComponent,
     RtInputComponent,
     RtPaginationComponent,
+    RtSlotOutletDirective,
     RtToolbarComponent,
     RtToolbarLeftDirective,
     RtToolbarRightDirective,
+    rtSlotTemplate,
 } from '@rt-tools/ui-kit-v2';
 import { IPageModel } from '@rt-tools/utils';
 
@@ -18,6 +31,18 @@ import { CMS_LIST_PAGE_HOST } from '../list-page.tokens';
 import { IListPage, IListQuery } from '../list-query.model';
 
 const BEM_BLOCK: string = 'rt-cms-list-page';
+
+/** Filters on the left of the list bar, before the search: `<ng-template rtCmsListToolbarLeft>`. */
+@Directive({ selector: '[rtCmsListToolbarLeft]' })
+class CmsListToolbarLeftDirective {
+    public readonly template: TemplateRef<unknown> | null = rtSlotTemplate(BEM_BLOCK, 'rtCmsListToolbarLeft');
+}
+
+/** Actions on the right of the list bar, before the reload: `<ng-template rtCmsListToolbarRight>`. */
+@Directive({ selector: '[rtCmsListToolbarRight]' })
+class CmsListToolbarRightDirective {
+    public readonly template: TemplateRef<unknown> | null = rtSlotTemplate(BEM_BLOCK, 'rtCmsListToolbarRight');
+}
 
 /**
  * The markup of a list screen: the title with a hint, the action bar with the search on the left,
@@ -46,6 +71,7 @@ const BEM_BLOCK: string = 'rt-cms-list-page';
         RtIconButtonComponent,
         RtInputComponent,
         RtPaginationComponent,
+        RtSlotOutletDirective,
         RtToolbarComponent,
         RtToolbarLeftDirective,
         RtToolbarRightDirective,
@@ -62,6 +88,10 @@ export class CmsListPageComponent {
     protected readonly host: IListPage.Host = inject(CMS_LIST_PAGE_HOST);
 
     protected readonly t: Signal<TCmsLabelMap> = inject(CMS_LABELS);
+
+    /** The bar templates: filters on the left and actions on the right, each in the order written. */
+    protected readonly leftSlots: Signal<readonly CmsListToolbarLeftDirective[]> = contentChildren(CmsListToolbarLeftDirective);
+    protected readonly rightSlots: Signal<readonly CmsListToolbarRightDirective[]> = contentChildren(CmsListToolbarRightDirective);
 
     protected readonly loading: Signal<boolean> = computed((): boolean => this.host.store.loading());
 
@@ -85,3 +115,5 @@ export class CmsListPageComponent {
     /** The hint in the empty search field: the section names by it the field the server searches by. */
     public readonly searchPlaceholder: InputSignal<string> = input<string>('');
 }
+
+export { CmsListToolbarLeftDirective, CmsListToolbarRightDirective };

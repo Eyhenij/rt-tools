@@ -39,7 +39,7 @@ has 'SC-AK-437 — передача берётся по имени текуще�
 has 'SC-AK-439 — карта приходит тем же запуском, что и передача' "$OUT" '# Turn map'
 has 'SC-AK-440 — карта называет обязательное действие состояния' "$OUT" 'finish the stage: `step N.M` measures each step and marks it done'
 has 'SC-AK-441 — карта называет концы хода: конец сценария' "$OUT" 'the end of the scenario'
-has 'SC-AK-441 — карта называет концы хода: слово остановки' "$OUT" 'a stop word of the owner'
+has 'SC-AK-441 — карта называет концы хода: прерывание владельца' "$OUT" 'the owner interrupted the turn'
 has 'SC-AK-442 — карта берётся из ресурса, а не из разметки правила' "$OUT" 'States and mandatory actions'
 
 # Передача ветки с папкой задачи лежит разделом её хода работы: он коммитится и едет в ветку,

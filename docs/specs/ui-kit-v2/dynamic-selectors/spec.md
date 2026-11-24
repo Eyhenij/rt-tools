@@ -162,8 +162,8 @@ stands next to it as components of its own, drawn on the parts of the second kit
 - **A value the caller sets on the list block reaches it, and a popup property or the add button's
   colour reaches it from any ancestor.** The popup lives in an overlay, outside the field, so the
   caller sets its properties on the overlay pane or a container of its own; only the defaults stand
-  on the popup itself, under the `-default` suffix. The add button is projected by both fields with
-  different looks, so its colour is a handle with the button's own colour as the fallback.
+  on the popup itself, under the `-default` suffix. Both fields hand the add button to the
+  list as a template, with different looks, so its colour is a handle with the button's own colour as the fallback.
 - **The gaps of the list reach it from any ancestor.** These are the gap between the action bar
   buttons, the gap between the buttons of a row, the end padding of a row, the distance from the
   last row to the action bar, the paddings of the drag handle and the gap from the handle to the

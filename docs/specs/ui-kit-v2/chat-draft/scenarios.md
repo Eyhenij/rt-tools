@@ -61,7 +61,7 @@ Covered: `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.compone
 
 ### SC-UKV-1165 — the bar stands above every reply field
 
-Given a correspondence with the slot `rtChatComposerBar` and any kind of the field
+Given a correspondence with the template `rtChatComposerBar` and any kind of the field
 When a reply is allowed
 Then the slot stands above the field, and with no reply allowed it is gone
 

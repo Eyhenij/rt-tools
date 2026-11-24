@@ -19,6 +19,9 @@ COPY prisma ./prisma
 # без манифеста `auth-angular` установка не ставит `keycloak-js`, и сборка админки падает на нём.
 COPY projects/auth-contract/package.json ./projects/auth-contract/package.json
 COPY projects/auth-angular/package.json ./projects/auth-angular/package.json
+# Кит объявляет свои пакеты графиков (d3) сам, корневой манифест их больше не несёт: без манифеста
+# кита установка их не ставит, и сборка админки упадёт на них, как только она покажет график.
+COPY projects/ui-kit-v2/package.json ./projects/ui-kit-v2/package.json
 RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
     pnpm install --frozen-lockfile
 

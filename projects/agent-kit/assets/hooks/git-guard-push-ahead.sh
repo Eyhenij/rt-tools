@@ -14,6 +14,8 @@
 # Exit codes: 0 — the set is green; 1 — a check is red; 3 — the run did not start (no profile, no
 # repository, edits outside the index). Not 2: to a hook that code means "refuse", and this command
 # refuses nothing.
+#
+# Requires: hooks/git-guard-push-marks.sh, hooks/facts.sh
 not_started=3
 
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -51,6 +53,21 @@ command -v rt_push_note_not_run >/dev/null 2>&1 || rt_push_note_not_run() { retu
 command -v rt_run_note >/dev/null 2>&1 || rt_run_note() { return 0; }
 command -v rt_tree_sign >/dev/null 2>&1 || rt_tree_sign() { return 0; }
 
+# The steps and their choice run on the node the tree pins, as at the push: the shell that starts
+# the run may carry another one. A pinned node that is not installed, with another node in PATH,
+# starts no step.
+# shellcheck disable=SC1091
+command -v rt_node_pinned_dir >/dev/null 2>&1 || { [ -f "$rt_hooks_dir/facts.sh" ] && . "$rt_hooks_dir/facts.sh" 2>/dev/null; }
+if command -v rt_node_pinned_dir >/dev/null 2>&1; then
+    node_line="$(rt_node_pin_mismatch "$root")"
+    if [ -n "$node_line" ]; then
+        printf 'push ahead: %s\n' "$node_line" >&2
+        exit "$not_started"
+    fi
+    node_dir="$(rt_node_pinned_dir "$root")"
+    [ -n "$node_dir" ] && PATH="$node_dir:$PATH"
+fi
+
 # A mark vouches for the tree of the head, and the checks run over the working copy: with edits
 # outside the index the run would write marks for content that does not leave.
 rt_push_mark_clean || {
@@ -60,13 +77,18 @@ rt_push_mark_clean || {
 
 base="$(rt_push_base "${RT_MAIN_BRANCH:-main}")"
 skip_code="${RT_SKIP_CODE:-7}"
+# The steps run against a ref pinned at the commit of the base, and the push takes that ref while the
+# record fits its head: a branch merged, removed, moved or put next to this one during the set
+# changes nothing for the push.
+command -v rt_push_base_pin >/dev/null 2>&1 && base="$(rt_push_base_pin "$base")"
+command -v rt_push_base_label >/dev/null 2>&1 || rt_push_base_label() { printf '%s' "${1:-none}"; }
 
 if command -v rt_push_adds_nothing >/dev/null 2>&1 && rt_push_adds_nothing "$base"; then
-    printf 'push ahead: the head adds no commit to %s — there is nothing to run, the push passes\n' "$base"
+    printf 'push ahead: the head adds no commit to %s — there is nothing to run, the push passes\n' "$(rt_push_base_label "$base")"
     exit 0
 fi
 
-printf 'push ahead: base %s, tree %s\n' "${base:-none}" "$(git rev-parse --short 'HEAD^{tree}')"
+printf 'push ahead: base %s, tree %s\n' "$(rt_push_base_label "$base")" "$(git rev-parse --short 'HEAD^{tree}')"
 sign="$(rt_tree_sign .)"
 # Whether the change touched the subject of each step, for the run lines; a step the selection
 # drops leaves a line of its own.

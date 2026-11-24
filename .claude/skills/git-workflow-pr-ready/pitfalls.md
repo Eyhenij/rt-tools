@@ -1,4 +1,4 @@
-<!-- rt-kit v0.38.0 · pitfalls/git-workflow-pr-ready.md · cba109fcbccc · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · pitfalls/git-workflow-pr-ready.md · cba109fcbccc · правится надстройкой, не здесь -->
 # Bringing a PR to readiness — cold part
 
 The pattern `git-workflow-pr-ready` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.

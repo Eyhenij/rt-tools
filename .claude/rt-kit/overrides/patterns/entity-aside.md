@@ -42,6 +42,10 @@ a skeleton for the time of the read.
 }
 ```
 
+These sections are the body of `rt-aside`, and the body reaches it only inside
+`<ng-template rtAsideContent>`; the header and the footer buttons stay elements. A body written
+straight into the aside is not drawn, and nothing warns.
+
 The reading sign comes to the aside as an input and goes into every row: the skeleton is drawn by
 the kit row, and `rt-skeleton-wrapper` is not wrapped by hand. The record input accepts emptiness
 too — while the read goes on there is no record yet at all, and the property names already stand

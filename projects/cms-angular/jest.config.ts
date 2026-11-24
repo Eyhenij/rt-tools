@@ -39,6 +39,15 @@ export default {
         // The specs run against the working tree, not against the last published versions.
         '^@rt-tools/cms-contract$': '<rootDir>/../cms-contract/src/index.ts',
         '^@rt-tools/cms-angular$': '<rootDir>/src/public-api.ts',
+        // The kit too: the screens pass their slots as templates, and the published kit the package
+        // installs has no template slots yet.
+        '^@rt-tools/ui-kit-v2$': '<rootDir>/../ui-kit-v2/src/public-api.ts',
+        '^@rt-tools/ui-kit-v2/rich-editor$': '<rootDir>/../ui-kit-v2/src/rich-editor/public-api.ts',
+        '^@rt-tools/ui-kit-v2/core$': '<rootDir>/../ui-kit-v2/src/lib/core.ts',
+        '^@rt-tools/ui-kit-v2/([\\w-]+)$': '<rootDir>/../ui-kit-v2/src/lib/components/$1/index.ts',
+        '^@rt-tools/core$': '<rootDir>/../core/src/index.ts',
+        '^@rt-tools/utils$': '<rootDir>/../utils/src/index.ts',
+        '^@angular/cdk/([\\w-]+)$': '<rootDir>/../../node_modules/@angular/cdk/fesm2022/$1.mjs',
         // The contract writes explicit .js extensions on its relative imports; Jest resolves the
         // TypeScript sources, so the extension is stripped.
         '^(\\.{1,2}/.*)\\.js$': '$1',

@@ -4,8 +4,8 @@ import { ESLintUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
  * It demands that every `@Component` decorator hold `host: { class: BEM_BLOCK }`.
  *
  * It makes the host class one for the whole tree: every component declares its BEM block by a
- * local const `BEM_BLOCK` and puts it on the host through
- * `@Component({ ..., host: { class: BEM_BLOCK } })`. That closes the hole with
+ * local const `BEM_BLOCK` and puts it on the host through `host: { class: BEM_BLOCK }` in the
+ * argument of the `@Component` decorator. That closes the hole with
  * `<ng-container rtBlock="...">`: the container unfolds into a comment node, `BlockDirective`
  * skips it, and the block class is not applied at all — the markup looks marked up while there
  * are no rules under it.
@@ -80,7 +80,7 @@ export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = createRule<TOpti
 
                 const arg: TSESTree.CallExpressionArgument | undefined = expr.arguments[0];
                 if (!arg || arg.type !== 'ObjectExpression') {
-                    // `@Component()` without arguments, or with an identifier or an external
+                    // A `@Component` decorator without arguments, or with an identifier or an external
                     // const: the host cannot be read statically. Reported as missingHost.
                     context.report({ node, messageId: 'missingHost' });
                     return;

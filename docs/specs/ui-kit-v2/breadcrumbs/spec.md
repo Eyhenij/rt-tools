@@ -39,7 +39,7 @@ and the page title under it. Each writes and fixes its own copy; the kit has no 
 - **The back button is drawn only on request and only when the chain has an ancestor.** It leads to
   the last ancestor, and its name says where it leads.
 - **In the heading look the current crumb is the page heading on a row of its own.** What the page
-  projects into the component stands in the same row, after the heading.
+  gives by the template `rtBreadcrumbsContent` stands in the same row, after the heading.
 - **On a narrow screen a chain of three ancestors and more folds its middle into a menu.** The
   first and the last ancestor stay links, and the menu lists the folded ones as links in order.
 - **The separator is an input, and its default is the slash.**

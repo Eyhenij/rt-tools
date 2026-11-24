@@ -46,7 +46,7 @@ describe('importUsers', () => {
     });
 
     it('SC-AUTH-43 — the rights move as client roles', async () => {
-        const double: KeycloakFetchDouble = new KeycloakFetchDouble({ 'orders-admin': ['orders:read', 'orders:write'] });
+        const double: KeycloakFetchDouble = KeycloakFetchDouble.withClients({ 'orders-admin': ['orders:read', 'orders:write'] });
 
         await runImport(double, [{ email: 'a@test', roles: { 'orders-admin': ['orders:read', 'orders:write'] } }], false);
 
@@ -56,7 +56,7 @@ describe('importUsers', () => {
 
 describe('unknownRoles', () => {
     it('SC-AUTH-44 — a role or a client the realm does not have is named', async () => {
-        const double: KeycloakFetchDouble = new KeycloakFetchDouble({ 'orders-admin': ['orders:read'] });
+        const double: KeycloakFetchDouble = KeycloakFetchDouble.withClients({ 'orders-admin': ['orders:read'] });
         const file: IImportUser[] = [
             { email: 'a@test', roles: { 'orders-admin': ['orders:read', 'orders:delete'] } },
             { email: 'b@test', roles: { 'missing-admin': ['x:y'] } },

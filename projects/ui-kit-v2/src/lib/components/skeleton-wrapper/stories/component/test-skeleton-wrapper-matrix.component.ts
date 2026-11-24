@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { StoryGridComponent } from '../../../../../showcase/story-grid.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { TRtSkeletonShape } from '../../../skeleton/rt-skeleton.component';
+import { RtSkeletonWrapperContentDirective } from '../../rt-skeleton-wrapper-content.directive';
 import { RtSkeletonWrapperComponent } from '../../rt-skeleton-wrapper.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
@@ -26,7 +27,7 @@ export type TSkeletonWrapperMatrixPart = 'loading' | 'themes';
                 <app-story-grid caption="Загрузка × фигура заглушки" [rows]="loadingStates" [columns]="shapes" [rowLabel]="loadingLabel">
                     <ng-template let-loading let-shape="col">
                         <rt-skeleton-wrapper width="140px" height="16px" size="lg" [shape]="shape" [isLoading]="loading">
-                            Данные пришли
+                            <ng-template rtSkeletonWrapperContent>Данные пришли</ng-template>
                         </rt-skeleton-wrapper>
                     </ng-template>
                 </app-story-grid>
@@ -36,7 +37,9 @@ export type TSkeletonWrapperMatrixPart = 'loading' | 'themes';
                 <app-story-themes caption="Загрузка и содержимое в обеих темах">
                     <ng-template>
                         @for (loading of loadingStates; track loading) {
-                            <rt-skeleton-wrapper width="140px" height="16px" [isLoading]="loading">Данные пришли</rt-skeleton-wrapper>
+                            <rt-skeleton-wrapper width="140px" height="16px" [isLoading]="loading">
+                                <ng-template rtSkeletonWrapperContent>Данные пришли</ng-template>
+                            </rt-skeleton-wrapper>
                         }
                     </ng-template>
                 </app-story-themes>
@@ -47,6 +50,7 @@ export type TSkeletonWrapperMatrixPart = 'loading' | 'themes';
     imports: [
         // components
         RtSkeletonWrapperComponent,
+        RtSkeletonWrapperContentDirective,
 
         // showcase
         StoryGridComponent,

@@ -16,17 +16,19 @@ import {
     Signal,
     viewChild,
     ViewEncapsulation,
+    contentChildren,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
-import { IRtIcon, IRtKitConfig, rtKitDefault } from '@rt-tools/ui-kit-v2/core';
+import { IRtIcon, IRtKitConfig, rtKitDefault, RtSlotOutletDirective } from '@rt-tools/ui-kit-v2/core';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtRippleDirective } from '@rt-tools/ui-kit-v2/ripple';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { IRtIconButton } from './rt-icon-button.model';
+import { RtIconButtonContentDirective } from './rt-icon-button-content.directive';
 
 const BEM_BLOCK: string = 'rt-icon-button';
 
@@ -54,6 +56,7 @@ const BEM_BLOCK: string = 'rt-icon-button';
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
+        RtSlotOutletDirective,
         // standalone components / directives
         NgTemplateOutlet,
         RouterLink,
@@ -71,6 +74,9 @@ const BEM_BLOCK: string = 'rt-icon-button';
     },
 })
 export class RtIconButtonComponent {
+    /** Шаблоны своего содержимого: рисуются, только пока у кнопки нет значка и загрузки. */
+    protected readonly contents: Signal<readonly RtIconButtonContentDirective[]> = contentChildren(RtIconButtonContentDirective);
+
     /**
      * Размер дочерней `<rt-icon>`. По умолчанию маппится 1-к-1 от размера кнопки,
      * но потребитель может задать свой: у крупной кнопки-действия (плавающая

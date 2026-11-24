@@ -10,7 +10,7 @@
  * разбор отказа берутся у общего слоя, там же, где их берут все обращения дерева.
  */
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { ChatMessageMapper, ChatTalkMapper, IChat } from '@rt/message-bus-admin/chat/util';
 import { asReadFault, asSpokenFault, READ_TIMEOUT_MS } from '@rt/message-bus-admin/common/core/api';
 import {
@@ -40,7 +40,7 @@ export interface ITalksFeedAsked {
     readonly size: number;
 }
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class TalksApiService {
     readonly #http: HttpClient = inject(HttpClient);
     readonly #talks: ChatTalkMapper = new ChatTalkMapper();

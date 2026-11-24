@@ -39,7 +39,7 @@ const LONG_WIDE: IRtAiChat.LinkBlock = {
 };
 
 /** Четыре карточки макета: открывается, открыта, не открылась, длинное название. */
-export const AI_CHAT_LINK_MOCKUP: readonly IRtAiChat.Block[] = [PENDING, OPENED, FAILED, LONG];
+const AI_CHAT_LINK_MOCKUP: readonly IRtAiChat.Block[] = [PENDING, OPENED, FAILED, LONG];
 
 /** Три ширины макета: узкая панель 328 и 386, колонка чтения 640. */
 export const AI_CHAT_LINK_WIDTH_CASES: readonly IAiChatLinkCase[] = [

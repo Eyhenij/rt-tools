@@ -42,10 +42,10 @@ interface IDialogFooterContentCase {
                                 <span class="app-dialog-footer-matrix__note">{{ contentCase.note }}</span>
                             }
                             @if (contentCase.cancel) {
-                                <button rtButton appearance="text">Отмена</button>
+                                <button type="button" rtButton appearance="text">Отмена</button>
                             }
                             @if (contentCase.confirm) {
-                                <button rtButton theme="primary">Сохранить</button>
+                                <button type="button" rtButton theme="primary">Сохранить</button>
                             }
                         </rt-dialog-footer>
                     </ng-template>
@@ -59,8 +59,8 @@ interface IDialogFooterContentCase {
                              даёт коробка показа во всю ячейку. -->
                         <div style="inline-size: 100%">
                             <rt-dialog-footer [align]="align">
-                                <button rtButton appearance="text">Отмена</button>
-                                <button rtButton theme="primary">Сохранить</button>
+                                <button type="button" rtButton appearance="text">Отмена</button>
+                                <button type="button" rtButton theme="primary">Сохранить</button>
                             </rt-dialog-footer>
                         </div>
                     </ng-template>
@@ -71,8 +71,8 @@ interface IDialogFooterContentCase {
                 <app-story-presets caption="Футер окна в обоих наборах оформления">
                     <ng-template>
                         <rt-dialog-footer class="app-dialog-footer-matrix__footer">
-                            <button rtButton appearance="text">Отмена</button>
-                            <button rtButton theme="primary">Сохранить</button>
+                            <button type="button" rtButton appearance="text">Отмена</button>
+                            <button type="button" rtButton theme="primary">Сохранить</button>
                         </rt-dialog-footer>
                     </ng-template>
                 </app-story-presets>
@@ -82,8 +82,8 @@ interface IDialogFooterContentCase {
                 <app-story-themes caption="Футер окна в обеих темах">
                     <ng-template>
                         <rt-dialog-footer class="app-dialog-footer-matrix__footer">
-                            <button rtButton appearance="text">Отмена</button>
-                            <button rtButton theme="primary">Сохранить</button>
+                            <button type="button" rtButton appearance="text">Отмена</button>
+                            <button type="button" rtButton theme="primary">Сохранить</button>
                         </rt-dialog-footer>
                     </ng-template>
                 </app-story-themes>

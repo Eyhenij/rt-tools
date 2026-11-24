@@ -1,5 +1,7 @@
 import { ElementRef, Renderer2 } from '@angular/core';
 
+import { isNil } from '@rt-tools/utils';
+
 import { BEM_MODULE_CONFIG } from './bem.const';
 import { TMods, TModsObject } from './bem.types';
 
@@ -44,7 +46,7 @@ export function generateClass(blockName: string, elemName?: string, modName?: st
     if (modName) {
         modName = modNameHandler(modName);
         cls += BEM_MODULE_CONFIG.separators.mod + modName;
-        if (typeof modValue !== 'boolean' && modValue != null) {
+        if (typeof modValue !== 'boolean' && !isNil(modValue)) {
             cls += BEM_MODULE_CONFIG.separators.val + modValue;
         }
     }

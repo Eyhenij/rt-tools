@@ -1,4 +1,4 @@
-// rt-kit v0.38.0 · checks/board-pull-state.github.mjs · df34467dbcb6 · правится надстройкой, не здесь
+// rt-kit v0.39.0 · checks/board-pull-state.github.mjs · df34467dbcb6 · правится надстройкой, не здесь
 /**
  * The state of an open request read by its tip: a run pushed out of the queue, a missing run, a
  * finished piece of work left as a draft, a missing reviewer, a conflict. Lives in a file of its

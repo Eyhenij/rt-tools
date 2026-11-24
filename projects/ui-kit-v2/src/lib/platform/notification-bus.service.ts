@@ -1,4 +1,4 @@
-import { Injectable, Type } from '@angular/core';
+import { Type, Service } from '@angular/core';
 
 import { Observable } from 'rxjs';
 
@@ -19,7 +19,7 @@ import { INotification } from './notification.model';
  * `open` и `openFromComponent` возвращают `NotificationRef` — ручку показанного тоста: закрыть его,
  * обновить на ходу и узнать, почему он ушёл.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class NotificationBus {
     readonly #bus: MessageBus<INotification.Event> = new MessageBus<INotification.Event>();
 

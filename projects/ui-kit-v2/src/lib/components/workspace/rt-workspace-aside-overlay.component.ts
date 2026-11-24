@@ -1,7 +1,14 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, Injector, Signal, ViewEncapsulation } from '@angular/core';
 
-import { RT_ASIDE_DATA, RtAsideComponent, RtAsideFooterComponent, RtAsideHeaderComponent, RtAsideRef } from '@rt-tools/ui-kit-v2/aside';
+import {
+    RT_ASIDE_DATA,
+    RtAsideComponent,
+    RtAsideContentDirective,
+    RtAsideFooterComponent,
+    RtAsideHeaderComponent,
+    RtAsideRef,
+} from '@rt-tools/ui-kit-v2/aside';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
 import { IRtWorkspace } from './rt-workspace.model';
@@ -24,6 +31,7 @@ const BEM_BLOCK: string = 'rt-workspace-aside-overlay';
 
         // standalone components / directives
         RtAsideComponent,
+        RtAsideContentDirective,
         RtAsideFooterComponent,
         RtAsideHeaderComponent,
         RtButtonDirective,
