@@ -136,18 +136,93 @@ report "an epic branch whose kit edit came by a task merge is judged by that tas
   { sha: 'a', subject: \"Merge remote-tracking branch 'origin/main' into RT-1-epic\", merge: true, files: ['$OTHER'] },
   { sha: 'b', subject: '[RT-2] Блоки ответа (#9)', merge: true, files: ['$KIT'] },
 ], ['$KIT']); console.log(r.own.length + '|' + r.tasks.map((t) => t.task).join(','))")" '0|RT-2'
-report "a kit edit made in the epic branch itself is left to the branch" \
+report "a file the branch and a merged task both edited is judged by both records" \
     "$(run "const r = m.answerersOf([
   { sha: 'c', subject: 'fix: правка прямо в эпике', merge: false, files: ['$KIT'] },
   { sha: 'b', subject: '[RT-2] Блоки ответа (#9)', merge: true, files: ['$KIT'] },
-], ['$KIT']); console.log(r.own.join(',') + '|' + r.tasks.length)")" "$KIT|0"
-report "main brought into the branch answers for nothing" \
+], ['$KIT']); console.log(r.own.join(',') + '|' + r.tasks.length)")" "$KIT|1"
+report "a kit file only main's merge touched is a conflict the branch resolved" \
     "$(run "const r = m.answerersOf([
   { sha: 'a', subject: \"Merge remote-tracking branch 'origin/main' into RT-1-epic\", merge: true, files: ['$KIT'] },
-], ['$KIT']); console.log(r.own.length + '|' + r.tasks.length)")" '0|0'
+], ['$KIT']); console.log(r.own.length + '|' + r.tasks.length)")" '1|0'
+report "a file main's merge and a merged task touched is the task's alone" \
+    "$(run "const r = m.answerersOf([
+  { sha: 'a', subject: \"Merge remote-tracking branch 'origin/main' into RT-1-epic\", merge: true, files: ['$KIT'] },
+  { sha: 'b', subject: '[RT-2] Блоки ответа (#9)', merge: true, files: ['$KIT'] },
+], ['$KIT']); console.log(r.own.length + '|' + r.tasks.length)")" '0|1'
 report "a merge that names no task leaves its files to the branch" \
     "$(run "const r = m.answerersOf([
   { sha: 'd', subject: \"Merge branch 'RT-2-blocks' into RT-1-epic\", merge: true, files: ['$KIT'] },
 ], ['$KIT']); console.log(r.own.join(',') + '|' + r.tasks.length)")" "$KIT|0"
+
+# A branch with a record of its own answers by it only for the kit files its own commits brought; a
+# merged task answers by its own record, whatever the branch record says.
+# The code goes through a variable: bash 3.2 expands braces with commas inside "$(… "…")".
+MERGED="const merged = [{ sha: 'b00000000', subject: '[RT-2] Блоки ответа (#9)', merge: true, files: ['$KIT'] }];"
+OWN_EDIT="const ownEdit = [{ sha: 'c', subject: 'fix: правка', merge: false, files: ['$KIT'] }];"
+JUDGE_TASK_ONLY="$MERGED
+const own = { path: 'own.md', text: '- **Без вида:** «x»' };
+const f = m.judgeBranch({ name: 'RT-1-epic', own, visible: ['$KIT'], recordOfTask: () => null, commits: merged });
+console.log(f.length + '|' + f[0].startsWith('b00000000'));"
+JUDGE_NO_LINE="$MERGED
+const own = { path: 'own.md', text: '' };
+const task = { path: 'docs/archive/RT-2-x.md', text: '- **Без вида:** «да»' };
+const f = m.judgeBranch({ name: 'RT-1-epic', own, visible: ['$KIT'], recordOfTask: () => task, commits: merged });
+console.log(f.length);"
+JUDGE_OWN_EDIT="$OWN_EDIT
+const f = m.judgeBranch({ name: 'RT-1-x', own: null, visible: ['$KIT'], recordOfTask: () => null, commits: ownEdit });
+console.log(f.length + '|' + f[0].startsWith('RT-1-x'));"
+report "own record answers only for its own kit edits" "$(run "$JUDGE_TASK_ONLY")" '1|true'
+report "a branch with a record and no kit edit of its own needs no line in it" "$(run "$JUDGE_NO_LINE")" '0'
+report "a branch's own kit edit is judged by its own record" "$(run "$JUDGE_OWN_EDIT")" '1|true'
+
+# Kit edits that reach a branch by other roads than a merged PR: the epic branch merged into a task,
+# an epic merged into main, a commit of an earlier branch of a chain.
+EPIC_IN_TASK="const commits = [{ sha: 'e', subject: \"Merge branch 'RT-1-epic' into RT-9-x\", merge: true, files: ['$KIT'],
+  children: [{ sha: 'b', subject: '[RT-2] Блоки ответа (#9)', merge: true, files: ['$KIT'] }] }];
+const task = { path: 'docs/archive/RT-2-x.md', text: '- **Без вида:** «да»' };
+const f = m.judgeBranch({ name: 'RT-9-x', own: null, visible: ['$KIT'], recordOfTask: (t) => (t === 'RT-2' ? task : null), commits });
+console.log(f.length);"
+EPIC_IN_MAIN="const commits = [{ sha: 'p', subject: '[RT-1] Эпик (#10)', merge: true, files: ['$KIT'],
+  children: [{ sha: 'b', subject: '[RT-2] Блоки ответа (#9)', merge: true, files: ['$KIT'] }] }];
+const r = m.answerersOf(commits, ['$KIT'], { recordOfTask: (t) => (t === 'RT-2' ? { path: 'x', text: '' } : null) });
+console.log(r.own.length + '|' + r.tasks.map((t) => t.task).join(','));"
+CHAIN="const commits = [{ sha: 'k', subject: 'fix(rt:ui-kit-v2): правка (RT-8)', merge: false, files: ['$KIT'] },
+  { sha: 'l', subject: 'docs: план (RT-9)', merge: false, files: [] }];
+const r = m.answerersOf(commits, ['$KIT'], { ownTask: 'RT-9' });
+console.log(r.own.length + '|' + r.tasks.map((t) => t.task).join(','));"
+OWN_TASK="const commits = [{ sha: 'k', subject: 'fix(rt:ui-kit-v2): правка (RT-9)', merge: false, files: ['$KIT'] }];
+const r = m.answerersOf(commits, ['$KIT'], { ownTask: 'RT-9' });
+console.log(r.own.length + '|' + r.tasks.length);"
+QUOTES="$MERGED
+const own = { path: 'own.md', text: '- **Без вида:** «чужое»' };
+const task = { path: 'docs/archive/RT-2-x.md', text: '- **Без вида:** «да»' };
+const q = m.quotedRecords({ name: 'RT-1-epic', own, visible: ['$KIT'], recordOfTask: () => task, commits: merged });
+console.log(q.length);"
+QUOTES_OWN="$OWN_EDIT
+const own = { path: 'own.md', text: '- **Без вида:** «да»' };
+const q = m.quotedRecords({ name: 'RT-1-x', own, visible: ['$KIT'], recordOfTask: () => null, commits: ownEdit });
+console.log(q.map((r) => r.path).join(','));"
+FORGED="const commits = [{ sha: 'k', subject: 'fix(rt:ui-kit-v2): кнопка крупнее (RT-2)', merge: false, files: ['$KIT'] }];
+const task = { path: 'docs/archive/RT-2-x.md', text: '- **Без вида:** «да»' };
+const f = m.judgeBranch({ name: 'RT-9-x', own: null, visible: ['$KIT'], recordOfTask: () => task, inBranchOf: () => false, commits });
+console.log(f.length);"
+EMPTY_RECORD="const commits = [{ sha: 'p', subject: '[RT-1] Эпик (#10)', merge: true, files: ['$KIT'],
+  children: () => [{ sha: 'b', subject: '[RT-2] Блоки ответа (#9)', merge: true, files: ['$KIT'] }] }];
+const records = { 'RT-1': { path: 'docs/archive/RT-1-epic.md', text: 'итог эпика' }, 'RT-2': { path: 'x', text: '- **Без вида:** «да»' } };
+const f = m.judgeBranch({ name: 'main', own: null, visible: ['$KIT'], recordOfTask: (t) => records[t] ?? null, commits });
+console.log(f.length);"
+report "the epic branch merged into a task is taken apart by its merges" "$(run "$EPIC_IN_TASK")" '0'
+report "an epic merged into main is judged by its tasks" "$(run "$EPIC_IN_MAIN")" '0|RT-2'
+report "a commit of an earlier branch of the chain answers by its task" "$(run "$CHAIN")" '0|RT-8'
+report "a commit of the branch's own task is its own edit" "$(run "$OWN_TASK")" '1|0'
+report "a branch with no kit edit of its own opens no window" "$(run "$QUOTES")" '0'
+report "the window shows the branch record for its own kit edit" "$(run "$QUOTES_OWN")" 'own.md'
+report "a branch's own commit naming another task stays its own" "$(run "$FORGED")" '1'
+report "a merge whose record has no approval lines is taken apart" "$(run "$EMPTY_RECORD")" '0'
+report "a task is read from a merged PR and from a closing number" \
+    "$(run "console.log([m.taskOf('[RT-2] x (#9)'), m.taskOf('fix: y (RT-3)'), m.taskOf('Merge branch main')].join(','))")" 'RT-2,RT-3,'
+report "a revert and a number in passing name no task" \
+    "$(run "console.log([m.taskOf('Revert \"[RT-2] x (#9)\"'), m.taskOf('fix: поправлен [RT-2] отступ')].join(','))")" ','
 
 suite_result

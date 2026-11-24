@@ -38,6 +38,16 @@ report "SC-AK-48 — каталог есть — молчит" "$(docs_says 'no 
 doc c.md 'Гард `.claude/hooks/some-guard.sh` лежит в дереве.'
 report "SC-AK-49 — путь под каталогом с точкой найден" "$(docs_says 'no file .\.claude/hooks')" 0
 
+# Черновик под настройками игнора не судится, и кириллическое имя тоже: git по умолчанию отдаёт
+# такое имя в кавычках с восьмеричными кодами, и черновик в сверку не попадал
+mkdir -p "$DOC_TREE/.claude/handoff"
+printf '.claude/handoff/\n' > "$DOC_TREE/.gitignore"
+printf 'Черновик зовёт `docs/plans/nowhere-latin.md`.\n' > "$DOC_TREE/.claude/handoff/night.md"
+printf 'Черновик зовёт `docs/plans/nowhere-cyrillic.md`.\n' > "$DOC_TREE/.claude/handoff/ночь.md"
+git -C "$DOC_TREE" add -A
+report "SC-AK-49 — черновик под игнором не судится" "$(docs_says 'no file .docs/plans/nowhere-latin')" 0
+report "SC-AK-49 — черновик под игнором с кириллическим именем не судится" "$(docs_says 'no file .docs/plans/nowhere-cyrillic')" 0
+
 # SC-AK-50 — папка задачи из сверки выведена, как архив
 printf 'Снятый `docs/tasks/nowhere.md` тут назван.\n' > "$DOC_TREE/docs/tasks/RT-1-x/progress.md"
 printf 'Снятый `docs/archive/nowhere.md` тут назван.\n' > "$DOC_TREE/docs/archive/old.md"

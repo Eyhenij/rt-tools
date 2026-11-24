@@ -11,6 +11,9 @@ export const RT_NARROW_WIDTH: number = 1080;
 
 const NARROW_VIEWPORT_QUERY: string = `(max-width: ${RT_NARROW_WIDTH}px)`;
 
+/** Окно уже порога: на ровно 1080 запрос уже не срабатывает. Дробная граница ловит масштаб страницы. */
+const BELOW_NARROW_VIEWPORT_QUERY: string = `(max-width: ${RT_NARROW_WIDTH - 0.02}px)`;
+
 /** Порог телефона — тот же, что у `$rt-bp-sm` в стилях кита. */
 export const RT_PHONE_WIDTH: number = 480;
 
@@ -21,6 +24,14 @@ const PHONE_VIEWPORT_QUERY: string = `(max-width: ${RT_PHONE_WIDTH}px)`;
  */
 export function rtNarrowByWidth(placeWidth: number | null, viewportNarrow: boolean): boolean {
     return placeWidth === null ? viewportNarrow : placeWidth <= RT_NARROW_WIDTH;
+}
+
+/**
+ * Уже ли вид порога: 1079 и меньше. Ровно 1080 здесь уже широко — в отличие от `rtNarrowByWidth`.
+ * Ширина места страницы решает, когда место объявлено; без него решает окно.
+ */
+export function rtBelowNarrowByWidth(placeWidth: number | null, viewportBelowNarrow: boolean): boolean {
+    return placeWidth === null ? viewportBelowNarrow : placeWidth < RT_NARROW_WIDTH;
 }
 
 /**
@@ -42,6 +53,11 @@ export class BreakpointsService {
     readonly #placeWidth: WritableSignal<number | null> = signal<number | null>(null);
 
     #resizeObserver: ResizeObserver | null = null;
+
+    /** Окно уже порога (1079px и меньше); читается только признаком `belowNarrow`. */
+    readonly #viewportBelowNarrow: Signal<boolean> = toSignal(this.#match([BELOW_NARROW_VIEWPORT_QUERY]), {
+        initialValue: false,
+    });
 
     /**
      * Ширина места страницы; `null`, пока место не объявлено. Её читает компонент, у которого
@@ -84,6 +100,15 @@ export class BreakpointsService {
      * Считается от ширины места страницы, без места — от окна.
      */
     public readonly narrow: Signal<boolean> = computed((): boolean => rtNarrowByWidth(this.#placeWidth(), this.viewportNarrow()));
+
+    /**
+     * Вид уже порога (1079px и меньше): на ровно 1080 он уже широкий. Его читают отборы `rt-toolbar`:
+     * на 1080 и шире они стоят в строке, на 1079 и уже — за кнопкой. Общий `narrow` держит `≤1080`
+     * для остальных компонентов и для стилей кита.
+     */
+    public readonly belowNarrow: Signal<boolean> = computed((): boolean =>
+        rtBelowNarrowByWidth(this.#placeWidth(), this.#viewportBelowNarrow())
+    );
 
     /**
      * Объявляет узел местом страницы и возвращает снятие. Без `ResizeObserver` (сервер
