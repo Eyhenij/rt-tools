@@ -166,6 +166,13 @@ Given the section is open on a narrow screen
 When the list is read
 Then every record is shown as a card of the table of the kit, not as a cut row
 
+### SC-MB-457 — the buttons of the toolbar keep to the right edge on a narrow screen
+
+Given the section is open on a narrow screen
+When the toolbar is read
+Then its buttons stand in one row at the right edge, «Обновить» before «Колонки», and the row ends
+inside the window
+
 ### SC-MB-78 — the labels of the kit come from the dictionary of the application
 
 Given there is a pagination and an empty state on the screen

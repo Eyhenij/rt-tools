@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.0 · laws/work-conduct.md · 7cb7e041a4fe · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · laws/work-conduct.md · 7cb7e041a4fe · правится надстройкой, не здесь -->
 # Law on work conduct
 
 The law sets how work is conducted from the moment a task is set until it is closed. Work outlasts

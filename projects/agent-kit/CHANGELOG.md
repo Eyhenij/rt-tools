@@ -1,3 +1,25 @@
+## [0.39.1](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.39.0...rt-agent-kit%400.39.1) (2026-11-24)
+
+**Метрика выпуска:** отказов проверок turn-exit-guard, вниз
+
+### Bug Fixes
+
+- **rt:agent-kit:** одобрение плана засчитывается одним правилом для меню и чата (RT-3535) ([d02a15c](https://github.com/Eyhenij/rt-tools/commit/d02a15cda7790bc70565709e8b26050cf03456ec))
+- **rt:agent-kit:** правило одобрения после второго круга ревью (RT-3535) ([9bdb778](https://github.com/Eyhenij/rt-tools/commit/9bdb7789d7994ef336227b32c978174b5b272f62))
+- **rt:agent-kit:** правило одобрения после первого круга ревью (RT-3535) ([d1fdf5b](https://github.com/Eyhenij/rt-tools/commit/d1fdf5bd411f4d5322c37bc2d17bd0d11fc0a120))
+- **rt:agent-kit:** правки после второго круга ревью (RT-3585) ([fae3527](https://github.com/Eyhenij/rt-tools/commit/fae352780f560d50629d3c017f658de6a7be80e9))
+- **rt:agent-kit:** правки после первого круга ревью (RT-3585) ([1ba81b0](https://github.com/Eyhenij/rt-tools/commit/1ba81b0d5bc36593e1b717ce290d938762dad4e3))
+- **rt:agent-kit:** проверка путей пропускает черновик под игнором и с кириллическим именем (RT-3528) ([b121994](https://github.com/Eyhenij/rt-tools/commit/b1219943cd641cefa09675330650628db9d207f5))
+- **rt:agent-kit:** сборка графов удаляет graph.html (RT-3585) ([85816de](https://github.com/Eyhenij/rt-tools/commit/85816de2466ef97b0e84742eb5bcdd30db5ad974))
+- **rt:agent-kit:** слово остановки владельца снова отпускает ход (RT-3592) ([f934719](https://github.com/Eyhenij/rt-tools/commit/f9347197da89a79100451ccea929da0c2b7c6bfe))
+- **rt:agent-kit:** судья вопросов после второго круга ревью (RT-3591) ([ca608a7](https://github.com/Eyhenij/rt-tools/commit/ca608a79ca801e68ca12711f7389d89d64ea8d92))
+- **rt:agent-kit:** судья вопросов после первого круга ревью (RT-3591) ([73abdd2](https://github.com/Eyhenij/rt-tools/commit/73abdd2fa7a4e53ce96acab66f048bc79c5c0b73))
+- **rt:agent-kit:** судья вопросов пускает план эпика и держит приписанное действие после второго круга ревью (RT-3591) ([d756b3e](https://github.com/Eyhenij/rt-tools/commit/d756b3efbf6008130cf7f9baa39a8d5c2c043f9e))
+- **rt:agent-kit:** судья вопросов пускает решение владельца, даже если оно меняет проверку (RT-3591) ([e1bcc44](https://github.com/Eyhenij/rt-tools/commit/e1bcc44ae96638e70a3e420cff69dff1e3197035))
+- **rt:agent-kit:** сценарии не зависят от временного каталога машины (RT-3585) ([91dd620](https://github.com/Eyhenij/rt-tools/commit/91dd6209e3cacbb2e00ccbe29f58dc2c34f99f97))
+- **rt:agent-kit:** сценарии стража выхода из хода не читают общую временную папку машины (RT-3528) ([544b67d](https://github.com/Eyhenij/rt-tools/commit/544b67d5ed3d561e3003f77a19f6ae5f30f2a7c4))
+- **rt:ui-kit-v2:** правки после второго круга ревью (RT-3478) ([7e1ab5a](https://github.com/Eyhenij/rt-tools/commit/7e1ab5a9b9c41b2e988fb774ab3e9e2e1766357b))
+
 # [0.39.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.38.0...rt-agent-kit%400.39.0) (2026-11-23)
 
 **Метрика выпуска:** отказов проверок turn-exit-guard, вниз

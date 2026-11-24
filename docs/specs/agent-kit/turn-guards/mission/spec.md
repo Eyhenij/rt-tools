@@ -1,6 +1,6 @@
 # The mission of the guards of the end of a turn
 
-**Status:** in force · **Revision:** 2026-11-22 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-24 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `work-conduct`, `verifiability`
 **Procedures:** none
@@ -106,14 +106,15 @@ The guards have no interface: only the agent sees them, as the text of a refusal
   measured from the branch, not taken from the agent's memory or from a line of the progress.
 - **Under an open epic a turn with work does not end on its own.** The epic is the unit of
   delivery, and its next task is the next step.
-- **Only the owner's Esc ends a turn before the scenario is over.** The owner chose so on
-  22 November 2026: «Ожидание и убрать «стоп»». No typed word releases a turn, a menu answer
-  included. A question, a refusal of a guard and a handover are the turn going on. The other
-  release cases of the description are not the agent's to choose.
-- **The owner's interrupt is read from their last message in the record, not from the progress.**
-  The host writes the mark of Esc into the record as the owner's message. A line on disk is a
-  retelling, written by the one the stop suits. An interrupt older than the owner's latest message
-  releases nothing: the later message cancels it.
+- **The owner's stop word or their Esc ends a turn before the scenario is over.** The owner decided
+  so on 24 November 2026: «Одобряю план RT-3592». It replaces their choice of 22 November,
+  «Ожидание и убрать «стоп»», which left Esc alone. An answer chosen in a menu is the owner's word
+  too. A question, a refusal of a guard and a handover are the turn going on. The other release
+  cases of the description are not the agent's to choose.
+- **The owner's stop is read from their last message in the record, not from the progress.** A stop
+  word is that message; the mark of Esc is written there by the host. A line on disk is a retelling,
+  written by the one the stop suits. A stop older than the owner's latest message releases nothing:
+  the later message cancels it.
 - **A command that closes a session or writes a handover is not a word to stop.** It cleans up and
   hands over; the work it does not mention stays ordered.
 - **A question to the owner is held only when the owner already answered it or a rule answers it
@@ -141,8 +142,8 @@ What any tool of the day takes and gives. Lists only: the audit reads a table he
 
 - **Input.** The event of the end of a turn, the record of the session, the tree and the host — the
   branch, the task folder, the marks of the steps and the epic. The owner's words say what was
-  ordered, and the mark of Esc says the owner stopped the turn; the measured state says what is
-  left.
+  ordered; a stop word or the mark of Esc says the owner stopped the turn. The measured state says
+  what is left.
 - **Output.** Silence lets the turn end. A refusal names what is wrong and one move the agent can
   make in this turn; the refusal of a model starts with `BLOCKED by <guard>:`.
 - **Failure.** A broken tool lets the turn through and writes the failure: a guard has no right to
@@ -156,9 +157,9 @@ What any tool of the day takes and gives. Lists only: the audit reads a table he
    no tool carries goes to the open questions.
 2. Replay recorded turns through the new tool: a turn of each kind of stop above must be kept going,
    and a turn of each lawful stop must end. The turns come from the session records.
-3. Run it live in a new session, inside ordered work and outside it: a question, swearing, «стоп»
-   and «не сейчас» that keep the work going, Esc that ends it, a menu after a refusal, a promise
-   without a run.
+3. Run it live in a new session, inside ordered work and outside it: a question, swearing, «хватит
+   останавливаться» that keeps the work going, «стоп», «не сейчас» and Esc that end it, a menu after
+   a refusal, a promise without a run.
 4. Measure a week of work by the measures in the data section and compare with the base.
 5. Remove the old tool by the same change that binds the new one. Two tools judging one turn by
    different rules made the deadlock of 13 November.
@@ -240,3 +241,5 @@ measured by the engine, so no doubt about it is left to decide.
 - 2026-11-22 — the rules follow the owner's choice «Ожидание и убрать «стоп»»: no typed word
   releases a turn, and only the owner's Esc ends one before the scenario does. The menu of a step
   another guard refuses twice offers «отложить RT-N» and «подскажу путь».
+- 2026-11-24 — the rules follow the owner's decision «Одобряю план RT-3592»: their stop word ends a
+  turn again, next to Esc.

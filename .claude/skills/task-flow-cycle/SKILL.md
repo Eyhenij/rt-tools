@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow-owner
 description: Pattern of rule task-flow-owner. Load when an edit of a rule, a hook, a check or a role is chosen and when its result is judged. The worst driver from the report, one metric and its direction in the task, the verdict from the next report, and the plain name of an edit that moved nothing.
 ---
-<!-- rt-kit v0.39.0 · patterns/task-flow-cycle.md · 01522bad094e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · patterns/task-flow-cycle.md · 01522bad094e · правится надстройкой, не здесь -->
 
 # The improvement cycle
 
