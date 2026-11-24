@@ -6,6 +6,9 @@
 
 echo "the time of a session by step"
 
+# The days of the period are the days of the machine.
+export TZ=UTC
+
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 
@@ -13,7 +16,7 @@ trap 'rm -rf "$WORK"' EXIT
 # Kinds: ask — a message of the owner, say — an answer, call:<tool>:<id>:<command>, res:<id>,
 # res:<id>:<agent> — the launch of an agent, stop — the Stop hooks, end:<id> — the notice about a
 # background call, att:<id> — the same as an attachment, amsg:<agent> — a report of an agent, back — a
-# hand-back. A line `branch|<name>` sets the branch of the lines below it; `\n` in a command is a newline.
+# hand-back, fg:<id> — the result of a foreground agent. The time may name the day: `22T01:00:00`. A line `branch|<name>` sets the branch of the lines below it; `\n` in a command is a newline.
 journal() {
     node - "$WORK/$1.jsonl" <<'JS' 3>/dev/null
 const { readFileSync, writeFileSync } = require('node:fs');
@@ -25,7 +28,7 @@ const out = spec.flatMap((line, i) => {
         branch = kind;
         return [];
     }
-    const base = { uuid: (process.env.MARK || 'u') + i, timestamp: '2026-11-21T' + time + '.000Z', gitBranch: branch };
+    const base = { uuid: (process.env.MARK || 'u') + i, timestamp: '2026-11-' + (time.includes('T') ? time : '21T' + time) + '.000Z', gitBranch: branch };
     const text = rest.join('|').replace(/\\n/g, '\n');
     if (kind === 'raw') return text;
     if (kind === 'ask') return JSON.stringify({ ...base, type: 'user', origin: { kind: 'human' }, message: { content: 'секрет владельца' } });
@@ -37,9 +40,10 @@ const out = spec.flatMap((line, i) => {
     }
     if (kind.startsWith('res:')) {
         const [, id, agent] = kind.split(':');
-        const said = agent ? [{ type: 'text', text: 'agentId: ' + agent }] : undefined;
+        const said = [{ type: 'text', text: 'Async agent launched\nagentId: ' + (agent || 'none') }];
         return JSON.stringify({ ...base, type: 'user', message: { content: [{ type: 'tool_result', tool_use_id: id, content: said }] } });
     }
+    if (kind.startsWith('fg:')) return JSON.stringify({ ...base, type: 'user', message: { content: [{ type: 'tool_result', tool_use_id: kind.slice(3), content: 'отчёт' }] } });
     if (kind === 'stop') return JSON.stringify({ ...base, type: 'system', subtype: 'stop_hook_summary' });
     if (kind === 'side') return JSON.stringify({ ...base, isSidechain: true, type: 'system', subtype: 'stop_hook_summary' });
     if (kind.startsWith('att:')) return JSON.stringify({ ...base, type: 'attachment', attachment: { prompt: '<tool-use-id>' + kind.slice(4) + '</tool-use-id>' } });
@@ -104,6 +108,46 @@ kind_is Agent '' agents
 kind_is Workflow '' agents
 kind_is ExitPlanMode '' owner
 
+# What counts as a run of the set and as a call that opens a PR: a file of one command a line.
+marks_is() {
+    node --input-type=module -e "
+        import { $1 } from '$TOOLS/session-time-model.mjs';
+        import { readFileSync } from 'node:fs';
+        const lines = readFileSync(0, 'utf8').trim().split('\n').map((line) => line.replace(/\\\\n/g, '\n'));
+        console.log(lines.filter((line) => $1(line) !== $2).join(' ;; ') || 'all');
+    "
+}
+report 'the forms of a run of the set' "$(marks_is runsSet true <<'E'
+bash .claude/hooks/git-guard-push-ahead.sh > log 2>&1
+cd x && TMPDIR=/t /bin/bash -x ".claude/hooks/git-guard-push-ahead.sh"
+cat > b <<'X' && bash .claude/hooks/git-guard-push-ahead.sh\ntext\nX
+E
+)" all
+report 'what is no run of the set' "$(marks_is runsSet false <<'E'
+cat .claude/hooks/git-guard-push-ahead.sh
+bash -n .claude/hooks/git-guard-push-ahead.sh
+bash tests/git-guard-push-ahead.sh.test.sh
+git commit -am "bash git-guard-push-ahead.sh"
+ls # bash git-guard-push-ahead.sh
+E
+)" all
+report 'the forms of a call that opens a PR' "$(marks_is opensPr true <<'E'
+test -s t && GH_TOKEN="$(cat t)" /opt/homebrew/bin/gh pr create --title x
+gh -R o/r pr new
+$GH pr create --draft
+cat <<'X' | gh pr create --body-file -\ntext\nX
+E
+)" all
+report 'what opens no PR' "$(marks_is opensPr false <<'E'
+gh pr view 1
+gh pr create --help
+echo gh pr create
+gh issue create --body "then gh pr create"
+git commit -qm "run gh pr create"
+cat > n <<'X-1'\ngh pr create\nX-1
+E
+)" all
+
 # 2. A menu is the waiting of the owner, not a tool.
 SPEC='00:00:00|ask
 00:30:00|call:AskUserQuestion:q:
@@ -139,6 +183,13 @@ SPEC='00:00:00|ask
 00:02:00|res:n
 01:02:00|end:n' journal wait
 report 'another command of the background is a check' "$(run --file "$WORK/wait.jsonl" | field 'categories.checks.hours')" 1
+SPEC='00:00:00|call:Agent:g:
+00:00:00|res:g
+00:01:00|end:g
+00:02:00|call:Bash:p:bash .claude/hooks/git-guard-push-ahead.sh
+00:02:00|res:p
+01:02:00|end:p' journal over
+report 'an agent that ended names no later wait' "$(run --file "$WORK/over.jsonl" | field 'categories.pushset.hours')" 1
 
 # 4. A repeated uuid is read once, a broken line is counted, a record of a subagent is not an event.
 { cat "$WORK/menu.jsonl"; cat "$WORK/menu.jsonl"; } > "$WORK/twice.jsonl"
@@ -169,9 +220,12 @@ report 'a resumed journal is counted whole in either order' \
 # 5. The period, and the branches.
 SPEC='00:00:00|ask
 01:00:00|say' journal period
-report 'a day outside the period leaves no time' "$(run --file "$WORK/period.jsonl" --since 2026-11-22 | field 'activeHours')" 0
-report 'the last day of the period is whole' \
-    "$(run --file "$WORK/period.jsonl" --until 2026-11-22 | field 'activeHours'):$(run --file "$WORK/period.jsonl" --until 2026-11-20 | field 'activeHours')" 1:0
+report 'the last day of the period is whole' "$(run --file "$WORK/period.jsonl" --until 2026-11-21 | field 'activeHours')" 1
+MARK=d SPEC='22:00:00|ask
+22T01:00:00|say
+22T02:00:00|say' journal night
+report 'the days add up to the whole' \
+    "$(run --file "$WORK/period.jsonl" --file "$WORK/night.jsonl" --until 2026-11-21 | field 'activeHours'):$(run --file "$WORK/period.jsonl" --file "$WORK/night.jsonl" --since 2026-11-22 | field 'activeHours')" 1:4
 BRANCH='RT-1-x' SPEC='00:00:00|ask
 01:00:00|say' journal branch
 report 'a branch holds its own hours' "$(run --file "$WORK/branch.jsonl" | field 'branches["RT-1-x"].activeHours')" 1
@@ -200,18 +254,50 @@ COURSE='00:00:00|ask
 01:10:00|call:Bash:pr:gh pr create --title x
 01:10:00|res:pr
 01:13:00|say'
-export BRANCH='RT-2-step' ROLES='s1=goal-critic t1=product-strategist q1=qa-engineer q2=qa-engineer r1=qa-engineer r2=qa-engineer'
+export BRANCH='RT-2-step' ROLES='s1=goal-critic s2=goal-critic t1=product-strategist q1=qa-engineer q2=qa-engineer r1=qa-engineer r2=qa-engineer'
 SPEC="$COURSE" journal steps
 OUT="$(run --steps --file "$WORK/steps.jsonl")"
 report 'the steps of a full course' "$(printf '%s' "$OUT" | medians)" '1:5 4 21 8 5 9 3 15 3'
 report 'the categories of a step' "$(printf '%s' "$OUT" | field 'steps.kinds.round1.agents')" 8
 report 'every launch has its end' "$(printf '%s' "$OUT" | field 'steps.open')" 0
-report 'a step is of the period alone' "$(run --steps --since 2026-11-22 --file "$WORK/steps.jsonl" | field 'steps.branches')" 0
+SPEC="$COURSE
+22T00:30:00|say" journal late
+report 'a step is of the period alone' "$(run --steps --since 2026-11-22 --file "$WORK/late.jsonl" | field 'steps.branches')" 0
+node "$TOOLS/session-time.mjs" --branches RT-2 --since 2026-11-22 --file "$WORK/late.jsonl" > "$WORK/out" 2>&1
+report 'a task cut by the period is refused' "$?:$(grep -c 'cuts RT-2' "$WORK/out")" 1:1
 report 'the text holds the steps and what was left out' \
     "$(node "$TOOLS/session-time.mjs" --steps --file "$WORK/steps.jsonl" | grep -cE 'Код и живая проверка +21|Вне полного хода: веток 0')" 2
 OUT="$(run --steps --file "$WORK/branch.jsonl")"
 report 'a branch without rounds has no row of steps' "$(printf '%s' "$OUT" | field 'steps.branches')" 0
 report 'its hours are named as left out' "$(printf '%s' "$OUT" | field 'steps.left.branches + ":" + j.steps.left.hours')" 1:1
+report 'no full course is said in words' \
+    "$(node "$TOOLS/session-time.mjs" --steps --file "$WORK/branch.jsonl" | grep -cE 'Веток полного хода нет|без двух кругов 1')" 2
+SPEC="${COURSE/Bash:ps:bash/Bash:ps:cat}" journal noset
+report 'a branch without the set lacks it' "$(run --steps --file "$WORK/noset.jsonl" | field 'steps.branches + ":" + j.steps.left.lacks.set')" 0:1
+SPEC="${COURSE/gh pr create/gh pr view}" journal nopr
+report 'a branch without a PR call lacks it' "$(run --steps --file "$WORK/nopr.jsonl" | field 'steps.branches + ":" + j.steps.left.lacks.pr')" 0:1
+SPEC="${COURSE/Agent:s1:/Edit:s1:}" journal unread
+report 'with no reading of the plan all before round one is the code' "$(run --steps --file "$WORK/unread.jsonl" | medians)" '1:0 0 30 8 5 9 3 15 3'
+SPEC="${COURSE/00:30:00|call/00:12:00|call:Agent:t1:
+00:12:00|res:t1
+00:20:00|end:t1
+00:30:00|call}" journal reread
+report 'a second reading of the plan is of the reading' "$(run --steps --file "$WORK/reread.jsonl" | medians)" '1:5 15 10 8 5 9 3 15 3'
+SPEC="${COURSE/00:38:00|end:q1/00:32:00|call:Agent:s2:
+00:32:00|res:s2
+00:36:00|end:q1
+00:38:00|end:s2}" journal group
+report 'a round ends with the last report of its roles' "$(run --steps --file "$WORK/group.jsonl" | medians)" '1:5 4 21 8 5 9 3 15 3'
+SPEC="${COURSE/00:38:00|end:q1/00:38:00|fg:q1}"
+SPEC="${SPEC/00:30:00|res:q1
+/}" journal front
+report 'the result of a foreground agent is its end' "$(run --steps --file "$WORK/front.jsonl" | field 'steps.open + ":" + Object.values(j.steps.medians).join(" ")')" '0:5 4 21 8 5 9 3 15 3'
+SPEC="${COURSE/00:30:00|call/00:15:00|say
+00:20:00|ask
+00:30:00|call}" journal waited
+report 'the waiting for the owner is in no step' "$(run --steps --file "$WORK/waited.jsonl" | medians)" '1:5 4 16 8 5 9 3 15 3'
+SPEC="${COURSE/01:10:00|res:pr/01:12:00|res:pr}" journal slow
+report 'the delivery ends with the result of the PR call' "$(run --steps --file "$WORK/slow.jsonl" | medians)" '1:5 4 21 8 5 9 3 17 1'
 
 # The work on another branch in the middle of a step is not a minute of it, and the steps add up to the
 # active time of their branch.
@@ -263,21 +349,23 @@ OTHER="${OTHER//:pr/:zr}"
 OTHER="${OTHER//00:05:00/00:08:00}"
 MARK=z BRANCH='RT-22-step' SPEC="$OTHER" journal next
 report 'the median of two is the middle between them' "$(run --steps --file "$WORK/steps.jsonl" --file "$WORK/next.jsonl" | field 'steps.branches + ":" + j.steps.medians.plan')" 2:7
-report 'the mean of a named task' "$(run --branches RT-2 --file "$WORK/steps.jsonl" --file "$WORK/next.jsonl" | field 'means.branches + ":" + j.means.activeMinutes')" '1:73.2'
-report 'a repeated key counts once' "$(run --branches RT-2,RT-2, --file "$WORK/steps.jsonl" | field 'means.branches')" 1
+report 'the mean of a named task' "$(run --branches RT-2 --file "$WORK/steps.jsonl" --file "$WORK/next.jsonl" | field 'means.branches + ":" + j.means.activeMinutes')" '1:73'
+report 'a repeated key counts once' "$(run --branches RT-2,RT-2,RT-2-step --file "$WORK/steps.jsonl" | field 'means.branches')" 1
 MARK=y BRANCH='RT-1-y' SPEC='00:00:00|ask
 02:00:00|say' journal more
 report 'a task is all the branches of its key' "$(run --branches RT-1 --file "$WORK/branch.jsonl" --file "$WORK/more.jsonl" | field 'means.activeMinutes')" 180
-report 'the mean is over the tasks' "$(run --branches RT-1,RT-2 --file "$WORK/more.jsonl" --file "$WORK/steps.jsonl" | field 'means.branches + ":" + j.means.activeMinutes')" 2:96.6
+report 'the mean is over the tasks' "$(run --branches RT-1,RT-2 --file "$WORK/more.jsonl" --file "$WORK/steps.jsonl" | field 'means.branches + ":" + j.means.activeMinutes')" 2:96.5
 report 'the mean is printed' "$(node "$TOOLS/session-time.mjs" --branches RT-1 --file "$WORK/more.jsonl" | grep -c 'В среднем на задачу (1): 120 мин')" 1
 node "$TOOLS/session-time.mjs" --branches RT-2,RT-77 --file "$WORK/steps.jsonl" > "$WORK/out" 2>&1
 report 'a branch that is not there is refused' "$?:$(grep -c 'RT-77' "$WORK/out")" 1:1
 unset BRANCH ROLES
 
 # 8. No text of people reaches the output, and the refusals name their reason.
-OUT="$(node "$TOOLS/session-time.mjs" --by-branch --file "$WORK/base.jsonl" 2>&1)"
-case "$OUT" in *секрет* | *push-ahead* | *'nx test'*) leak=yes ;; *) leak=no ;; esac
-report 'neither a message nor a command is printed' "$leak" no
+for form in '--by-branch' '--json --by-branch --steps --branches RT-2' '--steps --branches RT-2'; do
+    OUT="$(eval "node \"\$TOOLS/session-time.mjs\" $form --file \"\$WORK/base.jsonl\" --file \"\$WORK/next.jsonl\" --file \"\$WORK/steps.jsonl\"" 2>&1)"
+    case "$OUT" in *секрет* | *push-ahead* | *'nx test'* | *'gh pr'* | *отчёт*) leak=yes ;; *) leak=no ;; esac
+    report "neither a message nor a command is printed: $form" "$leak:${#OUT}" "no:${#OUT}"
+done
 node "$TOOLS/session-time.mjs" --file "$WORK/none.jsonl" > "$WORK/out" 2>&1
 report 'a journal that is not there is refused' "$?:$(grep -c 'no such journal' "$WORK/out")" 1:1
 (cd "$WORK" && HOME="$WORK" node "$TOOLS/session-time.mjs") > "$WORK/out" 2>&1
@@ -294,7 +382,9 @@ refused 'a flag in place of a value is refused' 'incomplete argument' --branches
 refused 'an empty list of branches is refused' 'incomplete argument' --branches ,
 refused 'a directory is no journal' 'not a journal file' --file "$WORK"
 : > "$WORK/empty.jsonl"
-refused 'a journal with no event is refused' 'no event' --file "$WORK/empty.jsonl"
+refused 'a journal with no event is refused' 'no time' --file "$WORK/empty.jsonl"
+refused 'a period with no time is refused' 'no time' --since 2026-11-23 --file "$WORK/period.jsonl"
+report 'a bare double dash is passed over' "$(run -- --file "$WORK/period.jsonl" | field 'activeHours')" 1
 mkdir -p "$WORK/.claude/projects/$(cd "$WORK" && node -p 'process.cwd().replace(/[^a-zA-Z0-9]/g, "-")')"
 cp "$WORK/period.jsonl" "$WORK/.claude/projects/"*/
 report 'the journals of the working copy are found' "$(cd "$WORK" && HOME="$WORK" run | field 'activeHours')" 1

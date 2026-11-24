@@ -10,6 +10,11 @@
  *
  * The share of a category is taken of the active time — the whole time without the waiting for the
  * owner: a night at an open menu says nothing about the process.
+ *
+ * The time of a call holds the hooks that ran before it, and the categories repeat the first measurement
+ * of 24.11, so that «before» and «after» are compared by one rule. Two lines are read with that in mind:
+ * the board holds the checks of `plan-red` and the hooks before `gh pr create` — about 101 of its 172
+ * minutes on that journal; edits and commands hold the loops with `sleep`, about 77 minutes of it.
  */
 
 /** Categories in the order of the report; `owner` stands apart and is not active. */
@@ -26,7 +31,7 @@ export const CATEGORIES = [
 export const OWNER = 'owner';
 
 /** A run of the push set. A command that only names the file — a search, a print of it — is no run. */
-const RUNS_SET = /(?:^|[\s;&|(])(?:bash|sh)\s+(?:-\w+\s+)*\S*git-guard-push-ahead\.sh/;
+const RUNS_SET = /(?:^|[\s;&|(/])(?:bash|sh|zsh)\s+(?:-o\s+\w+\s+|-(?!n\b)\w+\s+)*["']?[^\s"']*git-guard-push-ahead\.sh(?=["'\s;&|)]|$)/;
 
 /** A command that waits in the foreground until the running set ends. */
 const WAITS_SET = /\bpgrep\b[^\n;|&]*push-ahead/;
@@ -34,13 +39,15 @@ const WAITS_SET = /\bpgrep\b[^\n;|&]*push-ahead/;
 /** The options of git stand before the verb, so `git -c key=value push` is a push too. */
 const PUSH = /\bgit(?:\s+-[cC]\s+(?:'[^']*'|"[^"]*"|[^\s'"]+(?:'[^']*'|"[^"]*")?)|\s+--?[\w-]+(?:=\S+)?)*\s+push\b/;
 
-const OPENS_PR = /(?:^|[\s;&|(/])gh\s+pr\s+create\b/;
+const OPENS_PR = /(?:^|[\s;&|(/])(?:gh|"?\$\{?GH\}?"?)(?:\s+-R\s+\S+)?\s+pr\s+(?:create|new)\b(?!\s+--help)/;
 
-/** What a command carries as text — a message of a commit, a here-document, an echoed line — runs nothing. */
+/** What a command carries as text — a message of a commit, a here-document, an echoed line, a comment — runs nothing. */
 const withoutText = (command) =>
     command
-        .replace(/<<-?\s*(['"]?)(\w+)\1[^\n]*\n[\s\S]*?\n\s*\2(?=\n|$)/g, '')
-        .replace(/(?:\s-m|\s--message|\becho|\bprintf)[ =]+("(?:[^"\\]|\\.)*"|'[^']*')/g, '');
+        .replace(/<<-?\s*(['"]?)\\?([\w-]+)\1([^\n]*)\n[\s\S]*?\n\s*\2(?=\n|$)/g, '$3')
+        .replace(/(?:\s-[a-z]*m|\s--(?:message|body|title)|\becho|\bprintf)[ =]+\$?("(?:[^"\\]|\\.)*"|'[^']*')/g, '')
+        .replace(/\becho\s[^;&|\n]*/g, '')
+        .replace(/(^|\s)#[^\n]*/g, '$1');
 
 export const runsSet = (command) => RUNS_SET.test(withoutText(command));
 export const opensPr = (command) => OPENS_PR.test(withoutText(command));
@@ -84,12 +91,13 @@ const waitKind = ({ name, command }) => {
 
 const textOf = (content) => (typeof content === 'string' ? content : JSON.stringify(content ?? ''));
 
-/** A tool call as the measure needs it: of the input only the command and the role are kept. */
+/** A tool call as the measure needs it: of the input only the command and the role are kept; `done` is the moment of its result. */
 const callOf = ({ name, input }, at, branch) => ({
     name,
     command: String(input?.command ?? ''),
     role: input?.subagent_type ?? null,
     at,
+    done: at,
     branch,
 });
 
@@ -108,7 +116,10 @@ export function eventOf(record, calls) {
     if (record.type === 'system') {
         return { ...base, kind: record.subtype === 'stop_hook_summary' ? 'stop' : 'other' };
     }
-    return record.type === 'user' ? { ...base, ...userEvent(record) } : null;
+    if (record.type !== 'user') return null;
+    const event = { ...base, ...userEvent(record) };
+    if (event.kind === 'result' && calls.has(event.call)) calls.get(event.call).done = at;
+    return event;
 }
 
 function userEvent(record) {
@@ -166,7 +177,7 @@ export function gapsOf(events, calls) {
 /** The hours of the gaps by category, and the same of every branch. */
 export function measure(gaps) {
     const total = {};
-    const branches = {};
+    const branches = Object.create(null);
     for (const { branch, kind, hours } of gaps) {
         total[kind] = (total[kind] ?? 0) + hours;
         branches[branch] ??= {};
@@ -177,9 +188,11 @@ export function measure(gaps) {
 
 const round = (value) => Math.round(value * 100) / 100;
 
+export const activeOf = (hours) => CATEGORIES.reduce((sum, [key]) => sum + (hours[key] ?? 0), 0);
+
 /** The report of one set of hours: active, owner, and a share for each category. */
 export function reportOf(hours) {
-    const active = CATEGORIES.reduce((sum, [key]) => sum + (hours[key] ?? 0), 0);
+    const active = activeOf(hours);
     const categories = Object.fromEntries(
         CATEGORIES.map(([key]) => [key, { hours: round(hours[key] ?? 0), share: active ? round((hours[key] ?? 0) / active) : 0 }])
     );
