@@ -216,6 +216,23 @@ describe('RtDatePanelComponent', (): void => {
         expect(fixture.nativeElement.classList).toContain('rt-date-panel--split');
     });
 
+    it('SC-UKV-1800 — the month and year grids also step aside on the «Time» tab', (): void => {
+        const { fixture }: IPanel = setup({ type: 'datetime-local', value: '2026-09-15T09:00', sheet: true });
+        const hidden: (id: string) => boolean = (id: string): boolean => {
+            const node: HTMLElement = qa(fixture, id)?.nativeElement as HTMLElement;
+
+            return node.hasAttribute('data-away') && node.hasAttribute('inert');
+        };
+        press(fixture, qa(fixture, 'calendar-month-title'));
+        press(fixture, qaAll(fixture, 'toggle-button-group-option')[1]);
+        expect(hidden('date-panel-months')).toBe(true);
+
+        press(fixture, qaAll(fixture, 'toggle-button-group-option')[0]);
+        press(fixture, qa(fixture, 'date-panel-year'));
+        press(fixture, qaAll(fixture, 'toggle-button-group-option')[1]);
+        expect(hidden('date-panel-years')).toBe(true);
+    });
+
     it('SC-UKV-422 — the input now sets today and the moment of «Now»', (): void => {
         const { fixture }: IPanel = setup({ type: 'date', value: '2026-03-15', now: new Date(2026, 2, 10, 18, 44) });
 

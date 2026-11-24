@@ -60,7 +60,7 @@ describe('RtCalendarComponent', (): void => {
         expect(qaAll(fixture, 'calendar-blank').length).toBe(2);
     });
 
-    it('сетка несёт число недель месяца: шторка по нему держит высоту шести недель', (): void => {
+    it('SC-UKV-1799 — сетка несёт число недель месяца: шторка по нему держит высоту шести недель', (): void => {
         const long: IRtCalendar.Month = {
             key: '2026-11',
             label: 'Ноябрь 2026',
@@ -263,7 +263,7 @@ describe('RtCalendarComponent', (): void => {
         });
     });
 
-    it('headerTitle ставит заголовок первого месяца в шапку между стрелками', (): void => {
+    it('SC-UKV-1798 — headerTitle ставит заголовок первого месяца в шапку между стрелками', (): void => {
         const fixture: ComponentFixture<RtCalendarComponent> = setup({ headerTitle: true });
 
         expect(el(fixture, '[qa-dataid="calendar-month"] [qa-dataid="calendar-month-title"]')).toBeNull();

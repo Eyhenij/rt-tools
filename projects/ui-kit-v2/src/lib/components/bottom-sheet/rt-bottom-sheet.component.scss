@@ -33,16 +33,17 @@
             transition: opacity var(--rt-bottom-sheet-transition-duration) ease;
         }
 
-        /* Предел высоты панели — `--rt-bottom-sheet-max-height`, умолчание `80vh`; свойство приходит
-           от предка или с тега листа. Шторка в ящике ниже окна не выходит за ящик: сверху остаётся та
-           же полоса, что у шторки во всю высоту, и шапка с «×» видна. */
+        /* Панель растёт по содержимому до всей высоты: длинное содержимое ставит шторку во всю высоту,
+           сверху остаётся полоса, и шапка с «×» видна; дальше прокручивается тело. Высота считается от
+           самой шторки — на весь экран, в ящике ниже окна на весь ящик. Свой предел приложение задаёт
+           свойством `--rt-bottom-sheet-max-height` от предка или с тега листа. */
         &__panel {
             position: absolute;
             right: 0;
             bottom: 0;
             left: 0;
             display: flex;
-            max-height: min(var(--rt-bottom-sheet-max-height, 80vh), calc(100% - var(--rt-space-2) - var(--rt-space-1)));
+            max-height: min(var(--rt-bottom-sheet-max-height, 100dvh), calc(100% - var(--rt-space-2) - var(--rt-space-1)));
             flex-direction: column;
             border-radius: var(--rt-bottom-sheet-radius) var(--rt-bottom-sheet-radius) 0 0;
             background: var(--rt-color-bg-surface);

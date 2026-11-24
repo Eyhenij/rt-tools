@@ -90,10 +90,23 @@ checkbox or a switch on the right. The question before closing offers «Apply»,
   it, so the sign is the visible part lower than the window by a keyboard's height; with a mouse
   that never happens and the height stays by the content. While the keyboard is shown the sheet
   stands in the visible part above it, so the last rows of a list are reachable; once it is
-  hidden the sheet returns to the height of its content. Content taller than the screen is held
-  by the height limit of the panel and scrolls. It holds alike for the search of a list, the page filters, the
+  hidden the sheet returns to the height of its content. It holds alike for the search of a list, the page filters, the
   filters of a thread list and the dynamic selector. The full-height input of a sheet stays as a
   switch of the application; no part of the kit sets it.
+- **Long content raises a sheet to the full height of its box.** The panel grows with its content
+  up to the height of the sheet less the strip of 12px on top, the same as a full-height sheet;
+  past it the body scrolls. The owner asked for it: «ну или если полей много то на всю высоту».
+  The box is the screen, or a box of a page lower than the window: the panel never leaves it, and
+  the header with «×» stays seen. An application sets a lower limit by its own property.
+- **The presets of the period sheet are one row that scrolls round.** The row is as wide as the
+  sheet, its edges fade, and the chosen preset stands in the centre. Picking another rolls the row
+  the short way round; the month arrows of the period sheet stand in the row of its title.
+- **The month of a sheet keeps the height of six weeks.** A month of five or four weeks stands in
+  the middle of that height, so paging never moves the footer of the sheet. Outside the sheet the
+  month keeps its own height.
+- **The tabs «Date | Time» keep the height of the sheet.** The date part and the time part stand
+  in one cell; the part of the other tab stays in the layout, unseen and untouchable, whether it is
+  the month, the month grid or the year grid. The time columns stand in the middle of its height.
 - **A sheet whose choice reaches the application only by a button asks before it closes with a
   choice not applied.** The dynamic selector asks with marks set. The page filters ask after any
   input made in the fields of the sheet since it opened, and when the application says the filters

@@ -86,7 +86,13 @@
                     </div>
                 </div>
             } @else {
-                <div rtElem="months" qa-dataid="date-panel-years" role="group" [attr.aria-label]="t().uiChooseYear">
+                <div
+                    rtElem="months"
+                    qa-dataid="date-panel-years"
+                    role="group"
+                    [attr.aria-label]="t().uiChooseYear"
+                    [attr.data-away]="dateAway() ? '' : null"
+                    [attr.inert]="dateAway() ? '' : null">
                     <div rtElem="months-header">
                         <rt-icon-button
                             qa-dataid="date-panel-prev-years"

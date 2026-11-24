@@ -356,3 +356,41 @@ When the list starts loading
 Then the apply button of the header is off
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-sheet.spec.ts`.
+
+### SC-UKV-1798 — the presets of the period sheet are one row that scrolls round
+
+Given the period field open in the sheet on a phone
+When the sheet opens with a preset chosen, then the person picks a preset at the far end of the row
+Then the presets stand in one row with faded edges, the chosen one in the centre; the row rolls to
+the new one by the short way round and stops with it in the centre; the month arrows stand in the
+row of the month title
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-range/panel/rt-chip-carousel.directive.spec.ts`
+and the title test of `projects/ui-kit-v2/src/lib/components/calendar/rt-calendar.component.spec.ts`.
+
+### SC-UKV-1799 — the month of a sheet keeps the height of six weeks
+
+Given the date or the period field open in the sheet
+When the person pages from a month of six weeks to a month of five or four
+Then the grid keeps the height of six weeks, and the shorter month stands in its middle
+
+Covered: the week count test of `projects/ui-kit-v2/src/lib/components/calendar/rt-calendar.component.spec.ts`.
+
+### SC-UKV-1800 — the tabs «Date | Time» keep the height of the sheet
+
+Given a date with time open in the sheet, the month, the month grid or the year grid shown
+When the person switches to «Time» and back
+Then the sheet keeps its height; the part of the other tab stays in the layout unseen and
+untouchable, and the time columns stand in the middle of the month's height
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.
+
+### SC-UKV-1801 — long content raises the sheet to the full height inside its box
+
+Given a sheet with content taller than its box, the screen or a box of a page lower than the window
+When the sheet opens
+Then the panel takes the full height of the box under the strip of 12px, the header with «×» is
+seen and the body scrolls; short content keeps the sheet by its height
+
+Not covered: a test has no layout — the height is seen by the frame of the story
+`Organisms/Aside/BottomSheet` `Content` and by the match of the showcase with the mockup.
