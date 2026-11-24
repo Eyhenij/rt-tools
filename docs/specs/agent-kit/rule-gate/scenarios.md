@@ -332,3 +332,67 @@ with the part about the queue, and an edit of a PR body by an address call names
 requests alone
 
 Covered: `projects/agent-kit/tests/defaults.test.sh`.
+
+### SC-AK-1915 — the rule of code design and its table come where the design is chosen
+
+Given the grill or the plan of a task, a draft of the grill or the plan of an epic is written
+When the gate decides what to demand
+Then it names the rule of code design and then its table, the domain rule of the file stays first, and
+a name of the folder that looks like a test changes nothing
+
+Covered: `projects/agent-kit/tests/skill-gate-design.test.sh`.
+
+### SC-AK-1916 — a module, a script and the entry file get the rule alone
+
+Given a module, a shell script or an entry file is written, the words of a test or a setting standing
+inside its name included
+When the gate decides what to demand
+Then it names the rule of code design after the domain rule and does not name the table
+
+Covered: `projects/agent-kit/tests/skill-gate-design.test.sh`.
+
+### SC-AK-1917 — the layer of code design is silent where there are no modules
+
+Given a spec, a story, a setting, a type declaration, a built or generated file, a test harness, an
+end-to-end test, a template, a sheet, the progress of a task, the findings of an epic or the agent's own
+file is written
+When the gate decides what to demand
+Then it does not name the rule of code design
+
+Covered: `projects/agent-kit/tests/skill-gate-design.test.sh`.
+
+### SC-AK-1918 — the tree lifts the layer of code design by the same function
+
+Given the gate map of the tree lifts the layer from a path
+When a file by that path and a file next to it are written
+Then the first gets neither the rule nor the table, and the second gets the rule
+
+Covered: `projects/agent-kit/tests/skill-gate-design.test.sh`.
+
+### SC-AK-1919 — the target of a write by a command gets the layers by path
+
+Given a command writes a module or a script by a redirection, `tee`, `sed -i` or a copy
+When the gate decides what to demand
+Then every target gets its layers by path on top of the domain rule; a script that is run with its
+output sent to a file, a removed file and a file copied outside get none
+
+Covered: `projects/agent-kit/tests/skill-gate-design.test.sh`.
+
+### SC-AK-1920 — a document of design is refused until its rules are loaded
+
+Given the grill, the plan of a task or the plan of an epic is written by the edit tool or by a command,
+the path typed with or without a leading `./`
+When the rule of code design or its table is not loaded
+Then the call is refused with the reason «before» and the observation names the rule; after both are
+loaded it passes in silence
+
+Covered: `projects/agent-kit/tests/skill-gate-design.test.sh`.
+
+### SC-AK-1921 — the path is read from the root of the tree
+
+Given the tree lies under a folder named like a test, a setting or a build, or is a working copy inside
+another
+When a module or a plan of that tree is written
+Then the layer of code design answers as in any other tree
+
+Covered: `projects/agent-kit/tests/skill-gate-design.test.sh`.
