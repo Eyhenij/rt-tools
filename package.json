@@ -33,6 +33,7 @@
     "check:specs": "node tools/check-specs.mjs",
     "check:unused": "knip --no-progress",
     "check:ngdoctor": "node tools/check-ngdoctor.mjs",
+    "session:time": "node tools/session-time.mjs",
     "ngdoctor": "angular-doctor",
     "spec:next-id": "node tools/spec-next-id.mjs",
     "specs:for": "node tools/specs-for.mjs",
