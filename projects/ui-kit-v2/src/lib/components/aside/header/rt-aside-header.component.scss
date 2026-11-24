@@ -163,6 +163,24 @@
             justify-content: flex-end;
         }
 
+        /* Под шапкой шторки, в начале содержимого: надзаголовок, подпись, бэйджи и содержимое колонки
+           заголовка — по левому краю, как в панели. Пустой блок места не занимает. */
+        &__sheet-meta {
+            display: flex;
+            min-width: 0;
+            flex-direction: column;
+            padding-top: calc(var(--rt-space-2) + var(--rt-space-1));
+            gap: var(--rt-space-0-5);
+
+            /* Левый край — край содержимого: шапка шторки уже отступила на 12, блок добирает остальное. */
+            padding-inline: calc(var(--rt-aside-content-inset, var(--rt-aside-inset)) - var(--rt-space-2) - var(--rt-space-1));
+            text-align: start;
+
+            &:empty {
+                display: none;
+            }
+        }
+
         /* Левая колонка шапки шторки: «×» у её начала; без «×» колонка пуста и держит центр. */
         &__start {
             display: flex;

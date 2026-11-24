@@ -1,4 +1,5 @@
 import { BooleanInput } from '@angular/cdk/coercion';
+import { NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     computed,
@@ -75,6 +76,8 @@ const BEM_BLOCK: string = 'rt-aside-header';
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
+        // angular
+        NgTemplateOutlet,
         // standalone components / directives
         RtIconButtonComponent,
         RtSkeletonWrapperComponent,

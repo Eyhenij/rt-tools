@@ -69,4 +69,14 @@ describe('стили панели-шторки', (): void => {
         expect(ruleBody(sheet, '.rt-bottom-sheet__header')).toContain(columns);
         expect(ruleBody(header, '.rt-aside-header__content--sheet')).toContain(columns);
     });
+
+    it('SC-UKV-1811 — надзаголовок и бэйджи под шапкой шторки стоят по краю содержимого', (): void => {
+        const meta: string = ruleBody(header, '.rt-aside-header__sheet-meta');
+
+        expect(meta).toContain('flex-direction: column');
+        expect(meta).toContain(
+            'padding-inline: calc(var(--rt-aside-content-inset, var(--rt-aside-inset)) - var(--rt-space-2) - var(--rt-space-1))'
+        );
+        expect(ruleBody(sheet, '.rt-bottom-sheet__header')).toContain('padding: 0 calc(var(--rt-space-2) + var(--rt-space-1))');
+    });
 });

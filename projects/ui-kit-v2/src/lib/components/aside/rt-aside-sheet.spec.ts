@@ -26,6 +26,7 @@ interface ISheetData {
     closable: boolean;
     primaries: readonly string[];
     trap: boolean;
+    overline: string | null;
 }
 
 /** Счёт нажатий: панель пишет сюда, что сделали её кнопки. */
@@ -39,7 +40,13 @@ function count(key: string): void {
     selector: 'rt-aside-sheet-content',
     template: `
         <rt-aside [ariaLabel]="data.name" [trapFocus]="data.trap">
-            <rt-aside-header [title]="data.title" [closable]="data.closable" (dismiss)="press('dismiss')">
+            <rt-aside-header
+                [title]="data.title"
+                [overline]="data.overline"
+                [subtitle]="data.overline === null ? null : 'Заезд 12 мая'"
+                [badges]="data.overline === null ? [] : [{ value: 'Оплачено' }]"
+                [closable]="data.closable"
+                (dismiss)="press('dismiss')">
                 <rt-icon-button asideActions qa-dataid="head-icon" icon="undo" ariaLabel="Сбросить" (clicked)="press('icon')" />
             </rt-aside-header>
             <ng-template rtAsideContent>
@@ -78,7 +85,7 @@ class SheetContentComponent {
     }
 }
 
-const DEFAULTS: ISheetData = { title: 'Запись', name: null, closable: true, primaries: ['save'], trap: false };
+const DEFAULTS: ISheetData = { title: 'Запись', name: null, closable: true, primaries: ['save'], trap: false, overline: null };
 
 async function settle(): Promise<void> {
     const app: ApplicationRef = TestBed.inject(ApplicationRef);
@@ -244,6 +251,40 @@ describe('Панель службы кита на телефоне — штор�
             expect(header?.querySelector('[qa-dataid="aside-title"]')?.textContent?.trim()).toBe('Запись');
             expect(node('aside-back')).toBeNull();
             expect(columns).toEqual(['rt-aside-header__start', 'rt-aside-header__heading', 'rt-aside-header__actions']);
+        });
+
+        it('SC-UKV-1811 — надзаголовок, подпись и бэйджи стоят под шапкой шторки, в шапке только заголовок', async (): Promise<void> => {
+            setup(true);
+            await open({ overline: 'Бронь №1042' });
+            const heading: HTMLElement | null = document.querySelector('.rt-aside-header__heading');
+            const meta: HTMLElement | null = node('aside-sheet-meta');
+            const header: HTMLElement | null = node('aside-header');
+
+            expect(heading?.querySelector('[qa-dataid="aside-overline"]')).toBeNull();
+            expect(heading?.querySelector('[qa-dataid="aside-title"]')?.textContent?.trim()).toBe('Запись');
+            expect(Array.from(meta?.children ?? []).map((part: Element): string => part.className.split(' ')[0])).toEqual([
+                'rt-aside-header__overline',
+                'rt-aside-header__subtitle',
+                'rt-aside-header__badges',
+            ]);
+            expect(meta?.querySelector('[qa-dataid="aside-overline"]')?.textContent?.trim()).toBe('Бронь №1042');
+            // Под шапкой, а не в ней: блок стоит после ряда «×», заголовка и кнопок.
+            expect(header?.compareDocumentPosition(meta as Node)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+            expect(header?.contains(meta)).toBe(false);
+        });
+
+        it('SC-UKV-1803 — сбоку надзаголовок стоит над заголовком в колонке шапки, блока под шапкой нет', async (): Promise<void> => {
+            setup(false);
+            await open({ overline: 'Бронь №1042' });
+            const heading: HTMLElement | null = document.querySelector('.rt-aside-header__heading');
+
+            expect(Array.from(heading?.children ?? []).map((part: Element): string => part.className.split(' ')[0])).toEqual([
+                'rt-aside-header__overline',
+                'rt-aside-header__title',
+                'rt-aside-header__subtitle',
+                'rt-aside-header__badges',
+            ]);
+            expect(node('aside-sheet-meta')).toBeNull();
         });
 
         it('SC-UKV-1812 — «Сохранить» справа в шапке делает то же, что кнопка подвала, и в подвале её нет', async (): Promise<void> => {

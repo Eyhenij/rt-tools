@@ -27,8 +27,8 @@
         }
 
         <div rtElem="heading">
-            @if (overline(); as overlineText) {
-                <p rtElem="overline" qa-dataid="aside-overline">{{ overlineText }}</p>
+            @if (!sheetMode()) {
+                <ng-container [ngTemplateOutlet]="meta" [ngTemplateOutletContext]="{ $implicit: 'overline' }" />
             }
             <!-- Без заголовка строки нет: пустая строка сдвинула бы надзаголовок с линии стрелки -->
             @if (title() || loading()) {
@@ -41,6 +41,37 @@
                 </h2>
             }
 
+            @if (!sheetMode()) {
+                <ng-container [ngTemplateOutlet]="meta" [ngTemplateOutletContext]="{ $implicit: 'rest' }" />
+            }
+        </div>
+
+        <div rtElem="actions" qa-dataid="aside-actions">
+            <ng-content select="[asideActions]" />
+            @if (sheetMode()) {
+                <!-- Место главной кнопки подвала: панель переносит её сюда, правее значков шапки. -->
+                <div #sheetMain rtElem="main" qa-dataid="aside-sheet-main"></div>
+            }
+        </div>
+    </header>
+
+    <!-- В шторке надзаголовок, подпись, бэйджи и содержимое колонки заголовка стоят под шапкой, в начале
+         содержимого: в шапке шторки только «×», заголовок и кнопки. -->
+    @if (sheetMode()) {
+        <div rtElem="sheet-meta" qa-dataid="aside-sheet-meta">
+            <ng-container [ngTemplateOutlet]="meta" [ngTemplateOutletContext]="{ $implicit: 'overline' }" />
+            <ng-container [ngTemplateOutlet]="meta" [ngTemplateOutletContext]="{ $implicit: 'rest' }" />
+        </div>
+    }
+
+    <!-- Части колонки заголовка: надзаголовок над ним и подпись, бэйджи, содержимое под ним. Проекция
+         одна: шаблон выводится либо в колонке, либо под шапкой шторки. -->
+    <ng-template #meta let-part>
+        @if (part === 'overline') {
+            @if (overline(); as overlineText) {
+                <p rtElem="overline" qa-dataid="aside-overline">{{ overlineText }}</p>
+            }
+        } @else {
             @if (subtitle(); as subtitleText) {
                 <p rtElem="subtitle" qa-dataid="aside-subtitle">{{ subtitleText }}</p>
             }
@@ -71,16 +102,8 @@
             }
 
             <ng-content select="[asideHeadingContent]" />
-        </div>
-
-        <div rtElem="actions" qa-dataid="aside-actions">
-            <ng-content select="[asideActions]" />
-            @if (sheetMode()) {
-                <!-- Место главной кнопки подвала: панель переносит её сюда, правее значков шапки. -->
-                <div #sheetMain rtElem="main" qa-dataid="aside-sheet-main"></div>
-            }
-        </div>
-    </header>
+        }
+    </ng-template>
 
     <div rtElem="row" qa-dataid="aside-header-row">
         <ng-content select="[asideHeaderContent]" />
