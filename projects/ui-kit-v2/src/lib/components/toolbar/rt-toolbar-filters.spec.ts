@@ -214,6 +214,8 @@ describe('RtToolbarComponent — отборы за кнопкой', (): void => 
         await settle(fixture, 50);
 
         expect(panel()?.contains(document.activeElement)).toBe(true);
+        // Начальный фокус — на блоке полей, а не на стрелке «Назад»: она тоже внутри панели
+        expect(document.activeElement?.getAttribute('qa-dataid')).toBe('toolbar-filters-fields');
     });
 
     it('SC-UKV-1096 — двойное нажатие открывает одну панель, и расширение места её закрывает', async (): Promise<void> => {

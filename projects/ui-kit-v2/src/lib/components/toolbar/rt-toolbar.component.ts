@@ -248,6 +248,10 @@ export class RtToolbarComponent {
                     collapsed: this.collapsed,
                     reset: (): void => this.filtersReset.emit(),
                     apply: (): void => this.filtersApply.emit(),
+                    // Поля возвращаются в полосу со следующей отрисовкой: фокус ставится после неё
+                    focusBar: (): void => {
+                        afterNextRender({ write: (): void => this.#focusBar() }, { injector: this.#injector });
+                    },
                 })
             );
             onCleanup(release);

@@ -67,7 +67,8 @@ Then one panel is open, and the screen widening closes it
 
 ### SC-UKV-1097 — the focus goes to the toolbar when the panel closes on a wide screen
 
-Given an open filters panel holding the focus
+Given an open filters panel holding the focus — the panel of the kit or the application panel in
+the outlet `ro`
 When the screen widens
 Then the focus stands on a field in the left part of the toolbar, not on the page
 

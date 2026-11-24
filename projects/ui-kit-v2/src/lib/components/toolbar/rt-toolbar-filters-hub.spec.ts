@@ -10,6 +10,7 @@ function source(): IRtToolbar.IFiltersSource {
         reset: (): void => undefined,
         apply: (): void => undefined,
         collapsed: signal(true),
+        focusBar: (): void => undefined,
     };
 }
 

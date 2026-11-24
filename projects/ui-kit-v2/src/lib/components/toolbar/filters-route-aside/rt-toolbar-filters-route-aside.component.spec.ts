@@ -234,6 +234,21 @@ describe('RtToolbarFiltersRouteAsideComponent — панель отборов в
         expect(state.container.closed).toBe(1);
     });
 
+    it('SC-UKV-1097 — маршрут, закрытый на широком месте с фокусом внутри, отдаёт фокус полю полосы', async (): Promise<void> => {
+        const state: ISetup = setup();
+        await ready(state);
+        route(state.fixture)?.querySelector<HTMLElement>('[qa-dataid="toolbar-filters-fields"]')?.focus();
+        expect(route(state.fixture)?.contains(document.activeElement)).toBe(true);
+
+        state.breakpoints.narrow.set(false);
+        await settle(state.fixture);
+
+        expect(state.container.closed).toBe(1);
+        const focused: Element | null = document.activeElement;
+        expect(focused?.getAttribute('qa-dataid')).toBe('slot-filter');
+        expect(focused?.getAttribute('data-place')).toBe('bar');
+    });
+
     it('SC-UKV-1775 — до готовой панели широкое место маршрут не закрывает: место ещё не измерено', async (): Promise<void> => {
         const state: ISetup = setup(false);
         await settle(state.fixture);

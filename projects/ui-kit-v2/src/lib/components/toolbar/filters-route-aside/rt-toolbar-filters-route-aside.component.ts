@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, effect, inject, untracked, ViewEncapsulation } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, untracked, ViewEncapsulation } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Event as RouterEvent, NavigationCancel, NavigationEnd, NavigationError } from '@angular/router';
 
@@ -46,6 +47,8 @@ const BEM_BLOCK: string = 'rt-toolbar-filters-route-aside';
 export class RtToolbarFiltersRouteAsideComponent extends RtRouteAsideComponent<never> {
     readonly #hub: RtToolbarFiltersHub = inject(RtToolbarFiltersHub);
     readonly #breakpoints: BreakpointsService = inject(BreakpointsService);
+    readonly #host: HTMLElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+    readonly #doc: Document = inject(DOCUMENT);
 
     readonly #dismissSource: Subject<void> = new Subject<void>();
 
@@ -79,7 +82,15 @@ export class RtToolbarFiltersRouteAsideComponent extends RtRouteAsideComponent<n
             // Каркас измеряет место страницы после первой отрисовки, позже маршрута панели. До замера
             // ширину даёт окно, и широкое окно при узком месте закрыло бы панель на перезагрузке
             if (this.#seenCollapsed || this.#breakpoints.placeWidth() !== null) {
-                untracked((): void => this.onClose());
+                untracked((): void => {
+                    // Кнопка, с которой панель открыли, на широком месте уже снята: фокус из панели
+                    // уходит в поле полосы, куда вернулись отборы, как у панели кита
+                    const focusInPanel: boolean = this.#host.contains(this.#doc.activeElement);
+                    this.onClose();
+                    if (focusInPanel) {
+                        source.focusBar();
+                    }
+                });
             }
         });
 
