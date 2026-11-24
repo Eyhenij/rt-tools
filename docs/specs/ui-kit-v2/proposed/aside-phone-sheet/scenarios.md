@@ -249,8 +249,8 @@ Not covered: the code is not written yet.
 
 Given a window 375 points wide and a panel in the tabs layout
 When the panel opens
-Then the strip of tabs stands right under the header of the sheet and the content of a tab
-scrolls under it
+Then the strip of tabs stands right under the header of the sheet, scrolls round with faded edges,
+the selected tab stands in its centre, and the content of a tab scrolls under it
 
 Not covered: the code is not written yet.
 

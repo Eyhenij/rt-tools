@@ -131,6 +131,10 @@ panel stand at its bottom. Before closing a panel with unsaved edits the person 
 - **The parts of a panel live in the sheet unchanged.** The request error, the empty content, the
   pending layer, the tabs layout and the row under the header stand where they stand in the panel;
   the overline, the subtitle, the badges and the content of the title column stand under the title.
+- **The tabs of a panel sheet are one row that scrolls round, like the presets of the period
+  sheet.** The tabs that do not fit scroll sideways in a circle, the edges of the row fade over
+  32 points, and the selected tab stands in the centre. The owner's word at the mockup: «прикинь как
+  на дейтпикере в ботомшите чипы листаются и затеняются когда не влазят и листаются каруселькой».
 - **The panel sheet is announced as a modal dialog by the name of the panel, else by its title.** It
   blocks the page and locks its scroll.
 - **No setting keeps the side panel at the side on a phone.** Neither the setting of the kit nor the
