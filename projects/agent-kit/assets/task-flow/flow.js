@@ -36,7 +36,11 @@
       outsideEpic: { git: source.git, host: source.host, tree: source.tree },
       outOfScenario: { git: source.git, host: source.host, tree: source.tree },
     },
-    owner: { interrupted: { owner: source.owner }, nudged: { owner: source.owner } },
+    owner: {
+      saidStop: { owner: source.owner },
+      interrupted: { owner: source.owner },
+      nudged: { owner: source.owner },
+    },
     session: {
       wrote: { session: source.session },
       role: { session: source.session },
@@ -80,7 +84,7 @@
     },
     taken: {
       title: 'задача-взята',
-      action: 'write the plan',
+      action: 'write the plan; once the owner approves it, run plan-red',
       pattern: 'task-flow-start',
       exit: measure.plan.approved,
     },
@@ -141,13 +145,15 @@
       order: 1,
       log: 'the end of the scenario',
     },
-    // No typed word stops the work; Esc does, and the turns a notice wakes after it are released.
-    interrupted: { when: measure.owner.interrupted, order: 2, log: 'the owner interrupted the turn' },
+    // The owner stops the work by a stop word or by Esc; the turns a notice wakes after either are
+    // released until the owner writes again.
+    stopWord: { when: measure.owner.saidStop, order: 2, log: 'a stop word of the owner' },
+    interrupted: { when: measure.owner.interrupted, order: 3, log: 'the owner interrupted the turn' },
     // The state «работа-отдана» sends work to the background by its own action and goes on: there
     // the wait releases nothing.
     background: {
       when: { all: [measure.session.waiting, { not: measure.pr.handed }] },
-      order: 3,
+      order: 4,
       log: 'a background task of the session runs',
     },
     noWrite: {
@@ -157,15 +163,24 @@
           { all: [{ not: measure.session.wrote }, { not: measure.owner.nudged }] },
         ],
       },
-      order: 4,
+      order: 5,
       log: 'no write to the tree, or a branch outside the scenario',
     },
-    role: { when: measure.session.role, order: 5, log: 'a role session' },
-    hostSilent: { when: measure.host.silent, order: 6, log: 'the host did not answer twice' },
+    role: { when: measure.session.role, order: 6, log: 'a role session' },
+    hostSilent: { when: measure.host.silent, order: 7, log: 'the host did not answer twice' },
     menuLost: { when: measure.session.menuLost, order: 8, log: 'the menu did not reach the owner' },
   },
 
   words: {
+    stop: [
+      'стоп', 'стой', 'хватит', 'остановись', 'прекрати', 'не сейчас', 'подожди', 'погоди', 'жди',
+      'пауза', 'отбой', 'на сегодня всё', 'stop', 'wait', 'not now', 'pause',
+    ],
+    stopExcept: [
+      'продолжай', 'делай', 'работай', 'доделывай', 'иди дальше', 'делай дальше', 'сначала', 'спрашивать',
+      'спрашивай', 'asking', 'keep going', 'go on',
+    ],
+    holdAfter: ['стоять', 'останавлива', 'ждать'],
     nudge: '(?<![\\p{L}])(?<!не )(продолжай|доделывай|работай|делай дальше|работаешь)(?![\\p{L}])|почему (ты )?(стоишь|встал|остановил)|что дальше|дальше\\?|^(ну )?(и )?что там|^ну и\\s*[?!.]|какого .*останов',
     write: [
       'git commit', 'git push', 'git add', 'git merge', 'git rm', 'git mv', 'sed -i', 'perl -pi', 'gh pr', 'npm run task:new', 'pnpm run task:new', 'npm run task:move',

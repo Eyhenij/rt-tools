@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.0 · pitfalls/write-a-skill.md · ab2befa6ad52 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · pitfalls/write-a-skill.md · ab2befa6ad52 · правится надстройкой, не здесь -->
 # How a skill is created — cold part
 
 What the skill `write-a-skill` handed over when cut to its statements, every article whole.

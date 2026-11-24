@@ -4,7 +4,7 @@ kind: rule
 law: lib-imports
 description: Rule under the lib-imports law. Load when editing project manifests, build paths, linter boundaries, any barrel and the layout checks, and when deciding where a shared symbol lives. Patterns lib-layers-new, lib-layers-move.
 ---
-<!-- rt-kit v0.39.0 · rules/lib-layers.md · 1efa32e18253 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · rules/lib-layers.md · 1efa32e18253 · правится надстройкой, не здесь -->
 
 # Imports between libs — how it works here
 

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.0 · pitfalls/git-workflow-pr.github.md · 570ab93e66a1 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · pitfalls/git-workflow-pr.github.md · 570ab93e66a1 · правится надстройкой, не здесь -->
 # The PR — cold part
 
 The pattern `git-workflow-pr` whole, in two files: every section with its code and its reasons. Its hot part names the sections and the opening of each.

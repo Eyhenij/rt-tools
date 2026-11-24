@@ -1,6 +1,6 @@
 # The guard of the exits of a turn
 
-**Status:** in force · **Revision:** 2026-11-22 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-24 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `work-conduct`
 **Procedures:** none
@@ -44,12 +44,14 @@ not by a person.
   The history is asked only in the state of a running stage. A step the plan names and the progress
   lacks counts as not done. A step done with no matched mark gets the measuring command, and the
   revert move only for a fix inside the folder.
-- **The owner's interrupt releases the turn: their last word is the mark of Esc, and no typed word releases a turn.**
-  A turn a background notice wakes after Esc is released until the owner writes again. A message
-  typed mid-turn counts as writing: the host keeps it as a queued command, not as a user entry. Esc
-  stops an order sent a second before it too: the host does not send a queued message after the
-  mark. A word typed to stop and an option chosen in a menu are words like any other: the turn is
-  judged by the scenario.
+- **The owner's stop word releases the turn: their last word begins with a stop word of the description, and nothing after it asks to go on.**
+  An option chosen in a menu is the owner's word too. «хватит останавливаться, продолжай» and «Стой,
+  не туда — делай RT-N» hold the turn: the first asks to go on, the second orders work.
+- **The owner's interrupt releases the turn: their last word is the mark of Esc.**
+  A turn a background notice wakes after Esc or after a stop word is released until the owner writes
+  again. A message typed mid-turn counts as writing: the host keeps it as a queued command, not as a
+  user entry. Esc stops an order sent a second before it too: the host does not send a queued message
+  after the mark.
 - **A session that wrote nothing to the tree releases the turn unless the owner's last word pushes the work on, and a branch outside the scenario releases it always.**
 - **A role session with no edit tool ends with its report.**
 - **The silent hosting releases the turn only when the measurement itself stopped on the silence.**
@@ -158,12 +160,12 @@ Not applicable: the guard judges one turn of one session.
 - **A watch of a CI run is a wait like any other task.** The owner named CI as the first long
   process the agent waits for. The CI hold still asks for the watch, and its notice wakes the
   session when the run ends.
-- **No typed word stops the work; Esc does.** On 22 November 2026 the owner chose «Ожидание и
-  убрать «стоп»»: a command that lets the agent do nothing is not wanted. On 20.11 after «стоп» the
-  session was woken seven times and made 44 calls before the owner's next word. Esc ends a turn
-  with no stop check, and a turn a notice wakes after it is released.
-- **The stuck menu asks for a way, not for a stop.** With «стоп» gone, the second option
-  «подскажу путь» takes the owner's way in the free field of the same menu. A bare answer gets one
+- **A stop word stops the work, next to Esc.** On 22 November 2026 the owner chose «Ожидание и
+  убрать «стоп»», and Esc alone was left. Without a stop word the guard held the turn after «стоп»
+  and asked for the owner's menu. On 24 November the owner decided «Одобряю план RT-3592», which
+  brings the word back. A word that does not open the message, or is followed by an order, releases
+  nothing: the turn is judged by the scenario.
+- **The stuck menu asks for a way, not for a stop.** The second option «подскажу путь» takes the owner's way in the free field of the same menu. A bare answer gets one
   more question with a free field; otherwise the next idle stop gives the same menu again.
 - **At night the default takes the place of the menu.** In the night of 23 November 2026 the menu
   opened in the middle of unattended work, and the session stood until the owner's answer. The
@@ -248,3 +250,5 @@ None.
   a step another check refused twice comes before a hung task; Esc lifts the CI hold.
 - 2026-11-24 — before the boundary of an autonomous session the default takes the place of the
   owner's menu; scenario 1930.
+- 2026-11-24 — the stop word releases a turn again, as a release case before the interrupt: scenario
+  1912 holds its cases. The stop word lifts the CI hold of a fresh head.

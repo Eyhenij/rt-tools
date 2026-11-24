@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.0 · hooks/git-guard-push-ahead.sh · 4a9e36955a67 · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/git-guard-push-ahead.sh · 4a9e36955a67 · правится надстройкой, не здесь
 # The push set run ahead of the push: every check of `rt_push_checks <base>`, a green mark for each
 # that passed. The push guard then reads the marks instead of running the steps again.
 #

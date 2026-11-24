@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.0 · hooks/facts-flow.sh · 5528238d6bb9 · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/facts-flow.sh · 6d2ce7c24c30 · правится надстройкой, не здесь
 # The facts of the course of work for one edit. NOT a guard: it has no `rt-hook:` declaration and is
 # not attached to any agent event. The work-conduct guards source it after `rt_task_flow_context`,
 # and so does a guard whose refusal names an edit of another file: it asks these facts of that edit
@@ -69,7 +69,7 @@ rt_flow_state_action() {
         просьба-не-разобрана) printf '%s' 'exploration over the tree, then questions to the owner' ;;
         разбор-закрыт) printf '%s' 'a product agreement or a named reason there is none' ;;
         договорённость-записана) printf '%s' 'create the task, the branch and the task folder' ;;
-        задача-взята) printf '%s' 'write the plan' ;;
+        задача-взята) printf '%s' 'write the plan; once the owner approves it, run plan-red' ;;
         замысел-записан) printf '%s' 'do the first stage' ;;
         папка-разобрана) printf '%s' 'the work queue audit, then open the PR' ;;
         влито) printf '%s' 'merge the PRs of the chain bottom-up, mark the merged tasks by the branch of the next one' ;;

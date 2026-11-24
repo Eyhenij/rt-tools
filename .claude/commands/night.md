@@ -2,7 +2,7 @@
 description: The start of an autonomous session — the time boundary, the checks before the first work, the cycle until morning and the list the owner reads
 argument-hint: '[until when: «до 8 утра» | «часов шесть» | empty — the boundary is asked]'
 ---
-<!-- rt-kit v0.39.0 · commands/night.md · c33149f35a17 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · commands/night.md · 71b808922712 · правится надстройкой, не здесь -->
 
 Start an autonomous session: the owner is leaving, and the work goes on without them until the
 boundary they named. The boundary from the owner: `$ARGUMENTS`
@@ -194,9 +194,10 @@ Then the work goes by the rule and the pattern, and the last reply gives the lis
 that lies in the file.
 
 Where a turn-exit guard is laid out, it holds a working turn until the scenario is over or the
-owner presses Esc. Before the boundary it names a default instead of a menu, and a question does
-not end the turn either. So the list is appended along the way and lies in the file at any minute.
-The guards do not end the night: the boundary only gives the owner's menu back.
+owner stops it by a stop word or Esc. Before the boundary it names a default instead of a menu, and
+a question does not end the turn either. So the list is appended along the way and lies in the file
+at any minute. The guards do not end the night: the boundary only gives the owner's menu back, and
+the night ends with the end of the scenario, or with the owner's stop word, Esc or return.
 
 ## What this command does not do
 

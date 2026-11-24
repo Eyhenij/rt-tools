@@ -120,7 +120,7 @@ flowchart TD
 
 Nothing checks that the session ended at its boundary or by the owner's word, and a queue emptied
 earlier is not told from unfinished work: the list is completed, and the turn is held until the
-scenario is over or the harness ends it. The turn-exit guard reads the boundary line only to name a
+scenario is over, the owner stops it by a stop word or Esc, or the harness ends it. The turn-exit guard reads the boundary line only to name a
 default instead of the owner's menu while it lies ahead, and the model hook on the turn's end only for
 the send of an incident record; the guards that ask by their own window do
 not read it, and a tree that has taught one of them names it in the companion. The ban on what is visible from outside past the

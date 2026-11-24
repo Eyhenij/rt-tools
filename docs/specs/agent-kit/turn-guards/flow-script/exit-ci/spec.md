@@ -1,6 +1,6 @@
 # The CI hold at the end of a turn
 
-**Status:** in force · **Revision:** 2026-11-22 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-24 · **Scenario prefix:** `SC-AK`
 **Depends on:** `docs/specs/agent-kit/turn-guards/flow-script/exit/spec.md`
 **Laws:** `work-conduct`, `delivery`
 **Procedures:** none
@@ -37,7 +37,8 @@ There is no interface: the refusal is read by the executor and names the run and
 - **A red run holds the stop until a call of the hosting client after its end, neither refused nor failed, names it, or a command or a read takes the output of its watch.**
 - **A head with no run holds the stop for two minutes after the result of its push or the opening of its PR.**
 - **A hosting that does not answer about the CI holds nothing.**
-- **No typed word of the owner passes the CI hold, and their Esc does: after the mark of Esc the hold holds nothing until the owner writes again.**
+- **The owner's stop word passes a fresh head with no run and nothing else: a running run still asks for its watch, and a red one for its read.**
+- **After the mark of Esc the CI hold holds nothing until the owner writes again.**
 - **The host adapter reads the open PRs and the runs of the PR pipeline file on a head past the clock.**
 - **A call event carries its time and the branch of its record entry, and a background event the command of its call.**
 
@@ -100,10 +101,9 @@ Every open PR the session answers for is judged; the first run that holds names 
 - **A read is counted after the end of the attempt.** The call that starts the watch names the run
   before it ends and reads nothing. The red run of PR #3460 on 20.11 (44810853234) was named by no
   record for twelve hours.
-- **No word of the owner passes the hold.** On 21.11 the owner chose by two menu answers that a red
+- **A stop word passes a fresh head only.** On 21.11 the owner chose by two menu answers that a red
   run holds until one read and a running run asks for one background watch, after «стоп» too. On
-  22.11 no typed word releases a turn any more, and a fresh head lost its pass with it: the owner
-  stops the work by Esc.
+  24.11 the stop word releases a turn again, and a fresh head has its pass back.
 - **A watch of a CI run is a wait.** The owner named CI as the first long process the agent waits
   for: the agent waits, and after the notice it goes on with the current step. One watch releases
   one stop, as any task does.
@@ -124,3 +124,4 @@ None.
 - 2026-11-22 — the hold reads no typed word of the owner, and a watch of a CI run is a wait.
   Scenario 1813 is removed with its test: no typed word stops the work, the owner stops it by Esc.
   After Esc the hold holds nothing: a red run or a running one does not put the work back on.
+- 2026-11-24 — the stop word passes a fresh head again, and only it: the cases stand in scenario 1912.

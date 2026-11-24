@@ -77,7 +77,7 @@ Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
 
 Given the same plan, and an approval mark naming a record that lies on disk but no longer holds the entry of that `uuid`
 When an edit of the engine is made
-Then it is refused, and the refusal names the move: ask the owner again and run `plan-red`
+Then it is refused, and the refusal names the move: run `plan-red`, which finds the answer in the record
 
 Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
 
@@ -165,7 +165,7 @@ Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
 
 Given an approval mark naming plan commit A with its answer in place, and the branch rewritten so that commit B adds the plan
 When an edit of the engine is made
-Then it is refused, and the refusal names the move: ask the owner again and run `plan-red`
+Then it is refused, and the refusal names the move: run `plan-red`, which finds the answer in the record
 
 Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
 
@@ -213,7 +213,7 @@ Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
 Given an approved plan and an approval mark whose record the retention cleanup of the harness removed
 When an edit of the engine is made
-Then it is refused, and the refusal names the move: ask the owner again and run `plan-red`
+Then it is refused, and the refusal names the move: run `plan-red`, which finds the answer in the record
 
 Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
 

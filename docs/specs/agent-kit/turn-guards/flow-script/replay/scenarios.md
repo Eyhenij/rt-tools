@@ -91,19 +91,19 @@ Then the turn is released by the case of a session with no write
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
-### SC-AK-1457 — RT-3276: «не сейчас» holds the turn
+### SC-AK-1457 — RT-3276: «не сейчас» releases the turn
 
 Given a stage going on, a session that edited a file, and the owner's last word «не сейчас»
 When the hook on Stop reads the turn
-Then the turn is held, and the refusal names the running stage and the current step
+Then the turn is released by the case of a stop word of the owner
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
-### SC-AK-1458 — RT-3276: «стоп» holds the turn
+### SC-AK-1458 — RT-3276: «стоп» releases the turn
 
 Given a stage going on, a session that edited a file, and the owner's last word «стоп»
 When the hook on Stop reads the turn
-Then the turn is held, and the refusal names the running stage and the current step
+Then the turn is released by the case of a stop word of the owner
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
@@ -115,11 +115,11 @@ Then the turn is released by the case of a session with no write
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
-### SC-AK-1460 — RT-3276: the menu after a refusal answered «стоп» holds the turn
+### SC-AK-1460 — RT-3276: the menu after a refusal answered «стоп» releases the turn
 
 Given the folder taken apart, the push refused by another check, the menu of the refusal, and the owner's answer «стоп»
 When the hook on Stop reads the turn
-Then the turn is held, and the refusal names the state of the taken-apart folder
+Then the turn is released by the case of a stop word of the owner
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
@@ -171,10 +171,34 @@ Then it holds the first and lets the second leave
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`; the verdicts of the model — `projects/agent-kit/tests/judge-replay.mjs`.
 
-### SC-AK-1548 — the recorded stop words of the owner hold the turn
+### SC-AK-1911 — the menu hook lets the owner's decision leave, the approval of a plan that changes a check included
+
+Given two questions with the option «Одобряю план RT-N»: one for a plan that changes the exit check, asked after the plan and both roles; one right after a refusal, with no plan and no roles
+When the text of the menu hook is read, and the model judge reads both recorded questions
+Then the first approval leaves, and the approval of nothing is held
+
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`, `projects/agent-kit/tests/judge-replay.mjs`.
+
+### SC-AK-1914 — an approval option that appends an action of its own is held, the plan of an epic is not
+
+Given a plan approval asked after the plan and both roles, whose option appends turning the check of marks off, and an approval of the plan of an epic
+When the text of the menu hook is read, and the model judge reads the recorded question
+Then the option with the appended lift is held, and the plan of an epic is not held for a missing task folder
+
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`, `projects/agent-kit/tests/judge-replay.mjs`.
+
+### SC-AK-1913 — every recorded message of a stop releases the turn
+
+Given the seven recorded messages of a stop: the five of the measurement of 15 November and the two of the live turns of RT-3276
+When the hook on Stop reads each turn
+Then the hook is silent on each of the seven, and the engine names the case of a stop word of the owner
+
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
+
+### SC-AK-1548 — the recorded stop words of the owner release the turn
 
 Given the five stop messages of the measurement of 15 November — «Стой», «жди конца набора», «жди соседа», «Остановись на логической точке» and «Не сейчас» as a free answer to a menu
 When the hook on Stop reads each turn
-Then every turn is held, and the refusal names the state its tree stands in: the running stage with its step, the handed-in work or the taken task
+Then every turn is released by the case of a stop word of the owner: in the running stage, in handed-in work and in a taken task
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
