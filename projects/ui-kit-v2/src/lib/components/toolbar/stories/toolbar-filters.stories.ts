@@ -27,11 +27,26 @@ export default {
 
 type TStory = StoryObj<TestRtToolbarFiltersComponent>;
 
-/** Отбор выключен: кнопка фильтров первой в ряду, без точки, SC-UKV-1086. */
+/** Отбор выключен: кнопка фильтров последней в ряду, после настроек таблицы, без точки, SC-UKV-1086. */
 export const FilterOff: TStory = { args: { part: 'off' } };
 
 /** Отбор включён: точка в углу значка, полоса её не режет, SC-UKV-1088. */
 export const FilterOn: TStory = { args: { part: 'on' } };
+
+/**
+ * Ровно 1080: отборы ещё стоят в строке, каждый шириной по своей подсказке, без многоточия,
+ * SC-UKV-1772, SC-UKV-1779.
+ */
+export const InRowAt1080: TStory = {
+    args: { part: 'off' },
+    parameters: { snapshot: { fullPage: true, viewport: { width: 1080, height: 64 } } },
+};
+
+/** 1079: вместо отборов кнопка фильтров последней в ряду кнопок, SC-UKV-1772. */
+export const ButtonAt1079: TStory = {
+    args: { part: 'off' },
+    parameters: { snapshot: { fullPage: true, viewport: { width: 1079, height: 64 } } },
+};
 
 /** Панель отборов открыта нажатием на кнопку, SC-UKV-1089. */
 export const PanelOpen: TStory = {
