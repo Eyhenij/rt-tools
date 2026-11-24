@@ -7,7 +7,7 @@ import { exhaustMap, filter, Observable, of, Subject, switchMap, take, timer } f
 import { RtContainerRightSidenavPanelDirective, RtRouteAsideComponent } from '@rt-tools/ui-kit-v2/container';
 import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
 import { RtToolbarFiltersPanelComponent } from '../filters-panel/rt-toolbar-filters-panel.component';
-import { RtToolbarFiltersHub } from '../rt-toolbar-filters.hub';
+import { RtToolbarFiltersHub } from '../rt-toolbar-filters-hub';
 import { IRtToolbar } from '../rt-toolbar.model';
 
 const BEM_BLOCK: string = 'rt-toolbar-filters-route-aside';

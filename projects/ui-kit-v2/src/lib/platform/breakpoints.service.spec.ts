@@ -69,20 +69,20 @@ describe('rtNarrowByWidth', (): void => {
 });
 
 describe('rtBelowNarrowByWidth', (): void => {
-    it('SC-UKV-1710: ровно 1080 — уже широко, 1079 — уже порога', (): void => {
+    it('SC-UKV-1772: ровно 1080 — уже широко, 1079 — уже порога', (): void => {
         expect(rtBelowNarrowByWidth(1080, true)).toBe(false);
         expect(rtBelowNarrowByWidth(1079, false)).toBe(true);
         expect(rtBelowNarrowByWidth(1079.5, false)).toBe(true);
     });
 
-    it('SC-UKV-1710: без места признак считается от окна', (): void => {
+    it('SC-UKV-1772: без места признак считается от окна', (): void => {
         expect(rtBelowNarrowByWidth(null, true)).toBe(true);
         expect(rtBelowNarrowByWidth(null, false)).toBe(false);
     });
 });
 
 describe('BreakpointsService', (): void => {
-    it('SC-UKV-1710: на месте 1080 узкий вид есть, а «уже порога» нет; на 1079 есть оба', (): void => {
+    it('SC-UKV-1772: на месте 1080 узкий вид есть, а «уже порога» нет; на 1079 есть оба', (): void => {
         const { service } = setup();
         const element: HTMLElement = place(1080);
 

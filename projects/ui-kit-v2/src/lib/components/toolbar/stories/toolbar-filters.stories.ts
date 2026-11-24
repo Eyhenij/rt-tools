@@ -35,14 +35,14 @@ export const FilterOn: TStory = { args: { part: 'on' } };
 
 /**
  * Ровно 1080: отборы ещё стоят в строке, каждый шириной по своей подсказке, без многоточия,
- * SC-UKV-1710, SC-UKV-1717.
+ * SC-UKV-1772, SC-UKV-1779.
  */
 export const InRowAt1080: TStory = {
     args: { part: 'off' },
     parameters: { snapshot: { fullPage: true, viewport: { width: 1080, height: 64 } } },
 };
 
-/** 1079: вместо отборов кнопка фильтров последней в ряду кнопок, SC-UKV-1710. */
+/** 1079: вместо отборов кнопка фильтров последней в ряду кнопок, SC-UKV-1772. */
 export const ButtonAt1079: TStory = {
     args: { part: 'off' },
     parameters: { snapshot: { fullPage: true, viewport: { width: 1079, height: 64 } } },

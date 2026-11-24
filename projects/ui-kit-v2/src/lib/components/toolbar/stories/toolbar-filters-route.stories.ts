@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
-import { TestRtToolbarFiltersRouteComponent } from './component/test-toolbar-filters-route.component';
+import { TestRtToolbarFiltersRouteComponent } from './component/test-rt-toolbar-filters-route.component';
 
 /** Окно телефона, как у историй отборов за кнопкой: 375 в ширину. */
 const PHONE_375: { width: number; height: number } = { width: 375, height: 812 };
@@ -28,7 +28,7 @@ type TStory = StoryObj<TestRtToolbarFiltersRouteComponent>;
 
 /**
  * Кнопка фильтров сообщила `filtersOpen`, приложение перешло на маршрут панели в аутлете `ro`,
- * SC-UKV-1711, SC-UKV-1712.
+ * SC-UKV-1773, SC-UKV-1774.
  */
 export const AppPanelOpen: TStory = {
     parameters: { snapshot: { fullPage: true, viewport: PHONE_375, overlay: ROUTE_PANEL } },

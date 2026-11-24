@@ -119,7 +119,7 @@ describe('RtToolbarComponent — панель отборов у приложен
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1711 — при filtersPanel="app" кнопка сообщает filtersOpen и своей панели не открывает', async (): Promise<void> => {
+    it('SC-UKV-1773 — при filtersPanel="app" кнопка сообщает filtersOpen и своей панели не открывает', async (): Promise<void> => {
         const { fixture } = setup();
 
         press(trigger(fixture));
@@ -129,7 +129,7 @@ describe('RtToolbarComponent — панель отборов у приложен
         expect(document.querySelector('.rt-toolbar-filters-aside')).toBeNull();
     });
 
-    it('SC-UKV-1715 — без входа полоса открывает панель кита и filtersOpen не сообщает', async (): Promise<void> => {
+    it('SC-UKV-1777 — без входа полоса открывает панель кита и filtersOpen не сообщает', async (): Promise<void> => {
         const { fixture } = setup();
         fixture.componentInstance.mode.set('kit');
         await settle(fixture);
@@ -141,7 +141,7 @@ describe('RtToolbarComponent — панель отборов у приложен
         expect(document.querySelector('.rt-toolbar-filters-aside')).not.toBeNull();
     });
 
-    it('SC-UKV-1712 — панель в маршруте приложения рисует поля из шаблона полосы, шапку и подвал', async (): Promise<void> => {
+    it('SC-UKV-1774 — панель в маршруте приложения рисует поля из шаблона полосы, шапку и подвал', async (): Promise<void> => {
         const { fixture } = setup();
         await openRoute(fixture);
 
@@ -152,7 +152,7 @@ describe('RtToolbarComponent — панель отборов у приложен
         expect(textOf(route(fixture)?.querySelector('[qa-dataid="toolbar-filters-apply"]') ?? null)).toBe('Apply');
     });
 
-    it('SC-UKV-1712 — «Сбросить» и «Применить» панели приложения доходят до выходов полосы', async (): Promise<void> => {
+    it('SC-UKV-1774 — «Сбросить» и «Применить» панели приложения доходят до выходов полосы', async (): Promise<void> => {
         const { fixture } = setup();
         await openRoute(fixture);
 
@@ -167,7 +167,7 @@ describe('RtToolbarComponent — панель отборов у приложен
         expect(fixture.componentInstance.dismisses).toBe(1);
     });
 
-    it('SC-UKV-1714 — стрелка панели приложения просит закрыть её молча', async (): Promise<void> => {
+    it('SC-UKV-1776 — стрелка панели приложения просит закрыть её молча', async (): Promise<void> => {
         const { fixture } = setup();
         await openRoute(fixture);
 
@@ -221,7 +221,7 @@ describe('RtToolbarComponent — порог отборов', (): void => {
         return element;
     }
 
-    it('SC-UKV-1710 — на 1080 отборы в строке, на 1079 вместо них кнопка; общий narrow на 1080 узкий', (): void => {
+    it('SC-UKV-1772 — на 1080 отборы в строке, на 1079 вместо них кнопка; общий narrow на 1080 узкий', (): void => {
         TestBed.configureTestingModule({
             providers: [
                 ...provideRtKitTesting(),

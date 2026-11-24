@@ -32,7 +32,7 @@ import { BreakpointsService, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { RtAsideRef, RtAsideService } from '@rt-tools/ui-kit-v2/aside';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtToolbarFiltersAsideComponent } from './filters-aside/rt-toolbar-filters-aside.component';
-import { RtToolbarFiltersHub } from './rt-toolbar-filters.hub';
+import { RtToolbarFiltersHub } from './rt-toolbar-filters-hub';
 import { IRtToolbar } from './rt-toolbar.model';
 
 /**

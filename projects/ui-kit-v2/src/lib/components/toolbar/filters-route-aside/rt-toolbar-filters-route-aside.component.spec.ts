@@ -165,14 +165,14 @@ async function ready(state: ISetup): Promise<void> {
 }
 
 describe('RtToolbarFiltersRouteAsideComponent — панель отборов в маршруте приложения', (): void => {
-    it('SC-UKV-1712 — маршрут рисует поля из шаблона полосы с контекстом panel', async (): Promise<void> => {
+    it('SC-UKV-1774 — маршрут рисует поля из шаблона полосы с контекстом panel', async (): Promise<void> => {
         const state: ISetup = setup();
         await ready(state);
 
         expect(route(state.fixture)?.querySelector('[qa-dataid="slot-filter"]')?.getAttribute('data-place')).toBe('panel');
     });
 
-    it('SC-UKV-1712 — «Сбросить» оставляет маршрут, «Применить» сообщает полосе и закрывает его', async (): Promise<void> => {
+    it('SC-UKV-1774 — «Сбросить» оставляет маршрут, «Применить» сообщает полосе и закрывает его', async (): Promise<void> => {
         const state: ISetup = setup();
         await ready(state);
 
@@ -187,7 +187,7 @@ describe('RtToolbarFiltersRouteAsideComponent — панель отборов в
         expect(state.container.closed).toBe(1);
     });
 
-    it('SC-UKV-1716 — «Применить», сменивший адрес, закрывает маршрут после этого перехода', async (): Promise<void> => {
+    it('SC-UKV-1778 — «Применить», сменивший адрес, закрывает маршрут после этого перехода', async (): Promise<void> => {
         const state: ISetup = setup();
         await ready(state);
         state.fixture.componentInstance.applyNavigates = 'sync';
@@ -200,7 +200,7 @@ describe('RtToolbarFiltersRouteAsideComponent — панель отборов в
         expect(state.container.closed).toBe(1);
     });
 
-    it('SC-UKV-1716 — переход, начатый приложением из микрозадачи, панель тоже дожидается', async (): Promise<void> => {
+    it('SC-UKV-1778 — переход, начатый приложением из микрозадачи, панель тоже дожидается', async (): Promise<void> => {
         const state: ISetup = setup();
         await ready(state);
         state.fixture.componentInstance.applyNavigates = 'microtask';
@@ -211,7 +211,7 @@ describe('RtToolbarFiltersRouteAsideComponent — панель отборов в
         expect(state.container.closedAt).toEqual(['/?status=paid']);
     });
 
-    it('SC-UKV-1714 — стрелка закрывает маршрут молча', async (): Promise<void> => {
+    it('SC-UKV-1776 — стрелка закрывает маршрут молча', async (): Promise<void> => {
         const state: ISetup = setup();
         await ready(state);
 
@@ -223,7 +223,7 @@ describe('RtToolbarFiltersRouteAsideComponent — панель отборов в
         expect(state.fixture.componentInstance.resets).toBe(0);
     });
 
-    it('SC-UKV-1713 — отборы вернулись в полосу на широком месте: маршрут закрывается', async (): Promise<void> => {
+    it('SC-UKV-1775 — отборы вернулись в полосу на широком месте: маршрут закрывается', async (): Promise<void> => {
         const state: ISetup = setup();
         await ready(state);
         expect(state.container.closed).toBe(0);
@@ -234,7 +234,7 @@ describe('RtToolbarFiltersRouteAsideComponent — панель отборов в
         expect(state.container.closed).toBe(1);
     });
 
-    it('SC-UKV-1713 — до готовой панели широкое место маршрут не закрывает: место ещё не измерено', async (): Promise<void> => {
+    it('SC-UKV-1775 — до готовой панели широкое место маршрут не закрывает: место ещё не измерено', async (): Promise<void> => {
         const state: ISetup = setup(false);
         await settle(state.fixture);
         expect(state.container.closed).toBe(0);
@@ -245,7 +245,7 @@ describe('RtToolbarFiltersRouteAsideComponent — панель отборов в
         expect(state.container.closed).toBe(0);
     });
 
-    it('SC-UKV-1713 — до замера места широкое окно маршрут не закрывает: перезагрузка с узким местом', async (): Promise<void> => {
+    it('SC-UKV-1775 — до замера места широкое окно маршрут не закрывает: перезагрузка с узким местом', async (): Promise<void> => {
         const state: ISetup = setup(false);
         state.breakpoints.placeWidth.set(null);
         await ready(state);
@@ -259,7 +259,7 @@ describe('RtToolbarFiltersRouteAsideComponent — панель отборов в
         expect(route(state.fixture)?.querySelector('[qa-dataid="slot-filter"]')?.getAttribute('data-place')).toBe('panel');
     });
 
-    it('SC-UKV-1713 — отборы, уже стоявшие за кнопкой, закрывают маршрут возвратом в строку и до замера', async (): Promise<void> => {
+    it('SC-UKV-1775 — отборы, уже стоявшие за кнопкой, закрывают маршрут возвратом в строку и до замера', async (): Promise<void> => {
         const state: ISetup = setup();
         state.breakpoints.placeWidth.set(null);
         await ready(state);
@@ -271,7 +271,7 @@ describe('RtToolbarFiltersRouteAsideComponent — панель отборов в
         expect(state.container.closed).toBe(1);
     });
 
-    it('SC-UKV-1713 — полоса ушла со страницы: маршрут закрывается', async (): Promise<void> => {
+    it('SC-UKV-1775 — полоса ушла со страницы: маршрут закрывается', async (): Promise<void> => {
         const state: ISetup = setup();
         await ready(state);
 
@@ -281,7 +281,7 @@ describe('RtToolbarFiltersRouteAsideComponent — панель отборов в
         expect(state.container.closed).toBe(1);
     });
 
-    it('SC-UKV-1713 — маршрут, вставший раньше полосы, не закрывается и берёт её отборы', async (): Promise<void> => {
+    it('SC-UKV-1775 — маршрут, вставший раньше полосы, не закрывается и берёт её отборы', async (): Promise<void> => {
         const state: ISetup = setup();
         state.fixture.componentInstance.toolbarShown.set(false);
         await ready(state);

@@ -1,4 +1,4 @@
-import { computed, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { computed, Service, Signal, signal, WritableSignal } from '@angular/core';
 
 import { IRtToolbar } from './rt-toolbar.model';
 
@@ -9,7 +9,7 @@ import { IRtToolbar } from './rt-toolbar.model';
  * в маршруте приложения берёт их отсюда: полоса и панель стоят в разных местах страницы и друг друга
  * не видят. Отвечает полоса, отдавшая отборы последней.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class RtToolbarFiltersHub {
     readonly #sources: WritableSignal<readonly IRtToolbar.IFiltersSource[]> = signal<readonly IRtToolbar.IFiltersSource[]>([]);
 

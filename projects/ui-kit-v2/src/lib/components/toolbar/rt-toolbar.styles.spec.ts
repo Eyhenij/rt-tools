@@ -22,7 +22,7 @@ function ruleBody(css: string, selector: string): string {
 }
 
 describe('ширина отборов в строке полосы', (): void => {
-    it('SC-UKV-1717 — отбор в левой части шириной по своему содержимому, а не 100% части', (): void => {
+    it('SC-UKV-1779 — отбор в левой части шириной по своему содержимому, а не 100% части', (): void => {
         const css: string = sass.compile(TOOLBAR, { style: 'expanded' }).css;
         const select: string = ruleBody(css, '.rt-toolbar__bar--left > rt-select');
 
