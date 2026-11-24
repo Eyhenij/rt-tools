@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — about one turn. Load when a turn is being ended — what it ends with, what the owner is told about a step that is theirs, what backs a statement about the tree, what the guards watch. Pattern task-flow-handoff. The whole course of work — rule task-flow.
 ---
-<!-- rt-kit v0.39.1 · rules/turn-conduct.md · d9653e87f4d5 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · rules/turn-conduct.md · 94d8053b3a8f · правится надстройкой, не здесь -->
 
 # Turn conduct — how it works here
 
@@ -210,8 +210,6 @@ flowchart TD
   memory.** Everything the reply says about the tree carries a command and its output; said without
   one, it is no statement — not "checked", not "cleared", not "done". The hook reads the reply and
   the results of the turn's calls.
-- **A wrong conclusion from a right command is not judged.** About a sample judged by one file there
-  is nothing to compare with. This is the hook's known boundary; the articles below hold it.
 - **A turn that handed work in does not end before the next task is begun.** Someone else's step —
   the run, the review, the merge — goes without the executor. Handed-in work is a measured state, and
   its exit is the next task of the epic taken.
@@ -239,8 +237,7 @@ flowchart TD
   command, not a neighbouring tool, not an edit of the guard itself. The edit is done once the
   refusal's condition is met, or not at all — then the owner is told the refusal, not a result.
 - **A command refused by a gate is repeated whole, not by its tail.** A gate refuses the call before
-  it runs, so none of its links worked — those before the refused one included. A repeated tail does
-  work where it was not expected:
+  it runs, so none of its links worked — those before the refused one included.
 - **A writing call is not appended to an exploration line.** A line assembled from questions reads
   as a question whole — by its author too; the edit goes in a call of its own, where it is visible.
   For a call with a reading twin, the kind is chosen by the action, not the command's name.
@@ -249,9 +246,10 @@ flowchart TD
   a search over them. What was found lands in the grill section "What the rules already say". The
   agent hook of the question tool holds a question a rule or a spec answers plainly; whether the
   reading was done in the same turn no check counts.
-- **The owner's answer is sought in their own messages before the rules.** The law says a question
-  with a written answer is not put to the owner, and the most reachable record lies in the
-  conversation: the owner's first message and their answers to past rounds.
+- **The owner's answer is sought in their own messages before the rules.** The most reachable
+  record is the conversation: the owner's messages, their answers to past rounds and
+  one's own questions and buttons. A short reply the summary does not explain answers one of those.
+  A question with an answer there is acted on; one the work made needless is withdrawn in the turn.
 - **The size of work is never a reason to cut its boundaries.** An offer to drop a part is a request
   to reassign the goal, served as a clarification. What is costly is done at cost, or called costly outright, with the price named.
 - **The actions the executor does not do without the owner's word are listed in the rule's

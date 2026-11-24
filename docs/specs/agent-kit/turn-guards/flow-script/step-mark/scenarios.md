@@ -329,7 +329,7 @@ Given a tree whose `.nvmrc` names a version installed in the nvm directory, and 
 When the PR opens and the final rerun runs
 Then the engine runs on the pinned node; without `.nvmrc` it runs on the node of the session
 
-Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-script-node.test.sh`.
 
 ### SC-AK-1736 — a step command that does not match leaves the progress as it was
 
