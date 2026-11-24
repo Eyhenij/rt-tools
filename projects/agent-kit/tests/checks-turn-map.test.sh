@@ -25,10 +25,11 @@ rule() {
     } > "$TREE/.claude/skills/task-flow/SKILL.md"
 }
 
-# Чем ход кончается: конец сценария и прерывание владельца.
+# Чем ход кончается: конец сценария, слово остановки и прерывание владельца.
 ends_ru() {
     printf '\n## Чем ход кончается\n\n'
     printf -- '- **конец сценария** — движок его измерил\n'
+    printf -- '- **слово остановки** — владелец велел встать\n'
     printf -- '- **прерывание владельца** — он нажал Esc\n'
 }
 
@@ -103,6 +104,7 @@ map_list_en() {
         done
         printf '\n## What a turn ends with\n\n'
         printf -- '- **the end of the scenario** — measured by the engine\n'
+        printf -- '- **a stop word of the owner** — they said to stop\n'
         printf -- '- **the owner interrupted the turn** — they pressed Esc\n'
     } > "$TREE/.claude/rt-kit/defaults/turn-map.md"
 }
@@ -143,7 +145,17 @@ case "$out" in
     *) report 'SC-AK-1547 — старый выход в прозе карту не роняет' 'расхождения' 'сошлось' ;;
 esac
 
-# Карта пакета сама проходит проверку: она называет оба конца хода и ни одного старого выхода.
+# Карта без слова остановки отказана: выход, который движок отпускает, карта называет.
+map_list_en этап-идёт влито
+sed -i.bak '/a stop word of the owner/d' "$TREE/.claude/rt-kit/defaults/turn-map.md"
+out="$(run)"
+case "$out" in
+    *'the turn exit «a stop word of the owner» is not named in the map'*)
+        report 'SC-AK-1547 — карта без слова остановки отказана' 'отказана' 'отказана' ;;
+    *) report 'SC-AK-1547 — карта без слова остановки отказана' 'пропущена' 'отказана' ;;
+esac
+
+# Карта пакета сама проходит проверку: она называет все концы хода и ни одного старого выхода.
 cp "$(dirname "${BASH_SOURCE[0]}")/../assets/defaults/turn-map.md" "$TREE/.claude/rt-kit/defaults/turn-map.md"
 rule $(sed -n 's/^- `\([^`]*\)` — .*/\1/p' "$TREE/.claude/rt-kit/defaults/turn-map.md")
 out="$(run)"

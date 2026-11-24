@@ -66,7 +66,7 @@ sections through the override; they merge here by heading, and a package edit do
 - **Audit** — a check that edits nothing and names discrepancies: of the layout against the package, of specs against the code, of the work queue against the branches
 - **Measurement** — a number taken from the running application. A look at the screen is not a measurement
 - **Flow script** — the engine of the task flow. It measures the work state of a branch by the task flow description, runs the check of a plan step and writes its mark, and gives the verdict at the end of a turn. The description is data; the script edits no file of the work
-- **Exit check** — the guard at the end of a turn that asks the flow script for a verdict. It holds a turn whose scenario is not over and names the one next move. Only the end of the scenario, the owner's Esc and the release cases of the description let a turn end
+- **Exit check** — the guard at the end of a turn that asks the flow script for a verdict. It holds a turn whose scenario is not over and names the one next move. Only the end of the scenario, the owner's stop word or Esc and the release cases of the description let a turn end
 
 ## Russian names
 

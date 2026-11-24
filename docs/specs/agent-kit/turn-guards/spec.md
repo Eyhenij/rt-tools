@@ -1,6 +1,6 @@
 # The guards of the end of a turn
 
-**Status:** in force · **Revision:** 2026-11-22 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-24 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `verifiability`, `work-conduct`
 **Procedures:** none
@@ -205,3 +205,5 @@ None.
 - 2026-11-22 — the agent hook of the Stop event no longer lets a turn end on a word to stop: the
   owner stops the work by Esc. It lets a turn end while a background task of the session still runs
   and the reply names the task and the step that goes on by its notice.
+- 2026-11-24 — the agent hook of the Stop event lets a turn end on the owner's word to stop or to
+  wait again, next to Esc.

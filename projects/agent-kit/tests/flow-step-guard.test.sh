@@ -354,18 +354,30 @@ d "protect: SC-AK-1525 — в задаче, чей одобренный план
 d "protect: SC-AK-1526 — запись оболочкой судится теми же условиями" "$(shell_input "printf '({})' > projects/agent-kit/assets/task-flow/flow.js" "$R5")" PASS
 d "protect: SC-AK-1708 — одобрение, найденное на месте в записи, пропускает правку движка" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" PASS
 
+# SC-AK-1874 — одобрение вторым вопросом окна: ответы окна не склеиваются
+approve "$R5" "$B5"
+jq -cn '{type:"user",uuid:"a1",toolUseResult:{answers:{"Граница дня?":"До 18:00","Одобряешь план RT-9?":"Одобряю план RT-9"}}}' > "$(records_dir "$R5")/session.jsonl"
+d "protect: SC-AK-1874 — одобрение вторым ответом окна пропускает правку движка" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" PASS
+jq -cn '{type:"user",uuid:"a1",message:{role:"user",content:"одобряю план RT-9"}}' > "$(records_dir "$R5")/session.jsonl"
+d "protect: SC-AK-1874 — набранное строчными одобрение пропускает правку движка" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" PASS
+jq -cn '{type:"user",uuid:"a1",toolUseResult:{answers:{"Одобряешь?":"Одобряю plan.md RT-7"}}}' > "$(records_dir "$R5")/session.jsonl"
+d "protect: SC-AK-1874 — «plan.md» с номером другой задачи — отказ" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" deny
+
 approve "$R5" "$B5" 'Переделай этап 1'
 d "protect: SC-AK-1709 — на месте не одобряющий ответ — отказ" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" deny
 expect_reason "protect: SC-AK-1709 — отказ называет, что на месте нет одобрения" "$GUARD" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" 'no approving answer of the owner'
 
 approve "$R5" "$B5" '' a2
 d "protect: SC-AK-1710 — запись без записи с этим uuid — отказ" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" deny
-expect_reason "protect: SC-AK-1710 — отказ называет ход: спросить заново и plan-red" "$GUARD" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" 'ask the owner again and run'
+expect_reason "protect: SC-AK-1710 — отказ называет ход: plan-red" "$GUARD" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" "it finds the owner's answer in the record"
+# SC-AK-1875 — отказ велит запустить plan-red и не велит переспрашивать владельца
+expect_reason "protect: SC-AK-1875 — отказ ведёт к plan-red, владельца спрашивают, только если ответа нет" "$GUARD" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" 'ask the owner only when it finds none'
+expect_no_reason "protect: SC-AK-1875 — в отказе нет совета переспросить" "$GUARD" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" 'ask the owner again'
 
 approve "$R5" "$B5"
 rm -f "$(records_dir "$R5")/session.jsonl"
 d "protect: SC-AK-1730 — запись, снятая очисткой хозяина, — отказ" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" deny
-expect_reason "protect: SC-AK-1730 — отказ называет ход" "$GUARD" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" 'ask the owner again and run'
+expect_reason "protect: SC-AK-1730 — отказ называет ход" "$GUARD" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" "it finds the owner's answer in the record"
 
 OUTSIDE="$(mktemp -d)"
 TMPS+=("$OUTSIDE")
@@ -380,7 +392,7 @@ d "protect: SC-AK-1728 — метка без места вне закрытог�
 approve "$R5" "$B5"
 git -C "$R5" -c user.name=t -c user.email=t@t commit -q --amend -m 'docs: план заново'
 d "protect: SC-AK-1721 — одобрение другого коммита плана — отказ" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" deny
-expect_reason "protect: SC-AK-1721 — отказ называет ход" "$GUARD" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" 'ask the owner again and run'
+expect_reason "protect: SC-AK-1721 — отказ называет ход" "$GUARD" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" "it finds the owner's answer in the record"
 
 # Одобрение дано в другой рабочей копии: его запись лежит в каталоге записей той копии.
 approve "$R5" "$B5"

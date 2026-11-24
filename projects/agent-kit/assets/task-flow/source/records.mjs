@@ -18,17 +18,15 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, readdirSync, realpathSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { basename, dirname, join, resolve } from 'node:path';
-import { wordOf } from './owner.mjs';
+import { approvalOf, wordOf } from './owner.mjs';
 import { linesOf } from './session.mjs';
-
-/** The approving answer: a menu option or a message that begins so. */
-const APPROVE = /^\s*Одобряю/u;
 
 /**
  * Why an approval mark does not hold, or null when it does: the mark names the commit of the plan
  * and the place of the answer — a session record of this repository and the uuid of its entry — and
- * the entry there is the owner's answer that begins with «Одобряю» and names `plan.md` or the task.
- * The move of every reason is the same: ask the owner again and run `plan-red`.
+ * the entry there approves the plan of the task by `approvalOf`, the rule `plan-red` uses too. The
+ * move of every reason is the same: run `plan-red`, which finds the answer in the record; the owner
+ * is asked only when it finds none.
  */
 export function approvalFault(mark, planSha, task, records) {
     if (!mark || typeof mark.answer !== 'string') return 'there is no approval mark';
@@ -38,8 +36,7 @@ export function approvalFault(mark, planSha, task, records) {
     if (!existsSync(mark.place.record)) return 'the session record of the answer is gone';
     const entry = records.entry(mark.place.record, mark.place.uuid);
     if (!entry) return 'the session record no longer holds the entry of the answer';
-    const word = wordOf(entry) ?? '';
-    if (!APPROVE.test(word) || !new RegExp(`plan\\.md|${task}(?!\\d)`).test(word)) return 'the entry at the place is no approving answer of the owner';
+    if (!approvalOf(entry, task)) return 'the entry at the place is no approving answer of the owner';
     return null;
 }
 
