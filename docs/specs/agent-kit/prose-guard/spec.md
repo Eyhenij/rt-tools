@@ -35,7 +35,7 @@ The guard has no interface: only the executor sees it — as the text of a refus
   and the new text is the body of the command: the written text stands inside it. The
   text is taken from the heredoc bodies of the call. A rewrite carrying the previous wording inside
   the command was refused by the words of that wording, twice in a row. A command without a heredoc
-  is judged whole, as before.
+  is judged by what it prints into a file, and a chain of edits and checks brings no text.
 - **The boundary of the judgement is the project root.** A scratch document written outside it
   belongs to no repository. The wording agreements of this tree are nobody's agreement there: a
   fixture in the system temporary directory was refused over a word in it. A tree that names no root

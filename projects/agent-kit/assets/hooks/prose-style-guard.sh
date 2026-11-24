@@ -65,6 +65,56 @@ rt_prose_heredoc_bodies() {
     '
 }
 
+# The text a command without a heredoc brings with it: the arguments of a `printf` or an `echo` whose
+# output leaves — by a redirect, into a pipe or out of a group — and a here-string. Everything else
+# of the command is its own words: a chain of `sed -i` and checks read as one long sentence.
+rt_prose_printed() {
+    awk -v q="'" '
+        function words(s) { gsub(/["]/, "", s); gsub(q, "", s); return s }
+        function flush(next_sign,   head) {
+            head = seg
+            sub(/^[ \t\n]*(then|do|else|!|[{(]|[A-Za-z_][A-Za-z0-9_]*=[^ \t]*[ \t])*[ \t]*/, "", head)
+            if (head ~ /^(printf|echo)([ \t]|$)/ && (leaves || grouped || next_sign == "|")) {
+                print words(before == "" ? head : substr(head, 1, length(head) - length(seg) + before))
+            } else if (here) {
+                print words(substr(seg, here))
+            }
+            seg = ""; leaves = 0; before = ""; here = 0
+        }
+        { text = text $0 "\n" }
+        END {
+            n = length(text); quote = ""
+            for (i = 1; i <= n; i++) {
+                c = substr(text, i, 1)
+                if (c == "\\" && quote != q && i < n) { seg = seg c substr(text, ++i, 1); continue }
+                if (quote != "") {
+                    if (c == quote) { quote = "" }
+                } else if (c == "\"" || c == q) {
+                    quote = c
+                } else if (substr(text, i, 3) == "<<<") {
+                    here = length(seg) + 4; seg = seg "<<<"; i += 2; continue
+                } else if (c == ">") {
+                    leaves = 1
+                    if (before == "") { before = length(seg) }
+                } else if (c == "&" && (substr(text, i + 1, 1) == ">" || substr(text, i - 1, 1) == ">")) {
+                    # A part of a redirect, not the end of a command.
+                } else if (c == ";" || c == "&" || c == "\n" || c == "|") {
+                    d = substr(text, i + 1, 1)
+                    if (c == "|" && d == "|") { c = ";"; i++ }
+                    flush(c)
+                    continue
+                } else if ((c == "{" || c == "(") && seg ~ /^[ \t]*$/) {
+                    grouped++
+                } else if ((c == "}" || c == ")") && seg ~ /^[ \t]*$/ && grouped) {
+                    grouped--
+                }
+                seg = seg c
+            }
+            flush("")
+        }
+    '
+}
+
 tool="$(rt_hook_tool)"
 case "$tool" in
     Edit | Write | MultiEdit)
@@ -80,10 +130,10 @@ case "$tool" in
         # The new text is taken from the heredoc bodies of the command, not from the whole call.
         # A rewrite carrying the previous wording inside the call would otherwise be refused by
         # the words of that previous wording, and the refusal repeats at the second attempt. No
-        # heredoc in the command — the whole text is judged, as before: a redirect of a printf
-        # holds the written text and nothing else.
+        # heredoc in the command — only what it prints is judged: a command that brings no text of
+        # its own gives nothing to judge.
         added="$(printf '%s' "$cmd" | rt_prose_heredoc_bodies)"
-        [ -z "$added" ] && added="$cmd"
+        [ -z "$added" ] && added="$(printf '%s' "$cmd" | rt_prose_printed)"
         ;;
     *) exit 0 ;;
 esac

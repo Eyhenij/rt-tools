@@ -164,8 +164,8 @@ prints a line per fixture.
 
 Two scenarios of the neighbouring specs follow these rules: `SC-AK-1414` of `guard/` (an edit that
 marks a step done is refused) and `SC-AK-1411` of the engine (the approval mark carries the place of
-the answer). `SC-AK-1726` rests on the rule of the engine that refuses a step while a file of the task
-folder differs from the commit of the plan, and adds only that such a step stays not done.
+the answer). `SC-AK-1726` rests on the rule of the engine that refuses a step while the plan or the
+grill differs from the commit of the plan, and adds only that such a step stays not done.
 
 ## What is out of scope
 

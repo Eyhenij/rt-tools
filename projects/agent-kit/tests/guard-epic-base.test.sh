@@ -155,6 +155,12 @@ report "SC-AK-993 — отказ называет ветку эпика" "$got" 
 if [ -z "$(ge_decision "$GE_WITH_EPIC" origin/RT-1921-work-by-epics)" ]; then got="прошло"; else got="отбито"; fi
 report "SC-AK-993 — ветка от ветки эпика проходит" "$got" "прошло"
 
+# Перенаправление после имени ветки — не основание: судится вершина рабочей копии.
+got="$(ge_silent "$(ge_decision "$GE_WITH_EPIC" '2>&1')")"
+report "SC-AK-993 — a redirect after the branch name is no base" "$got" "прошло"
+got="$(ge_silent "$(ge_decision "$GE_WITH_EPIC" '>/dev/null')")"
+report "SC-AK-993 — the same for a redirect into a file" "$got" "прошло"
+
 got="$(ge_silent "$(ge_decision "$GE_NO_EPIC" origin/main)")"
 report "SC-AK-993 — у задачи без эпика основание судится по главной, как прежде" "$got" "прошло"
 

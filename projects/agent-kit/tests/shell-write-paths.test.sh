@@ -90,6 +90,17 @@ OSREPLACE="$(printf "python3 - <<'PY'\nimport os\nos.replace('docs/a.tmp', 'docs
 report "SC-AK-1209 — os.replace целью называет конец переноса" \
     "$(names "$OSREPLACE" 'docs/a.md')" 1
 
+# Сравнение внутри кода толкователя ничего не пишет, и путь в той же строке — проверка, которую
+# команда запускает, а не цель записи.
+report "SC-AK-1251 — process.exit(a>b?1:0) рядом с запуском проверки путей не отдаёт" \
+    "$(count 'node -e "process.exit(a>b?1:0)" && node tools/check-specs.mjs')" 0
+COMPARED="$(printf "node - <<'JS'\nif (rows.length > limit.max) console.log(readFileSync('docs/a.md'))\nif (w > h/2) console.log('tools/b.mjs')\nJS\n")"
+report "SC-AK-1251 — сравнение с пробелами в теле heredoc путей не отдаёт" "$(count "$COMPARED")" 0
+PERLED="$(printf "perl - <<'PL'\nopen(my \$f, '>docs/a.md');\nPL\n")"
+report "SC-AK-1251 — перенаправление в строке толкователя называет путь" "$(names "$PERLED" 'docs/a.md')" 1
+INSHELL="$(printf "python3 - <<'PY'\nimport os\nos.system('echo x > docs/a.md')\nPY\n")"
+report "SC-AK-1251 — перенаправление внутри os.system называет путь" "$(names "$INSHELL" 'docs/a.md')" 1
+
 report "SC-AK-1251 — стрелка в двойных кавычках путей не отдаёт" \
     "$(count 'echo "a->b"')" 0
 report "SC-AK-1251 — стрелочная функция в коде node -e путей не отдаёт" \

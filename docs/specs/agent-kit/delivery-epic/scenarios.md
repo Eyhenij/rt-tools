@@ -43,9 +43,10 @@ Given a task whose state names an epic, and the branch of that epic is in the re
 When the guard judges the creation of a branch from the main one
 Then it refuses and names the branch of the epic
 
-Given the same branch is created from the branch of the epic
+Given the same branch is created from the branch of the epic, or from the tip of the working copy
+standing on it with a redirect after the branch name
 When the guard judges it
-Then it lets it through
+Then it lets it through: a redirect is no base
 
 Given the state of the task names no epic
 When the guard judges the creation of a branch from the main one
@@ -57,13 +58,28 @@ Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
 
 Given the remote copy of the epic branch lags behind the main branch
 When the guard judges the creation of a branch from that remote copy
-Then it refuses and names the lag
+Then it refuses, names the lag and the task branch as the place of the repairs the merge needs
 
 Given the local epic branch has the main branch merged in, and the remote copy still lags
 When the guard judges the creation of a branch from the local one
 Then it lets it through: the merge is done, and the task branch carries the main tip
 
 Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
+
+### SC-AK-1936 — the draft of the epic plan goes to the host from a temporary tree
+
+Given the working copy stands on the branch of other work with edits of its own
+When the command of creating is called with the argument about an epic
+Then the branch of the epic is taken from the tip of the main branch in a temporary working tree,
+committed with the draft and pushed; the working copy keeps its branch and edits, the temporary tree
+is gone, and the printed line takes the ready branch
+
+Given the host refuses the push
+When the same call goes
+Then the draft lies in the working copy, the reason is named, and the printed line takes the branch
+from the main one
+
+Covered: `projects/agent-kit/tests/task-new-epic.test.sh`.
 
 ### SC-AK-994 — the request of a task of an epic goes into the branch of the epic
 

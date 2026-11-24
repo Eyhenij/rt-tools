@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.0 · pitfalls/git-workflow.2.github.md · 47144e649e40 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · pitfalls/git-workflow.2.github.md · a827800dbbc1 · правится надстройкой, не здесь -->
 # Delivery — cold part, second file
 
 The sections the rule `git-workflow` handed over when it was cut to its statements and split in
@@ -257,7 +257,7 @@ flowchart TD
 - **The identity of the machine account is confirmed by the host's answer:** asked with the token,
   login and number come together.
 - **Guard scenarios set the git settings and the locale themselves, not take them from the machine.**
-  Author, email and signature go as `-c` flags; the push guard runs steps under `C.UTF-8`, where bash
+  Author, email and signature go as `-c` flags; the push guard runs steps under `C.UTF-8`, and bash
   3.2 breaks `$var»`.
 
 - **Every commit of the branch's contribution is signed by the machine account, and the push set

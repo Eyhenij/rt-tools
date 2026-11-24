@@ -19,6 +19,7 @@ cp "$CHECKS/board-epic-plan.github.mjs" "$TN_TREE/tools/board-epic-plan.mjs"
 cp "$CHECKS/board-task-dirs.github.mjs" "$TN_TREE/tools/board-task-dirs.mjs"
 cp "$CHECKS/task-new.github.mjs" "$TN_TREE/tools/task-new.mjs"
 cp "$CHECKS/task-new-queue.github.mjs" "$TN_TREE/tools/task-new-queue.mjs"
+cp "$CHECKS/task-new-epic.github.mjs" "$TN_TREE/tools/task-new-epic.mjs"
 
 # Настройки дерева-фикстуры: своя очередь работ, своя метка эпика, свой каталог планов.
 tn_config() {
@@ -91,7 +92,7 @@ report "SC-AK-936 — карточка создана с меткой эпика
 if [ -f "$TN_TREE/docs/plans/work-by-epics.md" ]; then got="есть"; else got="нет"; fi
 report "SC-AK-936 — заготовка плана легла в каталог планов" "$got" "есть"
 
-if grep -q 'Замысел эпика — docs/plans/work-by-epics.md' "$TN_CREATED" 2>/dev/null; then got="есть"; else got="нет"; fi
+if grep -q 'План эпика — docs/plans/work-by-epics.md' "$TN_CREATED" 2>/dev/null; then got="есть"; else got="нет"; fi
 report "SC-AK-936 — тело карточки называет путь к плану" "$got" "есть"
 
 if grep -q 'RT-4242 · \*\*Ветка эпика:\*\* `RT-4242-work-by-epics`' "$TN_TREE/docs/plans/work-by-epics.md" 2>/dev/null; then
@@ -162,7 +163,7 @@ tn_run_under_epic() {
 
 TN_OUT="$(tn_run_under_epic '{"name":"epic"}')"
 
-if grep -q 'Задача эпика #1921, замысел — docs/plans/work-by-epics.md' "$TN_CREATED" 2>/dev/null; then
+if grep -q 'Задача эпика #1921, план — docs/plans/work-by-epics.md' "$TN_CREATED" 2>/dev/null; then
     got="есть"
 else got="нет"; fi
 report "SC-AK-938 — тело задачи объявляет эпик в читаемом сверкой виде" "$got" "есть"
@@ -221,6 +222,44 @@ tn_config 'docs/plans' ''
 TN_OUT="$(tn_run --title 'Письма владельцу не уходят' --slug mail-silence)"
 if [ -f "$TN_CREATED" ]; then got="создана"; else got="нет"; fi
 report "SC-AK-939 — без метки эпика в дереве задача заводится как прежде" "$got" "создана"
+
+# --- SC-AK-1936 — черновик плана уходит из временной рабочей копии --------------------
+#
+# Эпик заводят посреди другой работы: рабочая копия стоит на её ветке с правками. Переключать её
+# нечем и незачем — ветка эпика берётся, коммитится и отправляется рядом.
+tn_config
+TN_G=(git -c user.name=t -c user.email=t@example.test -c commit.gpgsign=false -c init.defaultBranch=main)
+TN_HOST="$(mktemp -d)"
+"${TN_G[@]}" init -q --bare "$TN_HOST"
+( cd "$TN_TREE" && "${TN_G[@]}" init -q && "${TN_G[@]}" add tools && "${TN_G[@]}" commit -q -m start \
+    && git remote add origin "$TN_HOST" && git push -q -u origin main && git checkout -q -b RT-7-other \
+    && printf 'своё\n' > own.txt ) 2>/dev/null
+tn_run_signed() {
+    GIT_AUTHOR_NAME=t GIT_AUTHOR_EMAIL=t@example.test GIT_COMMITTER_NAME=t GIT_COMMITTER_EMAIL=t@example.test \
+        GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=commit.gpgsign GIT_CONFIG_VALUE_0=false \
+        tn_run --epic --title 'Поставка идёт эпиками' --slug work-by-epics
+}
+TN_OUT="$(tn_run_signed)"
+got="$(git -C "$TN_HOST" show RT-4242-work-by-epics:docs/plans/work-by-epics.md 2>/dev/null | grep -c 'Ветка эпика:\*\* `RT-4242-work-by-epics`')"
+report "SC-AK-1936 — the epic draft goes from a temporary tree" "$got" 1
+report "SC-AK-1936 — коммит черновика стоит на вершине главной" \
+    "$(git -C "$TN_HOST" log --format=%s main..RT-4242-work-by-epics 2>/dev/null)" 'docs: план эпика RT-4242'
+report "SC-AK-1936 — рабочая копия осталась на своей ветке, черновика в ней нет" \
+    "$(git -C "$TN_TREE" branch --show-current)|$(cat "$TN_TREE/own.txt")|$(ls "$TN_TREE/docs" 2>/dev/null)" 'RT-7-other|своё|'
+report "SC-AK-1936 — временной копии после вызова нет" "$(git -C "$TN_TREE" worktree list | grep -c .)" 1
+report "SC-AK-1936 — напечатана готовая ветка" "$(printf '%s' "$TN_OUT" | grep -c '^  git checkout RT-4242-work-by-epics$')" 1
+
+# Отправка не прошла: черновик лёг в рабочую копию, ветки нет, и её берут напечатанной строкой.
+git -C "$TN_TREE" branch -q -D RT-4242-work-by-epics
+git -C "$TN_HOST" branch -q -D RT-4242-work-by-epics
+printf '#!/bin/sh\necho "хост отказал" >&2\nexit 1\n' > "$TN_HOST/hooks/pre-receive" && chmod +x "$TN_HOST/hooks/pre-receive"
+TN_OUT="$(tn_run_signed)"
+got="$([ -f "$TN_TREE/docs/plans/work-by-epics.md" ] && echo лёг || echo нет)"
+report "SC-AK-1936 — отказ отправки оставляет черновик в рабочей копии и называет причину" \
+    "$got|$(printf '%s' "$TN_OUT" | grep -c 'the branch of the epic is not on the host')" 'лёг|1'
+report "SC-AK-1936 — после отказа ветку берут напечатанной строкой" \
+    "$(printf '%s' "$TN_OUT" | grep -c 'git checkout -b RT-4242-work-by-epics origin/main')|$(git -C "$TN_TREE" branch --list 'RT-4242*' | grep -c .)" '1|0'
+rm -rf "$TN_HOST" "$TN_TREE/.git"
 
 # --- SC-AK-1089 — путь плана читают одним ходом команда и аудит ------------------------------
 #

@@ -1,4 +1,4 @@
-// rt-kit v0.39.0 · checks/flow-step.mjs · bfcbacdad7c2 · правится надстройкой, не здесь
+// rt-kit v0.39.0 · checks/flow-step.mjs · 8d5adad3655e · правится надстройкой, не здесь
 /**
  * A step of the plan measured by its check — the engine command `step`.
  *
@@ -43,8 +43,10 @@ export const STEP_LIMIT_MS = 540_000;
 /** The budget of the rerun before a PR, in milliseconds: a second run of a group starts only within it. */
 export const RERUN_BUDGET_MS = 1_500_000;
 
-/** The progress changes every turn and is the one file of the folder not judged against the plan. */
 const PROGRESS = 'progress.md';
+
+/** What the owner approved: these files stay as the commit of the plan holds them. */
+const FROZEN = ['plan.md', 'grill.md'];
 
 /** A taken-apart folder put back for one run, or null; a live, broken or stray folder on disk refuses the step. */
 export function restoreFolder(git, folder) {
@@ -145,11 +147,11 @@ export function planOfBranch(git, words = {}) {
     return { branch, folder, sha, text, fingerprint: createHash('sha256').update(text).digest('hex').slice(0, 16) };
 }
 
-/** The files of the task folder that differ from the commit of the plan; the progress is not judged. */
+/** The plan and the grill, if they differ from the commit of the plan; the other records of the folder grow. */
 export function changedSincePlan(git, plan, read = readFile) {
     return git
         .filesAt(plan.folder, plan.sha)
-        .filter((path) => !path.endsWith(`/${PROGRESS}`))
+        .filter((path) => FROZEN.some((name) => path === `${plan.folder}/${name}`))
         .filter((path) => read(path) !== git.versionAt(path, plan.sha));
 }
 

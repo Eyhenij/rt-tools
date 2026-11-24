@@ -291,11 +291,11 @@ Then both are refused before anything runs, and the refusal names the command or
 
 Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
-### SC-AK-1407 — a file of the task folder edited after the plan refuses the step
+### SC-AK-1407 — the plan or the grill edited after the commit of the plan refuses the step
 
-Given a file of the task folder changed after the commit of the plan, and then only the progress changed
+Given the grill changed after the commit of the plan, and then only the progress and the approvals changed
 When the engine measures a step
-Then the first is refused naming the file, and the progress does not refuse it
+Then the first is refused naming the file, and the other records of the folder do not refuse it
 
 Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 

@@ -43,6 +43,10 @@ their own turn.
 - **The state of a task carries the number of its epic.** The guard has no other road to the epic:
   the work queue holds neither branches nor kinship of cards, and a second asking for the body would
   cost an extra call and diverge from the first.
+- **The draft of the epic plan goes to the host from a temporary working tree.** An epic is declared
+  in the middle of other work: the working copy stands on another branch, and switching it carries
+  its edits along. The commit and the push go through the hooks of the tree; a refused push leaves
+  the draft in the working copy and names the reason.
 - **The base of a request about a task of an epic is the branch of that epic.** A request into the
   main branch takes the task past its epic: the epic is handed in without it, and the reviewer sees
   the edit next to everything lying in the main branch and not in the epic. A base not named at all

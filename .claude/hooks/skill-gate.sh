@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.0 · hooks/skill-gate.sh · 43b16e94dc8b · правится надстройкой, не здесь
+# rt-kit v0.39.0 · hooks/skill-gate.sh · 1b8c46625fbf · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__claude-in-chrome__.*|mcp__figma__use_figma
 # Requires: checks/decide.mjs, hooks/decide.sh, hooks/deny-tail.sh
 # The rules gate: it does not let a file be edited until the rule it falls under has been loaded.
@@ -249,6 +249,32 @@ for name in $req; do
 done
 gate_unread=""
 gate_why=""
+gate_given=""
+given=()
+rest=()
+# The names of the rules of a list, quoted.
+rt_gate_names() {
+    local out="" one
+    for one in "$@"; do out="${out}${out:+, }«${one}»"; done
+    printf '%s' "$out"
+}
+# Writes the delivered rules into the record of the session and into the observations.
+rt_gate_record() {
+    local dir="${TMPDIR:-/tmp}/claude-skill-gate" recorded=1 unrec=""
+    mkdir -p "$dir" 2>/dev/null || recorded=0
+    if [ "$recorded" = 1 ]; then
+        printf '%s\n' "$@" >> "$loaded" 2>/dev/null || recorded=0
+    fi
+    # shellcheck disable=SC1091
+    . "$rt_hooks_dir/observe.sh" 2>/dev/null
+    command -v rt_note >/dev/null 2>&1 || return 0
+    # An unwritten name costs one more delivery of the same rule; the note says so.
+    [ "$recorded" = 1 ] || unrec="unrecorded=yes"
+    for name in "$@"; do
+        rt_note gate-deliver "res=$name" "kind=$kind" "sid=$sid" $unrec
+    done
+    return 0
+}
 if [ "$sid" != "nosession" ] && [ "${#need[@]}" -gt 0 ]; then
     head_line="Passed by the rules gate: the call went through, and the text of"
     i=0
@@ -299,22 +325,7 @@ The companion of the rule — ${comp} — did not fit here and is read as a file
                 rt_gate_text
             fi
         done
-        dir="${TMPDIR:-/tmp}/claude-skill-gate"
-        recorded=1
-        mkdir -p "$dir" 2>/dev/null || recorded=0
-        if [ "$recorded" = 1 ]; then
-            printf '%s\n' "${need[@]}" >> "$loaded" 2>/dev/null || recorded=0
-        fi
-        # shellcheck disable=SC1091
-        . "$rt_hooks_dir/observe.sh" 2>/dev/null
-        if command -v rt_note >/dev/null 2>&1; then
-            # An unwritten name costs one more delivery of the same rule; the note says so.
-            unrec=""
-            [ "$recorded" = 1 ] || unrec="unrecorded=yes"
-            for name in "${need[@]}"; do
-                rt_note gate-deliver "res=$name" "kind=$kind" "sid=$sid" $unrec
-            done
-        fi
+        rt_gate_record "${need[@]}"
         jq -cn --arg c "$text" '{hookSpecificOutput:{hookEventName:"PreToolUse",additionalContext:$c}}'
         exit 0
     fi
@@ -332,6 +343,25 @@ The companion of the rule — ${comp} — did not fit here and is read as a file
                 break
             fi
         done
+        # The rules that fit arrive inside the refusal, in the order of the map, and the refusal is
+        # for the rest. The reserve is the refusal's own words with its tail: all of it together
+        # stays within the host limit.
+        gate_reserve=1800
+        for k in "${!need[@]}"; do
+            block="${rules[$k]}"
+            comp="$rules_dir/${need[$k]}/implementation.md"
+            [ -f "$root/$comp" ] && block="${block}
+
+The companion of the rule — ${comp} — is read as a file."
+            if [ $((${#gate_given} + ${#block} + gate_reserve)) -le "$gate_limit" ]; then
+                gate_given="${gate_given}${block}"
+                given+=("${need[$k]}")
+            else
+                rest+=("${need[$k]}")
+            fi
+        done
+        # The article and the companion of the refusal are those of a rule that did not arrive.
+        [ "$gate_why" = together ] && [ "${#given[@]}" -gt 0 ] && want="${rest[0]}"
     fi
 fi
 
@@ -386,8 +416,13 @@ fi
 # branches: there are three of them, and each rewrites the reason whole.
 [ -n "$ahead" ] && reason="${reason} Further along this same command these will be needed: ${ahead}."
 
-# Why the gate did not put the rule into the session itself. Rules that do not fit together are
-# refused together and named all at once: nothing was delivered, so they are loaded in one turn.
+# Why the gate did not put the rule into the session itself. The rules that fit arrived in this very
+# refusal; the rest are named all at once and loaded in one turn. The one longer than the limit is
+# named on top with its own move.
+if [ "${#given[@]}" -gt 0 ]; then
+    reason="Refused by the rules gate: the rules $(rt_gate_names "${given[@]}") of this call arrived below whole, the same as a load by the tool Skill. The rules $(rt_gate_names "${rest[@]}") do not fit the host limit of ${gate_limit} characters with them: load all of these by the tool Skill in one turn and repeat the action. ${fallback}"
+    [ "$gate_why" = together ] && gate_why=""
+fi
 case "$gate_why" in
     too-long)
         reason="${reason} The rule «${req}» is longer than the host limit of ${gate_limit} characters, so the gate does not put it into the session: read ${rules_dir}/${req}/SKILL.md by the tool Read, and the read counts as a load."
@@ -396,9 +431,7 @@ case "$gate_why" in
         reason="${reason} The gate could not read ${rules_dir}/${req}/SKILL.md, so it did not put the rule into the session."
         ;;
     together)
-        names=""
-        for name in "${need[@]}"; do names="${names}${names:+, }«${name}»"; done
-        reason="Refused by the rules gate: the rules ${names} of this call do not fit the host limit of ${gate_limit} characters together, so none of them arrived: load all of them by the tool Skill in one turn and repeat the action. ${fallback}"
+        reason="Refused by the rules gate: the rules $(rt_gate_names "${need[@]}") of this call do not fit the host limit of ${gate_limit} characters together, so none of them arrived: load all of them by the tool Skill in one turn and repeat the action. ${fallback}"
         ;;
 esac
 
@@ -418,6 +451,12 @@ The companion of the rule — ${companion} — is read together with it: the rul
 # as the slot `{reason}`. The action is the class of this call.
 # shellcheck disable=SC1091
 . "$rt_hooks_dir/decide.sh" 2>/dev/null
-command -v rt_decide >/dev/null 2>&1 \
-    && rt_decide skill-gate.sh "?edit_code" '{"rule_loaded":"no"}' "$(jq -cn --arg r "$reason" '{reason:$r}')" PreToolUse "$input"
+command -v rt_decide >/dev/null 2>&1 || exit 0
+answer="$(rt_decide skill-gate.sh "?edit_code" '{"rule_loaded":"no"}' "$(jq -cn --arg r "${reason}${gate_given}" '{reason:$r}')" PreToolUse "$input")"
+[ -n "$answer" ] || exit 0
+# A rule is recorded only by an answer that carries its text: the table may answer otherwise.
+if [ "${#given[@]}" -gt 0 ]; then
+    case "$answer" in *"=== ${rules_dir}/${given[0]}/SKILL.md ==="*) rt_gate_record "${given[@]}" ;; esac
+fi
+printf '%s\n' "$answer"
 exit 0
