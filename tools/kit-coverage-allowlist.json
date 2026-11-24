@@ -47,12 +47,17 @@
     "[rtDataListCustomCells]": "маркер шаблонов ячеек приложения: своей разметки у него нет, а ячейку рисует приложение. Он лишь увозит шаблоны в таблицу списка",
     "[rtDataListRowActions]": "маркер пунктов меню строки: разметку даёт приложение. Полосу действий строки показывает история `Actions` семейства `data-table`",
     "[rtDataListAdditionalRowActions]": "маркер действий рядом с кнопкой меню строки: разметку даёт приложение, у маркера её нет",
+    "[rtPopoverSheetOptions]": "хост-директива `rtPopover` с входами шторки: своей разметки у неё нет и отдельно в разметку она не ставится. Действие в шапке и вопрос, которые она передаёт, показывают истории `*Sheet` семейств с режимом шторки, например `Molecules/Forms/MultiselectSheet`",
+    "[rtSheetTemplates]": "хост-директива списков выбора с входами своих шапки и подвала шторки: своей разметки у неё нет. Шаблоны она увозит в шторку, а саму шторку со своими шапкой и подвалом показывает матрица `Organisms/Aside/BottomSheet`",
     "ng-template[rtExpansionPanelContent]": "маркер ленивого тела панели: своей разметки у него нет вовсе. В кадре виден не маркер, а тело, которое панель создала при раскрытии, — это показывают истории семейства `expansion-panel`",
     "[rtChatFooter]": "маркер шаблона подвала ленты переписки: своей разметки у него нет вовсе, и ни одна история кита подвал не подаёт. В кадре был бы не маркер, а содержимое потребителя под лентой; как лента раскладывает соседние слоты, показывают истории семейства `chat`"
   },
   "shownWithin": {
     "rt-ai-chat-section": "projects/ui-kit-v2/src/ai-chat-chart/lib/components/block/stories/ai-chat-section-matrix.stories.ts",
     "ng-template[rtAsideEmpty]": "projects/ui-kit-v2/src/lib/components/aside/stories/aside-matrix.stories.ts",
+    "ng-template[rtSheetHeader]": "projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/bottom-sheet-matrix.stories.ts",
+    "ng-template[rtSheetFooter]": "projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/bottom-sheet-matrix.stories.ts",
+    "[rtDateWheel]": "projects/ui-kit-v2/src/lib/components/date-picker/stories/date-sheet.stories.ts",
     "ng-template[rtThreadListEmpty]": "projects/ui-kit-v2/src/lib/components/thread-list/stories/thread-list-states.stories.ts",
     "ng-template[rtThreadListError]": "projects/ui-kit-v2/src/lib/components/thread-list/stories/thread-list-states.stories.ts",
     "ng-template[rtWorkspaceDetailsError]": "projects/ui-kit-v2/src/lib/components/workspace-details/stories/workspace-details-states.stories.ts",

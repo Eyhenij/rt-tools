@@ -125,6 +125,18 @@ export class RtPageBarComponent {
         computation: (): boolean => false,
     });
 
+    /** В шторке отборов что-то ввели после открытия: событие ввода или смены значения от её полей. */
+    protected readonly sheetTouched: WritableSignal<boolean> = linkedSignal<boolean, boolean>({
+        source: this.sheetOpen,
+        computation: (): boolean => false,
+    });
+
+    /** Отборы изменены и не применены: по вводу в шторке или по слову приложения во входе `filtersChanged`. */
+    protected readonly sheetUnsaved: Signal<boolean> = computed((): boolean => this.sheetTouched() || this.filtersChanged());
+
+    /** Сбрасывать есть что: отборы стоят или в шторке что-то введено и не применено. */
+    protected readonly canReset: Signal<boolean> = computed((): boolean => this.filtersActive() || this.sheetUnsaved());
+
     protected readonly filtersPopover: Signal<RtPopoverDirective | undefined> = viewChild('filtersPopover', { read: RtPopoverDirective });
 
     protected readonly filtersPanelBox: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('filtersPanelBox');
@@ -146,10 +158,28 @@ export class RtPageBarComponent {
         transform: booleanAttribute,
     });
 
+    /**
+     * Отборы в шторке изменены и не применены — слово приложения. Шторка сама видит ввод в полях с
+     * событиями `input` и `change`; выбор в списке кита таких событий не шлёт, и о нём говорит
+     * приложение. С неприменённым вводом шторка перед закрытием спрашивает, применить ли его.
+     */
+    public readonly filtersChanged: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
     public readonly actionClick: OutputEmitterRef<string> = output<string>();
 
     /** Нажата «Применить» в шторке отборов узкого вида. */
     public readonly filtersApply: OutputEmitterRef<void> = output<void>();
+
+    /** Нажата «Сбросить» в шторке отборов узкого вида: приложение очищает отборы. */
+    public readonly filtersReset: OutputEmitterRef<void> = output<void>();
+
+    /**
+     * На вопрос перед закрытием шторки отборов ответили «Не применять»: приложение возвращает полям
+     * применённые значения. Поля отборов принадлежат приложению, и сама шапка вернуть их не может.
+     */
+    public readonly filtersDiscard: OutputEmitterRef<void> = output<void>();
 
     constructor() {
         const destroyRef: DestroyRef = inject(DestroyRef);
@@ -193,6 +223,12 @@ export class RtPageBarComponent {
     /** Панель стоит в перекрытии в конце страницы: фокус переходит в неё, иначе Tab уходит мимо отборов. */
     protected onPanelOpened(): void {
         afterNextRender((): void => this.filtersPanelBox()?.nativeElement.focus(), { injector: this.#injector });
+    }
+
+    /** Сброс отборов: очищает их приложение, шторка остаётся открытой и больше не считает ввод неприменённым. */
+    protected onReset(): void {
+        this.filtersReset.emit();
+        this.sheetTouched.set(false);
     }
 
     protected onApply(): void {

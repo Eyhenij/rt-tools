@@ -81,7 +81,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
 Given a multiselect with two values chosen, open in the bottom sheet
 When the sheet is drawn
-Then its footer says «Selected: 2» and carries a reset and a done button
+Then its footer says «Selected: 2» and carries a reset, and the done button stands in the header
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
@@ -93,10 +93,10 @@ Then the choice is empty, the multiselect reports it, and the sheet stays open
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
-### SC-UKV-1679 — the done button in the footer closes the sheet
+### SC-UKV-1679 — the done button in the header closes the sheet
 
 Given a multiselect open in the bottom sheet
-When the done button in the footer is pressed
+When the done button in the header is pressed
 Then the bottom sheet is closed, and the choice made stays
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.

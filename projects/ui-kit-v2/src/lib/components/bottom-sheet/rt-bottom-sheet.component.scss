@@ -11,6 +11,11 @@
         --rt-bottom-sheet-shadow: var(--rt-shadow-card-soft);
         --rt-bottom-sheet-transition-duration: var(--rt-duration-base);
         --rt-bottom-sheet-footer-border-width: var(--rt-border-width-thin);
+        --rt-bottom-sheet-confirm-radius: var(--rt-radius-xl);
+
+        /* Место над клавиатурой телефона: оба свойства шторка пишет сама, пока клавиатура открыта. */
+        --rt-bottom-sheet-keyboard-top: 0;
+        --rt-bottom-sheet-keyboard-height: 100%;
 
         position: fixed;
         z-index: 1000;
@@ -41,11 +46,33 @@
             border-radius: var(--rt-bottom-sheet-radius) var(--rt-bottom-sheet-radius) 0 0;
             background: var(--rt-color-bg-surface);
             box-shadow: var(--rt-bottom-sheet-shadow);
+
+            /* Панель берёт фокус только кодом, после отмены вопроса: кольца у неё нет. */
+            outline: 0;
             transform: translateY(100%);
             transition: transform var(--rt-bottom-sheet-transition-duration) ease;
 
             &--dragging {
                 transition: none;
+            }
+
+            /* Шторка во всю высоту: панель занимает экран целиком, сверху остаётся полоса, в которой
+               видны скруглённые углы. Высота считается от самой шторки — она стоит на весь экран, а
+               в ящике витрины на весь ящик; предел берётся от видимой области (`dvh`), чтобы панель
+               не уходила под полосы браузера на телефоне. */
+            &--full {
+                height: calc(100% - var(--rt-space-2) - var(--rt-space-1));
+                max-height: calc(100dvh - var(--rt-space-2) - var(--rt-space-1));
+            }
+
+            /* Человек печатает в поле шторки. На сенсорном экране это открытая клавиатура: шторка
+               встаёт во всю высоту, чтобы список или поля остались видны над ней. Признак —
+               указатель, а не ширина окна: в узком окне с мышью клавиатуры нет, и высота прежняя. */
+            @media (pointer: coarse) {
+                &--typing {
+                    height: calc(100% - var(--rt-space-2) - var(--rt-space-1));
+                    max-height: calc(100dvh - var(--rt-space-2) - var(--rt-space-1));
+                }
             }
         }
 
@@ -54,32 +81,66 @@
             height: 4px;
             align-self: center;
             border-radius: var(--rt-bottom-sheet-handle-radius);
-            margin: var(--rt-space-4) 0;
+            margin: calc(var(--rt-space-2) + var(--rt-space-1)) 0 var(--rt-space-2);
             background: var(--rt-color-border-default);
             cursor: grab;
             touch-action: none;
         }
 
+        /* Шапка: кнопка закрытия слева, заголовок по центру, действие справа. Крайние колонки равны
+           (`1fr`), поэтому заголовок стоит по центру панели, что бы ни стояло по бокам. Края шапки
+           стоят в 12 от краёв панели: шаги 8 и 4 шкалы отступов. */
         &__header {
-            display: flex;
-            justify-content: center;
-            padding: 0 var(--rt-space-5) var(--rt-space-4);
+            display: grid;
+            flex-shrink: 0;
+            align-items: center;
+            padding: 0 calc(var(--rt-space-2) + var(--rt-space-1)) calc(var(--rt-space-2) + var(--rt-space-1));
             color: var(--rt-color-text-primary);
             font-weight: var(--rt-font-weight-semibold);
+            gap: var(--rt-space-2);
+            grid-template-columns: minmax(max-content, 1fr) auto minmax(max-content, 1fr);
+        }
+
+        /* Своя шапка: раскладку даёт шаблон приложения, шторка оставляет поля и зазор, колонок не
+           задаёт. */
+        &__header--own {
+            display: flex;
+            grid-template-columns: none;
+        }
+
+        &__start {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        &__title {
+            display: flex;
+            min-width: 0;
+            justify-content: center;
+            text-align: center;
+        }
+
+        &__action {
+            display: flex;
+            justify-content: flex-end;
         }
 
         /* Тело — единственная прокручиваемая зона: панель упирается в предел высоты, а ручка,
            шапка и подвал остаются на месте. `min-height: 0` обязателен — без него элемент флекса
            не сжимается ниже своего содержимого, и прокрутка не включается. Колонка флекса
-           сохраняет раскладку содержимого прежней: до тела оно стояло прямо в колонке панели. */
+           сохраняет раскладку содержимого прежней: до тела оно стояло прямо в колонке панели.
+           Зона прокрутки заходит на 4 в нижнее поле шапки: кольцо фокуса у поля, стоящего сразу
+           под шапкой, иначе обрезалось бы верхним краем тела. Место содержимого это не меняет. */
         &__body {
             display: flex;
             min-width: 0;
             min-height: 0;
             flex: 1 1 auto;
             flex-direction: column;
+            margin-block-start: calc(-1 * var(--rt-space-1));
             overflow-y: auto;
             overscroll-behavior: contain;
+            padding-block-start: var(--rt-space-1);
         }
 
         /* Подвал не прокручивается: кнопки стоят внизу при любой длине тела. Нижний отступ
@@ -97,6 +158,67 @@
 
             &:empty {
                 display: none;
+            }
+        }
+
+        /* Вопрос перед закрытием стоит в нижней части экрана поверх шторки и затемняет её. Нижний
+           отступ прибавляет вырез экрана. */
+        &__confirm {
+            position: absolute;
+            display: flex;
+            align-items: flex-end;
+            padding: calc(var(--rt-space-2) + var(--rt-space-1)) calc(var(--rt-space-2) + var(--rt-space-1))
+                calc(var(--rt-space-6) + env(safe-area-inset-bottom));
+            background: var(--rt-overlay-black-50);
+            inset: 0;
+        }
+
+        &__confirm-card {
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+            padding: var(--rt-space-5);
+            border-radius: var(--rt-bottom-sheet-confirm-radius);
+            background: var(--rt-color-bg-surface);
+            box-shadow: var(--rt-bottom-sheet-shadow);
+            gap: var(--rt-space-2);
+        }
+
+        &__confirm-title {
+            margin: 0;
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-md);
+            font-weight: var(--rt-font-weight-semibold);
+            line-height: var(--rt-leading-normal);
+        }
+
+        /* Строка 20 из макета — шаг шкалы отступов: множителя с такой высотой у кегля 14 нет. */
+        &__confirm-message {
+            margin: 0;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+            line-height: var(--rt-space-5);
+        }
+
+        &__confirm-actions {
+            display: flex;
+            flex-direction: column;
+            margin-top: calc(var(--rt-space-2) + var(--rt-space-1));
+            gap: var(--rt-space-2);
+        }
+
+        /* Экранная клавиатура открыта: шторка встаёт в видимую часть окна над ней. Клавиатура ложится
+           поверх окна и его не сжимает, поэтому место над ней приходит числами от самой шторки.
+           Только там, где указатель — палец: у окна с мышью экранной клавиатуры нет. */
+        @media (pointer: coarse) {
+            &--keyboard {
+                top: var(--rt-bottom-sheet-keyboard-top);
+                bottom: auto;
+                height: var(--rt-bottom-sheet-keyboard-height);
+            }
+
+            &--keyboard &__panel--typing {
+                max-height: calc(100% - var(--rt-space-2) - var(--rt-space-1));
             }
         }
 
@@ -123,6 +245,14 @@
 
             .rt-bottom-sheet__panel {
                 transform: translateY(100%);
+            }
+        }
+
+        /* Человек просил систему убавить движение: шторка появляется и уходит без выезда. */
+        @media (prefers-reduced-motion: reduce) {
+            &__backdrop,
+            &__panel {
+                transition: none;
             }
         }
 

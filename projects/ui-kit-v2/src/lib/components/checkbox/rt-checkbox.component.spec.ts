@@ -238,4 +238,27 @@ describe('RtCheckboxComponent', (): void => {
             expect(seen).toEqual([true, false]);
         });
     });
+
+    describe('описание и вид карточки', (): void => {
+        it('без описания второй строки нет', (): void => {
+            expect(qa(setup(), 'checkbox-description')).toBeNull();
+        });
+
+        it('вход description рисует вторую строку под подписью', (): void => {
+            const fixture: ComponentFixture<RtCheckboxComponent> = setup({ description: 'Письма на адрес поддержки' });
+
+            expect(textOf(qa(fixture, 'checkbox-description'))).toBe('Письма на адрес поддержки');
+            expect(classesOf(control(fixture))).toContain('rt-checkbox--described');
+        });
+
+        it('вход card ставит вид карточки: рамка, содержимое слева, квадрат справа', (): void => {
+            const fixture: ComponentFixture<RtCheckboxComponent> = setup({ card: true });
+
+            expect(classesOf(control(fixture))).toContain('rt-checkbox--card');
+        });
+
+        it('без входа card вида карточки нет', (): void => {
+            expect(classesOf(control(setup()))).not.toContain('rt-checkbox--card');
+        });
+    });
 });

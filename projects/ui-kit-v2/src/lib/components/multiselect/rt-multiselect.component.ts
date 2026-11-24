@@ -32,10 +32,10 @@ import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
-import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { RtPopoverDirective, RtSheetTemplatesDirective } from '@rt-tools/ui-kit-v2/popover';
 import { IRtPopover } from '@rt-tools/ui-kit-v2/popover';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
-import { RtOptionList, TRtOptionListAction } from '@rt-tools/ui-kit-v2/core';
+import { RtOptionList } from '@rt-tools/ui-kit-v2/core';
 import {
     rtTreeBranchState,
     rtTreeFind,
@@ -52,6 +52,8 @@ import { RtMultiselectExtraDirective } from './rt-multiselect-extra.directive';
 import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
 import { RtTagComponent } from '@rt-tools/ui-kit-v2/tag';
 import { RtToggleSwitchComponent } from '@rt-tools/ui-kit-v2/toggle-switch';
+import { RtCheckboxComponent } from '@rt-tools/ui-kit-v2/checkbox';
+import { rtMultiselectOpenKey } from './rt-multiselect-keys.logic';
 import { RtMultiselectLabelPipe } from './rt-multiselect-label.pipe';
 import { IRtMultiselectSummary, TRtMultiselectLook, rtMultiselectKnownCount } from './rt-multiselect-toggles.logic';
 import { RtMultiselectTogglesView } from './rt-multiselect-toggles.view';
@@ -75,7 +77,7 @@ function nextPanelId(): number {
 @Component({
     selector: 'rt-multiselect',
     templateUrl: './rt-multiselect.component.html',
-    styleUrl: './rt-multiselect.component.scss',
+    styleUrls: ['./rt-multiselect.component.scss', './rt-multiselect-views.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
@@ -91,6 +93,7 @@ function nextPanelId(): number {
         RtPopoverDirective,
         RtTagComponent,
         RtToggleSwitchComponent,
+        RtCheckboxComponent,
         RtSlotOutletDirective,
         BlockDirective,
         ElemDirective,
@@ -103,7 +106,10 @@ function nextPanelId(): number {
         // Алиас базового токена — для contentChild(RtFormControlBase) в rt-field.
         { provide: RtFormControlBase, useExisting: forwardRef(() => RtMultiselectComponent) },
     ],
-    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
+    hostDirectives: [
+        { directive: RtRadiusDirective, inputs: ['radius'] },
+        { directive: RtSheetTemplatesDirective, inputs: ['sheetHeaderTemplate', 'sheetFooterTemplate'] },
+    ],
     host: {
         class: BEM_BLOCK,
         '[class.rt-multiselect--open]': 'isOpen()',
@@ -140,7 +146,10 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
     protected readonly popover: Signal<RtPopoverDirective> = viewChild.required(RtPopoverDirective);
 
     /** Список открыт в нижней шторке: под ним стоит подвал «Выбрано · Сбросить · Готово». */
-    protected readonly openedInSheet: Signal<boolean> = computed((): boolean => this.popover().openedInSheet());
+    protected readonly openedInSheet: Signal<boolean> = computed((): boolean => this.popover().shownInSheet());
+
+    /** Список рисуется карточками: он открыт в шторке, и вход `sheetCards` их не выключил. */
+    protected readonly cards: Signal<boolean> = computed((): boolean => this.sheetCards() && this.openedInSheet());
 
     /** «Выбрано: N» в подвале шторки — подпись с подстановкой, потому берётся вызовом. */
     protected readonly selectedLabel: Signal<string> = rtKitLabel(
@@ -280,6 +289,15 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
      * закрывает её. Включена по умолчанию; `false` оставляет список у поля на любой ширине.
      */
     public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
+    /**
+     * Карточки выбора в шторке: каждая опция — карточка с подписью, пояснением и флажком кита
+     * справа; у вида переключателей справа остаётся переключатель. Включены по умолчанию; `false`
+     * возвращает в шторку строки, какими список стоит у поля.
+     */
+    public readonly sheetCards: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
 
@@ -431,37 +449,11 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
     }
 
     #handleOpenKeydown(event: KeyboardEvent): void {
-        const action: TRtOptionListAction = this.optionList.actionOf(event.key);
-        if (action === 'none') {
-            return;
-        }
-        event.preventDefault();
-        switch (action) {
-            case 'next':
-                this.optionList.move(1);
-                break;
-            case 'previous':
-                this.optionList.move(-1);
-                break;
-            case 'first':
-                this.optionList.first();
-                break;
-            case 'last':
-                this.optionList.last();
-                break;
-            case 'choose':
-                this.#toggleActive();
-                break;
-            case 'close':
-                // Escape закрывает один слой: панель. Без остановки событие всплывает до document,
-                // и оверлей под панелью — боковая панель, окно — закрывается вместе с ней.
-                event.stopPropagation();
-                this.popover().close();
-                break;
-            case 'side':
-                this.#sideKey(event.key);
-                break;
-        }
+        rtMultiselectOpenKey(event, this.optionList, {
+            choose: (): void => this.#toggleActive(),
+            close: (): void => this.popover().close(),
+            side: (key: string): void => this.#sideKey(key),
+        });
     }
 
     #checkOf(row: IRtSelect.Row<TValue>): IRtSelect.TBranchState {

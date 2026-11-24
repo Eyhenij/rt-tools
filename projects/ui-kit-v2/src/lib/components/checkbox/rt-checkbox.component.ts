@@ -113,6 +113,14 @@ export class RtCheckboxComponent implements ControlValueAccessor {
         transform: booleanAttribute,
     });
 
+    /** Вид «карточка»: рамка, содержимое слева, квадрат справа — как у радиокнопки. */
+    public readonly card: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /** Пояснение второй строкой под подписью. */
+    public readonly description: InputSignal<string> = input<string>('');
+
     public writeValue(value: boolean | null | undefined): void {
         this.#model.set(value === true);
     }

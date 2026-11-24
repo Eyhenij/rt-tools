@@ -780,6 +780,8 @@ export type TRtConsumerHandleName =
     | '--rt-option-selected-state-layer-color'
     | '--rt-page-header-bg'
     | '--rt-pagination-field-font-size'
+    | '--rt-sheet-card-bg'
+    | '--rt-sheet-card-bg-hover'
     | '--rt-side-menu-sub-item-letter-spacing'
     | '--rt-stepper-current-color'
     | '--rt-stepper-description-color'
@@ -1631,6 +1633,8 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-option-selected-state-layer-color',
     '--rt-page-header-bg',
     '--rt-pagination-field-font-size',
+    '--rt-sheet-card-bg',
+    '--rt-sheet-card-bg-hover',
     '--rt-side-menu-sub-item-letter-spacing',
     '--rt-stepper-current-color',
     '--rt-stepper-description-color',

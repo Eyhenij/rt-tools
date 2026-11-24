@@ -1,0 +1,24 @@
+<div style="box-sizing: border-box; inline-size: 375px; padding: 16px">
+    @switch (kind) {
+        @case ('range') {
+            <rt-field label="Период">
+                <rt-date-range [ngModel]="range" [attr.data-story-trigger]="triggerAttribute" />
+            </rt-field>
+        }
+        @case ('time') {
+            <rt-field label="Время заезда">
+                <rt-date-picker type="time" [ngModel]="time" [attr.data-story-trigger]="triggerAttribute" />
+            </rt-field>
+        }
+        @case ('midnight') {
+            <rt-field label="Время выезда">
+                <rt-date-picker type="time" timeStart="midnight" [ngModel]="empty" [attr.data-story-trigger]="triggerAttribute" />
+            </rt-field>
+        }
+        @default {
+            <rt-field label="Заезд">
+                <rt-date-picker type="datetime-local" [ngModel]="moment" [attr.data-story-trigger]="triggerAttribute" />
+            </rt-field>
+        }
+    }
+</div>

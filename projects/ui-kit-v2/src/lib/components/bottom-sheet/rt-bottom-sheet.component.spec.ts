@@ -1,7 +1,8 @@
+import { ScrollStrategy, ScrollStrategyOptions } from '@angular/cdk/overlay';
 import { ChangeDetectionStrategy, Component, WritableSignal, signal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
-import { createRtFixture, hostClasses, qa, renderedText, setInputs } from '../../../testing/rt-kit-testing';
+import { classesOf, createRtFixture, hostClasses, qa, renderedText, setInputs } from '../../../testing/rt-kit-testing';
 import { DRAG_DISMISS_THRESHOLD_PX } from './rt-bottom-sheet.logic';
 import { RtBottomSheetComponent } from './rt-bottom-sheet.component';
 
@@ -70,6 +71,21 @@ class BottomSheetHostComponent {
 class BottomSheetFooterHostComponent {
     public lastChange: boolean | null = null;
 }
+
+/** Действие шторки приходит своим слотом — кнопка справа в шапке. */
+@Component({
+    selector: 'rt-bottom-sheet-action-host',
+    template: `
+        <rt-bottom-sheet [open]="true">
+            <h2 sheetHeader>Каналы</h2>
+            <button sheetAction type="button">Готово</button>
+            <p>Содержимое листа</p>
+        </rt-bottom-sheet>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtBottomSheetComponent],
+})
+class BottomSheetActionHostComponent {}
 
 function setup(open: boolean = true): ComponentFixture<RtBottomSheetComponent> {
     return createRtFixture(RtBottomSheetComponent, { open });
@@ -241,11 +257,15 @@ describe('RtBottomSheetComponent', (): void => {
 
         it('без спроецированного подвала элемент пуст — правило :empty убирает его из раскладки', (): void => {
             // Ни пробела, ни перевода строки: текстовый узел снял бы с элемента :empty,
-            // и пустой подвал занял бы место с линией сверху.
+            // и пустой подвал занял бы место с линией сверху. Узел-комментарий ветки шаблона :empty не
+            // снимает: он не элемент и не текст.
             const fixture: ComponentFixture<BottomSheetHostComponent> = createRtFixture(BottomSheetHostComponent);
             const footer: HTMLElement = qa(fixture, 'bottom-sheet-footer')?.nativeElement as HTMLElement;
+            const drawn: ChildNode[] = Array.from(footer.childNodes).filter(
+                (node: ChildNode): boolean => node.nodeType !== Node.COMMENT_NODE
+            );
 
-            expect(footer.childNodes.length).toBe(0);
+            expect(drawn.length).toBe(0);
             expect(footer.matches(':empty')).toBe(true);
         });
 
@@ -297,5 +317,105 @@ describe('RtBottomSheetComponent', (): void => {
         fixture.detectChanges();
 
         expect(hostClasses(fixture)).toContain('rt-bottom-sheet--open');
+    });
+
+    describe('шапка', (): void => {
+        it('SC-UKV-1772 — кнопка закрытия стоит в шапке первой, заголовок — в своей ячейке по центру', (): void => {
+            const fixture: ComponentFixture<BottomSheetHostComponent> = createRtFixture(BottomSheetHostComponent);
+            const header: HTMLElement = qa(fixture, 'bottom-sheet-header')?.nativeElement as HTMLElement;
+            const close: HTMLElement = qa(fixture, 'bottom-sheet-close')?.nativeElement as HTMLElement;
+
+            expect(header.firstElementChild?.contains(close)).toBe(true);
+            expect(close.querySelector('button')?.getAttribute('aria-label')).toBe('Close');
+            expect((qa(fixture, 'bottom-sheet-title')?.nativeElement as HTMLElement).textContent?.trim()).toBe('Фильтры');
+        });
+
+        it('SC-UKV-1772 — кнопка закрытия просит закрыть лист так же, как подложка', (): void => {
+            const fixture: ComponentFixture<BottomSheetHostComponent> = createRtFixture(BottomSheetHostComponent);
+
+            // Якорь стоит на теге кнопки кита, а нажимают её внутреннюю кнопку.
+            (qa(fixture, 'bottom-sheet-close')?.nativeElement as HTMLElement).querySelector('button')?.click();
+            fixture.detectChanges();
+
+            expect(fixture.componentInstance.lastChange).toBe(false);
+        });
+
+        it('SC-UKV-1774 — без заголовка кнопка закрытия остаётся, ячейка заголовка пуста', (): void => {
+            const fixture: ComponentFixture<RtBottomSheetComponent> = setup();
+
+            expect(qa(fixture, 'bottom-sheet-close')).not.toBeNull();
+            expect((qa(fixture, 'bottom-sheet-title')?.nativeElement as HTMLElement).textContent?.trim()).toBe('');
+        });
+
+        it('действие шторки приходит своим слотом и встаёт в шапке последним', (): void => {
+            const fixture: ComponentFixture<BottomSheetActionHostComponent> = createRtFixture(BottomSheetActionHostComponent);
+            const header: HTMLElement = qa(fixture, 'bottom-sheet-header')?.nativeElement as HTMLElement;
+            const action: HTMLElement = qa(fixture, 'bottom-sheet-action')?.nativeElement as HTMLElement;
+
+            expect(header.lastElementChild).toBe(action);
+            expect(action.textContent?.trim()).toBe('Готово');
+            expect((qa(fixture, 'bottom-sheet-body')?.nativeElement as HTMLElement).textContent).not.toContain('Готово');
+        });
+    });
+
+    describe('высота', (): void => {
+        it('по умолчанию панель растёт по содержимому — модификатора полной высоты нет', (): void => {
+            expect(classesOf(qa(setup(), 'bottom-sheet-panel'))).not.toContain('rt-bottom-sheet__panel--full');
+        });
+
+        it('вход fullHeight ставит панели модификатор полной высоты', (): void => {
+            const fixture: ComponentFixture<RtBottomSheetComponent> = createRtFixture(RtBottomSheetComponent, {
+                open: true,
+                fullHeight: true,
+            });
+
+            expect(classesOf(qa(fixture, 'bottom-sheet-panel'))).toContain('rt-bottom-sheet__panel--full');
+        });
+    });
+
+    describe('Escape и прокрутка страницы', (): void => {
+        function escape(): void {
+            document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        }
+
+        it('Escape просит закрыть открытый лист', (): void => {
+            const fixture: ComponentFixture<BottomSheetHostComponent> = createRtFixture(BottomSheetHostComponent);
+
+            escape();
+            fixture.detectChanges();
+
+            expect(fixture.componentInstance.lastChange).toBe(false);
+        });
+
+        it('Escape закрытому листу ничего не говорит', (): void => {
+            const fixture: ComponentFixture<BottomSheetHostComponent> = createRtFixture(BottomSheetHostComponent);
+            fixture.componentInstance.open.set(false);
+            fixture.detectChanges();
+
+            escape();
+            fixture.detectChanges();
+
+            expect(fixture.componentInstance.lastChange).toBeNull();
+        });
+
+        it('открытый лист держит прокрутку страницы, закрытый отпускает', (): void => {
+            const calls: string[] = [];
+            const lock: Pick<ScrollStrategy, 'enable' | 'disable'> = {
+                enable: (): void => void calls.push('enable'),
+                disable: (): void => void calls.push('disable'),
+            };
+            const fixture: ComponentFixture<BottomSheetHostComponent> = createRtFixture(
+                BottomSheetHostComponent,
+                {},
+                { providers: [{ provide: ScrollStrategyOptions, useValue: { block: (): typeof lock => lock } }] }
+            );
+
+            expect(calls).toEqual(['enable']);
+
+            fixture.componentInstance.open.set(false);
+            fixture.detectChanges();
+
+            expect(calls).toEqual(['enable', 'disable']);
+        });
     });
 });

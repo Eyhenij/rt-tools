@@ -8,14 +8,15 @@
 
 Свои входы поверх общих из [`RtFormControlBase`](../form-control/CONTEXT.md):
 
-| вход                | тип                                                     | умолчание         |
-| ------------------- | ------------------------------------------------------- | ----------------- |
-| `options`           | `ReadonlyArray<{ label, value, disabled?, children? }>` | `[]`              |
-| `placeholder`       | `string`                                                | `''`              |
-| `iconLeft`          | `IRtIcon.Name \| null`                                  | `null`            |
-| `filter`            | `boolean`                                               | `false`           |
-| `filterPlaceholder` | `string`                                                | `''` → `uiSearch` |
-| `floatingLabel`     | `string \| null`                                        | `null`            |
+| вход                | тип                                                                   | умолчание         |
+| ------------------- | --------------------------------------------------------------------- | ----------------- |
+| `options`           | `ReadonlyArray<{ label, value, description?, disabled?, children? }>` | `[]`              |
+| `placeholder`       | `string`                                                              | `''`              |
+| `iconLeft`          | `IRtIcon.Name \| null`                                                | `null`            |
+| `filter`            | `boolean`                                                             | `false`           |
+| `filterPlaceholder` | `string`                                                              | `''` → `uiSearch` |
+| `floatingLabel`     | `string \| null`                                                      | `null`            |
+| `sheetCards`        | `boolean` — карточки выбора в шторке                                  | `true`            |
 
 | выход             | тип              |
 | ----------------- | ---------------- |
@@ -36,6 +37,13 @@
 `ControlValueAccessor`; отдельный выход нужен там, где на выбор надо среагировать (перезагрузить
 зависимый список), не подписываясь на `valueChanges` всей формы. Очистка крестиком тоже
 поднимает его — со значением `null`.
+
+**В шторке на телефоне список стоит карточками.** Карточка держит подпись слева и радиокнопку
+кита справа; `description` опции — её вторая строка, у поля строка его не показывает.
+`[sheetCards]="false"` возвращает в шторку строки, какими список стоит у поля. Шторка с поиском
+открыта по высоте содержимого и встаёт во всю высоту, только пока человек печатает в поиске на
+сенсорном экране; с мышью высота прежняя. Это замечает сама шторка. Договорённость —
+`docs/specs/ui-kit-v2/sheet-header-cards/`.
 
 ## Клавиатура
 

@@ -1,8 +1,10 @@
-import { ComponentFixture } from '@angular/core/testing';
+import { ApplicationRef, Provider, signal, WritableSignal } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EFilterOperatorType, IFilterModel } from '@rt-tools/utils';
 
 import { createRtFixture, qa, qaAll, setInputs } from '../../../../testing/rt-kit-testing';
+import { BreakpointsService } from '../../../platform';
 import { IRtTable } from '../rt-table.model';
 import { RtTableFilterHeaderComponent } from './rt-table-filter-header.component';
 
@@ -256,5 +258,71 @@ describe('RtTableFilterHeaderComponent', (): void => {
         fixture.detectChanges();
 
         expect(qa(fixture, 'table-filter-select')?.componentInstance.placeholder()).not.toBe('');
+    });
+});
+
+/** Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. */
+class BreakpointsStub {
+    public readonly viewportNarrow: WritableSignal<boolean> = signal<boolean>(true);
+    public readonly phone: WritableSignal<boolean> = signal<boolean>(true);
+    public readonly narrow: WritableSignal<boolean> = signal<boolean>(true);
+}
+
+describe('RtTableFilterHeaderComponent — виды сравнения в шторке (вход sheetCards)', (): void => {
+    function open(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtTableFilterHeaderComponent> {
+        const providers: Provider[] = [{ provide: BreakpointsService, useValue: new BreakpointsStub() }];
+        const fixture: ComponentFixture<RtTableFilterHeaderComponent> = createRtFixture(
+            RtTableFilterHeaderComponent,
+            { propertyName: 'title', filter: TEXT_FILTER, ...inputs },
+            { providers }
+        );
+        qa(fixture, 'table-filter-operator')?.nativeElement.click();
+        fixture.detectChanges();
+        TestBed.inject(ApplicationRef).tick();
+        fixture.detectChanges();
+
+        return fixture;
+    }
+
+    function items(): HTMLElement[] {
+        return Array.from(document.querySelectorAll<HTMLElement>('.rt-popover-sheet [qa-dataid="table-filter-operator-item"]'));
+    }
+
+    afterEach((): void => {
+        document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
+    });
+
+    it('SC-UKV-1782 — виды сравнения стоят карточками с радиокнопкой кита, нынешний отмечен', (): void => {
+        open();
+
+        const radios: HTMLElement[] = items().map((item: HTMLElement): HTMLElement => item.querySelector('[role="radio"]') as HTMLElement);
+
+        expect(radios.length).toBeGreaterThan(1);
+        expect(radios.every((radio: HTMLElement): boolean => radio.classList.contains('rt-radio-button--card'))).toBe(true);
+        expect(radios.filter((radio: HTMLElement): boolean => radio.getAttribute('aria-checked') === 'true')).toHaveLength(1);
+        expect(document.querySelector('[qa-dataid="table-filter-operators"]')?.getAttribute('role')).toBe('radiogroup');
+    });
+
+    it('нажатие на карточку меняет вид сравнения и закрывает шторку', (): void => {
+        const fixture: ComponentFixture<RtTableFilterHeaderComponent> = open();
+        const before: string = (qa(fixture, 'table-filter-operator')?.nativeElement as HTMLElement).textContent?.trim() ?? '';
+        const unchecked: HTMLElement = items()
+            .map((item: HTMLElement): HTMLElement => item.querySelector('[role="radio"]') as HTMLElement)
+            .find((radio: HTMLElement): boolean => radio.getAttribute('aria-checked') === 'false') as HTMLElement;
+
+        unchecked.click();
+        fixture.detectChanges();
+        TestBed.inject(ApplicationRef).tick();
+
+        expect((qa(fixture, 'table-filter-operator')?.nativeElement as HTMLElement).textContent?.trim()).not.toBe(before);
+        expect(document.querySelector('.rt-popover-sheet .rt-bottom-sheet--open')).toBeNull();
+    });
+
+    it('SC-UKV-1779 — sheetCards=false оставляет в шторке пункты меню', (): void => {
+        open({ sheetCards: false });
+
+        expect(items().length).toBeGreaterThan(1);
+        expect(document.querySelector('.rt-popover-sheet [role="radio"]')).toBeNull();
+        expect(document.querySelector('[qa-dataid="table-filter-operators"]')?.getAttribute('role')).toBe('menu');
     });
 });

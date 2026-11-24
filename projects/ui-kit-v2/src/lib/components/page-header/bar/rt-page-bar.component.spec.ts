@@ -1,9 +1,10 @@
 import { signal, ChangeDetectionStrategy, Component, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 
 import { WINDOW } from '@rt-tools/core';
 
-import { createRtFixture, qa, qaAll } from '../../../../testing/rt-kit-testing';
+import { classesOf, createRtFixture, qa, qaAll } from '../../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../../platform';
 import { RT_POPOVER_SHEET } from '../../popover/rt-popover-sheet.token';
 import { RtPageBarFilterDirective, RtPageBarSearchDirective } from './rt-page-bar-slots.directive';
@@ -121,6 +122,123 @@ describe('rt-page-bar', (): void => {
         (qa(fixture, 'page-bar-filters')?.nativeElement as HTMLElement).click();
         fixture.detectChanges();
         (qa(fixture, 'page-bar-apply')?.nativeElement as HTMLElement).click();
+        fixture.detectChanges();
+
+        expect(qa(fixture, 'page-bar-sheet')).toBeNull();
+    });
+
+    it('SC-UKV-1784 — the filters sheet opens by the height of its fields, the apply button stands in its header', (): void => {
+        const fixture: ComponentFixture<PageBarHostComponent> = setup(375);
+
+        (qa(fixture, 'page-bar-filters')?.nativeElement as HTMLElement).click();
+        fixture.detectChanges();
+
+        expect(classesOf(qa(fixture, 'bottom-sheet-panel'))).not.toContain('rt-bottom-sheet__panel--full');
+        const apply: HTMLElement = qa(fixture, 'page-bar-apply')?.nativeElement as HTMLElement;
+        expect(apply.closest('[qa-dataid="bottom-sheet-action"]')).not.toBeNull();
+        // Залитая кнопка — та, у которой нет ни рамочного, ни текстового вида.
+        expect(apply.classList).not.toContain('rt-button--outlined');
+        expect(apply.classList).not.toContain('rt-button--text');
+    });
+
+    it('SC-UKV-1755 — the reset in the footer of the filters sheet reports the reset and keeps the sheet open', (): void => {
+        const fixture: ComponentFixture<PageBarHostComponent> = setup(375);
+        let reset: number = 0;
+        (fixture.debugElement.query(By.directive(RtPageBarComponent)).componentInstance as RtPageBarComponent).filtersReset.subscribe(
+            (): void => {
+                reset += 1;
+            }
+        );
+        (qa(fixture, 'page-bar-filters')?.nativeElement as HTMLElement).click();
+        fixture.detectChanges();
+        const button: HTMLButtonElement = qa(fixture, 'page-bar-reset')?.nativeElement as HTMLButtonElement;
+
+        expect(button.closest('[qa-dataid="bottom-sheet-footer"]')).not.toBeNull();
+        // Сбрасывать нечего: отборы не стоят, в шторке ничего не введено.
+        expect(button.disabled).toBe(true);
+
+        (qa(fixture, 'page-bar-sheet')?.nativeElement as HTMLElement).dispatchEvent(new Event('input', { bubbles: true }));
+        fixture.detectChanges();
+        expect(button.disabled).toBe(false);
+
+        button.click();
+        fixture.detectChanges();
+
+        expect(reset).toBe(1);
+        expect(qa(fixture, 'page-bar-sheet')).not.toBeNull();
+        // После сброса ввод не считается неприменённым: шторка закрывается без вопроса.
+        (qa(fixture, 'bottom-sheet-close')?.nativeElement as HTMLElement).querySelector('button')?.click();
+        fixture.detectChanges();
+        expect(qa(fixture, 'bottom-sheet-confirm')).toBeNull();
+    });
+
+    it('SC-UKV-1759 — the answer "do not apply" reports that the input is dropped and closes the sheet', (): void => {
+        const fixture: ComponentFixture<PageBarHostComponent> = setup(375);
+        let dropped: number = 0;
+        (fixture.debugElement.query(By.directive(RtPageBarComponent)).componentInstance as RtPageBarComponent).filtersDiscard.subscribe(
+            (): void => {
+                dropped += 1;
+            }
+        );
+        (qa(fixture, 'page-bar-filters')?.nativeElement as HTMLElement).click();
+        fixture.detectChanges();
+        (qa(fixture, 'page-bar-sheet')?.nativeElement as HTMLElement).dispatchEvent(new Event('input', { bubbles: true }));
+        fixture.detectChanges();
+
+        (qa(fixture, 'bottom-sheet-close')?.nativeElement as HTMLElement).querySelector('button')?.click();
+        fixture.detectChanges();
+        (qa(fixture, 'bottom-sheet-confirm-discard')?.nativeElement as HTMLElement).click();
+        fixture.detectChanges();
+
+        expect(dropped).toBe(1);
+        expect(qa(fixture, 'page-bar-sheet')).toBeNull();
+    });
+
+    it('SC-UKV-1785 — an input made in the sheet makes it ask before closing, apply reports the filters', (): void => {
+        const fixture: ComponentFixture<PageBarHostComponent> = setup(375);
+        let applied: number = 0;
+        (fixture.debugElement.query(By.directive(RtPageBarComponent)).componentInstance as RtPageBarComponent).filtersApply.subscribe(
+            (): void => {
+                applied += 1;
+            }
+        );
+        (qa(fixture, 'page-bar-filters')?.nativeElement as HTMLElement).click();
+        fixture.detectChanges();
+
+        (qa(fixture, 'page-bar-sheet')?.nativeElement as HTMLElement).dispatchEvent(new Event('input', { bubbles: true }));
+        fixture.detectChanges();
+        (qa(fixture, 'bottom-sheet-close')?.nativeElement as HTMLElement).querySelector('button')?.click();
+        fixture.detectChanges();
+
+        expect(qa(fixture, 'bottom-sheet-confirm')).not.toBeNull();
+        expect(qa(fixture, 'page-bar-sheet')).not.toBeNull();
+
+        (qa(fixture, 'bottom-sheet-confirm-apply')?.nativeElement as HTMLElement).click();
+        fixture.detectChanges();
+
+        expect(applied).toBe(1);
+        expect(qa(fixture, 'page-bar-sheet')).toBeNull();
+    });
+
+    it('SC-UKV-1787 — with nothing changed the close button closes the filters sheet at once', (): void => {
+        const fixture: ComponentFixture<PageBarHostComponent> = setup(375);
+        (qa(fixture, 'page-bar-filters')?.nativeElement as HTMLElement).click();
+        fixture.detectChanges();
+
+        (qa(fixture, 'bottom-sheet-close')?.nativeElement as HTMLElement).querySelector('button')?.click();
+        fixture.detectChanges();
+
+        expect(qa(fixture, 'bottom-sheet-confirm')).toBeNull();
+        expect(qa(fixture, 'page-bar-sheet')).toBeNull();
+    });
+
+    // Прокрутку страницы держит общая оболочка шторки; её блокировку проверяет спека самой оболочки.
+    it('SC-UKV-1788 — Escape closes the filters sheet', (): void => {
+        const fixture: ComponentFixture<PageBarHostComponent> = setup(375);
+        (qa(fixture, 'page-bar-filters')?.nativeElement as HTMLElement).click();
+        fixture.detectChanges();
+
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
         fixture.detectChanges();
 
         expect(qa(fixture, 'page-bar-sheet')).toBeNull();

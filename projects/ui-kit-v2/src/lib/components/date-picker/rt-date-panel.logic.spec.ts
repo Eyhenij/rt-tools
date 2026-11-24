@@ -10,6 +10,7 @@ import {
     rtDateNow,
     rtDateRead,
     rtDateSplit,
+    rtDateStartTime,
     rtDateTimeColumns,
     rtDateWeekdays,
     rtDateWrite,
@@ -160,5 +161,22 @@ describe('rt-date-panel.logic', () => {
         expect(rtDateCanPageYears(2024, -1, '2026-01-01', null)).toBe(false);
         expect(rtDateCanPageYears(2024, 1, null, '2035-12-31')).toBe(false);
         expect(rtDateCanPageYears(2024, 1, null, '2036-01-01')).toBe(true);
+    });
+
+    it('SC-UKV-1769 — the wheel starts at the current time rounded down to the step, or at midnight', () => {
+        const now: Date = new Date(2026, 8, 27, 14, 37);
+        const open: Omit<IRtDatePicker.TimeContext, 'hour'> = { step: 5, day: null, min: null, max: null };
+
+        expect(rtDateStartTime('now', now, open)).toBe('14:35');
+        expect(rtDateStartTime('now', now, { ...open, step: 1 })).toBe('14:37');
+        expect(rtDateStartTime('midnight', now, open)).toBe('00:00');
+    });
+
+    it('SC-UKV-1769 — a start time outside the bounds gives way to the first allowed one', () => {
+        const now: Date = new Date(2026, 8, 27, 14, 37);
+
+        expect(rtDateStartTime('midnight', now, { step: 5, day: null, min: '09:30', max: '18:00' })).toBe('09:30');
+        expect(rtDateStartTime('now', now, { step: 5, day: null, min: null, max: '10:00' })).toBe('00:00');
+        expect(rtDateStartTime('now', now, { step: 5, day: null, min: '14:50', max: null })).toBe('14:50');
     });
 });

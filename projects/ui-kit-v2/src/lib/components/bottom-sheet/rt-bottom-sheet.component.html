@@ -4,24 +4,95 @@
         rtElem="backdrop"
         qa-dataid="bottom-sheet-backdrop"
         [attr.aria-label]="t().bottomSheetClose"
+        [attr.inert]="confirming() ? '' : null"
         (click)="dismiss()"></button>
+    <!-- Пока показан вопрос, панель под ним недоступна: Tab ходит только по ответам. -->
     <div
         rtElem="panel"
         qa-dataid="bottom-sheet-panel"
         role="dialog"
         aria-modal="true"
+        tabindex="-1"
         [attr.aria-labelledby]="ariaLabelledby()"
-        [rtMod]="{ dragging: dragging() }"
-        [style.transform]="dragging() ? 'translateY(' + dragDeltaY() + 'px)' : null">
+        [attr.aria-label]="ariaLabel()"
+        [attr.inert]="confirming() ? '' : null"
+        [rtMod]="{ dragging: dragging(), full: fullHeight(), typing: typing() }"
+        [style.transform]="dragging() ? 'translateY(' + dragDeltaY() + 'px)' : null"
+        (focusin)="onFocusIn($event)">
         <div rtElem="handle" qa-dataid="bottom-sheet-handle" (pointerdown)="onDragStart($event)"></div>
-        <div rtElem="header" qa-dataid="bottom-sheet-header">
-            <ng-content select="[sheetHeader]" />
-        </div>
+        @if (headerTpl(); as ownHeader) {
+            <div rtElem="header" qa-dataid="bottom-sheet-header" [rtMod]="{ own: true }">
+                <ng-container [ngTemplateOutlet]="ownHeader" [ngTemplateOutletContext]="templateContext" />
+            </div>
+        } @else {
+            <div rtElem="header" qa-dataid="bottom-sheet-header">
+                <div rtElem="start">
+                    <rt-icon-button
+                        qa-dataid="bottom-sheet-close"
+                        icon="ico-close"
+                        variant="secondary"
+                        radius="full"
+                        [ariaLabel]="t().bottomSheetClose"
+                        (clicked)="dismiss()" />
+                </div>
+                <div rtElem="title" qa-dataid="bottom-sheet-title">
+                    <ng-content select="[sheetHeader]" />
+                </div>
+                <div rtElem="action" qa-dataid="bottom-sheet-action">
+                    <ng-content select="[sheetAction]" />
+                </div>
+            </div>
+        }
         <div rtElem="body" qa-dataid="bottom-sheet-body">
             <ng-content />
         </div>
         <div rtElem="footer" qa-dataid="bottom-sheet-footer">
-            <ng-content select="[sheetFooter]" />
+            @if (footerTpl(); as ownFooter) {
+                <ng-container [ngTemplateOutlet]="ownFooter" [ngTemplateOutletContext]="templateContext" />
+            } @else {
+                <ng-content select="[sheetFooter]" />
+            }
         </div>
     </div>
+    @if (confirming()) {
+        <div rtElem="confirm" qa-dataid="bottom-sheet-confirm" role="alertdialog" aria-modal="true" [attr.aria-labelledby]="confirmTitleId">
+            <div rtElem="confirm-card">
+                <h2 rtElem="confirm-title" qa-dataid="bottom-sheet-confirm-title" [attr.id]="confirmTitleId">
+                    {{ t().bottomSheetUnsavedTitle }}
+                </h2>
+                <p rtElem="confirm-message" qa-dataid="bottom-sheet-confirm-message">{{ t().bottomSheetUnsavedMessage }}</p>
+                <div rtElem="confirm-actions">
+                    <button
+                        #confirmFirst
+                        rtButton
+                        qa-dataid="bottom-sheet-confirm-apply"
+                        type="button"
+                        size="md"
+                        appearance="filled"
+                        [label]="t().uiApply"
+                        [attr.aria-label]="t().uiApply"
+                        (click)="onConfirmApply()"></button>
+                    <button
+                        rtButton
+                        qa-dataid="bottom-sheet-confirm-discard"
+                        type="button"
+                        size="md"
+                        theme="secondary"
+                        appearance="outlined"
+                        [label]="t().bottomSheetUnsavedDiscard"
+                        [attr.aria-label]="t().bottomSheetUnsavedDiscard"
+                        (click)="onConfirmDiscard()"></button>
+                    <button
+                        rtButton
+                        qa-dataid="bottom-sheet-confirm-cancel"
+                        type="button"
+                        size="md"
+                        appearance="text"
+                        [label]="t().uiCancel"
+                        [attr.aria-label]="t().uiCancel"
+                        (click)="onConfirmCancel()"></button>
+                </div>
+            </div>
+        </div>
+    }
 </ng-container>

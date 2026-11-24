@@ -41,6 +41,7 @@ import {
     rtDateNow,
     rtDatePanelMonth,
     rtDateSplit,
+    rtDateStartTime,
     rtDateTime,
     rtDateTimeColumns,
     rtDateWeekdays,
@@ -51,6 +52,8 @@ import {
 } from '../rt-date-panel.logic';
 import { IRtDatePicker } from '../rt-date-picker.model';
 import { rtDateLayout, rtDateText } from '../rt-date-text.logic';
+import { rtDateWheelRows, IRtDateWheelRow } from '../rt-date-wheel.logic';
+import { RtDateWheelDirective } from './rt-date-wheel.directive';
 
 const BEM_BLOCK: string = 'rt-date-panel';
 const MONTH_LEN: number = 7;
@@ -75,7 +78,7 @@ const ESCAPE_BACK: Readonly<Record<TView, TView | null>> = { days: null, months:
 @Component({
     selector: 'rt-date-panel',
     templateUrl: './rt-date-panel.component.html',
-    styleUrl: './rt-date-panel.component.scss',
+    styleUrls: ['./rt-date-panel.component.scss', './rt-date-wheel.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
@@ -88,12 +91,13 @@ const ESCAPE_BACK: Readonly<Record<TView, TView | null>> = { days: null, months:
         RtCalendarComponent,
         RtIconButtonComponent,
         RtToggleButtonGroupComponent,
+        RtDateWheelDirective,
     ],
     host: {
         class: BEM_BLOCK,
         '[class.rt-date-panel--sheet]': 'sheet()',
         '[class.rt-date-panel--with-time]': "type() !== 'date'",
-        '(keydown.escape)': 'onEscape()',
+        '(keydown.escape)': 'onEscape($event)',
     },
 })
 export class RtDatePanelComponent {
@@ -102,6 +106,17 @@ export class RtDatePanelComponent {
     /** Минута открытия панели: от неё считается «сегодня», когда вход `now` не задан. */
     readonly #openedAt: Date = new Date();
     readonly #firstDay: Signal<number> = computed((): number => rtDateFirstDay(this.#locale()));
+    /**
+     * Время, с которого барабан шторки начинает у поля без времени: под полосой барабана всегда стоит
+     * значение, и пустым он быть не может. У списков поля на широком экране такого времени нет.
+     */
+    readonly #startTime: Signal<string | null> = computed((): string | null => this.#startFor(rtDateSplit(this.value(), this.type()).day));
+    /** В черновике стоит только время, с которого барабан начал: человек ещё ничего не выбрал. */
+    readonly #startOnly: Signal<boolean> = computed((): boolean => {
+        const value: { day: string | null; time: string | null } = rtDateSplit(this.value(), this.type());
+
+        return value.time === null && this.draftTime() === this.#startTime() && this.draftDay() === value.day;
+    });
 
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
     protected readonly weekdays: Signal<readonly string[]> = computed((): readonly string[] => rtDateWeekdays(this.#locale()));
@@ -119,7 +134,7 @@ export class RtDatePanelComponent {
         (): string | null => rtDateSplit(this.value(), this.type()).day
     );
     protected readonly draftTime: WritableSignal<string | null> = linkedSignal(
-        (): string | null => rtDateSplit(this.value(), this.type()).time
+        (): string | null => rtDateSplit(this.value(), this.type()).time ?? this.#startTime()
     );
     protected readonly shownMonth: WritableSignal<string> = linkedSignal((): string =>
         (this.draftDay() ?? this.today()).slice(0, MONTH_LEN)
@@ -179,14 +194,37 @@ export class RtDatePanelComponent {
     protected readonly draftHour: Signal<number | null> = computed((): number | null => this.#part(0));
     protected readonly draftMinute: Signal<number | null> = computed((): number | null => this.#part(1));
     protected readonly columns: Signal<IRtDatePicker.TimeColumns> = computed((): IRtDatePicker.TimeColumns =>
-        rtDateTimeColumns({ step: this.minuteStep(), hour: this.draftHour(), day: this.draftDay(), min: this.min(), max: this.max() })
+        rtDateTimeColumns({
+            step: this.minuteStep(),
+            hour: this.draftHour(),
+            // Под полосой барабана всегда стоит значение: минута не по шагу встаёт в колонку своей строкой.
+            minute: this.sheet() ? this.draftMinute() : null,
+            day: this.draftDay(),
+            min: this.min(),
+            max: this.max(),
+        })
+    );
+
+    /** Номера выбранных часа и минуты в своих колонках: по ним барабан шторки держит значение под полосой. */
+    protected readonly hourIndex: Signal<number> = computed((): number =>
+        this.columns().hours.findIndex((cell: IRtDatePicker.TimeCell): boolean => cell.value === this.draftHour())
+    );
+    protected readonly minuteIndex: Signal<number> = computed((): number =>
+        this.columns().minutes.findIndex((cell: IRtDatePicker.TimeCell): boolean => cell.value === this.draftMinute())
+    );
+    /** Строки колонок: барабан шторки повторяет круг значений, чтобы крутиться без конца. */
+    protected readonly hourRows: Signal<IRtDateWheelRow<IRtDatePicker.TimeCell>[]> = computed(
+        (): IRtDateWheelRow<IRtDatePicker.TimeCell>[] =>
+            rtDateWheelRows(this.columns().hours, this.sheet(), this.draftHour(), 'date-panel-hour')
+    );
+    protected readonly minuteRows: Signal<IRtDateWheelRow<IRtDatePicker.TimeCell>[]> = computed(
+        (): IRtDateWheelRow<IRtDatePicker.TimeCell>[] =>
+            rtDateWheelRows(this.columns().minutes, this.sheet(), this.draftMinute(), 'date-panel-minute')
     );
 
     protected readonly todayOff: Signal<boolean> = computed((): boolean => !rtDateInBounds(this.today(), this.min(), this.max()));
     /** У даты в подвале только «Сегодня»: без неё пустая черта не рисуется. */
     protected readonly hasFooter: Signal<boolean> = computed((): boolean => this.type() !== 'date' || this.isTodayButtonShown());
-    /** Черновик собирается в значение и лежит в границах. */
-    protected readonly canApply: Signal<boolean> = computed((): boolean => this.#draftValue() !== '');
     /** Черновик даты со временем текстом для подвала шторки: `15.03.2026, 09:30`; не собран — пусто. */
     protected readonly draftText: Signal<string> = computed((): string => {
         const parts: string[] = this.#draftValue().split('T');
@@ -197,8 +235,11 @@ export class RtDatePanelComponent {
         { value: 'time', label: this.t().uiTime },
     ]);
 
-    /** Тип значения: дата, время или дата со временем. */
-    public readonly type: InputSignal<IRtDatePicker.Type> = input.required<IRtDatePicker.Type>();
+    /**
+     * Тип значения: дата, время или дата со временем. Умолчание нужно шапке шторки поля: она читает
+     * черновик панели в том же проходе, в котором панель создана и вход ещё не задан.
+     */
+    public readonly type: InputSignal<IRtDatePicker.Type> = input<IRtDatePicker.Type>('date');
     /** Значение в форме нативного input'а: `YYYY-MM-DD`, `HH:mm`, `YYYY-MM-DDTHH:mm`; пустая строка — пусто. */
     public readonly value: InputSignal<string> = input<string>('');
     /** Нижняя граница в форме значения; `null` — границы нет. */
@@ -225,6 +266,30 @@ export class RtDatePanelComponent {
      */
     public readonly now: InputSignal<Date | null> = input<Date | null>(null);
 
+    /**
+     * С какого времени барабан шторки начинает у поля без времени: `now` — с текущего, округлённого
+     * вниз до шага минут, `midnight` — с `00:00`. Время за границей заменяет первое допустимое.
+     */
+    public readonly timeStart: InputSignal<IRtDatePicker.TimeStart> = input<IRtDatePicker.TimeStart>('now');
+
+    /**
+     * Кнопка «Готово» или «Применить» стоит вне панели — в шапке шторки, в которую панель положили:
+     * в подвале панели её нет. Тот, кто ставит вход, сам зовёт `apply()` и читает `canApply`.
+     */
+    public readonly applyOutside: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /** Черновик собирается в значение и лежит в границах. */
+    public readonly canApply: Signal<boolean> = computed((): boolean => this.#draftValue() !== '');
+    /**
+     * Черновик собран и отличается от значения: закрыть панель сейчас — значит потерять выбранное.
+     * Время, с которого барабан начал сам, выбранным не считается.
+     */
+    public readonly dirty: Signal<boolean> = computed(
+        (): boolean => this.canApply() && this.#draftValue() !== this.value() && !this.#startOnly()
+    );
+
     /** Готовое значение в форме `value`: панель просит его записать. */
     public readonly picked: OutputEmitterRef<string> = output<string>();
     /** Панель просит закрыть себя: после выбора, а также по Escape в днях. */
@@ -244,13 +309,42 @@ export class RtDatePanelComponent {
         });
     }
 
+    /** «Готово» и «Применить»: черновик уходит значением, панель закрывается. */
+    public apply(): void {
+        const value: string = this.#draftValue();
+        if (value !== '') {
+            this.#emit(value);
+        }
+    }
+
+    /** Под полосой барабана остановился час с этим номером; час за границей не принимается. */
+    protected pickHourAt(index: number): void {
+        const cell: IRtDatePicker.TimeCell | undefined = this.columns().hours.at(index);
+        if (cell?.disabled === false) {
+            this.pickHour(cell.value);
+        }
+    }
+
+    protected pickMinuteAt(index: number): void {
+        const cell: IRtDatePicker.TimeCell | undefined = this.columns().minutes.at(index);
+        if (cell?.disabled === false) {
+            this.pickMinute(cell.value);
+        }
+    }
+
     protected pickDay(day: IRtCalendar.Day): void {
         this.activeKey.set(day.key);
         if (this.type() === 'date') {
             this.#emit(day.key);
             return;
         }
+        // Время, с которого барабан начал сам, считается заново по границам выбранного дня: у
+        // пустого поля оно считалось без дня, и граница этого дня могла оставить его снаружи.
+        const start: string | null = this.#startOnly() ? this.#startFor(day.key) : null;
         this.draftDay.set(day.key);
+        if (start !== null) {
+            this.draftTime.set(start);
+        }
     }
 
     protected pickToday(): void {
@@ -316,20 +410,20 @@ export class RtDatePanelComponent {
     }
 
     /** Escape в сетке годов или месяцев возвращает на вид назад; в днях закрывает панель. */
-    protected onEscape(): void {
+    protected onEscape(event: Event): void {
         const back: TView | null = ESCAPE_BACK[this.view()];
-        if (back === null) {
-            this.closed.emit();
+        if (back !== null) {
+            // В шторке клавиша дальше не идёт: она вернула вид назад, и шторка по ней не закрывается.
+            if (this.sheet()) {
+                event.stopPropagation();
+            }
+            this.view.set(back);
             return;
         }
-        this.view.set(back);
-    }
-
-    /** «Готово» и «Применить»: черновик уходит значением, панель закрывается. */
-    protected apply(): void {
-        const value: string = this.#draftValue();
-        if (value !== '') {
-            this.#emit(value);
+        // С кнопкой снаружи панель себя не закрывает: клавиша доходит до шторки, и та сначала
+        // спросит о выбранном и не применённом.
+        if (!this.applyOutside()) {
+            this.closed.emit();
         }
     }
 
@@ -346,6 +440,18 @@ export class RtDatePanelComponent {
     #draftValue(): string {
         const value: string = rtDateWrite(this.type(), this.draftDay(), this.draftTime());
         return value !== '' && rtDateInBounds(value, this.min(), this.max()) ? value : '';
+    }
+
+    /** Время, с которого барабан шторки начинает у этого дня; вне шторки и у даты без времени его нет. */
+    #startFor(day: string | null): string | null {
+        return this.sheet() && this.type() !== 'date'
+            ? rtDateStartTime(this.timeStart(), this.now() ?? this.#openedAt, {
+                  day,
+                  step: this.minuteStep(),
+                  min: this.min(),
+                  max: this.max(),
+              })
+            : null;
     }
 
     #part(index: number): number | null {

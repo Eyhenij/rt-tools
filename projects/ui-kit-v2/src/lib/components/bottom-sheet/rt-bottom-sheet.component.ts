@@ -1,20 +1,28 @@
 import { BooleanInput } from '@angular/cdk/coercion';
-import { DOCUMENT } from '@angular/common';
+import { OverlayContainer, ScrollStrategy, ScrollStrategyOptions } from '@angular/cdk/overlay';
+import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
+    contentChild,
     DestroyRef,
     effect,
+    EffectCleanupRegisterFn,
+    ElementRef,
     inject,
     input,
     InputSignal,
     InputSignalWithTransform,
+    linkedSignal,
     output,
     OutputEmitterRef,
     signal,
     Signal,
+    TemplateRef,
+    untracked,
+    viewChild,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
@@ -23,11 +31,25 @@ import {
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
+import { IRtSheetKeyboardBox, rtWatchSheetKeyboard } from './rt-bottom-sheet-keyboard';
 import { RtBottomSheetStackService } from './rt-bottom-sheet-stack.service';
-import { clampDragDelta, shouldDismissDrag } from './rt-bottom-sheet.logic';
+import { clampDragDelta, focusLeftBehind, innerFocus, isTypingTarget, outerFocus, shouldDismissDrag } from './rt-bottom-sheet.logic';
+import { IRtSheetTemplateContext } from './rt-bottom-sheet.model';
+import { RtSheetFooterDirective } from './rt-sheet-footer.directive';
+import { RtSheetHeaderDirective } from './rt-sheet-header.directive';
 
 const BEM_BLOCK: string = 'rt-bottom-sheet';
+
+let nextConfirmId: number = 0;
+
+function takeConfirmId(): string {
+    nextConfirmId += 1;
+
+    return `rt-bottom-sheet-confirm-${nextConfirmId}`;
+}
 
 @Component({
     selector: 'rt-bottom-sheet',
@@ -36,12 +58,17 @@ const BEM_BLOCK: string = 'rt-bottom-sheet';
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
+        // @angular
+        NgTemplateOutlet,
+
         // rt-tools
         BlockDirective,
         ElemDirective,
         ModDirective,
 
-        // transloco
+        // kit
+        RtButtonDirective,
+        RtIconButtonComponent,
     ],
     hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
@@ -56,23 +83,88 @@ const BEM_BLOCK: string = 'rt-bottom-sheet';
         // Шторка, подменённая открытой из неё, `inert` не получает: в ней стоит указатель поля,
         // открывшего верхнюю, и его клавиши ведут список верхней. С `inert` фокус падал на страницу.
         '[attr.inert]': 'open() ? null : ""',
+        '[class.rt-bottom-sheet--keyboard]': 'keyboardBox() !== null',
+        '[style.--rt-bottom-sheet-keyboard-top.px]': 'keyboardBox()?.top',
+        '[style.--rt-bottom-sheet-keyboard-height.px]': 'keyboardBox()?.height',
+        '(keydown.escape)': 'onHostEscape($event)',
+        '(document:keydown.escape)': 'onEscape($event)',
     },
 })
 export class RtBottomSheetComponent {
     readonly #doc: Document = inject(DOCUMENT);
     readonly #stack: RtBottomSheetStackService = inject(RtBottomSheetStackService);
+    readonly #host: HTMLElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+    /** Блокировка прокрутки страницы — та же, что держит оверлей у шторки панели выбора. */
+    readonly #scrollLock: ScrollStrategy = inject(ScrollStrategyOptions).block();
+    readonly #overlayContainer: OverlayContainer = inject(OverlayContainer);
     readonly #onDragMove: (event: PointerEvent) => void = (event: PointerEvent): void => this.#handleDragMove(event);
     readonly #onDragEnd: () => void = (): void => this.#handleDragEnd();
+    readonly #requestClose: () => void = (): void => this.dismiss();
+    readonly #requestApply: () => void = (): void => this.applyRequest.emit();
+    readonly #onKeyboardBox: (box: IRtSheetKeyboardBox | null) => void = (box: IRtSheetKeyboardBox | null): void =>
+        this.keyboardBox.set(box);
 
     #dragStartY: number = 0;
+    #locked: boolean = false;
+    /** Узел, с которого шторку открыли: ему возвращается фокус, оставшийся в закрытой шторке. */
+    #openedFrom: HTMLElement | null = null;
+    /** Узел шторки, с которого её просили закрыть: ему возвращается фокус после ответа «Остаться». */
+    #askedFrom: HTMLElement | null = null;
 
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly dragDeltaY: WritableSignal<number> = signal<number>(0);
     protected readonly dragging: WritableSignal<boolean> = signal<boolean>(false);
 
+    /**
+     * В шторке начали печатать: фокус побывал в поле ввода. На сенсорном экране это открытая
+     * клавиатура: шторка встаёт во всю высоту и держит её до закрытия — сожмись она по уходу фокуса,
+     * карточка уехала бы из-под пальца, который её нажимает. Там, где указатель точный, клавиатуры
+     * нет, и стили высоту не меняют.
+     */
+    protected readonly typing: WritableSignal<boolean> = linkedSignal<boolean>((): boolean => this.#closedWith(false));
+
+    /**
+     * Место над экранной клавиатурой, пока в шторке печатают; без клавиатуры пусто. Клавиатура
+     * телефона ложится поверх окна, и шторка во весь экран ушла бы низом под неё: с этим местом она
+     * встаёт ровно над клавиатурой. Стили читают его только там, где указатель — палец.
+     */
+    protected readonly keyboardBox: WritableSignal<IRtSheetKeyboardBox | null> = linkedSignal<IRtSheetKeyboardBox | null>(
+        (): IRtSheetKeyboardBox | null => this.#typedWith(null)
+    );
+
+    /**
+     * Вопрос перед закрытием показан: шторку просили закрыть при неприменённом выборе. Закрытая
+     * шторка вопроса за собой не оставляет: со сменой открытости он снят.
+     */
+    protected readonly confirming: WritableSignal<boolean> = linkedSignal<boolean>((): boolean => this.#closedWith(false));
+    protected readonly confirmTitleId: string = takeConfirmId();
+
     /** Открыта, но поверх неё открыта шторка из неё самой: эта спрятана до закрытия верхней. */
     protected readonly covered: Signal<boolean> = computed((): boolean => this.open() && this.#stack.top() !== this);
+
+    protected readonly ownHeader: Signal<RtSheetHeaderDirective | undefined> = contentChild(RtSheetHeaderDirective);
+    protected readonly ownFooter: Signal<RtSheetFooterDirective | undefined> = contentChild(RtSheetFooterDirective);
+
+    /** Своя шапка: шаблон из входа сильнее шаблона директивы в содержимом. Пусто — шапка шторки. */
+    protected readonly headerTpl: Signal<TemplateRef<IRtSheetTemplateContext> | null> = computed(
+        (): TemplateRef<IRtSheetTemplateContext> | null => this.headerTemplate() ?? this.ownHeader()?.template ?? null
+    );
+
+    /** Свой подвал: шаблон из входа сильнее шаблона директивы в содержимом. Пусто — узлы `sheetFooter`. */
+    protected readonly footerTpl: Signal<TemplateRef<IRtSheetTemplateContext> | null> = computed(
+        (): TemplateRef<IRtSheetTemplateContext> | null => this.footerTemplate() ?? this.ownFooter()?.template ?? null
+    );
+
+    /** Своему шаблону шторка отдаёт просьбу закрыть — ту же, что зовёт её кнопка «×», — и просьбу применить. */
+    protected readonly templateContext: IRtSheetTemplateContext = {
+        $implicit: this.#requestClose,
+        close: this.#requestClose,
+        apply: this.#requestApply,
+    };
+
+    /** Первый ответ вопроса: фокус встаёт на него, как только вопрос нарисован. */
+    protected readonly confirmFirst: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('confirmFirst');
 
     public readonly open: InputSignalWithTransform<boolean, BooleanInput> = input.required<boolean, BooleanInput>({
         transform: booleanAttribute,
@@ -81,7 +173,44 @@ export class RtBottomSheetComponent {
     /** Идентификатор узла с названием диалога: без него `role="dialog"` читается без имени. */
     public readonly ariaLabelledby: InputSignal<string | null> = input<string | null>(null);
 
+    /** Название диалога строкой — для шторки, у которой узла с названием в разметке нет: со своей шапкой. */
+    public readonly ariaLabel: InputSignal<string | null> = input<string | null>(null);
+
+    /**
+     * Шторка во всю высоту экрана: для содержимого, в котором человек печатает. По умолчанию
+     * панель растёт по содержимому до своего предела.
+     */
+    public readonly fullHeight: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /**
+     * Выбор в шторке изменён и не применён. Шторка с таким выбором на просьбу закрыть — кнопкой,
+     * подложкой, свайпом или Escape — сначала спрашивает: применить, не применять или остаться.
+     * Ставит его тот, у кого выбор уходит в приложение только по кнопке.
+     */
+    public readonly unsaved: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /**
+     * Своя шапка шаблоном: встаёт на место кнопки закрытия, заголовка и действия. Тот же шаблон
+     * в разметке задаёт `<ng-template rtSheetHeader>`; вход нужен тому, кто открывает шторку кодом.
+     */
+    public readonly headerTemplate: InputSignal<TemplateRef<IRtSheetTemplateContext> | null> =
+        input<TemplateRef<IRtSheetTemplateContext> | null>(null);
+
+    /** Свой подвал шаблоном; в разметке его задаёт `<ng-template rtSheetFooter>`. */
+    public readonly footerTemplate: InputSignal<TemplateRef<IRtSheetTemplateContext> | null> =
+        input<TemplateRef<IRtSheetTemplateContext> | null>(null);
+
     public readonly openChange: OutputEmitterRef<boolean> = output<boolean>();
+
+    /** Человек ответил на вопрос «Применить»: выбор нужно применить, следом придёт просьба закрыть. */
+    public readonly applyRequest: OutputEmitterRef<void> = output<void>();
+
+    /** Человек ответил на вопрос «Не применять»: неприменённое нужно отбросить, следом придёт просьба закрыть. */
+    public readonly discardRequest: OutputEmitterRef<void> = output<void>();
 
     constructor() {
         // Порядок открытия — общий для всех шторок страницы; шторка встаёт в него с открытием.
@@ -92,7 +221,97 @@ export class RtBottomSheetComponent {
                 this.#stack.remove(this);
             }
         });
-        inject(DestroyRef).onDestroy((): void => this.#stack.remove(this));
+        // Прокрутку страницы шторка держит сама, пока открыта. Шторке панели выбора это не нужно:
+        // её оверлей уже держит прокрутку и слушает Escape, и второй раз они сработать не должны.
+        effect((): void => {
+            this.#setScrollLock(this.open() && !this.#inPopoverSheet());
+        });
+        // Фокус, оставшийся в закрытой шторке, уходит туда, откуда её открыли. Вопрос и высоту под
+        // клавиатуру закрытая шторка снимает сама: их сигналы связаны с открытостью.
+        effect((): void => {
+            const open: boolean = this.open();
+            untracked((): void => {
+                if (open) {
+                    // Шторке панели выбора фокус возвращает её мост: он знает, какой узел триггера его берёт.
+                    this.#openedFrom = this.#inPopoverSheet() ? null : outerFocus(this.#doc, this.#host);
+                } else {
+                    this.#returnFocus();
+                }
+            });
+        });
+        // Пока в шторке печатают, она следит за местом над экранной клавиатурой и встаёт в него;
+        // место снимается само, когда печатать перестали.
+        effect((onCleanup: EffectCleanupRegisterFn): void => {
+            if (this.typing()) {
+                onCleanup(rtWatchSheetKeyboard(this.#doc.defaultView, this.#onKeyboardBox));
+            }
+        });
+        // Вопрос нарисован — фокус встаёт на первый ответ: иначе он остаётся под вопросом, на кнопке
+        // закрытия, и скринридер вопроса не объявляет.
+        // Вопрос стоит внизу экрана сам: фокус на его ответе страницу под шторкой не прокручивает.
+        effect((): void => this.confirmFirst()?.nativeElement.focus({ preventScroll: true }));
+        inject(DestroyRef).onDestroy((): void => {
+            this.#stack.remove(this);
+            this.#setScrollLock(false);
+            this.#returnFocus();
+        });
+    }
+
+    /**
+     * Escape: открытый вопрос он снимает, иначе просит закрыть шторку — с неприменённым выбором через
+     * вопрос. Шторке в оверлее клавишу отдаёт её оверлей, остальным — слушатель документа.
+     */
+    public closeByEscape(): void {
+        if (this.confirming()) {
+            this.onConfirmCancel();
+        } else {
+            this.dismiss();
+        }
+    }
+
+    /**
+     * Escape с фокусом в самой шторке: дальше клавиша не идёт. Шторка может стоять в боковой панели
+     * или диалоге, и их оверлей закрыл бы по той же клавише себя, а не её.
+     */
+    protected onHostEscape(event: Event): void {
+        if (!event.defaultPrevented && this.#ownsEscape()) {
+            event.preventDefault();
+            event.stopPropagation();
+            this.closeByEscape();
+        }
+    }
+
+    /** Escape с фокусом вне шторки. Клавишу, уже взятую слоем над шторкой, она не трогает. */
+    protected onEscape(event: Event): void {
+        if (!event.defaultPrevented && this.#ownsEscape()) {
+            this.closeByEscape();
+        }
+    }
+
+    protected onFocusIn(event: FocusEvent): void {
+        if (isTypingTarget(event.target)) {
+            this.typing.set(true);
+        }
+    }
+
+    protected onConfirmApply(): void {
+        this.confirming.set(false);
+        this.applyRequest.emit();
+        this.openChange.emit(false);
+    }
+
+    protected onConfirmDiscard(): void {
+        this.confirming.set(false);
+        this.discardRequest.emit();
+        this.openChange.emit(false);
+    }
+
+    protected onConfirmCancel(): void {
+        this.confirming.set(false);
+        // Закрыть просили подложкой или свайпом — узла с фокусом не было: фокус берёт панель шторки,
+        // иначе он упал бы на страницу под открытой шторкой.
+        (this.#askedFrom ?? this.#host.querySelector<HTMLElement>('[role="dialog"]'))?.focus({ preventScroll: true });
+        this.#askedFrom = null;
     }
 
     protected onDragStart(event: PointerEvent): void {
@@ -103,8 +322,64 @@ export class RtBottomSheetComponent {
         this.#doc.addEventListener('pointerup', this.#onDragEnd);
     }
 
+    /** Просьба закрыть: с неприменённым выбором сначала вопрос, без него — сразу наружу. */
     protected dismiss(): void {
-        this.openChange.emit(false);
+        if (!this.unsaved()) {
+            this.openChange.emit(false);
+            return;
+        }
+        // Вопрос уже показан — вторая просьба закрыть его не переспрашивает.
+        if (!this.confirming()) {
+            this.#askedFrom = innerFocus(this.#doc, this.#host);
+            this.confirming.set(true);
+        }
+    }
+
+    /** Шторка панели выбора: прокрутку и Escape за неё держит её собственный оверлей. */
+    /** Значение, к которому сигнал возвращается с каждой сменой открытости шторки. */
+    #closedWith<T>(value: T): T {
+        this.open();
+
+        return value;
+    }
+
+    /** Значение, к которому сигнал возвращается, когда в шторке начали или перестали печатать. */
+    #typedWith<T>(value: T): T {
+        this.typing();
+
+        return value;
+    }
+
+    #inPopoverSheet(): boolean {
+        return this.#host.closest('rt-popover-sheet') !== null;
+    }
+
+    #ownsEscape(): boolean {
+        return this.open() && !this.covered() && !this.#inPopoverSheet();
+    }
+
+    /** Фокус, оставшийся в закрытой шторке или упавший с неё на страницу, уходит на открывший её узел. */
+    #returnFocus(): void {
+        const target: HTMLElement | null = this.#openedFrom;
+        this.#openedFrom = null;
+        if (target?.isConnected === true && focusLeftBehind(this.#doc, this.#host)) {
+            target.focus();
+        }
+    }
+
+    #setScrollLock(locked: boolean): void {
+        if (locked === this.#locked) {
+            return;
+        }
+        this.#locked = locked;
+        if (locked) {
+            // Правило блокировки лежит в стилях оверлея CDK, а они грузятся с первым оверлеем
+            // страницы. Шторка в шаблоне страницы может открыться раньше любого оверлея.
+            this.#overlayContainer.getContainerElement();
+            this.#scrollLock.enable();
+        } else {
+            this.#scrollLock.disable();
+        }
     }
 
     #handleDragMove(event: PointerEvent): void {
@@ -116,7 +391,7 @@ export class RtBottomSheetComponent {
         this.#doc.removeEventListener('pointermove', this.#onDragMove);
         this.#doc.removeEventListener('pointerup', this.#onDragEnd);
         if (shouldDismissDrag(this.dragDeltaY())) {
-            this.openChange.emit(false);
+            this.dismiss();
         }
         this.dragDeltaY.set(0);
     }

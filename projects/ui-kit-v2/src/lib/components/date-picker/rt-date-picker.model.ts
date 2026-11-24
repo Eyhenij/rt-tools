@@ -21,6 +21,9 @@ export namespace IRtDatePicker {
         minute: string;
     }
 
+    /** С какого времени барабан шторки начинает у поля без значения: с текущего или с `00:00`. */
+    export type TimeStart = 'now' | 'midnight';
+
     /** Ячейка колонки часов или минут. */
     export interface TimeCell {
         value: number;
@@ -67,6 +70,8 @@ export namespace IRtDatePicker {
     export interface TimeContext {
         step: number;
         hour: number | null;
+        /** Выбранная минута, которой колонка обязана иметь строку, даже когда она не на шаге. */
+        minute?: number | null;
         day: string | null;
         min: string | null;
         max: string | null;

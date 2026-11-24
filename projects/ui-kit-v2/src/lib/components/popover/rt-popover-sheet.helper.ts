@@ -1,12 +1,13 @@
 import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
-import { afterNextRender, ComponentRef, Injector, TemplateRef, ViewContainerRef } from '@angular/core';
-import { outputToObservable } from '@angular/core/rxjs-interop';
+import { afterNextRender, ComponentRef, DestroyRef, effect, Injector, TemplateRef, ViewContainerRef } from '@angular/core';
+import { outputToObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { filter, merge, Observable, tap } from 'rxjs';
 
 import { carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
 import { RtPopoverSheetComponent } from './rt-popover-sheet.component';
+import { RtPopoverSheetOptionsDirective } from './rt-popover-sheet-options.directive';
 
 /** Открытая шторка: её оверлей и сам компонент — их события закрывают панель. */
 export interface IRtPopoverSheetOpened {
@@ -23,6 +24,8 @@ export interface IRtPopoverSheetRequest {
     template: TemplateRef<unknown>;
     context: unknown;
     title: string;
+    /** Высота, действие в шапке и неприменённый выбор: шторка читает их, пока открыта. Нет — шторка без них. */
+    options?: RtPopoverSheetOptionsDirective;
     /** Классы потребителя с `rtPopoverPanelClass`: в режиме шторки они ставятся на коробку оверлея, как у панели у триггера. */
     panelClasses?: readonly string[];
     /**
@@ -39,6 +42,30 @@ function finishClosingSheets(): void {
     for (const finish of Array.from(closingSheets)) {
         finish();
     }
+}
+
+/**
+ * Входы шторки живут, пока она открыта: высота меняется, когда поиск внутри получает фокус, а
+ * неприменённый выбор появляется с первой отметкой. Ответ «Применить» на вопрос шторки уходит
+ * тому, кто её открыл. Слежение и подписка снимаются вместе с компонентом шторки.
+ */
+function bindSheetOptions(sheetRef: ComponentRef<RtPopoverSheetComponent>, options: RtPopoverSheetOptionsDirective | undefined): void {
+    if (options === undefined) {
+        return;
+    }
+    effect(
+        (): void => {
+            sheetRef.setInput('fullHeight', options.rtPopoverSheetFull());
+            sheetRef.setInput('action', options.rtPopoverSheetAction());
+            sheetRef.setInput('unsaved', options.rtPopoverSheetUnsaved());
+            sheetRef.setInput('header', options.header());
+            sheetRef.setInput('footer', options.footer());
+        },
+        { injector: sheetRef.injector }
+    );
+    outputToObservable(sheetRef.instance.applyRequest)
+        .pipe(takeUntilDestroyed(sheetRef.injector.get(DestroyRef)))
+        .subscribe((): void => options.rtPopoverSheetApply.emit());
 }
 
 /**
@@ -66,6 +93,7 @@ export function rtOpenPopoverSheet(request: IRtPopoverSheetRequest): IRtPopoverS
     sheetRef.setInput('template', request.template);
     sheetRef.setInput('context', request.context);
     sheetRef.setInput('title', request.title);
+    bindSheetOptions(sheetRef, request.options);
     afterNextRender(
         (): void => {
             // Слой мог уйти до первой отрисовки: быстрое закрытие или снос директивы.
@@ -91,9 +119,15 @@ export function rtOpenPopoverSheet(request: IRtPopoverSheetRequest): IRtPopoverS
 export function rtPopoverSheetDismissals(sheet: IRtPopoverSheetOpened): Observable<unknown> {
     return merge(
         outputToObservable(sheet.sheetRef.instance.dismissed),
+        // Escape идёт через саму шторку: с неприменённым выбором она сначала спрашивает, а закрытие
+        // приходит её событием `dismissed`, как от кнопки и подложки.
         sheet.overlayRef.keydownEvents().pipe(
             filter((event: KeyboardEvent): boolean => event.key === 'Escape'),
-            tap((event: KeyboardEvent): void => event.preventDefault())
+            tap((event: KeyboardEvent): void => {
+                event.preventDefault();
+                sheet.sheetRef.instance.closeByEscape();
+            }),
+            filter((): boolean => false)
         )
     );
 }

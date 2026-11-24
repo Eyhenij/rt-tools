@@ -28,12 +28,13 @@ import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
 import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
-import { IButton, IRtIcon, IRtInput, IRtKitConfig, rtKitDefault } from '@rt-tools/ui-kit-v2/core';
-import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { IButton, IRtIcon, IRtInput } from '@rt-tools/ui-kit-v2/core';
+import { RtPopoverDirective, RtSheetTemplatesDirective } from '@rt-tools/ui-kit-v2/popover';
 import { TRtRadius } from '@rt-tools/ui-kit-v2/core';
 import { RtDynamicSelectorListComponent } from './list/rt-dynamic-selector-list.component';
 import { RtDynamicSelectorPopupComponent } from './popup/rt-dynamic-selector-popup.component';
 import { RtDynamicSelectorRowControlsDirective, RtDynamicSelectorRowTitleDirective } from './rt-dynamic-selector.directives';
+import { IRtDynamicSelectorDefaults, rtDynamicSelectorDefaults } from './rt-dynamic-selector-defaults';
 import { RtDynamicSelectorLoadStateDirective } from './rt-dynamic-selector-load-state.directive';
 import {
     clearDynamicKeys,
@@ -41,6 +42,7 @@ import {
     sameDynamicKeys,
     sameDynamicKeySet,
     dynamicEntitiesOf,
+    dynamicLabelCase,
     dynamicListRows,
     selectableDynamicItems,
 } from './rt-dynamic-selector.logic';
@@ -80,7 +82,10 @@ const BEM_BLOCK: string = 'rt-dynamic-selector';
         { provide: RtFormControlBase, useExisting: forwardRef(() => RtDynamicSelectorComponent) },
         RtDynamicSelectorPartsService,
     ],
-    hostDirectives: [{ directive: RtDynamicSelectorLoadStateDirective, inputs: ['error', 'errorDescription'], outputs: ['retry'] }],
+    hostDirectives: [
+        { directive: RtDynamicSelectorLoadStateDirective, inputs: ['error', 'errorDescription'], outputs: ['retry'] },
+        { directive: RtSheetTemplatesDirective, inputs: ['sheetHeaderTemplate', 'sheetFooterTemplate'] },
+    ],
     host: { class: BEM_BLOCK },
 })
 export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormControlBase<unknown[]> {
@@ -89,64 +94,18 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
     readonly #parts: RtDynamicSelectorPartsService<TEntity> = inject<RtDynamicSelectorPartsService<TEntity>>(RtDynamicSelectorPartsService);
     readonly #loadState: RtDynamicSelectorLoadStateDirective = inject(RtDynamicSelectorLoadStateDirective, { self: true });
     /* Умолчания входов считаются из настроек кита при объявлении: вход в разметке перебивает их. */
-    readonly #invitationButtonIconDefault: IRtIcon.Name | null = rtKitDefault(
-        'dynamicSelector',
-        (it: IRtKitConfig.DynamicSelector): IRtIcon.Name | null | undefined => it.invitationButtonIcon,
-        null
-    );
-    readonly #invitationButtonAppearanceDefault: IButton.Appearance = rtKitDefault(
-        'dynamicSelector',
-        (it: IRtKitConfig.DynamicSelector): IButton.Appearance | undefined => it.invitationButtonAppearance,
-        'outlined'
-    );
-    readonly #clearIconDefault: IRtIcon.Name = rtKitDefault(
-        'dynamicSelector',
-        (it: IRtKitConfig.DynamicSelector): IRtIcon.Name | undefined => it.clearIcon,
-        'close'
-    );
-    readonly #titleWrapDefault: boolean = rtKitDefault(
-        'dynamicSelector',
-        (it: IRtKitConfig.DynamicSelector): boolean | undefined => it.titleWrap,
-        true
-    );
-    readonly #searchAppearanceDefault: IRtInput.Appearance = rtKitDefault(
-        'dynamicSelector',
-        (it: IRtKitConfig.DynamicSelector): IRtInput.Appearance | undefined => it.searchAppearance,
-        'outline'
-    );
-    readonly #searchRadiusDefault: TRtRadius | null = rtKitDefault(
-        'dynamicSelector',
-        (it: IRtKitConfig.DynamicSelector): TRtRadius | null | undefined => it.searchRadius,
-        null
-    );
-    readonly #highlightSearchDefault: boolean = rtKitDefault(
-        'dynamicSelector',
-        (it: IRtKitConfig.DynamicSelector): boolean | undefined => it.highlightSearch,
-        false
-    );
-    readonly #applyLabelDefault: string = rtKitDefault(
-        'dynamicSelector',
-        (it: IRtKitConfig.DynamicSelector): string | undefined => it.applyLabel,
-        ''
-    );
-    readonly #applyLabelCaseDefault: IRtDynamicSelector.LabelCase = rtKitDefault(
-        'dynamicSelector',
-        (it: IRtKitConfig.DynamicSelector): IRtDynamicSelector.LabelCase | undefined => it.applyLabelCase,
-        'none'
-    );
-    readonly #autofocusSearchDefault: boolean = rtKitDefault(
-        'dynamicSelector',
-        (it: IRtKitConfig.DynamicSelector): boolean | undefined => it.autofocusSearch,
-        false
-    );
-    readonly #emptyResultsTextDefault: string = rtKitDefault(
-        'dynamicSelector',
-        (it: IRtKitConfig.DynamicSelector): string | undefined => it.emptyResultsText,
-        ''
-    );
+    readonly #defaults: IRtDynamicSelectorDefaults = rtDynamicSelectorDefaults();
+    readonly #applyKitLabel: Signal<string> = rtKitLabel('dynamicSelectorApply');
 
     protected readonly addLabel: Signal<string> = rtKitLabel('dynamicSelectorAdd');
     protected readonly nothingToChooseLabel: Signal<string> = rtKitLabel('dynamicSelectorNothingToChoose');
+    /** Подпись «Применить» в шапке шторки — та же, что у кнопки окна выбора. */
+    protected readonly applyText: Signal<string> = computed((): string =>
+        dynamicLabelCase(this.applyLabel() || this.#applyKitLabel(), this.applyLabelCase())
+    );
+    /** Ключи, отмеченные в открытом окне и ещё не применённые: с ними шторка спрашивает перед закрытием. */
+    protected readonly pendingKeys: Signal<unknown[]> = this.#parts.ticked;
+    protected readonly sheetUnsaved: Signal<boolean> = computed((): boolean => this.pendingKeys().length > 0);
 
     /** Всплывающий выбор открывается от нажатой кнопки добавления: у полосы и у приглашения — свой. */
     protected readonly popovers: Signal<readonly RtPopoverDirective[]> = viewChildren(RtPopoverDirective);
@@ -212,6 +171,19 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
     public readonly sheet: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
         transform: booleanAttribute,
     });
+    /**
+     * Карточки выбора в шторке: каждый пункт окна — карточка с отметкой кита справа. Включены по
+     * умолчанию; `false` возвращает в шторку пункты, какими окно стоит у кнопки.
+     */
+    public readonly sheetCards: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
+    /** Окно рисует карточки: оно открыто в шторке, и вход `sheetCards` их не выключил. Читает окно выбора. */
+    public readonly cards: Signal<boolean> = computed((): boolean => this.sheetCards() && this.inSheet());
+    /** Окно выбора открыто в нижней шторке. Читает окно выбора: его кнопки уходят в шапку шторки. */
+    public readonly inSheet: Signal<boolean> = computed((): boolean =>
+        this.popovers().some((popover: RtPopoverDirective): boolean => popover.shownInSheet())
+    );
     public readonly addShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
         transform: booleanAttribute,
     });
@@ -250,35 +222,37 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
     public readonly invitationGlyph: InputSignal<string | null> = input<string | null>(null);
     public readonly invitationDescription: InputSignal<string> = input<string>('');
     /** Значок кнопки приглашения; null — кнопка без значка. */
-    public readonly invitationButtonIcon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(this.#invitationButtonIconDefault);
+    public readonly invitationButtonIcon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(
+        this.#defaults.invitationButtonIcon
+    );
     /** Вид кнопки приглашения — тот же набор, что у кнопки кита. */
     public readonly invitationButtonAppearance: InputSignal<IButton.Appearance> = input<IButton.Appearance>(
-        this.#invitationButtonAppearanceDefault
+        this.#defaults.invitationButtonAppearance
     );
     /** Значок кнопки «Очистить список». */
-    public readonly clearIcon: InputSignal<IRtIcon.Name> = input<IRtIcon.Name>(this.#clearIconDefault);
+    public readonly clearIcon: InputSignal<IRtIcon.Name> = input<IRtIcon.Name>(this.#defaults.clearIcon);
     /** Название строки переносится; `false` ведёт его одной строкой с многоточием и подсказкой при обрезке. */
-    public readonly titleWrap: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(this.#titleWrapDefault, {
+    public readonly titleWrap: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(this.#defaults.titleWrap, {
         transform: booleanAttribute,
     });
     /** Вид поля поиска в окне выбора. */
-    public readonly searchAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>(this.#searchAppearanceDefault);
+    public readonly searchAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>(this.#defaults.searchAppearance);
     /** Шаг скругления поля поиска в окне выбора; null — скругление самого поля. */
-    public readonly searchRadius: InputSignal<TRtRadius | null> = input<TRtRadius | null>(this.#searchRadiusDefault);
+    public readonly searchRadius: InputSignal<TRtRadius | null> = input<TRtRadius | null>(this.#defaults.searchRadius);
     /** Символы подписи пункта окна выбора, совпавшие со словами поиска, выделены. */
-    public readonly highlightSearch: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(this.#highlightSearchDefault, {
+    public readonly highlightSearch: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(this.#defaults.highlightSearch, {
         transform: booleanAttribute,
     });
     /** Подпись пустого результата поиска; пустая строка оставляет подпись кита. */
-    public readonly emptyResultsText: InputSignal<string> = input<string>(this.#emptyResultsTextDefault);
+    public readonly emptyResultsText: InputSignal<string> = input<string>(this.#defaults.emptyResultsText);
     /** Подпись кнопки применения в окне выбора; пустая строка оставляет подпись кита. */
-    public readonly applyLabel: InputSignal<string> = input<string>(this.#applyLabelDefault);
+    public readonly applyLabel: InputSignal<string> = input<string>(this.#defaults.applyLabel);
     /** Регистр подписи кнопки применения; `none` оставляет её как есть. */
     public readonly applyLabelCase: InputSignal<IRtDynamicSelector.LabelCase> = input<IRtDynamicSelector.LabelCase>(
-        this.#applyLabelCaseDefault
+        this.#defaults.applyLabelCase
     );
     /** Поле поиска получает фокус при открытии окна выбора. */
-    public readonly autofocusSearch: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(this.#autofocusSearchDefault, {
+    public readonly autofocusSearch: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(this.#defaults.autofocusSearch, {
         transform: booleanAttribute,
     });
     public readonly multiToggleShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
@@ -356,6 +330,13 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
                 ? keys.slice(0, 1)
                 : [...this.value(), ...keys.filter((key: unknown): boolean => !this.value().includes(key))]
         );
+    }
+
+    /** «Применить» в шапке шторки и ответ «Применить» на её вопрос: уходят отметки открытого окна. */
+    protected onSheetApply(): void {
+        if (this.pendingKeys().length > 0) {
+            this.onApplied([...this.pendingKeys()]);
+        }
     }
 
     protected onCancelled(): void {
