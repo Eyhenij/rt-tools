@@ -235,8 +235,11 @@ export class RtDatePanelComponent {
         { value: 'time', label: this.t().uiTime },
     ]);
 
-    /** Тип значения: дата, время или дата со временем. */
-    public readonly type: InputSignal<IRtDatePicker.Type> = input.required<IRtDatePicker.Type>();
+    /**
+     * Тип значения: дата, время или дата со временем. Умолчание нужно шапке шторки поля: она читает
+     * черновик панели в том же проходе, в котором панель создана и вход ещё не задан.
+     */
+    public readonly type: InputSignal<IRtDatePicker.Type> = input<IRtDatePicker.Type>('date');
     /** Значение в форме нативного input'а: `YYYY-MM-DD`, `HH:mm`, `YYYY-MM-DDTHH:mm`; пустая строка — пусто. */
     public readonly value: InputSignal<string> = input<string>('');
     /** Нижняя граница в форме значения; `null` — границы нет. */

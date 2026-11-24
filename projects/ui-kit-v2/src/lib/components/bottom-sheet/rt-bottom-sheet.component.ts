@@ -15,6 +15,7 @@ import {
     input,
     InputSignal,
     InputSignalWithTransform,
+    linkedSignal,
     output,
     OutputEmitterRef,
     signal,
@@ -100,6 +101,8 @@ export class RtBottomSheetComponent {
     readonly #onDragEnd: () => void = (): void => this.#handleDragEnd();
     readonly #requestClose: () => void = (): void => this.dismiss();
     readonly #requestApply: () => void = (): void => this.applyRequest.emit();
+    readonly #onKeyboardBox: (box: IRtSheetKeyboardBox | null) => void = (box: IRtSheetKeyboardBox | null): void =>
+        this.keyboardBox.set(box);
 
     #dragStartY: number = 0;
     #locked: boolean = false;
@@ -119,17 +122,22 @@ export class RtBottomSheetComponent {
      * карточка уехала бы из-под пальца, который её нажимает. Там, где указатель точный, клавиатуры
      * нет, и стили высоту не меняют.
      */
-    protected readonly typing: WritableSignal<boolean> = signal<boolean>(false);
+    protected readonly typing: WritableSignal<boolean> = linkedSignal<boolean>((): boolean => this.#closedWith(false));
 
     /**
      * Место над экранной клавиатурой, пока в шторке печатают; без клавиатуры пусто. Клавиатура
      * телефона ложится поверх окна, и шторка во весь экран ушла бы низом под неё: с этим местом она
      * встаёт ровно над клавиатурой. Стили читают его только там, где указатель — палец.
      */
-    protected readonly keyboardBox: WritableSignal<IRtSheetKeyboardBox | null> = signal<IRtSheetKeyboardBox | null>(null);
+    protected readonly keyboardBox: WritableSignal<IRtSheetKeyboardBox | null> = linkedSignal<IRtSheetKeyboardBox | null>(
+        (): IRtSheetKeyboardBox | null => this.#typedWith(null)
+    );
 
-    /** Вопрос перед закрытием показан: шторку просили закрыть при неприменённом выборе. */
-    protected readonly confirming: WritableSignal<boolean> = signal<boolean>(false);
+    /**
+     * Вопрос перед закрытием показан: шторку просили закрыть при неприменённом выборе. Закрытая
+     * шторка вопроса за собой не оставляет: со сменой открытости он снят.
+     */
+    protected readonly confirming: WritableSignal<boolean> = linkedSignal<boolean>((): boolean => this.#closedWith(false));
     protected readonly confirmTitleId: string = takeConfirmId();
 
     /** Открыта, но поверх неё открыта шторка из неё самой: эта спрятана до закрытия верхней. */
@@ -218,8 +226,8 @@ export class RtBottomSheetComponent {
         effect((): void => {
             this.#setScrollLock(this.open() && !this.#inPopoverSheet());
         });
-        // Закрытая шторка вопроса и высоты под клавиатуру за собой не оставляет: следующее открытие
-        // начинается без них. Фокус, оставшийся в закрытой шторке, уходит туда, откуда её открыли.
+        // Фокус, оставшийся в закрытой шторке, уходит туда, откуда её открыли. Вопрос и высоту под
+        // клавиатуру закрытая шторка снимает сама: их сигналы связаны с открытостью.
         effect((): void => {
             const open: boolean = this.open();
             untracked((): void => {
@@ -227,20 +235,15 @@ export class RtBottomSheetComponent {
                     // Шторке панели выбора фокус возвращает её мост: он знает, какой узел триггера его берёт.
                     this.#openedFrom = this.#inPopoverSheet() ? null : outerFocus(this.#doc, this.#host);
                 } else {
-                    this.confirming.set(false);
-                    this.typing.set(false);
                     this.#returnFocus();
                 }
             });
         });
-        // Пока в шторке печатают, она следит за местом над экранной клавиатурой и встаёт в него.
+        // Пока в шторке печатают, она следит за местом над экранной клавиатурой и встаёт в него;
+        // место снимается само, когда печатать перестали.
         effect((onCleanup: EffectCleanupRegisterFn): void => {
             if (this.typing()) {
-                onCleanup(
-                    rtWatchSheetKeyboard(this.#doc.defaultView, (box: IRtSheetKeyboardBox | null): void => this.keyboardBox.set(box))
-                );
-            } else {
-                this.keyboardBox.set(null);
+                onCleanup(rtWatchSheetKeyboard(this.#doc.defaultView, this.#onKeyboardBox));
             }
         });
         // Вопрос нарисован — фокус встаёт на первый ответ: иначе он остаётся под вопросом, на кнопке
@@ -333,6 +336,20 @@ export class RtBottomSheetComponent {
     }
 
     /** Шторка панели выбора: прокрутку и Escape за неё держит её собственный оверлей. */
+    /** Значение, к которому сигнал возвращается с каждой сменой открытости шторки. */
+    #closedWith<T>(value: T): T {
+        this.open();
+
+        return value;
+    }
+
+    /** Значение, к которому сигнал возвращается, когда в шторке начали или перестали печатать. */
+    #typedWith<T>(value: T): T {
+        this.typing();
+
+        return value;
+    }
+
     #inPopoverSheet(): boolean {
         return this.#host.closest('rt-popover-sheet') !== null;
     }

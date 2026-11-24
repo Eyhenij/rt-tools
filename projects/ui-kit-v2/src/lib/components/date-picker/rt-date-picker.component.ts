@@ -2,7 +2,6 @@ import { NumberInput } from '@angular/cdk/coercion';
 import {
     booleanAttribute,
     computed,
-    effect,
     forwardRef,
     inject,
     input,
@@ -12,7 +11,6 @@ import {
     viewChild,
     ChangeDetectionStrategy,
     Component,
-    EffectRef,
     ElementRef,
     InputSignal,
     InputSignalWithTransform,
@@ -101,20 +99,15 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
     protected readonly phone: Signal<boolean> = inject(BreakpointsService).phone;
     /** Приложение разрешает шторку токеном `RT_POPOVER_SHEET` (по умолчанию да); `false` оставляет поповер у поля везде под ним. */
     readonly #sheetAllowed: boolean = inject(RT_POPOVER_SHEET);
-    /** Панель шторки доходит до шапки шторки следующим проходом — когда её входы уже заданы. */
-    protected readonly panelSync: EffectRef = effect((): void => this.sheetPanel.set(this.sheetPanelRef()));
     /** Шторка включена входом `sheet`, токеном и экраном телефона (`BreakpointsService.phone`, до 480 px); иначе панель открывается поповером у поля. */
     protected readonly useSheet: Signal<boolean> = computed((): boolean => this.#sheetAllowed && this.phone() && this.sheet());
 
     protected readonly fieldEl: Signal<ElementRef<HTMLInputElement> | undefined> = viewChild<ElementRef<HTMLInputElement>>('fieldEl');
     protected readonly popover: Signal<RtPopoverDirective | undefined> = viewChild(RtPopoverDirective);
-    protected readonly sheetPanelRef: Signal<RtDatePanelComponent | undefined> = viewChild<RtDatePanelComponent>('sheetPanel');
     /**
-     * Панель в шторке: кнопка в шапке шторки зовёт её и читает, есть ли что применять. Сигнал
-     * отстаёт от запроса на один проход: в проходе, где панель создана, её входы ещё не заданы, и
-     * чтение её черновика из шапки шторки упало бы на обязательном входе.
+     * Панель в шторке: кнопка в шапке шторки зовёт её и читает, есть ли что применять.
      */
-    protected readonly sheetPanel: WritableSignal<RtDatePanelComponent | undefined> = signal<RtDatePanelComponent | undefined>(undefined);
+    protected readonly sheetPanel: Signal<RtDatePanelComponent | undefined> = viewChild<RtDatePanelComponent>('sheetPanel');
 
     /** Набранный текст не читается как значение в границах: поле помечено ошибкой. */
     protected readonly textInvalid: WritableSignal<boolean> = signal(false);
