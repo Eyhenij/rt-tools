@@ -1,7 +1,9 @@
 <ng-container rtBlock="rt-dynamic-input">
     <!-- Под приглашением пустой список не рисуется: узел нулевой высоты сдвигал бы приглашение зазором. -->
     @if (rows().length > 0 || !isInvitationShown()) {
-        <rt-dynamic-selector-list>
+        <rt-dynamic-selector-list [addButton]="addButtonTpl" />
+        <!-- Кнопку добавления рисует список: она создаётся, только пока его полоса действий показана. -->
+        <ng-template #addButtonTpl>
             @if (isAddShown()) {
                 <button
                     rtButton
@@ -13,7 +15,7 @@
                     [disabled]="isDisabled()"
                     (click)="onAdd()"></button>
             }
-        </rt-dynamic-selector-list>
+        </ng-template>
     }
 
     @if (isFieldShown()) {

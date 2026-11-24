@@ -9,7 +9,7 @@
  * приёмника кончается при его перезапуске, и экран без переподключения молча перестал бы видеть
  * новые реплики.
  */
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { RtAuthService } from '@rt-tools/auth-angular';
 import { WINDOW } from '@rt-tools/core';
 import { Observable, Subscriber } from 'rxjs';
@@ -30,7 +30,7 @@ export function eventData(block: string): string | null {
     return lines.length ? lines.join('\n') : null;
 }
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class ChatStreamService {
     readonly #auth: RtAuthService = inject(RtAuthService);
     readonly #window: Window & typeof globalThis = inject(WINDOW) as Window & typeof globalThis;

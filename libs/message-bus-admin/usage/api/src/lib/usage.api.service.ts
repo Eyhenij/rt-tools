@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { asReadFault, READ_TIMEOUT_MS } from '@rt/message-bus-admin/common/core/api';
 import {
     IUsage,
@@ -30,7 +30,7 @@ export interface IUsageSessionsAsked {
  * Предел ожидания и разбор отказа — те же, что у страницы: общий слой отдаёт их готовыми, а
  * своего способа спросить у раздела нет.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class UsageApiService {
     readonly #http: HttpClient = inject(HttpClient);
     readonly #mapper: UsageSessionMapper = new UsageSessionMapper();

@@ -4,14 +4,15 @@
     [title]="t().redirectsTitle"
     [hint]="t().redirectsSubtitle"
     [searchPlaceholder]="t().redirectsSearch">
-    <rt-icon-button
-        rtCmsListToolbarRight
-        icon="ico-plus"
-        variant="primary"
-        qa-dataid="redirects-create"
-        [tooltip]="t().redirectsNew"
-        [ariaLabel]="t().redirectsNew"
-        (clicked)="openCreate()" />
+    <ng-template rtCmsListToolbarRight>
+        <rt-icon-button
+            icon="ico-plus"
+            variant="primary"
+            qa-dataid="redirects-create"
+            [tooltip]="t().redirectsNew"
+            [ariaLabel]="t().redirectsNew"
+            (clicked)="openCreate()" />
+    </ng-template>
 
     <rt-cms-redirects-table
         qa-dataid="redirects-list"

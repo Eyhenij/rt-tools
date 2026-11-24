@@ -1,4 +1,4 @@
-import { Directive, HostListener, inject, input, InputSignal } from '@angular/core';
+import { Directive, inject, input, InputSignal } from '@angular/core';
 import { Router } from '@angular/router';
 import { TNullable } from '@rt-tools/utils';
 
@@ -8,6 +8,9 @@ import { WINDOW } from '../tokens/window.token';
 @Directive({
     selector: '[rtNavigationDirective]',
     providers: [PlatformService],
+    host: {
+        '(click)': 'onClick($event)',
+    },
 })
 export class RtNavigationDirective {
     readonly #router: Router = inject(Router);
@@ -16,7 +19,6 @@ export class RtNavigationDirective {
 
     public link: InputSignal<TNullable<string>> = input.required({ alias: 'rtNavigationDirective' });
 
-    @HostListener('click', ['$event'])
     public onClick(event: MouseEvent): void {
         if (this.link()) {
             if (this.#platformService.isPlatformBrowser && (event.ctrlKey || event.metaKey)) {

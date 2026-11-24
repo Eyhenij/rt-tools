@@ -31,7 +31,7 @@ export interface IRtLayerOverride {
         <app-story-row caption="Правило приложения против правила кита при равной специфичности" [items]="items" [itemLabel]="labelOf">
             <ng-template let-item>
                 <div [class]="item.cellClass">
-                    <button rtButton aria-label="Кнопка витрины" [label]="'Сохранить'"></button>
+                    <button type="button" rtButton aria-label="Кнопка витрины" [label]="'Сохранить'"></button>
                 </div>
             </ng-template>
         </app-story-row>

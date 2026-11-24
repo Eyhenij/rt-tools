@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, Signal } from '@angular/core';
+import { computed, inject, Signal, Service } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ChatApiService, IChatTalksAsked } from '@rt/message-bus-admin/chat/api';
 import { IChat } from '@rt/message-bus-admin/chat/util';
@@ -35,7 +35,7 @@ const INITIAL_STATE: IChatTalksState = { ...BASE_INITIAL_STATE.ASYNC, rows: [], 
  * `switchMap`: человек меняет сужение, не дождавшись прежнего ответа, и увидеть он должен то,
  * что назвал последним.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class ChatTalksStore extends BaseAsyncStoreService<IChatTalksState, TChatTalksMessage> {
     readonly #api: ChatApiService = inject(ChatApiService);
     readonly #readSource: Subject<IChatTalksAsked> = new Subject<IChatTalksAsked>();

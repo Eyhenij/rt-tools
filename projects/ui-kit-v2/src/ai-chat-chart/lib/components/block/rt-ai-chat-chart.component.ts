@@ -71,7 +71,7 @@ function nextTableId(): string {
     },
 })
 export class RtAiChatChartComponent {
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
     readonly #dialog: RtDialogService = inject(RtDialogService);
     readonly #locale: Signal<string> = inject(RT_KIT_LOCALE);
 
@@ -157,7 +157,7 @@ export class RtAiChatChartComponent {
     protected async download(): Promise<void> {
         const url: string | null = (await this.plot()?.toPng()) ?? null;
         if (url) {
-            rtAiChatChartSave(this.#document, url, rtAiChatChartFileName(this.spec()?.title));
+            rtAiChatChartSave(this.#doc, url, rtAiChatChartFileName(this.spec()?.title));
         }
     }
 }

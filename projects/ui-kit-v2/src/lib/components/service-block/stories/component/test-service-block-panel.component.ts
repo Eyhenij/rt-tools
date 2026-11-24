@@ -3,6 +3,7 @@ import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
 import { RtAsideFooterComponent } from '../../../aside/footer/rt-aside-footer.component';
 import { RtAsideHeaderComponent } from '../../../aside/header/rt-aside-header.component';
+import { RtAsideContentDirective } from '../../../aside/rt-aside-content.directive';
 import { RtAsideComponent } from '../../../aside/rt-aside.component';
 import { RtButtonDirective } from '../../../button/rt-button.directive';
 import { RtCopyCellComponent } from '../../../table/copy-cell/rt-copy-cell.component';
@@ -40,6 +41,7 @@ export interface IServiceBlockPanelField {
 
         // components
         RtAsideComponent,
+        RtAsideContentDirective,
         RtAsideFooterComponent,
         RtAsideHeaderComponent,
         RtButtonDirective,

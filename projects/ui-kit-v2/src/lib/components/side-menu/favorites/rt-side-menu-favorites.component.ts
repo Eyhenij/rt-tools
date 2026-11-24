@@ -36,6 +36,7 @@ import { RtSideMenuSettingsService } from '../rt-side-menu-settings.service';
 import { filterSideMenuItems } from '../rt-side-menu.logic';
 import { IRtSideMenu } from '../rt-side-menu.model';
 import { IRtSideMenuHost, RT_SIDE_MENU } from '../rt-side-menu.tokens';
+import { RtSideMenuSubItemActionDirective } from '../sub-item/rt-side-menu-sub-item-action.directive';
 import { RtSideMenuSubItemComponent } from '../sub-item/rt-side-menu-sub-item.component';
 
 const BEM_BLOCK: string = 'rt-side-menu-favorites';
@@ -78,6 +79,7 @@ const SUB_MENU_PANEL: string = '.rt-side-menu__panel';
         RtIconButtonComponent,
         RtIconComponent,
         RtSideMenuSubItemComponent,
+        RtSideMenuSubItemActionDirective,
     ],
 })
 export class RtSideMenuFavoritesComponent {

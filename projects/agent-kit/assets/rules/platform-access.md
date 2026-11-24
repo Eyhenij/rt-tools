@@ -32,7 +32,7 @@ Rule under the law `docs/constitution/frontend-application.md`. Cold part: `pitf
   needs none: `StorageService` falls back to memory.
 - **A direct call to the global object is refused by the linter.** Sixteen names on front-end trees;
   deliberate places sit in the config, never disabled per line. Banned by name, not path:
-  `this.#document.defaultView` on an injected document is lawful; a bypass looks alike.
+  `this.#doc.defaultView` on an injected document is lawful; a bypass looks alike.
 
 ## What of the law is not here
 

@@ -10,6 +10,7 @@ import { RtAsideHeaderComponent } from '../../header/rt-aside-header.component';
 import { RtTabDirective } from '../../../tabs/rt-tab.directive';
 import { RtTabsComponent } from '../../../tabs/rt-tabs.component';
 import { RtAsideEmptyDirective } from '../../rt-aside-empty.directive';
+import { RtAsideContentDirective } from '../../rt-aside-content.directive';
 import { TRtAsideContentLayout, TRtAsideSize, RtAsideComponent } from '../../rt-aside.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
@@ -63,7 +64,9 @@ interface IAsidePropertiesCase {
                                     <div class="app-aside-matrix__box">
                                         <rt-aside [size]="size" [ariaLabel]="'Панель ' + size">
                                             <rt-aside-header title="Тур в Сочи" overline="Заявка № 1024" />
-                                            <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                            <ng-template rtAsideContent>
+                                                <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                            </ng-template>
                                             <rt-aside-footer>
                                                 <button
                                                     rtButton
@@ -96,7 +99,11 @@ interface IAsidePropertiesCase {
                                     <div class="app-aside-matrix__box">
                                         <rt-aside size="md" ariaLabel="Панель своей ширины" [width]="width">
                                             <rt-aside-header title="Тур в Сочи" />
-                                            <rt-aside-section heading="Клиент">Ширина задана входом и перекрывает размер.</rt-aside-section>
+                                            <ng-template rtAsideContent>
+                                                <rt-aside-section heading="Клиент">
+                                                    Ширина задана входом и перекрывает размер.
+                                                </rt-aside-section>
+                                            </ng-template>
                                         </rt-aside>
                                     </div>
                                 </ng-template>
@@ -113,8 +120,10 @@ interface IAsidePropertiesCase {
                                     <div class="app-aside-matrix__box">
                                         <rt-aside size="sm" [contentLayout]="layoutCase.layout" [ariaLabel]="layoutCase.name">
                                             <rt-aside-header title="Тур в Сочи" />
-                                            <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
-                                            <rt-aside-section heading="Даты">12.05.2026 — 26.05.2026</rt-aside-section>
+                                            <ng-template rtAsideContent>
+                                                <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                                <rt-aside-section heading="Даты">12.05.2026 — 26.05.2026</rt-aside-section>
+                                            </ng-template>
                                         </rt-aside>
                                     </div>
                                 </ng-template>
@@ -131,7 +140,9 @@ interface IAsidePropertiesCase {
                                     <div class="app-aside-matrix__box app-aside-matrix__box--tall">
                                         <rt-aside size="sm" ariaLabel="Карточка тура" [requestError]="requestError">
                                             <rt-aside-header title="Тур в Сочи" overline="Заявка № 1024" />
-                                            <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                            <ng-template rtAsideContent>
+                                                <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                            </ng-template>
                                             <rt-aside-footer>
                                                 <button
                                                     rtButton
@@ -166,6 +177,10 @@ interface IAsidePropertiesCase {
                                             @case ('default') {
                                                 <rt-aside size="sm" ariaLabel="События" [empty]="true">
                                                     <rt-aside-header title="События" />
+                                                    <!-- Пустая панель тела не строит: шаблон ниже не создаётся -->
+                                                    <ng-template rtAsideContent>
+                                                        <rt-aside-section heading="События">Список событий</rt-aside-section>
+                                                    </ng-template>
                                                     <rt-aside-footer>
                                                         <button
                                                             rtButton
@@ -188,11 +203,19 @@ interface IAsidePropertiesCase {
                                                     emptyDescription="Они появятся после первой брони"
                                                     [empty]="true">
                                                     <rt-aside-header title="События" />
+                                                    <!-- Пустая панель тела не строит: шаблон ниже не создаётся -->
+                                                    <ng-template rtAsideContent>
+                                                        <rt-aside-section heading="События">Список событий</rt-aside-section>
+                                                    </ng-template>
                                                 </rt-aside>
                                             }
                                             @case ('template') {
                                                 <rt-aside size="sm" ariaLabel="События" [empty]="true">
                                                     <rt-aside-header title="События" />
+                                                    <!-- Пустая панель тела не строит: шаблон ниже не создаётся -->
+                                                    <ng-template rtAsideContent>
+                                                        <rt-aside-section heading="События">Список событий</rt-aside-section>
+                                                    </ng-template>
                                                     <ng-template rtAsideEmpty>
                                                         <rt-aside-section heading="Своя заглушка">
                                                             Приложение подставило свою разметку целиком.
@@ -203,12 +226,14 @@ interface IAsidePropertiesCase {
                                             @case ('tab') {
                                                 <rt-aside size="sm" ariaLabel="Бронь" contentLayout="tabs">
                                                     <rt-aside-header title="Бронь № 1042" />
-                                                    <rt-tabs activeId="events" [animationDuration]="0">
-                                                        <ng-template rtTab="main" label="Общее">
-                                                            <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
-                                                        </ng-template>
-                                                        <ng-template rtTab="events" label="События" [empty]="true" />
-                                                    </rt-tabs>
+                                                    <ng-template rtAsideContent>
+                                                        <rt-tabs activeId="events" [animationDuration]="0">
+                                                            <ng-template rtTab="main" label="Общее">
+                                                                <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                                            </ng-template>
+                                                            <ng-template rtTab="events" label="События" [empty]="true" />
+                                                        </rt-tabs>
+                                                    </ng-template>
                                                 </rt-aside>
                                             }
                                         }
@@ -227,7 +252,9 @@ interface IAsidePropertiesCase {
                                     <div class="app-aside-matrix__box">
                                         <rt-aside size="sm" ariaLabel="Карточка тура" [pending]="true">
                                             <rt-aside-header title="Тур в Сочи" overline="Заявка № 1024" />
-                                            <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                            <ng-template rtAsideContent>
+                                                <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                            </ng-template>
                                             <rt-aside-footer>
                                                 <button
                                                     rtButton
@@ -260,7 +287,9 @@ interface IAsidePropertiesCase {
                                     <div class="app-aside-matrix__box app-aside-matrix__box--tall" [attr.style]="propertiesCase.style">
                                         <rt-aside size="sm" [ariaLabel]="propertiesCase.name" [requestError]="requestError">
                                             <rt-aside-header title="Тур в Сочи" overline="Заявка № 1024" />
-                                            <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                            <ng-template rtAsideContent>
+                                                <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                            </ng-template>
                                             <rt-aside-footer>
                                                 <button
                                                     rtButton
@@ -291,7 +320,9 @@ interface IAsidePropertiesCase {
                             <div class="app-aside-matrix__box">
                                 <rt-aside size="sm" ariaLabel="Карточка тура">
                                     <rt-aside-header title="Тур в Сочи" overline="Заявка № 1024" />
-                                    <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                    <ng-template rtAsideContent>
+                                        <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                    </ng-template>
                                     <rt-aside-footer>
                                         <button
                                             rtButton
@@ -317,7 +348,9 @@ interface IAsidePropertiesCase {
                                     <div class="app-aside-matrix__box">
                                         <rt-aside size="sm" ariaLabel="Карточка тура">
                                             <rt-aside-header title="Тур в Сочи" overline="Заявка № 1024" />
-                                            <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                            <ng-template rtAsideContent>
+                                                <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                            </ng-template>
                                             <rt-aside-footer>
                                                 <button
                                                     rtButton
@@ -376,6 +409,7 @@ interface IAsidePropertiesCase {
     imports: [
         // components
         RtAsideComponent,
+        RtAsideContentDirective,
         RtAsideEmptyDirective,
         RtAsideFooterComponent,
         RtAsideHeaderComponent,

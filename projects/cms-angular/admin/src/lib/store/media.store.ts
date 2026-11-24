@@ -1,4 +1,4 @@
-import { DestroyRef, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { DestroyRef, inject, Signal, signal, WritableSignal, Service } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { catchError, concatMap, EMPTY, map, of, Subject, switchMap, tap } from 'rxjs';
@@ -51,7 +51,7 @@ export function mediaRefusalOf(error: unknown, otherwise: TCmsLabelKey): TCmsLab
  * by one in the order picked: ten at once would hit the request body limit. The list is open in one
  * folder, and an upload puts the file into it.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class MediaStore implements IListPage.Store<IMediaFileRow> {
     readonly #api: MediaApiService = inject(MediaApiService);
     readonly #notifications: NotificationBus = inject(NotificationBus);

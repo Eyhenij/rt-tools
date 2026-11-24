@@ -62,8 +62,22 @@ Given a reader in the admin
 When a record is created with their token
 Then the example server answers 403
 
+### SC-AUTH-119 — the records screen loads without a page error and without a failed script load
+
+Given a reader opens the admin of the example
+When they enter through Keycloak and the records screen opens
+Then the screen shows the records or their empty state, the page throws no error, and no script of
+the build fails to load
+
 ### SC-AUTH-118 — every icon button of the records screen draws its glyph
 
 Given a person entered the admin and is on the records screen
 When they look at the icon buttons of the screen
 Then each of them shows the glyph of its icon, not an empty frame: the kit found every icon name
+
+### SC-AUTH-120 — the sprite symbols of the records screen carry SVG shapes and nothing that runs
+
+Given a person entered the admin and is on the records screen
+When the kit has put the icons of the screen into the sprite of the page
+Then every symbol carries the shapes of its file, every node of it is an SVG node, and none carries
+an event handler

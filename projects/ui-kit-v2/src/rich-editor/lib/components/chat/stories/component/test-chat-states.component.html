@@ -27,8 +27,12 @@
                         [hasThread]="item.hasThread"
                         [error]="item.error"
                         [messages]="messages">
-                        <rt-icon-button rtChatHeaderActions icon="calendar" variant="ghost" size="sm" ariaLabel="Бронирование" />
-                        <rt-icon-button rtChatHeaderActions icon="ellipsis-v" variant="ghost" size="sm" ariaLabel="Ещё" />
+                        <ng-template rtChatHeaderActions>
+                            <rt-icon-button icon="calendar" variant="ghost" size="sm" ariaLabel="Бронирование" />
+                        </ng-template>
+                        <ng-template rtChatHeaderActions>
+                            <rt-icon-button icon="ellipsis-v" variant="ghost" size="sm" ariaLabel="Ещё" />
+                        </ng-template>
                         @if (item.ownEmpty) {
                             <ng-template rtChatEmpty>
                                 <div [style]="slotStyle">

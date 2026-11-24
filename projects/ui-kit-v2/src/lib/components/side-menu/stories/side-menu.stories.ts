@@ -2,7 +2,6 @@ import { Args, Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 
 import { STORY_PHONE_VIEWPORT } from '../../../../showcase/story-snapshot';
 import { SIDE_MENU_STORY_DEEP_ACTIVE } from './component/side-menu-story-data';
-import { TestRtSideMenuMobileComponent } from './component/test-side-menu-mobile.component';
 import { TestRtSideMenuComponent } from './component/test-side-menu.component';
 import { holdBySearch, openSection, pressKey, SIDE_MENU_PANEL, typeQuery } from './side-menu.play';
 
@@ -38,10 +37,10 @@ const HOVERED: { snapshot: { fullPage: boolean; overlay: string } } = { snapshot
 const MOBILE: Pick<TStory, 'decorators' | 'render' | 'globals' | 'parameters'> = {
     globals: { viewport: { value: 'narrow' } },
     parameters: { snapshot: { fullPage: true, viewport: STORY_PHONE_VIEWPORT } },
-    decorators: [moduleMetadata({ imports: [TestRtSideMenuMobileComponent] })],
+    decorators: [moduleMetadata({ imports: [TestRtSideMenuComponent] })],
     render: (args: Args): { props: Args; template: string } => ({
         props: args,
-        template: '<app-side-menu-mobile [activeIds]="activeIds" />',
+        template: '<app-side-menu [activeIds]="activeIds" />',
     }),
 };
 

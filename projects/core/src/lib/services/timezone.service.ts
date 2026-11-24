@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { PlatformService } from './platform.service';
 
@@ -22,7 +22,7 @@ export const FALLBACK_TIMEZONE: string = 'UTC';
  * The value is read on every call rather than resolved once: a reader travels, or fixes the system
  * setting, without reloading the tab.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class RtTimezoneService {
     readonly #platform: PlatformService = inject(PlatformService);
 

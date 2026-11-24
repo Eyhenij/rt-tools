@@ -4,6 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { createRtFixture, provideRtKitTesting } from '../../../testing/rt-kit-testing';
 import { RtAsideHeaderComponent } from './header/rt-aside-header.component';
+import { RtAsideContentDirective } from './rt-aside-content.directive';
 import { RtAsideComponent } from './rt-aside.component';
 import { RtAsideService } from './rt-aside.service';
 
@@ -11,11 +12,13 @@ import { RtAsideService } from './rt-aside.service';
     selector: 'rt-aside-open-content',
     template: `
         <rt-aside>
-            <p>Содержимое</p>
+            <ng-template rtAsideContent>
+                <p>Содержимое</p>
+            </ng-template>
         </rt-aside>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtAsideComponent],
+    imports: [RtAsideComponent, RtAsideContentDirective],
 })
 class OwnedContentComponent {}
 

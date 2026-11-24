@@ -18,7 +18,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { RtAsideRef } from '@rt-tools/ui-kit-v2/aside';
 import { RT_ASIDE_DATA } from '@rt-tools/ui-kit-v2/aside';
-import { RtAsideComponent } from '@rt-tools/ui-kit-v2/aside';
+import { RtAsideComponent, RtAsideContentDirective } from '@rt-tools/ui-kit-v2/aside';
 import { RtAsideFooterComponent } from '@rt-tools/ui-kit-v2/aside';
 import { RtAsideHeaderComponent } from '@rt-tools/ui-kit-v2/aside';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
@@ -54,6 +54,7 @@ const BEM_BLOCK: string = 'rt-data-list-settings-aside';
     imports: [
         // components
         RtAsideComponent,
+        RtAsideContentDirective,
         RtAsideFooterComponent,
         RtAsideHeaderComponent,
         RtIconButtonComponent,

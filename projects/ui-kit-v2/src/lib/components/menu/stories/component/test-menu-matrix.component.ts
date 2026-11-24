@@ -7,6 +7,7 @@ import { IStoryState, STORY_STATES, storyStateLabel } from '../../../../../showc
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { IRtIcon } from '../../../icon/rt-icon.model';
 import { RtMenuItemComponent } from '../../rt-menu-item.component';
+import { RtMenuContentDirective } from '../../rt-menu-content.directive';
 import { RtMenuComponent } from '../../rt-menu.component';
 import { IRtMenu } from '../../rt-menu.model';
 
@@ -43,7 +44,9 @@ interface IMenuTriggerCase {
                         <app-story-row [items]="triggerCases" [itemLabel]="caseLabel">
                             <ng-template let-triggerCase>
                                 <rt-menu [icon]="triggerCase.icon" [disabled]="triggerCase.disabled" [ariaLabel]="triggerCase.name">
-                                    <rt-menu-item label="Открыть" icon="ico-eye" />
+                                    <ng-template rtMenuContent>
+                                        <rt-menu-item label="Открыть" icon="ico-eye" />
+                                    </ng-template>
                                 </rt-menu>
                             </ng-template>
                         </app-story-row>
@@ -57,7 +60,9 @@ interface IMenuTriggerCase {
                         <app-story-row [items]="states" [itemLabel]="stateLabel">
                             <ng-template let-state>
                                 <rt-menu ariaLabel="Действия" [attr.data-story-state]="state.state">
-                                    <rt-menu-item label="Открыть" icon="ico-eye" />
+                                    <ng-template rtMenuContent>
+                                        <rt-menu-item label="Открыть" icon="ico-eye" />
+                                    </ng-template>
                                 </rt-menu>
                             </ng-template>
                         </app-story-row>
@@ -71,13 +76,19 @@ interface IMenuTriggerCase {
                         <app-story-themes>
                             <ng-template>
                                 <rt-menu ariaLabel="Действия">
-                                    <rt-menu-item label="Открыть" icon="ico-eye" />
+                                    <ng-template rtMenuContent>
+                                        <rt-menu-item label="Открыть" icon="ico-eye" />
+                                    </ng-template>
                                 </rt-menu>
                                 <rt-menu icon="ico-edit" ariaLabel="Правка">
-                                    <rt-menu-item label="Изменить" icon="ico-edit" />
+                                    <ng-template rtMenuContent>
+                                        <rt-menu-item label="Изменить" icon="ico-edit" />
+                                    </ng-template>
                                 </rt-menu>
                                 <rt-menu ariaLabel="Недоступно" [disabled]="true">
-                                    <rt-menu-item label="Открыть" icon="ico-eye" />
+                                    <ng-template rtMenuContent>
+                                        <rt-menu-item label="Открыть" icon="ico-eye" />
+                                    </ng-template>
                                 </rt-menu>
                             </ng-template>
                         </app-story-themes>
@@ -91,15 +102,17 @@ interface IMenuTriggerCase {
                     [class.app-menu-matrix__panel-slot--end]="align === 'end'"
                     [class.rt-preset-material]="material">
                     <rt-menu ariaLabel="Действия со строкой" [align]="align" [size]="size" [attr.data-story-trigger]="triggerAttribute">
-                        <rt-menu-item label="Открыть" icon="ico-eye" />
-                        <rt-menu-item label="Изменить" icon="ico-edit" />
-                        <rt-menu-item label="Скопировать" icon="ico-copy" [disabled]="true" />
-                        <rt-menu-item
-                            label="Удалить"
-                            icon="ico-trash"
-                            confirmMessage="Удалить запись? Действие необратимо."
-                            confirmTitle="Удаление"
-                            [danger]="true" />
+                        <ng-template rtMenuContent>
+                            <rt-menu-item label="Открыть" icon="ico-eye" />
+                            <rt-menu-item label="Изменить" icon="ico-edit" />
+                            <rt-menu-item label="Скопировать" icon="ico-copy" [disabled]="true" />
+                            <rt-menu-item
+                                label="Удалить"
+                                icon="ico-trash"
+                                confirmMessage="Удалить запись? Действие необратимо."
+                                confirmTitle="Удаление"
+                                [danger]="true" />
+                        </ng-template>
                     </rt-menu>
                 </div>
             }
@@ -121,6 +134,7 @@ interface IMenuTriggerCase {
     imports: [
         // components
         RtMenuComponent,
+        RtMenuContentDirective,
         RtMenuItemComponent,
 
         // showcase

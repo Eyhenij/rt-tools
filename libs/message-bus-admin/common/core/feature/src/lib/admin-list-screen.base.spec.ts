@@ -1,6 +1,6 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting, TestRequest } from '@angular/common/http/testing';
-import { ChangeDetectionStrategy, Component, inject, Injectable } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Service } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
@@ -19,7 +19,7 @@ const LIST_PATH: string = '/api/postmortems';
 const TREES_PATH: string = '/api/trees';
 
 /** Стор раздела: к основе он добавляет ровно адрес операции. */
-@Injectable({ providedIn: 'root' })
+@Service()
 class TestListStore extends AdminListStoreBase<IRow> {
     protected readonly path: string = LIST_PATH;
 

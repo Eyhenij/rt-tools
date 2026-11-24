@@ -13,6 +13,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@a
 import { AdminListScreenBase } from '@rt/message-bus-admin/common/core/feature';
 import {
     AdminListPageComponent,
+    AdminListPageContentDirective,
     AdminListToolbarLeftDirective,
     AdminMomentPipe,
     AdminTreeFilterComponent,
@@ -20,7 +21,13 @@ import {
 import { adminColumns, AdminTextService, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
 import { MonthRecordsStore } from '@rt/message-bus-admin/summaries/data-access';
 import { IMonthRecord, SUMMARIES_COLUMNS, SUMMARIES_TABLE_ID } from '@rt/message-bus-admin/summaries/util';
-import { IRtTable, RtTableComponent, RtTableRowDirective, RtTableSortHeaderComponent } from '@rt-tools/ui-kit-v2';
+import {
+    IRtTable,
+    RtTableComponent,
+    RtTableRowDirective,
+    RtTableSortHeaderComponent,
+    RtTableSortHeaderContentDirective,
+} from '@rt-tools/ui-kit-v2';
 import { MONTH_RECORD_SORTABLE } from '@rt/message-bus-common';
 
 const BEM_BLOCK: string = 'admin-summaries-list';
@@ -61,11 +68,13 @@ const BEM_BLOCK: string = 'admin-summaries-list';
 
         // components
         AdminListPageComponent,
+        AdminListPageContentDirective,
         AdminListToolbarLeftDirective,
         AdminTreeFilterComponent,
         RtTableComponent,
         RtTableRowDirective,
         RtTableSortHeaderComponent,
+        RtTableSortHeaderContentDirective,
 
         // pipes
         AdminMomentPipe,

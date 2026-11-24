@@ -16,7 +16,7 @@ import {
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
 import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
-import { RtAsideComponent, RtAsideFooterComponent, RtAsideHeaderComponent } from '@rt-tools/ui-kit-v2/aside';
+import { RtAsideComponent, RtAsideContentDirective, RtAsideFooterComponent, RtAsideHeaderComponent } from '@rt-tools/ui-kit-v2/aside';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtToolbarFiltersHub } from '../rt-toolbar-filters.hub';
 import { IRtToolbar } from '../rt-toolbar.model';
@@ -52,6 +52,7 @@ const BEM_BLOCK: string = 'rt-toolbar-filters-panel';
 
         // components
         RtAsideComponent,
+        RtAsideContentDirective,
         RtAsideFooterComponent,
         RtAsideHeaderComponent,
 

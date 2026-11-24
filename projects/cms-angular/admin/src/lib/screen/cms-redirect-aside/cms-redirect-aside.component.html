@@ -6,22 +6,22 @@
 <ng-container rtBlock="rt-cms-redirect-aside">
     <rt-aside qa-dataid="redirect-aside" [ariaLabel]="t().redirectTitle">
         <rt-aside-header qa-dataid="redirect-aside-header" [title]="title()" (dismiss)="onClose()" />
-
-        <form rtElem="form" qa-dataid="redirect-form" [formGroup]="form">
-            @if (submitError(); as reason) {
-                <rt-message severity="danger" qa-dataid="redirect-refusal">{{ reason }}</rt-message>
-            }
-            <rt-field [label]="t().redirectsColumnFrom" [hint]="t().redirectFromHint">
-                <rt-input qa-dataid="redirect-from" formControlName="from" />
-            </rt-field>
-            <rt-field [label]="t().redirectsColumnTo" [hint]="t().redirectToHint">
-                <rt-input qa-dataid="redirect-to" formControlName="to" />
-            </rt-field>
-            <rt-field [label]="t().redirectsColumnType">
-                <rt-select qa-dataid="redirect-type" formControlName="type" [options]="typeOptions()" [clearable]="false" />
-            </rt-field>
-        </form>
-
+        <ng-template rtAsideContent>
+            <form rtElem="form" qa-dataid="redirect-form" [formGroup]="form">
+                @if (submitError(); as reason) {
+                    <rt-message severity="danger" qa-dataid="redirect-refusal">{{ reason }}</rt-message>
+                }
+                <rt-field [label]="t().redirectsColumnFrom" [hint]="t().redirectFromHint">
+                    <rt-input qa-dataid="redirect-from" formControlName="from" />
+                </rt-field>
+                <rt-field [label]="t().redirectsColumnTo" [hint]="t().redirectToHint">
+                    <rt-input qa-dataid="redirect-to" formControlName="to" />
+                </rt-field>
+                <rt-field [label]="t().redirectsColumnType">
+                    <rt-select qa-dataid="redirect-type" formControlName="type" [options]="typeOptions()" [clearable]="false" />
+                </rt-field>
+            </form>
+        </ng-template>
         <rt-aside-footer>
             <button
                 asideDismiss

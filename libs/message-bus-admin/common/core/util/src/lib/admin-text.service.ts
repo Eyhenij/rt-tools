@@ -10,7 +10,7 @@
  * Ненайденный ключ отдаётся признаком, а не пустотой: пустая строка читается как «подписи здесь
  * нет» и доживает до жалобы человека, а `«ключ»` виден на экране и чинится по имени.
  */
-import { computed, inject, Injectable, Signal } from '@angular/core';
+import { computed, inject, Signal, Service } from '@angular/core';
 import { TRtKitLabelParams } from '@rt-tools/ui-kit-v2';
 
 import { ADMIN_LABELS, fill, TAdminLabelKey } from './admin-labels';
@@ -31,7 +31,7 @@ function missing(key: TAdminLabelKey): string {
 }
 
 /** Словарь подписей админки. Язык берётся из выбора человека и меняется без перезагрузки. */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class AdminTextService {
     readonly #locale: AdminLocaleService = inject(AdminLocaleService);
 

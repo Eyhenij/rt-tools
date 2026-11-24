@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { IPageModel } from '@rt-tools/utils';
 
+import { RtDynamicListContentDirective } from '../../rt-dynamic-list-content.directive';
 import { RtDynamicListComponent } from '../../rt-dynamic-list.component';
 
 /** Три страницы: под списком стоит ряд номеров. */
@@ -30,7 +31,9 @@ const PAGE: IPageModel = { pageNumber: 1, pageSize: 20, totalCount: 55 };
                 [showColumnSettings]="showColumnSettings"
                 [selectable]="selectable"
                 [selectedCount]="selectedCount">
-                <ng-container [ngTemplateOutlet]="rowsTpl" />
+                <ng-template rtDynamicListContent>
+                    <ng-container [ngTemplateOutlet]="rowsTpl" />
+                </ng-template>
             </rt-dynamic-list>
         </div>
 
@@ -66,7 +69,7 @@ const PAGE: IPageModel = { pageNumber: 1, pageSize: 20, totalCount: 55 };
         }
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [NgTemplateOutlet, RtDynamicListComponent],
+    imports: [NgTemplateOutlet, RtDynamicListComponent, RtDynamicListContentDirective],
 })
 export class TestRtDynamicListComponent {
     public loading: boolean = false;

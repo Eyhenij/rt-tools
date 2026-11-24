@@ -45,7 +45,7 @@ import { drawStoryCropperSample } from './story-cropper-sample';
 export class TestRtImageCropperComponent {
     readonly #window: Window & typeof globalThis = inject(WINDOW) as Window & typeof globalThis;
 
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
 
     #appliedUrl: string | null = null;
 
@@ -93,7 +93,7 @@ export class TestRtImageCropperComponent {
     }
 
     public takeSample(): void {
-        void drawStoryCropperSample(this.#document, this.#window).then((sample: File | null): void => this.choose(sample ?? undefined));
+        void drawStoryCropperSample(this.#doc, this.#window).then((sample: File | null): void => this.choose(sample ?? undefined));
     }
 
     public onCropped(result: IRtImageCropper.Result): void {

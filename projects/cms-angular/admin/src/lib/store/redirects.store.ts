@@ -1,4 +1,4 @@
-import { DestroyRef, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { DestroyRef, inject, Signal, signal, WritableSignal, Service } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { catchError, concatMap, EMPTY, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
@@ -27,7 +27,7 @@ export function redirectRefusalOf(error: unknown): TCmsLabelKey {
 }
 
 /** The redirect list page. A save gives its stream to the panel: the panel shows the refusal itself. */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class RedirectsStore implements IListPage.Store<IRedirectListRow> {
     readonly #api: RedirectsApiService = inject(RedirectsApiService);
     readonly #notifications: NotificationBus = inject(NotificationBus);

@@ -1,7 +1,6 @@
 import {
     ChangeDetectionStrategy,
     Component,
-    HostBinding,
     InputSignal,
     InputSignalWithTransform,
     Signal,
@@ -45,6 +44,8 @@ const DEFAULT_CHANNEL: string = 'default';
         class: BEM_BLOCK,
         role: 'region',
         '[attr.aria-label]': 'ariaLabel()',
+        '[class]': 'hostModifierClasses',
+        '[style]': 'hostStackStyles',
         '(mouseenter)': 'onStackEnter()',
         '(mousemove)': 'onStackEnter()',
         '(mouseleave)': 'onStackLeave()',
@@ -105,7 +106,6 @@ export class RtToasterComponent {
      */
     public readonly channel: InputSignal<string> = input<string>(DEFAULT_CHANNEL);
 
-    @HostBinding('class')
     public get hostModifierClasses(): Record<string, boolean> {
         return {
             [`${BEM_BLOCK}--y--${this.positionY()}`]: true,
@@ -113,7 +113,6 @@ export class RtToasterComponent {
         };
     }
 
-    @HostBinding('style')
     public get hostStackStyles(): Record<string, string> {
         return {
             '--front-toast-height': `${this.heights()[0]?.height ?? 0}px`,

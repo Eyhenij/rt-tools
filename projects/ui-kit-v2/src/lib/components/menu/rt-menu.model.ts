@@ -42,3 +42,10 @@ export namespace IRtMenu {
  * переживает границы content-projection и overlay-контейнера.
  */
 export const RT_MENU_SELECT_EVENT: string = 'rtMenuSelect';
+
+/**
+ * Имя DOM-события, которым `rt-menu-item` сообщает панели о подтверждении выбора: `detail` — `true`,
+ * когда окно подтверждения открылось, и `false`, когда оно закрылось. Пока подтверждение ждёт
+ * ответа, закрытое меню держит свои пункты в странице скрытыми: ответ доходит до живого пункта.
+ */
+export const RT_MENU_CONFIRM_EVENT: string = 'rtMenuConfirm';

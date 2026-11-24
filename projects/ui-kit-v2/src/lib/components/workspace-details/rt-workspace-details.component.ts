@@ -8,12 +8,12 @@ import {
     contentChild,
     effect,
     inject,
+    linkedSignal,
     input,
     InputSignal,
     InputSignalWithTransform,
     output,
     OutputEmitterRef,
-    signal,
     Signal,
     untracked,
     ViewEncapsulation,
@@ -22,6 +22,7 @@ import {
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { isNil } from '@rt-tools/utils';
 
 import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
 import { NotificationBus } from '@rt-tools/ui-kit-v2/core';
@@ -35,7 +36,7 @@ import { IRtLoadError, RtEmptyStateComponent, rtLoadErrorView } from '@rt-tools/
 import { RtFieldComponent } from '@rt-tools/ui-kit-v2/field';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtMoneyListComponent } from '@rt-tools/ui-kit-v2/money-list';
-import { RtMoneyRowComponent } from '@rt-tools/ui-kit-v2/money-list';
+import { RtMoneyRowComponent, RtMoneyRowContentDirective } from '@rt-tools/ui-kit-v2/money-list';
 import { RtNoteComponent } from '@rt-tools/ui-kit-v2/note';
 import { RtSelectComponent } from '@rt-tools/ui-kit-v2/select';
 import { RtServiceLogoComponent } from '@rt-tools/ui-kit-v2/service-logo';
@@ -79,6 +80,7 @@ interface ITransitionFormShape {
         RtIconButtonComponent,
         RtMoneyListComponent,
         RtMoneyRowComponent,
+        RtMoneyRowContentDirective,
         RtNoteComponent,
         RtSelectComponent,
         RtServiceLogoComponent,
@@ -98,9 +100,11 @@ interface ITransitionFormShape {
 export class RtWorkspaceDetailsComponent {
     readonly #notificationBus: NotificationBus = inject(NotificationBus);
 
-    readonly #lastEntityId: WritableSignal<number | null | undefined> = signal<number | null | undefined>(undefined);
+    /** Запись, под которую сброшена форма перехода: смена записи очищает начатый переход. */
+    #formEntityId: number | null | undefined = undefined;
 
-    readonly #lastAgentId: WritableSignal<number | null | undefined> = signal<number | null | undefined>(undefined);
+    /** Смена записи или текущего агента отменяет начатую правку агента и возвращает его выбор. */
+    readonly #agentResetKey: Signal<string> = computed((): string => `${this.entityId()}|${this.agentEdit()?.currentAgentId ?? null}`);
 
     #lastTransitionSuccess: string | null = null;
 
@@ -122,9 +126,15 @@ export class RtWorkspaceDetailsComponent {
     /** Свой вид ошибки `<ng-template rtWorkspaceDetailsError>` — встаёт вместо вида по умолчанию. */
     protected readonly errorTemplate: Signal<RtWorkspaceDetailsErrorDirective | undefined> = contentChild(RtWorkspaceDetailsErrorDirective);
 
-    protected readonly editingAgent: WritableSignal<boolean> = signal<boolean>(false);
+    protected readonly editingAgent: WritableSignal<boolean> = linkedSignal<string, boolean>({
+        source: this.#agentResetKey,
+        computation: (): boolean => false,
+    });
 
-    protected readonly selectedAgentId: WritableSignal<number | null> = signal<number | null>(null);
+    protected readonly selectedAgentId: WritableSignal<number | null> = linkedSignal<string, number | null>({
+        source: this.#agentResetKey,
+        computation: (): number | null => untracked((): IRtWorkspaceDetails.AgentEdit | null => this.agentEdit())?.currentAgentId ?? null,
+    });
 
     protected readonly transitionForm: FormGroup<ITransitionFormShape> = new FormGroup<ITransitionFormShape>({
         to_key: new FormControl<string | null>(null, {
@@ -204,27 +214,15 @@ export class RtWorkspaceDetailsComponent {
     constructor() {
         effect((): void => {
             const id: number | null = this.entityId();
-            if (id === untracked((): number | null | undefined => this.#lastEntityId())) {
+            if (id === this.#formEntityId) {
                 return;
             }
-            this.#lastEntityId.set(id);
-            this.editingAgent.set(false);
-            this.selectedAgentId.set(untracked((): IRtWorkspaceDetails.AgentEdit | null => this.agentEdit())?.currentAgentId ?? null);
+            this.#formEntityId = id;
             this.transitionForm.reset();
         });
 
         effect((): void => {
-            const currentAgentId: number | null = this.agentEdit()?.currentAgentId ?? null;
-            if (currentAgentId === untracked((): number | null | undefined => this.#lastAgentId())) {
-                return;
-            }
-            this.#lastAgentId.set(currentAgentId);
-            this.editingAgent.set(false);
-            this.selectedAgentId.set(currentAgentId);
-        });
-
-        effect((): void => {
-            if (this.transition()?.success != null) {
+            if (!isNil(this.transition()?.success)) {
                 this.transitionForm.reset();
             }
         });

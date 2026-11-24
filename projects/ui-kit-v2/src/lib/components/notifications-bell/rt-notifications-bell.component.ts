@@ -55,8 +55,8 @@ export class RtNotificationsBellComponent {
     });
 
     /**
-     * Имя значка кита. Та же кнопка шапки с другим значком ставится в слот `[rtHeaderBell]` рядом
-     * с колокольчиком — например кнопка помощника со значком `sparkle`. Пустое имя (атрибут без
+     * Имя значка кита. Та же кнопка шапки с другим значком ставится в слот `rtHeaderBell` рядом
+     * с колокольчиком (элементом в `rt-header`, шаблоном в `rt-page-header`) — например кнопка помощника со значком `sparkle`. Пустое имя (атрибут без
      * значения) возвращает колокольчик: пустой значок рисовал бы пустую рамку.
      */
     public readonly icon: InputSignalWithTransform<IRtIcon.Name, TRtBellIconInput> = input<IRtIcon.Name, TRtBellIconInput>(DEFAULT_ICON, {

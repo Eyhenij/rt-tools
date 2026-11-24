@@ -130,14 +130,14 @@ export class RtScrollAreaComponent {
             const body: HTMLElement | null = this.bodyRef()?.nativeElement ?? null;
             const footer: HTMLElement | null = this.footerRef()?.nativeElement ?? null;
 
+            // Выключенный признак подсказку не рисует: шаблон сам проверяет признак. Включение
+            // ставит наблюдателей, и первый замер приходит из их отклика, а не из эффекта:
+            // наблюдатель размера откликается на каждый поставленный узел сразу после постановки.
             if (!this.isScrollHintShown()) {
                 this.#unwatch();
-                this.hasMoreBelow.set(false);
 
                 return;
             }
-
-            this.onBodyScroll();
 
             if (!this.#isWatching || body !== this.#watchedBody || footer !== this.#watchedFooter) {
                 this.#watch(body, footer);

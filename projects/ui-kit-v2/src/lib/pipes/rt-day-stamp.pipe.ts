@@ -1,6 +1,8 @@
 import { formatDate } from '@angular/common';
 import { inject, LOCALE_ID, Pipe, PipeTransform } from '@angular/core';
 
+import { isNil } from '@rt-tools/utils';
+
 /**
  * Штамп последнего взаимодействия для превью списков чатов: событие за сегодня
  * показывается временем («14:05»), за вчера и ранее — датой («18.07.2026»), чтобы
@@ -11,7 +13,7 @@ export class RtDayStampPipe implements PipeTransform {
     readonly #locale: string = inject(LOCALE_ID);
 
     public transform(value: Date | string | null): string {
-        if (value == null || value === '') {
+        if (isNil(value) || value === '') {
             return '—';
         }
         const date: Date = value instanceof Date ? value : new Date(value);
