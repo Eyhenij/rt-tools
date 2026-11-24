@@ -90,6 +90,9 @@ function build(target) {
         return false;
     }
     settle(target);
+    // `graphify update` also draws the graph as a page. Nobody reads it here, git ignores it, and
+    // the Angular Doctor check reads ignored files and goes red on it.
+    rmSync(join(ROOT, target, 'graphify-out', 'graph.html'), { force: true });
     console.log(`+ ${target}: ${rebuilt[1]} in ${seconds}s`);
     return true;
 }
