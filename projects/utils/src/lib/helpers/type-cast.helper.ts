@@ -80,7 +80,7 @@ export class TypeCastHelper {
                 break;
 
             case 'string':
-                date = !!parseFormatOptions ? parseDate(date as string, parseFormatOptions, new Date()) : parseISO(date as string);
+                date = parseFormatOptions ? parseDate(date as string, parseFormatOptions, new Date()) : parseISO(date as string);
                 break;
         }
 

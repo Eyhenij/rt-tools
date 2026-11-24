@@ -1,3 +1,5 @@
+import { isNil } from '../is-nil/index.js';
+
 /**
  * Two functions of structural comparison — in one module.
  *
@@ -9,7 +11,7 @@
 
 /** Non-null object — arrays included where the caller sorts the two kinds out. */
 function isRecord(value: unknown): value is object {
-    return typeof value === 'object' && value != null;
+    return typeof value === 'object' && !isNil(value);
 }
 
 /** An array against a non-array: different kinds of value, nothing to compare. */

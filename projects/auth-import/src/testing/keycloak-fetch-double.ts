@@ -19,7 +19,7 @@ const REALM_URL: string = 'https://auth.test/admin/realms/rt';
  * records every request and every letter.
  */
 export class KeycloakFetchDouble {
-    readonly #clients: Map<string, Set<string>>;
+    readonly #clients: Map<string, Set<string>> = new Map<string, Set<string>>();
     readonly #users: Map<string, TStoredUser> = new Map<string, TStoredUser>();
     readonly #routes: readonly [string, RegExp, TRoute][] = [
         ['GET', /^\/clients$/, (_match: RegExpExecArray, url: URL): Response => this.#client(url.searchParams.get('clientId') ?? '')],
@@ -40,12 +40,6 @@ export class KeycloakFetchDouble {
     public readonly requests: IRecordedRequest[] = [];
     public readonly letters: { userId: string; actions: string[] }[] = [];
     public readonly secrets: string[] = [];
-
-    constructor(clients: Record<string, readonly string[]> = {}) {
-        this.#clients = new Map<string, Set<string>>(
-            Object.entries(clients).map(([id, roles]: [string, readonly string[]]): [string, Set<string>] => [id, new Set<string>(roles)])
-        );
-    }
 
     /** The people of the realm by username. */
     public users(): ReadonlyMap<string, TStoredUser> {
@@ -74,6 +68,15 @@ export class KeycloakFetchDouble {
         }
         return Promise.resolve(new Response('not found', { status: 404 }));
     };
+
+    /** A realm with these clients and their roles; `new KeycloakFetchDouble()` gives a realm with none. */
+    public static withClients(clients: Record<string, readonly string[]>): KeycloakFetchDouble {
+        const double: KeycloakFetchDouble = new KeycloakFetchDouble();
+        for (const [id, roles] of Object.entries(clients)) {
+            double.#clients.set(id, new Set<string>(roles));
+        }
+        return double;
+    }
 
     #client(clientId: string): Response {
         return Response.json(this.#clients.has(clientId) ? [{ id: `uuid-${clientId}` }] : []);

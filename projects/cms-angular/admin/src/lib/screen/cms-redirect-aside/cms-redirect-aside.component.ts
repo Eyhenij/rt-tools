@@ -10,6 +10,7 @@ import { CMS_LABELS, IRedirectListRow, REDIRECT_TYPE_TITLES, TCmsLabelMap, inter
 import {
     IRtSelect,
     RtAsideComponent,
+    RtAsideContentDirective,
     RtAsideFooterComponent,
     RtAsideHeaderComponent,
     RtButtonDirective,
@@ -55,6 +56,7 @@ function required(control: AbstractControl): ValidationErrors | null {
         BlockDirective,
         ElemDirective,
         RtAsideComponent,
+        RtAsideContentDirective,
         RtAsideFooterComponent,
         RtAsideHeaderComponent,
         RtButtonDirective,

@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { effect, inject, signal, untracked, DestroyRef, ElementRef, Signal, WritableSignal } from '@angular/core';
+import { computed, effect, inject, signal, DestroyRef, ElementRef, Signal, WritableSignal } from '@angular/core';
 
 /** Шаг размера значения компактной плитки: 24 px, затем 20, затем 18. */
 export enum ERtStatTileValueFit {
@@ -47,13 +47,23 @@ export function rtStatTileValueFit(
     active: () => boolean
 ): Signal<ERtStatTileValueFit> {
     const document: Document = inject(DOCUMENT);
-    const fit: WritableSignal<ERtStatTileValueFit> = signal<ERtStatTileValueFit>(ERtStatTileValueFit.Full);
     const room: WritableSignal<number> = signal<number>(0);
     const fonts: WritableSignal<number> = signal<number>(0);
     const view: (Window & typeof globalThis) | null = document.defaultView;
     const fontsChanged: () => void = (): void => fonts.update((count: number): number => count + 1);
     let watch: ResizeObserver | null = null;
     let canvas: CanvasRenderingContext2D | null = null;
+    // Ширину ряда пишет колбэк наблюдателя: замер приходит событием браузера.
+    const observe: (element: HTMLElement, host: Window & typeof globalThis) => ResizeObserver = (
+        element: HTMLElement,
+        host: Window & typeof globalThis
+    ): ResizeObserver => {
+        const observer: ResizeObserver = new host.ResizeObserver((entries: ResizeObserverEntry[]): void =>
+            room.set(entries[0]?.contentBoxSize[0]?.inlineSize ?? element.clientWidth)
+        );
+        observer.observe(element);
+        return observer;
+    };
 
     document.fonts?.addEventListener('loadingdone', fontsChanged);
     void document.fonts?.ready.then(fontsChanged);
@@ -62,29 +72,22 @@ export function rtStatTileValueFit(
         const element: HTMLElement | undefined = row()?.nativeElement;
 
         watch?.disconnect();
-        watch = null;
-        if (element === undefined || view === null || typeof view.ResizeObserver === 'undefined') {
-            return;
-        }
-        watch = new view.ResizeObserver((entries: ResizeObserverEntry[]): void =>
-            room.set(entries[0]?.contentBoxSize[0]?.inlineSize ?? element.clientWidth)
-        );
-        watch.observe(element);
+        watch = element === undefined || view === null || typeof view.ResizeObserver === 'undefined' ? null : observe(element, view);
     });
 
-    effect((): void => {
+    // Ступень выводится из текста, ширины ряда и загруженных шрифтов: это расчёт, а не запись.
+    const fit: Signal<ERtStatTileValueFit> = computed((): ERtStatTileValueFit => {
         const element: HTMLElement | undefined = row()?.nativeElement;
         const value: string = text();
         const width: number = room();
 
         fonts();
         if (!active() || element === undefined || view === null || width <= 0) {
-            untracked((): void => fit.set(ERtStatTileValueFit.Full));
-            return;
+            return ERtStatTileValueFit.Full;
         }
         canvas ??= document.createElement('canvas').getContext('2d');
         if (canvas === null) {
-            return;
+            return ERtStatTileValueFit.Full;
         }
         const style: CSSStyleDeclaration = view.getComputedStyle(element);
         const sizes: number[] = FIT_STEPS.map(([, token]: readonly [ERtStatTileValueFit, string]): number =>
@@ -94,7 +97,7 @@ export function rtStatTileValueFit(
         canvas.font = `${style.fontWeight} ${sizes[0]}px ${style.fontFamily}`;
         const step: number = rtStatTileFitStep(canvas.measureText(value).width, sizes, width);
 
-        untracked((): void => fit.set(FIT_STEPS[step]?.[0] ?? ERtStatTileValueFit.Full));
+        return FIT_STEPS[step]?.[0] ?? ERtStatTileValueFit.Full;
     });
 
     inject(DestroyRef).onDestroy((): void => {
@@ -102,5 +105,5 @@ export function rtStatTileValueFit(
         document.fonts?.removeEventListener('loadingdone', fontsChanged);
     });
 
-    return fit.asReadonly();
+    return fit;
 }

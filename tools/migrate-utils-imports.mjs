@@ -41,7 +41,6 @@ const MOVED = new Map([
     ['IsEmailPipe', 'IsEmailPipe'],
     ['NotEqualChainPipe', 'NotEqualChainPipe'],
     ['NotEqualPipe', 'NotEqualPipe'],
-    ['SanitizePipe', 'SanitizePipe'],
     ['TernaryPipe', 'TernaryPipe'],
     // the services and their settings
     ['BreakpointService', 'BreakpointService'],

@@ -4,6 +4,7 @@ import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtTagComponent } from '../../../tag/rt-tag.component';
+import { RtInfoItemContentDirective } from '../../rt-info-item-content.directive';
 import { RtInfoItemComponent } from '../../rt-info-item.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
@@ -27,7 +28,9 @@ export type TInfoItemMatrixPart = 'loading' | 'grow' | 'content' | 'presets' | '
                     <ng-template>
                         <app-story-row [items]="loadingStates" [itemLabel]="loadingLabel">
                             <ng-template let-loading>
-                                <rt-info-item label="Тариф" [loading]="loading">Годовой</rt-info-item>
+                                <rt-info-item label="Тариф" [loading]="loading">
+                                    <ng-template rtInfoItemContent>Годовой</ng-template>
+                                </rt-info-item>
                             </ng-template>
                         </app-story-row>
                     </ng-template>
@@ -40,9 +43,15 @@ export type TInfoItemMatrixPart = 'loading' | 'grow' | 'content' | 'presets' | '
                         @for (grow of growStates; track grow) {
                             <div class="app-info-item-matrix__strip">
                                 <span class="app-info-item-matrix__strip-label">{{ grow ? 'grow' : 'по содержимому' }}</span>
-                                <rt-info-item label="Тариф" [grow]="grow">Годовой</rt-info-item>
-                                <rt-info-item label="Статус" [grow]="grow">Активен</rt-info-item>
-                                <rt-info-item label="Оплачен до" [grow]="grow">12.09.2026</rt-info-item>
+                                <rt-info-item label="Тариф" [grow]="grow">
+                                    <ng-template rtInfoItemContent>Годовой</ng-template>
+                                </rt-info-item>
+                                <rt-info-item label="Статус" [grow]="grow">
+                                    <ng-template rtInfoItemContent>Активен</ng-template>
+                                </rt-info-item>
+                                <rt-info-item label="Оплачен до" [grow]="grow">
+                                    <ng-template rtInfoItemContent>12.09.2026</ng-template>
+                                </rt-info-item>
                             </div>
                         }
                     </ng-template>
@@ -61,11 +70,13 @@ export type TInfoItemMatrixPart = 'loading' | 'grow' | 'content' | 'presets' | '
                             <ng-template let-contentCase>
                                 @switch (contentCase) {
                                     @case ('текст') {
-                                        <rt-info-item label="Тариф">Годовой</rt-info-item>
+                                        <rt-info-item label="Тариф"><ng-template rtInfoItemContent>Годовой</ng-template></rt-info-item>
                                     }
                                     @case ('пилюля') {
                                         <rt-info-item label="Статус">
-                                            <rt-tag value="Активен" severity="success" />
+                                            <ng-template rtInfoItemContent>
+                                                <rt-tag value="Активен" severity="success" />
+                                            </ng-template>
                                         </rt-info-item>
                                     }
                                     @case ('пусто') {
@@ -82,7 +93,9 @@ export type TInfoItemMatrixPart = 'loading' | 'grow' | 'content' | 'presets' | '
                 <app-story-presets caption="Загрузка и значение в обоих наборах">
                     <ng-template>
                         @for (loading of loadingStates; track loading) {
-                            <rt-info-item label="Тариф" [loading]="loading">Годовой</rt-info-item>
+                            <rt-info-item label="Тариф" [loading]="loading">
+                                <ng-template rtInfoItemContent>Годовой</ng-template>
+                            </rt-info-item>
                         }
                     </ng-template>
                 </app-story-presets>
@@ -94,7 +107,9 @@ export type TInfoItemMatrixPart = 'loading' | 'grow' | 'content' | 'presets' | '
                         <app-story-themes>
                             <ng-template>
                                 @for (loading of loadingStates; track loading) {
-                                    <rt-info-item label="Тариф" [loading]="loading">Годовой</rt-info-item>
+                                    <rt-info-item label="Тариф" [loading]="loading">
+                                        <ng-template rtInfoItemContent>Годовой</ng-template>
+                                    </rt-info-item>
                                 }
                             </ng-template>
                         </app-story-themes>
@@ -133,6 +148,7 @@ export type TInfoItemMatrixPart = 'loading' | 'grow' | 'content' | 'presets' | '
     imports: [
         // components
         RtInfoItemComponent,
+        RtInfoItemContentDirective,
         RtTagComponent,
 
         // showcase

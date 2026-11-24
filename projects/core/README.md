@@ -92,7 +92,6 @@ import {
 ```typescript
 import {
     BreakStringPipe, // camelCase → readable
-    SanitizePipe,
     EntityToStringPipe,
     EmptyToDashPipe,
     EqualPipe,
@@ -105,7 +104,7 @@ import {
 ```
 
 ```html
-{{ 'camelCaseString' | breakString }} {{ htmlContent | sanitize }} {{ condition | ternary: 'yes' : 'no' }}
+{{ 'camelCaseString' | breakString }} {{ condition | ternary: 'yes' : 'no' }}
 ```
 
 ### Validators

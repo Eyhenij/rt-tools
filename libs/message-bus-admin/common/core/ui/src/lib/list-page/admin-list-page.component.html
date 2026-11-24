@@ -65,7 +65,9 @@
         </rt-message>
     } @else {
         <div rtElem="scroll" [rtMod]="scrollMods()">
-            <ng-content />
+            @if (contentTpl(); as content) {
+                <ng-container [ngTemplateOutlet]="content" />
+            }
         </div>
     }
 

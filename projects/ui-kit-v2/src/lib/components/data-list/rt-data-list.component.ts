@@ -57,6 +57,9 @@ import { RtDataListToolbarActionsDirective, RtDataListToolbarSelectorsDirective 
 
 const BEM_BLOCK: string = 'rt-data-list';
 
+/** Ключ записи по умолчанию — свойство `id`. */
+const DEFAULT_KEY_EXP: string = 'id';
+
 /** Показанная полоса прокрутки — ступень размеров кита, та же, что в основе его полос. */
 const SCROLLBAR_SIZE: string = 'var(--rt-size-3)';
 
@@ -209,7 +212,7 @@ export class RtDataListComponent<
     public readonly filterModel: InputSignalWithTransform<TRtDataTableFilters<ENTITY_TYPE>, TNullable<TRtDataTableFilters<ENTITY_TYPE>>> =
         input<TRtDataTableFilters<ENTITY_TYPE>, TNullable<TRtDataTableFilters<ENTITY_TYPE>>>([], { transform: transformArrayInput });
 
-    public readonly keyExp: InputSignal<NonNullable<KEY>> = input('id' as NonNullable<KEY>);
+    public readonly keyExp: InputSignal<NonNullable<KEY>> = input(DEFAULT_KEY_EXP as NonNullable<KEY>);
 
     /** Первая загрузка: вместо списка крутилка. */
     public readonly loading: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });

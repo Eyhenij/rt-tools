@@ -10,7 +10,7 @@
         <div style="display: grid; gap: 0.5rem; grid-template-rows: auto 28rem auto; min-inline-size: 0">
             <strong>{{ kind.title }}</strong>
             <rt-chat fill hasThread canReply [messenger]="kind.messenger" [richComposer]="kind.rich" [messages]="messages">
-                <app-chat-edit-bar rtChatComposerBar />
+                <ng-template rtChatComposerBar><app-chat-edit-bar /></ng-template>
             </rt-chat>
             <span qa-dataid="story-draft-text">draftText(): {{ drafts()[$index] }}</span>
         </div>

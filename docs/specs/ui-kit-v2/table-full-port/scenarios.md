@@ -74,6 +74,14 @@ When two rows with different values are drawn
 Then each icon stands after its value and carries the style its row's value gave
 Covered: `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.spec.ts`.
 
+### SC-UKV-1710 — the style string of a column reaches the glyph whole, without the sanitizer's trust
+
+Given a column with a glyph icon and a style function that returns several properties
+When the cell is drawn
+Then the glyph carries every property of the string: the cell binds the string as it is, and no
+trust of the sanitizer stands between the column and the glyph
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.spec.ts`.
+
 ### SC-UKV-266 — a copyable ready cell with an empty value has no copy button
 
 Given a copyable column and a row whose value is absent

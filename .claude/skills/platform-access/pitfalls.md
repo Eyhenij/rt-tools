@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.0 · pitfalls/platform-access.md · 5d7326424820 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · pitfalls/platform-access.md · 61e696c4e80d · правится надстройкой, не здесь -->
 # Browser environment — how it works here — cold part
 
 What the rule `platform-access` handed over when cut to its statements, every article whole.
@@ -65,7 +65,7 @@ flowchart TD
 
 ## What of the law is not here
 
-The ban acts on names, not on paths to them: the linter lets `this.#document.defaultView` through,
+The ban acts on names, not on paths to them: the linter lets `this.#doc.defaultView` through,
 because there is no global name in such a line. Such a call is lawful — the window there already
 came by injection — but a real bypass would look the same, and it can be seen only by reading.
 

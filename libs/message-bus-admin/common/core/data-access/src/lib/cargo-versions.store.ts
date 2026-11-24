@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, Signal } from '@angular/core';
+import { computed, inject, Signal, Service } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CargoVersionsApiService } from '@rt/message-bus-admin/common/core/api';
 import { ECargoKind } from '@rt/message-bus-common';
@@ -26,7 +26,7 @@ const INITIAL_STATE: ICargoVersionsState = { ...BASE_INITIAL_STATE.ASYNC, byKind
  * Отказ чтения версий экран не показывает — тем же приёмом, что и отказ чтения деревьев: отбор
  * при нём пуст, а список читается по-прежнему. Человек пришёл за грузом, а не за версиями.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class CargoVersionsStore extends BaseAsyncStoreService<ICargoVersionsState, TCargoVersionsMessage> {
     readonly #api: CargoVersionsApiService = inject(CargoVersionsApiService);
     readonly #readSource: Subject<ECargoKind> = new Subject<ECargoKind>();

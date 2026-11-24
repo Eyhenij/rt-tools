@@ -10,6 +10,7 @@ import { IRtToggleButtonGroup } from '../../../toggle-button-group/rt-toggle-but
 import { RtProfileMenuComponent } from '../../../profile-menu/rt-profile-menu.component';
 import { PROFILE_MENU_LOCALES } from '../../../profile-menu/stories/component/test-profile-menu.data';
 import { IRtPageHeader } from '../../rt-page-header.model';
+import { RtCompactCenterDirective, RtCompactLeftDirective, RtCompactRightDirective } from '../../rt-page-header-slots.directive';
 import { RtPageHeaderComponent } from '../../rt-page-header.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
@@ -136,12 +137,18 @@ interface IPageHeaderUserCase {
                      прокрутки — то есть показал бы обычную полосу вместо сжатой. -->
                 <div class="app-page-header-matrix__scroll" data-story-root [attr.data-story-scroll]="scrollAttribute">
                     <rt-page-header ariaLabel="Разделы" stickyCompact [items]="compactItems" [user]="user">
-                        <span rtCompactLeft class="app-page-header-matrix__crumbs">Туры / Лето 2026 / Италия</span>
-                        <rt-toggle-button-group rtCompactCenter ariaLabel="Отбор" value="all" [options]="filterOptions" />
-                        <span rtCompactRight class="app-page-header-matrix__actions">
-                            <rt-icon-button icon="search" ariaLabel="Поиск" size="sm" />
-                            <rt-icon-button icon="filter" ariaLabel="Отбор" size="sm" />
-                        </span>
+                        <ng-template rtCompactLeft>
+                            <span class="app-page-header-matrix__crumbs">Туры / Лето 2026 / Италия</span>
+                        </ng-template>
+                        <ng-template rtCompactCenter>
+                            <rt-toggle-button-group ariaLabel="Отбор" value="all" [options]="filterOptions" />
+                        </ng-template>
+                        <ng-template rtCompactRight>
+                            <span class="app-page-header-matrix__actions">
+                                <rt-icon-button icon="search" ariaLabel="Поиск" size="sm" />
+                                <rt-icon-button icon="filter" ariaLabel="Отбор" size="sm" />
+                            </span>
+                        </ng-template>
                     </rt-page-header>
                     <div class="app-page-header-matrix__page"></div>
                 </div>
@@ -190,6 +197,9 @@ interface IPageHeaderUserCase {
     imports: [
         // components
         RtPageHeaderComponent,
+        RtCompactLeftDirective,
+        RtCompactCenterDirective,
+        RtCompactRightDirective,
         RtProfileMenuComponent,
         RtToggleButtonGroupComponent,
         RtIconButtonComponent,

@@ -12,6 +12,7 @@ import { RtFieldComponent } from '../../../field/rt-field.component';
 import { IRtInput } from '../../../input/rt-input.model';
 import { IRtSelect } from '../../../select/rt-select.model';
 import { RtToggleSwitchComponent } from '../../../toggle-switch/rt-toggle-switch.component';
+import { RtMultiselectExtraDirective } from '../../rt-multiselect-extra.directive';
 import { RtMultiselectComponent } from '../../rt-multiselect.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
@@ -257,12 +258,18 @@ function invalid(): FormControl<readonly string[] | null> {
                         [options]="categories"
                         [formControl]="togglesPanelControl">
                         <!-- Строка приложения собрана как строки кита: подпись слева, переключатель справа -->
-                        <label
-                            rtMultiselectExtra
-                            style="display: flex; min-height: var(--rt-size-10); box-sizing: border-box; align-items: center; justify-content: space-between; padding: var(--rt-space-sm) var(--rt-space-md); color: var(--rt-color-text-primary); cursor: pointer; font-size: var(--rt-input-font-size); gap: var(--rt-space-sm)">
-                            Скрыть пустые
-                            <rt-toggle-switch qa-dataid="story-hide-empty" ariaLabel="Скрыть пустые" [formControl]="hideEmptyControl" />
-                        </label>
+                        <ng-template rtMultiselectExtra>
+                            <label
+                                for="story-hide-empty-input"
+                                style="display: flex; min-height: var(--rt-size-10); box-sizing: border-box; align-items: center; justify-content: space-between; padding: var(--rt-space-sm) var(--rt-space-md); color: var(--rt-color-text-primary); cursor: pointer; font-size: var(--rt-input-font-size); gap: var(--rt-space-sm)">
+                                Скрыть пустые
+                                <rt-toggle-switch
+                                    qa-dataid="story-hide-empty"
+                                    inputId="story-hide-empty-input"
+                                    ariaLabel="Скрыть пустые"
+                                    [formControl]="hideEmptyControl" />
+                            </label>
+                        </ng-template>
                     </rt-multiselect>
                 </div>
             }
@@ -306,6 +313,9 @@ function invalid(): FormControl<readonly string[] | null> {
         RtFieldComponent,
         RtMultiselectComponent,
         RtToggleSwitchComponent,
+
+        // directives
+        RtMultiselectExtraDirective,
 
         // showcase
         StoryPresetsComponent,

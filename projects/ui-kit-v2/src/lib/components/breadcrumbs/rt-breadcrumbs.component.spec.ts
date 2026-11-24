@@ -4,6 +4,7 @@ import { provideRouter } from '@angular/router';
 
 import { createRtFixture, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
+import { RtBreadcrumbsContentDirective } from './rt-breadcrumbs-content.directive';
 import { RtBreadcrumbsComponent } from './rt-breadcrumbs.component';
 import { rtBreadcrumbsFits, rtBreadcrumbsFold } from './rt-breadcrumbs.logic';
 import { IRtBreadcrumbs } from './rt-breadcrumbs.model';
@@ -33,11 +34,13 @@ class NarrowBreakpointsService {
     selector: 'rt-breadcrumbs-heading-host',
     template: `
         <rt-breadcrumbs look="heading" [crumbs]="chain">
-            <span qa-dataid="heading-tag">Draft</span>
+            <ng-template rtBreadcrumbsContent>
+                <span qa-dataid="heading-tag">Draft</span>
+            </ng-template>
         </rt-breadcrumbs>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtBreadcrumbsComponent],
+    imports: [RtBreadcrumbsComponent, RtBreadcrumbsContentDirective],
 })
 class HeadingHostComponent {
     public readonly chain: readonly IRtBreadcrumbs.Crumb[] = CHAIN;
@@ -95,7 +98,7 @@ describe('RtBreadcrumbsComponent', (): void => {
         expect(qa(setup({ crumbs: [{ label: 'Home' }], back: true }), 'breadcrumbs-back')).toBeNull();
     });
 
-    it('SC-UKV-821 — в виде заголовка текущее звено — заголовок строкой ниже, рядом проекция', (): void => {
+    it('SC-UKV-821 — в виде заголовка текущее звено — заголовок строкой ниже, рядом шаблон содержимого', (): void => {
         const fixture: ComponentFixture<HeadingHostComponent> = createRtFixture(
             HeadingHostComponent,
             {},

@@ -28,6 +28,23 @@ class TestBemHostComponent {
     public readonly elemMods: WritableSignal<TMods> = signal<TMods>(undefined);
 }
 
+/**
+ * Узел с именем блока и именем элемента сразу: директива элемента берёт блок своего же узла, и узел
+ * носит класс элемента этого блока — без класса самого блока.
+ */
+@Component({
+    standalone: true,
+    imports: [BlockDirective, ElemDirective],
+    template: `
+        <div rtBlock="card">
+            <section rtBlock="panel" rtElem="body" [rtMod]="mods()"></section>
+        </div>
+    `,
+})
+class TestBemNestedHostComponent {
+    public readonly mods: WritableSignal<TMods> = signal<TMods>(undefined);
+}
+
 function setup(): ComponentFixture<TestBemHostComponent> {
     TestBed.configureTestingModule({ imports: [TestBemHostComponent] });
 
@@ -37,7 +54,7 @@ function setup(): ComponentFixture<TestBemHostComponent> {
     return fixture;
 }
 
-function classesOf(fixture: ComponentFixture<TestBemHostComponent>, selector: string): string[] {
+function classesOf(fixture: ComponentFixture<TestBemHostComponent | TestBemNestedHostComponent>, selector: string): string[] {
     const element: HTMLElement | null = (fixture.nativeElement as HTMLElement).querySelector(selector);
 
     return Array.from(element?.classList ?? []);
@@ -98,5 +115,16 @@ describe('директивы BEM', (): void => {
         fixture.detectChanges();
 
         expect(classesOf(fixture, '[rtElem]')).toContain('card__title--active');
+    });
+
+    it('узел с именами блока и элемента носит класс элемента своего блока, а не класс блока', (): void => {
+        TestBed.configureTestingModule({ imports: [TestBemNestedHostComponent] });
+        const fixture: ComponentFixture<TestBemNestedHostComponent> = TestBed.createComponent(TestBemNestedHostComponent);
+        fixture.detectChanges();
+
+        fixture.componentInstance.mods.set('open');
+        fixture.detectChanges();
+
+        expect(classesOf(fixture, 'section')).toEqual(['panel__body', 'panel__body--open']);
     });
 });

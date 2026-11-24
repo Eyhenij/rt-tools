@@ -25,7 +25,6 @@ import {
 } from '@rt/message-bus-common';
 
 import { askOwnFeed, askSiteLook, askTalks, IWidgetSigns, sendRemark, startTalk, streamAddress, WidgetRefusal } from './chat-widget.api';
-import { WIDGET_ICON_ARROW_UP, WIDGET_ICON_CLOCK, WIDGET_ICON_COMMENTS, WIDGET_ICON_INFO } from './chat-widget.icons';
 import {
     EWidgetHoursWord,
     widgetHoursText,
@@ -39,7 +38,20 @@ import {
 } from './chat-widget.logic';
 import { read, readSeen, write } from './chat-widget.storage';
 import { WIDGET_STYLES } from './chat-widget.styles';
-import { endedLine, escaped, remarks, talkHead, talksList, titleHead } from './chat-widget.view';
+import {
+    bubble,
+    endedLine,
+    greetingCard,
+    hoursNote,
+    node,
+    remarks,
+    sendForm,
+    talkHead,
+    talksList,
+    titleHead,
+    unavailable,
+    widgetPanel,
+} from './chat-widget.view';
 import { WIDGET_WORDS } from './chat-widget.words';
 
 /** Имя тега: им страница потребителя ставит виджет. */
@@ -335,55 +347,41 @@ export class ChatWidgetElement extends HTMLElement {
         this.#messages = [...this.#messages, message];
     }
 
-    /** Разметка целиком: она короткая, и собирать её кусками дороже, чем нарисовать заново. */
+    /**
+     * Разметка целиком: она короткая, и собирать её кусками дороже, чем нарисовать заново.
+     *
+     * Узлы, а не строка: реплики, имена и слово сервиса — чужой ввод, и текстом они остаются
+     * текстом при любой разметке внутри.
+     */
     #draw(): void {
-        this.#root.innerHTML = `<style>${WIDGET_STYLES}</style>${this.#open ? this.#panel() : this.#bubble()}`;
+        this.#root.replaceChildren(node('style', {}, WIDGET_STYLES), this.#open ? this.#panel() : bubble());
         this.#bind();
     }
 
-    #bubble(): string {
-        return `<button aria-label="${WIDGET_WORDS.bubble}" class="bubble" data-act="open" qa-dataid="widget-bubble" type="button">${WIDGET_ICON_COMMENTS}</button>`;
-    }
-
-    #panel(): string {
+    #panel(): HTMLElement {
         if (!this.#live) {
-            return `<div class="panel" qa-dataid="widget-panel">
-                ${titleHead(WIDGET_WORDS.bubble)}
-                <div class="unavailable">
-                    <span class="unavailable-icon">${WIDGET_ICON_COMMENTS}</span>
-                    <span class="unavailable-title" qa-dataid="widget-unavailable">${WIDGET_WORDS.unavailable}</span>
-                    <span class="unavailable-hint">${WIDGET_WORDS.unavailableHint}</span>
-                </div>
-            </div>`;
+            return widgetPanel(titleHead(WIDGET_WORDS.bubble), unavailable());
         }
 
         if (this.#screen === EWidgetScreen.Talks) {
-            return `<div class="panel" qa-dataid="widget-panel">
-                ${titleHead(WIDGET_WORDS.talks)}
-                ${talksList(this.#talks, this.#seen, new Date())}
-            </div>`;
+            return widgetPanel(titleHead(WIDGET_WORDS.talks), ...talksList(this.#talks, this.#seen, new Date()));
         }
 
         const placeholder: string = this.#closed ? WIDGET_WORDS.newQuestion : WIDGET_WORDS.placeholder;
 
-        return `<div class="panel" qa-dataid="widget-panel">
-            ${this.#talkHead()}
-            <div class="feed" data-part="feed" qa-dataid="widget-feed">${this.#feed()}</div>
-            ${this.#fault ? `<div class="fault" data-part="fault" qa-dataid="widget-fault">${this.#fault}</div>` : ''}
-            <form class="send" data-act="send">
-                <div class="field" qa-dataid="widget-field">
-                    <input aria-label="${placeholder}" data-part="text" placeholder="${placeholder}" qa-dataid="widget-text" />
-                    <button aria-label="${WIDGET_WORDS.send}" qa-dataid="widget-send" type="submit">${WIDGET_ICON_ARROW_UP}</button>
-                </div>
-            </form>
-        </div>`;
+        return widgetPanel(
+            this.#talkHead(),
+            node('div', { class: 'feed', 'data-part': 'feed', 'qa-dataid': 'widget-feed' }, ...this.#feed()),
+            this.#fault ? node('div', { class: 'fault', 'data-part': 'fault', 'qa-dataid': 'widget-fault' }, this.#fault) : null,
+            sendForm(placeholder)
+        );
     }
 
     /**
      * Шапка обращения. До первой реплики — заголовок чата; дальше — кто отвечает. Стрелка назад
      * стоит, когда у посетителя есть список, куда вернуться.
      */
-    #talkHead(): string {
+    #talkHead(): HTMLElement {
         const back: boolean = this.#talks.length > 0;
 
         if (this.#messages.length === 0) {
@@ -399,22 +397,17 @@ export class ChatWidgetElement extends HTMLElement {
      * До первой реплики — карточка со словами площадки и часами ответа. В идущем разговоре часы
      * нужны только вне рабочего времени: тогда над лентой встаёт плашка о том, когда ответят.
      */
-    #feed(): string {
+    #feed(): HTMLElement[] {
         const hours: string = this.#hours();
 
         if (this.#messages.length === 0) {
-            return `<div class="greeting">
-                <p class="greeting-text" data-part="greeting" qa-dataid="widget-greeting">${escaped(this.#look?.greeting ?? '')}</p>
-                ${hours ? `<span class="hours" qa-dataid="widget-hours"><span class="hours-icon">${WIDGET_ICON_CLOCK}</span>${hours}</span>` : ''}
-            </div>`;
+            return [greetingCard(this.#look?.greeting ?? '', hours)];
         }
 
         const later: boolean = this.#look !== null && widgetHoursWord(this.#look) === EWidgetHoursWord.Later;
-        const note: string = later
-            ? `<div class="note" qa-dataid="widget-hours"><span class="note-icon">${WIDGET_ICON_INFO}</span>${hours}</div>`
-            : '';
+        const note: HTMLElement[] = later ? [hoursNote(hours)] : [];
 
-        return note + remarks(this.#messages) + (this.#closed ? endedLine(this.#closed.at) : '');
+        return [...note, ...remarks(this.#messages), ...(this.#closed ? [endedLine(this.#closed.at)] : [])];
     }
 
     /** Слово о часах ответа: часы не названы — виджет о них молчит. */

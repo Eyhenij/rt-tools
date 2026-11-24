@@ -5,6 +5,7 @@ import {
     computed,
     effect,
     inject,
+    linkedSignal,
     signal,
     Signal,
     untracked,
@@ -130,7 +131,13 @@ export class AdminChatPanelComponent {
      * Второго чтения той же принадлежности заводить незачем — набор сайтов уже приехал строками,
      * и он же стоит в запросе на стороне приёмника.
      */
-    protected readonly sites: WritableSignal<readonly string[]> = signal<readonly string[]>([]);
+    protected readonly sites: Signal<readonly string[]> = linkedSignal<readonly IChat.Talk.State[] | null, readonly string[]>({
+        // сайты запоминаются по непросуженному списку: просуженный называет один, и отбор,
+        // собранный по нему, потерял бы соседние сайты того же оператора
+        source: (): readonly IChat.Talk.State[] | null => (this.site() === '' && this.state() === '' ? this.rows() : null),
+        computation: (rows: readonly IChat.Talk.State[] | null, previous?: { value: readonly string[] }): readonly string[] =>
+            rows === null ? (previous?.value ?? []) : [...new Set(rows.map((row: IChat.Talk.State): string => row.siteId))],
+    });
 
     protected readonly talksEmpty: Signal<string> = computed((): string => this.#text.text('chatTalksEmpty'));
     protected readonly talksEmptyFrom: Signal<string> = computed((): string => this.#text.text('chatTalksEmptyFrom'));
@@ -192,18 +199,6 @@ export class AdminChatPanelComponent {
             const site: string = this.site();
 
             untracked((): void => this.#talks.read({ page: 1, size: TALKS_PAGE_SIZE, site, state }));
-        });
-
-        // Сайты запоминаются по непросуженному списку: просуженный называет один, и отбор,
-        // собранный по нему, потерял бы соседние сайты того же оператора
-        effect((): void => {
-            const rows: readonly IChat.Talk.State[] = this.rows();
-
-            if (this.site() !== '' || this.state() !== '') {
-                return;
-            }
-
-            untracked((): void => this.sites.set([...new Set(rows.map((row: IChat.Talk.State): string => row.siteId))]));
         });
 
         // Поток подключается после первого рисования: при отдаче страницы сервером читать его

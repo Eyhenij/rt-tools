@@ -128,7 +128,9 @@
                                         [attr.rt-data-table-stop-row-click]="''"
                                         [ariaLabel]="actionsLabel()"
                                         (openedChange)="onMenuOpenedChange(index, $event)">
-                                        <ng-container [ngTemplateOutlet]="actions" [ngTemplateOutletContext]="{ $implicit: row }" />
+                                        <ng-template rtMenuContent>
+                                            <ng-container [ngTemplateOutlet]="actions" [ngTemplateOutletContext]="{ $implicit: row }" />
+                                        </ng-template>
                                     </rt-menu>
                                 }
                             </div>

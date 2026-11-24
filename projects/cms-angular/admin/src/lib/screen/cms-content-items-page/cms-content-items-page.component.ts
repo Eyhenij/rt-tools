@@ -18,7 +18,11 @@ import { IRtSelect, RtIconButtonComponent, RtSelectComponent } from '@rt-tools/u
 
 import { IContentItemsFilter } from '../../api/content-items-api.service';
 import { BaseListPageDirective } from '../../list/base-list-page.directive';
-import { CmsListPageComponent } from '../../list/cms-list-page/cms-list-page.component';
+import {
+    CmsListPageComponent,
+    CmsListToolbarLeftDirective,
+    CmsListToolbarRightDirective,
+} from '../../list/cms-list-page/cms-list-page.component';
 import { provideCmsListPage } from '../../list/list-page.tokens';
 import { ContentItemsStore } from '../../store/content-items.store';
 import { ContentTypesStore } from '../../store/content-types.store';
@@ -48,6 +52,8 @@ const BEM_BLOCK: string = 'rt-cms-content-items-page';
         // components
         CmsContentItemsTableComponent,
         CmsListPageComponent,
+        CmsListToolbarLeftDirective,
+        CmsListToolbarRightDirective,
     ],
     providers: [ContentItemsStore, provideCmsListPage(() => CmsContentItemsPageComponent)],
     host: {

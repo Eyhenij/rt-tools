@@ -14,13 +14,15 @@
                 (click)="append(item.type)"></button>
         }
         <rt-menu icon="ellipsis-v" qa-dataid="cms-editor-add-more" [ariaLabel]="t().editorMoreBlocks" [disabled]="isDisabled()">
-            @for (item of menuItems(); track item.type) {
-                <rt-menu-item
-                    qa-dataid="cms-editor-add-more-type"
-                    [attr.data-type]="item.type"
-                    [label]="item.title"
-                    (selected)="append(item.type)" />
-            }
+            <ng-template rtMenuContent>
+                @for (item of menuItems(); track item.type) {
+                    <rt-menu-item
+                        qa-dataid="cms-editor-add-more-type"
+                        [attr.data-type]="item.type"
+                        [label]="item.title"
+                        (selected)="append(item.type)" />
+                }
+            </ng-template>
         </rt-menu>
     </nav>
 

@@ -48,7 +48,7 @@ const FULL_HEIGHT: string = 'calc(90dvh - 18rem)';
     },
 })
 export class RtAiChatChartDialogComponent {
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
 
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
@@ -65,7 +65,7 @@ export class RtAiChatChartDialogComponent {
     protected async download(): Promise<void> {
         const url: string | null = (await this.plot()?.toPng()) ?? null;
         if (url) {
-            rtAiChatChartSave(this.#document, url, rtAiChatChartFileName(this.spec.title));
+            rtAiChatChartSave(this.#doc, url, rtAiChatChartFileName(this.spec.title));
         }
     }
 }

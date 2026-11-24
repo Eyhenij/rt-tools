@@ -10,7 +10,7 @@ import { InjectionToken } from '@angular/core';
  *
  * @example
  * \`\`\`ts
- * @Component({...})
+ * // декоратор компонента опущен
  * export class WelcomeModalComponent {
  *   readonly data = inject(RT_DIALOG_DATA) as { userName: string };
  * }

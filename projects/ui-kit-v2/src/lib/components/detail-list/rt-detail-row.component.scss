@@ -22,5 +22,20 @@
             line-height: var(--rt-leading-normal);
             white-space: pre-line;
         }
+
+        /* Коробка значения раскладывается как прежняя обёртка заглушки: строчный flex во всю ширину. */
+        &__value-box {
+            display: inline-flex;
+            width: 100%;
+        }
+
+        /* Тело значения не даёт своей коробки; в загрузке прячется, оставаясь в странице. */
+        &__value-body {
+            display: contents;
+
+            &--hidden {
+                display: none;
+            }
+        }
     }
 }

@@ -1,5 +1,7 @@
-import { afterNextRender, signal, viewChildren, ChangeDetectionStrategy, Component, Signal, WritableSignal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { afterNextRender, inject, signal, viewChildren, ChangeDetectionStrategy, Component, Signal, WritableSignal } from '@angular/core';
 
+import { RtChatComposerBarDirective } from '../../rt-chat-states.directive';
 import { RtChatComponent } from '../../rt-chat.component';
 import { IRtChat } from '../../rt-chat.model';
 import { TestRtChatEditBarComponent } from './test-chat-edit-bar.component';
@@ -26,11 +28,13 @@ interface IReplyKind {
  */
 @Component({
     selector: 'app-chat-reply-kinds',
-    imports: [RtChatComponent, TestRtChatEditBarComponent],
+    imports: [RtChatComponent, RtChatComposerBarDirective, TestRtChatEditBarComponent],
     templateUrl: './test-chat-reply-kinds.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TestRtChatReplyKindsComponent {
+    readonly #doc: Document = inject(DOCUMENT);
+
     protected readonly chats: Signal<readonly RtChatComponent[]> = viewChildren(RtChatComponent);
 
     protected readonly drafts: WritableSignal<readonly string[]> = signal<readonly string[]>([]);
@@ -51,7 +55,7 @@ export class TestRtChatReplyKindsComponent {
             for (const chat of this.chats()) {
                 chat.setDraft(DRAFT);
             }
-            (document.activeElement as HTMLElement | null)?.blur();
+            (this.#doc.activeElement as HTMLElement | null)?.blur();
             this.drafts.set(this.chats().map((chat: RtChatComponent): string => chat.draftText()));
         });
     }

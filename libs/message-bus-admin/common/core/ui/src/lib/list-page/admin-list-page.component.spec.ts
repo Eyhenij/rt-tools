@@ -1,6 +1,6 @@
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { ChangeDetectionStrategy, Component, forwardRef, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Directive, forwardRef, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ADMIN_LIST_HOST, EReadFault, IAdminListHost, IReadFault } from '@rt/message-bus-admin/common/core/util';
@@ -10,9 +10,20 @@ import { IPageModel } from '@rt-tools/utils';
 import {
     AdminListAboveTableDirective,
     AdminListPageComponent,
+    AdminListPageContentDirective,
     AdminListToolbarLeftDirective,
     AdminListToolbarRightDirective,
 } from './admin-list-page.component';
+
+/** Счёт построенных таблиц раздела: директива стоит на содержимом шаблона. */
+const built: { count: number } = { count: 0 };
+
+@Directive({ selector: '[adminRowsProbe]' })
+class RowsProbeDirective {
+    constructor() {
+        built.count++;
+    }
+}
 
 const PAGE: IPageModel = { pageNumber: 1, pageSize: 20, totalCount: 137 };
 
@@ -38,11 +49,20 @@ const PAGE: IPageModel = { pageNumber: 1, pageSize: 20, totalCount: 137 };
                 <p qa-dataid="postmortems-notice">сказанное обо всём списке</p>
             </ng-template>
 
-            <p qa-dataid="postmortems-rows">строки раздела</p>
+            <ng-template adminListPageContent>
+                <p adminRowsProbe qa-dataid="postmortems-rows">строки раздела</p>
+            </ng-template>
         </admin-list-page>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [AdminListPageComponent, AdminListToolbarLeftDirective, AdminListToolbarRightDirective, AdminListAboveTableDirective],
+    imports: [
+        AdminListPageComponent,
+        AdminListToolbarLeftDirective,
+        AdminListToolbarRightDirective,
+        AdminListAboveTableDirective,
+        AdminListPageContentDirective,
+        RowsProbeDirective,
+    ],
     providers: [{ provide: ADMIN_LIST_HOST, useExisting: forwardRef((): typeof HostComponent => HostComponent) }],
 })
 class HostComponent implements IAdminListHost {
@@ -75,11 +95,13 @@ class HostComponent implements IAdminListHost {
     selector: 'admin-list-page-bare-host',
     template: `
         <admin-list-page qaPrefix="summaries" title="Сводки проектов">
-            <p qa-dataid="summaries-rows">строки раздела</p>
+            <ng-template adminListPageContent>
+                <p qa-dataid="summaries-rows">строки раздела</p>
+            </ng-template>
         </admin-list-page>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [AdminListPageComponent],
+    imports: [AdminListPageComponent, AdminListPageContentDirective],
     providers: [{ provide: ADMIN_LIST_HOST, useExisting: forwardRef((): typeof BareHostComponent => BareHostComponent) }],
 })
 class BareHostComponent extends HostComponent {}
@@ -168,6 +190,20 @@ describe('AdminListPageComponent', () => {
 
         expect(textOf(fixture, 'postmortems-fault')).toContain('Прочитать не удалось');
         expect(fixture.debugElement.query(By.css('[qa-dataid="postmortems-rows"]'))).toBeNull();
+    });
+
+    it('SC-MB-456 — раздел, чтение которого упало, показывает отказ и не строит таблицу', () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [HostComponent],
+            providers: [provideHttpClient(), provideHttpClientTesting(), provideRtUtils(), provideRtStorage(), provideRtIDBStorage()],
+        });
+        built.count = 0;
+        const failed: ComponentFixture<HostComponent> = TestBed.createComponent(HostComponent);
+        failed.componentInstance.fault.set({ kind: EReadFault.Service, incident: '' });
+        failed.detectChanges();
+
+        expect([textOf(failed, 'postmortems-fault').includes('Прочитать не удалось'), built.count]).toEqual([true, 0]);
     });
 
     it('названный приёмником номер обращения стоит рядом с причиной', () => {

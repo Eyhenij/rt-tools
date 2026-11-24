@@ -12,20 +12,22 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 <rt-tree-selector ariaLabel="Справочник" [nodes]="accounts" [(value)]="chosen" />
 
 <rt-aside title="Гостиницы">
-    <rt-tree-selector
-        #selector
-        confirm
-        expandControls
-        revertable
-        multiToggle
-        [footer]="false"
-        [emptyAllowed]="false"
-        [nodes]="hotels"
-        [(value)]="hotelIds">
-        <ng-template rtTreeSelectorControls>
-            <button rtButton size="sm" appearance="outlined" [label]="groupingLabel" (click)="openGrouping()"></button>
-        </ng-template>
-    </rt-tree-selector>
+    <ng-template rtAsideContent>
+        <rt-tree-selector
+            #selector
+            confirm
+            expandControls
+            revertable
+            multiToggle
+            [footer]="false"
+            [emptyAllowed]="false"
+            [nodes]="hotels"
+            [(value)]="hotelIds">
+            <ng-template rtTreeSelectorControls>
+                <button rtButton size="sm" appearance="outlined" [label]="groupingLabel" (click)="openGrouping()"></button>
+            </ng-template>
+        </rt-tree-selector>
+    </ng-template>
 </rt-aside>
 ```
 

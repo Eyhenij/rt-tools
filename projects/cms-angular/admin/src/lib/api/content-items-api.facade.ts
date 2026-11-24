@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { type Observable, from } from 'rxjs';
 
@@ -30,7 +30,7 @@ export interface IItemsRequest {
 }
 
 /** The way out to the pages contract. The facade knows only the contract and gives the answer as is. */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class ContentItemsApiFacade {
     readonly #client: Client<typeof CmsContract> = createClient(CmsContract, inject(CMS_TRANSPORT));
 

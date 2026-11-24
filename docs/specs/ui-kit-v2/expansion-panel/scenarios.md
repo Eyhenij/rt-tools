@@ -2,11 +2,12 @@
 
 The numbers continue the numbering of the second kit.
 
-### SC-UKV-519 — a collapsed panel draws its header and no body
+### SC-UKV-519 — a collapsed panel draws its header and hides its body
 
 Given a panel with a title, a body node and a body template
 When it is drawn collapsed
-Then the header shows the title and the chevron. Neither body is drawn
+Then the header shows the title and the chevron, the body node is hidden and inert, and the body
+template is not created
 
 Covered: `projects/ui-kit-v2/src/lib/components/expansion-panel/rt-expansion-panel.component.spec.ts`.
 
@@ -22,7 +23,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/expansion-panel/rt-expansion-pan
 
 Given a collapsed panel bound to the owner
 When the owner sets true, then false
-Then the body node is drawn, then removed
+Then the body node is shown, then hidden
 
 Covered: `projects/ui-kit-v2/src/lib/components/expansion-panel/rt-expansion-panel.component.spec.ts`.
 

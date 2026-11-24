@@ -1,4 +1,16 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, InputSignalWithTransform, Signal } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    contentChildren,
+    Directive,
+    inject,
+    input,
+    InputSignal,
+    InputSignalWithTransform,
+    Signal,
+    TemplateRef,
+} from '@angular/core';
 
 import { TranslocoPipe } from '@jsverse/transloco';
 
@@ -12,6 +24,8 @@ import {
     RtToolbarLeftDirective,
     RtToolbarRightDirective,
 } from '../../../../lib/components/toolbar/rt-toolbar.component';
+import { RtSlotOutletDirective } from '../../../../lib/util/rt-slot-outlet.directive';
+import { rtSlotTemplate } from '../../../../lib/util/slot-template';
 import { IListPage } from './list-page.model';
 import { APP_LIST_PAGE_HOST } from './list-page.token';
 
@@ -20,6 +34,18 @@ import { APP_LIST_PAGE_HOST } from './list-page.token';
  * только раскладывает по ней свои части.
  */
 const BEM_BLOCK: string = 'app-list-page';
+
+/** Отбор и поиск слева в тулбаре списка: `<ng-template appListToolbarLeft>`. */
+@Directive({ selector: '[appListToolbarLeft]' })
+class AppListToolbarLeftDirective {
+    public readonly template: TemplateRef<unknown> | null = rtSlotTemplate(BEM_BLOCK, 'appListToolbarLeft');
+}
+
+/** Действия над списком справа в тулбаре, перед обновлением: `<ng-template appListToolbarRight>`. */
+@Directive({ selector: '[appListToolbarRight]' })
+class AppListToolbarRightDirective {
+    public readonly template: TemplateRef<unknown> | null = rtSlotTemplate(BEM_BLOCK, 'appListToolbarRight');
+}
 
 /**
  * Разметка списочного экрана: заголовок, тулбар, зона прокрутки с таблицей и переключатель
@@ -48,6 +74,7 @@ const BEM_BLOCK: string = 'app-list-page';
         RtToolbarComponent,
         RtToolbarLeftDirective,
         RtToolbarRightDirective,
+        RtSlotOutletDirective,
         TranslocoPipe,
     ],
     host: {
@@ -57,6 +84,10 @@ const BEM_BLOCK: string = 'app-list-page';
 export class AppListPageComponent {
     /** Экран, чей это список: у него шаблон берёт стор и ему же отдаёт действия. */
     protected readonly host: IListPage.Host = inject(APP_LIST_PAGE_HOST);
+
+    /** Шаблоны тулбара: отбор слева и действия справа, все по порядку записи. */
+    protected readonly leftSlots: Signal<readonly AppListToolbarLeftDirective[]> = contentChildren(AppListToolbarLeftDirective);
+    protected readonly rightSlots: Signal<readonly AppListToolbarRightDirective[]> = contentChildren(AppListToolbarRightDirective);
 
     protected readonly pageModel: Signal<IPageModel> = computed((): IPageModel => this.host.store.pageModel());
 
@@ -84,3 +115,5 @@ export class AppListPageComponent {
         transform: (value: unknown): boolean => value !== false,
     });
 }
+
+export { AppListToolbarLeftDirective, AppListToolbarRightDirective };

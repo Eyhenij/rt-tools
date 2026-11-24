@@ -41,6 +41,7 @@ import {
     RtIconButtonComponent,
     RtIconComponent,
     RtMenuComponent,
+    RtMenuContentDirective,
     RtMenuItemComponent,
     RtMessageComponent,
     RtPromptSuggestionComponent,
@@ -48,8 +49,8 @@ import {
     RtThreadListComponent,
     RtThreadListRowActionsDirective,
     RtThreadListRowDirective,
-    rtMatchParts,
     TRtKitLabelMap,
+    rtMatchParts,
 } from '@rt-tools/ui-kit-v2';
 
 import { nextAtBottom, RT_CHAT_PIN_RETRY_DELAYS_MS } from '../chat/rt-chat-thread.logic';
@@ -104,6 +105,7 @@ interface IThreadRow extends IRtThreadList.Row {
         RtIconButtonComponent,
         RtIconComponent,
         RtMenuComponent,
+        RtMenuContentDirective,
         RtMenuItemComponent,
         RtMessageComponent,
         RtAiPromptInputComponent,

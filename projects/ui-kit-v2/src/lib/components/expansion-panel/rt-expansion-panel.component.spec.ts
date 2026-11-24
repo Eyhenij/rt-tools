@@ -46,12 +46,13 @@ function press(fixture: ComponentFixture<ExpansionPanelHostComponent>): void {
 }
 
 describe('RtExpansionPanelComponent', (): void => {
-    it('SC-UKV-519 — рисует заголовок из содержимого и шеврон, тело свёрнутой панели не рисует', (): void => {
+    it('SC-UKV-519 — рисует заголовок из содержимого и шеврон, тело свёрнутой панели скрыто, ленивое не создано', (): void => {
         const fixture: ComponentFixture<ExpansionPanelHostComponent> = setup();
 
         expect(textOf(header(fixture))).toBe('Доставка');
         expect(header(fixture).querySelector('.rt-expansion-panel__chevron')).not.toBeNull();
-        expect(qa(fixture, 'host-eager')).toBeNull();
+        expect(bodies(fixture)[0].contains(qa(fixture, 'host-eager')?.nativeElement as HTMLElement)).toBe(true);
+        expect(bodies(fixture)[0].classList).toContain('rt-expansion-panel__body--collapsed');
         expect(qa(fixture, 'host-lazy')).toBeNull();
     });
 
@@ -76,7 +77,8 @@ describe('RtExpansionPanelComponent', (): void => {
 
         fixture.componentInstance.expanded.set(false);
         fixture.detectChanges();
-        expect(qa(fixture, 'host-eager')).toBeNull();
+        expect(bodies(fixture)[0].classList).toContain('rt-expansion-panel__body--collapsed');
+        expect(bodies(fixture)[0].hasAttribute('inert')).toBe(true);
     });
 
     it('SC-UKV-522 — недоступная панель не раскрывается нажатием', (): void => {
@@ -104,11 +106,12 @@ describe('RtExpansionPanelComponent', (): void => {
     it('SC-UKV-524 — заголовок называет раскрытие и тело, тело — регион с подписью по заголовку', (): void => {
         const fixture: ComponentFixture<ExpansionPanelHostComponent> = setup();
 
+        const body: HTMLElement = bodies(fixture)[0];
+
         expect(header(fixture).getAttribute('aria-expanded')).toBe('false');
-        expect(header(fixture).getAttribute('aria-controls')).toBeNull();
+        expect(header(fixture).getAttribute('aria-controls')).toBe(body.id);
 
         press(fixture);
-        const body: HTMLElement = bodies(fixture)[0];
 
         expect(header(fixture).getAttribute('aria-expanded')).toBe('true');
         expect(header(fixture).getAttribute('aria-controls')).toBe(body.id);

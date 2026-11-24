@@ -10,6 +10,8 @@
                     [pageModel]="page"
                     [empty]="item.empty"
                     [error]="item.error">
+                    <!-- Пустой и упавший список записей не строит: шаблон ниже не создаётся -->
+                    <ng-template rtDynamicListContent><div [style]="slotStyle">Записи</div></ng-template>
                     @if (item.ownEmpty) {
                         <ng-template rtDynamicListEmpty>
                             <div [style]="slotStyle">

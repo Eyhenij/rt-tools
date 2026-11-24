@@ -15,10 +15,9 @@ import { RT_RADIUS_DEFAULT, TRtRadius } from '@rt-tools/ui-kit-v2/core';
  *
  * @example
  * ```ts
- * @Component({
- *     selector: 'rt-card',
- *     hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
- * })
+ * // в декораторе компонента rt-card
+ * selector: 'rt-card',
+ * hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
  * ```
  * ```html
  * <rt-card radius="none">…</rt-card>

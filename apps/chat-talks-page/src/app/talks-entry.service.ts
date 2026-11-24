@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { inject, Injectable, signal, Signal, WritableSignal } from '@angular/core';
+import { inject, signal, Signal, WritableSignal, Service } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
 import { WINDOW } from '@rt-tools/core';
@@ -19,7 +19,7 @@ import { chatPageNeedsSignature, chatPageRefusalWords, chatPageSignatureOf, ETal
  *
  * Остальные отказы человеку и показываются словами: новая подпись их не исправит.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class TalksEntryService {
     readonly #http: HttpClient = inject(HttpClient);
     readonly #window: Window = inject(WINDOW);
