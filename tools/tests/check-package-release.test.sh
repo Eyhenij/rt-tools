@@ -17,7 +17,9 @@ $1" 2>&1
 
 # Every one-off tree lies in one directory of the run, removed at its end: left in the shared
 # temporary directory, a thousand of them slowed down the scenarios of the guards.
+# The path reaches the code through the environment, not the code text: a quote in it would break it.
 RELEASE_TMP="$(mktemp -d "${TMPDIR:-/tmp}/rt-release-XXXXXX")"
+export RELEASE_TMP
 trap 'rm -rf "$RELEASE_TMP"' EXIT
 
 # A one-off tree of one package: the wiring is whole until the script of the test breaks a part of it.
@@ -25,7 +27,7 @@ tree() {
     run "
 import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-const dir = mkdtempSync(join('$RELEASE_TMP', 'tree-'));
+const dir = mkdtempSync(join(process.env.RELEASE_TMP, 'tree-'));
 mkdirSync(join(dir, 'projects/pkg'), { recursive: true });
 mkdirSync(join(dir, '.github/workflows'), { recursive: true });
 const verify = $1 ? { verify: { dependsOn: ['build'], options: { command: 'node tools/verify-package.cjs pkg' } } } : {};
@@ -113,6 +115,6 @@ report "the guard lets through a start of a whole package and of a package with 
 report "the guard is silent on a command that starts nothing" \
     "$(guard 'git status')" 0
 
-run "import { rmSync } from 'node:fs'; const dir = '$RELEASE_TMP'; rmSync(dir, { recursive: true, force: true });"
+run "import { rmSync } from 'node:fs'; const dir = process.env.RELEASE_TMP; rmSync(dir, { recursive: true, force: true });"
 
 suite_result

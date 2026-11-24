@@ -6,8 +6,8 @@
  * The graphs are built by `graphify update`, which reads the syntax of the code and asks no
  * language model. graphify names shell nodes by the absolute path of the copy; the command cuts that
  * path out, so the same head gives the same graph in any copy. Only `graph.json` of each
- * graph lies in history; the cache, the report and the HTML view are rebuilt by this same command
- * and are ignored.
+ * graph lies in history; the cache and the report are rebuilt by this same command and are ignored,
+ * and the HTML view is removed: the Angular Doctor check reads ignored files and counts it as code.
  *
  * A graph is fresh when its `built_at_commit` is the head it was built from. The pattern
  * `task-flow-graph` reads that field before the first exploration of a turn and names what changed
@@ -79,6 +79,9 @@ function build(target) {
     rmSync(join(ROOT, target, 'graphify-out', 'graph.json'), { force: true });
     const started = Date.now();
     const run = spawnSync('graphify', ['update', target, '--force'], { cwd: ROOT, encoding: 'utf8' });
+    // `graphify update` also draws the graph as a page, a failed run too. Nobody reads it here, git
+    // ignores it, and the Angular Doctor check reads ignored files and goes red on it.
+    rmSync(join(ROOT, target, 'graphify-out', 'graph.html'), { force: true });
     const seconds = ((Date.now() - started) / 1000).toFixed(1);
     if (run.error) {
         console.error(`graphs-build: graphify is not installed — ${run.error.message}`);
@@ -90,9 +93,6 @@ function build(target) {
         return false;
     }
     settle(target);
-    // `graphify update` also draws the graph as a page. Nobody reads it here, git ignores it, and
-    // the Angular Doctor check reads ignored files and goes red on it.
-    rmSync(join(ROOT, target, 'graphify-out', 'graph.html'), { force: true });
     console.log(`+ ${target}: ${rebuilt[1]} in ${seconds}s`);
     return true;
 }
