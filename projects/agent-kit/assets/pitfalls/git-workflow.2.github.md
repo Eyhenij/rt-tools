@@ -255,20 +255,21 @@ flowchart TD
   leaves signed by a stranger.
 - **The identity of the machine account is confirmed by the host's answer:** asked with the token,
   login and number come together.
-- **Guard scenarios set the git settings themselves, not take them from the machine.** Author, email
-  and signature go as `-c` flags.
+- **Guard scenarios set the git settings and the locale themselves, not take them from the machine.**
+  Author, email and signature go as `-c` flags; the push guard runs steps under `C.UTF-8`, where bash
+  3.2 breaks `$var»`.
 
 - **Every commit of the branch's contribution is signed by the machine account, and the push set
   checks it.** The guard judges a commit that named itself as it; a person's passes by.
-- **The PR state is reread from the host right after publishing.** Opening and setting a reviewer
-  answer zero even having done nothing.
+- **The PR state is reread from the host right after publishing.** Opening and setting a
+  reviewer answer zero, done or not.
 - **Reviewers are asked by a REST call, not by the client's selection.** Its fields come from GraphQL,
   where the account has no rights.
 
 - **A second working copy is for reading, and the call goes from the copy the session stands in.**
   The gate runs its set where the session was started, and a neighbour's uncommitted work refuses it.
-- **The working tree is not emptied for a tool run.** The comparison goes on a second copy: stashing
-  takes uncommitted work where neither the tree state nor the audit sees it.
+- **The working tree is not emptied for a tool run.** On a second copy: stashing hides
+  uncommitted work from the tree state and the audit.
 
 ## What of the law is not here
 

@@ -14,6 +14,6 @@
     },
     { "role": "owner", "at": "2026-10-13T19:21:00Z", "owner": "Остановись на логической точке" },
     { "role": "agent", "at": "2026-10-13T19:25:00Z", "call": "Bash", "command": "git commit -q -F msg.txt", "code": 0 },
-    { "role": "agent", "at": "2026-10-13T19:26:00Z", "say": "Stopped after the commit of the step." }
+    { "role": "agent", "at": "2026-10-13T19:26:00Z", "say": "Остановился после коммита шага." }
   ]
 }

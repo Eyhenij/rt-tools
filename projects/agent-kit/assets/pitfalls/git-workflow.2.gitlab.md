@@ -241,8 +241,8 @@ flowchart TD
   token does not see the project whole.
 - **A task is moved across lists by editing its labels.** The board's lists are labels: a move that
   did not remove the previous label leaves the task in two lists at once, and the queue reads wrong.
-- **Guard scenarios set the git settings themselves, not take them from the machine.** Author, email
-  and signature go as `-c` flags.
+- **Guard scenarios set the git settings and the locale themselves, not take them from the machine.**
+  Author, email and signature go as `-c` flags; the push guard runs steps under `C.UTF-8`.
 
 ## What of the law is not here
 

@@ -155,6 +155,22 @@ Then all five are held by the running stage, and the model hook lets only the se
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`; the verdicts of the model — `projects/agent-kit/tests/judge-replay.mjs`.
 
+### SC-AK-1933 — a reply not in the owner's language is held by the model hook
+
+Given a turn that answers the owner in another language, and one that answers in theirs and quotes a command with its English output
+When the text of the model hook on Stop is read
+Then it holds the first and lets the second end
+
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`; the verdicts of the model — `projects/agent-kit/tests/judge-replay.mjs`.
+
+### SC-AK-1934 — a question not in the owner's language is held, a product choice leaves
+
+Given a menu written in another language, and a menu in the owner's that asks what the product keeps after sanitizing
+When the text of the model hook before a question is read
+Then it holds the first and lets the second leave
+
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`; the verdicts of the model — `projects/agent-kit/tests/judge-replay.mjs`.
+
 ### SC-AK-1548 — the recorded stop words of the owner hold the turn
 
 Given the five stop messages of the measurement of 15 November — «Стой», «жди конца набора», «жди соседа», «Остановись на логической точке» and «Не сейчас» as a free answer to a menu

@@ -7,6 +7,6 @@
     { "role": "owner", "at": "2026-11-02T20:00:00Z", "owner": "<order:RT-101>" },
     { "role": "agent", "at": "2026-11-02T20:03:00Z", "call": "Edit", "file": "projects/agent-kit/assets/rules/task-flow.md", "code": 0 },
     { "role": "owner", "at": "2026-11-02T20:04:00Z", "owner": "Стой" },
-    { "role": "agent", "at": "2026-11-02T20:04:10Z", "say": "Stopped." }
+    { "role": "agent", "at": "2026-11-02T20:04:10Z", "say": "Остановился." }
   ]
 }

@@ -189,14 +189,19 @@ flowchart TD
   code is written.
 - **Every step of the plan carries a check whose expected output is taken from a run while the plan
   is written.** Written by a guess, it fails at the step itself. The engine runs the check and writes
-  the mark of the step; a step marked done without its mark is refused.
+  the mark of the step; a step marked done without its mark is refused. A number is written bare,
+  `>= 12`: backticks mean a whole line. A test run is expected by its count of passed tests, never by exit 0.
+  Absence is written `grep -q … → exit 1`: `grep` exits 1 without a match. The verdict is the code of the
+  whole line: a pipe starts with `set -o pipefail;`, and `VERBOSE=1` and the like stand in the line.
+  A comparison with another branch names its commit, by `git rev-parse --short <branch>`.
 - **A plan for work that ports a technique from outside is written by a measurement of one's own
   code.** Reading the sample says how it is built; what is needed here is said by a count over
   one's own files.
 - **A claim about a dependency names a file and line of its installed code.** About how it behaves, by
   the path from `node_modules/`. An approved plan forbade what the framework allows.
 - **A count that becomes the measure of the work is bounded by the declaration, not by the file.**
-  A file holds neighbouring sets too.
+  A file holds neighbouring sets too. What a review round adds carries a sign of its own and a line in
+  the progress. Rewording the added items so the frozen number holds hides them from the count.
 - **Waiting for one part of a stage is never a stop of the stage.** The parts independent of what is
   awaited are done in the same turn; the owner is told what is done and what is left for their step.
 - **A finding made mid-stage is checked against the plan's exit conditions before the first edit.**

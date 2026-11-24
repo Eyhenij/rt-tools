@@ -12,7 +12,7 @@
       "file": "projects/agent-kit/tests/turn-exit-guard.test.sh",
       "code": 0
     },
-    { "role": "agent", "at": "2026-11-14T17:44:00Z", "say": "Now I will run the suite and commit the step." }
+    { "role": "agent", "at": "2026-11-14T17:44:00Z", "say": "Сейчас запущу набор и закоммичу шаг." }
   ],
   "next": { "owner": "<nudge>" }
 }

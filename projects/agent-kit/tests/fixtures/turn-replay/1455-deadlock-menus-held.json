@@ -17,7 +17,7 @@
       "role": "agent",
       "at": "2026-11-14T04:20:00Z",
       "menu": [
-        "The push is refused by the marks check. What now?",
+        "Отправку не пускает проверка отметок. Что дальше?",
         "снять проверку отметок и отправить",
         "подождать соседнюю сессию",
         "стоп"
@@ -28,14 +28,14 @@
     {
       "role": "agent",
       "at": "2026-11-14T04:31:00Z",
-      "menu": ["The push of RT-101 is refused by another check.", "отложить RT-101", "стоп"],
+      "menu": ["Отправку RT-101 не пускает другая проверка.", "отложить RT-101", "стоп"],
       "answer": { "held": "ask-judge" }
     },
     { "role": "hook", "at": "2026-11-14T04:40:00Z", "stop": "menu" },
     {
       "role": "agent",
       "at": "2026-11-14T04:41:00Z",
-      "menu": ["The push of RT-101 is still refused by another check.", "отложить RT-101", "стоп"],
+      "menu": ["Отправку RT-101 всё ещё не пускает другая проверка.", "отложить RT-101", "стоп"],
       "answer": { "held": "ask-judge" }
     }
   ],

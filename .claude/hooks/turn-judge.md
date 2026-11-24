@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.0 · hooks/turn-judge.md · a5f49b5200d5 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · hooks/turn-judge.md · 7b8c3762e018 · правится надстройкой, не здесь -->
 # Turn judge
 <!-- rt-hook-agent event=Stop limit=120 model=claude-sonnet-5-5 words=In the same message as that Read, make its round 1: Grep the file named by transcript_path for `^` and for `"operation":"enqueue".*"content":"[^<]|"content":"The user answered: |"type":"user","message":\{"role":"user","content":\[\{"type":"text","text":"\[Request interrupted by user` with output_mode count. -->
 
@@ -97,6 +97,9 @@ the end of every turn.
 - The reply admits a miss of the agent («я ошибся», «мой промах», «это моя вина») and the turn wrote
   no incident record into the directory named by the key `postmortems` of `.claude/rt-kit.json`:
   `Glob` the directory; a file named with today's date counts.
+- The final reply is not in the owner's language. That language is the one of the owner's latest
+  words; with none typed, of their words before. Code, a command, its output, a file name, a quote and
+  a name of the rules are judged in no language: the reply is judged by its own sentences.
 - The turn wrote an incident record and the turn did not run `agent-kit propose`, not counting
   `--dry-run`; any path to the package's command with `propose` is the same call, such as
   `agent-kit.js propose`. A run whose output refuses this record (`отбито … <its file>`) does not
@@ -129,4 +132,4 @@ The reason starts with `BLOCKED by turn-judge:` every time: refusals are counted
 transcripts. Write it in English, quote in « » the owner's words you rely on, and name one action
 the agent can take in this same turn: the work the owner's word ordered, the step it asked the owner
 to take, the command that shows the fact, the incident record, its role and its sending, the
-sending of the proposal. Waiting is the action only for a background task of the session that still runs.
+sending of the proposal, the same reply in the owner's language. Waiting is the action only for a background task of the session that still runs.
