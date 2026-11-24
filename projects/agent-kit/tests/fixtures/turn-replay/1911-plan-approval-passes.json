@@ -1,24 +1,38 @@
 {
   "case": "SC-AK-1911",
-  "kind": "the approval of a plan that changes a check",
+  "kind": "the approval of a plan that changes a check, asked after the plan and both roles",
   "record": "RT-3584, 24.11: the question judge held «Одобряю план RT-3584» three times, and the work stood",
   "task": 101,
   "turns": [
     { "role": "owner", "at": "2026-11-24T07:40:00Z", "owner": "<order:RT-101>" },
     {
       "role": "agent",
+      "at": "2026-11-24T07:50:00Z",
+      "call": "Write",
+      "command": "docs/tasks/RT-101-replay-task/plan.md — the plan of RT-101: at night the verdict of the exit check names no menu",
+      "code": "ok"
+    },
+    {
+      "role": "agent",
       "at": "2026-11-24T07:52:00Z",
       "call": "Agent",
-      "command": "product-strategist and goal-critic on the plan of RT-101",
+      "command": "product-strategist on docs/tasks/RT-101-replay-task/plan.md",
+      "code": "ok"
+    },
+    {
+      "role": "agent",
+      "at": "2026-11-24T07:53:00Z",
+      "call": "Agent",
+      "command": "goal-critic on the owner's words of RT-101",
       "code": "ok"
     },
     {
       "role": "agent",
       "at": "2026-11-24T07:58:00Z",
       "menu": [
-        "Plan RT-101 changes the exit check: at night its verdict names no menu, and the executor defers the step itself. Do you approve it?",
-        "Одобряю план RT-101",
-        "Переделай план RT-101"
+        "Plan RT-101 (docs/tasks/RT-101-replay-task/plan.md) changes the exit check: at night its verdict names no menu, and the executor defers the step itself. Do you approve it?",
+        "Одобряю план RT-101 (Recommended) — I make the edit and run the suites at once",
+        "Переделай план RT-101 — the plan is rewritten by your remark"
       ]
     }
   ]

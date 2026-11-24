@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.0 · hooks/ask-judge.md · f76758ece067 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · hooks/ask-judge.md · 7bfaf5370c0c · правится надстройкой, не здесь -->
 # Ask judge
 <!-- rt-hook-agent event=PreToolUse pattern=AskUserQuestion limit=60 -->
 
@@ -21,7 +21,8 @@ after any refusal of another check. Avoid both.
    `output_mode: "content"` and `-n`. The first kind is a typed message, its text in the field
    `content`; the second is an answer to an earlier question. Take the whole current task, not only
    the last message.
-3. The state of the work: the branch in `<cwd>/.git/HEAD`, then `<cwd>/docs/tasks/<branch>/progress.md`
+3. The state of the work: the branch in `<cwd>/.git/HEAD` — in a working copy `.git` is a file
+   whose `gitdir:` line names the directory that holds `HEAD` — then `<cwd>/docs/tasks/<branch>/progress.md`
    with `limit: 60` — the line `Next step` and the steps marked `[ ]` or `[>]` — and the rows of
    `<cwd>/docs/plans` that hold the task key at the head of the branch.
 4. For a question about how the project works, the rules: `docs/constitution/`, `.claude/skills/`,
@@ -32,9 +33,13 @@ after any refusal of another check. Avoid both.
 - The answer is not in the owner's messages, not in the progress and not in the rules: the decision
   is the owner's.
 - The question asks for an approval the owner must give: a plan, a new working tree, a merge, a
-  release, a purchase, a deletion, a change of the owner's earlier decision, the deferral of a
-  task. The approval of a plan is never held, a plan that changes a hook or a check included: the
-  plan names the change, the owner decides it, and the option only records the decision.
+  release, a purchase, a deletion, a change of the owner's earlier decision.
+- The question asks to approve the plan of the task of the branch, and the owner has not approved
+  it yet. The approval of a plan is never held, a plan that changes a hook or a check included,
+  when two things hold. The plan lies in `<cwd>/docs/tasks/<branch>/plan.md`. The transcript holds
+  calls of the roles `product-strategist` and `goal-critic` before the question. The plan names
+  the change, the roles read it, the owner decides it, and the option only records the decision.
+  Without the plan or without both roles the option is held: an approval of nothing is a lift.
 - The question follows a refusal of another check and names what was done meanwhile or why nothing
   could be done. A refusal elsewhere is never a reason to hold the question.
 - The question is the menu named by a refusal of the exit check. Another check
@@ -55,14 +60,18 @@ after any refusal of another check. Avoid both.
   a case from it, lowers its threshold or adds an exception to it. Hold it in any menu, the menu of
   the exit check included. An owner who picks such an option removes the check with their own hand,
   and that has happened once already. The move instead is to do what the check asks.
-  An option that only records the owner's decision is not such an option: «Одобряю план RT-N»,
-  «отложить RT-N», the approval of a merge or a release, named with the task key and nothing
-  else, leaves even when the decision changes a check. An option that appends an action to the
-  decision — «Одобряю план RT-N: снять проверку отметок» — is held.
+  An option that only records the owner's decision is not such an option.
+  Such an option is «Одобряю план RT-N» under the conditions above, or the approval of a merge or a release named by the task key.
+  It leaves even when the decision changes a check. A «(Recommended)» mark is no action. A
+  description that says what the executor does next — makes the edit, runs the suite — is no
+  action either. An option is its label, its description and the text of its question together.
+  An option that appends an action to the decision anywhere in them is held.
+  Example: «Одобряю план RT-N (снимает проверку отметок)», or a question that says the approval also lifts a check.
 
 When in doubt, let the question leave: a held question can leave the owner without a decision that
 was theirs. An option that weakens a check by itself is not a doubt: it is held. An option that
-records the owner's decision is not a doubt either: it leaves.
+records the owner's decision is not a doubt either: it leaves. A decision the owner already took
+in this conversation is held by the first item of this list whatever the option.
 
 ## How to answer
 
