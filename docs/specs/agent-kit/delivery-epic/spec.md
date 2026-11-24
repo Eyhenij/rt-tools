@@ -60,6 +60,9 @@ their own turn.
   run comes to such a base, so a PR of a task into its epic branch would wait for nothing. The bases
   are read from the `pull_request` trigger of the pipeline file the tree named for the push gate.
   Where the file, the setting or a branch filter is absent, the draft is not judged.
+- **A miss of the call itself is refused in an epic and outside it.** A bad title, a foreign number, the
+  author as the reviewer, a draft without a run and a thin body do not depend on the epic. On an epic
+  branch that moved ahead one refusal names the miss and the branch.
 - **The freshness asked before a request of such a task is the epic's, not the main branch's.** The
   request goes into the epic, and it is the divergence with the epic that shows in the diff; the main
   branch reaches the task through the epic.

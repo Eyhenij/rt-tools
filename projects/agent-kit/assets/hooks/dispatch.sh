@@ -79,6 +79,29 @@ if [ "$event" = UserPromptSubmit ] && [ -s "$journal_file" ]; then
         fi
     fi
 fi
+# A merge of the base leaves conflict markers in the guards themselves, and a guard that does not parse
+# refuses every call, the one that takes the markers off with the rest. Two commands take them off: the
+# guards of this side, and the merge undone. While a file of the guards does not parse, exactly these
+# two pass unjudged; a call after them is judged as before.
+rt_dispatch_root="$(cd "${CLAUDE_PROJECT_DIR:-${RT_HOOK_CWD:-.}}" 2>/dev/null && pwd -P)"
+rt_dispatch_rel="$(cd "$here" && pwd -P)"
+case "$rt_dispatch_rel" in
+    "$rt_dispatch_root"/*) rt_dispatch_rel="${rt_dispatch_rel#"$rt_dispatch_root"/}" ;;
+    *) rt_dispatch_rel=".claude/hooks" ;;
+esac
+rt_dispatch_recovery="git checkout --ours -- $rt_dispatch_rel"
+rt_dispatch_broken() {
+    for rt_dispatch_file in "$here"/*.sh; do
+        bash -n "$rt_dispatch_file" 2>/dev/null || { printf '%s' "${rt_dispatch_file##*/}"; return 0; }
+    done
+    return 1
+}
+if [ "$event" = PreToolUse ]; then
+    case "$(printf '%s' "${RT_HOOK_CMD:-}" | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//; s/^git -C [^[:space:];&|$`]+ /git /')" in
+        "$rt_dispatch_recovery" | 'git merge --abort') rt_dispatch_broken >/dev/null && exit 0 ;;
+    esac
+fi
+
 branches="$(grep -l '^# rt-hook:' "$here"/*.sh 2>/dev/null | sort)"
 [ -z "$branches" ] && [ -z "$collected" ] && exit 0
 
@@ -149,7 +172,12 @@ EOF
         continue
     fi
     if [ "$code" -ne 0 ]; then
-        if [ -n "$branch_out" ]; then
+        if ! bash -n "$branch" 2>/dev/null; then
+            # The guard did not judge: its file does not parse. The way out is named, for the call that
+            # fixes the file is refused by the same file.
+            refusal="$(printf 'The guard %s does not parse, so it judged nothing: after a merge it holds conflict markers. Take them off by one of two commands, alone in the call — %s (in the middle of a merge; the edits of the other side to the guards come back with the layout), or git merge --abort. Both pass while a guard does not parse. Without a merge in progress the file is restored by the layout or by the owner.' \
+                "$(basename "$branch")" "$rt_dispatch_recovery")"
+        elif [ -n "$branch_out" ]; then
             refusal="$branch_out"
         elif [ -n "$said_err" ]; then
             refusal="$said_err"

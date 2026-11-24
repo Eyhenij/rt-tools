@@ -65,9 +65,16 @@ refuse() {
             [ -n "$flow" ] || flow='{"facts":{},"params":{}}'
         fi
     fi
+    # A compound command is refused whole: the words name the part judged by the path of the edit.
+    # shellcheck disable=SC1091
+    command -v rt_judged_part >/dev/null 2>&1 || . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
+    part=""
+    if [ -n "${cmd:-}" ] && command -v rt_judged_part >/dev/null 2>&1; then
+        part="$(rt_judged_part "$cmd" "$(printf '%s' "${candidate##*/}" | sed 's/[][().*+?{}|^$\\]/[&]/g')")"
+    fi
     rt_decide "$RT_GUARD_NAME.sh" "$1" \
         "$(jq -cn --argjson m "$move" --argjson f "$flow" --argjson o "$2" '$m + $f.facts + $o')" \
-        "$(jq -cn --argjson f "$flow" --argjson p "$3" '$f.params + $p')" PreToolUse "$input"
+        "$(jq -cn --argjson f "$flow" --argjson p "$3" --arg a "$part" '$f.params + $p + (if $a == "" then {} else {after:$a} end)')" PreToolUse "$input"
     exit 0
 }
 

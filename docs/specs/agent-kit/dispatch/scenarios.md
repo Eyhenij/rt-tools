@@ -274,3 +274,14 @@ Then the record names the file of the check at the moved path
 And the layout names that the script guards are not connected: the dispatcher is not on disk
 
 Covered: `projects/agent-kit/src/lib/commands.spec.ts`.
+
+### SC-AK-1945 — a guard with conflict markers names the way out, and the way out passes
+
+Given a guard holds the markers of a merge conflict
+When a call is judged
+Then the refusal names the guard and the command that restores the guards of this side
+And that command, from the directory of the tree or with it named, and the undoing of the merge pass
+And the command with a tail after it, and the same command on another path, are refused
+And with the guards whole the command is judged as any other
+
+Covered: `projects/agent-kit/tests/dispatch.test.sh`.

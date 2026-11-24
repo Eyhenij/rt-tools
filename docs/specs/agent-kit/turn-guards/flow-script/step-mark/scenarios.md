@@ -137,6 +137,14 @@ Then the fixture counts as a mismatch, and the code is 1
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
+### SC-AK-1941 — a judge that did not run stops the replay and is no mismatch
+
+Given two fixtures and a judge that ends with code 1 and the words «Please run /login», or with code 0 and nothing
+When the replay runs
+Then it stops on the first call, the answer of the judge is printed, and the code is 2; an answer with no verdict stays a mismatch
+
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
+
 ### SC-AK-1716 — a plan stripped of its checks in the working copy does not lift the refusal
 
 Given a plan whose commit wrote a check under step 1.1, and the same plan in the working copy with every check line removed

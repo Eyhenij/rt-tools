@@ -105,7 +105,7 @@ silent about.
 - **A second working copy is for reading, and the call goes from the copy the session stands in.** — `.claude/hooks/git-guard-push-tests.sh:moved_root` — the move at the start of the call names the other copy; the roots differ, and the gate refuses.
 - **The form of a branch name is judged by the tree the command runs in.** — `.claude/hooks/git-guard-delivery-tree.sh:rt_delivery_branch_form_ok` — the tree is taken from the move at the start of the call; without a move the session's own profile answers.
 - **An edit brought to a commit is brought to the host in the same turn.** — **Not checked.** The exit guard judges the measured state of the branch and does not count the commits ahead of the remote ref.
-- **The main branch is taken by the remote ref — in words and in actions.** — `.claude/hooks/push-set.sh:rt_push_set_base` — the base is taken from the remote ref rather than from the local tip. The statement to the owner is not guarded by this: a network call inside the parsing of a command would fall together with the connection. The session-closing steps — pulling main in, counting what is merged and what is not — take that same ref, and nothing guards them: the command is read by the session, not by a check
+- **The main branch is taken by the remote ref — in words and in actions.** — `.claude/hooks/push-set.sh:rt_push_set_base` — the base is taken from the remote ref rather than from the local tip. The statement to the owner is not guarded by this: a network call inside the parsing of a command would fall together with the connection. The session-closing steps — pulling main in, counting what is merged — take that same ref, unguarded. Every `git fetch` is followed by a fast-forward of the local main: `git fetch origin main:main`, or `git merge --ff-only origin/main` standing on it
 - **A commit lands with its final content, and a later commit of the same branch does not correct it.** — **Not checked.** The guard sees a commit, not whether its content was checked before it: a fixing commit three steps later looks the same as any other.
 - **A wave of branches off one epic branch is checked by a trial merge, not one by one:** — **Not checked by anything.** A check judges one branch, while a collision lives between branches, and before a merge nothing sees it. Held by the pattern `git-workflow-stack`.
 
@@ -126,7 +126,7 @@ silent about.
   called with the token in the call's environment:
 
     ```bash
-    GH_TOKEN=$(cat ~/.config/rt-tools-bot-token) command gh pr create …
+    test -s ~/.config/rt-tools-bot-token && GH_TOKEN=$(cat ~/.config/rt-tools-bot-token) command gh pr create …
     ```
 
     `gh auth login` under the machine account is not done: it would wipe the owner's sign-in in
@@ -146,7 +146,7 @@ silent about.
   machine account's token:
 
     ```bash
-    GH_TOKEN=$(cat ~/.config/rt-tools-bot-token) command gh pr create --draft --base main \
+    test -s ~/.config/rt-tools-bot-token && GH_TOKEN=$(cat ~/.config/rt-tools-bot-token) command gh pr create --draft --base main \
         --head <branch> --title '<title>' --body-file <file>
     ```
 

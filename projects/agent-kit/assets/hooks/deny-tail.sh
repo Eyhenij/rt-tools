@@ -41,6 +41,53 @@ rt_gate_pending() {
     printf '%s' "$rule"
 }
 
+# The words about the part of a compound command a refusal judges, or nothing for a plain command.
+# The harness refuses the call whole, so the neighbours of the judged part did not run either, and a
+# refusal that does not say so reads as if the rest of the command were done. The second parameter is
+# an extended regular expression of what the guard judged; among the parts that carry it a part with a
+# write sign comes first. The body of a heredoc is data and is no part. No part carries it — a script
+# file holds it — and the words name the call as a whole.
+rt_judged_part() {
+    printf '%s\n' "$1" | RT_JP_WANT="$2" awk -v sq="'" '
+        function flush() {
+            gsub(/^[ \t]+|[ \t]+$/, "", seg)
+            if (seg != "") { part[++n] = seg }
+            seg = ""
+        }
+        {
+            if (tag != "") { line = $0; gsub(/^[ \t]+|[ \t]+$/, "", line); if (line == tag) { tag = "" } ; next }
+            len = length($0)
+            for (i = 1; i <= len; i++) {
+                c = substr($0, i, 1)
+                if (c == "\\" && q != sq && i < len) { seg = seg c substr($0, i + 1, 1); i++; continue }
+                if (q != "") { if (c == q) { q = "" } }
+                else if (c == "\"" || c == sq || c == "`") { q = c }
+                else if (c == ";" || c == "|") { flush(); continue }
+                else if (c == "&" && substr($0, i + 1, 1) != ">" && substr($0, i - 1, 1) != ">") { flush(); continue }
+                seg = seg c
+            }
+            if (q == "" && match($0, "<<-?[ \t]*[\"" sq "]?[A-Za-z_][A-Za-z0-9_]*")) {
+                tag = substr($0, RSTART, RLENGTH); sub("^<<-?[ \t]*[\"" sq "]?", "", tag)
+            }
+            if (q == "") { flush() } else { seg = seg " " }
+        }
+        END {
+            flush()
+            if (n < 2) { exit }
+            want = ENVIRON["RT_JP_WANT"]
+            for (k = 1; k <= n; k++) {
+                if (part[k] !~ want) { continue }
+                if (first == "") { first = part[k] }
+                if (wrote == "" && part[k] ~ /[>]|tee |sed |cp |mv |install |python|node |ruby |perl |php /) { wrote = part[k] }
+            }
+            said = wrote != "" ? wrote : first
+            if (length(said) > 240) { said = substr(said, 1, 240) "…" }
+            if (said != "") { printf "The part of the command judged here: `%s`. ", said }
+            printf "The call is refused whole: none of the %d parts of the command ran, send the others as calls of their own.", n
+        }
+    ' 2>/dev/null
+}
+
 rt_deny_tail() {
     if [ -n "$1" ]; then
         printf 'Two moves from here: fix what is named and repeat the call, or bring the owner the price of a bypass and wait for their word. The lawful form of bypass: %s. An edit is not laid past the guard in silence: it refuses one call, and a bypassed one lifts the requirement from the whole tree and says nothing about it.' "$1"

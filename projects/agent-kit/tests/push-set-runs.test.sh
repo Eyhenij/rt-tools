@@ -178,4 +178,16 @@ report "SC-AK-1847 — the set starts no step without the pinned node" \
     "node v99.0.0 is pinned in .nvmrc and not installed; PATH gives …|yes|none"
 report "SC-AK-1847 — the run ahead starts no step without the pinned node" "$(ahead_node "$t_other")" "3 none"
 
+# --- SC-AK-1944 — шаг не получает окружения вызова, в котором идёт набор ---------------------------
+cat >"$set_tree/.claude/rt-kit/project.sh" <<'EOF'
+rt_push_checks() { printf '%s\n' 'env > seen-env.txt'; }
+EOF
+rm -rf "$set_marks"
+# Каталог git назван переменной, как его даёт крючок: от него не должно зависеть, какое дерево судит шаг.
+(cd "$set_tree" && GIT_DIR="$set_tree/.git" GIT_INDEX_FILE="$set_tree/.git/index" RT_HOOK_INPUT='{"tool_name":"Bash"}' RT_HOOK_CMD='git push' RT_HOOK_PARSED=1 \
+    CLAUDE_PROJECT_DIR="$set_tree" bash -c '. "$1/push-set.sh"; rt_push_set_profile "$1" "$PWD"; rt_push_set_run "$2"' _ "$HOOKS" "$set_base" >/dev/null 2>&1)
+report "SC-AK-1944 — шаг набора отработал" "$([ -s "$set_tree/seen-env.txt" ] && echo yes || echo no)" yes
+report "окружение вызова отправки: GIT_DIR до шага не доходит" "$(grep -cE '^GIT_(DIR|WORK_TREE|INDEX_FILE|COMMON_DIR|PREFIX)=' "$set_tree/seen-env.txt")" 0
+report "окружение вызова отправки: RT_HOOK до шага не доходит" "$(grep -c '^RT_HOOK_' "$set_tree/seen-env.txt")" 0
+
 suite_result "the run line of a push set step"

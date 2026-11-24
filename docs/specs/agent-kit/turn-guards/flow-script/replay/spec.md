@@ -40,6 +40,7 @@ silent.
 - **The end of the epic releases the turn: every task lies in the epic branch, and the PR of the epic into the main branch exists.**
 - **A menu of a refusal held twice in a row releases the turn; held once, it does not.**
 - **The menu hook lets the menu of the exit check through and holds an option that removes or weakens a check.**
+- **The menu hook holds a menu whose every option hands the work to the owner or stops it after a refusal that named the move.**
 - **The model hook on Stop does not judge open work and holds a question whose answer is already given.**
 - **The model hook on Stop holds a turn that wrote an incident record and did not send it, and lets one that sent it end.**
 - **The model hooks hold a reply and a question that are not in the owner's language, and a question about what the product sanitizes leaves.**

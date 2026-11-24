@@ -35,14 +35,16 @@ There is no interface: the guard answers the agent with a refusal or stays silen
 - **The tree override is edited only by the owner's last word naming the key it changes, and the reason of a removed key quotes that word.**
 - **The description, its measurers and sources and the engine are edited only in a task whose approved plan names their path in a footprint row marked «(правится)».**
 - **The owner's last word is a message the owner typed or the options the owner chose in a menu.**
+- **A plan with no approval mark is refused a check whose form hides its result, when it is written.**
 - **The guard lets a call through when the engine is absent, fails or prints nothing.**
 - **A tree override that does not build does not lift the hooks: they judge by the package description.**
 
 ## What is out of scope
 
 The engine, its measurers and the marks it writes are the subdomain one level up. A shell command
-is judged by its text: a script that computes a path itself is not seen. The plan write is judged by
-the command `plan-check` of the engine, not here.
+is judged by its text: a script that computes a path itself is not seen. Of a plan write only the two
+forms that hide a result are judged here: a pipe without `pipefail` and an absence counted by `grep -c`.
+The rest is the command `plan-check` of the engine.
 
 ## Contract
 

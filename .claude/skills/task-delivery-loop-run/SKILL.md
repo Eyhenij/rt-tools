@@ -11,10 +11,13 @@ A pattern of the rule `task-delivery-loop`; the steps are numbered as there. `N`
 card, `<base>` the base of the branch: the previous branch of the chain, the epic branch or `main`. Shell variables do not live from one call to the next,
 so every block sets the client and the token itself.
 
+Every call with the token starts with `test -s`: an empty or missing file would leave the variable
+empty, and the client answers from the owner's account.
+
 ## 2–3. The task and its branch
 
 ```bash
-GH=/opt/homebrew/bin/gh; export GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)"
+GH=/opt/homebrew/bin/gh; test -s ~/.config/rt-tools-bot-token && export GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)"
 git fetch -q origin
 node tools/epic-table.mjs E
 $GH api "repos/Eyhenij/rt-tools/git/matching-refs/heads/RT-N-" --jq '.[].ref'
@@ -59,7 +62,8 @@ reaches. `everything` runs the whole set before the push and `show2` the showcas
 test. The coverage guard judges the pushed head: a commit with the test is pushed before `gh pr create`.
 
 The showcase frames have one road: `node tools/visual-gate.mjs ui-kit-v2`, the whole set, about
-eight minutes. A path sample is read only after `--update`.
+eight minutes. A path sample after the kit matches the named story files alone, and after
+`--update` re-takes them; a pointed match is for the edit at hand, the push set runs the whole one.
 
 A heavy run goes alone and in the background: the two calls above, one after the other. The affected run outlasts a foreground call on a cold
 cache, and the showcase frames fall with ECONNRESET beside the tests of the packages.
@@ -94,7 +98,8 @@ Return findings with file:line, the failure scenario and a severity.
 
 `qa-engineer` gets the agreement and the review lens of `.claude/workflows/feature.js`.
 `product-strategist` gets the plan's points and their signs. `goal-critic` gets the owner's words
-from the grill and the result, never the plan.
+from the grill and the result, never the plan. The replies of the roles are saved to a file of the
+scratchpad as they come: the PR body takes their tables word for word.
 
 ## 8, 9. Commit as the machine account
 
@@ -168,7 +173,8 @@ labels go in the same call. A PR into `main` adds `--draft`: the pipeline wakes 
 epic branch opens ready, without `--draft`: the delivery guard refuses a draft there.
 
 ```bash
-GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)" /opt/homebrew/bin/gh pr create --title '[RT-N] <что сделано>' \
+test -s ~/.config/rt-tools-bot-token && GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)" \
+    /opt/homebrew/bin/gh pr create --title '[RT-N] <что сделано>' \
     --base <base> --head RT-N-<slug> --body-file <body file> \
     --reviewer Eyhenij --assignee rt-tools-dev --label <label> --draft
 ```
@@ -181,7 +187,7 @@ The state is reread from the host right after: the author must be `rt-tools-dev`
 an assignee or a label the call did not set is added by REST:
 
 ```bash
-GH=/opt/homebrew/bin/gh; export GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)"
+GH=/opt/homebrew/bin/gh; test -s ~/.config/rt-tools-bot-token && export GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)"
 $GH api repos/Eyhenij/rt-tools/pulls/<pr> \
     --jq '{author: .user.login, reviewers: [.requested_reviewers[].login], assignees: [.assignees[].login], labels: [.labels[].name]}'
 $GH api repos/Eyhenij/rt-tools/issues/N --jq '.labels[].name' | while IFS= read -r L; do
@@ -193,13 +199,13 @@ npm run -s task:move -- N in-review
 A draft into `main` is lifted on the green run of its tip, in the turn that hands it over:
 
 ```bash
-GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)" /opt/homebrew/bin/gh pr ready <pr>
+test -s ~/.config/rt-tools-bot-token && GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)" /opt/homebrew/bin/gh pr ready <pr>
 ```
 
 ## After the merge
 
 ```bash
-GH=/opt/homebrew/bin/gh; export GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)"
+GH=/opt/homebrew/bin/gh; test -s ~/.config/rt-tools-bot-token && export GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)"
 $GH api repos/Eyhenij/rt-tools/pulls/<pr> --jq '{merged, merged_at}'
 $GH api repos/Eyhenij/rt-tools/issues/N --jq .state
 npm run -s check:board

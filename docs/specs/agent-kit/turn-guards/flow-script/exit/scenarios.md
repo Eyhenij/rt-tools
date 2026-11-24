@@ -278,9 +278,10 @@ And the bound is ninety minutes
 And a turn that ended on the task spends it: a second stop with no call is held, and a call makes the task fresh
 And a refused stop does not spend the task
 And two running tasks release two stops, and the end of one gives its stop back
+And a turn that ended while the notice of one of two tasks stood in the queue left the stop of the other whole; after the delivery the next ended turn takes it
 And a task whose start is stamped ahead of the clock is no wait
 
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`, `projects/agent-kit/tests/background-delivery.test.sh`.
 
 ### SC-AK-1838 — a background task past the bound is hung, and the hold names it
 

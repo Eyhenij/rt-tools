@@ -44,4 +44,7 @@ Part of [SKILL.md](SKILL.md). What refuses along the loop and what to do instead
   and «Оставшийся шаг», a draft into a base the pipeline does not wake for, and a token whose
   account equals the reviewer. It is fixed, never bypassed by REST.
 - **The delivery guards read a delivery word anywhere in the command text.** A script or a probe
-  that only mentions `gh pr create` is judged as the call itself: such text goes into a file.
+  that only mentions `gh pr create` is judged as the call itself.
+- **The PR is opened by a typed call, never from a script file.** The delivery guard reads the script
+  a command runs, so a wrapper meets the same conditions; a wrapper in a tracked file is not read and
+  stays forbidden.

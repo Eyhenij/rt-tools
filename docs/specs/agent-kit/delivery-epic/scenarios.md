@@ -145,6 +145,20 @@ Then the guard refuses and names the epic branch, and the audit names the reques
 
 Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`, `projects/agent-kit/tests/checks-board-epic-base.test.sh`.
 
+### SC-AK-1937 — five misses of the call are refused for a task of an epic too
+
+Given a task of an epic and a task outside one, each with every condition of delivery met
+When a request opens with no number in its title, with a foreign number, with its author as the
+reviewer or without the demanded section of the body
+Then every one of them is refused with its reason, and a request without a miss passes
+
+Given the same task of the epic
+When a draft opens into a base the pipeline does not wake for, or the branch of the epic has moved
+ahead and the title carries no number
+Then the draft is refused, and one refusal names both the branch of the epic and the title
+
+Covered: `projects/agent-kit/tests/delivery-epic-classes.test.sh`.
+
 ### SC-AK-1256 — a draft on a base the pipeline does not wake for is refused
 
 Given the pipeline file narrows its `pull_request` trigger to a list of branches

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/git-guard-delivery.sh · 1d6320144082 · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/git-guard-delivery.sh · 2507b6917fcd · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Requires: hooks/git-guard-delivery-merged.sh, hooks/git-guard-delivery-task.sh, hooks/git-guard-delivery-folder.sh,hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-pipeline.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/git-guard-delivery-rerun.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
+# Requires: hooks/git-guard-delivery-merged.sh, hooks/git-guard-delivery-task.sh, hooks/git-guard-delivery-folder.sh,hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-pipeline.sh, hooks/git-guard-delivery-identity.sh, hooks/script-files.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/git-guard-delivery-rerun.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
 #
 # The delivery law demands three things nothing usually checks: an edit starts from a task visible
@@ -71,6 +71,17 @@ if [ "$tool" = "mcp__webstorm__execute_tool" ] && command -v perl >/dev/null 2>&
         }
     ' 2>/dev/null)"
     [ -n "$inner" ] && cmd="$inner"
+fi
+
+# A script file the command runs is read with it: a request opened from a file is the same opening, and
+# the text of the command holds only the path of the file.
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/script-files.sh" 2>/dev/null || true
+if command -v rt_script_files >/dev/null 2>&1; then
+    while IFS= read -r script_file; do
+        [ -n "$script_file" ] && cmd="$cmd
+$(cat "$script_file" 2>/dev/null)"
+    done <<<"$(printf '%s' "$cmd" | rt_script_files)"
 fi
 
 workdir="$(rt_hook_cwd)"
@@ -443,39 +454,11 @@ if [ -n "$remote_main" ] && [ -n "$local_main" ] && [ "$remote_main" != "$local_
     unmet origin_main_fresh no "your ref origin/${main_branch} lags behind the remote one — ${local_main:0:8} against ${remote_main:0:8}.${age} The guard compares the branch with what lies in the tree, so silence of the first tier means «the ref is not older than the branch», not «the main branch is merged in». Merge it in and repeat: git fetch origin && git merge origin/${main_branch}."
 fi
 
-# The identity of the call. The hosting client holds two accounts — the logged-in one and the one
-# whose token stands in the call environment; which of them opens the PR is visible from the command
-# only through an explicit substitution.
-#
-# What is judged is not the name of the account but the clash with the reviewer: the author of a PR
-# is never its reviewer, the hosting silently drops such a review request, and the author cannot be
-# changed afterwards. A PR opened by any other account is lawful while its reviewer is somebody
-# else — judging the name instead leaves a machine that holds no token with no way to deliver at all.
-# The value is taken as one word up to the next space: a login has no spaces in it, and an alphabet
-# listed by ranges would silently not recognise a neighbouring one — the value then reads as absent,
-# and the clash with the reviewer goes unnoticed.
-pull_reviewer="$(printf '%s' "$cmd" | sed -n "s/.*--reviewer[= ]\{1,\}['\"]\{0,1\}\([^[:space:]'\"]\{1,\}\).*/\1/p" | head -1)"
-
-# Who will open the PR is asked of the hosting by the tree: the hosting, the client and the path to
-# the token are each their own. The answer covers both accounts at once — the substitution reads a
-# file that may not be on the machine, and then the client answers from the logged-in one.
-token_login=''
-command -v rt_pull_token_login >/dev/null 2>&1 && token_login="$(rt_pull_token_login 2>/dev/null)"
-
-if [ -n "$token_login" ]; then
-    if [ -n "$pull_reviewer" ] && [ "$token_login" = "$pull_reviewer" ]; then
-        unmet_class pr_create_self_review "the request would be opened by the account «${token_login}», and the same one is named as its reviewer. The hosting accepts such a review request and silently does not create it, and the author of a request cannot be changed — it is fixed only by reopening. Open it by another account${pull_token_hint:+, substituting the token: ${pull_token_hint} …}, or name another reviewer."
-    elif [ -n "$task_bot" ] && [ "$token_login" != "$task_bot" ]; then
-        # Not a refusal: the reviewer is somebody else, and the review will be created. But silence
-        # about a foreign account is indistinguishable from a check that did not fire at all.
-        printf 'the delivery guard: the request will come out from the account «%s», not the machine one «%s». The reviewer is another one, so the review will be created.\n' "$token_login" "$task_bot" >&2
-    fi
-elif [ -n "$pull_token_var" ] \
-    && ! printf '%s' "$cmd" | grep -qE "(^|[;&|(]|&&|\|\||[[:space:]])${pull_token_var}="; then
-    # There is nothing to learn the author by — no helper, or an empty answer from it. Then the only
-    # lawful call is the one that names the account in its own text.
-    unmet_class pr_create_self_review "who will open the request cannot be learned: the hosting was not asked, and the command carries no substitution of «${pull_token_var}». Opened by the logged-in account, the request may come out from the very person named as its reviewer, and that is fixed only by reopening.${pull_token_hint:+ Substitute the token: ${pull_token_hint} …}"
-fi
+# The identity of the call — who opens the PR and whether that account is its own reviewer — lives in a
+# helper next door. No helper — the identity is not judged.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/git-guard-delivery-identity.sh" ] && . "$rt_hooks_dir/git-guard-delivery-identity.sh" 2>/dev/null
+command -v rt_delivery_identity >/dev/null 2>&1 && rt_delivery_identity
 
 # The body of the request: the section about the remaining step and the line that closes the task.
 # The subject lives in a helper next door — `git-guard-delivery-body.sh`, by the same technique as

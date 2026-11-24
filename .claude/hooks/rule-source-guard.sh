@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/rule-source-guard.sh · bd4ed987f32d · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/rule-source-guard.sh · 79b2450a980a · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/write-targets.sh, hooks/guard-note.sh
 # Guard of the place of the edit: the rules layer is fixed where it is broken, not where it is seen.
@@ -66,9 +66,16 @@ refuse() {
             [ -n "$flow" ] || flow='{"facts":{},"params":{}}'
         fi
     fi
+    # A compound command is refused whole: the words name the part judged by the path of the edit.
+    # shellcheck disable=SC1091
+    command -v rt_judged_part >/dev/null 2>&1 || . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
+    part=""
+    if [ -n "${cmd:-}" ] && command -v rt_judged_part >/dev/null 2>&1; then
+        part="$(rt_judged_part "$cmd" "$(printf '%s' "${candidate##*/}" | sed 's/[][().*+?{}|^$\\]/[&]/g')")"
+    fi
     rt_decide "$RT_GUARD_NAME.sh" "$1" \
         "$(jq -cn --argjson m "$move" --argjson f "$flow" --argjson o "$2" '$m + $f.facts + $o')" \
-        "$(jq -cn --argjson f "$flow" --argjson p "$3" '$f.params + $p')" PreToolUse "$input"
+        "$(jq -cn --argjson f "$flow" --argjson p "$3" --arg a "$part" '$f.params + $p + (if $a == "" then {} else {after:$a} end)')" PreToolUse "$input"
     exit 0
 }
 

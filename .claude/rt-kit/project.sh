@@ -58,7 +58,7 @@ RT_TASK_BOT='rt-tools-dev'
 RT_HUMAN_EMAILS='72300075+Eyhenij@users.noreply.github.com 41898282+github-actions[bot]@users.noreply.github.com sviathut@gmail.com'
 
 RT_PULL_TOKEN_VAR='GH_TOKEN'
-RT_PULL_TOKEN_HINT='GH_TOKEN=$(cat ~/.config/rt-tools-bot-token)'
+RT_PULL_TOKEN_HINT='test -s ~/.config/rt-tools-bot-token && GH_TOKEN=$(cat ~/.config/rt-tools-bot-token)'
 
 # Who will come to the hosting by this token. The same file is read as in the substitution above:
 # there is no file — the value is empty, the client answers from the owner's signed-in account, and

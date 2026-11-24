@@ -4,7 +4,7 @@ kind: pattern
 rule: autonomous-work
 description: Pattern of rule autonomous-work. Load when the owner has left and the work runs through the night — the cycle of one piece of work, chained branching, a written default instead of a question, the list by morning, handling a guard refusal. Not for ordinary work — patterns task-flow-start and -resume.
 ---
-<!-- rt-kit v0.39.1 · patterns/autonomous-work-run.md · 7a7f78912b72 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · patterns/autonomous-work-run.md · 0e78937caf9c · правится надстройкой, не здесь -->
 
 # A night without the owner
 
@@ -71,11 +71,7 @@ them it used:
 ```
 
 What the allowance does not name stays local, and in the morning the owner decides what to hand
-out of it. The allowed calls are rehearsed before the owner leaves: a kind with a form that changes
-nothing is run twice with different data; a merge, a publication or a send is covered by the owner's
-own allow rule and never rehearsed by doing it. One that prompts with no such rule leaves the
-allowance. The commands of the cycle above are rehearsed with them, one call each: a substitution or
-a chain is kept only where a guard demands that form.
+out of it. The calls are checked before the owner leaves, as the rule `autonomous-work` says.
 
 ## A default instead of a question
 

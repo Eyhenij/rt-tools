@@ -30,4 +30,12 @@ printf 'printf "%%s\\n" "$LC_ALL" > seen.txt\n' > "$dir/good.test.sh"
 runner C > /dev/null
 report "the sets run under the locale of the push guard" "$(cat "$dir/seen.txt")" "C.UTF-8"
 
+# A set that leaves its directories leaves them in a place the run removes.
+shared="$(mktemp -d)"
+printf 'mktemp -d > seen-dir.txt; mktemp -d >/dev/null\n' > "$dir/good.test.sh"
+(cd "$dir" && env -u RT_SUITES_BASE TMPDIR="$shared/" bash run.sh >/dev/null 2>&1)
+report "a set takes its directories apart from the shared one" "$(grep -c '/good.test.sh.tmp/' "$dir/seen-dir.txt")" "1"
+report "a set leaves no directory behind the run" "$(find "$shared" -mindepth 1 | wc -l | tr -d ' ')" "0"
+rm -rf "$shared"
+
 suite_result "the runner of the sets"

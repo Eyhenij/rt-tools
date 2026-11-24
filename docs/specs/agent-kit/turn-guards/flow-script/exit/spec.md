@@ -72,6 +72,7 @@ not by a person.
 - **A stop made while a background task of the session runs names no owner's menu.**
 - **A background task the session has not read is the first move, and no owner's menu is offered over it: the refusal names the task and its output file.**
 - **Two running tasks release two stops, and the end of a task gives its stop back.**
+- **The end of a task counts from the delivery of its notice: a turn that ends while the notice stands in the queue takes no stop of a neighbour.**
 - **A release on a wait is written to the journal with the session.**
 - **The session source and the source of the records read a record by pieces and never hold it as one string.**
 - **The forecast judges a background task by the time of the stop it replays and names the longest run of held stops in a row; a released stop and a word of the owner break a run.**

@@ -27,6 +27,7 @@
   "1932-incident-sent.json": { "judge": "allow" },
   "1933-owner-language-kept.json": { "judge": "allow" },
   "1933-owner-language.json": { "judge": "block" },
+  "1939-menu-hands-work-over.json": { "ask": "block" },
   "1934-question-language.json": { "ask": "block" },
   "1934-question-product-choice.json": { "ask": "allow" }
 }

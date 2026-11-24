@@ -332,6 +332,10 @@ report "replay: SC-AK-1934 — хук меню держит вопрос не н
 report "replay: SC-AK-1934 — выбор продукта уходит владельцу" "$(has "$ASK_JUDGE" 'what the product sanitizes or allows is a product')" есть
 report "replay: SC-AK-1934 — запись спрашивает, что продукт оставляет после очистки" \
     "$(jq -r '[.turns[].menu // empty | select(.[0] | test("очистки"))] | length' "$FIXTURES/1934-question-product-choice.json")" 1
+report "replay: SC-AK-1939 — хук меню держит меню, где работа вся у владельца" "$(has "$ASK_JUDGE" 'Every option hands the work to the owner')" есть
+report "replay: SC-AK-1939 — меню отказа проверки выхода таким не считается" "$(has "$ASK_JUDGE" 'The menu of the exit check is not')" есть
+report "replay: SC-AK-1939 — запись несёт отказ с готовым ходом и меню без хода" \
+    "$(jq -r '[.turns[] | select((.says // "" | test("Assemble the task folder")) or (.menu // [] | index("Солью сам")))] | length' "$FIXTURES/1939-menu-hands-work-over.json")" 2
 hold 1470-menu-lifts-check archived "replay: SC-AK-1470 — меню задержано один раз — ход держится" 'папка-разобрана'
 report "replay: SC-AK-1470 — фикстура несёт меню отказа с таким вариантом" \
     "$(jq -r '[.turns[] | select(.menu) | .menu[] | select(test("снять проверку"))] | length' "$FIXTURES/1470-menu-lifts-check.json")" 1
@@ -372,6 +376,25 @@ report "replay: SC-AK-1713 — ответ без вердикта — не со�
 printf '%s\n' '{ "a.json": { "judge": "block" } }' > "$J/fixtures/judge-verdicts.turn-judge.json"
 report "replay: SC-AK-1714 — старый файл вердиктов не читается, считается ответ этого прогона" "$(run_replay allow | jq -r '.[0].got')" allow
 report "replay: SC-AK-1714 — в каталоге фикстур нет файлов вердиктов прошлых прогонов" "$(ls "$FIXTURES" | grep -c '^judge-verdicts')" 0
+
+# SC-AK-1941 — судья, который не запустился, — не расхождение: повтор встаёт на первом вызове
+cp "$FIXTURES/1450-answer-mid-work.json" "$J/fixtures/b.json"
+printf '%s\n' '{ "a.json": { "judge": "block" }, "b.json": { "judge": "block" } }' > "$J/two.json"
+dead_replay() {
+    RT_JUDGE_RUNNER="cat > /dev/null; echo вызов >> '$J/calls'; $1" judge_js \
+        "try { console.log(JSON.stringify(j.replay({root:'$J', fixtures:'$J/fixtures', hooksDir:'$J/hooks', expectedFile:'$J/two.json'}))) } catch (e) { console.log(e instanceof j.JudgeDidNotRun ? 'не запустился: ' + e.message : 'иная ошибка: ' + e.message) }"
+}
+: > "$J/calls"
+got="$(dead_replay "echo 'Invalid API key · Please run /login'; exit 1")"
+report "replay: SC-AK-1941 — судья не запустился: ответ назван" \
+    "$(printf '%s' "$got" | grep -c '^не запустился: .*a.json: exit 1 · Invalid API key')" 1
+report "replay: SC-AK-1941 — судья не запустился: второго вызова нет" "$(grep -c вызов "$J/calls")" 1
+report "replay: SC-AK-1941 — судья не запустился: пустой ответ с кодом 0 — тоже" \
+    "$(dead_replay 'exit 0' | grep -c '^не запустился: .*an empty answer')" 1
+report "replay: SC-AK-1941 — ответ без вердикта — по-прежнему расхождение" \
+    "$(dead_replay "printf 'не знаю'" | jq -r 'map(.ok) | any')" false
+RT_JUDGE_RUNNER="cat > /dev/null; echo 'Please run /login'; exit 1" node "$JUDGE" > "$J/out.txt" 2>&1
+report "replay: SC-AK-1941 — судья не запустился: код вызова 2, и ответ напечатан" "$?/$(grep -c 'Please run /login' "$J/out.txt")" '2/1'
 
 # --- судья как хук: стенограмма на диске, инструменты агент-хука, секунды ----------------------------
 mkdir -p "$J/.claude"

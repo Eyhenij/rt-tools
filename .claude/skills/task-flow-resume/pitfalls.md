@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/task-flow-resume.md · e0ae37130fd0 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · pitfalls/task-flow-resume.md · e21086b64f09 · правится надстройкой, не здесь -->
 # Returning to unfinished work — cold part
 
 The pattern `task-flow-resume` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.
@@ -108,6 +108,17 @@ and its steps are not new stages: the progress marks the steps of the plan as be
 pipeline's acceptance is the readiness sign of that stage. Its goal phase compares the result with
 the whole request of the grill, so for one stage its verdict "goal not met" is expected and is not
 the readiness sign.
+
+**A step leaves an approved plan only by the owner's word, and the plan text stays.** A step deleted
+from the plan makes the engine refuse every step after it: it reads the plan of the approval. The
+owner's word goes into the decisions of the progress, and next to it a replacement of the check of
+that step, which reads the record of the word instead of the dropped work:
+
+```markdown
+- **Check of step N.M replaced:** `grep -cF "<the owner's words>" <progress of the task>` → >= 1 · the owner's word: «<их слова>»
+```
+
+The owner allows that edit in the window. The step is then marked by the engine like any other.
 
 The "Where we stand" section is **rewritten**, not appended — it is the first thing the next session
 reads, and the only thing that survives trimming by size:

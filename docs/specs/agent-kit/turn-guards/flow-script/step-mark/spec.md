@@ -147,6 +147,8 @@ prints a line per fixture.
   none.
 - **The script compares the judge's verdict with the expected verdicts after the judge answered.**
 - **A judge answer that is not one verdict, `allow` or `block`, is a mismatch.**
+- **A judge that did not run stops the replay, and no case of it counts as a mismatch.** An expired login
+  of the CLI answered every case, and the replay read as a text that judges everything wrong.
 - **The verdicts are taken only from the judge's answers in the same run.** The verdict files an agent
   wrote for the earlier replay are removed and never read.
 - **The replay runs by hand and as a plan step, not in the set before a push.** It calls a model once

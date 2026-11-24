@@ -24,6 +24,7 @@
  * parent would leave a working server holding the port until the end of the session.
  *
  *   node tools/visual-gate.mjs ui-kit-v2           # the showcase's snapshots
+ *   node tools/visual-gate.mjs ui-kit-v2 '<path sample>'  # a match of the named files only
  *   node tools/visual-gate.mjs ui-kit-v2 --update  # a re-take of them, by the same road
  *   node tools/visual-gate.mjs ui-kit-v2 --update '<path sample>'  # a re-take of the named files only
  */
@@ -68,12 +69,20 @@ export function shellQuote(text) {
     return `'${text.replaceAll("'", "'\\''")}'`;
 }
 
+/** The path sample of the call: after `--update` for a re-take, after the kit for a match; a flag is no sample. */
+export function sampleOf(args) {
+    const at = args.indexOf('--update');
+    const sample = at >= 0 ? args[at + 1] : args[1];
+
+    return sample === undefined || sample.startsWith('--') ? undefined : sample;
+}
+
 /**
- * The command of the shooting run: the script of the kit and, for a pointed re-take, the sample —
+ * The command of the shooting run: the script of the kit and, for a pointed run, the sample —
  * quoted here only for a kit whose script does not quote it itself.
  */
 export function snapshotCommand(config, retakes, sample) {
-    const pointed = retakes && sample !== undefined && !sample.startsWith('--');
+    const pointed = sample !== undefined && !sample.startsWith('--');
     const script = retakes ? (pointed ? config.updateOne : config.update) : config.snapshots;
 
     if (!script) {
@@ -115,15 +124,16 @@ async function main() {
     const retakes = process.argv.includes('--update');
 
     /**
-     * A path sample after `--update`: then only the stories of the named files are re-taken.
+     * A path sample: then only the stories of the named files are matched, or re-taken after
+     * `--update`.
      *
      * Without it the re-take goes over the whole directory, and that erases the divergence nobody
      * expected together with the one being fixed: a frame that moved by itself becomes the new
      * reference and is never looked at again. New stories have no reference at all, and they are
      * exactly the case where a pointed re-take is the only lawful road.
      */
-    const retakeSample = retakes ? process.argv[process.argv.indexOf('--update') + 1] : undefined;
-    const pointed = retakeSample !== undefined && !retakeSample.startsWith('--');
+    const sample = sampleOf(process.argv.slice(2));
+    const pointed = sample !== undefined;
 
     if (!Object.hasOwn(KITS, kit)) {
         console.error(`\n  The kit is not named or is unknown: «${kit ?? ''}». Expected one of: ${Object.keys(KITS).join(', ')}\n`);
@@ -250,7 +260,7 @@ async function main() {
         console.log(`\n  The frames of ${kit} are matched in the pipeline only: its showcase shoots with the machine's browser.\n`);
     }
 
-    const shotArgs = snapshotCommand(KITS[kit], retakes, retakeSample);
+    const shotArgs = snapshotCommand(KITS[kit], retakes, sample);
 
     if (!shotArgs) {
         stop();
@@ -262,7 +272,7 @@ async function main() {
 
     /*
      * The registry of opened stories is kept only where the gate itself matches the references
-     * directory, and only on a full session: a pointed re-take opens not the whole directory.
+     * directory, and only on a full session: a pointed run opens not the whole directory.
      */
     const references = judgesFrames && !pointed ? KITS[kit].references : undefined;
     const registryDir = references ? mkdtempSync(join(tmpdir(), 'rt-snapshots-')) : undefined;

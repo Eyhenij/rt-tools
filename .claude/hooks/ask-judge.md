@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · hooks/ask-judge.md · dacb390fccb1 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · hooks/ask-judge.md · 5a141bf9d3f0 · правится надстройкой, не здесь -->
 # Ask judge
 <!-- rt-hook-agent event=PreToolUse pattern=AskUserQuestion limit=60 -->
 
@@ -42,7 +42,8 @@ after any refusal of another check. Avoid both.
   that name this plan or its task. The plan names the change, the roles read it, the owner
   decides it, and the option only records the decision.
 - The question follows a refusal of another check and names what was done meanwhile or why nothing
-  could be done. A refusal elsewhere is never a reason to hold the question.
+  could be done. A refusal elsewhere is never a reason to hold the question by itself. One that names
+  a ready move holds a menu that leaves the move undone by the last item of the hold list.
 - The question is the menu named by a refusal of the exit check. Another check
   refused the step twice. The options are exactly two: «отложить RT-N» with the task number and
   «подскажу путь», and the question says the way goes into its free field. The owner's answer to
@@ -79,6 +80,12 @@ after any refusal of another check. Avoid both.
   none typed, of their words before. Code, a file name, a task number, a quote and the two options of
   the menu of the exit check are judged in no language. The move is the same question in the owner's
   language.
+- Every option hands the work to the owner or stops it, and the last refusal of a guard in the record
+  names a ready move: a command to run, a file to write, a step to take. Examples of such options are
+  «солью сам», «сделаете вы», «стоп, отложить». The refusal already said what to do, so there is
+  nothing to decide: quote the move and tell the agent to make it. The menu of the exit check is not
+  such a menu, and neither is one where an option goes on with the work or the move needs the
+  owner's word by a rule.
 
 When in doubt, let the question leave: a held question can leave the owner without a decision that
 was theirs. An option that weakens a check by itself is not a doubt: it is held. An option that

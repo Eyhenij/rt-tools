@@ -206,3 +206,16 @@ When Write puts the laid-out `tools/task-flow/flow.js`
 Then it is refused
 
 Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1940 — a check whose form hides its result is refused when the plan is written
+
+Given a plan of the branch with no approval mark
+When Write or Edit puts a check that is a pipe without `pipefail`, or one that counts an absence by `grep -c`
+Then the write is refused and names the step, the command and the form to write; a pipe with `pipefail`, an
+«||», a bar inside quotes, a count of what is found and another file pass
+
+Given the same plan committed, or an approval mark of the branch
+When `plan-red` runs, or the plan is written
+Then neither asks the form: an approved plan keeps its checks, and `plan-check` still names it
+
+Covered: `projects/agent-kit/tests/flow-plan-forms.test.sh`.

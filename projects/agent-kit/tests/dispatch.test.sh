@@ -387,6 +387,29 @@ report "SC-AK-1268 — в конце хода поля контекста нет
     "$(printf '%s' "$STOP_OUT" | jq -r 'has("hookSpecificOutput")' 2>/dev/null)" false
 rm -f "$DISPATCH_DIR/a_note.sh" "$DISPATCH_DIR/b_note.sh"
 
+# --- SC-AK-1945 — защита с метками слияния называет команду восстановления --------------------------
+marked_guard() {
+    {
+        printf '#!/usr/bin/env bash\n# rt-hook: PreToolUse .*\n'
+        printf '<<<<<<< HEAD\nexit 0\n=======\nexit 1\n>>>>>>> origin/main\n'
+    } > "$DISPATCH_DIR/m_marked.sh"
+}
+input_git() { jq -cn --arg c "$1" '{tool_name:"Bash",tool_input:{command:$c},cwd:"/tmp"}'; }
+marked_guard
+report "SC-AK-1945 — защита с метками слияния: отказ называет команду восстановления" \
+    "$(dispatch_says PreToolUse "$INPUT_BASH" | grep -c 'git checkout --ours -- .claude/hooks')" 1
+report "SC-AK-1945 — защита с метками слияния: отказ называет защиту" \
+    "$(dispatch_says PreToolUse "$INPUT_BASH" | grep -c 'm_marked.sh does not parse')" 1
+report "SC-AK-1945 — команда восстановления проходит" "$(dispatch_code PreToolUse "$(input_git 'git checkout --ours -- .claude/hooks')")" 0
+report "SC-AK-1945 — она же с каталогом дерева проходит" "$(dispatch_code PreToolUse "$(input_git 'git -C /tmp/tree checkout --ours -- .claude/hooks')")" 0
+report "SC-AK-1945 — отмена слияния проходит" "$(dispatch_code PreToolUse "$(input_git 'git merge --abort')")" 0
+report "SC-AK-1945 — хвост за командой восстановления не проходит" "$(dispatch_code PreToolUse "$(input_git 'git checkout --ours -- .claude/hooks && git push')")" 2
+report "SC-AK-1945 — соседний путь не проходит" "$(dispatch_code PreToolUse "$(input_git 'git checkout --ours -- src')")" 2
+branch n_denies PreToolUse '.*' 2
+rm -f "$DISPATCH_DIR/m_marked.sh"
+report "SC-AK-1945 — защиты целы — команда восстановления судится как прежде" "$(dispatch_code PreToolUse "$(input_git 'git checkout --ours -- .claude/hooks')")" 2
+rm -f "$DISPATCH_DIR/n_denies.sh"
+
 rm -rf "$DISPATCH_DIR"
 
 suite_result "диспетчер событий"

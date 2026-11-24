@@ -112,12 +112,23 @@ Covered: `projects/agent-kit/tests/git-guards-identity.test.sh`.
 
 ### SC-AK-1065 — a request from a record other than the machine one passes, and the record is named
 
-Given the hosting answers with an account other than the machine one, and the reviewer is a third
+Given the hosting answers with an account other than the machine one, the reviewer is a third, and the
+command substitutes no token
 When a request is opened
 Then the guard lets the call through and names the account aloud: the review will be created, and
 silence about a foreign account is indistinguishable from a check that did not fire
 
 Covered: `projects/agent-kit/tests/git-guards-identity.test.sh`.
+
+### SC-AK-1938 — a substituted token answered by a foreign record refuses the request
+
+Given the command substitutes the token variable, behind a check of the token file or without it, and
+the hosting answers with an account other than the machine one
+When a request is opened with a third account as the reviewer
+Then the opening is refused, and the refusal names both accounts and the ready substitution line. The
+machine account, a command without a substitution and a tree without a machine record are not refused
+
+Covered: `projects/agent-kit/tests/delivery-token-account.test.sh`.
 
 ### SC-AK-1116 — a runner before the call does not hide the call
 

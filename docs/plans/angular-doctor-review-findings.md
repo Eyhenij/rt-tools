@@ -249,7 +249,7 @@ with its parts, `kit-approval`. No edit of the gate map is needed.
    wrapper component», after «Plain public fields — these are the Storybook control surface.».
    Here seven boolean inputs failed `check-boolean-inputs`. The comment at
    `tools/check-boolean-inputs.mjs:33` says the stories lie outside `src/lib`; they do not.
-3. **Исправлено в RT-3589, снимки по образцу пути — RT-3607.** **The showcase frames have one road** — tree, `task-delivery-loop-run`, section «5–6»: only
+3. **Исправлено в RT-3589.** **Исправлено в RT-3607 — снимки по образцу пути.** **The showcase frames have one road** — tree, `task-delivery-loop-run`, section «5–6»: only
    `node tools/visual-gate.mjs ui-kit-v2`, the whole set, about eight minutes; a path sample is read
    only after `--update`. A pointed match without `--update` is a code task.
 4. **Исправлено в RT-3589.** **The own showcase and stand are stopped before the run ahead** — tree,

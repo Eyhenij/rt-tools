@@ -171,6 +171,14 @@ Then it holds the first and lets the second leave
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`; the verdicts of the model — `projects/agent-kit/tests/judge-replay.mjs`.
 
+### SC-AK-1939 — a menu whose every option hands the work to the owner is held
+
+Given a refusal of a guard that names a ready move, and a menu right after it with the options «Солью сам» and «Стоп, отложить»
+When the text of the menu hook is read, and the model judge reads the recorded question
+Then the menu is held; the menu of the exit check, «отложить RT-N» and «подскажу путь», leaves
+
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`; the verdicts of the model — `projects/agent-kit/tests/judge-replay.mjs`.
+
 ### SC-AK-1911 — the menu hook lets the owner's decision leave, the approval of a plan that changes a check included
 
 Given two questions with the option «Одобряю план RT-N»: one for a plan that changes the exit check, asked after the plan and both roles; one right after a refusal, with no plan and no roles

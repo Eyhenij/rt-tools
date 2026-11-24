@@ -21,6 +21,18 @@ out in that tree. Cold part: `pitfalls.md` — every section below whole, with i
 
 ## Order
 
+The merge of the base takes the conflict markers off the guards in the same call: a guard with markers
+refuses every later call.
+
+```bash
+git merge --no-edit origin/<база> || git checkout --ours -- .claude/hooks
+```
+
+`--ours` gives every hook in conflict this side's text: a laid-out one is put back by the layout, and a
+hook the tree wrote itself loses the base's edit. What the base changed is read by
+`git diff HEAD...MERGE_HEAD -- .claude/hooks` and applied to the tree's own hooks before the merge
+commit. A guard already broken names the same way out, and it passes.
+
 ## A commit is carried over by a cherry-pick
 
 The branch the commit was meant to leave with is gone: merged, removed by the host or created under the wrong task.

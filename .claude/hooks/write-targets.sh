@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/write-targets.sh · b97588d1a34a · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/write-targets.sh · eb5fd2d77412 · правится надстройкой, не здесь
 # Write targets named by the shell command outright: redirection, `tee`, an in-place edit, a copy
 # over the top, and for an interpreter — the paths from its body. Prints one per line.
 #
@@ -30,6 +30,10 @@
 # an interpreter is judged on a par with writing into it. In the shell one reads by other means —
 # `cat`, `grep`, `sed -n` — while an interpreter given the path of a laid-out copy almost always
 # edits it.
+
+# The literals of the variables and the script files of a command. No helper — neither is read.
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/script-files.sh" 2>/dev/null || true
 
 rt_write_targets() {
     rt_wt_text="$(cat)"
@@ -67,7 +71,8 @@ rt_write_targets() {
 
     # An arrow inside quotes is text of the command, not a redirection: `echo "a->b"` and the code
     # of `node -e "[1].map(x => x)"` read as writes into `b` and `x)` and were refused as edits.
-    # The quote state is kept per line; a backslash outside single quotes escapes the next sign.
+    # The separators of commands inside quotes are dropped with it: a `sed` script of several parts is
+    # one word. The quote state is kept per line; a backslash outside single quotes escapes the next sign.
     rt_wt_shell="$(printf '%s\n' "$rt_wt_shell" | awk -v sq="'" '
         function drop_quoted_arrows(s,   out, i, c, q, n) {
             out = ""; q = ""; n = length(s)
@@ -75,7 +80,7 @@ rt_write_targets() {
                 c = substr(s, i, 1)
                 if (c == "\\" && q != sq && i < n) { out = out c substr(s, i + 1, 1); i++; continue }
                 if (q != "") {
-                    if (c == q) { q = "" } else if (c == ">") { continue }
+                    if (c == q) { q = "" } else if (index(">;|&", c)) { continue }
                 } else if (c == "\"" || c == sq || c == "`") {
                     q = c
                 }
@@ -86,15 +91,43 @@ rt_write_targets() {
         { print drop_quoted_arrows($0) }
     ')"
 
+    # The literals the command itself gave its variables. A target through such a variable is a literal
+    # path, and it is compared with the root of the tree as one.
+    RT_WT_VARS="$(command -v rt_cmd_vars >/dev/null 2>&1 && printf '%s\n' "$rt_wt_shell" | rt_cmd_vars)"
+
     {
+        # Each command of the line is read apart: an in-place edit names its last word, and the last
+        # word of the line belonged to the command after it.
         printf '%s' "$rt_wt_shell" \
             | tr "\"'\`" '   ' \
-            | sed -E 's/>>?/\n>/g' \
+            | sed -E 's/>\|/>/g; s/>>?/\n>/g; s/(&&|[|][|]|[;|&])/\n/g' \
             | sed -nE '
                 s/^>[[:space:]]*([^[:space:]|&;]+).*/\1/p
                 s/(^|.*[[:space:]])tee[[:space:]]+(-a[[:space:]]+)?([^[:space:]|&;]+).*/\3/p
-                s/(^|.*[[:space:]])sed[[:space:]]+-i[[:space:]]+([^[:space:]]+[[:space:]]+)*([^[:space:]|&;]+)$/\3/p
+                s/(^|.*[[:space:]])g?sed[[:space:]]+(-[^[:space:]]+[[:space:]]+)*(-[A-Za-z]*i[^[:space:]]*|--in-place[^[:space:]]*)[[:space:]]+([^[:space:]]+[[:space:]]+)*([^[:space:]|&;]+)[[:space:]]*$/\5/p
                 s/(^|.*[[:space:]])(cp|mv|install)[[:space:]]+([^[:space:]]+[[:space:]]+)+([^[:space:]|&;]+).*/\4/p
+            ' \
+            | RT_WT_VARS="$RT_WT_VARS" awk '
+                BEGIN {
+                    n = split(ENVIRON["RT_WT_VARS"], rows, "\n")
+                    for (i = 1; i <= n; i++) {
+                        p = index(rows[i], "\t")
+                        if (p) { c++; name[c] = substr(rows[i], 1, p - 1); value[c] = substr(rows[i], p + 1) }
+                    }
+                }
+                {
+                    hit = 0
+                    for (i = 1; i <= c; i++) {
+                        for (f = 1; f <= 2; f++) {
+                            v = f == 1 ? "${" name[i] "}" : "$" name[i]
+                            at = index($0, v)
+                            if (!at || (f == 2 && substr($0, at + length(v), 1) ~ /[A-Za-z0-9_]/)) { continue }
+                            print substr($0, 1, at - 1) value[i] substr($0, at + length(v))
+                            hit = 1
+                        }
+                    }
+                    if (!hit) { print }
+                }
             '
 
         # The body of the interpreter: the code comes as a `-c` argument, an `-e` argument or a
@@ -261,11 +294,23 @@ rt_write_targets() {
                 next
             }
             {
-                # Code as an argument: everything that stands after `-c` or `-e` of an interpreter.
-                if ($0 ~ /(^|[|;&(]|[ \t])(python3?|node|ruby|perl|php|deno|bun)([ \t]|$)/ \
-                    && match($0, /[ \t]-[ce][ \t]/)) {
-                    rest = substr($0, RSTART + RLENGTH)
-                    if (writes(rest)) { note_var(rest); emit(strip_content(rest)); emit_calls(rest) }
+                # Code as an argument: what stands after `-c` or `-e` of the interpreter itself, up to the
+                # quote that closes it. A key of another command of the line — `grep -c` next to a run of
+                # a script — is no code, and a command after the code is read by the shell parse above.
+                rest = $0
+                while (match(rest, /(^|[|;&(]|[ \t])(python3?|node|ruby|perl|php|deno|bun)[ \t]([^|;&\047\"]*[ \t])?-[ce][ \t]+/)) {
+                    rest = substr(rest, RSTART + RLENGTH)
+                    code = rest
+                    quote = substr(code, 1, 1)
+                    if (quote == "\047" || quote == "\"") {
+                        for (k = 2; k <= length(code); k++) {
+                            ch = substr(code, k, 1)
+                            if (ch == "\\" && quote == "\"") { k++; continue }
+                            if (ch == quote) { break }
+                        }
+                        code = substr(code, 1, k)
+                    }
+                    if (writes(code)) { note_var(code); emit(strip_content(code)); emit_calls(code) }
                 }
                 # The heredoc body: the write path of the interpreter stands exactly there.
                 if (match($0, /<<-?[ \t]*[\047\"]?[A-Za-z_][A-Za-z0-9_]*/)) {
@@ -277,5 +322,17 @@ rt_write_targets() {
                 }
             }
             END { if (tag != "") { flush_body() } }'
+
+        # A script file the command runs is read the same way: a shell script is a command, any other is
+        # a body of its interpreter. One level: a script that runs another script is not followed.
+        if [ -z "${RT_WT_SCRIPT:-}" ] && command -v rt_script_files >/dev/null 2>&1; then
+            printf '%s' "$rt_wt_text" | rt_script_files | while IFS= read -r rt_wt_file; do
+                case "$(head -c 64 "$rt_wt_file" 2>/dev/null | head -1) $rt_wt_file" in
+                    *python* | *.py) printf 'python3 - <<RT_SCRIPT_BODY\n%s\nRT_SCRIPT_BODY\n' "$(cat "$rt_wt_file")" ;;
+                    *node* | *.mjs | *.cjs | *.js | *.ts | *.rb | *.pl | *.php) printf 'node - <<RT_SCRIPT_BODY\n%s\nRT_SCRIPT_BODY\n' "$(cat "$rt_wt_file")" ;;
+                    *) cat "$rt_wt_file" ;;
+                esac | RT_WT_SCRIPT=1 rt_write_targets
+            done
+        fi
     } | sort -u
 }

@@ -84,6 +84,18 @@ turn.
   device and into the error stream is removed before the parse — by the same technique the shell write
   sign removes it. Otherwise a body that writes nothing gives out all its paths again: a command with
   an edit of one file and a run of a check next to it was forbidden by the path of that check.
+- **A key with code belongs to its own interpreter, and an in-place edit to its own command.** The
+  code of `-c` and `-e` is read only after the interpreter it stands by, up to the closing quote; a
+  command line is split into its commands before the target of `sed -i` is taken, and the spellings
+  `sed -E -i` and `--in-place` count as well. A variable the command gives a literal, a loop over
+  literals included, is filled in before the target is compared with the tree.
+- **A script file the command runs is read with the command.** An interpreter or a shell with a file,
+  `source`, and a file called by its path: the text of the file is parsed the same way as the command,
+  by the guard of the place of an edit and by the delivery guard alike. A file tracked by its
+  repository, an installed package, a build and a file longer than 64 KB are not read.
+- **A refusal of a compound command names the part it judged.** The call is refused whole, and the
+  refusal says that the other parts did not run; a plain command gets no such words. The guard of the
+  course of work says the same.
 - **Removing a laid-out copy passes.** A removed file the layout puts anew, and that is how a copy the
   formatter rewrote is fixed.
 - **Writing whole over a non-empty override is refused by a refusal of its own.** An override
