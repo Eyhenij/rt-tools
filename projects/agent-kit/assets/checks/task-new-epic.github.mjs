@@ -8,15 +8,22 @@
  *
  * An epic is declared in the middle of other work, and the working copy then stands on the branch of
  * that work with its edits. So the branch of the epic is taken, committed and pushed from a temporary
- * working tree on the tip of the main branch: the working copy is not switched, and its edits go
- * nowhere. The commit and the push go through the hooks of the tree like any other. A tree whose hooks
- * need an install of their own names the command in `board.epicTreeInstall`; without it the
- * `node_modules` of the working copy are linked.
+ * clone on the tip of the main branch: the working copy is not switched, and its edits go nowhere. The
+ * commit and the push go through the hooks of the tree like any other. A tree whose hooks need an
+ * install of their own names the command in `board.epicTreeInstall`; without it the `node_modules` of
+ * the working copy are linked.
+ *
+ * It is a clone and not a linked working tree: git gives the hooks of a linked one `GIT_DIR` of the
+ * shared repository, and a check that makes a repository of its own writes its settings there. A live
+ * call from a linked tree left the shared repository bare.
+ *
+ * The push waits for the whole set of the tree before a push, and a call may be cut short there. So the
+ * draft lies in the working copy before the push and leaves it after: a call cut short loses nothing.
  *
  * FAIL-OPEN: no repository or no remote main branch — the draft is laid in the working copy.
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmdirSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 
@@ -61,6 +68,14 @@ function draftOf({ title, number, branch }) {
         '- <Что лежит рядом и в эпик не входит.>',
         '',
     ].join('\n');
+}
+
+/** Removes the directories the draft made and nothing else lies in, up to the root of the tree. */
+function rmdirEmpty(dir) {
+    if (dir !== ROOT && readdirSync(dir).length === 0) {
+        rmdirSync(dir);
+        rmdirEmpty(dirname(dir));
+    }
 }
 
 /** The identity of the commit: the caller's own, or the machine mail the tree profile names. */
@@ -119,43 +134,61 @@ function send(draft) {
     if (git(['rev-parse', '--verify', '--quiet', `origin/${MAIN}`], ROOT).status !== 0) {
         return { sent: false, why: null };
     }
-    git(['fetch', '-q', 'origin', MAIN], ROOT);
     const holder = mkdtempSync(join(tmpdir(), 'rt-epic-'));
     const tree = join(holder, 'tree');
-    let why = null;
+    console.log(`The branch ${draft.branch} goes to the host from ${tree}; a call cut short leaves that directory`);
     try {
-        const made = git(['worktree', 'add', '-q', '--no-track', '-b', draft.branch, tree, `origin/${MAIN}`], ROOT);
-        why = made.status === 0 ? commitAndPush(tree, draft, identity()) : `git worktree: ${said(made)}`;
+        const why = cloneAt(tree, draft.branch) ?? commitAndPush(tree, draft, identity());
+        if (why === null) {
+            git(['fetch', '-q', 'origin', `+refs/heads/${draft.branch}:refs/remotes/origin/${draft.branch}`], ROOT);
+        }
         return { sent: why === null, why };
     } finally {
-        git(['worktree', 'remove', '--force', tree], ROOT);
-        // The branch that did not reach the host is taken by hand, by the printed line: left here, it
-        // would refuse that line. The draft lies in the working copy.
-        if (why !== null) {
-            git(['branch', '-q', '-D', draft.branch], ROOT);
-        }
         rmSync(holder, { recursive: true, force: true });
-        git(['worktree', 'prune'], ROOT);
     }
+}
+
+/** The temporary clone on the tip of the main branch of the host, with its hooks; the reason of a failure, or null. */
+function cloneAt(tree, branch) {
+    const url = git(['remote', 'get-url', 'origin'], ROOT).stdout.trim();
+    const hooks = git(['config', 'core.hooksPath'], ROOT).stdout.trim();
+    for (const [args, cwd] of [
+        [['clone', '-q', '--shared', '--no-checkout', ROOT, tree], ROOT],
+        [['remote', 'set-url', 'origin', url], tree],
+        [['fetch', '-q', '--prune', 'origin', '+refs/heads/*:refs/remotes/origin/*'], tree],
+        ...(hooks ? [[['config', 'core.hooksPath', hooks], tree]] : []),
+        [['checkout', '-q', '--no-track', '-b', branch, `origin/${MAIN}`], tree],
+    ]) {
+        const run = git(args, cwd);
+        if (run.status !== 0) {
+            return `git ${args[0]}: ${said(run)}`;
+        }
+    }
+    return null;
 }
 
 /**
  * The draft of the epic plan. An existing file is not overwritten: a plan written before the card is
  * a lawful order — the makeup is thought out first, and the card is created under a ready one. It is
- * that file that goes to the host then, and it stays in the working copy.
+ * that file that goes to the host then. Sent, a file history does not hold leaves the working copy: it
+ * lies in the branch word for word, and the checkout of that branch would refuse over it.
  */
 export function layEpicPlan({ title, number, branch, planPath }) {
     const path = join(ROOT, planPath);
     const written = existsSync(path);
-    const text = written ? readFileSync(path, 'utf8') : draftOf({ title, number, branch });
-    const { sent, why } = send({ planPath, branch, number, text });
-    if (sent) {
-        console.log(`\nThe plan of the epic is in the branch ${branch} on the host: ${planPath}`);
-        return { sent };
-    }
     if (!written) {
         mkdirSync(dirname(path), { recursive: true });
-        writeFileSync(path, text);
+        writeFileSync(path, draftOf({ title, number, branch }));
+    }
+    const text = readFileSync(path, 'utf8');
+    const { sent, why } = send({ planPath, branch, number, text });
+    if (sent) {
+        if (git(['ls-files', '--error-unmatch', '--', planPath], ROOT).status !== 0 && readFileSync(path, 'utf8') === text) {
+            rmSync(path);
+            rmdirEmpty(dirname(path));
+        }
+        console.log(`\nThe plan of the epic is in the branch ${branch} on the host: ${planPath}`);
+        return { sent };
     }
     console.log(written ? `\nThe plan of the epic is already in place: ${planPath}` : `\nThe draft of the epic plan: ${planPath}`);
     if (why) {

@@ -419,7 +419,7 @@ fi
 # refusal; the rest are named all at once and loaded in one turn. The one longer than the limit is
 # named on top with its own move.
 if [ "${#given[@]}" -gt 0 ]; then
-    reason="Refused by the rules gate: the rules $(rt_gate_names "${given[@]}") of this call arrived below whole, the same as a load by the tool Skill. The rules $(rt_gate_names "${rest[@]}") do not fit the host limit of ${gate_limit} characters with them: load all of these by the tool Skill in one turn and repeat the action. ${fallback}"
+    reason="Refused by the rules gate: the rules $(rt_gate_names "${given[@]}") of this call arrived below whole, the same as a load by the tool Skill. The rules $(rt_gate_names "${rest[@]}") do not fit the host limit of ${gate_limit} characters with them: repeat the action, and they arrive with it, or load all of these by the tool Skill first. ${fallback}"
     [ "$gate_why" = together ] && gate_why=""
 fi
 case "$gate_why" in

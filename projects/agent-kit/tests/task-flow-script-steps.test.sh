@@ -91,10 +91,13 @@ report "step: SC-AK-1406 — форма ожидаемого не распозн
 
 # SC-AK-1407 — разбор отличается от коммита плана; прочие записи папки растут
 printf 'два\n' > "$TF_STEP/docs/tasks/RT-1-x/grill.md"
-got="$(tf_step 1.1)"
 report "step: SC-AK-1407 — разбор правлен после плана — отказ" \
-    "$(printf '%s' "$got" | grep -c 'differs from the commit of the plan: docs/tasks/RT-1-x/grill.md code=1')" 1
+    "$(tf_step 1.1 | grep -c 'differs from the commit of the plan: docs/tasks/RT-1-x/grill.md code=1')" 1
 printf 'один\n' > "$TF_STEP/docs/tasks/RT-1-x/grill.md"
+printf 'два\n' > "$TF_STEP/docs/tasks/RT-1-x/probe.txt"
+report "step: SC-AK-1407 — файл папки, который читает проверка шага, правлен после плана — отказ" \
+    "$(tf_step 1.6 | grep -c 'differs from the commit of the plan: docs/tasks/RT-1-x/probe.txt code=1')" 1
+printf 'один\n' > "$TF_STEP/docs/tasks/RT-1-x/probe.txt"
 printf 'одобряю\n' >> "$TF_STEP/docs/tasks/RT-1-x/approvals.md"
 report "step: SC-AK-1407 — an approval line added after the plan passes" "$(tf_step 1.1 | grep -c '· совпало code=0')" 1
 printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Совпасть\n- [x] 1.2 Не совпасть\n- [x] 1.3 Ждать дольше предела\n' > "$TF_STEP/docs/tasks/RT-1-x/progress.md"

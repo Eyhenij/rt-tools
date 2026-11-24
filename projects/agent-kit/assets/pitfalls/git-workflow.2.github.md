@@ -268,8 +268,8 @@ flowchart TD
 
 - **A second working copy is for reading, and the call goes from the copy the session stands in.**
   The gate runs its set where the session was started, and a neighbour's uncommitted work refuses it.
-- **The working tree is not emptied for a tool run.** On a second copy: stashing hides
-  uncommitted work from the tree state and the audit.
+- **The working tree is not emptied for a tool run.** Compare on a second copy: a stash hides
+  uncommitted work from tree state and audit.
 
 ## What of the law is not here
 

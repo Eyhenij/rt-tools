@@ -1,4 +1,4 @@
-// rt-kit v0.39.0 · checks/board-epics.github.mjs · 7140d4417de5 · правится надстройкой, не здесь
+// rt-kit v0.39.0 · checks/board-epics.github.mjs · c784326645d9 · правится надстройкой, не здесь
 /**
  * The link between a task and an epic. Lives in a file of its own: the work queue audit stands at
  * the length limit even without it, and these two checks are read separately.
@@ -13,7 +13,7 @@ import { CONFIG } from './rt-kit-checks.config.mjs';
  * tell an epic card from an ordinary task by.
  */
 // Чтение объявления переехало в свой модуль, а звали его отсюда: имя оставлено на прежнем месте,
-// чтобы соседям не пришлось знать о переезде. Тем же ходом переехал выбор документа замысла — его
+// чтобы соседям не пришлось знать о переезде. Тем же ходом переехал выбор документа плана — его
 // читает и команда заведения задачи.
 export { declaredEpicOf, planPathOf, planRows };
 

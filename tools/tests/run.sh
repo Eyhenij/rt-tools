@@ -11,6 +11,10 @@ cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 # run from a terminal was green.
 export LC_ALL=C.UTF-8
 
+# A push from a linked working copy gives the hook `GIT_DIR` of the shared repository: a set that
+# makes a repository of its own would write its settings there.
+unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_OBJECT_DIRECTORY GIT_ALTERNATE_OBJECT_DIRECTORIES
+
 suites="$(ls *.test.sh)"
 if [ -n "${RT_SUITES_BASE:-}" ]; then
     picked="$(git diff --name-only --no-renames "$RT_SUITES_BASE...HEAD" 2>/dev/null | bash ./select.sh)"

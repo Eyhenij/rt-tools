@@ -70,9 +70,13 @@ Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
 
 Given the working copy stands on the branch of other work with edits of its own
 When the command of creating is called with the argument about an epic
-Then the branch of the epic is taken from the tip of the main branch in a temporary working tree,
-committed with the draft and pushed; the working copy keeps its branch and edits, the temporary tree
-is gone, and the printed line takes the ready branch
+Then the branch of the epic is taken from the tip of the main branch in a temporary clone, committed
+with the draft and pushed through the hooks of the tree; the working copy keeps its branch, edits and
+settings, the clone is gone, and the printed line takes the ready branch
+
+Given a plan written before the card, which history does not hold
+When the same call goes
+Then it goes to the host word for word and leaves the working copy
 
 Given the host refuses the push
 When the same call goes

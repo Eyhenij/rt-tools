@@ -19,7 +19,7 @@ every section and article with its reasons, what `preview.ts` gives, the gotchas
 - **The arg-driven page is `Playground`, or the family names why not.**
 - **A component is counted apart from its family; one shown in a neighbour's story is named.**
   One without a story gets a story or a reason, and a story brings a snapshot reference; a plan that
-  keeps the references names the component with its reason.
+  keeps the references names the component with its reason, and its story is work of its own.
 - **A styling preset wraps the matrix as a pair of halves, never an axis.** Every story it touches
   gets the pair; halves wrap by content width; a one-instance showing asks for its half's width; a
   showing with no pair says why.

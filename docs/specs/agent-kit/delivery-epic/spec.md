@@ -46,7 +46,10 @@ their own turn.
 - **The draft of the epic plan goes to the host from a temporary working tree.** An epic is declared
   in the middle of other work: the working copy stands on another branch, and switching it carries
   its edits along. The commit and the push go through the hooks of the tree; a refused push leaves
-  the draft in the working copy and names the reason.
+  the draft in the working copy and names the reason. What the hooks need is set up there by the
+  setting `board.epicTreeInstall` — a command run in the temporary tree; without it the
+  `node_modules` of the working copy are linked. The tree is a clone: the hooks of a linked one see
+  the shared repository. Sent, a plan history does not hold leaves the working copy.
 - **The base of a request about a task of an epic is the branch of that epic.** A request into the
   main branch takes the task past its epic: the epic is handed in without it, and the reviewer sees
   the edit next to everything lying in the main branch and not in the epic. A base not named at all

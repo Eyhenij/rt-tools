@@ -16,7 +16,7 @@ Rule under the law `docs/constitution/delivery.md`, for a tree on Azure DevOps. 
 - **Work begins with the epic, and the branch of a work item is taken from the epic branch.**
 - **The PR of an epic into the main branch opens after all its work items are merged and their folders are taken apart.**
 - **The epic branch carries the plan of the epic and the merges of its work items, and no edits of its own.**
-- **The main branch is merged into the epic branch, and the epic branch into the branches of its work items — while the work runs, not before the hand-over.** A merge needing repairs stays alone: they go into the task branch from that tip. The folder is created in the task branch.
+- **The main branch is merged into the epic branch, and the epic branch into the branches of its work items — while the work runs, not before the hand-over.** A merge needing repairs goes into the epic branch alone, the repairs into the task branch from that tip. The folder is created in the task branch.
 - **A wave of branches off one epic branch is checked by a trial merge, not one by one:** each is green alone, and they collide on what one branch cannot show.
 - **The next work's branch is taken from the previous one while the chain is unbroken.**
 - **A chain is merged bottom-up, and the order stands in every PR description.**

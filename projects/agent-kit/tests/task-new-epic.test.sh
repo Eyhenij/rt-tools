@@ -72,7 +72,8 @@ TN_CREATED="$TN_TREE/created"
 
 # Вызов команды из дерева-фикстуры. Ввод пустой: тело заявки набор не проверяет.
 tn_run() {
-    rm -rf "$TN_TREE/docs" "$TN_CREATED"
+    rm -rf "$TN_CREATED"
+    [ -n "${TN_KEEP_DOCS:-}" ] || rm -rf "$TN_TREE/docs"
     ( cd "$TN_TREE" && TN_CREATED="$TN_CREATED" TN_EPIC_LABELS="${TN_EPIC_LABELS-{\"name\":\"epic\"}}" \
         GH_BIN="$TN_TREE/gh" RT_GH_RETRY_MS=1 RT_TASK_NEW_PAUSES_MS=1 \
         node tools/task-new.mjs "$@" < /dev/null 2>&1 )
@@ -249,8 +250,39 @@ report "SC-AK-1936 — рабочая копия осталась на свое�
 report "SC-AK-1936 — временной копии после вызова нет" "$(git -C "$TN_TREE" worktree list | grep -c .)" 1
 report "SC-AK-1936 — напечатана готовая ветка" "$(printf '%s' "$TN_OUT" | grep -c '^  git checkout RT-4242-work-by-epics$')" 1
 
+# Крючок отправки видит своё хранилище, а не хранилище рабочей копии.
+printf '#!/bin/sh\ngit init -q --bare "$TMPDIR/rt-hook-probe" && git rev-parse --git-common-dir > "%s/hook-dir"\n' "$TN_HOST" \
+    > "$TN_TREE/.git/hooks-live" && mkdir -p "$TN_TREE/.git/live" && mv "$TN_TREE/.git/hooks-live" "$TN_TREE/.git/live/pre-push" \
+    && chmod +x "$TN_TREE/.git/live/pre-push"
+git -C "$TN_TREE" config core.hooksPath "$TN_TREE/.git/live"
+git -C "$TN_HOST" branch -q -D RT-4242-work-by-epics
+TN_HOOK_TMP="$(mktemp -d)"
+TMPDIR="$TN_HOOK_TMP" tn_run_signed >/dev/null
+report "SC-AK-1936 — крючок отправки запускается и хранилища рабочей копии не трогает" \
+    "$([ -s "$TN_HOST/hook-dir" ] && echo запущен)|$(git -C "$TN_TREE" config core.bare)" 'запущен|false'
+git -C "$TN_TREE" config --unset core.hooksPath
+rm -rf "$TN_HOOK_TMP"
+
+# Плана, написанного до карточки, история не знает: отправленный, он уходит из рабочей копии, и
+# напечатанная строка его ветку берёт.
+git -C "$TN_HOST" branch -q -D RT-4242-work-by-epics
+mkdir -p "$TN_TREE/docs/plans" && printf '# Свой план\n' > "$TN_TREE/docs/plans/work-by-epics.md"
+TN_OUT="$(TN_KEEP_DOCS=1 tn_run_signed)"
+report "SC-AK-1936 — готовый план уходит на хост дословно" \
+    "$(git -C "$TN_HOST" show RT-4242-work-by-epics:docs/plans/work-by-epics.md 2>/dev/null)" '# Свой план'
+report "SC-AK-1936 — напечатанная строка берёт ветку" \
+    "$(git -C "$TN_TREE" checkout -q RT-4242-work-by-epics 2>&1; git -C "$TN_TREE" branch --show-current)" RT-4242-work-by-epics
+git -C "$TN_TREE" checkout -q RT-7-other
+
+# Ветка с этим именем уже стоит: вызов её не удаляет.
+TN_WAS="$(git -C "$TN_TREE" rev-parse RT-4242-work-by-epics)"
+tn_run_signed >/dev/null
+report "SC-AK-1936 — чужая ветка с тем же именем остаётся" "$(git -C "$TN_TREE" rev-parse --verify -q RT-4242-work-by-epics)" "$TN_WAS"
+rm -rf "$TN_TREE/docs"
+
 # Отправка не прошла: черновик лёг в рабочую копию, ветки нет, и её берут напечатанной строкой.
 git -C "$TN_TREE" branch -q -D RT-4242-work-by-epics
+git -C "$TN_TREE" update-ref -d refs/remotes/origin/RT-4242-work-by-epics
 git -C "$TN_HOST" branch -q -D RT-4242-work-by-epics
 printf '#!/bin/sh\necho "хост отказал" >&2\nexit 1\n' > "$TN_HOST/hooks/pre-receive" && chmod +x "$TN_HOST/hooks/pre-receive"
 TN_OUT="$(tn_run_signed)"

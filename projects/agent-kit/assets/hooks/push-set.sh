@@ -160,7 +160,8 @@ rt_push_set_run() {
         rt_run_note "$sign" "$started" red "$check" "$base" "$(rt_push_subject_of "$subjects" "$check")"
         rt_push_set_failed="${rt_push_set_failed}${rt_push_set_failed:+
 }${check}"
-        # The refusal keeps a tail; the full output stays in a file, with the locale of the step.
+        # The refusal keeps a tail; the full output stays in a file for a day, with the locale of the step.
+        find "${TMPDIR:-/tmp}/" -maxdepth 1 -name 'push-set-red.*' -mtime +0 -delete 2>/dev/null
         full="$(mktemp "${TMPDIR:-/tmp}/push-set-red.XXXXXX" 2>/dev/null)" && printf '%s\n' "$out" >"$full"
         rt_push_set_output="${rt_push_set_output}${rt_push_set_output:+
 

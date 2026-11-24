@@ -1,11 +1,11 @@
-// rt-kit v0.39.0 · checks/flow-step.mjs · 8d5adad3655e · правится надстройкой, не здесь
+// rt-kit v0.39.0 · checks/flow-step.mjs · 7a70d948f468 · правится надстройкой, не здесь
 /**
  * A step of the plan measured by its check — the engine command `step`.
  *
- * The check is taken from the commit that added the plan, not from the working copy: a plan edited
- * after it is written would measure what was never approved. Every file of the task folder that the
- * commit holds, except the progress, must still match it, otherwise the step is refused: a script of
- * the folder edited after the plan would answer what the step needs. A command of the work itself is
+ * The check is taken from the commit that added the plan: a plan edited later would measure what was
+ * never approved. The plan, the grill and every file of the folder a check names, except the progress,
+ * must still match that commit: a script edited after the plan would answer what the step needs. The
+ * other records of the folder grow. A command of the work itself is
  * never a check, and an expected result in no form of `expect` is refused before anything runs. The
  * command runs with a limit; past it the step does not match.
  *
@@ -44,7 +44,6 @@ export const STEP_LIMIT_MS = 540_000;
 export const RERUN_BUDGET_MS = 1_500_000;
 
 const PROGRESS = 'progress.md';
-
 /** What the owner approved: these files stay as the commit of the plan holds them. */
 const FROZEN = ['plan.md', 'grill.md'];
 
@@ -147,11 +146,12 @@ export function planOfBranch(git, words = {}) {
     return { branch, folder, sha, text, fingerprint: createHash('sha256').update(text).digest('hex').slice(0, 16) };
 }
 
-/** The plan and the grill, if they differ from the commit of the plan; the other records of the folder grow. */
-export function changedSincePlan(git, plan, read = readFile) {
+/** The frozen files that differ from the commit of the plan: the plan, the grill and the files the checks of `steps` name. */
+export function changedSincePlan(git, plan, steps = [], read = readFile) {
+    const frozen = (name) => FROZEN.includes(name) || (name !== PROGRESS && steps.some((s) => s.command?.includes(name)));
     return git
         .filesAt(plan.folder, plan.sha)
-        .filter((path) => FROZEN.some((name) => path === `${plan.folder}/${name}`))
+        .filter((path) => frozen(path.slice(path.lastIndexOf('/') + 1)))
         .filter((path) => read(path) !== git.versionAt(path, plan.sha));
 }
 
@@ -200,9 +200,10 @@ const gotOf = (run, form, limitMs, matched = true) => {
 /** The step ready to run: its plan, its check and the expected result, or a refusal before anything runs. */
 function prepareStep({ git, steps }, model, number, read) {
     const plan = planOfBranch(git, model.words);
-    const changed = changedSincePlan(git, plan, read);
+    const all = steps.ofPlan(plan.text);
+    const changed = changedSincePlan(git, plan, all, read);
     if (changed.length > 0) throw new StepRefused(`the task folder differs from the commit of the plan: ${changed.join(', ')}`);
-    const planned = steps.ofPlan(plan.text).find((s) => s.number === number);
+    const planned = all.find((s) => s.number === number);
     if (!planned) throw new StepRefused(`the plan names no step ${number}`);
     const progress = `${plan.folder}/${PROGRESS}`;
     const step = { number, ...replacedCheck(read(progress) ?? git.lastVersion(progress), number, planned) };

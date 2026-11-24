@@ -45,7 +45,8 @@ The table in `implementation.md` next to it.
   (RT-N)», then «второго круга». The owner reads the rounds in history: this is the one place
   where a later commit of a branch corrects an earlier one by design.
 - **The push set runs once per branch, after round two.** The fixes are committed together, the
-  base is merged in once, and the tree is not touched between the green run and the push. A fix
+  base is merged in once, and between the green run and the push only the folder is taken apart, by the
+  last commit: a red found after the take-apart is fixed after it. A fix
   for the owner's remarks after the PR is a new content and runs the set again.
 - **Unattended work keeps the loop and the night rule both.** By the rule `autonomous-work` the
   show of step 10 becomes the session's own measurement, and the push and the PR wait for the

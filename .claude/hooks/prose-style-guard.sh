@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.0 · hooks/prose-style-guard.sh · a27ec6db55b6 · правится надстройкой, не здесь
+# rt-kit v0.39.0 · hooks/prose-style-guard.sh · 34a6e4b03329 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: checks/check-prose-style.mjs, hooks/deny-tail.sh, hooks/write-targets.sh
 # Prose guard: officialese and words that are not written in this tree do not reach the file.
@@ -66,21 +66,19 @@ rt_prose_heredoc_bodies() {
     '
 }
 
-# The text a command without a heredoc brings with it: the arguments of a `printf` or an `echo` whose
-# output leaves — by a redirect, into a pipe or out of a group — and a here-string. Everything else
-# of the command is its own words: a chain of `sed -i` and checks read as one long sentence.
+# The text a command without a heredoc brings with it: the whole command, less its parts that bring
+# none — the commands of reading and moving named below, and an interpreter that runs a file. Each
+# part left is a paragraph of its own: a chain of `sed -i` and checks read as one long sentence. A
+# part not named is judged: an unknown form of a write must not become a way past the wording.
 rt_prose_printed() {
     awk -v q="'" '
-        function words(s) { gsub(/["]/, "", s); gsub(q, "", s); return s }
-        function flush(next_sign,   head) {
+        function flush(   head) {
             head = seg
-            sub(/^[ \t\n]*(then|do|else|!|[{(]|[A-Za-z_][A-Za-z0-9_]*=[^ \t]*[ \t])*[ \t]*/, "", head)
-            if (head ~ /^(printf|echo)([ \t]|$)/ && (leaves || grouped || next_sign == "|")) {
-                print words(before == "" ? head : substr(head, 1, length(head) - length(seg) + before))
-            } else if (here) {
-                print words(substr(seg, here))
-            }
-            seg = ""; leaves = 0; before = ""; here = 0
+            sub(/^[ \t]*((then|do|else|if|while|until|time|!|[{(]|[A-Za-z_][A-Za-z0-9_]*=[^ \t"]*[ \t])[ \t]*)*/, "", head)
+            silent = head ~ /^(sed|grep|egrep|rg|find|ls|cat|head|tail|sort|wc|cd|git|npx|npm|pnpm|nx|diff|jq|test|\[|\[\[|true|false|sleep|mkdir|rm|mv|cp|touch|chmod|export|source|\.|set|done|fi|esac)([ \t]|$)/ \
+                || head ~ /^(node|python3?|perl|ruby|bash|sh)[ \t]+[^ \t-]/
+            if (!silent || head ~ /<<</) { gsub(/"/, "", seg); gsub(q, "", seg); print seg "\n" }
+            seg = ""
         }
         { text = text $0 "\n" }
         END {
@@ -92,26 +90,19 @@ rt_prose_printed() {
                     if (c == quote) { quote = "" }
                 } else if (c == "\"" || c == q) {
                     quote = c
-                } else if (substr(text, i, 3) == "<<<") {
-                    here = length(seg) + 4; seg = seg "<<<"; i += 2; continue
-                } else if (c == ">") {
-                    leaves = 1
-                    if (before == "") { before = length(seg) }
+                } else if (c == "#" && seg ~ /(^|[ \t])$/) {
+                    # A comment: its apostrophe opens no quote.
+                    while (i < n && substr(text, i + 1, 1) != "\n") { i++ }
+                    continue
                 } else if (c == "&" && (substr(text, i + 1, 1) == ">" || substr(text, i - 1, 1) == ">")) {
                     # A part of a redirect, not the end of a command.
                 } else if (c == ";" || c == "&" || c == "\n" || c == "|") {
-                    d = substr(text, i + 1, 1)
-                    if (c == "|" && d == "|") { c = ";"; i++ }
-                    flush(c)
+                    flush()
                     continue
-                } else if ((c == "{" || c == "(") && seg ~ /^[ \t]*$/) {
-                    grouped++
-                } else if ((c == "}" || c == ")") && seg ~ /^[ \t]*$/ && grouped) {
-                    grouped--
                 }
                 seg = seg c
             }
-            flush("")
+            flush()
         }
     '
 }
@@ -131,8 +122,7 @@ case "$tool" in
         # The new text is taken from the heredoc bodies of the command, not from the whole call.
         # A rewrite carrying the previous wording inside the call would otherwise be refused by
         # the words of that previous wording, and the refusal repeats at the second attempt. No
-        # heredoc in the command — only what it prints is judged: a command that brings no text of
-        # its own gives nothing to judge.
+        # heredoc in the command — all of it but the parts that bring no text is judged.
         added="$(printf '%s' "$cmd" | rt_prose_heredoc_bodies)"
         [ -z "$added" ] && added="$(printf '%s' "$cmd" | rt_prose_printed)"
         ;;

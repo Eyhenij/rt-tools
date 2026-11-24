@@ -2,7 +2,9 @@
 
 The findings of the rules review of every closed task of the epic "Дерево проходит проверку Angular
 Doctor без находок" accumulate here and wait for the owner's word. The file lies next to the plan of
-the epic — `docs/plans/angular-doctor.md`. Nothing here is applied without that word.
+the epic — `docs/plans/angular-doctor.md`. The word came on 24 November 2026: «Отправь разборы и
+исправь все что нашел». Every item carries in its first line the task that fixed it, or the reason
+it was written off.
 
 ## RT-3478 — the review of 22 November 2026
 
@@ -247,7 +249,7 @@ with its parts, `kit-approval`. No edit of the gate map is needed.
    wrapper component», after «Plain public fields — these are the Storybook control surface.».
    Here seven boolean inputs failed `check-boolean-inputs`. The comment at
    `tools/check-boolean-inputs.mjs:33` says the stories lie outside `src/lib`; they do not.
-3. **Исправлено в RT-3589.** **The showcase frames have one road** — tree, `task-delivery-loop-run`, section «5–6»: only
+3. **Исправлено в RT-3589, снимки по образцу пути — RT-3607.** **The showcase frames have one road** — tree, `task-delivery-loop-run`, section «5–6»: only
    `node tools/visual-gate.mjs ui-kit-v2`, the whole set, about eight minutes; a path sample is read
    only after `--update`. A pointed match without `--update` is a code task.
 4. **Исправлено в RT-3589.** **The own showcase and stand are stopped before the run ahead** — tree,
@@ -380,7 +382,9 @@ says each copy installs its own; the plan's «10» for 11 — a one-off typo.
 - «Исполнитель спросил владельца о том, на что уже отвечает карточка задачи» — **Исправлено в
   RT-3589:** текст карточки — такой же ответ, как код.
 - «Исполнитель спросил владельца «вид не меняется?» о правке, которая вида не касается» —
-  **Исправлено в RT-3588.**
+  **Исправлено в RT-3588.** **Списано в части различения правки вида по diff:** вид правки судит
+  исполнитель по слову владельца «ты сам должен понимать где нужны макеты а где нет», проверка
+  согласий его не различает.
 - «Исполнитель не узнал собственный вопрос и сказал владельцу, что ничего не спрашивал» —
   **Исправлено в RT-3589:** короткий ответ ищется среди своих вопросов; ход, который уходит в
   следующую работу, не спрашивает.

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.0 · hooks/ask-judge.md · c1a03891d33f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · hooks/ask-judge.md · 5e18b6462b6c · правится надстройкой, не здесь -->
 # Ask judge
 <!-- rt-hook-agent event=PreToolUse pattern=AskUserQuestion limit=60 -->
 
@@ -56,9 +56,10 @@ after any refusal of another check. Avoid both.
   the refused step in the menu of the exit check. A check here is a guard, a linter, a test or a
   threshold of the work. An option that changes what the product sanitizes or allows is a product
   choice, and it leaves.
-- The question or its options are not in the owner's language, the one of their latest words. Code,
-  a file name, a task number and a quote are judged in no language. The move is the same question in
-  the owner's language.
+- The question or its options are not in the owner's language, the one of their latest words; with
+  none typed, of their words before. Code, a file name, a task number, a quote and the two options of
+  the menu of the exit check are judged in no language. The move is the same question in the owner's
+  language.
 
 When in doubt, let the question leave: a held question can leave the owner without a decision that
 was theirs. An option that weakens a check is not a doubt: it is held.

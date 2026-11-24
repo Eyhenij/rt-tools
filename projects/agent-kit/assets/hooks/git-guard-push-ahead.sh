@@ -133,7 +133,9 @@ while IFS= read -r check; do
         red="${red}${red:+
 }${check}"
         # The line keeps a tail: the failed suite of a long step stands above it, and a rerun to
-        # find it ran in the session's shell, under another locale, and came out green.
+        # find it ran in the session's shell, under another locale, and came out green. The file of
+        # the full output stays for a day.
+        find "${TMPDIR:-/tmp}/" -maxdepth 1 -name 'push-ahead-red.*' -mtime +0 -delete 2>/dev/null
         full="$(mktemp "${TMPDIR:-/tmp}/push-ahead-red.XXXXXX" 2>/dev/null)" && printf '%s\n' "$out" >"$full"
         printf '✗ red in %ss under LC_ALL=%s: %s\n%s\n' "$took" "${LC_ALL:-not set}" "$check" "$(printf '%s' "$out" | tail -n 25)"
         [ -n "$full" ] && printf '  the full output: %s\n' "$full"

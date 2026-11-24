@@ -146,14 +146,19 @@ rt_write_targets() {
             # Inside a body that does write, all paths are still taken: the path and the write call
             # stand there on different lines, and there is nothing to tie them together with.
             #
-            # A redirect inside a body stands after a space, a quote or at the line start, and names
-            # a path with a slash — the caller is given no other. `a>b` and `a > b.length` of the
+            # A redirect inside a body names a path with a slash — the caller is given no other. With
+            # an extension of a file it is a redirect anywhere but after `=` or `-`, without one only
+            # after a space, a quote or at the line start. `a>b`, `a > b.length` and `w > h/2` of the
             # language compare and write nothing.
+            function redirects(s) {
+                return s ~ /(^|[ \t\047\"&])[0-9]?>>?[ \t]*[A-Za-z0-9_.~$@-]*\/[A-Za-z_.~$@]/ \
+                    || s ~ /(^|[^=-])>[ \t]*[A-Za-z0-9_.~$@\/-]*\/[A-Za-z0-9_.@-]*\.(md|json|mjs|cjs|js|ts|tsx|sh|scss|css|html|yml|yaml|txt|xml|svg|toml|prisma|py)([^A-Za-z0-9]|$)/
+            }
             function writes(s) {
                 return s ~ /open[ \t]*\([^)]*[\047\"](w|a|r\+|w\+|a\+)[\047\"]/ \
                     || s ~ /writeFileSync|writeFile|appendFile|write_text|write_bytes|\.write\(|\.save\(|savefig|to_csv|json\.dump|\.dump\(/ \
                     || s ~ /makedirs|mkdir|rename|replace[ \t]*\(|unlink|rmtree|copyfile|copy2|shutil\./ \
-                    || s ~ /(^|[ \t\047\"&])[0-9]?>>?[ \t]*[A-Za-z0-9_.~$-]*\/[A-Za-z_.~$]/ \
+                    || redirects(s) \
                     || s ~ /(^|[|;&(]|[ \t])(tee|cp|mv|rm|touch|install|truncate)([ \t]|$)/
             }
             function trim(s) { sub(/^[ \t]+/, "", s); sub(/[ \t]+$/, "", s); return s }

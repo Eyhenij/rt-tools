@@ -54,8 +54,8 @@ The last two lines are the quick checks of the push set: the linter after an edi
 End to end, the suites a change touches are the ones
 `bash -c '. .claude/rt-kit/project.sh; rt_push_touched origin/<base> HEAD'` answers for: `auth` —
 `apps/auth-example-e2e/`, `receiver` — `apps/message-bus-admin-e2e/`, `kit2` — each the kit edit
-reaches. The
-coverage guard judges the pushed head: a commit with the test is pushed before `gh pr create`.
+reaches. `everything` runs the whole set before the push and `show2` the showcase; neither demands a
+test. The coverage guard judges the pushed head: a commit with the test is pushed before `gh pr create`.
 
 The showcase frames have one road: `node tools/visual-gate.mjs ui-kit-v2`, the whole set, about
 eight minutes. A path sample is read only after `--update`.
