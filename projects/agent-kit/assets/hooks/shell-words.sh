@@ -18,7 +18,8 @@
 #
 # NOT SEEN: a redirection inside backquotes, a group `{ … }` in a pipe, a command of a container or of
 # another machine, `case` inside `$(…)`, a command held by a variable, a second `-exec` of one `find`, a
-# written script run from another directory or through a pipe. A `cd` under a condition counts as done.
+# written script run from another directory or through a pipe, a file the text does not name: one `xargs`
+# takes from the stream, `{}`, a loop over a mask. A `cd` under a condition counts as done.
 
 # The path without its «.» and «..»; a «..» above a root by name stays.
 RT_PATH_TIDY='

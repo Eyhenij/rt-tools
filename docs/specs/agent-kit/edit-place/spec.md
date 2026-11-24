@@ -72,7 +72,8 @@ turn.
   a folder without a slash at the end is asked from the disk. Not seen: a redirection inside backquotes,
   a group in braces that takes a body by a pipe, `case` inside a substitution, arithmetic over several
   lines, a command of a container or of another machine, a command held by a variable and the second
-  `-exec` of one `find`. No words of a write here: `dd`, `truncate`, `rsync`, `ln`, `patch`, `git apply`,
+  `-exec` of one `find`. A file the text does not name stays unnamed: one `xargs` takes from the stream,
+  `{}` and a loop over a mask. No words of a write here: `dd`, `truncate`, `rsync`, `ln`, `patch`, `git apply`,
   `sort -o`, `curl -o`, a write by the code of `sed` or `awk`.
 - **The directory is followed call by call inside a command handed to a shell and inside a script file.**
   A relative path stands from the directory its call stands in, and not from the first `cd` of the text:

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/shell-words.sh · a0771cfc20db · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/shell-words.sh · 0ad8046196c2 · правится надстройкой, не здесь
 # The words of a shell command: which file a call writes, which code it hands to an interpreter.
 #
 # NOT a guard and not a hook: there is deliberately no `rt-hook:` line. `write-targets.sh` sources it.
@@ -19,7 +19,8 @@
 #
 # NOT SEEN: a redirection inside backquotes, a group `{ … }` in a pipe, a command of a container or of
 # another machine, `case` inside `$(…)`, a command held by a variable, a second `-exec` of one `find`, a
-# written script run from another directory or through a pipe. A `cd` under a condition counts as done.
+# written script run from another directory or through a pipe, a file the text does not name: one `xargs`
+# takes from the stream, `{}`, a loop over a mask. A `cd` under a condition counts as done.
 
 # The path without its «.» and «..»; a «..» above a root by name stays.
 RT_PATH_TIDY='
