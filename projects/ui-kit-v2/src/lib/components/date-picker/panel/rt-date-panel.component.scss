@@ -253,5 +253,26 @@
         &--sheet &__time-group {
             flex: 1 1 0;
         }
+
+        /* Вкладки «Дата | Время»: месяц и колонки стоят в одной ячейке, высота тела — по большей из
+           них, поэтому шторка при переключении не меняет высоту. Скрытая часть остаётся в раскладке. */
+        &--split &__body {
+            display: grid;
+        }
+
+        &--split &__body > * {
+            grid-area: 1 / 1;
+        }
+
+        /* Колонки времени на своей вкладке — без черты у месяца и по центру высоты месяца. */
+        &--split &__time:not(:first-child) {
+            align-self: center;
+            border-inline-start: 0;
+            padding-inline-start: 0;
+        }
+
+        &--split [data-away] {
+            visibility: hidden;
+        }
     }
 }

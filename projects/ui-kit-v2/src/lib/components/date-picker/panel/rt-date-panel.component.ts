@@ -97,6 +97,7 @@ const ESCAPE_BACK: Readonly<Record<TView, TView | null>> = { days: null, months:
         class: BEM_BLOCK,
         '[class.rt-date-panel--sheet]': 'sheet()',
         '[class.rt-date-panel--with-time]': "type() !== 'date'",
+        '[class.rt-date-panel--split]': 'split()',
         '(keydown.escape)': 'onEscape($event)',
     },
 })
@@ -142,12 +143,12 @@ export class RtDatePanelComponent {
     protected readonly year: WritableSignal<number> = linkedSignal((): number => Number(this.shownMonth().slice(0, YEAR_LEN)));
 
     protected readonly split: Signal<boolean> = computed((): boolean => this.sheet() && this.type() === 'datetime-local');
-    protected readonly showDate: Signal<boolean> = computed(
-        (): boolean => this.type() !== 'time' && !(this.split() && this.tab() === 'time')
-    );
-    protected readonly showTime: Signal<boolean> = computed(
-        (): boolean => this.type() !== 'date' && !(this.split() && this.tab() === 'date')
-    );
+    protected readonly showDate: Signal<boolean> = computed((): boolean => this.type() !== 'time');
+    protected readonly showTime: Signal<boolean> = computed((): boolean => this.type() !== 'date');
+    /* Вкладки «Дата | Время» в шторке: обе части стоят в одной ячейке и обе в разметке, скрыта та, чья
+       вкладка не выбрана. Высота шторки — по большей части и при переключении не меняется. */
+    protected readonly dateAway: Signal<boolean> = computed((): boolean => this.split() && this.tab() === 'time');
+    protected readonly timeAway: Signal<boolean> = computed((): boolean => this.split() && this.tab() === 'date');
 
     protected readonly months: Signal<IRtCalendar.Month[]> = computed((): IRtCalendar.Month[] => [
         rtDatePanelMonth(this.shownMonth(), {

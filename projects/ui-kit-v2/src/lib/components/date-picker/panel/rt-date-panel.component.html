@@ -19,6 +19,8 @@
                     grid
                     titleAction
                     headerTitle
+                    [attr.data-away]="dateAway() ? '' : null"
+                    [attr.inert]="dateAway() ? '' : null"
                     [months]="months()"
                     [weekdayLabels]="weekdays()"
                     [canPrev]="canPrev()"
@@ -32,7 +34,13 @@
                     (gridKey)="onGridKey($event)"
                     (titleClick)="openMonths()" />
             } @else if (view() === 'months') {
-                <div rtElem="months" qa-dataid="date-panel-months" role="group" [attr.aria-label]="t().uiChooseMonth">
+                <div
+                    rtElem="months"
+                    qa-dataid="date-panel-months"
+                    role="group"
+                    [attr.aria-label]="t().uiChooseMonth"
+                    [attr.data-away]="dateAway() ? '' : null"
+                    [attr.inert]="dateAway() ? '' : null">
                     <div rtElem="months-header">
                         <rt-icon-button
                             qa-dataid="date-panel-prev-year"
@@ -120,7 +128,7 @@
         }
 
         @if (showTime()) {
-            <div rtElem="time" qa-dataid="date-panel-time">
+            <div rtElem="time" qa-dataid="date-panel-time" [attr.data-away]="timeAway() ? '' : null" [attr.inert]="timeAway() ? '' : null">
                 <div rtElem="time-group">
                     <span rtElem="time-title" qa-dataid="date-panel-hours-title" aria-hidden="true">{{ t().uiHours }}</span>
                     <!-- В шторке колонка — барабан: выбрано значение, остановившееся под полосой по центру. -->

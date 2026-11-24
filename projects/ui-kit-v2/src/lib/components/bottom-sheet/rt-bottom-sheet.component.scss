@@ -34,14 +34,15 @@
         }
 
         /* Предел высоты панели — `--rt-bottom-sheet-max-height`, умолчание `80vh`; свойство приходит
-           от предка или с тега листа. */
+           от предка или с тега листа. Шторка в ящике ниже окна не выходит за ящик: сверху остаётся та
+           же полоса, что у шторки во всю высоту, и шапка с «×» видна. */
         &__panel {
             position: absolute;
             right: 0;
             bottom: 0;
             left: 0;
             display: flex;
-            max-height: var(--rt-bottom-sheet-max-height, 80vh);
+            max-height: min(var(--rt-bottom-sheet-max-height, 80vh), calc(100% - var(--rt-space-2) - var(--rt-space-1)));
             flex-direction: column;
             border-radius: var(--rt-bottom-sheet-radius) var(--rt-bottom-sheet-radius) 0 0;
             background: var(--rt-color-bg-surface);
