@@ -1,25 +1,29 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import {
     booleanAttribute,
+    computed,
     inject,
     input,
     output,
     ChangeDetectionStrategy,
     Component,
+    ElementRef,
     InputSignal,
     InputSignalWithTransform,
     OutputEmitterRef,
     Signal,
     ViewEncapsulation,
+    viewChild,
 } from '@angular/core';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtSkeletonWrapperComponent, RtSkeletonWrapperContentDirective } from '@rt-tools/ui-kit-v2/skeleton-wrapper';
 import { RtTagComponent } from '@rt-tools/ui-kit-v2/tag';
 import { RtAsideRef } from '../rt-aside-ref';
+import { RT_ASIDE_SHEET, RtAsideSheet } from '../rt-aside-sheet';
 import { IRtAsideHeader } from './rt-aside-header.model';
 
 const BEM_BLOCK: string = 'rt-aside-header';
@@ -46,6 +50,10 @@ const BEM_BLOCK: string = 'rt-aside-header';
  *
  * Слот `[asideHeadingContent]` — содержимое в колонке заголовка, под подписью и бэйджами, по её
  * левому краю. Пустой слот ничего не рисует.
+ *
+ * В шторке телефона шапка рисуется шапкой шторки: «×» слева вместо стрелки, заголовок по центру в
+ * одну строку, справа значки `[asideActions]` и за ними главная кнопка подвала, которую сюда
+ * переносит панель. «×» идёт дорогой стрелки: `dismiss`, затем `asideRef.close()`.
  *
  * `ViewEncapsulation.None` — для единообразия с rt-dialog-header (стили
  * префиксованы `.rt-aside-header`).
@@ -74,17 +82,23 @@ const BEM_BLOCK: string = 'rt-aside-header';
         RtTagComponent,
         BlockDirective,
         ElemDirective,
+        ModDirective,
     ],
     host: {
         class: BEM_BLOCK,
+        '[class.rt-aside-header--sheet]': 'sheetMode()',
     },
 })
 export class RtAsideHeaderComponent {
     readonly #asideRef: RtAsideRef | null = inject(RtAsideRef, { optional: true });
+    readonly #sheet: RtAsideSheet | null = inject(RT_ASIDE_SHEET, { optional: true });
 
     /** Текст заголовка — рендерится в `<h2>`. Null/пустая строка вместе с
      *  `[loading]=true` показывают skeleton вместо title. */
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
+
+    /** Шапка стоит в шторке телефона. */
+    protected readonly sheetMode: Signal<boolean> = computed((): boolean => this.#sheet?.active() ?? false);
 
     public readonly title: InputSignal<string | null> = input<string | null>(null);
 
@@ -128,6 +142,9 @@ export class RtAsideHeaderComponent {
      * DOM-события (`close`).
      */
     public readonly dismiss: OutputEmitterRef<void> = output<void>();
+
+    /** Место главной кнопки справа в шапке шторки; вне шторки его нет. */
+    public readonly sheetMainSlot: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('sheetMain');
 
     protected onDismiss(): void {
         // Сначала output — route-driven consumer обработает intent.

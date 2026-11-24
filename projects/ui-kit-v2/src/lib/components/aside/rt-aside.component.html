@@ -1,38 +1,73 @@
-<div
-    #frame
-    rtBlock="rt-aside"
-    qa-dataid="aside"
-    [attr.role]="modal() ? 'dialog' : 'complementary'"
-    [attr.aria-modal]="modal() || null"
-    [rtMod]="{ size: size(), content: contentLayout() }"
-    [style.--rt-aside-width]="width()"
-    [attr.aria-label]="ariaLabel()"
-    [attr.aria-busy]="pending() || null">
-    <ng-content select="rt-aside-header" />
+<ng-container rtBlock="rt-aside">
+    <!-- Шапка, тело и подвал панели — одной разметкой: в рамке у края окна и в шторке телефона. -->
+    <ng-template #headerSlot>
+        <ng-content select="rt-aside-header" />
+    </ng-template>
 
-    @if (hasRequestError()) {
-        <rt-aside-error-box rtElem="error" [error]="requestError()" />
-    }
+    <ng-template #footerSlot>
+        <ng-content select="rt-aside-footer" />
+    </ng-template>
 
-    <div rtElem="content" qa-dataid="aside-content">
-        @if (empty()) {
-            <div rtElem="empty" qa-dataid="aside-empty">
-                @if (emptyTemplate(); as own) {
-                    <ng-container [ngTemplateOutlet]="own.templateRef" />
-                } @else {
-                    <rt-empty-state [icon]="emptyIcon()" [title]="emptyTitleText()" [description]="emptyDescription()" />
-                }
-            </div>
-        } @else {
-            <ng-container [rtSlotOutlet]="contents()" />
+    <ng-template #bodySlot>
+        @if (hasRequestError()) {
+            <rt-aside-error-box rtElem="error" [error]="requestError()" />
         }
-    </div>
 
-    <ng-content select="rt-aside-footer" />
+        <div rtElem="content" qa-dataid="aside-content">
+            @if (empty()) {
+                <div rtElem="empty" qa-dataid="aside-empty">
+                    @if (emptyTemplate(); as own) {
+                        <ng-container [ngTemplateOutlet]="own.templateRef" />
+                    } @else {
+                        <rt-empty-state [icon]="emptyIcon()" [title]="emptyTitleText()" [description]="emptyDescription()" />
+                    }
+                </div>
+            } @else {
+                <ng-container [rtSlotOutlet]="contents()" />
+            }
+        </div>
 
-    @if (pending()) {
-        <div rtElem="pending" qa-dataid="aside-pending">
-            <rt-spinner />
+        @if (pending()) {
+            <div rtElem="pending" qa-dataid="aside-pending">
+                <rt-spinner />
+            </div>
+        }
+    </ng-template>
+
+    @if (sheetMode()) {
+        <!-- Телефон: панель — шторка кита во всю высоту. Шапка панели встаёт в шапку шторки, подвал —
+             в её подвал, только когда в нём осталась кнопка. -->
+        <rt-bottom-sheet
+            fullHeight
+            qa-dataid="aside-sheet"
+            [open]="sheetShown()"
+            [ariaLabel]="sheetName()"
+            [headerTemplate]="headerSlot"
+            [footerTemplate]="sheetFooter()"
+            (openChange)="onSheetOpenChange($event)">
+            <div
+                #frame
+                rtBlock="rt-aside"
+                qa-dataid="aside"
+                [rtMod]="{ sheet: true, content: contentLayout() }"
+                [attr.aria-busy]="pending() || null">
+                <ng-container [ngTemplateOutlet]="bodySlot" />
+            </div>
+        </rt-bottom-sheet>
+    } @else {
+        <div
+            #frame
+            rtBlock="rt-aside"
+            qa-dataid="aside"
+            [attr.role]="modal() ? 'dialog' : 'complementary'"
+            [attr.aria-modal]="modal() || null"
+            [rtMod]="{ size: size(), content: contentLayout() }"
+            [style.--rt-aside-width]="width()"
+            [attr.aria-label]="ariaLabel()"
+            [attr.aria-busy]="pending() || null">
+            <ng-container [ngTemplateOutlet]="headerSlot" />
+            <ng-container [ngTemplateOutlet]="bodySlot" />
+            <ng-container [ngTemplateOutlet]="footerSlot" />
         </div>
     }
-</div>
+</ng-container>

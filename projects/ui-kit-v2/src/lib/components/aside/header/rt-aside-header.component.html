@@ -1,6 +1,20 @@
 <ng-container rtBlock="rt-aside-header">
-    <header rtElem="content" qa-dataid="aside-header">
-        @if (closable()) {
+    <header rtElem="content" qa-dataid="aside-header" [rtMod]="{ sheet: sheetMode() }">
+        @if (sheetMode()) {
+            <!-- Шапка шторки: «×» слева идёт дорогой стрелки; шапка без стрелки «×» не рисует. -->
+            <div rtElem="start">
+                @if (closable()) {
+                    <rt-icon-button
+                        rtElem="close"
+                        qa-dataid="aside-sheet-close"
+                        icon="ico-close"
+                        variant="secondary"
+                        radius="full"
+                        [ariaLabel]="t().bottomSheetClose"
+                        (clicked)="onDismiss()" />
+                }
+            </div>
+        } @else if (closable()) {
             <rt-icon-button
                 rtElem="back"
                 qa-dataid="aside-back"
@@ -61,6 +75,10 @@
 
         <div rtElem="actions" qa-dataid="aside-actions">
             <ng-content select="[asideActions]" />
+            @if (sheetMode()) {
+                <!-- Место главной кнопки подвала: панель переносит её сюда, правее значков шапки. -->
+                <div #sheetMain rtElem="main" qa-dataid="aside-sheet-main"></div>
+            }
         </div>
     </header>
 

@@ -1,3 +1,5 @@
+@use '../../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-aside-header — заголовок side-sheet'а. ViewEncapsulation.None.
        Селекторы префиксованы `.rt-aside-header`. */
@@ -126,6 +128,55 @@
         &__row {
             min-width: 0;
             margin-top: var(--rt-aside-header-gap, var(--rt-aside-header-gap-default));
+
+            &:empty {
+                display: none;
+            }
+        }
+
+        /* Шапка в шторке телефона: поля, ручку и отступ под собой даёт шапка шторки, сама шапка панели
+           тянется на всю её ширину. Заголовок — заголовок шторки: кегль и вес шторки, одна строка. */
+        &--sheet {
+            --rt-aside-header-title-size-default: var(--rt-text-md);
+            --rt-aside-header-title-weight-default: var(--rt-font-weight-semibold);
+
+            min-width: 0;
+            flex: 1 1 auto;
+            padding: 0;
+        }
+
+        /* Колонки шапки шторки: «×» слева, заголовок по центру, значки и главная кнопка справа. */
+        &__content--sheet {
+            @include kv.sheet-header-columns;
+        }
+
+        &__content--sheet &__heading {
+            min-height: 0;
+            text-align: center;
+        }
+
+        &__content--sheet &__badges {
+            justify-content: center;
+        }
+
+        &__content--sheet &__actions {
+            justify-content: flex-end;
+        }
+
+        /* Левая колонка шапки шторки: «×» у её начала; без «×» колонка пуста и держит центр. */
+        &__start {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        &__close {
+            flex-shrink: 0;
+        }
+
+        /* Место главной кнопки подвала — правее значков шапки. */
+        &__main {
+            display: flex;
+            flex-shrink: 0;
 
             &:empty {
                 display: none;

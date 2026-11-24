@@ -1,6 +1,9 @@
 <ng-container rtBlock="rt-aside-footer">
     <footer rtElem="content" qa-dataid="aside-footer">
-        <ng-content select="[asideDismiss]" />
+        <!-- В шторке кнопка, которая только закрывает, не рисуется: её роль у «×» шапки. -->
+        @if (!closeOnlyHidden()) {
+            <ng-content select="[asideDismiss]" />
+        }
         <ng-content select="[asidePrimary]" />
     </footer>
 </ng-container>

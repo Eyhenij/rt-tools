@@ -19,16 +19,22 @@ import {
     Signal,
     ViewEncapsulation,
     contentChildren,
+    TemplateRef,
 } from '@angular/core';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { IRtIcon, rtKitLabel, RtSlotOutletDirective } from '@rt-tools/ui-kit-v2/core';
 import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
+import { IRtSheetTemplateContext, RtBottomSheetComponent } from '@rt-tools/ui-kit-v2/bottom-sheet';
 import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
 import { RtAsideErrorBoxComponent } from './error-box/rt-aside-error-box.component';
+import { RtAsideFooterComponent } from './footer/rt-aside-footer.component';
+import { RtAsideHeaderComponent } from './header/rt-aside-header.component';
 import { RtAsideEmptyDirective } from './rt-aside-empty.directive';
 import { RtAsideContentDirective } from './rt-aside-content.directive';
+import { RtAsideMainAction } from './rt-aside-main-action';
+import { RT_ASIDE_SHEET, RtAsideSheet, TRtAsideSheetGesture } from './rt-aside-sheet';
 
 const BEM_BLOCK: string = 'rt-aside';
 
@@ -62,6 +68,11 @@ export type TRtAsideContentLayout = 'default' | 'tabs';
  * инсет и прокрутку сам по себе: разделы делили высоту панели между собой, а
  * обводка фокуса поля срезалась краем такого мини-скроллера.
  *
+ * На телефоне (окно до 480 точек) панель, открытая службой кита или правой панелью
+ * `rt-container`, рисуется шторкой кита во всю высоту: вид приходит токеном `RT_ASIDE_SHEET` от
+ * открывшего, шапка панели встаёт в шапку шторки, главная кнопка подвала — справа в шапку,
+ * подвал — в подвал шторки. Шторка объявлена модальным диалогом по имени панели или её заголовку.
+ *
  * Семантика — `role="complementary"` (mirror rt-dialog имеет `role="dialog"`,
  * aside — другая роль, side-sheet не обязательно блокирующий). Панель, которая блокирует
  * страницу и держит фокус, включает вход `modal`: рамка объявлена `role="dialog"` с `aria-modal`.
@@ -83,6 +94,7 @@ export type TRtAsideContentLayout = 'default' | 'tabs';
         ElemDirective,
         ModDirective,
         RtAsideErrorBoxComponent,
+        RtBottomSheetComponent,
         RtEmptyStateComponent,
         RtSpinnerComponent,
     ],
@@ -96,11 +108,33 @@ export class RtAsideComponent {
 
     readonly #focusTrapFactory: FocusTrapFactory = inject(FocusTrapFactory);
     readonly #doc: Document = inject(DOCUMENT);
+    readonly #host: HTMLElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+    /** Вид открытия: есть у панели, открытой службой или правой панелью `rt-container`. */
+    readonly #sheet: RtAsideSheet | null = inject(RT_ASIDE_SHEET, { optional: true });
+    readonly #mainAction: RtAsideMainAction = new RtAsideMainAction();
 
     readonly #t_uiEmptyTitle: Signal<string> = rtKitLabel('uiEmptyTitle');
 
     #focusTrap: FocusTrap | null = null;
     #restoreFocusTo: HTMLElement | null = null;
+    /** Каким жестом шторка просит закрыться: Escape отмечается на пути клавиши к шторке. */
+    #sheetGesture: TRtAsideSheetGesture = 'backdrop';
+
+    protected readonly header: Signal<RtAsideHeaderComponent | undefined> = contentChild(RtAsideHeaderComponent, { descendants: true });
+    protected readonly footer: Signal<RtAsideFooterComponent | undefined> = contentChild(RtAsideFooterComponent, { descendants: true });
+    protected readonly footerSlot: Signal<TemplateRef<IRtSheetTemplateContext>> = viewChild.required('footerSlot', { read: TemplateRef });
+
+    /** Панель — шторка телефона: так решил открывший её при открытии. */
+    protected readonly sheetMode: Signal<boolean> = computed((): boolean => this.#sheet?.active() ?? false);
+    protected readonly sheetShown: Signal<boolean> = computed((): boolean => this.#sheet?.shown() ?? false);
+
+    /** Имя диалога шторки: имя панели, а без него — её заголовок. */
+    protected readonly sheetName: Signal<string | null> = computed((): string | null => this.ariaLabel() || this.header()?.title() || null);
+
+    /** Подвал шторки: только когда в подвале панели осталась кнопка, иначе шторка без подвала. */
+    protected readonly sheetFooter: Signal<TemplateRef<IRtSheetTemplateContext> | null> = computed(
+        (): TemplateRef<IRtSheetTemplateContext> | null => (this.footer()?.sheetFilled() === true ? this.footerSlot() : null)
+    );
 
     protected readonly frame: Signal<ElementRef<HTMLElement>> = viewChild.required<ElementRef<HTMLElement>>('frame');
 
@@ -163,12 +197,50 @@ export class RtAsideComponent {
 
     constructor() {
         // После отрисовки: до неё у рамки нет ни полей, ни кнопок, и ловить фокус не на чем.
+        // Шторка держит Tab во всей своей панели — с шапкой и подвалом, и ловит его, когда поднята:
+        // опущенная шторка `inert`, и фокус в неё не встаёт.
         afterRenderEffect((): void => {
-            const enabled: boolean = this.trapFocus();
+            const enabled: boolean = this.trapFocus() && (!this.sheetMode() || this.sheetShown());
             const frame: HTMLElement = this.frame().nativeElement;
-            untracked((): void => (enabled ? this.#holdFocus(frame) : this.#releaseFocus()));
+            untracked((): void => (enabled ? this.#holdFocus(this.#sheetPanel() ?? frame) : this.#releaseFocus()));
         });
-        inject(DestroyRef).onDestroy((): void => this.#releaseFocus());
+        // Главная кнопка подвала встаёт справа в шапку шторки и возвращается в подвал вне шторки.
+        afterRenderEffect((): void => {
+            const slot: HTMLElement | null = this.header()?.sheetMainSlot()?.nativeElement ?? null;
+            const footer: RtAsideFooterComponent | undefined = this.footer();
+            footer?.slotCount();
+            untracked((): void => this.#mainAction.place(slot, (): HTMLElement | null => footer?.mainActionNode() ?? null));
+        });
+        // Escape идёт к шторке через рамку панели: отметка на пути вниз, до того как шторка её
+        // возьмёт, говорит, каким жестом шторку просят закрыть.
+        const markEscape: (event: KeyboardEvent) => void = (event: KeyboardEvent): void => {
+            if (event.key === 'Escape') {
+                this.#sheetGesture = 'escape';
+                // Шторка закрывается в том же событии; клавиша, ничего не закрывшая, отметку не оставляет.
+                queueMicrotask((): void => {
+                    this.#sheetGesture = 'backdrop';
+                });
+            }
+        };
+        this.#host.addEventListener('keydown', markEscape, { capture: true });
+        inject(DestroyRef).onDestroy((): void => {
+            this.#host.removeEventListener('keydown', markEscape, { capture: true });
+            this.#mainAction.restore();
+            this.#releaseFocus();
+        });
+    }
+
+    /** Шторка просит закрыться: решает открывший панель — служба кита или правая панель рамки. */
+    protected onSheetOpenChange(open: boolean): void {
+        const gesture: TRtAsideSheetGesture = this.#sheetGesture;
+        this.#sheetGesture = 'backdrop';
+        if (!open) {
+            this.#sheet?.requestClose(gesture);
+        }
+    }
+
+    #sheetPanel(): HTMLElement | null {
+        return this.sheetMode() ? this.#host.querySelector<HTMLElement>('[qa-dataid="bottom-sheet-panel"]') : null;
     }
 
     #holdFocus(frame: HTMLElement): void {

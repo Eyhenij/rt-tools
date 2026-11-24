@@ -1,5 +1,6 @@
 import {
     booleanAttribute,
+    computed,
     contentChildren,
     effect,
     inject,
@@ -16,6 +17,7 @@ import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
 import { BreakpointsService, IButton, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
+import { RT_ASIDE_SHEET, RtAsideSheet } from '../rt-aside-sheet';
 
 const BEM_BLOCK: string = 'rt-aside-footer';
 
@@ -34,6 +36,11 @@ function slotLook(host: HTMLElement | undefined, dismissLook: IButton.PlaceLook)
     return null;
 }
 
+/** Узел слота, в котором стоит кнопка: она сама или её обёртка с атрибутом слота. */
+function slotNode(host: HTMLElement, slot: string): HTMLElement | null {
+    return host.closest<HTMLElement>(`[${slot}]`);
+}
+
 /**
  * Footer-слот для композиции внутри `<rt-aside>`. Две зоны через именованные
  * слоты: `[asideDismiss]` (слева — «Закрыть») и `[asidePrimary]` (справа —
@@ -49,6 +56,10 @@ function slotLook(host: HTMLElement | undefined, dismissLook: IButton.PlaceLook)
  *
  * Только две именованные зоны — безатрибутный контент НЕ проецируется (контент
  * без `asideDismiss`/`asidePrimary` не отрендерится).
+ *
+ * В шторке телефона последняя кнопка слота `[asidePrimary]` встаёт справа в шапку шторки, а кнопка
+ * слота `[asideDismiss]` с короткой подписью «Закрыть» не рисуется: её роль у «×» шапки. Кнопка
+ * этого слота со своим смыслом — подвал выключил короткую подпись — остаётся в подвале.
  *
  * `ViewEncapsulation.None` — для единообразия с rt-aside.
  *
@@ -69,11 +80,23 @@ function slotLook(host: HTMLElement | undefined, dismissLook: IButton.PlaceLook)
     imports: [BlockDirective, ElemDirective],
     host: {
         class: BEM_BLOCK,
+        '[class.rt-aside-footer--sheet]': 'sheetMode()',
     },
 })
 export class RtAsideFooterComponent {
     readonly #phone: Signal<boolean> = inject(BreakpointsService).phone;
     readonly #closeLabel: Signal<string> = rtKitLabel('uiClose');
+    readonly #host: HTMLElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+    readonly #sheet: RtAsideSheet | null = inject(RT_ASIDE_SHEET, { optional: true });
+
+    /** Узлы слотов в порядке документа, каждый один раз: кнопка и её обёртка — один узел. */
+    readonly #slots: Signal<{ dismiss: number; primary: number }> = computed((): { dismiss: number; primary: number } => {
+        const nodes: HTMLElement[] = this.hosts().map((host: ElementRef<HTMLElement>): HTMLElement => host.nativeElement);
+        const count: (slot: string) => number = (slot: string): number =>
+            new Set(nodes.map((node: HTMLElement): HTMLElement | null => slotNode(node, slot)).filter(Boolean)).size;
+
+        return { dismiss: count('asideDismiss'), primary: count('asidePrimary') };
+    });
 
     /* Кнопки ищутся и внутри обёрток слота; оба списка идут в одном порядке документа. */
     protected readonly buttons: Signal<readonly RtButtonDirective[]> = contentChildren(RtButtonDirective, { descendants: true });
@@ -82,6 +105,12 @@ export class RtAsideFooterComponent {
         read: ElementRef,
     });
 
+    /** Подвал стоит в шторке телефона. */
+    protected readonly sheetMode: Signal<boolean> = computed((): boolean => this.#sheet?.active() ?? false);
+
+    /** Кнопка слота `[asideDismiss]` только закрывает панель: в шторке её место у «×» шапки. */
+    protected readonly closeOnlyHidden: Signal<boolean> = computed((): boolean => this.sheetMode() && this.phoneCloseLabel());
+
     /**
      * На телефоне кнопка слота `[asideDismiss]` читается «Закрыть»: так она названа у всех панелей.
      * `false` оставляет подпись потребителя — у панели фильтров эта кнопка «Сбросить», а не выход.
@@ -89,6 +118,17 @@ export class RtAsideFooterComponent {
     public readonly phoneCloseLabel: InputSignalWithTransform<boolean, boolean | string> = input<boolean, boolean | string>(true, {
         transform: booleanAttribute,
     });
+
+    /** Сколько кнопок в подвале: по нему панель заново ищет главную кнопку, когда кнопки меняются. */
+    public readonly slotCount: Signal<number> = computed((): number => this.#slots().dismiss + this.#slots().primary);
+
+    /**
+     * В шторке подвалу есть что показать: кнопка со своим смыслом в слоте `[asideDismiss]` или
+     * вторая кнопка слота `[asidePrimary]` — последняя ушла в шапку. Без них шторка без подвала.
+     */
+    public readonly sheetFilled: Signal<boolean> = computed(
+        (): boolean => (this.#slots().dismiss > 0 && !this.closeOnlyHidden()) || this.#slots().primary > 1
+    );
 
     constructor() {
         effect((): void => {
@@ -103,5 +143,12 @@ export class RtAsideFooterComponent {
                 button.placeLook.set(slotLook(hosts[index]?.nativeElement, dismissLook));
             });
         });
+    }
+
+    /** Главная кнопка для шапки шторки: последний узел слота `[asidePrimary]`; нет его — `null`. */
+    public mainActionNode(): HTMLElement | null {
+        const nodes: NodeListOf<HTMLElement> = this.#host.querySelectorAll<HTMLElement>('[asidePrimary]');
+
+        return nodes.item(nodes.length - 1) ?? null;
     }
 }

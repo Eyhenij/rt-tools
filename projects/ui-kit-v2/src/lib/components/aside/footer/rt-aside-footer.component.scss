@@ -28,5 +28,15 @@
         &:empty {
             display: none;
         }
+
+        /* В шторке телефона поля, черту и отступ даёт подвал шторки: свои подвал панели снимает и
+           тянется на всю его ширину. */
+        &--sheet {
+            min-width: 0;
+            flex: 1 1 auto;
+            padding: 0;
+            margin: 0;
+            border-block-start: none;
+        }
     }
 }

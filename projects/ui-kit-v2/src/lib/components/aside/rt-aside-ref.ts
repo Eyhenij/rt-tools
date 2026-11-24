@@ -3,6 +3,8 @@ import { Renderer2, signal, WritableSignal } from '@angular/core';
 
 import { Observable, Subject, take } from 'rxjs';
 
+import { RtAsideSheet } from './rt-aside-sheet';
+
 /** Длительность slide-out анимации; синхронизирована с `--rt-aside-animation-duration` в SCSS. */
 const LEAVE_ANIMATION_DURATION_MS: number = 200;
 
@@ -55,6 +57,8 @@ export class RtAsideRef<T = unknown> {
     readonly #renderer: Renderer2;
     readonly #afterClosedSource: Subject<T | undefined> = new Subject<T | undefined>();
     readonly #closeRequestsSource: Subject<TRtAsideCloseRequest>;
+    /** Вид открытия на телефоне: шторку закрытие опускает вниз. Без него панель уезжает вбок. */
+    readonly #sheet: RtAsideSheet | null;
 
     #isClosing: boolean = false;
 
@@ -65,11 +69,13 @@ export class RtAsideRef<T = unknown> {
     constructor(
         overlayRef: OverlayRef,
         renderer: Renderer2,
-        closeRequestsSource: Subject<TRtAsideCloseRequest> = new Subject<TRtAsideCloseRequest>()
+        closeRequestsSource: Subject<TRtAsideCloseRequest> = new Subject<TRtAsideCloseRequest>(),
+        sheet: RtAsideSheet | null = null
     ) {
         this.#overlayRef = overlayRef;
         this.#renderer = renderer;
         this.#closeRequestsSource = closeRequestsSource;
+        this.#sheet = sheet;
         this.#overlayRef
             .detachments()
             .pipe(take(1))
@@ -85,6 +91,8 @@ export class RtAsideRef<T = unknown> {
 
         this.#renderer.removeClass(this.#overlayRef.overlayElement, 'rt-aside-overlay--open');
         this.#renderer.addClass(this.#overlayRef.overlayElement, 'rt-aside-overlay--leaving');
+        // Шторка уезжает вниз за то же время, что панель вбок: её переход — `--rt-duration-base`.
+        this.#sheet?.show(false);
 
         // Эмитим результат сразу — consumer не ждёт slide-out.
         this.#emit(result);
