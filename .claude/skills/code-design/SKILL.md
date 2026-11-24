@@ -4,7 +4,7 @@ kind: rule
 law: code-structure
 description: Rule under the code-structure law. Load when a request is taken apart, a plan is written and code with behaviour is edited — modules, their duty and links, coupling, isolation, patterns, the decision in the plan. Pattern code-design-choose. Names and types — rule typescript-conventions.
 ---
-<!-- rt-kit v0.39.1 · rules/code-design.md · 966a8d32b7ee · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · rules/code-design.md · 21aa91e4c462 · правится надстройкой, не здесь -->
 
 # Code design — how it works here
 
@@ -19,8 +19,8 @@ after, where it lives.
   GRASP, Gang of Four; no problem — «no pattern» and why. For a new module, a split and the host's
   plan mode the table is loaded by a call.
 - **Code is read first: who imports the module and whom it imports.**
-- **Coupling is counted before and after the edit.** Incoming, outgoing, cycles, imports past the
-  entry; growth is named in the plan.
+- **Coupling is counted before and after the edit.** By `check-coupling`: links, cycles, imports past
+  the entry; growth is named in the plan.
 - **A module has one duty, said in one sentence without «and».** Cohesion: two sentences are two
   modules.
 - **Isolation: from outside a module is called through its entry and tested without its

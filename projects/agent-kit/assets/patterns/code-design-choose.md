@@ -22,7 +22,7 @@ Pattern of the rule `code-design`. What must be true — the law
 | --- | --- | --- |
 | A module has two duties | Single Responsibility, high Cohesion: split by the reason to change | each duty is one sentence; the halves do not import each other |
 | A method has no clear home | Information Expert: to whoever holds the data | the method reads fields of its own module only |
-| Modules import each other | Indirection: the shared part moves to a third module | the cycle check is silent where it reads these files; elsewhere the imports are read by hand |
+| Modules import each other | Indirection: the shared part moves to a third module | `check-coupling` names no new cycle |
 | A decision reads disk or network | Dependency Inversion: the source is an argument | the decision is tested without a file |
 | A chain of `if` by one sign grows | Strategy or a table of rows: Open–Closed | a new case adds a row and edits no branch |
 | A foreign shape leaks in | Adapter: the foreign type ends at the boundary | the foreign name is found in one file |
@@ -42,18 +42,16 @@ Pattern of the rule `code-design`. What must be true — the law
 ## The words
 
 SOLID, GRASP and Gang of Four name the techniques of the table. Coupling, cohesion and isolation are
-defined in the glossary. Coupling is counted by a search over the sources:
+defined in the glossary. Coupling is counted by the check of the tree:
 
 ```bash
-grep -rlw "<shown symbol>" <sources>                                    # who knows a module: by what it shows
-grep -rlE "(\.|source|bash|sh) +[^ ]*<script>\.sh" <sources>            # who runs or joins a script
-grep -E "^ *(import |export .* from )" <module file>                    # whom a module of code knows
-grep -nE "(^|[;&|{ ])(\.|source) +[\"\$/.]" <script> | grep -v "^[0-9]*: *#" # whom a script joins
+node <checks>/check-coupling.mjs --module=<path>      # the numbers now, for the plan
+node <checks>/check-coupling.mjs --base=<base>        # was → became on the branch, before the review
+grep -rlw "<shown symbol>" <sources>                  # a link the check does not see: who names a symbol
 ```
 
-A module behind an entry is searched by the symbol it shows, not by its file: callers import the
-entry. A name in a comment or a text is not a link and is not counted. Cycles and imports past the
-entry are read by hand from these lists until the tree has a command.
+The check does not see a name in a variable, a path assembled in pieces, a script started from code
+and a template: those links are searched by the symbol the module shows.
 
 ## The decision in the plan
 
@@ -62,11 +60,16 @@ plans in Russian and «Decision» otherwise. A row each; a row that does not app
 named down to the class or the function that gets the edit, and a thing the goal does not need has no
 row. A decision that outlives the task goes to the spec of the domain, where the texts keep it.
 
+The check reads the row Coupling: the path in backticks, then the outgoing links with an arrow. A new
+folder is named by one number, the path with a slash at the end: what it imports from outside. A module
+that stood before is named by itself. Growth named nowhere refuses the push; an overrun is the same line
+among the decisions of the progress, with its reason after the numbers.
+
 | Row | Example |
 | --- | --- |
 | Modules | `mail/reader.ts:readMail` — turns a letter into a record; shows `readMail` alone |
 | Dependencies | the reader imports the record; the record imports nobody; the screen never imports the reader |
-| Coupling | incoming one now and one after; outgoing two and two; cycles none; imports past the entry none |
+| Coupling | `mail/reader.ts` incoming 1 → 1, outgoing 2 → 3; cycles none; imports past the entry none |
 | Patterns | Adapter — `mail/reader.ts:readMail`; the mail format leaks into three callers; dropped: a cast at each |
 | Terms | letter — what came by mail; record — what the domain keeps; both stand in the glossary |
 | Input | from the mail server: a letter with a file, a letter without one, a broken header — refused |

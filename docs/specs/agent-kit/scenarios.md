@@ -11,6 +11,7 @@ table.
 | [The state mark of a cargo record](cargo-mark/scenarios.md)                     | `cargo-mark/`                   |
 | [Reading the cargo from the intake](cargo-read/scenarios.md)                    | `cargo-read/`                   |
 | [The checks of the tree](checks/scenarios.md)                                   | `checks/`                       |
+| [The coupling of modules](checks/coupling/scenarios.md)                         | `checks/coupling/`              |
 | [The uniformity signs](checks/reuse/scenarios.md)                               | `checks/reuse/`                 |
 | [The cost of context is counted by a command](context-cost/scenarios.md)        | `context-cost/`                 |
 | [A conflicting request of one's own](delivery-conflict/scenarios.md)            | `delivery-conflict/`            |
