@@ -80,7 +80,7 @@
     },
     taken: {
       title: 'задача-взята',
-      action: 'write the plan',
+      action: 'write the plan; once the owner approves it, run plan-red',
       pattern: 'task-flow-start',
       exit: measure.plan.approved,
     },

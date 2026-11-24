@@ -47,7 +47,8 @@ There is no interface: the description is read by the engine and by the executor
 - **The parsing of the steps reaches a measurer through a source, by the module every reader of the steps shares.**
 - **Exit 1 is met by a grill of the branch or of a draft that holds the owner's request as a quote and an answer.**
 - **Exit 3 is met by a line of the grill or the plan naming the agreement directory found on disk or in the history, or the reason there is none.**
-- **Exit 5 is met by a plan the branch added whose every step has a check of a known form, and by an approval mark whose place holds the owner's answer that begins with «Одобряю».**
+- **Exit 5 is met by a plan the branch added whose every step has a check of a known form, and by an approval mark whose place holds the owner's answer that approves the plan of the task.**
+- **An answer approves the plan by one rule for a menu option and a typed message.** Only the answers of a real menu and typed messages count. Each answer, line and clause between commas, colons, full stops and marks is judged alone; a pasted block, a quote and a line opening with «>» are no word. A clause approves when it holds «одобряю» in any case with no negation before it, holds no «?», «но» or «только», and its line holds no condition, change or dictated phrase. A clause naming the plan approves the task of the tree's key named right after the plan word, the number bounded on both sides; a clause naming tasks without it approves them unless it names another thing approved. A clause naming no task approves when the menu question names this task alone or right after a plan word and the plan is named, or by `plan.md` when the question names no task. `plan-red` takes the latest approving answer with both roles called before it.
 - **The marks lie in the common directory of git, and a mark that does not parse reads as absent.**
 - **Exit 6 is met by a version of the progress in the commit of the plan or later that repeats its steps and marks exactly one of them as going on.**
 - **Exit 7 is met when every step is done and every done step has a green mark, and a plan without check lines is judged by the marks of the progress alone.**
@@ -63,7 +64,7 @@ There is no interface: the description is read by the engine and by the executor
 - **A check runs with a limit of 540 seconds, and past it the step does not match.**
 - **The command for the done steps measures again every step the progress marks done.**
 - **A plan may be written only when every step carries a check of a known form that is no command of the work, and a form added to the description is known at once.**
-- **The approval mark is written when every check is red before the work, both roles were called and the owner then chose an option that begins with «Одобряю» and names the plan or the task; it names the place of that answer.**
+- **The approval mark is written when every check is red before the work, both roles were called and the owner then approved the plan by a menu option or a typed message; it names the place of that answer.** A refusal of the mark check sends the session to `plan-red`, which finds the answer in the record; the owner is asked only when it finds none.
 - **A check is replaced only by a decision in the progress the owner allowed in the window on its edit.**
 - **A row of the epic plan is never marked «шаг владельца»: the step is the executor's.** The edit is refused and names the deferral by the owner's word. A row that still carries the old mark is read as an ordinary row, and an edit that takes the mark off passes.
 - **A branch planned before the engine reads its plan from the newest commit that changed it.**
