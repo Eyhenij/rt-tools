@@ -44,4 +44,24 @@ report "SC-AK-1942 — комментарий конца строки не за�
 report "SC-AK-1942 — чтение на строке записи места не называет" \
     "$(targets "python3 -c 's = open(\"docs/a.md\").read(); open(\"docs/b.md\",\"w\").write(s)'")" 'docs/b.md'
 
+# Пишущее слово — команда только в начале своего куска.
+for read in "grep -n 'cp -r' docs/a.md | head" "rg 'sed -i' docs/a.md | head" "grep -n 'sed -i' docs/a.md; ls" "git log --grep 'install deps' -- docs/a.md && echo x"; do
+    report "SC-AK-1942 — «$read» читает" "$(targets "$read")" ''
+done
+for write in 'x=1 sudo cp b docs/a.md' 'git mv b docs/a.md' '/bin/cp b docs/a.md' 'if true; then cp b docs/a.md; fi' 'x=$(cp b docs/a.md)' '(cd x && cp b docs/a.md)' "bash -c 'true && cp b docs/a.md'" 'ls | xargs -n1 sed -i "" s/a/b/ docs/a.md'; do
+    report "SC-AK-1942 — «$write» пишет" "$(targets "$write")" 'docs/a.md'
+done
+
+# Кавычки через строки, русские буквы и две записи одной переменной.
+report "SC-AK-1942 — код «bash -c» в несколько строк судится" "$(targets "bash -c '
+cd .
+echo x > docs/a.md
+'")" 'docs/a.md'
+report "SC-AK-1942 — апостроф внутри \$'…' кавычку не закрывает" "$(targets "git commit -m \$'it\\'s done'
+echo x > docs/a.md")" 'docs/a.md'
+report "SC-AK-1942 — комментарий сразу за «;»" "$(targets "echo a;# don't
+echo x > docs/a.md")" 'docs/a.md'
+report "SC-AK-1942 — решётка за русской буквой разбора не роняет" "$(targets 'echo задача#5; echo x > docs/a.md')" 'docs/a.md'
+report "SC-AK-1942 — переменная с двумя значениями места не называет" "$(targets 'F=/tmp/a; echo x > $F; F=docs/a.md; cat $F')" '$F'
+
 suite_result "места записи в составной команде"

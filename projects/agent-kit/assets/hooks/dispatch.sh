@@ -80,9 +80,11 @@ if [ "$event" = UserPromptSubmit ] && [ -s "$journal_file" ]; then
     fi
 fi
 # A merge of the base leaves conflict markers in the guards themselves, and a guard that does not parse
-# refuses every call, the one that takes the markers off with the rest. Two commands take them off: the
-# guards of this side, and the merge undone. While a file of the guards does not parse, exactly these
-# two pass unjudged; a call after them is judged as before.
+# refuses every call, the one that takes the markers off with the rest. They are taken off by the text
+# of this side, for one guard or for all of them, and by the undoing of the merge, the rebase or the
+# cherry-pick. While a file of the guards does not parse and one of the three goes on, exactly these pass
+# unjudged; a call after them is judged as before. Outside of the three the same restore would silently
+# drop an edit nobody committed, and it does not pass.
 rt_dispatch_root="$(cd "${CLAUDE_PROJECT_DIR:-${RT_HOOK_CWD:-.}}" 2>/dev/null && pwd -P)"
 rt_dispatch_rel="$(cd "$here" && pwd -P)"
 case "$rt_dispatch_rel" in
@@ -96,9 +98,20 @@ rt_dispatch_broken() {
     done
     return 1
 }
+rt_dispatch_merging() {
+    for rt_dispatch_head in MERGE_HEAD REBASE_HEAD CHERRY_PICK_HEAD; do
+        git -C "$here" rev-parse -q --verify "$rt_dispatch_head" >/dev/null 2>&1 && return 0
+    done
+    return 1
+}
 if [ "$event" = PreToolUse ]; then
-    case "$(printf '%s' "${RT_HOOK_CMD:-}" | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//; s/^git -C [^[:space:];&|$`]+ /git /')" in
-        "$rt_dispatch_recovery" | 'git merge --abort' | 'git rebase --abort' | 'git cherry-pick --abort') rt_dispatch_broken >/dev/null && exit 0 ;;
+    rt_dispatch_cmd="$(printf '%s' "${RT_HOOK_CMD:-}" | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//; s/^git -C [^[:space:];&|$`]+ /git /')"
+    # One guard of the directory is restored by its file, and the neighbours keep their edits.
+    case "$rt_dispatch_cmd" in "$rt_dispatch_recovery/"*[!A-Za-z0-9_./-]* | *..*) ;; "$rt_dispatch_recovery/"*.sh) rt_dispatch_cmd="$rt_dispatch_recovery" ;; esac
+    case "$rt_dispatch_cmd" in
+        "$rt_dispatch_recovery" | 'git merge --abort' | 'git rebase --abort' | 'git cherry-pick --abort')
+            rt_dispatch_broken >/dev/null && rt_dispatch_merging && exit 0
+            ;;
     esac
 fi
 
@@ -175,8 +188,12 @@ EOF
         if ! bash -n "$branch" 2>/dev/null; then
             # The guard did not judge: its file does not parse. The way out is named, for the call that
             # fixes the file is refused by the same file.
-            refusal="$(printf 'The guard %s does not parse, so it judged nothing: after a merge it holds conflict markers. Take them off by one of two commands, alone in the call — %s (in the middle of a merge; the edits of the other side to the guards come back with the layout), or git merge --abort. Both pass while a guard does not parse. A guard one side deleted has no version of this side, and the first command stops on it: the merge is undone. Without a merge in progress the file is restored by the layout or by the owner.' \
-                "$(basename "$branch")" "$rt_dispatch_recovery")"
+            if rt_dispatch_merging; then
+                refusal="$(printf 'The guard %s does not parse, so it judged nothing: the merge left conflict markers in it. Take them off by one of two commands, alone in the call — %s/%s (the edit of the other side to a laid-out guard comes back with the layout, to one of the tree by hand), or git merge --abort. Both pass while a guard does not parse. A guard one side deleted has no version of this side, and the first command stops on it: the merge is undone.' \
+                    "$(basename "$branch")" "$rt_dispatch_recovery" "$(basename "$branch")")"
+            else
+                refusal="$(printf 'The guard %s does not parse, so it judged nothing, and no merge goes on. A laid-out guard is put back by the layout, one of the tree is fixed by the owner in the terminal: every call of the session is refused by the same file.' "$(basename "$branch")")"
+            fi
         elif [ -n "$branch_out" ]; then
             refusal="$branch_out"
         elif [ -n "$said_err" ]; then

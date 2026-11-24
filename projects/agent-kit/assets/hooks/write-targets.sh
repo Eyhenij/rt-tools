@@ -35,18 +35,30 @@
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/script-files.sh" 2>/dev/null || true
 [ -n "${RT_SF_EXPAND:-}" ] || RT_SF_EXPAND='function rt_vars_read() {} function rt_expand(w, depth) { en = 1; ev[1] = w }'
 
-# The targets of a script as they stand from the directory the script enters; $1 — its body.
+# The targets of a script as they stand from the directory the script enters first; $1 — its body. A
+# directory of the tree by name — `rev-parse --show-toplevel`, `CLAUDE_PROJECT_DIR` — leaves them as
+# they are, a literal joins them, and one the script computes otherwise is none of the tree's.
 rt_wt_from_dir() {
-    _wd_dir="$(printf '%s\n' "$1" | sed -nE 's#^([^\#]*[;&|[:space:]])?cd[[:space:]]+["'\'']?(/[^"'\''[:space:];&|$`]+).*#\2#p' | head -1)"
-    _wd_own="$(printf '%s\n' "$1" | sed -nE 's/^(.*[;&|[:space:]])?([A-Za-z_][A-Za-z0-9_]*)="?\$\(mktemp.*/\2/p' | tr '\n' ' ')"
-    if printf '%s\n' "$1" | grep -qE '(^|[;&|[:space:]])cd[[:space:]]+"?\$\(mktemp'; then _wd_dir=-; fi
-    for _wd_var in $_wd_own; do
-        printf '%s\n' "$1" | grep -qE "(^|[;&|[:space:]])cd[[:space:]]+\"?[$][{]?${_wd_var}([^A-Za-z0-9_]|\$)" && _wd_dir=-
-    done
+    _wd_tree='rev-parse|CLAUDE_PROJECT_DIR|[$][(]pwd'
+    _wd_dir="$(printf '%s\n' "$1" | grep -oE '(^|[;&|({[:space:]])(cd|pushd)[[:space:]]+("[^"]*"|'"'[^']*'"'|[$][(][^)]*[)]|[^;&|)[:space:]]+)' | head -1 \
+        | sed -E "s/^[;&|({[:space:]]*(cd|pushd)[[:space:]]+//; s/[\"']//g")"
+    if printf '%s' "$_wd_dir" | grep -qE "$_wd_tree"; then
+        _wd_dir=''
+    elif printf '%s' "$_wd_dir" | grep -q '[$]'; then
+        _wd_var="$(printf '%s' "$_wd_dir" | sed -nE 's/^[$][{]?([A-Za-z_][A-Za-z0-9_]*)[}]?.*/\1/p')"
+        _wd_rest="$(printf '%s' "$_wd_dir" | sed -E 's/^[$][{]?[A-Za-z0-9_]*[}]?//')"
+        if [ -n "$_wd_var" ] && printf '%s\n' "$1" | grep -E "(^|[;&|[:space:]])${_wd_var}=" | grep -qE "$_wd_tree"; then
+            _wd_dir="${_wd_rest#/}"
+        else
+            _wd_dir="$(printf '%s\n' "$1" | rt_cmd_vars | sed -n "s/^${_wd_var:-0}	//p" | head -1)"
+            [ -n "$_wd_dir" ] && _wd_dir="$_wd_dir$_wd_rest" || _wd_dir=-
+        fi
+    fi
+    case "$_wd_dir" in . | ./) _wd_dir='' ;; '~/'*) _wd_dir="$HOME/${_wd_dir#??}" ;; esac
     while IFS= read -r _wd_path; do
         case "$_wd_path" in
             /* | '~'* | '$'*) printf '%s\n' "$_wd_path" ;;
-            *) case "$_wd_dir" in '') printf '%s\n' "$_wd_path" ;; -) ;; *) printf '%s\n' "$_wd_dir/$_wd_path" ;; esac ;;
+            *) case "$_wd_dir" in '') printf '%s\n' "$_wd_path" ;; -) ;; *) printf '%s\n' "${_wd_dir%/}/$_wd_path" ;; esac ;;
         esac
     done
 }
@@ -67,7 +79,7 @@ rt_write_targets() {
     # the command. A markdown quote line inside a body — a caret and a path — read as a redirection,
     # and an edit that wrote nothing into the tree was refused by the path standing in that quote.
     # The bodies are parsed separately, by the interpreter branch below.
-    rt_wt_shell="$(printf '%s' "$rt_wt_text" | awk -v q="'" '
+    rt_wt_shell="$(printf '%s' "$rt_wt_text" | LC_ALL=C awk -v q="'" '
         function trim(s) { sub(/^[ \t]+/, "", s); sub(/[ \t]+$/, "", s); return s }
         tag != "" { if (trim($0) == tag) { tag = "" } ; next }
         {
@@ -89,25 +101,27 @@ rt_write_targets() {
     # of `node -e "[1].map(x => x)"` read as writes into `b` and `x)` and were refused as edits.
     # The separators of commands inside quotes are dropped with it: a `sed` script of several parts is
     # one word. The quotes are read across the lines: a message of several lines is one word too; a
-    # backslash outside single quotes escapes the next sign, and a comment ends its line.
-    rt_wt_shell="$(printf '%s\n' "$rt_wt_shell" | awk -v sq="'" '
-        function drop_quoted_arrows(s,   out, i, c, n) {
+    # backslash outside single quotes escapes the next sign — and inside `$'…'` as well — and a comment
+    # ends its line. The code of `bash -c` is a command, and it is left as it stands.
+    rt_wt_shell="$(printf '%s\n' "$rt_wt_shell" | LC_ALL=C awk -v sq="'" '
+        function drop_quoted_arrows(s,   out, i, c, n, before) {
             out = ""; n = length(s)
             for (i = 1; i <= n; i++) {
-                c = substr(s, i, 1)
-                if (c == "\\" && q != sq && i < n) { out = out c substr(s, i + 1, 1); i++; continue }
+                c = substr(s, i, 1); before = i > 1 ? substr(s, i - 1, 1) : ""
+                if (c == "\\" && (q != sq || ansi) && i < n) { out = out c substr(s, i + 1, 1); i++; continue }
                 if (q != "") {
-                    if (c == q) { q = "" } else if (index(">;|&", c)) { continue }
+                    if (c == q) { q = "" } else if (!code && index(">;|&()", c)) { continue }
                 } else if (c == "\"" || c == sq || c == "`") {
-                    q = c
-                } else if (c == "#" && (i == 1 || substr(s, i - 1, 1) ~ /[ \t]/)) {
+                    q = c; ansi = c == sq && before == "$"
+                    code = out ~ /(^|[ \t;|&(\/])(bash|sh|zsh)[ \t]+-[A-Za-z]*c[ \t]+$/
+                } else if (c == "#" && (before == "" || index(" \t;|&()", before))) {
                     break
                 }
                 out = out c
             }
             return out
         }
-        { print drop_quoted_arrows($0) }
+        { line = drop_quoted_arrows($0); if (q != "" && !code) { printf "%s ", line } else { print line } }
     ')"
 
     # The literals the command itself gave its variables. A target through such a variable is a literal
@@ -116,17 +130,20 @@ rt_write_targets() {
 
     {
         # Each command of the line is read apart: an in-place edit names its last word, and the last
-        # word of the line belonged to the command after it.
+        # word of the line belonged to the command after it. A writing word is a command only where one
+        # stands — at the start of its part, behind what only runs it; elsewhere it is an argument, and
+        # `grep -n "cp -r" <file> | head` reads.
         printf '%s' "$rt_wt_shell" \
             | tr "\"'\`" '   ' \
-            | sed -E 's/>\|/>/g; s/>>?/\n>/g; s/(&&|[|][|]|[;|&])/\n/g' \
+            | sed -E 's/>\|/>/g; s/>>?/\n>/g; s/(&&|[|][|]|[;|&()])/\n/g' \
+            | sed -E 's/^[[:space:]]*((do|then|else|if|elif|while|until|sudo|env|command|exec|time|nohup|[!{]|[A-Za-z_][A-Za-z0-9_]*=[^[:space:]]*|xargs([[:space:]]+-[^[:space:]]+)*|timeout[[:space:]]+[^[:space:]]+|find[[:space:]].*-exec|([^[:space:]]*\/)?(bash|sh|zsh)[[:space:]]+-[A-Za-z]*c)[[:space:]]+)*([^[:space:]>]*\/)?(git[[:space:]]+mv)?/\7/; s/^git[[:space:]]+mv/mv/' \
             | sed -nE '
                 s/^>[[:space:]]*([^[:space:]|&;]+).*/\1/p
-                s/(^|.*[[:space:]])tee[[:space:]]+(-a[[:space:]]+)?([^[:space:]|&;]+).*/\3/p
-                s/(^|.*[[:space:]])g?sed[[:space:]]+([^[:space:]]+[[:space:]]+)*(-[A-Za-z]*i[^[:space:]]*|--in-place[^[:space:]]*)[[:space:]]+([^[:space:]]+[[:space:]]+)*([^[:space:]|&;]+)[[:space:]]*$/\5/p
-                s/(^|.*[[:space:]])(cp|mv|install)[[:space:]]+([^[:space:]]+[[:space:]]+)+([^[:space:]|&;]+).*/\4/p
+                s/^tee[[:space:]]+(-a[[:space:]]+)?([^[:space:]|&;]+).*/\2/p
+                s/^g?sed[[:space:]]+([^[:space:]]+[[:space:]]+)*(-[A-Za-z]*i[^[:space:]]*|--in-place[^[:space:]]*)[[:space:]]+([^[:space:]]+[[:space:]]+)*([^[:space:]|&;]+)[[:space:]]*$/\4/p
+                s/^(cp|mv|install)[[:space:]]+([^[:space:]]+[[:space:]]+)+([^[:space:]|&;]+).*/\3/p
             ' \
-            | RT_SF_VARS="$RT_WT_VARS" awk "$RT_SF_EXPAND"'
+            | RT_SF_VARS="$RT_WT_VARS" LC_ALL=C awk "$RT_SF_EXPAND"'
                 BEGIN { rt_vars_read() }
                 { rt_expand($0, 1); for (i = 1; i <= en; i++) { print ev[i] } }
             '
@@ -136,7 +153,7 @@ rt_write_targets() {
         # not the whole command: a compound line in which a heredoc writes one file while a check is
         # run next to it would give away the path of that check as a write target — and running a
         # laid-out check would again read as an edit of the check itself.
-        printf '%s\n' "$rt_wt_text" | awk '
+        printf '%s\n' "$rt_wt_text" | LC_ALL=C awk '
             function emit(s,   n, i, parts) {
                 n = split(s, parts, /[^A-Za-z0-9_.@\/-]+/)
                 for (i = 1; i <= n; i++) {

@@ -41,6 +41,10 @@ open('$PROGRESS', 'w').write('x')
 PY")" 'judged here')" нет
 report "SC-AK-1946 — стрелка в кавычках чтения — не запись" \
     "$(has "$(said $PLACE 'grep -n "a > b" tools/laid.mjs; cp x tools/laid.mjs')" 'judged here: `cp x tools/laid.mjs`')" да
+for read in 'sed -n 1p tools/laid.mjs' 'git diff tools/laid.mjs > /tmp/x' 'cp tools/laid.mjs /tmp/x' 'node tools/laid.mjs' 'grep x tools/laid.mjs <<<"abc"'; do
+    report "SC-AK-1946 — «$read» рядом с правкой не названо" "$(has "$(said $PLACE "$read; cp x tools/laid.mjs")" 'judged here: `cp x tools/laid.mjs`')" да
+done
+report "SC-AK-1946 — длинный русский кусок слов не снимает" "$(has "$(said $PLACE "ls; printf '$(printf 'слово %.0s' {1..80})' > tools/laid.mjs")" 'none of the 2 parts')" да
 report "SC-AK-1946 — апостроф комментария слов не снимает" "$(has "$(said $PLACE "# don't
 ls; cp x tools/laid.mjs")" 'judged here: `cp x tools/laid.mjs`')" да
 report "SC-AK-1946 — шаги: простая команда всё же отказана" "$([ -n "$(said $STEPS "echo x >> $PROGRESS")" ] && echo да || echo нет)" да

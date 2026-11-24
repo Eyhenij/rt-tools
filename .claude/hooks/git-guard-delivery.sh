@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/git-guard-delivery.sh · 7859bcd7fd54 · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/git-guard-delivery.sh · 79e18f87ecc4 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/git-guard-delivery-merged.sh, hooks/git-guard-delivery-task.sh, hooks/git-guard-delivery-folder.sh,hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-pipeline.sh, hooks/git-guard-delivery-identity.sh, hooks/script-files.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/git-guard-delivery-rerun.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
@@ -77,18 +77,8 @@ fi
 # the text of the command holds only the path of the file.
 # shellcheck disable=SC1091
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/script-files.sh" 2>/dev/null || true
-script_call=''
-if command -v rt_script_files >/dev/null 2>&1; then
-    # Of a shell script only its calls about a request are taken: a branch it creates, it may create in a
-    # repository of its own, and the rest of its text is judged by nobody here.
-    while IFS= read -r script_file; do
-        [ -n "$script_file" ] && [ "$(rt_script_kind "$script_file")" = shell ] || continue
-        script_call="$script_call
-$(rt_script_text "$script_file" | rt_script_calls "${RT_CMD_BOUND}(gh[[:space:]]+pr|glab[[:space:]]+mr|az[[:space:]]+repos[[:space:]]+pr)[[:space:]]+(create|merge|ready|update)([[:space:]]|\$)")"
-    done <<<"$(printf '%s' "$cmd" | rt_script_files)"
-    [ -n "${script_call//[[:space:]]/}" ] && cmd="$cmd
-$script_call"
-fi
+script_call='' script_text=''
+command -v rt_script_requests >/dev/null 2>&1 && rt_script_requests
 
 workdir="$(rt_hook_cwd)"
 [ -z "$workdir" ] && workdir="${CLAUDE_PROJECT_DIR:-.}"
@@ -412,7 +402,7 @@ fi
 
 case "$script_call" in
     *create*)
-        # The title a script computes cannot be read, and neither can the body it names.
+        # A title the script computes cannot be read.
         case "$title" in
             *'$'*)
                 unmet_class pr_create_bad_title "the request is opened from a script file, and its title is computed there: «${title}» cannot be read. Type the opening call itself, with its title."
@@ -452,7 +442,7 @@ if [ -n "$epic_pull" ] && command -v rt_epic_pull_base >/dev/null 2>&1; then
 elif git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \
     && ! git merge-base --is-ancestor "origin/${main_branch}" HEAD 2>/dev/null; then
     behind="$(git rev-list --count "HEAD..origin/${main_branch}" 2>/dev/null)"
-    unmet branch_has_main_tip no "«${main_branch}» has moved ahead by ${behind:-several} commits and is not merged into the branch. A PR from a diverged branch shows the reviewer the edit mixed with someone else, and the checks on it run from a stale base. Merge it in and repeat: git fetch origin && git merge origin/${main_branch} — the order and the resolving of the conflict are in the pattern git-workflow-merge."
+    unmet branch_has_main_tip no "«${main_branch}» has moved ahead by ${behind:-several} commits and is not merged into the branch. A PR from a diverged branch shows the reviewer the edit mixed with someone else, and the checks on it run from a stale base. Merge it in and repeat: git fetch origin && git merge origin/${main_branch} — by the block of the pattern git-workflow-merge, which keeps conflict markers out of the guards; the resolving of the conflict is there too."
 fi
 
 # The second tier: the local reference could itself have gone stale. No answer — the tier stays
@@ -469,7 +459,7 @@ if [ -n "$remote_main" ] && [ -n "$local_main" ] && [ "$remote_main" != "$local_
     if [ -n "$fetched_at" ]; then
         age=" The last git fetch was $(( ( $(date +%s) - fetched_at ) / 60 )) min ago."
     fi
-    unmet origin_main_fresh no "your ref origin/${main_branch} lags behind the remote one — ${local_main:0:8} against ${remote_main:0:8}.${age} The guard compares the branch with what lies in the tree, so silence of the first tier means «the ref is not older than the branch», not «the main branch is merged in». Merge it in and repeat: git fetch origin && git merge origin/${main_branch}."
+    unmet origin_main_fresh no "your ref origin/${main_branch} lags behind the remote one — ${local_main:0:8} against ${remote_main:0:8}.${age} The guard compares the branch with what lies in the tree, so silence of the first tier means «the ref is not older than the branch», not «the main branch is merged in». Merge it in and repeat: git fetch origin && git merge origin/${main_branch} — by the block of the pattern git-workflow-merge."
 fi
 
 # The identity of the call — who opens the PR and whether that account is its own reviewer — lives in a

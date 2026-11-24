@@ -34,7 +34,8 @@ for check in 'grep -cF "а" a.txt` → = 0' 'grep -cE "а|б" a.txt` → = 0' 'g
     report "SC-AK-1940 — ноль, посчитанный «${check%%\`*}», отказан" "$(named "$(pf_write "\`$check")" 'grep -q … → exit 1')" отказ
 done
 report "SC-AK-1940 — pipefail после трубы её не снимает" "$(named "$(pf_write '`cat a | tail -1; set -o pipefail` → `б`')" 'a pipe without')" отказ
-for check in 'grep -c а a.txt || true` → = 0' 'test $(ls a | wc -l) -eq 3` → exit 0' 'test "$(ls a | wc -l)" -eq 3` → exit 0' 'case $x in a|b) true ;; esac` → exit 0' '[[ $x =~ a|b ]]` → exit 0' 'echo a >| f` → exit 0'; do
+report "SC-AK-1940 — ноль образцом отказан" "$(named "$(pf_write '`grep -c а a.txt` → /^0$/')" 'grep -q … → exit 1')" отказ
+for check in 'set -eu -o pipefail; ls | wc -l` → = 3' 'test $(grep -c "(x)" f | tr -d " ") -eq 3` → exit 0' 'diff <(ls | sort) f` → exit 0' 'echo ${a:-b|c}` → exit 0' 'grep -c а a.txt || true` → = 0' 'test $(ls a | wc -l) -eq 3` → exit 0' 'test "$(ls a | wc -l)" -eq 3` → exit 0' 'case $x in a|b) true ;; esac` → exit 0' '[[ $x =~ a|b ]]` → exit 0' 'echo a >| f` → exit 0'; do
     report "SC-AK-1940 — «${check%%\`*}» проходит" "$(pf_write "\`$check")" ''
 done
 report "SC-AK-1940 — другой файл не судится" "$(pf_write '`cat a | tail -1` → `б`' "$PF/docs/plan.md")" ''

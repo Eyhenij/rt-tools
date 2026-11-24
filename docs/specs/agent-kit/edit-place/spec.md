@@ -80,7 +80,10 @@ turn.
   arrow, and a command that wrote nothing was refused as an edit. The shell parse drops every `>`
   inside single, double or back quotes before it looks for a redirection; a backslash outside
   single quotes escapes the next sign, a quote runs over the lines until it closes, and a comment ends
-  its line.
+  its line. The code of `bash -c` is a command and keeps its arrows.
+- **A writing word is a command only at the start of its part.** `grep -n 'cp -r' <file> | head` reads:
+  behind `sudo`, `env`, an assignment, `xargs` or `bash -c` the word is still the command, elsewhere an
+  argument.
 - **Muted output is never a sign of a write, inside a body either.** A redirection into the empty
   device and into the error stream is removed before the parse — by the same technique the shell write
   sign removes it. Otherwise a body that writes nothing gives out all its paths again: a command with
@@ -89,13 +92,15 @@ turn.
   code of `-c` and `-e` is read only after the interpreter it stands by, up to the closing quote; a
   command line is split into its commands before the target of `sed -i` is taken, and the spellings
   `sed -E -i` and `--in-place` count as well. A variable the command gives a literal, a loop over
-  literals included, is filled in before the target is compared with the tree.
+  literals included, is filled in before the target is compared with the tree; one the command gives two
+  literals is left as it stands.
 - **A script file the command runs is read with the command.** An interpreter or a shell with a file,
   `source`, and a file called by its path: the text of the file is parsed the same way as the command,
   by the guard of the place of an edit and by the delivery guard alike; the delivery guard takes of it
   only the calls about a request. A file tracked by its repository, an installed package, a build and a
   file longer than 64 KB are not read. Not seen: a file fed through a pipe, a runner the parse does not
-  name, a path from the arguments of the script and a script run by another script.
+  name, a path the script computes or takes from its arguments, a script run by another script and one
+  the same call writes. The guards of prose and of anchors read no script: they judge the text of the call.
 - **A refusal of a compound command names the part it judged.** The call is refused whole, and the
   refusal says that the other parts did not run; a plain command gets no such words. A part that only
   reads is never named, and where the judged text stands in a heredoc or comes through a loop none is. The guard of the

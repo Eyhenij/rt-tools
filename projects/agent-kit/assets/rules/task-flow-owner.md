@@ -17,7 +17,7 @@ Rule under the law `docs/constitution/work-conduct.md`. Cold part: `pitfalls.md`
 - **The last run of the main branch is read first thing in a session and after every known merge.**
 - **A session does not start work by itself.** An empty message, a word or a path orders nothing.
 - **A refusal by an external limiter removes the way, not the task.** A guard that names the fix gives the way.
-- **A refusal that names a ready command is carried out before any question to the owner.**
+- **A refusal that names a ready command is carried out before any question to the owner.** A move the rules leave to the owner is asked.
 - **A menu where every option hands the work to the owner or stops it bypasses the task.** The move a refusal named comes first.
 - **A question written by a past session does not become a question to the owner.** It goes to the handover's author; a work step closes some.
 - **The owner's instruction holds until they cancel it, and a new fact against it is a line in the reply about the cost, not a new question.**

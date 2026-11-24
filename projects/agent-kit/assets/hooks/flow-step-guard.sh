@@ -97,6 +97,8 @@ part=""
 if [ "$tool" = Bash ]; then
     # shellcheck disable=SC1091
     . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
+    # shellcheck disable=SC1091
+    . "$rt_hooks_dir/write-targets.sh" 2>/dev/null
     command -v rt_judged_part >/dev/null 2>&1 && part="$(rt_judged_part "$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)" \
         'progress.md|plan.md|plans/|rt-kit|task-flow|flow-|.claude/projects/')"
 fi

@@ -32,6 +32,11 @@ report "SC-AK-1938 — без подстановки чужая запись п�
 report "SC-AK-1938 — подстановка за проверкой файла читается так же" \
     "$(ta владелец "test -s ~/.config/token && GH_TOKEN=\"\$(cat ~/.config/token)\" $OPEN" | grep -c '^deny · ')" 1
 report "SC-AK-1938 — слова о токене в теле заявки — не подстановка" "$(ta владелец "$OPEN --body 'вызов несёт GH_TOKEN=... впереди'")" ''
+report "SC-AK-1938 — слово create перед вызовом подстановки не прячет" \
+    "$(ta владелец "git commit -m 'feat: create x' && GH_TOKEN=\$(cat ~/.config/token) $OPEN" | grep -c '^deny · ')" 1
+printf 'export GH_TOKEN="$(cat ~/.config/token)"\n%s --title "[RT-1941] Сделано" --reviewer третий --body x\n' "$OPEN" > "$TA_REPO/../ta-open.sh"
+report "SC-AK-1938 — подстановка отдельной строкой сценария читается" "$(ta владелец "bash $TA_REPO/../ta-open.sh; true" | grep -c '^deny · ')" 1
+rm -f "$TA_REPO/../ta-open.sh"
 report "SC-AK-1938 — дерево без машинной записи не судится" \
     "$(TA_BOT='' ta владелец "GH_TOKEN=\$(cat ~/.config/token) $OPEN")" ''
 

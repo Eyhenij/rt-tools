@@ -42,7 +42,7 @@ next one is created. Taking the base fresh instead breaks the chain:
 ```bash
 git fetch origin
 git merge-base --is-ancestor origin/<база> <прошлая ветка> || {
-    git checkout <прошлая ветка> && git merge origin/<база>
+    git checkout <прошлая ветка> && git merge origin/<база>   # by the block of git-workflow-merge
 }
 git checkout -b <КЛЮЧ>-<номер>-<slug> <прошлая ветка>
 ```

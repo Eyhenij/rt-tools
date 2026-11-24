@@ -396,8 +396,15 @@ marked_guard() {
 }
 input_git() { jq -cn --arg c "$1" '{tool_name:"Bash",tool_input:{command:$c},cwd:"/tmp"}'; }
 marked_guard
+report "SC-AK-1945 — вне слияния отказ команды восстановления не называет" \
+    "$(dispatch_says PreToolUse "$INPUT_BASH" | grep -c 'no merge goes on')/$(dispatch_says PreToolUse "$INPUT_BASH" | grep -c 'checkout --ours')" '1/0'
+report "SC-AK-1945 — вне слияния команда восстановления не проходит" "$(dispatch_code PreToolUse "$(input_git 'git checkout --ours -- .claude/hooks')")" 2
+git -C "$DISPATCH_DIR" init -q && git -C "$DISPATCH_DIR" -c user.name=t -c user.email=t@e -c commit.gpgsign=false commit -q --allow-empty -m one
+git -C "$DISPATCH_DIR" rev-parse HEAD > "$DISPATCH_DIR/.git/MERGE_HEAD"
 report "SC-AK-1945 — защита с метками слияния: отказ называет команду восстановления" \
-    "$(dispatch_says PreToolUse "$INPUT_BASH" | grep -c 'git checkout --ours -- .claude/hooks')" 1
+    "$(dispatch_says PreToolUse "$INPUT_BASH" | grep -c 'git checkout --ours -- .claude/hooks/m_marked.sh')" 1
+report "SC-AK-1945 — команда восстановления одной защиты проходит" "$(dispatch_code PreToolUse "$(input_git 'git checkout --ours -- .claude/hooks/m_marked.sh')")" 0
+report "SC-AK-1945 — путь из каталога защит наружу не проходит" "$(dispatch_code PreToolUse "$(input_git 'git checkout --ours -- .claude/hooks/../a.sh')")" 2
 report "SC-AK-1945 — защита с метками слияния: отказ называет защиту" \
     "$(dispatch_says PreToolUse "$INPUT_BASH" | grep -c 'm_marked.sh does not parse')" 1
 report "SC-AK-1945 — команда восстановления проходит" "$(dispatch_code PreToolUse "$(input_git 'git checkout --ours -- .claude/hooks')")" 0

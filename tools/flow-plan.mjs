@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · checks/flow-plan.mjs · b744a61c3cbd · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/flow-plan.mjs · f03f42b34639 · правится надстройкой, не здесь
 /**
  * The approval of a plan and the forms of its checks — the engine commands `plan-check` and
  * `plan-red`.
@@ -60,13 +60,19 @@ export function planProblems(text, steps, model, { forms = true } = {}) {
 
 /**
  * The command without its quoted strings, escaped characters and substitutions: what is left is the
- * shell's own. The verdict of a substitution is not the verdict of the command.
+ * shell's own. The verdict of a substitution is not the verdict of the command. The code of `bash -c`
+ * stands in quotes and is not judged.
  */
 const bare = (command) => {
-    let text = command.replace(/\\./g, ' ').replace(/'[^']*'/g, "''");
+    let text = command
+        .replace(/\\./g, ' ')
+        .replace(/'[^']*'/g, "''")
+        .replace(/"[^"$`]*"/g, "''")
+        .replace(/`[^`]*`/g, ' ')
+        .replace(/\$\{[^}]*\}/g, ' ');
     for (let before = ''; before !== text; ) {
         before = text;
-        text = text.replace(/\$\([^()]*\)/g, ' ');
+        text = text.replace(/[$<]\([^()]*\)/g, ' ');
     }
     return text
         .replace(/"[^"]*"/g, "''")
@@ -78,14 +84,14 @@ const bare = (command) => {
 /** Whether the command is a pipe whose verdict the last part alone decides. */
 const isBarePipe = (command) => {
     const pipe = bare(command).replace(/\|\|/g, '  ').indexOf('|');
-    return pipe >= 0 && !/\bset\s+-[A-Za-z]*o\s+pipefail\b/.test(bare(command).slice(0, pipe));
+    return pipe >= 0 && !/\bset\b[^;&|]*\bpipefail\b/.test(bare(command).slice(0, pipe));
 };
 
 /** Whether the command counts by `grep -c`, or by `grep | wc -l`, and the expected result is nothing found. */
 const isCountedAbsence = (command, expected) => {
     const text = bare(command);
     const counts = /\b([ef]?grep|rg)\b[^|;&]*\s(-[A-Za-z]*c[A-Za-z]*|--count)(?=\s|$)/.test(text) || /\b([ef]?grep|rg)\b[^;&]*\|\s*wc\s+-l/.test(text);
-    return counts && !/\|\|\s*(true|:)/.test(text) && /^(==?\s*0|<=?\s*0|`0`|<\s*1)$/.test(expected.trim());
+    return counts && !/\|\|\s*(true|:)/.test(text) && /^(==?\s*0|<=?\s*0|`0`|<\s*1|\/\^0\$\/)$/.test(expected.trim());
 };
 
 /**

@@ -75,6 +75,7 @@ docker_double() {
 printf '%s\n' "\$*" >> "$STALE_BIN/calls"
 [ "\$1" = inspect ] && [ "$1" = none ] && exit 1
 [ "\$1" = inspect ] && printf '[{"StartedAt":"$1","Status":"running","Health":{"Status":"healthy"}},["A=b"],[]]'
+[ "\$1" = ps ] && [ "${2:-}" = down ] && exit 1
 [ "\$1" = ps ] && printf '%s' "${2:-}"
 exit 0
 SH
@@ -97,6 +98,9 @@ docker_double none c0ffee
 echo former > "$STALE_BIN/record"
 drop_stale
 report "drop-stale: a container that could not be read keeps the former digest" "$(cat "$STALE_BIN/record")" "former"
+docker_double none down
+drop_stale
+report "drop-stale: a Docker that does not answer keeps the former digest" "$(cat "$STALE_BIN/record")" "former"
 docker_double none
 drop_stale
 report "drop-stale: without a container the digest of the next one is written down" "$(cat "$STALE_BIN/record")" "$DIGEST"

@@ -59,6 +59,24 @@ report "SC-AK-1943 — правка в своём временном катал�
 printf 'cd %s\nsed -i "" s/a/b/ tools/laid.mjs\n' "$SF" > "$OUT/home.sh"
 report "SC-AK-1943 — сценарий, который входит в дерево, отказан" "$(cd "$OUT" && judge $PLACE "bash $OUT/home.sh")" отказ
 
+report "SC-AK-1943 — сообщение с решёткой за русской буквой перед запуском" "$(judge $PLACE "git commit -m исправлено#12 && bash $OUT/edit.sh")" отказ
+report "SC-AK-1943 — «cd» внутри скобок наружу не выходит" "$(judge $PLACE "cd $OUT; H=\$(cd node-x && pwd); (cd node-x && ls); bash edit.sh")" отказ
+for run in 'node --check' 'bash --version' 'command -v'; do
+    report "SC-AK-1943 — «$run» ничего не исполняет" "$(judge $PLACE "$run $OUT/edit.sh")" прошло
+done
+report "SC-AK-1943 — сценарий, который пишет сам вызов, судится не по прежнему тексту" \
+    "$(judge $PLACE "printf 'echo x\n' > $OUT/edit.sh && bash $OUT/edit.sh")" прошло
+report "SC-AK-1943 — запись рядом с запуском чтения файла не снимает" "$(judge $PLACE "echo x > $OUT/log; bash $OUT/edit.sh")" отказ
+printf 'S=/tmp/zz; cd "$S"; sed -i "" s/a/b/ tools/laid.mjs\n' > "$OUT/zz.sh"
+report "SC-AK-1943 — правка в каталоге из переменной проходит" "$(judge $PLACE "bash $OUT/zz.sh")" прошло
+printf 'R="$(git rev-parse --show-toplevel)"; cd "$R"\nsed -i "" s/a/b/ tools/laid.mjs\n' > "$OUT/root.sh"
+report "SC-AK-1943 — вход в корень дерева через переменную отказан" "$(judge $PLACE "bash $OUT/root.sh")" отказ
+# Вложенные подстановки не растягивают разбор на минуты.
+nested="$(printf '$(echo %.0s' {1..900})"
+started="$(date +%s)"
+judge $PLACE "$nested" >/dev/null
+report "SC-AK-1943 — девятьсот незакрытых подстановок разобраны быстро" "$([ $(($(date +%s) - started)) -lt 20 ] && echo да || echo нет)" да
+
 # --- защита доставки --------------------------------------------------------------------
 printf '%s\n' "$OPEN" > "$OUT/open.sh"
 report "SC-AK-1943 — заявка из файла сценария судится" "$(judge $DELIVERY "bash $OUT/open.sh")" отказ
@@ -74,6 +92,10 @@ report "SC-AK-1943 — вычисленный заголовок назван в
     "$(printf '%s' "$got" | grep -c 'is computed there')/$(printf '%s' "$got" | grep -c 'does not start with the number')" '1/0'
 printf 'cd "$(mktemp -d)" && git init -q\ngit checkout -q -b RT-3-Slug.x\n# %s --title x\ncat > a <<EOF\n%s --title x\nEOF\n' 'gh pr'' create' 'gh pr'' create' > "$OUT/own.sh"
 report "SC-AK-1943 — ветка своего репозитория, комментарий и тело записи не судятся" "$(judge $DELIVERY "bash $OUT/own.sh")" прошло
+printf 'grep -n "x; %s y" f\necho "\n%s --title x\n"\n' 'gh pr'' create' 'gh pr'' create' > "$OUT/said.sh"
+report "SC-AK-1943 — заявка внутри кавычек сценария — текст" "$(judge $DELIVERY "bash $OUT/said.sh")" прошло
+printf 'A=1 \\\n  %s --title "Без номера"\n' 'gh pr'' create' > "$OUT/two.sh"
+report "SC-AK-1943 — заявка на второй строке вызова судится" "$(judge $DELIVERY "bash $OUT/two.sh")" отказ
 cp "$OUT/open.sh" "$SF/tools/open.sh"
 git -C "$SF" add -A && git -C "$SF" -c user.name=t -c user.email=t@e -c commit.gpgsign=false commit -qm open
 report "SC-AK-1943 — сценарий дерева не читается" "$(judge $DELIVERY 'bash tools/open.sh')" прошло
