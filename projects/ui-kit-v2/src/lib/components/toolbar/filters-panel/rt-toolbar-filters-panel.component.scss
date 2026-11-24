@@ -1,13 +1,19 @@
 @layer rt-kit.components {
-    /* rt-toolbar-filters-aside — панель отборов полосы на узком экране. ViewEncapsulation.None. */
-    .rt-toolbar-filters-aside {
-        --rt-toolbar-filters-aside-gap: var(--rt-space-md);
+    /* rt-toolbar-filters-panel — содержимое панели отборов полосы. ViewEncapsulation.None. */
+
+    /* Хост боксом не становится: рамка `rt-aside` остаётся там же, где без этой обёртки. */
+    rt-toolbar-filters-panel {
+        display: contents;
+    }
+
+    .rt-toolbar-filters-panel {
+        --rt-toolbar-filters-panel-gap: var(--rt-space-md);
 
         /* Поля отборов — одно под другим во всю ширину тела панели. */
         &__fields {
             display: flex;
             flex-direction: column;
-            gap: var(--rt-toolbar-filters-aside-gap);
+            gap: var(--rt-toolbar-filters-panel-gap);
 
             // Блок получает начальный фокус панели как место, а не как элемент управления: рамки нет
             &:focus {
