@@ -117,10 +117,9 @@ export class RtBottomSheetComponent {
     protected readonly dragging: WritableSignal<boolean> = signal<boolean>(false);
 
     /**
-     * В шторке начали печатать: фокус побывал в поле ввода. На сенсорном экране это открытая
-     * клавиатура: шторка встаёт во всю высоту и держит её до закрытия — сожмись она по уходу фокуса,
-     * карточка уехала бы из-под пальца, который её нажимает. Там, где указатель точный, клавиатуры
-     * нет, и стили высоту не меняют.
+     * В шторке начали печатать: фокус побывал в поле ввода. С этого момента и до закрытия шторка
+     * следит за экранной клавиатурой; сама высота от фокуса не меняется — её меняет показанная
+     * клавиатура (`raised`).
      */
     protected readonly typing: WritableSignal<boolean> = linkedSignal<boolean>((): boolean => this.#closedWith(false));
 
@@ -132,6 +131,13 @@ export class RtBottomSheetComponent {
     protected readonly keyboardBox: WritableSignal<IRtSheetKeyboardBox | null> = linkedSignal<IRtSheetKeyboardBox | null>(
         (): IRtSheetKeyboardBox | null => this.#typedWith(null)
     );
+
+    /**
+     * Экранная клавиатура показана: шторка во всю высоту стоит над ней. Клавиатура убрана — шторка
+     * снова по высоте содержимого. От одного нажатия в поле, пока клавиатура не появилась, шторка не
+     * поднимается.
+     */
+    protected readonly raised: Signal<boolean> = computed((): boolean => this.keyboardBox() !== null);
 
     /**
      * Вопрос перед закрытием показан: шторку просили закрыть при неприменённом выборе. Закрытая

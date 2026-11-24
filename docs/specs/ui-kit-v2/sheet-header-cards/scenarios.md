@@ -96,13 +96,15 @@ Then the kinds are cards with the kit radio button, and the current one is check
 
 Covered: `projects/ui-kit-v2/src/lib/components/table/filter-header/rt-table-filter-header.component.spec.ts`.
 
-### SC-UKV-1783 — a sheet with a search is open by the height of its content and marked as typed in from the focus in its search until it closes
+### SC-UKV-1783 — a sheet with a search takes the full height only while the keyboard is shown
 
 Given a select with a search open in the sheet by the height of its content
 When the search takes the focus
-Then the sheet is marked as typed in, which on a touch screen gives it the full height, and the mark
-stays when the focus leaves the search and is gone at the next opening; the focus on a card, a
-checkbox, a radio button, a button or a read-only field does not set the mark: nobody types there
+Then the sheet starts watching for the keyboard and keeps the height of its content until the
+visible part of the window shrinks by a keyboard; with the keyboard shown it takes the full
+height, with the keyboard hidden it returns to the height of its content, and nothing of it stays
+at the next opening; the focus on a card, a checkbox, a radio button, a button or a read-only
+field does not start the watch: nobody types there
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`; which node is
 typed in — by `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.logic.spec.ts`.

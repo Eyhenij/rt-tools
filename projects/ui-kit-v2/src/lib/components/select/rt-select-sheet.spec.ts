@@ -388,36 +388,59 @@ describe('Карточки выбора селекта в шторке (вход
         expect(document.activeElement).toBe(qa(fixture, 'select-trigger')?.nativeElement);
     });
 
-    it('SC-UKV-1783 — шторка с поиском открыта по содержимому и помечена «печатают» с фокуса в поиске до закрытия', (): void => {
-        const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { filter: true });
-        press(fixture, 'select-trigger');
-        const panel: HTMLElement = document.querySelector('[qa-dataid="bottom-sheet-panel"]') as HTMLElement;
-        const search: HTMLElement = document.querySelector('[qa-dataid="select-filter"] input') as HTMLElement;
+    describe('SC-UKV-1783 — высота под клавиатуру', (): void => {
+        /** Видимая область окна, которую двигает экранная клавиатура. */
+        let viewport: EventTarget & { height: number; offsetTop: number; scale: number };
 
-        expect(panel.classList).not.toContain('rt-bottom-sheet__panel--full');
-        expect(panel.classList).not.toContain('rt-bottom-sheet__panel--typing');
+        beforeEach((): void => {
+            viewport = Object.assign(new EventTarget(), { height: window.innerHeight, offsetTop: 0, scale: 1 });
+            Object.defineProperty(window, 'visualViewport', { configurable: true, value: viewport });
+        });
 
-        search.dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
-        settle(fixture);
-        expect(panel.classList).toContain('rt-bottom-sheet__panel--typing');
-        expect(panel.classList).not.toContain('rt-bottom-sheet__panel--full');
+        afterEach((): void => {
+            Reflect.deleteProperty(window, 'visualViewport');
+        });
 
-        // Уход фокуса высоту не снимает: сожмись шторка сейчас, карточка уехала бы из-под пальца.
-        search.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
-        all('select-option')[0].dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
-        settle(fixture);
-        expect(panel.classList).toContain('rt-bottom-sheet__panel--typing');
-    });
+        function keyboard(shown: boolean): void {
+            viewport.height = shown ? window.innerHeight - 300 : window.innerHeight;
+            viewport.dispatchEvent(new Event('resize'));
+        }
 
-    it('SC-UKV-1783 — фокус на карточке «печатают» не ставит: в неё не печатают', (): void => {
-        const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { filter: true });
-        press(fixture, 'select-trigger');
-        const panel: HTMLElement = document.querySelector('[qa-dataid="bottom-sheet-panel"]') as HTMLElement;
+        it('SC-UKV-1783 — шторка с поиском во всю высоту только пока показана клавиатура', (): void => {
+            const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { filter: true });
+            press(fixture, 'select-trigger');
+            const panel: HTMLElement = document.querySelector('[qa-dataid="bottom-sheet-panel"]') as HTMLElement;
+            const search: HTMLElement = document.querySelector('[qa-dataid="select-filter"] input') as HTMLElement;
 
-        all('select-option')[0].dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
-        settle(fixture);
+            expect(panel.classList).not.toContain('rt-bottom-sheet__panel--typing');
 
-        expect(panel.classList).not.toContain('rt-bottom-sheet__panel--typing');
+            // Нажатие в поиск само шторку не поднимает: клавиатуры ещё нет.
+            search.dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
+            settle(fixture);
+            expect(panel.classList).not.toContain('rt-bottom-sheet__panel--typing');
+
+            keyboard(true);
+            settle(fixture);
+            expect(panel.classList).toContain('rt-bottom-sheet__panel--typing');
+            expect(panel.classList).not.toContain('rt-bottom-sheet__panel--full');
+
+            keyboard(false);
+            settle(fixture);
+            expect(panel.classList).not.toContain('rt-bottom-sheet__panel--typing');
+        });
+
+        it('SC-UKV-1783 — фокус на карточке слежение за клавиатурой не включает: в неё не печатают', (): void => {
+            const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { filter: true });
+            press(fixture, 'select-trigger');
+            const panel: HTMLElement = document.querySelector('[qa-dataid="bottom-sheet-panel"]') as HTMLElement;
+
+            all('select-option')[0].dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
+            settle(fixture);
+            keyboard(true);
+            settle(fixture);
+
+            expect(panel.classList).not.toContain('rt-bottom-sheet__panel--typing');
+        });
     });
 
     it('SC-UKV-1797 — sheetCards=false возвращает в шторку строки, какими список стоит у поля', (): void => {
