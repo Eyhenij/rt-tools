@@ -185,9 +185,9 @@ Then the opening is refused naming step 1.1 and the network as the cause
 
 Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
-### SC-AK-1726 — a task folder changed since the plan commit refuses the step
+### SC-AK-1726 — a grill changed since the plan commit refuses the step
 
-Given a check of step 1.1 that matches, and a file of the task folder other than the progress changed since the commit of the plan
+Given a check of step 1.1 that matches, and the grill changed since the commit of the plan
 When `step 1.1` is run
 Then the step is refused with its reason, and the progress keeps step 1.1 not done
 
@@ -360,7 +360,7 @@ When `step 1.3` is run
 Then it is refused with the move `git revert --no-edit <the commit that took the folder apart>`
 And a number the plan does not name is refused as such, with no move and no folder put back
 And the step guard lets that command through, refuses a hand mark of a step, and the command brings the folder back
-And a folder file edited after the commit of the plan refuses the step by its name, with the revert move
+And a grill edited after the commit of the plan refuses the step by its name, with the revert move
 
 Covered: `projects/agent-kit/tests/task-flow-script-archive.test.sh`.
 

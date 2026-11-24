@@ -17,9 +17,9 @@
     {
       "role": "agent",
       "at": "2026-11-14T17:37:00Z",
-      "menu": ["The push of RT-101 is refused by another check.", "отложить RT-101", "стоп"],
+      "menu": ["Отправку RT-101 не пускает другая проверка.", "отложить RT-101", "стоп"],
       "answer": { "owner": "<menu-answer:2>" }
     },
-    { "role": "agent", "at": "2026-11-14T17:38:00Z", "say": "Stopped at your word." }
+    { "role": "agent", "at": "2026-11-14T17:38:00Z", "say": "Остановился по вашему слову." }
   ]
 }

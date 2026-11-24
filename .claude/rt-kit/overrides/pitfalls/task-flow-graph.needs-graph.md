@@ -22,6 +22,10 @@ npm run graph:build
 npm run graph:build -- projects/utils apps/message-bus
 ```
 
+`graph:build` is not run in a task branch. It rewrites every `graph.json` of the tree, and a
+difference foreign to the task leaves in its branch. A review finding that asks for a rebuild is
+written off with this reason; the graphs are rebuilt by a task of their own.
+
 Only `graph.json` lies in history, and `built_at_commit` names the parent of the commit that carries
 it. A graph after a merge of two branches has no `built_at_commit` at all — the merge driver joins both sides, and the result
 was built from no head.

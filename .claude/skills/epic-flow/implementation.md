@@ -10,7 +10,7 @@ The names and bindings of this tree, next to the rule `SKILL.md` beside it.
 
 ## Where it lives
 
-- **The epic plan** — `docs/plans/`, named by the key `plansDir` in `.claude/rt-kit/checks.json`: the creation command lays the draft of a plan there
+- **The epic plan** — `docs/plans/`, named by the key `plansDir` in `.claude/rt-kit/checks.json`: the creation command puts the draft of a plan there in the epic branch, and in the working copy when the push is refused
 - **The table of assignments** — `.claude/rt-kit/assignments.md`
 
 ## How the law applies here
@@ -29,7 +29,7 @@ The names and bindings of this tree, next to the rule `SKILL.md` beside it.
 - **An epic is not closed by a sign confirmed by reading alone.** — **Not checked.** The sign of the end of an epic is prose in its plan; a machine has nothing to tell what was read from what was checked. It is held by naming every sign aloud, together with a command or a measurement, when the epic is closed
 - **The tasks of an epic are created all at once, by the same turn as the epic itself.** — **Not checked.** The work queue audit judges the epic label against the plan only by the pair «card and plan», and it does not reconcile the makeup of tasks with the order table. Whether one of ten was created or all ten is invisible to it
 - **The epic plan names how the branches of its tasks stand, on a par with their order.** — **Not checked.** The epic plans in `docs/plans/` carry the section «Как стоят ветки», which `tools/task-new.mjs` writes into the draft, and nothing reads it against the base of the task branches. The work queue audit reads the makeup of tasks, not the base of their branches. It is held by the article; the price of the arrangement shows only after the requests are opened — by how many of them the run stalled on.
-- **The epic plan lies where it is found without the network and after the merge.** — `tools/task-new.mjs:writeEpicPlan` — the command lays the draft in the directory named by `plansDir` and writes the path to it into the card; a plan moved by hand afterwards nothing checks
+- **The epic plan lies where it is found without the network and after the merge.** — `tools/task-new-epic.mjs:layEpicPlan` — the command pushes the epic branch with the draft in the directory named by `plansDir`, or lays the draft in the working copy when the push is refused, and writes the path into the card; a plan moved by hand afterwards nothing checks
 - **Which epic this working copy leads is read from the table of assignments, and the owner writes it.** — `tools/tree-assignment.mjs:assignmentFault` — the table is `.claude/rt-kit/assignments.md` in the main branch. The name of the copy lies in `.claude/rt-kit/tree-name` outside history. The refusal comes from `.claude/hooks/tree-assignment-guard.sh` on a created task and a moved card, and from `.claude/hooks/git-guard-delivery.sh` on a branch. The same reading is printed at session start by the `SessionStart` hook in `.claude/settings.local.json`. A closed epic left in the row is refused by `.claude/hooks/git-guard-tree-assignment.sh:rt_assignment_stale`, which asks the board by `rt_task_state`
 
 ## What else is worth knowing when reading the code

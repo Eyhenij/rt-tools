@@ -42,6 +42,7 @@ silent.
 - **The menu hook lets the menu of the exit check through and holds an option that removes or weakens a check.**
 - **The model hook on Stop does not judge open work and holds a question whose answer is already given.**
 - **The model hook on Stop holds a turn that wrote an incident record and did not send it, and lets one that sent it end.**
+- **The model hooks hold a reply and a question that are not in the owner's language, and a question about what the product sanitizes leaves.**
 - **A recorded turn carries no text the owner typed: the word is a class label or a phrase of at most four words that asks to stop or to wait.**
 
 ## What is out of scope
@@ -108,6 +109,8 @@ the case of the deadlock of RT-3304 checks it. Its number is not given again.
 ## History of changes
 
 - 2026-11-24 — an incident record written and not sent holds the turn; scenario 1932.
+- 2026-11-24 — the owner's language of a reply and of a question, the product choice; scenarios 1933
+  and 1934.
 - 2026-11-15 — the subdomain was started with the stop kinds, the six live turns of RT-3276 and the
   lawful ends of a turn.
 - 2026-11-22 — the recorded words «не сейчас», «стоп», «Стой», «жди конца набора», «жди соседа»,

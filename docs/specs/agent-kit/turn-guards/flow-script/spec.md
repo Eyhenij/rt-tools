@@ -59,7 +59,7 @@ There is no interface: the description is read by the engine and by the executor
 - **The engine measures the checked-out branch by the measurers of the description over its sources and prints the state, its action and the exits read, as lines or as one JSON object.**
 - **A branch past a state is not measured below it: a taken-apart folder, an epic merged into the main branch and an epic branch removed on the server keep the measured state.**
 - **A step is measured by the check the commit of the plan wrote; a matched step writes its mark, and an unmatched one drops it.**
-- **A step is refused when its check is a command of the work, its expected result is in no form, or a file of the task folder differs from the commit of the plan.**
+- **A step is refused when its check is a command of the work, its expected result is in no form, or the plan or the grill differs from the commit of the plan.** So does a file of the folder that is no text: a check may run it. The other texts of the folder grow.
 - **A check runs with a limit of 540 seconds, and past it the step does not match.**
 - **The command for the done steps measures again every step the progress marks done.**
 - **A plan may be written only when every step carries a check of a known form that is no command of the work, and a form added to the description is known at once.**

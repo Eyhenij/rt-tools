@@ -48,6 +48,41 @@ c "SC-AK-928 — запись не в документ гарда не буди�
 c "SC-AK-928 — описание прошлого командой не судится" \
     'printf "Данный разбор является записью." > docs/archive/RT-1.md' PASS
 
+# Без тела heredoc судится только то, что команда печатает: цепочка правок и проверок длиннее
+# сорока слов читалась одним предложением и отбивалась, хотя своего текста не несла.
+CHAIN='sed -i "" -e s/a/b/ docs/x.md'
+for word in $(seq 1 30); do CHAIN="$CHAIN && node tools/check.mjs слово${word}"; done
+c "SC-AK-1136 — a sed chain over 60 words passes" "$CHAIN" PASS
+c "SC-AK-1136 — printf of officialese into a .md is refused" \
+    "${CHAIN} && printf '%s\\n' 'Проверка является инструментом контроля.' > docs/x.md" deny
+c "SC-AK-1136 — печать группы в документ судится" \
+    '{ printf "# Заголовок\n"; echo "Данный этап является закрытым."; } > docs/x.md' deny
+c "SC-AK-1136 — печать в трубу до tee судится" \
+    'echo "Данный этап является закрытым." | tee docs/x.md' deny
+c "SC-AK-1136 — печать без кавычек судится" 'echo Данный этап является закрытым > docs/x.md' deny
+c "SC-AK-1136 — строка на входе судится" 'tee docs/x.md <<< "Данный этап является закрытым."' deny
+# Формы, которыми текст попадает в документ без heredoc: судится всё, кроме частей, которые текста не несут.
+BAD='Данный этап является закрытым.'
+c "SC-AK-1136 — запись кодом node судится" "node -e \"require('fs').writeFileSync('docs/x.md','$BAD')\"" deny
+c "SC-AK-1136 — запись кодом python судится" "python3 -c \"open('docs/x.md','w').write('$BAD')\"" deny
+c "SC-AK-1136 — печать в цикле судится" "for i in 1; do echo '$BAD'; done > docs/x.md" deny
+c "SC-AK-1136 — текст переменной судится" "T='$BAD'; echo \"\$T\" > docs/x.md" deny
+c "SC-AK-1136 — печать через exec судится" "exec > docs/x.md; echo '$BAD'" deny
+c "SC-AK-1136 — текст после перенаправления судится" "echo > docs/x.md '$BAD'" deny
+c "SC-AK-1136 — перенаправление перед печатью судится" "> docs/x.md echo '$BAD'" deny
+c "SC-AK-1136 — печать по полному пути судится" "/usr/bin/printf '%s' '$BAD' > docs/x.md" deny
+c "SC-AK-1136 — печать кодом awk судится" "awk 'BEGIN{print \"$BAD\"}' > docs/x.md" deny
+c "SC-AK-1136 — новый текст замены sed судится" "sed -i '' 's/старое/$BAD/' docs/x.md" deny
+c "SC-AK-1136 — прежняя редакция в замене sed не судится" "sed -i '' 's/$BAD/Этап закрыт./' docs/x.md" PASS
+c "SC-AK-1136 — печать sed в документ судится" "sed 's/^/$BAD/' docs/y.md > docs/x.md" deny
+c "SC-AK-1136 — текст export судится" "export T='$BAD'; echo \"\$T\" > docs/x.md" deny
+c "SC-AK-1136 — печать jq судится" "jq -rn '\"$BAD\"' > docs/x.md" deny
+c "SC-AK-1136 — формат git судится" "git log --format='$BAD' > docs/x.md" deny
+c "SC-AK-1136 — текст внутри подстановки процесса судится" "cat <(echo '$BAD') > docs/x.md" deny
+c "SC-AK-1136 — текст, отданный сценарию, судится" "bash gen.sh '$BAD' > docs/x.md" deny
+c "SC-AK-1136 — образец поиска не судится" "grep '$BAD' docs/y.md > docs/x.md" PASS
+c "SC-AK-1136 — апостроф в комментарии печать не прячет" "$(printf "# it's the note\nprintf '%%s' '%s' > docs/x.md" "$BAD")" deny
+
 # Текст берётся из тел heredoc: правка, несущая внутри команды прежнюю редакцию, отбивалась
 # словами той редакции — и на второй попытке снова, потому что старый текст оставался в команде.
 c "SC-AK-1136 — прежняя редакция вне тела heredoc не судится" \

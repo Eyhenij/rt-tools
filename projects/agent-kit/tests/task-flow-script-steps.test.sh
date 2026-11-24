@@ -43,7 +43,7 @@ TF_G=(git -c user.name=t -c user.email=t@example.test -c commit.gpgsign=false)
        Check: `echo привет мир` → ~мир
 - **Readiness sign:** шаги измерены
 PLAN
-    printf 'один\n' > docs/tasks/RT-1-x/probe.txt
+    printf 'один\n' | tee docs/tasks/RT-1-x/probe.txt docs/tasks/RT-1-x/grill.md > docs/tasks/RT-1-x/approvals.md
     printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Совпасть\n- [x] 1.2 Не совпасть\n- [>] 1.3 Ждать дольше предела\n- [ ] 1.4 Сделать работу проверкой\n- [ ] 1.5 Ждать формы, которой нет\n- [ ] 1.6 Принять форму из описания\n' > docs/tasks/RT-1-x/progress.md
     git add -A
     "${TF_G[@]}" commit -q -m plan
@@ -89,12 +89,17 @@ report "step: SC-AK-1406 — команда работы как проверка
 got="$(tf_step 1.5)"
 report "step: SC-AK-1406 — форма ожидаемого не распознана — отказ до запуска" "$(printf '%s' "$got" | grep -c 'is in no form: примерно ноль.* code=1')" 1
 
-# SC-AK-1407 — файл папки отличается от коммита плана
+# SC-AK-1407 — разбор отличается от коммита плана; прочие записи папки растут
+printf 'два\n' > "$TF_STEP/docs/tasks/RT-1-x/grill.md"
+report "step: SC-AK-1407 — разбор правлен после плана — отказ" \
+    "$(tf_step 1.1 | grep -c 'differs from the commit of the plan: docs/tasks/RT-1-x/grill.md code=1')" 1
+printf 'один\n' > "$TF_STEP/docs/tasks/RT-1-x/grill.md"
 printf 'два\n' > "$TF_STEP/docs/tasks/RT-1-x/probe.txt"
-got="$(tf_step 1.1)"
-report "step: SC-AK-1407 — файл папки правлен после плана — отказ" \
-    "$(printf '%s' "$got" | grep -c 'differs from the commit of the plan: docs/tasks/RT-1-x/probe.txt code=1')" 1
+report "step: SC-AK-1407 — файл папки, который не текст, правлен после плана — отказ" \
+    "$(tf_step 1.6 | grep -c 'differs from the commit of the plan: docs/tasks/RT-1-x/probe.txt code=1')" 1
 printf 'один\n' > "$TF_STEP/docs/tasks/RT-1-x/probe.txt"
+printf 'одобряю\n' >> "$TF_STEP/docs/tasks/RT-1-x/approvals.md"
+report "step: SC-AK-1407 — an approval line added after the plan passes" "$(tf_step 1.1 | grep -c '· совпало code=0')" 1
 printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Совпасть\n- [x] 1.2 Не совпасть\n- [x] 1.3 Ждать дольше предела\n' > "$TF_STEP/docs/tasks/RT-1-x/progress.md"
 report "step: SC-AK-1407 — ход работы правится и после плана" "$(tf_step 1.1 | grep -c '· совпало code=0')" 1
 
@@ -118,12 +123,12 @@ tf_step 1.2 >/dev/null
 report "step: SC-AK-1736 — несовпавший шаг оставляет ход работы как был" "$([ "$before" = "$(cat "$TF_PROGRESS")" ] && echo тот же || echo другой)" 'тот же'
 report "step: SC-AK-1736 — метки несовпавшего шага нет" "$(test -e "$TF_MARK/1.2.json" && echo есть || echo нет)" 'нет'
 
-# SC-AK-1726 — файл папки правлен после коммита плана: step отказывает, шаг не отмечен
-printf 'два\n' > "$TF_STEP/docs/tasks/RT-1-x/probe.txt"
+# SC-AK-1726 — разбор правлен после коммита плана: step отказывает, шаг не отмечен
+printf 'два\n' > "$TF_STEP/docs/tasks/RT-1-x/grill.md"
 printf '# Ход работы\n\n## Шаги\n\n- [>] 1.1 Совпасть\n' > "$TF_PROGRESS"
-report "step: SC-AK-1726 — папка изменена после плана — отказ" "$(tf_step 1.1 | grep -c 'differs from the commit of the plan.* code=1')" 1
+report "step: SC-AK-1726 — разбор изменён после плана — отказ" "$(tf_step 1.1 | grep -c 'differs from the commit of the plan.* code=1')" 1
 report "step: SC-AK-1726 — шаг остался неотмеченным" "$(grep -c '^- \[x\] 1.1' "$TF_PROGRESS")" 0
-printf 'один\n' > "$TF_STEP/docs/tasks/RT-1-x/probe.txt"
+printf 'один\n' > "$TF_STEP/docs/tasks/RT-1-x/grill.md"
 
 TF_HOME="$TF_DIR/records-home"
 TF_REC="$TF_HOME/$(printf '%s' "$(cd "$TF_STEP" && pwd -P)" | sed 's#[/.]#-#g')"

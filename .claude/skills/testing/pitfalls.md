@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.0 · pitfalls/testing.md · e8c75be98230 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · pitfalls/testing.md · 177492b3865f · правится надстройкой, не здесь -->
 # Verification — cold part
 
 Pitfalls: traps already stepped on. Loaded not with the rule but on demand — an ordinary
@@ -90,6 +90,12 @@ The rule is `testing`; the articles that hold the law stand there.
   when the rows became three. The expected value is written as a number in the test itself next
   to the check, and the shared module of the end-to-end tests holds the techniques — open, wait,
   read off the page — but not what is expected of the page.
+- **A parser of a tool's output is tested on output the tool printed.** Synthetic output lacks the fields
+  its author did not think of: an empty file, a finding on a directory. A finding with an empty `file`
+  resolved to the tree root and gave a false divergence; only the live check found it.
+- **In a substitution braces with a comma are expanded.** In bash 3.2 a command substitution inside
+  double quotes expands a pair of braces in its nested quotes: `"$(f "x{a,b}")"` calls another
+  command than is written. Code with such braces goes into a variable first.
 - **Red that came without a code edit is investigated from the side of time.** A green run of the
   same tip an hour earlier means the search is not in the edit: a fixture's expiry date, a leap
   day, the day rolling over in universal time, the machine's time zone. A test waited two days

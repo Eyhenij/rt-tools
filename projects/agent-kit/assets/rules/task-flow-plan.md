@@ -30,7 +30,7 @@ Rule under the law `docs/constitution/work-conduct.md`. Cold part: `pitfalls.md`
 - **A count that becomes the measure of the work is bounded by the declaration, not by the file.**
 - **Waiting for one part of a stage is never a stop of the stage.**
 - **A finding made mid-stage is checked against the plan's exit conditions before the first edit.** Outside them it is filed as a task.
-- **Done work is marked only in the progress.**
+- **Done work is marked only in the progress.** After the plan's commit the plan, the grill and a script stay; the other records of the folder grow.
 - **The plan names the steps of every stage, and the progress mirrors them with a mark each.**
 - **The numbers and the names of the steps are copied from the plan, not reworded.**
 - **Exactly one step carries the mark of going on right now, while any step is not done.**

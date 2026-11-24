@@ -21,7 +21,7 @@ with the rule.
 | --- | --- |
 | an autonomous session | the owner's request to work without them, stated in words and with a time boundary; started by the command `/night` |
 | a default instead of a question | a "Decisions" line in the grill: what was taken, the reason and the cost of a mistake |
-| work visible from outside | pushing a branch, opening a PR, merging, publishing the package, sending cargo; moving a card on the work queue is not among them: the session moves it back itself, and nobody acts on it before morning |
+| work visible from outside | pushing a branch — `task:new --epic` pushes one too — opening a PR, merging, publishing the package, sending cargo; moving a card on the work queue is not among them: the session moves it back itself, and nobody acts on it before morning |
 | a chain | the branch of each next piece of work is created from the branch of the previous one |
 | the morning list | a file the command `/night` creates and every closed work appends to: the work, the branch, what backs it, what it waits for; the last message gives it whole |
 | the boundary and the allowance | two lines in the head of the list: `Автономно до: ГГГГ-ММ-ДДTЧЧ:ММ`, which the guards read, and `Разрешено:` with the owner's words |

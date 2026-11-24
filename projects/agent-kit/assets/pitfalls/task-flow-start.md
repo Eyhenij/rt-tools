@@ -278,6 +278,9 @@ of each of its steps and marks the step done itself; a hand mark is refused.
   queue.
 - **The grill is written to disk at once, not stored up in the conversation.** The session breaks
   off, and a grill lived through in conversation is recovered only by the owner's retelling.
+- **The plan is committed after its last reading.** The step engine reads
+  the plan of the commit that added it: a correction committed apart is not seen, and the history is
+  rebuilt before the push.
 - **One grill produced several tasks — the common part leaves for the epic plan.** The task folder
   dies with the merge, and the task order outlives it; the directory is named by the rule's
   companion.

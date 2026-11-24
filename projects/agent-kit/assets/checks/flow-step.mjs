@@ -1,10 +1,10 @@
 /**
  * A step of the plan measured by its check — the engine command `step`.
  *
- * The check is taken from the commit that added the plan, not from the working copy: a plan edited
- * after it is written would measure what was never approved. Every file of the task folder that the
- * commit holds, except the progress, must still match it, otherwise the step is refused: a script of
- * the folder edited after the plan would answer what the step needs. A command of the work itself is
+ * The check is taken from the commit that added the plan: a plan edited later would measure what was
+ * never approved. The plan, the grill and every file of the folder that is no text must still match
+ * that commit: a script edited after the plan would answer what the step needs. The other texts of the
+ * folder grow. A command of the work itself is
  * never a check, and an expected result in no form of `expect` is refused before anything runs. The
  * command runs with a limit; past it the step does not match.
  *
@@ -42,8 +42,9 @@ export const STEP_LIMIT_MS = 540_000;
 /** The budget of the rerun before a PR, in milliseconds: a second run of a group starts only within it. */
 export const RERUN_BUDGET_MS = 1_500_000;
 
-/** The progress changes every turn and is the one file of the folder not judged against the plan. */
 const PROGRESS = 'progress.md';
+/** What the owner approved: these files stay as the commit of the plan holds them. */
+const FROZEN = ['plan.md', 'grill.md'];
 
 /** A taken-apart folder put back for one run, or null; a live, broken or stray folder on disk refuses the step. */
 export function restoreFolder(git, folder) {
@@ -144,11 +145,12 @@ export function planOfBranch(git, words = {}) {
     return { branch, folder, sha, text, fingerprint: createHash('sha256').update(text).digest('hex').slice(0, 16) };
 }
 
-/** The files of the task folder that differ from the commit of the plan; the progress is not judged. */
+/** The files that differ from the commit of the plan: the plan, the grill and every file that is no text; the other texts grow. */
 export function changedSincePlan(git, plan, read = readFile) {
+    const frozen = (name) => FROZEN.includes(name) || !name.endsWith('.md');
     return git
         .filesAt(plan.folder, plan.sha)
-        .filter((path) => !path.endsWith(`/${PROGRESS}`))
+        .filter((path) => frozen(path.slice(path.lastIndexOf('/') + 1)))
         .filter((path) => read(path) !== git.versionAt(path, plan.sha));
 }
 

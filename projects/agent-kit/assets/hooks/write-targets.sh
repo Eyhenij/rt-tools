@@ -145,11 +145,21 @@ rt_write_targets() {
             # answer was forbidden as an edit of that helper — three times in a row in one session.
             # Inside a body that does write, all paths are still taken: the path and the write call
             # stand there on different lines, and there is nothing to tie them together with.
+            #
+            # A redirect inside a body names a file. With an extension of one it is a redirect
+            # anywhere but after `=` or `-`, and so is a variable of the shell; a path with a slash
+            # and no extension only after a space, a quote or at the line start, and not before a
+            # bracket. `a>b`, `a > b.length`, `w > h/2` and `(w > h/c)` of the language compare.
+            function redirects(s) {
+                return s ~ /(^|[ \t\047\"&])[0-9]?>>?[ \t]*[A-Za-z0-9_.~$@-]*\/[A-Za-z_.~$@][A-Za-z0-9_.~$@\/-]*([^A-Za-z0-9_.~$@\/)-]|$)/ \
+                    || s ~ /(^|[^=-])>[ \t]*[\047\"]?[$][{]?[A-Z]/ \
+                    || s ~ /(^|[^=-])>[ \t]*[A-Za-z0-9_.~$@\/-]*\.(md|json|mjs|cjs|js|ts|tsx|sh|scss|css|html|yml|yaml|txt|xml|svg|toml|prisma|py|lock|conf|ini|env|cfg)([^A-Za-z0-9]|$)/
+            }
             function writes(s) {
                 return s ~ /open[ \t]*\([^)]*[\047\"](w|a|r\+|w\+|a\+)[\047\"]/ \
                     || s ~ /writeFileSync|writeFile|appendFile|write_text|write_bytes|\.write\(|\.save\(|savefig|to_csv|json\.dump|\.dump\(/ \
                     || s ~ /makedirs|mkdir|rename|replace[ \t]*\(|unlink|rmtree|copyfile|copy2|shutil\./ \
-                    || s ~ />[ \t]*[A-Za-z0-9_.~$\/-]/ \
+                    || redirects(s) \
                     || s ~ /(^|[|;&(]|[ \t])(tee|cp|mv|rm|touch|install|truncate)([ \t]|$)/
             }
             function trim(s) { sub(/^[ \t]+/, "", s); sub(/[ \t]+$/, "", s); return s }

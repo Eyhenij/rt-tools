@@ -176,6 +176,7 @@
         "tokenPath": "~/.config/rt-tools-bot-token",
         "reviewer": "Eyhenij",
         "epicLabel": "epic",
+        "epicTreeInstall": "pnpm install --frozen-lockfile --prefer-offline",
         "cargoLabels": [
             "agent-kit-feedback"
         ]

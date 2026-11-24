@@ -34,12 +34,10 @@ Tree rule under `work-conduct`, over `task-flow`. Cold part, steps whole: `pitfa
   the owner by menu first.
 - **The fixes of a round go as one commit named by the round.** «… после первого/второго круга
   ревью (RT-N)»: the one place a later commit fixes an earlier one.
-- **The push set runs once per branch, after round two.** Base merged in once, nothing touched
-  until the push; a fix after the PR reruns it.
+- **The push set runs once per branch, after round two.** Base merged in once; after green only the
+  take-apart commit, then the push; a fix after the PR reruns it.
 - **Unattended work keeps the loop and the night rule both.** By `autonomous-work` the owner's
   screen becomes a measurement; push and PR wait for the owner's return where it keeps all local.
-- **No guard counts the rounds.** Nor the live check: the gate demands the loop loaded; round
-  commits and the PR body show the rest.
 
 ## Duties of the steps
 

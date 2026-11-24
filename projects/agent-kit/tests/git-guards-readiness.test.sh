@@ -117,6 +117,24 @@ dlv_reason "SC-AK-370 — отказ называет отставание чи�
     'does not carry the tip of «main».*ahead by 1'
 dlv_reason "SC-AK-370 — и чем берётся свежее основание" "$BEHIND" 'git checkout -b RT-93-new' \
     'git fetch origin'
+
+# Ветка эпика отстала от главной: отказ называет и слияние, и место починок, которых оно требует, —
+# ветку задачи, взятую от этой вершины. Без него починки коммитили прямо в ветку эпика.
+EPIC_LAG="$(fixture_repo_branched main RT-80-epic)"
+mkdir -p "$EPIC_LAG/.claude/rt-kit"
+printf '{"board":{"taskKey":"RT","owner":"o","repo":"r"}}\n' > "$EPIC_LAG/.claude/rt-kit/checks.json"
+printf 'rt_task_state() { printf %%s '"'"'{"exists":true,"open":true,"onBoard":true,"assigned":true,"numbered":true,"epic":"80"}'"'"'; }\n' \
+    > "$EPIC_LAG/.claude/rt-kit/project.sh"
+fixture_commit "$EPIC_LAG" docs/plans/epic.md 'план эпика' 'docs: план эпика'
+git -C "$EPIC_LAG" update-ref refs/remotes/origin/RT-80-epic RT-80-epic 2>/dev/null
+git -C "$EPIC_LAG" checkout -q main 2>/dev/null
+fixture_commit "$EPIC_LAG" docs/чужое.md 'правка соседней ветки' 'docs: чужая правка'
+git -C "$EPIC_LAG" update-ref refs/remotes/origin/main main 2>/dev/null
+git -C "$EPIC_LAG" checkout -q RT-80-epic 2>/dev/null
+dlv_reason "SC-AK-1164 — the main tip refusal names the task branch" "$EPIC_LAG" \
+    'git checkout -b RT-81-new origin/RT-80-epic' \
+    'go into the task branch: .* git checkout -b RT-81-new RT-80-epic'
+rm -rf "$EPIC_LAG"
 # Ветка под пробу без номера этого требования не получает: она живёт локально, и заявка с неё
 # не откроется.
 dlv "SC-AK-370 — беззадачная ветка основания не спрашивает" "$BEHIND" \

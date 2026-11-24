@@ -238,8 +238,8 @@ flowchart TD
 - **The state set is taken from the project process, not assigned by the rule.** Agile, Scrum and
   Basic name the same three steps differently, and a move to a state the process lacks answers with
   a refusal on every work item in a row.
-- **Guard scenarios set the git settings themselves, not take them from the machine.** Author, email
-  and signature go as `-c` flags.
+- **Guard scenarios set the git settings and the locale themselves, not take them from the machine.**
+  Author, email and signature go as `-c` flags; the push guard runs steps under `C.UTF-8`.
 
 ## What of the law is not here
 

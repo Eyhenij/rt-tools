@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.39.0 · checks/epic-table.github.mjs · 3b425b2da0c6 · правится надстройкой, не здесь
+// rt-kit v0.39.0 · checks/epic-table.github.mjs · 6cc700e49acb · правится надстройкой, не здесь
 /**
  * The table of the epic's tasks: the order from the plan, the state from the hosting.
  *
@@ -227,7 +227,7 @@ function gathered(argv) {
     const plan = found.text;
     const rows = makeupOf(plan);
     if (rows.length === 0) {
-        return { ok: false, why: `замысел «${found.path}» не несёт состава эпика: состав — таблица со столбцом задач` };
+        return { ok: false, why: `план «${found.path}» не несёт состава эпика: состав — таблица со столбцом задач` };
     }
 
     const board = fetchBoard(OPTIONS);

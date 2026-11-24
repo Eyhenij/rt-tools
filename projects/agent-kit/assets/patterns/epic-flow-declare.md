@@ -25,9 +25,13 @@ queue with the epic label, and as a plan next to it.
 npm run task:new -- --epic --title '<Возможность, которая разрабатывается>' --slug <slug> < тело.md
 ```
 
-The call puts the epic label on the card, lays a draft of the plan in the tree's directory of plans
-and writes the path to it into the body: the audit reads the plan by that path, and a card without
-it points into emptiness. Everything the epic cannot be created without is asked before the card is
+The call puts the epic label on the card, writes the path of the plan into its body, takes the epic
+branch from the main branch, and commits and pushes a draft of the plan into it from a temporary
+clone: the working copy stays on its branch. What its hooks need, the tree installs there by the
+setting `board.epicTreeInstall`. The audit reads the plan by that path, and a card
+without it points into emptiness. A refused push leaves the draft in the working copy. The push runs
+the whole set of the tree before it, so the call goes in the background; at night it is work visible
+from outside and waits for the owner's word. Everything the epic cannot be created without is asked before the card is
 made — an administrator alone can take a made one off the board. What the call does not write — a
 file of epics, an index of plans — the tree lists as hand steps of the same commit as the plan.
 
@@ -40,27 +44,28 @@ revision is the owner's decision.
 The row of the table of assignments that gives the epic to this working copy is the owner's, and it
 is asked for right after the epic card is created, before the task cards: the assignment guard
 counts a call with `--epic-of` as taking work and refuses a number other than the assigned epic.
-The guard reads the table of the working copy, and the epic branch is taken from the main branch:
-the row lies in the main branch before the epic branch is taken, otherwise every branch of the
-epic reads the old epic.
+The guard reads the table of the working copy, and the epic branch is taken from the main branch
+before the row lies there: once it does, the main branch is merged into the epic branch before the
+first branch of a task, otherwise every branch of the epic reads the old epic.
 
 When the row stands, the cards for all the tasks are created at once — by the same call with
 `--epic-of`, for every row of the makeup. The issued numbers return to the same table: "take the
 next" answers with a number from now on.
 
-**Next move:** the branch of the epic is taken, and the declared plan with the task numbers is
+**Next move:** the branch of the epic is checked out, and the declared plan with the task numbers is
 committed into it — a commit on the main branch is refused.
 
 ## State `эпик-заведён`: the branch of the epic
 
 ```bash
-git checkout -b <КЛЮЧ>-<номер эпика>-<slug> origin/main
+git checkout <КЛЮЧ>-<номер эпика>-<slug>                  # the call pushed the branch
+git checkout -b <КЛЮЧ>-<номер эпика>-<slug> origin/main   # the push was refused
 ```
 
 The branch is taken before the first task of the epic, not with it: taken later, it leaves the first
 task standing on the main branch, and the epic starts as half of itself already merged.
 
-The plan of the epic is committed into it right after it is taken, and the branch is pushed at once — the branches of the
+The plan of the epic is committed into it and the branch is pushed at once; the draft the call sent is filled in by the next commit — the branches of the
 tasks are taken from it, and one that exists only on the machine is a base nobody else has. The card
 names the branch: the reader comes to the epic from the queue, and the queue holds no branches.
 
@@ -74,9 +79,9 @@ epic, and the folder: pattern `task-flow-start`, state `договорённос
 
 - The epic branch taken together with the first task, not before it: the first task stands on the
   main branch, and the epic starts as half of itself already merged.
-- An epic found in the middle of a task, declared from the copy of that task: the push hook refuses a
-  branch the copy does not stand on. It is declared and pushed by a session standing in a
-  second working tree, taken from the main branch by the order of the tree — by the owner's word where
+- An epic found in the middle of a task, its plan filled in from the copy of that task: the push hook
+  refuses a branch the copy does not stand on. The draft goes by the call itself; the filled plan is
+  committed and pushed by a session standing in a second working tree, taken from the main branch by the order of the tree — by the owner's word where
   it asks for one — with its own install there, not a link to the install of the first. A push into it from the
   first copy is refused.
 - A task moved to another epic and named only in its plan: it stays a sub-issue of the former card,
