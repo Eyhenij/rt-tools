@@ -2,6 +2,7 @@ import { BooleanInput } from '@angular/cdk/coercion';
 import {
     afterRenderEffect,
     booleanAttribute,
+    DestroyRef,
     Directive,
     ElementRef,
     inject,
@@ -10,8 +11,8 @@ import {
     InputSignalWithTransform,
 } from '@angular/core';
 
-/** Дольше плавная прокрутка ряда не идёт: без события её конца перенос возвращается по этому сроку. */
-const STEER_LIMIT_MS: number = 1000;
+/** Столько прокрутка ряда молчит, и плавное движение считается кончившимся. */
+const STEER_QUIET_MS: number = 200;
 
 /**
  * Ряд чипов в шторке — карусель: чипы стоят в одну строку, ряд прокручивается вбок по кругу, выбранный
@@ -23,6 +24,7 @@ const STEER_LIMIT_MS: number = 1000;
     selector: '[rtChipCarousel]',
     host: {
         '(scroll)': 'onScroll()',
+        '(scrollend)': 'onScrollEnd()',
     },
 })
 export class RtChipCarouselDirective {
@@ -36,6 +38,9 @@ export class RtChipCarouselDirective {
      * полпути, поэтому до конца прокрутки ряд не переносится.
      */
     #steering: boolean = false;
+
+    /** Ожидание тишины прокрутки, после которой ряд считается вставшим. */
+    #settle: number | null = null;
 
     public readonly enabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         alias: 'rtChipCarousel',
@@ -55,12 +60,20 @@ export class RtChipCarouselDirective {
                 this.#placed = true;
             }
         });
+        inject(DestroyRef).onDestroy((): void => {
+            this.#steering = false;
+            this.#finish();
+        });
     }
 
     /** Прокрутка ушла в крайний повтор — ряд переносится на ширину повтора, вид не меняется. */
     protected onScroll(): void {
+        if (this.#steering) {
+            this.#rearm();
+            return;
+        }
         const span: number = this.#span();
-        if (!this.enabled() || span <= 0 || this.#steering) {
+        if (!this.enabled() || span <= 0) {
             return;
         }
         const start: number = this.#chip(this.loop())?.offsetLeft ?? 0;
@@ -74,7 +87,16 @@ export class RtChipCarouselDirective {
         }
     }
 
+    /** Браузер сообщил конец прокрутки — ряд встал, ждать тишины не нужно. */
+    protected onScrollEnd(): void {
+        this.#finish();
+    }
+
     #center(at: number, asked: ScrollBehavior): void {
+        // Выбор сняли днём календаря — ряд остаётся там, где его оставил человек.
+        if (at < 0 && this.#placed) {
+            return;
+        }
         const left: number | null = this.#target(at, asked === 'smooth');
         if (left === null || Math.abs(this.#row.scrollLeft - left) < 1) {
             return;
@@ -122,17 +144,35 @@ export class RtChipCarouselDirective {
     /** Плавная прокрутка идёт: перенос ждёт её конца, а за ним ряд тихо встаёт в средний повтор. */
     #steer(): void {
         this.#steering = true;
-        const done: () => void = (): void => {
-            if (!this.#steering) {
-                return;
-            }
-            this.#steering = false;
-            this.#row.removeEventListener('scrollend', done);
-            this.onScroll();
-        };
-        this.#row.addEventListener('scrollend', done);
-        // Браузер без события конца прокрутки: перенос возвращается, когда плавное движение заведомо кончилось.
-        this.#row.ownerDocument.defaultView?.setTimeout(done, STEER_LIMIT_MS);
+        this.#rearm();
+    }
+
+    /**
+     * Конец движения ждётся по тишине: браузер без события конца прокрутки его не сообщает, и ряд
+     * считается вставшим, когда прокрутка молчит. Каждое новое движение заводит ожидание заново.
+     */
+    #rearm(): void {
+        const view: Window | null = this.#row.ownerDocument.defaultView;
+        if (view === null) {
+            this.#finish();
+            return;
+        }
+        if (this.#settle !== null) {
+            view.clearTimeout(this.#settle);
+        }
+        this.#settle = view.setTimeout((): void => this.#finish(), STEER_QUIET_MS);
+    }
+
+    #finish(): void {
+        if (this.#settle !== null) {
+            this.#row.ownerDocument.defaultView?.clearTimeout(this.#settle);
+            this.#settle = null;
+        }
+        if (!this.#steering) {
+            return;
+        }
+        this.#steering = false;
+        this.onScroll();
     }
 
     /** Ширина одного повтора: от первого чипа до первого чипа следующего повтора. */

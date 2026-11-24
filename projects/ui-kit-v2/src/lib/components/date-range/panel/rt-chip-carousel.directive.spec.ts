@@ -97,6 +97,42 @@ describe('RtChipCarouselDirective', (): void => {
         expect(row.scrollLeft).toBe(300);
     });
 
+    it('SC-UKV-1798 — без события конца прокрутки ряд встаёт по тишине, и каждое движение ждёт её заново', (): void => {
+        jest.useFakeTimers();
+        try {
+            const { fixture, row }: { fixture: ComponentFixture<ChipCarouselHostComponent>; row: HTMLElement } = setup(0);
+            row.scrollTo = (): void => undefined;
+            fixture.componentInstance.chosen.set(2);
+            fixture.detectChanges();
+
+            row.scrollLeft = 600;
+            row.dispatchEvent(new Event('scroll'));
+            jest.advanceTimersByTime(150);
+            // Второй выбор до тишины: ожидание первого не снимает его движение.
+            fixture.componentInstance.chosen.set(1);
+            fixture.detectChanges();
+            jest.advanceTimersByTime(150);
+            row.dispatchEvent(new Event('scroll'));
+            jest.advanceTimersByTime(150);
+            expect(row.scrollLeft).toBe(600);
+
+            jest.advanceTimersByTime(100);
+            expect(row.scrollLeft).toBe(300);
+        } finally {
+            jest.useRealTimers();
+        }
+    });
+
+    it('SC-UKV-1798 — выбор, снятый днём календаря, ряд не сдвигает', (): void => {
+        const { fixture, row }: { fixture: ComponentFixture<ChipCarouselHostComponent>; row: HTMLElement } = setup(2);
+        const before: number = row.scrollLeft;
+
+        fixture.componentInstance.chosen.set(-1);
+        fixture.detectChanges();
+
+        expect(row.scrollLeft).toBe(before);
+    });
+
     it('выключенная, ряд не трогает', (): void => {
         const { row }: { row: HTMLElement } = setup(1, false);
 
