@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.0 · pitfalls/task-flow-graph.needs-graph.md · 484d0b81d5e4 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · pitfalls/task-flow-graph.needs-graph.md · 484d0b81d5e4 · правится надстройкой, не здесь -->
 # Working with the tree's code graph — cold part
 
 The pattern `task-flow-graph` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.

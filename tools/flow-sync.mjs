@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.39.0 · checks/flow-sync.mjs · 4414ee375719 · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/flow-sync.mjs · 4414ee375719 · правится надстройкой, не здесь
 /**
  * The generator of the texts the task flow description is told by. Five views are written from the
  * description of the package, each between the markers `<!-- flow:<view> -->` and

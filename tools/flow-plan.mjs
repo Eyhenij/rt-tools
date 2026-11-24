@@ -1,4 +1,4 @@
-// rt-kit v0.39.0 · checks/flow-plan.mjs · efc1d55fba68 · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/flow-plan.mjs · efc1d55fba68 · правится надстройкой, не здесь
 /**
  * The approval of a plan and the forms of its checks — the engine commands `plan-check` and
  * `plan-red`.
