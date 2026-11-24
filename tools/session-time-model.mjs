@@ -25,13 +25,36 @@ export const CATEGORIES = [
 ];
 export const OWNER = 'owner';
 
+/** A run of the push set. A command that only names the file — a search, a print of it — is no run. */
+const RUNS_SET = /(?:^|[\s;&|(])(?:bash|sh)\s+(?:-\w+\s+)*\S*git-guard-push-ahead\.sh/;
+
+/** A command that waits in the foreground until the running set ends. */
+const WAITS_SET = /\bpgrep\b[^\n;|&]*push-ahead/;
+
+/** The options of git stand before the verb, so `git -c key=value push` is a push too. */
+const PUSH = /\bgit(?:\s+-[cC]\s+(?:'[^']*'|"[^"]*"|[^\s'"]+(?:'[^']*'|"[^"]*")?)|\s+--?[\w-]+(?:=\S+)?)*\s+push\b/;
+
+const OPENS_PR = /(?:^|[\s;&|(/])gh\s+pr\s+create\b/;
+
+/** What a command carries as text — a message of a commit, a here-document, an echoed line — runs nothing. */
+const withoutText = (command) =>
+    command
+        .replace(/<<-?\s*(['"]?)(\w+)\1[^\n]*\n[\s\S]*?\n\s*\2(?=\n|$)/g, '')
+        .replace(/(?:\s-m|\s--message|\becho|\bprintf)[ =]+("(?:[^"\\]|\\.)*"|'[^']*')/g, '');
+
+export const runsSet = (command) => RUNS_SET.test(withoutText(command));
+export const opensPr = (command) => OPENS_PR.test(withoutText(command));
+const isPush = (command) => runsSet(command) || [WAITS_SET, PUSH].some((pattern) => pattern.test(withoutText(command)));
+
 /** The kind of a shell command: the first match wins, the order is from the specific to the general. */
 const COMMANDS = [
-    ['pushset', /git-guard-push-ahead\.sh|\bgit push\b/],
+    ['pushset', isPush],
+    ['ci', /\bgh run watch\b|\bgh pr checks\b.*--watch/],
     ['checks', /visual-gate|:e2e\b|serve:stand|storybook|playwright/],
     ['checks', /ngdoctor.*check|check.*ngdoctor/],
     ['checks', /test-hooks|tests\/run\.sh|check-hooks|\.test\.sh/],
     ['checks', /nx (?:affected|run|test|build|lint)|run build|jest|check:all/],
+    ['checks', /\bpnpm (?:run )?(?:-s )?(?:test|lint)\b|\bvitest\b/],
     ['board', /task-flow-script|task:new|task:move|epic-table|check:board/],
     ['checks', /tools\/check|agent-kit|pnpm run check|check:/],
     ['board', /\bgh\b|\bbot api/],
@@ -39,23 +62,36 @@ const COMMANDS = [
 
 const commandKind = (command) => {
     const text = command.replace(/cd \S+ *(?:&&|;)/g, '');
-    return COMMANDS.find(([, pattern]) => pattern.test(text))?.[0] ?? 'tools';
+    const match = ([, pattern]) => (typeof pattern === 'function' ? pattern(text) : pattern.test(text));
+    return COMMANDS.find(match)?.[0] ?? 'tools';
 };
 
-const toolKind = ({ name, input }) => {
-    if (name === 'AskUserQuestion') return OWNER;
-    return name === 'Bash' ? commandKind(String(input?.command ?? '')) : 'tools';
+/** Calls that hand the work to agents; a foreground one is waited for by its result. */
+const AGENTS = new Set(['Agent', 'Task', 'Workflow']);
+
+const toolKind = ({ name, command }) => {
+    if (name === 'AskUserQuestion' || name === 'ExitPlanMode') return OWNER;
+    if (AGENTS.has(name)) return 'agents';
+    return name === 'Bash' ? commandKind(command) : 'tools';
 };
 
 /** What a command of the background is waited for by: the pipeline is asked through the host client. */
-const waitKind = ({ name, input }) => {
-    if (name === 'Agent') return 'agents';
-    const command = String(input?.command ?? '');
-    if (/push-ahead/.test(command)) return 'pushset';
+const waitKind = ({ name, command }) => {
+    if (AGENTS.has(name)) return 'agents';
+    if (isPush(command)) return 'pushset';
     return /\bgh\b|\bbot api/.test(command) ? 'ci' : 'checks';
 };
 
 const textOf = (content) => (typeof content === 'string' ? content : JSON.stringify(content ?? ''));
+
+/** A tool call as the measure needs it: of the input only the command and the role are kept. */
+const callOf = ({ name, input }, at, branch) => ({
+    name,
+    command: String(input?.command ?? ''),
+    role: input?.subagent_type ?? null,
+    at,
+    branch,
+});
 
 /** One record of a journal as an event of the main thread, or null. Tool calls are kept for the results that answer them. */
 export function eventOf(record, calls) {
@@ -65,7 +101,7 @@ export function eventOf(record, calls) {
     if (Number.isNaN(at)) return null;
     if (record.type === 'assistant') {
         for (const block of record.message?.content ?? []) {
-            if (block.type === 'tool_use') calls.set(block.id, { name: block.name, input: block.input, at, branch: base.branch });
+            if (block.type === 'tool_use') calls.set(block.id, callOf(block, at, base.branch));
         }
         return { ...base, kind: 'answer' };
     }
@@ -105,28 +141,38 @@ function categoryOf(event, previous, calls, done) {
     return ['agents', 'pushset'].find((kind) => kinds.includes(kind)) ?? kinds[0] ?? 'agents';
 }
 
-/** Adds the hours of the gaps to the totals and to the totals of their branches. */
-export function measure(events, calls) {
+/** The gaps of one journal, in order: the branch, the category, the end and the hours of each. */
+export function gapsOf(events, calls) {
     const done = new Map();
     const sorted = [...events].sort((a, b) => a.at - b.at);
     for (const event of sorted) {
         if (event.kind === 'notice' && event.call && !done.has(event.call)) done.set(event.call, event.at);
     }
-    const total = {};
-    const branches = {};
-    const owner = [];
-    let branch = null;
+    const gaps = [];
+    let branch = sorted[0]?.branch ?? null;
     for (let i = 1; i < sorted.length; i += 1) {
         const event = sorted[i];
         branch = event.branch ?? branch;
-        const hours = (event.at - sorted[i - 1].at) / 3_600_000;
-        const kind = categoryOf(event, sorted[i - 1], calls, done);
-        if (kind === OWNER) owner.push([sorted[i - 1].at, event.at]);
-        total[kind] = (total[kind] ?? 0) + hours;
-        branches[branch ?? '—'] ??= {};
-        branches[branch ?? '—'][kind] = (branches[branch ?? '—'][kind] ?? 0) + hours;
+        gaps.push({
+            branch: branch ?? '—',
+            kind: categoryOf(event, sorted[i - 1], calls, done),
+            to: event.at,
+            hours: (event.at - sorted[i - 1].at) / 3_600_000,
+        });
     }
-    return { total, branches, owner };
+    return gaps;
+}
+
+/** The hours of the gaps by category, and the same of every branch. */
+export function measure(gaps) {
+    const total = {};
+    const branches = {};
+    for (const { branch, kind, hours } of gaps) {
+        total[kind] = (total[kind] ?? 0) + hours;
+        branches[branch] ??= {};
+        branches[branch][kind] = (branches[branch][kind] ?? 0) + hours;
+    }
+    return { total, branches };
 }
 
 const round = (value) => Math.round(value * 100) / 100;

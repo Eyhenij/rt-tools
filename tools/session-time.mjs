@@ -7,26 +7,29 @@
  *   node tools/session-time.mjs --since 2026-11-21 --until 2026-11-24
  *   node tools/session-time.mjs --by-branch --steps --json
  *
- * `--branches RT-1,RT-2` prints the mean active minutes of the branches that start with these keys, and
- * the mean of every category: it is the number the milestone of the epic is judged by.
+ * `--branches RT-1,RT-2` prints the mean active minutes of these tasks, and the mean of every category:
+ * it is the number the milestone of the epic is judged by. A task is all the branches that start with
+ * its key. With `--steps` it also leaves only these branches in the steps.
  *
  * `--steps` adds the median minutes of every step of the task flow over the branches that went the
  * whole course; what tells a step from another is said in `session-time-steps.mjs`.
  *
  * The journals are the client's own and lie outside the tree. Nothing is written and no text of a
- * message or of a command is printed: the output holds numbers, categories and branch names.
+ * message or of a command is printed: the output holds numbers, categories and branch names. The
+ * journals of another working copy, a worktree included, are read only by `--file`.
  *
- * A journal is read line by line: one session took 176 MB. A line that is not JSON is counted and
- * named, and a record whose `uuid` was already read is skipped — a resumed session repeats them in a
- * second file. A journal that cannot be read is refused with the code 1; no journal at all is too:
- * an empty table reads as «no time was spent».
+ * A journal is read line by line: one session took 176 MB. A line that is not a JSON object is counted
+ * and named, and a record whose `uuid` was already read is skipped — a resumed session repeats them in
+ * a second file. The longest file is read first, so the copy that goes on holds the whole session and
+ * the order of the arguments changes nothing. A journal that cannot be read, or none at all, or none
+ * with an event in it is refused with the code 1: an empty table reads as «no time was spent».
  */
-import { createReadStream, existsSync, readdirSync } from 'node:fs';
+import { createReadStream, existsSync, readdirSync, statSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { createInterface } from 'node:readline';
 
-import { CATEGORIES, eventOf, measure, reportOf } from './session-time-model.mjs';
+import { CATEGORIES, eventOf, gapsOf, measure, reportOf } from './session-time-model.mjs';
 import { STEPS, noteEnds, stepsOf, stepsReport } from './session-time-steps.mjs';
 
 const fail = (message) => {
@@ -34,19 +37,31 @@ const fail = (message) => {
     process.exit(1);
 };
 
+/** A day that the calendar holds: `2026-02-31` parses to a day of the next month and is not one. */
+const isDay = (value) => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+    const date = new Date(`${value}T00:00:00Z`);
+    return !Number.isNaN(date.getTime()) && date.toISOString().startsWith(value);
+};
+
 function parseArgs(argv) {
     const args = { files: [], since: null, until: null, branches: null, byBranch: false, steps: false, json: false };
     for (let i = 0; i < argv.length; i += 1) {
-        const value = argv[i + 1];
-        if (argv[i] === '--by-branch') args.byBranch = true;
-        else if (argv[i] === '--steps') args.steps = true;
-        else if (argv[i] === '--json') args.json = true;
-        else if (argv[i] === '--branches' && value) args.branches = argv[(i += 1)].split(',');
-        else if (argv[i] === '--file' && value) args.files.push(argv[(i += 1)]);
-        else if ((argv[i] === '--since' || argv[i] === '--until') && /^\d{4}-\d{2}-\d{2}$/.test(value ?? '')) {
-            args[argv[i].slice(2)] = argv[(i += 1)];
-        } else fail(`unknown or incomplete argument ${argv[i]}`);
+        const name = argv[i];
+        if (name === '--by-branch') args.byBranch = true;
+        else if (name === '--steps') args.steps = true;
+        else if (name === '--json') args.json = true;
+        else {
+            const value = argv[(i += 1)] ?? '';
+            if (value === '' || value.startsWith('--')) fail(`unknown or incomplete argument ${name}`);
+            if (name === '--file') args.files.push(value);
+            else if (name === '--branches') args.branches = [...new Set(value.split(',').filter(Boolean))];
+            else if ((name === '--since' || name === '--until') && isDay(value)) args[name.slice(2)] = value;
+            else fail(`unknown or incomplete argument ${name}`);
+        }
     }
+    if (args.branches?.length === 0) fail('unknown or incomplete argument --branches');
+    if (args.since && args.until && args.since > args.until) fail(`the period ends before it begins: ${args.since} — ${args.until}`);
     return args;
 }
 
@@ -59,59 +74,69 @@ function ownJournals() {
         .map((name) => join(dir, name));
 }
 
+/** The journals from the longest to the shortest; the name settles a tie. */
+function ordered(files) {
+    const sized = [...new Set(files)].map((file) => {
+        if (!existsSync(file)) fail(`no such journal: ${file}`);
+        const stat = statSync(file);
+        if (!stat.isFile()) fail(`not a journal file: ${file}`);
+        return { file, size: stat.size };
+    });
+    return sized.sort((a, b) => b.size - a.size || (a.file < b.file ? -1 : 1)).map(({ file }) => file);
+}
+
+const parsed = (line) => {
+    try {
+        return JSON.parse(line);
+    } catch {
+        return null;
+    }
+};
+
+/** The events of one journal; the calls and their ends go to the store that all the journals share. */
 async function readJournal(file, store) {
-    const { events, calls, seen } = store;
-    let broken = 0;
+    const events = [];
     for await (const line of createInterface({ input: createReadStream(file, 'utf8'), crlfDelay: Infinity })) {
         if (line.trim() === '') continue;
-        let record;
-        try {
-            record = JSON.parse(line);
-        } catch {
-            broken += 1;
+        const record = parsed(line);
+        if (record === null || typeof record !== 'object') {
+            store.broken += 1;
             continue;
         }
-        if (record.uuid && seen.has(record.uuid)) continue;
-        if (record.uuid) seen.add(record.uuid);
-        const event = eventOf(record, calls);
+        if (record.uuid && store.seen.has(record.uuid)) continue;
+        if (record.uuid) store.seen.add(record.uuid);
+        const event = eventOf(record, store.calls);
         if (event) events.push(event);
         noteEnds(record, store);
     }
-    return broken;
+    return events;
 }
 
-/** One session has one clock: the gaps are counted inside each journal, then added up. */
-async function readAll(files, { since, until }) {
-    const seen = new Set();
-    const total = {};
-    const branches = {};
-    const rows = [];
-    let broken = 0;
-    const from = since ? Date.parse(`${since}T00:00:00`) : -Infinity;
-    const to = until ? Date.parse(`${until}T23:59:59.999`) : Infinity;
+/** One session has one clock: the gaps are counted inside each journal, then taken together. */
+async function readAll(files, from, to) {
+    const store = { calls: new Map(), ends: new Map(), agents: new Map(), seen: new Set(), broken: 0 };
+    const journals = [];
     for (const file of files) {
-        const store = { events: [], calls: new Map(), ends: new Map(), agents: new Map(), seen };
-        broken += await readJournal(file, store);
-        const events = store.events.filter((event) => event.at >= from && event.at <= to).sort((a, b) => a.at - b.at);
-        const part = measure(events, store.calls);
-        rows.push(...stepsOf({ events, calls: store.calls, ends: store.ends, owner: part.owner }));
-        for (const [kind, hours] of Object.entries(part.total)) total[kind] = (total[kind] ?? 0) + hours;
-        for (const [branch, kinds] of Object.entries(part.branches)) {
-            branches[branch] ??= {};
-            for (const [kind, hours] of Object.entries(kinds)) branches[branch][kind] = (branches[branch][kind] ?? 0) + hours;
+        try {
+            journals.push(await readJournal(file, store));
+        } catch (error) {
+            fail(`cannot read ${file}: ${error.code ?? error.message}`);
         }
     }
-    return { total, branches, rows, broken };
+    if (journals.every((events) => events.length === 0)) fail('no event of a session in the journals');
+    const inPeriod = (event) => event.at >= from && event.at <= to;
+    const gaps = journals.flatMap((events) => gapsOf(events.filter(inPeriod), store.calls));
+    return { gaps, store };
 }
 
 const pad = (text, width) => text.padEnd(width);
+const isOf = (branch, key) => branch === key || branch.startsWith(`${key}-`);
 
-/** The mean minutes of the named branches. A key that no branch starts with is refused: a mean over fewer branches reads as a whole one. */
-function meansOf(branches, keys) {
-    const found = keys.map((key) => [key, Object.keys(branches).find((branch) => branch === key || branch.startsWith(`${key}-`))]);
-    const missing = found.filter(([, branch]) => branch === undefined).map(([key]) => key);
+/** The mean minutes of the named tasks. A key that no branch starts with is refused: a mean over fewer tasks reads as a whole one. */
+function meansOf(gaps, branches, keys) {
+    const missing = keys.filter((key) => !Object.keys(branches).some((branch) => isOf(branch, key)));
     if (missing.length > 0) fail(`no branch of the journals starts with ${missing.join(', ')}`);
-    const reports = found.map(([, branch]) => reportOf(branches[branch]));
+    const reports = keys.map((key) => reportOf(measure(gaps.filter(({ branch }) => isOf(branch, key))).total));
     const mean = (pick) => Math.round((reports.reduce((sum, report) => sum + pick(report), 0) / reports.length) * 600) / 10;
     return {
         branches: reports.length,
@@ -122,13 +147,25 @@ function meansOf(branches, keys) {
 }
 
 function printMeans({ branches, activeMinutes, ownerMinutes, categories }) {
-    console.log(`В среднем на ветку (${branches}): ${activeMinutes} мин активно, ${ownerMinutes} мин ожидания владельца`);
+    console.log(`В среднем на задачу (${branches}): ${activeMinutes} мин активно, ${ownerMinutes} мин ожидания владельца`);
     for (const [key, label] of CATEGORIES) console.log(`  ${pad(label, 34)} ${String(categories[key]).padStart(5)}`);
 }
 
-function printSteps({ branches, medians }) {
-    console.log(`Шаги task flow, медиана по ${branches} веткам полного хода, минуты`);
-    for (const [key, label] of STEPS) console.log(`  ${pad(label, 34)} ${String(medians[key]).padStart(5)}`);
+const LABELS = new Map(CATEGORIES);
+
+/** The two categories that took most of a step. */
+const leading = (kinds) =>
+    Object.entries(kinds)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 2)
+        .map(([kind, minutes]) => `${LABELS.get(kind)} ${minutes}`)
+        .join(', ');
+
+function printSteps({ branches, medians, kinds, left, open }) {
+    console.log(`Шаги task flow, медиана по ${branches} веткам полного хода, минуты; справа — среднее двух главных категорий шага`);
+    for (const [key, label] of STEPS) console.log(`  ${pad(label, 34)} ${String(medians[key]).padStart(5)}  ${leading(kinds[key])}`);
+    console.log(`Вне полного хода: веток ${left.branches}, ${left.hours} ч активно`);
+    if (open > 0) console.log(`Запусков ревью без найденного конца: ${open}`);
 }
 
 function printReport(report, branches, broken) {
@@ -144,22 +181,25 @@ function printReport(report, branches, broken) {
 }
 
 const args = parseArgs(process.argv.slice(2));
-const files = args.files.length > 0 ? args.files : ownJournals();
+const files = ordered(args.files.length > 0 ? args.files : ownJournals());
 if (files.length === 0) fail('no journal found for this working copy: name one by --file');
-for (const file of files) if (!existsSync(file)) fail(`no such journal: ${file}`);
+const from = args.since ? Date.parse(`${args.since}T00:00:00`) : -Infinity;
+const to = args.until ? Date.parse(`${args.until}T23:59:59.999`) : Infinity;
 
-const { total, branches, rows, broken } = await readAll(files, args);
+const { gaps, store } = await readAll(files, from, to);
+const { total, branches } = measure(gaps);
 const report = reportOf(total);
 const byBranch = args.byBranch
     ? Object.entries(branches)
           .map(([branch, kinds]) => [branch, reportOf(kinds)])
           .sort((a, b) => b[1].activeHours - a[1].activeHours)
     : [];
-const means = args.branches ? meansOf(branches, args.branches) : null;
-const steps = args.steps ? stepsReport(rows) : null;
-if (args.json) console.log(JSON.stringify({ ...report, broken, branches: Object.fromEntries(byBranch), steps, means }));
+const means = args.branches ? meansOf(gaps, branches, args.branches) : null;
+const takes = (branch) => !args.branches || args.branches.some((key) => isOf(branch, key));
+const steps = args.steps ? stepsReport(stepsOf({ gaps, calls: store.calls, ends: store.ends, from, to, takes })) : null;
+if (args.json) console.log(JSON.stringify({ ...report, broken: store.broken, branches: Object.fromEntries(byBranch), steps, means }));
 else {
-    printReport(report, byBranch, broken);
+    printReport(report, byBranch, store.broken);
     if (steps) printSteps(steps);
     if (means) printMeans(means);
 }

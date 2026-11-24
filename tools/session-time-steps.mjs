@@ -1,18 +1,24 @@
 /**
- * The steps of the task flow inside the hours of a session: minutes of one branch from its start to
- * its last PR call, without the waiting for the owner. The events and the calls come from
- * `session-time-model.mjs`.
+ * The steps of the task flow inside the hours of the sessions: the active minutes of one branch, split
+ * by what the journals mark. The gaps and the calls come from `session-time-model.mjs`.
  *
- * A step is told by what the journal holds, not by what the executor writes about it:
+ * Only the gaps of the branch itself are split, each whole by the moment it ended, so the steps of a
+ * branch add up to its active minutes: work on another branch and the waiting for the owner are in
+ * none of them. The gaps and the calls of all the journals are taken together: a task handed over to
+ * another session is one branch. A step is told by what the journals hold:
  * - a group of reviewers is the review roles launched within three minutes of one another;
  * - a group without `qa-engineer` is the reading of the plan, the first group with it is round one,
- *   the second is round two; later groups belong to the closing;
- * - a group ends with the last report of its members;
- * - the push set is its first run ahead, the delivery ends with the last call that opens a PR.
+ *   the second is round two; later groups belong to what follows;
+ * - a group ends with the last report of its members; a launch whose report no journal holds is
+ *   counted in `open`, because its group then ends too early;
+ * - the delivery begins with the first run of the push set after round two, or with the end of the
+ *   round where the set ran only earlier, and ends with the last call that opens a PR.
  *
  * A branch without both rounds, the set and a PR call has no full course and gets no row: its gaps
- * would be read as steps nobody made.
+ * would be read as steps nobody made. The branches left out and their active hours are reported.
  */
+import { OWNER, opensPr, runsSet } from './session-time-model.mjs';
+
 export const STEPS = [
     ['plan', 'Разбор и план'],
     ['planRead', 'Чтение плана ролями'],
@@ -54,80 +60,99 @@ function reviewGroups(launches, ends) {
     const groups = [];
     for (const launch of [...launches].sort((a, b) => a.at - b.at)) {
         const last = groups.at(-1);
-        const group = last && launch.at - last.end0 <= APART ? last : { start: launch.at, end: 0, qa: false };
+        const group = last && launch.at - last.launched <= APART ? last : { start: launch.at, end: 0, qa: false };
         if (group !== last) groups.push(group);
-        group.end0 = launch.at;
+        group.launched = launch.at;
         group.qa ||= launch.role === 'qa-engineer';
         group.end = Math.max(group.end, ends.get(launch.id) ?? launch.at);
     }
     return groups;
 }
 
-/** What one branch did, from the events of the main thread: the first and the last moment, the calls that mark the steps. */
-function marksOf(events, calls) {
+/** The calls of every branch that mark its steps, of the period alone. */
+function marksOf(calls, from, to) {
     const marks = new Map();
     const of = (branch) => {
-        if (!marks.has(branch)) marks.set(branch, { first: Infinity, last: 0, launches: [], set: null, pr: null });
+        if (!marks.has(branch)) marks.set(branch, { launches: [], sets: [], pr: null });
         return marks.get(branch);
     };
-    for (const event of events) {
-        if (!event.branch) continue;
-        const mark = of(event.branch);
-        mark.first = Math.min(mark.first, event.at);
-        mark.last = Math.max(mark.last, event.at);
-    }
-    for (const [id, call] of calls) {
-        if (!call.branch) continue;
-        const command = String(call.input?.command ?? '');
-        const mark = of(call.branch);
-        if (call.name === 'Agent' && REVIEW.has(call.input?.subagent_type))
-            mark.launches.push({ id, at: call.at, role: call.input.subagent_type });
-        if (/push-ahead\.sh/.test(command)) mark.set = Math.min(mark.set ?? Infinity, call.at);
-        if (/gh pr create/.test(command)) mark.pr = Math.max(mark.pr ?? 0, call.at);
+    for (const [id, { name, command, role, at, branch }] of calls) {
+        if (!branch || at < from || at > to) continue;
+        if (name === 'Agent' && REVIEW.has(role)) of(branch).launches.push({ id, at, role });
+        if (runsSet(command)) of(branch).sets.push(at);
+        if (opensPr(command)) of(branch).pr = Math.max(of(branch).pr ?? 0, at);
     }
     return marks;
 }
 
-/** Minutes of one stretch without the owner's waits, given as pairs of moments. */
-const activeMinutes = (from, to, owner) =>
-    to <= from ? 0 : (to - from - owner.reduce((sum, [a, b]) => sum + Math.max(0, Math.min(to, b) - Math.max(from, a)), 0)) / 60_000;
+/** The moments that bound the steps of a branch, each not earlier than the previous; null without a full course. */
+function boundsOf({ launches, sets, pr }, ends) {
+    const groups = reviewGroups(launches, ends);
+    const [first, second] = groups.filter((group) => group.qa);
+    if (!second || pr === null || sets.length === 0) return null;
+    const afterRound = sets.filter((at) => at >= second.end);
+    const reading = groups.find((group) => !group.qa && group.start < first.start) ?? { start: first.start, end: first.start };
+    const set = afterRound.length > 0 ? Math.min(...afterRound) : second.end;
+    let high = 0;
+    return [reading.start, reading.end, first.start, first.end, second.start, second.end, set, pr].map((at) => (high = Math.max(high, at)));
+}
 
-/** The minutes of the steps of every branch that went the whole course. */
-export function stepsOf({ events, calls, ends, owner }) {
-    const marks = marksOf(events, calls);
-    const rows = [];
-    for (const [branch, mark] of marks) {
-        const groups = reviewGroups(mark.launches, ends);
-        const rounds = groups.filter((group) => group.qa);
-        if (rounds.length < 2 || mark.set === null || mark.pr === null) continue;
-        const reading = groups.find((group) => !group.qa && group.start < rounds[0].start);
-        const bounds = [
-            mark.first,
-            reading?.start ?? rounds[0].start,
-            reading?.end ?? rounds[0].start,
-            rounds[0].start,
-            rounds[0].end,
-            rounds[1].start,
-            rounds[1].end,
-            mark.set,
-            mark.pr,
-            mark.last,
-        ];
-        rows.push({ branch, minutes: STEPS.map(([,], i) => activeMinutes(bounds[i], bounds[i + 1], owner)) });
+/** The minutes of one branch by step, and of every step by category. */
+function rowOf(branch, gaps, bounds) {
+    const row = { branch, minutes: STEPS.map(() => 0), kinds: STEPS.map(() => ({})) };
+    for (const { kind, to, hours } of gaps) {
+        const index = bounds.findIndex((bound) => to <= bound);
+        const step = index === -1 ? STEPS.length - 1 : index;
+        row.minutes[step] += hours * 60;
+        row.kinds[step][kind] = (row.kinds[step][kind] ?? 0) + hours * 60;
     }
-    return rows;
+    return row;
+}
+
+/** The rows of the branches that went the whole course, and what was left out; `takes` picks branches by name. */
+export function stepsOf({ gaps, calls, ends, from, to, takes }) {
+    const own = new Map();
+    for (const gap of gaps) {
+        if (gap.kind === OWNER || !takes(gap.branch)) continue;
+        if (!own.has(gap.branch)) own.set(gap.branch, []);
+        own.get(gap.branch).push(gap);
+    }
+    const marks = marksOf(calls, from, to);
+    const rows = [];
+    const left = [];
+    let open = 0;
+    for (const [branch, branchGaps] of own) {
+        const mark = marks.get(branch);
+        const bounds = mark ? boundsOf(mark, ends) : null;
+        open += mark ? mark.launches.filter(({ id }) => !ends.has(id)).length : 0;
+        if (bounds) rows.push(rowOf(branch, branchGaps, bounds));
+        else left.push(branchGaps.reduce((sum, { hours }) => sum + hours, 0));
+    }
+    return { rows, left, open };
 }
 
 const median = (values) => {
     const sorted = [...values].sort((a, b) => a - b);
-    return sorted.length === 0 ? 0 : sorted[Math.floor(sorted.length / 2)];
+    const middle = sorted.length >> 1;
+    if (sorted.length === 0) return 0;
+    return sorted.length % 2 === 1 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
 };
 
-/** The median of every step over the branches, in whole minutes, and how many branches they rest on. */
-export function stepsReport(rows) {
+const sum = (values) => values.reduce((a, b) => a + b, 0);
+const tenth = (value) => Math.round(value * 10) / 10;
+
+/** The median of every step, the mean minutes of its categories, and what was left out. */
+export function stepsReport({ rows, left, open }) {
+    const kindsOf = (i) => {
+        const keys = new Set(rows.flatMap((row) => Object.keys(row.kinds[i])));
+        return Object.fromEntries([...keys].map((kind) => [kind, tenth(sum(rows.map((row) => row.kinds[i][kind] ?? 0)) / rows.length)]));
+    };
     return {
         branches: rows.length,
         medians: Object.fromEntries(STEPS.map(([key], i) => [key, Math.round(median(rows.map((row) => row.minutes[i])))])),
-        perBranch: Object.fromEntries(rows.map((row) => [row.branch, Math.round(row.minutes.reduce((a, b) => a + b, 0))])),
+        kinds: Object.fromEntries(STEPS.map(([key], i) => [key, kindsOf(i)])),
+        perBranch: Object.fromEntries(rows.map((row) => [row.branch, tenth(sum(row.minutes))])),
+        left: { branches: left.length, hours: Math.round(sum(left) * 100) / 100 },
+        open,
     };
 }

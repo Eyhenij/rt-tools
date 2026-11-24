@@ -11,15 +11,22 @@ trap 'rm -rf "$WORK"' EXIT
 
 # A journal from lines of `HH:MM:SS|kind|payload`; the payload is free text, empty where not needed.
 # Kinds: ask — a message of the owner, say — an answer, call:<tool>:<id>:<command>, res:<id>,
-# stop — the Stop hooks, end:<id> — the notice about a background call, back — a hand-back.
+# res:<id>:<agent> — the launch of an agent, stop — the Stop hooks, end:<id> — the notice about a
+# background call, att:<id> — the same as an attachment, amsg:<agent> — a report of an agent, back — a
+# hand-back. A line `branch|<name>` sets the branch of the lines below it; `\n` in a command is a newline.
 journal() {
     node - "$WORK/$1.jsonl" <<'JS' 3>/dev/null
 const { readFileSync, writeFileSync } = require('node:fs');
 const spec = process.env.SPEC.trim().split('\n');
-const out = spec.map((line, i) => {
+let branch = process.env.BRANCH || 'main';
+const out = spec.flatMap((line, i) => {
     const [time, kind, ...rest] = line.trim().split('|');
-    const base = { uuid: 'u' + i, timestamp: '2026-11-21T' + time + '.000Z', gitBranch: process.env.BRANCH || 'main' };
-    const text = rest.join('|');
+    if (time === 'branch') {
+        branch = kind;
+        return [];
+    }
+    const base = { uuid: (process.env.MARK || 'u') + i, timestamp: '2026-11-21T' + time + '.000Z', gitBranch: branch };
+    const text = rest.join('|').replace(/\\n/g, '\n');
     if (kind === 'raw') return text;
     if (kind === 'ask') return JSON.stringify({ ...base, type: 'user', origin: { kind: 'human' }, message: { content: 'секрет владельца' } });
     if (kind === 'say') return JSON.stringify({ ...base, type: 'assistant', message: { content: [{ type: 'text', text: 'ответ' }] } });
@@ -28,9 +35,15 @@ const out = spec.map((line, i) => {
         const role = new Map((process.env.ROLES || '').split(' ').map((pair) => pair.split('='))).get(id);
         return JSON.stringify({ ...base, type: 'assistant', message: { content: [{ type: 'tool_use', id, name, input: { command: cmd.join(':') || text, subagent_type: role } }] } });
     }
-    if (kind.startsWith('res:')) return JSON.stringify({ ...base, type: 'user', message: { content: [{ type: 'tool_result', tool_use_id: kind.slice(4) }] } });
+    if (kind.startsWith('res:')) {
+        const [, id, agent] = kind.split(':');
+        const said = agent ? [{ type: 'text', text: 'agentId: ' + agent }] : undefined;
+        return JSON.stringify({ ...base, type: 'user', message: { content: [{ type: 'tool_result', tool_use_id: id, content: said }] } });
+    }
     if (kind === 'stop') return JSON.stringify({ ...base, type: 'system', subtype: 'stop_hook_summary' });
-    if (kind === 'side') return JSON.stringify({ ...base, isSidechain: true, type: 'assistant', message: { content: [] } });
+    if (kind === 'side') return JSON.stringify({ ...base, isSidechain: true, type: 'system', subtype: 'stop_hook_summary' });
+    if (kind.startsWith('att:')) return JSON.stringify({ ...base, type: 'attachment', attachment: { prompt: '<tool-use-id>' + kind.slice(4) + '</tool-use-id>' } });
+    if (kind.startsWith('amsg:')) return JSON.stringify({ ...base, type: 'user', origin: { kind: 'peer' }, message: { content: '<agent-message from="' + kind.slice(5) + '">' } });
     if (kind === 'back') return JSON.stringify({ ...base, type: 'user', origin: { kind: 'peer' }, message: { content: 'Subagent hand-back' } });
     if (kind.startsWith('end:')) return JSON.stringify({ ...base, type: 'user', origin: { kind: 'task-notification' }, message: { content: '<tool-use-id>' + kind.slice(4) + '</tool-use-id>' } });
     throw new Error('kind ' + kind);
@@ -65,6 +78,31 @@ report 'the board goes to its own' "$(printf '%s' "$OUT" | field 'categories.boa
 report 'the Stop hooks go to their own' "$(printf '%s' "$OUT" | field 'categories.stop.hours')" 0.17
 report 'a message of the owner is their waiting' "$(printf '%s' "$OUT" | field 'ownerHours')" 0.17
 report 'the active time leaves the owner out' "$(printf '%s' "$OUT" | field 'activeHours')" 1.67
+report 'a share is taken of the active time' "$(printf '%s' "$OUT" | field 'categories.model.share')" 0.5
+
+# The category of one call by the hour its result took: the tool, the command, the category.
+kind_is() {
+    SPEC="00:00:00|call:$1:k:|$2
+01:00:00|res:k" journal kind
+    report "$3: $1 $2" "$(run --file "$WORK/kind.jsonl" | field 'ownerHours === 1 ? "owner" : Object.entries(j.categories).find((e) => e[1].hours === 1)[0]')" "$3"
+}
+kind_is Bash 'git push -u origin x' pushset
+kind_is Bash "git -c credential.helper= -c credential.helper='!gh auth git-credential' push" pushset
+kind_is Bash 'until ! pgrep -f git-guard-push-ahead.sh; do sleep 5; done' pushset
+kind_is Bash 'cat .claude/hooks/git-guard-push-ahead.sh' tools
+kind_is Bash 'git commit -m "before git push"' tools
+kind_is Bash "cat > note <<'E'\\ngit push\\nE" tools
+kind_is Bash 'cd projects/agent-kit && ls' tools
+kind_is Bash 'npx playwright test' checks
+kind_is Bash 'node tools/ngdoctor.mjs --check' checks
+kind_is Bash 'bash tools/tests/run.sh' checks
+kind_is Bash 'pnpm run lint' checks
+kind_is Bash 'node tools/check-dupes.mjs' checks
+kind_is Bash 'gh pr list' board
+kind_is Bash 'gh run watch 1' ci
+kind_is Agent '' agents
+kind_is Workflow '' agents
+kind_is ExitPlanMode '' owner
 
 # 2. A menu is the waiting of the owner, not a tool.
 SPEC='00:00:00|ask
@@ -96,6 +134,12 @@ SPEC='00:00:00|ask
 01:02:00|end:h' journal ci
 report 'the host client is the wait for the pipeline' "$(run --file "$WORK/ci.jsonl" | field 'categories.ci.hours')" 1
 
+SPEC='00:00:00|ask
+00:02:00|call:Bash:n:npx nx test kit
+00:02:00|res:n
+01:02:00|end:n' journal wait
+report 'another command of the background is a check' "$(run --file "$WORK/wait.jsonl" | field 'categories.checks.hours')" 1
+
 # 4. A repeated uuid is read once, a broken line is counted, a record of a subagent is not an event.
 { cat "$WORK/menu.jsonl"; cat "$WORK/menu.jsonl"; } > "$WORK/twice.jsonl"
 report 'a record with a known uuid is skipped' "$(run --file "$WORK/twice.jsonl" | field 'ownerHours')" 2
@@ -103,16 +147,31 @@ cp "$WORK/menu.jsonl" "$WORK/copy.jsonl"
 report 'a second journal with the same records adds nothing' "$(run --file "$WORK/menu.jsonl" --file "$WORK/copy.jsonl" | field 'ownerHours')" 2
 SPEC='00:00:00|ask
 00:10:00|raw|{not json
+00:15:00|raw|null
 00:20:00|side
 01:00:00|say' journal broken
-OUT="$(run --file "$WORK/broken.jsonl")"
-report 'a line that is not JSON is counted' "$(printf '%s' "$OUT" | field 'broken')" 1
-report 'a record of a subagent splits no gap' "$(printf '%s' "$OUT" | field 'categories.model.hours')" 1
+OUT="$(run --file "$WORK/broken.jsonl" --file "$WORK/menu.jsonl")"
+report 'a line that is not a record is counted' "$(printf '%s' "$OUT" | field 'broken')" 2
+report 'a record of a subagent splits no gap' "$(run --file "$WORK/broken.jsonl" | field 'categories.model.hours')" 1
+report 'the lines are named in the text' "$(node "$TOOLS/session-time.mjs" --file "$WORK/broken.jsonl" | grep -c 'Строк без разбора: 2')" 1
+SPEC='00:00:00|ask
+01:00:00|say
+00:30:00|stop' journal mixed
+report 'the records are taken in the order of time' "$(run --file "$WORK/mixed.jsonl" | field 'categories.stop.hours')" 0.5
+MARK=o SPEC='10:00:00|ask
+11:00:00|say
+12:00:00|say
+13:00:00|say' journal resumed
+head -2 "$WORK/resumed.jsonl" > "$WORK/origin.jsonl"
+report 'a resumed journal is counted whole in either order' \
+    "$(run --file "$WORK/origin.jsonl" --file "$WORK/resumed.jsonl" | field 'activeHours'):$(run --file "$WORK/resumed.jsonl" --file "$WORK/origin.jsonl" | field 'activeHours')" 3:3
 
 # 5. The period, and the branches.
 SPEC='00:00:00|ask
 01:00:00|say' journal period
 report 'a day outside the period leaves no time' "$(run --file "$WORK/period.jsonl" --since 2026-11-22 | field 'activeHours')" 0
+report 'the last day of the period is whole' \
+    "$(run --file "$WORK/period.jsonl" --until 2026-11-22 | field 'activeHours'):$(run --file "$WORK/period.jsonl" --until 2026-11-20 | field 'activeHours')" 1:0
 BRANCH='RT-1-x' SPEC='00:00:00|ask
 01:00:00|say' journal branch
 report 'a branch holds its own hours' "$(run --file "$WORK/branch.jsonl" | field 'branches["RT-1-x"].activeHours')" 1
@@ -125,7 +184,8 @@ report 'the gap between two journals is not counted' "$(run --file "$WORK/period
 
 # 7. The steps of the task flow and the mean of the named branches. The reading of the plan holds no
 # `qa-engineer`, so it is not a round; two rounds, the set and a PR call make a full course.
-BRANCH='RT-2-step' SPEC='00:00:00|ask
+medians() { field 'steps.branches + ":" + Object.values(j.steps.medians).join(" ")'; }
+COURSE='00:00:00|ask
 00:05:00|call:Agent:s1:
 00:05:00|res:s1
 00:09:00|end:s1
@@ -139,13 +199,80 @@ BRANCH='RT-2-step' SPEC='00:00:00|ask
 00:55:00|res:ps
 01:10:00|call:Bash:pr:gh pr create --title x
 01:10:00|res:pr
-01:13:00|say' ROLES='s1=product-strategist q1=qa-engineer q2=qa-engineer' journal steps
+01:13:00|say'
+export BRANCH='RT-2-step' ROLES='s1=goal-critic t1=product-strategist q1=qa-engineer q2=qa-engineer r1=qa-engineer r2=qa-engineer'
+SPEC="$COURSE" journal steps
 OUT="$(run --steps --file "$WORK/steps.jsonl")"
-report 'the steps of a full course' "$(printf '%s' "$OUT" | field 'steps.branches + ":" + Object.values(j.steps.medians).join(" ")')" '1:5 4 21 8 5 9 3 15 3'
-report 'a branch without rounds has no row of steps' "$(run --steps --file "$WORK/branch.jsonl" | field 'steps.branches')" 0
-report 'the mean of a named branch' "$(run --branches RT-2 --file "$WORK/steps.jsonl" | field 'means.branches + ":" + j.means.activeMinutes')" '1:73.2'
+report 'the steps of a full course' "$(printf '%s' "$OUT" | medians)" '1:5 4 21 8 5 9 3 15 3'
+report 'the categories of a step' "$(printf '%s' "$OUT" | field 'steps.kinds.round1.agents')" 8
+report 'every launch has its end' "$(printf '%s' "$OUT" | field 'steps.open')" 0
+report 'a step is of the period alone' "$(run --steps --since 2026-11-22 --file "$WORK/steps.jsonl" | field 'steps.branches')" 0
+report 'the text holds the steps and what was left out' \
+    "$(node "$TOOLS/session-time.mjs" --steps --file "$WORK/steps.jsonl" | grep -cE 'Код и живая проверка +21|Вне полного хода: веток 0')" 2
+OUT="$(run --steps --file "$WORK/branch.jsonl")"
+report 'a branch without rounds has no row of steps' "$(printf '%s' "$OUT" | field 'steps.branches')" 0
+report 'its hours are named as left out' "$(printf '%s' "$OUT" | field 'steps.left.branches + ":" + j.steps.left.hours')" 1:1
+
+# The work on another branch in the middle of a step is not a minute of it, and the steps add up to the
+# active time of their branch.
+SPEC="${COURSE/00:30:00|call/00:12:00|say
+branch|RT-3-other
+00:22:00|say
+branch|RT-2-step
+00:30:00|call}" journal two
+OUT="$(run --steps --file "$WORK/two.jsonl")"
+report 'another branch is out of a step' "$(printf '%s' "$OUT" | medians)" '1:5 4 11 8 5 9 3 15 3'
+report 'the steps add up to the active time of the branch' "$(printf '%s' "$OUT" | field 'steps.perBranch["RT-2-step"] + ":" + Math.round(j.branches["RT-2-step"].activeHours * 60)')" 63:63
+report '--branches picks the branches of the steps' "$(run --steps --branches RT-3 --file "$WORK/two.jsonl" | field 'steps.branches')" 0
+
+# The set that ran before the end of round two, a mention of it and of a PR call move no bound.
+SPEC="$COURSE
+01:14:00|call:Bash:m:|echo \"gh pr create\"
+01:14:00|res:m"
+SPEC="${SPEC/00:55:00|call/00:20:00|call:Bash:e:bash .claude/hooks/git-guard-push-ahead.sh
+00:20:00|res:e
+00:53:00|call:Bash:c:cat .claude/hooks/git-guard-push-ahead.sh
+00:53:00|res:c
+00:55:00|call}" journal marks
+report 'a mention and an early set move no bound' "$(run --steps --file "$WORK/marks.jsonl" | medians)" '1:5 4 21 8 5 9 3 15 4'
+SPEC="${COURSE/00:55:00|call:Bash:ps:/00:20:00|call:Bash:ps:}" journal early
+report 'a set only before round two leaves no step below zero' "$(run --steps --file "$WORK/early.jsonl" | medians)" '1:5 4 21 8 5 9 0 18 3'
+
+# A task handed over to another session is one branch; the gap between the two is nobody's time.
+head -7 "$WORK/steps.jsonl" > "$WORK/first.jsonl"
+tail -n +8 "$WORK/steps.jsonl" > "$WORK/second.jsonl"
+report 'a branch of two journals is one row' "$(run --steps --file "$WORK/first.jsonl" --file "$WORK/second.jsonl" | medians)" '1:5 4 21 8 0 9 3 15 3'
+
+# The other forms of the end of an agent, and a launch with no end at all.
+SPEC="${COURSE/00:09:00|end:s1/00:09:00|att:s1
+00:09:00|say}"
+SPEC="${SPEC/res:q1/res:q1:a77}"
+SPEC="${SPEC/00:38:00|end:q1/00:38:00|amsg:a77}" journal ends
+OUT="$(run --steps --file "$WORK/ends.jsonl")"
+report 'an attachment and a message end an agent' "$(printf '%s' "$OUT" | medians):$(printf '%s' "$OUT" | field 'steps.open')" '1:5 4 21 8 5 9 3 15 3:0'
+SPEC="${COURSE/00:38:00|end:q1/00:38:00|say}" journal open
+OUT="$(run --steps --file "$WORK/open.jsonl")"
+report 'a launch with no end is counted' "$(printf '%s' "$OUT" | field 'steps.open')" 1
+
+# The middle of two branches, and the mean of the named ones.
+OTHER="${COURSE//s1/t1}"
+OTHER="${OTHER//q1/r1}"
+OTHER="${OTHER//q2/r2}"
+OTHER="${OTHER//:ps/:zs}"
+OTHER="${OTHER//:pr/:zr}"
+OTHER="${OTHER//00:05:00/00:08:00}"
+MARK=z BRANCH='RT-22-step' SPEC="$OTHER" journal next
+report 'the median of two is the middle between them' "$(run --steps --file "$WORK/steps.jsonl" --file "$WORK/next.jsonl" | field 'steps.branches + ":" + j.steps.medians.plan')" 2:7
+report 'the mean of a named task' "$(run --branches RT-2 --file "$WORK/steps.jsonl" --file "$WORK/next.jsonl" | field 'means.branches + ":" + j.means.activeMinutes')" '1:73.2'
+report 'a repeated key counts once' "$(run --branches RT-2,RT-2, --file "$WORK/steps.jsonl" | field 'means.branches')" 1
+MARK=y BRANCH='RT-1-y' SPEC='00:00:00|ask
+02:00:00|say' journal more
+report 'a task is all the branches of its key' "$(run --branches RT-1 --file "$WORK/branch.jsonl" --file "$WORK/more.jsonl" | field 'means.activeMinutes')" 180
+report 'the mean is over the tasks' "$(run --branches RT-1,RT-2 --file "$WORK/more.jsonl" --file "$WORK/steps.jsonl" | field 'means.branches + ":" + j.means.activeMinutes')" 2:96.6
+report 'the mean is printed' "$(node "$TOOLS/session-time.mjs" --branches RT-1 --file "$WORK/more.jsonl" | grep -c 'В среднем на задачу (1): 120 мин')" 1
 node "$TOOLS/session-time.mjs" --branches RT-2,RT-77 --file "$WORK/steps.jsonl" > "$WORK/out" 2>&1
 report 'a branch that is not there is refused' "$?:$(grep -c 'RT-77' "$WORK/out")" 1:1
+unset BRANCH ROLES
 
 # 8. No text of people reaches the output, and the refusals name their reason.
 OUT="$(node "$TOOLS/session-time.mjs" --by-branch --file "$WORK/base.jsonl" 2>&1)"
@@ -155,7 +282,21 @@ node "$TOOLS/session-time.mjs" --file "$WORK/none.jsonl" > "$WORK/out" 2>&1
 report 'a journal that is not there is refused' "$?:$(grep -c 'no such journal' "$WORK/out")" 1:1
 (cd "$WORK" && HOME="$WORK" node "$TOOLS/session-time.mjs") > "$WORK/out" 2>&1
 report 'no journal at all is refused' "$?:$(grep -c 'no journal found' "$WORK/out")" 1:1
-node "$TOOLS/session-time.mjs" --since yesterday > "$WORK/out" 2>&1
-report 'a date of another form is refused' "$?:$(grep -c 'incomplete argument' "$WORK/out")" 1:1
+refused() {
+    node "$TOOLS/session-time.mjs" "${@:3}" > "$WORK/out" 2>&1
+    report "$1" "$?:$(grep -c "^session-time: .*$2" "$WORK/out")" 1:1
+}
+refused 'a date of another form is refused' 'incomplete argument' --since yesterday
+refused 'a day the calendar does not hold is refused' 'incomplete argument' --since 2026-02-31
+refused 'a month that is not there is refused' 'incomplete argument' --since 2026-13-45
+refused 'a period that ends before it begins is refused' 'before it begins' --since 2026-11-24 --until 2026-11-21
+refused 'a flag in place of a value is refused' 'incomplete argument' --branches --json
+refused 'an empty list of branches is refused' 'incomplete argument' --branches ,
+refused 'a directory is no journal' 'not a journal file' --file "$WORK"
+: > "$WORK/empty.jsonl"
+refused 'a journal with no event is refused' 'no event' --file "$WORK/empty.jsonl"
+mkdir -p "$WORK/.claude/projects/$(cd "$WORK" && node -p 'process.cwd().replace(/[^a-zA-Z0-9]/g, "-")')"
+cp "$WORK/period.jsonl" "$WORK/.claude/projects/"*/
+report 'the journals of the working copy are found' "$(cd "$WORK" && HOME="$WORK" run | field 'activeHours')" 1
 
 suite_result 'session-time'
