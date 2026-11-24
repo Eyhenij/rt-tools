@@ -69,6 +69,8 @@ report "SC-AK-1081 — и сказано, что надстройки под э�
 # Та же правка командой оболочки: гард судит запись, а не инструмент.
 report "SC-AK-536 — запись командой в разложенную копию отбивается" \
     "$(decision "$(cmd_in 'printf x > tools/probe.mjs')")" deny
+report "SC-AK-536 — запись терминалом среды отбивается" \
+    "$(decision "$(cmd_in 'execute_terminal_command --command "cp /tmp/x tools/probe.mjs"' | jq '.tool_name = "mcp__webstorm__execute_tool"')")" deny
 report "SC-AK-536 — чтение разложенной копии проходит" \
     "$(decision "$(cmd_in 'cat tools/probe.mjs')")" PASS
 # Снятие копии — законный приём: снятый файл раскладка кладёт заново, и так чинят копию,

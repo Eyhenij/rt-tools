@@ -175,6 +175,7 @@ c "SC-AK-1919 — путь через неизвестную переменну�
 c "SC-AK-1919 — чтение с функцией-стрелкой молчит" "node -e 'require(\"fs\").readFileSync(\"hooks/a.sh\",\"utf8\").split(\"x\").filter(x => x.y)'" нет
 c "SC-AK-1919 — стрелка в кавычках молчит" "echo 'a -> hooks/a.sh'" нет
 c "SC-AK-1919 — чтение рядом с записью наружу молчит" "grep -n x $TREE/hooks/a.sh > /tmp/o" нет
+c "SC-AK-1919 — голое имя после cd внутри bash -c правка" "bash -c 'cd hooks; printf x > a.sh'" да
 c "SC-AK-1919 — скрипт со своим -e молчит" "node tools/a.mjs -e hooks/a.sh" нет
 
 # --- SC-AK-1921 — путь читается от корня дерева -----------------------------------------------

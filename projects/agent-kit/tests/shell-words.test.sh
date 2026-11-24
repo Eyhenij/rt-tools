@@ -305,6 +305,7 @@ wrote "знак & в доводе bash -c" "bash -c 'cp \"\$1\" \"\$2\"' _ 'x&y'
 wrote "dash -c" "dash -c 'cp x a/b.sh'" "a/b.sh"
 wrote "trap" "trap 'cp x a/b.sh' EXIT" "a/b.sh"
 wrote "flock и setsid" "flock /tmp/l cp x a/b.sh; setsid cp x c/d.sh" "a/b.sh c/d.sh"
+wrote "noglob, watch, script, dotenv, fnm, su и npx -c" "noglob cp x a/1.sh; watch -n 5 cp x a/2.sh; script -q /dev/null cp x a/3.sh; dotenv -e .env -- cp x a/4.sh; fnm exec cp x a/5.sh; su bob -c 'cp x a/6.sh'; npx -c 'cp x a/7.sh'" "a/1.sh a/2.sh a/3.sh a/4.sh a/5.sh a/6.sh a/7.sh"
 wrote "gcp и gtee" "gcp x a/b.sh; echo x | gtee c/d.sh" "a/b.sh c/d.sh"
 wrote "env --split-string= и env -iS" "env --split-string='tee a/b.sh'; env -iS 'tee c/d.sh'" "a/b.sh c/d.sh"
 wrote "uv run со значением флага" "uv run --python 3.12 tee a/b.sh" "a/b.sh"

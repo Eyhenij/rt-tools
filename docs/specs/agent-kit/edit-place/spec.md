@@ -78,16 +78,20 @@ turn.
   A relative path stands from the directory its call stands in, and not from the first `cd` of the text:
   one `cd` moved or dropped the paths of every call around it. A subshell gives the directory back, and a
   function only declared enters nothing. The root of the tree by its name and by `git rev-parse` keeps the
-  path in the tree; a directory the text computes otherwise leaves the path out. Not followed: `cd` on the
-  line of the command itself. A `cd` under a condition counts as done.
+  path in the tree; a directory the text computes otherwise leaves the path out, and so does one above the
+  tree. Not followed: `cd` on the line of the command itself, `cd -`, `popd`, a directory given by a key
+  of the command (`env -C`, `pnpm -C`, `git -C`). A `cd` under a condition, in a pipe behind its first call
+  or in the background counts as done; a path given by a variable is not joined, and a variable without a
+  literal stays in the path as it is written.
 - **The code of an interpreter is read apart from the words of the shell.** The calls that write and the
   calls that run a command are known by their names; the language is not parsed. A name gets the last
-  value given to it above; a list, a loop, several names at once, a typed name and a field count. A call
-  goes on over the lines until its bracket closes, and a call inside a string or a comment is text. A
-  command the code runs, by a string or by a list of words, is read as a command of the shell. Not seen: a
-  path the code puts together from parts, a path without an extension, a call under a name given anew, a
-  list a function returns. A string that only looks like a redirection counts as one, and so does a name
-  given to an argument of another call.
+  value given to it above; a list of words, a loop over one, several names at once, a typed name and a
+  field count. A call goes on over the lines until its bracket closes, and a call inside a string or a
+  comment is text. A command the code runs, by a string or by a list of words, is read as a command of the
+  shell. Not seen: a path the code puts together from parts, takes from the arguments of the script or
+  hands to a function, a path without an extension, a bare name, a call under a name given anew, a
+  dictionary, a named list of rows, a value a function returns. A string that only looks like a redirection
+  counts as one, and so does a name given to an argument of another call and a list on the line of a write.
 - **The parse tells a file written whole from a file added to.** The guard of overrides judges only the
   first; `>>`, `tee -a`, an edit in place, code that opens a file to append and code that reads the file
   it writes keep what stood there. A read after the write keeps nothing, and each call of a line is judged
@@ -134,7 +138,10 @@ turn.
   command line is split into its commands before the target of `sed -i` is taken, and the spellings
   `sed -E -i` and `--in-place` count as well. A variable the command gives a literal, a loop over
   literals included, is filled in before the target is compared with the tree; one the command gives two
-  literals is left as it stands.
+  literals is left as it stands, and so is one that is given another variable. The terminal of an
+  environment hands its command as a text, and that text is read as a command: one word in quotes, or
+  without them the rest of the call. Not read: a command in quotes given to `watch`, `script -c`, `su -lc`
+  and `npx --call=`.
 - **A script file the command runs is read with the command.** An interpreter or a shell with a file,
   `source`, and a file called by its path: the text of the file is parsed the same way as the command,
   by the guard of the place of an edit and by the delivery guard alike; the delivery guard takes of it

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/override-write-guard.sh · 57c4062a7c7f · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/override-write-guard.sh · 986c717ef2b7 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Write|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh, hooks/guard-note.sh, hooks/write-targets.sh
 # Guard against wiping out an override: writing over is not the same as editing.
@@ -97,7 +97,8 @@ while IFS= read -r candidate; do
             candidate="$root/$candidate"
             ;;
     esac
-    case "$relative" in "$overrides_dir"/*) ;; *) continue ;; esac
+    # A copy of the tree inside it holds overrides of its own, and they are gained the same way.
+    case "$relative" in "$overrides_dir"/* | .claude/worktrees/*/"$overrides_dir"/*) ;; *) continue ;; esac
     [ -f "$candidate" ] || continue
 
     lines="$(wc -l <"$candidate" 2>/dev/null | tr -d ' ')"
@@ -105,7 +106,7 @@ while IFS= read -r candidate; do
     [ "$lines" -eq 0 ] && continue
 
     sections="$(grep -c '^## ' "$candidate" 2>/dev/null || printf '0')"
-    resource="${relative#"$overrides_dir"/}"
+    resource="${relative##*"$overrides_dir"/}"
 
     refuse write_override '{"override_nonempty":"yes"}' \
         "$(jq -cn --arg p "$relative" --arg l "$lines" --arg s "$sections" --arg r "$resource" '{path:$p, lines:$l, sections:$s, resource:$r}')" \

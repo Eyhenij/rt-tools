@@ -14,6 +14,7 @@ SIGN="\\\\b(tee|cp|mv)\\\\b|(^|[^A-Za-z_])$NAME( ?[.]?[*+]|\\[\\[|\\\\s| ?\\[|\\
 SIGN="$SIGN|(^|[^A-Za-z_])(sed|perl)\\)?( ?[.*+]|\\[\\[|\\\\s|\\[\\^| ?\\(| -\\[| -i(\\[|\\.))|(cp|mv|tee|sed)\\|(cp|mv|tee|install|sed|rm)"
 SIGN="$SIGN|(^|[^-=])>\\\\?\\)?(\\[\\[|\\\\s| ?\\[|\\(\\[| \\*| \\?|\\+|\\.\\*)|>>\\?"
 SIGN="$SIGN|[*\"'](git )?$NAME ?[\"']\\*?\\)|##\\*>|#\\*?(git )?(mv|cp|tee) |== *\"(cp|mv|tee|sed)\"|writeFileSync|rt_shell_words"
+SIGN="$SIGN|grep[^|;]*( -[a-zA-Z]*w[a-zA-Z]* +[\"']?|[\"'])(tee|cp|mv)([\"' ]|\$)|-[dF] ?[\"']>|= [\"']?(cp|mv|tee|sed)[\"']? *\\]"
 second_parse() {
     local hook
     for hook in "$1"/*.sh; do
@@ -54,6 +55,10 @@ second "слово команды в выборе узнано" "case \"\$cmd\" 
 second "слово команды в awk узнано" "awk '\$1 == \"cp\" { print \$NF }'"
 second "имя вызова записи кода узнано" "grep -oE 'writeFileSync\\([^)]*'"
 second "слова команды мимо общего разбора узнаны" 'printf "%s" "$cmd" | rt_shell_words'
+second "tee перед путём в grep узнан" 'grep -q "tee $path"'
+second "целое слово в grep узнано" 'grep -qw tee'
+second "резка по стрелке узнана" "cut -d'>' -f2; awk -F'>' '{ print \$2 }'"
+second "сравнение имени команды узнано" 'set -- $cmd; if [ "$1" = cp ]; then shift; fi'
 second "комментарий о записи не разбор" '# cp[[:space:]] и tee[[:space:]] разбирает сосед' ''
 second "запуск команды записи не разбор" 'cp "$a" "$b"; printf x | tee -a "$log"; sed -i "" s/a/b/ "$b"' ''
 rm -rf "$SECOND"

@@ -283,4 +283,16 @@ whole "поток записи дописывает" "node -e \"fs.createWriteSt
 whole "режим r+" "python3 -c \"open('o/a.md','r+').write('x')\""
 whole "perl дописывает" "perl -e 'open(F, \">>o/a.md\")'"
 
+beside "слово tsx доводом линтера" "npx eslint --ext ts tsx -p \"fs.writeFileSync('a/b.ts','x')\""
+wrote "tsx, ts-node, pypy3 и ipython" "npx tsx -e \"fs.writeFileSync('a/1.ts','x')\"; ts-node -e \"fs.writeFileSync('a/2.ts','x')\"; pypy3 -c \"open('a/3.py','w')\"; ipython -c \"open('a/4.py','w')\"" "a/1.ts a/2.ts a/3.py a/4.py"
+
+# Терминал среды отдаёт команду строкой внутри своей.
+wrote "терминал среды, двойные кавычки" "execute_terminal_command --command \"printf x > a/b.sh\"" "a/b.sh"
+wrote "терминал среды, одинарные кавычки" "execute_terminal_command --command 'printf x | tee a/b.sh'" "a/b.sh"
+wrote "терминал среды, знак равенства" "execute_terminal_command --command=\"cp /tmp/x a/b.sh\"" "a/b.sh"
+wrote "терминал среды без кавычек" "runTerminalCommand --command cp /tmp/x a/b.sh" "a/b.sh"
+wrote "терминал среды, флаги после команды" "execute_terminal_command --command \"cp /tmp/x a/b.sh\" --timeout 5000 --projectPath /r" "a/b.sh"
+wrote "терминал среды, флаги до команды" "execute_terminal_command --executeInShell true --command='cp /tmp/x a/b.sh' --timeout 5" "a/b.sh"
+beside "терминал среды, чтение" "execute_terminal_command --command \"cat a/b.sh\""
+
 suite_result "запись кодом толкователя"

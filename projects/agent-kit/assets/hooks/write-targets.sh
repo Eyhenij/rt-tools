@@ -38,21 +38,30 @@ command -v rt_code_writes >/dev/null 2>&1 || rt_code_writes() { cat >/dev/null; 
 [ -n "${RT_SF_EXPAND:-}" ] || RT_SF_EXPAND='function rt_vars_read() {} function rt_expand(w, depth) { en = 1; ev[1] = w }'
 
 # The targets as they stand from the directory of their call: a literal one joins them, the root of the
-# tree by name leaves them as they are, and one the text computes otherwise is none of the tree's. A command
-# further inside starts in the directory it is called from.
+# tree by name leaves them as they are, and one the text computes otherwise is none of the tree's, as well as
+# one above the tree. A command further inside starts in the directory it is called from.
 rt_wt_from_dir() {
-    LC_ALL=C awk '
+    LC_ALL=C awk "${RT_PATH_TIDY:-function tidy(s) { return s \}}"'
         function far(s) { return s ~ /^[\/~]/ || (s ~ /^[$]/ && s !~ /^[$][{]?PWD[}]?\//) }
         /^D/ { dir = substr($0, 3); next }
+        # A copy carries its source behind the target, and the source is no part of the path.
         /^[WAT] / {
-            path = substr($0, 3)
+            path = substr($0, 3); source = ""
+            if (match(path, /\t/)) { source = substr(path, RSTART); path = substr(path, 1, RSTART - 1) }
+            into = path ~ /(^|\/)\.?\.?$/ ? "/" : ""
             if (dir == "" || far(path)) { print; next }
             if (dir ~ /[$][(][)]/) { next }
             sub(/^[$][{]?PWD[}]?\//, "", path)
-            print substr($0, 1, 2) dir "/" path
+            path = tidy(dir "/" path)
+            if (path ~ /^([$][{]?CLAUDE_PROJECT_DIR[}]?)?$/) { path = "." }
+            if (path !~ /^([$][{]?CLAUDE_PROJECT_DIR[}]?\/)?\.\.(\/|$)/) { print substr($0, 1, 2) path into source }
             next
         }
-        /^S / && !on && dir != "" { print "S cd \047" dir "\047" }
+        /^S / && !on && dir != "" {
+            n = split(dir, piece, "\047")
+            for (i = 2; i <= n; i++) { piece[1] = piece[1] "\047\\\047\047" piece[i] }
+            print "S cd \047" piece[1] "\047"
+        }
         { on = /^S / ? 1 : /^E$/ ? 0 : on; print }'
 }
 
@@ -94,7 +103,7 @@ rt_shell_calls() {
                 for (i = 1; i <= n; i++) { for (j = 1; j <= en; j++) { base = ev[j]; sub(/\/+$/, "", base); sub(/.*\//, "", base); if (base ~ /^\.*$/) { sub(/\/+$/, "", to[i]); print "W " to[i] } else { print "T " to[i] "\t" base } } }
             }
         ' \
-        | sed -E 's#^([WAT]) \$\{?(PWD|CLAUDE_PROJECT_DIR)\}?/#\1 #' \
+        | sed -E 's#^([WAT]) \$\{?(PWD|CLAUDE_PROJECT_DIR)\}?/#\1 ./#' \
         | while IFS= read -r rt_wt_line; do
             case "$rt_wt_line" in
                 'T '*)

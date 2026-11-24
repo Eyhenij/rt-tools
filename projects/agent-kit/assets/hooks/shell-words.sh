@@ -20,9 +20,23 @@
 # another machine, `case` inside `$(…)`, a command held by a variable, a second `-exec` of one `find`, a
 # written script run from another directory or through a pipe. A `cd` under a condition counts as done.
 
+# The path without its «.» and «..»; a «..» above a root by name stays.
+RT_PATH_TIDY='
+        function tidy(s,   n, i, k, part, out) {
+            n = split(s, part, "/"); k = 0
+            for (i = 1; i <= n; i++) {
+                if (part[i] == "." || (part[i] == "" && i > 1)) { continue }
+                if (part[i] != ".." || !k || out[k] ~ /^([$~].*|\.\.)$/) { out[++k] = part[i] }
+                else if (out[k] != "") { k-- }
+            }
+            s = k == 1 && out[1] == "" ? "/" : k ? out[1] : ""
+            for (i = 2; i <= k; i++) { s = s "/" out[i] }
+            return s
+        }'
+
 rt_shell_words() {
     # Signs are read as bytes: the awk of one of the systems stops at a letter of two bytes.
-    LC_ALL=C awk '
+    LC_ALL=C awk "$RT_PATH_TIDY"'
         # A runner stands before the name of a command; some of its flags carry a value in the next word.
         BEGIN {
             first = 1
@@ -36,8 +50,11 @@ rt_shell_words() {
             valued["doas"] = "^-[uC]$"; valued["arch"] = "^-[de]$"
             valued["command"] = valued["builtin"] = valued["nohup"] = valued["coproc"] = valued["setsid"] = "^$"
             valued["flock"] = "^(-[wE]|--(timeout|wait|conflict-exit-code))$"
+            valued["noglob"] = valued["chronic"] = valued["unbuffer"] = valued["script"] = "^$"
+            valued["watch"] = "^(-n|--interval)$"; valued["dotenv"] = "^-[ev]$"
             WORD = "^(then|do|else|if|elif|while|until|!|\\{)$"
-            RUNNER = "^(uv|op|poetry|pipenv|rye|hatch|mise|direnv)$"
+            RUNNER = "^(uv|op|poetry|pipenv|rye|hatch|mise|direnv|fnm)$"
+            CODE = "^((python|pypy)[0-9.]*|ipython|php|node|deno|bun|tsx|ts-node|ruby|perl)$"; SNAKE = "^((python|pypy)[0-9.]*|ipython|php)$"
             PACKAGE = "^(-C|--dir|-F|--filter|--filter-prod|-w|--workspace)$"
             CARRIES = "^(-p|--python|--with|--with-requirements|--project|--directory|--env-file|--group|--extra)$"
             SWITCH = "^-[pnlaswtTuUcfX0-9]*"
@@ -93,24 +110,26 @@ rt_shell_words() {
         }
         # The directory a call enters. A word the text does not know leaves it unknown: `$()`.
         function stands(s) { if (s != dir) { dir = s; print "D " s } }
-        function enters(n,   to, name) {
-            while (n <= count && words[n] ~ /^-[A-Za-z@]/) { n++ }
+        # Variables may name each other: no more than eight of them are filled in.
+        function enters(n, pushes,   to, name, turn) {
+            while (n <= count && words[n] ~ /^-[A-Za-z@]/) { if (pushes) { stands("$()"); return } n++ }
             if (words[n] == "--") { n++ }
-            to = n > count ? "~" : words[n]
-            if (to == "-") { to = "$()" }
-            while (match(to, /^[$][{]?[A-Za-z_][A-Za-z0-9_]*[}]?/)) {
+            to = n <= count ? words[n] : pushes ? "$()" : "~"
+            if (to == "-" || (pushes && to ~ /^[+-][0-9]/)) { to = "$()" }
+            sub(/^[$][{]CLAUDE_PROJECT_DIR:-[^}]*[}]/, "${CLAUDE_PROJECT_DIR}", to)
+            for (turn = 0; turn < 8 && match(to, /^[$][{]?[A-Za-z_][A-Za-z0-9_]*[}]?/); turn++) {
                 name = substr(to, 1, RLENGTH); gsub(/[^A-Za-z0-9_]/, "", name)
-                if (name == "PWD") { to = dir substr(to, RLENGTH + 1); break }
+                if (name == "PWD") { to = "." substr(to, RLENGTH + 1); break }
                 if (!(name in held)) { break }
                 to = held[name] substr(to, RLENGTH + 1)
                 if (index(to, "$" name) == 1 || index(to, "${" name) == 1) { break }
             }
             if (to ~ /[$][(][)]/ || (to !~ /^[\/~$]/ && dir ~ /[$][(][)]/)) { stands("$()"); return }
             if (to !~ /^[\/~$]/ && dir != "") { to = dir "/" to }
-            while (sub(/[^\/.]+\/\.\.(\/|$)/, "", to)) { }
-            sub(/\/+$/, "", to); sub(/^(\.\/)+/, "", to)
-            stands(to == "." ? "" : to)
+            stands(length(to) > 1024 ? "$()" : tidy(to))
         }
+        # The directory as a path that does not depend on where a call stands.
+        function standing() { return dir == "" ? "${PWD}" : dir ~ /^[\/~$]/ ? dir : "${CLAUDE_PROJECT_DIR}/" dir }
         # A function is declared here and runs later: its `cd` is not the one of the command.
         function declares() {
             if (words[first] == "{" && (inside || declared)) { inside++ }
@@ -150,22 +169,23 @@ rt_shell_words() {
                     if (runner == "command" && words[i] ~ /^-[vV]/) { return 0 }
                     if (runner == "env" && words[i] ~ /^(-[a-z0]*S|--split-string)$/) { emit("S", words[++i]) }
                     else if (runner == "env" && sub(/^--split-string=/, "", words[i])) { emit("S", words[i]) }
+                    else if (runner == "npx" && words[i] ~ /^(-c|--call)$/) { emit("S", words[++i]) }
                     else if (words[i] ~ valued[runner]) { i++ }
                 }
-                if (runner ~ /^(g?timeout|flock)$/) { i++ }
+                if (runner ~ /^(g?timeout|flock|script)$/) { i++ }
             }
             return 0
         }
         function reads_as(name) {
             if (name ~ /^(bash|sh|zsh|dash|ksh|eval)$/) { return "S" }
-            return name ~ /^(python[0-9.]*|php|node|deno|bun|ruby|perl)$/ ? "C" : ""
+            return name ~ CODE ? "C" : ""
         }
         # Behind a runner this module does not know stands an interpreter, named by a word of its own.
         function reader_at(i,   n, name) {
             if (!i || reads_as(base_name(words[i])) != "" || base_name(words[i]) ~ PLAIN) { return i }
             for (n = i + 1; n <= count; n++) {
                 name = base_name(words[n])
-                if (bare[n] && words[n] !~ /\./ && name != "eval" && reads_as(name) != "") { return n }
+                if (bare[n] && words[n] !~ /\./ && name !~ /^(eval|tsx|ts-node)$/ && reads_as(name) != "") { return n }
             }
             return i
         }
@@ -263,7 +283,7 @@ rt_shell_words() {
         }
         function takes_body(i, name) {
             if (name ~ /^(bash|sh|zsh|dash|ksh)$/) { return listens(i + 1, "c", "^-[a-z]*[oO]$") }
-            if (name ~ /^(python[0-9.]*|php)$/) { return listens(i + 1, "cmr", "^-[WX]$") }
+            if (name ~ SNAKE) { return listens(i + 1, "cmr", "^-[WX]$") }
             return reads_as(name) == "C" && listens(i + 1, "ep", LOADS)
         }
         # The text a substitution printed is code where it stands after a code flag or as the script.
@@ -325,18 +345,27 @@ rt_shell_words() {
             else if (name ~ /^(docker|podman)$/) { inner(i + 1, name, "cp", "^$") }
             else if (name ~ /^g?sed$/) { edits(i + 1) }
             else if (name ~ /^(perl|ruby)$/) { oneliner(i + 1) }
-            else if (name ~ /^(node|deno|bun)$/) { given(i + 1, "^(-[a-z]*[ep]|--eval|--print|eval)$", LOADS, "C") }
-            else if (name ~ /^(python[0-9.]*|php)$/) { given(i + 1, "^(-[a-zA-Z]*c|-r)$", "^-[WX]$", "C") }
+            else if (name ~ /^(node|deno|bun|tsx|ts-node)$/) { given(i + 1, "^(-[a-z]*[ep]|--eval|--print|eval)$", LOADS, "C") }
+            else if (name ~ SNAKE) { given(i + 1, "^(-[a-zA-Z]*c|-r)$", "^-[WX]$", "C") }
             else if (name ~ /^(bash|sh|zsh|dash|ksh)$/) { given(i + 1, "^-[a-z]*c$", "^-[a-z]*[oO]$", "S") }
+            else if (name == "su") { for (n = i + 1; n < count; n++) { if (words[n] ~ /^(-c|--command)$/) { emit("S", words[n + 1]) } } }
+            # The terminal of an environment takes the command as a text of its own.
+            else if (name ~ /^(execute_terminal_command|runTerminalCommand)$/) {
+                for (n = i + 1; n <= count && words[n] !~ /^--command(=|$)/; n++) { }
+                if (words[n] == "--command") { n++ }
+                text = words[n]; sub(/^--command=/, "", text)
+                if (bare[n]) { for (n++; n <= count; n++) { text = text " " words[n] } }
+                emit("S", text)
+            }
             else if (name == "eval") {
                 text = ""
                 for (i++; i <= count; i++) { text = text words[i] " " }
                 emit("S", text)
             }
-            else if (name ~ /^(cd|pushd)$/ && sign != "|" && !inside) { enters(i + 1) }
-            else if (name ~ /^(popd)$/ && !inside) { stands("$()") }
+            else if (name ~ /^(cd|pushd)$/ && sign != "|" && !inside) { enters(i + 1, name == "pushd") }
+            else if (name == "popd" && !inside) { stands("$()") }
             if (count >= first) {
-                says = name == "pwd" ? (dir == "" ? "${PWD}" : dir) : name == "git" && (words[i + 1] == "rev-parse" && words[i + 2] == "--show-toplevel") ? "${CLAUDE_PROJECT_DIR}" : ""
+                says = name == "pwd" ? standing() : name == "git" && (words[i + 1] == "rev-parse" && words[i + 2] == "--show-toplevel") ? "${CLAUDE_PROJECT_DIR}" : ""
             }
             if (!i || name ~ /^(export|local|declare|readonly|typeset)$/) {
                 for (n = first; n <= count; n++) { if (match(words[n], /^[A-Za-z_][A-Za-z0-9_]*=/)) { held[substr(words[n], 1, RLENGTH - 1)] = substr(words[n], RLENGTH + 1) } }

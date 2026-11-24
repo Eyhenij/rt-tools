@@ -84,6 +84,29 @@ report "SC-AK-541 — запись внутри bash -c отбивается" \
     "$(decision "$(cmd_in "bash -c 'printf x > .claude/rt-kit/overrides/rules/probe.md'")")" deny
 report "SC-AK-541 — запись кодом отбивается" \
     "$(decision "$(cmd_in "python3 -c \"open('.claude/rt-kit/overrides/rules/probe.md','w').write('x')\"")")" deny
+ide_in() { cmd_in "$1" | jq '.tool_name = "mcp__webstorm__execute_tool"'; }
+report "SC-AK-541 — запись терминалом среды отбивается" \
+    "$(decision "$(ide_in 'execute_terminal_command --command "printf x > .claude/rt-kit/overrides/rules/probe.md"')")" deny
+report "SC-AK-541 — запись терминалом среды с флагами после команды отбивается" \
+    "$(decision "$(ide_in 'execute_terminal_command --command "printf x > .claude/rt-kit/overrides/rules/probe.md" --executeInShell true')")" deny
+report "SC-AK-541 — запись внутри bash -c после cd назад отбивается" \
+    "$(decision "$(cmd_in "bash -c 'cd .claude/hooks; cd ../..; printf x > .claude/rt-kit/overrides/rules/probe.md'")")" deny
+report "SC-AK-541 — запись по пути назад внутри bash -c отбивается" \
+    "$(decision "$(cmd_in "bash -c 'cd sub; printf x > ../.claude/rt-kit/overrides/rules/probe.md'")")" deny
+report "SC-AK-541 — копия из папки выше внутри bash -c отбивается" \
+    "$(decision "$(cmd_in "bash -c 'cd .claude/rt-kit/overrides; cp ../../../docs/n.md rules/probe.md'")")" deny
+report "SC-AK-541 — путь от pwd после cd назад отбивается" \
+    "$(decision "$(cmd_in 'cd sub && cd .. && printf x > "$(pwd)/.claude/rt-kit/overrides/rules/probe.md"')")" deny
+report "SC-AK-541 — папка, данная переменной через себя, отбивается" \
+    "$(decision "$(cmd_in "bash -c 'D=.claude; D=\$D/rt-kit; cd \$D; printf x > overrides/rules/probe.md'")")" deny
+report "SC-AK-541 — запись после cd в корень по полному пути отбивается" \
+    "$(decision "$(cmd_in "cd $TREE && printf x > .claude/rt-kit/overrides/rules/probe.md")")" deny
+mkdir -p "$TREE/.claude/worktrees/w/.claude/rt-kit/overrides/rules"
+cp "$TREE/.claude/rt-kit/overrides/rules/probe.md" "$TREE/.claude/worktrees/w/.claude/rt-kit/overrides/rules/"
+report "SC-AK-541 — запись в рабочей копии внутри дерева отбивается" \
+    "$(decision "$(cmd_in "printf x > $TREE/.claude/worktrees/w/.claude/rt-kit/overrides/rules/probe.md")")" deny
+report "SC-AK-541 — копия терминалом среды отбивается" \
+    "$(decision "$(ide_in 'execute_terminal_command --command=cp /tmp/x .claude/rt-kit/overrides/rules/probe.md')")" deny
 
 # Дописывание ничего не уносит: раздел встаёт в конец, прежние остаются на месте.
 report "SC-AK-542 — дописывание в конец проходит" \
@@ -94,6 +117,12 @@ report "SC-AK-542 — дописывание кодом проходит" \
     "$(decision "$(cmd_in "python3 -c \"open('.claude/rt-kit/overrides/rules/probe.md','a').write('x')\"")")" PASS
 report "SC-AK-542 — правка на месте кодом проходит" \
     "$(decision "$(cmd_in "python3 -c \"p='.claude/rt-kit/overrides/rules/probe.md'; t=open(p).read(); open(p,'w').write(t + 'x')\"")")" PASS
+report "SC-AK-542 — копия наружу из папки ниже проходит" \
+    "$(decision "$(cmd_in "bash -c 'cd sub/x; cp ../../.claude/rt-kit/overrides/rules/probe.md ../../out.md'")")" PASS
+report "SC-AK-542 — запись внутри bash -c мимо дерева проходит" \
+    "$(decision "$(cmd_in "bash -c 'cd ../other; printf x > .claude/rt-kit/overrides/rules/probe.md'")")" PASS
+report "SC-AK-542 — чтение терминалом среды проходит" \
+    "$(decision "$(ide_in 'execute_terminal_command --command "cat .claude/rt-kit/overrides/rules/probe.md"')")" PASS
 report "SC-AK-542 — путь в тексте сообщения проходит" \
     "$(decision "$(cmd_in "git commit -m 'x > .claude/rt-kit/overrides/rules/probe.md'")")" PASS
 report "SC-AK-542 — чтение надстройки проходит" \

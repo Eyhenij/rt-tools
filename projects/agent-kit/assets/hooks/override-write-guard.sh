@@ -96,7 +96,8 @@ while IFS= read -r candidate; do
             candidate="$root/$candidate"
             ;;
     esac
-    case "$relative" in "$overrides_dir"/*) ;; *) continue ;; esac
+    # A copy of the tree inside it holds overrides of its own, and they are gained the same way.
+    case "$relative" in "$overrides_dir"/* | .claude/worktrees/*/"$overrides_dir"/*) ;; *) continue ;; esac
     [ -f "$candidate" ] || continue
 
     lines="$(wc -l <"$candidate" 2>/dev/null | tr -d ' ')"
@@ -104,7 +105,7 @@ while IFS= read -r candidate; do
     [ "$lines" -eq 0 ] && continue
 
     sections="$(grep -c '^## ' "$candidate" 2>/dev/null || printf '0')"
-    resource="${relative#"$overrides_dir"/}"
+    resource="${relative##*"$overrides_dir"/}"
 
     refuse write_override '{"override_nonempty":"yes"}' \
         "$(jq -cn --arg p "$relative" --arg l "$lines" --arg s "$sections" --arg r "$resource" '{path:$p, lines:$l, sections:$s, resource:$r}')" \

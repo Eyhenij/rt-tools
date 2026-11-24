@@ -358,10 +358,11 @@ Covered: `projects/agent-kit/tests/write-parse-one.test.sh`.
 ### SC-AK-1967 — a path stands from the directory of its call
 
 Given a command handed to a shell, a body or a script file writes relative paths before, after and
-between calls of `cd` and `pushd`, in a subshell, in a function, and through a variable
+between calls of `cd` and `pushd`, in a subshell, in a function, and in a directory given by a variable
 When the shared parse takes the write targets out of the command text
-Then each path is joined to the directory its own call stands in; the root of the tree by name leaves it
-as it is; a directory the text computes otherwise leaves the path out, and the rest of the targets stay;
+Then each path is joined to the directory its own call stands in and loses its «.» and «..»; the root of
+the tree by name leaves it as it is; a directory the text computes otherwise and one above the tree leave
+the path out, and the rest of the targets stay; variables that name each other end the reading;
 `cd` on the line of the command itself joins nothing
 
 Covered: `projects/agent-kit/tests/write-dirs.test.sh`.

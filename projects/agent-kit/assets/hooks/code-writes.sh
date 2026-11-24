@@ -15,9 +15,11 @@
 # refusal was bypassed by changing the form of the command, not the action. A write of a file whose
 # address is not seen gives out the paths of its whole line.
 #
-# NOT SEEN: an address put together from parts, a path without an extension, a name given to a call of a
-# write anew, a variable or a list that comes from another file or from a function. A string that only
-# looks like a redirection counts as one, and so does a name given to an argument of another call.
+# NOT SEEN: an address put together from parts, taken from the arguments of the script or handed to a
+# function, a path without an extension, a bare name, a name given to a call of a write anew, a dictionary,
+# a named list of rows, a value that comes from another file or that a function returns. A string that only
+# looks like a redirection counts as one, and so does a name given to an argument of another call and a
+# list on the line of a write.
 
 rt_code_writes() {
     # A redirection to the empty device and to the error stream is cut first: a muted output inside a body
