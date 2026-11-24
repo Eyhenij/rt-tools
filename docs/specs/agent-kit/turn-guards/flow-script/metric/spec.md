@@ -1,6 +1,6 @@
 # The measures of the executable scenario
 
-**Status:** in force · **Revision:** 2026-11-22 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-24 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `work-conduct`, `verifiability`
 **Procedures:** none
@@ -131,3 +131,4 @@ None.
   judged by it.
 - 2026-11-22 — a turn the owner ended by Esc is no missed stop, since Esc releases the turn; a typed
   word to stop releases none.
+- 2026-11-24 — a turn the owner ended by a stop word is no missed stop either.

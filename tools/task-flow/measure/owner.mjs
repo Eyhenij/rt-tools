@@ -1,8 +1,16 @@
-// rt-kit v0.39.0 · task-flow/measure/owner.mjs · b969f88621ec · правится надстройкой, не здесь
+// rt-kit v0.39.0 · task-flow/measure/owner.mjs · 41b6f0bf01f8 · правится надстройкой, не здесь
 /**
- * The measurer «measure.owner» — what the owner's last word says about the turn: an interrupt, or a
- * push to go on. No typed word stops the work: the owner stops it by Esc.
+ * The measurer «measure.owner» — what the owner's last word says about the turn: a stop, an
+ * interrupt, or a push to go on.
  */
+
+/** The owner's last word begins with a stop word of `words.stop`, and nothing after it holds the turn. */
+export function saidStop({ owner }) {
+    return ({ words, rules }) => {
+        const last = owner.last();
+        return last !== null && rules.saysStop(last, words);
+    };
+}
 
 /** The mark the host writes into the record when the owner presses Esc. */
 const INTERRUPT = /^\[Request interrupted by user/;

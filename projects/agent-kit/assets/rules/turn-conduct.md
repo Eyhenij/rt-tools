@@ -19,7 +19,7 @@ demand, not with the rule.
 | In the law | Here |
 | --- | --- |
 | turn | one pass of the agent: from the owner's message to the reply |
-| a turn exit | the end of the scenario or the owner's Esc; the other release cases of the task flow description |
+| a turn exit | the end of the scenario, the owner's stop word or Esc; the other release cases of the task flow description |
 | the guard of turn exits | a guard at the turn's end: asks the engine to measure the branch by the task flow description |
 | the agent hook of the turn's end | a model at the turn's end: reads the owner's last message, the reply and the calls of the turn |
 | a statement about the state of the tree | a word in the reply to the owner backed by a command of the same turn and its output |
@@ -28,20 +28,21 @@ demand, not with the rule.
 
 ## Turn exits
 
-A turn ends when the scenario is over or when the owner pressed Esc. No typed word stops the work:
-the owner wants no command that lets the agent do nothing, and a wait for a long process of its own
-is a release case, not a stop. The exit guard measures the branch by the task flow description and
+A turn ends when the scenario is over, or when the owner stopped it by a stop word or by Esc. A stop
+word of the description opens the owner's last message; a word after it that asks to go on holds
+the turn. The exit guard measures the branch by the task flow description and
 holds every other turn with the one move that comes next, unless a release case below is met.
 
 <!-- flow:turn-end -->
 The engine lets a turn end before the scenario does when a case is met, asked in this order:
 
 - **1** · the end of the scenario — `any(measure.epic.finished, all(measure.copy.outsideEpic, measure.pr.handed))`
-- **2** · the owner interrupted the turn — `measure.owner.interrupted`
-- **3** · a background task of the session runs — `all(measure.session.waiting, not(measure.pr.handed))`
-- **4** · no write to the tree, or a branch outside the scenario — `any(measure.copy.outOfScenario, all(not(measure.session.wrote), not(measure.owner.nudged)))`
-- **5** · a role session — `measure.session.role`
-- **6** · the host did not answer twice — `measure.host.silent`
+- **2** · a stop word of the owner — `measure.owner.saidStop`
+- **3** · the owner interrupted the turn — `measure.owner.interrupted`
+- **4** · a background task of the session runs — `all(measure.session.waiting, not(measure.pr.handed))`
+- **5** · no write to the tree, or a branch outside the scenario — `any(measure.copy.outOfScenario, all(not(measure.session.wrote), not(measure.owner.nudged)))`
+- **6** · a role session — `measure.session.role`
+- **7** · the host did not answer twice — `measure.host.silent`
 - **8** · the menu did not reach the owner — `measure.session.menuLost`
 <!-- /flow:turn-end -->
 
@@ -76,7 +77,7 @@ One turn: what it ends with, what is checked before its end and what the owner i
 flowchart TD
     A[The turn is going] --> B{The engine measures the branch}
     B -->|The scenario is over| L[The epic table shown]
-    B -->|The owner pressed Esc| I
+    B -->|The owner said a stop word or pressed Esc| I
     B -->|Another release case of the description| I
     B -->|None| D{The next move}
     D -->|The executor's step| G[Done in the same turn: a question, a refusal, a handover never end it]
@@ -186,15 +187,15 @@ flowchart TD
 - **A step of the plan that is not done forbids a stop, and a report about the done is not an
   exception.** The engine counts the steps by their marks, and a running stage holds the turn
   whatever the report says.
-- **The stop is read from the owner's Esc, not from the executor.** Otherwise the stop is declared
+- **The stop is read from the owner's words, not from the executor.** Otherwise the stop is declared
   by whoever finds it convenient, and the ban holds until the first inconvenience.
-- **Until the scenario is over a turn ends only by the owner's Esc or by a release case.** A
-  question, a refusal, a handover and a second pass are the turn going on: the exit guard returns
-  each with the next move named. A typed word stops nothing. The other release cases of the
-  description are not the executor's to choose.
-- **The owner's Esc is read from the record of the session, not from the progress.** A stop written
-  on disk by the executor is a retelling. The host writes Esc into the record as the owner's entry,
-  and it releases the turns a background notice wakes only while it is the owner's last word.
+- **Until the scenario is over a turn ends only by the owner's stop word, their Esc or a release
+  case.** A question, a refusal, a handover and a second pass are the turn going on: the exit guard
+  returns each with the next move named. The other release cases of the description are not the
+  executor's to choose.
+- **The owner's stop is read from the record of the session, not from the progress.** A stop written
+  on disk by the executor is a retelling. The stop word is the owner's last message, Esc is written
+  there by the host; either releases the turns a notice wakes only while it is their last word.
 - **The session is ended by the owner and by nobody else.** The tool that closes the conversation is
   refused by a guard always, with no lawful form of bypass: an assignment stands until the owner
   cancels it, and a session that must close is closed by them.
@@ -202,7 +203,7 @@ flowchart TD
   another step taken, or the owner's menu put to them. A refused stop — the
   closing tool — is no exit either.
 - **The phrase "waiting for your word" is a stop declared by the executor.** Without the owner's
-  Esc, waiting for their word is a report, not work. A decision that is theirs goes to them as a
+  stop, waiting for their word is a report, not work. A decision that is theirs goes to them as a
   menu, and the turn waits for the answer inside itself. The agent hook judges it by meaning.
 - **A statement about the tree's state is watched by the agent hook, not by the executor's
   memory.** Everything the reply says about the tree carries a command and its output; said without

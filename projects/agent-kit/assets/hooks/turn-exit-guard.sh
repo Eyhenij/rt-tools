@@ -5,8 +5,8 @@
 # Turn exit guard: a turn does not end before the scenario of the task flow does. Stop.
 #
 # The engine measures the branch by the description and answers with a verdict: the turn is released
-# by a release case of the description — the end of the scenario, the owner's Esc, a session
-# that wrote nothing, a role, the silent hosting, a menu that did not reach the owner — or held with
+# by a release case of the description — the end of the scenario, the owner's stop word or Esc, a
+# session that wrote nothing, a role, the silent hosting, a menu that did not reach the owner — or held with
 # one move named, the next step of the scenario. This file hands the engine the input and turns its
 # verdict into the answer of the hook.
 #
