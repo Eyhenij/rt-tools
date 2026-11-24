@@ -5,6 +5,11 @@
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 TURNS="$(mktemp -d)"
+# Своя временная папка: страж читает в ней метку окна по номеру сессии, а сценарии зовут сессию
+# `tests`. Метка с этим номером, оставленная в общей папке машины чем угодно ещё, отпускала бы ход
+# раньше решения, и сценарии краснели бы без дефекта в страже
+export TMPDIR="$TURNS/tmp/"
+mkdir -p "$TMPDIR"
 REPO="$(fixture_repo RT-1-probe)"
 export CLAUDE_PROJECT_DIR="$REPO"
 cleanup() { rm -rf "$TURNS" "$REPO"; }

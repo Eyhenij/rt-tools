@@ -1,7 +1,17 @@
-import { expect, Page, test } from '@playwright/test';
+import { expect, Locator, Page, test } from '@playwright/test';
 
-import { openSection, qa, rowsOf } from './support/admin';
+import { IBox, openSection, pageQa, qa, rowsOf } from './support/admin';
 import { expectScreen } from './support/shot';
+
+/** Прямоугольник узла; узла нет на экране — тест падает здесь, а не сравнивает нули. */
+async function boxOf(locator: Locator): Promise<IBox> {
+    const box: IBox | null = await locator.boundingBox();
+    if (box === null) {
+        throw new Error('узла нет на экране');
+    }
+
+    return box;
+}
 
 /**
  * Узкий экран: запись показана карточкой таблицы кита, а не обрезанной строкой.
@@ -33,5 +43,28 @@ test.describe('список на узком экране', () => {
         expect(card.width).toBeLessThanOrEqual(viewport);
 
         await expectScreen(page, 'list-narrow-cards');
+    });
+
+    test('SC-MB-457 — кнопки полосы на узком экране стоят рядом у правого края', async ({ page }: { page: Page }) => {
+        await openSection(page, 'postmortems');
+
+        const refresh: IBox = await boxOf(pageQa(page, 'postmortems', 'refresh'));
+        const columns: IBox = await boxOf(pageQa(page, 'postmortems', 'columns'));
+        // Полоса целиком, а не её правая часть: та сама шириной по кнопкам и прижатия не покажет
+        const bar: IBox = await boxOf(page.locator('rt-toolbar .rt-toolbar__bars').first());
+        const viewport: number = page.viewportSize()?.width ?? 0;
+
+        // «Обновить» перед «Колонками», в одной строке
+        expect(refresh.x).toBeLessThan(columns.x);
+        expect(Math.round(refresh.y)).toBe(Math.round(columns.y));
+
+        // ряд прижат к правому краю полосы, а не к левому, и не выходит за окно
+        const barRight: number = bar.x + bar.width;
+        const rowRight: number = columns.x + columns.width;
+
+        expect(rowRight).toBeLessThanOrEqual(barRight + 0.5);
+        expect(barRight - rowRight).toBeLessThan(refresh.width);
+        expect(refresh.x - bar.x).toBeGreaterThan(bar.width / 2);
+        expect(rowRight).toBeLessThanOrEqual(viewport);
     });
 });

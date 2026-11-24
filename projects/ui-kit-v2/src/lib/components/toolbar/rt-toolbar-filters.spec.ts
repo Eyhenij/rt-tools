@@ -11,6 +11,7 @@ class StubBreakpointsService {
     public readonly narrow: WritableSignal<boolean> = signal(true);
     public readonly phone: WritableSignal<boolean> = signal(true);
     public readonly viewportNarrow: Signal<boolean> = this.narrow;
+    public readonly belowNarrow: Signal<boolean> = this.narrow;
     public readonly mobile: Signal<boolean> = this.phone;
     public readonly tablet: Signal<boolean> = signal(false);
     public readonly desktop: Signal<boolean> = signal(false);
@@ -100,12 +101,12 @@ describe('RtToolbarComponent — отборы за кнопкой', (): void => 
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1086 — на узком месте отборы стоят за одной кнопкой, первой в ряду кнопок', (): void => {
+    it('SC-UKV-1086 — на узком месте отборы стоят за одной кнопкой, последней в ряду кнопок', (): void => {
         const { fixture } = setup(true);
         const right: HTMLElement | null = root(fixture).querySelector('[data-slot="right"]');
 
         expect(root(fixture).querySelector('[qa-dataid="slot-filter"]')).toBeNull();
-        expect(right?.firstElementChild?.getAttribute('qa-dataid')).toBe('toolbar-filters-trigger');
+        expect(right?.lastElementChild?.getAttribute('qa-dataid')).toBe('toolbar-filters-trigger');
         expect(root(fixture).querySelector('rt-toolbar')?.classList).toContain('rt-toolbar--filters-collapsed');
     });
 
@@ -213,6 +214,8 @@ describe('RtToolbarComponent — отборы за кнопкой', (): void => 
         await settle(fixture, 50);
 
         expect(panel()?.contains(document.activeElement)).toBe(true);
+        // Начальный фокус — на блоке полей, а не на стрелке «Назад»: она тоже внутри панели
+        expect(document.activeElement?.getAttribute('qa-dataid')).toBe('toolbar-filters-fields');
     });
 
     it('SC-UKV-1096 — двойное нажатие открывает одну панель, и расширение места её закрывает', async (): Promise<void> => {
