@@ -1,4 +1,4 @@
-// rt-kit v0.39.0 · checks/flow-verdict.mjs · d6e078ade475 · правится надстройкой, не здесь
+// rt-kit v0.39.0 · checks/flow-verdict.mjs · a6d0e78ea417 · правится надстройкой, не здесь
 /**
  * The verdict at the end of a turn — the engine command `verdict`, called by the hook on Stop.
  *
@@ -129,11 +129,12 @@ export function menuCause(read) {
 /**
  * The boundary of an autonomous session, from the text of its morning list: `ГГГГ-ММ-ДДTЧЧ:ММ` of the
  * line `Автономно до:` in the head while it lies ahead of `now`, otherwise null. The head ends at the
- * first row of the table: a row that quotes the line is no boundary.
+ * first row of the table: a row that quotes the line is no boundary. A moment the clock does not have,
+ * hour 25 say, is no boundary either.
  */
 export function nightBoundary(list, now) {
     const head = (list ?? '').split(/^\|/m)[0];
-    const until = head.match(/^Автономно до: *(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})\s*$/m)?.[1] ?? null;
+    const until = head.match(/^Автономно до: *(\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])T(?:[01]\d|2[0-3]):[0-5]\d)\s*$/m)?.[1] ?? null;
     return until && new Date(until).getTime() > now.getTime() ? until : null;
 }
 
@@ -141,7 +142,10 @@ export function nightBoundary(list, now) {
 function nightLines({ until, list }) {
     return [
         `An autonomous session does not ask the owner before its boundary, ${until}: no menu is offered.`,
-        `The one move is the default of the rule \`autonomous-work\`: do what the refusal named. Where that takes the owner's word or an outside step the line «Разрешено:» does not name, write the stopped work and its reason into the morning list \`${list}\`, move its card back and take the next work of the chain.`,
+        'The one move is the default of the rule `autonomous-work`: do what the refusal named.',
+        `Where that takes an outside step the line «Разрешено:» does not name, the work waits: its line in the morning list \`${list}\` names the step, its card and its branch stay, and the next work of the chain is taken.`,
+        `Where that takes the owner's word or a red run cannot be fixed, the work stops: its line in the list names the reason, its card goes back, and the next work is taken from the last green branch.`,
+        'With no next work left, the list is completed and its last line says so.',
     ];
 }
 

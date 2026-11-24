@@ -206,6 +206,9 @@ out('menu: SC-AK-1930 — граница ровно сейчас — не ноч
 out('menu: SC-AK-1930 — без строки границы и без списка — не ночь', `${boundary('')} ${nightBoundary(null, AT_NIGHT)}`, 'null null');
 out('menu: SC-AK-1930 — граница словами или без времени — не ночь', `${boundary('Автономно до: 8 утра')} ${boundary('Автономно до: 2026-11-25')}`, 'null null');
 out('menu: SC-AK-1930 — строка после таблицы границей не считается', String(nightBoundary('# Список\n\n| Работа |\n| --- |\n| RT-1 |\nАвтономно до: 2026-11-24T08:00\n', AT_NIGHT)), 'null');
+out('menu: SC-AK-1930 — строка не с начала границей не считается', `${boundary('Слова: Автономно до: 2026-11-24T08:00')} ${boundary('**Автономно до:** 2026-11-24T08:00')}`, 'null null');
+out('menu: SC-AK-1930 — момент, которого нет на часах, — не граница', ['2026-11-24T25:00', '2026-13-01T08:00', '2026-11-32T08:00', '2026-11-24T08:60'].map((at) => boundary(`Автономно до: ${at}`)).join(' '), 'null null null null');
+out('menu: SC-AK-1930 — граница с возвратом каретки читается', boundary('Автономно до: 2026-11-24T08:00\r'), '2026-11-24T08:00');
 const NIGHT = { until: '2026-11-24T08:00', list: '.claude/handoff/2026-11-24-ночь.md' };
 const nightOfCause = (cause) => holdReason(model, stage, null, { ...HOLD_MENU, cause, night: NIGHT });
 const isDefault = (text) => String(text.includes('An autonomous session does not ask the owner') && text.includes(NIGHT.list) && text.includes(NIGHT.until) && !text.includes("owner's menu:") && !text.includes('подскажу путь'));
@@ -214,7 +217,12 @@ out('menu: SC-AK-1930 — night boundary ahead gives a default: простой',
 out('menu: SC-AK-1930 — умолчание всё равно называет отказавшую проверку', String(nightOfCause(menuCause(forbiddenBy)).includes('`git-guard-delivery` refused the same step twice')), 'true');
 out('menu: SC-AK-1930 — без ночи меню прежнее', String(ownerMenu.includes("The one move is the owner's menu:")), 'true');
 out('menu: SC-AK-1930 — ночь без причины меню шаг не меняет', String(holdReason(model, stage, { number: '2.1', name: 'x', left: 1 }, { ...HOLD_MENU, night: NIGHT }).includes('The next move is step 2.1')), 'true');
-out('menu: SC-AK-1930 — ночь не прячет непрочитанную задачу', String(nightOfCause({ unread: { task: 'task-a', output: '/t/a.output', agent: false } }).includes('`task-a`')), 'true');
+const waitOrStop = nightOfCause({ idle: true });
+out('menu: SC-AK-1930 — умолчание: работа, ждущая внешнего шага, оставляет карточку и ветку', String(/outside step[^\n]*«Разрешено:»[^\n]*its card and its branch stay/.test(waitOrStop)), 'true');
+out('menu: SC-AK-1930 — умолчание: остановленная работа возвращает карточку', String(/owner's word[^\n]*its card goes back/.test(waitOrStop)), 'true');
+out('menu: SC-AK-1930 — умолчание: без следующей работы список дописывается', String(waitOrStop.includes('With no next work left, the list is completed')), 'true');
+out('menu: SC-AK-1930 — ночь не прячет зависшую задачу и отказ другой проверки', String(nightOfCause({ hung: { task: 'task-h', minutes: 95, output: null } }).includes('`task-h`') && nightOfCause({ foreign: ['git-guard-draft-ready'] }).includes('`git-guard-draft-ready`')), 'true');
+out('menu: SC-AK-1930 — ночь не прячет непрочитанную задачу',String(nightOfCause({ unread: { task: 'task-a', output: '/t/a.output', agent: false } }).includes('`task-a`')), 'true');
 
 const answered = (option) => sourceWordOf({ type: 'user', toolUseResult: { answers: { 'Что делать?': option } }, message: { content: [] } });
 out('menu: SC-AK-1467 — вариант меню отказа — слово владельца', answered('подскажу путь'), 'подскажу путь');
@@ -413,21 +421,6 @@ expect_stop "menu: SC-AK-1797 — стенограмма 21.11 держит ос
 expect_reason "menu: SC-AK-1797 — стенограмма 21.11 называет задачу, не меню" "$NIGHT" 'The background task `b1` ended after the last call'
 expect_reason "menu: SC-AK-1797 — стенограмма 21.11 называет файл вывода" "$NIGHT" 'its output is `/tmp/tasks/b1.output`'
 
-# Ночь через хук: простой после отказа движка, граница берётся из новейшего списка к утру.
-engine_refused() { jq -c -n '{type:"user",message:{content:"Stop hook feedback:\nBLOCKED by turn-exit-guard: сценарий не кончен"}}'; }
-IDLE="$(input_stop "$(transcript "$(say 'делай')" "$(edited)" "$(engine_refused)")")"
-HANDOFF="$REPO/.claude/handoff"
-mkdir -p "$HANDOFF"
-expect_reason "menu: SC-AK-1930 — без списка к утру простой зовёт меню" "$IDLE" "The one move is the owner's menu:"
-printf '# Список к утру\n\nАвтономно до: 2001-01-02T08:00\n' > "$HANDOFF/2001-01-01-ночь.md"
-expect_reason "menu: SC-AK-1930 — прошедшая граница зовёт меню и через хук" "$IDLE" "The one move is the owner's menu:"
-printf '# Список к утру\n\nАвтономно до: 2199-01-02T08:00\n' > "$HANDOFF/2198-01-01-ночь.md"
-expect_reason "menu: SC-AK-1930 — граница впереди даёт умолчание через хук" "$IDLE" 'An autonomous session does not ask the owner before its boundary, 2199-01-02T08:00'
-expect_reason "menu: SC-AK-1930 — умолчание называет новейший список" "$IDLE" '.claude/handoff/2198-01-01-ночь.md'
-printf '# Список к утру\n\nАвтономно до: 2001-01-02T08:00\n' > "$HANDOFF/2199-01-01-ночь.md"
-expect_reason "menu: SC-AK-1930 — старый список с границей впереди не ночь" "$IDLE" "The one move is the owner's menu:"
-rm -rf "$HANDOFF"
-
 JOURNAL="$REPO/.git/rt-kit/turn-exit.log"
 BROKEN="$TURNS/broken-engine.mjs"
 printf 'process.exit(3);\n' > "$BROKEN"
@@ -491,5 +484,6 @@ expect_stop "end: SC-AK-1434 — сессия роли отпускает ход
 
 . "$TESTS/turn-exit-guard-foreign.test.sh"
 . "$TESTS/turn-exit-guard-wait.test.sh"
+. "$TESTS/turn-exit-guard-night.test.sh"
 
 suite_result "проверка выхода из хода"

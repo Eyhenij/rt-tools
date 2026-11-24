@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.39.0 · checks/task-flow-script.mjs · 285e33db4fbd · правится надстройкой, не здесь
+// rt-kit v0.39.0 · checks/task-flow-script.mjs · 50f343aa5e29 · правится надстройкой, не здесь
 /**
  * The engine of the task flow: reads the description `flow.js` through the model and answers about
  * the scenario. The description lies next to the engine as `task-flow/flow.js` where the engine is
@@ -37,7 +37,7 @@
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { evaluateCondition } from './flow-condition.mjs';
@@ -204,15 +204,20 @@ async function runGuard(model, base) {
 }
 
 /**
- * The autonomous session of this copy by its newest morning list: `{ until, list }` while the boundary
+ * The autonomous session by the newest morning list of the project: `{ until, list }` while the boundary
  * lies ahead, otherwise null. The lists are named by their day, so the newest one is the last by name.
+ * The directory is the project's of the session, as in the guards; a list that cannot be read is none.
  */
 function nightOf(root) {
-    const dir = join(root ?? '.', GUARD_SETTINGS.handoffDir);
-    const name = existsSync(dir) ? readdirSync(dir).filter((file) => file.endsWith('-ночь.md')).sort().at(-1) : null;
-    if (!name) return null;
-    const until = nightBoundary(readFileSync(join(dir, name), 'utf8'), new Date());
-    return until ? { until, list: `${GUARD_SETTINGS.handoffDir}/${name}` } : null;
+    try {
+        const dir = resolve(process.env.CLAUDE_PROJECT_DIR || root || '.', GUARD_SETTINGS.handoffDir);
+        const names = readdirSync(dir).filter((file) => file.endsWith('-ночь.md'));
+        const name = names.sort().at(-1);
+        const until = name ? nightBoundary(readFileSync(join(dir, name), 'utf8'), new Date()) : null;
+        return until ? { until, list: `${GUARD_SETTINGS.handoffDir}/${name}` } : null;
+    } catch {
+        return null;
+    }
 }
 
 /**
@@ -246,7 +251,8 @@ async function runVerdict(model, base) {
         step = stageStep(source('git'), source('marks'), folder, branch, text);
     }
     const task = branch?.match(/^[A-Z]+-(\d+)-/)?.[1] ?? null;
-    return { block: holdReason(model, result, step, { cause: menuCause(measured), task, night: nightOf(root) }) };
+    const cause = menuCause(measured);
+    return { block: holdReason(model, result, step, { cause, task, night: cause ? nightOf(root) : null }) };
 }
 
 /**

@@ -4,7 +4,7 @@ kind: rule
 law: autonomous-work
 description: Rule under the autonomous-work law. Load when the owner has left and asked for unattended work — a chain of branches, a default instead of a question, nothing outside but what the owner named, a list by morning. Pattern autonomous-work-run. One piece of work — rule task-flow.
 ---
-<!-- rt-kit v0.39.0 · rules/autonomous-work.md · c6d424b6f81e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · rules/autonomous-work.md · eaaeccd4215d · правится надстройкой, не здесь -->
 
 # Autonomous work — how it works here
 
@@ -47,7 +47,7 @@ flowchart TD
     E --> F[Task folder, grill with defaults, plan]
     F --> G[Work by stages; each stage ends with a commit]
     G --> I{Run green}
-    I -->|Red is fixed in the same branch| J[The task folder is taken apart; the work stops before the PR]
+    I -->|Red is fixed in the same branch| J[The task folder is taken apart; the work stops before the PR unless the owner named the PR and the merge]
     I -->|Red cannot be fixed, or the owner's word is needed| X[The work stops: the card goes back, the list says the branch is not merged]
     X --> K
     J --> K{The night is not over}
@@ -59,11 +59,11 @@ flowchart TD
 ## How the law applies here
 
 - **The session is started by the command `/night`, and the time boundary goes to it as an
-  argument.** Before it there was no launch at all: the order of the night lay in the texts, and
-  every session assembled it from memory — what was forgotten showed only in the morning, by a
-  branch that cannot be merged or by work missing from the list. The command takes the boundary,
-  raises this rule and the pattern, makes the checks that cost a whole night if met at three
-  o'clock, and creates the file of the morning list.
+  argument.** Assembled from memory, the night shows what was forgotten only in the morning. The
+  command takes the boundary, raises this rule and the pattern, makes the checks that cost a whole
+  night if met at three o'clock, and creates the file of the morning list. A night declared by words
+  starts with the same steps, and a boundary that is an event is written as the latest moment the
+  owner expects it: without that moment the guards take the night for day.
 - **The command called without a boundary asks the owner for one and starts nothing.** They are
   still here at that minute; by morning there is nobody to ask, and a session without a boundary is
   work without an end.
@@ -81,9 +81,10 @@ flowchart TD
   merge, publishing or cargo send past their word: all of it is visible to others, and a person
   cancels it. Their word goes verbatim into the head of the morning list as the line `Разрешено:`,
   and each list line names the allowance it used. Cargo marks that need a merge wait for the merge.
-- **Every allowed kind of night call is run twice before the owner leaves, and none waits on a
-  permission prompt.** Different data each time: a second PR has a new title and body. A call that
-  prompts is covered by the owner's own allow rule then, or it leaves the allowance.
+- **The allowed night calls are rehearsed before the owner leaves, and none waits on a
+  permission prompt.** A kind with a form that changes nothing is run twice with different data. A merge, a
+  publication or a send is never rehearsed by doing it: the owner's own allow rule covers it. A call
+  that prompts with no such rule leaves the allowance.
 - **An interrupted call cancels that call, not the session.** The work goes on with the next step,
   and a turn of the night ends with neither a promise nor a question in text.
 - **The order to work alone is not an approval.** No plan, mockup or look is approved by it, and it
@@ -105,18 +106,21 @@ flowchart TD
   branches from the last green branch of the chain — the stopped one leaves the merge order.
 - **A guard's refusal is a work step, not the end of the session.** It names what was skipped; the
   skipped is done, and the work goes on. A refusal that demands an action visible from outside the
-  owner did not name stops the work before that step, and the list names what it waits for. A guard
-  does not open the owner's window before the boundary: it names a default instead. Bypassing a
-  guard stays forbidden in an autonomous session too.
+  owner did not name stops the work before that step, and the list names what it waits for. The
+  turn-exit guard names a default instead of the owner's menu before the boundary. A call whose guard
+  would open the owner's window is not made before it: the work waits, and the list names the call.
+  Bypassing a guard stays forbidden in an autonomous session too.
 - **The morning list is written along the way, not recalled at the end.** Each closed piece of work
   appends its line: the night is longer than the window. A broken night is resumed from the list
   file, which the command does not write over.
 
 ## What of the law is not here
 
-Nothing ends the session at its boundary: the session ends at it or by the owner's word; a queue
-emptied earlier ends it with the list. The guards read the boundary line only to name a default
-instead of the owner's window while it lies ahead. The ban on what is visible from outside past the
+Nothing checks that the session ended at its boundary or by the owner's word, and a queue emptied
+earlier is not told from unfinished work: the list is completed, and the turn is held until the
+scenario is over or the harness ends it. The turn-exit guard reads the boundary line only to name a
+default instead of the owner's menu while it lies ahead; the guards that ask by their own window do
+not read it, and a tree that has taught one of them names it in the companion. The ban on what is visible from outside past the
 allowance, the chain's base, a written default and a readiness command named before the stage are
 held by the rule, not by a guard: the push command is no different from the one made by day.
 

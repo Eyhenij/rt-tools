@@ -4,7 +4,7 @@ kind: pattern
 rule: autonomous-work
 description: Pattern of rule autonomous-work. Load when the owner has left and the work runs through the night — the cycle of one piece of work, chained branching, a written default instead of a question, the list by morning, handling a guard refusal. Not for ordinary work — patterns task-flow-start and -resume.
 ---
-<!-- rt-kit v0.39.0 · patterns/autonomous-work-run.md · 3e492530ddc5 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · patterns/autonomous-work-run.md · 0e63a6888639 · правится надстройкой, не здесь -->
 
 # A night without the owner
 
@@ -14,7 +14,7 @@ Pattern of the rule `autonomous-work`. What must be true — the law
 ## When to use
 
 - The owner said they are leaving and asked for work on one's own.
-- More than one task in a row is taken in a session, and they cannot be handed outside.
+- More than one task in a row is taken in a session, and only what the owner named goes outside.
 - The work ran into a question, and there is nobody to ask.
 
 ## The chain of branches
@@ -71,9 +71,10 @@ them it used:
 ```
 
 What the allowance does not name stays local, and in the morning the owner decides what to hand
-out of it. Every allowed kind of call is run twice before the owner leaves, with different data,
-and passes without a permission prompt; one that prompts is covered by the owner's own allow rule
-or leaves the allowance.
+out of it. The allowed calls are rehearsed before the owner leaves: a kind with a form that changes
+nothing is run twice with different data; a merge, a publication or a send is covered by the owner's
+own allow rule and never rehearsed by doing it. One that prompts with no such rule leaves the
+allowance.
 
 ## A default instead of a question
 
@@ -114,9 +115,10 @@ npm run task:move -- <номер> <прежняя колонка>
 Appended along the way, after each closed piece of work, not assembled at the end.
 
 ```markdown
-| Работа | Ветка | Чем подтверждена | Чего ждёт |
-| ------ | ----- | ---------------- | --------- |
-| <КЛЮЧ>-… — <что сделано> | `<ветка>` (на `<предыдущей>`) | `<команда>` — <вывод> | заявки и слияния |
+| Работа | Ветка | Чем подтверждена | Какое разрешение взято | Чего ждёт |
+| ------ | ----- | ---------------- | ---------------------- | --------- |
+| <КЛЮЧ>-… — <что сделано> | `<ветка>` (на `<предыдущей>`) | `<команда>` — <вывод> | «сам сливай в ветку эпика» — PR #<номер>, слит | ничего |
+| <КЛЮЧ>-… — <что сделано> | `<ветка>` (на `<предыдущей>`) | `<команда>` — <вывод> | нет | PR и слияния |
 ```
 
 The order of rows is the merge order. Below the list — the postponed tasks with their questions.
@@ -128,8 +130,10 @@ night ends with work, not with an argument with the guard.
 
 - The refusal demands an outside step the allowance does not name. The work is brought to the place
   where the demand can be met in the morning, and its list line names the step it waits for.
-- A guard names a default instead of the owner's window: the default goes into the list as a line,
-  and the step goes on.
+- The turn-exit guard names a default instead of the owner's menu: it goes into the list as a line,
+  and the work goes on.
+- A guard asks the owner by its own window: the call is not made, the list names it, and the next
+  work is taken. What is ready keeps its card and its branch.
 - The refusal repeats at the same place twice — then the skipped step was understood wrongly: the
   rule named in the refusal is read, not the wording rewritten.
 

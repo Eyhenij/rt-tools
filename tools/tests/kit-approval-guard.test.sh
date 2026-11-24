@@ -41,7 +41,9 @@ list 2198-01-01 "$AHEAD"
 report "night refuses instead of the window" "$(decision)" deny
 report "the night refusal names the boundary, the list and the quotes" \
     "$(names '2199-01-02T08:00') $(names '.claude/handoff/2198-01-01-ночь.md') $(names "$QUOTES")" "1 1 1"
-report "the night refusal says the PR waits for the morning" "$(names 'The PR waits for the morning')" 1
+report "the night refusal says the PR waits for the morning and the next work is taken" \
+    "$(names 'The PR waits for the morning') $(names 'leave the card and the branch, and take the next work')" "1 1"
+report "the night refusal does not call to wait for the owner's word" "$(names 'wait for their word')" 0
 report "no visible kit edit passes at night" "$(STUB_QUOTES='' decision)" PASS
 report "a missing record is refused at night by its own reason" \
     "$(STUB_FAIL=1 decision) $(STUB_FAIL=1 answer | jq -r '.hookSpecificOutput.permissionDecisionReason' | grep -c 'Autonomous until')" "deny 0"
@@ -53,6 +55,32 @@ list 2198-01-01 'Автономно до: 8 утра'
 report "a boundary in words opens the window" "$(decision)" ask
 list 2198-01-01 'Граница: до утра' "| $AHEAD | x |"
 report "a row of the table that quotes the line is no boundary" "$(decision)" ask
+printf '# Список\n\n| Работа |\n| --- |\n| RT-1 |\n%s\n' "$AHEAD" >"$HANDOFF/2198-01-01-ночь.md"
+report "a line after the table is no boundary" "$(decision)" ask
+list 2198-01-01 "Слова: $AHEAD"
+report "a line that does not open with the words is no boundary" "$(decision)" ask
+list 2198-01-01 "$AHEAD"$'\r'
+report "a boundary with a carriage return is read" "$(decision)" deny
+list 2198-01-01 "$AHEAD
+$BEHIND"
+report "the first boundary of the head is judged" "$(decision)" deny
+for at in 2199-01-01T25:00 2199-13-01T08:00 2199-11-32T08:00 2199-01-01T08:60; do
+    list 2198-01-01 "Автономно до: $at"
+    report "a moment the clock does not have is no boundary: $at" "$(decision)" ask
+done
+# A boundary minutes away, in local time: a zone far from UTC tells a local clock from UTC.
+export TZ=Asia/Vladivostok
+near() { node -e "const d = new Date(Date.now() + $1 * 60000); const p = (n) => String(n).padStart(2, '0'); console.log(\`\${d.getFullYear()}-\${p(d.getMonth() + 1)}-\${p(d.getDate())}T\${p(d.getHours())}:\${p(d.getMinutes())}\`)"; }
+list 2198-01-01 "Автономно до: $(near 5)"
+report "a boundary five minutes ahead is night" "$(decision)" deny
+list 2198-01-01 "Автономно до: $(near -5)"
+report "a boundary five minutes back is day" "$(decision)" ask
+unset TZ
+ELSEWHERE="$TREE/elsewhere"
+mkdir -p "$ELSEWHERE"
+printf '%s\n' "$AHEAD" >"$ELSEWHERE/2199-05-05-ночь.md"
+report "the directory of the list comes from the environment, an absolute one too" \
+    "$(RT_HANDOFF_DIR=elsewhere decision) $(RT_HANDOFF_DIR="$ELSEWHERE" decision)" "deny deny"
 list 2198-01-01 "$AHEAD"
 list 2199-01-01 "$BEHIND"
 report "the newest list is judged, not an older one" "$(decision)" ask

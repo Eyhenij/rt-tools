@@ -39,8 +39,8 @@ not by a person.
 - **A turn is released by the first release case of the description that is met, in the order of the cases.**
 - **A held turn names one move: the action of the measured state, and in a running stage the current step with the command that measures it.**
 - **A held turn in a running stage with no current step names by its number the first step of the plan not done or without a matched mark.**
-  On a taken-apart folder the progress comes from the history, and the refusal adds the move `git
-revert` of the commit that took it apart; a folder a live step run put back is read from the history too.
+  On a taken-apart folder the progress comes from the history, and the refusal adds the move
+  `git revert` of the commit that took it apart; a folder a live step run put back is read from the history too.
   The history is asked only in the state of a running stage. A step the plan names and the progress
   lacks counts as not done. A step done with no matched mark gets the measuring command, and the
   revert move only for a fix inside the folder.
@@ -78,6 +78,7 @@ revert` of the commit that took it apart; a folder a live step run put back is r
 - **A stop again with no call, after refusals of a stop by other hooks only, is no idle one: the refusal names those hooks and the move of the state, with no owner's menu.**
 - **The menu of a refusal carries exactly the options of the description: «отложить RT-N» with the task number and «подскажу путь», and the question says the way goes into its free field.**
 - **While the boundary of an autonomous session lies ahead, the refusal names the default of the rule `autonomous-work` with the morning list instead of the owner's menu; once the boundary has passed, the menu is back.**
+- **The command `/night` continues only a list whose boundary lies ahead; any other night gets a new list with its own boundary and words, and a boundary that is no moment ahead starts none.**
 - **The owner's choice is carried out: a deferral marks the task «отложено» and the next unblocked task is taken; a way the owner wrote is taken in the same step.**
 - **The menu hook lets exactly this menu through, and one question with a free field after a bare «подскажу путь».**
 - **An engine that fails, runs past its limit or cannot be called releases the turn and writes «движок упал» to the journal.**
@@ -177,6 +178,8 @@ Not applicable: the guard judges one turn of one session.
 - **The handover directory of the tree profile is not read by the engine.** It takes
   `RT_HANDOFF_DIR` from the environment, otherwise `.claude/handoff`, the same way it takes the
   tasks directory; a tree that keeps the list elsewhere gets the menu at night too.
+- **A night with no next work is not released.** The default says to complete the list; the turn
+  is held until the scenario is over or the harness ends it.
 - **A monitor is no background task.** A persistent monitor never ends, and a turn would be
   released on it for as long as it runs.
 
