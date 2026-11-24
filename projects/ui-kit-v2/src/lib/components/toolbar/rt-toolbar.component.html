@@ -20,7 +20,10 @@
 
             @if (rightTpl() || collapsed()) {
                 <div rtElem="bar" qa-dataid="toolbar-bar" data-slot="right" [rtMod]="{ right: true }">
-                    <!-- На узком месте отборы уходят за кнопку: она первая в ряду кнопок полосы -->
+                    <ng-container [ngTemplateOutlet]="rightTpl() ?? null" />
+
+                    <!-- На узком месте отборы уходят за кнопку: она последняя в ряду кнопок полосы,
+                         после настроек таблицы — обе меняют только вид списка -->
                     @if (collapsed()) {
                         <rt-icon-button
                             rtElem="filters-trigger"
@@ -32,8 +35,6 @@
                             [indicator]="filtersActive()"
                             (clicked)="openFilters()" />
                     }
-
-                    <ng-container [ngTemplateOutlet]="rightTpl() ?? null" />
                 </div>
             }
         </div>
