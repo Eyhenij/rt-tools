@@ -4,13 +4,14 @@ import { DOCUMENT } from '@angular/common';
 import { inject, DestroyRef, Injector, Renderer2, RendererFactory2, Signal, Service } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { EMPTY, map, merge, mergeMap, Observable, Subject, Subscriber, takeUntil } from 'rxjs';
+import { EMPTY, exhaustMap, map, merge, mergeMap, Observable, of, Subject, Subscriber, takeUntil } from 'rxjs';
 
 import { BreakpointsService, IRtKitConfig } from '@rt-tools/ui-kit-v2/core';
 import { rtKitDefault } from '@rt-tools/ui-kit-v2/core';
 import { carryThemeScopeOfFocus, materialPresetClassesOfFocus } from '@rt-tools/ui-kit-v2/core';
 import { RtAsideRef, TRtAsideCloseRequest } from './rt-aside-ref';
-import { RT_ASIDE_SHEET, RtAsideSheet, TRtAsideSheetGesture } from './rt-aside-sheet';
+import { IRtAsideSheetCloseRequest, RT_ASIDE_SHEET, RtAsideSheet } from './rt-aside-sheet';
+import { ERtAsideUnsavedOutcome } from './unsaved-dialog/rt-aside-unsaved.logic';
 import { RT_ASIDE_DATA } from './rt-aside.tokens';
 
 /**
@@ -63,7 +64,9 @@ interface IRtAsideOpenContext {
     overlayRef: OverlayRef;
     asideRef: {
         disableClose: Signal<boolean>;
+        unsaved: Signal<boolean>;
         close: () => void;
+        requestSave: () => void;
     };
     closeRequests: Subject<TRtAsideCloseRequest>;
     /** Вид открытия: на телефоне шторка, и её жесты закрытия приходят отсюда. */
@@ -155,7 +158,8 @@ export class RtAsideService {
                     );
                     const escapeClose$: Observable<() => void> = openContext.overlayRef.keydownEvents().pipe(
                         map((event: KeyboardEvent): (() => void) => (): void => {
-                            if (event.key !== 'Escape') {
+                            // Escape шторки телефона ведёт сама шторка: она знает, верхняя ли она.
+                            if (event.key !== 'Escape' || openContext.sheet.active()) {
                                 return;
                             }
                             if (openContext.closeOnEscape) {
@@ -167,14 +171,15 @@ export class RtAsideService {
                     const ownerClose$: Observable<() => void> = this.#destroyed(openContext.ownerDestroyRef).pipe(
                         map((): (() => void) => (): void => openContext.asideRef.close())
                     );
-                    // Шторка телефона закрывается полосой над собой, свайпом и Escape с фокусом внутри:
-                    // эти жесты подчиняются тем же настройкам открытия, что подложка и Escape панели.
-                    const sheetClose$: Observable<() => void> = openContext.sheet.closeRequests().pipe(
-                        map((gesture: TRtAsideSheetGesture): (() => void) => (): void => {
-                            const enabled: boolean = gesture === 'escape' ? openContext.closeOnEscape : openContext.closeOnBackdropClick;
-                            this.#answerCloseGesture(openContext, gesture, enabled);
-                        })
-                    );
+                    // Шторка телефона закрывается полосой над собой, свайпом, Escape и «×»: жесты
+                    // подчиняются тем же настройкам открытия, что подложка и Escape панели.
+                    const sheetClose$: Observable<() => void> = openContext.sheet
+                        .closeRequests()
+                        .pipe(
+                            exhaustMap((request: IRtAsideSheetCloseRequest): Observable<() => void> =>
+                                this.#answerSheet(openContext, request)
+                            )
+                        );
                     return merge(backdropClose$, escapeClose$, ownerClose$, sheetClose$).pipe(
                         takeUntil(openContext.overlayRef.detachments())
                     );
@@ -292,6 +297,36 @@ export class RtAsideService {
             return;
         }
         openContext.closeRequests.next(gesture);
+    }
+
+    /**
+     * Просьба шторки телефона закрыться. Выключенный жест и панель под `disableClose` отказывают до
+     * вопроса, и отказ свайпа сообщается как отказ подложки. «×» идёт дорогой стрелки и не
+     * отказывает. Признак несохранённого на хэндле сначала спрашивает внизу экрана: «Сохранить и
+     * закрыть» сообщает просьбу записи и оставляет панель открытой, «Закрыть без сохранения»
+     * закрывает, «Остаться» — ничего.
+     */
+    #answerSheet(openContext: IRtAsideOpenContext, request: IRtAsideSheetCloseRequest): Observable<() => void> {
+        const close: () => void = request.road ?? ((): void => openContext.asideRef.close());
+        if (request.gesture !== 'dismiss') {
+            const enabled: boolean = request.gesture === 'escape' ? openContext.closeOnEscape : openContext.closeOnBackdropClick;
+            if (!enabled || openContext.asideRef.disableClose()) {
+                const gesture: TRtAsideCloseRequest = request.gesture;
+                return of((): void => openContext.closeRequests.next(gesture));
+            }
+        }
+        if (!openContext.asideRef.unsaved()) {
+            return of(close);
+        }
+        // Пока вопрос показан, новые просьбы закрыться отбрасываются: `exhaustMap` ждёт ответа.
+        return openContext.sheet.ask().pipe(
+            map((outcome: ERtAsideUnsavedOutcome): (() => void) => {
+                if (outcome === ERtAsideUnsavedOutcome.Save) {
+                    return (): void => openContext.asideRef.requestSave();
+                }
+                return outcome === ERtAsideUnsavedOutcome.Discard ? close : (): void => undefined;
+            })
+        );
     }
 
     /**

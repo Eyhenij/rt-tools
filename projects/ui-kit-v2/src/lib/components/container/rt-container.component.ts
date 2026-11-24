@@ -259,7 +259,8 @@ export class RtContainerComponent {
                         overlayRef.backdropClick().pipe(map((): (() => void) => (): void => this.backdropClick.emit())),
                         overlayRef.keydownEvents().pipe(
                             map((event: KeyboardEvent): (() => void) => (): void => {
-                                if (event.key !== 'Escape' || !this.rightOpen()) {
+                                // Escape шторки телефона ведёт сама шторка: она знает, верхняя ли она.
+                                if (event.key !== 'Escape' || !this.rightOpen() || this.#rightSheet.active()) {
                                     return;
                                 }
                                 event.preventDefault();

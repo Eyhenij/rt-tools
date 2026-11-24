@@ -181,6 +181,28 @@
         flex: 1 1 auto;
     }
 
+    /* Вкладки панели-шторки — одна строка, как чипы периода в шторке: ряд прокручивается вбок по
+       кругу, края затеняются на 32, стрелки прокрутки не нужны — ряд листают пальцем. */
+    rt-aside .rt-aside--sheet.rt-aside--content--tabs {
+        .rt-tabs__tab-list {
+            flex-wrap: nowrap;
+            mask-image: linear-gradient(
+                to right,
+                transparent,
+                currentcolor var(--rt-space-8),
+                currentcolor calc(100% - var(--rt-space-8)),
+                transparent
+            );
+            overflow-x: auto;
+            overscroll-behavior-x: contain;
+            scrollbar-width: none;
+        }
+
+        .rt-tabs__rest {
+            display: none;
+        }
+    }
+
     @media (width <= 768px) {
         rt-aside .rt-aside,
         rt-aside .rt-aside--size--sm,

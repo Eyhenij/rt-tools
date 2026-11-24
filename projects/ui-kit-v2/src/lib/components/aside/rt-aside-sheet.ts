@@ -1,12 +1,26 @@
 import { InjectionToken, Signal, signal, WritableSignal } from '@angular/core';
 
-import { Observable, Subject } from 'rxjs';
+import { defer, Observable, Subject, take } from 'rxjs';
+
+import { ERtAsideUnsavedOutcome } from './unsaved-dialog/rt-aside-unsaved.logic';
 
 /**
- * Жест, которым шторка панели просит закрыться: нажатие по полосе над шторкой и свайп вниз —
- * `backdrop`, Escape — `escape`. «×» сюда не приходит: он идёт дорогой стрелки шапки.
+ * Чем шторку панели просят закрыться: нажатие по полосе над шторкой и свайп вниз — `backdrop`,
+ * Escape — `escape`, «×» шапки — `dismiss`.
  */
-export type TRtAsideSheetGesture = 'backdrop' | 'escape';
+export type TRtAsideSheetGesture = 'backdrop' | 'escape' | 'dismiss';
+
+/**
+ * Вопрос перед закрытием шторки: о несохранённых правках записи (`edits`, слова панели) или о
+ * неприменённых отборах (`apply`, слова шторки кита).
+ */
+export type TRtAsideSheetQuestion = 'edits' | 'apply';
+
+/** Просьба шторки закрыться: жест и, у «×», дорога стрелки шапки, которой панель закрывается. */
+export interface IRtAsideSheetCloseRequest {
+    readonly gesture: TRtAsideSheetGesture;
+    readonly road: (() => void) | null;
+}
 
 /**
  * Вид одного открытия панели на телефоне: шторка во всю высоту вместо выезда сбоку.
@@ -14,18 +28,24 @@ export type TRtAsideSheetGesture = 'backdrop' | 'escape';
  * Вид выбирает тот, кто открывает панель, — служба кита или правая панель `rt-container`, — по
  * окну в миг открытия, и держит его до закрытия: окно, перешедшее порог при открытой панели, вид
  * не меняет. Рамка панели, её шапка и подвал читают вид и рисуются шторкой; просьбы шторки
- * закрыться уходят обратно открывшему — он решает, закрыть ли панель.
+ * закрыться уходят обратно открывшему — он решает, закрыть ли панель, и при несохранённом
+ * спрашивает вопросом шторки внизу экрана (`ask()`).
  */
 export class RtAsideSheet {
     readonly #active: WritableSignal<boolean> = signal<boolean>(false);
     readonly #shown: WritableSignal<boolean> = signal<boolean>(false);
-    readonly #gesturesSource: Subject<TRtAsideSheetGesture> = new Subject<TRtAsideSheetGesture>();
+    readonly #gesturesSource: Subject<IRtAsideSheetCloseRequest> = new Subject<IRtAsideSheetCloseRequest>();
+    readonly #asksSource: Subject<void> = new Subject<void>();
+    readonly #answersSource: Subject<ERtAsideUnsavedOutcome> = new Subject<ERtAsideUnsavedOutcome>();
 
     /** Панель рисуется шторкой: решено при открытии. */
     public readonly active: Signal<boolean> = this.#active.asReadonly();
 
     /** Шторка поднята; снятый признак опускает её вниз. */
     public readonly shown: Signal<boolean> = this.#shown.asReadonly();
+
+    /** О чём спрашивает шторка перед закрытием; по нему она берёт слова вопроса. */
+    public readonly question: WritableSignal<TRtAsideSheetQuestion> = signal<TRtAsideSheetQuestion>('edits');
 
     /** Вид, выбранный при открытии панели. */
     public activate(active: boolean): void {
@@ -37,14 +57,41 @@ export class RtAsideSheet {
         this.#shown.set(shown);
     }
 
-    /** Шторку просят закрыть жестом: полосой, свайпом или Escape. */
-    public requestClose(gesture: TRtAsideSheetGesture): void {
-        this.#gesturesSource.next(gesture);
+    /** Шторку просят закрыть: полосой, свайпом, Escape или «×» с дорогой стрелки. */
+    public requestClose(gesture: TRtAsideSheetGesture, road: (() => void) | null = null): void {
+        this.#gesturesSource.next({ gesture, road });
     }
 
-    /** Просьбы шторки закрыться; закрывать или нет, решает открывший панель. */
-    public closeRequests(): Observable<TRtAsideSheetGesture> {
+    /** Просьбы шторки закрыться; закрывать ли, решает открывший панель. */
+    public closeRequests(): Observable<IRtAsideSheetCloseRequest> {
         return this.#gesturesSource.asObservable();
+    }
+
+    /**
+     * Спросить внизу экрана, что сделать с несохранённым, и получить ответ. Шторка задаёт вопрос
+     * один раз: просьба, пришедшая, пока он показан, получает тот же ответ.
+     */
+    public ask(): Observable<ERtAsideUnsavedOutcome> {
+        return defer((): Observable<ERtAsideUnsavedOutcome> => {
+            this.#asksSource.next();
+
+            return this.#answersSource.pipe(take(1));
+        });
+    }
+
+    /** Вопросы, которые надо показать: их слушает рамка панели со шторкой. */
+    public asks(): Observable<void> {
+        return this.#asksSource.asObservable();
+    }
+
+    /** Ответ человека на вопрос шторки. */
+    public answer(outcome: ERtAsideUnsavedOutcome): void {
+        this.#answersSource.next(outcome);
+    }
+
+    /** Ответы человека на вопросы шторки — ими живут, например, отборы полосы при отказе. */
+    public answers(): Observable<ERtAsideUnsavedOutcome> {
+        return this.#answersSource.asObservable();
     }
 }
 

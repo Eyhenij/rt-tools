@@ -58,9 +58,9 @@
         <div rtElem="confirm" qa-dataid="bottom-sheet-confirm" role="alertdialog" aria-modal="true" [attr.aria-labelledby]="confirmTitleId">
             <div rtElem="confirm-card">
                 <h2 rtElem="confirm-title" qa-dataid="bottom-sheet-confirm-title" [attr.id]="confirmTitleId">
-                    {{ t().bottomSheetUnsavedTitle }}
+                    {{ confirmText().title }}
                 </h2>
-                <p rtElem="confirm-message" qa-dataid="bottom-sheet-confirm-message">{{ t().bottomSheetUnsavedMessage }}</p>
+                <p rtElem="confirm-message" qa-dataid="bottom-sheet-confirm-message">{{ confirmText().message }}</p>
                 <div rtElem="confirm-actions">
                     <button
                         #confirmFirst
@@ -69,8 +69,8 @@
                         type="button"
                         size="md"
                         appearance="filled"
-                        [label]="t().uiApply"
-                        [attr.aria-label]="t().uiApply"
+                        [label]="confirmText().apply"
+                        [attr.aria-label]="confirmText().apply"
                         (click)="onConfirmApply()"></button>
                     <button
                         rtButton
@@ -79,8 +79,8 @@
                         size="md"
                         theme="secondary"
                         appearance="outlined"
-                        [label]="t().bottomSheetUnsavedDiscard"
-                        [attr.aria-label]="t().bottomSheetUnsavedDiscard"
+                        [label]="confirmText().discard"
+                        [attr.aria-label]="confirmText().discard"
                         (click)="onConfirmDiscard()"></button>
                     <button
                         rtButton
@@ -88,8 +88,8 @@
                         type="button"
                         size="md"
                         appearance="text"
-                        [label]="t().uiCancel"
-                        [attr.aria-label]="t().uiCancel"
+                        [label]="confirmText().stay"
+                        [attr.aria-label]="confirmText().stay"
                         (click)="onConfirmCancel()"></button>
                 </div>
             </div>

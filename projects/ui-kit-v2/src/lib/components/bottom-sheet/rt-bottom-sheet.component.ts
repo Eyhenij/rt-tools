@@ -37,7 +37,7 @@ import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { IRtSheetKeyboardBox, rtWatchSheetKeyboard } from './rt-bottom-sheet-keyboard';
 import { RtBottomSheetStackService } from './rt-bottom-sheet-stack.service';
 import { clampDragDelta, focusLeftBehind, innerFocus, isTypingTarget, outerFocus, shouldDismissDrag } from './rt-bottom-sheet.logic';
-import { IRtSheetTemplateContext } from './rt-bottom-sheet.model';
+import { IRtSheetConfirmLabels, IRtSheetTemplateContext } from './rt-bottom-sheet.model';
 import { RtSheetFooterDirective } from './rt-sheet-footer.directive';
 import { RtSheetHeaderDirective } from './rt-sheet-header.directive';
 
@@ -169,6 +169,18 @@ export class RtBottomSheetComponent {
         apply: this.#requestApply,
     };
 
+    /** Слова вопроса: свои из входа, без них — вопрос о неприменённом выборе. */
+    protected readonly confirmText: Signal<IRtSheetConfirmLabels> = computed(
+        (): IRtSheetConfirmLabels =>
+            this.confirmLabels() ?? {
+                title: this.t().bottomSheetUnsavedTitle,
+                message: this.t().bottomSheetUnsavedMessage,
+                apply: this.t().uiApply,
+                discard: this.t().bottomSheetUnsavedDiscard,
+                stay: this.t().uiCancel,
+            }
+    );
+
     /** Первый ответ вопроса: фокус встаёт на него, как только вопрос нарисован. */
     protected readonly confirmFirst: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('confirmFirst');
 
@@ -210,6 +222,20 @@ export class RtBottomSheetComponent {
     public readonly footerTemplate: InputSignal<TemplateRef<IRtSheetTemplateContext> | null> =
         input<TemplateRef<IRtSheetTemplateContext> | null>(null);
 
+    /**
+     * Свои слова вопроса перед закрытием — у панели, которая спрашивает о правках записи, а не о
+     * выборе. Пусто — слова шторки о неприменённом выборе.
+     */
+    public readonly confirmLabels: InputSignal<IRtSheetConfirmLabels | null> = input<IRtSheetConfirmLabels | null>(null);
+
+    /**
+     * Ответ «Применить» закрывает шторку. `false` — ответ только сообщает о себе, и шторка остаётся
+     * открытой: её закроет хозяин, когда применённое запишется.
+     */
+    public readonly closeOnApply: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
     public readonly openChange: OutputEmitterRef<boolean> = output<boolean>();
 
     /** Человек ответил на вопрос «Применить»: выбор нужно применить, следом придёт просьба закрыть. */
@@ -217,6 +243,9 @@ export class RtBottomSheetComponent {
 
     /** Человек ответил на вопрос «Не применять»: неприменённое нужно отбросить, следом придёт просьба закрыть. */
     public readonly discardRequest: OutputEmitterRef<void> = output<void>();
+
+    /** Человек остался: ответил на вопрос третьей кнопкой или снял его Escape. */
+    public readonly stayRequest: OutputEmitterRef<void> = output<void>();
 
     constructor() {
         // Порядок открытия — общий для всех шторок страницы; шторка встаёт в него с открытием.
@@ -276,6 +305,17 @@ export class RtBottomSheetComponent {
     }
 
     /**
+     * Задать вопрос перед закрытием, не дожидаясь жеста: так спрашивает хозяин, которого просят
+     * закрыться в обход шторки. Показанный вопрос второй раз не задаётся.
+     */
+    public ask(): void {
+        if (!this.confirming()) {
+            this.#askedFrom = innerFocus(this.#doc, this.#host);
+            this.confirming.set(true);
+        }
+    }
+
+    /**
      * Escape с фокусом в самой шторке: дальше клавиша не идёт. Шторка может стоять в боковой панели
      * или диалоге, и их оверлей закрыл бы по той же клавише себя, а не её.
      */
@@ -303,7 +343,9 @@ export class RtBottomSheetComponent {
     protected onConfirmApply(): void {
         this.confirming.set(false);
         this.applyRequest.emit();
-        this.openChange.emit(false);
+        if (this.closeOnApply()) {
+            this.openChange.emit(false);
+        }
     }
 
     protected onConfirmDiscard(): void {
@@ -318,6 +360,7 @@ export class RtBottomSheetComponent {
         // иначе он упал бы на страницу под открытой шторкой.
         (this.#askedFrom ?? this.#host.querySelector<HTMLElement>('[role="dialog"]'))?.focus({ preventScroll: true });
         this.#askedFrom = null;
+        this.stayRequest.emit();
     }
 
     protected onDragStart(event: PointerEvent): void {
@@ -335,10 +378,7 @@ export class RtBottomSheetComponent {
             return;
         }
         // Вопрос уже показан — вторая просьба закрыть его не переспрашивает.
-        if (!this.confirming()) {
-            this.#askedFrom = innerFocus(this.#doc, this.#host);
-            this.confirming.set(true);
-        }
+        this.ask();
     }
 
     /** Шторка панели выбора: прокрутку и Escape за неё держит её собственный оверлей. */

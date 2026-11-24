@@ -44,6 +44,11 @@
             [ariaLabel]="sheetName()"
             [headerTemplate]="headerSlot"
             [footerTemplate]="sheetFooter()"
+            [confirmLabels]="sheetConfirm()"
+            [closeOnApply]="false"
+            (applyRequest)="onSheetAnswer(outcomes.Save)"
+            (discardRequest)="onSheetAnswer(outcomes.Discard)"
+            (stayRequest)="onSheetAnswer(outcomes.Stay)"
             (openChange)="onSheetOpenChange($event)">
             <div
                 #frame

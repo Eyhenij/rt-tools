@@ -53,10 +53,19 @@ export class RtAsideRef<T = unknown> {
      */
     public readonly disableClose: WritableSignal<boolean> = signal(false);
 
+    /**
+     * Признак несохранённых правок, который ставит приложение, пока панель держит незаписанное.
+     * На телефоне панель-шторка с ним перед закрытием жестом или «×» спрашивает внизу экрана:
+     * сохранить и закрыть, закрыть без сохранения или остаться. Закрытие кодом через `close()`
+     * признак не читает. От 481 точки признак ничего не меняет.
+     */
+    public readonly unsaved: WritableSignal<boolean> = signal(false);
+
     readonly #overlayRef: OverlayRef;
     readonly #renderer: Renderer2;
     readonly #afterClosedSource: Subject<T | undefined> = new Subject<T | undefined>();
     readonly #closeRequestsSource: Subject<TRtAsideCloseRequest>;
+    readonly #saveRequestsSource: Subject<void> = new Subject<void>();
     /** Вид открытия на телефоне: шторку закрытие опускает вниз. Без него панель уезжает вбок. */
     readonly #sheet: RtAsideSheet | null;
 
@@ -117,6 +126,22 @@ export class RtAsideRef<T = unknown> {
         return this.#closeRequestsSource.asObservable();
     }
 
+    /**
+     * Человек ответил «Сохранить и закрыть» на вопрос шторки телефона. Панель остаётся открытой:
+     * приложение записывает правки и закрывает её через `close()`, признак снимать не обязательно.
+     * Завершается вместе с панелью.
+     */
+    public saveRequests(): Observable<void> {
+        return this.#saveRequestsSource.asObservable();
+    }
+
+    /** Ответ «Сохранить и закрыть» на вопрос шторки: служба передаёт его приложению. */
+    public requestSave(): void {
+        if (!this.#isClosing) {
+            this.#saveRequestsSource.next();
+        }
+    }
+
     /** Слой снят без `close()`: анимации играть не на чем, остаётся отдать результат. */
     #finish(result: T | undefined): void {
         if (this.#isClosing) {
@@ -130,5 +155,6 @@ export class RtAsideRef<T = unknown> {
         this.#afterClosedSource.next(result);
         this.#afterClosedSource.complete();
         this.#closeRequestsSource.complete();
+        this.#saveRequestsSource.complete();
     }
 }

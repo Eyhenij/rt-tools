@@ -146,6 +146,19 @@ export class RtAsideHeaderComponent {
     /** Место главной кнопки справа в шапке шторки; вне шторки его нет. */
     public readonly sheetMainSlot: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('sheetMain');
 
+    /**
+     * «×» шторки идёт дорогой стрелки. У панели службы кита с признаком несохранённого служба
+     * сначала спрашивает внизу экрана, и дорога идёт после ответа «Закрыть без сохранения».
+     * Панель маршрута спрашивает сама, получив `dismiss`.
+     */
+    protected onSheetClose(): void {
+        if (this.#sheet === null || this.#asideRef === null) {
+            this.onDismiss();
+            return;
+        }
+        this.#sheet.requestClose('dismiss', (): void => this.onDismiss());
+    }
+
     protected onDismiss(): void {
         // Сначала output — route-driven consumer обработает intent.
         this.dismiss.emit();
