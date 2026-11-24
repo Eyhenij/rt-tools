@@ -103,7 +103,7 @@ function recordOf(branch) {
 /** The faults of one record, each a line for the refusal; empty means approved. */
 export function faultsOf(name, record) {
     if (record === null) {
-        return [`${name}: no approval record in the task folder's approvals.md — the mockup and the showcase lines, or the line «Без вида» with the owner's approval of the plan that named the kit files`];
+        return [`${name}: no approval record, in approvals.md of the task folder or in the archive record — the mockup and the showcase lines, or the line «Без вида» with the owner's approval of the plan`];
     }
 
     const found = parseApprovals(record.text);
@@ -414,7 +414,7 @@ if (calledDirectly) {
     if (faults.length > 0) {
         console.error(`check-kit-approval: a visible kit edit without the owner's approvals (rule ${RULE})\n`);
         faults.forEach((fault) => console.error(`  ${fault}`));
-        console.error('\nA changed look: ask the owner about the mockup and the showcase, write their answer word for word; a refusal is fixed and shown again. No change of look: no question — the line «Без вида» quotes the approval of the plan that named these files; a file it did not name goes into the plan and to its approval.');
+        console.error('\nA changed look: ask the owner about the mockup and the showcase, write their answer word for word; a refusal is fixed and shown again. No change of look: no question — the line «Без вида» quotes the approval of the plan; a file the plan did not name goes into the progress as a decision.');
         process.exit(1);
     }
 

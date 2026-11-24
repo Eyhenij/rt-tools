@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — about one turn. Load when a turn is being ended — what it ends with, what the owner is told about a step that is theirs, what backs a statement about the tree, what the guards watch. Pattern task-flow-handoff. The whole course of work — rule task-flow.
 ---
-<!-- rt-kit v0.39.0 · rules/turn-conduct.md · b5f8aa86d6f0 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · rules/turn-conduct.md · 3819c037117b · правится надстройкой, не здесь -->
 
 # Turn conduct — how it works here
 
@@ -268,9 +268,9 @@ flowchart TD
 - **The sign of irreversibility is taken from the list, not derived by argument.** The list was
   drawn up by someone who already weighed reversibility, and an argument cancels it silently. Actions outside the list the executor does not gate.
 - **A turn in which the executor admitted a miss does not end until the incident record exists.**
-  Its text is by the role `cargo-writer`, and it is sent in the same turn by `agent-kit propose` — at
-  night by `autonomous-work`. The agent hook reads both. The companion names the records directory,
-  the file name is the date and the miss.
+  The role `cargo-writer` writes its text by the layout template; it is sent in the same turn by
+  `agent-kit propose`, at night by `autonomous-work`. The agent hook refuses without any of the three.
+  The companion names the records directory; the file name is the date and the miss.
 - **A session begun from a handover enters the work by the same rule as any other.** The handover
   was written by a past session, no check reads it, and it describes yesterday: everything in it is
   checked against the tree. The entry order is four steps in the resume pattern; a guard watches it,
@@ -280,7 +280,7 @@ flowchart TD
   with a ready command but does not break the session.
 - **A filled window ends a turn only where there is no compaction.** Where it is declared, the
   window is the turn going on: the session compacts and works on, and the stop threshold fires only
-  when compaction did not come. A turn closed below the threshold loses the rest of the window.
+  when compaction did not come.
 - **The session's window fill is watched by a guard, not by the executor's memory.** At the first
   threshold it reminds to pick a stopping point, at the second it refuses everything but the
   handover, delivery commands and the task folder — the folder whole: at closing, both the decision

@@ -45,7 +45,7 @@ Tree rule under `work-conduct`, over `task-flow`. Cold part, steps whole: `pitfa
 
 - A PR into `main` is a draft, into an epic branch ready.
 - `goal-critic` never gets the plan.
-- Before closing, a kit or admin change shows the owner address, screen, width; the turn waits.
+- Before closing, a kit or admin change of look shows the owner address, screen, width; the turn waits.
   Texts, rules, tools: numbers in PR body.
 - After a merge, the next task in the same turn.
 - The executor merges only by the owner's word.

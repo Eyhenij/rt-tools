@@ -33,8 +33,8 @@ An approval goes into the task folder's approvals.md word for word, between « a
 ```
 
 An edit with no change of look — the type an input takes, say — carries one line instead of the
-three. It quotes the approval of the plan that named these kit files, never words said about
-something else; a branch with no kit edits of its own carries no line at all:
+three. It quotes the approval of the plan of this task, never words said about something else, and
+answers only for a branch whose every own kit edit keeps its look; a branch with no kit edits of its own carries no line at all:
 
 ```markdown
 - **Без вида:** «<the owner's words of the approval of the plan>»
@@ -59,5 +59,5 @@ A refusal is not written. The frame or the code is fixed, and the same question 
 node tools/check-kit-approval.mjs
 ```
 
-It names every missing line and every quote the owner did not write. The archive record takes both
-lines verbatim when the task folder is taken apart.
+It names every missing line; whether the owner wrote the quote is confirmed in the window of the PR.
+The archive record takes the lines verbatim when the task folder is taken apart.

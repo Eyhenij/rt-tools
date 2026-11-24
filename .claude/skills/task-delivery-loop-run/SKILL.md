@@ -46,7 +46,7 @@ pnpm exec nx affected -t lint typecheck test --parallel --base=origin/<base>
 RT_SUITES_BASE=origin/<base> bash tools/tests/run.sh   # the check scenarios the change reaches
 ```
 
-A heavy run goes alone and in the background. The affected run outlasts a foreground call on a cold
+A heavy run goes alone and in the background: the two calls above, one after the other. The affected run outlasts a foreground call on a cold
 cache, and the showcase frames fall with ECONNRESET beside the tests of the packages.
 
 The live check runs in the pinned Chrome. If it does not hold the local tab, the same measurement is

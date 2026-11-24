@@ -25,7 +25,8 @@ Part of [SKILL.md](SKILL.md). What refuses along the loop and what to do instead
   itself in `.claude/rt-kit/tree-name`, and the row goes into `.claude/rt-kit/assignments.md`.
 - **The run ahead writes marks only for a clean copy.** Commit first, then run it; a touch of the
   tree after a green run drops the marks.
-- **A visible kit edit is refused at the push without both approvals** — the rule `kit-approval`.
+- **A visible kit edit is refused at the push without the lines of its record** — the rule
+  `kit-approval`: both approvals, or the no-look line.
 
 ## End of the turn
 

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.0 · hooks/turn-judge.md · feba5dcbc788 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · hooks/turn-judge.md · a5f49b5200d5 · правится надстройкой, не здесь -->
 # Turn judge
 <!-- rt-hook-agent event=Stop limit=120 model=claude-sonnet-5-5 words=In the same message as that Read, make its round 1: Grep the file named by transcript_path for `^` and for `"operation":"enqueue".*"content":"[^<]|"content":"The user answered: |"type":"user","message":\{"role":"user","content":\[\{"type":"text","text":"\[Request interrupted by user` with output_mode count. -->
 
@@ -99,11 +99,22 @@ the end of every turn.
   `Glob` the directory; a file named with today's date counts.
 - The turn wrote an incident record and the turn did not run `agent-kit propose`, not counting
   `--dry-run`; any path to the package's command with `propose` is the same call, such as
-  `agent-kit.js propose`. A run whose output refuses this record or fails to send does not count.
+  `agent-kit.js propose`. A run whose output refuses this record (`отбито … <its file>`) does not
+  count: the record is fixed and sent again.
   A send a permission prompt refused counts when the reply names the unsent record and the permission
-  it needs. No send is demanded before the boundary of an autonomous session that named no send — the
-  line «Автономно до:» of the newest morning list is ahead: there the reply or that list names the
-  unsent record.
+  it needs. So does one the agent cannot carry through — the intake did not answer, the tree has no
+  intake or keeps no cargo, the owner said not to send — when the reply names the record and the
+  reason. No send is demanded before the boundary of an autonomous session that named no send: the
+  newest `*-ночь.md` of the directory of handovers, `.claude/handoff` by default, carries «Автономно
+  до:» ahead of now and a line «Разрешено:» without it. There the reply or that list names the unsent
+  record. The boundary is local time and the stamps of the transcript are UTC: with no local time in
+  the turn's output, the reply's word about the night is taken. The last records read may not hold the
+  writing: `Grep` the transcript once for `"name":"(Write|Edit)".*<the directory>` after the line of
+  the owner's latest word, and where it matches, for `propose`.
+- The turn wrote an incident record, and the transcript shows no call of the role `cargo-writer` for
+  it: `Grep` for `"subagent_type":\s*"cargo-writer"`, since the bare name stands in rules the session
+  loaded. A tree that lists the role in `rolesOff` of
+  `.claude/rt-kit.json` is not refused.
 - The owner asked to send a proposal to the rules package and the turn did not run
   `agent-kit propose`.
 
@@ -117,5 +128,5 @@ Answer with JSON only, no other text.
 The reason starts with `BLOCKED by turn-judge:` every time: refusals are counted by this mark in the
 transcripts. Write it in English, quote in « » the owner's words you rely on, and name one action
 the agent can take in this same turn: the work the owner's word ordered, the step it asked the owner
-to take, the command that shows the fact, the incident record, the sending of the proposal. Waiting
-is the action only for a background task of the session that still runs.
+to take, the command that shows the fact, the incident record, its role and its sending, the
+sending of the proposal. Waiting is the action only for a background task of the session that still runs.

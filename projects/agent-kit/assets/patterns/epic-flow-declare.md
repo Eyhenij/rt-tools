@@ -75,8 +75,10 @@ epic, and the folder: pattern `task-flow-start`, state `договорённос
 - The epic branch taken together with the first task, not before it: the first task stands on the
   main branch, and the epic starts as half of itself already merged.
 - An epic found in the middle of a task, declared from the copy of that task: the push hook refuses a
-  branch the copy does not stand on. It is declared and pushed from a second working tree on the main
-  branch, with its own install there, not a link to the install of the first.
+  branch the copy does not stand on. It is declared and pushed by a session standing in a
+  second working tree, taken from the main branch by the order of the tree — by the owner's word where
+  it asks for one — with its own install there, not a link to the install of the first. A push into it from the
+  first copy is refused.
 - A task moved to another epic and named only in its plan: it stays a sub-issue of the former card,
   its body names the former number, and the former plan keeps its row. The link, the body line and
   both plans move in the same turn.

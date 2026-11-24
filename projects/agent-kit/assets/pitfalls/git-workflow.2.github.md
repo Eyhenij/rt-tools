@@ -236,7 +236,7 @@ flowchart TD
   the review left: a lifted draft reads as "may be merged", and there is nobody to merge.
 - **The PR merge is pressed by a person, not by the work's executor.** Button and merge call are
   equal. The executor merges their own PR only on a person's word: about this PR, or a named allowance
-  that names the PRs and the condition in advance; nothing past it. A word about one does not carry.
+  that names the PRs and the condition in advance; nothing past it. Form: `--merge` or the tree's.
 - **The identity of the call opening a PR is guarded by the delivery guard, not by the executor's
   memory.** It shows in the command text only by an explicit token substitution; judged is the
   clash with the reviewer, not the account name.

@@ -292,6 +292,7 @@ hold 1548-not-now taken "replay: SC-AK-1548 — записанное слово 
 hold 1932-incident-not-sent stage "replay: SC-AK-1932 — разбор записан и не отправлен" "$STAGE" "$STEP"
 hold 1932-incident-sent stage "replay: SC-AK-1932 — разбор записан и отправлен" "$STAGE" "$STEP"
 hold 1932-incident-send-refused stage "replay: SC-AK-1932 — отправка разбора отбита проверкой слов" "$STAGE" "$STEP"
+hold 1932-incident-no-role stage "replay: SC-AK-1932 — разбор записан мимо роли" "$STAGE" "$STEP"
 hold 1932-incident-night stage "replay: SC-AK-1932 — ночью разбор записан в утренний список" "$STAGE" "$STEP"
 
 # --- хуки модели: их текст ----------------------------------------------------------------------------
@@ -303,7 +304,9 @@ report "replay: SC-AK-1451 — хук модели на Stop держит воп
 report "replay: SC-AK-1451 — хук модели на Stop не судит открытую работу" "$(has "$TURN_JUDGE" 'Open work is not yours to judge')" есть
 report "replay: SC-AK-1932 — хук модели на Stop держит разбор без отправки" "$(has "$TURN_JUDGE" 'wrote an incident record and the turn did not run `agent-kit propose`')" есть
 report "replay: SC-AK-1932 — отклонённая запросом отправка называется владельцу" "$(has "$TURN_JUDGE" 'a permission prompt refused counts when the reply names the unsent record')" есть
-report "replay: SC-AK-1932 — отбитая отправка не считается отправкой" "$(has "$TURN_JUDGE" 'A run whose output refuses this record or fails to send does not count')" есть
+report "replay: SC-AK-1932 — отбитая отправка не считается отправкой" "$(has "$TURN_JUDGE" 'A run whose output refuses this record (`отбито … <its file>`) does not')" есть
+report "replay: SC-AK-1932 — отправка, которой не провести, называется владельцу" "$(has "$TURN_JUDGE" 'So does one the agent cannot carry through')" есть
+report "replay: SC-AK-1932 — разбор мимо роли держится" "$(has "$TURN_JUDGE" 'the transcript shows no call of the role `cargo-writer`')" есть
 report "replay: SC-AK-1932 — ночью без названной отправки ход не держится" "$(has "$TURN_JUDGE" 'the boundary of an autonomous session that named no send')" есть
 report "replay: SC-AK-1455 — хук меню пропускает меню отказа проверки выхода" "$(has "$ASK_JUDGE" 'The question is the menu named by a refusal of the exit check')" есть
 report "replay: SC-AK-1455 — меню отказа — ровно два варианта" "$(has "$ASK_JUDGE" 'The options are exactly two: «отложить RT-N» with the task number')" есть

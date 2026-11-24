@@ -57,8 +57,9 @@ The table in `implementation.md` next to it.
   names every kit file the check counts and says that its look does not change; the line «Без вида»
   quotes the words by which the owner approved that plan, and it replaces all three lines. No question
   of its own is asked, neither with the plan nor at the push. A kit file the plan did not name, met
-  later, goes into the plan first, and the plan is approved again. An edit whose look may change goes
-  by the mockup.
+  later, goes into the progress as a decision along the way, and the line quotes the same approval.
+  The line answers only for a branch whose every own kit edit keeps its look; one edit that may change
+  the look takes the branch to the mockup. The window of the PR confirms the quote, it asks nothing new.
 - **A branch with no kit edits of its own writes no approval line.** Kit files brought by a merge answer
   by the records of their own tasks; a quote of words said about anything else is a false record.
 - **The push, the PR and the release go only after the approvals the record demands.** The check
