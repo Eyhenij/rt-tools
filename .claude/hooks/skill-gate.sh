@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/skill-gate.sh · 43b16e94dc8b · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/skill-gate.sh · 905cd0a1e5d7 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__claude-in-chrome__.*|mcp__figma__use_figma
 # Requires: checks/decide.mjs, hooks/decide.sh, hooks/deny-tail.sh
 # The rules gate: it does not let a file be edited until the rule it falls under has been loaded.
@@ -142,6 +142,13 @@ case "$tool" in
                 written_path="$(rt_gate_copy_path "$written_path")"
                 more="$(skill_for edit "$written_path" "" 2>/dev/null)"
                 [ -n "$more" ] && req="$req $more"
+                # The layers by path come to a file written by a command too; the layers by the text
+                # of the edit stay silent: the command carries no field of the text.
+                gate_command="$target"
+                target="$written_path"
+                # shellcheck disable=SC1090
+                [ -f "$rt_hooks_dir/skill-gate-layers.sh" ] && . "$rt_hooks_dir/skill-gate-layers.sh" 2>/dev/null
+                target="$gate_command"
             done <<EOF
 $(rt_shell_paths "$target")
 EOF

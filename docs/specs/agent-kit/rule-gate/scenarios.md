@@ -332,3 +332,45 @@ with the part about the queue, and an edit of a PR body by an address call names
 requests alone
 
 Covered: `projects/agent-kit/tests/defaults.test.sh`.
+
+### SC-AK-1915 — the rule of code design and its table come where the design is chosen
+
+Given the grill or the plan of a task, a draft of the grill or the plan of an epic is written
+When the gate decides what to demand
+Then it names the rule of code design and its table, and the domain rule of the file stays first
+
+Covered: `projects/agent-kit/tests/skill-gate-design.test.sh`.
+
+### SC-AK-1916 — a module, a script and the entry file get the rule alone
+
+Given a module, a shell script or an entry file is written
+When the gate decides what to demand
+Then it names the rule of code design after the domain rule and does not name the table
+
+Covered: `projects/agent-kit/tests/skill-gate-design.test.sh`.
+
+### SC-AK-1917 — the layer of code design is silent where there are no modules
+
+Given a spec, a story, a setting, a type declaration, a built file, an end-to-end test, a template, a
+sheet, the progress of a task or the agent's own file is written
+When the gate decides what to demand
+Then it does not name the rule of code design
+
+Covered: `projects/agent-kit/tests/skill-gate-design.test.sh`.
+
+### SC-AK-1918 — the tree lifts the layer of code design by the same function
+
+Given the gate map of the tree lifts the layer from a path
+When a file by that path and a file next to it are written
+Then the first gets neither the rule nor the table, and the second gets the rule
+
+Covered: `projects/agent-kit/tests/skill-gate-design.test.sh`.
+
+### SC-AK-1919 — a file written by a command gets the layers by path
+
+Given a command writes a module, a script or two files at once
+When the gate decides what to demand
+Then every written file gets its layers by path on top of the domain rule, a built file or a spec next
+to it does not lift them, and a command that only reads gets none
+
+Covered: `projects/agent-kit/tests/skill-gate-design.test.sh`.

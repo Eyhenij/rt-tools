@@ -24,6 +24,9 @@ sections through the override; they merge here by heading, and a package edit do
 - **Binding** — a `` `file:symbol` `` line in a companion or in a spec sidecar: the place where a statement is carried out
 - **Sidecar** — a file next to a spec or a rule: a companion, a list of scenarios
 - **Product agreement** — how the product will behave, written before the code: the only place where a spec speaks of the future. After the rollout it merges into the domain spec
+- **Coupling** — how many modules know a module and how many it knows; counted by imports, before an edit and after it
+- **Cohesion** — how far the parts of a module serve one duty. Said as one sentence without «and»
+- **Isolation** — a module is called through its entry, tested and changed without its neighbours
 - **Resource** — a unit of what the rules package ships: a law, a rule, a pattern, a guard, a check, a role, a command, a pipeline, a template, a default, a document
 - **Layout** — the transfer of a resource from the package into the tree, by its kind and by the layer settings
 - **Laid-out file** — a file in the tree with the package header. Edited through the override, not in place: an in-place edit is lost on the next layout

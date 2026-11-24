@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · laws/code-structure.md · 9b3b6d2587ed · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · laws/code-structure.md · 9392e59f5a37 · правится надстройкой, не здесь -->
 # Law on code structure
 
 What must be true about the code itself regardless of what it does. The law is needed because
@@ -25,6 +25,16 @@ file.
 - **A file is read whole.** The length at which it is read in parts is declared as one number for
   all kinds of files, and what accumulated before the declaration is listed one by one: the list
   marks a debt, it does not grant permission.
+- **A module has one duty.** A module with two changes for two reasons, and an edit for one of them
+  is checked against both.
+- **Dependencies go one way.** Two modules that know each other are one module in two files: neither
+  is read, tested or moved alone.
+- **A module shows outside only what its neighbours need.** What is shown is what others rely on, and
+  an extra symbol turns an inner edit into an edit of everyone.
+- **A change stays in the module it belongs to.** A condition spread over neighbours is corrected in
+  one of them, and the rest keep the old answer silently.
+- **The links of a module are known before an edit and after it.** Growth of links is seen only as a
+  difference; without the first number it is noticed when nothing can be moved any more.
 
 ## Open questions
 

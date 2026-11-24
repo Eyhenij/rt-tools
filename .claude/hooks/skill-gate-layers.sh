@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/skill-gate-layers.sh · d1365dcac1f2 · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/skill-gate-layers.sh · 572a5c240da3 · правится надстройкой, не здесь
 # Layers of the rules gate: requirements that come ON TOP of the domain one.
 #
 # NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The rules gate
@@ -159,6 +159,24 @@ case "$target" in
     *.spec.ts|*.stories.ts) ;;
     *.ts|*.html|*.scss)
         [ -f "$target" ] || { rt_layer_allowed reuse-first "$target" && rt_layer_add reuse-first; }
+        ;;
+esac
+
+# --- layer by path: code design ---------------------------------------------------------------
+#
+# Modules, their links and patterns are chosen while the request is taken apart and the plan is
+# written, so the rule and its table come there. The code gets the rule alone: together with the
+# table it would not fit into one delivery. Tests and settings have no modules.
+case "$target" in
+    */.claude/* | *.spec.* | *.test.* | *.stories.* | *.config.* | *.d.ts | */tests/* | *-e2e/*) ;;
+    */docs/tasks/*/grill.md | */docs/tasks/*/plan.md | */docs/plans/*.md)
+        if rt_layer_allowed code-design "$target"; then
+            rt_layer_add code-design
+            rt_layer_add code-design-choose
+        fi
+        ;;
+    *.ts | *.mjs | *.cjs | *.js | *.sh)
+        rt_layer_allowed code-design "$target" && rt_layer_add code-design
         ;;
 esac
 
