@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.0 · hooks/ask-judge.md · 71fcb35de950 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · hooks/ask-judge.md · 8ed095f45c52 · правится надстройкой, не здесь -->
 # Ask judge
 <!-- rt-hook-agent event=PreToolUse pattern=AskUserQuestion limit=60 -->
 
@@ -33,8 +33,8 @@ after any refusal of another check. Avoid both.
 - The answer is not in the owner's messages, not in the progress and not in the rules: the decision
   is the owner's.
 - The question asks for an approval the owner must give: a new working tree, a merge, a release, a
-  purchase, a deletion, a change of the owner's earlier decision. The approval of a plan has the
-  next item to itself.
+  purchase, a deletion, a change of the owner's earlier decision, the plan of an epic in
+  `<cwd>/docs/plans/`. The approval of the plan of a task has the next item to itself.
 - The question asks to approve the plan of the task of the branch, and the owner has not approved
   it yet. The approval of a plan is never held, a plan that changes a hook or a check included,
   when two things hold. The plan lies in `<cwd>/docs/tasks/<branch>/plan.md`. After that file was
@@ -57,8 +57,9 @@ after any refusal of another check. Avoid both.
   the next step, the epic table names the next task or the owner's order covers it. Quote the line.
 - A rule or a spec answers it plainly. Name the file and the line.
 - The question offers to walk around a check or a rule.
-- An option approves a plan. Without the plan or without both roles the option is held: an
-  approval of nothing is a lift. Name what is missing — the plan file or the role calls.
+- An option approves the plan of a task, not the plan of an epic in `<cwd>/docs/plans/`.
+  Without the plan or without both roles the option is held: an approval of nothing is a lift.
+  Name what is missing — the plan file or the role calls.
 - An option of the question removes, disables or weakens a hook or a check: switches it off, drops
   a case from it, lowers its threshold or adds an exception to it. Hold it in any menu, the menu of
   the exit check included. An owner who picks such an option removes the check with their own hand,

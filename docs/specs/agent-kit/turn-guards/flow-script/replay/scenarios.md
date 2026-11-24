@@ -155,6 +155,14 @@ Then the first approval leaves, and the approval of nothing is held
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`, `projects/agent-kit/tests/judge-replay.mjs`.
 
+### SC-AK-1914 — an approval option that appends an action of its own is held, the plan of an epic is not
+
+Given a plan approval asked after the plan and both roles, whose option appends turning the check of marks off, and an approval of the plan of an epic
+When the text of the menu hook is read, and the model judge reads the recorded question
+Then the option with the appended lift is held, and the plan of an epic is not held for a missing task folder
+
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`, `projects/agent-kit/tests/judge-replay.mjs`.
+
 ### SC-AK-1548 — the recorded stop words of the owner hold the turn
 
 Given the five stop messages of the measurement of 15 November — «Стой», «жди конца набора», «жди соседа», «Остановись на логической точке» and «Не сейчас» as a free answer to a menu
