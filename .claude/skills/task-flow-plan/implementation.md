@@ -32,4 +32,5 @@ here».
 - **A task folder is created for any work, no exceptions.** — `.claude/hooks/task-flow-guard.sh:tasks_dir` — the task directory here is `docs/tasks`, and the folder is looked for by the branch name one to one
 - **The task folder is created as a draft and gets its number by a command.** — `tools/task-new.mjs:adoptDraft` — the draft by slug is renamed into the folder by branch name and gets the plan header
 - **An abandoned grill is visible.** — `tools/check-board.mjs:checkDrafts` — a draft older than a week is listed by the work queue audit
+- **A claim about a dependency names a file and line of its installed code.** — **Not checked.** A machine does not tell a claim about a dependency from any other sentence of the plan; the line is read by the roles at the plan and by the review rounds
 - **A merged agreement does not lock the branch.** — `.claude/hooks/facts-flow.sh:rt_fact_agreement` — the branch history tells the merged from the never-created

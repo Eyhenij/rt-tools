@@ -28,7 +28,8 @@ The names and bindings of this tree, next to the rule `SKILL.md` beside it.
 The first column is the article verbatim. An autonomous session is held by technique. Two checks
 tell night from day by the line «Автономно до:» of the newest morning list, the turn-exit guard and
 the kit approval guard: the first names a default instead of the owner's menu, the second
-refuses the PR instead of opening its window. The rest is held by no guard, and every article says so
+refuses the PR instead of opening its window. The model hook on the turn's end reads it too, for the
+send of an incident record. The rest is held by no guard, and every article says so
 outright.
 
 - **The branch of the next work is created from the previous one, not from main.** — **Not checked.** No guard demands the previous branch as the base; the delivery guards judge whether the base is fresh, and a base that moved during the night is refused by them on every task branch. `.claude/hooks/git-guard-delivery.sh` refuses a base without the tip of main when there is no epic, and in every case a local reference to main that lags behind the server — fixed by `git fetch`. With an epic, `.claude/hooks/git-guard-delivery-epic.sh:rt_epic_base` refuses a base without the remote epic branch and proposes a branch from the epic, and refuses an epic branch without main's tip and proposes a merge into it and a push. Each of the fixes they name breaks the chain or needs a push; the rule's fix — merge the moved base into the previous branch locally — passes all of them. It is held by the technique `git checkout -b RT-<number>-<slug> <the previous branch>` and by the order in the morning list
@@ -36,7 +37,7 @@ outright.
 - **The allowed night calls are rehearsed before the owner leaves, and none waits on a permission prompt.** — **Not checked.** Permission prompts are the harness's and leave no trace in the tree; the owner's allow rules lie in `.claude/settings.local.json`
 - **An interrupted call cancels that call, not the session.** — **Not checked.** The exit check reads an interrupt as the owner's Esc and releases the turn; that the work went on is held by the article
 - **The order to work alone is not an approval.** — `tools/flow-plan.mjs:approvingEntry` — a plan is approved by the owner's choice «Одобряю …» in a menu, not by an order. A quote in a kit approval record is confirmed by the owner in the window of `.claude/hooks/kit-approval-guard.sh`
-- **An incident analysis is written at night at once.** — **Not checked.** The analysis lies in `.claude/rt-kit/postmortems/`, the send is `node dist/agent-kit/bin/agent-kit.js propose`
+- **An incident analysis is written at night at once.** — `.claude/hooks/turn-judge.md:propose` — the model hook demands the record of an admitted miss and its send, or its line in the morning list. The analysis lies in `.claude/rt-kit/postmortems/`, the send is `node dist/agent-kit/bin/agent-kit.js propose`
 - **A task that needs the owner's word is not taken at all.** — **Not checked.** The board does not know what a task is waiting for; it is held by the line of a postponed task in the morning list
 - **A default is written where the owner's answer would have been written.** — **Not checked.** It is written into the section «Decisions» of the grill — `docs/tasks/RT-<number>-<slug>/grill.md`; the completeness of the section is not judged by a machine
 - **The readiness sign is named as a command before the stage begins.** — **Not checked.** The step guard `.claude/hooks/flow-step-guard.sh` refuses a step marked done without the mark that `tools/task-flow-script.mjs step` writes after its check passed. A plan step without a check line it lets through, and the minute the command was named it does not read

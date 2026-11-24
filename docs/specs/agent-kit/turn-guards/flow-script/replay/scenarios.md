@@ -147,6 +147,14 @@ Then the turn is held, and the menu hook holds such an option in any menu, the m
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
+### SC-AK-1932 — an incident record written and not sent holds the turn
+
+Given five turns that admit a miss and write its record: not sent, sent, refused by the send, written past its role, and left in the morning list of a night that named no send
+When the hook on Stop reads the turns, and the text of the model hook is read
+Then all five are held by the running stage, and the model hook lets only the sent one and the night end
+
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`; the verdicts of the model — `projects/agent-kit/tests/judge-replay.mjs`.
+
 ### SC-AK-1548 — the recorded stop words of the owner hold the turn
 
 Given the five stop messages of the measurement of 15 November — «Стой», «жди конца набора», «жди соседа», «Остановись на логической точке» and «Не сейчас» as a free answer to a menu

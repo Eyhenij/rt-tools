@@ -21,7 +21,7 @@ Rule under the law `docs/constitution/delivery.md`, for a tree on GitLab. Cold p
 - **A push into a branch that has an open MR is followed by rereading its description.**
 - **On remarks to an MR the person is asked whether to answer under them, and after a yes each one gets an answer.**
 - **The draft is lifted by a separate call — `glab mr update <номер> --ready`.**
-- **The MR merge is pressed by a person, not by the work's executor.** The executor merges only on a person's word about this very MR.
+- **The MR merge is pressed by a person, not by the work's executor.** The executor merges only on a person's word — about this MR or a named allowance.
 - **The draft is not lifted while the MR has no review.**
 - **A branch with an open MR lags behind its base silently.**
 - **MR labels and assignee are set at creation, not by an edit after.**
