@@ -318,7 +318,7 @@ describe('RtTableFilterHeaderComponent — виды сравнения в што
         expect(document.querySelector('.rt-popover-sheet .rt-bottom-sheet--open')).toBeNull();
     });
 
-    it('SC-UKV-1779 — sheetCards=false оставляет в шторке пункты меню', (): void => {
+    it('SC-UKV-1797 — sheetCards=false оставляет в шторке пункты меню', (): void => {
         open({ sheetCards: false });
 
         expect(items().length).toBeGreaterThan(1);

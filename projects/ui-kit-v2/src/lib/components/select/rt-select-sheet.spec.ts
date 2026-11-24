@@ -340,7 +340,7 @@ describe('Карточки выбора селекта в шторке (вход
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1776 — каждая опция — карточка с радиокнопкой кита справа, выбранная отмечена', (): void => {
+    it('SC-UKV-1794 — каждая опция — карточка с радиокнопкой кита справа, выбранная отмечена', (): void => {
         const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true);
         fixture.componentInstance.writeValue('msq');
 
@@ -358,7 +358,7 @@ describe('Карточки выбора селекта в шторке (вход
         expect(option.querySelector('.rt-select__check')).toBeNull();
     });
 
-    it('SC-UKV-1778 — пояснение опции стоит второй строкой карточки, у поля его нет', (): void => {
+    it('SC-UKV-1796 — пояснение опции стоит второй строкой карточки, у поля его нет', (): void => {
         const inSheet: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { options: DESCRIBED });
         press(inSheet, 'select-trigger');
 
@@ -375,7 +375,7 @@ describe('Карточки выбора селекта в шторке (вход
         expect(all('select-option-description')).toEqual([]);
     });
 
-    it('SC-UKV-1773 — кнопка закрытия закрывает шторку и возвращает фокус полю', (): void => {
+    it('SC-UKV-1791 — кнопка закрытия закрывает шторку и возвращает фокус полю', (): void => {
         const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true);
         press(fixture, 'select-trigger');
         const close: HTMLButtonElement = document.querySelector('[qa-dataid="bottom-sheet-close"] button') as HTMLButtonElement;
@@ -420,7 +420,7 @@ describe('Карточки выбора селекта в шторке (вход
         expect(panel.classList).not.toContain('rt-bottom-sheet__panel--typing');
     });
 
-    it('SC-UKV-1779 — sheetCards=false возвращает в шторку строки, какими список стоит у поля', (): void => {
+    it('SC-UKV-1797 — sheetCards=false возвращает в шторку строки, какими список стоит у поля', (): void => {
         const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { sheetCards: false, options: DESCRIBED });
         fixture.componentInstance.writeValue('approve');
 

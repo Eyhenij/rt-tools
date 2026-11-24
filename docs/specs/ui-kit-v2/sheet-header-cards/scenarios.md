@@ -3,7 +3,7 @@
 The prefix `SC-UKV` is shared across the domain together with the subdomains. What a scenario is
 covered by is said under it.
 
-### SC-UKV-1772 — every sheet has a close button on the left of its header
+### SC-UKV-1790 — every sheet has a close button on the left of its header
 
 Given an open bottom sheet of the kit
 When its header is shown
@@ -11,7 +11,7 @@ Then a close button stands on the left of the header, and the title stands in th
 
 Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.component.spec.ts`.
 
-### SC-UKV-1773 — the close button closes the sheet and returns the focus
+### SC-UKV-1791 — the close button closes the sheet and returns the focus
 
 Given a select open in the sheet
 When the close button is pressed
@@ -19,7 +19,7 @@ Then the sheet closes, and the focus stands on the field
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
-### SC-UKV-1774 — a sheet with no title keeps the close button
+### SC-UKV-1792 — a sheet with no title keeps the close button
 
 Given a bottom sheet with no title
 When it is open
@@ -27,7 +27,7 @@ Then the close button stands on the left, and the header holds no title
 
 Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.component.spec.ts`.
 
-### SC-UKV-1775 — the action of a sheet stands on the right of its header
+### SC-UKV-1793 — the action of a sheet stands on the right of its header
 
 Given a multiselect open in the sheet
 When its header is shown
@@ -35,7 +35,7 @@ Then a filled done button stands on the right of the header, and the footer hold
 
 Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-sheet.spec.ts`.
 
-### SC-UKV-1776 — a choice of one value is drawn as cards with the kit radio button
+### SC-UKV-1794 — a choice of one value is drawn as cards with the kit radio button
 
 Given a select open in the sheet
 When its list is shown
@@ -43,7 +43,7 @@ Then every option is a card with the label on the left and the kit radio button 
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
-### SC-UKV-1777 — a choice of several values is drawn as cards with the kit checkbox
+### SC-UKV-1795 — a choice of several values is drawn as cards with the kit checkbox
 
 Given a multiselect open in the sheet
 When its list is shown
@@ -51,7 +51,7 @@ Then every option is a card with the kit checkbox on the right
 
 Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-sheet.spec.ts`.
 
-### SC-UKV-1778 — the description of an option is the second line of its card
+### SC-UKV-1796 — the description of an option is the second line of its card
 
 Given a select whose option carries a description
 When the select is open in the sheet
@@ -60,7 +60,7 @@ Then the card shows the description under the label, and next to the trigger the
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`; for the
 multiselect by `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-sheet.spec.ts`.
 
-### SC-UKV-1779 — one input returns the rows the panel has next to its trigger
+### SC-UKV-1797 — one input returns the rows the panel has next to its trigger
 
 Given a select with the cards switched off
 When it is open in the sheet
