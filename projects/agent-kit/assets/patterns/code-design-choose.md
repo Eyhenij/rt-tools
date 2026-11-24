@@ -45,7 +45,7 @@ SOLID, GRASP and Gang of Four name the techniques of the table. Coupling, cohesi
 defined in the glossary. Coupling is counted by the check of the tree:
 
 ```bash
-node <checks>/check-coupling.mjs --module=<path>      # the numbers now, for the plan
+node <checks>/check-coupling.mjs --module=<path>      # the numbers now, who imports and is imported
 node <checks>/check-coupling.mjs --base=<base>        # was → became on the branch, before the review
 grep -rlw "<shown symbol>" <sources>                  # a link the check does not see: who names a symbol
 ```
@@ -61,9 +61,10 @@ named down to the class or the function that gets the edit, and a thing the goal
 row. A decision that outlives the task goes to the spec of the domain, where the texts keep it.
 
 The check reads the row Coupling: the path in backticks, then the outgoing links with an arrow. A new
-folder is named by one number, the path with a slash at the end: what it imports from outside. A module
-that stood before is named by itself. Growth named nowhere refuses the push; an overrun is the same line
-among the decisions of the progress, with its reason after the numbers.
+folder is named by one number, the path with a slash at the end: what it imports from outside. In a
+folder that stood before every module is named by itself. Growth named nowhere refuses the push; an
+overrun is the same line with its reason after the numbers — among the decisions of the progress or, once
+the folder of the task is taken apart, in the text of a commit.
 
 | Row | Example |
 | --- | --- |

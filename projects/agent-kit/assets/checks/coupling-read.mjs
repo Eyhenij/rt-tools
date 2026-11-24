@@ -14,12 +14,13 @@ import { join } from 'node:path';
 const CODE = /\.(ts|tsx|mts|cts|mjs|cjs|js|jsx|sh)$/;
 const TYPES = /\.d\.[mc]?ts$/;
 /** A copy laid out from a package repeats its source: judged twice, one edit would grow two modules. */
-const LAID_OUT = /^(?:#!.*\n)?(?:\/\/|#|<!--) rt-kit v/;
+const LAID_OUT = /^(?:#!.*\n)?(?:\/\/|#|<!--) rt-kit v\S+(?: · (\S+))?/;
 const LIMIT = 1024 * 1024 * 512;
 
 export class RevisionMissing extends Error {}
 
-const git = (root, args) => execFileSync('git', args, { cwd: root, encoding: 'utf8', maxBuffer: LIMIT, stdio: ['ignore', 'pipe', 'pipe'] });
+const git = (root, args) =>
+    execFileSync('git', ['-c', 'core.quotePath=false', ...args], { cwd: root, encoding: 'utf8', maxBuffer: LIMIT, stdio: ['ignore', 'pipe', 'pipe'] });
 const lines = (text) => text.split('\n').filter(Boolean);
 
 const wanted = (path, { roots, skipped }) =>
@@ -28,39 +29,42 @@ const wanted = (path, { roots, skipped }) =>
     roots.some((root) => path === root || path.startsWith(`${root}/`)) &&
     !path.split('/').some((part) => skipped.includes(part));
 
-const keep = (files, path, text) => {
-    if (!LAID_OUT.test(text)) {
+const keep = ({ files, copies }, path, text) => {
+    const copy = LAID_OUT.exec(text);
+    if (copy) {
+        copies.set(path, copy[1]);
+    } else {
         files.set(path, text);
     }
 };
 
-/** The tracked and the new files of the working tree. */
+/** The tracked and the new files of the working tree: texts by path, laid-out copies by the name of the resource. */
 export function treeFiles(root, scope) {
-    const files = new Map();
+    const read = { files: new Map(), copies: new Map() };
     for (const path of git(root, ['ls-files', '-z', '--cached', '--others', '--exclude-standard']).split('\0')) {
         if (path && wanted(path, scope) && existsSync(join(root, path))) {
-            keep(files, path, readFileSync(join(root, path), 'utf8'));
+            keep(read, path, readFileSync(join(root, path), 'utf8'));
         }
     }
-    return files;
+    return read;
 }
 
-/** The files of a revision, read by one call. */
+/** The same of a revision, read by one call. */
 export function revisionFiles(root, revision, scope) {
     const paths = git(root, ['ls-tree', '-r', '-z', '--name-only', revision])
         .split('\0')
         .filter((path) => path && wanted(path, scope));
     const input = paths.map((path) => `${revision}:${path}\n`).join('');
     const out = spawnSync('git', ['cat-file', '--batch'], { cwd: root, input, maxBuffer: LIMIT }).stdout;
-    const files = new Map();
+    const read = { files: new Map(), copies: new Map() };
     let at = 0;
     for (const path of paths) {
         const end = out.indexOf(10, at);
         const size = Number(out.subarray(at, end).toString().split(' ')[2]);
-        keep(files, path, out.subarray(end + 1, end + 1 + size).toString());
+        keep(read, path, out.subarray(end + 1, end + 1 + size).toString());
         at = end + size + 2;
     }
-    return files;
+    return read;
 }
 
 /** The point a revision left the base at. A revision nobody has is named, not passed over. */
@@ -70,7 +74,11 @@ export function forkOf(root, base, at = 'HEAD') {
             throw new RevisionMissing(`the revision «${revision}» is not in this repository`);
         }
     }
-    return git(root, ['merge-base', base, at]).trim();
+    const found = spawnSync('git', ['merge-base', base, at], { cwd: root, encoding: 'utf8' });
+    if (found.status !== 0) {
+        throw new RevisionMissing(`«${base}» and «${at}» have no common revision here: the history is cut or foreign`);
+    }
+    return found.stdout.trim();
 }
 
 /** The text of one file at a revision, or null. */
@@ -100,35 +108,61 @@ export function ownPaths(root, fork, at = null) {
     return new Set([...committed, ...loose]);
 }
 
-/**
- * The versions of `<tasks>/<task>/<name>` the branch itself wrote — its commits, then the file of the
- * working tree; the folder of a task leaves the tree before the push, its history stays. `first` holds the
- * first version of the file named by the branch, or the one that came with the base, and the first versions
- * written before it: the lower branches of a stack. Everything else is `later`.
- */
-export function ownVersions(root, fork, tasksDir, name, at = null) {
-    const own = `${tasksDir}/${git(root, ['rev-parse', '--abbrev-ref', at ?? 'HEAD']).trim()}/${name}`;
-    const stood = textAt(root, fork, own);
-    const wrote = stood === null ? [] : [{ path: own, text: stood }];
-    const history = [...ownCommits(fork, at), '--reverse', '--format=%H', '--diff-filter=AM', '--', `${tasksDir}/*/${name}`];
+/** The texts of the own commits: after the folder of the task is taken apart a reason has no other place. */
+export const ownMessages = (root, fork, at = null) => git(root, ['log', '--first-parent', '--no-merges', '--format=%B', `${fork}..${at ?? 'HEAD'}`]);
+
+/** A copy of the sample nobody filled in: most of its lines with a gap still stand. */
+function isDraft(text, sample) {
+    const gaps = (sample ?? '').split('\n').filter((line) => /<[^<>]+>/.test(line));
+    return gaps.filter((line) => text.includes(line)).length * 2 > gaps.length;
+}
+
+/** Every version of `<tasks>/<task>/<name>` the commits wrote, oldest first; the sample and its copies apart. */
+function versionsIn(root, commits, { tasksDir, name, sample }) {
+    const form = ['--no-merges', '--no-renames', '--full-history', '--topo-order', '--reverse', '--name-only', '--format=%H', '--diff-filter=AM'];
+    const versions = [];
     let commit = null;
-    for (const line of lines(git(root, history))) {
+    for (const line of lines(git(root, ['log', ...form, ...commits, '--', `${tasksDir}/*/${name}`]))) {
         if (/^[0-9a-f]{40}$/.test(line)) {
             commit = line;
         } else if (!line.startsWith(`${tasksDir}/_`)) {
-            wrote.push({ path: line, text: git(root, ['show', `${commit}:${line}`]) });
+            versions.push({ commit, path: line, text: git(root, ['show', `${commit}:${line}`]) });
         }
     }
-    if (!at && existsSync(join(root, own))) {
-        wrote.push({ path: own, text: readFileSync(join(root, own), 'utf8') });
-    }
+    return versions.filter(({ text }) => !isDraft(text, sample));
+}
+
+/** The file of the task the branch is named by; a revision without a name — the task begun last. */
+function ownFile(root, at, versions, pathOf) {
+    const name = git(root, ['rev-parse', '--abbrev-ref', at ?? 'HEAD']).trim();
+    const paths = [...new Set(versions.map(({ path }) => path))];
+    const named = [name, name.replace(/^[^/]+\//, '')].map(pathOf);
+    return paths.find((path) => named.includes(path)) ?? (name === '' || name === 'HEAD' ? paths.at(-1) : null) ?? named[0];
+}
+
+/**
+ * The versions of `<tasks>/<task>/<name>` of a branch — its commits, then the file of the working tree; the
+ * folder of a task leaves the tree before the push, its history stays. `first` holds the first version of
+ * the file named by the branch, or the one that came with the base, the first versions written before it —
+ * the lower branches of a stack — and those of the tasks merged into the branch. The rest is `later`.
+ */
+export function ownVersions(root, fork, tasksDir, name, at = null) {
+    const form = { tasksDir, name, sample: textAt(root, fork, `${tasksDir}/_template/${name}`) };
+    const range = `${fork}..${at ?? 'HEAD'}`;
+    const committed = versionsIn(root, ['--first-parent', range], form);
+    const own = ownFile(root, at, committed, (task) => `${tasksDir}/${task}/${name}`);
+    const stood = textAt(root, fork, own);
+    const loose = !at && existsSync(join(root, own)) ? [{ path: own, text: readFileSync(join(root, own), 'utf8') }] : [];
+    const wrote = [...(stood === null ? [] : [{ path: own, text: stood }]), ...committed, ...loose.filter(({ text }) => !isDraft(text, form.sample))];
+    const merged = versionsIn(root, [range], form).filter(({ commit, path }) => path !== own && !committed.some((one) => one.commit === commit));
     const last = Math.max(
         0,
         wrote.findIndex(({ path }) => path === own)
     );
-    const isFirst = ({ path }, index) => index <= last && wrote.findIndex((one) => one.path === path) === index;
-    const textsOf = (first) => wrote.filter((one, index) => isFirst(one, index) === first).map(({ text }) => text);
-    return { first: textsOf(true), later: textsOf(false) };
+    const opens = (list) => (one, index) => list.findIndex(({ path }) => path === one.path) === index;
+    const first = [...wrote.filter((one, index) => index <= last && opens(wrote)(one, index)), ...merged.filter(opens(merged))];
+    const textsOf = (list) => list.map(({ text }) => text);
+    return { first: textsOf(first), later: textsOf([...wrote, ...merged].filter((one) => !first.includes(one))) };
 }
 
 /** The path aliases of the tree: `paths` of the settings file, comments and trailing commas allowed; null — unread. */

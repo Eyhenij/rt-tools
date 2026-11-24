@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · checks/coupling-judge.mjs · 2d8f2c79997e · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/coupling-judge.mjs · 16c6cf6a5f59 · правится надстройкой, не здесь
 /**
  * Which numbers of the import graph are violations.
  *
@@ -6,10 +6,13 @@
  * violations: a cycle of modules, a cycle of blocks, an import past an entry, outgoing links grown past
  * what the branch named. What stood in the base is not judged. Incoming links are printed and not
  * judged: they grow by reuse, and refusing that teaches to write copies.
+ *
+ * The base is `{ graph, settings }` of the fork under the paths of today: a renamed file keeps its past,
+ * and the two graphs are compared path by path.
  */
 import { posix } from 'node:path';
 
-import { blocksOf, bypassesOf, cyclesOf, entriesOf, isHarness, outsideOf } from './coupling-numbers.mjs';
+import { blockFolders, blocksOf, bypassesOf, cycleWay, cyclesOf, entriesOf, importBetween, isHarness, outsideOf } from './coupling-numbers.mjs';
 
 const BLOCKS = 'blocks: ';
 const cycleKey = (members) => members.join(' | ');
@@ -33,6 +36,16 @@ export const countsOf = (keys) => {
     };
 };
 
+/**
+ * The settings with the blocks of both graphs by both settings: the two are compared over the same
+ * folders. A block declared over old links makes no new cycle, and one whose entry is gone stays a block.
+ */
+function overCommonBlocks(graph, settings, base) {
+    const given = base ? [settings, base.settings] : [settings];
+    const graphs = base ? [graph, base.graph] : [graph];
+    return { ...settings, blocks: [...new Set(given.flatMap((one) => graphs.flatMap((each) => [...blockFolders(each, one)])))] };
+}
+
 /** A cycle is known when a known one holds every member of it: a cycle that lost a member is no new one. */
 const known = (members, list) => list.some((old) => members.every((member) => old.includes(member)));
 
@@ -41,77 +54,86 @@ const acceptedCycles = (accepted, blocks) =>
         .filter((key) => key.includes(' | ') && key.startsWith(BLOCKS) === blocks)
         .map((key) => key.slice(blocks ? BLOCKS.length : 0).split(' | '));
 
-const namesOf = (renames) => {
-    const newNames = new Map([...renames].map(([now, was]) => [was, now]));
-    return { wasName: (path) => renames.get(path) ?? path, nowName: (path) => newNames.get(path) ?? path };
+const newCycles = (now, stood, accepted) => cyclesOf(now).filter((members) => !known(members, [...(stood ? cyclesOf(stood) : []), ...accepted]));
+
+const wayOf = (graph, members) => {
+    const way = cycleWay(graph, members);
+    return [...way, way[0]];
 };
 
-/** New cycles of one graph: `graphFor` builds it from the import graph. */
-function newCycles(graph, settings, { base, accepted }, { graphFor, label, blocks }) {
-    const { nowName } = namesOf(base?.renames ?? new Map());
-    // Both settings read the base: a block the branch declares over old links makes no new cycle.
-    const stood = base ? [base.settings, settings].flatMap((given) => cyclesOf(graphFor(base.graph, given))) : [];
-    const old = [...stood.map((members) => members.map(nowName)), ...acceptedCycles(accepted, blocks)];
-    return cyclesOf(graphFor(graph, settings))
-        .filter((members) => !known(members, old))
-        .map((members) => `${label}: ${members.join(' → ')} → ${members[0]}`);
+/** The imports that hold a cycle of blocks: the name of a folder says nothing about the link to break. */
+function heldBy(graph, settings, way) {
+    return way
+        .slice(1)
+        .map((block, at) => importBetween(graph, settings, way[at], block))
+        .map(({ from, to }) => `${from} imports ${to}`)
+        .join('; ');
 }
 
 /**
  * New imports past an entry. An import that stood in the base is old even where the base did not yet call
  * it a bypass: an entry added to its folder, or an entry that stopped reaching the importer, is no edit of
- * the import. Neither is one that moved over from a neighbour of the same folder: a file was split.
+ * the import. A folder stays closed when its entry is gone. A bypass that left a file of the same folder
+ * answers for one new: a file was split.
  */
 function newBypasses(graph, settings, { base, accepted }) {
-    const { wasName, nowName } = namesOf(base?.renames ?? new Map());
-    const stoodThen = ({ from, to }) => base?.graph.get(wasName(from))?.links.has(wasName(to));
-    const moved = ({ from, to }) =>
-        [...(base?.graph ?? [])].some(
-            ([path, module]) =>
-                posix.dirname(path) === posix.dirname(wasName(from)) &&
-                module.links.has(wasName(to)) &&
-                !graph.get(nowName(path))?.links.has(to)
-        );
-    return bypassesOf(graph, settings)
-        .filter((bypass) => !stoodThen(bypass) && !accepted.has(pastKey(bypass)) && !moved(bypass))
-        .map(({ from, to, entry }) => `${from} imports ${to} past the entry ${entry}`);
+    const closed = base ? [...entriesOf(base.graph, base.settings).folders.keys()] : [];
+    const given = { ...settings, closed };
+    const placeOf = ({ from, to }) => `${posix.dirname(from)} -> ${to}`;
+    const gone = new Map();
+    const old = base ? [given, base.settings].flatMap((one) => bypassesOf(base.graph, one)) : [];
+    for (const [key, bypass] of new Map(old.map((one) => [pastKey(one), one]))) {
+        if (!graph.get(bypass.from)?.links.has(bypass.to)) {
+            gone.set(placeOf(bypass), [...(gone.get(placeOf(bypass)) ?? []), key]);
+        }
+    }
+    return bypassesOf(graph, given)
+        .filter(({ from, to }) => !base?.graph.get(from)?.links.has(to))
+        .filter((bypass) => !accepted.has(pastKey(bypass)) && !gone.get(placeOf(bypass))?.pop())
+        .map(({ from, to, entry, folder }) => `${from} imports ${to} past the entry ${entry ?? `of ${folder}, which the branch removed`}`);
 }
 
-/** New cycles and imports past an entry. `base` is `{ graph, settings, renames }` of the fork, or null. */
+/** New cycles and imports past an entry. `base` is `{ graph, settings }` of the fork, or null. */
 export function structureOf(graph, settings, { base = null, accepted = new Set() } = {}) {
-    const known = { base, accepted };
+    const common = overCommonBlocks(graph, settings, base);
+    const blocks = blocksOf(graph, common);
+    const cycles = newCycles(graph, base?.graph, acceptedCycles(accepted, false));
+    const blockCycles = newCycles(blocks, base && blocksOf(base.graph, common), acceptedCycles(accepted, true));
     return [
-        ...newCycles(graph, settings, known, { graphFor: (given) => given, label: 'a new cycle', blocks: false }),
-        ...newCycles(graph, settings, known, { graphFor: blocksOf, label: 'a new cycle of blocks', blocks: true }),
-        ...newBypasses(graph, settings, known),
+        ...cycles.map((members) => `a new cycle: ${wayOf(graph, members).join(' → ')}`),
+        ...blockCycles.map((members) => {
+            const way = wayOf(blocks, members);
+            return `a new cycle of blocks: ${way.join(' → ')} (${heldBy(graph, common, way)})`;
+        }),
+        ...newBypasses(graph, settings, { base, accepted }),
     ];
 }
 
-/** Links between blocks the base did not have by either settings: printed, since one way is no cycle. */
+/** Links between blocks the base did not have: printed, since one way is no cycle. */
 export function newBlockLinks(graph, settings, base) {
-    const old = [base.settings, settings].map((given) => blocksOf(base.graph, given));
-    const stood = (from, to) => old.some((blocks) => blocks.get(from)?.links.has(to));
-    return [...blocksOf(graph, settings)].flatMap(([from, { links }]) =>
-        [...links].filter((to) => !stood(from, to)).map((to) => `${from} → ${to}`)
+    const common = overCommonBlocks(graph, settings, base);
+    const old = blocksOf(base.graph, common);
+    return [...blocksOf(graph, common)].flatMap(([from, { links }]) =>
+        [...links].filter((to) => !old.get(from)?.links.has(to)).map((to) => `${from} → ${to}`)
     );
 }
 
 /**
  * Outgoing links that grew past what the branch named: `{ path, text }`. `own` holds the paths the branch
  * itself touched, `named` — a path to the number of the plan or of the progress; a path with a slash at
- * the end is a folder, and its number is what the folder imports from outside. A folder answers for its
- * new modules alone: one that stood in the base is named by itself. Harness and entries are free where
- * both settings call them so, the one of the base and the one of the branch.
+ * the end is a folder, and its number is what the folder imports from outside. A folder the base did not
+ * have answers for its modules; in an older one every module is named by itself. Harness and entries are
+ * free where both settings call them so, the one of the base and the one of the branch.
  */
 export function growthOf(graph, settings, { base, own, named }) {
-    const { wasName } = namesOf(base.renames);
     const entries = [settings, base.settings].map((given) => entriesOf(graph, given).entries);
     const free = (path) => [settings, base.settings].every((given, at) => isHarness(path, given) || entries[at].has(path));
     const folders = [...named.keys()].filter((path) => path.endsWith('/'));
-    const answered = (path) => !base.graph.has(wasName(path)) && folders.some((folder) => path.startsWith(folder));
+    const fresh = folders.filter((folder) => ![...base.graph.keys()].some((path) => path.startsWith(folder)));
+    const answered = (path) => fresh.some((folder) => path.startsWith(folder));
     const modules = [...graph]
         .filter(([path]) => own.has(path) && (named.has(path) || !(free(path) || answered(path))))
-        .map(([path, module]) => ({ path, was: base.graph.get(wasName(path))?.links.size ?? 0, now: module.links.size }));
+        .map(([path, module]) => ({ path, was: base.graph.get(path)?.links.size ?? 0, now: module.links.size }));
     const whole = folders
         .filter((folder) => [...own].some((path) => path.startsWith(folder)))
         .map((path) => ({ path, was: outsideOf(base.graph, path, base.settings), now: outsideOf(graph, path, settings) }));

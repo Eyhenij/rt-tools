@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · checks/coupling-graph.mjs · dc62760e195c · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/coupling-graph.mjs · ee9385540a17 · правится надстройкой, не здесь
 /**
  * The import graph of a tree, built from texts.
  *
@@ -12,7 +12,8 @@
  * the tree. Not seen: a name that lies in a variable, a path assembled by `join`, a start from code.
  *
  * The sources of a package may call a neighbour by the name of its laid-out copy: `board.mjs` is the
- * file `board.github.mjs` of the same folder. A missing file is looked for by that form last.
+ * file `board.github.mjs` of the same folder. A missing file is looked for by that form last. An import of
+ * a laid-out copy is a link to its source where the tree holds the source.
  */
 import { posix } from 'node:path';
 
@@ -26,7 +27,7 @@ const withoutComments = (text) =>
         (part, string) => string ?? ''
     );
 
-const CALLED = /\b(?:import|require)\(\s*['"]([^'"]+)['"]\s*\)/g;
+const CALLED = /\b(?:import|require)\(\s*(?:'([^'\n]+)'|"([^"\n]+)"|`([^`$\n]+)`)\s*[,)]/g;
 const SPECIFIERS = [
     /(?:^|[\n;])\s*(?:import|export)\b[^'"`;]*?\bfrom\s*['"]([^'"]+)['"]/g,
     /(?:^|[\n;])\s*import\s*['"]([^'"]+)['"]/g,
@@ -34,7 +35,7 @@ const SPECIFIERS = [
 ];
 
 const SCRIPT_CALL =
-    /(?:^|[;&|({!]|\b(?:then|do|else|if|elif|while|exec|time)\s)\s*(?:[A-Za-z_]\w*=\S*\s+)*(?:\.|source|bash|sh|node)\s+/g;
+    /(?:^|[;&|(){!]|\b(?:then|do|else|if|elif|while|exec|time)\s)\s*(?:(?:env|nohup|timeout\s+\S+|[A-Za-z_]\w*=\S*)\s+)*(?:\.|source|bash|sh|node)\s+/g;
 /** The constant tail of a script address: after the last variable or nested call, quotes apart. */
 const SCRIPT_TAIL = /^["']?(.*[)}]\/|.*\$\w+\/)?((?:[\w.-]+\/)*[\w.-]+\.(?:sh|mjs|cjs|js))["']?$/;
 
@@ -44,7 +45,8 @@ const SHOWN_LISTED = /^export\s+(?:type\s+)?\{([^}]*)\}\s*(from\b)?/gm;
 const SHOWN_FUNCTION = /^([A-Za-z_][\w]*)\s*\(\)\s*\{/gm;
 const TAKEN_LISTED =
     /(?:^|[\n;])\s*(?:import|export)\s+(?:type\s+)?(?:[\w$]+\s*,\s*)?\{([^}]*)\}\s*from\s*['"]([^'"]+)['"]/g;
-const TAKEN_WHOLE = /(?:^|[\n;])\s*(?:import\s+(?:type\s+)?\*|export\s+\*)[^'"`;]*?from\s*['"]([^'"]+)['"]/g;
+const TAKEN_WHOLE =
+    /(?:^|[\n;])\s*(?:import\s+(?:type\s+)?(?:\*|[A-Za-z_$][\w$]*(?=\s*,|\s+from\b))|export\s+\*)[^'"`;]*?from\s*['"]([^'"]+)['"]/g;
 
 const listed = (list, side) =>
     list
@@ -59,8 +61,23 @@ const listed = (list, side) =>
         )
         .filter(Boolean);
 
+/** The source of a laid-out copy: the module of the tree whose path ends with the name of the resource. */
+function sourcesOf(files, copies) {
+    const resources = new Set(copies.values());
+    const sources = new Map();
+    for (const path of files.keys()) {
+        for (let at = path.indexOf('/'); at >= 0; at = path.indexOf('/', at + 1)) {
+            if (resources.has(path.slice(at + 1))) {
+                sources.set(path.slice(at + 1), path);
+            }
+        }
+    }
+    return (copy) => sources.get(copies.get(copy));
+}
+
 /** A resolver of one tree: from an importer and a specifier to a path of the tree, or null. */
-function resolverOf(files, { aliases = {}, entryNames = [] } = {}) {
+function resolverOf(files, { aliases = {}, entryNames = [], copies = new Map() } = {}) {
+    const sourceOf = sourcesOf(files, copies);
     const variants = new Map();
     for (const path of files.keys()) {
         const form = /^(.*)\.[a-z]+(\.(?:mjs|cjs|js|sh))$/.exec(path);
@@ -77,7 +94,8 @@ function resolverOf(files, { aliases = {}, entryNames = [] } = {}) {
             ...CODE_EXTENSIONS.map((extension) => base + extension),
             ...entryNames.map((name) => `${base}/${name}`),
         ];
-        return candidates.find((path) => files.has(path)) ?? variants.get(base) ?? null;
+        const copy = () => sourceOf(candidates.find((path) => copies.has(path)));
+        return candidates.find((path) => files.has(path)) ?? variants.get(base) ?? copy() ?? null;
     };
 
     const byAlias = (specifier, alias, target) => {
@@ -193,7 +211,7 @@ function moduleOf(path, raw, resolve) {
 
     for (const pattern of SPECIFIERS) {
         for (const match of text.matchAll(pattern)) {
-            take(match[1], pattern === CALLED ? ['*'] : []);
+            take(match[1] ?? match[2] ?? match[3], pattern === CALLED ? ['*'] : []);
         }
     }
     for (const match of text.matchAll(TAKEN_LISTED)) {
@@ -210,6 +228,18 @@ function moduleOf(path, raw, resolve) {
         }
     }
     return { links, shown, taken, words: null };
+}
+
+/** The graph of the past under the paths of today: `renames` is the new path → the old one. */
+export function underNewPaths(graph, renames) {
+    const names = new Map([...renames].map(([now, was]) => [was, now]));
+    const now = (path) => names.get(path) ?? path;
+    const moved = ({ links, taken, ...module }) => ({
+        ...module,
+        links: new Set([...links].map(now)),
+        taken: new Map([...taken].map(([to, list]) => [now(to), list])),
+    });
+    return new Map([...graph].map(([path, module]) => [now(path), moved(module)]));
 }
 
 /** The graph: a path → what it imports (`links`), shows (`shown`) and takes by name (`taken`). */

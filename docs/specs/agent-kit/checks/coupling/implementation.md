@@ -16,5 +16,5 @@ spec.
 - **The list of the accepted does not lift what the branch added.** — `projects/agent-kit/assets/checks/check-coupling.mjs:OWNER_WORDS` — scenario SC-AK-1941
 - **Incoming links and names taken by nobody are printed, not judged.** — `projects/agent-kit/assets/checks/coupling-numbers.mjs:numbersOf` — scenario SC-AK-1936
 - **The push set and the pipeline call the check with the base.** — `projects/agent-kit/assets/defaults/push.sh:rt_push_checks_default` — the pipeline step is «Coupling of modules» of `.github/workflows/ci.yml`; scenario SC-AK-1941
-- **With a base an old violation missing from the list is printed.** — `projects/agent-kit/assets/checks/coupling-judge.mjs:countsOf` — scenario SC-AK-1941
+- **With a base an old violation missing from the list is printed.** — `projects/agent-kit/assets/checks/check-coupling.mjs:printUnlisted` — scenario SC-AK-1941
 - **A missing revision is a refusal with its name.** — `projects/agent-kit/assets/checks/coupling-read.mjs:RevisionMissing` — scenario SC-AK-1937

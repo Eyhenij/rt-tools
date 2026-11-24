@@ -6,7 +6,8 @@
  *
  * The settings: `aliases` — the path aliases of the tree; `entryNames` — what a barrel is called;
  * `entries` — files declared entries of their folder by name; `blocks` — folders that are blocks without
- * an entry; `harness` — the folder names, `harnessRoots` — the paths where only tests and harness lie.
+ * an entry; `harness` — the folder names, `harnessRoots` — the paths where only tests and harness lie;
+ * `closed` — folders that stay closed though their entry is gone.
  */
 import { posix } from 'node:path';
 
@@ -22,7 +23,7 @@ export const isHarness = (path, { harness = [], harnessRoots = [] } = {}) =>
     harnessRoots.some((root) => path === root || path.startsWith(`${root}/`));
 
 /** The entries: the barrels by name, the files a path alias names, the declared ones. */
-export function entriesOf(graph, { aliases = {}, entryNames = [], entries: named = [] } = {}) {
+export function entriesOf(graph, { aliases = {}, entryNames = [], entries: named = [], closed = [] } = {}) {
     const names = new Set(entryNames);
     const own = new Set(named);
     const targets = new Set(
@@ -43,8 +44,12 @@ export function entriesOf(graph, { aliases = {}, entryNames = [], entries: named
             folders.set(folder, [...(folders.get(folder) ?? []), path]);
         }
     }
+    closed.filter((folder) => !folders.has(folder)).forEach((folder) => folders.set(folder, []));
     return { entries, folders };
 }
+
+/** The blocks: the folders with an entry and the declared ones. */
+export const blockFolders = (graph, settings = {}) => new Set([...entriesOf(graph, settings).folders.keys(), ...(settings.blocks ?? [])]);
 
 /** Every strongly connected part of more than one node, its members sorted. */
 export function cyclesOf(graph) {
@@ -100,6 +105,24 @@ export function cyclesOf(graph) {
     return cycles;
 }
 
+/** The shortest way round a cycle from its first member: the members by name say nothing about the links. */
+export function cycleWay(graph, members) {
+    const queue = [[members[0]]];
+    const seen = new Set();
+    for (let way = queue.shift(); way; way = queue.shift()) {
+        for (const to of graph.get(way.at(-1)).links) {
+            if (to === members[0]) {
+                return way;
+            }
+            if (members.includes(to) && !seen.has(to)) {
+                seen.add(to);
+                queue.push([...way, to]);
+            }
+        }
+    }
+    return members;
+}
+
 function reachOf(graph) {
     const memo = new Map();
     return (from) => {
@@ -148,38 +171,50 @@ export function bypassesOf(graph, settings = {}) {
                 .filter((folder) => folders.has(folder) && !from.startsWith(`${folder}/`))
                 .at(-1);
             if (passed && !folders.get(passed).some((entry) => reach(entry).has(from))) {
-                found.push({ from, to, entry: folders.get(passed)[0] });
+                found.push({ from, to, folder: passed, entry: folders.get(passed)[0] });
             }
         }
     }
     return found;
 }
 
-/**
- * The graph of blocks: a block is a folder with an entry or a declared one, a link is an import between
- * two blocks that do not hold each other — the outermost pair the two paths part at.
- */
-export function blocksOf(graph, settings = {}) {
-    const blocks = new Set([...entriesOf(graph, settings).folders.keys(), ...(settings.blocks ?? [])]);
-    const chain = (path) =>
-        foldersUp(path)
-            .filter((folder) => blocks.has(folder))
-            .reverse();
-    const found = new Map([...blocks].map((block) => [block, { links: new Set() }]));
+const chainOf = (path, blocks) =>
+    foldersUp(path)
+        .filter((folder) => blocks.has(folder))
+        .reverse();
+
+/** The two blocks an import ties, or null: the outermost pair the two paths part at, harness apart. */
+function tiedBlocks({ from, to }, blocks, settings) {
+    const ours = chainOf(from, blocks);
+    const theirs = isHarness(to, settings) ? [] : chainOf(to, blocks);
+    const part = ours.findIndex((block, at) => block !== theirs[at]);
+    return part >= 0 && theirs[part] ? [ours[part], theirs[part]] : null;
+}
+
+function* tiesOf(graph, settings) {
+    const blocks = blockFolders(graph, settings);
     for (const [from, module] of graph) {
-        if (isHarness(from, settings)) {
-            continue;
-        }
-        const ours = chain(from);
-        for (const to of module.links) {
-            const theirs = isHarness(to, settings) ? [] : chain(to);
-            const part = ours.findIndex((block, at) => block !== theirs[at]);
-            if (part >= 0 && theirs[part]) {
-                found.get(ours[part]).links.add(theirs[part]);
+        for (const to of isHarness(from, settings) ? [] : module.links) {
+            const tied = tiedBlocks({ from, to }, blocks, settings);
+            if (tied) {
+                yield { from, to, tied };
             }
         }
     }
+}
+
+/** The graph of blocks: a link is an import between two blocks that do not hold each other. */
+export function blocksOf(graph, settings = {}) {
+    const found = new Map([...blockFolders(graph, settings)].map((block) => [block, { links: new Set() }]));
+    for (const { tied } of tiesOf(graph, settings)) {
+        found.get(tied[0]).links.add(tied[1]);
+    }
     return found;
+}
+
+/** One import that ties a block to another. */
+export function importBetween(graph, settings, block, other) {
+    return [...tiesOf(graph, settings)].find(({ tied }) => tied[0] === block && tied[1] === other);
 }
 
 /** What a folder imports from outside itself, harness apart: the outgoing links of a block. */

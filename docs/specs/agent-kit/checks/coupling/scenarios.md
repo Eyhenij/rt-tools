@@ -32,7 +32,9 @@ Covered: `projects/agent-kit/tests/check-coupling.test.sh`.
 
 Given a module with importers, imports and names nobody takes
 When its numbers are asked by the path
-Then incoming, outgoing, imports past an entry, names shown and names taken by nobody are printed
+Then incoming, outgoing, imports past an entry, names shown and names taken by nobody are printed, and
+who imports it and whom it imports, a folder gets its links to the outside, and an unknown argument is
+refused
 
 Covered: `projects/agent-kit/tests/check-coupling.test.sh`.
 
@@ -49,7 +51,8 @@ Covered: `projects/agent-kit/tests/check-coupling.test.sh`.
 
 Given a base with a cycle and a branch that added another
 When the check runs with the base
-Then only the new one is named, also where the branch dropped the block or the root from the settings
+Then only the new one is named, also where the branch dropped the block or the root from the settings,
+and neither a rename of a block nor an entry added over old links makes the old one new
 
 Covered: `projects/agent-kit/tests/check-coupling.test.sh`.
 
@@ -57,8 +60,8 @@ Covered: `projects/agent-kit/tests/check-coupling.test.sh`.
 
 Given a base with an import past an entry and a branch that added another
 When the check runs with the base
-Then only the new one is named, and neither a rename, a later entry nor a link the entry lost makes
-the old one new
+Then only the new one is named, also where the branch removed the entry, and neither a rename, a later
+entry nor a link the entry lost makes the old one new
 
 Covered: `projects/agent-kit/tests/check-coupling.test.sh`.
 

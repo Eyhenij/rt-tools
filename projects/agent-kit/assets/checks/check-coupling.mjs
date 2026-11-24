@@ -6,7 +6,7 @@
  *   node check-coupling.mjs                        the tree against the list of the accepted
  *   node check-coupling.mjs --base=<revision>      the branch against the base: «was → now», the growth
  *   node check-coupling.mjs --base=… --at=<rev>    a past revision instead of the working tree
- *   node check-coupling.mjs --module=<path>        the numbers of one module — the «now» of a plan
+ *   node check-coupling.mjs --module=<path>        one module or folder: its numbers and its links
  *   node check-coupling.mjs --baseline             the list as it would be written
  *
  * With a base the list does not lift what the branch added, unless the owner's words stand in the reason
@@ -14,7 +14,8 @@
  * branch: a branch does not loosen the check it is judged by.
  *
  * Growth is judged by the own commits of the branch against the first version of its plan. A number named
- * later — in the plan or in the progress, with its reason — is accepted and printed as an overrun.
+ * later — in the plan, among the decisions of the progress or in the text of a commit, with its reason —
+ * is accepted and printed as an overrun.
  *
  * What is judged — `coupling-judge.mjs`, what is counted — `coupling-numbers.mjs`, which imports are
  * seen — `coupling-graph.mjs`. A non-zero exit code and a line per violation.
@@ -22,14 +23,15 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { graphOf } from './coupling-graph.mjs';
+import { graphOf, underNewPaths } from './coupling-graph.mjs';
 import { countsOf, growthOf, keysOf, newBlockLinks, structureOf } from './coupling-judge.mjs';
-import { numbersOf } from './coupling-numbers.mjs';
-import { namedOf } from './coupling-plan.mjs';
+import { isHarness, numbersOf, outsideOf } from './coupling-numbers.mjs';
+import { decisionsOf, namedOf } from './coupling-plan.mjs';
 import {
     RevisionMissing,
     aliasesFrom,
     forkOf,
+    ownMessages,
     ownPaths,
     ownVersions,
     renamesOf,
@@ -39,8 +41,12 @@ import {
 } from './coupling-read.mjs';
 import { CONFIG, CONFIG_PATH, ROOT, allowlistOf, baselineOf, configFrom, parseAllowlist, skipUnless } from './rt-kit-checks.config.mjs';
 
-const OWNER_WORDS = /(?:слов\p{L}* владельца|owner's words?)[^«"]*\d{2}\.\d{2}[^«"]*[«"][^»"]+[»"]/iu;
-const argument = (name) => process.argv.find((arg) => arg.startsWith(`--${name}=`))?.slice(name.length + 3) ?? null;
+const OWNER_WORDS = /^\s*(?:слово владельца|the owner['’]s words?)\s+(?:\d{2}\.\d{2}(?:\.\d{4})?|\d{4}-\d{2}-\d{2})\s*:\s*[«"“][^»"”]+[»"”]/iu;
+
+function stop(text) {
+    console.error(`check-coupling: ${text}`);
+    process.exit(1);
+}
 
 function refuse(problems, hint) {
     console.error(`\ncheck-coupling: violations ${problems.length}\n`);
@@ -49,8 +55,12 @@ function refuse(problems, hint) {
     process.exit(1);
 }
 
-const base = argument('base');
-const at = argument('at');
+const given = new Map();
+for (const arg of process.argv.slice(2)) {
+    const [, name, value] = /^--(?:(base|at|module)=(.+)|baseline)$/.exec(arg) ?? stop(`the argument «${arg}» is not known or is empty`);
+    given.set(name ?? 'baseline', value ?? true);
+}
+const [base, at, one] = ['base', 'at', 'module'].map((name) => given.get(name) ?? null);
 
 /** The point the branch left the base at; null — no base is named. */
 function forkOrExit() {
@@ -60,8 +70,7 @@ function forkOrExit() {
         if (!(error instanceof RevisionMissing)) {
             throw error;
         }
-        console.error(`check-coupling: ${error.message}`);
-        return process.exit(1);
+        return stop(error.message);
     }
 }
 
@@ -73,12 +82,12 @@ const scope = {
     skipped: CONFIG.skippedDirs.filter((dir) => stood.skippedDirs.includes(dir)),
 };
 
-function aliasesAt(revision) {
-    const path = join(ROOT, CONFIG.coupling.aliasesFile);
-    const text = revision ? textAt(ROOT, revision, CONFIG.coupling.aliasesFile) : existsSync(path) && readFileSync(path, 'utf8');
+function aliasesAt(revision, { coupling: { aliasesFile } }) {
+    const path = join(ROOT, aliasesFile);
+    const text = revision ? textAt(ROOT, revision, aliasesFile) : existsSync(path) && readFileSync(path, 'utf8');
     const aliases = text ? aliasesFrom(text) : {};
     if (aliases === null) {
-        console.log(`check-coupling: ${CONFIG.coupling.aliasesFile} does not parse, imports by an alias are not seen`);
+        console.log(`check-coupling: ${aliasesFile} does not parse, imports by an alias are not seen`);
     }
     return aliases ?? {};
 }
@@ -92,34 +101,45 @@ const settingsOf = (config, aliases) => ({
     harnessRoots: config.e2eRoots,
 });
 
-const settings = settingsOf(CONFIG, aliasesAt(at));
-const graph = graphOf(at ? revisionFiles(ROOT, at, scope) : treeFiles(ROOT, scope), settings);
+const settings = settingsOf(CONFIG, aliasesAt(at, CONFIG));
+const baseSettings = fork ? settingsOf(stood, aliasesAt(fork, stood)) : settings;
+/** An import is resolved by both settings: an alias or a barrel name the branch dropped hides no link. */
+const graphBy = ({ files, copies }, first, second) =>
+    graphOf(files, { aliases: { ...second.aliases, ...first.aliases }, entryNames: [...new Set([...first.entryNames, ...second.entryNames])], copies });
+const graph = graphBy(at ? revisionFiles(ROOT, at, scope) : treeFiles(ROOT, scope), settings, baseSettings);
 skipUnless(graph.size > 0, `code under the roots ${scope.roots.join(', ')}`);
 
-const one = argument('module');
-if (one) {
-    const numbers = numbersOf(graph, settings).get(one);
-    if (!numbers) {
-        console.error(`check-coupling: the module «${one}» is not among ${graph.size} read`);
-        process.exit(1);
+function printOne() {
+    if (one.endsWith('/')) {
+        console.log(`${one}: outgoing ${outsideOf(graph, one, settings)}`);
+        return;
     }
-    const { incoming, outgoing, past, shown, untaken } = numbers;
+    const { incoming, outgoing, past, shown, untaken } =
+        numbersOf(graph, settings).get(one) ?? stop(`the module «${one}» is not among ${graph.size} read`);
     console.log(`${one}: incoming ${incoming}, outgoing ${outgoing}, past an entry ${past}, shown ${shown}, taken by nobody ${untaken}`);
+    graph.get(one).links.forEach((to) => console.log(`  imports ${to}`));
+    [...graph].filter(([, { links }]) => links.has(one)).forEach(([from]) => console.log(`  imported by ${from}`));
+}
+
+if (one) {
+    printOne();
     process.exit(0);
 }
 
 const list = parseAllowlist('coupling');
 const keys = keysOf(graph, settings);
-if (process.argv.includes('--baseline')) {
+if (given.has('baseline')) {
     console.log(baselineOf(keys, list));
     process.exit(0);
 }
 
-const linksOf = (given) => [...given.values()].reduce((sum, module) => sum + module.links.size, 0);
+const linksOf = (read) => [...read.values()].reduce((sum, module) => sum + module.links.size, 0);
 const counts = Object.entries(countsOf(keys));
+const unlisted = keys.filter((key) => !list.keys.has(key));
 // A past revision is judged by the history alone: the list of today says nothing about it.
 const gone = at ? [] : [...list.keys].filter((key) => !keys.includes(key));
-const dead = gone.map((key) => `${key}: listed in ${allowlistOf('coupling')}, and the violation is gone — remove the line`);
+const renamed = unlisted.length > 0 ? `, or write it by the new name: ${unlisted.slice(0, 3).join('; ')}` : '';
+const dead = gone.map((key) => `${key}: listed in ${allowlistOf('coupling')}, and the violation is gone — remove the line${renamed}`);
 
 if (!base) {
     console.log(`check-coupling: modules ${graph.size}, links ${linksOf(graph)}, ${counts.map(([name, number]) => `${name} ${number}`).join(', ')}`);
@@ -130,19 +150,25 @@ if (!base) {
     process.exit(0);
 }
 
-const baseSettings = settingsOf(stood, aliasesAt(fork));
-const before = {
-    settings: baseSettings,
-    graph: graphOf(revisionFiles(ROOT, fork, scope), baseSettings),
-    renames: renamesOf(ROOT, fork, at),
-};
-const wasName = (path) => before.renames.get(path) ?? path;
+/** The base under the paths of today. A harness file that became a module, or back, is another file. */
+function baseOf() {
+    const renames = new Map([...renamesOf(ROOT, fork, at)].filter(([now, was]) => isHarness(now, settings) === isHarness(was, baseSettings)));
+    const names = new Map([...renames].map(([now, was]) => [was, now]));
+    const nowName = (path) => names.get(path.replace(/^\.\//, '')) ?? path;
+    const aliases = Object.fromEntries(Object.entries(baseSettings.aliases).map(([alias, targets]) => [alias, targets.map(nowName)]));
+    return {
+        settings: { ...baseSettings, aliases, entries: baseSettings.entries.map(nowName) },
+        graph: underNewPaths(graphBy(revisionFiles(ROOT, fork, scope), baseSettings, settings), renames),
+    };
+}
+
+const before = baseOf();
 
 function printNumbers() {
     const now = numbersOf(graph, settings);
-    const was = numbersOf(before.graph, baseSettings);
+    const was = numbersOf(before.graph, before.settings);
     for (const [path, current] of [...now].sort(([a], [b]) => a.localeCompare(b))) {
-        const old = was.get(wasName(path));
+        const old = was.get(path);
         if (!old || Object.keys(current).some((field) => old[field] !== current[field])) {
             const pair = (field) => `${old?.[field] ?? 0} → ${current[field]}`;
             console.log(
@@ -151,6 +177,7 @@ function printNumbers() {
             );
         }
     }
+    [...was].filter(([path]) => !now.has(path)).forEach(([path, { outgoing }]) => console.log(`  ${path}: removed, outgoing was ${outgoing}`));
     newBlockLinks(graph, settings, before).forEach((link) => console.log(`  a new link of blocks: ${link}`));
 }
 
@@ -158,10 +185,12 @@ function printNumbers() {
 function growthLeft() {
     const plans = ownVersions(ROOT, fork, stood.tasksDir, 'plan.md', at);
     const progress = ownVersions(ROOT, fork, stood.tasksDir, 'progress.md', at);
+    const decisions = [...progress.first, ...progress.later].map(decisionsOf);
     // A root named as a folder would answer for the whole tree.
     const withoutRoots = (named) => new Map([...named].filter(([path]) => !scope.roots.some((root) => `${root}/`.startsWith(path))));
     const planned = withoutRoots(namedOf(plans.first.join('\n'), graph));
-    const later = withoutRoots(namedOf([...plans.later, ...progress.first, ...progress.later].join('\n'), graph, { reasoned: true }));
+    const written = [...plans.later, ...decisions, ownMessages(ROOT, fork, at)].join('\n\n');
+    const later = withoutRoots(namedOf(written, graph, { reasoned: true }));
     const named = new Map(planned);
     later.forEach((number, path) => named.set(path, Math.max(named.get(path) ?? 0, number)));
 
@@ -182,20 +211,27 @@ function structureLeft() {
     const byOwner = at ? [] : [...list.accepted, ...list.debt].filter(([, { reason }]) => OWNER_WORDS.test(reason));
     byOwner.forEach(([key, { reason }]) => console.log(`  accepted by the owner: ${key} — ${reason}`));
     // An alias the branch adds frees no file that stood in the base; a new file with an alias is a new entry.
-    const isNew = (target) => !before.graph.has(wasName(target.replace(/^\.\//, '')));
+    const isNew = (target) => !before.graph.has(target.replace(/^\.\//, ''));
     const fresh = Object.entries(settings.aliases).filter(([, targets]) => targets.every(isNew));
-    const strict = { ...baseSettings, aliases: { ...Object.fromEntries(fresh), ...baseSettings.aliases } };
+    const strict = { ...before.settings, aliases: { ...Object.fromEntries(fresh), ...before.settings.aliases } };
     const options = { base: before, accepted: new Set(byOwner.map(([key]) => key)) };
-    return [...new Set([settings, strict].flatMap((given) => structureOf(graph, given, options)))];
+    return [...new Set([settings, strict].flatMap((by) => structureOf(graph, by, options)))];
+}
+
+/** What stood in the base and is missing from the list; a tree without a list gets the number alone. */
+function printUnlisted() {
+    if (list.keys.size === 0 && unlisted.length > 0) {
+        console.log(`  not in ${allowlistOf('coupling')}: ${unlisted.length}, the tree keeps no list`);
+        return;
+    }
+    unlisted.forEach((key) => console.log(`  not in ${allowlistOf('coupling')}: ${key}`));
 }
 
 printNumbers();
 const growth = growthLeft();
 const structure = structureLeft();
-if (structure.length === 0 && list.keys.size > 0) {
-    keys.filter((key) => !list.keys.has(key)).forEach((key) => console.log(`  old, not in ${allowlistOf('coupling')}: ${key}`));
-}
-const old = countsOf(keysOf(before.graph, baseSettings));
+printUnlisted();
+const old = countsOf(keysOf(before.graph, before.settings));
 console.log(
     `check-coupling: modules ${before.graph.size} → ${graph.size}, links ${linksOf(before.graph)} → ${linksOf(graph)}, ` +
         `${counts.map(([name, number]) => `${name} ${old[name]} → ${number}`).join(', ')}, against ${base}`
@@ -205,8 +241,8 @@ const problems = [...structure, ...growth, ...dead];
 if (problems.length > 0) {
     refuse(
         problems,
-        'A cycle is broken by moving the shared part out; an import goes through the entry. Growth is planned: the line of ' +
-            'the plan is `path` outgoing N → M, and an overrun is the same line among the decisions of the progress, with its ' +
-            'reason after the numbers.'
+        'A cycle is broken by moving the shared part out; an import goes through the entry. Growth is planned, that of the part ' +
+            'moved out too: the line of the plan is `path` outgoing N → M. An overrun is the same line with its reason after the ' +
+            'numbers — among the decisions of the progress or, when the folder of the task is taken apart, in the text of a commit.'
     );
 }

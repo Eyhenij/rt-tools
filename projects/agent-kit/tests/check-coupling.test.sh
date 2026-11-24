@@ -29,7 +29,7 @@ save() { g add -A && g commit -q -m "$1"; }
 aliases() { printf '{"compilerOptions":{"paths":{%s}}}\n' "$1" > "$T/tsconfig.base.json"; }
 run() { (cd "$T" && node tools/check-coupling.mjs "$@" 2>&1); }
 code() { (cd "$T" && node tools/check-coupling.mjs "$@" > /dev/null 2>&1; echo $?); }
-module() { run --module="$1" | sed -E 's/^[^:]*: //'; }
+module() { run --module="$1" | head -1 | sed -E 's/^[^:]*: //'; }
 outgoing() { module "$1" | sed -E 's/.*outgoing ([0-9]+).*/\1/'; }
 lines_of() { run "${@:2}" | grep -cF -- "$1"; }
 
@@ -74,6 +74,14 @@ form "имя скрипта в тексте не связь" b10.sh 'echo "за�
 form "чужой пакет не связь" a12.ts "import { z } from 'node:path';\n" 0
 put libs/copy.mjs "// rt-kit v0.1 · checks/copy.mjs · 1\nimport './m.mjs';\n"
 report "SC-AK-1933 — разложенная копия не модуль" "$(lines_of 'is not among' --module=libs/copy.mjs)" 1
+put libs/pk/checks/copy.mjs 'export const c = 1;\n'
+form "импорт разложенной копии — связь с её исходником" a14.mjs "import './copy.mjs';\n" 1
+report "SC-AK-1933 — назван исходник, а не копия" "$(run --module=libs/a14.mjs | grep -c 'imports libs/pk/checks/copy.mjs')" 1
+form "импорт вызовом с обратными кавычками и доводом" a15.mjs 'await import(`./m.mjs`);\nawait import("./n.ts", { with: {} });\n' 2
+form "обратные кавычки с подстановкой не видно" a16.mjs 'await import(`./${name}.mjs`);\n' 0
+form "запуск через env и в ветке case" b14.sh 'case "$1" in a) bash "$here/h.sh" ;; esac\nenv A=1 timeout 5 node "$here/m.mjs"\n' 2
+put libs/two/x/amb.sh ':\n' && put libs/two/y/amb.sh ':\n'
+form "имя, которое носят два файла, не связь" b15.sh '. "$root/z/amb.sh"\n' 0
 put libs/dist/d.ts "import '../n';\n"
 report "SC-AK-1933 — собранное не модуль" "$(lines_of 'is not among' --module=libs/dist/d.ts)" 1
 
@@ -87,11 +95,13 @@ cycle_of c5 ts "import './b';\n" "export const b = 1;\n" "связь в одну
 fresh_tree c6
 put libs/a.ts "import './b';\n" && put libs/b.ts "import './c';\n" && put libs/c.ts "import './a';\n"
 report "SC-AK-1934 — цикл трёх назван одной строкой" "$(lines_of 'a new cycle: libs/a.ts → libs/b.ts → libs/c.ts → libs/a.ts')" 1
+put libs/a.ts "import './c';\n" && put libs/c.ts "import './b';\n" && put libs/b.ts "import './a';\n"
+report "SC-AK-1934 — цикл назван путём, а не по алфавиту" "$(lines_of 'a new cycle: libs/a.ts → libs/c.ts → libs/b.ts → libs/a.ts')" 1
 fresh_tree c7
 put libs/d1/a.ts "import '../d2/b';\n" && put libs/d1/z.ts 'export const z = 1;\n' && put libs/d2/b.ts 'export const b = 1;\n'
 report "SC-AK-1934 — связь блоков в одну сторону не цикл" "$(code)" 0
 put libs/d2/y.ts "import '../d1/z';\n"
-report "SC-AK-1934 — цикл блоков без цикла файлов" "$(lines_of 'a new cycle of blocks: libs/d1 → libs/d2 → libs/d1')" 1
+report "SC-AK-1934 — цикл блоков без цикла файлов, названы его импорты" "$(lines_of 'a new cycle of blocks: libs/d1 → libs/d2 → libs/d1 (libs/d1/a.ts imports libs/d2/b.ts; libs/d2/y.ts imports libs/d1/z.ts)')" 1
 put libs/d2/y.ts 'export const y = 1;\n' && put libs/d2/y.spec.ts "import '../d1/z';\n"
 report "SC-AK-1934 — тест цикла блоков не создаёт" "$(code)" 0
 
@@ -135,6 +145,12 @@ put libs/s.sh 'known() {\n  :\n}\nspare() {\n  :\n}\n'
 put libs/u.sh '. "$d/s.sh"\nknown\n'
 report "SC-AK-1936 — функция скрипта, которую никто не зовёт" "$(module libs/s.sh | grep -c 'shown 2, taken by nobody 1')" 1
 report "SC-AK-1936 — модуля нет — отказ" "$(code --module=libs/none.ts)" 1
+report "SC-AK-1936 — названы те, кого модуль импортирует и кто импортирует его" "$(run --module=libs/b.ts | grep -c 'imported by libs/a.ts'):$(run --module=libs/a.ts | grep -c '  imports libs/b.ts')" "1:1"
+put libs/fold/x.ts "import '../b';\nimport './y';\n" && put libs/fold/y.ts 'export const y = 1;\n'
+report "SC-AK-1936 — у папки печатаются связи наружу" "$(run --module=libs/fold/)" "libs/fold/: outgoing 1"
+put libs/cls.ts 'export default class Foo {}\n' && put libs/f.ts "import Foo from './cls';\n"
+report "SC-AK-1936 — умолчание взято соседом" "$(module libs/cls.ts | grep -c 'taken by nobody 0')" 1
+report "SC-AK-1936 — неизвестный ключ и пустая база — отказ" "$(code --bsae=main):$(code --base=):$(code main)" "1:1:1"
 
 # --- SC-AK-1937 — с базой печатается «было → стало» --------------------------------------------------
 fresh_tree base
@@ -195,6 +211,19 @@ save base
 g checkout -q -b RT-1-x
 config '"coupling":{"blocks":["libs/e1","libs/e2"]}'
 report "SC-AK-1938 — блок, объявленный веткой над старыми связями, не новый цикл" "$(code --base=main)" 0
+put libs/e1/w.ts "import '../e3/b';\n" && put libs/e3/b.ts 'export const b = 1;\n' && put libs/e3/y.ts "import '../e1/z';\n"
+config '"coupling":{"blocks":["libs/e1","libs/e3"]}'
+report "SC-AK-1938 — новый цикл блока, объявленного самой веткой, отказан" "$(lines_of 'a new cycle of blocks: libs/e1 → libs/e3 → libs/e1' --base=main)" 1
+g reset -q --hard && g clean -fdq
+put libs/e1/index.ts "export * from './z';\n" && put libs/e2/index.ts "export * from './b';\n"
+report "SC-AK-1938 — новый вход над старыми связями не новый цикл блоков" "$(code --base=main)" 0
+save "входы" && g checkout -q -B main && g checkout -q -b RT-2-x && g mv libs/e2 libs/e9 && put libs/e1/a.ts "import '../e9/b';\n"
+report "SC-AK-1938 — переименование папки-блока не делает старый цикл новым" "$(code --base=main)" 0
+g reset -q --hard && g rm -q libs/e2/index.ts && put libs/e2/new.ts "import '../e1';\n"
+report "SC-AK-1938 — снятый вход не снимает блока" "$(lines_of 'a new link of blocks' --base=main):$(code --base=main)" "0:0"
+g checkout -q -f main && g clean -fdq && put libs/y1.ts "import './y2';\n" && put libs/y2.ts 'export const y = 1;\n' && save y && put libs/y2.ts "import './y1';\n" && save "цикл в базе"
+g checkout -q -f -b RT-3-x main~1 && put libs/n.ts 'export const n = 1;\n' && save work
+report "SC-AK-1938 — судится точка отхода, а не вершина базы" "$(lines_of 'cycles 0 → 0' --base=main)" 1
 
 # --- SC-AK-1939 — новый обход отказан, старый пропущен -------------------------------------------------
 fresh_tree byp
@@ -222,13 +251,29 @@ put libs/takes.ts "import { x } from './bare/x';\nimport { i } from './box/i';\n
 report "SC-AK-1939 — новый обход из файла, который был в базе, отказан" "$(lines_of 'libs/takes.ts imports libs/box/i.ts past' --base=main)" 1
 put libs/old.ts 'export const o = 1;\n'
 report "SC-AK-1939 — обход, переехавший от соседа той же папки, не новый" "$(code --base=main)" 0
-g checkout -q -- libs/old.ts libs/takes.ts
+put libs/third.ts "import { i } from './box/i';\n"
+report "SC-AK-1939 — ушедший обход отвечает за один новый" "$(lines_of 'past the entry libs/box/index.ts' --base=main)" 1
+rm "$T/libs/third.ts" && g checkout -q -- libs/takes.ts && put libs/else/third.ts "import { i } from '../box/i';\n"
+report "SC-AK-1939 — обход, переехавший в другую папку, новый" "$(code --base=main)" 1
+rm -r "$T/libs/else" && g checkout -q -- libs/old.ts
+g rm -q libs/box/index.ts && put libs/n.ts "import { i } from './box/i';\n"
+report "SC-AK-1939 — снятый веткой вход папки не открывает" "$(lines_of 'libs/n.ts imports libs/box/i.ts past the entry of libs/box, which the branch removed' --base=main)" 1
+g reset -q --hard && g clean -fdq
 put libs/box/second.ts 'export const s = 1;\n' && put libs/n.ts "import { s } from '@x/second';\n"
 aliases '"@x/second":["libs/box/second.ts"]'
 report "SC-AK-1939 — новый файл со своим псевдонимом — новый вход" "$(code --base=main)" 0
 rm "$T/tsconfig.base.json" "$T/libs/box/second.ts" && put libs/n.ts 'export const n = 1;\n'
-g mv libs/old.ts libs/moved.ts
-report "SC-AK-1939 — переименование не делает старый обход новым" "$(code --base=main)" 0
+long() { printf '// строка %s\n' 1 2 3 4 5 6 7 8; }
+g reset -q --hard && g clean -fdq
+g checkout -q -B main && put libs/long.ts "$(long)\nimport { i } from './box/i';\n" && save long && g checkout -q -b RT-4-x
+mkdir -p "$T/libs/far" && g mv libs/long.ts libs/far/moved.ts && put libs/far/moved.ts "$(long)\nimport { i } from '../box/i';\n"
+report "SC-AK-1939 — перенос файла в другую папку не делает старый обход новым" "$(code --base=main)" 0
+g reset -q --hard && g clean -fdq
+g checkout -q main && put libs/box/core.ts 'export const c = 1;\n' && aliases '"@x/core":["libs/box/core.ts"]' && put libs/h.spec.ts "import { i } from './box/i';\n" && save "псевдоним"
+g checkout -q -b RT-2-x && g mv libs/box/core.ts libs/box/heart.ts && aliases '"@x/core":["libs/box/heart.ts"]' && put libs/n.ts "import { c } from '@x/core';\n"
+report "SC-AK-1939 — переименованная цель псевдонима остаётся входом" "$(code --base=main)" 0
+g mv libs/h.spec.ts libs/h.ts
+report "SC-AK-1939 — тест, ставший модулем, старого импорта не имеет" "$(lines_of 'libs/h.ts imports libs/box/i.ts past' --base=main)" 1
 
 # --- SC-AK-1940 — рост исходящих сверх плана -----------------------------------------------------------
 fresh_tree grow
@@ -238,7 +283,7 @@ save base
 g checkout -q -b RT-1-x
 links() { local n out=""; for n in $(seq 1 "$1"); do out="${out}import './t$n';\n"; done; printf '%s' "$out"; }
 plan() { put "docs/tasks/${2:-RT-1-x}/plan.md" "$1\n"; }
-progress() { put docs/tasks/RT-1-x/progress.md "$1\n"; }
+progress() { put docs/tasks/RT-1-x/progress.md "# Ход работы\n\n## ${2:-Decisions along the way}\n\n$1\n\n## Sessions\n"; }
 put libs/a.ts "$(links 2)"
 report "SC-AK-1940 — в дереве без планов рост печатается и не отказан" "$(lines_of 'grown, the tree keeps no plans: `libs/a.ts` outgoing 1 → 2' --base=main):$(code --base=main)" "1:0"
 plan '`libs/a.ts` исходящие 1 → 9' _template
@@ -253,6 +298,10 @@ plan '`libs/a.ts:fn` — входящие 0 → 1; исходящие: 1 → 3; 
 report "SC-AK-1940 — символ, точка с запятой и двоеточие читаются" "$(code --base=main)" 0
 plan '`a.ts` outgoing 1 -> 3'
 report "SC-AK-1940 — короткий путь единственного файла" "$(code --base=main)" 0
+plan '- `libs/a.ts:Reader.read()` исходящие\n  **1** → **3**'
+report "SC-AK-1940 — метод класса, перенос строки и жирные числа читаются" "$(code --base=main)" 0
+plan '`libs/a.ts` исходящие без изменений, входящие 1 → 9'
+report "SC-AK-1940 — число входящих не читается исходящими" "$(code --base=main)" 1
 plan '`libs/side.ts` и `libs/a.ts` исходящие 1 → 3'
 report "SC-AK-1940 — число относится к ближайшему пути" "$(code --base=main)" 0
 save work
@@ -262,6 +311,17 @@ put libs/new.ts "$(links 1)"
 report "SC-AK-1940 — неназванный новый модуль отказан" "$(lines_of '`libs/new.ts` outgoing 0 → 1; nobody named' --base=main)" 1
 progress '- `libs/new.ts` исходящие 0 → 1.'
 report "SC-AK-1940 — строка хода работы без причины не снимает отказ" "$(code --base=main)" 1
+progress '- `libs/new.ts` исходящие 0 → 1: помощник.'
+report "SC-AK-1940 — одного слова мало для причины" "$(code --base=main)" 1
+progress '- `libs/new.ts` outgoing 0 → 1; nobody named a number for it'
+report "SC-AK-1940 — текст самого отказа причиной не служит" "$(code --base=main)" 1
+progress '- `libs/new.ts` исходящие 0 → 1, `libs/b.ts` исходящие 0 → 1: общий помощник.'
+report "SC-AK-1940 — причина соседнего модуля чужой не служит" "$(code --base=main)" 1
+progress '- `libs/new.ts` исходящие 0 → 1: общий помощник.' 'Live check'
+report "SC-AK-1940 — число вне раздела решений не снимает отказ" "$(code --base=main)" 1
+rm -rf "$T/docs" && g add -A && g commit -q -m "правка" -m 'Превышение: `libs/new.ts` исходящие 0 → 1: помощник по замечанию.'
+report "SC-AK-1940 — превышение, названное текстом коммита после разбора папки" "$(lines_of 'overrun, named after the plan: `libs/new.ts`' --base=main):$(code --base=main)" "1:0"
+g reset -q --soft HEAD~1 && g reset -q
 progress '- `libs/new.ts` исходящие 0 → 1: общий помощник.'
 report "SC-AK-1940 — названное в ходе работы с причиной проходит и печатается" "$(lines_of 'overrun, named after the plan: `libs/new.ts` outgoing 0 → 1' --base=main):$(code --base=main)" "1:0"
 rm -rf "$T/docs"
@@ -277,9 +337,11 @@ progress '`libs/` исходящие 0 → 9: корень дерева цели
 report "SC-AK-1940 — корень дерева папкой не принимается" "$(code --base=main)" 1
 rm -rf "$T/docs" "$T/libs/fold"
 g checkout -q main && put libs/old/m.ts "import '../t1';\n" && save "прежняя папка" && g checkout -q -b RT-3-z
-put libs/old/m.ts "import '../t1';\nimport './n';\n" && put libs/old/n.ts 'export const n = 1;\n'
+put libs/old/m.ts "import '../t1';\nimport './n';\n" && put libs/old/n.ts "import '../t1';\n" && put 'libs/файл.ts' "import './t1';\n"
 plan '`libs/old/` исходящие 1 → 1' RT-3-z
 report "SC-AK-1940 — папка не отвечает за модуль, который был в базе" "$(lines_of '`libs/old/m.ts` outgoing 1 → 2; nobody named' --base=main)" 1
+report "SC-AK-1940 — прежняя папка не отвечает и за новый модуль" "$(lines_of '`libs/old/n.ts` outgoing 0 → 1; nobody named' --base=main)" 1
+report "SC-AK-1940 — путь не латиницей судится" "$(lines_of '`libs/файл.ts` outgoing 0 → 1; nobody named' --base=main)" 1
 g reset -q --hard && g clean -fdq && g checkout -q RT-1-x && g merge -q --no-edit main
 put libs/index.ts "$(links 6)" && put libs/a.spec.ts "$(links 6)"
 report "SC-AK-1940 — вход и тест не судятся" "$(code --base=main)" 0
@@ -302,6 +364,9 @@ g checkout -q main && plan 'образец' _template && save "образец з
 g checkout -q -b RT-2-y main && plan 'без чисел' RT-2-y && put libs/t3.ts "import './t2';\n" && save work
 g checkout -q -b RT-9-epic main && g merge -q --no-ff --no-edit RT-2-y
 report "SC-AK-1940 — рост влитой задачи в ветке эпика не судится" "$(code --base=main)" 0
+g checkout -q -b RT-8-n main && plan '`libs/t5.ts` исходящие 0 → 1' RT-8-n && put libs/t5.ts "import './t1';\n" && save work
+g checkout -q RT-9-epic && g merge -q --no-ff --no-edit RT-8-n && put libs/t5.ts "import './t1';\n// опечатка\n" && save "правка в эпике"
+report "SC-AK-1940 — число плана влитой задачи отвечает за правку в ветке эпика" "$(code --base=main)" 0
 g checkout -q RT-2-y
 report "SC-AK-1940 — тот же рост в ветке задачи отказан" "$(code --base=main)" 1
 plan '| `libs/t3.ts` | исходящие 0 → 1 |' RT-5-second && save "план чужой папки после своего"
@@ -311,6 +376,12 @@ report "SC-AK-1940 — с причиной он печатается превы�
 g checkout -q -b RT-6-low main && plan '| `libs/t4.ts` | исходящие 0 → 1 |' RT-6-low && put libs/t4.ts "import './t1';\n" && save low
 g checkout -q -b RT-7-top && plan 'без чисел' RT-7-top && save top
 report "SC-AK-1940 — план нижней ветки стопки, число в соседней ячейке" "$(code --base=main)" 0
+g checkout -q --detach
+report "SC-AK-1940 — ревизия без имени ветки судится так же" "$(code --base=main):$(code --base=main --at="$(g rev-parse RT-7-top)")" "0:0"
+g checkout -q main && plan '- **A:** <где стоит>\n- **B:** <что увидит человек>' _template && save "образец с пробелами"
+g checkout -q -b RT-11-d && plan '- **A:** <где стоит>\n- **B:** <что увидит человек>' RT-11-d && save "разбор с образцом плана"
+plan '| `libs/t4.ts` | исходящие 0 → 1 |' RT-11-d && put libs/t4.ts "import './t1';\n" && save "план"
+report "SC-AK-1940 — незаполненный образец первым планом не считается" "$(code --base=main)" 0
 g checkout -q main && plan '`libs/t4.ts` исходящие 0 → 1' RT-4-w && save "план в базе"
 g checkout -q -b RT-4-w && rm -rf "$T/docs/tasks/RT-4-w" && put libs/t4.ts "import './t1';\n" && save work
 report "SC-AK-1940 — план ветки, пришедший с базой, читается" "$(code --base=main)" 0
@@ -332,6 +403,8 @@ debt '"libs/a.ts | libs/b.ts":{"reason":"слово владельца 24.11: «
 report "SC-AK-1941 — запись со словом владельца снимает и печатается" "$(lines_of 'accepted by the owner: libs/a.ts | libs/b.ts' --base=main):$(code --base=main)" "1:0"
 debt '"libs/a.ts | libs/b.ts":{"reason":"версия 10.20 «как было»","task":"RT-1"}'
 report "SC-AK-1941 — дата и кавычки без слов владельца не снимают" "$(code --base=main)" 1
+debt '"libs/a.ts | libs/b.ts":{"reason":"слово владельца ещё не получено, как в 10.20: «временно»","task":"RT-1"}'
+report "SC-AK-1941 — слово владельца, которого нет, не снимает" "$(code --base=main)" 1
 debt '"libs/a.ts | libs/b.ts":{"reason":"","task":"RT-1"}'
 report "SC-AK-1941 — запись без причины отказана" "$(lines_of 'has an empty reason')" 1
 debt "$old_cycle,\"libs/a.ts -> libs/z.ts\":{\"reason\":\"ушло\",\"task\":\"RT-1\"}"
@@ -341,8 +414,11 @@ save "ветка с циклом и записью"
 g checkout -q --detach main && g merge -q --no-ff --no-edit RT-1-x
 report "SC-AK-1941 — слияние ветки с новым циклом отказано с базой, запись не снимает" "$(code --base=main)" 1
 g checkout -q RT-1-x && put libs/c.ts "import './d';\n" && put libs/d.ts "import './c';\n" && save "ещё цикл"
-report "SC-AK-1941 — старое, чего нет в списке, печатается с базой" "$(lines_of 'old, not in tools/coupling-allowlist.json: libs/c.ts | libs/d.ts' --base=HEAD):$(code --base=HEAD)" "1:0"
+report "SC-AK-1941 — старое, чего нет в списке, печатается с базой" "$(lines_of 'not in tools/coupling-allowlist.json: libs/c.ts | libs/d.ts' --base=HEAD):$(code --base=HEAD)" "1:0"
+debt '"libs/a.ts | libs/z.ts":{"reason":"старое имя","task":"RT-1"}'
+report "SC-AK-1941 — отказ за ушедшую запись называет новый ключ" "$(lines_of 'remove the line, or write it by the new name: libs/a.ts | libs/b.ts; libs/c.ts | libs/d.ts' --base=HEAD)" 1
 debt ''
+report "SC-AK-1941 — дерево без списка печатает одно число" "$(lines_of 'not in tools/coupling-allowlist.json: 2, the tree keeps no list' --base=HEAD)" 1
 report "SC-AK-1941 — снимок списка называет ключ" "$(run --baseline 2> /dev/null | grep -c 'libs/a.ts | libs/b.ts')" 1
 fresh_tree empty
 report "SC-AK-1941 — дерево без кода пропущено" "$(code)" 0
