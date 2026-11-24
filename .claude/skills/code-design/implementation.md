@@ -4,7 +4,7 @@ The names of this tree next to the rule `SKILL.md` beside it.
 
 ## Where it lives
 
-- **the layer that brings the rule** — `.claude/hooks/skill-gate-layers.sh`, called by `.claude/hooks/skill-gate.sh`; the showcase and the linter settings are lifted by `skill_layer_skip` in `.claude/rt-kit/gate-map.sh`
+- **the layer that brings the rule** — `.claude/hooks/skill-gate-layers.sh`, called by `.claude/hooks/skill-gate.sh`; the demonstration components of the showcase and the linter settings are lifted by `skill_layer_skip` in `.claude/rt-kit/gate-map.sh`
 - **the check of import cycles** — `tools/check-cycles.mjs` over the `.ts` files under `projects/`
 - **the borders of libraries** — `@nx/enforce-module-boundaries` in `eslint.config.mjs` with `eslint/boundaries/domains/`
 - **the second copy** — `tools/check-dupes.mjs`; **the unused export** — `knip.json`

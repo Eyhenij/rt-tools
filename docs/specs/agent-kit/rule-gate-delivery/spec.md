@@ -43,7 +43,9 @@ turn, as today.
 ### The delivery
 
 - **An edit that needs a rule not loaded in the session passes, and the text of the rule arrives in
-  the session by the same call.** There is no refusal, no load by the tool and no repeat.
+  the session by the same call.** There is no refusal, no load by the tool and no repeat. A document
+  of design is the exception: its rules are read before the text is composed, and the subdomain
+  `rule-gate` names them.
 - **The delivery covers every call kind the gate judges: a file edit, a writing shell command, the
   browser and the mockups tool.** The readiness sign of the request is "almost no gate refusals", and
   the gate refuses on all four kinds today.
@@ -135,7 +137,8 @@ turn, as today.
   the round being removed.
 - **The re-arming line says that every other rule comes back by itself at the next edit of its
   area.** Without such a line the summary says the rules are loaded, and the session cannot tell
-  why they arrive again.
+  why they arrive again. The line names its own exception: the rules of the grill and of a plan are
+  read before the document is written.
 - **A re-arming line without a rule longer than the host limit asks to load nothing.**
 
 ## What is out of scope
@@ -166,6 +169,7 @@ exit code.
 | a rule of the call is longer than the host limit        | the call refused     | the rule, its law, reading its `SKILL.md`, and that it is too long |
 | the rules of the call do not fit the host limit together | the call refused    | every rule of the call, and that they do not fit together     |
 | a rule of the call could not be read                    | the call refused     | the rule, its law, and that it was not read                   |
+| a document of design is written without its rules       | the call refused     | every rule of the call, and that they are read beforehand     |
 | the call carries no session id                          | the call refused     | the rule, and how to load it                                  |
 | every rule the call needs is already loaded             | a pass               | nothing                                                       |
 

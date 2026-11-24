@@ -22,6 +22,8 @@ The steps below open one continuous count: a step number is one for the whole co
 
 ### State `просьба-не-разобрана`: exploration — before the first question
 
+The rule `code-design` and its table are loaded before the code is read, where the tree has them: bounds, terms and patterns are the executor's to choose, also when the plan is written in the plan mode of the host.
+
 A question whose answer lies in the code is not put to the owner: it devalues the rest. The findings go into the grill section "What is already in the tree".
 
 ### State `просьба-не-разобрана`: the grill with the owner

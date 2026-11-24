@@ -76,8 +76,14 @@ expect_reason "SC-AK-1920 — отказ говорит, почему не до�
     "$(input_edit "$TREE/docs/plans/x.md")" 'before this text is composed'
 rm -rf "$TREE/.claude/rt-kit/observations"
 answer "$(input_edit "$TREE/docs/plans/x.md")" >/dev/null
-got="$(cat "$TREE"/.claude/rt-kit/observations/*.jsonl 2>/dev/null | grep -c '"why":"before"')"
-report "SC-AK-1920 — причина записана в наблюдение" "$got" 1
+got="$(cat "$TREE"/.claude/rt-kit/observations/*.jsonl 2>/dev/null | jq -r 'select(.why == "before") | .res' | tr '\n' ' ')"
+report "SC-AK-1920 — причина записана в наблюдение с именем правила" "$got" "code-design "
+expect_reason "SC-AK-1920 — отказ называет запасной ход" skill-gate.sh "$(input_edit "$TREE/docs/plans/x.md")" 'read .claude/skills/code-design/SKILL.md'
+for doc in docs/tasks/RT-1-x/plan.md docs/plans/x.md; do
+    report "SC-AK-1920 — запись $doc с ./ в пути отказана" "$(answer "$(input_cmd "printf x > ./$doc")")" отказ
+    report "SC-AK-1920 — копия на $doc с ./ в пути отказана" "$(answer "$(input_cmd "cp /tmp/p.md ./$doc")")" отказ
+    report "SC-AK-1920 — перенос на $doc отказан" "$(answer "$(input_cmd "mv /tmp/p.md $TREE/$doc")")" отказ
+done
 gate_session_reset
 
 # --- SC-AK-1916 — правило приходит на код с поведением, скрипт и входной файл -----------------
@@ -86,7 +92,7 @@ gate_session_reset
 for code in libs/x/src/lib/a.ts tools/a.mjs tools/a.cjs tools/a.js hooks/a.sh libs/x/src/index.ts \
     libs/x/src/public-api.ts libs/x/a.mts libs/x/a.cts apps/x/a.tsx apps/x/a.jsx apps/x/src/app.config.ts \
     tools/rt-checks.config.mjs libs/tests/src/lib/t.store.ts libs/specs/a.ts libs/x/contest.ts libs/x/claude.ts \
-    libs/x/latest-e2ee.ts; do
+    libs/x/latest-e2ee.ts libs/x/theme.preset.ts libs/x/jest.configure.ts; do
     edit "SC-AK-1916 — правило на $code" "$code" code-design да
 done
 edit "SC-AK-1916 — на коде таблица не приходит" libs/x/src/lib/a.ts code-design-choose нет
@@ -99,7 +105,11 @@ for quiet in libs/x/src/lib/a.spec.ts libs/x/src/lib/a.stories.ts tools/a.test.m
     .claude/hooks/a.sh .claude/workflows/a.js apps/x-e2e/src/a.ts docs/tasks/RT-1-x/progress.md \
     docs/specs/x/spec.md libs/x/src/lib/a.html libs/x/src/lib/a.scss libs/x/test-setup.ts jest.preset.js \
     .eslintrc.js libs/x/a.mock.ts libs/x/a.fixture.ts libs/x/generated/a.ts .storybook/main.ts e2e/a.ts \
-    vite.config.ts docs/plans/x-findings.md docs/plans/x.json libs/x/grill.md libs/x/a.json libs/x/a.prisma; do
+    vite.config.ts docs/plans/x-findings.md docs/plans/x.json libs/x/grill.md libs/x/a.json libs/x/a.prisma \
+    libs/x/fixtures/a.ts libs/x/__tests__/a.ts libs/x/__mocks__/a.ts libs/x/a.cy.ts libs/x/a.e2e-spec.ts \
+    libs/x/a.d.mts libs/x/a.d.cts jest.setup.ts stylelint.config.mjs stylelint-order.config.mjs prettier.config.cjs \
+    playwright.config.ts tsup.config.ts babel.config.js karma.conf.js prisma.config.ts tailwind.config.ts \
+    docs/tasks/_template/plan.md docs/tasks/_template/grill.md docs/plans/README.md libs/x/fixtures/docs/plans/x.md; do
     edit "SC-AK-1917 — молчит на $quiet" "$quiet" code-design нет
 done
 
@@ -121,7 +131,17 @@ c "SC-AK-1919 — копирование наружу не правка" "cp $TR
 c "SC-AK-1919 — удаление не правка" "rm $TREE/hooks/a.sh" нет
 c "SC-AK-1919 — tee на модуль правка" "printf x | tee $TREE/hooks/a.sh" да
 c "SC-AK-1919 — sed -i на модуль правка" "sed -i '' 's/a/b/' $TREE/hooks/a.sh" да
+c "SC-AK-1919 — sed -E -i на модуль правка" "sed -E -i '' 's/a/b/' $TREE/hooks/a.sh" да
+c "SC-AK-1919 — sed -i с & в замене правка" "sed -i '' -e 's/a/&b/' $TREE/hooks/a.sh" да
+c "SC-AK-1919 — sed без -i чтение" "sed -n '1,3p' $TREE/hooks/a.sh > /tmp/o" нет
+c "SC-AK-1919 — скрипт, запущенный после sed -i, не правка" "sed -i '' 's/a/b/' /tmp/x && node $TREE/tools/a.mjs > /tmp/o" нет
 c "SC-AK-1919 — копия на модуль правка" "cp /tmp/a.sh $TREE/hooks/a.sh" да
+c "SC-AK-1919 — перенос на модуль правка" "mv /tmp/a.sh $TREE/hooks/a.sh" да
+c "SC-AK-1919 — копия модуля в текст дерева не правка модуля" "cp $TREE/hooks/a.sh $TREE/a.txt" нет
+c "SC-AK-1919 — запись с ./ в пути правка" "printf x > ./hooks/a.sh" да
+c "SC-AK-1919 — tee с ./ в пути правка" "printf x | tee ./hooks/a.sh" да
+c "SC-AK-1919 — копия на путь с ./ правка" "cp /tmp/a.sh ./hooks/a.sh" да
+c "SC-AK-1919 — sed -i на путь с ./ правка" "sed -i '' 's/a/b/' ./hooks/a.sh" да
 c "SC-AK-1919 — документ в месте правка" "cat > $TREE/hooks/a.sh <<'E'
 x
 E" да
@@ -132,7 +152,7 @@ c "SC-AK-1919 — рабочая копия внутри дерева судит
 
 # --- SC-AK-1921 — путь читается от корня дерева -----------------------------------------------
 OUTER="$(mktemp -d)"
-for above in acme.test.app tests my-e2e x.config.d; do
+for above in acme.test.app tests my-e2e x.config.d build dist; do
     mkdir -p "$OUTER/$above"
     cp -R "$TREE" "$OUTER/$above/proj"
     export CLAUDE_PROJECT_DIR="$OUTER/$above/proj"
@@ -144,6 +164,7 @@ mkdir -p "$CLAUDE_PROJECT_DIR"
 cp -R "$TREE/.claude/skills" "$TREE/.claude/rt-kit" "$CLAUDE_PROJECT_DIR/" 2>/dev/null
 mkdir -p "$CLAUDE_PROJECT_DIR/.claude" && mv "$CLAUDE_PROJECT_DIR/skills" "$CLAUDE_PROJECT_DIR/rt-kit" "$CLAUDE_PROJECT_DIR/.claude/"
 d "SC-AK-1921 — модуль рабочей копии, открытой деревом" "$(input_edit "$CLAUDE_PROJECT_DIR/libs/x/a.ts")" code-design да
+d "SC-AK-1921 — план рабочей копии, открытой деревом" "$(input_edit "$CLAUDE_PROJECT_DIR/docs/plans/x.md")" code-design-choose да
 export CLAUDE_PROJECT_DIR="$TREE"
 rm -rf "$OUTER"
 

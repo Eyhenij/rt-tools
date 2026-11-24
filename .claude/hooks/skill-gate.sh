@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/skill-gate.sh · dd26864c0f72 · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/skill-gate.sh · c3697e9fc935 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__claude-in-chrome__.*|mcp__figma__use_figma
 # Requires: checks/decide.mjs, hooks/decide.sh, hooks/deny-tail.sh
 # The rules gate: it does not let a file be edited until the rule it falls under has been loaded.
@@ -66,9 +66,11 @@ rt_gate_copy_path() {
 # file that is read stand in the same line. A body of an interpreter names no target.
 rt_gate_is_target() {
     local path
-    path="$(printf '%s' "$2" | sed 's/[][\.*^$+?(){}|]/\\&/g')"
+    # The list of paths drops a leading `./`, and the text of the command keeps it.
+    path="(\./)*$(printf '%s' "$2" | sed 's/[][\.*^$+?(){}|]/\\&/g')"
     printf '%s\n' "$1" | tr "\"'" '  ' | grep -qE \
-        -e "(>|(^|[[:space:];&|])tee[[:space:]]([^;&|]*[[:space:]])?|sed -i[^;&]*[[:space:]])[[:space:]]*${path}([[:space:];&|)<>]|\$)" \
+        -e "(>|(^|[[:space:];&|])tee[[:space:]]([^;&|]*[[:space:]])?)[[:space:]]*${path}([[:space:];&|)<>]|\$)" \
+        -e "(^|[[:space:];&|])sed[[:space:]]+(-[a-zA-Z]+[[:space:]]+)*(-[a-zA-Z]*i|--in-place)([^;&]|&[^&])*[[:space:]]${path}([[:space:];&|)<>]|\$)" \
         -e "(^|[[:space:];&|])(cp|mv)[[:space:]][^;&|]*[[:space:]]${path}[[:space:]]*([;&|)]|[0-9]?>|\$)"
 }
 
@@ -272,7 +274,7 @@ done
 # write, when the design is already in it.
 gate_before=""
 for name in $rt_layer_before; do
-    case " ${need[*]} " in *" $name "*) gate_before=1 ;; esac
+    case " ${need[*]} " in *" $name "*) gate_before="${gate_before:-$name}" ;; esac
 done
 gate_unread=""
 gate_why=""
@@ -351,6 +353,7 @@ The companion of the rule — ${comp} — did not fit here and is read as a file
         want="$gate_unread"
     elif [ -n "$gate_before" ]; then
         gate_why="before"
+        want="$gate_before"
     else
         gate_why="together"
         for k in "${!rules[@]}"; do

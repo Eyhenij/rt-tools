@@ -381,10 +381,10 @@ Then they stand under `recordRefusals:own` as one sum
 
 ### SC-AK-1747 — the refusals of the rules gate are counted by reason
 
-Given the notes of a day: two refusals «too long», one «together», one «not read», one with no
-reason, a refusal of the hook scenarios and a refusal of another day
+Given the notes of a day: two refusals «too long», one «together», one «not read», one «before», one
+with no reason, a refusal of the hook scenarios and a refusal of another day
 When the gate of that day is counted
-Then the reasons are 2, 1, 1 and 1 «без причины», and the two other refusals are not counted
+Then the reasons are 2, 1, 1, 1 and 1 «без причины», and the two other refusals are not counted
 
 ### SC-AK-1748 — the rules delivered with no refusal are counted
 

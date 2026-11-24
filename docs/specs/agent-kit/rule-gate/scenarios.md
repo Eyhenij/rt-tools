@@ -381,15 +381,17 @@ Covered: `projects/agent-kit/tests/skill-gate-design.test.sh`.
 ### SC-AK-1920 — a document of design is refused until its rules are loaded
 
 Given the grill, the plan of a task or the plan of an epic is written by the edit tool or by a command,
-and the rules of the call fit into one delivery
+the path typed with or without a leading `./`
 When the rule of code design or its table is not loaded
-Then the call is refused with the reason «before», and after both are loaded it passes in silence
+Then the call is refused with the reason «before» and the observation names the rule; after both are
+loaded it passes in silence
 
 Covered: `projects/agent-kit/tests/skill-gate-design.test.sh`.
 
 ### SC-AK-1921 — the path is read from the root of the tree
 
-Given the tree lies under a folder named like a test or a setting, or is a working copy inside another
+Given the tree lies under a folder named like a test, a setting or a build, or is a working copy inside
+another
 When a module or a plan of that tree is written
 Then the layer of code design answers as in any other tree
 

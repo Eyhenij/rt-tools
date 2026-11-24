@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/code-design.md · 99a37455acea · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · pitfalls/code-design.md · f479883c52df · правится надстройкой, не здесь -->
 # Code design — how it works here — cold part
 
 What the rule `code-design` does not carry into every edit: where it lives, what is not here and the
@@ -75,6 +75,6 @@ with the same interface. The plan says «no pattern», the place and the dropped
 - **The names, the types, the cast, the deprecation mark and the length.** They are held by the rule
   `typescript-conventions`, where the tree has it.
 - **The borders between libraries.** They are held by the rule `lib-layers`; what is taken instead of
-  being written — by `reuse-first`.
+  being written — by `reuse-first`, where the tree has them.
 - **That a module has one duty and a pattern has its problem.** No check reads that: it is seen by a
   reader of the plan and of the diff.

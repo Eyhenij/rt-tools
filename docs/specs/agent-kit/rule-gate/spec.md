@@ -73,12 +73,14 @@ The gate has no interface: only the executor sees it — as the text of a refusa
   declaration, a built file and the agent's own file have no duties to divide, and a rule that comes
   everywhere becomes background.
 - **The path of the layer of code design is read from the root of the tree.** A folder above the tree
-  named like a test or a setting would silence the layer in the whole tree.
+  named like a test, a setting or a build would silence the layer in the whole tree.
 - **The target of a write by a command gets the layers by path.** Without that the same module written
   by the shell passed every layer, and the domain rule alone came. A target is what a redirection,
   `tee`, `sed -i`, `cp` or `mv` names; a script that is run and a file that is read stand in the same
-  line and are not targets. A path in a variable and a write by the body of an interpreter are not
-  seen. The layers by the text of the edit stay silent: a command carries no field of the text.
+  line and are not targets. Not seen: a path in a variable or with a space, a write by the body of an
+  interpreter, by `perl -pi`, `install`, `dd`, `touch` or `>|`, a copy into a directory, a target
+  followed by a comment, a command torn by `\` at the end of a line, a `sed` expression with `;` inside.
+  The layers by the text of the edit stay silent: a command carries no field of the text.
 - **The gate map counts as a command a call, not a mention.** A match by substring catches any
   mention: a line about a commit in the body of the commit itself was refused as a commit, and this
   was gone around by rewriting the text, not by the work.
@@ -154,6 +156,7 @@ exit code.
 | What happened                                    | How it ends      | What it says                                               |
 | ------------------------------------------------ | ---------------- | ---------------------------------------------------------- |
 | an edit without the rule loaded                  | the call refused | the name of the rule, the law under it and how to load it  |
+| a document of design without its rules           | the call refused | the names of all the rules of the call, read beforehand    |
 | a layer has nothing to read the text of the edit | a pass           | nothing: the side duty of the gate stays silent            |
 | a path outside the tree                          | a pass           | nothing: the rules of the tree judge the files of the tree |
 

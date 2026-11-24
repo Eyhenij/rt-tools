@@ -50,6 +50,9 @@ report "SC-AK-1050 — сказано, что гейт заряжен занов
 if printf '%s' "$said" | grep -qi 'comes back by itself'; then got="есть"; else got="нет"; fi
 report "SC-AK-1050 — сказано, что делать дальше" "$got" "есть"
 
+if printf '%s' "$said" | grep -q 'rules of the grill and of a plan are the exception'; then got="есть"; else got="нет"; fi
+report "SC-AK-1050 — сказано, что правила разбора и плана читаются до записи" "$got" "есть"
+
 event="$(start tests compact | "$HOOKS/skill-gate-rearm.sh" 2>/dev/null \
     | jq -r '.hookSpecificOutput.hookEventName // ""' 2>/dev/null)"
 report "SC-AK-1050 — сказанное приходит полем события запуска" "$event" "SessionStart"

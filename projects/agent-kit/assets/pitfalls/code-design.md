@@ -74,6 +74,6 @@ with the same interface. The plan says «no pattern», the place and the dropped
 - **The names, the types, the cast, the deprecation mark and the length.** They are held by the rule
   `typescript-conventions`, where the tree has it.
 - **The borders between libraries.** They are held by the rule `lib-layers`; what is taken instead of
-  being written — by `reuse-first`.
+  being written — by `reuse-first`, where the tree has them.
 - **That a module has one duty and a pattern has its problem.** No check reads that: it is seen by a
   reader of the plan and of the diff.

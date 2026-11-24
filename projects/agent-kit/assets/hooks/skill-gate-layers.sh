@@ -26,10 +26,16 @@
 # two different requirements.
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 
+# The path from the root of the tree: a folder above it named like a build or a test belongs to
+# someone else and silences nothing here.
+rt_layer_root="${CLAUDE_PROJECT_DIR:-.}/"
+command -v rt_gate_copy_path >/dev/null 2>&1 && rt_layer_root="$(rt_gate_copy_path "$rt_layer_root")"
+rt_layer_path="/${target#"$rt_layer_root"}"
+
 # A built tree is never code: the path to an artifact arrives from the command that runs it. The
 # gate map already lets such a path through, and the layers must stay silent along with it —
 # otherwise leaving the map lifts one requirement and leaves a dozen and a half others.
-case "$target" in
+case "$rt_layer_path" in
     */node_modules/* | */dist/* | */build/* | */.nx/* | */coverage/*) return 0 ;;
 esac
 
@@ -168,13 +174,11 @@ esac
 # rule alone: together with the table it does not fit into one delivery. Tests, settings and
 # generated files have no modules.
 #
-# The path is read from the root of the tree: a folder above it named like a test belongs to someone
-# else. The documents are judged before the silent kinds: a task with `-e2e` in its name has a plan.
-rt_design_root="${CLAUDE_PROJECT_DIR:-.}/"
-command -v rt_gate_copy_path >/dev/null 2>&1 && rt_design_root="$(rt_gate_copy_path "$rt_design_root")"
-case "/${target#"$rt_design_root"}" in
-    */docs/plans/*-findings*.md) ;;
-    */docs/tasks/*/grill.md | */docs/tasks/*/plan.md | */docs/plans/*.md)
+# The documents are judged before the silent kinds: a task with `-e2e` in its name has a plan. A
+# template, an index and the findings of an epic are not a design.
+case "$rt_layer_path" in
+    /docs/tasks/_template/* | /docs/plans/README.md | /docs/plans/*-findings*.md) ;;
+    /docs/tasks/*/grill.md | /docs/tasks/*/plan.md | /docs/plans/*.md)
         if rt_layer_allowed code-design "$target"; then
             rt_layer_add code-design
             rt_layer_add code-design-choose
@@ -182,9 +186,10 @@ case "/${target#"$rt_design_root"}" in
         fi
         ;;
     /.claude/* | */.storybook/* | */generated/* | */__tests__/* | */__mocks__/* | */fixtures/* | */e2e/* | *-e2e/* | */tests/*.sh) ;;
-    *.spec.* | *.test.* | *.stories.* | *.mock.* | *.fixture.* | *.cy.* | *.e2e-spec.* | *.d.ts | *.d.mts | */test-setup.* | *.preset.* | */.*rc.*) ;;
-    */jest.config.* | */vite.config.* | */vitest.config.* | */eslint.config.* | */stylelint.config.* | */prettier.config.*) ;;
-    */commitlint.config.* | */playwright.config.* | */webpack.config.* | */rollup.config.* | */postcss.config.* | */tailwind.config.*) ;;
+    *.spec.* | *.test.* | *.stories.* | *.mock.* | *.fixture.* | *.cy.* | *.e2e-spec.* | *.d.ts | *.d.mts | *.d.cts | */test-setup.* | */.*rc.*) ;;
+    */jest.config.* | */jest.preset.* | */jest.setup.* | */vite.config.* | */vitest.config.* | */eslint.config.* | */stylelint*.config.*) ;;
+    */prettier.config.* | */commitlint.config.* | */playwright.config.* | */webpack.config.* | */rollup.config.* | */tsup.config.*) ;;
+    */postcss.config.* | */tailwind.config.* | */babel.config.* | */karma.conf.* | */prisma.config.*) ;;
     *.ts | *.mts | *.cts | *.tsx | *.mjs | *.cjs | *.js | *.jsx | *.sh)
         rt_layer_allowed code-design "$target" && rt_layer_add code-design
         ;;

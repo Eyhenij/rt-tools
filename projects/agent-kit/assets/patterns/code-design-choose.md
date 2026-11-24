@@ -45,27 +45,33 @@ SOLID, GRASP and Gang of Four name the techniques of the table. Coupling, cohesi
 defined in the glossary. Coupling is counted by a search over the sources:
 
 ```bash
-grep -rlE "(from|import|require)[ (]+['\"][^'\"]*/<module>(\.[a-z]+)?['\"]" <sources>  # who knows a module
-grep -rlE "(^|[ \"/])<script>\.sh" <sources>                                           # who knows a script
-grep -cE "^(import|export .* from) |^\. " <module file>                               # whom it knows
+grep -rlw "<shown symbol>" <sources>                                    # who knows a module: by what it shows
+grep -rlE "(\.|source|bash|sh) +[^ ]*<script>\.sh" <sources>            # who runs or joins a script
+grep -E "^ *(import |export .* from )" <module file>                    # whom a module of code knows
+grep -nE "(^|[;&|{ ])(\.|source) +[\"\$/.]" <script> | grep -v "^[0-9]*: *#" # whom a script joins
 ```
+
+A module behind an entry is searched by the symbol it shows, not by its file: callers import the
+entry. A name in a comment or a text is not a link and is not counted. Cycles and imports past the
+entry are read by hand from these lists until the tree has a command.
 
 ## The decision in the plan
 
-The section is named «Решение» in a tree that writes its plans in Russian and «Decision» otherwise. A
-row each; a row that does not apply says why. A module is named down to the class or the function
-that gets the edit, and a thing the goal does not need has no row.
+The section stands before the footprint of the plan and is named «Решение» in a tree that writes its
+plans in Russian and «Decision» otherwise. A row each; a row that does not apply says why. A module is
+named down to the class or the function that gets the edit, and a thing the goal does not need has no
+row. A decision that outlives the task goes to the spec of the domain, where the texts keep it.
 
 | Row | Example |
 | --- | --- |
 | Modules | `mail/reader.ts:readMail` — turns a letter into a record; shows `readMail` alone |
 | Dependencies | the reader imports the record; the record imports nobody; the screen never imports the reader |
-| Coupling | the reader has one caller now and one after; imports past the entry: none |
+| Coupling | incoming one now and one after; outgoing two and two; cycles none; imports past the entry none |
 | Patterns | Adapter — `mail/reader.ts:readMail`; the mail format leaks into three callers; dropped: a cast at each |
 | Terms | letter — what came by mail; record — what the domain keeps; both stand in the glossary |
 | Input | from the mail server: a letter with a file, a letter without one, a broken header — refused |
 | Bounds | the record keeps its fields; the old letters are read; no new network address |
-| Priority | reliability over speed: a lost letter costs more than a second |
+| Priority | reliability over speed: a lost letter costs more than a second; a letter in under 2 s, 50 MB |
 | Budget | two files, 120 lines, no dependency |
 
 ## Common misses
