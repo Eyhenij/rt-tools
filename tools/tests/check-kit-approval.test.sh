@@ -150,4 +150,25 @@ report "a merge that names no task leaves its files to the branch" \
   { sha: 'd', subject: \"Merge branch 'RT-2-blocks' into RT-1-epic\", merge: true, files: ['$KIT'] },
 ], ['$KIT']); console.log(r.own.join(',') + '|' + r.tasks.length)")" "$KIT|0"
 
+# A branch with a record of its own answers by it only for the kit files its own commits brought; a
+# merged task answers by its own record, whatever the branch record says.
+# The code goes through a variable: bash 3.2 expands braces with commas inside "$(… "…")".
+MERGED="const merged = [{ sha: 'b00000000', subject: '[RT-2] Блоки ответа (#9)', merge: true, files: ['$KIT'] }];"
+OWN_EDIT="const ownEdit = [{ sha: 'c', subject: 'fix: правка', merge: false, files: ['$KIT'] }];"
+JUDGE_TASK_ONLY="$MERGED
+const own = { path: 'own.md', text: '- **Без вида:** «x»' };
+const f = m.judgeBranch({ name: 'RT-1-epic', own, visible: ['$KIT'], recordOfTask: () => null, commits: merged });
+console.log(f.length + '|' + f[0].startsWith('b00000000'));"
+JUDGE_NO_LINE="$MERGED
+const own = { path: 'own.md', text: '' };
+const task = { path: 'docs/archive/RT-2-x.md', text: '- **Без вида:** «да»' };
+const f = m.judgeBranch({ name: 'RT-1-epic', own, visible: ['$KIT'], recordOfTask: () => task, commits: merged });
+console.log(f.length);"
+JUDGE_OWN_EDIT="$OWN_EDIT
+const f = m.judgeBranch({ name: 'RT-1-x', own: null, visible: ['$KIT'], recordOfTask: () => null, commits: ownEdit });
+console.log(f.length + '|' + f[0].startsWith('RT-1-x'));"
+report "own record answers only for its own kit edits" "$(run "$JUDGE_TASK_ONLY")" '1|true'
+report "a branch with a record and no kit edit of its own needs no line in it" "$(run "$JUDGE_NO_LINE")" '0'
+report "a branch's own kit edit is judged by its own record" "$(run "$JUDGE_OWN_EDIT")" '1|true'
+
 suite_result

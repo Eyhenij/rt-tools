@@ -218,17 +218,23 @@ function branchFaults() {
         return [];
     }
 
-    const own = recordOf(branch);
+    return judgeBranch({ name: branch, own: recordOf(branch), commits: firstParents(base), visible, recordOfTask: taskRecordOf });
+}
 
-    if (own !== null) {
-        return faultsOf(branch, own);
-    }
-
-    const { own: direct, tasks } = answerersOf(firstParents(base), visible);
-    const faults = direct.length === 0 ? [] : faultsOf(branch, null);
+/**
+ * The faults of a branch, from what it carries. The branch's own record answers only for the kit
+ * files its own commits brought; a merged task answers by its own record. A branch with a record of
+ * its own and no kit edit of its own is not asked for approvals: the merged tasks were.
+ *
+ * `own` is the branch record or null; `commits` the first parents from the base; `recordOfTask`
+ * gives the archive record of a task number or null.
+ */
+export function judgeBranch({ name, own, commits, visible, recordOfTask }) {
+    const { own: direct, tasks } = answerersOf(commits, visible);
+    const faults = direct.length === 0 ? [] : faultsOf(name, own);
 
     for (const { task, sha, subject } of tasks) {
-        faults.push(...faultsOf(`${sha.slice(0, 9)} ${subject}`, taskRecordOf(task)));
+        faults.push(...faultsOf(`${sha.slice(0, 9)} ${subject}`, recordOfTask(task)));
     }
 
     return faults;
