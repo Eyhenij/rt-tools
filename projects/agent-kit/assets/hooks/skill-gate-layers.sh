@@ -161,6 +161,24 @@ case "$target" in
         ;;
 esac
 
+# --- layer by path: code design ---------------------------------------------------------------
+#
+# Modules, their links and patterns are chosen while the request is taken apart and the plan is
+# written, so the rule and its table come there. The code gets the rule alone: together with the
+# table it would not fit into one delivery. Tests and settings have no modules.
+case "$target" in
+    */.claude/* | *.spec.* | *.test.* | *.stories.* | *.config.* | *.d.ts | */tests/* | *-e2e/*) ;;
+    */docs/tasks/*/grill.md | */docs/tasks/*/plan.md | */docs/plans/*.md)
+        if rt_layer_allowed code-design "$target"; then
+            rt_layer_add code-design
+            rt_layer_add code-design-choose
+        fi
+        ;;
+    *.ts | *.mjs | *.cjs | *.js | *.sh)
+        rt_layer_allowed code-design "$target" && rt_layer_add code-design
+        ;;
+esac
+
 # Where a newly created check goes and what shape its known list has are statements of
 # `testing`, and they are needed exactly at the moment of creation: an existing check has both
 # its place in the gate and the shape of its list already chosen.

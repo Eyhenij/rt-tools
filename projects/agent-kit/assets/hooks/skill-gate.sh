@@ -141,6 +141,13 @@ case "$tool" in
                 written_path="$(rt_gate_copy_path "$written_path")"
                 more="$(skill_for edit "$written_path" "" 2>/dev/null)"
                 [ -n "$more" ] && req="$req $more"
+                # The layers by path come to a file written by a command too; the layers by the text
+                # of the edit stay silent: the command carries no field of the text.
+                gate_command="$target"
+                target="$written_path"
+                # shellcheck disable=SC1090
+                [ -f "$rt_hooks_dir/skill-gate-layers.sh" ] && . "$rt_hooks_dir/skill-gate-layers.sh" 2>/dev/null
+                target="$gate_command"
             done <<EOF
 $(rt_shell_paths "$target")
 EOF
