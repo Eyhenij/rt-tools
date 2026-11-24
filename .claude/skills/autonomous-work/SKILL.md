@@ -2,9 +2,9 @@
 name: autonomous-work
 kind: rule
 law: autonomous-work
-description: Rule under the autonomous-work law. Load when the owner has left and asked for unattended work — a chain of branches, a default instead of a question, local work with nothing pushed outside, a list of what was done by morning. Pattern autonomous-work-run. One piece of work — rule task-flow.
+description: Rule under the autonomous-work law. Load when the owner has left and asked for unattended work — a chain of branches, a default instead of a question, nothing outside but what the owner named, a list by morning. Pattern autonomous-work-run. One piece of work — rule task-flow.
 ---
-<!-- rt-kit v0.39.0 · rules/autonomous-work.md · 37e65f845dc7 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · rules/autonomous-work.md · c6d424b6f81e · правится надстройкой, не здесь -->
 
 # Autonomous work — how it works here
 
@@ -25,6 +25,7 @@ with the rule.
 | work visible from outside | pushing a branch, opening a PR, merging, publishing the package, sending cargo; moving a card on the work queue is not among them: the session moves it back itself, and nobody acts on it before morning |
 | a chain | the branch of each next piece of work is created from the branch of the previous one |
 | the morning list | a file the command `/night` creates and every closed work appends to: the work, the branch, what backs it, what it waits for; the last message gives it whole |
+| the boundary and the allowance | two lines in the head of the list: `Автономно до: ГГГГ-ММ-ДДTЧЧ:ММ`, which the guards read, and `Разрешено:` with the owner's words |
 | postponed work | a task that needs the owner's word: its state on the board does not move |
 
 ## Where it lives
@@ -71,14 +72,26 @@ flowchart TD
   silently.
 - **The branch of the next work is created from the previous one, not from main.** The first — from
   the epic branch, or from main where the work has no epic; each next — from the tip of the
-  previous: `git checkout -b <КЛЮЧ>-<номер>-<slug> <прошлая-ветка>`. The owner merges them in turn
-  from the bottom up, and each PR stands on the previous one. A night work stops in the state
-  `папка-разобрана`: the PR is opened in the morning. A base that moved during the night — main or
+  previous: `git checkout -b <КЛЮЧ>-<номер>-<slug> <прошлая-ветка>`. They merge in turn from the
+  bottom up, and each PR stands on the previous one. A night work stops in the state
+  `папка-разобрана`, unless the owner named its push, PR and merge. A base that moved during the night — main or
   the epic branch — is merged into the previous branch locally before the next branch is created:
   a delivery check refuses a base without it, and the fix it names needs a push.
-- **Nothing goes outside during the night.** No push, no PR, no merge, no publishing, no sending
-  cargo to the intake: all of it is visible to others, and a person cancels it. Cargo marks that
-  need a merge wait too — they assert what is not yet in main.
+- **Nothing goes outside during the night except what the owner named when leaving.** No push, PR,
+  merge, publishing or cargo send past their word: all of it is visible to others, and a person
+  cancels it. Their word goes verbatim into the head of the morning list as the line `Разрешено:`,
+  and each list line names the allowance it used. Cargo marks that need a merge wait for the merge.
+- **Every allowed kind of night call is run twice before the owner leaves, and none waits on a
+  permission prompt.** Different data each time: a second PR has a new title and body. A call that
+  prompts is covered by the owner's own allow rule then, or it leaves the allowance.
+- **An interrupted call cancels that call, not the session.** The work goes on with the next step,
+  and a turn of the night ends with neither a promise nor a question in text.
+- **The order to work alone is not an approval.** No plan, mockup or look is approved by it, and it
+  is never quoted in an approval record. On plan approval at night: a task whose code a guard holds
+  until the plan is approved is postponed whole; one the guards let through goes, and the list names
+  the approval it lacks.
+- **An incident analysis is written at night at once.** It goes to the intake only if the owner
+  named the send; otherwise the list names it.
 - **A task that needs the owner's word is not taken at all.** Its state on the board does not move:
   a task taken and postponed halfway looks done, and the next session does not come back to it. A
   task that runs into the owner's word halfway stops the way unfixable red does.
@@ -91,22 +104,21 @@ flowchart TD
   back to its former column, its line in the list says the branch is not merged, and the next work
   branches from the last green branch of the chain — the stopped one leaves the merge order.
 - **A guard's refusal is a work step, not the end of the session.** It names what was skipped; the
-  skipped is done, and the work goes on. A refusal that demands an action visible from outside is
-  not carried out at night: the work stops before that step, and the list names what it waits for.
-  Bypassing a guard stays forbidden in an autonomous session too.
+  skipped is done, and the work goes on. A refusal that demands an action visible from outside the
+  owner did not name stops the work before that step, and the list names what it waits for. A guard
+  does not open the owner's window before the boundary: it names a default instead. Bypassing a
+  guard stays forbidden in an autonomous session too.
 - **The morning list is written along the way, not recalled at the end.** Each closed piece of work
   appends its line: the night is longer than the window. A broken night is resumed from the list
   file, which the command does not write over.
 
 ## What of the law is not here
 
-Nothing checks the session's time boundary: the command writes it into the head of the list, and
-the session ends at it or by the owner's word; a queue emptied earlier ends it with the list. A
-turn-exit guard does not know the boundary either: it releases a working turn at the end of the
-scenario or on the owner's Esc, and the command says so. The
-ban on what is visible from outside, the chain's base, a written default and a readiness command
-named before the stage are held the same way — by the rule, not by a guard: the push command is no
-different from the one made by day.
+Nothing ends the session at its boundary: the session ends at it or by the owner's word; a queue
+emptied earlier ends it with the list. The guards read the boundary line only to name a default
+instead of the owner's window while it lies ahead. The ban on what is visible from outside past the
+allowance, the chain's base, a written default and a readiness command named before the stage are
+held by the rule, not by a guard: the push command is no different from the one made by day.
 
 ## Patterns
 

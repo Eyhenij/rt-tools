@@ -10,6 +10,7 @@
  * with no call after a refusal of the engine itself,
  * the one move is the owner's menu: the options of `words.menu`, with the number of the task put in.
  * A stop again after refusals of other stop hooks only names those hooks and the move instead.
+ * While the boundary of an autonomous session lies ahead, the default takes the place of that menu.
  *
  * The case of the silent hosting counts only when the measurement itself stopped on the silence: a
  * read that failed for a state passed over says nothing when a later local exit is unmet. Any other
@@ -124,6 +125,25 @@ export function menuCause(read) {
     return idle ? { idle: true } : null;
 }
 
+/**
+ * The boundary of an autonomous session, from the text of its morning list: `ГГГГ-ММ-ДДTЧЧ:ММ` of the
+ * line `Автономно до:` in the head while it lies ahead of `now`, otherwise null. The head ends at the
+ * first row of the table: a row that quotes the line is no boundary.
+ */
+export function nightBoundary(list, now) {
+    const head = (list ?? '').split(/^\|/m)[0];
+    const until = head.match(/^Автономно до: *(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})\s*$/m)?.[1] ?? null;
+    return until && new Date(until).getTime() > now.getTime() ? until : null;
+}
+
+/** The lines of the default that takes the place of the owner's menu in an autonomous session. */
+function nightLines({ until, list }) {
+    return [
+        `An autonomous session does not ask the owner before its boundary, ${until}: no menu is offered.`,
+        `The one move is the default of the rule \`autonomous-work\`: do what the refusal named. Where that takes the owner's word or an outside step the line «Разрешено:» does not name, write the stopped work and its reason into the morning list \`${list}\`, move its card back and take the next work of the chain.`,
+    ];
+}
+
 /** The options of the owner's menu: `words.menu`, the number of the task put in place of N. */
 export function menuOptions(words, task) {
     return (words.menu ?? []).map((option) => (task ? option.replace(/RT-N$/, `RT-${task}`) : option));
@@ -182,7 +202,8 @@ function stepLines(step) {
 
 /**
  * The reason of a held turn: the measured state, its action, and the step when the stages go on. With a
- * cause of the menu the one move is the owner's menu instead.
+ * cause of the menu the one move is the owner's menu instead, or the default when `menu.night` carries
+ * the boundary of an autonomous session and its list: `{ until, list }`.
  */
 export function holdReason(model, result, step, menu = null) {
     const total = model.states.length;
@@ -212,6 +233,7 @@ export function holdReason(model, result, step, menu = null) {
                 ? 'The previous refusal named a move, and no call followed it.'
                 : `The check \`${menu.cause.by}\` refused the same step twice for the same reason.`,
         );
+        if (menu.night) return [...lines, ...nightLines(menu.night)].join('\n');
         const options = menuOptions(model.words, menu.task);
         lines.push(`The one move is the owner's menu: ask through the question tool with exactly these options — ${options.map((o) => `«${o}»`).join(', ')} — and say in the question that the way goes into its free field.`);
         lines.push('Then do what the owner chose: a deferral marks the task «отложено» in the plan of the epic and takes the next unblocked task; a way written by the owner is taken in the same step. A bare «подскажу путь» with no text is followed by one question with a free field only.');

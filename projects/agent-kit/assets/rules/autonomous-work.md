@@ -2,7 +2,7 @@
 name: autonomous-work
 kind: rule
 law: autonomous-work
-description: Rule under the autonomous-work law. Load when the owner has left and asked for unattended work — a chain of branches, a default instead of a question, local work with nothing pushed outside, a list of what was done by morning, outside only what the owner named. Pattern autonomous-work-run. One piece of work — rule task-flow.
+description: Rule under the autonomous-work law. Load when the owner has left and asked for unattended work — a chain of branches, a default instead of a question, nothing outside but what the owner named, a list by morning. Pattern autonomous-work-run. One piece of work — rule task-flow.
 ---
 
 # Autonomous work — how it works here

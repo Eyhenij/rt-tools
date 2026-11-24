@@ -159,6 +159,17 @@ And the text of the menu hook lets one question with a free field through after 
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`, `projects/agent-kit/tests/turn-exit-guard-foreign.test.sh`, `projects/agent-kit/tests/turn-replay.test.sh`.
 
+### SC-AK-1930 — before the boundary of an autonomous session the default takes the place of the menu
+
+Given a held turn whose next move is the owner's menu, and a newest morning list whose head carries «Автономно до:» with a moment ahead
+When the refusal is named
+Then it names the boundary, the default of the rule `autonomous-work` and that list, and no menu and no option of it
+And it still names the check that refused the step twice
+And a passed boundary, a boundary in words, a row of the table quoting the line, an older list or no list gives the menu
+And a step of the scenario and an unread background task are named as by day
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
 ### SC-AK-1467 — an option of the menu is the owner's word and releases no turn
 
 Given the owner chose «подскажу путь» in the menu

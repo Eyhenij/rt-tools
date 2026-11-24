@@ -4,7 +4,7 @@ kind: pattern
 rule: autonomous-work
 description: Pattern of rule autonomous-work. Load when the owner has left and the work runs through the night — the cycle of one piece of work, chained branching, a written default instead of a question, the list by morning, handling a guard refusal. Not for ordinary work — patterns task-flow-start and -resume.
 ---
-<!-- rt-kit v0.39.0 · patterns/autonomous-work-run.md · e98428fdb35b · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · patterns/autonomous-work-run.md · 3e492530ddc5 · правится надстройкой, не здесь -->
 
 # A night without the owner
 
@@ -61,8 +61,19 @@ git add "$dir" && git commit                              # the folder goes into
 # the folder is taken apart into the archive by the last commit
 ```
 
-Nothing goes outside during the night: no `git push`, no `gh pr create`, no publishing, no cargo
-mark. The branch stays local, and in the morning the owner decides what to hand out of it.
+A push, a PR, a merge, a publication or a cargo send is not done at night unless the owner named it
+when leaving. Their words stand in the head of the list, and the line of the work names which of
+them it used:
+
+```markdown
+Автономно до: 2026-11-24T08:00
+Разрешено: «сам сливай в ветку эпика, PR эпика в main — после зелёного прогона»
+```
+
+What the allowance does not name stays local, and in the morning the owner decides what to hand
+out of it. Every allowed kind of call is run twice before the owner leaves, with different data,
+and passes without a permission prompt; one that prompts is covered by the owner's own allow rule
+or leaves the allowance.
 
 ## A default instead of a question
 
@@ -115,8 +126,10 @@ The order of rows is the merge order. Below the list — the postponed tasks wit
 The refusal names the skipped step: the step is done, the call is repeated, the work goes on. The
 night ends with work, not with an argument with the guard.
 
-- The refusal demands what must not be done (a push, a PR). The work is brought to the place where
-  the demand can be met in the morning and goes into the morning list as the line "waits for a PR".
+- The refusal demands an outside step the allowance does not name. The work is brought to the place
+  where the demand can be met in the morning, and its list line names the step it waits for.
+- A guard names a default instead of the owner's window: the default goes into the list as a line,
+  and the step goes on.
 - The refusal repeats at the same place twice — then the skipped step was understood wrongly: the
   rule named in the refusal is read, not the wording rewritten.
 

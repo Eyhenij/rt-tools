@@ -52,6 +52,17 @@ if [ "$code" -eq 0 ]; then
     [ "$mode" = "branch" ] || exit 0
     quotes="$(cd "$root" && node "$check" --quotes 2>/dev/null)"
     [ -n "$quotes" ] || exit 0
+    # Before the boundary of an autonomous session nobody answers a window: the PR waits for the
+    # morning, and the work goes on. The boundary is the line `Автономно до:` in the head of the
+    # newest morning list, ahead of now; both are local times of one form and compare as text.
+    list="$(find "$root/${RT_HANDOFF_DIR:-.claude/handoff}" -maxdepth 1 -name '*-ночь.md' 2>/dev/null | sort | tail -1)"
+    until="$([ -n "$list" ] && sed -n '/^|/q; s/^Автономно до: *\([0-9]\{4\}-[0-9][0-9]-[0-9][0-9]T[0-9][0-9]:[0-9][0-9]\)[[:space:]]*$/\1/p' "$list" | head -1)"
+    if [ -n "$until" ] && [ "$(date +%Y-%m-%dT%H:%M)" \< "$until" ]; then
+        tail_text="$(rt_deny_tail 2>/dev/null)"
+        reason="BLOCKED by kit-approval: the branch carries a visible kit edit, its record says: ${quotes}, and the owner confirms these quotes in a window. Autonomous until ${until} («Автономно до:» in ${list#"$root"/}): no window is opened. The PR waits for the morning: write it into that list as the step the work waits for, and take the next work. ${tail_text}"
+        jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}'
+        exit 0
+    fi
     reason="The branch carries a visible kit edit, and its approval record says: ${quotes}. Allow the PR if these are your words about this mockup and this showcase; forbid it otherwise."
     jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"ask",permissionDecisionReason:$r}}'
     exit 0
