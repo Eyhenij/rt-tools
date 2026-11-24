@@ -70,7 +70,7 @@ The table in `implementation.md` next to it.
    progress. A visible kit edit first goes through the rule `kit-approval`: the mockup and the
    owner's approval come before the code.
 6. **Check live.** A kit edit — in the showcase on port 6007, measured in the pinned Chrome by the
-   pattern `browser-verification-measure`. The receiver and the admin panel — on the stand of
+   pattern `browser-verification-measure`; if it does not hold the local tab, in the built-in browser. The receiver and the admin panel — on the stand of
    `pnpm run serve:stand`. A rule, a hook, a check or a text — the guard or the check is run on a
    real record and its scenarios run — the tree's checks by `tools/tests/run.sh`, the guards by
    `nx affected -t test-hooks`. The numbers go into the progress.

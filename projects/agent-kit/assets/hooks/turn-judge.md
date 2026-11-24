@@ -97,8 +97,12 @@ the end of every turn.
   no incident record into the directory named by the key `postmortems` of `.claude/rt-kit.json`:
   `Glob` the directory; a file named with today's date counts.
 - The turn wrote an incident record and the turn did not run `agent-kit propose`, not counting
-  `--dry-run`. A send a permission prompt refused counts when the reply names the unsent record and
-  the permission it needs.
+  `--dry-run`; any path to the package's command with `propose` is the same call, such as
+  `agent-kit.js propose`. A run whose output refuses this record or fails to send does not count.
+  A send a permission prompt refused counts when the reply names the unsent record and the permission
+  it needs. No send is demanded before the boundary of an autonomous session that named no send — the
+  line «Автономно до:» of the newest morning list is ahead: there the reply or that list names the
+  unsent record.
 - The owner asked to send a proposal to the rules package and the turn did not run
   `agent-kit propose`.
 

@@ -27,7 +27,8 @@ The rule is `turn-conduct`; the articles that hold the law stand there.
 - **An incident record written past its role and not sent.** It was written by hand, past
   `cargo-writer` and the template, and stayed on disk: the file alone satisfied the hook. Where a
   permission prompt refused the send, the turn names to the owner the unsent record and the permission
-  it needs; the record stays to be sent.
+  it needs; the record stays to be sent. In an autonomous session that named no send it goes into the
+  morning list, by `autonomous-work`.
 - **The repeated tail of a refused command.** A branch switch left in the discarded beginning
   carried six task files into the branch of the previous work together with the commit.
 - **The judgement "this is safe" instead of the list.** In one session the same command was first

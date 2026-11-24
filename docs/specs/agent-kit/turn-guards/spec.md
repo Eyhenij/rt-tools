@@ -91,7 +91,9 @@ exits asks the engine of the task flow for a verdict: `docs/specs/agent-kit/turn
 - **A turn in which the executor admitted a miss does not close until there is a record about the
   incident.** The agent hook on the Stop event reads the admission in the reply and looks for the
   record in the directory of incident analyses the tree names. A record written in the turn is sent in
-  the same turn; a send a permission prompt refused is named to the owner with the permission it needs.
+  the same turn, and a call whose output refused it does not count; a send a permission prompt refused is
+  named to the owner with the permission it needs. Before the boundary of an autonomous session that
+  named no send, the record is named in the morning list instead.
 - **A turn in which the owner said to create or send a proposal does not close until there was a
   sending.** What is written and not sent lies in the tree indistinguishably from what is sent, and it
   has no record of its own in the rules layer. Showing what would go away does not count as a sending.
@@ -109,7 +111,8 @@ exits asks the engine of the task flow for a verdict: `docs/specs/agent-kit/turn
   package lays out the text of an agent hook for the Stop event; the hook reads the owner's latest
   words, the final reply and the calls of the turn. Open work is not its to judge: the exit guard
   measures it. The hook refuses a turn that leaves undone the work the owner's latest word ordered,
-  asks what is already answered, states a fact with no output or admits a miss with no record.
+  asks what is already answered, states a fact with no output, admits a miss with no record or leaves
+  the record unsent.
 
 - **The refusal of the model names itself by a fixed mark.** It starts with `BLOCKED by
   turn-judge:`, and refusals are counted by that mark in the transcripts.

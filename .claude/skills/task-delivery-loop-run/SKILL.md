@@ -142,7 +142,7 @@ GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)" /opt/homebrew/bin/gh pr create --
     --reviewer Eyhenij --assignee rt-tools-dev --label <label> --draft
 ```
 
-The `$(…)` in this call may raise a permission prompt. Before the owner leaves for the night the
+The `$(…)` in this call, as in every call with the token here, may raise a permission prompt. Before the owner leaves for the night the
 form is checked by the pattern `autonomous-work-run`; a form that asks needs the owner's permission
 rule, and without it the PR waits for the morning.
 

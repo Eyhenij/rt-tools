@@ -19,7 +19,8 @@
  *   - **Макет:** «<the owner's words>» — <the Figma link>
  *   - **Витрина:** «<the owner's words>»
  *
- * An edit the owner said changes nothing visible carries one line instead of all three:
+ * An edit with no change of look carries one line instead of all three; it quotes the owner's words
+ * approving the plan that named the kit files:
  *
  *   - **Без вида:** «<the owner's words>»
  */
@@ -102,14 +103,14 @@ function recordOf(branch) {
 /** The faults of one record, each a line for the refusal; empty means approved. */
 export function faultsOf(name, record) {
     if (record === null) {
-        return [`${name}: no approval record — the mockup and the showcase lines in the task folder's approvals.md`];
+        return [`${name}: no approval record in the task folder's approvals.md — the mockup and the showcase lines, or the line «Без вида» with the owner's approval of the plan that named the kit files`];
     }
 
     const found = parseApprovals(record.text);
     const faults = [];
 
     // A kit file edited without a change of look — the type an input takes, say — has no frame to
-    // draw. The owner's word that nothing visible changed stands in for all three lines; like the
+    // draw. The owner's approval of the plan that named it stands in for all three lines; like the
     // other quotes, it goes to the owner's window on `gh pr create` — `quotesLine` shows it there.
     if (found.invisible !== null) {
         return [];
@@ -413,7 +414,7 @@ if (calledDirectly) {
     if (faults.length > 0) {
         console.error(`check-kit-approval: a visible kit edit without the owner's approvals (rule ${RULE})\n`);
         faults.forEach((fault) => console.error(`  ${fault}`));
-        console.error('\nAsk the owner, write their answer word for word; a refusal is fixed and shown again.');
+        console.error('\nA changed look: ask the owner about the mockup and the showcase, write their answer word for word; a refusal is fixed and shown again. No change of look: no question — the line «Без вида» quotes the approval of the plan that named these files; a file it did not name goes into the plan and to its approval.');
         process.exit(1);
     }
 

@@ -17,7 +17,7 @@ A rule of this tree under the law `docs/constitution/mockups.md`. The owner's wo
 | ------------------- | -------------------------------------------------------------------------------------- |
 | a visible edit      | a file of `projects/ui-kit-v2/src`; specs, stories, showcase pages, snapshot references, pure logic (`*.logic.ts`, `*.core.ts`), barrels (`index.ts`) and the storage files named in the check (the key registry, the settings services) are not one |
 | the mockup          | a frame in Figma, named by its link with `node-id`                                      |
-| approved            | the owner's answer to the question «одобряете?», written down word for word: a chat message or a choice in the question window |
+| approved            | the owner's answer to the question «одобряете?», written down word for word: a chat message or a choice in the question window; for an edit with no change of look — their approval of the plan |
 | the approval record | the file approvals.md in the task folder, the same lines in the archive record after it |
 
 ## Where it lives
@@ -56,8 +56,9 @@ The table in `implementation.md` next to it.
   input takes is edited there too. Such an edit has no frame to draw and nothing to measure. The plan
   names every kit file the check counts and says that its look does not change; the line «Без вида»
   quotes the words by which the owner approved that plan, and it replaces all three lines. No question
-  of its own is asked, neither with the plan nor at the push. An edit whose look may change goes by
-  the mockup.
+  of its own is asked, neither with the plan nor at the push. A kit file the plan did not name, met
+  later, goes into the plan first, and the plan is approved again. An edit whose look may change goes
+  by the mockup.
 - **A branch with no kit edits of its own writes no approval line.** Kit files brought by a merge answer
   by the records of their own tasks; a quote of words said about anything else is a false record.
 - **The push, the PR and the release go only after the approvals the record demands.** The check

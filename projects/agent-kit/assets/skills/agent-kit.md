@@ -9,7 +9,8 @@ Cold part: `pitfalls.md` — traps; `pitfalls-2.md` — every section whole. Sam
 
 ## When to use
 
-- A file with the `rt-kit` header is edited, the package is bumped, or `sync --check` refused.
+- A file with the `rt-kit` header is edited, the package is bumped, or `sync --check` refused;
+  a proposal or an incident analysis is written.
 
 ## Where what is set up
 
@@ -37,8 +38,8 @@ Gate map — `gate-map.sh`; names, commands — `project.sh`; paths — `checks.
 
 - **Observations** go to `.claude/rt-kit/observations/` by the guards; digest `agent-kit stats`,
   cost `agent-kit cost`, own records `agent-kit fate`.
-- **Proposals** come by `/skill-curator` after a task and `/feedback` mid-work; the text is by
-  `cargo-writer`, judged by the send.
+- **Proposals** come by `/skill-curator` after a task and `/feedback` mid-work; its text, and
+  an analysis', is by `cargo-writer`, judged by the send.
 - **A record has place, reason, closest (exact quote or «нет») and what it closes, never empty.**
 - **A proposal is addressed «пакет», «компаньон» or «дерево», and is no requirement until it lands.**
   An override section it covers carries `rt-proposed:`.

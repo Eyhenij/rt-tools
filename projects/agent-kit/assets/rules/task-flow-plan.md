@@ -26,7 +26,7 @@ Rule under the law `docs/constitution/work-conduct.md`. Cold part: `pitfalls.md`
 - **Every rule of the product agreement becomes a step of some stage.**
 - **Every step of the plan carries a check whose expected output is taken from a run while the plan is written.**
 - **A plan for work that ports a technique from outside is written by a measurement of one's own code.**
-- **A claim about a dependency names a line of its installed code.**
+- **A claim about a dependency names a file and line of its installed code.**
 - **A count that becomes the measure of the work is bounded by the declaration, not by the file.**
 - **Waiting for one part of a stage is never a stop of the stage.**
 - **A finding made mid-stage is checked against the plan's exit conditions before the first edit.** Outside them it is filed as a task.

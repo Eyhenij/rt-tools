@@ -5,10 +5,10 @@
   "task": 101,
   "turns": [
     { "role": "owner", "at": "2026-11-24T08:00:00Z", "owner": "<question>" },
-    { "role": "agent", "at": "2026-11-24T08:01:00Z", "call": "Read", "file": "docs/tasks/RT-101-replay-task/progress.md", "code": 0 },
+    { "role": "agent", "at": "2026-11-24T08:01:00Z", "call": "Bash", "command": "git log --oneline -1", "code": 0, "out": "4c7d7d4 docs: plan of the task" },
     { "role": "agent", "at": "2026-11-24T08:03:00Z", "call": "Write", "file": ".claude/rt-kit/postmortems/2026-11-24-answered-without-reading.md", "code": 0 },
-    { "role": "agent", "at": "2026-11-24T08:03:30Z", "call": "Bash", "command": "npx agent-kit propose --dry-run", "code": 0, "out": "to send: 1 analysis" },
-    { "role": "agent", "at": "2026-11-24T08:04:00Z", "call": "Bash", "command": "npx agent-kit propose", "code": 0, "out": "accepted: 1 analysis" },
-    { "role": "agent", "at": "2026-11-24T08:05:00Z", "say": "That was my miss: I answered without reading the plan. The incident record is written and accepted by the intake." }
+    { "role": "agent", "at": "2026-11-24T08:03:30Z", "call": "Bash", "command": "node dist/agent-kit/bin/agent-kit.js propose --dry-run", "code": 0, "out": "to send: 1 analysis" },
+    { "role": "agent", "at": "2026-11-24T08:04:00Z", "call": "Bash", "command": "node dist/agent-kit/bin/agent-kit.js propose", "code": 0, "out": "accepted: 1 analysis" },
+    { "role": "agent", "at": "2026-11-24T08:05:00Z", "say": "The last commit of the branch is the plan of the task. Earlier I answered you without reading it, and that was my miss: the incident record is written and accepted by the intake." }
   ]
 }

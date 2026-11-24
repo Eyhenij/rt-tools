@@ -15,7 +15,7 @@ happen in the working database.
 
 - **In the rule** — Here
 - **a stand** — the showcase at `http://localhost:6007`; the applications: the receiver at `:3000`, the admin panel at `:4200`; the end-to-end suite — its own `:3310` and `:4310`
-- **the browser driver** — the claude-in-chrome extension in the pinned profile; the app's built-in browser is the fallback when the pinned Chrome does not hold the local tab, and the progress says which of the two made the measurement
+- **the browser driver** — the claude-in-chrome extension in the pinned profile; the app's built-in browser is the fallback when the pinned Chrome does not hold the local tab. It measures a local stand or showcase only, never an outside sign-in or a release, and the progress names it. A refused profile choice still stops browser work
 - **the pinned profile** — the identifier from `.claude/rt-kit/browser-device-id` — a file of the machine, it does not travel into the repository
 - **a measurement** — the computed values of a node, taken from the page rather than by eye from a screenshot
 
@@ -67,7 +67,7 @@ silent about.
 
 ## What else is worth knowing when reading the code
 
-- **There are two ways into the browser here, and the second is not a workaround.** The
+- **There are two ways into the browser here besides the built-in fallback, and the second is not a workaround.** The
   extension drives a live tab on the pinned profile and demands the owner at the machine. The
   driver standing in the tree for the snapshot runner is driven by a script without it — it is
   what takes the measurements, the narrow screen and the sweep over all the stories
