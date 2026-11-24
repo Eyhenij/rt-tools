@@ -64,8 +64,10 @@ flowchart TD
   starts with the same steps, and a boundary that is an event is written as the latest moment the
   owner expects it: without that moment the guards take the night for day.
 - **The command called without a boundary asks the owner for one and starts nothing.** They are
-  still here at that minute; by morning there is nobody to ask, and a session without a boundary is
-  work without an end.
+  still here at that minute; a session without a boundary is work without an end.
+- **The owner's word or return before the boundary ends the night at once.** The line
+  `Автономно до:` gets the current moment before any other step: until then the guards answer the
+  owner at the desk as if they were away.
 - **The command does not repeat the order of the night.** It raises the rule and the pattern:
   rewritten into the command, the order would become a second source and diverge from the first
   silently.
@@ -83,7 +85,8 @@ flowchart TD
 - **The allowed night calls are rehearsed before the owner leaves, and none waits on a
   permission prompt.** A kind with a form that changes nothing is run twice with different data. A merge, a
   publication or a send is never rehearsed by doing it: the owner's own allow rule covers it. A call
-  that prompts with no such rule leaves the allowance.
+  that prompts with no such rule leaves the allowance. The calls of the cycle — the column move, the
+  queue audit — are rehearsed too, one call each, no substitution and no chain unless a guard demands it.
 - **An interrupted call cancels that call, not the session.** The work goes on with the next step,
   and a turn of the night ends with neither a promise nor a question in text.
 - **The order to work alone is not an approval.** No plan, mockup or look is approved by it, and it

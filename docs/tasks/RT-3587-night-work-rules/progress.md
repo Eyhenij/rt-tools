@@ -6,10 +6,11 @@
 - **Stage:** 2 of 2 — Защиты ночью
 - **Done:** этап 1 — закон, закон доставки, правило, образец и команда ночи; старые запреты ушли
   (`grep -c "nothing goes outside during the night" …/commands/night.md` — 0). Этап 2 — защита конца
-  хода (271 из 271) и защита согласий кита (11 из 11) ночью дают умолчание; спека и компаньоны дописаны
+  хода (335 из 335) ночью даёт умолчание, защита согласий кита (26 из 26) — отказ до утра; спека и
+  компаньоны дописаны; два круга ревью пройдены
 - **Live check:** хук конца хода в этом дереве с записью простоя: без списка — меню, граница 2099-01-01
   впереди — умолчание, граница 2026-11-24T08:00 прошла — меню
-- **Next step:** два круга ревью
+- **Next step:** архив и набор перед отправкой
 - **Uncommitted:** нет
 - **PR:** not open yet
 
@@ -63,6 +64,15 @@
   слияния PR и холодные части хостингов — шаги RT-3588; окна защит через решатель — RT-3572; отпуск
   ночи без работы — #3584; каталог передачи из профиля движок не читает, как и каталог задач, и это
   сказано в спеке.
+- **Второй круг ревью, 24.11.2026.** Исправлено: блок `/night` под zsh не заводил списка никогда;
+  новые слова владельца до старой границы терялись; кавычки, подстановка и вторая строка в словах
+  ломали голову или пропадали; блок читался из подкаталога и мимо профиля; список с поздним именем
+  оставался новейшим; отказ записи назывался успехом; граница списка читалась мягче, чем у защит;
+  две защиты по-разному читали день, которого нет в месяце; ночь не кончалась, когда владелец
+  вернулся раньше границы; простой ночью не называл шага; окно чужой защиты не названо ожиданием;
+  репетиция не охватывала команды цикла; точка B обещала больше сделанного; выжившие мутации
+  сценариев. Списано: незаведённый день месяца граница принимает — обе защиты читают его одинаково,
+  текстом; окна через решатель, правила слияния хостинга и отпуск ночи — туда же, куда в первом круге.
 - **Check of step 1.3 replaced:** `grep -c "Nothing goes outside during the night\.\*\*" projects/agent-kit/assets/rules/autonomous-work.md || true` → = 0
 - **Check of step 1.4 replaced:** `grep -c "the PR is opened in the morning" projects/agent-kit/assets/rules/autonomous-work.md || true` → = 0
 - **Check of step 1.5 replaced:** `grep -c "not carried out at night" projects/agent-kit/assets/rules/autonomous-work.md || true` → = 0
@@ -89,7 +99,7 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 2 of 2 — Защиты ночью
-- **Next step:** 2.1 — вердикт защиты конца хода ночью даёт умолчание
+- **Next step:** два круга ревью
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-3587-night-work-rules/progress.md`; the plan lies next to it.
@@ -97,28 +107,18 @@ The progress in full — `docs/tasks/RT-3587-night-work-rules/progress.md`; the 
 ### Uncommitted
 
 ```
- M docs/tasks/RT-3587-night-work-rules/progress.md
- M projects/agent-kit/assets/commands/night.md
- M projects/agent-kit/assets/laws/autonomous-work.md
- M projects/agent-kit/assets/laws/delivery.md
- M projects/agent-kit/assets/patterns/autonomous-work-run.md
- M projects/agent-kit/assets/rules/autonomous-work.md
+none
 ```
 
 ### Commits over the main branch
 
 ```
-66f24a20f Merge remote-tracking branch 'origin/RT-3586-night-findings-fixes' into RT-3587-night-work-rules
-5abceba2a [RT-3585] Проверка согласий кита не требует согласий за чужие правки кита, сборка графов не краснит проверку Angular Doctor (#3595)
-314476266 docs(rt:agent-kit): папка задачи RT-3585 разобрана в архивную запись (RT-3585)
-fae352780 fix(rt:agent-kit): правки после второго круга ревью (RT-3585)
-1ba81b0d5 fix(rt:agent-kit): правки после первого круга ревью (RT-3585)
-91dd6209e fix(rt:agent-kit): сценарии не зависят от временного каталога машины (RT-3585)
-85816de24 fix(rt:agent-kit): сборка графов удаляет graph.html (RT-3585)
-537254bee fix(rt:agent-kit): проверка согласий судит слитые задачи по их записям (RT-3585)
-0729657f9 docs(rt:agent-kit): разбор и план RT-3587 — правила ночной работы (RT-3587)
-974506ce7 docs(rt:agent-kit): разбор и план RT-3585 — находки ночи 23.11 (RT-3585)
-019e56e95 docs(rt:agent-kit): план эпика RT-3586 и назначение копии — находки ночи 23.11 (RT-3586)
+60f710aaa fix(rt:agent-kit): правки после первого круга ревью (RT-3587)
+d63f8c97f feat(rt:agent-kit): до границы ночи защиты дают умолчание вместо окна (RT-3587)
+51b574726 docs(rt:agent-kit): задача уходит в новый эпик по слову владельца (RT-3587)
+3ffef2156 docs(rt:agent-kit): ночью делается то, что владелец назвал, уходя (RT-3587)
+2c84f96da docs(rt:agent-kit): разбор и план RT-3587 — правила ночной работы (RT-3587)
+60fbe3b4e docs(rt:agent-kit): план эпика RT-3597 и назначение копии — ночная работа и находки 23.11 (RT-3597)
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

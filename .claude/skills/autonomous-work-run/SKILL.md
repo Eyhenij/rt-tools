@@ -4,7 +4,7 @@ kind: pattern
 rule: autonomous-work
 description: Pattern of rule autonomous-work. Load when the owner has left and the work runs through the night — the cycle of one piece of work, chained branching, a written default instead of a question, the list by morning, handling a guard refusal. Not for ordinary work — patterns task-flow-start and -resume.
 ---
-<!-- rt-kit v0.39.0 · patterns/autonomous-work-run.md · 0e63a6888639 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · patterns/autonomous-work-run.md · 7a7f78912b72 · правится надстройкой, не здесь -->
 
 # A night without the owner
 
@@ -74,7 +74,8 @@ What the allowance does not name stays local, and in the morning the owner decid
 out of it. The allowed calls are rehearsed before the owner leaves: a kind with a form that changes
 nothing is run twice with different data; a merge, a publication or a send is covered by the owner's
 own allow rule and never rehearsed by doing it. One that prompts with no such rule leaves the
-allowance.
+allowance. The commands of the cycle above are rehearsed with them, one call each: a substitution or
+a chain is kept only where a guard demands that form.
 
 ## A default instead of a question
 
@@ -130,8 +131,8 @@ night ends with work, not with an argument with the guard.
 
 - The refusal demands an outside step the allowance does not name. The work is brought to the place
   where the demand can be met in the morning, and its list line names the step it waits for.
-- The turn-exit guard names a default instead of the owner's menu: it goes into the list as a line,
-  and the work goes on.
+- The turn-exit guard names a default instead of the owner's menu: it is done, and the work goes on.
+  Work that waits or stops gets its line in the list.
 - A guard asks the owner by its own window: the call is not made, the list names it, and the next
   work is taken. What is ready keeps its card and its branch.
 - The refusal repeats at the same place twice — then the skipped step was understood wrongly: the

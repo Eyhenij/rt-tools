@@ -62,7 +62,7 @@ if [ "$code" -eq 0 ]; then
     list="$(find "$handoff" -maxdepth 1 -name '*-ночь.md' 2>/dev/null | sort | tail -1)"
     until="$([ -n "$list" ] && sed -n -E '/^\|/q; s/^Автономно до: *([0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9])[[:space:]]*$/\1/p' "$list" 2>/dev/null | head -1)"
     if [ -n "$until" ] && [ "$(date +%Y-%m-%dT%H:%M)" \< "$until" ]; then
-        reason="BLOCKED by kit-approval: the branch carries a visible kit edit, its record says: ${quotes}, and the owner confirms these quotes in a window. Autonomous until ${until} («Автономно до:» in ${list#"$root"/}): no window is opened. The PR waits for the morning: write it into that list as the step the work waits for, leave the card and the branch, and take the next work."
+        reason="BLOCKED by kit-approval: the branch carries a visible kit edit, its record says: ${quotes}, and the owner confirms these quotes in a window. Autonomous until ${until} («Автономно до:» in ${list#"$root"/}): no window is opened. The PR waits for the morning: write it into that list as the step the work waits for, leave the card and the branch, and take the next work. If the owner is back, set that line to the current moment and repeat the call."
         jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}'
         exit 0
     fi

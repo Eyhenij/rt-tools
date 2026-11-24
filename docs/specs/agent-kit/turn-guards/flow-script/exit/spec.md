@@ -78,7 +78,7 @@ not by a person.
 - **A stop again with no call, after refusals of a stop by other hooks only, is no idle one: the refusal names those hooks and the move of the state, with no owner's menu.**
 - **The menu of a refusal carries exactly the options of the description: «отложить RT-N» with the task number and «подскажу путь», and the question says the way goes into its free field.**
 - **While the boundary of an autonomous session lies ahead, the refusal names the default of the rule `autonomous-work` with the morning list instead of the owner's menu; once the boundary has passed, the menu is back.**
-- **The command `/night` continues only a list whose boundary lies ahead; any other night gets a new list with its own boundary and words, and a boundary that is no moment ahead starts none.**
+- **The command `/night` continues only a list whose boundary lies ahead, and the owner's new words rewrite its head; any other night gets a new list with its own boundary and words, and a boundary that is no moment ahead starts none.**
 - **The owner's choice is carried out: a deferral marks the task «отложено» and the next unblocked task is taken; a way the owner wrote is taken in the same step.**
 - **The menu hook lets exactly this menu through, and one question with a free field after a bare «подскажу путь».**
 - **An engine that fails, runs past its limit or cannot be called releases the turn and writes «движок упал» to the journal.**

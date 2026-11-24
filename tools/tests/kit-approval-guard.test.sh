@@ -42,7 +42,9 @@ report "night refuses instead of the window" "$(decision)" deny
 report "the night refusal names the boundary, the list and the quotes" \
     "$(names '2199-01-02T08:00') $(names '.claude/handoff/2198-01-01-ночь.md') $(names "$QUOTES")" "1 1 1"
 report "the night refusal says the PR waits for the morning and the next work is taken" \
-    "$(names 'The PR waits for the morning') $(names 'leave the card and the branch, and take the next work')" "1 1"
+    "$(names 'The PR waits for the morning: write it into that list as the step the work waits for') $(names 'leave the card and the branch, and take the next work')" "1 1"
+report "the night refusal names the list by its path in the tree and the move when the owner is back" \
+    "$(names "in .claude/handoff/2198-01-01-ночь.md") $(names 'If the owner is back')" "1 1"
 report "the night refusal does not call to wait for the owner's word" "$(names 'wait for their word')" 0
 report "no visible kit edit passes at night" "$(STUB_QUOTES='' decision)" PASS
 report "a missing record is refused at night by its own reason" \
@@ -76,6 +78,14 @@ report "a boundary five minutes ahead is night" "$(decision)" deny
 list 2198-01-01 "Автономно до: $(near -5)"
 report "a boundary five minutes back is day" "$(decision)" ask
 unset TZ
+list 2198-01-01 "$AHEAD (по Москве)"
+report "a moment with a tail is no boundary" "$(decision)" ask
+list 2198-01-01 "$BEHIND"
+printf '%s\n' "$AHEAD" >"$HANDOFF/2198-02-01-ночь-до-080000.md"
+printf '%s\n' "$AHEAD" >"$HANDOFF/RT-1-probe.md"
+mkdir -p "$HANDOFF/inner"
+printf '%s\n' "$AHEAD" >"$HANDOFF/inner/2198-03-01-ночь.md"
+report "a list put aside, another handover and a nested file are no morning list" "$(decision)" ask
 ELSEWHERE="$TREE/elsewhere"
 mkdir -p "$ELSEWHERE"
 printf '%s\n' "$AHEAD" >"$ELSEWHERE/2199-05-05-ночь.md"

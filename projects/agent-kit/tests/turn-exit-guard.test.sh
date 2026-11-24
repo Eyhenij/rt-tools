@@ -214,11 +214,12 @@ const nightOfCause = (cause) => holdReason(model, stage, null, { ...HOLD_MENU, c
 const isDefault = (text) => String(text.includes('An autonomous session does not ask the owner') && text.includes(NIGHT.list) && text.includes(NIGHT.until) && !text.includes("owner's menu:") && !text.includes('подскажу путь'));
 out('menu: SC-AK-1930 — night boundary ahead gives a default: шаг запрещает другая проверка', isDefault(nightOfCause(menuCause(forbiddenBy))), 'true');
 out('menu: SC-AK-1930 — night boundary ahead gives a default: простой', isDefault(nightOfCause({ idle: true })), 'true');
+out('menu: SC-AK-1930 — простой ночью называет шаг, дважды отказанный шаг заново не зовётся', [{ idle: true }, menuCause(forbiddenBy)].map((cause) => String(nightOfCause(cause).includes('The next move is'))).join(' '), 'true false');
 out('menu: SC-AK-1930 — умолчание всё равно называет отказавшую проверку', String(nightOfCause(menuCause(forbiddenBy)).includes('`git-guard-delivery` refused the same step twice')), 'true');
 out('menu: SC-AK-1930 — без ночи меню прежнее', String(ownerMenu.includes("The one move is the owner's menu:")), 'true');
 out('menu: SC-AK-1930 — ночь без причины меню шаг не меняет', String(holdReason(model, stage, { number: '2.1', name: 'x', left: 1 }, { ...HOLD_MENU, night: NIGHT }).includes('The next move is step 2.1')), 'true');
 const waitOrStop = nightOfCause({ idle: true });
-out('menu: SC-AK-1930 — умолчание: работа, ждущая внешнего шага, оставляет карточку и ветку', String(/outside step[^\n]*«Разрешено:»[^\n]*its card and its branch stay/.test(waitOrStop)), 'true');
+out('menu: SC-AK-1930 — умолчание: работа, ждущая внешнего шага, оставляет карточку и ветку', String(/outside step[^\n]*«Разрешено:»[^\n]*guard's window[^\n]*its card and its branch stay/.test(waitOrStop)), 'true');
 out('menu: SC-AK-1930 — умолчание: остановленная работа возвращает карточку', String(/owner's word[^\n]*its card goes back/.test(waitOrStop)), 'true');
 out('menu: SC-AK-1930 — умолчание: без следующей работы список дописывается', String(waitOrStop.includes('With no next work left, the list is completed')), 'true');
 out('menu: SC-AK-1930 — ночь не прячет зависшую задачу и отказ другой проверки', String(nightOfCause({ hung: { task: 'task-h', minutes: 95, output: null } }).includes('`task-h`') && nightOfCause({ foreign: ['git-guard-draft-ready'] }).includes('`git-guard-draft-ready`')), 'true');

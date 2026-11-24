@@ -125,6 +125,12 @@ export function menuCause(read) {
     return idle ? { idle: true } : null;
 }
 
+/** A moment as the local `ГГГГ-ММ-ДДTЧЧ:ММ`: boundaries compare as text, the way the other guards compare them. */
+function localMoment(at) {
+    const two = (n) => String(n).padStart(2, '0');
+    return `${at.getFullYear()}-${two(at.getMonth() + 1)}-${two(at.getDate())}T${two(at.getHours())}:${two(at.getMinutes())}`;
+}
+
 /**
  * The boundary of an autonomous session, from the text of its morning list: `ГГГГ-ММ-ДДTЧЧ:ММ` of the
  * line `Автономно до:` in the head while it lies ahead of `now`, otherwise null. The head ends at the
@@ -134,7 +140,7 @@ export function menuCause(read) {
 export function nightBoundary(list, now) {
     const head = (list ?? '').split(/^\|/m)[0];
     const until = head.match(/^Автономно до: *(\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])T(?:[01]\d|2[0-3]):[0-5]\d)\s*$/m)?.[1] ?? null;
-    return until && new Date(until).getTime() > now.getTime() ? until : null;
+    return until && until > localMoment(now) ? until : null;
 }
 
 /** The lines of the default that takes the place of the owner's menu in an autonomous session. */
@@ -142,7 +148,7 @@ function nightLines({ until, list }) {
     return [
         `An autonomous session does not ask the owner before its boundary, ${until}: no menu is offered.`,
         'The one move is the default of the rule `autonomous-work`: do what the refusal named.',
-        `Where that takes an outside step the line «Разрешено:» does not name, the work waits: its line in the morning list \`${list}\` names the step, its card and its branch stay, and the next work of the chain is taken.`,
+        `Where that takes an outside step the line «Разрешено:» does not name, or a guard's window, the work waits: its line in the morning list \`${list}\` names the step, its card and its branch stay, and the next work of the chain is taken.`,
         `Where that takes the owner's word or a red run cannot be fixed, the work stops: its line in the list names the reason, its card goes back, and the next work is taken from the last green branch.`,
         'With no next work left, the list is completed and its last line says so.',
     ];
@@ -204,6 +210,17 @@ function stepLines(step) {
     return lines;
 }
 
+/** The lines with the move of the state after them: the step when the stages go on, else the action. */
+function withNextMove(lines, step, state) {
+    if (step && state?.key === 'stage') {
+        lines.push(...stepLines(step));
+    } else {
+        lines.push(`The next move is the action of this state: ${state?.action ?? ''} (pattern \`${state?.pattern ?? ''}\`).`);
+    }
+    lines.push('`node tools/task-flow-script.mjs measure` names the exits read.');
+    return lines.join('\n');
+}
+
 /**
  * The reason of a held turn: the measured state, its action, and the step when the stages go on. With a
  * cause of the menu the one move is the owner's menu instead, or the default when `menu.night` carries
@@ -237,17 +254,15 @@ export function holdReason(model, result, step, menu = null) {
                 ? 'The previous refusal named a move, and no call followed it.'
                 : `The check \`${menu.cause.by}\` refused the same step twice for the same reason.`,
         );
-        if (menu.night) return [...lines, ...nightLines(menu.night)].join('\n');
+        if (menu.night) {
+            lines.push(...nightLines(menu.night));
+            // An idle stop has a move of its own below; a step refused twice is the one the default replaces.
+            return menu.cause.idle ? withNextMove(lines, step, state) : lines.join('\n');
+        }
         const options = menuOptions(model.words, menu.task);
         lines.push(`The one move is the owner's menu: ask through the question tool with exactly these options — ${options.map((o) => `«${o}»`).join(', ')} — and say in the question that the way goes into its free field.`);
         lines.push('Then do what the owner chose: a deferral marks the task «отложено» in the plan of the epic and takes the next unblocked task; a way written by the owner is taken in the same step. A bare «подскажу путь» with no text is followed by one question with a free field only.');
         return lines.join('\n');
     }
-    if (step && state?.key === 'stage') {
-        lines.push(...stepLines(step));
-    } else {
-        lines.push(`The next move is the action of this state: ${state?.action ?? ''} (pattern \`${state?.pattern ?? ''}\`).`);
-    }
-    lines.push('`node tools/task-flow-script.mjs measure` names the exits read.');
-    return lines.join('\n');
+    return withNextMove(lines, step, state);
 }
