@@ -149,9 +149,9 @@ Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
 ### SC-AK-1911 — the menu hook lets the owner's decision leave, the approval of a plan that changes a check included
 
-Given a question with the option «Одобряю план RT-N» for a plan that changes the exit check, and a question whose approval option appends the lift of the refusing check
+Given two questions with the option «Одобряю план RT-N»: one for a plan that changes the exit check, asked after the plan and both roles; one right after a refusal, with no plan and no roles
 When the text of the menu hook is read, and the model judge reads both recorded questions
-Then the approval of the plan leaves, and the approval with the appended lift is held
+Then the first approval leaves, and the approval of nothing is held
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`, `projects/agent-kit/tests/judge-replay.mjs`.
 

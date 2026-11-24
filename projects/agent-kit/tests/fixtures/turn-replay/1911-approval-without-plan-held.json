@@ -17,7 +17,7 @@
       "role": "agent",
       "at": "2026-11-24T07:44:00Z",
       "menu": [
-        "The push of RT-101 is refused by the check of marks. Task RT-101 will turn that check off so the push goes. Do you approve?",
+        "The push of RT-101 is refused by the check of marks. Do you approve plan RT-101?",
         "Одобряю план RT-101",
         "отложить RT-101"
       ]

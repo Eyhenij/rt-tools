@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.0 · hooks/ask-judge.md · 7bfaf5370c0c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · hooks/ask-judge.md · 71fcb35de950 · правится надстройкой, не здесь -->
 # Ask judge
 <!-- rt-hook-agent event=PreToolUse pattern=AskUserQuestion limit=60 -->
 
@@ -32,14 +32,15 @@ after any refusal of another check. Avoid both.
 
 - The answer is not in the owner's messages, not in the progress and not in the rules: the decision
   is the owner's.
-- The question asks for an approval the owner must give: a plan, a new working tree, a merge, a
-  release, a purchase, a deletion, a change of the owner's earlier decision.
+- The question asks for an approval the owner must give: a new working tree, a merge, a release, a
+  purchase, a deletion, a change of the owner's earlier decision. The approval of a plan has the
+  next item to itself.
 - The question asks to approve the plan of the task of the branch, and the owner has not approved
   it yet. The approval of a plan is never held, a plan that changes a hook or a check included,
-  when two things hold. The plan lies in `<cwd>/docs/tasks/<branch>/plan.md`. The transcript holds
-  calls of the roles `product-strategist` and `goal-critic` before the question. The plan names
-  the change, the roles read it, the owner decides it, and the option only records the decision.
-  Without the plan or without both roles the option is held: an approval of nothing is a lift.
+  when two things hold. The plan lies in `<cwd>/docs/tasks/<branch>/plan.md`. After that file was
+  last written, the transcript holds calls of the roles `product-strategist` and `goal-critic`
+  that name this plan or its task. The plan names the change, the roles read it, the owner
+  decides it, and the option only records the decision.
 - The question follows a refusal of another check and names what was done meanwhile or why nothing
   could be done. A refusal elsewhere is never a reason to hold the question.
 - The question is the menu named by a refusal of the exit check. Another check
@@ -56,17 +57,21 @@ after any refusal of another check. Avoid both.
   the next step, the epic table names the next task or the owner's order covers it. Quote the line.
 - A rule or a spec answers it plainly. Name the file and the line.
 - The question offers to walk around a check or a rule.
+- An option approves a plan. Without the plan or without both roles the option is held: an
+  approval of nothing is a lift. Name what is missing — the plan file or the role calls.
 - An option of the question removes, disables or weakens a hook or a check: switches it off, drops
   a case from it, lowers its threshold or adds an exception to it. Hold it in any menu, the menu of
   the exit check included. An owner who picks such an option removes the check with their own hand,
   and that has happened once already. The move instead is to do what the check asks.
   An option that only records the owner's decision is not such an option.
-  Such an option is «Одобряю план RT-N» under the conditions above, or the approval of a merge or a release named by the task key.
-  It leaves even when the decision changes a check. A «(Recommended)» mark is no action. A
-  description that says what the executor does next — makes the edit, runs the suite — is no
-  action either. An option is its label, its description and the text of its question together.
-  An option that appends an action to the decision anywhere in them is held.
-  Example: «Одобряю план RT-N (снимает проверку отметок)», or a question that says the approval also lifts a check.
+  Such an option is «Одобряю план RT-N» under the conditions above. It leaves even when the plan
+  changes a check, and a question that describes the change the plan makes is no action. A
+  «(Recommended)» mark is no action. A description that says what the executor does next — makes
+  the edit, runs the suite — is no action either. An option is its label, its description and
+  the text of its question together. An option that appends to the decision an action of its
+  own, one the plan does not name, anywhere in them is held. Example: «Одобряю план RT-N
+  (и сразу снимаю проверку отметок)», or a question that says picking the option also lifts a
+  check now, apart from the plan.
 
 When in doubt, let the question leave: a held question can leave the owner without a decision that
 was theirs. An option that weakens a check by itself is not a doubt: it is held. An option that
