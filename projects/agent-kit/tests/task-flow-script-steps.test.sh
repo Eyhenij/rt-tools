@@ -255,10 +255,15 @@ printf '%s\n' '{"type":"user","uuid":"a1","toolUseResult":{"answers":{"Одоб�
 report "plan: SC-AK-1411 — запись вне каталогов записей метки не даёт" "$(tf_red "$TF_DIR/outside.jsonl" | grep -c 'not a session record of this repository.* code=1')" 1
 rm -f "$TF_APPROVAL"
 tf_record 'Переделай этап 1'
-report "plan: SC-AK-1411 — другой ответ меню метки не даёт" "$(tf_red | grep -c 'no menu answer.* code=1')" 1
+report "plan: SC-AK-1411 — другой ответ меню метки не даёт" "$(tf_red | grep -c 'no approving answer.* code=1')" 1
 report "plan: SC-AK-1411 — после отказа метки нет" "$(test -e "$TF_APPROVAL" && echo есть || echo нет)" 'нет'
+report "plan: SC-AK-1873 — отказ называет меню и набранное сообщение" "$(tf_red | grep -c 'a menu option or a typed message.* code=1')" 1
+tf_record x && head -2 "$TF_REC" > "$TF_REC.r" && printf '%s\n' '{"type":"user","uuid":"t1","message":{"role":"user","content":"одобряю план RT-2"}}' >> "$TF_REC.r" && mv "$TF_REC.r" "$TF_REC"
+report "plan: SC-AK-1873 — набранное строчными «одобряю план RT-2» даёт метку с местом ответа" \
+    "$(tf_red | grep -c 'approval mark is written — «одобряю план RT-2».* code=0')/$(node -e "console.log(require('$TF_APPROVAL').place.uuid)" 2>&1)" '1/t1'
+rm -f "$TF_APPROVAL"
 printf '%s\n' '{"type":"user","toolUseResult":{"answers":{"Одобряешь?":"Одобряю план RT-2"}}}' > "$TF_REC"
-report "plan: SC-AK-1411 — без вызовов ролей метки нет" "$(tf_red | grep -c 'no menu answer.* code=1')" 1
+report "plan: SC-AK-1411 — без вызовов ролей метки нет" "$(tf_red | grep -c 'no approving answer.* code=1')" 1
 
 # SC-AK-1412 — проверка зелёная в минуту записи — отказ
 printf 'готово\n' > "$TF_RED/out.txt"

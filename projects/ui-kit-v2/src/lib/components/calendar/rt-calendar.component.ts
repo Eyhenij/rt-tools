@@ -28,6 +28,7 @@ import { RtSkeletonComponent } from '@rt-tools/ui-kit-v2/skeleton';
 import { ERtCalendarDayState, IRtCalendar } from './rt-calendar.model';
 
 const BEM_BLOCK: string = 'rt-calendar';
+const DAYS_IN_WEEK: number = 7;
 
 /** Клавиши, что календарь в режиме сетки отдаёт наружу вместо прокрутки страницы. */
 const GRID_KEYS: ReadonlySet<string> = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End']);
@@ -82,6 +83,19 @@ export class RtCalendarComponent {
             days.find((day: IRtCalendar.Day): boolean => !day.disabled);
         return pick?.key ?? null;
     });
+
+    /**
+     * Сколько недель занимает сетка каждого месяца, по ключу месяца. Стоит признаком на сетке: шторка
+     * держит высоту под шесть недель и ставит месяц покороче по центру, чтобы высота не прыгала.
+     */
+    protected readonly weeks: Signal<Readonly<Record<string, number>>> = computed((): Readonly<Record<string, number>> =>
+        Object.fromEntries(
+            this.months().map((month: IRtCalendar.Month): [string, number] => [
+                month.key,
+                Math.ceil((month.leadingBlanks.length + month.days.length) / DAYS_IN_WEEK),
+            ])
+        )
+    );
 
     public readonly months: InputSignal<readonly IRtCalendar.Month[]> = input.required<readonly IRtCalendar.Month[]>();
     public readonly weekdayLabels: InputSignal<readonly string[]> = input.required<readonly string[]>();

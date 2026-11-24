@@ -1,4 +1,4 @@
-// rt-kit v0.39.0 · task-flow/measure/folder.mjs · b7497719cf91 · правится надстройкой, не здесь
+// rt-kit v0.39.1 · task-flow/measure/folder.mjs · b7497719cf91 · правится надстройкой, не здесь
 /**
  * The measurer «measure.folder» — exit 9: one commit of the branch removed the task folder and added
  * a record to the description of the past.

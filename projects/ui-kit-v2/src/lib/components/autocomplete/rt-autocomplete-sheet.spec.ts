@@ -189,7 +189,7 @@ describe('Автокомплит в нижней шторке', (): void => {
         expect(checked[CITIES.indexOf(CITIES[1])]).toBe(true);
     });
 
-    it('SC-UKV-1779 — sheetCards=false оставляет в шторке строки, какими подсказки стоят у поля', (): void => {
+    it('SC-UKV-1797 — sheetCards=false оставляет в шторке строки, какими подсказки стоят у поля', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup({ sheetCards: false });
 
         tapField(fixture);

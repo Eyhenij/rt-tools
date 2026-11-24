@@ -35,6 +35,98 @@
     - в подвале шторки отборов `rt-page-bar` стоит «Сбросить»: поля очищает приложение по выходу `filtersReset`, а к применённым значениям возвращает по `filtersDiscard`. Без этих подписок кнопка и ответ «Не применять» полей не меняют;
     - о выборе в списке кита внутри отборов `rt-page-bar` шторка узнаёт только от приложения — входом `filtersChanged`; ввод в текстовые поля она замечает сама.
 
+# [0.52.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.51.0...rt-ui-kit-v2%400.52.0) (2026-11-24)
+
+### Bug Fixes
+
+- **rt:cms:** правки после первого круга ревью (RT-3478) ([6717f51](https://github.com/Eyhenij/rt-tools/commit/6717f518982f11db9d6c5ce84ed9b7db1732ee38))
+- **rt:ui-kit-v2:** быстрые периоды в шторке поля периода переносятся на строки (RT-3399) ([1909205](https://github.com/Eyhenij/rt-tools/commit/19092052f248456e19a079a8681c46d81091551d))
+- **rt:ui-kit-v2:** глаз пароля и свой триггер выбора берут общую рамку фокуса кита (RT-3399) ([22bc968](https://github.com/Eyhenij/rt-tools/commit/22bc9689288ab974fdb4f0ac226e24e906cd5cba))
+- **rt:ui-kit-v2:** длина сценариев шторки, шаблоны историй и шаги работы под набор проверок (RT-3399) ([2e3db1d](https://github.com/Eyhenij/rt-tools/commit/2e3db1db6c3af349128d77e0d044d7ee93c40844))
+- **rt:ui-kit-v2:** закреплённая колонка показывает отключённую ручку перетаскивания (RT-3399) ([79207a1](https://github.com/Eyhenij/rt-tools/commit/79207a13192fcfe63eac9bc41f58e89c44fbc298))
+- **rt:ui-kit-v2:** значки и стиль значка ячейки без записи innerHTML и обхода очистки (RT-3478) ([ef78a69](https://github.com/Eyhenij/rt-tools/commit/ef78a69199145a114826676e658d17134290ca9b))
+- **rt:ui-kit-v2:** значок календаря у полей даты и периода — на линии шеврона селекта (RT-3399) ([5e04df4](https://github.com/Eyhenij/rt-tools/commit/5e04df4745e556e5acb42f764d9aa4b1fbe245d9))
+- **rt:ui-kit-v2:** исправления после второго круга ревью (RT-3399) ([a65f3cb](https://github.com/Eyhenij/rt-tools/commit/a65f3cb2887d2fc0c38fd9ad60b8bff82320d26c))
+- **rt:ui-kit-v2:** исправления после второго круга ревью постоянного текста поля (RT-3399) ([72bbc66](https://github.com/Eyhenij/rt-tools/commit/72bbc66c2abdf92075750f0695a79853087b44b8))
+- **rt:ui-kit-v2:** исправления после круга ревью подсказки у подписи поля (RT-3399) ([e598cea](https://github.com/Eyhenij/rt-tools/commit/e598ceac3640fa4f2adc015c71e31dd5e670fcfd))
+- **rt:ui-kit-v2:** исправления после круга ревью шторки из шторки, панели отборов и поиска (RT-3399) ([34daab4](https://github.com/Eyhenij/rt-tools/commit/34daab45571c6bb2d80ad17f7a0ed6440f154710))
+- **rt:ui-kit-v2:** исправления после первого круга ревью четырёх замечаний (RT-3399) ([9f7b26a](https://github.com/Eyhenij/rt-tools/commit/9f7b26a08a93a495eb84be7df48ebe523b3daf1c))
+- **rt:ui-kit-v2:** маршрутная панель отборов отдаёт фокус полю полосы на широком месте после третьего круга ревью (RT-3528) ([a8be252](https://github.com/Eyhenij/rt-tools/commit/a8be2521c18aa8dd551b095900b87e165b031ce1))
+- **rt:ui-kit-v2:** меню узкого экрана без истории до своей работы, эталоны главной не тронуты (RT-3508) ([006d474](https://github.com/Eyhenij/rt-tools/commit/006d4742bce2315642329a0b9746a7e1b72c4fe3))
+- **rt:ui-kit-v2:** меню узкого экрана шапки страницы — свой компонент, слот мультиселекта в списке покрытия витрины (RT-3508) ([46cdf92](https://github.com/Eyhenij/rt-tools/commit/46cdf9299cf80250178bc6cc0bc67acc8f6b320a))
+- **rt:ui-kit-v2:** мультиселект без ng-content под условием, порог Angular Doctor после слияния главной (RT-3508) ([045b78e](https://github.com/Eyhenij/rt-tools/commit/045b78ec645785e33d0620d9221594ed97ec2bac))
+- **rt:ui-kit-v2:** настройка RT_POPOVER_SHEET выключает и шторку отборов шапки (RT-3399) ([3a019c0](https://github.com/Eyhenij/rt-tools/commit/3a019c0aad2ac3d75077c1f2a0a257dfe8f2b293))
+- **rt:ui-kit-v2:** окно подтверждения, «?» у подписи и свёрнутая группа доведены до макета (RT-3399) ([5284516](https://github.com/Eyhenij/rt-tools/commit/5284516aaae73067248a5316e086f82fe6ce15b0))
+- **rt:ui-kit-v2:** отступы шторки по макету — 20 по бокам, 24 снизу, строка заголовка 24 (RT-3399) ([290a069](https://github.com/Eyhenij/rt-tools/commit/290a069640b6db474760b59f915c5681e10ae175))
+- **rt:ui-kit-v2:** панель отборов в маршруте не закрывается до замера места после второго круга ревью (RT-3528) ([b82ca40](https://github.com/Eyhenij/rt-tools/commit/b82ca40cb5d6a9ceba2bd06b36914189510c52a7))
+- **rt:ui-kit-v2:** панель отборов маршрутом и кнопка фильтров после первого круга ревью (RT-3528) ([be393a7](https://github.com/Eyhenij/rt-tools/commit/be393a74ca2d6add24691ae89dac1224e6a22330))
+- **rt:ui-kit-v2:** панель отборов на шаблоне тела панели кита, проверка Angular Doctor и свободные номера сценариев после слияния главной (RT-3528) ([8ceb2b4](https://github.com/Eyhenij/rt-tools/commit/8ceb2b4f4366cd63a3835bd875807f362275ccfb))
+- **rt:ui-kit-v2:** подвал панели настроек списка данных снова стоит внизу (RT-3479) ([208cac2](https://github.com/Eyhenij/rt-tools/commit/208cac200c46bf3cae62eed21b7d5aa0fc335aa1))
+- **rt:ui-kit-v2:** подсказка у подписи поля открывается подсказкой кита (RT-3399) ([4029a44](https://github.com/Eyhenij/rt-tools/commit/4029a442481d7d85d8476d8c4d6ab8cb8c105476))
+- **rt:ui-kit-v2:** порог по окну без :has() от корня, ширина окна подтверждения по кнопкам, строка подписи со значком «?» (RT-3399) ([3434e65](https://github.com/Eyhenij/rt-tools/commit/3434e658c2e7c9f89cd3daadbab96cb9e1346e4d))
+- **rt:ui-kit-v2:** правки после второго круга ревью (RT-3478) ([7e1ab5a](https://github.com/Eyhenij/rt-tools/commit/7e1ab5a9b9c41b2e988fb774ab3e9e2e1766357b))
+- **rt:ui-kit-v2:** правки после второго круга ревью (RT-3479) ([a38e062](https://github.com/Eyhenij/rt-tools/commit/a38e062156768c0cd6ad89e25d6a8a027b18119a))
+- **rt:ui-kit-v2:** правки после второго круга ревью (RT-3508) ([a8e6e59](https://github.com/Eyhenij/rt-tools/commit/a8e6e59399e38ec3ac0d2c4e671ab60c1ef10612))
+- **rt:ui-kit-v2:** правки после первого круга ревью (RT-3479) ([b69a0fc](https://github.com/Eyhenij/rt-tools/commit/b69a0fc7a5ecb2e125faf7cdaf4cb55b853138b9))
+- **rt:ui-kit-v2:** правки после первого круга ревью (RT-3508) ([77545b0](https://github.com/Eyhenij/rt-tools/commit/77545b0c1ce527d145d09ecfd63d42889bf17e16))
+- **rt:ui-kit-v2:** пункт шторки меню с подтверждением переживает закрытие меню (RT-3508) ([b320137](https://github.com/Eyhenij/rt-tools/commit/b320137969517a023999665a93c0afbb924d5dc6))
+- **rt:ui-kit-v2:** свёрнутая группа переключателей разворачивается в родителе по содержимому (RT-3399) ([5ca668c](https://github.com/Eyhenij/rt-tools/commit/5ca668c76b71159edbc90f6e428546c9c4dfe9f2))
+- **rt:ui-kit-v2:** сворачиваемая группа переключателей не сжимается во флекс-строке (RT-3399) ([b07f4ff](https://github.com/Eyhenij/rt-tools/commit/b07f4ff52b3a352f3811d1faf695af7624417b47))
+- **rt:ui-kit-v2:** съёмка витрины повторяет открытие зависшей страницы (RT-3399) ([d66e135](https://github.com/Eyhenij/rt-tools/commit/d66e1357ae5895a639208e0455cfac4f9f68028d))
+- **rt:ui-kit-v2:** шаблоны обёртки витрины маршрутной панели в своих файлах (RT-3528) ([8924262](https://github.com/Eyhenij/rt-tools/commit/8924262e2333b5a8a626047687e7cafd0d52cf11))
+- **rt:ui-kit-v2:** шторка только на телефоне и исправления после первого круга ревью (RT-3399) ([a0292c8](https://github.com/Eyhenij/rt-tools/commit/a0292c8da7ba4f64d6900f80af0d10594a47f480))
+
+### Features
+
+- **rt:ui-kit-v2:** автокомплит на телефоне ищет в нижней шторке (RT-3399) ([dceae8f](https://github.com/Eyhenij/rt-tools/commit/dceae8fdec38ade5f373d9f3565e26ca1c0e5774))
+- **rt:ui-kit-v2:** вкладки выключают шторку для «Ещё» и меню вкладки входом sheet (RT-3399) ([61d155e](https://github.com/Eyhenij/rt-tools/commit/61d155ee13348c4e51511dc715dacaeccfdeb066))
+- **rt:ui-kit-v2:** группа переключателей сворачивается в поле выбора, когда не помещается (RT-3399) ([153d11d](https://github.com/Eyhenij/rt-tools/commit/153d11d3982f4ba66f34c0e3b53ad13e5c067394))
+- **rt:ui-kit-v2:** именованные слоты кита передаются шаблонами (RT-3479) ([0a6fb6e](https://github.com/Eyhenij/rt-tools/commit/0a6fb6e2eff10d631ec2631a982f7e5104e336d8))
+- **rt:ui-kit-v2:** меню вкладки на телефоне — в нижней шторке (RT-3399) ([98bfabd](https://github.com/Eyhenij/rt-tools/commit/98bfabd6b0679cd8f638d48fe421d4b2e0ed042f))
+- **rt:ui-kit-v2:** меню действий rt-menu на телефоне — в нижней шторке (RT-3399) ([cf96bb0](https://github.com/Eyhenij/rt-tools/commit/cf96bb005608ffbdc30fad1448ca387c12810e38))
+- **rt:ui-kit-v2:** меню шапки страницы на телефоне — в нижней шторке (RT-3399) ([bb98b0b](https://github.com/Eyhenij/rt-tools/commit/bb98b0b6d4073ba9143bb6cc1fc80fb63eb33241))
+- **rt:ui-kit-v2:** мультиселект с переключателями — вид look="toggles" (RT-3399) ([93ad24a](https://github.com/Eyhenij/rt-tools/commit/93ad24a73d07f5e12a648a6d7e3e423524101c6d))
+- **rt:ui-kit-v2:** нижняя шторка у динамического селектора (RT-3399) ([857f2ed](https://github.com/Eyhenij/rt-tools/commit/857f2edf446e624081cbfdd44c85cb31d1b97f95))
+- **rt:ui-kit-v2:** нижняя шторка у меню и панелей остального набора (RT-3399) ([44c9814](https://github.com/Eyhenij/rt-tools/commit/44c9814e83e59d4c1db8b2c8090eb09bf3c2e0f9))
+- **rt:ui-kit-v2:** новый значок календаря calendar-2 у полей даты и периода (RT-3399) ([1d96f6a](https://github.com/Eyhenij/rt-tools/commit/1d96f6aa610601f07a47318daff57bc18587ac27))
+- **rt:ui-kit-v2:** панель отборов полосы открывается маршрутом приложения, кнопка фильтров с 1079 (RT-3528) ([07e5cef](https://github.com/Eyhenij/rt-tools/commit/07e5cef401661aff7a8989887112393992bcbad1))
+- **rt:ui-kit-v2:** подвал «Выбрано · Сбросить · Готово» в шторке мультиселекта (RT-3399) ([0d74de2](https://github.com/Eyhenij/rt-tools/commit/0d74de272e9c5ba9d38b9058bf279841236c20e1))
+- **rt:ui-kit-v2:** поиск в мультиселекте — у поля и в шторке, как в макете (RT-3399) ([24c6299](https://github.com/Eyhenij/rt-tools/commit/24c629905e83f94b28f9cc79019091b00a470048))
+- **rt:ui-kit-v2:** постоянный текст до и после значения в rt-input (RT-3399) ([066bd25](https://github.com/Eyhenij/rt-tools/commit/066bd257b97979a8f8911689785d8acb48cdf0e1))
+- **rt:ui-kit-v2:** потребители кита передают слоты шаблонами (RT-3479) ([d1e5d81](https://github.com/Eyhenij/rt-tools/commit/d1e5d817bdf8d33a47c7cb435e96100aba755302))
+- **rt:ui-kit-v2:** пустое поле даты и периода подсказывает маской из чёрточек (RT-3399) ([d1d5a01](https://github.com/Eyhenij/rt-tools/commit/d1d5a01d50a14bab8c60b0b2d7028196d02ac307))
+- **rt:ui-kit-v2:** селект и мультиселект открывают список в нижней шторке на телефоне (RT-3399) ([ab78c88](https://github.com/Eyhenij/rt-tools/commit/ab78c88321e2163e91244dd7051baf446089260c))
+- **rt:ui-kit-v2:** слоты по умолчанию кита передаются шаблонами (RT-3479) ([517e8ee](https://github.com/Eyhenij/rt-tools/commit/517e8eeb9b7849003f1cf8bc8df193d73a0478c6))
+- **rt:ui-kit-v2:** фон фильтров, одно кольцо фокуса, стол без «назад», панель даты по краю поля (RT-3399) ([50570df](https://github.com/Eyhenij/rt-tools/commit/50570df3b1c53ce0d302f38bdc7da380f5a67092))
+- **rt:ui-kit-v2:** шторка из шторки подменяет её, отборы шапки шире телефона открываются панелью у кнопки (RT-3399) ([4ce58da](https://github.com/Eyhenij/rt-tools/commit/4ce58daa4ad24a073d15cc9d5ff6c782b5142013))
+
+### BREAKING CHANGES
+
+- **rt:ui-kit-v2:** rt-toggle-button-group, которой не хватает ширины в одну строку, сворачивается в select или multiselect на любом экране, не только на телефоне. Прежние кнопки — вход fold=false; sheet=false и RT_POPOVER_SHEET выключают только шторку свёрнутого поля. RT_POPOVER_SHEET выключает шторку и у rt-date-picker, rt-date-range. Подмена BreakpointsService без поля phone падает при открытии панели.
+- **rt:ui-kit-v2:** из словаря кита убраны подписи uiShapeDay, uiShapeMonth, uiShapeYear, uiShapeHour
+  и uiShapeMinute. Приложение, задававшее их в своём наборе подписей, удаляет эти ключи.
+- **rt:ui-kit-v2:** на телефоне (до 480 px) панели выбора кита открываются в нижней шторке по умолчанию — select, multiselect, rt-menu, autocomplete, вкладки, split-button, speed-menu, dynamic-selector, color-palette, toggle-button-group, action-bar, thread-list, page-header, фильтр заголовка таблицы. Прежнее поведение: вход sheet=false у компонента или { provide: RT_POPOVER_SHEET, useValue: false }. Поля дат открывали шторку до 1080 px, теперь до 480 px. Подмены BreakpointsService в тестах приложения должны отдавать phone.
+- **rt:ui-kit-v2:** слоты кита, стоящие под условием, передаются шаблонами.
+  Прежняя форма — элемент с атрибутом слота или содержимое по умолчанию —
+  не рисуется; именованные слоты и пункт меню в режиме разработки
+  предупреждают. Переход:
+    - rtFieldHint, rtExpansionPanelActions, rtRailLogo, rtRailPage,
+      rtCompactLeft, rtCompactCenter, rtCompactRight, rtHeaderBell (в
+      rt-page-header), rtChatHeaderActions, rtChatComposerBar,
+      rtChatComposerTools, rtChatFooter, rtSideMenuSubItemAction,
+      rtCmsListToolbarLeft, rtCmsListToolbarRight: `<x rtSlot>…</x>` →
+      `<ng-template rtSlot><x>…</x></ng-template>`;
+    - содержимое по умолчанию rt-menu → `<ng-template rtMenuContent>`,
+      rt-icon-button → rtIconButtonContent, rt-breadcrumbs →
+      rtBreadcrumbsContent, заголовок сортировки rtSortHeader →
+      rtTableSortHeaderContent, rt-aside → rtAsideContent (шапка и подвал
+      остаются элементами), rt-skeleton-wrapper → rtSkeletonWrapperContent,
+      rt-dynamic-list → rtDynamicListContent, rt-money-row →
+      rtMoneyRowContent, rt-info-item → rtInfoItemContent, страница списка
+      админки → adminListPageContent;
+    - директиву слота импортирует компонент, где шаблон написан.
+      Поле и строка деталей содержимое по умолчанию оставляют проекцией.
+
 # [0.51.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.50.0...rt-ui-kit-v2%400.51.0) (2026-11-22)
 
 ### Bug Fixes

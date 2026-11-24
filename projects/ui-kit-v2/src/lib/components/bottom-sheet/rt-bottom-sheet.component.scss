@@ -33,15 +33,17 @@
             transition: opacity var(--rt-bottom-sheet-transition-duration) ease;
         }
 
-        /* Предел высоты панели — `--rt-bottom-sheet-max-height`, умолчание `80vh`; свойство приходит
-           от предка или с тега листа. */
+        /* Панель растёт по содержимому до всей высоты: длинное содержимое ставит шторку во всю высоту,
+           сверху остаётся полоса, и шапка с «×» видна; дальше прокручивается тело. Высота считается от
+           самой шторки — на весь экран, в ящике ниже окна на весь ящик. Свой предел приложение задаёт
+           свойством `--rt-bottom-sheet-max-height` от предка или с тега листа. */
         &__panel {
             position: absolute;
             right: 0;
             bottom: 0;
             left: 0;
             display: flex;
-            max-height: var(--rt-bottom-sheet-max-height, 80vh);
+            max-height: min(var(--rt-bottom-sheet-max-height, 100dvh), calc(100% - var(--rt-space-2) - var(--rt-space-1)));
             flex-direction: column;
             border-radius: var(--rt-bottom-sheet-radius) var(--rt-bottom-sheet-radius) 0 0;
             background: var(--rt-color-bg-surface);
@@ -65,9 +67,8 @@
                 max-height: calc(100dvh - var(--rt-space-2) - var(--rt-space-1));
             }
 
-            /* Человек печатает в поле шторки. На сенсорном экране это открытая клавиатура: шторка
-               встаёт во всю высоту, чтобы список или поля остались видны над ней. Признак —
-               указатель, а не ширина окна: в узком окне с мышью клавиатуры нет, и высота прежняя. */
+            /* Экранная клавиатура показана: шторка встаёт во всю высоту над ней, чтобы список или
+               поля остались видны. Клавиатура убрана — модификатор снят, высота по содержимому. */
             @media (pointer: coarse) {
                 &--typing {
                     height: calc(100% - var(--rt-space-2) - var(--rt-space-1));

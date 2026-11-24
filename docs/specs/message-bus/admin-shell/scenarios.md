@@ -36,7 +36,7 @@ Given the width of the window is narrow
 When the owner presses the button of the sections in the top row
 Then a list of the same four sections opens, and a transition by it leads into a section
 
-### SC-MB-457 — the list of the sections on a narrow screen closes by its close button
+### SC-MB-458 — the list of the sections on a narrow screen closes by its close button
 
 Given the width of the window is narrow and the owner opened the list of the sections
 When they press the close button in the header of the list

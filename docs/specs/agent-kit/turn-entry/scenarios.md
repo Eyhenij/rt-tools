@@ -89,11 +89,11 @@ Then at every state its mandatory action is named, and not a single row is empty
 
 Covered: `projects/agent-kit/tests/turn-entry-load.test.sh`.
 
-### SC-AK-441 — the map names the two ends of a turn
+### SC-AK-441 — the map names the ends of a turn
 
 Given the map has arrived in the context
 When the session looks in it for what a turn ends with
-Then it finds both ends — the end of the scenario and the interrupt by Esc — and what each is confirmed by
+Then it finds the three ends — the end of the scenario, the stop word of the owner and the interrupt by Esc — and what each is confirmed by
 
 Covered: `projects/agent-kit/tests/turn-entry-load.test.sh`.
 

@@ -32,7 +32,7 @@
                 @if (!headerTitle()) {
                     <ng-container *ngTemplateOutlet="titleTpl; context: { $implicit: month }" />
                 }
-                <div rtElem="grid" qa-dataid="calendar-grid">
+                <div rtElem="grid" qa-dataid="calendar-grid" [attr.data-weeks]="weeks()[month.key]">
                     @for (weekday of weekdayLabels(); track $index) {
                         <span rtElem="weekday" qa-dataid="calendar-weekday">{{ weekday }}</span>
                     }

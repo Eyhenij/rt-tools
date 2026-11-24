@@ -154,7 +154,7 @@ describe('Динамический селектор в нижней шторке
         expect(apply.disabled).toBe(true);
     });
 
-    it('SC-UKV-1779 — sheetCards=false оставляет в шторке пункты, какими окно стоит у кнопки', (): void => {
+    it('SC-UKV-1797 — sheetCards=false оставляет в шторке пункты, какими окно стоит у кнопки', (): void => {
         open({ sheetCards: false });
 
         expect(inSheet('[qa-dataid="dynamic-selector-option"]')).toHaveLength(3);

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.0 · pitfalls/autonomous-work.md · ce40bee42307 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · pitfalls/autonomous-work.md · ce40bee42307 · правится надстройкой, не здесь -->
 # Autonomous work — cold part
 
 Pitfalls: traps already stepped on. Loaded not with the rule but on demand — an ordinary

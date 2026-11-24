@@ -3,7 +3,7 @@
 The prefix `SC-UKV` is shared across the domain together with the subdomains. What a scenario is
 covered by is said under it.
 
-### SC-UKV-1772 — every sheet has a close button on the left of its header
+### SC-UKV-1790 — every sheet has a close button on the left of its header
 
 Given an open bottom sheet of the kit
 When its header is shown
@@ -11,7 +11,7 @@ Then a close button stands on the left of the header, and the title stands in th
 
 Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.component.spec.ts`.
 
-### SC-UKV-1773 — the close button closes the sheet and returns the focus
+### SC-UKV-1791 — the close button closes the sheet and returns the focus
 
 Given a select open in the sheet
 When the close button is pressed
@@ -19,7 +19,7 @@ Then the sheet closes, and the focus stands on the field
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
-### SC-UKV-1774 — a sheet with no title keeps the close button
+### SC-UKV-1792 — a sheet with no title keeps the close button
 
 Given a bottom sheet with no title
 When it is open
@@ -27,7 +27,7 @@ Then the close button stands on the left, and the header holds no title
 
 Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.component.spec.ts`.
 
-### SC-UKV-1775 — the action of a sheet stands on the right of its header
+### SC-UKV-1793 — the action of a sheet stands on the right of its header
 
 Given a multiselect open in the sheet
 When its header is shown
@@ -35,7 +35,7 @@ Then a filled done button stands on the right of the header, and the footer hold
 
 Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-sheet.spec.ts`.
 
-### SC-UKV-1776 — a choice of one value is drawn as cards with the kit radio button
+### SC-UKV-1794 — a choice of one value is drawn as cards with the kit radio button
 
 Given a select open in the sheet
 When its list is shown
@@ -43,7 +43,7 @@ Then every option is a card with the label on the left and the kit radio button 
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
-### SC-UKV-1777 — a choice of several values is drawn as cards with the kit checkbox
+### SC-UKV-1795 — a choice of several values is drawn as cards with the kit checkbox
 
 Given a multiselect open in the sheet
 When its list is shown
@@ -51,7 +51,7 @@ Then every option is a card with the kit checkbox on the right
 
 Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-sheet.spec.ts`.
 
-### SC-UKV-1778 — the description of an option is the second line of its card
+### SC-UKV-1796 — the description of an option is the second line of its card
 
 Given a select whose option carries a description
 When the select is open in the sheet
@@ -60,7 +60,7 @@ Then the card shows the description under the label, and next to the trigger the
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`; for the
 multiselect by `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-sheet.spec.ts`.
 
-### SC-UKV-1779 — one input returns the rows the panel has next to its trigger
+### SC-UKV-1797 — one input returns the rows the panel has next to its trigger
 
 Given a select with the cards switched off
 When it is open in the sheet
@@ -96,13 +96,15 @@ Then the kinds are cards with the kit radio button, and the current one is check
 
 Covered: `projects/ui-kit-v2/src/lib/components/table/filter-header/rt-table-filter-header.component.spec.ts`.
 
-### SC-UKV-1783 — a sheet with a search is open by the height of its content and marked as typed in from the focus in its search until it closes
+### SC-UKV-1783 — a sheet with a search takes the full height only while the keyboard is shown
 
 Given a select with a search open in the sheet by the height of its content
 When the search takes the focus
-Then the sheet is marked as typed in, which on a touch screen gives it the full height, and the mark
-stays when the focus leaves the search and is gone at the next opening; the focus on a card, a
-checkbox, a radio button, a button or a read-only field does not set the mark: nobody types there
+Then the sheet starts watching for the keyboard and keeps the height of its content until the
+visible part of the window shrinks by a keyboard; with the keyboard shown it takes the full
+height, with the keyboard hidden it returns to the height of its content, and nothing of it stays
+at the next opening; the focus on a card, a checkbox, a radio button, a button or a read-only
+field does not start the watch: nobody types there
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`; which node is
 typed in — by `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.logic.spec.ts`.
@@ -354,3 +356,42 @@ When the list starts loading
 Then the apply button of the header is off
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-sheet.spec.ts`.
+
+### SC-UKV-1798 — the presets of the period sheet are one row that scrolls round
+
+Given the period field open in the sheet on a phone
+When the sheet opens with a preset chosen, then the person picks a preset at the far end of the row
+Then the presets stand in one row with faded edges, the chosen one in the centre; the row rolls to
+the new one by the short way round and stops with it in the centre; the month arrows stand in the
+row of the month title
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-range/panel/rt-chip-carousel.directive.spec.ts`
+and the title test of `projects/ui-kit-v2/src/lib/components/calendar/rt-calendar.component.spec.ts`.
+
+### SC-UKV-1799 — the month of a sheet keeps the height of six weeks
+
+Given the date or the period field open in the sheet
+When the person pages from a month of six weeks to a month of five or four
+Then the grid keeps the height of six weeks, and the shorter month stands in its middle
+
+Covered: the week count test of `projects/ui-kit-v2/src/lib/components/calendar/rt-calendar.component.spec.ts`.
+
+### SC-UKV-1800 — the tabs «Date | Time» keep the height of the sheet
+
+Given a date with time open in the sheet, the month, the month grid or the year grid shown
+When the person switches to «Time» and back
+Then the sheet keeps its height; the part of the other tab stays in the layout unseen and
+untouchable, and the time columns stand in the middle of the month's height
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.
+
+### SC-UKV-1801 — long content raises the sheet to the full height inside its box
+
+Given a sheet with content taller than its box, the screen or a box of a page lower than the window
+When the sheet opens
+Then the panel takes the full height of the box under the strip of 12px, the header with «×» is
+seen and the body scrolls; short content keeps the sheet by its height
+
+Not covered: a test has no layout — the height is seen by the frame of the story `Content` in
+`projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/bottom-sheet-matrix.stories.ts` and by
+the match of the showcase with the mockup.

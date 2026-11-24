@@ -50,7 +50,7 @@ async function open({ canvasElement }: { canvasElement: HTMLElement }): Promise<
     await openStoryOverlay(canvasElement);
 }
 
-/** Открывает шторку и ставит фокус в её поиск: так стоит шторка, пока на телефоне открыта клавиатура. */
+/** Открывает шторку и ставит фокус в её поиск: от фокуса высота шторки не меняется. */
 async function openAndSearch(context: { canvasElement: HTMLElement }): Promise<void> {
     await open(context);
     document.querySelector<HTMLInputElement>('.rt-popover-sheet [qa-dataid="select-filter"] input')?.focus();
@@ -74,12 +74,12 @@ export const SheetSearch: TStory = {
 };
 
 /**
- * Фокус в поиске: кольцо фокуса видно целиком. Во всю высоту шторка встаёт только на сенсорном
- * экране, где фокус в поле открывает клавиатуру; с мышью высота остаётся по содержимому.
+ * Фокус в поиске: кольцо фокуса видно целиком, шторка по высоте содержимого. Во всю высоту она
+ * встаёт, только пока на телефоне показана экранная клавиатура; в кадре клавиатуры нет.
  */
 export const SheetSearchFocused: TStory = {
     args: { sheet: true, filter: true },
-    parameters: { snapshot: { fullPage: true, overlay: '.rt-popover-sheet .rt-bottom-sheet__panel--typing', viewport: PHONE_WINDOW } },
+    parameters: { snapshot: { fullPage: true, overlay: OPEN_SHEET, viewport: PHONE_WINDOW } },
     play: openAndSearch,
 };
 

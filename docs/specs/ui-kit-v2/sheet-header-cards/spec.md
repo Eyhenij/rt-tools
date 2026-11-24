@@ -82,17 +82,31 @@ checkbox or a switch on the right. The question before closing offers «Apply»,
   `--rt-sheet-card-bg` and `--rt-sheet-card-bg-hover`.
 - **An option carries an optional description.** It is the second line of a card in the sheet;
   next to the trigger the row does not show it.
-- **A sheet opens by the height of its content and takes the full height once a person types in
-  it on a touch screen.** The sheet itself notices the focus in a text field, a search or an
-  editable node of its panel. The sign is the pointer, not the width of the window: on a touch
-  screen that focus opens the keyboard; with a mouse the height stays by the content. The sheet
-  keeps the full height until it closes: shrinking when the focus leaves the field would move a
-  card from under the finger that presses it. While the keyboard is open the sheet stands in the
-  part of the window visible above it, so the last rows of a list are reachable; the keyboard
-  lies over the window and does not resize it, and the sheet reads the visible part from the
-  browser. It holds alike for the search of a list, the page filters, the
+- **A sheet opens by the height of its content and takes the full height while the screen
+  keyboard is shown.** The sheet itself notices the focus in a text field, a search or an
+  editable node of its panel and from then on watches the part of the window the browser shows.
+  The full height comes with the keyboard, not with the tap: the owner saw on a phone a sheet
+  that rose before the keyboard appeared. The keyboard lies over the window and does not resize
+  it, so the sign is the visible part lower than the window by a keyboard's height; with a mouse
+  that never happens and the height stays by the content. While the keyboard is shown the sheet
+  stands in the visible part above it, so the last rows of a list are reachable; once it is
+  hidden the sheet returns to the height of its content. It holds alike for the search of a list, the page filters, the
   filters of a thread list and the dynamic selector. The full-height input of a sheet stays as a
   switch of the application; no part of the kit sets it.
+- **Long content raises a sheet to the full height of its box.** The panel grows with its content
+  up to the height of the sheet less the strip of 12px on top, the same as a full-height sheet;
+  past it the body scrolls. The owner asked for it: «ну или если полей много то на всю высоту».
+  The box is the screen, or a box of a page lower than the window: the panel never leaves it, and
+  the header with «×» stays seen. An application sets a lower limit by its own property.
+- **The presets of the period sheet are one row that scrolls round.** The row is as wide as the
+  sheet, its edges fade, and the chosen preset stands in the centre. Picking another rolls the row
+  the short way round; the month arrows of the period sheet stand in the row of its title.
+- **The month of a sheet keeps the height of six weeks.** A month of five or four weeks stands in
+  the middle of that height, so paging never moves the footer of the sheet. Outside the sheet the
+  month keeps its own height.
+- **The tabs «Date | Time» keep the height of the sheet.** The date part and the time part stand
+  in one cell; the part of the other tab stays in the layout, unseen and untouchable, whether it is
+  the month, the month grid or the year grid. The time columns stand in the middle of its height.
 - **A sheet whose choice reaches the application only by a button asks before it closes with a
   choice not applied.** The dynamic selector asks with marks set. The page filters ask after any
   input made in the fields of the sheet since it opened, and when the application says the filters

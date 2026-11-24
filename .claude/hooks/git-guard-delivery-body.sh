@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.0 · hooks/git-guard-delivery-body.sh · c247cc401860 · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/git-guard-delivery-body.sh · c247cc401860 · правится надстройкой, не здесь
 # The body of a PR being opened, for the delivery guard: the section about the remaining step, the
 # table of points and the line that closes the task.
 #

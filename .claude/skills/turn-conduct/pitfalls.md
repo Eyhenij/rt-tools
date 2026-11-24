@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.0 · pitfalls/turn-conduct.md · bd4fadcdf84b · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · pitfalls/turn-conduct.md · bd4fadcdf84b · правится надстройкой, не здесь -->
 # Session turn — cold part
 
 Pitfalls: cases and numbers that used to stand next to the rule's articles. Loaded not with the

@@ -49,6 +49,7 @@ import {
     rtRangePresetOf,
 } from '../rt-date-range.logic';
 import { ERtDateRangePreset, IRtDateRange } from '../rt-date-range.model';
+import { RtChipCarouselDirective } from './rt-chip-carousel.directive';
 
 const BEM_BLOCK: string = 'rt-date-range-panel';
 const MONTH_LEN: number = 7;
@@ -107,6 +108,7 @@ interface IPresetView {
         RtButtonDirective,
         RtCalendarComponent,
         RtIconButtonComponent,
+        RtChipCarouselDirective,
     ],
     host: {
         class: BEM_BLOCK,
@@ -199,6 +201,12 @@ export class RtDateRangePanelComponent {
             chosen: cell.preset === chosen,
         }));
     });
+
+    /** Повторы ряда чипов: в шторке ряд — карусель по кругу и повторён трижды, средний повтор — свой. */
+    protected readonly presetCopies: Signal<readonly number[]> = computed((): readonly number[] => (this.sheet() ? [0, 1, 2] : [1]));
+    protected readonly chosenPreset: Signal<number> = computed((): number =>
+        this.presets().findIndex((item: IPresetView): boolean => item.chosen)
+    );
 
     /** Число дней черновика подписью кита по форме множественного числа локали. */
     protected readonly daysText: Signal<string> = rtKitLabel(

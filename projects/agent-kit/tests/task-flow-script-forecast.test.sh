@@ -46,6 +46,8 @@ const B = 'RT-7-x';
 const held = await run([owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), say(B), stop(B), say(B), owner(B, '[Request interrupted by user]'), say(B), stop(B)]);
 out('forecast: SC-AK-1549 — остановка после записи держится, Esc отпускает', `${held.stops} ${held.held}`, '2 1');
 out('forecast: SC-AK-1549 — на тысячу вызовов', perMille(held, false), '1000');
+const stopped = await run([owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), say(B), stop(B), say(B), owner(B, 'стоп'), say(B), stop(B)]);
+out('forecast: SC-AK-1549 — «стоп» отпускает остановку после записи', `${stopped.stops} ${stopped.held}`, '2 1');
 const quiet = await run([owner('main-x', 'спасибо'), say('main-x'), stop('main-x')]);
 out('forecast: SC-AK-1549 — сессия без записи отпущена', `${quiet.stops} ${quiet.held}`, '1 0');
 const shell = await run([owner(B, 'делай RT-7'), use(B, 'Bash', { command: 'echo x > docs/tasks/RT-7-x/progress.md' }), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' })]);
@@ -78,6 +80,7 @@ out('forecast: SC-AK-1765 — без удержанных остановок с�
 out('forecast: SC-AK-1765 — строка называет самую длинную серию', String(forecastLine(series, false).endsWith('the longest run of held stops — 3')), 'true');
 
 out('missed: SC-AK-1552 — конец хода с открытой работой пропущен, конец по Esc нет', `${held.ended} ${held.missed}`, '2 1');
+out('missed: SC-AK-1552 — конец хода по «стоп» не пропущен', `${stopped.ended} ${stopped.missed}`, '2 1');
 out('missed: SC-AK-1552 — остановка с отказом хука ход не кончает', `${loop.ended} ${loop.missed}`, '0 0');
 out('missed: SC-AK-1552 — каждая остановка на ветке с движком входит в знаменатель', loop.laidStops, '3');
 const blocked = await run([owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), { ...stop(B), hookErrors: ['BLOCKED by turn-exit-guard: open'] }]);

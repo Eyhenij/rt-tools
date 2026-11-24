@@ -320,7 +320,7 @@ describe('RtBottomSheetComponent', (): void => {
     });
 
     describe('шапка', (): void => {
-        it('SC-UKV-1772 — кнопка закрытия стоит в шапке первой, заголовок — в своей ячейке по центру', (): void => {
+        it('SC-UKV-1790 — кнопка закрытия стоит в шапке первой, заголовок — в своей ячейке по центру', (): void => {
             const fixture: ComponentFixture<BottomSheetHostComponent> = createRtFixture(BottomSheetHostComponent);
             const header: HTMLElement = qa(fixture, 'bottom-sheet-header')?.nativeElement as HTMLElement;
             const close: HTMLElement = qa(fixture, 'bottom-sheet-close')?.nativeElement as HTMLElement;
@@ -330,7 +330,7 @@ describe('RtBottomSheetComponent', (): void => {
             expect((qa(fixture, 'bottom-sheet-title')?.nativeElement as HTMLElement).textContent?.trim()).toBe('Фильтры');
         });
 
-        it('SC-UKV-1772 — кнопка закрытия просит закрыть лист так же, как подложка', (): void => {
+        it('SC-UKV-1790 — кнопка закрытия просит закрыть лист так же, как подложка', (): void => {
             const fixture: ComponentFixture<BottomSheetHostComponent> = createRtFixture(BottomSheetHostComponent);
 
             // Якорь стоит на теге кнопки кита, а нажимают её внутреннюю кнопку.
@@ -340,7 +340,7 @@ describe('RtBottomSheetComponent', (): void => {
             expect(fixture.componentInstance.lastChange).toBe(false);
         });
 
-        it('SC-UKV-1774 — без заголовка кнопка закрытия остаётся, ячейка заголовка пуста', (): void => {
+        it('SC-UKV-1792 — без заголовка кнопка закрытия остаётся, ячейка заголовка пуста', (): void => {
             const fixture: ComponentFixture<RtBottomSheetComponent> = setup();
 
             expect(qa(fixture, 'bottom-sheet-close')).not.toBeNull();

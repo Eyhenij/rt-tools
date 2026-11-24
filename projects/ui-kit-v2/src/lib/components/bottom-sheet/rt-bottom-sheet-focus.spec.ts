@@ -182,7 +182,13 @@ describe('RtBottomSheetComponent — фокус и Escape', (): void => {
         expect(document.querySelector('.cdk-overlay-container')).not.toBeNull();
     });
 
-    it('SC-UKV-1783 — высота под клавиатуру держится до закрытия и следующему открытию не достаётся', (): void => {
+    it('SC-UKV-1783 — высота под клавиатуру следующему открытию не достаётся', (): void => {
+        const viewport: EventTarget & { height: number; offsetTop: number; scale: number } = Object.assign(new EventTarget(), {
+            height: window.innerHeight - 300,
+            offsetTop: 0,
+            scale: 1,
+        });
+        Object.defineProperty(window, 'visualViewport', { configurable: true, value: viewport });
         const fixture: TFixture = setup();
         const panel: HTMLElement = raw(fixture, 'bottom-sheet-panel');
 
@@ -196,5 +202,6 @@ describe('RtBottomSheetComponent — фокус и Escape', (): void => {
         settle(fixture);
 
         expect(panel.classList).not.toContain('rt-bottom-sheet__panel--typing');
+        Reflect.deleteProperty(window, 'visualViewport');
     });
 });

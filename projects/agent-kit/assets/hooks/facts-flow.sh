@@ -68,7 +68,7 @@ rt_flow_state_action() {
         просьба-не-разобрана) printf '%s' 'exploration over the tree, then questions to the owner' ;;
         разбор-закрыт) printf '%s' 'a product agreement or a named reason there is none' ;;
         договорённость-записана) printf '%s' 'create the task, the branch and the task folder' ;;
-        задача-взята) printf '%s' 'write the plan' ;;
+        задача-взята) printf '%s' 'write the plan; once the owner approves it, run plan-red' ;;
         замысел-записан) printf '%s' 'do the first stage' ;;
         папка-разобрана) printf '%s' 'the work queue audit, then open the PR' ;;
         влито) printf '%s' 'merge the PRs of the chain bottom-up, mark the merged tasks by the branch of the next one' ;;
