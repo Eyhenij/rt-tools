@@ -45,13 +45,12 @@ The table in `implementation.md` next to it.
   (RT-N)», then «второго круга». The owner reads the rounds in history: this is the one place
   where a later commit of a branch corrects an earlier one by design.
 - **The push set runs once per branch, after round two.** The fixes are committed together, the
-  base is merged in once, and the tree is not touched between the green run and the push. A fix
+  base is merged in once, and between the green run and the push only the folder is taken apart, by the
+  last commit: a red found after the take-apart is fixed after it. A fix
   for the owner's remarks after the PR is a new content and runs the set again.
 - **Unattended work keeps the loop and the night rule both.** By the rule `autonomous-work` the
   show of step 10 becomes the session's own measurement, and the push and the PR wait for the
   owner's return where that rule keeps everything local.
-- **No guard counts the rounds.** The gate demands the loop to be loaded; that it was carried out
-  is shown by the commits named by the rounds and by the PR body, and the body says so in words.
 
 ## One task, start to hand-over
 
@@ -65,12 +64,17 @@ The table in `implementation.md` next to it.
    the remote ref of `main` outside an epic; `npm run task:move -- N in-progress`. The working copy names itself in
    `.claude/rt-kit/tree-name` and has its row in `.claude/rt-kit/assignments.md`.
 4. **Run `task-flow-start` whole.** Exploration, the grill by menu, the agreement where the code
-   asks for one, the plan with numbered steps, the progress.
-5. **Do the stages.** Tests, lint and types over what is touched; each step is marked in the
-   progress. A visible kit edit first goes through the rule `kit-approval`: the mockup and the
-   owner's approval come before the code.
+   asks for one, the plan with numbered steps, the progress. The plan names the
+   end-to-end suites its paths demand and a step that edits a test of each: found at the PR, each suite
+   is a refusal of its own.
+5. **Do the stages.** Tests, lint, types and
+   the quick checks of the push set over what is touched: the linter after an edit does not judge
+   `tools/` and texts, and the push set is too late for them. Each step is
+   marked by the engine: `node tools/task-flow-script.mjs step N.M` runs its check and writes the mark.
+   The executor edits neither the marks nor a state ahead of the measured one. A kit edit that changes the look first goes through the rule `kit-approval`: the mockup
+   and the owner's approval come before the code. One that keeps it is named in the plan.
 6. **Check live.** A kit edit — in the showcase on port 6007, measured in the pinned Chrome by the
-   pattern `browser-verification-measure`. The receiver and the admin panel — on the stand of
+   pattern `browser-verification-measure`; if it does not hold the local tab, in the built-in browser. The receiver and the admin panel — on the stand of
    `pnpm run serve:stand`. A rule, a hook, a check or a text — the guard or the check is run on a
    real record and its scenarios run — the tree's checks by `tools/tests/run.sh`, the guards by
    `nx affected -t test-hooks`. The numbers go into the progress.
@@ -81,15 +85,16 @@ The table in `implementation.md` next to it.
 8. **Check every finding against the code, fix the confirmed ones, check live again.** One commit
    for the round.
 9. **Review round two.** Fresh subagents read the whole diff again; step 8 repeats. The last live
-   check runs on the code that ships.
-10. **Show a screen to the owner before the closing steps.** A kit or admin change: the address,
+   check runs on the code that ships. Before the round's commit the quick checks run once more, with
+   `node tools/check-dupes.mjs` and `pnpm run check:unused`: their findings join the round.
+10. **Show a screen to the owner before the closing steps.** A kit or admin change of look: the address,
     the screen and the width to look at, and the turn waits for the answer. A change of texts,
     rules or tools has nothing to show: its measurements go into the PR body.
-11. **Close the texts.** Merge the base in, merge the agreement into the domain spec, bring the
-    texts up to what was done, take the folder apart — patterns `task-flow-close` and
-    `task-flow-archive`.
-12. **Run the push set and push.** The heavy steps go ahead in the background, the push reads
-    their marks.
+11. **Close the texts and run the push set until green.** Merge the base in, merge the agreement
+    into the domain spec, bring the texts up to date — pattern `task-flow-close`. The heavy steps go
+    ahead in the background; a red is fixed here, while the folder still stands.
+12. **Then take the folder apart by the last commit and push.** Pattern `task-flow-archive`. The push
+    reads the marks of the run ahead; a step the last commit reached runs at the push.
 13. **Open the PR by `gh pr create` with the machine account's token.** The body lists what each
     round found and fixed. Reviewer, assignee and labels go in the same call; a PR into `main` is
     a draft, one into an epic branch opens ready. Then `npm run task:move -- N in-review`.
@@ -120,7 +125,7 @@ The table in `implementation.md` next to it.
 
 ## What of the law is not here
 
-No guard counts the review rounds or the live check: the loop is demanded by the gate, and that it
+Neither the review rounds nor the live check are counted by a guard: the loop is demanded by the gate, and that it
 was carried out is seen only by the commits named by the rounds and by the PR body. The owner
 judges both. The order "this rule, then `task-flow`" is held by the gate printing this rule first
 on a task folder edit; on a command the default rule comes along with it.

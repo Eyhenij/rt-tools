@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/task-flow-start.md · 7ebfc23ed882 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · pitfalls/task-flow-start.md · 6ff9f762de6f · правится надстройкой, не здесь -->
 # Starting the work — cold part
 
 The pattern `task-flow-start` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.
@@ -279,6 +279,9 @@ of each of its steps and marks the step done itself; a hand mark is refused.
   queue.
 - **The grill is written to disk at once, not stored up in the conversation.** The session breaks
   off, and a grill lived through in conversation is recovered only by the owner's retelling.
+- **The plan is committed after its last reading.** The step engine reads
+  the plan of the commit that added it: a correction committed apart is not seen, and the history is
+  rebuilt before the push.
 - **One grill produced several tasks — the common part leaves for the epic plan.** The task folder
   dies with the merge, and the task order outlives it; the directory is named by the rule's
   companion.

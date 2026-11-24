@@ -264,10 +264,45 @@ Covered: `projects/agent-kit/tests/shell-write-paths.test.sh`.
 
 ### SC-AK-1251 — an arrow inside quotes is not a write target
 
-Given the command passes a string with an arrow in it — `echo "a->b"`, the code of `node -e` with
+Given the command passes a string with an arrow or a comparison in it — `echo "a->b"`,
+`process.exit(a>b?1:0)`, the code of `node -e` with
 an arrow function, a message in single or back quotes
 When the shared parse takes the write targets out of the command text
 Then it names nothing, while `echo x > out` next to it still names `out`, and an arrow after an
 escaped quote outside quotes is still a redirection
 
 Covered: `projects/agent-kit/tests/shell-write-paths.test.sh`.
+
+### SC-AK-1942 — every command of the line gives out its own targets
+
+Given a command line with an in-place edit, an interpreter with code in an argument and a check next
+to them, or a target named through a variable the same line gives a literal
+When the shared parse takes the write targets out of the command text
+Then the target of the edit and the paths of the code are named, every variable of a path is filled
+in, and the path of the neighbouring command, of a read on the same line and of a message in quotes is
+named by nothing
+
+Covered: `projects/agent-kit/tests/write-targets.test.sh`.
+
+### SC-AK-1943 — a script file run by an interpreter is read with the command
+
+Given a script outside the tree that edits a laid-out copy, or opens a PR with a bad title
+When the command runs it by an interpreter with or without keys, by `env`, by `source`, by `<`, by the
+code of `bash -c`, by its path, through a variable, from another directory or under a time limit
+Then the guard of the place of an edit and the delivery guard refuse it as they refuse the same call
+written outright, and a title the script computes is named as computed; a script that only reads, a
+comment, a heredoc body and an edit in a `mktemp` directory inside it, `bash -n`, a run named in
+quotes, a tracked file of the tree, a missing file, a file longer than 64 KB and a command that prints
+the script pass
+
+Covered: `projects/agent-kit/tests/script-file-read.test.sh`.
+
+### SC-AK-1946 — the refusal of a compound command names the judged part
+
+Given a line of several commands, one of which edits a laid-out copy or writes into the progress
+When the guard of the place of an edit or the guard of the course of work refuses it
+Then the refusal quotes that part and says none of the parts ran; a read of the same file next to
+the write is not the part named, also when a heredoc body holds the write, and then no part is named;
+the refusal of a plain command, one line or several joined by a backslash, holds no such words
+
+Covered: `projects/agent-kit/tests/combined-command-refusal.test.sh`.

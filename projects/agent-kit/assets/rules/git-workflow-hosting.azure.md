@@ -21,6 +21,6 @@ Rule under the law `docs/constitution/delivery.md`, for a tree on Azure DevOps. 
 - **A push into a branch that has an open PR is followed by rereading its body.**
 - **On remarks to a PR the person is asked whether to answer under them, and after a yes each one gets an answer.**
 - **The draft is lifted by a separate call — `az repos pr update --id <номер> --draft false`.**
-- **The PR merge is pressed by a person, not by the work's executor.** The executor merges only on a person's word about this very PR.
+- **The PR merge is pressed by a person, not by the work's executor.** The executor merges only on a person's word — about this PR or a named allowance.
 - **A branch with an open PR lags behind its base silently.**
 - **A work item is bound to the PR at creation, not after.**

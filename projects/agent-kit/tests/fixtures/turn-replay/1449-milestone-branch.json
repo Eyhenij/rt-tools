@@ -8,7 +8,7 @@
     { "role": "agent", "at": "2026-10-28T08:04:00Z", "call": "Bash", "command": "npm run task:new -- --epic 100", "code": 0 },
     { "role": "agent", "at": "2026-10-28T08:06:00Z", "call": "Write", "file": "docs/tasks/RT-101-replay-task/grill.md", "code": 0 },
     { "role": "agent", "at": "2026-10-28T08:07:00Z", "call": "Bash", "command": "git commit -q -F msg.txt", "code": 0 },
-    { "role": "agent", "at": "2026-10-28T08:08:00Z", "say": "The branch is created and the folder is committed." }
+    { "role": "agent", "at": "2026-10-28T08:08:00Z", "say": "Ветка заведена, папка задачи закоммичена." }
   ],
   "next": { "owner": "<nudge>" }
 }

@@ -99,7 +99,7 @@ board_config "$EPIC_CONFIG"
 
 report "SC-AK-751 — замысел задачу называет, а её тело эпика — нет" \
     "$(board_says '#702: the plan of the epic #700 names the task')" 1
-report "SC-AK-751 — названа строка, которой это чинится" "$(board_says 'Задача эпика #700, замысел — docs/plans/epic.md')" 1
+report "SC-AK-751 — названа строка, которой это чинится" "$(board_says 'Задача эпика #700, план — docs/plans/epic.md')" 1
 
 # Обе стороны на месте — сверка молчит.
 export STUB_ISSUES="$(epic_issues 'Задача эпика #700, замысел — docs/plans/epic.md')"

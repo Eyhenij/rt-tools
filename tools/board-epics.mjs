@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · checks/board-epics.github.mjs · 5ffc00cbeba7 · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/board-epics.github.mjs · c784326645d9 · правится надстройкой, не здесь
 /**
  * The link between a task and an epic. Lives in a file of its own: the work queue audit stands at
  * the length limit even without it, and these two checks are read separately.
@@ -13,7 +13,7 @@ import { CONFIG } from './rt-kit-checks.config.mjs';
  * tell an epic card from an ordinary task by.
  */
 // Чтение объявления переехало в свой модуль, а звали его отсюда: имя оставлено на прежнем месте,
-// чтобы соседям не пришлось знать о переезде. Тем же ходом переехал выбор документа замысла — его
+// чтобы соседям не пришлось знать о переезде. Тем же ходом переехал выбор документа плана — его
 // читает и команда заведения задачи.
 export { declaredEpicOf, planPathOf, planRows };
 
@@ -85,7 +85,7 @@ export function checkEpicLinks(open, report) {
             const body = String(byNumber.get(number).body ?? '');
             if (!declaredEpicOf(body, epic.number)) {
                 report(
-                    `#${number}: the plan of the epic #${epic.number} names the task, and its body does not name the epic. Add the line «Задача эпика #${epic.number}, замысел — ${planPath}»`
+                    `#${number}: the plan of the epic #${epic.number} names the task, and its body does not name the epic. Add the line «Задача эпика #${epic.number}, план — ${planPath}»`
                 );
             }
         }
@@ -141,7 +141,7 @@ function checkTasksOutsideEpics(open, epicNumbers, report) {
             continue;
         }
         report(
-            `#${issue.number}: the task names no epic, and no word of the owner about work outside one. Add the line «Задача эпика #<номер>, замысел — <путь>» or «Работа вне эпика — <слово владельца>»`
+            `#${issue.number}: the task names no epic, and no word of the owner about work outside one. Add the line «Задача эпика #<номер>, план — <путь>» or «Работа вне эпика — <слово владельца>»`
         );
     }
 }

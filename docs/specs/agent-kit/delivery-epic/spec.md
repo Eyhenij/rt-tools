@@ -43,6 +43,12 @@ their own turn.
 - **The state of a task carries the number of its epic.** The guard has no other road to the epic:
   the work queue holds neither branches nor kinship of cards, and a second asking for the body would
   cost an extra call and diverge from the first.
+- **The draft of the epic plan goes to the host from a temporary clone.** An epic is declared
+  in the middle of other work: the working copy stands on another branch, and switching it carries
+  its edits along. The commit and the push go through the hooks of the tree; a refused push leaves
+  the draft in the working copy and names the reason. What the hooks need is set up there by the
+  setting `board.epicTreeInstall` — a command run in the clone; without it the `node_modules` of the
+  working copy are linked. It is no linked working tree: the hooks of one see the shared repository. Sent, a plan history does not hold leaves the working copy.
 - **The base of a request about a task of an epic is the branch of that epic.** A request into the
   main branch takes the task past its epic: the epic is handed in without it, and the reviewer sees
   the edit next to everything lying in the main branch and not in the epic. A base not named at all
@@ -54,6 +60,9 @@ their own turn.
   run comes to such a base, so a PR of a task into its epic branch would wait for nothing. The bases
   are read from the `pull_request` trigger of the pipeline file the tree named for the push gate.
   Where the file, the setting or a branch filter is absent, the draft is not judged.
+- **A miss of the call itself is refused in an epic and outside it.** A bad title, a foreign number, the
+  author as the reviewer, a draft without a run and a thin body do not depend on the epic. On an epic
+  branch that moved ahead one refusal names the miss and the branch.
 - **The freshness asked before a request of such a task is the epic's, not the main branch's.** The
   request goes into the epic, and it is the divergence with the epic that shows in the diff; the main
   branch reaches the task through the epic.

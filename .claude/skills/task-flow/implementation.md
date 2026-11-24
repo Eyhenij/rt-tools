@@ -25,7 +25,7 @@ it refuses with.
 - **The task folders** — `docs/tasks/`, the sample is `docs/tasks/_template/`
 - **The product agreement before the code** — `docs/specs/<package>/proposed/<feature>/`
 - **The package spec** — `docs/specs/<package>/`
-- **The epic plan** — `docs/plans/`, named by the key `plansDir` in `.claude/rt-kit/checks.json`: the creation command lays the draft of a plan there
+- **The epic plan** — `docs/plans/`, named by the key `plansDir` in `.claude/rt-kit/checks.json`: the creation command puts the draft of a plan there in the epic branch, and in the working copy when the push is refused
 - **The review roles** — `.claude/agents/spec-writer.md`, `.claude/agents/spec-critic.md`, `.claude/agents/product-strategist.md`, `.claude/agents/goal-critic.md`
 - **The pipeline after the grill** — `.claude/workflows/plan.js`
 - **The missions document** — `docs/product/missions.md`: the role `product-strategist` judges a milestone against it
@@ -104,8 +104,8 @@ code before the plan — have been carried out since edition 0.4.0 of the packag
 
 - **`docs/plans/` is older than this rule.** There lie the epic plans — works each of which is
   wider than one branch; the task folder neither cancels nor duplicates them — it is about one
-  branch. The plan of a new epic goes there too, and the creation command lays a draft there itself:
-  a card with the `epic` label in the work queue says the epic exists, and the task order is held by
+  branch. The plan of a new epic goes there too, and the creation command puts a draft there itself, in
+  the epic branch: a card with the `epic` label in the work queue says the epic exists, and the task order is held by
   that record.
 - **The task number comes from GitHub, not from the folder name.** Until the task is created, the
   folder is called `docs/tasks/_draft-<slug>/` and does not travel into history.

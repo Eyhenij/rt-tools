@@ -174,6 +174,10 @@ function running(events, now, scripts = null) {
     // How many of the open tasks have released their stop: an ended turn takes one, the end of a
     // task gives one back, and a call of a tool gives all back.
     let spent = 0;
+    // The notices that stand in the queue: the record holds the notice twice, when it is queued and
+    // when it reaches the session. A turn that ends between the two is woken by the notice, and it
+    // takes no stop of a neighbour.
+    const queued = new Set();
     const close = (id) => {
         if (!open.delete(id)) return false;
         spent = Math.max(0, spent - 1);
@@ -188,10 +192,17 @@ function running(events, now, scripts = null) {
             // A notice that names its call ends that run alone: an agent a message resumed runs
             // under a new call, and a late copy of the notice of its former run does not end it.
             if (event.id) {
-                if (!close(event.id)) over.add(event.id);
+                if (close(event.id)) queued.add(event.id);
+                else {
+                    queued.delete(event.id);
+                    over.add(event.id);
+                }
             } else for (const [id, task] of open) if (event.task && task.task === event.task) close(id);
-        } else if (event.kind === 'ended') spent = Math.min(open.size, spent + 1);
-        else if (event.kind === 'call') spent = 0;
+        } else if (event.kind === 'ended') spent = queued.size > 0 ? spent : Math.min(open.size, spent + 1);
+        else if (event.kind === 'call' || event.kind === 'menu') {
+            queued.clear();
+            if (event.kind === 'call') spent = 0;
+        }
     }
     // A start stamped ahead of the clock by more than a minute is no start to wait for.
     const age = (task) => now - task.at;

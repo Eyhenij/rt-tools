@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub — branches, the epic, the chain and history. Load for a branch, a commit, a merge or a rebase. Its parts: git-workflow-queue, -push, -hosting. Patterns git-workflow-merge, -stack. Rollout — deploy-flow.
 ---
-<!-- rt-kit v0.39.1 · rules/git-workflow.github.md · 0dba9c444c4d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · rules/git-workflow.github.md · e35341fd6dd7 · правится надстройкой, не здесь -->
 
 # Delivery — branches, the epic, the chain and history
 
@@ -17,7 +17,7 @@ Rule under the law `docs/constitution/delivery.md`, for a tree on GitHub. Cold p
 - **Work begins with the epic, and the branch of a task is taken from the epic branch.**
 - **The PR of an epic into the main branch opens after all its tasks are merged and their folders are taken apart.**
 - **The epic branch carries the plan of the epic and the merges of its tasks, and no edits of its own.**
-- **The main branch is merged into the epic branch, and the epic branch into the branches of its tasks — while the work runs, not before the hand-over.**
+- **The main branch is merged into the epic branch, and the epic branch into the branches of its tasks — while the work runs, not before the hand-over.** A merge needing repairs goes into the epic branch alone, the repairs into the task branch from that tip. The folder is created in the task branch.
 - **A wave of branches off one epic branch is checked by a trial merge, not one by one:** each is green alone, and they collide on what one branch cannot show.
 - **The next work's branch is taken from the previous one while the chain is unbroken.**
 - **A chain is merged bottom-up, and the order stands in every PR body.**
@@ -29,7 +29,7 @@ Rule under the law `docs/constitution/delivery.md`, for a tree on GitHub. Cold p
 - **The form of a branch name is judged by the tree the command runs in.**
 - **The base judged is the one named by the command, not the tip of the working copy.**
 - **A branch without a task number gets no delivery conditions.**
-- **The main branch is taken by the remote ref — in words and in actions.**
+- **The main branch is taken by the remote ref — in words and in actions.** Every fetch fast-forwards the local one.
 - **A commit lands with its final content, and a later commit of the same branch does not correct it.**
 - **An edit brought to a commit is brought to the host in the same turn.**
 - **A second working copy is for reading, and the call goes from the copy the session stands in.**

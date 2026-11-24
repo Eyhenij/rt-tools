@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.39.1 · checks/check-doc-paths.mjs · f615d6487919 · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/check-doc-paths.mjs · 36a39cc59ae4 · правится надстройкой, не здесь
 /**
  * The check that the addresses named in the documentation exist.
  *
@@ -74,6 +74,14 @@ const EXTENSIONS = 'ts|mts|cts|js|mjs|cjs|json|jsonc|scss|css|html|proto|conf|ya
  * `looksLikePath`.
  */
 const PATH_IN_BACKTICKS = /`([^`\n]+?)`/g;
+
+/**
+ * The names of the remotes: `<remote>/<branch>` is a ref. A copy without remotes keeps the usual
+ * name, and a directory of the tree under the same name stays a path.
+ */
+const REMOTES = ['origin', ...(spawnSync('git', ['remote'], { cwd: ROOT, encoding: 'utf8' }).stdout ?? '').split('\n').filter(Boolean)].filter(
+    (name) => !existsSync(join(ROOT, name))
+);
 
 const problems = [];
 const indexProblems = [];
@@ -172,6 +180,10 @@ function looksLikePath(candidate) {
         return false;
     }
     if (/^(https?:|@|~|\/|-)/.test(candidate) || candidate.includes(':')) {
+        return false;
+    }
+    // A remote branch is a ref of git, not a path of the tree
+    if (REMOTES.some((remote) => candidate.startsWith(`${remote}/`))) {
         return false;
     }
     // A directory the check does not walk it does not judge either: what lies there is foreign code, the build and service files

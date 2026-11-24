@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · hooks/ask-judge.md · 8ed095f45c52 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · hooks/ask-judge.md · 5a141bf9d3f0 · правится надстройкой, не здесь -->
 # Ask judge
 <!-- rt-hook-agent event=PreToolUse pattern=AskUserQuestion limit=60 -->
 
@@ -42,7 +42,8 @@ after any refusal of another check. Avoid both.
   that name this plan or its task. The plan names the change, the roles read it, the owner
   decides it, and the option only records the decision.
 - The question follows a refusal of another check and names what was done meanwhile or why nothing
-  could be done. A refusal elsewhere is never a reason to hold the question.
+  could be done. A refusal elsewhere is never a reason to hold the question by itself. One that names
+  a ready move holds a menu that leaves the move undone by the last item of the hold list.
 - The question is the menu named by a refusal of the exit check. Another check
   refused the step twice. The options are exactly two: «отложить RT-N» with the task number and
   «подскажу путь», and the question says the way goes into its free field. The owner's answer to
@@ -63,8 +64,10 @@ after any refusal of another check. Avoid both.
 - An option of the question removes, disables or weakens a hook or a check: switches it off, drops
   a case from it, lowers its threshold or adds an exception to it. Hold it in any menu, the menu of
   the exit check included. An owner who picks such an option removes the check with their own hand,
-  and that has happened once already. The move instead is to do what the check asks.
-  An option that only records the owner's decision is not such an option.
+  and that has happened once already. The move instead is to do what the check asks, or to name
+  the refused step in the menu of the exit check. A check here is a guard, a linter, a test or a
+  threshold of the work. An option that changes what the product sanitizes or allows is a product
+  choice, and it leaves. An option that only records the owner's decision is not such an option.
   Such an option is «Одобряю план RT-N» under the conditions above. It leaves even when the plan
   changes a check, and a question that describes the change the plan makes is no action. A
   «(Recommended)» mark is no action. A description that says what the executor does next — makes
@@ -73,6 +76,16 @@ after any refusal of another check. Avoid both.
   own, one the plan does not name, anywhere in them is held. Example: «Одобряю план RT-N
   (и сразу снимаю проверку отметок)», or a question that says picking the option also lifts a
   check now, apart from the plan.
+- The question or its options are not in the owner's language, the one of their latest words; with
+  none typed, of their words before. Code, a file name, a task number, a quote and the two options of
+  the menu of the exit check are judged in no language. The move is the same question in the owner's
+  language.
+- Every option hands the work to the owner or stops it, and the last refusal of a guard in the record
+  names a ready move: a command to run, a file to write, a step to take. Examples of such options are
+  «солью сам», «сделаете вы», «стоп, отложить». The refusal already said what to do, so there is
+  nothing to decide: quote the move and tell the agent to make it. The menu of the exit check is not
+  such a menu, and neither is one where an option goes on with the work or the move needs the
+  owner's word by a rule.
 
 When in doubt, let the question leave: a held question can leave the owner without a decision that
 was theirs. An option that weakens a check by itself is not a doubt: it is held. An option that

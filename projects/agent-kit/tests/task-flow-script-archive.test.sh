@@ -23,7 +23,7 @@ ta_repo() {
         git checkout -q -b RT-6-arc
         mkdir -p docs/tasks/RT-6-arc
         printf '%s' "$2" > docs/tasks/RT-6-arc/plan.md
-        printf 'один\n' > docs/tasks/RT-6-arc/probe.txt
+        printf 'один\n' | tee docs/tasks/RT-6-arc/grill.md > docs/tasks/RT-6-arc/probe.txt
         printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Первый\n- [>] 1.2 Второй\n- [ ] 1.3 Третий\n' > docs/tasks/RT-6-arc/progress.md
         git add -A && "${TA_G[@]}" commit -q -m plan
         printf '%s' "$3" > docs/tasks/RT-6-arc/progress.md
@@ -113,12 +113,12 @@ printf '{"pid":%s,"root":"%s","folder":"docs/tasks/RT-6-arc","files":{}}\n' "$(t
 got="$(ta_engine "$TA" states 2>&1)"
 report "archive: SC-AK-1824 — папка у вершины не убирается по записи мёртвого запуска" \
     "$(ta_folder "$TA")|$(printf '%s' "$got" | grep -c 'left by a broken step run')" 'есть|0'
-# Файл папки правлен после коммита плана, папка разобрана: отказ называет ход отката.
-(cd "$TA" && printf 'новое слово\n' >> docs/tasks/RT-6-arc/probe.txt && git add -A && "${TA_G[@]}" commit -q -m edited \
+# Разбор правлен после коммита плана, папка разобрана: отказ называет ход отката.
+(cd "$TA" && printf 'новое слово\n' >> docs/tasks/RT-6-arc/grill.md && git add -A && "${TA_G[@]}" commit -q -m edited \
     && git rm -q -r docs/tasks/RT-6-arc && "${TA_G[@]}" commit -q -m "apart again")
 got="$(ta_engine "$TA" step 1.1)"
-report "archive: SC-AK-1823 — правленый после плана файл разобранной папки — отказ с ходом отката" \
-    "$(printf '%s' "$got" | grep -c "differs from the commit of the plan.*probe.txt.*git revert --no-edit $(cd "$TA" && git rev-parse HEAD).* code=1")" 1
+report "archive: SC-AK-1823 — правленый после плана разбор разобранной папки — отказ с ходом отката" \
+    "$(printf '%s' "$got" | grep -c "differs from the commit of the plan.*grill.md.*git revert --no-edit $(cd "$TA" && git rev-parse HEAD).* code=1")" 1
 
 # --- SC-AK-1824 — старт движка чистит папку мёртвого запуска и не трогает живой -------------------
 TB="$(ta_repo arc-broken "$TA_PLAN" "$TA_DONE2")"

@@ -119,7 +119,7 @@ Before opening, three things are checked by a command rather than by memory:
 ```bash
 gh pr list --base <ветка эпика> --state open      # no task of the epic is left unmerged
 git ls-tree -r --name-only HEAD -- docs/tasks/    # no folder of a task of this epic is left
-git fetch origin && git merge origin/main         # the main branch is merged into the epic branch
+git fetch origin && git merge origin/main         # into the epic branch, by the block of git-workflow-merge
 ```
 
 A folder left in the epic branch reaches the main branch with it: what one branch needed becomes the

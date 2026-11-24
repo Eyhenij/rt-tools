@@ -298,6 +298,11 @@ const DEFAULTS = {
          */
         epicLabel: '',
         /**
+         * The command the temporary clone of `task:new --epic` is set up by for the hooks of the tree.
+         * Empty — the `node_modules` of the working copy are linked there.
+         */
+        epicTreeInstall: '',
+        /**
          * The labels marking cargo in the work queue — the incident analyses and proposals sent by
          * trees. They are not judged as tasks at all: they have no title with a number, no executor
          * and no place on the board, and never will. The word is each tree's own, there is no

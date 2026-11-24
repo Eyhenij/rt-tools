@@ -34,6 +34,14 @@ doc b.md 'Каталог `projects/kit/src` есть, а `projects/kit/nowhere` 
 report "SC-AK-48 — каталога нет — назван" "$(docs_says 'no file .projects/kit/nowhere')" 1
 report "SC-AK-48 — каталог есть — молчит" "$(docs_says 'no file .projects/kit/src')" 0
 
+# SC-AK-47 — имя удалённой ветки — ссылка git, а не адрес
+doc r.md 'Ветка `origin/main` влита, `upstream/release/1.0` ждёт, а `docs/nowhere/x.md` нет.'
+git -C "$DOC_TREE" remote add upstream https://example.test/x.git
+report "SC-AK-47 — the remote main branch is a ref" "$(docs_says 'no file .origin/main')" 0
+report "SC-AK-47 — a branch of another remote is a ref" "$(docs_says 'no file .upstream/release')" 0
+report "SC-AK-47 — адрес рядом с веткой судится" "$(docs_says 'no file .docs/nowhere/x\.md')" 1
+doc r.md 'Файл `index.ts` есть.'
+
 # SC-AK-49 — дерево берётся у системы контроля версий: обход не видит каталогов с точкой
 doc c.md 'Гард `.claude/hooks/some-guard.sh` лежит в дереве.'
 report "SC-AK-49 — путь под каталогом с точкой найден" "$(docs_says 'no file .\.claude/hooks')" 0

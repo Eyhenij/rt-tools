@@ -39,6 +39,10 @@ There is no interface: the hook is seen as its lines in the push output and as a
   heavy one starts, and those not started are named. A check that exits with the skip code is named
   apart and refuses nothing; a skip code of 0 or 1 is not taken, because 1 is the exit of any
   failure.
+- **A step of the set gets nothing of the environment of the push call.** Git gives its hook the
+  address of the repository, and the dispatcher the parsed call of the agent: a check that raises a
+  repository of its own worked on the tree of the push, and a guard run by a check judged the call of
+  the push. The variables of both are taken away for the step alone.
 - **The hook reads the per-check marks and starts a heavy step itself.** A check green on the same
   tree against the same base is not started again, whoever marked it. Only the session guard names
   a heavy step for a run ahead, because it works under a hook limit; the git hook has no such limit.

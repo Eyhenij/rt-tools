@@ -3,7 +3,7 @@
 # refused with the ready form; a call that ends with it passes; a text that only names the script
 # passes.
 #
-# Scenarios of the description: SC-AK-1814, SC-AK-1815, SC-AK-1816, SC-AK-1821.
+# Scenarios of the description: SC-AK-1814, SC-AK-1815, SC-AK-1816, SC-AK-1821, SC-AK-1935.
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 echo "the call of the run ahead"
@@ -139,5 +139,22 @@ report "SC-AK-1821 — a red set in the ready form ends with a nonzero code" \
     "$([ "$code" -ne 0 ] && echo nonzero || echo "zero ($(tail -3 "$log_dir/a.log" | tr '\n' ' '))")" nonzero
 report "SC-AK-1821 — the last verdict line of the log says red" \
     "$(grep '^push ahead:' "$log_dir/a.log" | tail -1)" "push ahead: red —"
+
+# --- SC-AK-1935 — the red line names the file of the full output and the locale --------------------
+cat >"$tree/.claude/rt-kit/project.sh" <<'EOF'
+rt_push_checks() { printf '%s\n' 'seq 1 60; false # red'; }
+EOF
+(cd "$tree" && LC_ALL=C.UTF-8 CLAUDE_PROJECT_DIR="$tree" bash "$HOOKS/git-guard-push-ahead.sh" >"$log_dir/b.log" 2>&1)
+full="$(sed -n 's/^  the full output: //p' "$log_dir/b.log")"
+report "SC-AK-1935 — the refusal names the file of the full output" "$(grep -c . "$full" 2>/dev/null)" 60
+report "SC-AK-1935 — the red line names the locale" "$(grep -c '✗ red in .* under LC_ALL=C.UTF-8' "$log_dir/b.log")" 1
+# The push guard and the git hook run the set by the shared code: their refusal names both too.
+said="$(cd "$tree" && export LC_ALL=C.UTF-8 && . "$HOOKS/push-set.sh" && rt_push_set_profile "$HOOKS" "$tree" \
+    && rt_push_set_run "" >/dev/null 2>&1 && printf '%s' "$rt_push_set_output" | head -1)"
+report "SC-AK-1935 — the refusal of the push guard names the locale" \
+    "$(printf '%s' "$said" | grep -c 'LC_ALL=C.UTF-8, the full output: ')" 1
+full="$(printf '%s' "$said" | sed -n 's/.*the full output: \(.*\))$/\1/p')"
+report "SC-AK-1935 — the refusal of the push guard names the file of the full output" \
+    "$(grep -c . "$full" 2>/dev/null)" 60
 
 suite_result "the call of the run ahead"
