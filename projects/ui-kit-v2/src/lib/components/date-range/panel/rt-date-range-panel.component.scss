@@ -200,6 +200,7 @@
         &--sheet &__calendar {
             --rt-calendar-month-count: 1;
             --rt-calendar-day-size: var(--rt-date-range-panel-sheet-day-size);
+            --rt-calendar-six-weeks: 1;
 
             min-inline-size: 0;
         }

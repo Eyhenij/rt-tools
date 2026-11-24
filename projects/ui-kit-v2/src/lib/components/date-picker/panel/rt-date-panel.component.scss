@@ -234,6 +234,7 @@
            узел календаря — унаследованное от панели корень календаря перекрыл бы. */
         &--sheet &__calendar {
             --rt-calendar-day-size: var(--rt-date-panel-cell-size);
+            --rt-calendar-six-weeks: 1;
         }
 
         &--sheet &__body {
