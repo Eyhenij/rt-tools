@@ -60,7 +60,7 @@ flowchart TD
     J -->|Run red| K[Fixed in the same branch]
     K --> J
     J -->|Green| L[The description says no step is left]
-    L --> M[A person presses the merge into the epic branch: the executor asks and names the number]
+    L --> M[A person presses the merge into the epic branch: the executor asks and names the number, or merges by a named allowance]
     M --> N{Work items of the epic are left}
     N -->|Yes| B
     N -->|No| O[The PR of the epic into main opens: all the folders are taken apart, and the main branch takes the epic whole]
@@ -154,8 +154,8 @@ flowchart TD
   needs no such call.
 - **The PR merge is pressed by a person, not by the work's executor.** The Complete button, `az
   repos pr update --status completed` and auto-complete set by the executor are equal. The executor
-  merges their own PR only when a person said so about this PR; said about one, it does not carry to
-  the next.
+  merges their own PR only on a person's word: about this PR, or a named allowance that names the PRs
+  and the condition in advance; nothing past it. A word about one does not carry.
 - **A created work item is confirmed by the work queue's answer, not by the creation command's
   output.** A work item can be created and never reach the board: the queue is asked by number, and
   the answer is read from its presence on the board, its state and its assignee.

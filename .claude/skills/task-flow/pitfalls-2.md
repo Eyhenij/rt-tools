@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.0 · pitfalls/task-flow.2.md · 0c915f02354e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · pitfalls/task-flow.2.md · 59307a2a4332 · правится надстройкой, не здесь -->
 # Work conduct — cold part, second file
 
 The sections the rule `task-flow` handed over when it was cut to its statements and split in
@@ -100,7 +100,7 @@ flowchart TD
     L --> M{Review and run are over}
     M -->|Red run or remarks| V[Fixed in the same branch: the plan is gone from disk, the guard takes the sign of work from the branch history]
     V --> M
-    M -->|Green and no remarks| O[The draft, if there was one, is lifted; a person presses merge into the epic branch]
+    M -->|Green and no remarks| O[The draft, if there was one, is lifted; a person presses merge into the epic branch, or the executor by a named allowance]
     O --> P{Tasks of the epic are left}
     P -->|Yes| G
     P -->|No| Q[The PR of the epic into the main branch opens: every folder is taken apart]
@@ -194,6 +194,8 @@ flowchart TD
 - **A plan for work that ports a technique from outside is written by a measurement of one's own
   code.** Reading the sample says how it is built; what is needed here is said by a count over
   one's own files.
+- **A claim about a dependency names a file and line of its installed code.** About how it behaves, by
+  the path from `node_modules/`. An approved plan forbade what the framework allows.
 - **A count that becomes the measure of the work is bounded by the declaration, not by the file.**
   A file holds neighbouring sets too.
 - **Waiting for one part of a stage is never a stop of the stage.** The parts independent of what is

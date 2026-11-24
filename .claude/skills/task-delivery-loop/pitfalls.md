@@ -67,10 +67,10 @@ The table in `implementation.md` next to it.
 4. **Run `task-flow-start` whole.** Exploration, the grill by menu, the agreement where the code
    asks for one, the plan with numbered steps, the progress.
 5. **Do the stages.** Tests, lint and types over what is touched; each step is marked in the
-   progress. A visible kit edit first goes through the rule `kit-approval`: the mockup and the
-   owner's approval come before the code.
+   progress. A kit edit that changes the look first goes through the rule `kit-approval`: the mockup
+   and the owner's approval come before the code. One that keeps it is named in the plan.
 6. **Check live.** A kit edit — in the showcase on port 6007, measured in the pinned Chrome by the
-   pattern `browser-verification-measure`. The receiver and the admin panel — on the stand of
+   pattern `browser-verification-measure`; if it does not hold the local tab, in the built-in browser. The receiver and the admin panel — on the stand of
    `pnpm run serve:stand`. A rule, a hook, a check or a text — the guard or the check is run on a
    real record and its scenarios run — the tree's checks by `tools/tests/run.sh`, the guards by
    `nx affected -t test-hooks`. The numbers go into the progress.
@@ -82,7 +82,7 @@ The table in `implementation.md` next to it.
    for the round.
 9. **Review round two.** Fresh subagents read the whole diff again; step 8 repeats. The last live
    check runs on the code that ships.
-10. **Show a screen to the owner before the closing steps.** A kit or admin change: the address,
+10. **Show a screen to the owner before the closing steps.** A kit or admin change of look: the address,
     the screen and the width to look at, and the turn waits for the answer. A change of texts,
     rules or tools has nothing to show: its measurements go into the PR body.
 11. **Close the texts.** Merge the base in, merge the agreement into the domain spec, bring the

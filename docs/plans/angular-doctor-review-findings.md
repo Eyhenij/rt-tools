@@ -316,16 +316,16 @@ Loaded: `task-delivery-loop`, `task-flow` with its parts, `doc-style`, `agent-ki
 `typescript-conventions`, `rt-tools-storybook`, `browser-verification`, `spec-driven`,
 `git-workflow` with its parts, `kit-approval`. No edit of the gate map is needed.
 
-1. **A no-look kit edit is judged by the executor, and the plan carries the judgement** — tree,
+1. **Исправлено в RT-3588.** **A no-look kit edit is judged by the executor, and the plan carries the judgement** — tree,
    `kit-approval` and `kit-approval-record`: the article «Whether it is invisible is the owner's
    call, not the executor's» contradicts the owner's word «ты сам должен понимать где нужны макеты а
    где нет». The no-look line quotes the approval of the plan that names the kit files and says the
    look does not change; no question of its own. Replaces the tree block of the RT-3480 proposals.
-2. **A claim about how a dependency behaves names the file and line of its installed code** —
+2. **Исправлено в RT-3588.** **A claim about how a dependency behaves names the file and line of its installed code** —
    package, the rule `task-flow-plan`. Here the grill and the approved plan called own `srcset`
    next to `ngSrc` forbidden by Angular; the second review round read the installed code of `@angular/common` and found only
    `srcset` with `ngSrcset` conflicts.
-3. **An epic found mid-task is declared and pushed from a second working tree on the main branch**
+3. **Исправлено в RT-3588, кодовая часть — в RT-3589.** **An epic found mid-task is declared and pushed from a second working tree on the main branch**
    — package, the pattern `epic-flow-declare`, widening RT-3526 item 5: the push hook refuses a
    branch the copy does not stand on, and a second copy needs its own install, not a link. A code
    task for the package: `task:new --epic` commits and pushes the draft from a temporary tree.
@@ -334,10 +334,10 @@ Loaded: `task-delivery-loop`, `task-flow` with its parts, `doc-style`, `agent-ki
    `TMPDIR`; with ~10 800 entries 16 scenarios of the turn-exit guard and the dispatcher fail, with
    an empty `TMPDIR` they pass. Each test removes its dirs, and the hook run gives each file a fresh
    `TMPDIR`. The cause of the failing open is not found yet.
-5. **The pinned Chrome did not hold the local showcase tab** — the owner's decision: the second time
+5. **Исправлено в RT-3588.** **The pinned Chrome did not hold the local showcase tab** — the owner's decision: the second time
    after RT-3483 item 5. If the app's built-in browser is allowed as a fallback, the companion of
    `browser-verification` and step 6 of `task-delivery-loop` name it.
-6. **A heavy run goes alone** — tree, `task-delivery-loop-run` «5–6», together with RT-3483 item 4:
+6. **Исправлено в RT-3588.** **A heavy run goes alone** — tree, `task-delivery-loop-run` «5–6», together with RT-3483 item 4:
    the affected run outlasts a foreground call on a cold cache (540 s over 71 projects), and the
    showcase frames fell with ECONNRESET beside nx tests.
 
@@ -346,22 +346,24 @@ says each copy installs its own; the plan's «10» for 11 — a one-off typo.
 
 ## RT-3485 — the review of 23 November 2026
 
-1. **The owner's named allowance lifts the night ban on outside actions** — package, the law
+1. **Исправлено в RT-3587.** **The owner's named allowance lifts the night ban on outside actions** — package, the law
    `autonomous-work`, the rule, the pattern `autonomous-work-run` and the command `night`: push, PR
    and merge are done at night exactly where the owner named them when leaving; the allowance goes
    into the head of the morning list. The executor wavered between the ban and the owner's order.
-2. **Every allowed night call passes without a permission prompt, checked before the owner
+2. **Исправлено в RT-3587.** **Every allowed night call passes without a permission prompt, checked before the owner
    leaves** — package, the rule `autonomous-work`: a `$(…)` substitution or a chain prompts; the
    PR call stalled until the owner came back.
-3. **An interrupted call and a guard's menu do not end the night** — package, the rule
+3. **Исправлено в RT-3587.** **An interrupted call and a guard's menu do not end the night** — package, the rule
    `autonomous-work` and `hooks/turn-exit-guard.sh`: a default goes into the morning list instead
    of a menu.
-4. **The merge article of `git-workflow-hosting` accepts the night allowance** — package; squash
+4. **Исправлено в RT-3588.** **The merge article of `git-workflow-hosting` accepts the night allowance** — package; squash
    merges are off here, so the call is `gh pr merge <pr> --merge`.
-5. **A file of an installed dependency is named by its package** — package, `pitfalls/doc-style.md`:
+5. **Исправлено в RT-3588.** **A file of an installed dependency is named by its package** — package, `pitfalls/doc-style.md`:
    a bare file name of `@angular/common` in a findings file turned the push set red.
-6. **The tree's PR call prompts at night** — tree, `task-delivery-loop-run`.
-7. **An analysis is written by `cargo-writer` from the template and sent in the same turn** —
+6. **Исправлено в RT-3588** в части проверки до ухода владельца. **Списано** в части формы вызова:
+   токен лежит только в файле, и без подстановки его пришлось бы держать в окружении всей сессии;
+   правило разрешения на вызов ставит владелец. **The tree's PR call prompts at night** — tree, `task-delivery-loop-run`.
+7. **Исправлено в RT-3588.** **An analysis is written by `cargo-writer` from the template and sent in the same turn** —
    package, `rules/turn-conduct.md` and `hooks/turn-judge.md`; the two incidents of this night are
    «В автономной работе исполнитель возвращал решения владельцу…» and «Разбор написан в обход роли
    и шаблона и не ушёл в приёмник», both dated 23 November 2026 in the analyses directory.

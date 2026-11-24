@@ -2,7 +2,7 @@
 description: The start of an autonomous session — the time boundary, the checks before the first work, the cycle until morning and the list the owner reads
 argument-hint: '[until when: «до 8 утра» | «часов шесть» | empty — the boundary is asked]'
 ---
-<!-- rt-kit v0.39.0 · commands/night.md · 32ba6744c36e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · commands/night.md · c33149f35a17 · правится надстройкой, не здесь -->
 
 Start an autonomous session: the owner is leaving, and the work goes on without them until the
 boundary they named. The boundary from the owner: `$ARGUMENTS`
@@ -119,7 +119,8 @@ the shell keeps nothing between calls.
 Two lines of the head are read by the guards and the morning. `Автономно до:` is the boundary as a
 moment, `ГГГГ-ММ-ДДTЧЧ:ММ`, translated from the owner's words by the session: while it lies ahead,
 the turn-exit guard names a default instead of the owner's menu; once it has passed, the day goes
-as usual. `Разрешено:` carries the owner's words from section 5. The session fills the three values
+as usual. `Разрешено:` carries the owner's words from section 5. The model hook on the turn's end reads
+both lines for the send of an incident record. The session fills the three values
 into the block before running it: the words of the boundary from section 1, the moment and the
 allowance, each between its own marks. A value left unfilled, or a moment that is not ahead, starts
 no list, and the block says so: the guards would take that night for day in silence.
