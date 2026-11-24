@@ -3,10 +3,10 @@
 #
 # NOT a guard and not a hook: there is deliberately no `rt-hook:` line. `write-targets.sh` sources it.
 #
-# In: the lines `shell-words.sh` prints — `C <line>` with `E` at the end of a body; the rest is passed
-# over. Out: `W <path>` — a file the code writes; `S <line>` with `E` — a command the code runs.
-# `RT_WT_WHOLE` leaves only the files written whole: code that adds to a file, and code that reads the
-# file it writes, keep what stood there.
+# In: the lines `shell-words.sh` prints — `C <line>` with `E` at the end of a body and `D <dir>`, the
+# directory it runs in; the rest is passed over. Out: `D` as it came, `W <path>` — a file the code writes
+# whole; `A <path>` — one it adds to, or reads first and edits in place; `S <line>` with `E` — a command
+# the code runs.
 #
 # There is nothing to parse someone else's language with, and it is not parsed here: the calls that write
 # and the calls that run are known by their names. Paths are taken from the statements that write, not
@@ -15,29 +15,41 @@
 # refusal was bypassed by changing the form of the command, not the action. A write of a file whose
 # address is not seen gives out the paths of its whole line.
 #
-# NOT SEEN: an address put together from parts, a name given to a call of a write anew, a variable or a
-# list that comes from another file. A string that only looks like a redirection counts as one.
+# NOT SEEN: an address put together from parts, a path without an extension, a name given to a call of a
+# write anew, a variable or a list that comes from another file or from a function. A string that only
+# looks like a redirection counts as one, and so does a name given to an argument of another call.
 
 rt_code_writes() {
     # A redirection to the empty device and to the error stream is cut first: a muted output inside a body
     # is no sign of a write.
-    sed -E '/^[CE]/!d; s#(&|[0-9]*)>>?[[:space:]]*/dev/(null|stderr)##g; s#[0-9]*>&[0-9-]##g' | LC_ALL=C awk -v whole="${RT_WT_WHOLE:-}" '
+    sed -E '/^[CED]/!d; s#(&|[0-9]*)>>?[[:space:]]*/dev/(null|stderr)##g; s#[0-9]*>&[0-9-]##g' | LC_ALL=C awk '
         BEGIN {
             # The calls of a language that run a command; of the second other objects have a method too.
             RUNS = "(^|\\.)(execSync|execFileSync|execFile|spawnSync|system|popen|Popen|check_output|check_call|getoutput|shell_exec|passthru)$"
             STRICT = "(^|\\.)(exec|run|call|spawn)$"
-            TEXT = "(\"[^\"]*\"|\047[^\047]*\047|`[^`]*`)"
+            TEXT = "(\"[^\"]*\"|\047[^\047]*\047|`[^`]*`|\\[[^]]*\\])"
+            # The calls that write the file named by their first argument.
+            PUTS = "(writeFileSync|writeFile|appendFileSync|appendFile|writeTextFileSync|writeTextFile|createWriteStream|file_put_contents|File\\.write|Bun\\.write)[ \t]*\\("
         }
-        function is_path(s) { return s ~ /\// && s ~ /\.[A-Za-z0-9]+$/ }
-        # A path read by the code and written by it is an edit in place.
+        # A variable of the shell stands for a path too: what it was given is filled in later.
+        # A brace of anything else is filled in by the code itself.
+        function is_path(s,   t) {
+            t = s; gsub(/[$][{][A-Za-z_][A-Za-z0-9_]*[}]/, "", t)
+            return t !~ /[{}]/ && ((s ~ /\// && s ~ /\.[A-Za-z0-9]+$/) || s ~ /^[$][{]?[A-Za-z_][A-Za-z0-9_]*[}]?$/)
+        }
+        # A path read by the code and written by it further on is an edit in place.
         function say(path,   n, i, part) {
             said++
             n = split(path, part, "\n")
-            for (i = 1; i <= n; i++) { if (part[i] != "" && !(whole != "" && part[i] in kept)) { print "W " part[i] } }
+            for (i = 1; i <= n; i++) { if (part[i] != "") { gsub(/\003/, "(", part[i]); print (adds || part[i] in kept ? "A " : "W ") part[i] } }
         }
+        function keep(path,   n, i, part) { n = split(path, part, "\n"); for (i = 1; i <= n; i++) { kept[part[i]] = 1 } }
         function emit(s,   n, i, parts) {
-            n = split(s, parts, /[^A-Za-z0-9_.@\/-]+/)
-            for (i = 1; i <= n; i++) { if (is_path(parts[i])) { say(parts[i]) } }
+            n = split(s, parts, /[^A-Za-z0-9_.@\/${}-]+/)
+            for (i = 1; i <= n; i++) {
+                if (parts[i] !~ /[$][{]/) { gsub(/[{}]/, "", parts[i]) }
+                if (parts[i] ~ /\// && is_path(parts[i])) { say(parts[i]) }
+            }
         }
         function command(s,   n, i, part) { n = split(s, part, "\n"); for (i = 1; i <= n; i++) { print "S " part[i] } print "E" }
         # The index of the quote that closes a string of the code; a quote that closes nothing opens none.
@@ -62,7 +74,7 @@ rt_code_writes() {
         function words_of(i,   e, out) {
             for (i++; i <= size && ch[i] != "]"; i++) {
                 if (ch[i] ~ /[\047"`]/ && (e = string_end(i)) > i) { for (; i < e; i++) { out = out ch[i] } out = out ch[e] }
-                else { out = out (ch[i] == "," ? " " : ch[i]) }
+                else { out = out (ch[i] ~ /[,\n]/ ? " " : ch[i]) }
             }
             at = i
             return out
@@ -80,13 +92,18 @@ rt_code_writes() {
             for (i = 1; i <= n; i++) {
                 if (match(part[i], "[A-Za-z_][A-Za-z0-9_]*[ \t]*=[ \t]*[fr]?" TEXT)) {
                     text = substr(part[i], RSTART, RLENGTH)
-                    name = text; sub(/[ \t]*=.*$/, "", name); sub(/^[^=]*=[ \t]*[fr]?./, "", text); held[name] = substr(text, 1, length(text) - 1)
+                    name = text; sub(/[ \t]*=.*$/, "", name); sub(/^[^=]*=[ \t]*[fr]?./, "", text); text = substr(text, 1, length(text) - 1)
+                    # A list of words is a command too.
+                    if (text ~ /^[ \t]*[\047"][^\047"]*[\047"][ \t]*,/) { gsub(/,/, " ", text) }
+                    held[name] = text
                 }
             }
-            size = split(s, ch, ""); pieces = 0; text = ""; name = ""; gap = 0
+            size = split(s, ch, ""); pieces = 0; text = ""; name = ""; gap = 0; open_at = 0
             for (i = 1; i <= size; i++) {
                 c = ch[i]
-                if (c == "\n") { piece[++pieces] = text; text = ""; name = ""; gap = 0; continue }
+                # A call and a list go on over the lines until they close; a brace opens statements.
+                if (c == "\n" && open_at && brackets[open_at] != "{" && text !~ /;[ \t]*$/) { text = text " "; gap = 1; continue }
+                if (c == "\n") { if (text ~ /;[ \t]*$/) { open_at = 0 } piece[++pieces] = text; text = ""; name = ""; gap = 0; continue }
                 if ((c == "#" || (c == "/" && ch[i + 1] == "/")) && (i == 1 || ch[i - 1] ~ /[ \t\n;{}]/)) {
                     while (i < size && ch[i + 1] != "\n") { i++ }
                     continue
@@ -95,11 +112,23 @@ rt_code_writes() {
                     last = string_of(i, e)
                     # Two of the languages call a command without a bracket.
                     if (gap && name ~ /^(system|exec)$/ && text ~ /^[ \t]*(system|exec)[ \t]+$/) { command(last); i = e; name = ""; continue }
-                    for (; i <= e; i++) { if (ch[i] == "\n") { piece[++pieces] = text; text = "" } else { text = text ch[i] } }
+                    # The text of a string calls nothing, and a string of several lines is data.
+                    if (index(last, "\n")) { text = text "\"\"" } else { for (; i <= e; i++) { text = text (ch[i] == "(" ? "\003" : ch[i]) } }
                     i = e; name = ""; gap = 0
                     continue
                 }
+                if (c == "/" && ch[i + 1] == "*") {
+                    for (i += 2; i < size && !(ch[i] == "*" && ch[i + 1] == "/"); i++) { }
+                    i++
+                    continue
+                }
+                # A quote or a bracket of a pattern opens nothing.
+                if (c == "/" && text ~ /(^|[(,=:\[!&|?{};])[ \t]*$/) {
+                    for (e = i + 1; e <= size && ch[e] != "\n" && ch[e] != "/"; e++) { if (ch[e] == "\\") { e++ } }
+                    if (ch[e] == "/") { text = text "//"; i = e; last = "/"; name = ""; gap = 0; continue }
+                }
                 text = text c
+                if (c ~ /[(\[{]/) { brackets[++open_at] = c } else if (c ~ /[)\]}]/ && open_at) { open_at-- }
                 if (c ~ /[A-Za-z0-9_.]/) { name = (gap ? "" : name) c; gap = 0; continue }
                 if (c ~ /[ \t]/) { gap = 1; continue }
                 if (c == "(" && runs(name, last)) {
@@ -126,11 +155,12 @@ rt_code_writes() {
         # loop. It stands on a line separate from the write call, and without this pair a write through a
         # variable cannot be caught at all. A word that is no path is known too: it is empty.
         function note_var(s,   name, value, path) {
-            while (match(s, /[A-Za-z_][A-Za-z0-9_]*([ \t]*=[ \t]*([A-Za-z_.]*Path\([ \t]*)?|[ \t]+(in|of)[ \t]+)([\047"`][^\047"`]*[\047"`]|[\[(][^\])]*[\])])/)) {
+            while (match(s, /([A-Za-z_][A-Za-z0-9_]*(:[ \t]*[A-Za-z_.\[\]]+)?[ \t]*[=:][ \t]*([A-Za-z_.]*Path\([ \t]*)?|for[ \t(]+(const |let |var )?[ \t]*[A-Za-z_][A-Za-z0-9_]*[ \t]+(in|of)[ \t]+)([rbfu]?[\047"`][^\047"`]*[\047"`]|\([^)]*\)|\[[^\]]*\])/)) {
                 value = substr(s, RSTART, RLENGTH)
                 s = substr(s, RSTART + RLENGTH)
+                sub(/^for[ \t(]+(const |let |var )?[ \t]*/, "", value)
                 name = value
-                sub(/[ \t=].*$/, "", name)
+                sub(/[ \t=:].*$/, "", name)
                 varpath[name] = ""
                 while (match(value, /[\047"`][^\047"`]*[\047"`]/)) {
                     path = substr(value, RSTART + 1, RLENGTH - 2)
@@ -138,18 +168,44 @@ rt_code_writes() {
                     if (is_path(path)) { varpath[name] = varpath[name] (varpath[name] == "" ? "" : "\n") path }
                 }
             }
-            if (match(s, /[A-Za-z_][A-Za-z0-9_]*[ \t]+(in|of)[ \t]+[A-Za-z_][A-Za-z0-9_]*/)) {
+            if (match(s, /for[ \t(]+(const |let |var )?[ \t]*[A-Za-z_][A-Za-z0-9_]*[ \t]+(in|of)[ \t]+[A-Za-z_][A-Za-z0-9_]*/)) {
                 value = substr(s, RSTART, RLENGTH)
+                sub(/^for[ \t(]+(const |let |var )?[ \t]*/, "", value)
                 name = value
                 sub(/[ \t].*$/, "", name)
                 sub(/^.*[ \t]/, "", value)
                 if (value in varpath) { varpath[name] = varpath[value] }
             }
         }
+        # Several names given at once: the place of a word in its row says whose it is.
+        function note_row(s,   n, i, c, e, k, deep, names, loop, level, path) {
+            if (!match(s, /(^|for[ \t(]+|const |let |var )[ \t]*[\[(]?[A-Za-z_][A-Za-z0-9_]*([ \t]*,[ \t]*[A-Za-z_][A-Za-z0-9_]*)+[\])]?[ \t]*(=[^=>]|[ \t](in|of)[ \t])/)) { return }
+            c = substr(s, RSTART, RLENGTH); loop = c ~ /(in|of)[ \t]$/
+            sub(/^(for[ \t(]+)?(const |let |var )?/, "", c)
+            s = substr(s, RSTART + RLENGTH - (loop ? 0 : 1))
+            gsub(/[\[\]()= \t]|[ \t](in|of)[ \t]$/, "", c)
+            if (loop) { sub(/(in|of)$/, "", c) }
+            n = split(c, names, ",")
+            for (i = 1; i <= n; i++) { varpath[names[i]] = "" }
+            level = loop ? 2 : 0; k = 1; deep = 0
+            for (i = 1; i <= length(s); i++) {
+                c = substr(s, i, 1)
+                if (c ~ /[(\[]/) { if (++deep == level) { k = 1 } }
+                else if (c ~ /[)\]]/) { if (--deep <= 0 && loop) { after_row = substr(s, i + 1); return } }
+                else if (c == "," && deep == level) { k++ }
+                else if (c ~ /[\047"`]/ && (e = index(substr(s, i + 1), c))) {
+                    path = substr(s, i + 1, e - 1)
+                    if (deep == level && k <= n && is_path(path)) { varpath[names[k]] = varpath[names[k]] (varpath[names[k]] == "" ? "" : "\n") path }
+                    i += e
+                }
+            }
+        }
         # The word of an argument: a literal as it stands, a variable by what it was given.
         function known(arg) {
             gsub(/^[ \t]+|[ \t]+$/, "", arg)
-            if (arg ~ /^[\047"`].*[\047"`]$/) { arg = substr(arg, 2, length(arg) - 2); return is_path(arg) ? arg : "" }
+            if (arg ~ /^[rbfu]?[\047"`].*[\047"`]$/) { sub(/^[rbfu]/, "", arg); arg = substr(arg, 2, length(arg) - 2); return is_path(arg) ? arg : "" }
+            # A field is known by its name.
+            if (arg ~ /^[A-Za-z0-9_]+(\.[A-Za-z0-9_]+)+$/) { sub(/^.*\./, "", arg) }
             return arg ~ /^[A-Za-z0-9_]+$/ && arg in varpath ? varpath[arg] : "?"
         }
         # The files the code reads, for the question about the whole.
@@ -158,14 +214,14 @@ rt_code_writes() {
             while (match(rest, /(^|[^A-Za-z0-9_])(open|openSync|readFileSync|readFile)[ \t]*\(/)) {
                 name = substr(rest, RSTART, RLENGTH); from = RSTART + RLENGTH
                 args = substr(rest, from, args_end(rest, from) - from)
-                if (name !~ /open/ || !opens("open(" args ")")) { kept[known(first_arg(args))] = 1 }
+                if (name !~ /open/ || !opens("open(" args ")")) { keep(known(first_arg(args))) }
                 rest = substr(rest, from)
             }
             rest = s
             while (match(rest, /([A-Za-z_][A-Za-z0-9_]*|[\047"`][^\047"`]*[\047"`][ \t]*\))\.read_(text|bytes)[ \t]*\(/)) {
                 args = substr(rest, RSTART, RLENGTH); rest = substr(rest, RSTART + RLENGTH)
                 sub(/[ \t]*\)?\.read_.*$/, "", args)
-                kept[known(args)] = 1
+                keep(known(args))
             }
         }
         # The write target is the first argument of the write call. It is the address the script opens;
@@ -173,20 +229,24 @@ rt_code_writes() {
         function emit_calls(s,   rest, arg, name, from, args, first) {
             # The file object writes itself: its variable holds the path.
             rest = s
-            while (match(rest, /[A-Za-z_][A-Za-z0-9_]*\.(write_text|write_bytes|unlink|rename)[ \t]*\(/)) {
-                arg = substr(rest, RSTART, RLENGTH)
-                rest = substr(rest, RSTART + RLENGTH)
-                sub(/\..*$/, "", arg)
-                if (arg in varpath) { say(varpath[arg]) }
+            while (match(rest, /[A-Za-z_][A-Za-z0-9_]*\.(write_text|write_bytes|unlink|rename|open)[ \t]*\(/)) {
+                arg = substr(rest, RSTART, RLENGTH); from = RSTART + RLENGTH
+                args = substr(rest, from, args_end(rest, from) - from)
+                rest = substr(rest, from)
+                name = arg; sub(/\..*$/, "", arg)
+                if (arg in varpath && (name !~ /\.open/ || opens("open(" args ")"))) { say(varpath[arg]) }
             }
             rest = strip_reads(s)
-            while (match(rest, /(open|openSync|writeFileSync|writeFile|appendFileSync|appendFile|rename|symlink|mkdir|makedirs)[ \t]*\(/)) {
+            before_adds = adds
+            while (match(rest, "(" PUTS "|(open|openSync|truncateSync|rename|symlink|mkdir|makedirs)[ \t]*\\()")) {
+                name = substr(rest, RSTART, RLENGTH)
                 rest = substr(rest, RSTART + RLENGTH)
-                arg = rest
-                sub(/[,)].*$/, "", arg)
-                arg = known(arg)
+                args = substr(rest, 1, args_end(rest, 1) - 1)
+                arg = known(first_arg(args))
+                adds = appends(name args ")")
                 if (arg != "?") { say(arg) }
             }
+            adds = before_adds
             # A copy writes its second argument, a move both.
             rest = s
             while (match(rest, /(copyFileSync|copyFile|copyfile|copytree|copy2|cpSync|shutil\.copy|shutil\.move|renameSync|renames|rename|os\.replace)[ \t]*\(/)) {
@@ -210,14 +270,14 @@ rt_code_writes() {
         }
         # A file is opened for a write by its mode, or by an arrow before the name in the words of perl.
         function opens(s) { return s ~ /open(Sync)?[ \t]*\(([^()]|\([^()]*\))*([\047"](w|a|x|r[bt]*\+)[bt+]*[\047"]|[\047"][ \t]*\+?>)/ }
-        function puts(s) { return opens(s) || s ~ /(writeFileSync|writeFile|appendFileSync|appendFile|write_text|write_bytes)[ \t]*\(/ }
+        function puts(s) { return opens(s) || s ~ PUTS || s ~ /(write_text|write_bytes)[ \t]*\(/ }
         # Whether the statement writes at all. A body with not a single write call does not give away its
         # paths: a command that sourced a laid-out helper and printed its answer was forbidden as an edit
         # of that helper — three times in a row in one session. A call counts with its bracket: the word
         # `mkdir` in a string is text.
         function writes(s) {
             return puts(s) || s ~ /(savefig|to_csv|\.write|\.save|\.dump)[ \t]*\(/ \
-                || s ~ /(makedirs|mkdir|mkdirSync|rename|renames|renameSync|unlink|unlinkSync|rmtree|copyfile|copyFile|copyFileSync|copy2|cpSync|shutil\.[a-z0-9_]+|(os|Path\([^)]*\))\.replace)[ \t]*\(/ \
+                || s ~ /(makedirs|mkdir|mkdirSync|truncateSync|rename|renames|renameSync|unlink|unlinkSync|rmtree|copyfile|copyFile|copyFileSync|copy2|cpSync|shutil\.[a-z0-9_]+|(os|Path\([^)]*\))\.replace)[ \t]*\(/ \
                 || s ~ /[A-Za-z0-9_)]\.replace[ \t]*\([ \t]*[^,()= \t][^,()=]*\)|(^|[^.A-Za-z0-9_])replace[ \t]*\(/ \
                 || redirects(s)
         }
@@ -252,7 +312,8 @@ rt_code_writes() {
             gsub(/from[ \t]+[\047"][^\047"]*[\047"]/, "from", s)
             gsub(/(import|require)[ \t]*\([ \t]*[\047"][^\047"]*[\047"][ \t]*\)/, "import()", s)
             out = ""
-            while (match(s, /(^|[^A-Za-z0-9_])(open|openSync|readFileSync|readFile)[ \t]*\(/)) {
+            gsub(/Path\([^()]*\)\.(read_text|read_bytes|exists|open)\([^()\047"]*\)/, "read()", s)
+            while (match(s, /(^|[^A-Za-z0-9_])(open|openSync|readFileSync|readFile|existsSync|statSync|readdirSync|exists|isfile|isdir|dirname|basename)[ \t]*\(/)) {
                 name = substr(s, RSTART, RLENGTH)
                 from = RSTART + RLENGTH
                 out = out substr(s, 1, from - 1)
@@ -285,7 +346,7 @@ rt_code_writes() {
         function strip_content(s,   out, pre, name, from, endp, args) {
             s = strip_sources(strip_reads(s))
             out = ""
-            while (match(s, /(\.write|\.write_text|\.write_bytes|\.replace|writeFileSync|appendFileSync|writeFile|appendFile)[ \t]*\(/)) {
+            while (match(s, "(" PUTS "|(\\.write|\\.write_text|\\.write_bytes|\\.replace)[ \t]*\\()")) {
                 pre = substr(s, 1, RSTART - 1)
                 name = substr(s, RSTART, RLENGTH)
                 from = RSTART + RLENGTH
@@ -307,9 +368,11 @@ rt_code_writes() {
             return out s
         }
         function add(s) {
-            if (whole != "" && s ~ /appendFile(Sync)?[ \t]*\(|open(Sync)?[ \t]*\(([^()]|\([^()]*\))*([\047"](a|r[bt]*\+)[bt+]*[\047"]|[\047"][ \t]*>>)/) { return }
             line[++lines] = s; around[lines] = whole_line
             if (writes(s)) { wrote = 1 }
+        }
+        function appends(s) {
+            return s ~ /appendFile(Sync)?[ \t]*\(|flags?[ \t]*:[ \t]*[\047"]a|FILE_APPEND|open(Sync)?[ \t]*\(([^()]|\([^()]*\))*([\047"](a|r[bt]*\+)[bt+]*[\047"]|[\047"][ \t]*>>)/
         }
         # One line of code holds several statements; a write of one names nothing of the next. What a call
         # prints into its own stream is no file.
@@ -332,16 +395,19 @@ rt_code_writes() {
             commands(s)
             for (i = 1; i <= pieces; i++) { statements(piece[i]) }
             if (!wrote) { return }
-            for (i = 1; i <= lines; i++) { note_var(line[i]); note_reads(line[i]) }
+            for (i = 1; i <= lines; i++) { note_var(line[i]); note_row(line[i]) }
             for (i = 1; i <= lines; i++) {
-                note_var(line[i])
+                after_row = ""; note_var(line[i]); note_row(line[i]); note_reads(line[i])
+                adds = appends(line[i])
                 if (!writes(line[i])) { continue }
                 before = said
-                emit(strip_content(line[i])); emit_calls(line[i])
+                # The rows of a loop are data: whose word is a target is known by its place.
+                emit(strip_content(after_row == "" ? line[i] : after_row)); emit_calls(line[i])
                 if (said == before && puts(line[i])) { emit(strip_content(around[i])) }
             }
         }
         /^C / { text = text substr($0, 3) "\n"; next }
+        /^D/ { print; next }
         { if (text != "") { body(text) } text = "" }
         END { if (text != "") { body(text) } }'
 }

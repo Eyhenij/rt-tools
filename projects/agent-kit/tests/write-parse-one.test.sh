@@ -6,14 +6,19 @@
 echo "один разбор цели записи"
 
 # Второй разбор узнаётся по образцу команды записи в хуке: знак образца сразу за словом или за
-# стрелкой. Под судом не стоят сам разбор из трёх файлов и вопрос, кладёт ли вызов исполняемый им
-# сценарий сам, — он про имя одного файла, а не про цели.
+# стрелкой, слово команды в кавычках у выбора, отрезание слова от текста. Под судом не стоят сам разбор из
+# трёх файлов, вопрос «кладёт ли вызов исполняемый им сценарий сам» — он про имя одного файла, а не про
+# цели, — и линтер после правки: его чтение `git mv` ждёт своей задачи.
+NAME='(tee|cp|mv|install)'
+SIGN="\\\\b(tee|cp|mv)\\\\b|(^|[^A-Za-z_])$NAME( ?[.]?[*+]|\\[\\[|\\\\s| ?\\[|\\(\\[)"
+SIGN="$SIGN|(^|[^A-Za-z_])(sed|perl)\\)?( ?[.*+]|\\[\\[|\\\\s|\\[\\^| ?\\(| -\\[| -i(\\[|\\.))|(cp|mv|tee|sed)\\|(cp|mv|tee|install|sed|rm)"
+SIGN="$SIGN|(^|[^-=])>\\\\?\\)?(\\[\\[|\\\\s| ?\\[|\\(\\[| \\*| \\?|\\+|\\.\\*)|>>\\?"
+SIGN="$SIGN|[*\"'](git )?$NAME ?[\"']\\*?\\)|##\\*>|#\\*?(git )?(mv|cp|tee) |== *\"(cp|mv|tee|sed)\"|writeFileSync|rt_shell_words"
 second_parse() {
     local hook
     for hook in "$1"/*.sh; do
-        case "${hook##*/}" in shell-words.sh | code-writes.sh | write-targets.sh | script-files.sh) continue ;; esac
-        grep -v '^[[:space:]]*#' "$hook" | grep -qE '\\b(tee|cp|mv)\\b|>>\?|(^|[^A-Za-z_])(tee|cp|mv)( ?\.[*+]| ?\+|\[\[|\\s|\[ |\[\^|\(\[)|(^|[^A-Za-z_])(sed|perl)( ?\.[*+]|\[\[|\\s|\[\^|\(\[)|(cp|mv|tee|sed)\|(cp|mv|tee|install|sed|rm)|>(\[\[:space:\]\]|\\s|\[ |\[\^| \*|\+)|rt_shell_words' \
-            && printf '%s\n' "${hook##*/}"
+        case "${hook##*/}" in shell-words.sh | code-writes.sh | write-targets.sh | script-files.sh | lint-after-edit.sh) continue ;; esac
+        grep -v '^[[:space:]]*#' "$hook" | grep -qE "$SIGN" && printf '%s\n' "${hook##*/}"
     done
     return 0
 }
@@ -37,6 +42,17 @@ second "tee с пробелами узнан" 'grep -qE "tee +$path"'
 second "cp с чем угодно узнана" 'grep -qE "cp .+ $path"'
 second "слова с границей узнаны" "grep -qE '\\btee\\b|\\bcp\\b'"
 second "стрелка с необязательной второй узнана" "grep -oE '>>?[[:space:]]*x'"
+second "стрелка с любым классом и с любым знаком узнана" "grep -oE '>[[:blank:]]*x'; grep -oE '>.*'"
+second "стрелка с группой узнана" "grep -oE '>([^ ]+)'"
+second "sed с группой флага узнан" "grep -oE 'sed( -E)? -i'"
+second "sed с любым знаком за флагом узнан" "grep -oE 'sed -i[^|;]*'"
+second "perl с классом флага узнан" "grep -oE 'perl -[a-z]*i'"
+second "install с пробелами узнан" "grep -oE 'install[[:space:]]+-m.*'"
+second "отрезание до стрелки узнано" 'target="${cmd##*>}"'
+second "отрезание до слова команды узнано" 'set -- ${segment#*git mv }'
+second "слово команды в выборе узнано" "case \"\$cmd\" in *'tee '*) x ;; esac"
+second "слово команды в awk узнано" "awk '\$1 == \"cp\" { print \$NF }'"
+second "имя вызова записи кода узнано" "grep -oE 'writeFileSync\\([^)]*'"
 second "слова команды мимо общего разбора узнаны" 'printf "%s" "$cmd" | rt_shell_words'
 second "комментарий о записи не разбор" '# cp[[:space:]] и tee[[:space:]] разбирает сосед' ''
 second "запуск команды записи не разбор" 'cp "$a" "$b"; printf x | tee -a "$log"; sed -i "" s/a/b/ "$b"' ''

@@ -354,3 +354,14 @@ Then no target is named, the call passes and nothing goes into the error stream;
 same call is refused; without the module of code the writes of the shell are still named
 
 Covered: `projects/agent-kit/tests/write-parse-one.test.sh`.
+
+### SC-AK-1967 — a path stands from the directory of its call
+
+Given a command handed to a shell, a body or a script file writes relative paths before, after and
+between calls of `cd` and `pushd`, in a subshell, in a function, and through a variable
+When the shared parse takes the write targets out of the command text
+Then each path is joined to the directory its own call stands in; the root of the tree by name leaves it
+as it is; a directory the text computes otherwise leaves the path out, and the rest of the targets stay;
+`cd` on the line of the command itself joins nothing
+
+Covered: `projects/agent-kit/tests/write-dirs.test.sh`.

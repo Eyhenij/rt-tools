@@ -301,7 +301,37 @@ wrote "апостроф внутри \${…}" "echo \"\${x:-it's}\"; cp q c/d.sh
 wrote "строка \$'…' с переносом внутри bash -c" "bash -c \$'printf x > a/b.sh\\ncp y c/d.sh'" "a/b.sh c/d.sh"
 wrote "аргументы после кода bash -c" "bash -c 'cp \"\$0\" \"\$1\"' /tmp/x a/b.sh" "a/b.sh"
 wrote "все аргументы после кода bash -c" "bash -c 'cp \"\$@\"' _ /tmp/x a/b.sh" "a/b.sh"
-wrote "cd в папку внутри bash -c" "bash -c 'cd a && printf x > b/c.sh'" "a/b/c.sh"
+wrote "знак & в доводе bash -c" "bash -c 'cp \"\$1\" \"\$2\"' _ 'x&y' 'a/b&c.sh'" "a/b&c.sh"
+wrote "dash -c" "dash -c 'cp x a/b.sh'" "a/b.sh"
+wrote "trap" "trap 'cp x a/b.sh' EXIT" "a/b.sh"
+wrote "flock и setsid" "flock /tmp/l cp x a/b.sh; setsid cp x c/d.sh" "a/b.sh c/d.sh"
+wrote "gcp и gtee" "gcp x a/b.sh; echo x | gtee c/d.sh" "a/b.sh c/d.sh"
+wrote "env --split-string= и env -iS" "env --split-string='tee a/b.sh'; env -iS 'tee c/d.sh'" "a/b.sh c/d.sh"
+wrote "uv run со значением флага" "uv run --python 3.12 tee a/b.sh" "a/b.sh"
+wrote ">& с путём от переменной" "printf x >&\$PWD/a/b.sh" "a/b.sh"
+wrote "скобки списком в cp, mv и sed -i" "cp a/b.sh{.new,}; mv c/d.{js,ts}; sed -i '' s/a/b/ e/{x,y}.sh" "a/b.sh c/d.ts e/x.sh e/y.sh"
+wrote "разорванный список for" "for f in \\
+  a/x.sh \\
+  a/y.sh; do sed -i '' s/a/b/ \$f; done" "a/x.sh a/y.sh"
+wrote "for ((" "for ((i=0;i>3;i++)); do cp x a/b.sh; done" "a/b.sh"
+wrote "текст в трубе оболочке" "echo 'cp x a/b.sh' | bash; printf '%s\\n' 'cp x c/d.sh' | sh" "a/b.sh c/d.sh"
+wrote "текст в трубе толкователю" "echo \"open('a/b.py','w')\" | python3" "a/b.py"
+wrote "метка тела кириллицей" "cat > a/b.sh <<МЕТКА
+text > c/d.sh
+МЕТКА" "a/b.sh"
+wrote "метка с отступом внутри тела тело не закрывает" "cat <<'E' >a/b.sh
+ E
+it's > c/d.sh
+E
+cp x e/f.sh" "a/b.sh e/f.sh"
+wrote "записанный сценарий с флагом и значением" "cat > /tmp/zz-o.sh <<'E'
+cp x a/b.sh
+E
+bash -eo pipefail /tmp/zz-o.sh" "/tmp/zz-o.sh a/b.sh"
+wrote "записанный сценарий на вход" "cat > /tmp/zz-i.sh <<'E'
+cp x a/b.sh
+E
+bash < /tmp/zz-i.sh" "/tmp/zz-i.sh a/b.sh"
 wrote "'>!' оболочки zsh" "echo x >! a/b.sh" "a/b.sh"
 wrote "source записанного сценария" "cat > /tmp/zz-q.sh <<'E'
 cp x a/b.sh
@@ -418,6 +448,10 @@ E
 node --check /tmp/zz-n.mjs" "/tmp/zz-n.mjs"
 beside "элементы массива" "names=(cp a/x.sh b/y.sh); echo \"\${names[@]}\""
 beside "command -v" "command -v tee a/x.sh"
+beside "docker cp наружу" "docker cp a/b.sh c:/app/x/"
+beside "install -d" "install -d -m 755 a/b c/d"
+beside "поток ошибок по номеру" "echo x > /dev/fd/2"
+beside "текст в трубе поиску" "echo 'cp x a/b.sh' | grep cp"
 beside "kubectl exec в чужом месте" "kubectl exec pod -- bash -c 'cp x a/b.sh'"
 beside "[[ на двух строках" "[[ a &&
 \$b > c/d.sh ]]"
@@ -443,7 +477,7 @@ whole "запись целиком через переменную" "F=o/a.md; c
 whole "код в строке команды пишет целиком" "node -e \"require('child_process').execSync('echo x > o/a.md')\"" "o/a.md"
 whole "код толкователя пишет целиком" "python3 -c \"open('o/a.md','w').write('x')\"" "o/a.md"
 whole "код толкователя дописывает" "python3 -c \"open('o/a.md','a').write('x')\""
-whole "код читает и пишет рядом" "node -e 'const p=\"o/a.md\"; const s=require(\"fs\").readFileSync(p); require(\"fs\").writeFileSync(\"/tmp/o\", s)'" ""
+whole "код читает и пишет рядом" "node -e 'const p=\"o/a.md\"; const s=require(\"fs\").readFileSync(p); require(\"fs\").writeFileSync(\"/tmp/o.txt\", s)'" "/tmp/o.txt"
 whole "'<>' читает и пишет" "exec 3<> o/a.md"
 
 # Длинная команда читается быстро: проверка стоит перед каждым вызовом.
@@ -455,6 +489,10 @@ quick() {
 }
 quick "40 КБ одного слова" "$(printf 'printf x > a/b.sh; echo "%s"' "$(head -c 40000 /dev/zero | tr '\0' 'x')")"
 quick "четыре тысячи подстановок" "$(printf 'echo'; for i in $(seq 1 4000); do printf ' $(a%s)' "$i"; done; printf '; cp x a/b.sh')"
+quick "три тысячи незакрытых скобок" "$(printf 'cp x a/b.sh; echo '; for i in $(seq 1 3000); do printf '${a '; done)"
+quick "сто килобайт тела" "cp x a/b.sh; cat <<'E'
+$(for i in $(seq 1 1300); do echo "Строка текста про то, что it's > c/d.md и ещё немного слов для длины."; done)
+E"
 quick "сорок килобайт сравнений" "$(printf '[[ a'; for i in $(seq 1 3000); do printf ' && $b == %s' "$i"; done; printf ' ]]; cp x a/b.sh')"
 
 suite_result "разбор команды на слова"

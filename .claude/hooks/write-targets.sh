@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/write-targets.sh · ea41c5f1040a · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/write-targets.sh · 5c1687ca44e2 · правится надстройкой, не здесь
 # Write targets named by the shell command outright: redirection, `tee`, an in-place edit, a copy
 # over the top, and for an interpreter — the paths from its body. Prints one per line.
 #
@@ -38,69 +38,53 @@ command -v rt_code_writes >/dev/null 2>&1 || rt_code_writes() { cat >/dev/null; 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/script-files.sh" 2>/dev/null || true
 [ -n "${RT_SF_EXPAND:-}" ] || RT_SF_EXPAND='function rt_vars_read() {} function rt_expand(w, depth) { en = 1; ev[1] = w }'
 
-# The targets of a script as they stand from the directory the script enters first; $1 — its body. A
-# directory of the tree by name — `rev-parse --show-toplevel`, `CLAUDE_PROJECT_DIR` — leaves them as
-# they are, a literal joins them, and one the script computes otherwise is none of the tree's. A line
-# comes as a path or with the mark of `shell-words.sh` before it.
+# The targets as they stand from the directory of their call: a literal one joins them, the root of the
+# tree by name leaves them as they are, and one the text computes otherwise is none of the tree's. A command
+# further inside starts in the directory it is called from.
 rt_wt_from_dir() {
-    _wd_tree='rev-parse|CLAUDE_PROJECT_DIR|[$][(]pwd'
-    _wd_dir="$(printf '%s\n' "$1" | grep -oE '(^|[;&|({[:space:]])(cd|pushd)[[:space:]]+("[^"]*"|'"'[^']*'"'|[$][(][^)]*[)]|[^;&|)[:space:]]+)' | head -1 \
-        | sed -E "s/^[;&|({[:space:]]*(cd|pushd)[[:space:]]+//; s/[\"']//g")"
-    if printf '%s' "$_wd_dir" | grep -qE "$_wd_tree"; then
-        _wd_dir=''
-    elif printf '%s' "$_wd_dir" | grep -q '[$]'; then
-        _wd_var="$(printf '%s' "$_wd_dir" | sed -nE 's/^[$][{]?([A-Za-z_][A-Za-z0-9_]*)[}]?.*/\1/p')"
-        _wd_rest="$(printf '%s' "$_wd_dir" | sed -E 's/^[$][{]?[A-Za-z0-9_]*[}]?//')"
-        if [ -n "$_wd_var" ] && printf '%s\n' "$1" | grep -E "(^|[;&|[:space:]])${_wd_var}=" | grep -qE "$_wd_tree"; then
-            _wd_dir="${_wd_rest#/}"
-        else
-            _wd_dir="$(printf '%s\n' "$1" | rt_cmd_vars | sed -n "s/^${_wd_var:-0}	//p" | head -1)"
-            [ -n "$_wd_dir" ] && _wd_dir="$_wd_dir$_wd_rest" || _wd_dir=-
-        fi
-    fi
-    case "$_wd_dir" in . | ./) _wd_dir='' ;; '~/'*) _wd_dir="$HOME/${_wd_dir#??}" ;; esac
-    while IFS= read -r _wd_path; do
-        _wd_mark=''
-        case "$_wd_path" in
-            [CS]\ * | E) printf '%s\n' "$_wd_path"; continue ;;
-            [WAT]\ *) _wd_mark="${_wd_path%% *} " _wd_path="${_wd_path#? }" ;;
-        esac
-        case "$_wd_path" in
-            /* | '~'* | '$'*) printf '%s\n' "$_wd_mark$_wd_path" ;;
-            *) case "$_wd_dir" in '') printf '%s\n' "$_wd_mark$_wd_path" ;; -) ;; *) printf '%s\n' "$_wd_mark${_wd_dir%/}/$_wd_path" ;; esac ;;
-        esac
-    done
+    LC_ALL=C awk '
+        function far(s) { return s ~ /^[\/~]/ || (s ~ /^[$]/ && s !~ /^[$][{]?PWD[}]?\//) }
+        /^D/ { dir = substr($0, 3); next }
+        /^[WAT] / {
+            path = substr($0, 3)
+            if (dir == "" || far(path)) { print; next }
+            if (dir ~ /[$][(][)]/) { next }
+            sub(/^[$][{]?PWD[}]?\//, "", path)
+            print substr($0, 1, 2) dir "/" path
+            next
+        }
+        /^S / && !on && dir != "" { print "S cd \047" dir "\047" }
+        { on = /^S / ? 1 : /^E$/ ? 0 : on; print }'
 }
 
-# What the words of a command say: the text comes as the argument. A command handed to a shell — by the
-# line or by the code — is read again, to the fourth shell inside it, and its paths stand from the
-# directory it enters first. A path through a variable is the literal the command itself gave it, and it
-# is compared with the root of the tree as one. A copy into a folder writes a file of the same name
-# there, and what is a folder is asked from the disk.
+# The words of one text and of the commands it hands to a shell, to the fourth shell inside it: the text
+# comes as the second argument, how deep it stands as the first.
+rt_wt_read() {
+    local deep
+    deep="$(printf '%s\n' "$2" | rt_shell_words)"
+    case "
+$deep" in *"
+C "*) deep="$deep
+D
+$(printf '%s\n' "$deep" | rt_code_writes)" ;; esac
+    case "$1${RT_WT_BODY:-}" in 1) deep="$(printf '%s\n' "$deep" | sed '/^D/d')" ;; *) deep="$(printf '%s\n' "$deep" | rt_wt_from_dir)" ;; esac
+    printf '%s\n' "$deep"
+    [ "$1" -lt 5 ] || return 0
+    case "
+$deep" in *"
+S "*) ;; *) return 0 ;; esac
+    printf '%s\n' "$deep" | LC_ALL=C awk '/^S / { on = 1; print substr($0, 3) } /^E$/ && on { on = 0; printf "\036" }' \
+        | while IFS= read -r -d "$(printf '\036')" deep; do rt_wt_read "$(($1 + 1))" "$deep"; done
+}
+
+# What the words of a command say: the text comes as the argument. The paths of a command inside stand from
+# the directory of their call; a `cd` on the line of the command itself is not followed. A path through a
+# variable is the literal the command itself gave it, and it is compared with the root of the tree as one.
+# A copy into a folder writes a file of the same name there, and what is a folder is asked from the disk.
 rt_shell_calls() {
-    rt_wt_end="$(printf '\001')" rt_wt_calls=''
-    rt_wt_code="$1$rt_wt_end"
-    for rt_wt_round in 1 2 3 4 5; do
-        rt_wt_next=''
-        while [ -n "$rt_wt_code" ]; do
-            rt_wt_one="${rt_wt_code%%"$rt_wt_end"*}"
-            rt_wt_code="${rt_wt_code#*"$rt_wt_end"}"
-            rt_wt_deep="$(printf '%s\n' "$rt_wt_one" | rt_shell_words)"
-            case "
-$rt_wt_deep" in *"
-C "*) rt_wt_deep="$rt_wt_deep
-$(printf '%s\n' "$rt_wt_deep" | rt_code_writes)" ;; esac
-            case "$rt_wt_round$rt_wt_one" in 1*) ;; *'cd '* | *'pushd '*) rt_wt_deep="$(printf '%s\n' "$rt_wt_deep" | rt_wt_from_dir "$rt_wt_one")" ;; esac
-            rt_wt_calls="$rt_wt_calls
-$rt_wt_deep"
-            case "
-$rt_wt_deep" in *"
-S "*) rt_wt_next="$rt_wt_next$(printf '%s\n' "$rt_wt_deep" | LC_ALL=C awk '/^S / { on = 1; print substr($0, 3) } /^E$/ && on { on = 0; printf "\001" }')" ;; esac
-        done
-        rt_wt_code="$rt_wt_next"
-        [ -n "$rt_wt_code" ] || break
-    done
-    RT_WT_VARS="$(command -v rt_cmd_vars >/dev/null 2>&1 && { printf '%s\n' "$1" | rt_no_heredocs; printf '%s\n' "$rt_wt_calls" | sed -n 's/^S //p'; } | rt_cmd_vars)"
+    rt_wt_calls="$(rt_wt_read 1 "$1")"
+    RT_WT_VARS="$(command -v rt_cmd_vars >/dev/null 2>&1 && { printf '%s\n' "$1" | rt_no_heredocs; printf '%s\n' "$rt_wt_calls" | sed -n 's/^S //p'; } \
+        | LC_ALL=C awk '/[\\]$/ { printf "%s ", substr($0, 1, length($0) - 1); next } { print }' | rt_cmd_vars)"
     printf '%s\n' "$rt_wt_calls" \
         | RT_SF_VARS="$RT_WT_VARS" LC_ALL=C awk -F '\t' "$RT_SF_EXPAND"'
             BEGIN { rt_vars_read() }
@@ -142,13 +126,12 @@ rt_write_targets() {
         # a body of its interpreter. One level: a script that runs another script is not followed.
         #
         # A shell script that enters a directory of its own — one from `mktemp` — writes its relative
-        # paths there, and they are no paths of the tree. An absolute `cd` joins them.
+        # paths there, and they are no paths of the tree. A literal `cd` joins them.
         if [ -z "${RT_WT_SCRIPT:-}" ] && command -v rt_script_files >/dev/null 2>&1; then
             printf '%s' "$rt_wt_text" | rt_script_files | while IFS= read -r rt_wt_file; do
                 rt_wt_kind="$(rt_script_kind "$rt_wt_file")"
                 if [ "$rt_wt_kind" = shell ]; then
-                    rt_wt_body="$(sed -E '/^[[:space:]]*#/d' "$rt_wt_file")"
-                    printf '%s\n' "$rt_wt_body" | RT_WT_SCRIPT=1 rt_write_targets | rt_wt_from_dir "$rt_wt_body"
+                    sed -E '/^[[:space:]]*#/d' "$rt_wt_file" | RT_WT_SCRIPT=1 RT_WT_BODY=1 rt_write_targets
                 else
                     [ "$rt_wt_kind" = python ] && rt_wt_head=python3 || rt_wt_head=node
                     printf '%s - <<RT_SCRIPT_BODY\n%s\nRT_SCRIPT_BODY\n' "$rt_wt_head" "$(rt_script_text "$rt_wt_file")" \
