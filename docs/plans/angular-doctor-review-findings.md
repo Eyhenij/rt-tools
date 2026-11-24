@@ -29,7 +29,7 @@ pnpm run check:unused; node tools/check-doc-paths.mjs` — their findings join t
    `task-delivery-loop-run`, section 5–6: how to read the suites a change touches, and that the
    coverage guard judges the pushed head, so a test commit is pushed before `gh pr create`. Here the
    guard refused the PR twice, once per suite.
-4. **Graphs are not rebuilt in a task branch** — tree, override
+4. **Исправлено в RT-3585 (graph.html удаляется сборкой).** **Graphs are not rebuilt in a task branch** — tree, override
    `.claude/rt-kit/overrides/pitfalls/task-flow-graph.needs-graph.md`, section «The graphs of this
    tree»: «`graph:build` is not run in a task branch. It leaves graph.html in every `graphify-out/`,
    ignored by git yet counted by `check:ngdoctor`, and rewrites the root `graph.json` into one line.
@@ -173,7 +173,7 @@ is needed.
    terminal run sees what the guard sees; companion `.claude/skills/git-workflow-push/implementation.md`.
    Here two refusals «SETS WITH FAILURES: 1» while manual runs were green; a temporary diagnostic
    commit found «grep: illegal byte sequence».
-3. **The kit approval check gives a file to the task that edited it** — tree,
+3. **Исправлено в RT-3585.** **The kit approval check gives a file to the task that edited it** — tree,
    `tools/check-kit-approval.mjs`: `branchFaults` stops giving the whole visible set to the
    branch's own record; `answerersOf` gives a commit to the task its subject ends with `(RT-N)`, a
    merge to its `[RT-N]`; a commit naming no task needs the branch record; scenarios in
@@ -266,7 +266,7 @@ archive record of RT-3483.
 Loaded: `task-delivery-loop`, `task-flow` with its parts, `doc-style`, `git-workflow` with its
 parts, `testing`, `kit-approval`, `epic-flow`. No edit of the gate map is needed.
 
-1. **A task of an epic answers for the kit files its epic branch carries** — a code task:
+1. **Исправлено в RT-3585.** **A task of an epic answers for the kit files its epic branch carries** — a code task:
    `tools/check-kit-approval.mjs:answerersOf` counts the merge of the epic branch into a task branch
    as the branch's own work, so a tool-only task needs the no-look line; RT-3514, RT-3518, RT-3525
    and RT-3526 hit it. Until then — tree, `kit-approval`, «How the law applies here», and
@@ -329,7 +329,7 @@ Loaded: `task-delivery-loop`, `task-flow` with its parts, `doc-style`, `agent-ki
    — package, the pattern `epic-flow-declare`, widening RT-3526 item 5: the push hook refuses a
    branch the copy does not stand on, and a second copy needs its own install, not a link. A code
    task for the package: `task:new --epic` commits and pushes the draft from a temporary tree.
-4. **Hook scenarios do not depend on the machine's temp dir** — a code task: the release test
+4. **Исправлено в RT-3585.** **Hook scenarios do not depend on the machine's temp dir** — a code task: the release test
    leaves 1692 `rt-release-*` dirs and the scenario files leave `tmp.*` dirs in the shared
    `TMPDIR`; with ~10 800 entries 16 scenarios of the turn-exit guard and the dispatcher fail, with
    an empty `TMPDIR` they pass. Each test removes its dirs, and the hook run gives each file a fresh

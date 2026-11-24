@@ -154,29 +154,38 @@ function taskRecordOf(task) {
         return { path, text: readFileSync(path, 'utf8') };
     }
 
-    const archived = readdirSync(join('docs', 'archive')).find((file) => file.startsWith(`${task}-`));
+    const archive = join('docs', 'archive');
+    const archived = existsSync(archive) ? readdirSync(archive).find((file) => file.startsWith(`${task}-`)) : undefined;
 
-    return archived ? { path: join('docs', 'archive', archived), text: readFileSync(join('docs', 'archive', archived), 'utf8') } : null;
+    return archived ? { path: join(archive, archived), text: readFileSync(join(archive, archived), 'utf8') } : null;
 }
 
-/** The task a commit belongs to: `[RT-N]` of a merged PR, or `(RT-N)` closing a commit subject. */
+/**
+ * The task a commit belongs to: `[RT-N]` opening the subject of a merged PR, or `(RT-N)` closing a
+ * commit subject. A number elsewhere — a revert of a PR, a mention in passing — names no task.
+ */
 export function taskOf(subject) {
-    return /\[(RT-\d+)\]/.exec(subject)?.[1] ?? /\((RT-\d+)\)\s*$/.exec(subject)?.[1] ?? null;
+    return /^\[(RT-\d+)\]/.exec(subject)?.[1] ?? /\((RT-\d+)\)\s*$/.exec(subject)?.[1] ?? null;
 }
+
+/** A record that answers: present and with every line its kind needs. */
+const whole = (record) => record !== null && faultsOf(record.path, record).length === 0;
 
 /**
  * Who answers for the visible kit files a branch carries. Every commit that touched such a file
  * answers by the record of its task: a merged PR by `[RT-N]`, a commit of an earlier branch of the
- * chain by its closing `(RT-N)`. A merge with no record behind its task, or with no task at all —
- * an epic merged into main, the epic branch merged into a task — is taken apart by its own commits
- * when they are given. A commit of the branch's own task, a commit naming no task and a merge that
- * cannot be taken apart answer by the branch's own record. A file only main's merge touched is a
+ * chain by its closing `(RT-N)`. A merge with no whole record behind its task, or with no task at
+ * all — an epic merged into main, the epic branch merged into a task — is taken apart by its own
+ * commits when they are given. A commit of the branch's own task, a commit naming no task and a merge
+ * that cannot be taken apart answer by the branch's own record. A file only main's merge touched is a
  * conflict the branch resolved, and it is the branch's own too; a file a task answers for is not.
  *
- * `commits` are the first parents from the base, each `{ sha, subject, merge, files, children? }`,
- * `children` the first parents of the merged side. `ownTask` is the task of the branch itself.
+ * `commits` are the first parents from the base, each `{ sha, subject, merge, files, children? }`;
+ * `children` — the first parents of the merged side, a list or a function that reads them. `ownTask`
+ * is the task of the branch itself; `inBranchOf(sha, task)` says whether a commit lies in the branch
+ * of that task.
  */
-export function answerersOf(commits, visible, { ownTask = null, recordOfTask = () => null } = {}) {
+export function answerersOf(commits, visible, { ownTask = null, recordOfTask = () => null, inBranchOf = () => true } = {}) {
     const wanted = new Set(visible);
     const own = new Set();
     const tasks = new Map();
@@ -195,11 +204,14 @@ export function answerersOf(commits, visible, { ownTask = null, recordOfTask = (
             }
 
             const task = taskOf(commit.subject);
-            const foreign = task !== null && task !== ownTask;
-            const takeApart = commit.merge && Array.isArray(commit.children) && (!foreign || recordOfTask(task) === null);
+            // A commit of the branch's own that names another task is still the branch's own: only a
+            // commit lying in that task's branch came by the chain.
+            const foreign = task !== null && task !== ownTask && (commit.merge || inBranchOf(commit.sha, task));
+            const children = typeof commit.children === 'function' ? commit.children() : commit.children;
+            const takeApart = commit.merge && Array.isArray(children) && (!foreign || !whole(recordOfTask(task)));
 
             if (takeApart) {
-                walk(commit.children);
+                walk(children);
             } else if (foreign) {
                 const entry = tasks.get(task) ?? { task, sha: commit.sha, subject: commit.subject, files: new Set() };
 
@@ -222,28 +234,57 @@ export function answerersOf(commits, visible, { ownTask = null, recordOfTask = (
     return { own: [...own], tasks: [...tasks.values()].map(({ task, sha, subject }) => ({ task, sha, subject })) };
 }
 
-/** The first parents of `range`, each with the first parents of its merged side when it is a merge. */
+/** The files a commit changed against its first parent; a root commit against nothing. */
+function changedFiles(sha) {
+    const parent = spawnOk('git', ['rev-parse', '--verify', '--quiet', `${sha}^1`]);
+    const args = parent ? ['diff', '--name-only', `${sha}^1`, sha] : ['show', '--name-only', '--format=', sha];
+
+    return git(...args).split('\n').filter(Boolean);
+}
+
+const readSides = new Map();
+
+/**
+ * The first parents of `range`, each with its subject and files. The merged side of a merge is read
+ * only when the walk asks for it, and once: most merges answer by their task and are never opened.
+ */
 function firstParents(range, depth = 0) {
-    return git('log', '--first-parent', '--format=%H %P', range)
+    return git('log', '--first-parent', '--format=%H %P%x09%s', range)
         .split('\n')
         .filter(Boolean)
         .map((line) => {
-            const [sha, ...parents] = line.split(' ');
+            const [head, ...rest] = line.split('\t');
+            const [sha, ...parents] = head.split(' ');
             const merge = parents.length > 1;
+            const side = `${sha}^1..${sha}^2`;
 
             return {
                 sha,
-                subject: git('log', '-1', '--format=%s', sha),
+                subject: rest.join('\t'),
                 merge,
-                files: git('diff', '--name-only', `${sha}^1`, sha).split('\n').filter(Boolean),
+                files: changedFiles(sha),
                 // An epic in a chain merges at most a few levels deep; deeper history is left whole.
-                children: merge && depth < 3 ? firstParents(`${sha}^1..${sha}^2`, depth + 1) : undefined,
+                children:
+                    merge && depth < 3
+                        ? () => {
+                              if (!readSides.has(side)) {
+                                  readSides.set(side, firstParents(side, depth + 1));
+                              }
+
+                              return readSides.get(side);
+                          }
+                        : undefined,
             };
         });
 }
 
 /** The task of the branch itself, from its name: `RT-3585-night-findings` is RT-3585. */
 const taskOfBranch = (branch) => /^(RT-\d+)-/.exec(branch)?.[1] ?? null;
+
+/** Whether a commit lies in a branch of that task, local or on the host: a commit come by the chain. */
+function inTaskBranch(sha, task) {
+    return git('for-each-ref', '--contains', sha, '--format=%(refname)', `refs/heads/${task}-*`, `refs/remotes/origin/${task}-*`) !== '';
+}
 
 function branchFaults() {
     const branch = git('rev-parse', '--abbrev-ref', 'HEAD');
@@ -255,7 +296,7 @@ function branchFaults() {
         return [];
     }
 
-    return judgeBranch({ name: branch, own: recordOf(branch), commits: firstParents(`${base}..HEAD`), visible, recordOfTask: taskRecordOf });
+    return judgeBranch({ name: branch, own: recordOf(branch), commits: firstParents(`${base}..HEAD`), visible, recordOfTask: taskRecordOf, inBranchOf: inTaskBranch });
 }
 
 /**
@@ -264,10 +305,10 @@ function branchFaults() {
  * its own and no kit edit of its own is not asked for approvals: the merged tasks were.
  *
  * `own` is the branch record or null; `commits` the first parents from the base; `recordOfTask`
- * gives the record of a task number or null.
+ * gives the record of a task number or null; `inBranchOf` as in `answerersOf`.
  */
-export function judgeBranch({ name, own, commits, visible, recordOfTask }) {
-    const { own: direct, tasks } = answerersOf(commits, visible, { ownTask: taskOfBranch(name), recordOfTask });
+export function judgeBranch({ name, own, commits, visible, recordOfTask, inBranchOf }) {
+    const { own: direct, tasks } = answerersOf(commits, visible, { ownTask: taskOfBranch(name), recordOfTask, inBranchOf });
     const faults = direct.length === 0 ? [] : faultsOf(name, own);
 
     for (const { task, sha, subject } of tasks) {
@@ -278,26 +319,14 @@ export function judgeBranch({ name, own, commits, visible, recordOfTask }) {
 }
 
 /**
- * The records whose quotes the owner confirms in the window: the ones `judgeBranch` holds the branch
- * to and finds whole. A record that answers for nothing the branch carries is not shown.
+ * The record whose quotes the owner confirms in the window: the branch's own, and only when the
+ * branch carries a kit edit of its own. A merged task's quotes were confirmed in the window of its
+ * own PR; asked again on the epic, they stop a night for nothing.
  */
-export function quotedRecords({ name, own, commits, visible, recordOfTask }) {
-    const { own: direct, tasks } = answerersOf(commits, visible, { ownTask: taskOfBranch(name), recordOfTask });
-    const records = [];
+export function quotedRecords({ name, own, commits, visible, recordOfTask, inBranchOf }) {
+    const { own: direct } = answerersOf(commits, visible, { ownTask: taskOfBranch(name), recordOfTask, inBranchOf });
 
-    if (direct.length > 0 && own !== null) {
-        records.push(own);
-    }
-
-    tasks.forEach(({ task }) => {
-        const record = recordOfTask(task);
-
-        if (record !== null) {
-            records.push(record);
-        }
-    });
-
-    return records.filter((record) => faultsOf(record.path, record).length === 0);
+    return direct.length > 0 && whole(own) ? [own] : [];
 }
 
 /** The line of the window: both quotes of a record, for the owner to confirm. */
@@ -349,10 +378,10 @@ function publishFaults(kit) {
             subject,
             merge: parents.length > 1,
             files: visible,
-            children: parents.length > 1 ? firstParents(`${sha}^1..${sha}^2`, 1) : undefined,
+            children: parents.length > 1 ? () => firstParents(`${sha}^1..${sha}^2`, 1) : undefined,
         };
 
-        faults.push(...judgeBranch({ name: `${sha.slice(0, 9)} ${subject}`, own: null, commits: [commit], visible, recordOfTask: taskRecordOf }));
+        faults.push(...judgeBranch({ name: `${sha.slice(0, 9)} ${subject}`, own: null, commits: [commit], visible, recordOfTask: taskRecordOf, inBranchOf: inTaskBranch }));
     }
 
     return faults;
@@ -369,7 +398,7 @@ if (calledDirectly && process.argv.includes('--quotes')) {
 
     if (visible.length > 0) {
         const base = git('merge-base', 'origin/main', 'HEAD');
-        const records = quotedRecords({ name: branch, own: recordOf(branch), commits: firstParents(`${base}..HEAD`), visible, recordOfTask: taskRecordOf });
+        const records = quotedRecords({ name: branch, own: recordOf(branch), commits: firstParents(`${base}..HEAD`), visible, recordOfTask: taskRecordOf, inBranchOf: inTaskBranch });
 
         records.forEach((record) => console.log(quotesLine(record)));
     }

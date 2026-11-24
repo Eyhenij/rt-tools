@@ -198,13 +198,31 @@ QUOTES="$MERGED
 const own = { path: 'own.md', text: '- **Без вида:** «чужое»' };
 const task = { path: 'docs/archive/RT-2-x.md', text: '- **Без вида:** «да»' };
 const q = m.quotedRecords({ name: 'RT-1-epic', own, visible: ['$KIT'], recordOfTask: () => task, commits: merged });
+console.log(q.length);"
+QUOTES_OWN="$OWN_EDIT
+const own = { path: 'own.md', text: '- **Без вида:** «да»' };
+const q = m.quotedRecords({ name: 'RT-1-x', own, visible: ['$KIT'], recordOfTask: () => null, commits: ownEdit });
 console.log(q.map((r) => r.path).join(','));"
+FORGED="const commits = [{ sha: 'k', subject: 'fix(rt:ui-kit-v2): кнопка крупнее (RT-2)', merge: false, files: ['$KIT'] }];
+const task = { path: 'docs/archive/RT-2-x.md', text: '- **Без вида:** «да»' };
+const f = m.judgeBranch({ name: 'RT-9-x', own: null, visible: ['$KIT'], recordOfTask: () => task, inBranchOf: () => false, commits });
+console.log(f.length);"
+EMPTY_RECORD="const commits = [{ sha: 'p', subject: '[RT-1] Эпик (#10)', merge: true, files: ['$KIT'],
+  children: () => [{ sha: 'b', subject: '[RT-2] Блоки ответа (#9)', merge: true, files: ['$KIT'] }] }];
+const records = { 'RT-1': { path: 'docs/archive/RT-1-epic.md', text: 'итог эпика' }, 'RT-2': { path: 'x', text: '- **Без вида:** «да»' } };
+const f = m.judgeBranch({ name: 'main', own: null, visible: ['$KIT'], recordOfTask: (t) => records[t] ?? null, commits });
+console.log(f.length);"
 report "the epic branch merged into a task is taken apart by its merges" "$(run "$EPIC_IN_TASK")" '0'
 report "an epic merged into main is judged by its tasks" "$(run "$EPIC_IN_MAIN")" '0|RT-2'
 report "a commit of an earlier branch of the chain answers by its task" "$(run "$CHAIN")" '0|RT-8'
 report "a commit of the branch's own task is its own edit" "$(run "$OWN_TASK")" '1|0'
-report "the window shows the records the check holds the branch to" "$(run "$QUOTES")" 'docs/archive/RT-2-x.md'
+report "a branch with no kit edit of its own opens no window" "$(run "$QUOTES")" '0'
+report "the window shows the branch record for its own kit edit" "$(run "$QUOTES_OWN")" 'own.md'
+report "a branch's own commit naming another task stays its own" "$(run "$FORGED")" '1'
+report "a merge whose record has no approval lines is taken apart" "$(run "$EMPTY_RECORD")" '0'
 report "a task is read from a merged PR and from a closing number" \
     "$(run "console.log([m.taskOf('[RT-2] x (#9)'), m.taskOf('fix: y (RT-3)'), m.taskOf('Merge branch main')].join(','))")" 'RT-2,RT-3,'
+report "a revert and a number in passing name no task" \
+    "$(run "console.log([m.taskOf('Revert \"[RT-2] x (#9)\"'), m.taskOf('fix: поправлен [RT-2] отступ')].join(','))")" ','
 
 suite_result
