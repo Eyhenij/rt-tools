@@ -38,6 +38,10 @@
 
 ## Decisions along the way
 
+- **Проверка шага 1.3 заменена:** `sh -c 'pnpm exec nx test @rt-tools/ui-kit-v2 --maxWorkers=2 "--testPathPatterns=bottom-sheet|calendar|date|select" >/dev/null 2>&1 && echo green || echo red'` → `green`
+  Проверка плана записана без кавычек: оболочка читает `|` как конвейер, и `select` в конце даёт
+  ошибку разбора, exit 2, хотя тесты зелёные.
+
 - **Длинное содержимое ставит шторку во всю высоту** — владелец выбрал «Во всю высоту» на вопрос
   о словах «если полей много то на всю высоту»; предел панели по умолчанию — вся высота шторки без
   полосы 12 px, макет кадра 15 одобрен. Affected stage of the plan: 1.
