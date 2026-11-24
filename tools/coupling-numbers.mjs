@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · checks/coupling-numbers.mjs · db826bc5e85e · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/coupling-numbers.mjs · 6c615abcd3c3 · правится надстройкой, не здесь
 /**
  * The numbers of the import graph: cycles, imports past an entry, links between blocks, and by module —
  * incoming and outgoing links, names shown and taken by nobody.
@@ -106,13 +106,17 @@ export function cyclesOf(graph) {
     return cycles;
 }
 
-/** The shortest way round a cycle from its first member: the members by name say nothing about the links. */
-export function cycleWay(graph, members) {
-    const queue = [[members[0]]];
+/**
+ * The shortest way round a cycle over the link `through`, or from its first member: the members by name say
+ * nothing about the links.
+ */
+export function cycleWay(graph, members, through = null) {
+    const [first] = through ?? members;
+    const queue = [through ?? [first]];
     const seen = new Set();
     for (let way = queue.shift(); way; way = queue.shift()) {
         for (const to of graph.get(way.at(-1)).links) {
-            if (to === members[0]) {
+            if (to === first) {
                 return way;
             }
             if (members.includes(to) && !seen.has(to)) {
@@ -144,7 +148,7 @@ function reachOf(graph) {
     };
 }
 
-const foldersUp = (path) => {
+export const foldersUp = (path) => {
     const found = [];
     for (let folder = posix.dirname(path); folder !== '.' && folder !== '/'; folder = posix.dirname(folder)) {
         found.push(folder);
@@ -226,7 +230,7 @@ export function outsideOf(graph, folder, settings = {}) {
             [...module.links].filter((to) => !to.startsWith(folder)).forEach((to) => found.add(to));
         }
     }
-    return found.size;
+    return found;
 }
 
 /** Incoming by module: who imports it, harness apart. */

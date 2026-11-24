@@ -63,8 +63,9 @@ row. A decision that outlives the task goes to the spec of the domain, where the
 The check reads the row Coupling: the path in backticks, then the outgoing links with an arrow. A new
 folder is named by one number, the path with a slash at the end: what it imports from outside. In a
 folder that stood before every module is named by itself. Growth named nowhere refuses the push; an
-overrun is the same line with its reason after the numbers — among the decisions of the progress or, once
-the folder of the task is taken apart, in the text of a commit.
+overrun is the same line with the word «overrun» or «превышение» and its reason after the numbers —
+among the decisions of the progress or, once the folder of the task is taken apart, in the text of a
+commit.
 
 | Row | Example |
 | --- | --- |

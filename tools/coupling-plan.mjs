@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · checks/coupling-plan.mjs · a49163427387 · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/coupling-plan.mjs · 7977ea2afaab · правится надстройкой, не здесь
 /**
  * The outgoing links a text names: a path in backticks and, before the next backtick or the line end, the
  * word «исходящие» or «outgoing» with two numbers and an arrow between — now and after.
@@ -11,8 +11,11 @@ const SEGMENT = /`([^`\s]+)`([^`\n]*)/g;
 const NUMBERS = /(?:исходящ|outgoing)(?:(?!входящ|incoming)[^\d,;])*(\d+)[*\s]*(?:→|->|⇒|=>)[*\s]*(\d+)/iu;
 const MODULE = /^(?:\.\/)?(.+?\.(?:[mc]?[jt]sx?|sh))(?:[:#].*)?$/;
 const TORN = /\n(?!\s*(?:[-*+]\s|[|#>]|\d+\.\s)|\n)[^\S\n]*/g;
-/** The words of the refusal itself and of the other numbers give no reason. */
-const NO_REASON = /nobody named a number for it|the branch named \d+|(?:входящ|incoming|обход|past an? entry|цикл|cycles)[^,;.|]*/giu;
+/** A line pasted from the output of the command is neither a mark nor a reason. */
+const PASTED =
+    /nobody named a number for it|the branch named \d+|the number after the plan has no word of an overrun or no reason beside it|overrun, named after the plan:/gu;
+const MARK = /\p{L}*превышен\p{L}*|\boverrun\w*/giu;
+const OTHER_NUMBERS = /[^,;.|:]*\d[*\s]*(?:→|->|⇒|=>)[*\s]*\d+/gu;
 
 function whole(written, paths) {
     const path = MODULE.exec(written)?.[1] ?? written;
@@ -30,17 +33,22 @@ export const decisionsOf = (text) =>
         .filter((part) => /^## .*(?:decision|решени)/iu.test(part))
         .join('\n');
 
-/** `reasoned` — a line counts only when words of a reason stand after its numbers: an overrun explains itself. */
-export function namedOf(text, paths = new Map(), { reasoned = false } = {}) {
-    const bare = text.replace(TORN, ' ');
+/** An overrun: the line calls itself one, and two words of a reason stand after the numbers. */
+function isOverrun(bare, start, next) {
+    const line = bare.slice(bare.lastIndexOf('\n', start) + 1).split('\n', 1)[0];
+    const reason = bare.slice(start, next).split('\n', 1)[0].replace(OTHER_NUMBERS, '').replace(MARK, '');
+    return line.search(MARK) >= 0 && (reason.match(/\p{L}{2,}/gu) ?? []).length >= 2;
+}
+
+/** The numbers of a text by path; `overrun` — only those of the lines that are an overrun with its reason. */
+export function namedOf(text, paths = new Map(), { overrun = false } = {}) {
+    const bare = text.replace(TORN, ' ').replace(PASTED, '');
     const found = [...bare.matchAll(SEGMENT)]
         .map(({ index, 0: segment, 1: written, 2: rest }) => ({ index, written, numbers: NUMBERS.exec(rest), start: index + segment.length - rest.length }))
         .filter(({ numbers }) => numbers);
     const named = new Map();
     found.forEach(({ written, numbers, start }, at) => {
-        const [line] = bare.slice(start + numbers.index + numbers[0].length, found[at + 1]?.index).split('\n', 1);
-        const reason = line.replace(NO_REASON, '').match(/\p{L}{2,}/gu) ?? [];
-        if (!reasoned || reason.length >= 2) {
+        if (!overrun || isOverrun(bare, start + numbers.index + numbers[0].length, found[at + 1]?.index)) {
             const path = whole(written, paths);
             named.set(path, Math.max(named.get(path) ?? 0, Number(numbers[2])));
         }

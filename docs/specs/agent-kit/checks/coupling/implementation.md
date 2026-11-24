@@ -8,10 +8,10 @@ spec.
 - **A copy laid out from a package is not a module.** — `projects/agent-kit/assets/checks/coupling-read.mjs:LAID_OUT`
 - **A cycle is judged among modules and among blocks.** — `projects/agent-kit/assets/checks/coupling-judge.mjs:structureOf` — the links of blocks are built by `projects/agent-kit/assets/checks/coupling-numbers.mjs:blocksOf`; scenarios SC-AK-1934 and SC-AK-1938
 - **An import past an entry is lawful where there is no other way.** — `projects/agent-kit/assets/checks/coupling-numbers.mjs:bypassesOf` — scenario SC-AK-1935
-- **What stood in the base is not judged.** — `projects/agent-kit/assets/checks/coupling-judge.mjs:structureOf` — scenarios SC-AK-1938 and SC-AK-1939
+- **What stood in the base is not judged.** — `projects/agent-kit/assets/checks/coupling-judge.mjs:structureOf` — the place a file keeps is asked of `placesOf` of the same file; scenarios SC-AK-1938 and SC-AK-1939
 - **The settings of the base are in force together with those of the branch.** — `projects/agent-kit/assets/checks/check-coupling.mjs:baseSettings` — the roots are joined and the skipped folders crossed there too; scenarios SC-AK-1938 and SC-AK-1939
 - **Growth is judged against the first plan of the branch.** — `projects/agent-kit/assets/checks/coupling-judge.mjs:growthOf` — the numbers are read by `projects/agent-kit/assets/checks/coupling-plan.mjs:namedOf`; scenario SC-AK-1940
-- **An overrun carries its reason and is printed.** — `projects/agent-kit/assets/checks/check-coupling.mjs:later` — scenario SC-AK-1940
+- **An overrun carries its reason and is printed.** — `projects/agent-kit/assets/checks/check-coupling.mjs:later` — the mark and the reason are read by `isOverrun` of `projects/agent-kit/assets/checks/coupling-plan.mjs`; scenario SC-AK-1940
 - **Growth is judged by the own edits of the branch.** — `projects/agent-kit/assets/checks/coupling-read.mjs:ownPaths` — scenario SC-AK-1940
 - **The list of the accepted does not lift what the branch added.** — `projects/agent-kit/assets/checks/check-coupling.mjs:OWNER_WORDS` — scenario SC-AK-1941
 - **Incoming links and names taken by nobody are printed, not judged.** — `projects/agent-kit/assets/checks/coupling-numbers.mjs:numbersOf` — scenario SC-AK-1936

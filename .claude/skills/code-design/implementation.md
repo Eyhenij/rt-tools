@@ -6,7 +6,7 @@ The names of this tree next to the rule `SKILL.md` beside it.
 
 - **the layer that brings the rule** — `.claude/hooks/skill-gate-layers.sh`, called by `.claude/hooks/skill-gate.sh`; the demonstration components of the showcase and the linter settings are lifted by `skill_layer_skip` in `.claude/rt-kit/gate-map.sh`
 - **the check of coupling** — `tools/check-coupling.mjs`: `--module=<path>` gives the numbers for the plan, `--base=origin/<base>` gives «was → became» of the branch; the roots, the declared blocks and the harness are in `coupling` of `.claude/rt-kit/checks.json`
-- **the old cycles and imports past an entry** — `tools/coupling-allowlist.json`, each with its reason and task
+- **the old cycles and imports past an entry** — `tools/coupling-allowlist.json`, each with its reason and task; a new one is lifted only by a reason that begins with the owner's words
 - **the borders of libraries** — `@nx/enforce-module-boundaries` in `eslint.config.mjs` with `eslint/boundaries/domains/`
 - **the second copy** — `tools/check-dupes.mjs`; **the unused export** — `knip.json`
 - **the size of a module** — `max-lines` in `eslint.config.mjs` and `tools/check-file-size.mjs`

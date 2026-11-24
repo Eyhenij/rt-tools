@@ -147,7 +147,12 @@ report "SC-AK-1936 — функция скрипта, которую никто 
 report "SC-AK-1936 — модуля нет — отказ" "$(code --module=libs/none.ts)" 1
 report "SC-AK-1936 — названы те, кого модуль импортирует и кто импортирует его" "$(run --module=libs/b.ts | grep -c 'imported by libs/a.ts'):$(run --module=libs/a.ts | grep -c '  imports libs/b.ts')" "1:1"
 put libs/fold/x.ts "import '../b';\nimport './y';\n" && put libs/fold/y.ts 'export const y = 1;\n'
-report "SC-AK-1936 — у папки печатаются связи наружу" "$(run --module=libs/fold/)" "libs/fold/: outgoing 1"
+report "SC-AK-1936 — у папки печатаются связи наружу и их цели" "$(run --module=libs/fold/ | tr '\n' ';')" "libs/fold/: outgoing 1;  imports libs/b.ts;"
+report "SC-AK-1936 — папка без косой черты — та же папка" "$(run --module=libs/fold | head -1)" "libs/fold/: outgoing 1"
+report "SC-AK-1936 — папки без модулей нет — отказ" "$(code --module=libs/nothing/)" 1
+put libs/copy.mjs '// rt-kit v1.0 · checks/copy.mjs · abc\nexport const c = 1;\n'
+report "SC-AK-1936 — разложенная копия названа копией" "$(lines_of 'it is a copy laid out from checks/copy.mjs' --module=libs/copy.mjs):$(code --module=libs/copy.mjs)" "1:1"
+report "SC-AK-1936 — модуль вместе с базой — отказ" "$(code --module=libs/b.ts --base=main)" 1
 put libs/cls.ts 'export default class Foo {}\n' && put libs/f.ts "import Foo from './cls';\n"
 report "SC-AK-1936 — умолчание взято соседом" "$(module libs/cls.ts | grep -c 'taken by nobody 0')" 1
 report "SC-AK-1936 — неизвестный ключ и пустая база — отказ" "$(code --bsae=main):$(code --base=):$(code main)" "1:1:1"
@@ -196,7 +201,7 @@ put libs/c.ts "import './d';\n"
 report "SC-AK-1938 — новый цикл отказан" "$(code --base=main)" 1
 report "SC-AK-1938 — назван только новый" "$(lines_of 'a new cycle' --base=main)" 1
 put libs/c.ts "import './a';\n" && put libs/b.ts "import './a';\nimport './c';\n"
-report "SC-AK-1938 — старый цикл, в который вошёл новый модуль, отказан" "$(code --base=main)" 1
+report "SC-AK-1938 — старый цикл, в который вошёл новый модуль, отказан и назван им" "$(run --base=main | grep 'a new cycle:' | grep -c 'libs/c.ts'):$(code --base=main)" "1:1"
 put libs/b.ts "import './a';\n" && put libs/c.ts 'export const c = 1;\n' && put libs/d1/f.ts "import '../d2/e';\n"
 report "SC-AK-1938 — новый цикл блоков отказан" "$(lines_of 'a new cycle of blocks: libs/d1 → libs/d2 → libs/d1' --base=main)" 1
 config '"coupling":{"blocks":[]}'
@@ -221,6 +226,13 @@ save "входы" && g checkout -q -B main && g checkout -q -b RT-2-x && g mv li
 report "SC-AK-1938 — переименование папки-блока не делает старый цикл новым" "$(code --base=main)" 0
 g reset -q --hard && g rm -q libs/e2/index.ts && put libs/e2/new.ts "import '../e1';\n"
 report "SC-AK-1938 — снятый вход не снимает блока" "$(lines_of 'a new link of blocks' --base=main):$(code --base=main)" "0:0"
+g reset -q --hard && g clean -fdq && put libs/e5/index.ts "import '../e1';\n" && put libs/e1/z.ts "import '../e5';\n"
+report "SC-AK-1938 — блок, вошедший в старый цикл блоков, назван" "$(run --base=main | grep 'a new cycle of blocks:' | grep -c 'libs/e1 → libs/e5\|libs/e5 → libs/e1')" 1
+g reset -q --hard && g clean -fdq && g checkout -q -B main && long() { printf '// строка %s\n' 1 2 3 4 5 6 7 8; }
+put libs/g1/index.ts "export const g = 1;\n" && put libs/g1/far.ts "$(long)\nimport '../g3';\n" && put libs/g2/index.ts 'export const g = 1;\n' && put libs/g3/index.ts "import '../g2';\n"
+save "блоки в одну сторону" && g checkout -q -b RT-5-x && g mv libs/g1/far.ts libs/g2/far.ts
+report "SC-AK-1938 — перенос файла, замкнувший блоки, — новый цикл блоков" "$(run --base=main | grep -c 'a new cycle of blocks: libs/g2 → libs/g3 → libs/g2')" 1
+report "SC-AK-1938 — связь, созданная переносом, печатается" "$(lines_of 'a new link of blocks: libs/g2 → libs/g3' --base=main)" 1
 g checkout -q -f main && g clean -fdq && put libs/y1.ts "import './y2';\n" && put libs/y2.ts 'export const y = 1;\n' && save y && put libs/y2.ts "import './y1';\n" && save "цикл в базе"
 g checkout -q -f -b RT-3-x main~1 && put libs/n.ts 'export const n = 1;\n' && save work
 report "SC-AK-1938 — судится точка отхода, а не вершина базы" "$(lines_of 'cycles 0 → 0' --base=main)" 1
@@ -263,7 +275,16 @@ put libs/box/second.ts 'export const s = 1;\n' && put libs/n.ts "import { s } fr
 aliases '"@x/second":["libs/box/second.ts"]'
 report "SC-AK-1939 — новый файл со своим псевдонимом — новый вход" "$(code --base=main)" 0
 rm "$T/tsconfig.base.json" "$T/libs/box/second.ts" && put libs/n.ts 'export const n = 1;\n'
-long() { printf '// строка %s\n' 1 2 3 4 5 6 7 8; }
+g reset -q --hard && g clean -fdq
+g checkout -q -B main && put libs/box/near.ts "$(long)\nimport { i } from './i';\n" && put libs/out/in.ts "$(long)\nexport const inner = 1;\n" && put libs/by.ts "import './out/in';\n" && save near && g checkout -q -b RT-5-x
+g mv libs/box/near.ts libs/near.ts && put libs/near.ts "$(long)\nimport { i } from './box/i';\n"
+report "SC-AK-1939 — файл, вынесенный из закрытой папки, обходит её вход" "$(lines_of 'libs/near.ts imports libs/box/i.ts past' --base=main)" 1
+g reset -q --hard && g mv libs/out/in.ts libs/box/in.ts && put libs/by.ts "import './box/in';\n"
+report "SC-AK-1939 — цель, перенесённая в закрытую папку, делает импорт обходом" "$(lines_of 'libs/by.ts imports libs/box/in.ts past' --base=main)" 1
+g reset -q --hard && g mv libs/box/index.ts libs/index.ts && put libs/n.ts "import { i } from './box/i';\n"
+report "SC-AK-1939 — вход, перенесённый веткой, прежней папки не открывает" "$(lines_of 'libs/n.ts imports libs/box/i.ts past the entry of libs/box' --base=main)" 1
+g reset -q --hard && g mv libs/box libs/crate && put libs/old.ts "import { i } from './crate/i';\n"
+report "SC-AK-1939 — папка, переименованная целиком, старого обхода новым не делает" "$(code --base=main)" 0
 g reset -q --hard && g clean -fdq
 g checkout -q -B main && put libs/long.ts "$(long)\nimport { i } from './box/i';\n" && save long && g checkout -q -b RT-4-x
 mkdir -p "$T/libs/far" && g mv libs/long.ts libs/far/moved.ts && put libs/far/moved.ts "$(long)\nimport { i } from '../box/i';\n"
@@ -278,7 +299,7 @@ report "SC-AK-1939 — тест, ставший модулем, старого �
 # --- SC-AK-1940 — рост исходящих сверх плана -----------------------------------------------------------
 fresh_tree grow
 for n in 1 2 3 4 5 6; do put "libs/t$n.ts" "export const t$n = 1;\n"; done
-put libs/a.ts "import './t1';\n" && put libs/index.ts "import './t1';\n" && put libs/a.spec.ts "import './t1';\n" && put libs/side.ts "import './t1';\n"
+put libs/a.ts "import './t1';\n" && put libs/index.ts "import './t1';\n" && put libs/a.spec.ts "import './t1';\n" && put libs/side.ts "import './t1';\n" && put libs/long.ts "$(long)\nimport './t1';\n"
 save base
 g checkout -q -b RT-1-x
 links() { local n out=""; for n in $(seq 1 "$1"); do out="${out}import './t$n';\n"; done; printf '%s' "$out"; }
@@ -311,29 +332,40 @@ put libs/new.ts "$(links 1)"
 report "SC-AK-1940 — неназванный новый модуль отказан" "$(lines_of '`libs/new.ts` outgoing 0 → 1; nobody named' --base=main)" 1
 progress '- `libs/new.ts` исходящие 0 → 1.'
 report "SC-AK-1940 — строка хода работы без причины не снимает отказ" "$(code --base=main)" 1
-progress '- `libs/new.ts` исходящие 0 → 1: помощник.'
+progress '- Превышение: `libs/new.ts` исходящие 0 → 1: помощник.'
 report "SC-AK-1940 — одного слова мало для причины" "$(code --base=main)" 1
 progress '- `libs/new.ts` outgoing 0 → 1; nobody named a number for it'
 report "SC-AK-1940 — текст самого отказа причиной не служит" "$(code --base=main)" 1
-progress '- `libs/new.ts` исходящие 0 → 1, `libs/b.ts` исходящие 0 → 1: общий помощник.'
+progress '- `libs/new.ts` исходящие 0 → 1: общий помощник двух страниц.'
+report "SC-AK-1940 — число после плана без слова о превышении не снимает отказ и названо" "$(lines_of 'the number after the plan has no word of an overrun' --base=main):$(code --base=main)" "1:1"
+progress "- $(run --base=main | grep -F 'libs/new.ts` outgoing 0 → 1; nobody' | sed 's/^ *//')"
+report "SC-AK-1940 — новый текст отказа причиной не служит" "$(code --base=main)" 1
+progress '- Превышение: `libs/new.ts` исходящие 0 → 1, входящие 0 → 2.'
+report "SC-AK-1940 — другие числа причиной не служат" "$(code --base=main)" 1
+progress '- Превышение: `libs/new.ts` исходящие 0 → 1, `libs/b.ts` исходящие 0 → 1: общий помощник.'
 report "SC-AK-1940 — причина соседнего модуля чужой не служит" "$(code --base=main)" 1
-progress '- `libs/new.ts` исходящие 0 → 1: общий помощник.' 'Live check'
+progress '- Превышение: `libs/new.ts` исходящие 0 → 1: общий помощник.' 'Live check'
 report "SC-AK-1940 — число вне раздела решений не снимает отказ" "$(code --base=main)" 1
 rm -rf "$T/docs" && g add -A && g commit -q -m "правка" -m 'Превышение: `libs/new.ts` исходящие 0 → 1: помощник по замечанию.'
 report "SC-AK-1940 — превышение, названное текстом коммита после разбора папки" "$(lines_of 'overrun, named after the plan: `libs/new.ts`' --base=main):$(code --base=main)" "1:0"
+g reset -q --soft HEAD~1 && g commit -q -m "правка" -m 'Превышение: `libs/new.ts` исходящие 0 → 1' -m 'Co-Authored-By: Some Body <some@body.example>'
+report "SC-AK-1940 — имя соавтора причиной не служит" "$(code --base=main)" 1
 g reset -q --soft HEAD~1 && g reset -q
-progress '- `libs/new.ts` исходящие 0 → 1: общий помощник.'
+progress '- `libs/new.ts` исходящие 0 → 1 — превышение:\n  общий помощник.'
 report "SC-AK-1940 — названное в ходе работы с причиной проходит и печатается" "$(lines_of 'overrun, named after the plan: `libs/new.ts` outgoing 0 → 1' --base=main):$(code --base=main)" "1:0"
 rm -rf "$T/docs"
-plan '`libs/new.ts` исходящие 0 → 1: дописано после кода'
+plan '`libs/new.ts` исходящие 0 → 1, overrun: дописано после кода'
 report "SC-AK-1940 — число, дописанное в план позже, печатается превышением" "$(lines_of 'overrun, named after the plan: `libs/new.ts`' --base=main)" 1
 rm -rf "$T/docs" "$T/libs/new.ts"
 put libs/fold/x.ts "import '../t1';\nimport './y';\n" && put libs/fold/y.ts "import '../t2';\n"
-progress '`libs/fold/` исходящие 0 → 2: новая папка помощника'
+progress '`libs/fold/` исходящие 0 → 2, превышение: новая папка помощника'
 report "SC-AK-1940 — новая папка названа числом связей наружу" "$(code --base=main)" 0
+g mv libs/long.ts libs/fold/long.ts && put libs/fold/long.ts "$(long)\nimport '../t1';\nimport '../t2';\n"
+report "SC-AK-1940 — за модуль, перенесённый в новую папку, она не отвечает" "$(lines_of '`libs/fold/long.ts` outgoing 1 → 2; nobody named' --base=main)" 1
+g reset -q -- libs && g checkout -q -- libs/long.ts && rm "$T/libs/fold/long.ts"
 put libs/fold/y.ts "import '../t2';\nimport '../t3';\n"
 report "SC-AK-1940 — папка выросла сверх названного" "$(lines_of '`libs/fold/` outgoing 0 → 3; the branch named 2' --base=main)" 1
-progress '`libs/` исходящие 0 → 9: корень дерева целиком'
+progress '`libs/` исходящие 0 → 9, превышение: корень дерева целиком'
 report "SC-AK-1940 — корень дерева папкой не принимается" "$(code --base=main)" 1
 rm -rf "$T/docs" "$T/libs/fold"
 g checkout -q main && put libs/old/m.ts "import '../t1';\n" && save "прежняя папка" && g checkout -q -b RT-3-z
@@ -367,11 +399,14 @@ report "SC-AK-1940 — рост влитой задачи в ветке эпик
 g checkout -q -b RT-8-n main && plan '`libs/t5.ts` исходящие 0 → 1' RT-8-n && put libs/t5.ts "import './t1';\n" && save work
 g checkout -q RT-9-epic && g merge -q --no-ff --no-edit RT-8-n && put libs/t5.ts "import './t1';\n// опечатка\n" && save "правка в эпике"
 report "SC-AK-1940 — число плана влитой задачи отвечает за правку в ветке эпика" "$(code --base=main)" 0
+g checkout -q -b RT-10-m main && plan 'без чисел' RT-10-m && put libs/t6.ts "import './t1';\n" && g add -A && g commit -q -m work -m 'Превышение: `libs/t6.ts` исходящие 0 → 1: помощник по замечанию.'
+g checkout -q RT-9-epic && g merge -q --no-ff --no-edit RT-10-m && put libs/t6.ts "import './t1';\n// опечатка\n" && save "правка в эпике"
+report "SC-AK-1940 — превышение из коммита влитой задачи отвечает за правку в ветке эпика" "$(code --base=main)" 0
 g checkout -q RT-2-y
 report "SC-AK-1940 — тот же рост в ветке задачи отказан" "$(code --base=main)" 1
 plan '| `libs/t3.ts` | исходящие 0 → 1 |' RT-5-second && save "план чужой папки после своего"
 report "SC-AK-1940 — план чужой папки, записанный после своего, без причины не снимает" "$(code --base=main)" 1
-plan '| `libs/t3.ts` | исходящие 0 → 1, общий помощник |' RT-5-second && save "с причиной"
+plan '| `libs/t3.ts` | исходящие 0 → 1, превышение, общий помощник |' RT-5-second && save "с причиной"
 report "SC-AK-1940 — с причиной он печатается превышением" "$(lines_of 'overrun, named after the plan: `libs/t3.ts`' --base=main):$(code --base=main)" "1:0"
 g checkout -q -b RT-6-low main && plan '| `libs/t4.ts` | исходящие 0 → 1 |' RT-6-low && put libs/t4.ts "import './t1';\n" && save low
 g checkout -q -b RT-7-top && plan 'без чисел' RT-7-top && save top
@@ -401,6 +436,11 @@ report "SC-AK-1941 — принятый цикл проходит без баз�
 report "SC-AK-1941 — своя запись не снимает отказ с базой" "$(code --base=main)" 1
 debt '"libs/a.ts | libs/b.ts":{"reason":"слово владельца 24.11: «пусть будет»","task":"RT-1"}'
 report "SC-AK-1941 — запись со словом владельца снимает и печатается" "$(lines_of 'accepted by the owner: libs/a.ts | libs/b.ts' --base=main):$(code --base=main)" "1:0"
+debt '"libs/a.ts | libs/b.ts":{"reason":"слово владельца 24.11 в меню о цикле: «пусть будет»","task":"RT-1"}'
+report "SC-AK-1941 — слово владельца с пояснением перед цитатой снимает" "$(code --base=main)" 0
+debt '"libs/a.ts | libs/b.ts":{"reason":"слово владельца 24.11 ещё не получено: «пусть будет»","task":"RT-1"}'
+report "SC-AK-1941 — дата у слова, которого нет, не снимает" "$(code --base=main)" 1
+report "SC-AK-1941 — отказ называет, что снимает новое нарушение" "$(lines_of 'A line of the list lifts a new violation only when its reason begins' --base=main)" 1
 debt '"libs/a.ts | libs/b.ts":{"reason":"версия 10.20 «как было»","task":"RT-1"}'
 report "SC-AK-1941 — дата и кавычки без слов владельца не снимают" "$(code --base=main)" 1
 debt '"libs/a.ts | libs/b.ts":{"reason":"слово владельца ещё не получено, как в 10.20: «временно»","task":"RT-1"}'

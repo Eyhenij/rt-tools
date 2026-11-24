@@ -33,8 +33,8 @@ Covered: `projects/agent-kit/tests/check-coupling.test.sh`.
 Given a module with importers, imports and names nobody takes
 When its numbers are asked by the path
 Then incoming, outgoing, imports past an entry, names shown and names taken by nobody are printed, and
-who imports it and whom it imports, a folder gets its links to the outside, and an unknown argument is
-refused
+who imports it and whom it imports, a folder gets its links to the outside by name, and an unknown
+argument, an empty folder, a laid-out copy and a module with a base are refused
 
 Covered: `projects/agent-kit/tests/check-coupling.test.sh`.
 
@@ -52,7 +52,8 @@ Covered: `projects/agent-kit/tests/check-coupling.test.sh`.
 Given a base with a cycle and a branch that added another
 When the check runs with the base
 Then only the new one is named, also where the branch dropped the block or the root from the settings,
-and neither a rename of a block nor an entry added over old links makes the old one new
+and neither a rename of a block nor an entry added over old links makes the old one new; a module that
+entered an old cycle is named, and a file moved into another block may close a new one
 
 Covered: `projects/agent-kit/tests/check-coupling.test.sh`.
 
@@ -61,7 +62,8 @@ Covered: `projects/agent-kit/tests/check-coupling.test.sh`.
 Given a base with an import past an entry and a branch that added another
 When the check runs with the base
 Then only the new one is named, also where the branch removed the entry, and neither a rename, a later
-entry nor a link the entry lost makes the old one new
+entry nor a link the entry lost makes the old one new; a file or an entry moved over the border of a
+folder frees nothing
 
 Covered: `projects/agent-kit/tests/check-coupling.test.sh`.
 
@@ -69,8 +71,8 @@ Covered: `projects/agent-kit/tests/check-coupling.test.sh`.
 
 Given a branch whose module imports more than at the point it left the base
 When the check runs with the base
-Then a number in the first plan lets it pass, a later number with a reason passes as an overrun, and
-everything else is refused, the work of a merge apart
+Then a number in the first plan lets it pass, a later line that calls itself an overrun and gives a
+reason passes, and everything else is refused, the work of a merge apart
 
 Covered: `projects/agent-kit/tests/check-coupling.test.sh`.
 

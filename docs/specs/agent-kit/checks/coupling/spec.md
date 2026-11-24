@@ -28,7 +28,7 @@ branch, and what the count does not see.
 | ------------------------- | -------------------------------------------------------- |
 | the check                 | `node <the root of the checks>/check-coupling.mjs`       |
 | against the base          | `--base=<revision>`, a past revision — `--at=<revision>` |
-| the numbers of one module | `--module=<path>`                                        |
+| the numbers of one module | `--module=<path>`, of a folder — the path of the folder  |
 | the list of the accepted  | `coupling-allowlist.json` next to the other lists        |
 
 ## Rules
@@ -45,23 +45,27 @@ branch, and what the count does not see.
   and through it the import would close a cycle; tests, showings and harness call the insides.
 - **What stood in the base is not judged.** An import is old by itself, not by the bypass: an entry
   added to its folder later makes no new import. The base is read under the paths of today, and the
-  blocks of both are the same: a renamed file or folder keeps its past. One import past an entry that
-  left a file answers for one new in the same folder: a file was split.
+  blocks of both are the same: a renamed file or a folder renamed whole keeps its past. A file carried
+  over a border of folders does not: that move is an edit of the structure. One import past an entry that
+  left a file answers for one new in the same folder: a file was split. A cycle is named by the link that
+  entered it, not by its old part.
 - **The settings of the base are in force together with those of the branch.** A branch that drops a
   block or a root, removes an entry, or adds a harness folder or an alias, would otherwise loosen its own
   check.
 - **Growth is judged against the first plan of the branch.** The plan names a module, or a new folder
-  with one number for what its modules import from outside; unnamed growth is refused. The first plans of
-  the lower branches of a stack and of the tasks merged into the branch count too, and an unfilled copy of
+  with one number for what its new modules import from outside; unnamed growth is refused. A module moved
+  into a new folder is named by itself. The first plans of the lower branches of a stack and of the tasks merged into the branch count too, and an unfilled copy of
   the sample is no plan.
 - **An overrun carries its reason and is printed.** A refusal without a way out would be answered by a
-  bypass, and a number added without a word would be a plan rewritten after the code. It is named in the
-  plan later, among the decisions of the progress or in the text of an own commit: the folder of a task
-  is taken apart before the review. The words of the refusal are no reason.
+  bypass, and a number added without a word would be a plan rewritten after the code. The line calls
+  itself «overrun» or «превышение», and words of a reason stand after its numbers; a line that names the
+  number alone is refused by another text. It stands in the plan later, among the decisions of the
+  progress or in the text of a commit of the branch or of a task merged into it: the folder of a task is
+  taken apart before the review. The words of the refusal and the trailers of a commit are no reason.
 - **Growth is judged by the own edits of the branch.** A merge brings the work of others, judged in
   its own branch. A tree that keeps no plans gets its growth printed.
 - **The list of the accepted does not lift what the branch added.** Only the owner's words do: the reason
-  of the line begins with them, a date and a quote, and the line is printed.
+  of the line begins with them, a date and a quote, and the line is printed. The refusal says so.
 - **Incoming links and names taken by nobody are printed, not judged.** Incoming links grow by reuse,
   and refusing that teaches to write copies.
 - **The push set and the pipeline call the check with the base.** Two modes would answer differently:
@@ -79,6 +83,8 @@ branch, and what the count does not see.
 - Own work that came to the branch by the second parent of a merge: a pull, a local branch of a helper.
 - Growth of an entry, and an inner folder that gets an entry of its own: both are lawful, and a reader of
   the diff judges them.
+- Files of tests, showings and harness, those named `*.mock.*` and `*.fixture.*` too: their links are
+  neither counted nor judged.
 - Whether a module is tested without its neighbours.
 - Growth a merge of the base brought into a module the branch edits too: both are counted from the
   point the branch left its base at.
@@ -93,7 +99,8 @@ The surface is the launch line, the numbers it prints and the keys of the list.
 
 - `1` — a new cycle of modules or of blocks, a new import past an entry, growth past what was named.
 - `1` — a line of the list without a reason or a task, or a line whose violation is gone.
-- `1` — the named revision or the named module is not there, the argument is not known.
+- `1` — the named revision, module or folder is not there, the argument is not known, a module is named
+  together with a base.
 - `0` — the tree has no code under its roots: the check says so and skips.
 
 ## Data
@@ -122,8 +129,8 @@ Not applicable.
 
 ### Several objects
 
-A branch holds more than one task folder only by a merge, and a merge is not an own edit: one plan
-answers for one branch.
+A branch holds more than one task folder where it stands on another branch of a stack or took a merged
+task. The first plan of each folder answers; a later version of any of them is an overrun.
 
 ## Decisions
 

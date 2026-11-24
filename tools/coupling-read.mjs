@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · checks/coupling-read.mjs · f524ad498748 · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/coupling-read.mjs · 2da7b3af24d2 · правится надстройкой, не здесь
 /**
  * The texts the import graph is built from: the working tree, a revision, what a branch itself wrote.
  *
@@ -109,8 +109,12 @@ export function ownPaths(root, fork, at = null) {
     return new Set([...committed, ...loose]);
 }
 
-/** The texts of the own commits: after the folder of the task is taken apart a reason has no other place. */
-export const ownMessages = (root, fork, at = null) => git(root, ['log', '--first-parent', '--no-merges', '--format=%B', `${fork}..${at ?? 'HEAD'}`]);
+/**
+ * The texts of the commits of the branch, of the tasks merged into it too: after the folder of the task is
+ * taken apart a reason has no other place. The trailers are cut off: a name of a co-author is no reason.
+ */
+export const ownMessages = (root, fork, at = null) =>
+    git(root, ['log', '--no-merges', '--format=%B', `${fork}..${at ?? 'HEAD'}`]).replace(/^[A-Z]\w*(?:-\w+)+: .*$/gm, '');
 
 /** A copy of the sample nobody filled in: most of its lines with a gap still stand. */
 function isDraft(text, sample) {

@@ -24,8 +24,8 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { graphOf, underNewPaths } from './coupling-graph.mjs';
-import { countsOf, growthOf, keysOf, newBlockLinks, structureOf } from './coupling-judge.mjs';
-import { isHarness, numbersOf, outsideOf } from './coupling-numbers.mjs';
+import { countsOf, growthOf, keysOf, newBlockLinks, placesOf, structureOf } from './coupling-judge.mjs';
+import { entriesOf, isHarness, numbersOf, outsideOf } from './coupling-numbers.mjs';
 import { decisionsOf, namedOf } from './coupling-plan.mjs';
 import {
     RevisionMissing,
@@ -41,7 +41,7 @@ import {
 } from './coupling-read.mjs';
 import { CONFIG, CONFIG_PATH, ROOT, allowlistOf, baselineOf, configFrom, parseAllowlist, skipUnless } from './rt-kit-checks.config.mjs';
 
-const OWNER_WORDS = /^\s*(?:слово владельца|the owner['’]s words?)\s+(?:\d{2}\.\d{2}(?:\.\d{4})?|\d{4}-\d{2}-\d{2})\s*:\s*[«"“][^»"”]+[»"”]/iu;
+const OWNER_WORDS = /^\s*(?:слово владельца|the owner['’]s words?)\s+(?:\d{2}\.\d{2}(?:\.\d{4})?|\d{4}-\d{2}-\d{2})(?![^:]*\s(?:не|нет|not|no)\s)[^:«"“]{0,60}:\s*[«"“][^»"”]+[»"”]/iu;
 
 function stop(text) {
     console.error(`check-coupling: ${text}`);
@@ -106,22 +106,33 @@ const baseSettings = fork ? settingsOf(stood, aliasesAt(fork, stood)) : settings
 /** An import is resolved by both settings: an alias or a barrel name the branch dropped hides no link. */
 const graphBy = ({ files, copies }, first, second) =>
     graphOf(files, { aliases: { ...second.aliases, ...first.aliases }, entryNames: [...new Set([...first.entryNames, ...second.entryNames])], copies });
-const graph = graphBy(at ? revisionFiles(ROOT, at, scope) : treeFiles(ROOT, scope), settings, baseSettings);
+const read = at ? revisionFiles(ROOT, at, scope) : treeFiles(ROOT, scope);
+const graph = graphBy(read, settings, baseSettings);
 skipUnless(graph.size > 0, `code under the roots ${scope.roots.join(', ')}`);
 
+function printFolder(folder) {
+    console.log(`${folder}: outgoing ${outsideOf(graph, folder, settings).size}`);
+    outsideOf(graph, folder, settings).forEach((to) => console.log(`  imports ${to}`));
+}
+
 function printOne() {
-    if (one.endsWith('/')) {
-        console.log(`${one}: outgoing ${outsideOf(graph, one, settings)}`);
+    const folder = one.endsWith('/') ? one : `${one}/`;
+    if (!graph.has(one) && [...graph.keys()].some((path) => path.startsWith(folder))) {
+        printFolder(folder);
         return;
     }
+    const copy = read.copies.has(one) ? `: it is a copy laid out from ${read.copies.get(one) ?? 'a package'}, its source is judged` : '';
     const { incoming, outgoing, past, shown, untaken } =
-        numbersOf(graph, settings).get(one) ?? stop(`the module «${one}» is not among ${graph.size} read`);
+        numbersOf(graph, settings).get(one) ?? stop(`the module «${one}» is not among ${graph.size} read${copy}`);
     console.log(`${one}: incoming ${incoming}, outgoing ${outgoing}, past an entry ${past}, shown ${shown}, taken by nobody ${untaken}`);
     graph.get(one).links.forEach((to) => console.log(`  imports ${to}`));
     [...graph].filter(([, { links }]) => links.has(one)).forEach(([from]) => console.log(`  imported by ${from}`));
 }
 
 if (one) {
+    if (base) {
+        stop('«--module» prints what is now; «was → now» of every module is printed by «--base» alone');
+    }
     printOne();
     process.exit(0);
 }
@@ -150,15 +161,31 @@ if (!base) {
     process.exit(0);
 }
 
-/** The base under the paths of today. A harness file that became a module, or back, is another file. */
+const nowBy = (renames) => {
+    const names = new Map([...renames].map(([now, was]) => [was, now]));
+    return (path) => names.get(path.replace(/^\.\//, '')) ?? path;
+};
+
+/** The graph and the settings of the base, its files named by `renames`. */
+function renamedBase(raw, renames) {
+    const now = nowBy(renames);
+    const aliases = Object.fromEntries(Object.entries(baseSettings.aliases).map(([alias, targets]) => [alias, targets.map(now)]));
+    return { graph: underNewPaths(raw, renames), settings: { ...baseSettings, aliases, entries: baseSettings.entries.map(now) } };
+}
+
+/** The base. A harness file that became a module, or back, is another file. */
 function baseOf() {
     const renames = new Map([...renamesOf(ROOT, fork, at)].filter(([now, was]) => isHarness(now, settings) === isHarness(was, baseSettings)));
-    const names = new Map([...renames].map(([now, was]) => [was, now]));
-    const nowName = (path) => names.get(path.replace(/^\.\//, '')) ?? path;
-    const aliases = Object.fromEntries(Object.entries(baseSettings.aliases).map(([alias, targets]) => [alias, targets.map(nowName)]));
+    const raw = graphBy(revisionFiles(ROOT, fork, scope), baseSettings, settings);
+    const places = placesOf(raw, graph, renames);
     return {
-        settings: { ...baseSettings, aliases, entries: baseSettings.entries.map(nowName) },
-        graph: underNewPaths(graphBy(revisionFiles(ROOT, fork, scope), baseSettings, settings), renames),
+        ...renamedBase(raw, renames),
+        placed: renamedBase(raw, places.kept),
+        placeName: (path) => (places.kept.has(path) ? path : (renames.get(path) ?? path)),
+        nowName: nowBy(renames),
+        closed: [...entriesOf(raw, baseSettings).folders.keys()].map(places.today),
+        paths: [...raw.keys()],
+        keys: keysOf(raw, baseSettings),
     };
 }
 
@@ -190,12 +217,13 @@ function growthLeft() {
     const withoutRoots = (named) => new Map([...named].filter(([path]) => !scope.roots.some((root) => `${root}/`.startsWith(path))));
     const planned = withoutRoots(namedOf(plans.first.join('\n'), graph));
     const written = [...plans.later, ...decisions, ownMessages(ROOT, fork, at)].join('\n\n');
-    const later = withoutRoots(namedOf(written, graph, { reasoned: true }));
+    const later = withoutRoots(namedOf(written, graph, { overrun: true }));
+    const unmarked = withoutRoots(namedOf(written, graph));
     const named = new Map(planned);
     later.forEach((number, path) => named.set(path, Math.max(named.get(path) ?? 0, number)));
 
     const own = ownPaths(ROOT, fork, at);
-    const grown = growthOf(graph, settings, { base: before, own, named });
+    const grown = growthOf(graph, settings, { base: before, own, named, unmarked });
     growthOf(graph, settings, { base: before, own, named: planned })
         .filter(({ path }) => !grown.some((left) => left.path === path))
         .forEach(({ text }) => console.log(`  overrun, named after the plan: ${text}`));
@@ -231,7 +259,7 @@ printNumbers();
 const growth = growthLeft();
 const structure = structureLeft();
 printUnlisted();
-const old = countsOf(keysOf(before.graph, before.settings));
+const old = countsOf(before.keys);
 console.log(
     `check-coupling: modules ${before.graph.size} → ${graph.size}, links ${linksOf(before.graph)} → ${linksOf(graph)}, ` +
         `${counts.map(([name, number]) => `${name} ${old[name]} → ${number}`).join(', ')}, against ${base}`
@@ -242,7 +270,9 @@ if (problems.length > 0) {
     refuse(
         problems,
         'A cycle is broken by moving the shared part out; an import goes through the entry. Growth is planned, that of the part ' +
-            'moved out too: the line of the plan is `path` outgoing N → M. An overrun is the same line with its reason after the ' +
-            'numbers — among the decisions of the progress or, when the folder of the task is taken apart, in the text of a commit.'
+            'moved out too: the line of the plan is `path` outgoing N → M. An overrun is the same line with the word «overrun» or ' +
+            '«превышение» and the reason after the numbers — among the decisions of the progress or, when the folder of the task ' +
+            'is taken apart, in the text of a commit. A line of the list lifts a new violation only when its reason begins with ' +
+            'the words of the owner: the owner’s words <date>: «…».'
     );
 }
