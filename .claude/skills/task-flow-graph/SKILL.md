@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when the tree holds a code graph and a domain is explored or a shared symbol is about to be edited. Not for a claim about behaviour, a number or a rule text — those are read from the code and the documents.
 ---
-<!-- rt-kit v0.39.0 · patterns/task-flow-graph.needs-graph.md · 6cedfd71b67d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · patterns/task-flow-graph.needs-graph.md · 5c92d959110c · правится надстройкой, не здесь -->
 
 # Working with the tree's code graph
 
@@ -14,8 +14,8 @@ Pattern of the rule `task-flow`. What must be true meanwhile — the law
 The graph is a build artefact of the tool `graphify`: it lies next to the tree and is rebuilt from
 the code. It answers relations, not behaviour. The tool is not part of the package, and the pattern
 is laid out only to a tree that names the trait `graph`. A copy that names the trait and has no
-artefact on disk — a fresh clone, a new working tree — builds it by `graphify update .` before the
-first exploration of the turn, or the turn names that there is no graph, and none of the steps below
+artefact on disk — a fresh clone, a new working tree — builds it by `graphify update .` and removes
+the page `graphify-out/graph.html` it draws before the first exploration of the turn, or the turn names that there is no graph, and none of the steps below
 applies. Cold part: `pitfalls.md` — every section below whole, with its code and reasons.
 
 ## When to use
