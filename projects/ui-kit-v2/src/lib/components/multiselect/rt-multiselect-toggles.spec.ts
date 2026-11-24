@@ -5,6 +5,7 @@ import { createRtFixture, qa } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
 import { RtToggleSwitchComponent } from '../toggle-switch/rt-toggle-switch.component';
 import { IRtSelect } from '../select/rt-select.model';
+import { RtMultiselectExtraDirective } from './rt-multiselect-extra.directive';
 import { RtMultiselectComponent } from './rt-multiselect.component';
 import { rtMultiselectAllValues, rtMultiselectSummary } from './rt-multiselect-toggles.logic';
 
@@ -37,11 +38,13 @@ function providersFor(narrow: boolean): Provider[] {
     selector: 'rt-multiselect-toggles-host',
     template: `
         <rt-multiselect look="toggles" placeholder="Категории" [options]="opts">
-            <div rtMultiselectExtra><rt-toggle-switch label="Скрыть пустые" /></div>
+            <ng-template rtMultiselectExtra>
+                <div data-extra><rt-toggle-switch label="Скрыть пустые" /></div>
+            </ng-template>
         </rt-multiselect>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtMultiselectComponent, RtToggleSwitchComponent],
+    imports: [RtMultiselectComponent, RtMultiselectExtraDirective, RtToggleSwitchComponent],
 })
 class ExtraHostComponent {
     public readonly opts: ReadonlyArray<IRtSelect.Option<string>> = OPTIONS;
@@ -166,7 +169,7 @@ describe('Мультиселект с переключателями', (): void 
         const showAll: HTMLElement = document.querySelector('[qa-dataid="multiselect-show-all"]') as HTMLElement;
         const divider: HTMLElement = document.querySelector('[role="separator"]') as HTMLElement;
         const list: HTMLElement = document.querySelector('.rt-multiselect__list') as HTMLElement;
-        const extra: HTMLElement = document.querySelector('[rtMultiselectExtra]') as HTMLElement;
+        const extra: HTMLElement = document.querySelector('[data-extra]') as HTMLElement;
 
         expect(head).not.toBeNull();
         expect(head.contains(showAll)).toBe(true);

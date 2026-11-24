@@ -126,7 +126,7 @@ describe('RtToasterComponent', (): void => {
 
     describe('положение', (): void => {
         it('без входа стопка стоит в правом нижнем углу', (): void => {
-            expect(hostClasses(setup())).toEqual(expect.arrayContaining(['rt-toaster--y--bottom', 'rt-toaster--x--right']));
+            expect(hostClasses(setup())).toEqual(expect.arrayContaining(['rt-toaster', 'rt-toaster--y--bottom', 'rt-toaster--x--right']));
         });
 
         it.each<[IRtToaster.Position, string, string]>([

@@ -73,6 +73,14 @@ describe('RtFileDropComponent', (): void => {
             expect(textOf(qa(fixture, 'file-drop-label'))).toBe('Drop the files to attach them');
         });
 
+        it('вход файла в область показывает подсказку сразу, до первого движения над ней', (): void => {
+            const fixture: ComponentFixture<RtFileDropComponent> = setup();
+
+            fire(fixture, dragEvent('dragenter'));
+
+            expect(qa(fixture, 'file-drop-overlay')).not.toBeNull();
+        });
+
         it('своя подпись перебивает переведённую', (): void => {
             const fixture: ComponentFixture<RtFileDropComponent> = setup({ overlayLabel: 'Бросьте смету' });
 

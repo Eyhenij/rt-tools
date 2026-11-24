@@ -13,7 +13,7 @@ import { IRtToggleButtonGroup } from './rt-toggle-button-group.model';
  * ```html
  * <rt-toggle-button-group [options]="layouts" formControlName="layout">
  *     <ng-template rtToggleButtonOption let-option let-active="active">
- *         <img [src]="option.value + '.svg'" [alt]="option.label" />
+ *         <svg role="img" [attr.aria-label]="option.label"><use [attr.href]="'layouts.svg#' + option.value" /></svg>
  *     </ng-template>
  * </rt-toggle-button-group>
  * ```

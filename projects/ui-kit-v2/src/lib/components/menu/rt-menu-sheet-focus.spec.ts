@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { createRtFixture } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
+import { RtMenuContentDirective } from './rt-menu-content.directive';
 import { RtMenuItemComponent } from './rt-menu-item.component';
 import { RtMenuComponent } from './rt-menu.component';
 
@@ -17,12 +18,14 @@ class BreakpointsStub {
     selector: 'rt-menu-sheet-focus-host',
     template: `
         <rt-menu ariaLabel="Действия">
-            <rt-menu-item label="Открыть" icon="ico-eye" />
-            <rt-menu-item label="Удалить" icon="ico-trash" />
+            <ng-template rtMenuContent>
+                <rt-menu-item label="Открыть" icon="ico-eye" />
+                <rt-menu-item label="Удалить" icon="ico-trash" />
+            </ng-template>
         </rt-menu>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtMenuComponent, RtMenuItemComponent],
+    imports: [RtMenuComponent, RtMenuContentDirective, RtMenuItemComponent],
 })
 class MenuSheetFocusHostComponent {}
 

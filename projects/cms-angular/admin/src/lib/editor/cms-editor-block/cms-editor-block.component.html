@@ -11,23 +11,27 @@
             [ariaLabel]="t().editorDragBlock" />
         <span rtElem="kind" qa-dataid="cms-editor-block-kind" [attr.data-type]="current.type">{{ title() }}</span>
         <rt-menu icon="plus-circle" qa-dataid="cms-editor-block-add" [ariaLabel]="t().editorAddBelow">
-            @for (item of addItems(); track item.type) {
-                <rt-menu-item
-                    qa-dataid="cms-editor-block-add-type"
-                    [attr.data-type]="item.type"
-                    [label]="item.title"
-                    (selected)="addAfter(item.type)" />
-            }
+            <ng-template rtMenuContent>
+                @for (item of addItems(); track item.type) {
+                    <rt-menu-item
+                        qa-dataid="cms-editor-block-add-type"
+                        [attr.data-type]="item.type"
+                        [label]="item.title"
+                        (selected)="addAfter(item.type)" />
+                }
+            </ng-template>
         </rt-menu>
         @if (convertItems().length) {
             <rt-menu icon="sort-alt" qa-dataid="cms-editor-block-convert" [ariaLabel]="t().editorConvert">
-                @for (item of convertItems(); track item.type) {
-                    <rt-menu-item
-                        qa-dataid="cms-editor-block-convert-type"
-                        [attr.data-type]="item.type"
-                        [label]="item.title"
-                        (selected)="convert(item.type)" />
-                }
+                <ng-template rtMenuContent>
+                    @for (item of convertItems(); track item.type) {
+                        <rt-menu-item
+                            qa-dataid="cms-editor-block-convert-type"
+                            [attr.data-type]="item.type"
+                            [label]="item.title"
+                            (selected)="convert(item.type)" />
+                    }
+                </ng-template>
             </rt-menu>
         }
         <rt-icon-button
@@ -143,7 +147,9 @@
                         [tooltip]="t().editorBold"
                         [ariaLabel]="t().editorBold"
                         (clicked)="applyStyle(TextAction.Bold)">
-                        <b>{{ t().editorBoldMark }}</b>
+                        <ng-template rtIconButtonContent>
+                            <b>{{ t().editorBoldMark }}</b>
+                        </ng-template>
                     </rt-icon-button>
                 }
                 <rt-icon-button
@@ -152,7 +158,9 @@
                     [tooltip]="t().editorItalic"
                     [ariaLabel]="t().editorItalic"
                     (clicked)="applyStyle(TextAction.Italic)">
-                    <i>{{ t().editorItalicMark }}</i>
+                    <ng-template rtIconButtonContent>
+                        <i>{{ t().editorItalicMark }}</i>
+                    </ng-template>
                 </rt-icon-button>
                 <rt-icon-button
                     variant="ghost"
@@ -160,7 +168,9 @@
                     [tooltip]="t().editorStrike"
                     [ariaLabel]="t().editorStrike"
                     (clicked)="applyStyle(TextAction.LineThrough)">
-                    <s>{{ t().editorStrikeMark }}</s>
+                    <ng-template rtIconButtonContent>
+                        <s>{{ t().editorStrikeMark }}</s>
+                    </ng-template>
                 </rt-icon-button>
                 <rt-icon-button
                     variant="ghost"
@@ -168,7 +178,9 @@
                     [tooltip]="t().editorUnderline"
                     [ariaLabel]="t().editorUnderline"
                     (clicked)="applyStyle(TextAction.Underline)">
-                    <u>{{ t().editorUnderlineMark }}</u>
+                    <ng-template rtIconButtonContent>
+                        <u>{{ t().editorUnderlineMark }}</u>
+                    </ng-template>
                 </rt-icon-button>
             }
             @if (!isHeading()) {

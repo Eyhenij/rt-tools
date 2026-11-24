@@ -4,14 +4,16 @@
 
 ```html
 <rt-menu ariaLabel="Действия со строкой" align="end">
-    <rt-menu-item label="Открыть" icon="ico-eye" (selected)="open()" />
-    <rt-menu-item
-        label="Удалить"
-        icon="ico-trash"
-        confirmMessage="Удалить запись? Действие необратимо."
-        confirmTitle="Удаление"
-        [danger]="true"
-        (selected)="remove()" />
+    <ng-template rtMenuContent>
+        <rt-menu-item label="Открыть" icon="ico-eye" (selected)="open()" />
+        <rt-menu-item
+            label="Удалить"
+            icon="ico-trash"
+            confirmMessage="Удалить запись? Действие необратимо."
+            confirmTitle="Удаление"
+            [danger]="true"
+            (selected)="remove()" />
+    </ng-template>
 </rt-menu>
 ```
 
@@ -61,7 +63,8 @@
 **Подтверждение у пункта — диалог, а не поповер.** Панель поповера крепится к пункту, а пункт
 исчезает вместе с закрывшимся меню — держаться панели было бы не на чем. Поэтому
 `confirmMessage` открывает `rt-menu-confirm-dialog`, и `selected` приходит **только** после
-подтверждения.
+подтверждения. Меню, закрытое до ответа окна, держит пункт живым: панель у кнопки остаётся в
+странице невидимой, а нижняя шторка на телефоне прячется целиком до ответа.
 
 **Пункт-ссылка ведёт на страницу приложения.** Вход `link` принимает команды маршрута, как
 `routerLink`, и пункт рисует внутри себя ссылку с адресом. Enter и клик переходят по ней, а

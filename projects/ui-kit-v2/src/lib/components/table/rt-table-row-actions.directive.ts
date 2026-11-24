@@ -13,8 +13,8 @@ export interface IRtTableRowActionsContext<TRow> {
  * каждой строки внутри `rt-menu`, прокидывая строку через `$implicit`.
  *
  * Тип `let-row` выводится из `[rtTableRowActionsRowType]` (передаётся тот же
- * массив, что в `dataSource`) — type-carrier, как `*ngFor` выводит тип из
- * `ngForOf`. В рантайме значение не используется.
+ * массив, что в `dataSource`) — type-carrier: значение несёт только тип
+ * строки. В рантайме оно не используется.
  *
  * @example
  * ```html

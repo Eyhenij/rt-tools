@@ -14,6 +14,7 @@ import { AdminListScreenBase } from '@rt/message-bus-admin/common/core/feature';
 import {
     AdminListAboveTableDirective,
     AdminListPageComponent,
+    AdminListPageContentDirective,
     AdminListToolbarLeftDirective,
     AdminPeriodFilterComponent,
     AdminTreeFilterComponent,
@@ -32,7 +33,14 @@ import {
     USAGE_TABLE_ID,
 } from '@rt/message-bus-admin/usage/util';
 import { USAGE_SORTABLE } from '@rt/message-bus-common';
-import { IRtTable, RtEmptyStateComponent, RtTableComponent, RtTableRowDirective, RtTableSortHeaderComponent } from '@rt-tools/ui-kit-v2';
+import {
+    IRtTable,
+    RtEmptyStateComponent,
+    RtTableComponent,
+    RtTableRowDirective,
+    RtTableSortHeaderComponent,
+    RtTableSortHeaderContentDirective,
+} from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'admin-usage-list';
 
@@ -80,6 +88,7 @@ interface IUsageRowView extends IUsage.Row.State {
         // components
         AdminListAboveTableDirective,
         AdminListPageComponent,
+        AdminListPageContentDirective,
         AdminListToolbarLeftDirective,
         AdminPeriodFilterComponent,
         AdminTreeFilterComponent,
@@ -89,6 +98,7 @@ interface IUsageRowView extends IUsage.Row.State {
         RtTableComponent,
         RtTableRowDirective,
         RtTableSortHeaderComponent,
+        RtTableSortHeaderContentDirective,
     ],
     providers: [provideAdminListHost((): typeof AdminUsageListComponent => AdminUsageListComponent)],
     host: { class: BEM_BLOCK },

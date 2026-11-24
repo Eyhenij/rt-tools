@@ -2,14 +2,16 @@ import { ChangeDetectionStrategy, Component, WritableSignal, signal } from '@ang
 import { ComponentFixture } from '@angular/core/testing';
 
 import { createRtFixture, hostClasses, qa, renderedText } from '../../../testing/rt-kit-testing';
+import { RtSkeletonWrapperContentDirective } from './rt-skeleton-wrapper-content.directive';
 import { RtSkeletonWrapperComponent } from './rt-skeleton-wrapper.component';
 
 /** Содержимое приходит проекцией — нужна host-обёртка. */
 @Component({
     selector: 'rt-skeleton-wrapper-host',
-    template: '<rt-skeleton-wrapper width="240px" height="16px" [isLoading]="isLoading()">{{ value() }}</rt-skeleton-wrapper>',
+    template:
+        '<rt-skeleton-wrapper width="240px" height="16px" [isLoading]="isLoading()"><ng-template rtSkeletonWrapperContent>{{ value() }}</ng-template></rt-skeleton-wrapper>',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtSkeletonWrapperComponent],
+    imports: [RtSkeletonWrapperComponent, RtSkeletonWrapperContentDirective],
 })
 class SkeletonWrapperHostComponent {
     public readonly isLoading: WritableSignal<boolean> = signal<boolean>(true);

@@ -14,6 +14,7 @@ import { AdminListScreenBase } from '@rt/message-bus-admin/common/core/feature';
 import {
     AdminListAboveTableDirective,
     AdminListPageComponent,
+    AdminListPageContentDirective,
     AdminListToolbarLeftDirective,
     AdminPeriodFilterComponent,
     AdminTreeFilterComponent,
@@ -66,6 +67,7 @@ const BEM_BLOCK: string = 'admin-usage-quality';
         // components
         AdminListAboveTableDirective,
         AdminListPageComponent,
+        AdminListPageContentDirective,
         AdminListToolbarLeftDirective,
         AdminPeriodFilterComponent,
         AdminTreeFilterComponent,

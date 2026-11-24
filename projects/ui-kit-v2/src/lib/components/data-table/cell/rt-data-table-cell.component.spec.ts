@@ -181,6 +181,18 @@ describe('RtDataTableCellComponent', () => {
         expect(icon.style.color).toBe('red');
     });
 
+    it('SC-UKV-1710 — строка стиля колонки доходит до глифа целиком, без доверия очистителя', () => {
+        const fixture: ComponentFixture<CellHostComponent> = setup({
+            icon: { glyph: 'pets', placement: 'left' },
+            iconTransform: (): string => 'color: red; transform: rotate(90deg)',
+        });
+
+        const glyph: HTMLElement = qa(fixture, 'data-table-cell-glyph')?.nativeElement as HTMLElement;
+
+        expect(glyph.style.color).toBe('red');
+        expect(glyph.style.transform).toBe('rotate(90deg)');
+    });
+
     it('SC-UKV-1162 — колонка задаёт значку ячейки размер', () => {
         const fixture: ComponentFixture<CellHostComponent> = setup({ icon: { glyph: 'star', placement: 'left', size: 'sm' } });
 

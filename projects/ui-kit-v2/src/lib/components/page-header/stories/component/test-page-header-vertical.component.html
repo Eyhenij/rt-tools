@@ -1,48 +1,48 @@
-<div data-story-root class="app-rail-screen" [attr.data-story-trigger]="overlay ? '' : null" [style.height.px]="screenHeight">
+<div data-story-root class="app-rail-screen" [attr.data-story-trigger]="overlay() ? '' : null" [style.height.px]="screenHeight()">
     <rt-page-header
         layout="vertical"
-        [items]="sections"
-        [user]="user"
+        [items]="sections()"
+        [user]="user()"
         [userMenu]="profileMenu"
-        [railFoot]="phone() || tabs === 0"
-        [railActions]="railActions"
+        [railFoot]="phone() || tabs() === 0"
+        [railActions]="railActions()"
         (itemClick)="onAction($event)">
-        <span rtRailLogo class="app-rail-screen__logo"></span>
-        @if (phone()) {
-            <ng-container ngProjectAs="[rtRailPage]">
+        <ng-template rtRailLogo><span class="app-rail-screen__logo"></span></ng-template>
+        <ng-template rtRailPage>
+            @if (phone()) {
                 <ng-container [ngTemplateOutlet]="barTpl" />
-            </ng-container>
-        }
+            }
+        </ng-template>
     </rt-page-header>
 
     <div class="app-rail-screen__rest">
-        @if (tabs > 0) {
+        @if (tabs() > 0) {
             <rt-tabs
                 class="app-rail-screen__tabs"
                 closeOn="selected"
                 arrowLook="compact"
                 headerOnly
-                [overflow]="overflow"
-                [activeId]="pickedTab() ?? (tabs > 1 ? 'tab-2' : 'tab-1')"
+                [overflow]="overflow()"
+                [activeId]="pickedTab() ?? (tabs() > 1 ? 'tab-2' : 'tab-1')"
                 (activeIdChange)="pickedTab.set($event)">
-                @for (tab of tabList; track tab) {
+                @for (tab of tabList(); track tab) {
                     <ng-template
                         [rtTab]="'tab-' + tab"
-                        [label]="tabLabels[tab - 1] || 'Вкладка ' + tab"
-                        [pinned]="tabs > 1 && tab === 1"
-                        [closable]="tabs > 1"
+                        [label]="tabLabels()[tab - 1] || 'Вкладка ' + tab"
+                        [pinned]="tabs() > 1 && tab === 1"
+                        [closable]="tabs() > 1"
                         [contextMenu]="tabMenu">
                         <span></span>
                     </ng-template>
                 }
                 @if (!phone()) {
                     <ng-template rtTabsControl>
-                        <rt-page-actions [items]="railActions" [user]="user" [userMenu]="profileMenu" (itemClick)="onAction($event)" />
+                        <rt-page-actions [items]="railActions()" [user]="user()" [userMenu]="profileMenu" (itemClick)="onAction($event)" />
                     </ng-template>
                 }
             </rt-tabs>
         }
-        @if (bar && !phone()) {
+        @if (bar() && !phone()) {
             <ng-container [ngTemplateOutlet]="barTpl" />
         }
         <main class="app-rail-screen__page">
@@ -50,7 +50,7 @@
         </main>
     </div>
 
-    @if (assistantOpen) {
+    @if (assistantOpen()) {
         <aside class="app-rail-screen__assistant" data-qa="assistant">
             <rt-ai-chat
                 title="Ассистент"
@@ -86,12 +86,12 @@
 </ng-template>
 
 <ng-template #barTpl>
-    @if (bar) {
-        <rt-page-bar [pageTitle]="pageTitle" [actions]="barActions" [filtersActive]="filtersActive">
+    @if (bar()) {
+        <rt-page-bar [pageTitle]="pageTitle()" [actions]="barActions" [filtersActive]="filtersActive()">
             <ng-template rtPageBarSearch>
-                <rt-input iconLeft="search" [placeholder]="searchPlaceholder" [size]="phone() ? 'md' : 'sm'" />
+                <rt-input iconLeft="search" [placeholder]="searchPlaceholder()" [size]="phone() ? 'md' : 'sm'" />
             </ng-template>
-            @for (name of shownFilters; track name; let first = $first) {
+            @for (name of shownFilters(); track name; let first = $first) {
                 <ng-template rtPageBarFilter>
                     <rt-select
                         [placeholder]="name"

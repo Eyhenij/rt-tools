@@ -6,7 +6,7 @@
 **Procedures:** none
 
 A subdomain of the second kit about the right end of `rt-page-header`: the header buttons the
-application puts into the `[rtHeaderBell]` slot and the profile button. Written by task RT-3345
+application gives by the template `<ng-template rtHeaderBell>` and the profile button. Written by task RT-3345
 together with the fill fix of the chat.
 
 ## Why

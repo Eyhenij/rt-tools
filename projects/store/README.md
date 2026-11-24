@@ -24,7 +24,7 @@ npm install @rt-tools/store
 Synchronous state management with Angular Signals.
 
 ```typescript
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 import { BaseStoreService, IStoreConfig } from '@rt-tools/store';
 
 interface CounterState {
@@ -33,7 +33,7 @@ interface CounterState {
 
 type CounterAction = 'INCREMENT' | 'DECREMENT';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class CounterStore extends BaseStoreService<CounterState, CounterAction> {
     constructor() {
         super({ count: 0 }, { name: 'CounterStore', devTools: true });
@@ -54,7 +54,7 @@ export class CounterStore extends BaseStoreService<CounterState, CounterAction> 
 Extended store for async operations with loading states.
 
 ```typescript
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 import { BaseAsyncStoreService, BASE_INITIAL_STATE, IStateBase } from '@rt-tools/store';
 
 interface UsersState extends IStateBase.Async {
@@ -66,7 +66,7 @@ const INITIAL_STATE: UsersState = {
     users: [],
 };
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class UsersStore extends BaseAsyncStoreService<UsersState, string> {
     constructor() {
         super(INITIAL_STATE, { name: 'UsersStore', devTools: true });
@@ -99,8 +99,12 @@ interface TransportFailure {
     reason: string;
 }
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class UsersStore extends BaseAsyncStoreService<UsersState, string, TransportFailure> {
+    constructor() {
+        super(INITIAL_STATE, { name: 'UsersStore', devTools: true });
+    }
+
     // handleError(error?: TransportFailure, callbackFn?: () => void): void
     // setLoadingFailure(error: TransportFailure, config?: ISetPropertiesConfig): Observable<never>
 }

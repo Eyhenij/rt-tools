@@ -46,7 +46,7 @@ export class RtKcRootComponent {
     protected readonly realmName: string = this.#context.realm.displayName || this.#context.realm.name;
     protected readonly logo: IKcRealmLogo | null = realmLogoOf(this.#context.realm.displayNameHtml ?? '', this.realmName);
 
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
     readonly #languages: readonly IKcLanguage[] = this.#i18n.enabledLanguages;
 
     protected readonly languagesLabel: string = this.#i18n.msgStr('languages');
@@ -63,11 +63,11 @@ export class RtKcRootComponent {
     protected readonly locale: FormControl<string> = new FormControl<string>(this.#i18n.currentLanguage.languageTag, { nonNullable: true });
 
     constructor() {
-        this.#document.documentElement.lang = this.#i18n.currentLanguage.languageTag;
-        this.#document.title = this.realmName;
+        this.#doc.documentElement.lang = this.#i18n.currentLanguage.languageTag;
+        this.#doc.title = this.realmName;
         // The reCAPTCHA script renders only the widgets it finds on load, so the page is drawn first.
         afterNextRender((): void => {
-            loadPageScripts(this.#document, this.#context.scripts ?? []);
+            loadPageScripts(this.#doc, this.#context.scripts ?? []);
         });
     }
 
@@ -75,7 +75,7 @@ export class RtKcRootComponent {
     protected switchLocale(languageTag: string | null): void {
         const language: IKcLanguage | undefined = this.#languages.find((item: IKcLanguage): boolean => item.languageTag === languageTag);
         if (language && languageTag !== this.#i18n.currentLanguage.languageTag) {
-            this.#document.location.assign(language.href);
+            this.#doc.location.assign(language.href);
         }
     }
 }

@@ -1,9 +1,13 @@
 import { ApplicationRef, ChangeDetectionStrategy, Component, Provider, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { Observable, Subject } from 'rxjs';
+
 import { createRtFixture } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
+import { RtDialogService } from '../dialog/rt-dialog.service';
 import { RT_POPOVER_SHEET } from '../popover/rt-popover-sheet.token';
+import { RtMenuContentDirective } from './rt-menu-content.directive';
 import { RtMenuItemComponent } from './rt-menu-item.component';
 import { RtMenuComponent } from './rt-menu.component';
 
@@ -14,30 +18,50 @@ class BreakpointsStub {
     public readonly narrow: WritableSignal<boolean> = signal<boolean>(true);
 }
 
+/** Окно подтверждения, ответ которого тест даёт сам. */
+class DialogStub {
+    public readonly answer: Subject<boolean> = new Subject<boolean>();
+    public opened: number = 0;
+
+    public open(): { afterClosed: () => Observable<boolean> } {
+        this.opened++;
+        return { afterClosed: (): Observable<boolean> => this.answer };
+    }
+}
+
 @Component({
     selector: 'rt-menu-sheet-host',
     template: `
         <rt-menu ariaLabel="Действия" [sheet]="sheet()" (openedChange)="opened.push($event)">
-            <rt-menu-item label="Открыть" icon="ico-eye" (selected)="picked = picked + 1" />
-            <rt-menu-item label="Удалить" icon="ico-trash" />
+            <ng-template rtMenuContent>
+                <rt-menu-item label="Открыть" icon="ico-eye" (selected)="picked = picked + 1" />
+                <rt-menu-item label="Удалить" icon="ico-trash" confirmMessage="Удалить запись?" (selected)="removed = removed + 1" />
+            </ng-template>
         </rt-menu>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtMenuComponent, RtMenuItemComponent],
+    imports: [RtMenuComponent, RtMenuContentDirective, RtMenuItemComponent],
 })
 class MenuSheetHostComponent {
     public readonly sheet: WritableSignal<boolean> = signal<boolean>(true);
     public readonly opened: boolean[] = [];
     public picked: number = 0;
+    public removed: number = 0;
 }
 
 let lastStub: BreakpointsStub;
+let dialog: DialogStub;
 
 function setup(narrow: boolean, sheet: boolean = true, extra: Provider[] = []): ComponentFixture<MenuSheetHostComponent> {
     const stub: BreakpointsStub = new BreakpointsStub();
     stub.viewportNarrow.set(narrow);
     lastStub = stub;
-    const providers: Provider[] = [{ provide: BreakpointsService, useValue: stub }, ...extra];
+    dialog = new DialogStub();
+    const providers: Provider[] = [
+        { provide: BreakpointsService, useValue: stub },
+        { provide: RtDialogService, useValue: dialog },
+        ...extra,
+    ];
     const fixture: ComponentFixture<MenuSheetHostComponent> = createRtFixture(MenuSheetHostComponent, {}, { providers });
     fixture.componentInstance.sheet.set(sheet);
     fixture.detectChanges();
@@ -161,5 +185,95 @@ describe('RtMenuComponent — нижняя шторка', (): void => {
 
         expect(document.querySelector('.rt-popover-sheet')).toBeNull();
         expect(document.querySelectorAll('[qa-dataid="menu-panel"]').length).toBe(1);
+    });
+
+    it('SC-UKV-1747: пункт с подтверждением в шторке — «Подтвердить» даёт выбор один раз и закрывает шторку', (): void => {
+        const fixture: ComponentFixture<MenuSheetHostComponent> = setup(true);
+        openMenu(fixture);
+
+        (document.querySelectorAll('.rt-popover-sheet rt-menu-item[role="menuitem"]')[1] as HTMLElement).click();
+        settle(fixture);
+        const whileAsked: [number, boolean, number] = [
+            dialog.opened,
+            sheetPanel() !== null,
+            document.querySelectorAll('[qa-dataid="menu-panel"]').length,
+        ];
+        // Шторка уезжает с пунктами: ни шторка, ни её панель не прячутся на пути к закрытию.
+        const watch: MutationObserver = new MutationObserver((): void => undefined);
+        watch.observe(document.body, { attributes: true, attributeFilter: ['class'], subtree: true });
+        dialog.answer.next(true);
+        dialog.answer.complete();
+        settle(fixture);
+        const hidden: boolean = watch
+            .takeRecords()
+            .some((record: MutationRecord): boolean =>
+                ['rt-menu__sheet--held', 'rt-menu__panel--held'].some((name: string): boolean =>
+                    (record.target as Element).classList.contains(name)
+                )
+            );
+        watch.disconnect();
+
+        expect(whileAsked).toEqual([1, true, 1]);
+        expect(hidden).toBe(false);
+        expect(fixture.componentInstance.removed).toBe(1);
+        expect(document.querySelector('.rt-popover-sheet')).toBeNull();
+        expect(document.querySelector('[qa-dataid="menu-panel"]')).toBeNull();
+    });
+
+    it('SC-UKV-1747: «Отмена» в окне пункта шторки выбора не даёт и оставляет шторку с пунктами', (): void => {
+        const fixture: ComponentFixture<MenuSheetHostComponent> = setup(true);
+        openMenu(fixture);
+
+        (document.querySelectorAll('.rt-popover-sheet rt-menu-item[role="menuitem"]')[1] as HTMLElement).click();
+        settle(fixture);
+        dialog.answer.next(false);
+        dialog.answer.complete();
+        settle(fixture);
+
+        expect(fixture.componentInstance.removed).toBe(0);
+        expect(document.querySelectorAll('.rt-popover-sheet rt-menu-item').length).toBe(2);
+        expect(document.querySelectorAll('[qa-dataid="menu-panel"]').length).toBe(1);
+    });
+
+    it('SC-UKV-1747: клавиши у пункта шторки при открытом окне меню не берёт — Escape уходит окну над шторкой', (): void => {
+        const fixture: ComponentFixture<MenuSheetHostComponent> = setup(true);
+        openMenu(fixture);
+
+        const item: HTMLElement = document.querySelectorAll<HTMLElement>('.rt-popover-sheet rt-menu-item[role="menuitem"]')[1];
+        item.click();
+        settle(fixture);
+        item.focus();
+        let escapeReachedPage: boolean = false;
+        const onPage: (event: KeyboardEvent) => void = (event: KeyboardEvent): void => {
+            escapeReachedPage = escapeReachedPage || event.key === 'Escape';
+        };
+        document.addEventListener('keydown', onPage);
+        item.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', keyCode: 40, bubbles: true }));
+        const focusAfterArrow: Element | null = document.activeElement;
+        item.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        document.removeEventListener('keydown', onPage);
+
+        expect(focusAfterArrow).toBe(item);
+        expect(escapeReachedPage).toBe(true);
+    });
+
+    it('SC-UKV-1747: меню, закрытое при открытом окне пункта шторки, доводит подтверждённый выбор и не ставит панель у кнопки', (): void => {
+        const fixture: ComponentFixture<MenuSheetHostComponent> = setup(true);
+        openMenu(fixture);
+
+        (document.querySelectorAll('.rt-popover-sheet rt-menu-item[role="menuitem"]')[1] as HTMLElement).click();
+        settle(fixture);
+        (document.querySelector('.rt-popover-sheet [qa-dataid="bottom-sheet-backdrop"]') as HTMLElement).click();
+        settle(fixture);
+        const panelsWhileAsked: number = document.querySelectorAll('[qa-dataid="menu-panel"]:not(.rt-popover-sheet *)').length;
+        const sheetHidden: boolean = !!document.querySelector('.cdk-overlay-pane.rt-menu__sheet--held .rt-popover-sheet');
+        dialog.answer.next(true);
+        dialog.answer.complete();
+        settle(fixture);
+
+        expect([panelsWhileAsked, sheetHidden]).toEqual([0, true]);
+        expect(fixture.componentInstance.removed).toBe(1);
+        expect(document.querySelector('.rt-popover-sheet')).toBeNull();
+        expect(document.activeElement).toBe((fixture.nativeElement as HTMLElement).querySelector('[qa-dataid="menu-trigger"] button'));
     });
 });

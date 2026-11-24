@@ -40,7 +40,8 @@ marks and buttons cannot stand in it.
 - **Everything the owner puts into the panel outside a body mark is the header.** The panel knows
   nothing of what the header shows and adds no text of its own.
 - **The body is given either by a template created on expanding or by a marked node created at
-  once.** A collapsed panel draws no body.
+  once.** The marked node stays in the page from the start, hidden and inert while collapsed; the
+  template is not created while collapsed.
 - **A press on the header expands a collapsed panel and collapses an expanded one, and the owner
   hears it.** The expanded state is a two-way binding. The panel writes it itself, and the owner may
   keep it in its own signal and change it from outside.
@@ -52,7 +53,7 @@ marks and buttons cannot stand in it.
 - **The body opens and closes with motion of its height.** A browser without keyword height
   interpolation shows and removes the body at once. A reader asking for reduced motion gets none.
 - **The header names its state and the body it controls to the assistive means.** It carries
-  `aria-expanded`, and `aria-controls` while expanded. The body is a region labelled by the header.
+  `aria-expanded` and `aria-controls`. The body is a region labelled by the header.
 - **The id of the header is taken from the owner when given, otherwise it is unique on the page.**
   An owner that presses a header by its own number gives that number.
 - **The header and the body carry `qa-dataid`.** A check finds them without leaning on a class of the

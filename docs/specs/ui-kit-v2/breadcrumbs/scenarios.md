@@ -23,10 +23,10 @@ Covered: `projects/ui-kit-v2/src/lib/components/breadcrumbs/rt-breadcrumbs.compo
 
 ### SC-UKV-821 — in the heading look the current crumb is the page heading
 
-Given the heading look and content projected into the breadcrumbs
+Given the heading look and a content template `rtBreadcrumbsContent`
 When the breadcrumbs are drawn
 Then the ancestors stand on the first row, and the current crumb is a heading on the next row with
-the projected content after it
+the content of the template after it
 
 Covered: `projects/ui-kit-v2/src/lib/components/breadcrumbs/rt-breadcrumbs.component.spec.ts`.
 

@@ -5,6 +5,7 @@ import { IPageModel } from '@rt-tools/utils';
 
 import { createRtFixture, qa, textOf } from '../../../testing/rt-kit-testing';
 import { RtDynamicListEmptyDirective, RtDynamicListErrorDirective } from './rt-dynamic-list-states.directive';
+import { RtDynamicListContentDirective } from './rt-dynamic-list-content.directive';
 import { RtDynamicListComponent } from './rt-dynamic-list.component';
 
 /** Три страницы: без ошибки полоса страниц видна. */
@@ -21,11 +22,13 @@ const THREE_PAGES: IPageModel = { pageNumber: 1, pageSize: 20, totalCount: 55 };
             [fetching]="fetching()"
             [error]="error()"
             (retry)="retryCount = retryCount + 1">
-            <span qa-dataid="host-table">таблица потребителя</span>
+            <ng-template rtDynamicListContent>
+                <span qa-dataid="host-table">таблица потребителя</span>
+            </ng-template>
         </rt-dynamic-list>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtDynamicListComponent],
+    imports: [RtDynamicListComponent, RtDynamicListContentDirective],
 })
 class ErrorHostComponent {
     public readonly page: IPageModel = THREE_PAGES;
@@ -49,7 +52,7 @@ class ErrorHostComponent {
         </rt-dynamic-list>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtDynamicListComponent, RtDynamicListEmptyDirective, RtDynamicListErrorDirective],
+    imports: [RtDynamicListComponent, RtDynamicListContentDirective, RtDynamicListEmptyDirective, RtDynamicListErrorDirective],
 })
 class OwnViewsHostComponent {
     public readonly error: WritableSignal<string | null> = signal<string | null>(null);
@@ -72,7 +75,8 @@ describe('RtDynamicListComponent — ошибка загрузки и свои �
         );
 
         expect(textOf(qa(fixture, 'dynamic-list-error'))).toContain('Нет сети');
-        expect(qa(fixture, 'host-table')).toBeNull();
+        // Записи на ошибке скрыты, а не разрушены: таблица держит свои настройки колонок.
+        expect((qa(fixture, 'dynamic-list-content')?.nativeElement as HTMLElement).classList).toContain('rt-dynamic-list__content--hidden');
         expect(qa(fixture, 'dynamic-list-pagination')).toBeNull();
         expect(qa(fixture, 'dynamic-list-toolbar')).not.toBeNull();
 

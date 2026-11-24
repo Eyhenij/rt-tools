@@ -12,8 +12,9 @@
     <ng-container *rtDynamicListSelectors>
         <rt-select [options]="stages()" />
     </ng-container>
-
-    <rt-table [rows]="rows()" />
+    <ng-template rtDynamicListContent>
+        <rt-table [rows]="rows()" />
+    </ng-template>
 </rt-dynamic-list>
 ```
 

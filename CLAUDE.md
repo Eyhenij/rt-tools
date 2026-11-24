@@ -33,13 +33,25 @@ pnpm run lint
 # Format code
 pnpm run prettier
 
-# Lint, types, tests, build and verify over every project, then the styles linter and knip. It is
-# not the push gate: the tree checks, the hook scenarios and the showcase snapshots run only before
-# a push, and that set is printed by `rt_push_checks` in `.claude/rt-kit/project.sh`
+# Lint, types, tests, build and verify over every project, then the styles linter, check:ngdoctor
+# and knip. It is not the push gate: the tree checks, the hook scenarios and the showcase
+# snapshots run only before a push, and that set is printed by `rt_push_checks` in
+# `.claude/rt-kit/project.sh`
 pnpm run check:all
 
+# The Angular Doctor result of the tree — the score and the count of findings of every rule —
+# against `tools/ngdoctor-threshold.json`; red on any other result, on a degraded run, on a field of
+# `angular-doctor.config.json` or of `package.json#angularDoctor` other than `reportPath`, and when
+# a source of findings — the tool, oxlint, the template linter — does not fire its rules on a
+# two-component probe run before the tree, or when the tool lost a file of the tree silently: a
+# pass after the scan reads every file, parses every template, runs oxlint on the same files and
+# reads the package.json files and the stylesheets the tool reads apart from its list. A step of
+# `check:all`, of the pipeline and of the push set. `--verbose` lists the files of a rule that
+# grew; a fix writes the threshold by `node tools/check-ngdoctor.mjs --write`
+pnpm run check:ngdoctor
+
 # Files, dependencies and exports nobody uses, by knip over every project; settings in `knip.json`.
-# The last step of `check:all`; it is not in the push set, and any finding turns it red
+# The last step of `check:all`, a step of the pipeline and of the push set; any finding turns it red
 pnpm run check:unused
 
 # Raise the applications on one's own machine. The database is needed only by the receiver;

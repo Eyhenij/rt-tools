@@ -11,7 +11,12 @@ import {
 } from '@angular/cdk/table';
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { AdminListScreenBase } from '@rt/message-bus-admin/common/core/feature';
-import { AdminListPageComponent, AdminListToolbarRightDirective, AdminMomentPipe } from '@rt/message-bus-admin/common/core/ui';
+import {
+    AdminListPageComponent,
+    AdminListPageContentDirective,
+    AdminListToolbarRightDirective,
+    AdminMomentPipe,
+} from '@rt/message-bus-admin/common/core/ui';
 import { adminColumns, AdminTextService, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
 import { InvitesStore } from '@rt/message-bus-admin/invites/data-access';
 import {
@@ -30,6 +35,7 @@ import {
     RtTableComponent,
     RtTableRowActionsDirective,
     RtTableSortHeaderComponent,
+    RtTableSortHeaderContentDirective,
 } from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'admin-invites-list';
@@ -80,12 +86,14 @@ interface IInviteRowView extends IInvite.Short.State {
 
         // components
         AdminListPageComponent,
+        AdminListPageContentDirective,
         AdminListToolbarRightDirective,
         RtButtonDirective,
         RtMenuItemComponent,
         RtTableComponent,
         RtTableRowActionsDirective,
         RtTableSortHeaderComponent,
+        RtTableSortHeaderContentDirective,
 
         // pipes
         AdminMomentPipe,

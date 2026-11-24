@@ -1,10 +1,13 @@
-import { Directive, effect, input, InputSignal, InputSignalWithTransform } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Directive, effect, inject, input, InputSignal, InputSignalWithTransform } from '@angular/core';
 import { TNullable, transformArrayInput } from '@rt-tools/utils';
 
 @Directive({
     selector: '[rtScrollToElement]',
 })
 export class RtScrollToElementDirective {
+    readonly #doc: Document = inject(DOCUMENT);
+
     public rtScrollToElement: InputSignal<string | number> = input.required<string | number>();
     public elements: InputSignalWithTransform<unknown[], unknown[]> = input.required<unknown[], unknown[]>({
         transform: (value: unknown[]) => transformArrayInput(value),
@@ -20,7 +23,7 @@ export class RtScrollToElementDirective {
 
     #scrollToTarget(): void {
         const targetId: string | number = this.rtScrollToElement();
-        const targetElement: TNullable<HTMLElement> = document.getElementById(targetId.toString());
+        const targetElement: TNullable<HTMLElement> = this.#doc.getElementById(targetId.toString());
         targetElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 }

@@ -11,6 +11,7 @@
  */
 import { computed, inject, signal, Signal, WritableSignal } from '@angular/core';
 import { IRefusal } from '@rt/message-bus-common';
+import { isNil } from '@rt-tools/utils';
 
 import { TAdminLabelKey } from './admin-labels';
 import { AdminTextService } from './admin-text.service';
@@ -43,7 +44,7 @@ export function adminFaultText(fallback: TAdminLabelKey | (() => TAdminLabelKey)
     const text: Signal<string> = computed((): string => {
         const one: ITakenFault | null = taken();
 
-        return one?.refusal == null ? dictionary.text(keyOf()) : dictionary.text(one.refusal.code, one.refusal.params);
+        return isNil(one?.refusal) ? dictionary.text(keyOf()) : dictionary.text(one.refusal.code, one.refusal.params);
     });
 
     return {

@@ -12,7 +12,7 @@ import { Pipe, PipeTransform } from '@angular/core';
  * Template usage
  *
  * ```html
- *   <div *ngIf="100 | equal:1:10:100">Visible</div>
+ *   @if (100 | equal:1:10:100) { <div>Visible</div> }
  * ```
  */
 @Pipe({

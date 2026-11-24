@@ -5,6 +5,7 @@ import { AdminProposalViewComponent } from '@rt/message-bus-admin/proposals/ui';
 import { IProposal } from '@rt/message-bus-admin/proposals/util';
 import {
     RtAsideComponent,
+    RtAsideContentDirective,
     RtAsideFooterComponent,
     RtAsideHeaderComponent,
     RtButtonDirective,
@@ -36,6 +37,7 @@ const BEM_BLOCK: string = 'admin-proposal-details-aside';
         // components
         AdminProposalViewComponent,
         RtAsideComponent,
+        RtAsideContentDirective,
         RtAsideFooterComponent,
         RtAsideHeaderComponent,
         RtButtonDirective,

@@ -24,9 +24,11 @@
                     <li rtElem="item" qa-dataid="breadcrumbs-fold">
                         <span rtElem="fold">
                             <rt-menu size="sm" align="start" [ariaLabel]="foldLabel()">
-                                @for (crumb of fold().hidden; track $index) {
-                                    <rt-menu-item qa-dataid="breadcrumbs-fold-item" [label]="crumb.label" [link]="crumb.link ?? null" />
-                                }
+                                <ng-template rtMenuContent>
+                                    @for (crumb of fold().hidden; track $index) {
+                                        <rt-menu-item qa-dataid="breadcrumbs-fold-item" [label]="crumb.label" [link]="crumb.link ?? null" />
+                                    }
+                                </ng-template>
                             </rt-menu>
                         </span>
                         <span rtElem="separator" aria-hidden="true">{{ separator() }}</span>
@@ -61,7 +63,7 @@
             <h1 rtElem="title" qa-dataid="breadcrumbs-current" aria-current="page" rtTooltipWhenTruncated [rtTooltip]="page.label">
                 {{ page.label }}
             </h1>
-            <ng-content />
+            <ng-container [rtSlotOutlet]="contents()" />
         </div>
     }
 </ng-container>

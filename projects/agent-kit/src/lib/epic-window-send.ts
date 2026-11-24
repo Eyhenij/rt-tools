@@ -16,7 +16,7 @@ import { sharedMarksDir } from './outcomes.js';
 import { IShipped, TShip } from './ship.js';
 
 /** Метка отправленных окон в общем каталоге меток машины: её читает любая копия. */
-export const EPIC_WINDOWS_MARK: string = 'epic-windows.json';
+const EPIC_WINDOWS_MARK: string = 'epic-windows.json';
 
 /** Ответ сценария больше любого дня записи. */
 const MAX_BUFFER: number = 256 * 1024 * 1024;
@@ -25,7 +25,7 @@ const MAX_BUFFER: number = 256 * 1024 * 1024;
 const MERGES_TIMEOUT_MS: number = 60_000;
 
 /** Окно эпика, как его даёт подсчёт результата. */
-export interface ISendingWindow {
+interface ISendingWindow {
     readonly from: string;
     readonly to: string | null;
     readonly calls: number;
@@ -36,7 +36,7 @@ export interface ISendingWindow {
 }
 
 /** Статус эпика к концу последнего дня, как его пишет `checks/merge-read.mjs`. */
-export enum EEpicStatus {
+enum EEpicStatus {
     Released = 'released',
     NotReleased = 'not-released',
     Merged = 'merged',
@@ -44,7 +44,7 @@ export enum EEpicStatus {
 }
 
 /** Эпик периода со своими окнами. */
-export interface ISendingEpic {
+interface ISendingEpic {
     readonly epic: string;
     readonly status: EEpicStatus;
     readonly mergedAt: string | null;
@@ -54,17 +54,17 @@ export interface ISendingEpic {
 }
 
 /** Что ушло по окну: отпечаток по ключу окна. */
-export type TWindowMark = Readonly<Record<string, string>>;
+type TWindowMark = Readonly<Record<string, string>>;
 
 /** Окно, готовое к отправке, и его отпечаток для метки. */
-export interface IWindowToSend {
+interface IWindowToSend {
     readonly key: string;
     readonly print: string;
     readonly cargo: IEpicWindowCargo;
 }
 
 /** Общее у всех окон одной отправки. */
-export interface IWindowHead {
+interface IWindowHead {
     readonly tree: string;
     readonly origin: string;
     readonly stamp: number;
@@ -123,7 +123,7 @@ function finished(print: string | undefined): boolean {
 }
 
 /** Окна к отправке: свои окна, чей отпечаток не совпадает с ушедшим. */
-export function windowsToSend(epics: readonly ISendingEpic[], sent: TWindowMark, head: IWindowHead): readonly IWindowToSend[] {
+function windowsToSend(epics: readonly ISendingEpic[], sent: TWindowMark, head: IWindowHead): readonly IWindowToSend[] {
     return epics.flatMap((epic: ISendingEpic): IWindowToSend[] =>
         epic.windows
             .filter((window: ISendingWindow): boolean => window.own)
@@ -137,7 +137,7 @@ export function windowsToSend(epics: readonly ISendingEpic[], sent: TWindowMark,
 }
 
 /** Каталоги наблюдений всех копий машины: эта копия первой. */
-export function copiesOf(root: string): readonly string[] {
+function copiesOf(root: string): readonly string[] {
     const own: string = join(root, OBSERVATIONS_DIR);
 
     try {
@@ -159,7 +159,7 @@ export function copiesOf(root: string): readonly string[] {
 }
 
 /** Эпики срока хранения по наблюдениям всех копий. Сбой подсчёта: окон нет, строки дня это не трогает. */
-export function sendingEpicsOf(root: string, assetsDir: string, today: string): readonly ISendingEpic[] {
+function sendingEpicsOf(root: string, assetsDir: string, today: string): readonly ISendingEpic[] {
     const [own, ...others]: readonly string[] = copiesOf(root);
 
     try {
@@ -190,7 +190,7 @@ function markFile(root: string): string {
 }
 
 /** Метка окон. Битая читается как пустая: окна уйдут заново, приём заменит их по ключу. */
-export function readWindowMark(root: string): TWindowMark {
+function readWindowMark(root: string): TWindowMark {
     try {
         return JSON.parse(readFileSync(markFile(root), 'utf8')) as TWindowMark;
     } catch {

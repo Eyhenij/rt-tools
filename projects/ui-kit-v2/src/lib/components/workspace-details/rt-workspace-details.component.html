@@ -198,7 +198,7 @@
                         [label]="moneyRow.label"
                         [total]="moneyRow.total ?? false"
                         [loading]="loading()">
-                        {{ moneyRow.amount | number: moneyRow.format ?? '1.0-0' }} ₽
+                        <ng-template rtMoneyRowContent>{{ moneyRow.amount | number: moneyRow.format ?? '1.0-0' }} ₽</ng-template>
                     </rt-money-row>
                 }
             </rt-money-list>

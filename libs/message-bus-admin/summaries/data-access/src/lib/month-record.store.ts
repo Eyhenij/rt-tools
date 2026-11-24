@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, Signal } from '@angular/core';
+import { computed, inject, Signal, Service } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { detailsInitialState, IDetailsState, IReadFault } from '@rt/message-bus-admin/common/core/util';
 import { SummariesApiService } from '@rt/message-bus-admin/summaries/api';
@@ -23,7 +23,7 @@ const INITIAL_STATE: TMonthRecordState = detailsInitialState<IMonthRecord.State>
  * `switchMap`: человек открывает соседнюю строку, не дождавшись первой, и увидеть он должен ту,
  * которую назвал последней.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class MonthRecordStore extends BaseAsyncStoreService<TMonthRecordState, TMonthRecordMessage> {
     readonly #api: SummariesApiService = inject(SummariesApiService);
     readonly #readSource: Subject<string> = new Subject<string>();

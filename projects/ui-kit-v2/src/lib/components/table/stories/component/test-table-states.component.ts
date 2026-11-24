@@ -16,6 +16,7 @@ import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { RtTableEmptyStateDirective, RtTableErrorDirective } from '../../rt-table-states.directive';
 import { RtTableComponent } from '../../rt-table.component';
 import { IRtTable } from '../../rt-table.model';
+import { RtTableSortHeaderContentDirective } from '../../sort-header/rt-table-sort-header-content.directive';
 import { RtTableSortHeaderComponent } from '../../sort-header/rt-table-sort-header.component';
 
 /** Строка витрины: то, что показывают ячейки. */
@@ -70,6 +71,7 @@ const COLUMNS_CONFIG: readonly IRtTable.ColumnConfig[] = [
         // components
         RtTableComponent,
         RtTableSortHeaderComponent,
+        RtTableSortHeaderContentDirective,
 
         // directives
         RtTableEmptyStateDirective,

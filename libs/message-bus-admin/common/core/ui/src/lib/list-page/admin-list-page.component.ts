@@ -44,6 +44,9 @@ const BEM_BLOCK: string = 'admin-page';
  *     <ng-template adminListToolbarLeft>
  *         <admin-tree-filter [choices]="choices()" [tree]="query().tree" (treeChange)="changeTree($event)" />
  *     </ng-template>
+ *     <ng-template adminListPageContent>
+ *         <rt-table …>…</rt-table>
+ *     </ng-template>
  * </admin-list-page>
  * ```
  */
@@ -74,6 +77,15 @@ export class AdminListToolbarRightDirective {}
     selector: '[adminListAboveTable]',
 })
 export class AdminListAboveTableDirective {}
+
+/**
+ * Таблица раздела: `<ng-template adminListPageContent>`. Создаётся, только пока список прочитан без
+ * отказа: при отказе на её месте стоит сообщение, и таблица раздела не строится вовсе.
+ */
+@Directive({
+    selector: 'ng-template[adminListPageContent]',
+})
+export class AdminListPageContentDirective {}
 
 /**
  * Общий вид страницы списка: заголовок с подсказкой, тулбар со слотами, место под таблицу и
@@ -148,6 +160,9 @@ export class AdminListPageComponent {
         read: TemplateRef,
     });
     protected readonly aboveTpl: Signal<TemplateRef<unknown> | undefined> = contentChild(AdminListAboveTableDirective, {
+        read: TemplateRef,
+    });
+    protected readonly contentTpl: Signal<TemplateRef<unknown> | undefined> = contentChild(AdminListPageContentDirective, {
         read: TemplateRef,
     });
 

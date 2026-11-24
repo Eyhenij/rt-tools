@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { map, Observable } from 'rxjs';
 
@@ -11,7 +11,7 @@ import { ContentTypesApiFacade } from './content-types-api.facade';
 const CONTENT_TYPE: string = 'the content type';
 
 /** The content types in the CMS notions. The contract type does not go past this class. */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class ContentTypesApiService {
     readonly #facade: ContentTypesApiFacade = inject(ContentTypesApiFacade);
 

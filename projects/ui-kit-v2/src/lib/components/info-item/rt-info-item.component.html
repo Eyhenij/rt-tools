@@ -3,6 +3,6 @@
     @if (loading()) {
         <rt-skeleton-wrapper rtElem="value-skeleton" qa-dataid="info-item-skeleton" width="80px" [isLoading]="true" />
     } @else {
-        <span rtElem="value" qa-dataid="info-item-value"><ng-content /></span>
+        <span rtElem="value" qa-dataid="info-item-value"><ng-container [rtSlotOutlet]="contents()" /></span>
     }
 </ng-container>

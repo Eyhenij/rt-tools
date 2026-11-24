@@ -12,11 +12,11 @@
         <!-- Отбор и поиск слева, действия над списком справа: вперемешку они читаются как один
              набор кнопок, и непонятно, что меняет показанное -->
         <ng-template rtToolbarLeft>
-            <ng-content select="[appListToolbarLeft]" />
+            <ng-container [rtSlotOutlet]="leftSlots()" />
         </ng-template>
 
         <ng-template rtToolbarRight>
-            <ng-content select="[appListToolbarRight]" />
+            <ng-container [rtSlotOutlet]="rightSlots()" />
 
             <rt-icon-button
                 icon="sync"
@@ -58,7 +58,8 @@
     <!-- Таблица приходит от экрана целиком: её столбцы собираются её собственным запросом по
          контенту, и обёртка их до неё не донесёт -->
     <div rtElem="scroll">
-        <ng-content />
+        <!-- Элементы прежней формы слотов тулбара сюда не попадают: они не рисуются и только предупреждают. -->
+        <ng-content select=":not([appListToolbarLeft]):not([appListToolbarRight])" />
     </div>
 
     <rt-pagination

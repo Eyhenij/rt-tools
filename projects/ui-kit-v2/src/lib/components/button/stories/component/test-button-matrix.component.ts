@@ -62,6 +62,7 @@ interface IButtonIconCase {
                         <app-story-grid [rows]="themes" [columns]="appearances">
                             <ng-template let-theme let-appearance="col">
                                 <button
+                                    type="button"
                                     rtButton
                                     [attr.aria-label]="theme"
                                     [label]="theme"
@@ -79,6 +80,7 @@ interface IButtonIconCase {
                         <app-story-grid [rows]="themes" [columns]="appearances">
                             <ng-template let-theme let-appearance="col">
                                 <button
+                                    type="button"
                                     rtButton
                                     disabled
                                     [attr.aria-label]="theme"
@@ -97,6 +99,7 @@ interface IButtonIconCase {
                         <app-story-grid [rows]="appearances" [columns]="pressedCases" [columnLabel]="pressedLabel">
                             <ng-template let-appearance let-pressedCase="col">
                                 <button
+                                    type="button"
                                     rtButton
                                     [attr.aria-label]="appearance"
                                     [label]="appearance"
@@ -113,7 +116,13 @@ interface IButtonIconCase {
                     <ng-template>
                         <app-story-grid [rows]="sizes" [columns]="appearances">
                             <ng-template let-size let-appearance="col">
-                                <button rtButton label="Сохранить" aria-label="Сохранить" [size]="size" [appearance]="appearance"></button>
+                                <button
+                                    type="button"
+                                    rtButton
+                                    label="Сохранить"
+                                    aria-label="Сохранить"
+                                    [size]="size"
+                                    [appearance]="appearance"></button>
                             </ng-template>
                         </app-story-grid>
                     </ng-template>
@@ -126,6 +135,7 @@ interface IButtonIconCase {
                         <app-story-row [items]="iconCases" [itemLabel]="iconCaseLabel">
                             <ng-template let-iconCase>
                                 <button
+                                    type="button"
                                     rtButton
                                     [attr.aria-label]="iconCase.name"
                                     [label]="iconCase.label"
@@ -142,7 +152,7 @@ interface IButtonIconCase {
                     <ng-template>
                         <app-story-row [items]="radii" [itemLabel]="radiusLabel">
                             <ng-template let-value>
-                                <button rtButton label="Сохранить" aria-label="Сохранить" [radius]="value"></button>
+                                <button type="button" rtButton label="Сохранить" aria-label="Сохранить" [radius]="value"></button>
                             </ng-template>
                         </app-story-row>
                     </ng-template>
@@ -154,7 +164,13 @@ interface IButtonIconCase {
                     <ng-template>
                         <app-story-row [items]="appearances">
                             <ng-template let-appearance>
-                                <button rtButton loading label="Сохранение…" aria-label="Сохранение" [appearance]="appearance"></button>
+                                <button
+                                    type="button"
+                                    rtButton
+                                    loading
+                                    label="Сохранение…"
+                                    aria-label="Сохранение"
+                                    [appearance]="appearance"></button>
                             </ng-template>
                         </app-story-row>
                     </ng-template>
@@ -167,6 +183,7 @@ interface IButtonIconCase {
                         <app-story-grid [rows]="loadingLabels" [columns]="loadingStates" [columnLabel]="loadingStateLabel">
                             <ng-template let-mode let-busy="col">
                                 <button
+                                    type="button"
                                     rtButton
                                     icon="check"
                                     label="Сохранить изменения"
@@ -184,13 +201,24 @@ interface IButtonIconCase {
                     <ng-template>
                         <app-story-row caption="Взаимодействие" [items]="states" [itemLabel]="stateLabel">
                             <ng-template let-state>
-                                <button rtButton label="Сохранить" aria-label="Сохранить" [attr.data-story-state]="state.state"></button>
+                                <button
+                                    type="button"
+                                    rtButton
+                                    label="Сохранить"
+                                    aria-label="Сохранить"
+                                    [attr.data-story-state]="state.state"></button>
                             </ng-template>
                         </app-story-row>
 
                         <app-story-row caption="Отключение" [items]="appearances">
                             <ng-template let-appearance>
-                                <button rtButton disabled label="Отключена" aria-label="Отключена" [appearance]="appearance"></button>
+                                <button
+                                    type="button"
+                                    rtButton
+                                    disabled
+                                    label="Отключена"
+                                    aria-label="Отключена"
+                                    [appearance]="appearance"></button>
                             </ng-template>
                         </app-story-row>
                     </ng-template>
@@ -204,6 +232,7 @@ interface IButtonIconCase {
                             <app-story-grid [caption]="appearance" [rows]="themes" [columns]="sizes">
                                 <ng-template let-theme let-size="col">
                                     <button
+                                        type="button"
                                         rtButton
                                         icon="ico-plus"
                                         aria-label="Добавить"
@@ -223,6 +252,7 @@ interface IButtonIconCase {
                         <app-story-grid [rows]="appearances" [columns]="iconOnlyStates" [columnLabel]="iconOnlyStateLabel">
                             <ng-template let-appearance let-stateCase="col">
                                 <button
+                                    type="button"
                                     rtButton
                                     icon="ico-plus"
                                     aria-label="Добавить"
@@ -249,6 +279,7 @@ interface IButtonIconCase {
                         <app-story-row caption="Кнопка" [items]="focusOriginCases">
                             <ng-template>
                                 <button
+                                    type="button"
                                     rtButton
                                     qa-dataid="story-focus-trigger"
                                     label="Открыть окно"
@@ -256,6 +287,7 @@ interface IButtonIconCase {
                                     (click)="discard.focus()"></button>
                                 <button
                                     #discard
+                                    type="button"
                                     rtButton
                                     qa-dataid="story-focus-target"
                                     label="Отменить изменения"
@@ -266,6 +298,7 @@ interface IButtonIconCase {
                         <app-story-row caption="Кнопка-иконка" [items]="focusOriginCases">
                             <ng-template>
                                 <button
+                                    type="button"
                                     rtButton
                                     qa-dataid="story-focus-icon-trigger"
                                     label="Открыть окно"
@@ -287,6 +320,7 @@ interface IButtonIconCase {
                             <app-story-row [caption]="appearance" [items]="states" [itemLabel]="stateLabel">
                                 <ng-template let-state>
                                     <button
+                                        type="button"
                                         rtButton
                                         label="Сохранить"
                                         aria-label="Сохранить"
@@ -305,7 +339,7 @@ interface IButtonIconCase {
                         <app-story-themes>
                             <ng-template>
                                 @for (theme of themes; track theme) {
-                                    <button rtButton [attr.aria-label]="theme" [label]="theme" [theme]="theme"></button>
+                                    <button type="button" rtButton [attr.aria-label]="theme" [label]="theme" [theme]="theme"></button>
                                 }
                             </ng-template>
                         </app-story-themes>

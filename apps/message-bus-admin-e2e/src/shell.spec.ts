@@ -1,7 +1,7 @@
 import { expect, Page, Request, test } from '@playwright/test';
 
 import { SECTIONS } from '../stand/stand.mjs';
-import { expectRealmScreen, openSection, qa, SECTION, signIn } from './support/admin';
+import { expectRealmScreen, openSection, qa, SECTION, signIn, TSectionName } from './support/admin';
 import { expectScreen } from './support/shot';
 
 /**
@@ -48,6 +48,30 @@ test.describe('оболочка админки', () => {
 
         await expect.poll(async (): Promise<number> => (await glyphSizes()).length).toBeGreaterThanOrEqual(Object.keys(SECTIONS).length);
         await expect.poll(async (): Promise<number> => (await glyphSizes()).filter((size: number): boolean => size === 0).length).toBe(0);
+    });
+
+    test('SC-MB-455 — каждый раздел открывается без ошибки страницы и без упавшей загрузки скрипта', async ({ page }: { page: Page }) => {
+        // Разделы грузятся своими частями сборки, и зависимость, которой не оказалось в образе или в
+        // манифесте набора, роняет только свой раздел: остальные открываются, и оболочка выглядит
+        // живой. Поэтому обходятся все разделы, а не один.
+        const errors: string[] = [];
+        page.on('pageerror', (error: Error): void => {
+            errors.push(`pageerror: ${error.message}`);
+        });
+        page.on('requestfailed', (request: Request): void => {
+            if (request.resourceType() === 'script') {
+                errors.push(`requestfailed: ${request.url()}`);
+            }
+        });
+
+        await openSection(page, 'postmortems');
+
+        for (const name of Object.keys(SECTION) as TSectionName[]) {
+            await page.locator(`[qa-dataid="header-nav-item"][data-id="${SECTION[name].path}"] a`).click();
+            await expect(qa(page, SECTION[name].table)).toBeVisible();
+        }
+
+        expect(errors).toEqual([]);
     });
 
     test('SC-MB-143 — подсвечен тот пункт, чей раздел открыт, и после перехода, и по прямой ссылке', async ({ page }: { page: Page }) => {

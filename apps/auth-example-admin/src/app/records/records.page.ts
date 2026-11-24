@@ -13,7 +13,7 @@ import {
     RtInputComponent,
     RtMessageComponent,
 } from '@rt-tools/ui-kit-v2';
-import { IRtChat, RtChatComponent } from '@rt-tools/ui-kit-v2/rich-editor';
+import { IRtChat, RtChatComponent, RtChatComposerBarDirective, RtChatComposerToolsDirective } from '@rt-tools/ui-kit-v2/rich-editor';
 import { catchError, concatMap, EMPTY, Observable, Subject, switchMap, tap } from 'rxjs';
 
 import { RecordsApiService } from './records-api.service';
@@ -47,6 +47,8 @@ const SCHEDULED_LABEL: string = 'Goes out on 8 November at 10:00';
 
         // components
         RtChatComponent,
+        RtChatComposerBarDirective,
+        RtChatComposerToolsDirective,
         RtDetailRowComponent,
         RtEmptyStateComponent,
         RtIconButtonComponent,
