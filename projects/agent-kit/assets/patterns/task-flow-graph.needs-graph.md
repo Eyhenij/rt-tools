@@ -13,8 +13,8 @@ Pattern of the rule `task-flow`. What must be true meanwhile — the law
 The graph is a build artefact of the tool `graphify`: it lies next to the tree and is rebuilt from
 the code. It answers relations, not behaviour. The tool is not part of the package, and the pattern
 is laid out only to a tree that names the trait `graph`. A copy that names the trait and has no
-artefact on disk — a fresh clone, a new working tree — builds it by `graphify update .` before the
-first exploration of the turn, or the turn names that there is no graph, and none of the steps below
+artefact on disk — a fresh clone, a new working tree — builds it by `graphify update .` and removes
+the page `graphify-out/graph.html` it draws before the first exploration of the turn, or the turn names that there is no graph, and none of the steps below
 applies. Cold part: `pitfalls.md` — every section below whole, with its code and reasons.
 
 ## When to use

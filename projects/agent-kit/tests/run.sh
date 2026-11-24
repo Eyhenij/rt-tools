@@ -33,7 +33,11 @@ fi
 jobs="${RT_SUITES_JOBS:-8}"
 outdir="$(mktemp -d)"
 trap 'rm -rf "$outdir"' EXIT
-printf '%s\n' $suites | xargs -P "$jobs" -I{} bash -c 'bash "$1" > "$2/$1.out" 2>&1; echo $? > "$2/$1.code"' _ {} "$outdir"
+# Each suite gets a temporary directory of its own inside the run's. The scenarios share the session
+# id `tests`, and a state file one of them leaves in the shared directory — the window guard's stop
+# mark, `claude-window-stop/tests` — failed twenty scenarios of the turn-exit guard in the next run.
+# The run's directory takes them all away at the end.
+printf '%s\n' $suites | xargs -P "$jobs" -I{} bash -c 'TMPDIR="$(mktemp -d "$2/tmp.XXXXXX")" bash "$1" > "$2/$1.out" 2>&1; echo $? > "$2/$1.code"' _ {} "$outdir"
 
 failed=0
 red=""
