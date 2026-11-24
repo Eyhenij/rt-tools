@@ -491,6 +491,6 @@ function judgeOverride(call, ctx) {
 function judgeProtected(path, ctx, planPath) {
     const fault = ctx.legacy.includes(ctx.branch) ? null : ctx.approvalFault ? ctx.approvalFault() : ctx.approved() ? null : 'there is no approval mark';
     if (!fault && namedBy(path, editedPaths(ctx.read(planPath)))) return null;
-    const why = fault ? ` — ${fault}: ask the owner again and run \`node tools/task-flow-script.mjs plan-red\`` : '';
+    const why = fault ? ` — ${fault}: run \`node tools/task-flow-script.mjs plan-red\`, it finds the owner's answer in the record; ask the owner only when it finds none` : '';
     return `${path} belongs to the description of the task flow and its engine: it is edited only in a task whose approved plan names it in a footprint row marked «${EDITED_ROW}»${why}`;
 }

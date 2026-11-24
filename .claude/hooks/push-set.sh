@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.0 · hooks/push-set.sh · 6993aca64b2d · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/push-set.sh · a5043230c1dd · правится надстройкой, не здесь
 # The gate set before a push, one way for both who run it. NOT a guard: it has no `rt-hook:`
 # declaration and hooks into no agent event. The session guard of the push and the git hook
 # `pre-push` source it and call its functions.
@@ -137,7 +137,11 @@ rt_push_set_run() {
         key_before=""
         rt_push_mark_clean && key_before="$(rt_push_mark_key "$check" "$base" 2>/dev/null)"
         started="$(date +%s 2>/dev/null)"
-        out="$(eval "$check" 2>&1 </dev/null)"
+        # The step inherits nothing of the call it runs in: git gives its hook the address of the
+        # repository, the dispatcher gives the input of the agent's call, and a check that raises a
+        # repository of its own would work on the tree of the push, or judge the call of the push.
+        # shellcheck disable=SC2086
+        out="$(unset ${!RT_HOOK_@} GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_OBJECT_DIRECTORY GIT_ALTERNATE_OBJECT_DIRECTORIES GIT_COMMON_DIR GIT_PREFIX GIT_CONFIG_PARAMETERS GIT_CONFIG_COUNT; eval "$check" 2>&1 </dev/null)"
         status=$?
         over="$(rt_push_over_budget "$check" "$(($(date +%s 2>/dev/null) - started))")"
         if [ "$status" -eq 0 ] && [ -n "$over" ]; then

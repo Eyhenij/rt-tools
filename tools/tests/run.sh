@@ -40,7 +40,19 @@ fi
 jobs="${RT_SUITES_JOBS:-8}"
 outdir="$(mktemp -d)"
 trap 'rm -rf "$outdir"' EXIT
-printf '%s\n' $suites | xargs -P "$jobs" -I{} bash -c 'bash "$1" > "$2/$1.out" 2>&1; echo $? > "$2/$1.code"' _ {} "$outdir"
+# A set writes its temporary directories into one of its own, removed with the run: left in the shared
+# one, they grew past thirty thousand. The `mktemp` of macOS without a template does not read `TMPDIR`,
+# so a set finds one that does before it.
+mkdir -p "$outdir/bin"
+cat > "$outdir/bin/mktemp" <<SH
+#!/usr/bin/env bash
+case "\$*" in
+    '' | -d) exec $(command -v mktemp) "\$@" "\${TMPDIR%/}/tmp.XXXXXXXXXX" ;;
+esac
+exec $(command -v mktemp) "\$@"
+SH
+chmod +x "$outdir/bin/mktemp"
+printf '%s\n' $suites | PATH="$outdir/bin:$PATH" xargs -P "$jobs" -I{} bash -c 'mkdir -p "$2/$1.tmp"; TMPDIR="$2/$1.tmp/" bash "$1" > "$2/$1.out" 2>&1; echo $? > "$2/$1.code"; rm -rf "$2/$1.tmp"' _ {} "$outdir"
 
 failed=0
 red=""

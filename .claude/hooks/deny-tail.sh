@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.0 · hooks/deny-tail.sh · 00b5c0f42c7f · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/deny-tail.sh · 3906358e7d54 · правится надстройкой, не здесь
 # The shared deny tail. NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event.
 # The guards source it themselves — the same way they source the observation record and the word
 # about a missing profile function.
@@ -40,6 +40,71 @@ rt_gate_pending() {
     [ -f "${CLAUDE_PROJECT_DIR:-.}/${RT_RULES_DIR:-.claude/skills}/${rule}/SKILL.md" ] || return 1
     [ -f "$loaded" ] && grep -qE "^([^:]*:)?${rule}$" "$loaded" 2>/dev/null && return 1
     printf '%s' "$rule"
+}
+
+# The words about the part of a compound command a refusal judges, or nothing for a plain command.
+# The harness refuses the call whole, so the neighbours of the judged part did not run either, and a
+# refusal that does not say so reads as if the rest of the command were done. The second parameter is
+# what the guard judged: literals split by `|`. The part named is the one whose write targets carry one,
+# by the parse of `write-targets.sh` the guard sourced: a part that only reads is not. The body of a heredoc is data and is no part; a body that carries
+# a literal may be what was judged, and then no part is named. No part carries it — a script file holds
+# it, or a loop gives it through a variable — and the words name the call as a whole.
+rt_judged_part() {
+    local _jp_parts _jp_count _jp_part _jp_want _jp_said=''
+    # Bytes, not letters: the awk of macOS dies on half a letter handed to an expression.
+    _jp_parts="$(printf '%s\n' "$1" | RT_JP_WANT="$2" LC_ALL=C awk -v sq="'" '
+        function carries(s,   w) { for (w = 1; w <= wants; w++) { if (want[w] != "" && index(s, want[w])) { return 1 } } return 0 }
+        function flush() {
+            gsub(/^[ \t]+|[ \t]+$/, "", seg)
+            if (seg != "") { part[++n] = seg }
+            seg = ""
+        }
+        BEGIN { wants = split(ENVIRON["RT_JP_WANT"], want, "|") }
+        {
+            if (tag != "") {
+                line = $0; gsub(/^[ \t]+|[ \t]+$/, "", line)
+                if (line == tag) { tag = "" } else if (carries($0)) { body = 1 }
+                next
+            }
+            len = length($0); on = 0
+            for (i = 1; i <= len; i++) {
+                c = substr($0, i, 1); before = i > 1 ? substr($0, i - 1, 1) : ""
+                if (c == "\\" && (q != sq || ansi) && i < len) { seg = seg c substr($0, i + 1, 1); i++; continue }
+                # A line that ends with a backslash goes on with the next one.
+                if (c == "\\" && q != sq) { on = 1; seg = seg " "; continue }
+                if (q != "") { if (c == q) { q = "" } }
+                else if (c == "\"" || c == sq || c == "`") { q = c; ansi = c == sq && before == "$" }
+                else if (c == "#" && (before == "" || index(" \t;|&()", before))) { break }
+                else if (c == ";" || c == "|") { flush(); continue }
+                else if (c == "&" && substr($0, i + 1, 1) != ">" && before != ">") { flush(); continue }
+                seg = seg c
+            }
+            gsub(/<<</, " ")
+            if (q == "" && match($0, "<<-?[ \t]*[\"" sq "]?[A-Za-z_][A-Za-z0-9_]*")) {
+                tag = substr($0, RSTART, RLENGTH); sub("^<<-?[ \t]*[\"" sq "]?", "", tag)
+            }
+            if (q == "" && !on) { flush() } else if (!on) { seg = seg " " }
+        }
+        END {
+            flush()
+            if (n < 2) { exit }
+            print n
+            for (k = 1; k <= n && !body; k++) { if (carries(part[k])) { print part[k] } }
+        }
+    ' 2>/dev/null)"
+    _jp_count="${_jp_parts%%$'\n'*}"
+    [ -n "$_jp_count" ] || return 0
+    if command -v rt_write_targets >/dev/null 2>&1; then
+        while IFS= read -r _jp_part; do
+            [ -n "$_jp_part" ] || continue
+            _jp_want="$(printf '%s' "$_jp_part" | RT_WT_SCRIPT=1 rt_write_targets 2>/dev/null)"
+            [ -n "$_jp_want" ] && printf '%s\n' "$_jp_want" | grep -qF -e "$(printf '%s' "$2" | tr '|' '\n')" && { _jp_said="$_jp_part"; break; }
+        done <<<"$(printf '%s\n' "$_jp_parts" | tail -n +2)"
+    fi
+    # Cut at a space: a cut in bytes would split a letter.
+    [ "${#_jp_said}" -gt 240 ] && _jp_said="$(printf '%s' "$_jp_said" | LC_ALL=C cut -c1-240 | LC_ALL=C sed 's/[^ ]*$//')…"
+    [ -n "$_jp_said" ] && printf 'The part of the command judged here: `%s`. ' "$_jp_said"
+    printf 'The call is refused whole: none of the %d parts of the command ran, send the others as calls of their own.' "$_jp_count"
 }
 
 rt_deny_tail() {

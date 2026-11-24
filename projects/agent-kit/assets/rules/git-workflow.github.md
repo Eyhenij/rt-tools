@@ -28,7 +28,7 @@ Rule under the law `docs/constitution/delivery.md`, for a tree on GitHub. Cold p
 - **The form of a branch name is judged by the tree the command runs in.**
 - **The base judged is the one named by the command, not the tip of the working copy.**
 - **A branch without a task number gets no delivery conditions.**
-- **The main branch is taken by the remote ref — in words and in actions.**
+- **The main branch is taken by the remote ref — in words and in actions.** Every fetch fast-forwards the local one.
 - **A commit lands with its final content, and a later commit of the same branch does not correct it.**
 - **An edit brought to a commit is brought to the host in the same turn.**
 - **A second working copy is for reading, and the call goes from the copy the session stands in.**

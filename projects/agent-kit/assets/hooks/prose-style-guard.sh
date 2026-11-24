@@ -129,7 +129,8 @@ case "$tool" in
         [ -z "$cmd" ] && exit 0
         # The first document among the write targets. A command writing several is judged by one of
         # them: the text is one for the whole command, and a second refusal would repeat the first.
-        path="$(printf '%s' "$cmd" | rt_write_targets | grep -m1 '\.md$')"
+        # A script the command runs is left out: its text is not the text of the command judged below.
+        path="$(printf '%s' "$cmd" | RT_WT_SCRIPT=1 rt_write_targets | grep -m1 '\.md$')"
         # The new text is taken from the heredoc bodies of the command, not from the whole call.
         # A rewrite carrying the previous wording inside the call would otherwise be refused by
         # the words of that previous wording, and the refusal repeats at the second attempt. No

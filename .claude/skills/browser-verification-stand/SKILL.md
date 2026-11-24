@@ -4,7 +4,7 @@ kind: pattern
 rule: browser-verification
 description: Pattern of rule browser-verification. Load when a stand from the production build is needed — the build of the site, the admin stand, a stand behind real nginx, signing in to the admin, finding out what sits on a port. Not for layout measurements — that is pattern browser-verification-measure.
 ---
-<!-- rt-kit v0.39.0 · patterns/browser-verification-stand.md · 4e9e4de2406b · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · patterns/browser-verification-stand.md · e6f9c3135eeb · правится надстройкой, не здесь -->
 
 # A stand from the production build
 
@@ -253,6 +253,10 @@ identity server.
 | the entry example's receiver    | 3410  | the entry suite's stand, `apps/auth-example-e2e/stand/up.mjs` |
 | the entry example's admin panel | 4410  | by the same call                   |
 | the identity server, shared by both stands and the dev receiver | 58080 | `pnpm run serve:auth`; both stand scripts call it |
+
+`pnpm run serve:auth` removes the container of the identity server that started before the theme
+archive was written and raises a new one: the server reads its theme only at start, and the
+composition alone leaves the former container in place.
 
 The ports of the end-to-end stand are overridden by the variables `E2E_API_PORT` and
 `E2E_ADMIN_PORT` — they are declared in `apps/message-bus-admin-e2e/stand/stand.mjs`. The stand

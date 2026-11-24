@@ -3,14 +3,15 @@
  * `plan-red`.
  *
  * `plan-check <plan.md>` judges a plan before it is written: every step carries a check line, its
- * expected result is in a form of `expect`, and no check is a command of the work. A guard of the
- * plan write, where one is laid out, calls it and refuses the write on any problem.
+ * expected result is in a form of `expect`, no check is a command of the work, and no check hides its
+ * result — a pipe without `pipefail`, an absence counted by `grep -c`. A guard of the plan write,
+ * where one is laid out, calls it and refuses the write on any problem.
  *
  * `plan-red` writes the approval mark of the plan of the branch when all of it holds: every check of
  * the plan, run now, does not match — a check green before the work measures nothing; the record of
  * the conversation holds calls of the roles `product-strategist` and `goal-critic`; and after the last
- * of them the owner chose in a menu an option that begins with «Одобряю» and names `plan.md` or the
- * task of the branch. Another answer to the same menu gives no mark. The record counts only when it
+ * of them the owner approved the plan of the branch — a menu option or a typed message, judged by
+ * `approvalOf` of the engine, the same rule the mark check uses. Another answer gives no mark. The record counts only when it
  * is a session record of this repository. The mark carries the answer, the place of the answer — the
  * record and the uuid of its entry — the commit of the plan, its fingerprint and the red output of
  * every step.
@@ -24,26 +25,106 @@
 import { spawnSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { compareExpected, isWriteCommand } from './flow-data.mjs';
+import { callOf } from './flow-guard-run.mjs';
+import { textAfter } from './flow-guard.mjs';
 import { STEP_LIMIT_MS, StepRefused, openRecords, planOfBranch, runCheck } from './flow-step.mjs';
+import { stepsOfPlan } from './work-steps-lib.mjs';
+
+// The rule of an approving answer lies with the engine: next to it where it is laid out, one level up in the package.
+const HERE = dirname(fileURLToPath(import.meta.url));
+const OWNER = [join(HERE, 'task-flow/source/owner.mjs'), join(HERE, '../task-flow/source/owner.mjs')].find((path) => existsSync(path));
+if (!OWNER) throw new Error(`flow-plan: the engine source task-flow/source/owner.mjs is not laid out next to ${HERE}`);
+const { approvalOf, wordOf } = await import(pathToFileURL(OWNER).href);
 
 /** The roles whose verdicts precede the approval. */
 export const ROLES = ['product-strategist', 'goal-critic'];
 
-/** The word an approving menu option begins with. */
-const APPROVE = /^Одобряю(?![\p{L}])/u;
-
-/** What is wrong with the checks of a plan text; an empty list means it may be written. */
-export function planProblems(text, steps, model) {
-    const problems = [];
+/**
+ * What is wrong with the checks of a plan text; an empty list means it may be written. `forms: false`
+ * leaves out the forms that hide a result: an approved plan keeps its checks.
+ */
+export function planProblems(text, steps, model, { forms = true } = {}) {
+    const problems = forms ? formProblems(steps.ofPlan(text)) : [];
     for (const step of steps.ofPlan(text)) {
         if (step.command === null) problems.push(`step ${step.number} has no check line`);
         else if (isWriteCommand(step.command, model.words)) problems.push(`the check of step ${step.number} is a command of the work: ${step.command}`);
         else if (compareExpected(model.expect, step.expected, 0, '') === null) problems.push(`the expected result of step ${step.number} is in no form: ${step.expected}`);
     }
     return problems;
+}
+
+/**
+ * The command without its quoted strings, escaped characters and substitutions: what is left is the
+ * shell's own. The verdict of a substitution is not the verdict of the command. The code of `bash -c`
+ * stands in quotes and is not judged.
+ */
+const bare = (command) => {
+    let text = command
+        .replace(/\\./g, ' ')
+        .replace(/'[^']*'/g, "''")
+        .replace(/"[^"$`]*"/g, "''")
+        .replace(/`[^`]*`/g, ' ')
+        .replace(/\$\{[^}]*\}/g, ' ');
+    for (let before = ''; before !== text; ) {
+        before = text;
+        text = text.replace(/[$<]\([^()]*\)/g, ' ');
+    }
+    return text
+        .replace(/"[^"]*"/g, "''")
+        .replace(/\[\[.*?\]\]/g, ' ')
+        .replace(/\bcase\b.*?\besac\b/g, ' ')
+        .replace(/>\|/g, '>');
+};
+
+/** Whether the command is a pipe whose verdict the last part alone decides. */
+const isBarePipe = (command) => {
+    const pipe = bare(command).replace(/\|\|/g, '  ').indexOf('|');
+    return pipe >= 0 && !/\bset\b[^;&|]*\bpipefail\b/.test(bare(command).slice(0, pipe));
+};
+
+/** Whether the command counts by `grep -c`, or by `grep | wc -l`, and the expected result is nothing found. */
+const isCountedAbsence = (command, expected) => {
+    const text = bare(command);
+    const counts = /\b([ef]?grep|rg)\b[^|;&]*\s(-[A-Za-z]*c[A-Za-z]*|--count)(?=\s|$)/.test(text) || /\b([ef]?grep|rg)\b[^;&]*\|\s*wc\s+-l/.test(text);
+    return counts && !/\|\|\s*(true|:)/.test(text) && /^(==?\s*0|<=?\s*0|`0`|<\s*1|\/\^0\$\/)$/.test(expected.trim());
+};
+
+/**
+ * The checks of a list of plan steps whose form hides the result. They are asked when the plan is
+ * written, not by `plan-red`: a plan approved before this was asked keeps its checks.
+ */
+export function formProblems(planSteps) {
+    const problems = [];
+    for (const step of planSteps) {
+        if (step.command === null) continue;
+        if (isBarePipe(step.command))
+            problems.push(`the check of step ${step.number} is a pipe without «set -o pipefail;»: the last part alone decides: ${step.command}`);
+        if (isCountedAbsence(step.command, step.expected))
+            problems.push(
+                `the check of step ${step.number} counts an absence by «grep -c»: without a match grep exits 1 and the check never matches. Write «grep -q … → exit 1»: ${step.command}`
+            );
+    }
+    return problems;
+}
+
+/**
+ * The first form problem of the plan of the branch the hook input writes, or null: another file, a
+ * shell command and a plan with an approval mark are not judged. The hook of the step guard asks it.
+ */
+export function writtenPlanProblem(input) {
+    const root = gitOut(['rev-parse', '--show-toplevel']).stdout.trim();
+    const branch = gitOut(['rev-parse', '--abbrev-ref', 'HEAD']).stdout.trim();
+    const call = callOf(input, root);
+    if (!call?.path || call.path !== `${process.env.RT_FLOW_TASKS_DIR || 'docs/tasks'}/${branch}/plan.md`) return null;
+    const common = gitOut(['rev-parse', '--path-format=absolute', '--git-common-dir']).stdout.trim();
+    if (existsSync(join(common, 'rt-kit/approval', `${branch}.json`))) return null;
+    const file = join(root, call.path);
+    const after = textAfter(call, existsSync(file) ? readFileSync(file, 'utf8') : null);
+    return formProblems(stepsOfPlan(after))[0] ?? null;
 }
 
 /** The record of the conversation as entries, oldest first; a line that does not parse is skipped. */
@@ -66,32 +147,31 @@ const roleCalls = (entry) =>
         ? entry.message.content.filter((part) => part?.type === 'tool_use' && part.name === 'Agent').map((part) => part.input?.subagent_type)
         : [];
 
-const menuAnswers = (entry) => (entry.type === 'user' && entry.toolUseResult?.answers ? Object.values(entry.toolUseResult.answers) : []);
-
 /**
- * The approving answer of the owner: an option chosen in a menu after the last call of the roles,
- * which begins with «Одобряю» and names `plan.md` or the task — `<KEY>-<number>`. Null when there is
- * none or a role was never called.
+ * The latest approving answer of the owner with both roles called before it: a menu option or a
+ * typed message that approves the plan of the task by `approvalOf`. The roles called again in a
+ * review round later do not hide it. Null when there is none.
  */
 export function approvingEntry(entries, task) {
-    let lastRole = -1;
     const called = new Set();
-    entries.forEach((entry, index) => {
-        for (const role of roleCalls(entry)) {
-            if (ROLES.includes(role)) {
-                called.add(role);
-                lastRole = index;
-            }
-        }
-    });
-    if (ROLES.some((role) => !called.has(role))) return null;
-    const names = new RegExp(`plan\\.md|${task}(?!\\d)`);
-    for (const entry of entries.slice(lastRole + 1)) {
-        const answer = menuAnswers(entry).find((text) => APPROVE.test(text) && names.test(text));
-        if (answer) return { answer, uuid: entry.uuid ?? null };
+    let found = null;
+    for (const entry of entries) {
+        for (const role of roleCalls(entry)) if (ROLES.includes(role)) called.add(role);
+        if (ROLES.some((role) => !called.has(role))) continue;
+        const answer = approvalOf(entry, task);
+        if (answer) found = { answer, uuid: entry.uuid ?? null };
+    }
+    return found;
+}
+
+/** The last word of the owner holding «одобр» that the rule did not count, for the refusal to quote. */
+const uncounted = (entries) => {
+    for (let index = entries.length - 1; index >= 0; index -= 1) {
+        const word = wordOf(entries[index]);
+        if (word && /одобр/iu.test(word)) return word.replace(/\s+/g, ' ').trim().slice(0, 160);
     }
     return null;
-}
+};
 
 /** The text of the approving answer, or null — the same test as `approvingEntry`. */
 export const approvingAnswer = (entries, task) => approvingEntry(entries, task)?.answer ?? null;
@@ -143,7 +223,7 @@ export function runPlanRed({ git, steps, marks }, model, record, limitMs = STEP_
         console.log(`plan-red: ${error.message}`);
         return 1;
     }
-    const problems = planProblems(plan.text, steps, model);
+    const problems = planProblems(plan.text, steps, model, { forms: false });
     if (problems.length > 0) {
         console.log(problems.map((p) => `plan-red: ${p}`).join('\n'));
         return 1;
@@ -196,11 +276,19 @@ export function runPlanRed({ git, steps, marks }, model, record, limitMs = STEP_
     }
     const found = approvingEntry(record, task);
     if (found === null || !found.uuid) {
-        console.log(`plan-red: no menu answer «Одобряю …» naming plan.md or ${task} after the calls of ${ROLES.join(' and ')}; no mark`);
+        const word = uncounted(record);
+        console.log(
+            `plan-red: no approving answer of the owner after the calls of ${ROLES.join(' and ')} — a menu option or a typed message with «Одобряю» naming ${task} and no condition${word ? `; the last word with «одобр», not counted: «${word}»` : ''}; ask the owner one menu question naming ${task} and its plan, never ask them to type a phrase; no mark`
+        );
         return 1;
     }
     const { answer } = found;
     marks.writeApproval(plan.branch, { answer, plan: plan.sha, fingerprint: plan.fingerprint, red, place: { record: file, uuid: found.uuid } });
     console.log(`plan-red: the approval mark is written — «${answer}»`);
     return 0;
+}
+
+// `node flow-plan.mjs written` with the hook input on stdin prints the problem of the plan being written.
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1] && process.argv[2] === 'written') {
+    console.log(writtenPlanProblem(JSON.parse(readFileSync(0, 'utf8') || '{}')) ?? '');
 }

@@ -4,7 +4,7 @@ kind: rule
 law: entity-editing
 description: Rule under the entity-editing law. Load when editing any admin store and any panel that creates or edits a record. Names the shared base of the aside and of the list store, and that the aside opens by a route of its own. Patterns entity-aside, entity-store.
 ---
-<!-- rt-kit v0.39.0 · rules/entity-conventions.needs-admin.md · 8e18aac03418 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · rules/entity-conventions.needs-admin.md · 8e18aac03418 · правится надстройкой, не здесь -->
 
 # Entity editing — how it works here
 

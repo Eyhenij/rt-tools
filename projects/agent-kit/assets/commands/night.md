@@ -193,9 +193,10 @@ Then the work goes by the rule and the pattern, and the last reply gives the lis
 that lies in the file.
 
 Where a turn-exit guard is laid out, it holds a working turn until the scenario is over or the
-owner presses Esc. Before the boundary it names a default instead of a menu, and a question does
-not end the turn either. So the list is appended along the way and lies in the file at any minute.
-The guards do not end the night: the boundary only gives the owner's menu back.
+owner stops it by a stop word or Esc. Before the boundary it names a default instead of a menu, and
+a question does not end the turn either. So the list is appended along the way and lies in the file
+at any minute. The guards do not end the night: the boundary only gives the owner's menu back, and
+the night ends with the end of the scenario, or with the owner's stop word, Esc or return.
 
 ## What this command does not do
 

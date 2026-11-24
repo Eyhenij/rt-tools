@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.0 · hooks/guard-note.sh · efdc52b18a07 · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/guard-note.sh · efdc52b18a07 · правится надстройкой, не здесь
 # The record of a guard refusal. NOT a guard: it has no `rt-hook:` declaration and hooks into no
 # agent event. The decider call sources it — the one place every refusal passes through.
 #

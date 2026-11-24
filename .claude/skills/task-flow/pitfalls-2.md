@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.0 · pitfalls/task-flow.2.md · 74f4a14780c0 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · pitfalls/task-flow.2.md · ba8fd693b581 · правится надстройкой, не здесь -->
 # Work conduct — cold part, second file
 
 The sections the rule `task-flow` handed over when it was cut to its statements and split in
@@ -143,8 +143,9 @@ flowchart TD
 - **A session does not start work by itself.** The handover, the state from the startup hook and an
   assigned epic say what to do, not whether to work: a start needs the owner's word in the same
   session. An empty message, one word or one path order no work.
-- **A refusal by an external limiter removes the way, not the task.** It names no exit: the way is
-  taken from the guard that already described this fix, and the task stays the same.
+- **A refusal by an external limiter removes the way, not the task.** The way is taken from the guard that already described this fix.
+- **A refusal that names a ready command is carried out before any question to the owner.** A move of the owner's is asked; a bypass is no command.
+- **A menu where every option hands the work to the owner or stops it bypasses the task.** «You do it» and «stop» move nothing.
 - **A question written by a past session does not become a question to the owner.** It is addressed
   to the handover's author, and some are closed by a work step.
 - **The owner's instruction holds until they cancel it, and a new fact against it is a line in the

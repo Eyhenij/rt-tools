@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.39.0 · checks/task-flow-script.mjs · 50f343aa5e29 · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/task-flow-script.mjs · ac701d12d587 · правится надстройкой, не здесь
 /**
  * The engine of the task flow: reads the description `flow.js` through the model and answers about
  * the scenario. The description lies next to the engine as `task-flow/flow.js` where the engine is
@@ -44,7 +44,7 @@ import { evaluateCondition } from './flow-condition.mjs';
 import { runForecast } from './flow-forecast.mjs';
 import { judgeCall } from './flow-guard.mjs';
 import { callOf, guardContext } from './flow-guard-run.mjs';
-import { isWriteCommand, retiredLines } from './flow-data.mjs';
+import { isWriteCommand, saysStop } from './flow-data.mjs';
 import { FlowModelError, buildModel } from './flow-model.mjs';
 import { overridePath, removedLines } from './flow-override.mjs';
 import { planProblems, readRecord, runPlanRed } from './flow-plan.mjs';
@@ -133,7 +133,7 @@ export async function openReaders(model, base, given = {}) {
     const source = await openSources(model, base, given);
     const modules = {};
     for (const m of model.measures) modules[m.entry] = await import(pathToFileURL(join(base, m.file)).href);
-    const data = { words: model.words, expect: model.expect, rules: { isWriteCommand } };
+    const data = { words: model.words, expect: model.expect, rules: { saysStop, isWriteCommand } };
     const caps = new Map(model.measures.map((m) => [m.entry, m.caps]));
     return (name) => {
         const [, entry, cap] = name.split('.');
@@ -324,7 +324,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
             process.exit(runPlanRed(sources, model, readRecord(process.env.RT_FLOW_TRANSCRIPT)));
         } else {
             const result = measureStates(model, await openReaders(model, dirname(path)));
-            console.log(json ? JSON.stringify(measureJson(model, result)) : [...measureLines(model, result), ...removedLines(model), ...retiredLines(model)].join('\n'));
+            console.log(json ? JSON.stringify(measureJson(model, result)) : [...measureLines(model, result), ...removedLines(model)].join('\n'));
         }
     } catch (error) {
         if (error instanceof FlowSyntaxError) {

@@ -109,7 +109,7 @@ rt_epic_base() {
         && ! git merge-base --is-ancestor "origin/${main_branch}" "origin/${_epic_branch}" 2>/dev/null \
         && ! git merge-base --is-ancestor "origin/${main_branch}" "$_base_ref" 2>/dev/null; then
         _behind="$(git rev-list --count "origin/${_epic_branch}..origin/${main_branch}" 2>/dev/null)"
-        unmet epic_has_main_tip no "the branch of the epic «${_epic_branch}» does not carry the tip of «${main_branch}» — it has moved ahead by ${_behind:-several} commits. The main branch is merged into the branch of the epic, not bypassed by taking the base from the main one: git checkout ${_epic_branch}, git merge origin/${main_branch}, run the heavy steps by \`${ahead_cmd:-bash git-guard-push-ahead.sh} > \"\${TMPDIR:-/tmp}/push-ahead-\$(basename \"\$PWD\").log\" 2>&1\` (the Bash call with run_in_background, nothing after it; the verdict is the code of the notice and the last \`push ahead:\` line of the log), and send the branch after their end: the push is refused until they have a green mark. The repairs the merge needs go into the task branch: it is taken from that tip — git checkout -b ${_branch} ${_epic_branch} — and the task folder is created there; the epic branch takes no edits of its own."
+        unmet epic_has_main_tip no "the branch of the epic «${_epic_branch}» does not carry the tip of «${main_branch}» — it has moved ahead by ${_behind:-several} commits. The main branch is merged into the branch of the epic, not bypassed by taking the base from the main one: git checkout ${_epic_branch}, git merge origin/${main_branch}, run the heavy steps by \`${ahead_cmd:-bash git-guard-push-ahead.sh} > \"\${TMPDIR:-/tmp}/push-ahead-\$(basename \"\$PWD\").log\" 2>&1\` (the Bash call with run_in_background, nothing after it; the verdict is the code of the notice and the last \`push ahead:\` line of the log), and send the branch after their end: the push is refused until they have a green mark. The merge goes by the block of the pattern git-workflow-merge, which keeps conflict markers out of the guards. The repairs the merge needs go into the task branch: it is taken from that tip — git checkout -b ${_branch} ${_epic_branch} — and the task folder is created there; the epic branch takes no edits of its own."
     fi
 
     return 0
@@ -167,7 +167,7 @@ rt_epic_pull_base() {
     if git rev-parse --verify --quiet "origin/${_epic_branch}" >/dev/null 2>&1 \
         && ! git merge-base --is-ancestor "origin/${_epic_branch}" HEAD 2>/dev/null; then
         _behind="$(git rev-list --count "HEAD..origin/${_epic_branch}" 2>/dev/null)"
-        unmet branch_has_epic_tip no "the branch of the epic «${_epic_branch}» has moved ahead by ${_behind:-several} commits and is not merged into this branch. The reviewer would see the edit mixed with someone else's: git fetch origin && git merge origin/${_epic_branch}."
+        unmet branch_has_epic_tip no "the branch of the epic «${_epic_branch}» has moved ahead by ${_behind:-several} commits and is not merged into this branch. The reviewer would see the edit mixed with someone else's: git fetch origin && git merge origin/${_epic_branch} — by the block of the pattern git-workflow-merge, which keeps conflict markers out of the guards."
     fi
 
     return 0

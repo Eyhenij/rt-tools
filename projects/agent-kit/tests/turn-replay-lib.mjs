@@ -63,7 +63,7 @@ function answerOf(turn, id, at, options) {
         return result(
             at,
             id,
-            `PreToolUse:${turn.call} hook error: [${turn.guard}.sh]: BLOCKED by ${turn.guard}: the call is refused.`,
+            `PreToolUse:${turn.call} hook error: [${turn.guard}.sh]: BLOCKED by ${turn.guard}: ${turn.says ?? 'the call is refused.'}`,
             true
         );
     if (turn.code === 0) return result(at, id, turn.out ?? 'done', false);

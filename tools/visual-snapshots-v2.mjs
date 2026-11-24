@@ -19,6 +19,7 @@
  * The agreement is `docs/specs/ui-kit-v2/`.
  *
  *   node tools/visual-snapshots-v2.mjs                      # matching against the references
+ *   node tools/visual-snapshots-v2.mjs '<file>'             # matching of the named story files
  *   node tools/visual-snapshots-v2.mjs --update '<file>'    # a re-take of the named story files
  *   node tools/visual-snapshots-v2.mjs --update-all         # a re-take of the whole directory
  */
@@ -179,8 +180,12 @@ if (updateIndex >= 0 && (updateOne === undefined || updateOne.startsWith('--')))
     );
 }
 
-// A pointed re-take opens part of the directory, and the match is for a full session only.
-const own = await requireOwnShowcase(updateOne === undefined);
+// A path sample without `--update` matches the named files and takes nothing anew.
+const matchOne = updateIndex < 0 && !updateAll && args[0] !== undefined && !args[0].startsWith('--') ? args[0] : undefined;
+const pointed = updateOne ?? matchOne;
+
+// A pointed run opens part of the directory, and the match of the directory is for a full session only.
+const own = await requireOwnShowcase(pointed === undefined);
 console.log(`The second kit's showcase on ${URL}: stories ${own}.`);
 
 const registryDir = mkdtempSync(join(tmpdir(), 'rt-snapshots-'));
@@ -205,14 +210,14 @@ const runnerArgs = ['test-storybook', '--config-dir', CONFIG_DIR, '--url', URL, 
 
 if (updateAll) {
     runnerArgs.push('--', '-u');
-} else if (updateOne !== undefined) {
+} else if (pointed !== undefined) {
     // The sample selects story files by path rather than by story name. A selection by name (`-t`)
     // is no good here at all: with it the run's environment creates no page, and all the files fall
     // with `Cannot read properties of undefined (reading 'goto')` — the same at the first kit.
     // Checked flag by flag: `-u` works, `-t` breaks.
     // `test-storybook` hands Jest a command string for the shell, so the sample is quoted for it
     // here: brackets and a bar in a regex sample would otherwise drop the launch.
-    runnerArgs.push('--', '-u', `'${updateOne.replaceAll("'", "'\\''")}'`);
+    runnerArgs.push('--', ...(updateOne === undefined ? [] : ['-u']), `'${pointed.replaceAll("'", "'\\''")}'`);
 }
 
 const run = spawnSync('pnpm', ['exec', ...runnerArgs], {
@@ -235,9 +240,9 @@ const run = spawnSync('pnpm', ['exec', ...runnerArgs], {
 // everything else matches, that is, last of all.
 let stored = 0;
 try {
-    // A pointed re-take opens not the whole directory, and everything it did not touch would look
+    // A pointed run opens not the whole directory, and everything it did not touch would look
     // orphaned. The directory is matched only on a full session.
-    if (updateOne === undefined) {
+    if (pointed === undefined) {
         stored = requireNoOrphans(registryPath);
     }
 } finally {
@@ -248,4 +253,8 @@ if (run.status !== 0) {
     process.exit(run.status ?? 1);
 }
 
-console.log(`References in the directory: ${stored}. There are no orphaned ones.`);
+console.log(
+    pointed === undefined
+        ? `References in the directory: ${stored}. There are no orphaned ones.`
+        : `Only the files of «${pointed}» were opened: the directory of references is not matched.`
+);

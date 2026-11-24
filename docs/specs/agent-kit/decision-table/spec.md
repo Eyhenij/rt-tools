@@ -114,6 +114,7 @@ a hook with a decision, and marks a context hook and a git-side hook as helpers.
 | `git-guard-delivery-draft.sh` | — (tier of delivery) | helper | pr_reviewed, pr_conflicting, task_folder_in_branch | Bash:gh-pr-ready | deny (via git-guard-delivery) |
 | `git-guard-delivery-epic.sh` | — (tier of delivery) | helper | task_in_epic, epic_branch_unique_remote, base_has_epic_tip, epic_has_main_tip, pr_base_is_epic, branch_has_epic_tip, epic_folders_left | Bash:git-branch-create, Bash:gh-pr-create | deny (via git-guard-delivery) |
 | `git-guard-delivery-folder.sh` | — (tier of delivery) | helper | task_folder_in_branch, archive_gained, draft_spec_merged, folder_skip_declared | Bash:gh-pr-create, Bash:gh-pr-ready, Bash:gh-pr-merge | deny (via git-guard-delivery) |
+| `git-guard-delivery-identity.sh` | — (tier of delivery) | helper | pr_author_is_reviewer, token_answers_foreign | Bash:gh-pr-create | deny (via git-guard-delivery) |
 | `git-guard-delivery-merge.sh` | — (tier of delivery) | helper | pr_tip_run_green | Bash:gh-pr-merge | deny (via git-guard-delivery) |
 | `git-guard-delivery-merged.sh` | — (tier of delivery) | helper | branch_pr_merged | Bash:git-push | deny (via git-guard-delivery) |
 | `git-guard-delivery-pipeline.sh` | — (tier of delivery) | helper | pr_draft_base_wakes_pipeline | Bash:gh-pr-create --draft | deny (via git-guard-delivery) |
@@ -172,6 +173,7 @@ a hook with a decision, and marks a context hook and a git-side hook as helpers.
 | `turn-entry-load.sh` | SessionStart startup\|resume\|compact\|clear | guard·ctx | handover_present | SessionStart | context-only |
 | `turn-exit-guard.sh` | Stop | guard | read_only_role, engine_available, flow_scenario_over (engine `verdict`) | Stop | block |
 | `turn-exit-role.sh` | — | helper | read_only_role | — | — |
+| `script-files.sh` | — | helper | — | — | — |
 | `turn-judge.md` | Stop (agent hook, by its text) | model | owner_word_is_stop, stop_hook_active, owner_word_orders_work, question_already_answered, fact_without_output, miss_admitted_no_record, proposal_ordered_not_sent | Stop | block (`ok:false`) / allow |
 | `utf8.sh` | — | helper | — | — | — |
 | `window-fill-guard.sh` | PostToolUse .* / PreToolUse .* | guard | window_over_warn, window_over_stop, tool_allowed_after_stop | Post: any tool; Pre: any tool except Ask/TodoWrite/Read/SendUserFile, edits of tasks/handoff/scratchpad, git/gh/task:move/check:* | context (Post) / deny (Pre) |

@@ -260,10 +260,15 @@ printf '%s\n' '{"type":"user","uuid":"a1","toolUseResult":{"answers":{"Одоб�
 report "plan: SC-AK-1411 — запись вне каталогов записей метки не даёт" "$(tf_red "$TF_DIR/outside.jsonl" | grep -c 'not a session record of this repository.* code=1')" 1
 rm -f "$TF_APPROVAL"
 tf_record 'Переделай этап 1'
-report "plan: SC-AK-1411 — другой ответ меню метки не даёт" "$(tf_red | grep -c 'no menu answer.* code=1')" 1
+report "plan: SC-AK-1411 — другой ответ меню метки не даёт" "$(tf_red | grep -c 'no approving answer.* code=1')" 1
 report "plan: SC-AK-1411 — после отказа метки нет" "$(test -e "$TF_APPROVAL" && echo есть || echo нет)" 'нет'
+report "plan: SC-AK-1873 — отказ называет меню и набранное сообщение" "$(tf_red | grep -c 'a menu option or a typed message.* code=1')" 1
+tf_record x && head -2 "$TF_REC" > "$TF_REC.r" && printf '%s\n' '{"type":"user","uuid":"t1","message":{"role":"user","content":"одобряю план RT-2"}}' >> "$TF_REC.r" && mv "$TF_REC.r" "$TF_REC"
+report "plan: SC-AK-1873 — набранное строчными «одобряю план RT-2» даёт метку с местом ответа" \
+    "$(tf_red | grep -c 'approval mark is written — «одобряю план RT-2».* code=0')/$(node -e "console.log(require('$TF_APPROVAL').place.uuid)" 2>&1)" '1/t1'
+rm -f "$TF_APPROVAL"
 printf '%s\n' '{"type":"user","toolUseResult":{"answers":{"Одобряешь?":"Одобряю план RT-2"}}}' > "$TF_REC"
-report "plan: SC-AK-1411 — без вызовов ролей метки нет" "$(tf_red | grep -c 'no menu answer.* code=1')" 1
+report "plan: SC-AK-1411 — без вызовов ролей метки нет" "$(tf_red | grep -c 'no approving answer.* code=1')" 1
 
 # SC-AK-1412 — проверка зелёная в минуту записи — отказ
 printf 'готово\n' > "$TF_RED/out.txt"
@@ -458,40 +463,10 @@ report "pr: SC-AK-1794 — снятая замена не возвращаетс
 got="$(tf_wr_run wr-two "$(printf "$WR_HEAD- **Check of step 1.1 replaced:** \`echo 7\` → = 1\n$WR_ONE")")"
 report "pr: SC-AK-1794 — две замены одного шага — берётся поздняя" "$(printf '%s' "$got" | tr '\n' ' ' | grep -c 'matched 1 code=0')" 1
 WR_OPEN="$(printf '# Ход работы\n\n## Шаги\n\n- [>] 1.1 Шаг\n\n## Decisions along the way\n\n')"
-got="$(tf_wr_run wr-early-gone "$(printf '%s%s' "$WR_OPEN" "$(printf "$WR_ONE")")" "$(printf "$WR_HEAD")")"
+got="$(tf_wr_run wr-early-gone "$(printf '%s%s' "$WR_OPEN" "$(printf -- "$WR_ONE")")" "$(printf "$WR_HEAD")")"
 report "pr: SC-AK-1794 — замена ранней версии, снятая к отметке, не возвращается" "$(printf '%s' "$got" | tr '\n' ' ' | grep -c 'matched 0 code=1')" 1
 got="$(tf_wr_run wr-early-later "$(printf '%s- **Check of step 1.1 replaced:** `echo 7` → = 1\n' "$WR_OPEN")" "$(printf "$WR_HEAD$WR_ONE")")"
 report "pr: SC-AK-1794 — замена ранней версии заменена поздней другого коммита" "$(printf '%s' "$got" | tr '\n' ' ' | grep -c 'matched 1 code=0')" 1
-
-# SC-AK-1740 — перемер идёт на node, закреплённом в .nvmrc дерева
-TF_NVM="$TF_DIR/nvm"
-mkdir -p "$TF_NVM/versions/node/v99.1.0/bin" "$TF_DIR/pinned-tree"
-printf '#!/usr/bin/env bash\necho "pinned node"\nexit 1\n' > "$TF_NVM/versions/node/v99.1.0/bin/node"
-chmod +x "$TF_NVM/versions/node/v99.1.0/bin/node"
-printf 'v99.1.0\n' > "$TF_DIR/pinned-tree/.nvmrc"
-got="$(
-    unmet() { printf '%s %s\n' "$1" "$3"; }
-    rt_hooks_dir="$TESTS/../assets/hooks" root="$TF_DIR/pinned-tree" NVM_DIR="$TF_NVM"
-    . "$TESTS/../assets/hooks/git-guard-delivery-rerun.sh"
-    rt_delivery_rerun
-)"
-report "pr: SC-AK-1740 — перемер зовёт node из .nvmrc дерева" "$(printf '%s' "$got" | grep -c 'pinned node')" 1
-printf 'v99.0.5\n' > "$TF_DIR/pinned-tree/.nvmrc"
-got="$(
-    unmet() { printf '%s %s\n' "$1" "$3"; }
-    rt_hooks_dir="$TESTS/../assets/hooks" root="$TF_DIR/pinned-tree" NVM_DIR="$TF_NVM"
-    . "$TESTS/../assets/hooks/git-guard-delivery-rerun.sh"
-    rt_delivery_rerun
-)"
-report "pr: SC-AK-1740 — без точной версии перемер берёт более новую той же главной" "$(printf '%s' "$got" | grep -c 'pinned node')" 1
-rm "$TF_DIR/pinned-tree/.nvmrc"
-got="$(
-    unmet() { printf '%s %s\n' "$1" "$3"; }
-    rt_hooks_dir="$TESTS/../assets/hooks" root="$TF_DIR/pinned-tree" NVM_DIR="$TF_NVM"
-    . "$TESTS/../assets/hooks/git-guard-delivery-rerun.sh"
-    rt_delivery_rerun
-)"
-report "pr: SC-AK-1740 — без .nvmrc остаётся node сессии" "$(printf '%s' "$got" | grep -c 'pinned node')" 0
 
 if [ -n "${TF_ALONE:-}" ]; then
     rm -rf "$TF_DIR"

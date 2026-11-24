@@ -11,14 +11,19 @@ A pattern of the rule `task-delivery-loop`; the steps are numbered as there. `N`
 card, `<base>` the base of the branch: the previous branch of the chain, the epic branch or `main`. Shell variables do not live from one call to the next,
 so every block sets the client and the token itself.
 
+Every call with the token starts with `test -s`: an empty or missing file would leave the variable
+empty, and the client answers from the owner's account. A block of several calls makes them through
+`bot`, where the check stands in each: one check on the first line would let the next lines run. Its
+«no machine token» is no empty answer.
+
 ## 2–3. The task and its branch
 
 ```bash
-GH=/opt/homebrew/bin/gh; export GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)"
-git fetch -q origin
+bot() { test -s ~/.config/rt-tools-bot-token || { echo 'no machine token' >&2; return 1; }; GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)" /opt/homebrew/bin/gh "$@"; }
+git fetch -q origin; git fetch -q origin main:main || git merge -q --ff-only origin/main   # the local main too
 node tools/epic-table.mjs E
-$GH api "repos/Eyhenij/rt-tools/git/matching-refs/heads/RT-N-" --jq '.[].ref'
-$GH api "search/issues?q=repo:Eyhenij/rt-tools+is:pr+RT-N+in:title" --jq '.items[].number'
+bot api "repos/Eyhenij/rt-tools/git/matching-refs/heads/RT-N-" --jq '.[].ref'
+bot api "search/issues?q=repo:Eyhenij/rt-tools+is:pr+RT-N+in:title" --jq '.items[].number'
 git branch --list 'RT-N-*'
 ```
 
@@ -59,7 +64,8 @@ reaches. `everything` runs the whole set before the push and `show2` the showcas
 test. The coverage guard judges the pushed head: a commit with the test is pushed before `gh pr create`.
 
 The showcase frames have one road: `node tools/visual-gate.mjs ui-kit-v2`, the whole set, about
-eight minutes. A path sample is read only after `--update`.
+eight minutes. A path sample after the kit matches the named story files alone, and after
+`--update` re-takes them; a pointed match is for the edit at hand, the push set runs the whole one.
 
 A heavy run goes alone and in the background: the two calls above, one after the other. The affected run outlasts a foreground call on a cold
 cache, and the showcase frames fall with ECONNRESET beside the tests of the packages.
@@ -94,7 +100,8 @@ Return findings with file:line, the failure scenario and a severity.
 
 `qa-engineer` gets the agreement and the review lens of `.claude/workflows/feature.js`.
 `product-strategist` gets the plan's points and their signs. `goal-critic` gets the owner's words
-from the grill and the result, never the plan.
+from the grill and the result, never the plan. The replies of the roles are saved to a file of the
+scratchpad as they come: the PR body takes their tables word for word.
 
 ## 8, 9. Commit as the machine account
 
@@ -117,7 +124,8 @@ under the local identity.
 git fetch -q origin
 EM=317887029+rt-tools-dev@users.noreply.github.com
 GIT_AUTHOR_EMAIL=$EM GIT_COMMITTER_EMAIL=$EM \
-    GIT_AUTHOR_NAME=rt-tools-dev GIT_COMMITTER_NAME=rt-tools-dev git merge --no-edit origin/<base>
+    GIT_AUTHOR_NAME=rt-tools-dev GIT_COMMITTER_NAME=rt-tools-dev git merge --no-edit origin/<base> \
+    || { git diff --name-only --diff-filter=U -- .claude/hooks | while IFS= read -r f; do git checkout --ours -- "$f"; done; false; }
 node tools/check-specs.mjs; node tools/check-doc-paths.mjs
 pnpm exec nx affected -t test-hooks --base=origin/<base>    # the guard scenarios, when a hook moved
 ```
@@ -168,7 +176,8 @@ labels go in the same call. A PR into `main` adds `--draft`: the pipeline wakes 
 epic branch opens ready, without `--draft`: the delivery guard refuses a draft there.
 
 ```bash
-GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)" /opt/homebrew/bin/gh pr create --title '[RT-N] <что сделано>' \
+test -s ~/.config/rt-tools-bot-token && GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)" \
+    /opt/homebrew/bin/gh pr create --title '[RT-N] <что сделано>' \
     --base <base> --head RT-N-<slug> --body-file <body file> \
     --reviewer Eyhenij --assignee rt-tools-dev --label <label> --draft
 ```
@@ -181,26 +190,27 @@ The state is reread from the host right after: the author must be `rt-tools-dev`
 an assignee or a label the call did not set is added by REST:
 
 ```bash
-GH=/opt/homebrew/bin/gh; export GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)"
-$GH api repos/Eyhenij/rt-tools/pulls/<pr> \
+bot() { test -s ~/.config/rt-tools-bot-token || { echo 'no machine token' >&2; return 1; }; GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)" /opt/homebrew/bin/gh "$@"; }
+bot api repos/Eyhenij/rt-tools/pulls/<pr> \
     --jq '{author: .user.login, reviewers: [.requested_reviewers[].login], assignees: [.assignees[].login], labels: [.labels[].name]}'
-$GH api repos/Eyhenij/rt-tools/issues/N --jq '.labels[].name' | while IFS= read -r L; do
-    $GH api -X POST repos/Eyhenij/rt-tools/issues/<pr>/labels -f "labels[]=$L" >/dev/null; done
-$GH api -X POST repos/Eyhenij/rt-tools/pulls/<pr>/requested_reviewers -f 'reviewers[]=Eyhenij'
+bot api repos/Eyhenij/rt-tools/issues/N --jq '.labels[].name' | while IFS= read -r L; do
+    bot api -X POST repos/Eyhenij/rt-tools/issues/<pr>/labels -f "labels[]=$L" >/dev/null; done
+bot api -X POST repos/Eyhenij/rt-tools/pulls/<pr>/requested_reviewers -f 'reviewers[]=Eyhenij'
 npm run -s task:move -- N in-review
 ```
 
 A draft into `main` is lifted on the green run of its tip, in the turn that hands it over:
 
 ```bash
-GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)" /opt/homebrew/bin/gh pr ready <pr>
+test -s ~/.config/rt-tools-bot-token && GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)" /opt/homebrew/bin/gh pr ready <pr>
 ```
 
 ## After the merge
 
 ```bash
-GH=/opt/homebrew/bin/gh; export GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)"
-$GH api repos/Eyhenij/rt-tools/pulls/<pr> --jq '{merged, merged_at}'
-$GH api repos/Eyhenij/rt-tools/issues/N --jq .state
+bot() { test -s ~/.config/rt-tools-bot-token || { echo 'no machine token' >&2; return 1; }; GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)" /opt/homebrew/bin/gh "$@"; }
+git fetch -q origin; git fetch -q origin main:main || git merge -q --ff-only origin/main
+bot api repos/Eyhenij/rt-tools/pulls/<pr> --jq '{merged, merged_at}'
+bot api repos/Eyhenij/rt-tools/issues/N --jq .state
 npm run -s check:board
 ```

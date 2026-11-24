@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.0 · pitfalls/turn-conduct.md · 5bc793e522e7 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · pitfalls/turn-conduct.md · 35a9fe43bc7d · правится надстройкой, не здесь -->
 # Session turn — cold part
 
 Pitfalls: cases and numbers that used to stand next to the rule's articles. Loaded not with the
@@ -31,13 +31,9 @@ The rule is `turn-conduct`; the articles that hold the law stand there.
   it needs; the record stays to be sent. So it is where the intake does not answer, the tree has none
   or the owner said not to send. In an autonomous session that named no send it goes into the
   morning list, by `autonomous-work`.
-- **A question already answered, asked again.** A question to the owner is
-  checked against their answers in the record of the session before it leaves: one with an answer is
-  acted on, not asked. A question the work made needless is withdrawn in the same turn, and the owner is
-  told by which answer the work was done.
-- **One's own question not recognised.** A short answer of the owner that the compacted summary does not
-  explain is looked for in the record of the session among the executor's own questions and buttons.
-  «I did not ask this» is not written without that search.
+- **A withdrawn question.** The owner is told by which of their answers the work was done.
+- **One's own question not recognised.** «I did not ask this» is not written without a search of the
+  session's record.
 - **A question in a turn that goes on to the next work.** It is not asked there: a finding that can wait is filed as a
   task, and a question without whose answer the work cannot go stops the turn.
 - **The repeated tail of a refused command.** A branch switch left in the discarded beginning

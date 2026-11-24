@@ -61,11 +61,12 @@ the end of every turn.
 - The owner's latest word is the Esc mark `[Request interrupted by user`: the owner stopped the
   work, and a turn a notice woke after it ends without the work. An order typed before the mark
   orders nothing until the owner writes again, one sent a second before the mark included.
+- The owner's latest word says to stop or to wait — «стоп», «хватит», «не сейчас», «потом»,
+  «подожди», a refusal in an answer to the question tool — and the reply does not keep working.
 - A background task the session started still runs, and the reply names the task and the step that
   goes on by its notice. A task runs when its call ran in the background — `run_in_background` or
   a background agent — and no `<task-notification>` with its id stands after it. The wait is the
-  move then: the notice wakes the session, and it reads the result and goes on with the step. A
-  word of the owner does not stop the work: the owner stops it by Esc.
+  move then: the notice wakes the session, and it reads the result and goes on with the step.
 - `stop_hook_active` is true and the reason of the previous refusal is addressed, or cannot be
   addressed without the owner. Never refuse twice for the same reason: a second refusal for one
   reason is a deadlock in the making.

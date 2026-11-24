@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.0 · pitfalls/git-workflow.2.github.md · 24b61b1d4339 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · pitfalls/git-workflow.2.github.md · f26dc629dd17 · правится надстройкой, не здесь -->
 # Delivery — cold part, second file
 
 The sections the rule `git-workflow` handed over when it was cut to its statements and split in
@@ -197,8 +197,8 @@ flowchart TD
   source piles up silently, and the audit is not in the pipeline.
 - **After merging the base in, the check set is revised by what the branch now carries.** Checking by
   what the author edited means checking half: the branch answers whole.
-- **The main branch is taken by the remote ref — in words and in actions.** The local one is
-  yesterday's snapshot and silent about it: by it a merged branch counts as unmerged.
+- **The main branch is taken by the remote ref — in words and in actions.** The local one is a
+  silent snapshot; it is fast-forwarded by the same fetch.
 - **A commit lands with its final content, and a later commit of the same branch does not correct
   it.** It is made after the check against the mockup, the sample and the measurement; what is not
   checked stays in the working tree. A third commit fixing the first shows the reviewer the miss

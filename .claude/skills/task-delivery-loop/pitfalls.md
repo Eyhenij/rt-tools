@@ -69,7 +69,9 @@ The table in `implementation.md` next to it.
    is a refusal of its own.
 5. **Do the stages.** Tests, lint, types and
    the quick checks of the push set over what is touched: the linter after an edit does not judge
-   `tools/` and texts, and the push set is too late for them. Each step is marked in the progress. A kit edit that changes the look first goes through the rule `kit-approval`: the mockup
+   `tools/` and texts, and the push set is too late for them. Each step is
+   marked by the engine: `node tools/task-flow-script.mjs step N.M` runs its check and writes the mark.
+   The executor edits neither the marks nor a state ahead of the measured one. A kit edit that changes the look first goes through the rule `kit-approval`: the mockup
    and the owner's approval come before the code. One that keeps it is named in the plan.
 6. **Check live.** A kit edit — in the showcase on port 6007, measured in the pinned Chrome by the
    pattern `browser-verification-measure`; if it does not hold the local tab, in the built-in browser. The receiver and the admin panel — on the stand of

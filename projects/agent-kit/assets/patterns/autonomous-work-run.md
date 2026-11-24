@@ -42,7 +42,7 @@ next one is created. Taking the base fresh instead breaks the chain:
 ```bash
 git fetch origin
 git merge-base --is-ancestor origin/<база> <прошлая ветка> || {
-    git checkout <прошлая ветка> && git merge origin/<база>
+    git checkout <прошлая ветка> && git merge origin/<база>   # by the block of git-workflow-merge
 }
 git checkout -b <КЛЮЧ>-<номер>-<slug> <прошлая ветка>
 ```
@@ -70,11 +70,7 @@ them it used:
 ```
 
 What the allowance does not name stays local, and in the morning the owner decides what to hand
-out of it. The allowed calls are rehearsed before the owner leaves: a kind with a form that changes
-nothing is run twice with different data; a merge, a publication or a send is covered by the owner's
-own allow rule and never rehearsed by doing it. One that prompts with no such rule leaves the
-allowance. The commands of the cycle above are rehearsed with them, one call each: a substitution or
-a chain is kept only where a guard demands that form.
+out of it. The calls are checked before the owner leaves, as the rule `autonomous-work` says.
 
 ## A default instead of a question
 
