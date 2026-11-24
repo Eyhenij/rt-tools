@@ -73,9 +73,15 @@ git log --oneline -1 "origin/${RT_MAIN_BRANCH:-main}"
 
 ## 5. Name what will not be done
 
-Say it to the owner before they leave, in one line: nothing goes outside during the night — no
-push, no request, no publishing, no cargo mark. Everything visible from outside is undone by a
-person, and there is none until morning.
+Say it to the owner before they leave, in one line: nothing goes outside past their word — a push,
+a request, a merge, a publication, a cargo send happen only where they named it now. Everything
+visible from outside is undone by a person, and there is none until morning. Their words about
+what may go outside are taken verbatim for the line `Разрешено:`; no such words — the line says
+`нет`.
+
+Every allowed kind of call is run twice now, while they are here, with different data: a second PR
+has its own title and body. A call that stops on a permission prompt is covered by the owner's own
+allow rule now, or it leaves the allowance and the line says so.
 
 There they also hear which tasks the night will not take: the ones that need their word. Read
 from the source of the work, not guessed on the spot.
@@ -91,15 +97,24 @@ its head, and is appended to after each closed piece of work. A list of the last
 disk means a broken night resumed — after midnight too: it is read and continued, not written over.
 The block reads the profile itself: the shell keeps nothing between calls.
 
+Two lines of the head are read by the guards and the morning. `Автономно до:` is the boundary as a
+moment, `ГГГГ-ММ-ДДTЧЧ:ММ`, translated from the owner's words by the session: while it lies ahead,
+a guard names a default instead of opening the owner's window; once it has passed, the day goes as
+usual. `Разрешено:` carries the owner's words from section 5. The session fills both values into
+the block before running it.
+
 ```bash
 for profile in .claude/rt-kit/defaults/project.sh .claude/rt-kit/project.sh; do
     [ -f "$profile" ] && . "$profile"
 done
+until='<ГГГГ-ММ-ДДTЧЧ:ММ>'
+allowed='<the owner words, or нет>'
 dir="${RT_HANDOFF_DIR:-.claude/handoff}"
 list="$(find "$dir" -maxdepth 1 -name '*-ночь.md' -mtime -1 2>/dev/null | sort | tail -1)"
 [ -n "$list" ] || {
     list="$dir/$(date +%Y-%m-%d)-ночь.md"
-    printf '# Список к утру · ночь с %s\n\nГраница: %s\n\n' "$(date +%d.%m.%Y)" "$ARGUMENTS" > "$list"
+    printf '# Список к утру · ночь с %s\n\nГраница: %s\nАвтономно до: %s\nРазрешено: «%s»\n\n' \
+        "$(date +%d.%m.%Y)" "$ARGUMENTS" "$until" "$allowed" > "$list"
 }
 echo "$list"
 ```
@@ -113,13 +128,12 @@ Then the work goes by the rule and the pattern, and the last reply gives the lis
 that lies in the file.
 
 Where a turn-exit guard is laid out, it holds a working turn until the scenario is over or the
-owner presses Esc. The boundary is neither, and a question does not end the turn either. So the
-list is appended along the way and lies in the file at any minute. The night ends with the end of
-the scenario, or with the owner's Esc in the morning.
+owner presses Esc. Before the boundary it names a default instead of a menu, and a question does
+not end the turn either. So the list is appended along the way and lies in the file at any minute.
+The night ends with the end of the scenario, or with the owner's Esc in the morning.
 
 ## What this command does not do
 
-- It does not merge and does not open requests: they are visible from outside.
+- It opens no request and merges nothing on its own: those go only where `Разрешено:` names them.
 - It does not decide what to work on: the source of the work is the epic plan or the queue.
-- It does not tell night from day. There is no such sign in the tree, and the command adds none:
-  it is called by the owner's word and by nothing else.
+- It does not end the night at the boundary: the guards only stop naming defaults after it.
