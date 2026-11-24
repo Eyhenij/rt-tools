@@ -38,8 +38,6 @@ Tree rule under `work-conduct`, over `task-flow`. Cold part, steps whole: `pitfa
   until the push; a fix after the PR reruns it.
 - **Unattended work keeps the loop and the night rule both.** By `autonomous-work` the owner's
   screen becomes a measurement; push and PR wait for the owner's return where it keeps all local.
-- **No guard counts the rounds.** Nor the live check: the gate demands the loop loaded; round
-  commits and the PR body show the rest.
 
 ## Duties of the steps
 
