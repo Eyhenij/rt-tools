@@ -1,14 +1,12 @@
 # Scenarios — the side panel as a full-height sheet on a phone
 
-The prefix `SC-UKV` is shared across the domain together with the subdomains; the numbers do not
-change after the merge. Until a scenario is covered it carries the mark with its reason.
+The prefix `SC-UKV` is shared across the domain; the numbers do not change after the merge.
 
 ### SC-UKV-1802 — on a phone a panel opened by the service rises as a full-height sheet
 
 Given a window 375 points wide
 When an application opens a side panel through the kit's service
-Then the panel slides up from the bottom as wide as the window and as high as the window less the
-strip of 12 px on top
+Then the panel slides up as wide as the window and as high as it less the 12 px strip on top
 
 Not covered: the code is not written yet.
 
@@ -47,7 +45,7 @@ Not covered: the code is not written yet.
 
 ### SC-UKV-1807 — the details of the workspace open as a sheet on a phone
 
-Given a window 375 points wide and a workspace with a details template
+Given a phone and a workspace with a details template and its `singleColumnBreakpoint` set
 When the details open
 Then they rise as a full-height sheet titled by the title of the workspace
 
@@ -298,18 +296,17 @@ Not covered: the code is not written yet.
 
 ### SC-UKV-1838 — the panel's own first-focus node wins over «×»
 
-Given a window 375 points wide and a panel that keeps Tab inside and marks a field for the first
-focus
+Given a phone and a panel that keeps Tab inside and marks a field for the first focus
 When the panel opens
 Then the focus stands on the marked field
 
 Not covered: the code is not written yet.
 
-### SC-UKV-1839 — «×» stands when the header switched the arrow off
+### SC-UKV-1839 — a header without the arrow draws no «×»
 
 Given a window 375 points wide and a panel whose header switched the back arrow off
 When the panel opens
-Then the header of the sheet shows «×» on the left
+Then the header of the sheet shows no «×», and a swipe past the threshold still closes it
 
 Not covered: the code is not written yet.
 
@@ -369,5 +366,133 @@ Not covered: the code is not written yet.
 Given a window 375 points wide and a frame whose right panel has its dim switched off
 When the address opens a record in the right panel
 Then the panel sheet dims the page under it
+
+Not covered: the code is not written yet.
+
+### SC-UKV-1847 — «×» runs the road of the arrow, not the hidden button
+
+Given a phone and a panel whose close-only footer button differs in handler from its header dismiss
+When the person presses «×»
+Then the header's dismiss runs, and the handler of the hidden button does not
+
+Not covered: the code is not written yet.
+
+### SC-UKV-1848 — a close by code ignores the unsaved sign
+
+Given a panel sheet opened by the service whose handle carries the unsaved sign
+When the application closes the panel through its handle
+Then the panel closes and no question is shown
+
+Not covered: the code is not written yet.
+
+### SC-UKV-1849 — the back button under a record panel with edits asks at the bottom
+
+Given a window 375 points wide and a record panel sheet with an edits guard and a changed form
+When the person presses the back button of the browser
+Then the question «Несохранённые правки» stands at the bottom, and the address stays
+
+Not covered: the code is not written yet.
+
+### SC-UKV-1850 — the swipe obeys the switch of the tap on the dim
+
+Given a panel sheet opened with the tap on the dim switched off
+When the person swipes it down past the threshold
+Then the sheet returns to its place and the panel reports a close request of the kind `backdrop`
+
+Not covered: the code is not written yet.
+
+### SC-UKV-1851 — the answers of the question stand in the sheet's order
+
+Given a window 375 points wide and a record panel sheet with an edits guard and a changed form
+When the person presses «×»
+Then «Сохранить и закрыть» stands first with the focus, then «Закрыть без сохранения», «Остаться»
+
+Not covered: the code is not written yet.
+
+### SC-UKV-1852 — a filter typed and returned is no change
+
+Given the toolbar filters sheet on a phone with a field whose value was changed and typed back
+When the person presses «×»
+Then the sheet closes and no question is shown
+
+Not covered: the code is not written yet.
+
+### SC-UKV-1853 — a move to another record keeps the form
+
+Given a record panel sheet opened in a window 375 points wide that became 667 points wide
+When the person follows a link to another record inside the panel
+Then the panel stays a full-height sheet
+
+Not covered: the code is not written yet.
+
+### SC-UKV-1854 — a panel beside the content is judged at each opening
+
+Given a frame panel beside the content, opened and closed at 667 points, and the window now 375
+When the address opens a record in the right panel again
+Then the record panel rises as a full-height sheet
+
+Not covered: the code is not written yet.
+
+### SC-UKV-1855 — a panel restored on a reload is judged anew
+
+Given an address of a record panel and a window 375 points wide
+When the page reloads
+Then the record panel rises as a full-height sheet
+
+Not covered: the code is not written yet.
+
+### SC-UKV-1856 — the panel sheet stands above the screen keyboard
+
+Given a panel sheet on a touch screen
+When the person taps a text field and the screen keyboard shows
+Then the sheet stands in the visible part above the keyboard, and «×» stays seen
+
+Not covered: the code is not written yet.
+
+### SC-UKV-1857 — a panel opened at the left edge rises from the bottom
+
+Given a window 375 points wide
+When an application opens a panel through the service at the left edge
+Then the panel rises from the bottom as a full-height sheet
+
+Not covered: the code is not written yet.
+
+### SC-UKV-1858 — the width handle of the frame panel is not drawn in the sheet
+
+Given a window 375 points wide and a frame whose right panel has the width handle switched on
+When the address opens a record in the right panel
+Then the panel sheet has no width handle and is as wide as the window
+
+Not covered: the code is not written yet.
+
+### SC-UKV-1859 — Escape inside the panel sheet goes no further
+
+Given a panel sheet with the focus in one of its fields and a page that listens to Escape
+When the person presses Escape
+Then the panel sheet closes and the page does not hear the key
+
+Not covered: the code is not written yet.
+
+### SC-UKV-1860 — a second close request does not ask again
+
+Given the question about the unsaved edits shown at the bottom of a phone screen
+When the person presses Escape or swipes the sheet again
+Then one question stays on the screen and nothing closes
+
+Not covered: the code is not written yet.
+
+### SC-UKV-1861 — a long title is cut by an ellipsis
+
+Given a window 375 points wide and a panel whose title is longer than the header
+When the panel opens
+Then the title stands in one line in the centre and ends with an ellipsis
+
+Not covered: the code is not written yet.
+
+### SC-UKV-1862 — a panel without a name is announced by its title
+
+Given a window 375 points wide and a panel with a title and no accessible name of its own
+When the panel opens
+Then the sheet is announced as a modal dialog named by the title
 
 Not covered: the code is not written yet.

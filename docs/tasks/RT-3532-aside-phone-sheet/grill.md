@@ -1,5 +1,7 @@
 # Grill
 
+**Draft:** `docs/specs/ui-kit-v2/proposed/aside-phone-sheet/`
+
 ## The owner request
 
 > нужно проанализировать все компоненты которые открываются в ботомшит + асайды на мобилке нужно
