@@ -1,0 +1,25 @@
+{
+  "case": "SC-AK-1911",
+  "kind": "the approval of a plan that changes a check",
+  "record": "RT-3584, 24.11: the question judge held «Одобряю план RT-3584» three times, and the work stood",
+  "task": 101,
+  "turns": [
+    { "role": "owner", "at": "2026-11-24T07:40:00Z", "owner": "<order:RT-101>" },
+    {
+      "role": "agent",
+      "at": "2026-11-24T07:52:00Z",
+      "call": "Agent",
+      "command": "product-strategist and goal-critic on the plan of RT-101",
+      "code": "ok"
+    },
+    {
+      "role": "agent",
+      "at": "2026-11-24T07:58:00Z",
+      "menu": [
+        "Plan RT-101 changes the exit check: at night its verdict names no menu, and the executor defers the step itself. Do you approve it?",
+        "Одобряю план RT-101",
+        "Переделай план RT-101"
+      ]
+    }
+  ]
+}

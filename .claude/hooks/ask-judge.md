@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.0 · hooks/ask-judge.md · 5b36f0692eb7 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · hooks/ask-judge.md · f76758ece067 · правится надстройкой, не здесь -->
 # Ask judge
 <!-- rt-hook-agent event=PreToolUse pattern=AskUserQuestion limit=60 -->
 
@@ -32,7 +32,9 @@ after any refusal of another check. Avoid both.
 - The answer is not in the owner's messages, not in the progress and not in the rules: the decision
   is the owner's.
 - The question asks for an approval the owner must give: a plan, a new working tree, a merge, a
-  release, a purchase, a deletion, a change of the owner's earlier decision.
+  release, a purchase, a deletion, a change of the owner's earlier decision, the deferral of a
+  task. The approval of a plan is never held, a plan that changes a hook or a check included: the
+  plan names the change, the owner decides it, and the option only records the decision.
 - The question follows a refusal of another check and names what was done meanwhile or why nothing
   could be done. A refusal elsewhere is never a reason to hold the question.
 - The question is the menu named by a refusal of the exit check. Another check
@@ -52,11 +54,15 @@ after any refusal of another check. Avoid both.
 - An option of the question removes, disables or weakens a hook or a check: switches it off, drops
   a case from it, lowers its threshold or adds an exception to it. Hold it in any menu, the menu of
   the exit check included. An owner who picks such an option removes the check with their own hand,
-  and that has happened once already. The move instead is to do what the check asks, or to name
-  the refused step in the menu of the exit check.
+  and that has happened once already. The move instead is to do what the check asks.
+  An option that only records the owner's decision is not such an option: «Одобряю план RT-N»,
+  «отложить RT-N», the approval of a merge or a release, named with the task key and nothing
+  else, leaves even when the decision changes a check. An option that appends an action to the
+  decision — «Одобряю план RT-N: снять проверку отметок» — is held.
 
 When in doubt, let the question leave: a held question can leave the owner without a decision that
-was theirs. An option that weakens a check is not a doubt: it is held.
+was theirs. An option that weakens a check by itself is not a doubt: it is held. An option that
+records the owner's decision is not a doubt either: it leaves.
 
 ## How to answer
 

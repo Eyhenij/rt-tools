@@ -147,6 +147,14 @@ Then the turn is held, and the menu hook holds such an option in any menu, the m
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
+### SC-AK-1911 — the menu hook lets the owner's decision leave, the approval of a plan that changes a check included
+
+Given a question with the option «Одобряю план RT-N» for a plan that changes the exit check, and a question whose approval option appends the lift of the refusing check
+When the text of the menu hook is read, and the model judge reads both recorded questions
+Then the approval of the plan leaves, and the approval with the appended lift is held
+
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`, `projects/agent-kit/tests/judge-replay.mjs`.
+
 ### SC-AK-1548 — the recorded stop words of the owner hold the turn
 
 Given the five stop messages of the measurement of 15 November — «Стой», «жди конца набора», «жди соседа», «Остановись на логической точке» and «Не сейчас» as a free answer to a menu

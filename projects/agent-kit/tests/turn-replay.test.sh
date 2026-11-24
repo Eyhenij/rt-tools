@@ -305,6 +305,9 @@ report "replay: SC-AK-1470 — и в меню отказа проверки вы
 hold 1470-menu-lifts-check archived "replay: SC-AK-1470 — меню задержано один раз — ход держится" 'папка-разобрана'
 report "replay: SC-AK-1470 — фикстура несёт меню отказа с таким вариантом" \
     "$(jq -r '[.turns[] | select(.menu) | .menu[] | select(test("снять проверку"))] | length' "$FIXTURES/1470-menu-lifts-check.json")" 1
+report "replay: SC-AK-1911 — хук меню пускает одобрение плана, который правит проверку" "$(has "$ASK_JUDGE" 'The approval of a plan is never held, a plan that changes a hook or a check included')" есть
+report "replay: SC-AK-1911 — запрет на снятие проверки не задевает решение владельца" "$(has "$ASK_JUDGE" 'An option that only records the owner'"'"'s decision is not such an option')" есть
+report "replay: SC-AK-1911 — вариант одобрения с приписанным действием держится" "$(has "$ASK_JUDGE" 'An option that appends an action to the')" есть
 
 # --- прогон судьи: ему нечем читать ожидаемое ---------------------------------------------------------
 JUDGE="$TESTS/judge-replay.mjs"
