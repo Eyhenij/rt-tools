@@ -19,20 +19,28 @@ Then the first is released as the end of the scenario and the second is held
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-1839 — a typed word to stop releases no turn, and Esc releases it
+### SC-AK-1912 — a stop word of the owner releases the turn
 
-Given the owner's last word «стоп», «Стоп, на сегодня хватит», «не сейчас» or «подожди», and the mark of Esc with and without a tool call
+Given a session that wrote, and the owner's last word «Стоп, на сегодня хватит», «хватит останавливаться, продолжай» or «Стой, не туда — делай RT-12»
+When the hook on Stop reads the turn, and the release cases are read
+Then the first is released as «a stop word of the owner», and the other two are held: one asks to go on, the other orders work
+And «стоп» in the running stage with a step not done releases the turn
+And «стоп» lifts the CI hold of a fresh head with no run, and a red run holds the stop until one read
+And the text of the model hook on Stop lets the turn end on a word to stop
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`, `projects/agent-kit/tests/turn-replay.test.sh`.
+
+### SC-AK-1839 — Esc releases the turn until the owner writes again
+
+Given the mark of Esc with and without a tool call, and the owner's last word «стоп», «Стоп, на сегодня хватит», «не сейчас» or «подожди»
 When the interrupt is measured, and the release cases are read for a session that wrote
-Then only the mark of Esc is an interrupt, and only it releases the turn as «the owner interrupted the turn»
-And «стоп» in the running stage with a step not done holds the turn
-And through the hook after a write «Стоп, хватит» and «не сейчас» are held, and the mark of Esc is released
-And «стоп» does not lift the CI hold of a fresh head with no run
+Then only the mark of Esc is an interrupt, and it releases the turn as «the owner interrupted the turn»
+And through the hook after a write the mark of Esc is released
 And after Esc neither a red run nor a running one with no watch holds the stop, and a new word of the owner brings the hold back
 And a message typed mid-turn, kept as a queued command from a person, is the owner's word, and after Esc it holds the turn again; a queued notice of a task or a wrapper is no word
 And a mark of Esc a second and a half or a minute after a typed order releases the turn
 And a pasted text queued after Esc is a word and holds the turn again, and a wrapper of a shell or a command after Esc is none
-And the text of the model hook on Stop names no «стоп»
-And the pattern of the owner's words in that hook takes the mark of Esc from a record of the owner and not from a request blob that repeats it next to a newer word
+And the pattern of the owner's words in the model hook on Stop takes the mark of Esc from a record of the owner and not from a request blob that repeats it next to a newer word
 And that hook reads an order sent a second before the mark as stopped by it
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`, `projects/agent-kit/tests/turn-replay.test.sh`.

@@ -249,6 +249,16 @@ release() {
     report "$label — случай отпуска «${log}»" "$got" "$log"
 }
 
+# Записанное слово остановки: одна строка на сообщение — хук молчит, а движок называет его случай.
+stopped() {
+    local fixture="$1" tree="$2" label="$3" input out got
+    input="$(stop_input "$fixture" "$tree")"
+    out="$(run_hook "$input" "$tree")"
+    got="$(cd "$WORK/$tree" && node "$(engine_of "$tree")" verdict <<< "$input" 2>/dev/null | jq -r '.release // .block' 2>/dev/null)"
+    [ -z "$out" ] || got="хук держит: $out"
+    report "$label" "$got" 'a stop word of the owner'
+}
+
 STAGE='этап-идёт'
 STEP='step 1.2'
 
@@ -273,20 +283,19 @@ release 1455-deadlock-menus-held archived "replay: SC-AK-1455 — тупик RT-
 
 # --- шесть живых ходов RT-3276 ----------------------------------------------------------------------
 release 1456-rt3276-question stage "replay: SC-AK-1456 — RT-3276: вопрос в сессии без записи" 'no write to the tree, or a branch outside the scenario'
-hold 1457-rt3276-not-now stage "replay: SC-AK-1457 — RT-3276: «не сейчас»" "$STAGE" "$STEP"
-hold 1458-rt3276-stop stage "replay: SC-AK-1458 — RT-3276: «стоп»" "$STAGE" "$STEP"
+stopped 1457-rt3276-not-now stage "replay: SC-AK-1913 — RT-3276: «не сейчас» отпускает ход (SC-AK-1457)"
+stopped 1458-rt3276-stop stage "replay: SC-AK-1913 — RT-3276: «стоп» отпускает ход (SC-AK-1458)"
 release 1459-rt3276-abuse stage "replay: SC-AK-1459 — RT-3276: ругань без поручения" 'no write to the tree, or a branch outside the scenario'
-hold 1460-rt3276-menu-after-refusal archived "replay: SC-AK-1460 — RT-3276: меню после отказа, ответ «стоп»" 'папка-разобрана'
+stopped 1460-rt3276-menu-after-refusal archived "replay: SC-AK-1460 — RT-3276: меню после отказа, ответ «стоп»"
 hold 1461-rt3276-promise stage "replay: SC-AK-1461 — RT-3276: обещание без запуска" "$STAGE" "$STEP"
 
 # --- законные концы хода ----------------------------------------------------------------------------
 release 1462-epic-end epicEnd "replay: SC-AK-1462 — конец эпика по истории последнего закрытого эпика" 'the end of the scenario'
-# Слово владельца ход не отпускает: остановить работу может только Esc.
-hold 1548-stop-hold stage "replay: SC-AK-1548 — записанное слово «Стой»" "$STAGE" "$STEP"
-hold 1548-wait-for-suite stage "replay: SC-AK-1548 — записанное слово «жди конца набора»" "$STAGE" "$STEP"
-hold 1548-wait-for-neighbour handed "replay: SC-AK-1548 — записанное слово «жди соседа»" 'работа-отдана'
-hold 1548-stop-at-point stage "replay: SC-AK-1548 — записанное слово «Остановись на логической точке»" "$STAGE" "$STEP"
-hold 1548-not-now taken "replay: SC-AK-1548 — записанное слово «Не сейчас»" 'задача-взята'
+stopped 1548-stop-hold stage "replay: SC-AK-1913 — записанное слово «Стой» отпускает ход (SC-AK-1548)"
+stopped 1548-wait-for-suite stage "replay: SC-AK-1913 — записанное слово «жди конца набора» отпускает ход (SC-AK-1548)"
+stopped 1548-wait-for-neighbour handed "replay: SC-AK-1913 — записанное слово «жди соседа» отпускает ход (SC-AK-1548)"
+stopped 1548-stop-at-point stage "replay: SC-AK-1913 — записанное слово «Остановись на логической точке» отпускает ход (SC-AK-1548)"
+stopped 1548-not-now taken "replay: SC-AK-1913 — записанное слово «Не сейчас» отпускает ход (SC-AK-1548)"
 
 # --- хуки модели: их текст ----------------------------------------------------------------------------
 TURN_JUDGE="$ASSETS/hooks/turn-judge.md"
@@ -299,7 +308,7 @@ report "replay: SC-AK-1455 — хук меню пропускает меню о�
 report "replay: SC-AK-1455 — меню отказа — ровно два варианта" "$(has "$ASK_JUDGE" 'The options are exactly two: «отложить RT-N» with the task number')" есть
 report "replay: SC-AK-1842 — хук меню пропускает «подскажу путь» и вопрос о пути" "$(has "$ASK_JUDGE" 'answered that menu with a bare «подскажу путь»')" есть
 report "replay: SC-AK-1841 — хук модели на Stop отпускает ожидание своей фоновой задачи" "$(has "$TURN_JUDGE" 'A background task the session started still runs')" есть
-report "replay: SC-AK-1839 — хук модели на Stop не отпускает по слову владельца" "$(has "$TURN_JUDGE" '«стоп»')" нет
+report "replay: SC-AK-1912 — хук модели на Stop отпускает по слову остановки" "$(has "$TURN_JUDGE" "The owner's latest word says to stop or to wait — «стоп»")" есть
 report "replay: SC-AK-1470 — хук меню задерживает вариант, который снимает проверку" "$(has "$ASK_JUDGE" 'removes, disables or weakens a hook or a check')" есть
 report "replay: SC-AK-1470 — и в меню отказа проверки выхода" "$(has "$ASK_JUDGE" 'Hold it in any menu, the menu of')" есть
 hold 1470-menu-lifts-check archived "replay: SC-AK-1470 — меню задержано один раз — ход держится" 'папка-разобрана'

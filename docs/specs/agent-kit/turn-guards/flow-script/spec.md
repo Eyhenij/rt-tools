@@ -1,6 +1,6 @@
 # The task flow as an executable scenario
 
-**Status:** in force · **Revision:** 2026-11-22 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-24 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `work-conduct`
 **Procedures:** none
@@ -11,7 +11,7 @@ The state of the work used to be declared by the executor in the progress, and t
 the line. A step of the plan was marked done without its result being measured. The owner asked for
 an executable scenario: every state of the task flow and every step of the plan has a measured
 result, the next step does not begin until the previous one is met, and the turn is held until the
-scenario ends or the owner interrupts it by Esc.
+scenario ends or the owner stops it by a stop word or by Esc.
 
 The task flow is written in a narrow data language of its own; the language, its parser and its
 model are the subdomain `docs/specs/agent-kit/turn-guards/flow-script/language/`. Here is the engine
@@ -172,3 +172,5 @@ None.
 - 2026-11-19 — exits 11, 12 and 13 moved to the subdomain `epic/`.
 - 2026-11-22 — the turn is held until the scenario ends or the owner interrupts it by Esc: no typed
   word stops the work. The forecast replays a stop after the mark of Esc as released.
+- 2026-11-24 — the owner's stop word ends the hold again, and the forecast replays a stop after it as
+  released.
