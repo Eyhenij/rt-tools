@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/rule-source-guard.sh · 79b2450a980a · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/rule-source-guard.sh · b6dc18175f0d · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/write-targets.sh, hooks/guard-note.sh
 # Guard of the place of the edit: the rules layer is fixed where it is broken, not where it is seen.
@@ -71,7 +71,7 @@ refuse() {
     command -v rt_judged_part >/dev/null 2>&1 || . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
     part=""
     if [ -n "${cmd:-}" ] && command -v rt_judged_part >/dev/null 2>&1; then
-        part="$(rt_judged_part "$cmd" "$(printf '%s' "${candidate##*/}" | sed 's/[][().*+?{}|^$\\]/[&]/g')")"
+        part="$(rt_judged_part "$cmd" "${candidate##*/}")"
     fi
     rt_decide "$RT_GUARD_NAME.sh" "$1" \
         "$(jq -cn --argjson m "$move" --argjson f "$flow" --argjson o "$2" '$m + $f.facts + $o')" \

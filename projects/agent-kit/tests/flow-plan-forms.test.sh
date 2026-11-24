@@ -30,6 +30,13 @@ report "SC-AK-1940 — труба с pipefail проходит" "$(pf_write '`se
 report "SC-AK-1940 — «||» и черта в кавычках трубой не считаются" \
     "$(pf_write '`test -f a.txt || grep -E "a|b" b.txt` → exit 0')" ''
 report "SC-AK-1940 — счёт найденного проходит" "$(pf_write '`grep -c слово a.txt` → >= 1')" ''
+for check in 'grep -cF "а" a.txt` → = 0' 'grep -cE "а|б" a.txt` → = 0' 'grep -ci а a.txt` → = 0' 'rg -c а a.txt` → == 0' 'set -o pipefail; grep а a.txt | wc -l` → = 0'; do
+    report "SC-AK-1940 — ноль, посчитанный «${check%%\`*}», отказан" "$(named "$(pf_write "\`$check")" 'grep -q … → exit 1')" отказ
+done
+report "SC-AK-1940 — pipefail после трубы её не снимает" "$(named "$(pf_write '`cat a | tail -1; set -o pipefail` → `б`')" 'a pipe without')" отказ
+for check in 'grep -c а a.txt || true` → = 0' 'test $(ls a | wc -l) -eq 3` → exit 0' 'test "$(ls a | wc -l)" -eq 3` → exit 0' 'case $x in a|b) true ;; esac` → exit 0' '[[ $x =~ a|b ]]` → exit 0' 'echo a >| f` → exit 0'; do
+    report "SC-AK-1940 — «${check%%\`*}» проходит" "$(pf_write "\`$check")" ''
+done
 report "SC-AK-1940 — другой файл не судится" "$(pf_write '`cat a | tail -1` → `б`' "$PF/docs/plan.md")" ''
 
 # Правка плана судится по тексту после неё.

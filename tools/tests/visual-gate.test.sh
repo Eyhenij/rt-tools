@@ -64,6 +64,7 @@ report "a pointed match of a kit without a wrapper gets its sample quoted" \
     "$(drive command bare no 'button')" '["pnpm","run","test:visual:v2","'"'"'button'"'"'"]'
 report "the sample of a pointed match stands after the kit" "$(sample '["ui-kit-v2","button"]')" "button"
 report "the sample of a re-take stands after --update" "$(sample '["ui-kit-v2","--update","button"]')" "button"
+report "a sample before --update is not dropped" "$(sample '["ui-kit-v2","badge","--update"]')" "badge"
 report "a whole match has no sample" "$(sample '["ui-kit-v2"]')" "undefined"
 report "a whole re-take has no sample" "$(sample '["ui-kit-v2","--update"]')" "undefined"
 report "a flag is no sample of a match" "$(sample '["ui-kit-v2","--verbose"]')" "undefined"

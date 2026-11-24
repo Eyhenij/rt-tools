@@ -40,7 +40,7 @@ rt_admin_e2e_step() {
     for f in $changed; do
         case "$f" in
             # The browser script of the step itself runs every spec.
-            tools/shot-browser*) add='all' ;;
+            tools/shot-browser* | tools/shot-forward.mjs) add='all' ;;
             docs/*|*.md|.claude/*|projects/agent-kit/*|tools/*|graphify-out/*|*/graphify-out/*|.prettierignore) add='' ;;
             apps/message-bus-admin-e2e/src/*.spec.ts) add="${f#apps/message-bus-admin-e2e/}" ;;
             libs/message-bus-*.spec.ts) add='' ;;

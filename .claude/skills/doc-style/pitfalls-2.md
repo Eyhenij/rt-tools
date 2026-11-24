@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/doc-style.2.md · f6d1a3136a6a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · pitfalls/doc-style.2.md · 0a237c2c8100 · правится надстройкой, не здесь -->
 # Project texts — cold part, second file
 
 The sections the rule `doc-style` handed over when it was cut to its statements: its names,
@@ -124,7 +124,7 @@ flowchart TD
   all, and a replacement whose pattern matched nothing exits zero with the file untouched. A
   command that must write a document gets it as a file written by the edit tool beforehand.
   An edit script saved to a file and run by its path is the same write: the guard of the place of an
-  edit reads the script of a command that runs it, unless the file is tracked by the tree.
+  edit reads an untracked script a command runs; one fed by a pipe or run by another script it misses.
 
 - **A document is no longer than the length limit.** A text that does not fit on one screen gets
   appended to without rereading the beginning — that is how one document ends up with two answers

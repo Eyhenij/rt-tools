@@ -12,16 +12,17 @@ card, `<base>` the base of the branch: the previous branch of the chain, the epi
 so every block sets the client and the token itself.
 
 Every call with the token starts with `test -s`: an empty or missing file would leave the variable
-empty, and the client answers from the owner's account.
+empty, and the client answers from the owner's account. A block of several calls makes them through
+`bot`, where the check stands in each: one check on the first line would let the next lines run.
 
 ## 2–3. The task and its branch
 
 ```bash
-GH=/opt/homebrew/bin/gh; test -s ~/.config/rt-tools-bot-token && export GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)"
+bot() { test -s ~/.config/rt-tools-bot-token && GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)" /opt/homebrew/bin/gh "$@"; }
 git fetch -q origin
 node tools/epic-table.mjs E
-$GH api "repos/Eyhenij/rt-tools/git/matching-refs/heads/RT-N-" --jq '.[].ref'
-$GH api "search/issues?q=repo:Eyhenij/rt-tools+is:pr+RT-N+in:title" --jq '.items[].number'
+bot api "repos/Eyhenij/rt-tools/git/matching-refs/heads/RT-N-" --jq '.[].ref'
+bot api "search/issues?q=repo:Eyhenij/rt-tools+is:pr+RT-N+in:title" --jq '.items[].number'
 git branch --list 'RT-N-*'
 ```
 
@@ -122,7 +123,8 @@ under the local identity.
 git fetch -q origin
 EM=317887029+rt-tools-dev@users.noreply.github.com
 GIT_AUTHOR_EMAIL=$EM GIT_COMMITTER_EMAIL=$EM \
-    GIT_AUTHOR_NAME=rt-tools-dev GIT_COMMITTER_NAME=rt-tools-dev git merge --no-edit origin/<base>
+    GIT_AUTHOR_NAME=rt-tools-dev GIT_COMMITTER_NAME=rt-tools-dev git merge --no-edit origin/<base> \
+    || { git rev-parse -q --verify MERGE_HEAD >/dev/null && git checkout --ours -- .claude/hooks; }
 node tools/check-specs.mjs; node tools/check-doc-paths.mjs
 pnpm exec nx affected -t test-hooks --base=origin/<base>    # the guard scenarios, when a hook moved
 ```
@@ -187,12 +189,12 @@ The state is reread from the host right after: the author must be `rt-tools-dev`
 an assignee or a label the call did not set is added by REST:
 
 ```bash
-GH=/opt/homebrew/bin/gh; test -s ~/.config/rt-tools-bot-token && export GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)"
-$GH api repos/Eyhenij/rt-tools/pulls/<pr> \
+bot() { test -s ~/.config/rt-tools-bot-token && GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)" /opt/homebrew/bin/gh "$@"; }
+bot api repos/Eyhenij/rt-tools/pulls/<pr> \
     --jq '{author: .user.login, reviewers: [.requested_reviewers[].login], assignees: [.assignees[].login], labels: [.labels[].name]}'
-$GH api repos/Eyhenij/rt-tools/issues/N --jq '.labels[].name' | while IFS= read -r L; do
-    $GH api -X POST repos/Eyhenij/rt-tools/issues/<pr>/labels -f "labels[]=$L" >/dev/null; done
-$GH api -X POST repos/Eyhenij/rt-tools/pulls/<pr>/requested_reviewers -f 'reviewers[]=Eyhenij'
+bot api repos/Eyhenij/rt-tools/issues/N --jq '.labels[].name' | while IFS= read -r L; do
+    bot api -X POST repos/Eyhenij/rt-tools/issues/<pr>/labels -f "labels[]=$L" >/dev/null; done
+bot api -X POST repos/Eyhenij/rt-tools/pulls/<pr>/requested_reviewers -f 'reviewers[]=Eyhenij'
 npm run -s task:move -- N in-review
 ```
 
@@ -205,8 +207,8 @@ test -s ~/.config/rt-tools-bot-token && GH_TOKEN="$(cat ~/.config/rt-tools-bot-t
 ## After the merge
 
 ```bash
-GH=/opt/homebrew/bin/gh; test -s ~/.config/rt-tools-bot-token && export GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)"
-$GH api repos/Eyhenij/rt-tools/pulls/<pr> --jq '{merged, merged_at}'
-$GH api repos/Eyhenij/rt-tools/issues/N --jq .state
+bot() { test -s ~/.config/rt-tools-bot-token && GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)" /opt/homebrew/bin/gh "$@"; }
+bot api repos/Eyhenij/rt-tools/pulls/<pr> --jq '{merged, merged_at}'
+bot api repos/Eyhenij/rt-tools/issues/N --jq .state
 npm run -s check:board
 ```

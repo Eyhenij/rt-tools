@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load when the base of a branch is merged into it and a conflict is resolved — the merge order, handling by file kind, checking what was appended against the work queue, re-reading the body of the open request. Branch and commit — pattern git-workflow-commit.
 ---
-<!-- rt-kit v0.39.1 · patterns/git-workflow-merge.md · 93b37d9a475e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · patterns/git-workflow-merge.md · 45ede207502c · правится надстройкой, не здесь -->
 
 # Merging the base of a branch into it
 
@@ -26,8 +26,14 @@ The merge of the base takes the conflict markers off the guards in the same call
 refuses every later call.
 
 ```bash
-git merge --no-edit origin/<база> || git checkout --ours -- .claude/hooks
+GIT_AUTHOR_NAME="<бот>" GIT_AUTHOR_EMAIL="<номер>+<бот>@users.noreply.github.com" \
+GIT_COMMITTER_NAME="<бот>" GIT_COMMITTER_EMAIL="<номер>+<бот>@users.noreply.github.com" \
+    git merge --no-edit origin/<база> || { git rev-parse -q --verify MERGE_HEAD >/dev/null && git checkout --ours -- .claude/hooks; }
 ```
+
+The markers are taken off only in a merge that began: one refused over an uncommitted edit would lose
+that edit. A hook one side deleted has no text of this side, and the command stops on it; a dispatcher
+of guards with markers refuses every call, this one first. Both are lifted by the owner in the terminal.
 
 `--ours` gives every hook in conflict this side's text: a laid-out one is put back by the layout, and a
 hook the tree wrote itself loses the base's edit. What the base changed is read by

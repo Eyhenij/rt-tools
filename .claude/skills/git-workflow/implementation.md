@@ -176,7 +176,7 @@ silent about.
   temporary, though it does not count as passing:
 
     ```bash
-    GH_TOKEN=$(cat ~/.config/rt-tools-bot-token) command gh api rate_limit --jq '.resources.graphql'
+    test -s ~/.config/rt-tools-bot-token && GH_TOKEN=$(cat ~/.config/rt-tools-bot-token) command gh api rate_limit --jq '.resources.graphql'
     ```
 
     So the key `board.tokenPath` in `.claude/rt-kit/checks.json` is gone: the queue audit, the
@@ -219,7 +219,7 @@ silent about.
     and the number arrive in one answer:
 
     ```bash
-    GH_TOKEN=$(cat ~/.config/rt-tools-bot-token) gh api user --jq '.login, .id'   # rt-tools-dev, 317887029
+    test -s ~/.config/rt-tools-bot-token && GH_TOKEN=$(cat ~/.config/rt-tools-bot-token) gh api user --jq '.login, .id'   # rt-tools-dev, 317887029
     ```
 
     An answer about oneself is always good, and a search by number only for an unblocked account:
@@ -260,7 +260,7 @@ silent about.
 - Whom the call will go from — before the call, not by the author of an already open PR:
 
     ```bash
-    GH_TOKEN=$(cat ~/.config/rt-tools-bot-token) command gh api user -q '.login'   # rt-tools-dev
+    test -s ~/.config/rt-tools-bot-token && GH_TOKEN=$(cat ~/.config/rt-tools-bot-token) command gh api user -q '.login'   # rt-tools-dev
     ```
 
 - `pnpm run check:affected` — the same as the send guard runs, only by hand.

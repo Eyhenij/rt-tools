@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/dispatch.sh · 4dec59ded0ff · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/dispatch.sh · 48ef061c52ff · правится надстройкой, не здесь
 # The dispatcher of agent events. NOT a guard: it has no `rt-hook:` declaration — on the contrary,
 # it reads such declarations in the others. In the agent settings it stands alone on an event
 # instead of a list.
@@ -99,7 +99,7 @@ rt_dispatch_broken() {
 }
 if [ "$event" = PreToolUse ]; then
     case "$(printf '%s' "${RT_HOOK_CMD:-}" | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//; s/^git -C [^[:space:];&|$`]+ /git /')" in
-        "$rt_dispatch_recovery" | 'git merge --abort') rt_dispatch_broken >/dev/null && exit 0 ;;
+        "$rt_dispatch_recovery" | 'git merge --abort' | 'git rebase --abort' | 'git cherry-pick --abort') rt_dispatch_broken >/dev/null && exit 0 ;;
     esac
 fi
 
@@ -176,7 +176,7 @@ EOF
         if ! bash -n "$branch" 2>/dev/null; then
             # The guard did not judge: its file does not parse. The way out is named, for the call that
             # fixes the file is refused by the same file.
-            refusal="$(printf 'The guard %s does not parse, so it judged nothing: after a merge it holds conflict markers. Take them off by one of two commands, alone in the call — %s (in the middle of a merge; the edits of the other side to the guards come back with the layout), or git merge --abort. Both pass while a guard does not parse. Without a merge in progress the file is restored by the layout or by the owner.' \
+            refusal="$(printf 'The guard %s does not parse, so it judged nothing: after a merge it holds conflict markers. Take them off by one of two commands, alone in the call — %s (in the middle of a merge; the edits of the other side to the guards come back with the layout), or git merge --abort. Both pass while a guard does not parse. A guard one side deleted has no version of this side, and the first command stops on it: the merge is undone. Without a merge in progress the file is restored by the layout or by the owner.' \
                 "$(basename "$branch")" "$rt_dispatch_recovery")"
         elif [ -n "$branch_out" ]; then
             refusal="$branch_out"

@@ -117,8 +117,10 @@ edit guards and the turn-closing guards.
 - **A branch that does not parse names the commands that restore it, and exactly those pass.** A merge
   of the base leaves conflict markers in the guards themselves, and such a guard refuses every call,
   the one that takes the markers off with the rest. While a file of the guards does not parse, the
-  restore of the guards of this side and the undoing of the merge pass unjudged, alone in their call;
-  with the guards whole both are judged as before.
+  restore of the guards of this side and the undoing of the merge, the rebase or the cherry-pick pass
+  unjudged, alone in their call; with the guards whole they are judged as before. A guard one side
+  deleted has no text of this side, and the restore stops on it. Markers in the dispatcher itself are
+  outside: it judges nothing then, and every call is refused — the merge takes them off by its own call.
 
 - **A model check is connected by a record of the kind `agent`, which the layout writes from the
   declaration in the file of the check.** The file of a model check is a text a model follows, and

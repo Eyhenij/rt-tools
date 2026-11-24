@@ -26,8 +26,9 @@ rt_delivery_identity() {
     # listed by ranges would silently not recognise a neighbouring one — the value then reads as absent,
     # and the clash with the reviewer goes unnoticed.
     pull_reviewer="$(printf '%s' "$cmd" | sed -n "s/.*--reviewer[= ]\{1,\}['\"]\{0,1\}\([^[:space:]'\"]\{1,\}\).*/\1/p" | head -1)"
+    # The substitution stands before the call: the same words in the body of the request are its text.
     [ -n "$pull_token_var" ] \
-        && printf '%s' "$cmd" | grep -qE "(^|[;&|(]|&&|\|\||[[:space:]])${pull_token_var}=" \
+        && printf '%s' "${cmd%% create *}" | grep -qE "(^|[;&|(]|&&|\|\||[[:space:]])${pull_token_var}=" \
         && substituted=1
 
     # Who will open the PR is asked of the hosting by the tree: the hosting, the client and the path to

@@ -70,7 +70,7 @@ refuse() {
     command -v rt_judged_part >/dev/null 2>&1 || . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
     part=""
     if [ -n "${cmd:-}" ] && command -v rt_judged_part >/dev/null 2>&1; then
-        part="$(rt_judged_part "$cmd" "$(printf '%s' "${candidate##*/}" | sed 's/[][().*+?{}|^$\\]/[&]/g')")"
+        part="$(rt_judged_part "$cmd" "${candidate##*/}")"
     fi
     rt_decide "$RT_GUARD_NAME.sh" "$1" \
         "$(jq -cn --argjson m "$move" --argjson f "$flow" --argjson o "$2" '$m + $f.facts + $o')" \

@@ -30,9 +30,12 @@ out in that tree.
 git fetch origin
 GIT_AUTHOR_NAME="<бот>" GIT_AUTHOR_EMAIL="<номер>+<бот>@users.noreply.github.com" \
 GIT_COMMITTER_NAME="<бот>" GIT_COMMITTER_EMAIL="<номер>+<бот>@users.noreply.github.com" \
-    git merge origin/<база> --no-edit
+    git merge --no-edit origin/<база> || { git rev-parse -q --verify MERGE_HEAD >/dev/null && git checkout --ours -- .claude/hooks; }
 git diff --name-only --diff-filter=U     # what ended up in conflict
 ```
+
+The markers are taken off the guards in the same call, and only in a merge that began — the hot part
+says why.
 
 The signature stands in the command itself: that command creates the merge commit, not a
 separate `git commit`, and there is nothing to change its signature with later — a merge that

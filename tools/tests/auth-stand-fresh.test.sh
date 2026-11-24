@@ -73,15 +73,32 @@ docker_double() {
     cat > "$STALE_BIN/docker" <<SH
 #!/usr/bin/env bash
 printf '%s\n' "\$*" >> "$STALE_BIN/calls"
+[ "\$1" = inspect ] && [ "$1" = none ] && exit 1
 [ "\$1" = inspect ] && printf '[{"StartedAt":"$1","Status":"running","Health":{"Status":"healthy"}},["A=b"],[]]'
+[ "\$1" = ps ] && printf '%s' "${2:-}"
 exit 0
 SH
     chmod +x "$STALE_BIN/docker"
     rm -f "$STALE_BIN/calls"
 }
+drop_stale() { RT_AUTH_THEME_RECORD="$STALE_BIN/record" PATH="$STALE_BIN:$PATH" node "$ROOT/apps/auth-example-e2e/stand/drop-stale.mjs" >/dev/null 2>&1; }
+removed() { grep -c '^rm -f rt-auth-keycloak-1$' "$STALE_BIN/calls"; }
+ARCHIVE="$ROOT/dist/auth-keycloak-theme/rt-auth-keycloak-theme.jar"
+DIGEST="$([ -f "$ARCHIVE" ] && shasum -a 256 "$ARCHIVE" | cut -d' ' -f1)"
 docker_double 2001-01-01T00:00:00Z
-RT_AUTH_THEME_RECORD="$STALE_BIN/record" PATH="$STALE_BIN:$PATH" node "$ROOT/apps/auth-example-e2e/stand/drop-stale.mjs" >/dev/null 2>&1
-report "drop-stale: the stale container is removed by its name" "$(grep -c '^rm -f rt-auth-keycloak-1$' "$STALE_BIN/calls")" "1"
-report "drop-stale: the digest is written down for the next call" "$([ -f "$STALE_BIN/record" ] && echo yes || echo no)" "yes"
+drop_stale
+report "drop-stale: the stale container is removed by its name" "$(removed)" "1"
+report "drop-stale: the digest is written down for the next call" "$(cat "$STALE_BIN/record")" "$DIGEST"
+# The archive is absent on a fresh checkout, and a container without one is always raised anew.
+docker_double 2099-01-01T00:00:00Z
+drop_stale
+report "drop-stale: a container of the current theme is not removed" "$(removed)" "$([ -n "$DIGEST" ] && echo 0 || echo 1)"
+docker_double none c0ffee
+echo former > "$STALE_BIN/record"
+drop_stale
+report "drop-stale: a container that could not be read keeps the former digest" "$(cat "$STALE_BIN/record")" "former"
+docker_double none
+drop_stale
+report "drop-stale: without a container the digest of the next one is written down" "$(cat "$STALE_BIN/record")" "$DIGEST"
 
 suite_result "auth-stand-fresh"

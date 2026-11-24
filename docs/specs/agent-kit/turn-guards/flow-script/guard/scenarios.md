@@ -210,9 +210,11 @@ Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
 ### SC-AK-1940 — a check whose form hides its result is refused when the plan is written
 
 Given a plan of the branch with no approval mark
-When Write or Edit puts a check that is a pipe without `pipefail`, or one that counts an absence by `grep -c`
+When Write or Edit puts a check that is a pipe without `pipefail` before it, or one that counts an absence by
+`grep -c` with any keys, `rg -c` or `grep | wc -l`
 Then the write is refused and names the step, the command and the form to write; a pipe with `pipefail`, an
-«||», a bar inside quotes, a count of what is found and another file pass
+«||», a bar inside quotes, a substitution, a `case` or a test, a count behind «|| true», a count of what is
+found and another file pass
 
 Given the same plan committed, or an approval mark of the branch
 When `plan-red` runs, or the plan is written

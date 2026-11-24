@@ -79,7 +79,8 @@ turn.
   arrow in it — a message, the code of an interpreter — read as a write into the word after the
   arrow, and a command that wrote nothing was refused as an edit. The shell parse drops every `>`
   inside single, double or back quotes before it looks for a redirection; a backslash outside
-  single quotes escapes the next sign, and every new line starts outside quotes.
+  single quotes escapes the next sign, a quote runs over the lines until it closes, and a comment ends
+  its line.
 - **Muted output is never a sign of a write, inside a body either.** A redirection into the empty
   device and into the error stream is removed before the parse — by the same technique the shell write
   sign removes it. Otherwise a body that writes nothing gives out all its paths again: a command with
@@ -91,10 +92,13 @@ turn.
   literals included, is filled in before the target is compared with the tree.
 - **A script file the command runs is read with the command.** An interpreter or a shell with a file,
   `source`, and a file called by its path: the text of the file is parsed the same way as the command,
-  by the guard of the place of an edit and by the delivery guard alike. A file tracked by its
-  repository, an installed package, a build and a file longer than 64 KB are not read.
+  by the guard of the place of an edit and by the delivery guard alike; the delivery guard takes of it
+  only the calls about a request. A file tracked by its repository, an installed package, a build and a
+  file longer than 64 KB are not read. Not seen: a file fed through a pipe, a runner the parse does not
+  name, a path from the arguments of the script and a script run by another script.
 - **A refusal of a compound command names the part it judged.** The call is refused whole, and the
-  refusal says that the other parts did not run; a plain command gets no such words. The guard of the
+  refusal says that the other parts did not run; a plain command gets no such words. A part that only
+  reads is never named, and where the judged text stands in a heredoc or comes through a loop none is. The guard of the
   course of work says the same.
 - **Removing a laid-out copy passes.** A removed file the layout puts anew, and that is how a copy the
   formatter rewrote is fixed.

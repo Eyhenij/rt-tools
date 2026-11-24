@@ -280,7 +280,7 @@ Covered: `projects/agent-kit/src/lib/commands.spec.ts`.
 Given a guard holds the markers of a merge conflict
 When a call is judged
 Then the refusal names the guard and the command that restores the guards of this side
-And that command, from the directory of the tree or with it named, and the undoing of the merge pass
+And that command, from the directory of the tree or with it named, and the undoing of the merge or of the rebase pass
 And the command with a tail after it, and the same command on another path, are refused
 And with the guards whole the command is judged as any other
 

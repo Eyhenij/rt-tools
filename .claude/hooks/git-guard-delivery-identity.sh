@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/git-guard-delivery-identity.sh · b3be0ab70eb0 · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/git-guard-delivery-identity.sh · 0a03486fd6df · правится надстройкой, не здесь
 # The identity of the call that opens a PR, for the delivery guard: who will open it and whether that
 # account is its own reviewer.
 #
@@ -27,8 +27,9 @@ rt_delivery_identity() {
     # listed by ranges would silently not recognise a neighbouring one — the value then reads as absent,
     # and the clash with the reviewer goes unnoticed.
     pull_reviewer="$(printf '%s' "$cmd" | sed -n "s/.*--reviewer[= ]\{1,\}['\"]\{0,1\}\([^[:space:]'\"]\{1,\}\).*/\1/p" | head -1)"
+    # The substitution stands before the call: the same words in the body of the request are its text.
     [ -n "$pull_token_var" ] \
-        && printf '%s' "$cmd" | grep -qE "(^|[;&|(]|&&|\|\||[[:space:]])${pull_token_var}=" \
+        && printf '%s' "${cmd%% create *}" | grep -qE "(^|[;&|(]|&&|\|\||[[:space:]])${pull_token_var}=" \
         && substituted=1
 
     # Who will open the PR is asked of the hosting by the tree: the hosting, the client and the path to

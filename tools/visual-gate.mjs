@@ -69,12 +69,15 @@ export function shellQuote(text) {
     return `'${text.replaceAll("'", "'\\''")}'`;
 }
 
-/** The path sample of the call: after `--update` for a re-take, after the kit for a match; a flag is no sample. */
+/**
+ * The path sample of the call: after `--update` for a re-take, after the kit for a match; a flag is no
+ * sample. One that stands before `--update` is the sample too: dropped, it would re-take every frame.
+ */
 export function sampleOf(args) {
     const at = args.indexOf('--update');
-    const sample = at >= 0 ? args[at + 1] : args[1];
+    const named = [at >= 0 ? args[at + 1] : undefined, args[1]];
 
-    return sample === undefined || sample.startsWith('--') ? undefined : sample;
+    return named.find((sample) => sample !== undefined && !sample.startsWith('--'));
 }
 
 /**

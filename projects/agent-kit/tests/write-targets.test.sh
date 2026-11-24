@@ -30,4 +30,18 @@ report "SC-AK-1942 — переменная цикла раскрыта кажд
     "$(targets 'for f in docs/a.md docs/b.md; do sed -i "" s/a/b/ "$f"; done')" 'docs/a.md docs/b.md'
 report "SC-AK-1942 — неизвестная переменная остаётся как есть" "$(targets 'echo x > "$OUT"')" '$OUT'
 
+report "SC-AK-1942 — две переменные одного пути раскрыты обе" "$(targets 'D=docs; F=a.md; echo x > $D/$F')" 'docs/a.md'
+
+# Формы, которые находило ревью.
+report "SC-AK-1942 — ключ -i после выражения" "$(targets "sed -e s/a/b/ -i.bak docs/a.md && ls")" 'docs/a.md'
+report "SC-AK-1942 — код из склеенных кавычек — одно слово" "$(targets "python3 -c 'open(\"'docs/a.md'\",\"w\").write(1)'")" 'docs/a.md'
+report "SC-AK-1942 — ключ в кавычках перед кодом" \
+    "$(targets "node --import \"tsx\" -e 'require(\"fs\").writeFileSync(\"docs/a.md\",\"\")'")" 'docs/a.md'
+report "SC-AK-1942 — сообщение в несколько строк — не команда" \
+    "$(targets "git commit -m 'первая строка
+run sed -i s/a/b/ docs/a.md && ok'" | grep -c 'docs/a.md')" 0
+report "SC-AK-1942 — комментарий конца строки не закрывает чужую кавычку" "$(targets "echo x > docs/a.md # don't")" 'docs/a.md'
+report "SC-AK-1942 — чтение на строке записи места не называет" \
+    "$(targets "python3 -c 's = open(\"docs/a.md\").read(); open(\"docs/b.md\",\"w\").write(s)'")" 'docs/b.md'
+
 suite_result "места записи в составной команде"

@@ -22,6 +22,24 @@ if (themeStale(facts)) {
     execFileSync('docker', ['rm', '-f', KEYCLOAK_CONTAINER], { stdio: ['ignore', 'ignore', 'inherit'] });
 }
 
-const record = themeRecord(ROOT);
-mkdirSync(dirname(record), { recursive: true });
-writeFileSync(record, `${facts.theme.digest ?? ''}\n`);
+/**
+ * Whether the container the raising leaves runs with the archive on disk: the one read above stays or
+ * is removed, and without any the raising makes it. An inspect that failed on a living container says
+ * nothing about its theme, and the former digest stays.
+ */
+function themeKnown() {
+    if (facts.keycloak !== null) {
+        return true;
+    }
+    try {
+        return execFileSync('docker', ['ps', '-aq', '--filter', `name=^${KEYCLOAK_CONTAINER}$`], { encoding: 'utf8' }).trim() === '';
+    } catch {
+        return false;
+    }
+}
+
+if (themeKnown()) {
+    const record = themeRecord(ROOT);
+    mkdirSync(dirname(record), { recursive: true });
+    writeFileSync(record, `${facts.theme.digest ?? ''}\n`);
+}

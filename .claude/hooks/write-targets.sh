@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/write-targets.sh · eb5fd2d77412 · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/write-targets.sh · a6b58f3f1c6d · правится надстройкой, не здесь
 # Write targets named by the shell command outright: redirection, `tee`, an in-place edit, a copy
 # over the top, and for an interpreter — the paths from its body. Prints one per line.
 #
@@ -34,6 +34,23 @@
 # The literals of the variables and the script files of a command. No helper — neither is read.
 # shellcheck disable=SC1091
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/script-files.sh" 2>/dev/null || true
+[ -n "${RT_SF_EXPAND:-}" ] || RT_SF_EXPAND='function rt_vars_read() {} function rt_expand(w, depth) { en = 1; ev[1] = w }'
+
+# The targets of a script as they stand from the directory the script enters; $1 — its body.
+rt_wt_from_dir() {
+    _wd_dir="$(printf '%s\n' "$1" | sed -nE 's#^([^\#]*[;&|[:space:]])?cd[[:space:]]+["'\'']?(/[^"'\''[:space:];&|$`]+).*#\2#p' | head -1)"
+    _wd_own="$(printf '%s\n' "$1" | sed -nE 's/^(.*[;&|[:space:]])?([A-Za-z_][A-Za-z0-9_]*)="?\$\(mktemp.*/\2/p' | tr '\n' ' ')"
+    if printf '%s\n' "$1" | grep -qE '(^|[;&|[:space:]])cd[[:space:]]+"?\$\(mktemp'; then _wd_dir=-; fi
+    for _wd_var in $_wd_own; do
+        printf '%s\n' "$1" | grep -qE "(^|[;&|[:space:]])cd[[:space:]]+\"?[$][{]?${_wd_var}([^A-Za-z0-9_]|\$)" && _wd_dir=-
+    done
+    while IFS= read -r _wd_path; do
+        case "$_wd_path" in
+            /* | '~'* | '$'*) printf '%s\n' "$_wd_path" ;;
+            *) case "$_wd_dir" in '') printf '%s\n' "$_wd_path" ;; -) ;; *) printf '%s\n' "$_wd_dir/$_wd_path" ;; esac ;;
+        esac
+    done
+}
 
 rt_write_targets() {
     rt_wt_text="$(cat)"
@@ -72,10 +89,11 @@ rt_write_targets() {
     # An arrow inside quotes is text of the command, not a redirection: `echo "a->b"` and the code
     # of `node -e "[1].map(x => x)"` read as writes into `b` and `x)` and were refused as edits.
     # The separators of commands inside quotes are dropped with it: a `sed` script of several parts is
-    # one word. The quote state is kept per line; a backslash outside single quotes escapes the next sign.
+    # one word. The quotes are read across the lines: a message of several lines is one word too; a
+    # backslash outside single quotes escapes the next sign, and a comment ends its line.
     rt_wt_shell="$(printf '%s\n' "$rt_wt_shell" | awk -v sq="'" '
-        function drop_quoted_arrows(s,   out, i, c, q, n) {
-            out = ""; q = ""; n = length(s)
+        function drop_quoted_arrows(s,   out, i, c, n) {
+            out = ""; n = length(s)
             for (i = 1; i <= n; i++) {
                 c = substr(s, i, 1)
                 if (c == "\\" && q != sq && i < n) { out = out c substr(s, i + 1, 1); i++; continue }
@@ -83,6 +101,8 @@ rt_write_targets() {
                     if (c == q) { q = "" } else if (index(">;|&", c)) { continue }
                 } else if (c == "\"" || c == sq || c == "`") {
                     q = c
+                } else if (c == "#" && (i == 1 || substr(s, i - 1, 1) ~ /[ \t]/)) {
+                    break
                 }
                 out = out c
             }
@@ -104,30 +124,12 @@ rt_write_targets() {
             | sed -nE '
                 s/^>[[:space:]]*([^[:space:]|&;]+).*/\1/p
                 s/(^|.*[[:space:]])tee[[:space:]]+(-a[[:space:]]+)?([^[:space:]|&;]+).*/\3/p
-                s/(^|.*[[:space:]])g?sed[[:space:]]+(-[^[:space:]]+[[:space:]]+)*(-[A-Za-z]*i[^[:space:]]*|--in-place[^[:space:]]*)[[:space:]]+([^[:space:]]+[[:space:]]+)*([^[:space:]|&;]+)[[:space:]]*$/\5/p
+                s/(^|.*[[:space:]])g?sed[[:space:]]+([^[:space:]]+[[:space:]]+)*(-[A-Za-z]*i[^[:space:]]*|--in-place[^[:space:]]*)[[:space:]]+([^[:space:]]+[[:space:]]+)*([^[:space:]|&;]+)[[:space:]]*$/\5/p
                 s/(^|.*[[:space:]])(cp|mv|install)[[:space:]]+([^[:space:]]+[[:space:]]+)+([^[:space:]|&;]+).*/\4/p
             ' \
-            | RT_WT_VARS="$RT_WT_VARS" awk '
-                BEGIN {
-                    n = split(ENVIRON["RT_WT_VARS"], rows, "\n")
-                    for (i = 1; i <= n; i++) {
-                        p = index(rows[i], "\t")
-                        if (p) { c++; name[c] = substr(rows[i], 1, p - 1); value[c] = substr(rows[i], p + 1) }
-                    }
-                }
-                {
-                    hit = 0
-                    for (i = 1; i <= c; i++) {
-                        for (f = 1; f <= 2; f++) {
-                            v = f == 1 ? "${" name[i] "}" : "$" name[i]
-                            at = index($0, v)
-                            if (!at || (f == 2 && substr($0, at + length(v), 1) ~ /[A-Za-z0-9_]/)) { continue }
-                            print substr($0, 1, at - 1) value[i] substr($0, at + length(v))
-                            hit = 1
-                        }
-                    }
-                    if (!hit) { print }
-                }
+            | RT_SF_VARS="$RT_WT_VARS" awk "$RT_SF_EXPAND"'
+                BEGIN { rt_vars_read() }
+                { rt_expand($0, 1); for (i = 1; i <= en; i++) { print ev[i] } }
             '
 
         # The body of the interpreter: the code comes as a `-c` argument, an `-e` argument or a
@@ -145,11 +147,11 @@ rt_write_targets() {
             # A path assigned to a variable. It stands on a line separate from the write call, and
             # without this pair a write through a variable cannot be caught at all.
             function note_var(s,   name, path) {
-                if (match(s, /[A-Za-z_][A-Za-z0-9_]*[ \t]*=[ \t]*[\047\"][^\047\"]*\/[^\047\"]*[\047\"]/)) {
+                if (match(s, /[A-Za-z_][A-Za-z0-9_]*[ \t]*=[ \t]*([A-Za-z_.]*Path\([ \t]*)?[\047\"][^\047\"]*\/[^\047\"]*[\047\"]/)) {
                     path = substr(s, RSTART, RLENGTH)
                     name = path
                     sub(/[ \t]*=.*$/, "", name)
-                    sub(/^[^=]*=[ \t]*[\047\"]/, "", path)
+                    sub(/^[^=]*=[^\047\"]*[\047\"]/, "", path)
                     sub(/[\047\"].*$/, "", path)
                     if (path ~ /\.[A-Za-z0-9]+$/) { varpath[name] = path }
                 }
@@ -158,7 +160,15 @@ rt_write_targets() {
             # script opens; everything else on the same line is search patterns, substitutions and
             # data.
             function emit_calls(s,   rest, arg, name) {
+                # The file object writes itself: its variable holds the path.
                 rest = s
+                while (match(rest, /[A-Za-z_][A-Za-z0-9_]*\.(write_text|write_bytes|unlink|rename)[ \t]*\(/)) {
+                    name = substr(rest, RSTART, RLENGTH)
+                    rest = substr(rest, RSTART + RLENGTH)
+                    sub(/\..*$/, "", name)
+                    if (name in varpath) { print varpath[name] }
+                }
+                rest = strip_reads(s)
                 while (match(rest, /(open|writeFileSync|writeFile|appendFileSync|appendFile|copyfile|copy2|rename|symlink|mkdir|makedirs)[ \t]*\(/)) {
                     rest = substr(rest, RSTART + RLENGTH)
                     arg = rest
@@ -241,7 +251,25 @@ rt_write_targets() {
             # that argument is the address (`writeFileSync(path, data)`); the data and the argument
             # of `.write(`, `.write_text(`, `.write_bytes(` and of a string `.replace(` are cut.
             # `os.replace(source, target)` is a transfer, and its arguments stay.
+            # A read on the line of a write names no target: the reading call loses its arguments, an
+            # import its address. A file opened with no mode, or with one of reading, is read.
+            function strip_reads(s,   out, name, from, endp, args) {
+                gsub(/from[ \t]+[\047\"][^\047\"]*[\047\"]/, "from", s)
+                gsub(/(import|require)[ \t]*\([ \t]*[\047\"][^\047\"]*[\047\"][ \t]*\)/, "import()", s)
+                out = ""
+                while (match(s, /(^|[^A-Za-z0-9_])(open|readFileSync|readFile)[ \t]*\(/)) {
+                    name = substr(s, RSTART, RLENGTH)
+                    from = RSTART + RLENGTH
+                    out = out substr(s, 1, from - 1)
+                    endp = args_end(s, from)
+                    args = substr(s, from, endp - from)
+                    if (name ~ /open/ && args ~ /,/ && args !~ /,[ \t]*(mode[ \t]*=[ \t]*)?[\047\"]r[bt]?[\047\"]/) { s = substr(s, from); continue }
+                    s = substr(s, endp)
+                }
+                return out s
+            }
             function strip_content(s,   out, pre, name, from, endp, args) {
+                s = strip_reads(s)
                 out = ""
                 while (match(s, /(\.write|\.write_text|\.write_bytes|\.replace|writeFileSync|appendFileSync|writeFile|appendFile)[ \t]*\(/)) {
                     pre = substr(s, 1, RSTART - 1)
@@ -298,17 +326,20 @@ rt_write_targets() {
                 # quote that closes it. A key of another command of the line — `grep -c` next to a run of
                 # a script — is no code, and a command after the code is read by the shell parse above.
                 rest = $0
-                while (match(rest, /(^|[|;&(]|[ \t])(python3?|node|ruby|perl|php|deno|bun)[ \t]([^|;&\047\"]*[ \t])?-[ce][ \t]+/)) {
+                while (match(rest, /(^|[|;&(]|[ \t])(python3?|node|ruby|perl|php|deno|bun)[ \t](([^|;&\047\"]|\047[^\047]*\047|\"[^\"]*\")*[ \t])?-[ce][ \t]+/)) {
                     rest = substr(rest, RSTART + RLENGTH)
                     code = rest
-                    quote = substr(code, 1, 1)
-                    if (quote == "\047" || quote == "\"") {
-                        for (k = 2; k <= length(code); k++) {
+                    quote = ""
+                    # One word of the shell: a quote that closes next to another one goes on with it.
+                    if (code ~ /^[\047\"]/) {
+                        for (k = 1; k <= length(code); k++) {
                             ch = substr(code, k, 1)
-                            if (ch == "\\" && quote == "\"") { k++; continue }
-                            if (ch == quote) { break }
+                            if (ch == "\\" && quote != "\047") { k++; continue }
+                            if (quote != "") { if (ch == quote) { quote = "" } ; continue }
+                            if (ch == "\047" || ch == "\"") { quote = ch; continue }
+                            if (ch ~ /[ \t]/ || index(";|&)", ch)) { break }
                         }
-                        code = substr(code, 1, k)
+                        code = substr(code, 1, k - 1)
                     }
                     if (writes(code)) { note_var(code); emit(strip_content(code)); emit_calls(code) }
                 }
@@ -325,13 +356,20 @@ rt_write_targets() {
 
         # A script file the command runs is read the same way: a shell script is a command, any other is
         # a body of its interpreter. One level: a script that runs another script is not followed.
+        #
+        # A shell script that enters a directory of its own — one from `mktemp` — writes its relative
+        # paths there, and they are no paths of the tree. An absolute `cd` joins them.
         if [ -z "${RT_WT_SCRIPT:-}" ] && command -v rt_script_files >/dev/null 2>&1; then
             printf '%s' "$rt_wt_text" | rt_script_files | while IFS= read -r rt_wt_file; do
-                case "$(head -c 64 "$rt_wt_file" 2>/dev/null | head -1) $rt_wt_file" in
-                    *python* | *.py) printf 'python3 - <<RT_SCRIPT_BODY\n%s\nRT_SCRIPT_BODY\n' "$(cat "$rt_wt_file")" ;;
-                    *node* | *.mjs | *.cjs | *.js | *.ts | *.rb | *.pl | *.php) printf 'node - <<RT_SCRIPT_BODY\n%s\nRT_SCRIPT_BODY\n' "$(cat "$rt_wt_file")" ;;
-                    *) cat "$rt_wt_file" ;;
-                esac | RT_WT_SCRIPT=1 rt_write_targets
+                rt_wt_kind="$(rt_script_kind "$rt_wt_file")"
+                if [ "$rt_wt_kind" = shell ]; then
+                    rt_wt_body="$(sed -E '/^[[:space:]]*#/d' "$rt_wt_file")"
+                    printf '%s\n' "$rt_wt_body" | RT_WT_SCRIPT=1 rt_write_targets | rt_wt_from_dir "$rt_wt_body"
+                else
+                    [ "$rt_wt_kind" = python ] && rt_wt_head=python3 || rt_wt_head=node
+                    printf '%s - <<RT_SCRIPT_BODY\n%s\nRT_SCRIPT_BODY\n' "$rt_wt_head" "$(rt_script_text "$rt_wt_file")" \
+                        | RT_WT_SCRIPT=1 rt_write_targets
+                fi
             done
         fi
     } | sort -u

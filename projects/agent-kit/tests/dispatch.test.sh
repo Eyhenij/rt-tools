@@ -403,6 +403,7 @@ report "SC-AK-1945 — защита с метками слияния: отказ
 report "SC-AK-1945 — команда восстановления проходит" "$(dispatch_code PreToolUse "$(input_git 'git checkout --ours -- .claude/hooks')")" 0
 report "SC-AK-1945 — она же с каталогом дерева проходит" "$(dispatch_code PreToolUse "$(input_git 'git -C /tmp/tree checkout --ours -- .claude/hooks')")" 0
 report "SC-AK-1945 — отмена слияния проходит" "$(dispatch_code PreToolUse "$(input_git 'git merge --abort')")" 0
+report "SC-AK-1945 — отмена переноса проходит" "$(dispatch_code PreToolUse "$(input_git 'git rebase --abort')")" 0
 report "SC-AK-1945 — хвост за командой восстановления не проходит" "$(dispatch_code PreToolUse "$(input_git 'git checkout --ours -- .claude/hooks && git push')")" 2
 report "SC-AK-1945 — соседний путь не проходит" "$(dispatch_code PreToolUse "$(input_git 'git checkout --ours -- src')")" 2
 branch n_denies PreToolUse '.*' 2

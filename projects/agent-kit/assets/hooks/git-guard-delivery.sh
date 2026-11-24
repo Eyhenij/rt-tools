@@ -76,11 +76,17 @@ fi
 # the text of the command holds only the path of the file.
 # shellcheck disable=SC1091
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/script-files.sh" 2>/dev/null || true
+script_call=''
 if command -v rt_script_files >/dev/null 2>&1; then
+    # Of a shell script only its calls about a request are taken: a branch it creates, it may create in a
+    # repository of its own, and the rest of its text is judged by nobody here.
     while IFS= read -r script_file; do
-        [ -n "$script_file" ] && cmd="$cmd
-$(cat "$script_file" 2>/dev/null)"
+        [ -n "$script_file" ] && [ "$(rt_script_kind "$script_file")" = shell ] || continue
+        script_call="$script_call
+$(rt_script_text "$script_file" | rt_script_calls "${RT_CMD_BOUND}(gh[[:space:]]+pr|glab[[:space:]]+mr|az[[:space:]]+repos[[:space:]]+pr)[[:space:]]+(create|merge|ready|update)([[:space:]]|\$)")"
     done <<<"$(printf '%s' "$cmd" | rt_script_files)"
+    [ -n "${script_call//[[:space:]]/}" ] && cmd="$cmd
+$script_call"
 fi
 
 workdir="$(rt_hook_cwd)"
@@ -402,6 +408,18 @@ if command -v perl >/dev/null 2>&1; then
         }
     ' 2>/dev/null)"
 fi
+
+case "$script_call" in
+    *create*)
+        # The title a script computes cannot be read, and neither can the body it names.
+        case "$title" in
+            *'$'*)
+                unmet_class pr_create_bad_title "the request is opened from a script file, and its title is computed there: «${title}» cannot be read. Type the opening call itself, with its title."
+                refuse_unmet pr_create
+                ;;
+        esac
+        ;;
+esac
 
 if [ -n "$title" ]; then
     printf '%s' "$title" | grep -qE "$title_re" \

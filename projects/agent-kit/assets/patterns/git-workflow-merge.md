@@ -25,8 +25,14 @@ The merge of the base takes the conflict markers off the guards in the same call
 refuses every later call.
 
 ```bash
-git merge --no-edit origin/<база> || git checkout --ours -- .claude/hooks
+GIT_AUTHOR_NAME="<бот>" GIT_AUTHOR_EMAIL="<номер>+<бот>@users.noreply.github.com" \
+GIT_COMMITTER_NAME="<бот>" GIT_COMMITTER_EMAIL="<номер>+<бот>@users.noreply.github.com" \
+    git merge --no-edit origin/<база> || { git rev-parse -q --verify MERGE_HEAD >/dev/null && git checkout --ours -- .claude/hooks; }
 ```
+
+The markers are taken off only in a merge that began: one refused over an uncommitted edit would lose
+that edit. A hook one side deleted has no text of this side, and the command stops on it; a dispatcher
+of guards with markers refuses every call, this one first. Both are lifted by the owner in the terminal.
 
 `--ours` gives every hook in conflict this side's text: a laid-out one is put back by the layout, and a
 hook the tree wrote itself loses the base's edit. What the base changed is read by

@@ -32,6 +32,17 @@ report "SC-AK-1946 — чтение того же файла рядом куск
     "$(has "$(said $STEPS "cat $PROGRESS | head -1; printf x > $PROGRESS")" "judged here: \`printf x > $PROGRESS\`")" да
 report "SC-AK-1946 — место правки: простая команда — отказ без лишних слов" "$(has "$(said $PLACE 'sed -i "" s/a/b/ tools/laid.mjs')" 'judged here')" нет
 report "SC-AK-1946 — шаги: простая команда — отказ без лишних слов" "$(has "$(said $STEPS "echo x >> $PROGRESS")" 'judged here')" нет
+report "SC-AK-1946 — место правки: простая команда всё же отказана" "$([ -n "$(said $PLACE 'sed -i "" s/a/b/ tools/laid.mjs')" ] && echo да || echo нет)" да
+report "SC-AK-1946 — команда в несколько строк через черту — один кусок" "$(has "$(said $PLACE 'sed -i "" \
+    s/a/b/ \
+    tools/laid.mjs')" 'judged here')" нет
+report "SC-AK-1946 — чтение рядом с правкой через тело записи не названо" "$(has "$(said $STEPS "grep -n x $PROGRESS; python3 - <<'PY'
+open('$PROGRESS', 'w').write('x')
+PY")" 'judged here')" нет
+report "SC-AK-1946 — стрелка в кавычках чтения — не запись" \
+    "$(has "$(said $PLACE 'grep -n "a > b" tools/laid.mjs; cp x tools/laid.mjs')" 'judged here: `cp x tools/laid.mjs`')" да
+report "SC-AK-1946 — апостроф комментария слов не снимает" "$(has "$(said $PLACE "# don't
+ls; cp x tools/laid.mjs")" 'judged here: `cp x tools/laid.mjs`')" да
 report "SC-AK-1946 — шаги: простая команда всё же отказана" "$([ -n "$(said $STEPS "echo x >> $PROGRESS")" ] && echo да || echo нет)" да
 
 suite_result "отказ на составной команде"

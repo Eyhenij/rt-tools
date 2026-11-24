@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/flow-step-guard.sh · 556a9378b004 · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/flow-step-guard.sh · 6d77e51b43ed · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash
 # Requires: checks/task-flow-script.mjs, checks/flow-plan.mjs, checks/decide.mjs, hooks/decide.sh, hooks/deny-tail.sh, hooks/facts.sh
 # PreToolUse guard of the course of work: the scenario moves by a measurement, not by a declaration.
@@ -99,7 +99,7 @@ if [ "$tool" = Bash ]; then
     # shellcheck disable=SC1091
     . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
     command -v rt_judged_part >/dev/null 2>&1 && part="$(rt_judged_part "$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)" \
-        'progress[.]md|plan[.]md|plans/|rt-kit|task-flow|flow-[a-z-]+[.]mjs|[.]claude/projects/')"
+        'progress.md|plan.md|plans/|rt-kit|task-flow|flow-|.claude/projects/')"
 fi
 params="$(jq -cn --arg v "$verdict" --arg a "$part" '{verdict:$v} + (if $a == "" then {} else {after:$a} end)')"
 # shellcheck disable=SC1091

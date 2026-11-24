@@ -39,6 +39,26 @@ report "SC-AK-1943 — файла нет — проходит" "$(judge $PLACE "
 { cat "$OUT/edit.sh"; head -c 70000 /dev/zero | tr '\0' '#'; } > "$OUT/long.sh"
 report "SC-AK-1943 — файл длиннее 64 КБ не читается" "$(judge $PLACE "bash $OUT/long.sh")" прошло
 
+printf 'p = pathlib.Path("tools/laid.mjs")\np.write_text("x")\n' > "$OUT/path.py"
+report "SC-AK-1943 — запись через переменную от Path" "$(judge $PLACE "python3 $OUT/path.py")" отказ
+for run in 'bash -e' 'bash -euo pipefail' 'bash -o pipefail' 'bash <' '/usr/bin/env bash' "A='a b' bash" 'X="$(date)" bash' '.'; do
+    report "SC-AK-1943 — форма запуска «$run»" "$(judge $PLACE "$run $OUT/edit.sh")" отказ
+done
+mkdir -p "$OUT/a b" "$OUT/node-x" && cp "$OUT/edit.sh" "$OUT/a b/edit.sh" && cp "$OUT/edit.sh" "$OUT/node-x/edit.sh"
+report "SC-AK-1943 — путь с пробелом" "$(judge $PLACE "bash \"$OUT/a b/edit.sh\"")" отказ
+report "SC-AK-1943 — вид файла не берут из имени каталога" "$(judge $PLACE "bash $OUT/node-x/edit.sh")" отказ
+report "SC-AK-1943 — код «bash -c» зовёт файл" "$(judge $PLACE "bash -lc 'true; bash $OUT/edit.sh'")" отказ
+report "SC-AK-1943 — «bash -n» ничего не исполняет" "$(judge $PLACE "bash -n $OUT/edit.sh")" прошло
+report "SC-AK-1943 — запуск в кавычках — текст" "$(judge $PLACE "grep -n 'x; bash $OUT/edit.sh' a.md")" прошло
+printf '# было: sed -i "" s/a/b/ tools/laid.mjs\n' > "$OUT/note.sh"
+report "SC-AK-1943 — комментарий сценария — не правка" "$(judge $PLACE "bash $OUT/note.sh")" прошло
+printf 'node tools/laid.mjs > /tmp/o 2>&1\n' > "$OUT/run-node-checks.sh"
+report "SC-AK-1943 — запуск разложенной проверки — не правка" "$(judge $PLACE "bash $OUT/run-node-checks.sh")" прошло
+printf 'd="$(mktemp -d)"; cd "$d" && sed -i "" s/a/b/ tools/laid.mjs\n' > "$OUT/away.sh"
+report "SC-AK-1943 — правка в своём временном каталоге проходит" "$(judge $PLACE "bash $OUT/away.sh")" прошло
+printf 'cd %s\nsed -i "" s/a/b/ tools/laid.mjs\n' "$SF" > "$OUT/home.sh"
+report "SC-AK-1943 — сценарий, который входит в дерево, отказан" "$(cd "$OUT" && judge $PLACE "bash $OUT/home.sh")" отказ
+
 # --- защита доставки --------------------------------------------------------------------
 printf '%s\n' "$OPEN" > "$OUT/open.sh"
 report "SC-AK-1943 — заявка из файла сценария судится" "$(judge $DELIVERY "bash $OUT/open.sh")" отказ
@@ -47,6 +67,13 @@ chmod +x "$OUT/open.sh"
 report "SC-AK-1943 — файл, вызванный путём, судится" "$(judge $DELIVERY "$OUT/open.sh")" отказ
 report "SC-AK-1943 — файл под ограничителем времени судится" "$(judge $DELIVERY "timeout 60 bash $OUT/open.sh")" отказ
 report "SC-AK-1943 — файл, который заявки не открывает, проходит" "$(judge $DELIVERY "bash $OUT/edit.sh")" прошло
+report "SC-AK-1943 — заявка под ключом оболочки судится" "$(judge $DELIVERY "bash -e $OUT/open.sh")" отказ
+printf '%s --base "$1" --title "$2"\n' 'gh pr'' create' > "$OUT/params.sh"
+got="$(input_cmd "bash $OUT/params.sh main '[RT-1943] Готово'" Bash "$SF" | (cd "$SF" && CLAUDE_PROJECT_DIR="$SF" "$HOOKS/$DELIVERY" 2>/dev/null))"
+report "SC-AK-1943 — вычисленный заголовок назван вычисленным, а не безномерным" \
+    "$(printf '%s' "$got" | grep -c 'is computed there')/$(printf '%s' "$got" | grep -c 'does not start with the number')" '1/0'
+printf 'cd "$(mktemp -d)" && git init -q\ngit checkout -q -b RT-3-Slug.x\n# %s --title x\ncat > a <<EOF\n%s --title x\nEOF\n' 'gh pr'' create' 'gh pr'' create' > "$OUT/own.sh"
+report "SC-AK-1943 — ветка своего репозитория, комментарий и тело записи не судятся" "$(judge $DELIVERY "bash $OUT/own.sh")" прошло
 cp "$OUT/open.sh" "$SF/tools/open.sh"
 git -C "$SF" add -A && git -C "$SF" -c user.name=t -c user.email=t@e -c commit.gpgsign=false commit -qm open
 report "SC-AK-1943 — сценарий дерева не читается" "$(judge $DELIVERY 'bash tools/open.sh')" прошло
