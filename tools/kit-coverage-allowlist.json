@@ -58,6 +58,7 @@
     "ng-template[rtSheetHeader]": "projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/bottom-sheet-matrix.stories.ts",
     "ng-template[rtSheetFooter]": "projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/bottom-sheet-matrix.stories.ts",
     "[rtDateWheel]": "projects/ui-kit-v2/src/lib/components/date-picker/stories/date-sheet.stories.ts",
+    "[rtChipCarousel]": "projects/ui-kit-v2/src/lib/components/date-picker/stories/date-sheet.stories.ts",
     "ng-template[rtThreadListEmpty]": "projects/ui-kit-v2/src/lib/components/thread-list/stories/thread-list-states.stories.ts",
     "ng-template[rtThreadListError]": "projects/ui-kit-v2/src/lib/components/thread-list/stories/thread-list-states.stories.ts",
     "ng-template[rtWorkspaceDetailsError]": "projects/ui-kit-v2/src/lib/components/workspace-details/stories/workspace-details-states.stories.ts",

@@ -167,11 +167,26 @@
             align-items: stretch;
         }
 
+        /* Чипы в шторке — одна строка на всю ширину шторки, прокрутка вбок по кругу; края ряда
+           затеняются, чтобы было видно, что чипы уходят за край. */
         &--sheet &__presets {
-            flex-flow: row wrap;
-            padding-right: 0;
+            position: relative;
+            flex-flow: row nowrap;
             border-right: none;
             gap: var(--rt-space-2);
+            margin-inline: calc(-1 * var(--rt-space-5));
+            mask-image: linear-gradient(
+                to right,
+                transparent,
+                currentcolor var(--rt-space-8),
+                currentcolor calc(100% - var(--rt-space-8)),
+                transparent
+            );
+            overflow-x: auto;
+            overscroll-behavior-x: contain;
+            padding-block: var(--rt-space-1);
+            padding-inline: var(--rt-space-5);
+            scrollbar-width: none;
         }
 
         &--sheet &__preset {
