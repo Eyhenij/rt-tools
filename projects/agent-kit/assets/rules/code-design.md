@@ -18,8 +18,8 @@ after, where it lives.
   GRASP, Gang of Four; no problem — «no pattern» and why. For a new module, a split and the host's
   plan mode the table is loaded by a call.
 - **Code is read first: who imports the module and whom it imports.**
-- **Coupling is counted before and after the edit.** Incoming, outgoing, cycles, imports past the
-  entry; growth is named in the plan.
+- **Coupling is counted before and after the edit.** By `check-coupling`: links, cycles, imports past
+  the entry; growth is named in the plan.
 - **A module has one duty, said in one sentence without «and».** Cohesion: two sentences are two
   modules.
 - **Isolation: from outside a module is called through its entry and tested without its
