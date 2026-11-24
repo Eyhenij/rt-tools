@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.0 · pitfalls/task-flow-resume.md · a6621bcf7806 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · pitfalls/task-flow-resume.md · e0ae37130fd0 · правится надстройкой, не здесь -->
 # Returning to unfinished work — cold part
 
 The pattern `task-flow-resume` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.
@@ -132,8 +132,8 @@ host by the branch. A PR reopened for remarks after the folder left keeps its st
 - **PR:** не открыт · осталось: разбор папки, сверка очереди
 ```
 
-The progress carries no line about a stop. The exit guard reads the owner's Esc from their last
-entry in the record of the session, and a stop written on disk would only retell it. A task
+The progress carries no line about a stop. The exit guard reads the owner's stop word or Esc from
+their last entry in the record of the session, and a stop written on disk would only retell it. A task
 the owner put off gets the mark «отложено» in the epic plan, set by their word naming it, and the
 work goes on with the next task.
 

@@ -131,8 +131,8 @@ host by the branch. A PR reopened for remarks after the folder left keeps its st
 - **PR:** не открыт · осталось: разбор папки, сверка очереди
 ```
 
-The progress carries no line about a stop. The exit guard reads the owner's Esc from their last
-entry in the record of the session, and a stop written on disk would only retell it. A task
+The progress carries no line about a stop. The exit guard reads the owner's stop word or Esc from
+their last entry in the record of the session, and a stop written on disk would only retell it. A task
 the owner put off gets the mark «отложено» in the epic plan, set by their word naming it, and the
 work goes on with the next task.
 

@@ -1,6 +1,6 @@
 # The handover of a session and the entry into a new one
 
-**Status:** in force · **Revision:** 2026-11-22 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-24 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Procedures:** none
 **Laws:** `work-conduct`, `verifiability`
@@ -28,7 +28,7 @@ the window the squeeze happened for.
 - **The entry into a session** — what the startup hook puts into the context before the first remark.
   It differs from what the session will read itself: what is read costs a turn, what is put does not.
 - **The map of the turn** — a short list of the states of the work with the mandatory action of each,
-  and the two ends of a turn. Not a retelling of the rule: the rule explains, the map names.
+  and the ends of a turn. Not a retelling of the rule: the rule explains, the map names.
 - **A launch** — the event the startup hook fires at: the first launch, a resumption, a squeeze of
   the context, a clearing.
 
@@ -72,9 +72,9 @@ session.
   and Russian.** The map of the package is written in English, and the rule and the law are
   translated by tasks of their own; a tree with a Russian map of its own is not left without the
   check at a new edition of the package. Either of the two names is enough.
-- **The map names the mandatory action of every state and the two ends of a turn: the end of the
-  scenario and the owner's interrupt by Esc.** A list of the states without the mandatory actions answers
-  the question "where are we", while the answer needed is to the question "what to do"; without the
+- **The map names the mandatory action of every state and the ends of a turn: the end of the
+  scenario, the owner's stop word and their interrupt by Esc.** A list of the states without the
+  mandatory actions answers the question "where are we", while the answer needed is to the question "what to do"; without the
   ends of a turn it reads as permission to stop anywhere.
 - **A map that names a former exit of a turn as an item is refused.** A question, a guard's refusal,
   a filled window and handed-over work no longer end a turn. A map that still lists them tells the
@@ -207,6 +207,7 @@ from the root of the current tree.
 
 ## History of changes
 
+- 2026-11-24 — the map names the owner's stop word as an end of a turn again, next to Esc.
 - 2026-11-22 — the second end of a turn in the map is the owner's interrupt by Esc, «the owner
   interrupted the turn», in place of the stop word: no typed word stops the work.
 - 2026-11-15 — the map names two ends of a turn instead of four exits, and a map that lists a former

@@ -354,10 +354,21 @@ d="$(fl_data "{ menu: ['стоп', 3] }")"
 report "data: SC-AK-1518 — вариант меню не строка отказан" "$(fl_model_refused_with "$d" 'words.menu: a list of non-empty strings')" 'да'
 d="$(fl_data "{ nudge: '(продолжай' }")"
 report "data: SC-AK-1518 — образец, который не собирается, отказан" "$(fl_model_refused_with "$d" 'words.nudge: the pattern does not compile')" 'да'
-d="$(fl_data "{ stop: ['стоп'], stopExcept: ['не стоп'], holdAfter: ['подожди'], menu: ['отложить RT-N'] }")"  # the retired keys
-report "data: SC-AK-1849 — снятые ключи слов описание не роняют, движок их называет" \
-    "$(fl_data_call "$d" "d.retiredLines(m).length + ' ' + d.retiredLines(m)[0]")" \
-    '"3 retired by the package: words.stop — the owner stops a turn by Esc, and the key does nothing"'
+
+# --- SC-AK-1849 — слова остановки и исключения из них берутся из `words` ------------------------
+d="$(fl_data "{ stop: ['стоп', 'хватит'], stopExcept: ['работай'], holdAfter: ['останавлива'] }")"
+report "data: SC-AK-1849 — слово остановки из words" "$(fl_data_call "$d" "d.saysStop('Стоп, дальше не надо', m.words)")" 'true'
+report "data: SC-AK-1849 — исключение из words держит ход" "$(fl_data_call "$d" "d.saysStop('стоп, не туда, работай', m.words)")" 'false'
+report "data: SC-AK-1849 — исключение с «не» остановки не снимает" "$(fl_data_call "$d" "d.saysStop('стоп, не работай', m.words)")" 'true'
+report "data: SC-AK-1849 — слово из holdAfter держит ход" "$(fl_data_call "$d" "d.saysStop('хватит останавливаться', m.words)")" 'false'
+report "data: SC-AK-1849 — слово внутри другого слова не считается" "$(fl_data_call "$d" "d.saysStop('стопка бумаги', m.words)")" 'false'
+report "data: SC-AK-1849 — слово не в начале сообщения не считается" "$(fl_data_call "$d" "d.saysStop('работа не стоп', m.words)")" 'false'
+d="$(fl_data "{ stop: ['шабаш'] }")"
+report "data: SC-AK-1849 — другое описание — другие слова" "$(fl_data_call "$d" "d.saysStop('Шабаш на сегодня', m.words) + ' ' + d.saysStop('стоп', m.words)")" '"true false"'
+d="$(fl_data "{ stopExcept: 'не стоп' }")"
+report "data: SC-AK-1849 — исключения не списком отказаны" "$(fl_model_refused_with "$d" 'words.stopExcept: a list of non-empty strings')" 'да'
+d="$(fl_data "{ stopWords: ['стоп'] }")"
+report "data: SC-AK-1849 — чужой ключ words отказан" "$(fl_model_refused_with "$d" 'words.stopWords: not a word list')" 'да'
 
 # --- SC-AK-1519 — способ сравнения формы ожидаемого — поле `compare` ----------------------------
 d="$(fl_data '' "$FORMS")"

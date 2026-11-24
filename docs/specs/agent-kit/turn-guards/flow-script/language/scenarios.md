@@ -436,10 +436,12 @@ Then it prints `flow sync: 6 views match`, then refuses the view of the override
 
 Covered: `projects/agent-kit/tests/flow-language-sync.test.sh`, also run by `projects/agent-kit/tests/flow-language.test.sh`.
 
-### SC-AK-1849 — a retired key of `words` does not break the description
+### SC-AK-1849 — the stop words and what holds the turn after them are taken from `words`
 
-Given a description whose `words` set the retired keys `stop`, `stopExcept` and `holdAfter` next to `menu`
-When the model is built
-Then it builds, and the engine names each of the three keys as retired by the package
+Given a description whose `words` set `stop`, `stopExcept` and `holdAfter`
+When messages are judged by them
+Then a message opening with a stop word says stop, and one that goes on with a word of the two other lists does not, «не» before the exception aside
+And a stop word inside another word or not at the start says nothing, and another description has other words
+And exceptions that are no list and a key no description has are refused
 
 Covered: `projects/agent-kit/tests/flow-language.test.sh`.
