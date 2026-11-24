@@ -19,8 +19,8 @@ Pattern of the rule `kit-approval`.
 
 Each question goes by the question window, never as prose. Mockup: «Макет: <ссылка на кадр
 Figma>. Одобряете?» Showcase: «Витрина: <адрес истории>, совпадение с макетом <число>.
-Одобряете?» An edit with no change of look: «Правка <файлы>: <что меняется>. Вид не меняется —
-подтверждаете?»
+Одобряете?» An edit with no change of look has no question of its own: the plan names its files and
+says the look stays, and the approval of the plan covers it.
 
 ## The answer
 
@@ -33,10 +33,11 @@ An approval goes into the task folder's approvals.md word for word, between « a
 ```
 
 An edit with no change of look — the type an input takes, say — carries one line instead of the
-three:
+three. It quotes the approval of the plan that named these kit files, never words said about
+something else; a branch with no kit edits of its own carries no line at all:
 
 ```markdown
-- **Без вида:** «<the owner's words>»
+- **Без вида:** «<the owner's words of the approval of the plan>»
 ```
 
 ## The match before the showcase question

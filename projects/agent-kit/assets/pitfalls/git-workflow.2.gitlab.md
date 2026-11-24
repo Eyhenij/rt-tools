@@ -152,7 +152,8 @@ flowchart TD
   the draft and asking to merge are one turn, and an MR opened ready needs no such call.
 - **The MR merge is pressed by a person, not by the work's executor.** The button, `glab mr merge`
   and "Merge when pipeline succeeds" set by the executor are equal. The executor merges their own MR
-  only when a person said so about this MR; said about one, it does not carry to the next.
+  only on a person's word: about this MR, or a named allowance — a class of merges named in advance.
+  A word about one does not carry to the next.
 - **The draft is not lifted while the MR has no review.** The delivery guard reads the requested
   reviewer and the review left: a lifted draft reads as "may be merged", and there is nobody to
   merge. Earlier than this turn there is nowhere to ask — before the MR opens there is no reviewer

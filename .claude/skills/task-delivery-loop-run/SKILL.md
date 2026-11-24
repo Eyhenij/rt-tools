@@ -46,6 +46,12 @@ pnpm exec nx affected -t lint typecheck test --parallel --base=origin/<base>
 RT_SUITES_BASE=origin/<base> bash tools/tests/run.sh   # the check scenarios the change reaches
 ```
 
+A heavy run goes alone and in the background. The affected run outlasts a foreground call on a cold
+cache, and the showcase frames fall with ECONNRESET beside the tests of the packages.
+
+The live check runs in the pinned Chrome. If it does not hold the local tab, the same measurement is
+made in the app's built-in browser, and the progress names it.
+
 A stand of another copy may already hold the port. Who listens is asked first; a held port is
 taken by the variables of the stand, not by stopping the neighbour:
 
@@ -135,6 +141,10 @@ GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)" /opt/homebrew/bin/gh pr create --
     --base <base> --head RT-N-<slug> --body-file <body file> \
     --reviewer Eyhenij --assignee rt-tools-dev --label <label> --draft
 ```
+
+The `$(…)` in this call may raise a permission prompt. Before the owner leaves for the night the
+form is checked by the pattern `autonomous-work-run`; a form that asks needs the owner's permission
+rule, and without it the PR waits for the morning.
 
 The state is reread from the host right after: the author must be `rt-tools-dev`, and a reviewer,
 an assignee or a label the call did not set is added by REST:

@@ -16,5 +16,7 @@
   "1548-stop-at-point.json": { "judge": "allow" },
   "1548-stop-hold.json": { "judge": "allow" },
   "1548-wait-for-neighbour.json": { "judge": "allow" },
-  "1548-wait-for-suite.json": { "judge": "allow" }
+  "1548-wait-for-suite.json": { "judge": "allow" },
+  "1932-incident-not-sent.json": { "judge": "block" },
+  "1932-incident-sent.json": { "judge": "allow" }
 }

@@ -288,6 +288,10 @@ hold 1548-wait-for-neighbour handed "replay: SC-AK-1548 — записанное
 hold 1548-stop-at-point stage "replay: SC-AK-1548 — записанное слово «Остановись на логической точке»" "$STAGE" "$STEP"
 hold 1548-not-now taken "replay: SC-AK-1548 — записанное слово «Не сейчас»" 'задача-взята'
 
+# Разбор промаха: движок держит ход по этапу, а отправку судит хук модели.
+hold 1932-incident-not-sent stage "replay: SC-AK-1932 — разбор записан и не отправлен" "$STAGE" "$STEP"
+hold 1932-incident-sent stage "replay: SC-AK-1932 — разбор записан и отправлен" "$STAGE" "$STEP"
+
 # --- хуки модели: их текст ----------------------------------------------------------------------------
 TURN_JUDGE="$ASSETS/hooks/turn-judge.md"
 ASK_JUDGE="$ASSETS/hooks/ask-judge.md"
@@ -295,6 +299,8 @@ ASK_JUDGE="$ASSETS/hooks/ask-judge.md"
 has() { grep -qF -- "$2" "$1" && echo есть || echo нет; }
 report "replay: SC-AK-1451 — хук модели на Stop держит вопрос с готовым ответом" "$(has "$TURN_JUDGE" 'asks the owner something already answered in the conversation')" есть
 report "replay: SC-AK-1451 — хук модели на Stop не судит открытую работу" "$(has "$TURN_JUDGE" 'Open work is not yours to judge')" есть
+report "replay: SC-AK-1932 — хук модели на Stop держит разбор без отправки" "$(has "$TURN_JUDGE" 'wrote an incident record and the turn did not run `agent-kit propose`')" есть
+report "replay: SC-AK-1932 — отклонённая запросом отправка называется владельцу" "$(has "$TURN_JUDGE" 'a permission prompt refused counts when the reply names the unsent record')" есть
 report "replay: SC-AK-1455 — хук меню пропускает меню отказа проверки выхода" "$(has "$ASK_JUDGE" 'The question is the menu named by a refusal of the exit check')" есть
 report "replay: SC-AK-1455 — меню отказа — ровно два варианта" "$(has "$ASK_JUDGE" 'The options are exactly two: «отложить RT-N» with the task number')" есть
 report "replay: SC-AK-1842 — хук меню пропускает «подскажу путь» и вопрос о пути" "$(has "$ASK_JUDGE" 'answered that menu with a bare «подскажу путь»')" есть

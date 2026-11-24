@@ -154,8 +154,8 @@ flowchart TD
   needs no such call.
 - **The PR merge is pressed by a person, not by the work's executor.** The Complete button, `az
   repos pr update --status completed` and auto-complete set by the executor are equal. The executor
-  merges their own PR only when a person said so about this PR; said about one, it does not carry to
-  the next.
+  merges their own PR only on a person's word: about this PR, or a named allowance — a class of merges
+  named in advance. A word about one does not carry to the next.
 - **A created work item is confirmed by the work queue's answer, not by the creation command's
   output.** A work item can be created and never reach the board: the queue is asked by number, and
   the answer is read from its presence on the board, its state and its assignee.

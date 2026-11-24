@@ -90,7 +90,8 @@ exits asks the engine of the task flow for a verdict: `docs/specs/agent-kit/turn
   and a tree adds its own through the override, not through an edit of the engine.
 - **A turn in which the executor admitted a miss does not close until there is a record about the
   incident.** The agent hook on the Stop event reads the admission in the reply and looks for the
-  record in the directory of incident analyses the tree names.
+  record in the directory of incident analyses the tree names. A record written in the turn is sent in
+  the same turn; a send a permission prompt refused is named to the owner with the permission it needs.
 - **A turn in which the owner said to create or send a proposal does not close until there was a
   sending.** What is written and not sent lies in the tree indistinguishably from what is sent, and it
   has no record of its own in the rules layer. Showing what would go away does not count as a sending.

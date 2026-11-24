@@ -28,7 +28,7 @@ The table in `implementation.md` next to it.
 
 - **A visible kit edit starts in Figma, not in code.** The frame is drawn first, measured by the
   pattern `mockups-measure` and shown to the owner with its link.
-- **The owner is asked whether they approve, and only their answer is written down.** An approval
+- **The owner is asked for the approval, and only their answer is written down.** An approval
   goes into the record word for word. A refusal is not written: the frame is fixed and shown again.
   The quotes are confirmed by the owner in the permission window that opening the PR shows; the
   records of the conversations are not searched for them. Before the boundary of an autonomous
@@ -50,14 +50,16 @@ The table in `implementation.md` next to it.
   is laid over the Figma frame of the page, and the overlay goes to the owner with the showcase.
 - **The showcase is shown to the owner and approved by a second answer.** The first approval was of
   a picture; the second is of the component a consumer will get.
-- **A kit file edited without a change of look goes by the owner's word that nothing visible
-  changed.** The check judges by the file, and a component class holds more than its look: the
-  type an input takes is edited there too. Such an edit has no frame to draw and nothing to
-  measure, so the owner is asked whether the edit is invisible, and their answer replaces all three
-  lines of the record. Whether it is invisible is the owner's call, not the executor's. Visible is
-  what the check counts, not what the eye sees: a component class edited for a type is visible to
-  it. The plan names every kit file the check counts, and the no-look question goes to the owner
-  with the plan, not at the push.
+- **A kit file edited without a change of look is judged by the executor, and the plan carries the
+  judgement.** The owner's word, 23 November 2026: «ты сам должен понимать где нужны макеты а где
+  нет». The check judges by the file, and a component class holds more than its look: the type an
+  input takes is edited there too. Such an edit has no frame to draw and nothing to measure. The plan
+  names every kit file the check counts and says that its look does not change; the line «Без вида»
+  quotes the words by which the owner approved that plan, and it replaces all three lines. No question
+  of its own is asked, neither with the plan nor at the push. An edit whose look may change goes by
+  the mockup.
+- **A branch with no kit edits of its own writes no approval line.** Kit files brought by a merge answer
+  by the records of their own tasks; a quote of words said about anything else is a false record.
 - **The push, the PR and the release go only after the approvals the record demands.** The check
   refuses all three while the record lacks the mockup and showcase quotes, or the no-look quote in
   their place. A release is judged by every merge since the last version
@@ -71,7 +73,7 @@ The table in `implementation.md` next to it.
 - **Витрина:** «<the owner's words>»
 ```
 
-An edit the owner called invisible carries one line instead of the three:
+An edit without a change of look, named in the approved plan, carries one line instead of the three:
 
 ```markdown
 - **Без вида:** «<the owner's words>»

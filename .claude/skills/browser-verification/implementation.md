@@ -15,7 +15,7 @@ happen in the working database.
 
 - **In the rule** — Here
 - **a stand** — the showcase at `http://localhost:6007`; the applications: the receiver at `:3000`, the admin panel at `:4200`; the end-to-end suite — its own `:3310` and `:4310`
-- **the browser driver** — the claude-in-chrome extension; there is no other way in
+- **the browser driver** — the claude-in-chrome extension in the pinned profile; the app's built-in browser is the fallback when the pinned Chrome does not hold the local tab, and the progress says which of the two made the measurement
 - **the pinned profile** — the identifier from `.claude/rt-kit/browser-device-id` — a file of the machine, it does not travel into the repository
 - **a measurement** — the computed values of a node, taken from the page rather than by eye from a screenshot
 

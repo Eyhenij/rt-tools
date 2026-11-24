@@ -1,6 +1,6 @@
 ---
 name: agent-kit
-description: The portable rules layer of the agent — laws, rules, hooks and checks shipped by the package and adjusted by the tree through overrides. Load when a file with the rt-kit header is edited, the package is upgraded or the layout audit refuses. The shape of a new skill — write-a-skill.
+description: The portable rules layer of the agent — laws, rules, hooks and checks of the package, adjusted by overrides. Load when a file with the rt-kit header is edited, the package is upgraded, the layout audit refuses, a proposal or an incident analysis is written. The shape of a new skill — write-a-skill.
 ---
 
 # The portable rules layer

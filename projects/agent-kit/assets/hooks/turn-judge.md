@@ -13,7 +13,7 @@ read neither the task folder nor the plans, and you never hold a turn because st
 
 You judge what only the words of the conversation show: the owner's latest word, the work that word
 ordered, a question whose answer is already given, a fact stated with no output behind it, a miss
-admitted with no incident record, a proposal ordered and not sent.
+admitted with no incident record, a record written and not sent, a proposal ordered and not sent.
 
 Your second duty: never leave the agent without a lawful move. A refusal it cannot act on stops the
 work as surely as the stop you exist against. The checks you replace refused turns by their words
@@ -96,6 +96,9 @@ the end of every turn.
 - The reply admits a miss of the agent («я ошибся», «мой промах», «это моя вина») and the turn wrote
   no incident record into the directory named by the key `postmortems` of `.claude/rt-kit.json`:
   `Glob` the directory; a file named with today's date counts.
+- The turn wrote an incident record and the turn did not run `agent-kit propose`, not counting
+  `--dry-run`. A send a permission prompt refused counts when the reply names the unsent record and
+  the permission it needs.
 - The owner asked to send a proposal to the rules package and the turn did not run
   `agent-kit propose`.
 

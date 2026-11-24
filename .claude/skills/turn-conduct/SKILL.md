@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — about one turn. Load when a turn is being ended — what it ends with, what the owner is told about a step that is theirs, what backs a statement about the tree, what the guards watch. Pattern task-flow-handoff. The whole course of work — rule task-flow.
 ---
-<!-- rt-kit v0.39.0 · rules/turn-conduct.md · 86f601973b03 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · rules/turn-conduct.md · c04ef7d874be · правится надстройкой, не здесь -->
 
 # Turn conduct — how it works here
 
@@ -268,8 +268,9 @@ flowchart TD
 - **The sign of irreversibility is taken from the list, not derived by argument.** The list was
   drawn up by someone who already weighed reversibility, and an argument cancels it silently. Actions outside the list the executor does not gate.
 - **A turn in which the executor admitted a miss does not end until the incident record exists.**
-  The agent hook refuses at the turn's end. The records directory is named by the rule's companion,
-  the file name is the date and the miss, the form — the layout template.
+  The role `cargo-writer` writes it by the layout template, and it is sent in the same turn by
+  `agent-kit propose`; the agent hook refuses without both. The companion names the records directory,
+  the file name is the date and the miss.
 - **A session begun from a handover enters the work by the same rule as any other.** The handover
   was written by a past session, no check reads it, and it describes yesterday: everything in it is
   checked against the tree. The entry order is four steps in the resume pattern; a guard watches it,

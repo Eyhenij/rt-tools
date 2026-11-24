@@ -1,0 +1,12 @@
+{
+  "case": "SC-AK-1932",
+  "kind": "an incident record written and not sent",
+  "record": "synthetic",
+  "task": 101,
+  "turns": [
+    { "role": "owner", "at": "2026-11-24T08:00:00Z", "owner": "<question>" },
+    { "role": "agent", "at": "2026-11-24T08:01:00Z", "call": "Read", "file": "docs/tasks/RT-101-replay-task/progress.md", "code": 0 },
+    { "role": "agent", "at": "2026-11-24T08:03:00Z", "call": "Write", "file": ".claude/rt-kit/postmortems/2026-11-24-answered-without-reading.md", "code": 0 },
+    { "role": "agent", "at": "2026-11-24T08:04:00Z", "say": "That was my miss: I answered without reading the plan. The incident record is written into the directory of analyses." }
+  ]
+}
