@@ -59,8 +59,8 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'header' | 'footer' | 
                                     style="position: relative; contain: paint; inline-size: 100%; height: 16rem; border: 1px dashed var(--rt-color-border-subtle)">
                                     <rt-bottom-sheet [open]="value">
                                         <span sheetHeader>Действия с договором</span>
-                                        <button rtButton label="Скачать" aria-label="Скачать" appearance="text"></button>
-                                        <button rtButton label="Отправить" aria-label="Отправить" appearance="text"></button>
+                                        <button type="button" rtButton label="Скачать" aria-label="Скачать" appearance="text"></button>
+                                        <button type="button" rtButton label="Отправить" aria-label="Отправить" appearance="text"></button>
                                     </rt-bottom-sheet>
                                 </div>
                             </ng-template>
@@ -80,20 +80,35 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'header' | 'footer' | 
                                     @switch (content) {
                                         @case ('без шапки') {
                                             <rt-bottom-sheet [open]="true">
-                                                <button rtButton label="Скачать" aria-label="Скачать" appearance="text"></button>
+                                                <button
+                                                    type="button"
+                                                    rtButton
+                                                    label="Скачать"
+                                                    aria-label="Скачать"
+                                                    appearance="text"></button>
                                             </rt-bottom-sheet>
                                         }
                                         @case ('с шапкой') {
                                             <rt-bottom-sheet [open]="true">
                                                 <span sheetHeader>Действия с договором</span>
-                                                <button rtButton label="Скачать" aria-label="Скачать" appearance="text"></button>
+                                                <button
+                                                    type="button"
+                                                    rtButton
+                                                    label="Скачать"
+                                                    aria-label="Скачать"
+                                                    appearance="text"></button>
                                             </rt-bottom-sheet>
                                         }
                                         @case ('длинное содержимое') {
                                             <rt-bottom-sheet [open]="true">
                                                 <span sheetHeader>Действия с договором</span>
                                                 @for (action of manyActions; track action) {
-                                                    <button rtButton appearance="text" [label]="action" [attr.aria-label]="action"></button>
+                                                    <button
+                                                        type="button"
+                                                        rtButton
+                                                        appearance="text"
+                                                        [label]="action"
+                                                        [attr.aria-label]="action"></button>
                                                 }
                                             </rt-bottom-sheet>
                                         }
@@ -185,17 +200,18 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'header' | 'footer' | 
                             <rt-bottom-sheet [open]="true">
                                 <span sheetHeader>Фильтры</span>
                                 @for (action of longActions; track action) {
-                                    <button rtButton appearance="text" [label]="action" [attr.aria-label]="action"></button>
+                                    <button type="button" rtButton appearance="text" [label]="action" [attr.aria-label]="action"></button>
                                 }
                                 <rt-toggle-switch sheetFooter label="Свободные" [formControl]="onlyFree" />
                                 <button
+                                    type="button"
                                     sheetFooter
                                     rtButton
                                     label="Сбросить"
                                     aria-label="Сбросить"
                                     appearance="outlined"
                                     style="margin-inline-start: auto"></button>
-                                <button sheetFooter rtButton label="Применить" aria-label="Применить"></button>
+                                <button type="button" sheetFooter rtButton label="Применить" aria-label="Применить"></button>
                             </rt-bottom-sheet>
                         </div>
                     </ng-template>
@@ -210,7 +226,7 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'header' | 'footer' | 
                             style="position: relative; contain: paint; height: 16rem; width: 18rem; border: 1px dashed var(--rt-color-border-subtle)">
                             <rt-bottom-sheet [open]="true">
                                 <span sheetHeader>Действия с договором</span>
-                                <button rtButton label="Скачать" aria-label="Скачать" appearance="text"></button>
+                                <button type="button" rtButton label="Скачать" aria-label="Скачать" appearance="text"></button>
                             </rt-bottom-sheet>
                         </div>
                     </ng-template>
@@ -227,7 +243,7 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'header' | 'footer' | 
                                     style="position: relative; contain: paint; height: 16rem; width: 18rem; border: 1px dashed var(--rt-color-border-subtle)">
                                     <rt-bottom-sheet [open]="true">
                                         <span sheetHeader>Действия с договором</span>
-                                        <button rtButton label="Скачать" aria-label="Скачать" appearance="text"></button>
+                                        <button type="button" rtButton label="Скачать" aria-label="Скачать" appearance="text"></button>
                                     </rt-bottom-sheet>
                                 </div>
                             </ng-template>

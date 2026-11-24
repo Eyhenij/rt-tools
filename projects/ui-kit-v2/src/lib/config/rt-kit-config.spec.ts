@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { classesOf, createRtFixture, provideRtKitTesting } from '../../testing/rt-kit-testing';
 import { RtAsideRef } from '../components/aside/rt-aside-ref';
+import { RtAsideContentDirective } from '../components/aside/rt-aside-content.directive';
 import { RtAsideComponent } from '../components/aside/rt-aside.component';
 import { RtAsideService } from '../components/aside/rt-aside.service';
 import { RT_ASIDE_DATA } from '../components/aside/rt-aside.tokens';
@@ -37,11 +38,13 @@ class SpokenHostComponent {}
     selector: 'rt-config-aside-content',
     template: `
         <rt-aside ariaLabel="Карточка">
-            <p>{{ data }}</p>
+            <ng-template rtAsideContent>
+                <p>{{ data }}</p>
+            </ng-template>
         </rt-aside>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtAsideComponent],
+    imports: [RtAsideComponent, RtAsideContentDirective],
 })
 class AsideContentComponent {
     public readonly data: string = inject(RT_ASIDE_DATA) as string;

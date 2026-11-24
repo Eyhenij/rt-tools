@@ -29,7 +29,7 @@ another language gives its own, the showcase reads «Нет данных».
 
 ## Rules
 
-- **Under emptiness the panel body shows the placeholder instead of the projected content.** Without
+- **Under emptiness the panel body shows the placeholder instead of the body template.** Without
   emptiness the content is drawn as before.
 - **The header, the request error box and the footer stay in their places under emptiness.** The
   placeholder takes only the body and stands in its middle.

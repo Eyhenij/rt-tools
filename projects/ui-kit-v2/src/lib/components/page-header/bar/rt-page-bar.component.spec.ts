@@ -127,7 +127,7 @@ describe('rt-page-bar', (): void => {
         expect(qa(fixture, 'page-bar-sheet')).toBeNull();
     });
 
-    it('SC-UKV-1722 — the filters sheet opens by the height of its fields, the apply button stands in its header', (): void => {
+    it('SC-UKV-1784 — the filters sheet opens by the height of its fields, the apply button stands in its header', (): void => {
         const fixture: ComponentFixture<PageBarHostComponent> = setup(375);
 
         (qa(fixture, 'page-bar-filters')?.nativeElement as HTMLElement).click();
@@ -194,7 +194,7 @@ describe('rt-page-bar', (): void => {
         expect(qa(fixture, 'page-bar-sheet')).toBeNull();
     });
 
-    it('SC-UKV-1723 — an input made in the sheet makes it ask before closing, apply reports the filters', (): void => {
+    it('SC-UKV-1785 — an input made in the sheet makes it ask before closing, apply reports the filters', (): void => {
         const fixture: ComponentFixture<PageBarHostComponent> = setup(375);
         let applied: number = 0;
         (fixture.debugElement.query(By.directive(RtPageBarComponent)).componentInstance as RtPageBarComponent).filtersApply.subscribe(
@@ -220,7 +220,7 @@ describe('rt-page-bar', (): void => {
         expect(qa(fixture, 'page-bar-sheet')).toBeNull();
     });
 
-    it('SC-UKV-1725 — with nothing changed the close button closes the filters sheet at once', (): void => {
+    it('SC-UKV-1787 — with nothing changed the close button closes the filters sheet at once', (): void => {
         const fixture: ComponentFixture<PageBarHostComponent> = setup(375);
         (qa(fixture, 'page-bar-filters')?.nativeElement as HTMLElement).click();
         fixture.detectChanges();
@@ -233,7 +233,7 @@ describe('rt-page-bar', (): void => {
     });
 
     // Прокрутку страницы держит общая оболочка шторки; её блокировку проверяет спека самой оболочки.
-    it('SC-UKV-1726 — Escape closes the filters sheet', (): void => {
+    it('SC-UKV-1788 — Escape closes the filters sheet', (): void => {
         const fixture: ComponentFixture<PageBarHostComponent> = setup(375);
         (qa(fixture, 'page-bar-filters')?.nativeElement as HTMLElement).click();
         fixture.detectChanges();

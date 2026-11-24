@@ -7,72 +7,45 @@ description: Rule under the delivery law for a tree on GitHub — the work queue
 
 # Work queue audit — how it works here
 
-Rule under the law `docs/constitution/delivery.md`. The law says what must be true about the work
-queue; here — what the audit reads in a tree on GitHub and which discrepancies it names. Creating a
-task, a branch and a PR is the rule `git-workflow`.
+Rule under the law `docs/constitution/delivery.md`. Cold part: `pitfalls.md`. Where it lives: the
+table in `implementation.md` next to it. A task, a branch and a PR are the rule `git-workflow`.
 
 ## What it is called here
 
-| In the law                 | Here                                                         |
-| -------------------------- | ------------------------------------------------------------ |
-| the work queue             | the project board; a task is an issue on it                  |
-| a discrepancy of the queue | a line of the audit; a run with lines exits with code 1      |
-| the audit run              | `npm run check:board`                                        |
-
-## Where it lives
-
-In this tree — the table in `implementation.md` next to it. Paths live there, not here: the rule
-travels between repositories, the layout does not, and a path named in the rule lies in the first
-tree that keeps its code differently.
-
-## Flow
-
-What the audit reads, in the order it reads it.
-
-```mermaid
-flowchart TD
-    A[The audit starts] --> B[Open tasks and their columns]
-    B --> C[Epics: links both ways, the base of task PRs, long work]
-    C --> D[Open PRs: column, lag behind the base, conflict]
-    D --> E{The pipeline wakes for the base}
-    E -->|Yes| F[The run on the tip: absent, pushed out, green on a draft]
-    E -->|No| G[One line for all such PRs, not a discrepancy]
-    F --> H[The last run of the main branch]
-    G --> H
-    H --> I[Lines are printed, the exit code says whether any were]
-```
+| In the law | Here |
+| --- | --- |
+| the work queue | the project board; a task is an issue on it |
+| a discrepancy of the queue | a line of the audit; a run with lines exits with code 1 |
+| the audit run | `npm run check:board` |
 
 ## How the law applies here
 
-- **A lagging column is found by the queue audit, not by eye.** It judges the column by the PR both
-  ways: an open PR with the task not in review, and review with no open PR.
-- **A branch with an open PR lags behind its base silently.** The guard judges the base once, at
-  opening, and the run does not see what merged after. The work queue audit counts the lag in a
-  summary line and refuses nothing by it: a lag without a conflict the host merges itself.
-- **The link between a task and an epic is read by the audit both ways.** A one-sided binding looks
-  as whole as a two-sided one.
+- **A lagging column is found by the queue audit, not by eye.** Both ways: an open PR with the task
+  not in review, and review with no open PR.
+- **A branch with an open PR lags behind its base silently.** The guard judges the base only at
+  opening, and the run does not see what merged after. The audit counts the lag in a summary line
+  and refuses nothing: the host merges a lag without a conflict itself.
+- **The link between a task and an epic is read by the audit both ways.** The audit also judges the
+  base of a task's PR: a base past the epic branch and its chain takes the task out of the epic.
 - **Work that one session cannot close is marked in two places, and they are audited.** The board
-  label and the sessions line in the epic plan say the same to two readers; only what legitimately
-  does not split is marked.
+  label and the sessions line of the epic plan say the same; only what legitimately does not split is marked.
 - **The tip of an open PR without a run is seen by the work queue audit, unless the pipeline does
-  not wake for its base.** A page without a run looks the same as with a green one; where no run
-  comes at all, the audit is silent about that PR.
+  not wake for its base.** There it is silent about that PR; one summary line counts all such PRs,
+  and it is not a discrepancy.
 - **A run pushed out of the pipeline queue gets a separate audit line.** It looks failed though it
-  never checked the branch, and the step count tells them apart.
+  never checked the branch; the step count tells them apart.
 - **The last run of the main branch is judged by the audit too: red and pushed out get lines of
   their own.** The merge itself is checked by nobody; a pipeline asleep on a push to main is named.
-- **A draft with a green run on its tip is an audit discrepancy.** A green page permits nothing: the
-  host locks the button.
-- **A conflicting open PR is a work queue audit discrepancy.** The conflict arrives with someone
-  else's merge, and the host shows the mark only inside the PR.
-- **An open PR without a reviewer is a work queue audit discrepancy.** It reaches no inbox, and
-  before the merge the miss does not show. A request to the author does not count, so a PR opened
-  by a person shows here too; the author apart is not judged.
+- **A draft with a green run on its tip is an audit discrepancy.** The host locks its button.
+- **A conflicting open PR is a work queue audit discrepancy.** The host shows the mark only inside
+  the PR.
+- **An open PR without a reviewer is a work queue audit discrepancy.** A request to the author does
+  not count, so a PR opened by a person shows too; the author apart is not judged.
 
 ## What of the law is not here
 
-The audit reads the queue and the host, not the tree: what a PR body says about the work it reads
-as text and does not judge. A column moved by hand between two runs is seen only on the next run.
+The audit reads the queue and the host, not the tree: it does not judge a PR body, and sees a
+column moved by hand only on the next run.
 
 ## Patterns
 

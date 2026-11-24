@@ -3,7 +3,7 @@
 The prefix `SC-UKV` is shared across the domain together with the subdomains. What a scenario is
 covered by is said under it.
 
-### SC-UKV-1710 — every sheet has a close button on the left of its header
+### SC-UKV-1772 — every sheet has a close button on the left of its header
 
 Given an open bottom sheet of the kit
 When its header is shown
@@ -11,7 +11,7 @@ Then a close button stands on the left of the header, and the title stands in th
 
 Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.component.spec.ts`.
 
-### SC-UKV-1711 — the close button closes the sheet and returns the focus
+### SC-UKV-1773 — the close button closes the sheet and returns the focus
 
 Given a select open in the sheet
 When the close button is pressed
@@ -19,7 +19,7 @@ Then the sheet closes, and the focus stands on the field
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
-### SC-UKV-1712 — a sheet with no title keeps the close button
+### SC-UKV-1774 — a sheet with no title keeps the close button
 
 Given a bottom sheet with no title
 When it is open
@@ -27,7 +27,7 @@ Then the close button stands on the left, and the header holds no title
 
 Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.component.spec.ts`.
 
-### SC-UKV-1713 — the action of a sheet stands on the right of its header
+### SC-UKV-1775 — the action of a sheet stands on the right of its header
 
 Given a multiselect open in the sheet
 When its header is shown
@@ -35,7 +35,7 @@ Then a filled done button stands on the right of the header, and the footer hold
 
 Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-sheet.spec.ts`.
 
-### SC-UKV-1714 — a choice of one value is drawn as cards with the kit radio button
+### SC-UKV-1776 — a choice of one value is drawn as cards with the kit radio button
 
 Given a select open in the sheet
 When its list is shown
@@ -43,7 +43,7 @@ Then every option is a card with the label on the left and the kit radio button 
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
-### SC-UKV-1715 — a choice of several values is drawn as cards with the kit checkbox
+### SC-UKV-1777 — a choice of several values is drawn as cards with the kit checkbox
 
 Given a multiselect open in the sheet
 When its list is shown
@@ -51,7 +51,7 @@ Then every option is a card with the kit checkbox on the right
 
 Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-sheet.spec.ts`.
 
-### SC-UKV-1716 — the description of an option is the second line of its card
+### SC-UKV-1778 — the description of an option is the second line of its card
 
 Given a select whose option carries a description
 When the select is open in the sheet
@@ -60,7 +60,7 @@ Then the card shows the description under the label, and next to the trigger the
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`; for the
 multiselect by `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-sheet.spec.ts`.
 
-### SC-UKV-1717 — one input returns the rows the panel has next to its trigger
+### SC-UKV-1779 — one input returns the rows the panel has next to its trigger
 
 Given a select with the cards switched off
 When it is open in the sheet
@@ -72,7 +72,7 @@ for the autocomplete by `projects/ui-kit-v2/src/lib/components/autocomplete/rt-a
 for the dynamic selector by `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-sheet.spec.ts`,
 for the table column filter by `projects/ui-kit-v2/src/lib/components/table/filter-header/rt-table-filter-header.component.spec.ts`.
 
-### SC-UKV-1718 — the dynamic selector draws cards in the sheet
+### SC-UKV-1780 — the dynamic selector draws cards in the sheet
 
 Given a dynamic selector open in the sheet
 When its list is shown
@@ -80,7 +80,7 @@ Then every option is a card with the mark on the right
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-sheet.spec.ts`.
 
-### SC-UKV-1719 — the hints of an autocomplete are cards in the sheet
+### SC-UKV-1781 — the hints of an autocomplete are cards in the sheet
 
 Given an autocomplete open in the sheet
 When its hints are shown
@@ -88,7 +88,7 @@ Then every hint is a card
 
 Covered: `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-sheet.spec.ts`.
 
-### SC-UKV-1720 — the comparison kinds of a column filter are cards in the sheet
+### SC-UKV-1782 — the comparison kinds of a column filter are cards in the sheet
 
 Given a table column filter on a phone
 When the comparison kind is pressed
@@ -96,7 +96,7 @@ Then the kinds are cards with the kit radio button, and the current one is check
 
 Covered: `projects/ui-kit-v2/src/lib/components/table/filter-header/rt-table-filter-header.component.spec.ts`.
 
-### SC-UKV-1721 — a sheet with a search is open by the height of its content and marked as typed in from the focus in its search until it closes
+### SC-UKV-1783 — a sheet with a search is open by the height of its content and marked as typed in from the focus in its search until it closes
 
 Given a select with a search open in the sheet by the height of its content
 When the search takes the focus
@@ -107,7 +107,7 @@ checkbox, a radio button, a button or a read-only field does not set the mark: n
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`; which node is
 typed in — by `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.logic.spec.ts`.
 
-### SC-UKV-1722 — the filters sheet opens by the height of its fields, the apply button stands in its header
+### SC-UKV-1784 — the filters sheet opens by the height of its fields, the apply button stands in its header
 
 Given the page filters on a phone
 When they are opened
@@ -115,7 +115,7 @@ Then the sheet takes the height of its fields, and the apply button stands on th
 
 Covered: `projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.component.spec.ts`.
 
-### SC-UKV-1723 — a sheet with a choice not applied asks before it closes
+### SC-UKV-1785 — a sheet with a choice not applied asks before it closes
 
 Given the page filters open in the sheet with an input made since they opened
 When the close button is pressed
@@ -124,7 +124,7 @@ Then a question with apply, do not apply and cancel stands at the bottom of the 
 Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-unsaved.spec.ts`; for
 the page filters by `projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.component.spec.ts`.
 
-### SC-UKV-1724 — the answers of the question apply, drop or keep
+### SC-UKV-1786 — the answers of the question apply, drop or keep
 
 Given the question before closing
 When apply is pressed the sheet applies and closes, when do not apply is pressed it closes without applying, when cancel is pressed it stays open
@@ -132,7 +132,7 @@ Then the application learns of the apply only in the first case
 
 Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-unsaved.spec.ts`.
 
-### SC-UKV-1725 — a sheet with nothing changed closes at once
+### SC-UKV-1787 — a sheet with nothing changed closes at once
 
 Given the page filters open in the sheet with nothing changed
 When the close button is pressed
@@ -142,7 +142,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-uns
 the page filters by `projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.component.spec.ts`,
 for the dynamic selector by `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-sheet.spec.ts`.
 
-### SC-UKV-1726 — the sheet of a date field locks the page scroll and closes by Escape
+### SC-UKV-1788 — the sheet of a date field locks the page scroll and closes by Escape
 
 Given a date field open in the sheet
 When Escape is pressed
@@ -150,7 +150,7 @@ Then the sheet closes, and while it was open the page did not scroll
 
 Covered: `projects/ui-kit-v2/src/lib/components/date-picker/rt-date-picker.component.spec.ts`; for the page filters by `projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.component.spec.ts`.
 
-### SC-UKV-1727 — the dynamic selector with marks set asks before it closes
+### SC-UKV-1789 — the dynamic selector with marks set asks before it closes
 
 Given a dynamic selector open in the sheet with marks changed and not applied
 When the sheet is asked to close by its close button or dragged down

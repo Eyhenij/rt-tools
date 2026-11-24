@@ -56,6 +56,25 @@ test.describe('the entry', () => {
         expect(counters).toEqual([]);
     });
 
+    test('SC-AUTH-119 — the records screen loads without a page error and without a failed script load', async ({ page }) => {
+        // A dependency missing from the build of the kit breaks the screen only at load: the entry
+        // form still opens, and the screen behind it is the first to fail.
+        const errors: string[] = [];
+        page.on('pageerror', (error: Error): void => {
+            errors.push(`pageerror: ${error.message}`);
+        });
+        page.on('requestfailed', (request: { resourceType(): string; url(): string }): void => {
+            if (request.resourceType() === 'script') {
+                errors.push(`requestfailed: ${request.url()}`);
+            }
+        });
+
+        await signIn(page, 'reader');
+        await expect(page.getByTestId('records-empty').or(page.getByTestId('records-list'))).toBeVisible();
+
+        expect(errors).toEqual([]);
+    });
+
     test('SC-AUTH-117 — the entry page lets the Metrika frame in and keeps the other security headers', async ({ page }) => {
         const entryPage: Promise<{ headers(): Record<string, string> }> = page.waitForResponse(
             // The first answer of the entry address is a redirect without the security headers; the

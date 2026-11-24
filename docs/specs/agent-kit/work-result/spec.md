@@ -40,16 +40,26 @@ and no dead end over a working day — is read from the same numbers.
 
   Every other error result is not a refusal: a non-zero exit of a command, the owner turning a call
   down («The user doesn't want to proceed»), an interrupt, an error of the tool itself.
-- **The check of a refusal** — the package name of the check the refusal text names, by this table.
-  The prefix `PreToolUse:<tool> hook error:` is dropped before the table is read.
+- **The check of a refusal** — the package name of the check the refusal text names, by this table,
+  read top down: the first row that matches gives the name. The frame of a model check is read with
+  the prefix `PreToolUse:<tool> hook error:` of its event; every other row is found anywhere in the
+  text.
 
-  | The refusal text opens with                       | The check                |
+  | The refusal text holds                            | The check                |
   | ------------------------------------------------- | ------------------------ |
+  | the frame of the turn-end model check             | `turn-judge`             |
+  | the frame of the menu model check                 | `ask-judge`              |
   | `BLOCKED by <name>:`                              | `<name>`                 |
+  | a shell error `…/hooks/dispatch.sh: line N:`      | `dispatch-broken`        |
   | `Refused by the rules gate`                       | `skill-gate`             |
   | `Refused: the epic is over`                       | `epic-over`              |
+  | the opening of a text of a guard that names no check — delivery, push, main branch, tree assignment, documents, reuse, browser | that guard's name |
   | a denial by the permission system                 | `permission`             |
-  | any other text, `BLOCKED: <text>` included        | `unnamed`                |
+  | any other text                                    | `unnamed`                |
+
+  The frame of a model check names it whatever its verdict quotes, a failure to find or read its
+  own file included. The names act from the day they ship: an observation of a past day keeps only
+  the name it was counted with, and the report does not rename it.
 
   A stop refusal reads its check from the first line after `Stop hook feedback:`; a feedback entry
   with no further line counts under `unnamed`.
@@ -225,6 +235,16 @@ and no dead end over a working day — is read from the same numbers.
 - **Milestone G is reached on a day with fewer than five refusals per hundred calls and no dead
   end.** Exactly five is not reached. A day with no call is not judged and prints «вызовов нет». The
   report prints one milestone line per day of the period.
+- **The report prints the dead ends of each day by check.** A dead end belongs to the day of the
+  last refusal of its series; the checks go by the number of dead ends, most first, and a day with
+  none prints «нет».
+- **The milestone of the epic is reached by three days in a row.** Each of them is a working day —
+  a session record and at least 1500 calls — with fewer than five refusals per hundred and no dead
+  end. A day that is not a working day is skipped: it neither counts nor breaks the run, by the
+  owner's choice of 22.11.2026. Otherwise the report names each day that does not hold it and by
+  what: too few calls, the rate, the dead ends or no record, and marks a skipped one.
+- **The report with no `--until` takes today.** The day is the calendar day in UTC of the moment of
+  the run.
 
 ### The rules gate
 
@@ -391,3 +411,6 @@ None: the owner's words of 13 November are 196 on the full record, and SC-AK-161
 - 17 November 2026 — proposed for task RT-3270; revised by the grill decisions after the roles:
   questions Q-1 to Q-10 closed into rules.
 - 17 November 2026 — in force: merged as the subdomain `work-result` by task RT-3270.
+- 22 November 2026 — task RT-3423: the table of check names covers the texts that named no check,
+  the report prints the dead ends by check, the milestone of the epic by three days and takes today
+  with no `--until`; scenarios SC-AK-1817, SC-AK-1818, SC-AK-1834 and SC-AK-1835.

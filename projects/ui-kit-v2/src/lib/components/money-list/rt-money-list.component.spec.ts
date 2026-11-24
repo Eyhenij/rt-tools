@@ -3,6 +3,7 @@ import { ComponentFixture } from '@angular/core/testing';
 
 import { createRtFixture, hostClasses, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
 import { RtMoneyListComponent } from './rt-money-list.component';
+import { RtMoneyRowContentDirective } from './rt-money-row-content.directive';
 import { RtMoneyRowComponent } from './rt-money-row.component';
 
 /** Суммы приходят проекцией — нужна host-обёртка. */
@@ -10,13 +11,13 @@ import { RtMoneyRowComponent } from './rt-money-row.component';
     selector: 'rt-money-list-host',
     template: `
         <rt-money-list>
-            <rt-money-row label="Тариф">12 000 ₽</rt-money-row>
-            <rt-money-row label="Скидка" [loading]="loading()">−1 200 ₽</rt-money-row>
-            <rt-money-row label="Итого" [total]="true">10 800 ₽</rt-money-row>
+            <rt-money-row label="Тариф"><ng-template rtMoneyRowContent>12 000 ₽</ng-template></rt-money-row>
+            <rt-money-row label="Скидка" [loading]="loading()"><ng-template rtMoneyRowContent>−1 200 ₽</ng-template></rt-money-row>
+            <rt-money-row label="Итого" [total]="true"><ng-template rtMoneyRowContent>10 800 ₽</ng-template></rt-money-row>
         </rt-money-list>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtMoneyListComponent, RtMoneyRowComponent],
+    imports: [RtMoneyListComponent, RtMoneyRowComponent, RtMoneyRowContentDirective],
 })
 class MoneyListHostComponent {
     public readonly loading: WritableSignal<boolean> = signal<boolean>(false);

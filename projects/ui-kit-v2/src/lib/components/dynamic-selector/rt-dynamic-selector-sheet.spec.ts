@@ -65,7 +65,7 @@ describe('Динамический селектор в нижней шторке
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1718 — выбор нескольких: каждый пункт — карточка с флажком кита', (): void => {
+    it('SC-UKV-1780 — выбор нескольких: каждый пункт — карточка с флажком кита', (): void => {
         open();
 
         expect(inSheet('[qa-dataid="dynamic-selector-options"]')[0].classList).toContain('rt-dynamic-selector-popup__list--cards');
@@ -74,7 +74,7 @@ describe('Динамический селектор в нижней шторке
         expect(boxes.every((box: HTMLElement): boolean => box.classList.contains('rt-checkbox--card'))).toBe(true);
     });
 
-    it('SC-UKV-1718 — выбор одной записи: каждый пункт — карточка с радиокнопкой кита', (): void => {
+    it('SC-UKV-1780 — выбор одной записи: каждый пункт — карточка с радиокнопкой кита', (): void => {
         open({ mode: 'single' });
 
         const radios: HTMLElement[] = inSheet('[qa-dataid="dynamic-selector-option"] [role="radio"]');
@@ -102,7 +102,7 @@ describe('Динамический селектор в нижней шторке
         expect(inSheet('.rt-dynamic-selector-popup__foot--empty')).toHaveLength(1);
     });
 
-    it('SC-UKV-1727 — с отметками шторка спрашивает перед закрытием, «Применить» вопроса пишет выбор', (): void => {
+    it('SC-UKV-1789 — с отметками шторка спрашивает перед закрытием, «Применить» вопроса пишет выбор', (): void => {
         const fixture: TFixture = open();
         inSheet('[qa-dataid="dynamic-selector-option"] [role="checkbox"]')[1].click();
         settle(fixture);
@@ -119,7 +119,7 @@ describe('Динамический селектор в нижней шторке
         expect(valueOf(fixture)).toEqual([2]);
     });
 
-    it('SC-UKV-1725 — без отметок кнопка закрытия закрывает шторку сразу', (): void => {
+    it('SC-UKV-1787 — без отметок кнопка закрытия закрывает шторку сразу', (): void => {
         const fixture: TFixture = open();
 
         (inSheet('[qa-dataid="bottom-sheet-close"] button')[0] as HTMLButtonElement).click();
@@ -154,7 +154,7 @@ describe('Динамический селектор в нижней шторке
         expect(apply.disabled).toBe(true);
     });
 
-    it('SC-UKV-1717 — sheetCards=false оставляет в шторке пункты, какими окно стоит у кнопки', (): void => {
+    it('SC-UKV-1779 — sheetCards=false оставляет в шторке пункты, какими окно стоит у кнопки', (): void => {
         open({ sheetCards: false });
 
         expect(inSheet('[qa-dataid="dynamic-selector-option"]')).toHaveLength(3);

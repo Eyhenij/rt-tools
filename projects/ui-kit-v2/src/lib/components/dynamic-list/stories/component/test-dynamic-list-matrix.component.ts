@@ -6,6 +6,7 @@ import { IPageModel } from '@rt-tools/utils';
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
+import { RtDynamicListContentDirective } from '../../rt-dynamic-list-content.directive';
 import { RtDynamicListComponent } from '../../rt-dynamic-list.component';
 import { RtDynamicListToolbarActionsDirective, RtDynamicListToolbarSelectorsDirective } from '../../rt-dynamic-list.directives';
 
@@ -63,7 +64,9 @@ const PAGE: IPageModel = { pageNumber: 1, pageSize: 20, totalCount: 55 };
                                         <ng-template rtDynamicListActions>
                                             <span class="app-dynamic-list-matrix__hint">Своё</span>
                                         </ng-template>
-                                        <ng-container [ngTemplateOutlet]="rowsTpl" />
+                                        <ng-template rtDynamicListContent>
+                                            <ng-container [ngTemplateOutlet]="rowsTpl" />
+                                        </ng-template>
                                     </rt-dynamic-list>
                                 </div>
                             </ng-template>
@@ -104,7 +107,9 @@ const PAGE: IPageModel = { pageNumber: 1, pageSize: 20, totalCount: 55 };
                                 <ng-template rtDynamicListSelectors>
                                     <span class="app-dynamic-list-matrix__hint">Смена 2</span>
                                 </ng-template>
-                                <ng-container [ngTemplateOutlet]="rowsTpl" />
+                                <ng-template rtDynamicListContent>
+                                    <ng-container [ngTemplateOutlet]="rowsTpl" />
+                                </ng-template>
                             </rt-dynamic-list>
                         </div>
                     </ng-template>
@@ -116,7 +121,9 @@ const PAGE: IPageModel = { pageNumber: 1, pageSize: 20, totalCount: 55 };
                     <ng-template>
                         <div class="app-dynamic-list-matrix__box">
                             <rt-dynamic-list [pageModel]="page" [showRefresh]="true" [showColumnSettings]="true">
-                                <ng-container [ngTemplateOutlet]="rowsTpl" />
+                                <ng-template rtDynamicListContent>
+                                    <ng-container [ngTemplateOutlet]="rowsTpl" />
+                                </ng-template>
                             </rt-dynamic-list>
                         </div>
                     </ng-template>
@@ -130,7 +137,9 @@ const PAGE: IPageModel = { pageNumber: 1, pageSize: 20, totalCount: 55 };
                             <ng-template>
                                 <div class="app-dynamic-list-matrix__box">
                                     <rt-dynamic-list [pageModel]="page" [showRefresh]="true" [showColumnSettings]="true">
-                                        <ng-container [ngTemplateOutlet]="rowsTpl" />
+                                        <ng-template rtDynamicListContent>
+                                            <ng-container [ngTemplateOutlet]="rowsTpl" />
+                                        </ng-template>
                                     </rt-dynamic-list>
                                 </div>
                             </ng-template>
@@ -184,6 +193,7 @@ const PAGE: IPageModel = { pageNumber: 1, pageSize: 20, totalCount: 55 };
 
         // components
         RtDynamicListComponent,
+        RtDynamicListContentDirective,
         RtDynamicListToolbarActionsDirective,
         RtDynamicListToolbarSelectorsDirective,
 

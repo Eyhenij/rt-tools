@@ -3,14 +3,18 @@ import { BooleanInput } from '@angular/cdk/coercion';
 import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedPosition, Overlay, OverlayModule } from '@angular/cdk/overlay';
 import { NgTemplateOutlet } from '@angular/common';
 import {
+    afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
+    contentChildren,
     DestroyRef,
+    effect,
     ElementRef,
     inject,
     Injector,
+    isDevMode,
     input,
     InputSignal,
     InputSignalWithTransform,
@@ -30,7 +34,7 @@ import { Observable, Subject, switchMap } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { rtKitLabel, RtSlotOutletDirective } from '@rt-tools/ui-kit-v2/core';
 import { BreakpointsService, carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
 import { IRtIconButton, RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
@@ -41,9 +45,14 @@ import {
     rtOpenPopoverSheet,
     rtPopoverSheetDismissals,
 } from '@rt-tools/ui-kit-v2/popover';
+import { RtMenuContentDirective } from './rt-menu-content.directive';
+import { RtMenuItemComponent } from './rt-menu-item.component';
 import { IRtMenu } from './rt-menu.model';
 
 const BEM_BLOCK: string = 'rt-menu';
+
+/** Коробка шторки, спрятанная до ответа окна подтверждения: вид — в `rt-menu.component.scss`. */
+const SHEET_HELD_CLASS: string = `${BEM_BLOCK}__sheet--held`;
 
 const POSITION_BELOW_END: ConnectedPosition = {
     originX: 'end',
@@ -76,7 +85,7 @@ const POSITION_ABOVE_START: ConnectedPosition = {
 
 /**
  * Dropdown-меню действий: icon-only триггер «…» + плавающая панель с пунктами
- * `rt-menu-item`, спроецированными через `<ng-content>`. Типовое применение —
+ * `rt-menu-item` из шаблона `<ng-template rtMenuContent>`: пункты создаются при открытии. Типовое применение —
  * per-row действия в конце строки `rt-table` (см. `[showRowActions]`).
  *
  * Движок — CDK `cdkConnectedOverlay` с прозрачным backdrop: авто-flip у края
@@ -85,13 +94,15 @@ const POSITION_ABOVE_START: ConnectedPosition = {
  * предками (таблицы, карточки), т.к. рендерится в overlay-контейнере.
  *
  * Выбор пункта закрывает меню: `rt-menu-item` всплывающе диспатчит DOM-событие
- * `rtMenuSelect`, которое панель ловит, — это переживает content-projection.
+ * `rtMenuSelect`, которое панель ловит, — это переживает границу overlay-контейнера.
  *
  * @example
  * ```html
  * <rt-menu ariaLabel="Действия">
- *     <rt-menu-item icon="ico-edit" label="Редактировать" (selected)="edit()" />
- *     <rt-menu-item icon="ico-trash" label="Удалить" danger (selected)="remove()" />
+ *     <ng-template rtMenuContent>
+ *         <rt-menu-item icon="ico-edit" label="Редактировать" (selected)="edit()" />
+ *         <rt-menu-item icon="ico-trash" label="Удалить" danger (selected)="remove()" />
+ *     </ng-template>
  * </rt-menu>
  * ```
  */
@@ -108,6 +119,7 @@ const POSITION_ABOVE_START: ConnectedPosition = {
 
         // standalone components / directives
         RtIconButtonComponent,
+        RtSlotOutletDirective,
         BlockDirective,
         ElemDirective,
         ModDirective,
@@ -139,6 +151,24 @@ export class RtMenuComponent {
     protected readonly panelTpl: Signal<TemplateRef<unknown>> = viewChild.required<TemplateRef<unknown>>('panelTpl');
 
     protected readonly isOpen: WritableSignal<boolean> = signal<boolean>(false);
+
+    /** Шаблоны пунктов: создаются, пока панель открыта. */
+    protected readonly contents: Signal<readonly RtMenuContentDirective[]> = contentChildren(RtMenuContentDirective);
+
+    /**
+     * Узлы пунктов из содержимого меню. Запрос видит и пункты шаблона, пока панель открыта, — их
+     * отличает место: пункт шаблона лежит в панели, а пункт вне `rtMenuContent` не рисуется нигде.
+     */
+    protected readonly itemNodes: Signal<readonly ElementRef<HTMLElement>[]> = contentChildren(RtMenuItemComponent, {
+        descendants: true,
+        read: ElementRef,
+    });
+
+    /** Пункты, ждущие ответа окна подтверждения: пока они есть, закрытая панель остаётся скрытой. */
+    protected readonly confirming: WritableSignal<number> = signal<number>(0);
+
+    /** Узлы ждущих пунктов: пункт, разрушенный до ответа окна, узнаётся по уходу узла со страницы. */
+    readonly #pending: Set<HTMLElement> = new Set<HTMLElement>();
 
     /** Меню откроется (или открыто) в нижней шторке: режим включён входом и токеном, экран узкий. */
     protected readonly inSheet: Signal<boolean> = computed((): boolean => this.sheet() && this.#sheetAllowed && this.#narrow());
@@ -203,6 +233,20 @@ export class RtMenuComponent {
     public readonly openedChange: OutputEmitterRef<boolean> = output<boolean>();
 
     constructor() {
+        if (isDevMode()) {
+            effect((): void => {
+                const stray: boolean = this.itemNodes().some(
+                    (node: ElementRef<HTMLElement>): boolean => node.nativeElement.closest(`.${BEM_BLOCK}__panel`) === null
+                );
+                if (stray) {
+                    // eslint-disable-next-line no-console -- предупреждение разработчику приложения: другого канала у кита нет
+                    console.warn(
+                        'rt-menu: пункты передаются шаблоном — <ng-template rtMenuContent>…</ng-template>; пункт вне него не рисуется.'
+                    );
+                }
+            });
+        }
+
         // Шторка создаётся на каждое открытие: её подложка, ручка и Escape закрывают меню.
         this.#sheetOpenedSource
             .pipe(
@@ -239,15 +283,60 @@ export class RtMenuComponent {
         this.#activateKeys(pane);
     }
 
-    /** Выбранный пункт закрывает панель и возвращает фокус кнопке, откуда меню открыли. */
-    protected onSelect(): void {
+    /**
+     * Выбранный пункт закрывает панель и возвращает фокус кнопке, откуда меню открыли. Пункт, чей
+     * выбор подтвердило окно, ждать перестаёт до закрытия: открытая шторка уезжает вниз с пунктами,
+     * а не прячется до ответа, который уже пришёл.
+     */
+    protected onSelect(event: Event): void {
+        this.#pending.delete(event.target as HTMLElement);
+        this.confirming.set(this.#pending.size);
         this.close();
         this.#focusTrigger();
     }
 
-    /** Клавиши в шторке: у панели рядом с триггером их шлёт оверлей, а у шторки — сама панель. */
+    /**
+     * Нажатие мимо панели закрывает меню и снимает ожидание ответа окна. Пока окно открыто, его
+     * затемнение лежит над подложкой меню, и нажатие до неё не доходит; дошедшее значит, что окна
+     * уже нет. Пункт, разрушенный до ответа окна, ожидание сам не снимает, и без сброса закрытая
+     * панель держала бы прозрачную подложку над страницей.
+     */
+    protected onBackdropClick(): void {
+        this.#pending.clear();
+        this.confirming.set(0);
+        this.close();
+    }
+
+    /** Пункт открыл или закрыл окно подтверждения: закрытая панель ждёт его ответа. */
+    protected onConfirm(event: Event): void {
+        const item: HTMLElement = event.target as HTMLElement;
+
+        if ((event as CustomEvent<boolean>).detail) {
+            this.#pending.add(item);
+        } else {
+            this.#pending.delete(item);
+        }
+        this.confirming.set(this.#pending.size);
+        // Спрятанная шторка не видна, и снимается она без выезда; фокус, оставшийся в ней после окна,
+        // возвращается кнопке меню.
+        if (!this.isOpen() && this.#pending.size === 0 && this.#sheet !== null) {
+            const pane: HTMLElement = this.#sheet.overlayRef.overlayElement;
+            const focusInSheet: boolean = pane.contains(pane.ownerDocument.activeElement);
+            this.#closeSheet();
+            this.openedInSheet.set(false);
+            if (focusInSheet || pane.ownerDocument.activeElement === pane.ownerDocument.body) {
+                this.#focusTrigger();
+            }
+        }
+    }
+
+    /**
+     * Клавиши в шторке: у панели рядом с триггером их шлёт оверлей, а у шторки — сама панель. Пока
+     * пункт ждёт ответа окна подтверждения, окно лежит над шторкой, и клавиши к пунктам под ним не
+     * идут: Escape не закрывает меню под окном, стрелки и Enter не трогают пункты за ним.
+     */
     protected onSheetKeydown(event: KeyboardEvent): void {
-        if (this.openedInSheet()) {
+        if (this.openedInSheet() && this.confirming() === 0) {
             this.onKeydown(event);
         }
     }
@@ -320,8 +409,46 @@ export class RtMenuComponent {
         }
     }
 
+    /**
+     * Закрытое меню снимает шторку, а пока пункт шторки ждёт ответа окна подтверждения, прячет её
+     * целиком: пункт живёт в шторке, и снятая шторка унесла бы его вместе с подтверждённым выбором.
+     * Шторку снимает ответ окна. Меню остаётся «в шторке», и панель у кнопки не встаёт.
+     */
+    #closeOrHoldSheet(): void {
+        if (this.confirming() > 0 && this.#sheet !== null) {
+            this.#sheet.overlayRef.addPanelClass(SHEET_HELD_CLASS);
+            return;
+        }
+        this.#closeSheet(true);
+        this.openedInSheet.set(false);
+    }
+
+    /** Меню, открытое снова до ответа окна, показывает спрятанную шторку, а не строит вторую. */
+    #showHeldSheet(): void {
+        this.#sheet?.overlayRef.removePanelClass(SHEET_HELD_CLASS);
+        if (this.#sheet !== null) {
+            afterNextRender((): void => this.#activateKeys(this.#sheet?.overlayRef.overlayElement ?? null), {
+                injector: this.#injector,
+            });
+        }
+    }
+
     #focusTrigger(): void {
         this.trigger().elementRef.nativeElement.querySelector('button')?.focus();
+    }
+
+    /**
+     * Пункт, разрушенный при открытом окне, ответ окна уже не получит и ожидание не снимет: его узел
+     * ушёл со страницы. Закрытие меню снимает такие ожидания, иначе скрытая панель держала бы
+     * прозрачную подложку над страницей.
+     */
+    #dropGonePending(): void {
+        this.#pending.forEach((item: HTMLElement): void => {
+            if (!item.isConnected) {
+                this.#pending.delete(item);
+            }
+        });
+        this.confirming.set(this.#pending.size);
     }
 
     #setOpen(open: boolean): void {
@@ -329,15 +456,16 @@ export class RtMenuComponent {
             if (!open) {
                 this.#keyManager?.destroy();
                 this.#keyManager = null;
-                this.#closeSheet(true);
-                this.openedInSheet.set(false);
+                this.#dropGonePending();
+                this.#closeOrHoldSheet();
             }
             if (open) {
                 this.presetClasses.set(materialPresetClassesOf(this.#host.nativeElement));
-                this.openedInSheet.set(this.inSheet());
+                this.#showHeldSheet();
+                this.openedInSheet.set(this.#sheet !== null || this.inSheet());
             }
             this.isOpen.set(open);
-            if (open && this.openedInSheet()) {
+            if (open && this.openedInSheet() && this.#sheet === null) {
                 this.#openSheet();
             }
             this.openedChange.emit(open);

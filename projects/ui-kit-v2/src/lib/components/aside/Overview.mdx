@@ -17,7 +17,9 @@ ref.afterClosed().subscribe((result?: ITour): void => …);
 <!-- внутри поднятого компонента -->
 <rt-aside size="md" ariaLabel="Карточка тура">
     <rt-aside-header title="Тур в Сочи" />
-    <rt-aside-section heading="Клиент">…</rt-aside-section>
+    <ng-template rtAsideContent>
+        <rt-aside-section heading="Клиент">…</rt-aside-section>
+    </ng-template>
     <rt-aside-footer>…</rt-aside-footer>
 </rt-aside>
 ```

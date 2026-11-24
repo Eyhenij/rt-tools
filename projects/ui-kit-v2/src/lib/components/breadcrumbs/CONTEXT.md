@@ -2,7 +2,9 @@
 
 ```html
 <rt-breadcrumbs look="heading" [back]="true" [crumbs]="crumbs()">
-    <rt-tag>черновик</rt-tag>
+    <ng-template rtBreadcrumbsContent>
+        <rt-tag>черновик</rt-tag>
+    </ng-template>
 </rt-breadcrumbs>
 ```
 

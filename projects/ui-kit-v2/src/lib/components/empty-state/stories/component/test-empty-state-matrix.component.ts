@@ -63,13 +63,13 @@ interface IEmptyStatePartsCase {
                                     }
                                     @case ('действие') {
                                         <rt-empty-state icon="folder" title="Файлов нет" description="Прикрепите первый документ">
-                                            <button rtButton label="Прикрепить" aria-label="Прикрепить"></button>
+                                            <button type="button" rtButton label="Прикрепить" aria-label="Прикрепить"></button>
                                         </rt-empty-state>
                                     }
                                     @case ('картинка и действие') {
                                         <rt-empty-state title="Файлов нет" description="Прикрепите первый документ">
                                             <img rtEmptyIllustration alt="" width="96" height="72" [src]="illustration" />
-                                            <button rtButton label="Прикрепить" aria-label="Прикрепить"></button>
+                                            <button type="button" rtButton label="Прикрепить" aria-label="Прикрепить"></button>
                                         </rt-empty-state>
                                     }
                                 }
@@ -85,7 +85,12 @@ interface IEmptyStatePartsCase {
                         <app-story-row [items]="frameCases">
                             <ng-template let-frameCase>
                                 <rt-empty-state icon="cloud-upload" title="Перетащите файл сюда или" [framed]="frameCase === 'framed'">
-                                    <button rtButton appearance="outlined" label="Выбрать файл" aria-label="Выбрать файл"></button>
+                                    <button
+                                        type="button"
+                                        rtButton
+                                        appearance="outlined"
+                                        label="Выбрать файл"
+                                        aria-label="Выбрать файл"></button>
                                 </rt-empty-state>
                             </ng-template>
                         </app-story-row>

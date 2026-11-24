@@ -59,10 +59,11 @@ still read, and the call passes like the call of every guard that asks the decid
 
 Covered: `projects/agent-kit/tests/end-conversation-guard.test.sh`.
 
-### SC-AK-1358 — the agent hook lets a stop of the owner and a turn outside ordered work end
+### SC-AK-1358 — the agent hook lets a wait for an own task and a turn outside ordered work end
 
-Given the owner's latest word is «стоп» or «не сейчас», or their latest word orders no work and
-asks a question the reply answers
+Given a background task the session started still runs, and the reply names it and the step that
+goes on by its notice; or the owner's latest word orders no work and asks a question the reply
+answers
 When the agent hook of the Stop event judges the end of the turn
 Then it answers `{"ok": true}`, and the turn ends
 

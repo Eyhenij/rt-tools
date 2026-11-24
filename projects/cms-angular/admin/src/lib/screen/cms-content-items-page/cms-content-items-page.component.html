@@ -5,37 +5,37 @@
     [title]="title()"
     [hint]="t().itemsSubtitle"
     [searchPlaceholder]="t().itemsSearch">
-    <rt-select
-        rtCmsListToolbarLeft
-        qa-dataid="content-items-status"
-        [ariaLabel]="t().itemsColumnStatus"
-        [options]="statusOptions()"
-        [ngModel]="filter.status"
-        (ngModelChange)="filterStatus($event)" />
-    <rt-select
-        rtCmsListToolbarLeft
-        qa-dataid="content-items-locale"
-        [ariaLabel]="t().itemsColumnLocale"
-        [options]="localeOptions()"
-        [ngModel]="filter.locale"
-        (ngModelChange)="filterLocale($event)" />
+    <ng-template rtCmsListToolbarLeft>
+        <rt-select
+            qa-dataid="content-items-status"
+            [ariaLabel]="t().itemsColumnStatus"
+            [options]="statusOptions()"
+            [ngModel]="filter.status"
+            (ngModelChange)="filterStatus($event)" />
+        <rt-select
+            qa-dataid="content-items-locale"
+            [ariaLabel]="t().itemsColumnLocale"
+            [options]="localeOptions()"
+            [ngModel]="filter.locale"
+            (ngModelChange)="filterLocale($event)" />
+    </ng-template>
 
-    <rt-icon-button
-        rtCmsListToolbarRight
-        icon="cog"
-        variant="secondary"
-        qa-dataid="content-items-settings"
-        [tooltip]="t().itemsTypeSettings"
-        [ariaLabel]="t().itemsTypeSettings"
-        (clicked)="openSettings()" />
-    <rt-icon-button
-        rtCmsListToolbarRight
-        icon="ico-plus"
-        variant="primary"
-        qa-dataid="content-items-create"
-        [tooltip]="t().itemNew"
-        [ariaLabel]="t().itemNew"
-        (clicked)="openCreate()" />
+    <ng-template rtCmsListToolbarRight>
+        <rt-icon-button
+            icon="cog"
+            variant="secondary"
+            qa-dataid="content-items-settings"
+            [tooltip]="t().itemsTypeSettings"
+            [ariaLabel]="t().itemsTypeSettings"
+            (clicked)="openSettings()" />
+        <rt-icon-button
+            icon="ico-plus"
+            variant="primary"
+            qa-dataid="content-items-create"
+            [tooltip]="t().itemNew"
+            [ariaLabel]="t().itemNew"
+            (clicked)="openCreate()" />
+    </ng-template>
 
     <rt-cms-content-items-table
         qa-dataid="content-items-list"

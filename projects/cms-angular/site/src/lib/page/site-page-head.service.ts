@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Injectable, inject } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 
 import { ICmsSitePage } from './site-page.function';
@@ -23,7 +23,7 @@ export interface ICmsSitePageHead {
  * page, a draft closed from indexing, and the `hreflang` links only of the sites where the page is
  * published in their language. The links taken down are put back when the page is left.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class SitePageHeadService {
     readonly #title: Title = inject(Title);
     readonly #meta: Meta = inject(Meta);

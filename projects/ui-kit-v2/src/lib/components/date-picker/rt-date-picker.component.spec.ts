@@ -217,7 +217,7 @@ describe('RtDatePickerComponent', (): void => {
         });
 
         // Прокрутку страницы держит общая оболочка шторки; её блокировку проверяет спека самой оболочки.
-        it('SC-UKV-1726 — Escape закрывает шторку даты, в шапке стоит доступное имя поля', (): void => {
+        it('SC-UKV-1788 — Escape закрывает шторку даты, в шапке стоит доступное имя поля', (): void => {
             const fixture: ComponentFixture<RtDatePickerComponent> = createRtFixture(
                 RtDatePickerComponent,
                 { ariaLabel: 'Дата заезда' },

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/git-guard-delivery-task.sh · c38e0276c52c · правится надстройкой, не здесь
+# rt-kit v0.39.0 · hooks/git-guard-delivery-task.sh · c38e0276c52c · правится надстройкой, не здесь
 # The task of a branch, for the delivery guard: the task exists, is open, stands in the work queue,
 # has an assignee and a numbered title, and is not left in the first column.
 #

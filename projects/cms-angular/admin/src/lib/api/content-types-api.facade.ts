@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { type Observable, from } from 'rxjs';
 
@@ -12,7 +12,7 @@ import { type Client, createClient } from '@connectrpc/connect';
 import { CMS_TRANSPORT } from '@rt-tools/cms-angular';
 
 /** The way out to the content types contract. The facade knows only the contract and gives the answer as is. */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class ContentTypesApiFacade {
     readonly #client: Client<typeof CmsContract> = createClient(CmsContract, inject(CMS_TRANSPORT));
 

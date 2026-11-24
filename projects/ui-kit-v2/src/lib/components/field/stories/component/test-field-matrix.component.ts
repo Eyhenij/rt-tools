@@ -176,11 +176,11 @@ function failing(validators: ValidatorFn[] = [Validators.required], value: strin
                                 @if (hintCase.projected) {
                                     <rt-field label="Пароль">
                                         <rt-input type="password" [passwordToggle]="true" [formControl]="hintCase.control" />
-                                        <span rtFieldHint>
+                                        <ng-template rtFieldHint>
                                             Не короче
                                             <strong>восьми</strong>
                                             символов
-                                        </span>
+                                        </ng-template>
                                     </rt-field>
                                 } @else {
                                     <rt-field label="Пароль" hint="Не короче восьми символов">

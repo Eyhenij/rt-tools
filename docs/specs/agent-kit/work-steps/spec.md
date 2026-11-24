@@ -1,6 +1,6 @@
 # The steps of the work are written out, marked and counted
 
-**Status:** in force · **Revision:** 2026-11-15 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-22 · **Scenario prefix:** `SC-AK`
 **Depends on:** `docs/specs/agent-kit/epic-stop/spec.md`
 **Laws:** `work-conduct`
 **Procedures:** none
@@ -64,8 +64,9 @@ a refusal in the executor's own turn.
   work is done in it.
 - **A progress that carries the list while the plan names no steps is a divergence.** The list was
   written from the head, and nothing behind it holds.
-- **The word of the owner about a stop lifts the refusal, and the guard reads it from them.** The
-  same reading as everywhere else: their message, not a retelling of it.
+- **Only the owner's Esc lifts the refusal, and the guard reads it from the record.** The host
+  writes the mark of Esc there as the owner's message: their act, not a retelling of it. A word
+  typed to stop holds the turn like any other word.
 - **The check line under a step is read with either of its two words and is never part of the step
   name.** The plan of the task flow measures every step by the command under it, and the sample
   writes the word in English while older plans write it in Russian; read into the name, the line
@@ -141,3 +142,5 @@ own in each of them — the directory of the task folders — is read from the s
 - 2026-09-10 — the subdomain was created: the steps are written out in the plan, marked in the
   progress, matched by a check and counted by the guard of the turn.
 - 2026-11-15 — the parsing reads the check line under each step of the plan.
+- 2026-11-22 — a typed word to stop no longer lifts the refusal: only the owner's Esc does, and a
+  turn with steps not done is held after «Стоп, дальше не надо».

@@ -146,7 +146,7 @@ describe('RtBottomSheetComponent — фокус и Escape', (): void => {
         expect(fixture.componentInstance.open()).toBe(false);
     });
 
-    it('SC-UKV-1727 — свайп вниз при неприменённом выборе спрашивает, шторка остаётся открытой', (): void => {
+    it('SC-UKV-1789 — свайп вниз при неприменённом выборе спрашивает, шторка остаётся открытой', (): void => {
         const fixture: TFixture = setup(true);
         const handle: HTMLElement = raw(fixture, 'bottom-sheet-handle');
 
@@ -172,7 +172,7 @@ describe('RtBottomSheetComponent — фокус и Escape', (): void => {
         expect(document.activeElement).toBe(raw(fixture, 'bottom-sheet-panel'));
     });
 
-    it('SC-UKV-1726 — открытая шторка в шаблоне страницы сама подгружает стили блокировки прокрутки', (): void => {
+    it('SC-UKV-1788 — открытая шторка в шаблоне страницы сама подгружает стили блокировки прокрутки', (): void => {
         document.querySelector('.cdk-overlay-container')?.remove();
 
         setup();
@@ -182,7 +182,7 @@ describe('RtBottomSheetComponent — фокус и Escape', (): void => {
         expect(document.querySelector('.cdk-overlay-container')).not.toBeNull();
     });
 
-    it('SC-UKV-1721 — высота под клавиатуру держится до закрытия и следующему открытию не достаётся', (): void => {
+    it('SC-UKV-1783 — высота под клавиатуру держится до закрытия и следующему открытию не достаётся', (): void => {
         const fixture: TFixture = setup();
         const panel: HTMLElement = raw(fixture, 'bottom-sheet-panel');
 

@@ -9,7 +9,6 @@ import {
     computed,
     effect,
     ElementRef,
-    HostBinding,
     inject,
     Injector,
     input,
@@ -67,6 +66,8 @@ const UNMOUNT_DELAY_MS: number = 200;
         class: BEM_BLOCK,
         role: 'status',
         'aria-atomic': 'true',
+        '[class]': 'hostModifierClasses',
+        '[style]': 'hostStackStyles',
     },
 })
 export class RtToastComponent implements AfterViewInit, OnDestroy {
@@ -199,7 +200,6 @@ export class RtToastComponent implements AfterViewInit, OnDestroy {
 
     public readonly dismissed: OutputEmitterRef<number> = output<number>();
 
-    @HostBinding('class')
     public get hostModifierClasses(): Record<string, boolean> {
         return {
             [`${BEM_BLOCK}--severity--${this.toast().severity}`]: true,
@@ -215,7 +215,6 @@ export class RtToastComponent implements AfterViewInit, OnDestroy {
         };
     }
 
-    @HostBinding('style')
     public get hostStackStyles(): Record<string, string> {
         return {
             '--index': `${this.index()}`,

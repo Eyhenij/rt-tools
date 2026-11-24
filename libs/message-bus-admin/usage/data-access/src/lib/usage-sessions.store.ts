@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, Signal } from '@angular/core';
+import { computed, inject, Signal, Service } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { IReadFault } from '@rt/message-bus-admin/common/core/util';
 import { IUsageSessionsAsked, UsageApiService } from '@rt/message-bus-admin/usage/api';
@@ -32,7 +32,7 @@ const INITIAL_STATE: IUsageSessionsState = { ...BASE_INITIAL_STATE.ASYNC, skill:
  * `switchMap`: человек открывает соседнюю строку, не дождавшись первой, и увидеть он должен ту,
  * которую назвал последней.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class UsageSessionsStore extends BaseAsyncStoreService<IUsageSessionsState, TUsageSessionsMessage> {
     readonly #api: UsageApiService = inject(UsageApiService);
     readonly #readSource: Subject<IUsageSessionsRead> = new Subject<IUsageSessionsRead>();

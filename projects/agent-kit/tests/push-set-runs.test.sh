@@ -84,4 +84,98 @@ rm -rf "$set_marks"
 report "SC-AK-1657 — the runner ahead writes seven fields for every step" \
     "$(awk '{ print NF }' "$set_marks"/runs-* 2>/dev/null | sort -u | tr '\n' ' ')" "7 "
 
+# --- SC-AK-1846, SC-AK-1847 — the steps run on the node the tree pins ----------------------------
+# A node of its own stands first in PATH, as the hook inherits it; the pinned one lies in a directory
+# of nvm. The only step writes which node it found.
+node_box="$(mktemp -d)"
+trap 'rm -rf "$tree" "$set_tree" "$node_box"' EXIT
+fake_node() {
+    mkdir -p "$1"
+    printf '#!/bin/sh\necho v%s\n' "$2" >"$1/node"
+    chmod +x "$1/node"
+}
+fake_node "$node_box/other" 20.11.0
+fake_node "$node_box/other23" 23.1.0
+# 22.23.2 above the exact pin and 24 above its major: the exact directory and the major both decide.
+for v in 22.22.3 22.23.2 24.15.0 22.9.0 22.10.0 22.1.5 20.1.0; do fake_node "$node_box/nvm/versions/node/v$v/bin" "$v"; done
+# A half-done install: the highest 22 has no node, and the next one down serves the pin.
+mkdir -p "$node_box/nvm/versions/node/v22.30.0/bin" "$node_box/nvm-empty"
+seen="$node_box/seen"
+
+# A tree with the pin and a commit over its start. No pin — no .nvmrc.
+node_tree() {
+    local t
+    t="$(fixture_repo_branched main work)"
+    mkdir -p "$t/.claude/rt-kit"
+    printf '.claude/\n' >"$t/.gitignore"
+    printf '%s\n' "rt_push_checks() { printf '%s\\n' 'command -v node >\"\$RT_SEEN\"'; }" >"$t/.claude/rt-kit/project.sh"
+    [ -n "$1" ] && printf '%s\n' "$1" >"$t/.nvmrc"
+    git -C "$t" add -A 2>/dev/null
+    git -C "$t" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q -m 'chore: pin' 2>/dev/null
+    printf '%s' "$t"
+}
+# How the set ran in that tree: the line of a missing pin, whether PATH came back as it was, and the
+# node the step found — «none» when no step ran.
+set_trace() {
+    local t="$1" nvm="${2:-$node_box/nvm}" first="${3:-$node_box/other}"
+    rm -f "$seen"
+    (cd "$t" && PATH="$first:$PATH" NVM_DIR="$nvm" RT_SEEN="$seen" CLAUDE_PROJECT_DIR="$t" \
+        bash -c '. "$1/push-set.sh"; rt_push_set_profile "$1" "$PWD"; before="$PATH"; rt_push_set_run ""
+            [ "$PATH" = "$before" ] && back=yes || back=no; printf "%s|%s|" "$rt_push_set_node" "$back"' _ "$HOOKS" 2>/dev/null)
+    cat "$seen" 2>/dev/null || printf none
+}
+set_node() { set_trace "$@" | cut -d'|' -f3; }
+ahead_node() {
+    local t="$1" nvm="${2:-$node_box/nvm}" code
+    rm -f "$seen"
+    (cd "$t" && PATH="$node_box/other:$PATH" NVM_DIR="$nvm" RT_SEEN="$seen" CLAUDE_PROJECT_DIR="$t" \
+        bash "$HOOKS/git-guard-push-ahead.sh" >/dev/null 2>&1)
+    code=$?
+    printf '%s %s' "$code" "$(cat "$seen" 2>/dev/null || printf none)"
+}
+pinned_bin() { printf '%s/nvm/versions/node/v%s/bin/node' "$node_box" "$1"; }
+
+t_exact="$(node_tree 22.22.3)"
+# A green step leaves a mark for its tree, and the next runner skips it: the run ahead gets a tree of its own.
+t_ahead="$(node_tree 22.22.3)"
+t_major="$(node_tree 22)"
+t_alias="$(node_tree 'lts/*')"
+t_none="$(node_tree '')"
+t_same="$(node_tree 20.11.0)"
+t_other="$(node_tree 99.0.0)"
+t_minor="$(node_tree 22.1)"
+t_newer="$(node_tree 22.20.0)"
+t_noted="$(node_tree "$(printf '\357\273\277# the node of the tree\n\tv22.22.3 ')")"
+t_above="$(node_tree 22.25.0)"
+t_zeros="$(node_tree 20.11.00)"
+t_served="$(node_tree 20)"
+t_patch="$(node_tree 20.5.0)"
+trap 'rm -rf "$tree" "$set_tree" "$node_box" "$t_exact" "$t_ahead" "$t_major" "$t_alias" "$t_none" "$t_same" "$t_other" \
+    "$t_minor" "$t_newer" "$t_noted" "$t_served" "$t_patch" "$t_above" "$t_zeros"' EXIT
+
+report "SC-AK-1846 — the set sees the pinned node" "$(set_node "$t_exact")" "$(pinned_bin 22.22.3)"
+report "SC-AK-1846 — the run ahead sees the pinned node" "$(ahead_node "$t_ahead")" "0 $(pinned_bin 22.22.3)"
+report "SC-AK-1846 — a major pin takes the highest installed match" "$(set_node "$t_major")" "$(pinned_bin 22.23.2)"
+report "SC-AK-1846 — an alias pin runs on the node of PATH" "$(set_node "$t_alias")" "$node_box/other/node"
+report "SC-AK-1846 — no pin runs on the node of PATH" "$(set_node "$t_none")" "$node_box/other/node"
+report "SC-AK-1847 — same node in PATH runs the steps" "$(set_node "$t_same" "$node_box/nvm-empty")" "$node_box/other/node"
+report "SC-AK-1846 — a minor pin takes its own minor, not a longer one" "$(set_node "$t_minor")" "$(pinned_bin 22.1.5)"
+report "SC-AK-1846 — a full pin not installed takes a newer one of its major" "$(set_node "$t_newer")" "$(pinned_bin 22.23.2)"
+report "SC-AK-1846 — .nvmrc with a byte order mark, a comment line and a tab reads the version" "$(set_node "$t_noted")" "$(pinned_bin 22.22.3)"
+report "SC-AK-1846 — the set gives PATH back" "$(set_trace "$t_exact" | cut -d'|' -f2)" yes
+report "SC-AK-1847 — PATH serving a pin of the major runs the steps" "$(set_node "$t_served" "$node_box/nvm-empty")" "$node_box/other/node"
+report "SC-AK-1847 — a newer node of the pinned major in PATH runs the steps" "$(set_node "$t_patch" "$node_box/nvm-empty")" "$node_box/other/node"
+report "SC-AK-1847 — a pin with leading zeros is served by the same version in PATH" \
+    "$(set_node "$t_zeros" "$node_box/nvm-empty")" "$node_box/other/node"
+report "SC-AK-1846 — a pin no install serves does not stop a caller under set -e" \
+    "$(NVM_DIR="$node_box/nvm" bash -e -c '. "$1/facts.sh"; rt_node_pinned_dir "$2" >/dev/null; echo survived' _ "$HOOKS" "$t_above" 2>/dev/null)" survived
+report "SC-AK-1847 — a full pin above every install of its major starts no step" \
+    "$(set_trace "$t_above" | cut -d'|' -f3)" none
+report "SC-AK-1847 — a newer major in PATH starts no step" \
+    "$(set_trace "$t_newer" "$node_box/nvm-empty" "$node_box/other23" | sed -E 's/^node v22.20.0 is pinned.*PATH gives v23.1.0 — nvm install 22.20.0\|/refused|/')" "refused|yes|none"
+report "SC-AK-1847 — the set starts no step without the pinned node" \
+    "$(set_trace "$t_other" | sed -E 's/PATH gives [^|]*/PATH gives …/')" \
+    "node v99.0.0 is pinned in .nvmrc and not installed; PATH gives …|yes|none"
+report "SC-AK-1847 — the run ahead starts no step without the pinned node" "$(ahead_node "$t_other")" "3 none"
+
 suite_result "the run line of a push set step"

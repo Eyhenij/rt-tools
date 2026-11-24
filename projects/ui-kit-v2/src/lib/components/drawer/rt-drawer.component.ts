@@ -72,7 +72,7 @@ const DEFAULT_MAX_WIDTH: number = 640;
     },
 })
 export class RtDrawerComponent {
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
     readonly #injector: Injector = inject(Injector);
     readonly #focusTrapFactory: FocusTrapFactory = inject(FocusTrapFactory);
 
@@ -215,7 +215,7 @@ export class RtDrawerComponent {
         if (target === null) {
             return;
         }
-        const active: Element | null = this.#document.activeElement;
+        const active: Element | null = this.#doc.activeElement;
 
         this.#focusBefore = active instanceof HTMLElement ? active : null;
         afterNextRender((): void => this.#focusInside(target), { injector: this.#injector });
@@ -255,7 +255,7 @@ export class RtDrawerComponent {
                 const panel: HTMLElement = this.panel().nativeElement;
                 const property: string = this.mode() === 'over' ? 'transform' : 'inline-size';
 
-                listenTransitionEnd(this.#document.defaultView, panel, property, (): void => {
+                listenTransitionEnd(this.#doc.defaultView, panel, property, (): void => {
                     if (turn === this.#turn && !this.#destroyed) {
                         (opened ? this.afterOpened : this.afterClosed).emit();
                     }
@@ -270,7 +270,7 @@ export class RtDrawerComponent {
         const panel: HTMLElement = this.panel().nativeElement;
 
         this.#focusBefore = null;
-        if (before !== null && panel.contains(this.#document.activeElement)) {
+        if (before !== null && panel.contains(this.#doc.activeElement)) {
             before.focus({ preventScroll: true });
         }
     }

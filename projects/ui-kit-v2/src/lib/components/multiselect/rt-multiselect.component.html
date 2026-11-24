@@ -143,7 +143,7 @@
                         <span rtElem="option-label">{{ t().uiShowAll }}</span>
                         <rt-toggle-switch rtElem="switch" aria-hidden="true" inert [ngModel]="summary().state === 'all'" />
                     </div>
-                    <ng-content select="[rtMultiselectExtra]" />
+                    <ng-container [rtSlotOutlet]="extraSlots()" />
                 </div>
                 <div rtElem="divider" role="separator"></div>
             }

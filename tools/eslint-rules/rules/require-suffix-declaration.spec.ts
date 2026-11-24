@@ -26,6 +26,12 @@ ruleTester.run(RULE_NAME, rule, {
             code: `@ConnectProcedure()
                 export class LinkBookingProcedure {}`,
         },
+        // a singleton marked by Angular's `@Service` keeps the promise without the name
+        {
+            filename: 'notification-bus.service.ts',
+            code: `@Service()
+                export class NotificationBus {}`,
+        },
         // a base nobody injects carries no mark — the class name keeps the promise
         {
             filename: 'base-list-store.service.ts',
@@ -92,6 +98,12 @@ ruleTester.run(RULE_NAME, rule, {
         {
             filename: 'link-booking.procedure.ts',
             code: 'export class LinkBookingProcedure {}',
+            errors: [{ messageId: 'missingDeclaration' }],
+        },
+        // a service with neither the mark nor the name — the second accepted mark lets nothing more through
+        {
+            filename: 'notification-bus.service.ts',
+            code: 'export class NotificationBus {}',
             errors: [{ messageId: 'missingDeclaration' }],
         },
         // a file of logic holds constants alone

@@ -9,7 +9,9 @@
                 @if (row | rtRowHasActions: rowHasActions()) {
                     <div rtElem="actions-float">
                         <rt-menu>
-                            <ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ $implicit: row }" />
+                            <ng-template rtMenuContent>
+                                <ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ $implicit: row }" />
+                            </ng-template>
                         </rt-menu>
                     </div>
                 }
@@ -137,7 +139,9 @@
                                 @if (row | rtRowHasActions: rowHasActions()) {
                                     <div rtElem="card-actions" qa-dataid="table-card-actions">
                                         <rt-menu>
-                                            <ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ $implicit: row }" />
+                                            <ng-template rtMenuContent>
+                                                <ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ $implicit: row }" />
+                                            </ng-template>
                                         </rt-menu>
                                     </div>
                                 }

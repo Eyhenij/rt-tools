@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, Signal } from '@angular/core';
+import { computed, inject, Signal, Service } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { IReadFault } from '@rt/message-bus-admin/common/core/util';
 import { IUsageSessionsAsked, UsageApiService } from '@rt/message-bus-admin/usage/api';
@@ -30,7 +30,7 @@ const INITIAL_STATE: IUsageDigestState = { ...BASE_INITIAL_STATE.ASYNC, digest: 
  * `switchMap`: человек переключил период, не дождавшись первого ответа, и увидеть он должен
  * последний названный.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class UsageDigestStore extends BaseAsyncStoreService<IUsageDigestState, TUsageDigestMessage> {
     readonly #api: UsageApiService = inject(UsageApiService);
     readonly #readSource: Subject<IUsageSessionsAsked> = new Subject<IUsageSessionsAsked>();

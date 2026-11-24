@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# rt-kit v0.38.0 · hooks/turn-exit-guard.sh · 2bf742bf11c4 · правится надстройкой, не здесь
+# rt-kit v0.39.0 · hooks/turn-exit-guard.sh · 3d114c1e0607 · правится надстройкой, не здесь
 # rt-hook: Stop
 # rt-hook-timeout: 90
 # Requires: checks/task-flow-script.mjs, checks/decide.mjs, hooks/decide.sh, hooks/facts.sh, hooks/deny-tail.sh, hooks/turn-exit-role.sh
 # Turn exit guard: a turn does not end before the scenario of the task flow does. Stop.
 #
 # The engine measures the branch by the description and answers with a verdict: the turn is released
-# by a release case of the description — the end of the scenario, a stop word of the owner, a session
+# by a release case of the description — the end of the scenario, the owner's Esc, a session
 # that wrote nothing, a role, the silent hosting, a menu that did not reach the owner — or held with
 # one move named, the next step of the scenario. This file hands the engine the input and turns its
 # verdict into the answer of the hook.

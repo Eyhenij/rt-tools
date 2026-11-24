@@ -1,6 +1,6 @@
 # The task flow as an executable scenario
 
-**Status:** in force · **Revision:** 2026-11-15 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-22 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `work-conduct`
 **Procedures:** none
@@ -11,7 +11,7 @@ The state of the work used to be declared by the executor in the progress, and t
 the line. A step of the plan was marked done without its result being measured. The owner asked for
 an executable scenario: every state of the task flow and every step of the plan has a measured
 result, the next step does not begin until the previous one is met, and the turn is held until the
-scenario ends or the owner says stop.
+scenario ends or the owner interrupts it by Esc.
 
 The task flow is written in a narrow data language of its own; the language, its parser and its
 model are the subdomain `docs/specs/agent-kit/turn-guards/flow-script/language/`. Here is the engine
@@ -36,6 +36,14 @@ There is no interface: the description is read by the engine and by the executor
 - **The engine reads the description that lies next to it and names the states of the scenario in their order.**
 - **A factory of a source or a measurer that is not written yet throws, so an unmeasured exit is never read as met.**
 - **The history of the branch is the commits the main branch on the server does not hold, and a fact read from it stays true in later states.**
+- **The last version of a file the head lacks is read at the parent of the commit of the branch that removed it.**
+  A merged base, a fast-forward onto the base and a removal of an old copy in the base do not answer
+  for it, alone or one after another, nor an edit the base made to its copy. The branch's own
+  taking-apart wins: the commit whose own change removed the path and added an archive record. Of
+  its parents holding the path, an old copy is passed over. Without such a commit every removal is a
+  candidate, a merge against any parent included. A copy whose object stood earlier in another
+  candidate's history is passed over, and the newest of the rest wins. A removal the main branch
+  already holds gives no file. A file the head holds is read at the head.
 - **The parsing of the steps reaches a measurer through a source, by the module every reader of the steps shares.**
 - **Exit 1 is met by a grill of the branch or of a draft that holds the owner's request as a quote and an answer.**
 - **Exit 3 is met by a line of the grill or the plan naming the agreement directory found on disk or in the history, or the reason there is none.**
@@ -77,7 +85,8 @@ counter-conditions is the subdomain `docs/specs/agent-kit/turn-guards/flow-scrip
 recorded turns run through the hook on Stop are the subdomain
 `docs/specs/agent-kit/turn-guards/flow-script/replay/`. The guard at the end of a turn that asks
 the engine for its verdict, its release cases and the owner's menu are the subdomain
-`docs/specs/agent-kit/turn-guards/flow-script/exit/`. Exits 11, 12 and 13 of the end of an epic are
+`docs/specs/agent-kit/turn-guards/flow-script/exit/`; the CI hold it reads first is the subdomain
+`docs/specs/agent-kit/turn-guards/flow-script/exit-ci/`. Exits 11, 12 and 13 of the end of an epic are
 the subdomain `docs/specs/agent-kit/turn-guards/flow-script/epic/`: there exit 12 reads every task
 with a merged PR of its branch on the hosting. The guards of the end of a turn that judge the conversation are in the domain next to it. The check
 that the steps of the plan and of the progress match is the subdomain `docs/specs/agent-kit/work-steps/`.
@@ -160,3 +169,5 @@ None.
   its release cases and the owner's menu are measured by the engine.
 - 2026-11-15 — the forecast of refusals replays the session records before the hooks are laid out.
 - 2026-11-19 — exits 11, 12 and 13 moved to the subdomain `epic/`.
+- 2026-11-22 — the turn is held until the scenario ends or the owner interrupts it by Esc: no typed
+  word stops the work. The forecast replays a stop after the mark of Esc as released.

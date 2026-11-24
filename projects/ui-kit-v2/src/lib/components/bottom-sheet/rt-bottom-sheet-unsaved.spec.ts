@@ -44,7 +44,7 @@ function press(fixture: TFixture, id: string): void {
 }
 
 describe('RtBottomSheetComponent — вопрос перед закрытием', (): void => {
-    it('SC-UKV-1723 — кнопка закрытия при неприменённом выборе показывает вопрос, шторка остаётся открытой', (): void => {
+    it('SC-UKV-1785 — кнопка закрытия при неприменённом выборе показывает вопрос, шторка остаётся открытой', (): void => {
         const fixture: TFixture = setup();
 
         expect(qa(fixture, 'bottom-sheet-confirm')).toBeNull();
@@ -56,7 +56,7 @@ describe('RtBottomSheetComponent — вопрос перед закрытием'
         expect(fixture.componentInstance.changes).toEqual([]);
     });
 
-    it('SC-UKV-1723 — подложка и Escape спрашивают так же', (): void => {
+    it('SC-UKV-1785 — подложка и Escape спрашивают так же', (): void => {
         const fixture: TFixture = setup();
 
         press(fixture, 'bottom-sheet-backdrop');
@@ -70,7 +70,7 @@ describe('RtBottomSheetComponent — вопрос перед закрытием'
         expect(fixture.componentInstance.changes).toEqual([]);
     });
 
-    it('SC-UKV-1724 — «Применить» просит приложение применить и закрыть, сам вопрос уходит', (): void => {
+    it('SC-UKV-1786 — «Применить» просит приложение применить и закрыть, сам вопрос уходит', (): void => {
         const fixture: TFixture = setup();
         press(fixture, 'bottom-sheet-close');
 
@@ -81,7 +81,7 @@ describe('RtBottomSheetComponent — вопрос перед закрытием'
         expect(qa(fixture, 'bottom-sheet-confirm')).toBeNull();
     });
 
-    it('SC-UKV-1724 — «Не применять» закрывает шторку без применения', (): void => {
+    it('SC-UKV-1786 — «Не применять» закрывает шторку без применения', (): void => {
         const fixture: TFixture = setup();
         press(fixture, 'bottom-sheet-close');
 
@@ -92,7 +92,7 @@ describe('RtBottomSheetComponent — вопрос перед закрытием'
         expect(qa(fixture, 'bottom-sheet-confirm')).toBeNull();
     });
 
-    it('SC-UKV-1724 — «Отмена» убирает вопрос и оставляет шторку открытой', (): void => {
+    it('SC-UKV-1786 — «Отмена» убирает вопрос и оставляет шторку открытой', (): void => {
         const fixture: TFixture = setup();
         press(fixture, 'bottom-sheet-close');
 
@@ -103,7 +103,7 @@ describe('RtBottomSheetComponent — вопрос перед закрытием'
         expect(qa(fixture, 'bottom-sheet-confirm')).toBeNull();
     });
 
-    it('SC-UKV-1725 — без изменений шторка закрывается сразу, вопроса нет', (): void => {
+    it('SC-UKV-1787 — без изменений шторка закрывается сразу, вопроса нет', (): void => {
         const fixture: TFixture = setup(false);
 
         press(fixture, 'bottom-sheet-close');

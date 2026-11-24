@@ -17,6 +17,12 @@ When they look at the top row of sections
 Then each section shows the glyph of its icon, not an empty frame: the kit found every icon name of
 the menu
 
+### SC-MB-455 — every section opens without a page error and without a failed script load
+
+Given the owner entered the admin
+When they open each section of the top row in turn
+Then each section shows its table, the page throws no error, and no script of the build fails to load
+
 ### SC-MB-143 — the current section is highlighted both after a transition and by a direct link
 
 Given the owner opened a section by a direct link, and then went to a neighbouring one by an item of

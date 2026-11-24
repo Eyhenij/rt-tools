@@ -20,13 +20,13 @@ Pattern of the rule `platform-access`. What must be true — the law
 
 ```typescript
 import { DOCUMENT } from '@angular/common';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { PlatformService, WINDOW } from '@rt-tools/core';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class SomeService {
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
     readonly #platform: PlatformService = inject(PlatformService);
     readonly #window: Window = inject(WINDOW);
 }

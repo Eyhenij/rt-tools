@@ -1,12 +1,16 @@
-import { Directive } from '@angular/core';
+import { Directive, TemplateRef } from '@angular/core';
+
+import { rtSlotTemplate } from '@rt-tools/ui-kit-v2/core';
 
 /**
- * Маркер проецируемого hint'а для rt-field. Нужен, когда подсказке требуется
- * разметка (`<strong>`, интерполяция значений), которую плоский string-input
- * `[hint]` передать не может. Если проецируемый hint присутствует — rt-field
- * рендерит его вместо строкового `[hint]` (тот остаётся fallback'ом).
+ * Шаблон подсказки rt-field. Нужен, когда подсказке требуется разметка (`<strong>`, интерполяция
+ * значений), которую плоский string-input `[hint]` передать не может: `<ng-template rtFieldHint>`.
+ * Переданный шаблон рисуется вместо строкового `[hint]` и только пока зона подсказки её показывает:
+ * под ошибкой без резерва содержимое подсказки не создаётся.
  */
 @Directive({
     selector: '[rtFieldHint]',
 })
-export class RtFieldHintDirective {}
+export class RtFieldHintDirective {
+    public readonly template: TemplateRef<unknown> | null = rtSlotTemplate('rt-field', 'rtFieldHint');
+}

@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, Signal } from '@angular/core';
+import { computed, inject, Signal, Service } from '@angular/core';
 import { ICaller } from '@rt-tools/auth-contract';
 import { RtAuthService } from '@rt-tools/auth-angular';
 import { IAdminSession } from '@rt/message-bus-admin/common/container/util';
@@ -10,7 +10,7 @@ import { IAdminSession } from '@rt/message-bus-admin/common/container/util';
  * админки: имя для шапки и права для меню, стражей и кнопок. Права — роли клиента шины в токене,
  * приёмник читает их из того же токена, и второго источника у них нет.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class AuthStore {
     readonly #auth: RtAuthService = inject(RtAuthService);
 

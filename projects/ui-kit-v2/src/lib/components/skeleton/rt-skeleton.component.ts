@@ -3,7 +3,6 @@ import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
-    HostBinding,
     input,
     InputSignal,
     InputSignalWithTransform,
@@ -38,6 +37,15 @@ const BEM_BLOCK: string = 'rt-skeleton';
     hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
+        '[class.rt-skeleton--rectangle]': 'isRectangle',
+        '[class.rt-skeleton--circle]': 'isCircle',
+        '[class.rt-skeleton--square]': 'isSquare',
+        '[class.rt-skeleton--sm]': 'isSizeSm',
+        '[class.rt-skeleton--md]': 'isSizeMd',
+        '[class.rt-skeleton--lg]': 'isSizeLg',
+        '[class.rt-skeleton--animated]': 'isAnimated',
+        '[style.width]': 'hostWidth',
+        '[style.height]': 'hostHeight',
     },
 })
 export class RtSkeletonComponent {
@@ -59,42 +67,34 @@ export class RtSkeletonComponent {
         transform: booleanAttribute,
     });
 
-    @HostBinding('class.rt-skeleton--rectangle')
     protected get isRectangle(): boolean {
         return this.shape() === 'rectangle';
     }
 
-    @HostBinding('class.rt-skeleton--circle')
     protected get isCircle(): boolean {
         return this.shape() === 'circle';
     }
 
-    @HostBinding('class.rt-skeleton--square')
     protected get isSquare(): boolean {
         return this.shape() === 'square';
     }
 
-    @HostBinding('class.rt-skeleton--sm')
     protected get isSizeSm(): boolean {
         return this.size() === 'sm';
     }
 
-    @HostBinding('class.rt-skeleton--md')
     protected get isSizeMd(): boolean {
         return this.size() === 'md';
     }
 
-    @HostBinding('class.rt-skeleton--lg')
     protected get isSizeLg(): boolean {
         return this.size() === 'lg';
     }
 
-    @HostBinding('class.rt-skeleton--animated')
     protected get isAnimated(): boolean {
         return this.animation();
     }
 
-    @HostBinding('style.width')
     protected get hostWidth(): string {
         switch (this.shape()) {
             case 'circle':
@@ -107,7 +107,6 @@ export class RtSkeletonComponent {
         }
     }
 
-    @HostBinding('style.height')
     protected get hostHeight(): string {
         switch (this.shape()) {
             case 'circle':

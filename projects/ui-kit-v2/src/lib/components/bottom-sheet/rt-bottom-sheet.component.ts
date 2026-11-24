@@ -90,7 +90,7 @@ function takeConfirmId(): string {
     },
 })
 export class RtBottomSheetComponent {
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
     readonly #stack: RtBottomSheetStackService = inject(RtBottomSheetStackService);
     readonly #host: HTMLElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
     /** Блокировка прокрутки страницы — та же, что держит оверлей у шторки панели выбора. */
@@ -225,7 +225,7 @@ export class RtBottomSheetComponent {
             untracked((): void => {
                 if (open) {
                     // Шторке панели выбора фокус возвращает её мост: он знает, какой узел триггера его берёт.
-                    this.#openedFrom = this.#inPopoverSheet() ? null : outerFocus(this.#document, this.#host);
+                    this.#openedFrom = this.#inPopoverSheet() ? null : outerFocus(this.#doc, this.#host);
                 } else {
                     this.confirming.set(false);
                     this.typing.set(false);
@@ -237,7 +237,7 @@ export class RtBottomSheetComponent {
         effect((onCleanup: EffectCleanupRegisterFn): void => {
             if (this.typing()) {
                 onCleanup(
-                    rtWatchSheetKeyboard(this.#document.defaultView, (box: IRtSheetKeyboardBox | null): void => this.keyboardBox.set(box))
+                    rtWatchSheetKeyboard(this.#doc.defaultView, (box: IRtSheetKeyboardBox | null): void => this.keyboardBox.set(box))
                 );
             } else {
                 this.keyboardBox.set(null);
@@ -315,8 +315,8 @@ export class RtBottomSheetComponent {
         this.#dragStartY = event.clientY;
         this.dragging.set(true);
         this.dragDeltaY.set(0);
-        this.#document.addEventListener('pointermove', this.#onDragMove);
-        this.#document.addEventListener('pointerup', this.#onDragEnd);
+        this.#doc.addEventListener('pointermove', this.#onDragMove);
+        this.#doc.addEventListener('pointerup', this.#onDragEnd);
     }
 
     /** Просьба закрыть: с неприменённым выбором сначала вопрос, без него — сразу наружу. */
@@ -327,7 +327,7 @@ export class RtBottomSheetComponent {
         }
         // Вопрос уже показан — вторая просьба закрыть его не переспрашивает.
         if (!this.confirming()) {
-            this.#askedFrom = innerFocus(this.#document, this.#host);
+            this.#askedFrom = innerFocus(this.#doc, this.#host);
             this.confirming.set(true);
         }
     }
@@ -345,7 +345,7 @@ export class RtBottomSheetComponent {
     #returnFocus(): void {
         const target: HTMLElement | null = this.#openedFrom;
         this.#openedFrom = null;
-        if (target?.isConnected === true && focusLeftBehind(this.#document, this.#host)) {
+        if (target?.isConnected === true && focusLeftBehind(this.#doc, this.#host)) {
             target.focus();
         }
     }
@@ -371,8 +371,8 @@ export class RtBottomSheetComponent {
 
     #handleDragEnd(): void {
         this.dragging.set(false);
-        this.#document.removeEventListener('pointermove', this.#onDragMove);
-        this.#document.removeEventListener('pointerup', this.#onDragEnd);
+        this.#doc.removeEventListener('pointermove', this.#onDragMove);
+        this.#doc.removeEventListener('pointerup', this.#onDragEnd);
         if (shouldDismissDrag(this.dragDeltaY())) {
             this.dismiss();
         }

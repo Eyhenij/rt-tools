@@ -35,7 +35,9 @@ export interface IRtSideMenuIconContext {
  *
  * ```html
  * <rt-side-menu [menuItems]="items">
- *     <ng-template rtSideMenuIcon let-icon="icon"><img [src]="'/icons/' + icon + '.svg'" alt="" /></ng-template>
+ *     <ng-template rtSideMenuIcon let-icon="icon">
+ *         <svg aria-hidden="true"><use [attr.href]="'/icons/sprite.svg#' + icon" /></svg>
+ *     </ng-template>
  * </rt-side-menu>
  * ```
  */

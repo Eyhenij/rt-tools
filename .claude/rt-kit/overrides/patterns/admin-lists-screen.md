@@ -32,12 +32,16 @@ reference to something undeclared.
         <admin-tree-filter [choices]="choices()" [tree]="query().tree" (treeChange)="changeTree($event)" />
     </ng-template>
 
-    <rt-table #rowsTable="rtTable" clickable [attr.qa-dataid]="qaTable()" [dataSource]="rows()"><!-- … --></rt-table>
+    <ng-template adminListPageContent>
+        <rt-table #rowsTable="rtTable" clickable [attr.qa-dataid]="qaTable()" [dataSource]="rows()"><!-- … --></rt-table>
+    </ng-template>
 </admin-list-page>
 ```
 
-There are three slots: `adminListToolbarLeft` — what changes the selection; `adminListToolbarRight`
-— the section buttons; `adminListAboveTable` — what concerns the whole list at once. An unoccupied
+There are four slots: `adminListToolbarLeft` — what changes the selection; `adminListToolbarRight`
+— the section buttons; `adminListAboveTable` — what concerns the whole list at once;
+`adminListPageContent` — the table itself, built only while the page shows no read fault. A table
+written straight into the page without the template is not drawn, and nothing warns. An unoccupied
 slot does not appear on the screen at all and takes no height: a measurement on three sections
 gives a gap between the toolbar and the table of exactly one page column step.
 

@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, Signal } from '@angular/core';
+import { computed, inject, Signal, Service } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TreesApiService } from '@rt/message-bus-admin/common/core/api';
 import { ITreeChoice } from '@rt/message-bus-common';
@@ -25,7 +25,7 @@ const INITIAL_STATE: ITreesState = { ...BASE_INITIAL_STATE.ASYNC, choices: [] };
  * Отказ чтения деревьев экран не показывает: отбор при нём пуст, а список читается по-прежнему.
  * Сказать о нём человеку нечего — он пришёл за грузом, а не за деревьями.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class TreesStore extends BaseAsyncStoreService<ITreesState, TTreesMessage> {
     readonly #api: TreesApiService = inject(TreesApiService);
     readonly #readSource: Subject<void> = new Subject<void>();

@@ -292,7 +292,7 @@ describe('RtTableFilterHeaderComponent — виды сравнения в што
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1720 — виды сравнения стоят карточками с радиокнопкой кита, нынешний отмечен', (): void => {
+    it('SC-UKV-1782 — виды сравнения стоят карточками с радиокнопкой кита, нынешний отмечен', (): void => {
         open();
 
         const radios: HTMLElement[] = items().map((item: HTMLElement): HTMLElement => item.querySelector('[role="radio"]') as HTMLElement);
@@ -318,7 +318,7 @@ describe('RtTableFilterHeaderComponent — виды сравнения в што
         expect(document.querySelector('.rt-popover-sheet .rt-bottom-sheet--open')).toBeNull();
     });
 
-    it('SC-UKV-1717 — sheetCards=false оставляет в шторке пункты меню', (): void => {
+    it('SC-UKV-1779 — sheetCards=false оставляет в шторке пункты меню', (): void => {
         open({ sheetCards: false });
 
         expect(items().length).toBeGreaterThan(1);

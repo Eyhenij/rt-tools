@@ -39,20 +39,22 @@
                         [rtTooltip]="folder.name"
                         (click)="opened.emit(folder.id)"></button>
                     <rt-menu icon="ellipsis-v" qa-dataid="media-folder-menu" [ariaLabel]="t().mediaFolderActions">
-                        <rt-menu-item
-                            icon="pencil"
-                            qa-dataid="media-folder-rename"
-                            [label]="t().uiRename"
-                            (selected)="renameRequested.emit(folder)" />
-                        <rt-menu-item
-                            icon="trash"
-                            danger
-                            qa-dataid="media-folder-delete"
-                            [label]="t().uiDelete"
-                            [confirmTitle]="t().mediaFolderDeleteQuestion"
-                            [confirmLabel]="t().uiDelete"
-                            [confirmMessage]="t().mediaFolderDeleteWarning"
-                            (selected)="removeRequested.emit(folder)" />
+                        <ng-template rtMenuContent>
+                            <rt-menu-item
+                                icon="pencil"
+                                qa-dataid="media-folder-rename"
+                                [label]="t().uiRename"
+                                (selected)="renameRequested.emit(folder)" />
+                            <rt-menu-item
+                                icon="trash"
+                                danger
+                                qa-dataid="media-folder-delete"
+                                [label]="t().uiDelete"
+                                [confirmTitle]="t().mediaFolderDeleteQuestion"
+                                [confirmLabel]="t().uiDelete"
+                                [confirmMessage]="t().mediaFolderDeleteWarning"
+                                (selected)="removeRequested.emit(folder)" />
+                        </ng-template>
                     </rt-menu>
                 </li>
             }

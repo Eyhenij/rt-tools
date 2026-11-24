@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { RouterStateSnapshot, TitleStrategy } from '@angular/router';
 
@@ -17,7 +17,7 @@ const SEPARATOR: string = ' · ';
  * Имя приложения спрашивается у словаря на каждой постановке заголовка, а не берётся один раз:
  * взятое один раз, оно осталось бы на языке первой загрузки страницы.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class AdminTitleStrategy extends TitleStrategy {
     readonly #title: Title = inject(Title);
 

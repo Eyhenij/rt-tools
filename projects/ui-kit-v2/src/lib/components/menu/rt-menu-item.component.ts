@@ -35,7 +35,7 @@ import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtMenuConfirmDialogComponent } from './rt-menu-confirm-dialog.component';
 import { RtMenuItemIconDirective } from './rt-menu-item-icon.directive';
 import { menuItemIconName, unpairedGlyph } from './rt-menu-item.logic';
-import { RT_MENU_SELECT_EVENT, IRtMenu } from './rt-menu.model';
+import { RT_MENU_CONFIRM_EVENT, RT_MENU_SELECT_EVENT, IRtMenu } from './rt-menu.model';
 
 const BEM_BLOCK: string = 'rt-menu-item';
 
@@ -53,7 +53,7 @@ const BEM_BLOCK: string = 'rt-menu-item';
  * сперва открывается центрированная confirm-модалка, и `(selected)` эмитится
  * только после подтверждения. Модалка (а не popover) нужна потому, что панель
  * `rt-menu` сама в CDK Overlay; меню остаётся открытым под backdrop'ом, пока
- * пользователь решает.
+ * пользователь решает, а закрытое за это время меню держит пункт скрытым до ответа.
  *
  * `ViewEncapsulation.None`; стили префиксованы `.rt-menu-item`. Host несёт
  * BEM-класс блока (template-`<ng-container rtBlock>` даёт контекст для `rtElem`,
@@ -225,6 +225,7 @@ export class RtMenuItemComponent {
                 if (confirmed === true) {
                     this.#commitSelection();
                 }
+                this.#announceConfirm(false);
             });
     }
 
@@ -284,7 +285,17 @@ export class RtMenuItemComponent {
         };
         // Открытие модалки и подписка на результат — в конструкторном стриме
         // (см. #confirmRequestSource); здесь только эмит данных модалки.
+        this.#announceConfirm(true);
         this.#confirmRequestSource.next(data);
+    }
+
+    /**
+     * Панель меню узнаёт, что пункт ждёт ответа окна: закрытое меню держит пункт живым до ответа, и
+     * подтверждённый выбор доходит до потребителя. Событие всплывает по странице — меню таблицы
+     * получает его так же, хотя пункт пришёл шаблоном приложения.
+     */
+    #announceConfirm(pending: boolean): void {
+        this.#elementRef.nativeElement.dispatchEvent(new CustomEvent<boolean>(RT_MENU_CONFIRM_EVENT, { bubbles: true, detail: pending }));
     }
 
     #commitSelection(): void {

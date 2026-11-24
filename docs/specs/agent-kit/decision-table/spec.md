@@ -124,9 +124,9 @@ a hook with a decision, and marks a context hook and a git-side hook as helpers.
 | `git-guard-discard.sh` | PreToolUse Bash\|webstorm | guard | tree_dirty, discard_declared | Bash:git-reset-hard, Bash:git-checkout--, Bash:git-restore, Bash:git-clean-f | deny |
 | `git-guard-main.sh` | PreToolUse Bash\|webstorm | guard | branch_is_main | Bash:git-commit | deny |
 | `git-guard-no-verify.sh` | PreToolUse Bash\|webstorm | guard | hooks_skipped | Bash:git-commit, Bash:git-push | deny |
-| `git-guard-push-ahead.sh` | — (run by hand/agent) | helper | tree_dirty, push_adds_commits; writes push_marks_green | — | — (exit codes to its caller) |
+| `git-guard-push-ahead.sh` | — (run by hand/agent) | helper | tree_dirty, push_adds_commits, push_node_pinned; writes push_marks_green | — | — (exit codes to its caller) |
 | `git-guard-push-marks.sh` | — | helper | push_marks_green, tree_dirty, push_adds_commits | — | — |
-| `git-guard-push-tests.sh` | PreToolUse Bash\|webstorm\|mcp__terminal__run_in_terminal | guard | push_plain_single, push_from_session_copy, push_adds_commits, push_marks_green, tree_dirty | Bash:git-push, mcp:terminal-push | deny |
+| `git-guard-push-tests.sh` | PreToolUse Bash\|webstorm\|mcp__terminal__run_in_terminal | guard | push_plain_single, push_from_session_copy, push_adds_commits, push_node_pinned, push_marks_green, tree_dirty | Bash:git-push, mcp:terminal-push | deny |
 | `git-guard-tree-assignment.sh` | — (tier of delivery) | helper | copy_assignment_ok, assigned_epic_open | Bash:git-branch-create | deny (via git-guard-delivery) |
 | `glossary-load.sh` | SessionStart startup\|resume\|compact\|clear | guard·ctx | glossary_present | SessionStart | context-only |
 | `guard-note.sh` | — | helper | — | — | — |
@@ -141,11 +141,12 @@ a hook with a decision, and marks a context hook and a git-side hook as helpers.
 | `observe.sh` | — | helper | — | — | — |
 | `override-write-guard.sh` | PreToolUse Write\|Bash\|webstorm | guard | override_exists_nonempty | Write:override, Bash:overwrite (>, tee, cp, mv) | deny |
 | `owner-corrections.sh` | UserPromptSubmit | helper (no decision) | — | — | — |
-| `pre-push.sh` | git pre-push hook (no rt-hook) | guard·git | push_sends_head_commit, push_marks_green, push_adds_commits | git:push | block (exit 1) |
+| `pre-push.sh` | git pre-push hook (no rt-hook) | guard·git | push_sends_head_commit, push_node_pinned, push_marks_green, push_adds_commits | git:push | block (exit 1) |
 | `profile-check.sh` | — | helper | — | — | — |
 | `prose-style-guard.sh` | PreToolUse Edit\|Write\|MultiEdit\|Bash\|webstorm | guard | prose_clean (only .md in the tree, not docs/tasks, not docs/archive) | Edit:md, Bash:md-write | deny |
 | `pull-outcomes.sh` | — | helper | — | — | — |
-| `push-set.sh` | — | helper | push_marks_green | — | — |
+| `push-ahead-call-guard.sh` | PreToolUse Bash (run_in_background) | guard | push_ahead_code_visible | Bash:push-ahead-run | deny |
+| `push-set.sh` | — | helper | push_node_pinned, push_marks_green | — | — |
 | `push-sign.sh` | — | helper | push_plain_single | — | — |
 | `qa-dataid-guard.sh` | PreToolUse Edit\|Write\|MultiEdit\|create_new_file\|Bash\|webstorm | guard | edit_is_app_code, qa_anchors_present | Edit:html, Bash:html-write | deny |
 | `rerun-guard.sh` | PreToolUse Bash\|webstorm | guard | run_log_read | Bash:gh-run-rerun, Bash:glab-ci-retry | deny |

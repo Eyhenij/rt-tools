@@ -6,3 +6,4 @@ export * from './rt-side-menu-icon.logic';
 export * from './rt-side-menu-settings.logic';
 export * from './rt-side-menu-settings.service';
 export * from './sub-item/rt-side-menu-sub-item.component';
+export * from './sub-item/rt-side-menu-sub-item-action.directive';

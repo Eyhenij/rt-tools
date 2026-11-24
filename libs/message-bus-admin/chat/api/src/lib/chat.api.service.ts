@@ -9,7 +9,7 @@
  * оставляет соседский разговор в общем счёте строк.
  */
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { asReadFault, asSpokenFault, READ_TIMEOUT_MS } from '@rt/message-bus-admin/common/core/api';
 import { ChatMessageMapper, ChatTalkMapper, IChat } from '@rt/message-bus-admin/chat/util';
 import {
@@ -41,7 +41,7 @@ export interface IChatFeedAsked {
     readonly since: string;
 }
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class ChatApiService {
     readonly #http: HttpClient = inject(HttpClient);
     readonly #talks: ChatTalkMapper = new ChatTalkMapper();

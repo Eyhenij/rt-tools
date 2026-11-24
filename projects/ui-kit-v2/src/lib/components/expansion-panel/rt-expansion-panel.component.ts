@@ -16,6 +16,7 @@ import {
     ModelSignal,
     Signal,
     signal,
+    TemplateRef,
     untracked,
     ViewEncapsulation,
     WritableSignal,
@@ -23,6 +24,7 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { rtSlotTemplates } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtExpansionPanelActionsDirective } from './rt-expansion-panel-actions.directive';
 import { RtExpansionPanelContentDirective } from './rt-expansion-panel-content.directive';
@@ -43,13 +45,13 @@ function nextExpansionPanelId(): number {
  * Нажатие на заголовок раскрывает и сворачивает тело, раскрытие и сворачивание идут с движением.
  * Заменяет во втором ките панель раскрытия Material первого кита.
  *
- * Заголовок — содержимое панели без отметки. Тело — узел с `rtExpansionPanelBody`, созданный сразу,
- * или `<ng-template rtExpansionPanelContent>`, созданный при раскрытии.
+ * Заголовок — содержимое панели без отметки. Тело — узел с `rtExpansionPanelBody`, созданный сразу и
+ * скрытый, пока панель свёрнута, или `<ng-template rtExpansionPanelContent>`, созданный при раскрытии.
  *
  * Состояние раскрытия — `expanded`, двусторонняя привязка: панель пишет в него сама, а владелец
  * может держать его в своём сигнале и менять извне.
  *
- * Действия заголовка — узел с `rtExpansionPanelActions`: он стоит в строке заголовка вне кнопки, и
+ * Действия заголовка — шаблон `rtExpansionPanelActions`: он стоит в строке заголовка вне кнопки, и
  * нажатие по нему панель не раскрывает. В группе `rtExpansionPanelGroup` раскрытие панели
  * сворачивает соседей.
  */
@@ -75,7 +77,7 @@ function nextExpansionPanelId(): number {
         '[class.rt-expansion-panel--plain]': 'appearance() === "plain"',
         '[class.rt-expansion-panel--expanded]': 'expanded()',
         '[class.rt-expansion-panel--disabled]': 'disabled()',
-        '[class.rt-expansion-panel--with-actions]': '!!actions()',
+        '[class.rt-expansion-panel--with-actions]': 'actions().length > 0',
     },
     // Тело панели закрыто от группы над ней: вложенная панель раскрывается независимо, как в Material.
     providers: [
@@ -110,15 +112,17 @@ export class RtExpansionPanelComponent {
     );
     protected readonly bodyId: string = `${this.#idBase}-body`;
     /**
-     * Действия заголовка: есть они — шеврон выходит из кнопки и встаёт после них. Только свои: действия
-     * панели, вложенной в тело, принадлежат ей.
+     * Шаблоны действий заголовка: есть они — шеврон выходит из кнопки и встаёт после них. Только свои,
+     * все в порядке записи: действия панели, вложенной в тело, принадлежат ей.
      */
-    protected readonly actions: Signal<RtExpansionPanelActionsDirective | undefined> = computed(
-        (): RtExpansionPanelActionsDirective | undefined =>
-            this.allActions().find((action: RtExpansionPanelActionsDirective): boolean => action.owner === this)
+    protected readonly actions: Signal<TemplateRef<unknown>[]> = computed((): TemplateRef<unknown>[] =>
+        rtSlotTemplates(this.allActions().filter((action: RtExpansionPanelActionsDirective): boolean => action.owner === this))
     );
-    /** Тело есть в разметке: раскрыто, или сохраняется свёрнутым после первого раскрытия. */
-    protected readonly bodyRendered: Signal<boolean> = computed(
+    /**
+     * Ленивое тело создано: панель раскрыта, или тело сохраняется свёрнутым после первого раскрытия.
+     * Узел самого тела стоит в разметке всегда.
+     */
+    protected readonly lazyRendered: Signal<boolean> = computed(
         (): boolean => this.expanded() || (this.preserveContent() && this.#everExpanded())
     );
     protected readonly headerDomId: Signal<string> = computed((): string => this.headerId() ?? `${this.#idBase}-header`);

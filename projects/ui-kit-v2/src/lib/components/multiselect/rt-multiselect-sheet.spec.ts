@@ -48,7 +48,7 @@ describe('Карточки выбора мультиселекта в шторк
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1715 — каждая опция — карточка с флажком кита справа, выбранная отмечена', async (): Promise<void> => {
+    it('SC-UKV-1777 — каждая опция — карточка с флажком кита справа, выбранная отмечена', async (): Promise<void> => {
         const fixture: TFixture = setup();
         // Значение флажку отдаёт ngModel, а он пишет его на следующем шаге очереди.
         await fixture.whenStable();
@@ -68,7 +68,7 @@ describe('Карточки выбора мультиселекта в шторк
         expect(all('multiselect-option-checkbox')).toEqual([]);
     });
 
-    it('SC-UKV-1713 — «Готово» стоит справа в шапке шторки, в подвале остаются счётчик и сброс', (): void => {
+    it('SC-UKV-1775 — «Готово» стоит справа в шапке шторки, в подвале остаются счётчик и сброс', (): void => {
         setup();
 
         const done: HTMLElement = all('multiselect-sheet-done')[0];
@@ -81,7 +81,7 @@ describe('Карточки выбора мультиселекта в шторк
         expect(footer.querySelector('[qa-dataid="multiselect-sheet-done"]')).toBeNull();
     });
 
-    it('SC-UKV-1716 — пояснение опции стоит второй строкой карточки', (): void => {
+    it('SC-UKV-1778 — пояснение опции стоит второй строкой карточки', (): void => {
         setup();
 
         expect(all('multiselect-option-description').map((node: HTMLElement): string => node.textContent?.trim() ?? '')).toEqual([
@@ -107,7 +107,7 @@ describe('Карточки выбора мультиселекта в шторк
         expect(all('multiselect-option-mark')).toEqual([]);
     });
 
-    it('SC-UKV-1717 — sheetCards=false возвращает в шторку строки, какими список стоит у поля', (): void => {
+    it('SC-UKV-1779 — sheetCards=false возвращает в шторку строки, какими список стоит у поля', (): void => {
         setup({ sheetCards: false });
 
         expect(panelClasses()).not.toContain('rt-multiselect__panel--cards');

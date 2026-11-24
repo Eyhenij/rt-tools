@@ -31,12 +31,14 @@ import {
     InputSignal,
     InputSignalWithTransform,
     numberAttribute,
+    OnDestroy,
+    OnInit,
     output,
     OutputEmitterRef,
     signal,
     Signal,
     TemplateRef,
-    ViewChild,
+    viewChild,
     WritableSignal,
     ViewEncapsulation,
 } from '@angular/core';
@@ -51,7 +53,7 @@ import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { IRtLoadError, RtEmptyStateComponent, rtLoadErrorView } from '@rt-tools/ui-kit-v2/empty-state';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
-import { RtMenuComponent } from '@rt-tools/ui-kit-v2/menu';
+import { RtMenuComponent, RtMenuContentDirective } from '@rt-tools/ui-kit-v2/menu';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtSkeletonComponent } from '@rt-tools/ui-kit-v2/skeleton';
 import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
@@ -112,6 +114,7 @@ const DEFAULT_EMPTY_KEY: TRtKitLabelKey = 'uiNoRows';
         RtButtonDirective,
         RtEmptyStateComponent,
         RtMenuComponent,
+        RtMenuContentDirective,
         RtSkeletonComponent,
         RtSpinnerComponent,
         RtTableFilterHeaderComponent,
@@ -146,7 +149,7 @@ const DEFAULT_EMPTY_KEY: TRtKitLabelKey = 'uiNoRows';
         '[attr.aria-busy]': "isInitialLoading() || fetching() ? 'true' : null",
     },
 })
-export class RtTableComponent<TRow> extends CdkTable<TRow> {
+export class RtTableComponent<TRow> extends CdkTable<TRow> implements OnInit, OnDestroy {
     readonly #t_uiNoRows: Signal<string> = rtKitLabel(DEFAULT_EMPTY_KEY);
 
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
@@ -169,18 +172,15 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
         (): string | null => this.tableId()
     );
 
-    /** Колонка действий и её ячейки: регистрируются в CdkTable вручную — почему, сказано в `CONTEXT.md`. */
-    // native-ok: сигнальный viewChild() резолвится после первой отрисовки строк, а колонка действий должна попасть в реестр CdkTable до неё
-    @ViewChild(CdkColumnDef, { static: true })
-    private readonly actionsColumnDef?: CdkColumnDef;
+    /**
+     * Колонка действий и её ячейки: регистрируются в CdkTable вручную — почему, сказано в `CONTEXT.md`.
+     * Сигнальный запрос к собственной разметке заполнен уже в `ngOnInit`, до первой отрисовки строк.
+     */
+    protected readonly actionsColumnDef: Signal<CdkColumnDef | undefined> = viewChild(CdkColumnDef);
 
-    // native-ok: то же, что у объявления колонки выше: def присваивается вручную в ngOnInit, до первой отрисовки
-    @ViewChild(CdkCellDef, { static: true })
-    private readonly actionsCellDef?: CdkCellDef;
+    protected readonly actionsCellDef: Signal<CdkCellDef | undefined> = viewChild(CdkCellDef);
 
-    // native-ok: то же, что у объявления колонки выше: def присваивается вручную в ngOnInit, до первой отрисовки
-    @ViewChild(CdkHeaderCellDef, { static: true })
-    private readonly actionsHeaderCellDef?: CdkHeaderCellDef;
+    protected readonly actionsHeaderCellDef: Signal<CdkHeaderCellDef | undefined> = viewChild(CdkHeaderCellDef);
 
     /** Роль хоста: элементному `<rt-table>` её ставим сами, у native `<table>` она от тега. Считается один раз. */
     protected readonly hostRole: 'table' | null = rtTableHostRoleOf(inject(ElementRef).nativeElement as HTMLElement);
@@ -424,10 +424,13 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
         // Регистрируем view-колонку действий до первого рендера строк, чтобы
         // `displayedColumns()` мог на неё ссылаться без «column not found».
         // Cell/header присваиваем вручную — их ContentChild ещё не отработал.
-        if (this.actionsColumnDef !== undefined && this.actionsCellDef !== undefined && this.actionsHeaderCellDef !== undefined) {
-            this.actionsColumnDef.cell = this.actionsCellDef;
-            this.actionsColumnDef.headerCell = this.actionsHeaderCellDef;
-            this.addColumnDef(this.actionsColumnDef);
+        const columnDef: CdkColumnDef | undefined = this.actionsColumnDef();
+        const cellDef: CdkCellDef | undefined = this.actionsCellDef();
+        const headerCellDef: CdkHeaderCellDef | undefined = this.actionsHeaderCellDef();
+        if (columnDef !== undefined && cellDef !== undefined && headerCellDef !== undefined) {
+            columnDef.cell = cellDef;
+            columnDef.headerCell = headerCellDef;
+            this.addColumnDef(columnDef);
         }
 
         this.#columnSettings.start();
@@ -439,8 +442,9 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
     }
 
     public override ngOnDestroy(): void {
-        if (this.actionsColumnDef !== undefined) {
-            this.removeColumnDef(this.actionsColumnDef);
+        const columnDef: CdkColumnDef | undefined = this.actionsColumnDef();
+        if (columnDef !== undefined) {
+            this.removeColumnDef(columnDef);
         }
         this.#columnSettings.stop();
         this.#pinnedEdges.stop();

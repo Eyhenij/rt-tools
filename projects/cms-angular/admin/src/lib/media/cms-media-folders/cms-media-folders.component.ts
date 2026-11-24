@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, InputSignal, OutputEmitterRef, Sign
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { CMS_LABELS, CmsLabelPipe, IMediaFolder, MEDIA_ROOT_ID, TCmsLabelMap } from '@rt-tools/cms-angular';
-import { RtButtonDirective, RtMenuComponent, RtMenuItemComponent, RtTooltipDirective } from '@rt-tools/ui-kit-v2';
+import { RtButtonDirective, RtMenuComponent, RtMenuContentDirective, RtMenuItemComponent, RtTooltipDirective } from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'rt-cms-media-folders';
 
@@ -23,6 +23,7 @@ const BEM_BLOCK: string = 'rt-cms-media-folders';
         ElemDirective,
         RtButtonDirective,
         RtMenuComponent,
+        RtMenuContentDirective,
         RtMenuItemComponent,
         RtTooltipDirective,
     ],

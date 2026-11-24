@@ -9,3 +9,4 @@ export * from './footer/rt-aside-footer.component';
 export * from './error-box/rt-aside-error-box.component';
 export * from './unsaved-dialog/rt-aside-unsaved-dialog.component';
 export * from './unsaved-dialog/rt-aside-unsaved.logic';
+export * from './rt-aside-content.directive';

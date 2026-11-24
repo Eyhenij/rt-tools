@@ -7,6 +7,7 @@ import { IPageModel } from '@rt-tools/utils';
 
 import { provideRtKitLabels, TRtKitLabelKey, TRtKitTranslator } from '../../i18n';
 import { createRtFixture, el, qa, setInputs, textOf } from '../../../testing/rt-kit-testing';
+import { RtDynamicListContentDirective } from './rt-dynamic-list-content.directive';
 import { RtDynamicListComponent } from './rt-dynamic-list.component';
 import { RtDynamicListToolbarActionsDirective, RtDynamicListToolbarSelectorsDirective } from './rt-dynamic-list.directives';
 
@@ -43,11 +44,18 @@ const SEARCH_SETTLE_MS: number = 1000;
             @if (hasActions()) {
                 <ng-container *rtDynamicListActions><span>своё действие</span></ng-container>
             }
-            <span qa-dataid="host-table">таблица потребителя</span>
+            <ng-template rtDynamicListContent>
+                <span qa-dataid="host-table">таблица потребителя</span>
+            </ng-template>
         </rt-dynamic-list>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtDynamicListComponent, RtDynamicListToolbarSelectorsDirective, RtDynamicListToolbarActionsDirective],
+    imports: [
+        RtDynamicListComponent,
+        RtDynamicListContentDirective,
+        RtDynamicListToolbarSelectorsDirective,
+        RtDynamicListToolbarActionsDirective,
+    ],
 })
 class DynamicListHostComponent {
     public readonly hasSelectors: WritableSignal<boolean> = signal(true);
@@ -277,7 +285,7 @@ describe('RtDynamicListComponent', (): void => {
             expect(qa(fixture, 'dynamic-list-search')).not.toBeNull();
         });
 
-        it('SC-UKV-172 — таблица потребителя проецируется как есть', (): void => {
+        it('SC-UKV-172 — таблица потребителя рисуется из шаблона как есть', (): void => {
             const fixture: ComponentFixture<DynamicListHostComponent> = createRtFixture(DynamicListHostComponent);
             const content: HTMLElement = qa(fixture, 'dynamic-list-content')?.nativeElement as HTMLElement;
 

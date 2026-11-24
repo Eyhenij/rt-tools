@@ -65,7 +65,7 @@
                 [size]="resolvedIconSize()"
                 [fill]="iconFill()" />
         } @else {
-            <span rtElem="content" qa-dataid="icon-button-content"><ng-content /></span>
+            <span rtElem="content" qa-dataid="icon-button-content"><ng-container [rtSlotOutlet]="contents()" /></span>
         }
         @if (indicator()) {
             <span rtElem="indicator" aria-hidden="true"></span>

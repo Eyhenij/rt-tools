@@ -1,4 +1,4 @@
-<!-- rt-kit v0.38.0 · pitfalls/browser-verification.md · e9fcd0a4bb0f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.0 · pitfalls/browser-verification.md · e9fcd0a4bb0f · правится надстройкой, не здесь -->
 # Checking the running application — cold part
 
 The sections the rule `browser-verification` handed over when it was cut to its statements: its
