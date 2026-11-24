@@ -12,7 +12,8 @@
 #
 # The decision is the check's own, `tools/check-kit-approval.mjs`: the guard only recognises the
 # call and passes the refusal on. A record in place on `gh pr create` opens the owner's window with
-# its two quotes — the owner confirms them there.
+# its two quotes — the owner confirms them there. Before the boundary of an autonomous session the
+# window has nobody in front of it, and the PR is refused until the morning.
 #
 # FAIL-OPEN: no input, no jq, no node, no check file — pass.
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -52,6 +53,19 @@ if [ "$code" -eq 0 ]; then
     [ "$mode" = "branch" ] || exit 0
     quotes="$(cd "$root" && node "$check" --quotes 2>/dev/null)"
     [ -n "$quotes" ] || exit 0
+    # Before the boundary of an autonomous session nobody answers a window: the PR waits for the
+    # morning, and the work goes on. The boundary is the line `Автономно до:` in the head of the
+    # newest morning list, ahead of now; both are local times of one form and compare as text. The
+    # line «Разрешено:» does not open the PR: the quotes are confirmed by the owner's own hand.
+    handoff="${RT_HANDOFF_DIR:-.claude/handoff}"
+    case "$handoff" in /*) ;; *) handoff="$root/$handoff" ;; esac
+    list="$(find "$handoff" -maxdepth 1 -name '*-ночь.md' 2>/dev/null | sort | tail -1)"
+    until="$([ -n "$list" ] && sed -n -E '/^\|/q; s/^Автономно до: *([0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9])[[:space:]]*$/\1/p' "$list" 2>/dev/null | head -1)"
+    if [ -n "$until" ] && [ "$(date +%Y-%m-%dT%H:%M)" \< "$until" ]; then
+        reason="BLOCKED by kit-approval: the branch carries a visible kit edit, its record says: ${quotes}, and the owner confirms these quotes in a window. Autonomous until ${until} («Автономно до:» in ${list#"$root"/}): no window is opened. The PR waits for the morning: write it into that list as the step the work waits for, leave the card and the branch, and take the next work. If the owner is back, set that line to the current moment and repeat the call."
+        jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}'
+        exit 0
+    fi
     reason="The branch carries a visible kit edit, and its approval record says: ${quotes}. Allow the PR if these are your words about this mockup and this showcase; forbid it otherwise."
     jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"ask",permissionDecisionReason:$r}}'
     exit 0

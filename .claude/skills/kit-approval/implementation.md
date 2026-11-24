@@ -7,7 +7,8 @@ The names and bindings of this tree next to the rule `SKILL.md`.
 - **the check** — `tools/check-kit-approval.mjs` — the branch against origin/main, or `--publish <kit>`
 - **the push** — `.claude/rt-kit/project.sh:rt_push_checks` — the check stands in the push set
 - **the PR and the release** — `.claude/hooks/kit-approval-guard.sh` — opening a PR and starting either kit release
-- **the scenarios** — `tools/tests/check-kit-approval.test.sh`
+- **the scenarios** — `tools/tests/check-kit-approval.test.sh`; the guard at night — `tools/tests/kit-approval-guard.test.sh`
+- **at night** — before the boundary of an autonomous session the guard refuses the PR instead of opening the window: the line «Автономно до:» of the newest morning list
 - **where the owner's words are confirmed** — the permission window of `.claude/hooks/kit-approval-guard.sh` on `gh pr create`; the quotes come from `tools/check-kit-approval.mjs --quotes`
 - **who answers for a kit edit** — `tools/check-kit-approval.mjs:answerersOf`, judged by `judgeBranch`. Every commit that touched a visible kit file answers by the record of its task. A merged PR names it by `[RT-<number>]`, a commit of an earlier branch of a chain by a closing `(RT-<number>)`. A merge with no record behind it is taken apart by its own commits: an epic into main, the epic branch into a task. The branch record answers for its own commits, for commits naming no task and for a file only main's merge touched. A task record is read from the live task folder first, then from the archive. `--quotes` gives the quotes of exactly these records.
 

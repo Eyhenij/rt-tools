@@ -159,6 +159,30 @@ And the text of the menu hook lets one question with a free field through after 
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`, `projects/agent-kit/tests/turn-exit-guard-foreign.test.sh`, `projects/agent-kit/tests/turn-replay.test.sh`.
 
+### SC-AK-1930 — before the boundary of an autonomous session the default takes the place of the menu
+
+Given a held turn whose next move is the owner's menu, and a newest morning list whose head carries «Автономно до:» with a moment ahead
+When the refusal is named
+Then it names the boundary, the default of the rule `autonomous-work` and that list, and no menu and no option of it
+And it still names the check that refused the step twice
+And an idle stop is told its step, and a step refused twice is not called again
+And the default tells work that waits for an outside step or a guard's window, whose card and branch stay, from stopped work, whose card goes back
+And a passed boundary, a boundary in words, a moment the clock does not have, a row of the table quoting the line, an older list, a list that cannot be read or no list gives the menu
+And a step of the scenario, an unread or hung background task and a refusal of another stop hook are named as by day
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`, `projects/agent-kit/tests/turn-exit-guard-night.test.sh`.
+
+### SC-AK-1931 — the head of a new night does not live by the past one
+
+Given the block of the command `/night` that starts the morning list, and lists of past nights on disk
+When it is run by bash or by zsh, from the root or from a subdirectory
+Then a list whose boundary lies ahead is continued: run unfilled, its head stays; run with the owner's new words, its head is rewritten and its rows stay
+And a list with a passed boundary, with none or with one the guards cannot read gives a new one with this night's boundary and words; the old one is put aside, not erased, where it would stand newer
+And quotes, several lines and a substitution in the words, and a missing directory, break nothing
+And a boundary that is no moment ahead or a value left unfilled starts no list and is named, and a failed write is not called done
+
+Covered: `projects/agent-kit/tests/turn-exit-guard-night.test.sh`.
+
 ### SC-AK-1467 — an option of the menu is the owner's word and releases no turn
 
 Given the owner chose «подскажу путь» in the menu

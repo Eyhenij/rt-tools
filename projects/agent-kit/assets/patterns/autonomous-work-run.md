@@ -13,7 +13,7 @@ Pattern of the rule `autonomous-work`. What must be true — the law
 ## When to use
 
 - The owner said they are leaving and asked for work on one's own.
-- More than one task in a row is taken in a session, and they cannot be handed outside.
+- More than one task in a row is taken in a session, and only what the owner named goes outside.
 - The work ran into a question, and there is nobody to ask.
 
 ## The chain of branches
@@ -60,8 +60,21 @@ git add "$dir" && git commit                              # the folder goes into
 # the folder is taken apart into the archive by the last commit
 ```
 
-Nothing goes outside during the night: no `git push`, no `gh pr create`, no publishing, no cargo
-mark. The branch stays local, and in the morning the owner decides what to hand out of it.
+A push, a PR, a merge, a publication or a cargo send is not done at night unless the owner named it
+when leaving. Their words stand in the head of the list, and the line of the work names which of
+them it used:
+
+```markdown
+Автономно до: 2026-11-24T08:00
+Разрешено: «сам сливай в ветку эпика, PR эпика в main — после зелёного прогона»
+```
+
+What the allowance does not name stays local, and in the morning the owner decides what to hand
+out of it. The allowed calls are rehearsed before the owner leaves: a kind with a form that changes
+nothing is run twice with different data; a merge, a publication or a send is covered by the owner's
+own allow rule and never rehearsed by doing it. One that prompts with no such rule leaves the
+allowance. The commands of the cycle above are rehearsed with them, one call each: a substitution or
+a chain is kept only where a guard demands that form.
 
 ## A default instead of a question
 
@@ -102,9 +115,10 @@ npm run task:move -- <номер> <прежняя колонка>
 Appended along the way, after each closed piece of work, not assembled at the end.
 
 ```markdown
-| Работа | Ветка | Чем подтверждена | Чего ждёт |
-| ------ | ----- | ---------------- | --------- |
-| <КЛЮЧ>-… — <что сделано> | `<ветка>` (на `<предыдущей>`) | `<команда>` — <вывод> | заявки и слияния |
+| Работа | Ветка | Чем подтверждена | Какое разрешение взято | Чего ждёт |
+| ------ | ----- | ---------------- | ---------------------- | --------- |
+| <КЛЮЧ>-… — <что сделано> | `<ветка>` (на `<предыдущей>`) | `<команда>` — <вывод> | «сам сливай в ветку эпика» — PR #<номер>, слит | ничего |
+| <КЛЮЧ>-… — <что сделано> | `<ветка>` (на `<предыдущей>`) | `<команда>` — <вывод> | нет | PR и слияния |
 ```
 
 The order of rows is the merge order. Below the list — the postponed tasks with their questions.
@@ -114,8 +128,12 @@ The order of rows is the merge order. Below the list — the postponed tasks wit
 The refusal names the skipped step: the step is done, the call is repeated, the work goes on. The
 night ends with work, not with an argument with the guard.
 
-- The refusal demands what must not be done (a push, a PR). The work is brought to the place where
-  the demand can be met in the morning and goes into the morning list as the line "waits for a PR".
+- The refusal demands an outside step the allowance does not name. The work is brought to the place
+  where the demand can be met in the morning, and its list line names the step it waits for.
+- The turn-exit guard names a default instead of the owner's menu: it is done, and the work goes on.
+  Work that waits or stops gets its line in the list.
+- A guard asks the owner by its own window: the call is not made, the list names it, and the next
+  work is taken. What is ready keeps its card and its branch.
 - The refusal repeats at the same place twice — then the skipped step was understood wrongly: the
   rule named in the refusal is read, not the wording rewritten.
 
