@@ -92,6 +92,8 @@ report "SC-AK-542 — дописывание через tee -a проходит"
     "$(decision "$(cmd_in 'printf x | tee -a .claude/rt-kit/overrides/rules/probe.md')")" PASS
 report "SC-AK-542 — дописывание кодом проходит" \
     "$(decision "$(cmd_in "python3 -c \"open('.claude/rt-kit/overrides/rules/probe.md','a').write('x')\"")")" PASS
+report "SC-AK-542 — правка на месте кодом проходит" \
+    "$(decision "$(cmd_in "python3 -c \"p='.claude/rt-kit/overrides/rules/probe.md'; t=open(p).read(); open(p,'w').write(t + 'x')\"")")" PASS
 report "SC-AK-542 — путь в тексте сообщения проходит" \
     "$(decision "$(cmd_in "git commit -m 'x > .claude/rt-kit/overrides/rules/probe.md'")")" PASS
 report "SC-AK-542 — чтение надстройки проходит" \

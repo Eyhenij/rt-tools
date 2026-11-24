@@ -6,13 +6,13 @@
 echo "один разбор цели записи"
 
 # Второй разбор узнаётся по образцу команды записи в хуке: знак образца сразу за словом или за
-# стрелкой. Два файла под судом не стоят: сам разбор и вопрос, кладёт ли вызов исполняемый им
+# стрелкой. Под судом не стоят сам разбор из трёх файлов и вопрос, кладёт ли вызов исполняемый им
 # сценарий сам, — он про имя одного файла, а не про цели.
 second_parse() {
     local hook
     for hook in "$1"/*.sh; do
-        case "${hook##*/}" in shell-words.sh | write-targets.sh | script-files.sh) continue ;; esac
-        grep -v '^[[:space:]]*#' "$hook" | grep -qE '(^|[^A-Za-z_])(tee|cp|mv)( ?\.[*+]| ?\+|\[\[|\\s|\[ |\[\^|\(\[)|(^|[^A-Za-z_])(sed|perl)( ?\.[*+]|\[\[|\\s|\[\^|\(\[)|(cp|mv|tee|sed)\|(cp|mv|tee|install|sed|rm)|>(\[\[:space:\]\]|\\s|\[ |\[\^| \*|\+)|rt_shell_words' \
+        case "${hook##*/}" in shell-words.sh | code-writes.sh | write-targets.sh | script-files.sh) continue ;; esac
+        grep -v '^[[:space:]]*#' "$hook" | grep -qE '\\b(tee|cp|mv)\\b|>>\?|(^|[^A-Za-z_])(tee|cp|mv)( ?\.[*+]| ?\+|\[\[|\\s|\[ |\[\^|\(\[)|(^|[^A-Za-z_])(sed|perl)( ?\.[*+]|\[\[|\\s|\[\^|\(\[)|(cp|mv|tee|sed)\|(cp|mv|tee|install|sed|rm)|>(\[\[:space:\]\]|\\s|\[ |\[\^| \*|\+)|rt_shell_words' \
             && printf '%s\n' "${hook##*/}"
     done
     return 0
@@ -35,14 +35,20 @@ second "стрелка с повтором узнана" "re='(cat|echo) >+ ?([^
 second "стрелка с пробелами узнана" 'grep -qE "> *$path"'
 second "tee с пробелами узнан" 'grep -qE "tee +$path"'
 second "cp с чем угодно узнана" 'grep -qE "cp .+ $path"'
+second "слова с границей узнаны" "grep -qE '\\btee\\b|\\bcp\\b'"
+second "стрелка с необязательной второй узнана" "grep -oE '>>?[[:space:]]*x'"
 second "слова команды мимо общего разбора узнаны" 'printf "%s" "$cmd" | rt_shell_words'
 second "комментарий о записи не разбор" '# cp[[:space:]] и tee[[:space:]] разбирает сосед' ''
 second "запуск команды записи не разбор" 'cp "$a" "$b"; printf x | tee -a "$log"; sed -i "" s/a/b/ "$b"' ''
 rm -rf "$SECOND"
 
-# Без модуля слов проверка пропускает действие: сломанный разбор не мешает работе.
+# Без модуля слов проверка пропускает действие: сломанный разбор не мешает работе. Без модуля кода не
+# читается только код.
 ALONE="$(mktemp -d)"
-cp "$HOOKS/write-targets.sh" "$HOOKS/script-files.sh" "$ALONE/"
+cp "$HOOKS/write-targets.sh" "$HOOKS/shell-words.sh" "$HOOKS/script-files.sh" "$ALONE/"
+report "SC-AK-1966 — без модуля кода названа запись оболочкой, код молчит, ошибки нет" \
+    "$( (. "$ALONE/write-targets.sh"; printf "python3 -c \"open('c/d.py','w')\"; printf x > a/b.sh" | rt_write_targets) 2>&1)" 'a/b.sh'
+rm "$ALONE/shell-words.sh"
 report "SC-AK-1966 — без модуля слов цели нет, ошибки нет" \
     "$( (. "$ALONE/write-targets.sh"; printf 'printf x > a/b.sh' | rt_write_targets; printf 'printf x > a/b.sh' | rt_overwrite_targets) 2>&1)" ''
 cp -R "$HOOKS/.." "$ALONE/assets" && rm -f "$ALONE/assets/hooks/shell-words.sh"

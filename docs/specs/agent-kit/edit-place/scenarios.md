@@ -315,28 +315,28 @@ assignments, words of the shell or runners with their flags
 When the shared parse takes the write targets out of the command text
 Then every target is named whole and nothing else is: a path with a space, two files of `tee`, the file
 a copy makes in a folder, a path through a variable the command gave a literal, and the body of a script
-the same command writes and runs
+the same command writes and runs; of code — a name, a list, a loop and a command the code runs
 
-Covered: `projects/agent-kit/tests/shell-words.test.sh`.
+Covered: `projects/agent-kit/tests/shell-words.test.sh`, `projects/agent-kit/tests/code-writes.test.sh`.
 
 ### SC-AK-1963 — a read, a run and a text are not a write
 
 Given a command reads, runs, searches or quotes a path — with an arrow in quotes, in a comparison or
 in code, with a word of a write in a string, with a body handed to a script as its data
 When the shared parse takes the write targets out of the command text
-Then it names nothing of them, and a write that stands next to them is still named; a command of 40 KB
-is read within five seconds
+Then it names nothing of them, and a write that stands next to them is still named; a command of 40 KB,
+of four thousand substitutions and of three thousand comparisons is read within five seconds each
 
-Covered: `projects/agent-kit/tests/shell-words.test.sh`.
+Covered: `projects/agent-kit/tests/shell-words.test.sh`, `projects/agent-kit/tests/code-writes.test.sh`.
 
 ### SC-AK-1964 — a file written whole is told from a file added to
 
 Given a command writes a file by a redirection, `tee`, a copy or code, or adds to it, edits it in
-place or reads it
+place or reads it; code that reads the file it writes edits it in place
 When the parse is asked for the files written whole
 Then it names the first and stays silent about the rest
 
-Covered: `projects/agent-kit/tests/shell-words.test.sh`.
+Covered: `projects/agent-kit/tests/shell-words.test.sh`, `projects/agent-kit/tests/code-writes.test.sh`.
 
 ### SC-AK-1965 — a second parse in a hook is refused
 
@@ -351,6 +351,6 @@ Covered: `projects/agent-kit/tests/write-parse-one.test.sh`.
 Given the module of words is not laid out next to the shared parse
 When a guard judges a command that overwrites a non-empty override
 Then no target is named, the call passes and nothing goes into the error stream; with the module the
-same call is refused
+same call is refused; without the module of code the writes of the shell are still named
 
 Covered: `projects/agent-kit/tests/write-parse-one.test.sh`.

@@ -97,6 +97,7 @@ a hook with a decision, and marks a context hook and a git-side hook as helpers.
 | `browser-guard-no-listing.sh` | PreToolUse mcp__claude-in-chrome__(list_connected_browsers\|switch_browser) | guard | device_id_configured | mcp:browser-list, mcp:browser-switch | deny (exit 2) |
 | `browser-guard-no-other-drivers.sh` | PreToolUse mcp__playwright__.*\|mcp__chrome-devtools__.*\|plugin variants\|Bash\|webstorm terminal/tool | guard | device_id_configured, other_driver_used | mcp:playwright, mcp:chrome-devtools, Bash:browser-launch | deny (exit 2) |
 | `browser-guard-require-select.sh` | PreToolUse mcp__claude-in-chrome__.* | guard | device_id_configured, browser_selected_fresh | mcp:browser (all but list/switch/select) | deny |
+| `code-writes.sh` | — | helper | — | — | — |
 | `commit-msg.sh` | git commit-msg hook (no rt-hook) | guard·git | commit_msg_valid | git:commit | block (commitlint exit code) |
 | `conscience-guard.sh` | Stop | guard | conscience_role_off, stop_hook_active, conscience_repeat_found, repeat_dealt_with | Stop | block |
 | `constitution-index.sh` | SessionStart startup\|resume\|compact\|clear | guard·ctx | laws_present | SessionStart | context-only |

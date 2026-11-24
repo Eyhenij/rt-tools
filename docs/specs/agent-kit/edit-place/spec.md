@@ -52,25 +52,36 @@ turn.
   The general sign is wide on purpose — it holds the name of the interpreter too — and running a
   laid-out check would read as an edit of the check itself. A refusal on a read costs more than a
   miss: a guard that gets in the way of reading is switched off on the very first day.
-- **The parse of write targets is declared once, and every guard that judges an edit calls it.** Two
+- **The parse of write targets is declared once, and a hook that judges a write target calls it.** Two
   copies of one sign diverge silently: each is fixed on its own, and neither says the rest stayed
   blind. The parse has a suite of its own, so that a failure names the parse and not the guard that
   called it. The rules gate and the guard of overrides ask it too: each of them held a parse of its own
   and saw none of the forms the shared one had learned. A suite refuses a pattern of a writing command
-  in any other hook, by its form and not by the name of the function.
+  in any other hook, by its form and not by the name of the function. Two answers of another kind stay
+  apart. The profile of the shell says whether a command writes at all and which paths it names; the
+  rules gate, the reuse guard, the course of work and the linter after an edit ask it. The engine of
+  tasks judges the steps of a task by a parse of its own.
 - **A command is cut into words sign by sign, and a writing word names its targets.** A quote, a
   separator, a substitution and a torn line are the borders of a word; a pattern over the whole line
   saw them only by chance, and `sed` with `;` in its expression, `perl -pi`, a copy into a folder and a
   path with a space went past. The words answer three questions: what a call writes, which code it
   hands to an interpreter or to a shell, and who reads the body of a heredoc. A command handed to a
-  shell is read again, to the fourth shell inside it. A copy into a folder names the file it makes
-  there; a folder without a slash at the end is asked from the disk. Not seen: a redirection inside
-  backquotes, a group in braces that takes a body by a pipe, `case` inside a substitution, a command of
-  a container or of another machine, a path the code puts together from parts.
+  shell is read again, to the fourth shell inside it, and its paths stand from the directory it enters
+  first. A copy into a folder names the file it makes there; a folder without a slash at the end is
+  asked from the disk. Not seen: a redirection inside backquotes, a group in braces that takes a body by
+  a pipe, `case` inside a substitution, a command of a container or of another machine, a command held
+  by a variable and the second `-exec` of one `find`.
+- **The code of an interpreter is read apart from the words of the shell.** The calls that write and the
+  calls that run a command are known by their names; the language is not parsed. A name gets the last
+  value given to it above, a list and a loop over it included. A command the code runs, by a string or
+  by a list of words, is read as a command of the shell. Not seen: a path the code puts together from
+  parts, a call under a name given anew. A string that only looks like a redirection counts as one.
 - **The parse tells a file written whole from a file added to.** The guard of overrides judges only the
-  first; `>>`, `tee -a`, an edit in place and code that opens a file to append keep what stood there.
+  first; `>>`, `tee -a`, an edit in place, code that opens a file to append and code that reads the file
+  it writes keep what stood there.
 - **Without the module of words a guard passes the action and stays silent.** A broken parse does not
-  stop the work: no target is named, and nothing is written into the error stream.
+  stop the work: no target is named, and nothing is written into the error stream. Without the module of
+  code only the code is not read.
 - **The body of an interpreter without a write gives out none of its paths.** Inside the body there is
   nothing to parse a foreign language with, and everything looking like a path is taken from there; a
   body holding not a single write call gave out its paths on a par with one that writes. A command

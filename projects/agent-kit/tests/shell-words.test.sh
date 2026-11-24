@@ -64,33 +64,10 @@ wrote "perl -pi" "perl -pi -e 's/a/b/' a/b.sh" "a/b.sh"
 wrote "perl -i.bak на два файла" "perl -i.bak -pe 's/a/b/' a/b.sh c/d.sh" "a/b.sh c/d.sh"
 wrote "ruby -i" "ruby -i -pe 'gsub(/a/, 1)' a/b.sh" "a/b.sh"
 
-# Код толкователя.
-wrote "node -e" "node -e 'require(\"fs\").writeFileSync(\"a/b.js\",1)'" "a/b.js"
-wrote "node -r перед -e" "node -r ./x.js -e 'require(\"fs\").writeFileSync(\"a/b.js\",1)'" "a/b.js"
-wrote "node --eval=" "node --eval='require(\"fs\").writeFileSync(\"a/b.js\",1)'" "a/b.js"
-wrote "node --input-type перед -e" \
-    "node --input-type=module -e 'import fs from \"fs\"; fs.writeFileSync(\"a/b.js\",1)'" "a/b.js"
-wrote "python3 -c" "python3 -c 'open(\"a/b.py\",\"w\").write(\"x\")'" "a/b.py"
-wrote "python3 -c слитно" "python3 -c'open(\"a/b.py\",\"w\").write(1)'" "a/b.py"
-wrote "python3 -c с переменной и путём в данных" "python3 -c \"
-p = 'a/b.py'
-open(p, 'w').write('see c/d.py')
-\"" "a/b.py"
-wrote "второй путь той же переменной" "python3 - <<'E'
-p = 'a/b.md'; s = open(p).read(); open(p, 'w').write(s)
-p = 'a/c.md'; s = open(p).read(); open(p, 'w').write(s)
-E" "a/b.md a/c.md"
-wrote "heredoc после cd" "cd x && python3 - <<'E'
-open('a/b.py', 'w').write('x')
-E" "a/b.py"
-wrote "heredoc через трубу толкователю" "cat <<'E' | python3
-open('a/b.py', 'w').write('x')
-E" "a/b.py"
-
 # Код оболочки.
 wrote "bash -c" "bash -c 'printf x > a/b.sh'" "a/b.sh"
 wrote "bash -c на двух строках" "bash -c 'cd a
-printf x > b/c.sh'" "b/c.sh"
+printf x > b/c.sh'" "a/b/c.sh"
 wrote "bash -lc с правкой на месте" "bash -lc \"sed -i '' 's/a/b/' a/b.sh\"" "a/b.sh"
 wrote "bash -euo pipefail -c" "bash -euo pipefail -c 'cp x a/b.sh'" "a/b.sh"
 wrote "bash -o pipefail -c" "bash -o pipefail -c \"sed -i '' s/a/b/ a/b.sh\"" "a/b.sh"
@@ -313,6 +290,30 @@ E" "a/b.py"
 wrote "копия файла кодом называет, куда" "node -e 'require(\"fs\").copyFileSync(\"a/b.sh\",\"c/d.sh\")'" "c/d.sh"
 wrote "перенос кодом называет оба конца" "python3 -c \"import shutil; shutil.move('a/b.sh','c/d.sh')\"" "a/b.sh c/d.sh"
 
+# Граница слова: ]] вплотную, кавычка внутри ${…}, текст кода рядом с записью.
+wrote "]] вплотную к &&" "[[ -f x ]]&&cp x a/b.sh" "a/b.sh"
+wrote "]] вплотную к || и перенаправление" "[[ -f x ]]|| printf x > a/b.sh" "a/b.sh"
+wrote "]] вплотную к скобке" "([[ -n \"\$x\" ]]) && echo z > y/q.sh" "y/q.sh"
+wrote "скобка в кавычках внутри \${…}" "x=\${y%'}'}; cp q c/d.sh" "c/d.sh"
+wrote "скобка в двойных кавычках внутри \${…}" "x=\"\${line%\"}\"}\"; cp q c/d.sh" "c/d.sh"
+wrote "подстановка со скобкой внутри \${…}" "echo \"\${x:-\$(echo \"}\")}\" ; cp y c/d.sh" "c/d.sh"
+wrote "апостроф внутри \${…}" "echo \"\${x:-it's}\"; cp q c/d.sh" "c/d.sh"
+wrote "строка \$'…' с переносом внутри bash -c" "bash -c \$'printf x > a/b.sh\\ncp y c/d.sh'" "a/b.sh c/d.sh"
+wrote "аргументы после кода bash -c" "bash -c 'cp \"\$0\" \"\$1\"' /tmp/x a/b.sh" "a/b.sh"
+wrote "все аргументы после кода bash -c" "bash -c 'cp \"\$@\"' _ /tmp/x a/b.sh" "a/b.sh"
+wrote "cd в папку внутри bash -c" "bash -c 'cd a && printf x > b/c.sh'" "a/b/c.sh"
+wrote "'>!' оболочки zsh" "echo x >! a/b.sh" "a/b.sh"
+wrote "source записанного сценария" "cat > /tmp/zz-q.sh <<'E'
+cp x a/b.sh
+E
+source /tmp/zz-q.sh" "/tmp/zz-q.sh a/b.sh"
+wrote "слово run в строке кода перед записью" "node -e \"const fs=require('fs'); console.log('run '+name); fs.writeFileSync('a/b.js', s)\"" "a/b.js"
+wrote "слово run в конце строки кода" "python3 -c \"print('dry run '); open('a/b.py','w').close()\"" "a/b.py"
+wrote "команда в обратных кавычках внутри текста правки" "python3 - <<'E'
+s=s.replace('old', 'Before the push run \`cp a/x.sh tools/b.sh\` and commit')
+open('docs/x.md','w').write(s)
+E" "docs/x.md"
+
 # Чтение, запуск, текст — и запись рядом с ними.
 beside "стрелка в кавычках" "echo 'a -> b/c.ts'"
 beside "экранированная стрелка" "echo a \\> b/c.sh"
@@ -398,6 +399,28 @@ beside "cp доводом чужой команды" "man cp a/b.sh; npm run cp 
 beside "проверка синтаксиса тела" "bash -n <<'E'
 cp x a/b.sh
 E"
+beside "сценарий во временной папке, записанный и запущенный" "cat > /tmp/zz-run.sh <<'E'
+cd \"\$(mktemp -d)\"
+echo x > a/b.sh
+E
+bash /tmp/zz-run.sh" "/tmp/zz-run.sh"
+beside "тело оболочки во временной папке" "bash <<'E'
+cd \"\$(mktemp -d)\"
+echo x > a/b.sh
+E"
+beside "bash -n записанного сценария" "cat > /tmp/zz-n.sh <<'E'
+cp x a/b.sh
+E
+bash -n /tmp/zz-n.sh" "/tmp/zz-n.sh"
+beside "node --check записанного сценария" "cat > /tmp/zz-n.mjs <<'E'
+fs.writeFileSync('a/b.sh', 1)
+E
+node --check /tmp/zz-n.mjs" "/tmp/zz-n.mjs"
+beside "элементы массива" "names=(cp a/x.sh b/y.sh); echo \"\${names[@]}\""
+beside "command -v" "command -v tee a/x.sh"
+beside "kubectl exec в чужом месте" "kubectl exec pod -- bash -c 'cp x a/b.sh'"
+beside "[[ на двух строках" "[[ a &&
+\$b > c/d.sh ]]"
 
 # Запись целиком заменяет содержимое; дописывание и правка на месте его хранят.
 whole "'>'" "printf x > o/a.md" "o/a.md"
@@ -421,11 +444,17 @@ whole "код в строке команды пишет целиком" "node -e
 whole "код толкователя пишет целиком" "python3 -c \"open('o/a.md','w').write('x')\"" "o/a.md"
 whole "код толкователя дописывает" "python3 -c \"open('o/a.md','a').write('x')\""
 whole "код читает и пишет рядом" "node -e 'const p=\"o/a.md\"; const s=require(\"fs\").readFileSync(p); require(\"fs\").writeFileSync(\"/tmp/o\", s)'" ""
+whole "'<>' читает и пишет" "exec 3<> o/a.md"
 
-# Команда в 40 КБ читается быстро: проверка стоит перед каждым вызовом.
-LONG="$(printf 'printf x > a/b.sh; echo "%s"' "$(head -c 40000 /dev/zero | tr '\0' 'x')")"
-LONG_AT="$(date +%s)"
-beside "команда в 40 КБ прочитана" "$LONG" "a/b.sh"
-report "SC-AK-1963 — команда в 40 КБ прочитана за пять секунд" "$([ $(($(date +%s) - LONG_AT)) -le 5 ] && echo да || echo нет)" да
+# Длинная команда читается быстро: проверка стоит перед каждым вызовом.
+quick() {
+    local at
+    at="$(date +%s)"
+    beside "$1 прочитаны, запись рядом названа" "$2" "a/b.sh"
+    report "SC-AK-1963 — $1 прочитаны за пять секунд" "$([ $(($(date +%s) - at)) -le 5 ] && echo да || echo нет)" да
+}
+quick "40 КБ одного слова" "$(printf 'printf x > a/b.sh; echo "%s"' "$(head -c 40000 /dev/zero | tr '\0' 'x')")"
+quick "четыре тысячи подстановок" "$(printf 'echo'; for i in $(seq 1 4000); do printf ' $(a%s)' "$i"; done; printf '; cp x a/b.sh')"
+quick "сорок килобайт сравнений" "$(printf '[[ a'; for i in $(seq 1 3000); do printf ' && $b == %s' "$i"; done; printf ' ]]; cp x a/b.sh')"
 
 suite_result "разбор команды на слова"

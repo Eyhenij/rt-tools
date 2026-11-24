@@ -161,6 +161,14 @@ c "SC-AK-1919 — запись внутри bash -c правка" "bash -c 'prin
 c "SC-AK-1919 — запись телом толкователя правка" "python3 - <<'E'
 open('hooks/a.sh','w').write('x')
 E" да
+c "SC-AK-1919 — запись кодом по списку файлов правка" \
+    "node -e \"for (const f of ['hooks/a.sh','hooks/b.sh']) { require('fs').writeFileSync(f,'x') }\"" да
+c "SC-AK-1919 — запуск кодом с выводом в файл молчит" \
+    "python3 -c \"import subprocess; subprocess.run(['bash','hooks/a.sh'], stdout=open('/tmp/o.txt','w'))\"" нет
+c "SC-AK-1919 — сценарий во временной папке молчит" "bash <<'E'
+cd \"\$(mktemp -d)\"
+echo x > hooks/a.sh
+E" нет
 c "SC-AK-1919 — install на модуль правка" "install -m 755 /tmp/a.sh $TREE/hooks/a.sh" да
 c "SC-AK-1919 — путь от \$PWD правка" "printf x > \$PWD/hooks/a.sh" да
 c "SC-AK-1919 — путь через неизвестную переменную молчит" "printf x > \$S/hooks/a.sh" нет

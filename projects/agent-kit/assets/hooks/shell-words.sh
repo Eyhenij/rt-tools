@@ -16,13 +16,15 @@
 # else it is data.
 #
 # NOT SEEN: a redirection inside backquotes, a group `{ … }` in a pipe, a command of a container or of
-# another machine, `case` inside `$(…)`.
+# another machine, `case` inside `$(…)`, a command held by a variable, a second `-exec` of one `find`, a
+# written script run from another directory or through a pipe.
 
 rt_shell_words() {
     # Signs are read as bytes: the awk of one of the systems stops at a letter of two bytes.
     LC_ALL=C awk '
         # A runner stands before the name of a command; some of its flags carry a value in the next word.
         BEGIN {
+            first = 1
             valued["sudo"] = "^(-[ugpChTrD]|--(user|group|prompt|chdir|host))$"
             valued["env"] = "^(-[uC]|--(unset|chdir))$"
             valued["timeout"] = valued["gtimeout"] = "^(-[sk]|--(signal|kill-after))$"
@@ -39,9 +41,7 @@ rt_shell_words() {
             LOADS = "^(-r|--require|--import|--loader|--env-file|--input-type|--conditions|-C)$"
             # The words of these commands run nothing here: a name of an interpreter among them is searched
             # for or printed, and a command of another machine writes there.
-            PLAIN = "^([a-z]*grep|rg|ag|git|gh|echo|printf|man|which|type|brew|ls|cat|jq|awk|head|tail|cd|export|kill|pkill|pgrep|ps|lsof|ssh|scp|rsync|docker|podman|tee|cp|mv|install|g?sed)$"
-            # The calls of a language that run a command.
-            RUNS = "(execSync|exec|execFileSync|spawnSync|spawn|system|popen|Popen|check_output|check_call|getoutput|run|call|shell_exec|passthru)"
+            PLAIN = "^([a-z]*grep|rg|ag|git|gh|echo|printf|man|which|type|brew|ls|cat|jq|awk|head|tail|cd|export|kill|pkill|pgrep|ps|lsof|ssh|scp|rsync|docker|podman|kubectl|vagrant|tee|cp|mv|install|g?sed)$"
         }
         function put(s) { word = word s; some = 1 }
         function clean(s) { sub(/^(\.\/)+/, "", s); return s }
@@ -50,6 +50,11 @@ rt_shell_words() {
             if (s != "" && s != "$()" && s !~ /^\/dev\/(null|stderr|stdout|tty)$/) { print mark " " s }
         }
         function base_name(s) { sub(/\/+$/, "", s); sub(/^.*\//, "", s); return s }
+        # Only words of the shell stand before the last word of the call.
+        function starts_call(   i) {
+            for (i = first; i < count; i++) { if (words[i] !~ WORD) { return 0 } }
+            return 1
+        }
         function end_word() {
             if (!some) { return }
             if (skip == 2 && (quoted || word ~ /^[A-Za-z_]/)) { tags[++asked] = word; here = here " " asked }
@@ -62,44 +67,21 @@ rt_shell_words() {
                 else if (!joins || word !~ /^([0-9]+|-|\$.*)$/) { target(redirect, word) }
                 redirect = ""; joins = 0
             }
-            else { words[++count] = word; bare[count] = !quoted }
+            else {
+                words[++count] = word; bare[count] = !quoted
+                if (!quoted && word == "[[") { testing = starts_call() }
+                if (!quoted && word == "]]") { testing = 0 }
+            }
             word = ""; some = 0; quoted = 0
         }
         function emit(mark, s,   n, i, part) { n = split(s, part, "\n"); for (i = 1; i <= n; i++) { print mark " " part[i] } print "E" }
-        function hand(mark, s) { if (mark == "C") { code(s) } else { emit(mark, s) } }
-        # Code names a command as a string of a call that runs it, or through a variable of that string. The
-        # string is read as a command and leaves the code: its redirection is none of the language.
-        function code(s,   rest, out, call, text, name, i, n, part, held, at, long) {
-            text = "(\"[^\"]*\"|\047[^\047]*\047|`[^`]*`)"
-            n = split(s, part, /[\n;]/)
-            for (i = 1; i <= n; i++) {
-                if (match(part[i], "[A-Za-z_][A-Za-z0-9_]*[ \t]*=[ \t]*[fr]?" text)) {
-                    call = substr(part[i], RSTART, RLENGTH)
-                    name = call; sub(/[ \t]*=.*$/, "", name); sub(/^[^=]*=[ \t]*[fr]?./, "", call); held[name] = substr(call, 1, length(call) - 1)
-                }
-            }
-            rest = s
-            while (match(rest, "(^|[^A-Za-z0-9_])" RUNS "[ \t]*[( ][ \t]*([fr]?" text "|[A-Za-z_][A-Za-z0-9_]*[ \t]*[,)])")) {
-                at = RSTART; long = RLENGTH; call = substr(rest, at, long)
-                if (match(call, text "$")) {
-                    emit("S", substr(call, RSTART + 1, RLENGTH - 2))
-                    out = out substr(rest, 1, at - 1) substr(call, 1, RSTART - 1)
-                } else {
-                    out = out substr(rest, 1, at + long - 1)
-                    sub(/[ \t]*[,)]$/, "", call); sub(/^.*[^A-Za-z0-9_]/, "", call)
-                    if (call in held) { emit("S", held[call]) }
-                }
-                rest = substr(rest, at + long)
-            }
-            emit("C", out rest)
-        }
         function after_flags(n, values) {
             while (words[n] ~ /^-/) { n += words[n] ~ values ? 2 : 1 }
             return n
         }
         # The first word that names the command: assignments, words of the shell and runners stand before it.
         function command_at(   i, n, runner) {
-            for (i = 1; i <= count; i++) {
+            for (i = first; i <= count; i++) {
                 if (words[i] ~ /^[A-Za-z_][A-Za-z0-9_]*\+?=/ || words[i] ~ WORD) { continue }
                 if (words[i] == "function") { i++; continue }
                 runner = base_name(words[i])
@@ -126,6 +108,7 @@ rt_shell_words() {
                 if (!(runner in valued)) { return i }
                 while (i < count && words[i + 1] ~ /^-/) {
                     i++
+                    if (runner == "command" && words[i] ~ /^-[vV]/) { return 0 }
                     if (runner == "env" && words[i] ~ /^(-S|--split-string)$/) { emit("S", words[++i]) }
                     else if (words[i] ~ valued[runner]) { i++ }
                 }
@@ -201,14 +184,21 @@ rt_shell_words() {
                 if (words[n] ~ (SWITCH "i?[eE]$")) { body = words[++n] }
                 else if (match(words[n], SWITCH "[eE]")) { body = substr(words[n], RLENGTH + 1) }
             }
-            if (!inplace) { if (body != "" && !filter) { code(body) } return }
+            if (!inplace) { if (body != "" && !filter) { emit("C", body) } return }
             for (; n <= count; n++) { target("A", words[n]) }
+        }
+        # The words after the code of a shell are its arguments, from `$0` on.
+        function filled(s, from,   n, all) {
+            for (n = from + 1; n <= count; n++) { all = all " " words[n] }
+            if (all != "") { gsub(/"?\$[@*]"?/, all, s) }
+            for (n = from; n <= count && n < from + 10; n++) { gsub("[$][{]?" (n - from) "[}]?", words[n], s) }
+            return s
         }
         # The code stands among the flags; after the name of a script the words are its own.
         function given(from, flags, values, mark,   n) {
             for (n = from; n <= count && (words[n] ~ /^(-|eval$)/ || (words[n - 1] ~ /^--[a-z]/ && words[n] !~ /[.\/]/ && words[n + 1] ~ /^-/)); n++) {
-                if (words[n] ~ flags) { if (words[n + 1] == "--") { n++ } hand(mark, words[n + 1]); return }
-                if (words[n] ~ /^(-c.|--(eval|print)=)/) { sub(/^(-c|--[a-z]+=)/, "", words[n]); hand(mark, words[n]); return }
+                if (words[n] ~ flags) { if (words[n + 1] == "--") { n++ } emit(mark, mark == "S" ? filled(words[n + 1], n + 2) : words[n + 1]); return }
+                if (words[n] ~ /^(-c.|--(eval|print)=)/) { sub(/^(-c|--[a-z]+=)/, "", words[n]); emit(mark, words[n]); return }
                 if (words[n] ~ values) { n++ }
             }
         }
@@ -248,8 +238,10 @@ rt_shell_words() {
         # A body written to a file is the code of whoever runs that file further on.
         function runs_file(i, name,   n, path, mark) {
             path = clean(words[i]); mark = reads_as(name)
-            if (mark != "") {
-                for (n = i + 1; n <= count && words[n] ~ /^-./; n++) {}
+            if (name ~ /^(source|\.)$/) { path = clean(words[i + 1]); mark = "S" }
+            else if (mark != "") {
+                # A check of the syntax runs nothing.
+                for (n = i + 1; n <= count && words[n] ~ /^-./; n++) { if (words[n] ~ /^(-[a-z]*n|--check|-[cl])$/) { return } }
                 path = clean(words[n])
             }
             if (path == "" || !(path in owner)) { return }
@@ -262,16 +254,17 @@ rt_shell_words() {
         }
         function end_call(sign,   i, name, text, given_here) {
             end_word(); redirect = ""; skip = 0; joins = 0
-            i = reader_at(command_at())
+            # The elements of an array run nothing.
+            i = depth && kinds[depth] == "a" ? 0 : reader_at(command_at())
             name = i ? base_name(words[i]) : ""
             # A pipe hands the body on; a torn line after the pipe ends nothing.
             if (here != "" && takes_body(i, name)) { claim(here, reads_as(name)); here = "" }
             if (texts_in != "" && reads_as(name) != "" && takes_text(i, name)) { claim(texts_in, reads_as(name)) }
-            if (count) { texts_in = "" }
+            if (count >= first) { texts_in = "" }
             if (i) { runs_file(i, name) }
             given_here = here
-            if (count) { printed = name == "cat" ? here : "" }
-            if (here != "" && sign != "|" && count) { here = "" }
+            if (count >= first) { printed = name == "cat" ? here : "" }
+            if (here != "" && sign != "|" && count >= first) { here = "" }
             if (name == "tee") { splits(i + 1) }
             else if (name ~ /^(cp|mv|install)$/) { copies(i + 1, name) }
             else if (name == "git") { inner(i + 1, name, "mv", "^-[Cc]$") }
@@ -288,45 +281,40 @@ rt_shell_words() {
             }
             if (given_here != "") { keeps_body(given_here) }
             if (sign != "|") { outs = "" }
-            for (i = 1; i <= count; i++) { delete words[i] }
-            count = 0
-        }
-        function in_test(   i) {
-            for (i = 1; i <= count && words[i] ~ WORD; i++) {}
-            if (words[i] != "[[" || !bare[i]) { return 0 }
-            for (; i <= count; i++) { if (words[i] == "]]" && bare[i]) { return 0 } }
-            return 1
+            while (count >= first) { delete words[count--] }
+            testing = 0
         }
         # A substitution is a command of its own inside a word: the outer call waits for it.
-        function enter(kind,   i) {
+        function enter(kind) {
             depth++
             kinds[depth] = kind; quotes[depth] = quote; texts[depth] = word; somes[depth] = some; marked[depth] = quoted
-            marks[depth] = redirect; skips[depth] = skip; joint[depth] = joins; counts[depth] = count
+            marks[depth] = redirect; skips[depth] = skip; joint[depth] = joins; firsts[depth] = first; tests[depth] = testing
             heres[depth] = here; outer[depth] = texts_in; here = ""; texts_in = ""; printed = ""
-            for (i = 1; i <= count; i++) { saved[depth, i] = words[i]; naked[depth, i] = bare[i]; delete words[i] }
-            count = 0; word = ""; some = 0; quoted = 0; redirect = ""; skip = 0; joins = 0; quote = ""
+            first = count + 1; testing = 0; word = ""; some = 0; quoted = 0; redirect = ""; skip = 0; joins = 0; quote = ""
         }
-        function leave(   i) {
+        function leave() {
             end_call()
             if (!depth) { return }
             quote = quotes[depth]; word = texts[depth]; some = somes[depth]; quoted = marked[depth]
-            redirect = marks[depth]; skip = skips[depth]; joins = joint[depth]; count = counts[depth]
+            redirect = marks[depth]; skip = skips[depth]; joins = joint[depth]; first = firsts[depth]; testing = tests[depth]
             here = heres[depth]; texts_in = outer[depth]
             if (kinds[depth] != "(" && printed != "") { texts_in = texts_in printed; printed = "" }
-            for (i = 1; i <= count; i++) { words[i] = saved[depth, i]; bare[i] = naked[depth, i] }
             if (kinds[depth] == "(") { end_call() } else { put("$()") }
             depth--
         }
         # Arithmetic closes on the same line and holds no command.
         function sums(s) { return s ~ /^[^;&|]*\)\)/ || s ~ /^[^;()]*\)\)/ }
-        # The index of the brace that closes a parameter: a quote inside it opens no string of the command.
-        function brace(from,   i, open) {
+        # The index of the brace that closes a parameter: a quote inside it opens no string of the command,
+        # and a brace inside that quote closes nothing.
+        function brace(from, quotes,   i, open, q) {
             open = 1
             for (i = from; i <= m; i++) {
+                if (q != "") { if (sign[i] == q) { q = "" } continue }
+                if (quotes && (sign[i] == "\047" || sign[i] == "\"")) { q = sign[i] }
                 if (sign[i] == "{") { open++ }
                 if (sign[i] == "}" && --open == 0) { return i }
             }
-            return from - 1
+            return quotes ? brace(from, 0) : from - 1
         }
         # A body goes on until its mark stands on a line alone.
         bodies {
@@ -341,19 +329,19 @@ rt_shell_words() {
                 c = sign[p]; d = sign[p + 1]
                 if (quote == "\047") { if (c == quote) { quote = "" } else { put(c) } continue }
                 if (quote == "$") {
-                    if (c == "\\") { put(d); p++ } else if (c == "\047") { quote = "" } else { put(c) }
+                    if (c == "\\") { put(d == "n" ? "\n" : d == "t" ? "\t" : d); p++ } else if (c == "\047") { quote = "" } else { put(c) }
                     continue
                 }
                 if (c == "\\" && quote == "") { if (d != "\n") { put(d) } p++; continue }
                 if (c == "\\" && (d == quote || d == "\\" || d == "$" || d == "`")) { put(d); p++; continue }
                 if (c == "$" && d == "{") {
-                    e = brace(p + 2); text = ""
+                    e = brace(p + 2, 1); text = ""
                     while (p <= e) { text = text sign[p]; put(sign[p++]) }
                     p--
                     if (match(text, /\$\(.*\)/)) { emit("S", substr(text, RSTART + 2, RLENGTH - 3)) }
                     continue
                 }
-                if (c == "$" && d == "(" && sign[p + 2] == "(" && sums(substr($0, p + 3))) {
+                if (c == "$" && d == "(" && sign[p + 2] == "(" && sums(substr($0, p + 3, 999))) {
                     p += 2 + index(substr($0, p + 3), "))") + 1; put("$(())"); continue
                 }
                 if (c == "$" && d == "(") { some = 1; enter("$"); p++; continue }
@@ -367,20 +355,25 @@ rt_shell_words() {
                 if (c == " " || c == "\t") { end_word(); continue }
                 if (c == "&" && d == ">") { end_word(); continue }
                 # A comparison is no redirection.
-                if (c ~ /[<>&|()]/ && in_test()) { put(c); continue }
+                if (testing && !(word == "]]" && !quoted)) {
+                    if (c == "\n") { end_word(); continue }
+                    if (c ~ /[<>&|();]/) { put(c); continue }
+                }
                 if ((c == ">" || c == "<") && d == "(") { some = 1; enter("<"); p++; continue }
                 if (c == ">" || c == "<") {
                     if (word ~ /^[0-9]+$/) { word = ""; some = 0 }
                     end_word()
                     mark = d == ">" ? "A" : "W"
+                    if (c == "<" && d == ">") { c = ">"; p++ }
                     skip = c == "<"
                     if (skip && d == "<") { skip = sign[p + 2] == "<" ? 3 : 2 }
-                    while (sign[p + 1] ~ (c == ">" ? "[>|]" : "[<-]")) { p++ }
+                    while (sign[p + 1] ~ (c == ">" ? "[>|!]" : "[<-]")) { p++ }
                     if (sign[p + 1] == "&") { p++; joins = c == ">" }
                     redirect = skip ? "" : mark
                     continue
                 }
-                if (c == "(" && d == "(" && sums(substr($0, p + 2))) { p += index(substr($0, p + 2), "))") + 2; continue }
+                if (c == "(" && d == "(" && sums(substr($0, p + 2, 999))) { p += index(substr($0, p + 2), "))") + 2; continue }
+                if (c == "(" && word ~ /=$/) { enter("a"); continue }
                 if (c == "(") { end_call(); enter("("); continue }
                 if (c == ")") { leave(); continue }
                 if (c == "\n") { end_call(); bodies = asked > given_up; continue }
@@ -392,8 +385,8 @@ rt_shell_words() {
         END {
             while (depth) { quote = ""; leave() }
             end_call()
-            for (p = 1; p <= asked; p++) { if (reader[p] != "") { hand(reader[p], body[p]) } }
-            for (p = 1; p <= strings; p++) { if (reader["s" p] != "") { hand(reader["s" p], body["s" p]) } }
+            for (p = 1; p <= asked; p++) { if (reader[p] != "") { emit(reader[p], body[p]) } }
+            for (p = 1; p <= strings; p++) { if (reader["s" p] != "") { emit(reader["s" p], body["s" p]) } }
         }
     '
 }
