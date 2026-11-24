@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# Сценарии одного разбора цели записи: второго разбора в хуках нет, а без модуля слов проверка
+# пропускает действие и молчит.
+. "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
+
+echo "один разбор цели записи"
+
+# Второй разбор узнаётся по образцу команды записи в хуке: знак образца сразу за словом или за
+# стрелкой. Два файла под судом не стоят: сам разбор и вопрос, кладёт ли вызов исполняемый им
+# сценарий сам, — он про имя одного файла, а не про цели.
+second_parse() {
+    local hook
+    for hook in "$1"/*.sh; do
+        case "${hook##*/}" in shell-words.sh | write-targets.sh | script-files.sh) continue ;; esac
+        grep -v '^[[:space:]]*#' "$hook" | grep -qE '(^|[^A-Za-z_])(tee|cp|mv)( ?\.[*+]| ?\+|\[\[|\\s|\[ |\[\^|\(\[)|(^|[^A-Za-z_])(sed|perl)( ?\.[*+]|\[\[|\\s|\[\^|\(\[)|(cp|mv|tee|sed)\|(cp|mv|tee|install|sed|rm)|>(\[\[:space:\]\]|\\s|\[ |\[\^| \*|\+)|rt_shell_words' \
+            && printf '%s\n' "${hook##*/}"
+    done
+    return 0
+}
+SECOND="$(mktemp -d)"
+report "SC-AK-1965 — в хуках второго разбора нет" "$(second_parse "$HOOKS" | tr '\n' ' ')" ''
+second() {
+    rm -f "$SECOND"/*
+    printf '%s\n' "$2" > "$SECOND/a.sh"
+    report "SC-AK-1965 — $1" "$(second_parse "$SECOND")" "${3-a.sh}"
+}
+second "прежний разбор проверки правил узнан" 'grep -qE -e "(>|(^|[[:space:];&|])tee[[:space:]]([^;&|]*[[:space:]])?)[[:space:]]*${path}"'
+second "прежний разбор записи целиком узнан" "sed -nE 's/^>[[:space:]]*([^[:space:]|&;]+).*/\\1/p'"
+second "копия командой grep узнана" "grep -E '(cp|mv)[[:space:]]+.*a.md'"
+second "правка на месте командой perl узнана" "perl -ne 'print if /sed\\s+-i/'"
+second "стрелка в awk узнана" "awk '/>[ \\t]*a/ { print }'"
+second "перебор имён команд узнан" "case \"\$w\" in *) printf '%s' \"\$w\" | grep -qE 'tee|cp' ;; esac"
+second "стрелка с отрицанием узнана" "grep -oE '>[^&|;]+'"
+second "стрелка с повтором узнана" "re='(cat|echo) >+ ?([^ ]+)'"
+second "стрелка с пробелами узнана" 'grep -qE "> *$path"'
+second "tee с пробелами узнан" 'grep -qE "tee +$path"'
+second "cp с чем угодно узнана" 'grep -qE "cp .+ $path"'
+second "слова команды мимо общего разбора узнаны" 'printf "%s" "$cmd" | rt_shell_words'
+second "комментарий о записи не разбор" '# cp[[:space:]] и tee[[:space:]] разбирает сосед' ''
+second "запуск команды записи не разбор" 'cp "$a" "$b"; printf x | tee -a "$log"; sed -i "" s/a/b/ "$b"' ''
+rm -rf "$SECOND"
+
+# Без модуля слов проверка пропускает действие: сломанный разбор не мешает работе.
+ALONE="$(mktemp -d)"
+cp "$HOOKS/write-targets.sh" "$HOOKS/script-files.sh" "$ALONE/"
+report "SC-AK-1966 — без модуля слов цели нет, ошибки нет" \
+    "$( (. "$ALONE/write-targets.sh"; printf 'printf x > a/b.sh' | rt_write_targets; printf 'printf x > a/b.sh' | rt_overwrite_targets) 2>&1)" ''
+cp -R "$HOOKS/.." "$ALONE/assets" && rm -f "$ALONE/assets/hooks/shell-words.sh"
+report "SC-AK-1966 — проверка переопределений без модуля слов молчит" \
+    "$(mkdir -p "$ALONE/tree/.claude/rt-kit/overrides/rules" && printf 'a\n' > "$ALONE/tree/.claude/rt-kit/overrides/rules/a.md" \
+        && input_cmd 'printf x > .claude/rt-kit/overrides/rules/a.md' Bash "$ALONE/tree" | CLAUDE_PROJECT_DIR="$ALONE/tree" "$ALONE/assets/hooks/override-write-guard.sh" 2>&1)" ''
+report "SC-AK-1966 — с модулем слов тот же вызов отказан" \
+    "$(input_cmd 'printf x > .claude/rt-kit/overrides/rules/a.md' Bash "$ALONE/tree" | CLAUDE_PROJECT_DIR="$ALONE/tree" "$HOOKS/override-write-guard.sh" 2>/dev/null | jq -r '.hookSpecificOutput.permissionDecision')" deny
+rm -rf "$ALONE"
+
+suite_result "один разбор цели записи"

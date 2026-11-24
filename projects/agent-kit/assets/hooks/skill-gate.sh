@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__claude-in-chrome__.*|mcp__figma__use_figma
-# Requires: checks/decide.mjs, hooks/decide.sh, hooks/deny-tail.sh
+# Requires: checks/decide.mjs, hooks/decide.sh, hooks/deny-tail.sh, hooks/write-targets.sh
 # The rules gate: it does not let a file be edited until the rule it falls under has been loaded.
 #
 # A law and a rule nobody opens do not act. A reminder in the prompt helps right up to the first
@@ -61,17 +61,11 @@ rt_gate_copy_path() {
     esac
 }
 
-# The path is the target of a write rather than a word of the command: a script that is run and a
-# file that is read stand in the same line. A body of an interpreter names no target.
-rt_gate_is_target() {
-    local path
-    # The list of paths drops a leading `./`, and the text of the command keeps it.
-    path="(\./)*$(printf '%s' "$2" | sed 's/[][\.*^$+?(){}|]/\\&/g')"
-    printf '%s\n' "$1" | tr "\"'" '  ' | grep -qE \
-        -e "(>|(^|[[:space:];&|])tee[[:space:]]([^;&|]*[[:space:]])?)[[:space:]]*${path}([[:space:];&|)<>]|\$)" \
-        -e "(^|[[:space:];&|])sed[[:space:]]+(-[a-zA-Z]+[[:space:]]+)*(-[a-zA-Z]*i|--in-place)([^;&]|&[^&])*[[:space:]]${path}([[:space:];&|)<>]|\$)" \
-        -e "(^|[[:space:];&|])(cp|mv)[[:space:]][^;&|]*[[:space:]]${path}[[:space:]]*([;&|)]|[0-9]?>|\$)"
-}
+# The targets of a write are read by the parse shared with the other guards. Without it a command
+# names none, and only the paths below bring the domain rule.
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/write-targets.sh" 2>/dev/null || true
+command -v rt_write_targets >/dev/null 2>&1 || rt_write_targets() { cat >/dev/null; }
 
 req=""
 target=""
@@ -140,34 +134,37 @@ case "$tool" in
             # shellcheck disable=SC1090
             [ -f "$profile" ] && . "$profile" 2>/dev/null
         done
-        if command -v rt_shell_writes >/dev/null 2>&1 && command -v rt_shell_paths >/dev/null 2>&1 \
-            && rt_shell_writes "$target"; then
-            gate_command="$target"
-            while IFS= read -r written_path; do
-                [ -z "$written_path" ] && continue
-                gate_raw="$written_path"
-                case "$written_path" in
-                    /*) ;;
-                    *) written_path="${CLAUDE_PROJECT_DIR:-.}/$written_path" ;;
-                esac
-                case "$written_path" in
-                    "${CLAUDE_PROJECT_DIR:-.}"/*) ;;
-                    *) continue ;;
-                esac
-                written_path="$(rt_gate_copy_path "$written_path")"
-                more="$(skill_for edit "$written_path" "" 2>/dev/null)"
-                [ -n "$more" ] && req="$req $more"
-                # The layers by path come to the target of a write too. The layers by the text of the
-                # edit stay silent: the command carries no field of the text.
-                rt_gate_is_target "$gate_command" "$gate_raw" || continue
-                target="$written_path"
-                # shellcheck disable=SC1090
-                [ -f "$rt_hooks_dir/skill-gate-layers.sh" ] && . "$rt_hooks_dir/skill-gate-layers.sh" 2>/dev/null
-                target="$gate_command"
-            done <<EOF
-$(rt_shell_paths "$target")
+        # A target of a write — `W` — gets the domain rule and the layers. A path the command only
+        # names — `P` — gets the domain rule when the command writes: `rm` and `touch` name no target.
+        gate_command="$target"
+        while IFS= read -r written_path; do
+            gate_mark="${written_path%% *}"
+            written_path="${written_path#* }"
+            # A bare name after `cd` elsewhere would read as a file of the root.
+            case "$written_path" in
+                /*) ;;
+                '$'* | '~'*) continue ;;
+                */*) written_path="${CLAUDE_PROJECT_DIR:-.}/${written_path#./}" ;;
+                *) [ "$gate_mark" = P ] && [ -n "$written_path" ] || continue; written_path="${CLAUDE_PROJECT_DIR:-.}/$written_path" ;;
+            esac
+            case "$written_path" in
+                "${CLAUDE_PROJECT_DIR:-.}"/*) ;;
+                *) continue ;;
+            esac
+            written_path="$(rt_gate_copy_path "$written_path")"
+            more="$(skill_for edit "$written_path" "" 2>/dev/null)"
+            [ -n "$more" ] && req="$req $more"
+            # The layers by path come to the target of a write too. The layers by the text of the
+            # edit stay silent: the command carries no field of the text.
+            [ "$gate_mark" = W ] || continue
+            target="$written_path"
+            # shellcheck disable=SC1090
+            [ -f "$rt_hooks_dir/skill-gate-layers.sh" ] && . "$rt_hooks_dir/skill-gate-layers.sh" 2>/dev/null
+            target="$gate_command"
+        done <<EOF
+$(printf '%s' "$target" | RT_WT_SCRIPT=1 rt_write_targets | sed 's/^/W /')
+$(command -v rt_shell_writes >/dev/null 2>&1 && command -v rt_shell_paths >/dev/null 2>&1 && rt_shell_writes "$target" && rt_shell_paths "$target" | sed 's/^/P /')
 EOF
-        fi
         ;;
     mcp__claude-in-chrome__*)
         req="$(skill_for browser "$tool" "" 2>/dev/null)"

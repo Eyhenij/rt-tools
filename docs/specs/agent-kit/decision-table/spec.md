@@ -174,6 +174,7 @@ a hook with a decision, and marks a context hook and a git-side hook as helpers.
 | `turn-exit-guard.sh` | Stop | guard | read_only_role, engine_available, flow_scenario_over (engine `verdict`) | Stop | block |
 | `turn-exit-role.sh` | — | helper | read_only_role | — | — |
 | `script-files.sh` | — | helper | — | — | — |
+| `shell-words.sh` | — | helper | — | — | — |
 | `turn-judge.md` | Stop (agent hook, by its text) | model | owner_word_is_stop, stop_hook_active, owner_word_orders_work, question_already_answered, fact_without_output, miss_admitted_no_record, proposal_ordered_not_sent | Stop | block (`ok:false`) / allow |
 | `utf8.sh` | — | helper | — | — | — |
 | `window-fill-guard.sh` | PostToolUse .* / PreToolUse .* | guard | window_over_warn, window_over_stop, tool_allowed_after_stop | Post: any tool; Pre: any tool except Ask/TodoWrite/Read/SendUserFile, edits of tasks/handoff/scratchpad, git/gh/task:move/check:* | context (Post) / deny (Pre) |

@@ -149,6 +149,25 @@ c "SC-AK-1919 — путь в кавычках правка" "printf x > \"$TREE
 c "SC-AK-1919 — путь от корня дерева правка" "printf x > hooks/a.sh" да
 c "SC-AK-1919 — путь мимо дерева не правка" "printf x > /tmp/hooks/a.sh" нет
 c "SC-AK-1919 — рабочая копия внутри дерева судится так же" "printf x > $TREE/.claude/worktrees/w/hooks/a.sh" да
+c "SC-AK-1919 — '>' с чертой правка" "printf x >| $TREE/hooks/a.sh" да
+c "SC-AK-1919 — sed с ';' в выражении правка" "sed -i '' 's/a;b/c/' $TREE/hooks/a.sh && node x.mjs" да
+c "SC-AK-1919 — perl с ';' в выражении правка" "perl -pi -e 's/a;/b/' $TREE/hooks/a.sh" да
+c "SC-AK-1919 — копия в папку с косой чертой правка" "cp /tmp/b.sh hooks/" да
+mkdir -p "$TREE/hooks"
+c "SC-AK-1919 — копия в папку без косой черты правка" "cp /tmp/b.sh $TREE/hooks" да
+c "SC-AK-1919 — путь с пробелом правка" "cp '/tmp/a b.sh' '$TREE/hooks/a b.sh'" да
+c "SC-AK-1919 — git mv на модуль правка" "git mv a.sh $TREE/hooks/b.sh" да
+c "SC-AK-1919 — запись внутри bash -c правка" "bash -c 'printf x > hooks/a.sh'" да
+c "SC-AK-1919 — запись телом толкователя правка" "python3 - <<'E'
+open('hooks/a.sh','w').write('x')
+E" да
+c "SC-AK-1919 — install на модуль правка" "install -m 755 /tmp/a.sh $TREE/hooks/a.sh" да
+c "SC-AK-1919 — путь от \$PWD правка" "printf x > \$PWD/hooks/a.sh" да
+c "SC-AK-1919 — путь через неизвестную переменную молчит" "printf x > \$S/hooks/a.sh" нет
+c "SC-AK-1919 — чтение с функцией-стрелкой молчит" "node -e 'require(\"fs\").readFileSync(\"hooks/a.sh\",\"utf8\").split(\"x\").filter(x => x.y)'" нет
+c "SC-AK-1919 — стрелка в кавычках молчит" "echo 'a -> hooks/a.sh'" нет
+c "SC-AK-1919 — чтение рядом с записью наружу молчит" "grep -n x $TREE/hooks/a.sh > /tmp/o" нет
+c "SC-AK-1919 — скрипт со своим -e молчит" "node tools/a.mjs -e hooks/a.sh" нет
 
 # --- SC-AK-1921 — путь читается от корня дерева -----------------------------------------------
 OUTER="$(mktemp -d)"

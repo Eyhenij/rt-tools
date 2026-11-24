@@ -1,4 +1,4 @@
-# rt-kit v0.39.1 · checks/decision-table.json · 6b8d651554de · правится надстройкой, не здесь
+# rt-kit v0.39.1 · checks/decision-table.json · 2e6e5ab95559 · правится надстройкой, не здесь
 {
     "areas": {
         "browser": {
@@ -643,6 +643,11 @@
             "file": "script-files.sh",
             "kind": "helper",
             "reason": "hooks into no agent event; guards source it"
+        },
+        {
+            "file": "shell-words.sh",
+            "kind": "helper",
+            "reason": "hooks into no agent event; write-targets.sh sources it"
         },
         {
             "file": "git-guard-delivery-rerun.sh",

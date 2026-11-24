@@ -72,12 +72,28 @@ report "SC-AK-541 — копирование поверх надстройки �
     "$(decision "$(cmd_in 'cp new.md .claude/rt-kit/overrides/rules/probe.md')")" deny
 report "SC-AK-541 — отдача в надстройку через tee отбивается" \
     "$(decision "$(cmd_in 'printf x | tee .claude/rt-kit/overrides/rules/probe.md')")" deny
+report "SC-AK-541 — '>' с чертой отбивается" \
+    "$(decision "$(cmd_in 'printf x >| .claude/rt-kit/overrides/rules/probe.md')")" deny
+report "SC-AK-541 — tee после -- отбивается" \
+    "$(decision "$(cmd_in 'printf x | tee -- .claude/rt-kit/overrides/rules/probe.md')")" deny
+report "SC-AK-541 — копия в папку с косой чертой отбивается" \
+    "$(decision "$(cmd_in 'cp /tmp/probe.md .claude/rt-kit/overrides/rules/')")" deny
+report "SC-AK-541 — копия в папку без косой черты отбивается" \
+    "$(decision "$(cmd_in "cp /tmp/probe.md $TREE/.claude/rt-kit/overrides/rules")")" deny
+report "SC-AK-541 — запись внутри bash -c отбивается" \
+    "$(decision "$(cmd_in "bash -c 'printf x > .claude/rt-kit/overrides/rules/probe.md'")")" deny
+report "SC-AK-541 — запись кодом отбивается" \
+    "$(decision "$(cmd_in "python3 -c \"open('.claude/rt-kit/overrides/rules/probe.md','w').write('x')\"")")" deny
 
 # Дописывание ничего не уносит: раздел встаёт в конец, прежние остаются на месте.
 report "SC-AK-542 — дописывание в конец проходит" \
     "$(decision "$(cmd_in 'printf x >> .claude/rt-kit/overrides/rules/probe.md')")" PASS
 report "SC-AK-542 — дописывание через tee -a проходит" \
     "$(decision "$(cmd_in 'printf x | tee -a .claude/rt-kit/overrides/rules/probe.md')")" PASS
+report "SC-AK-542 — дописывание кодом проходит" \
+    "$(decision "$(cmd_in "python3 -c \"open('.claude/rt-kit/overrides/rules/probe.md','a').write('x')\"")")" PASS
+report "SC-AK-542 — путь в тексте сообщения проходит" \
+    "$(decision "$(cmd_in "git commit -m 'x > .claude/rt-kit/overrides/rules/probe.md'")")" PASS
 report "SC-AK-542 — чтение надстройки проходит" \
     "$(decision "$(cmd_in 'cat .claude/rt-kit/overrides/rules/probe.md')")" PASS
 

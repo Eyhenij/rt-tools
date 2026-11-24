@@ -644,6 +644,11 @@
             "reason": "hooks into no agent event; guards source it"
         },
         {
+            "file": "shell-words.sh",
+            "kind": "helper",
+            "reason": "hooks into no agent event; write-targets.sh sources it"
+        },
+        {
             "file": "git-guard-delivery-rerun.sh",
             "kind": "helper",
             "reason": "hooks into no agent event; guards source it"

@@ -30,6 +30,12 @@
 # `cat`, `grep`, `sed -n` — while an interpreter given the path of a laid-out copy almost always
 # edits it.
 
+# The words of a command. Without this neighbour the shell part names nothing, and the guards pass the
+# action.
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/shell-words.sh" 2>/dev/null || true
+command -v rt_shell_words >/dev/null 2>&1 || rt_shell_words() { cat >/dev/null; }
+
 # The literals of the variables and the script files of a command. No helper — neither is read.
 # shellcheck disable=SC1091
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/script-files.sh" 2>/dev/null || true
@@ -63,97 +69,72 @@ rt_wt_from_dir() {
     done
 }
 
+# What the words of a command say: the text comes as the argument. A command handed to a shell is read
+# again, to the fourth shell inside it. A path through a variable is the literal the command itself
+# gave it, and it is compared with the root of the tree as one. A copy into a folder writes a file of
+# the same name there, and what is a folder is asked from the disk.
+rt_shell_calls() {
+    rt_wt_calls="$(printf '%s\n' "$1" | rt_shell_words)"
+    rt_wt_deep="$rt_wt_calls"
+    for rt_wt_round in 1 2 3 4; do
+        case "
+$rt_wt_deep" in *"
+S "*) ;; *) break ;; esac
+        rt_wt_deep="$(printf '%s\n' "$rt_wt_deep" | LC_ALL=C awk '/^S / { on = 1; print substr($0, 3) } /^E$/ && on { on = 0; print ";" }' | rt_shell_words)"
+        rt_wt_calls="$rt_wt_calls
+$rt_wt_deep"
+    done
+    RT_WT_VARS="$(command -v rt_cmd_vars >/dev/null 2>&1 && { printf '%s\n' "$1" | rt_no_heredocs; printf '%s\n' "$rt_wt_calls" | sed -n 's/^S //p'; } | rt_cmd_vars)"
+    printf '%s\n' "$rt_wt_calls" \
+        | RT_SF_VARS="$RT_WT_VARS" LC_ALL=C awk -F '\t' "$RT_SF_EXPAND"'
+            BEGIN { rt_vars_read() }
+            /^[WA] / { rt_expand(substr($0, 3), 1); for (i = 1; i <= en; i++) { print substr($0, 1, 2) ev[i] } next }
+            /^T / {
+                rt_expand(substr($1, 3), 1); n = en; split("", to); for (i = 1; i <= n; i++) { to[i] = ev[i] }
+                rt_expand($2, 1)
+                for (i = 1; i <= n; i++) { for (j = 1; j <= en; j++) { base = ev[j]; sub(/\/+$/, "", base); sub(/.*\//, "", base); if (base ~ /^\.*$/) { sub(/\/+$/, "", to[i]); print "W " to[i] } else { print "T " to[i] "\t" base } } }
+                next
+            }
+            { print }
+        ' \
+        | sed -E 's#^([WAT]) \$\{?(PWD|CLAUDE_PROJECT_DIR)\}?/#\1 #' \
+        | while IFS= read -r rt_wt_line; do
+            case "$rt_wt_line" in
+                'T '*)
+                    rt_wt_in="${rt_wt_line##*	}" rt_wt_to="${rt_wt_line#T }"
+                    rt_wt_to="${rt_wt_to%	*}"
+                    case "$rt_wt_to" in
+                        */) rt_wt_to="$rt_wt_to$rt_wt_in" ;;
+                        *) { [ -d "$rt_wt_to" ] || [ -d "${CLAUDE_PROJECT_DIR:-.}/$rt_wt_to" ]; } && rt_wt_to="$rt_wt_to/$rt_wt_in" ;;
+                    esac
+                    printf 'W %s\n' "$rt_wt_to"
+                    ;;
+                *) printf '%s\n' "$rt_wt_line" ;;
+            esac
+        done
+}
+
+# The files a command writes whole: adding to the end and an edit in place keep what stood there.
+rt_overwrite_targets() {
+    RT_WT_WHOLE=1 RT_WT_SCRIPT=1 rt_write_targets
+}
+
 rt_write_targets() {
     rt_wt_text="$(cat)"
-
-    # Redirection to the empty device and to the error stream is removed before parsing — by the
-    # same technique the shell write sign removes it. Without this a muted output inside the body of
-    # an interpreter reads as a sign of a write, and a body that writes nothing again gives away all
-    # its paths: a command with an edit of one file and a run of a check next to it was forbidden by
-    # the path of that check. A real write next to a muted stream stays visible: the redirection is
-    # removed, not the whole command.
-    rt_wt_text="$(printf '%s' "$rt_wt_text" \
-        | sed -E 's#(&|[0-9]*)>>?[[:space:]]*/dev/(null|stderr)##g; s#[0-9]*>&[0-9-]##g')"
-
-    # The bodies of the heredocs are cut out of the shell parse: they are data of the command, not
-    # the command. A markdown quote line inside a body — a caret and a path — read as a redirection,
-    # and an edit that wrote nothing into the tree was refused by the path standing in that quote.
-    # The bodies are parsed separately, by the interpreter branch below.
-    rt_wt_shell="$(printf '%s' "$rt_wt_text" | LC_ALL=C awk -v q="'" '
-        function trim(s) { sub(/^[ \t]+/, "", s); sub(/[ \t]+$/, "", s); return s }
-        tag != "" { if (trim($0) == tag) { tag = "" } ; next }
-        {
-            print
-            s = $0
-            re = "<<-?[ \t]*(\"[^\"]+\"|" q "[^" q "]+" q "|[A-Za-z_][A-Za-z0-9_]*)"
-            while (match(s, re)) {
-                t = substr(s, RSTART, RLENGTH)
-                s = substr(s, RSTART + RLENGTH)
-                sub(/^<<-?[ \t]*/, "", t)
-                gsub(/\"/, "", t)
-                gsub(q, "", t)
-                tag = t
-            }
-        }
-    ')"
-
-    # An arrow inside quotes is text of the command, not a redirection: `echo "a->b"` and the code
-    # of `node -e "[1].map(x => x)"` read as writes into `b` and `x)` and were refused as edits.
-    # The separators of commands inside quotes are dropped with it: a `sed` script of several parts is
-    # one word. The quotes are read across the lines: a message of several lines is one word too; a
-    # backslash outside single quotes escapes the next sign — and inside `$'…'` as well — and a comment
-    # ends its line. The code of `bash -c` is a command, and it is left as it stands.
-    rt_wt_shell="$(printf '%s\n' "$rt_wt_shell" | LC_ALL=C awk -v sq="'" '
-        function drop_quoted_arrows(s,   out, i, c, n, before) {
-            out = ""; n = length(s)
-            for (i = 1; i <= n; i++) {
-                c = substr(s, i, 1); before = i > 1 ? substr(s, i - 1, 1) : ""
-                if (c == "\\" && (q != sq || ansi) && i < n) { out = out c substr(s, i + 1, 1); i++; continue }
-                if (q != "") {
-                    if (c == q) { q = "" } else if (!code && index(">;|&()", c)) { continue }
-                } else if (c == "\"" || c == sq || c == "`") {
-                    q = c; ansi = c == sq && before == "$"
-                    code = out ~ /(^|[ \t;|&(\/])(bash|sh|zsh)[ \t]+-[A-Za-z]*c[ \t]+$/
-                } else if (c == "#" && (before == "" || index(" \t;|&()", before))) {
-                    break
-                }
-                out = out c
-            }
-            return out
-        }
-        { line = drop_quoted_arrows($0); if (q != "" && !code) { printf "%s ", line } else { print line } }
-    ')"
-
-    # The literals the command itself gave its variables. A target through such a variable is a literal
-    # path, and it is compared with the root of the tree as one.
-    RT_WT_VARS="$(command -v rt_cmd_vars >/dev/null 2>&1 && printf '%s\n' "$rt_wt_shell" | rt_cmd_vars)"
+    rt_wt_words="$(rt_shell_calls "$rt_wt_text")"
 
     {
-        # Each command of the line is read apart: an in-place edit names its last word, and the last
-        # word of the line belonged to the command after it. A writing word is a command only where one
-        # stands — at the start of its part, behind what only runs it; elsewhere it is an argument, and
-        # `grep -n "cp -r" <file> | head` reads.
-        printf '%s' "$rt_wt_shell" \
-            | tr "\"'\`" '   ' \
-            | sed -E 's/>\|/>/g; s/>>?/\n>/g; s/(&&|[|][|]|[;|&()])/\n/g' \
-            | sed -E 's/^[[:space:]]*((do|then|else|if|elif|while|until|sudo|env|command|exec|time|nohup|[!{]|[A-Za-z_][A-Za-z0-9_]*=[^[:space:]]*|xargs([[:space:]]+-[^[:space:]]+)*|timeout[[:space:]]+[^[:space:]]+|find[[:space:]].*-exec|([^[:space:]]*\/)?(bash|sh|zsh)[[:space:]]+-[A-Za-z]*c)[[:space:]]+)*([^[:space:]>]*\/)?(git[[:space:]]+mv)?/\7/; s/^git[[:space:]]+mv/mv/' \
-            | sed -nE '
-                s/^>[[:space:]]*([^[:space:]|&;]+).*/\1/p
-                s/^tee[[:space:]]+(-a[[:space:]]+)?([^[:space:]|&;]+).*/\2/p
-                s/^g?sed[[:space:]]+([^[:space:]]+[[:space:]]+)*(-[A-Za-z]*i[^[:space:]]*|--in-place[^[:space:]]*)[[:space:]]+([^[:space:]]+[[:space:]]+)*([^[:space:]|&;]+)[[:space:]]*$/\4/p
-                s/^(cp|mv|install)[[:space:]]+([^[:space:]]+[[:space:]]+)+([^[:space:]|&;]+).*/\3/p
-            ' \
-            | RT_SF_VARS="$RT_WT_VARS" LC_ALL=C awk "$RT_SF_EXPAND"'
-                BEGIN { rt_vars_read() }
-                { rt_expand($0, 1); for (i = 1; i <= en; i++) { print ev[i] } }
-            '
+        printf '%s\n' "$rt_wt_words" | sed -n "s/^[W${RT_WT_WHOLE:-A}] //p"
 
         # The body of the interpreter: the code comes as a `-c` argument, an `-e` argument or a
         # heredoc body, and the write path stands inside it. It is exactly the body that is taken,
         # not the whole command: a compound line in which a heredoc writes one file while a check is
         # run next to it would give away the path of that check as a write target — and running a
         # laid-out check would again read as an edit of the check itself.
-        printf '%s\n' "$rt_wt_text" | LC_ALL=C awk '
+        #
+        # A redirection to the empty device and to the error stream is cut from it first: a muted
+        # output inside a body is no sign of a write.
+        printf '%s\n' "$rt_wt_words" | sed -E '/^[CE]/!d; s#(&|[0-9]*)>>?[[:space:]]*/dev/(null|stderr)##g; s#[0-9]*>&[0-9-]##g' | LC_ALL=C awk -v whole="${RT_WT_WHOLE:-}" '
             function emit(s,   n, i, parts) {
                 n = split(s, parts, /[^A-Za-z0-9_.@\/-]+/)
                 for (i = 1; i <= n; i++) {
@@ -185,7 +166,7 @@ rt_write_targets() {
                     if (name in varpath) { print varpath[name] }
                 }
                 rest = strip_reads(s)
-                while (match(rest, /(open|writeFileSync|writeFile|appendFileSync|appendFile|copyfile|copy2|rename|symlink|mkdir|makedirs)[ \t]*\(/)) {
+                while (match(rest, /(open|writeFileSync|writeFile|appendFileSync|appendFile|rename|symlink|mkdir|makedirs)[ \t]*\(/)) {
                     rest = substr(rest, RSTART + RLENGTH)
                     arg = rest
                     sub(/[,)].*$/, "", arg)
@@ -217,12 +198,11 @@ rt_write_targets() {
             }
             function writes(s) {
                 return s ~ /open[ \t]*\([^)]*[\047\"](w|a|r\+|w\+|a\+)[\047\"]/ \
-                    || s ~ /writeFileSync|writeFile|appendFile|write_text|write_bytes|\.write\(|\.save\(|savefig|to_csv|json\.dump|\.dump\(/ \
-                    || s ~ /makedirs|mkdir|rename|replace[ \t]*\(|unlink|rmtree|copyfile|copy2|shutil\./ \
-                    || redirects(s) \
-                    || s ~ /(^|[|;&(]|[ \t])(tee|cp|mv|rm|touch|install|truncate)([ \t]|$)/
+                    || s ~ /(writeFileSync|writeFile|appendFileSync|appendFile|write_text|write_bytes|savefig|to_csv|\.write|\.save|\.dump)[ \t]*\(/ \
+                    || s ~ /(makedirs|mkdir|mkdirSync|rename|renames|renameSync|unlink|unlinkSync|rmtree|copyfile|copyFile|copyFileSync|copy2|cpSync|shutil\.[a-z0-9_]+|(os|Path\([^)]*\))\.replace)[ \t]*\(/ \
+                    || s ~ /\.replace[ \t]*\([ \t]*[^,() \t][^,()]*\)|(^|[^.A-Za-z0-9_])replace[ \t]*\(/ \
+                    || redirects(s)
             }
-            function trim(s) { sub(/^[ \t]+/, "", s); sub(/[ \t]+$/, "", s); return s }
             # The index of the bracket that closes the call whose arguments start at `from`: the
             # quotes are skipped, and a bracket inside a string closes nothing.
             function args_end(s, from,   i, c, depth, q) {
@@ -284,19 +264,50 @@ rt_write_targets() {
                 }
                 return out s
             }
+            # The source of a copy is read: only where the copy goes is a target.
+            function strip_sources(s,   out, from, endp, args, first) {
+                out = ""
+                while (match(s, /(copyFileSync|copyFile|copyfile|copytree|copy2|cpSync|shutil\.copy|shutil\.move)[ \t]*\(/)) {
+                    from = RSTART + RLENGTH
+                    out = out substr(s, 1, from - 1)
+                    endp = args_end(s, from)
+                    args = substr(s, from, endp - from); first = first_arg(args)
+                    out = out (first == args || index(substr(s, RSTART, RLENGTH), "move") ? args : substr(args, length(first) + 2)) ")"
+                    s = substr(s, endp + 1)
+                }
+                return out s
+            }
+            # One line of code holds several statements; a write of one names nothing of the next.
+            function statements(s,   i, c, q, cur) {
+                for (i = 1; i <= length(s); i++) {
+                    c = substr(s, i, 1)
+                    if (c == "\\") { cur = cur c substr(s, ++i, 1); continue }
+                    if (q != "") { if (c == q) { q = "" } }
+                    else if (c == "\047" || c == "\"" || c == "`") { q = c }
+                    else if (c == ";") { add_line(cur); cur = ""; continue }
+                    cur = cur c
+                }
+                add_line(cur)
+            }
+            function add_line(s) {
+                if (whole != "" && s ~ /append|[\047\"]a[b+]*[\047\"]/) { return }
+                line[++lines] = s
+                if (writes(s)) { wrote = 1 }
+            }
             function strip_content(s,   out, pre, name, from, endp, args) {
-                s = strip_reads(s)
+                s = strip_sources(strip_reads(s))
                 out = ""
                 while (match(s, /(\.write|\.write_text|\.write_bytes|\.replace|writeFileSync|appendFileSync|writeFile|appendFile)[ \t]*\(/)) {
                     pre = substr(s, 1, RSTART - 1)
                     name = substr(s, RSTART, RLENGTH)
                     from = RSTART + RLENGTH
-                    if (name ~ /^\.replace/ && pre ~ /(^|[^A-Za-z0-9_])os$/) {
+                    endp = args_end(s, from)
+                    # A transfer names both ends; a string `replace` has two arguments and no file.
+                    if (name ~ /^\.replace/ && (pre ~ /(^|[^A-Za-z0-9_])os$/ || substr(s, from, endp - from) !~ /,/)) {
                         out = out pre name
                         s = substr(s, from)
                         continue
                     }
-                    endp = args_end(s, from)
                     if (name ~ /^\./) {
                         out = out pre name ")"
                     } else {
@@ -316,12 +327,13 @@ rt_write_targets() {
             # command, not the action — that is, it lifted the requirement instead of holding it.
             #
             # A path assigned to a variable is not lost by this: the pair "assignment — write line"
-            # is parsed separately.
+            # is parsed separately. A variable given another path names the last one above the write.
             function flush_body(   i) {
                 if (wrote) {
                     for (i = 1; i <= lines; i++) { note_var(line[i]) }
                     for (i = 1; i <= lines; i++) {
-                        if (writes(line[i])) { emit(strip_content(line[i])); emit_calls(line[i]) }
+                        note_var(line[i])
+                        if (writes(line[i])) { emit(strip_content(line[i])); emit_calls(strip_sources(line[i])) }
                     }
                 }
                 for (i = 1; i <= lines; i++) { delete line[i] }
@@ -329,46 +341,9 @@ rt_write_targets() {
                 lines = 0
                 wrote = 0
             }
-            tag != "" {
-                if (trim($0) == tag) { flush_body(); tag = ""; next }
-                if (keep) {
-                    line[++lines] = $0
-                    if (writes($0)) { wrote = 1 }
-                }
-                next
-            }
-            {
-                # Code as an argument: what stands after `-c` or `-e` of the interpreter itself, up to the
-                # quote that closes it. A key of another command of the line — `grep -c` next to a run of
-                # a script — is no code, and a command after the code is read by the shell parse above.
-                rest = $0
-                while (match(rest, /(^|[|;&(]|[ \t])(python3?|node|ruby|perl|php|deno|bun)[ \t](([^|;&\047\"]|\047[^\047]*\047|\"[^\"]*\")*[ \t])?-[ce][ \t]+/)) {
-                    rest = substr(rest, RSTART + RLENGTH)
-                    code = rest
-                    quote = ""
-                    # One word of the shell: a quote that closes next to another one goes on with it.
-                    if (code ~ /^[\047\"]/) {
-                        for (k = 1; k <= length(code); k++) {
-                            ch = substr(code, k, 1)
-                            if (ch == "\\" && quote != "\047") { k++; continue }
-                            if (quote != "") { if (ch == quote) { quote = "" } ; continue }
-                            if (ch == "\047" || ch == "\"") { quote = ch; continue }
-                            if (ch ~ /[ \t]/ || index(";|&)", ch)) { break }
-                        }
-                        code = substr(code, 1, k - 1)
-                    }
-                    if (writes(code)) { note_var(code); emit(strip_content(code)); emit_calls(code) }
-                }
-                # The heredoc body: the write path of the interpreter stands exactly there.
-                if (match($0, /<<-?[ \t]*[\047\"]?[A-Za-z_][A-Za-z0-9_]*/)) {
-                    t = substr($0, RSTART, RLENGTH)
-                    sub(/^<<-?[ \t]*[\047\"]?/, "", t)
-                    tag = t
-                    keep = ($0 ~ /(^|[|;&(]|[ \t])(python3?|node|ruby|perl|php|deno|bun)([ \t]|$)/)
-                    flush_body()
-                }
-            }
-            END { if (tag != "") { flush_body() } }'
+            /^C / { statements(substr($0, 3)); next }
+            { flush_body() }
+            END { flush_body() }'
 
         # A script file the command runs is read the same way: a shell script is a command, any other is
         # a body of its interpreter. One level: a script that runs another script is not followed.
@@ -388,5 +363,5 @@ rt_write_targets() {
                 fi
             done
         fi
-    } | sort -u
+    } | sed -E 's#^(\./)+##' | sort -u
 }

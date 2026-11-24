@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Write|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Requires: hooks/deny-tail.sh, hooks/guard-note.sh
+# Requires: hooks/deny-tail.sh, hooks/guard-note.sh, hooks/write-targets.sh
 # Guard against wiping out an override: writing over is not the same as editing.
 #
 # The tree's override merges with the package resource by `## ` section: a section the tree has
@@ -63,22 +63,11 @@ refuse() {
     exit 0
 }
 
-# The targets of writing over, named by the command outright. Appending is not included here: `>>`
-# is hidden before the parsing and is not unfolded back, and `tee` is taken only without the
-# appending argument.
-rt_overwrite_targets() {
-    tr "\"'\`" '   ' \
-        | sed -E 's/>>/\
-APPEND/g' \
-        | sed -E 's/>/\
->/g' \
-        | sed -nE '
-            s/^>[[:space:]]*([^[:space:]|&;]+).*/\1/p
-            s/(^|.*[[:space:]])tee[[:space:]]+([^-[:space:]][^[:space:]|&;]*).*/\2/p
-            s/(^|.*[[:space:]])(cp|mv|install)[[:space:]]+([^[:space:]]+[[:space:]]+)+([^[:space:]|&;]+).*/\4/p
-        ' \
-        | sort -u
-}
+# The targets of writing over are read by the parse shared with the other guards: what adds to the end
+# and what edits in place it does not name.
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/write-targets.sh" 2>/dev/null || true
+command -v rt_overwrite_targets >/dev/null 2>&1 || rt_overwrite_targets() { cat >/dev/null; }
 
 tool="$(rt_hook_tool)"
 candidates=""

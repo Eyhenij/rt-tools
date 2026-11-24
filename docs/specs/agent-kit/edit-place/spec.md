@@ -55,14 +55,30 @@ turn.
 - **The parse of write targets is declared once, and every guard that judges an edit calls it.** Two
   copies of one sign diverge silently: each is fixed on its own, and neither says the rest stayed
   blind. The parse has a suite of its own, so that a failure names the parse and not the guard that
-  called it.
+  called it. The rules gate and the guard of overrides ask it too: each of them held a parse of its own
+  and saw none of the forms the shared one had learned. A suite refuses a pattern of a writing command
+  in any other hook, by its form and not by the name of the function.
+- **A command is cut into words sign by sign, and a writing word names its targets.** A quote, a
+  separator, a substitution and a torn line are the borders of a word; a pattern over the whole line
+  saw them only by chance, and `sed` with `;` in its expression, `perl -pi`, a copy into a folder and a
+  path with a space went past. The words answer three questions: what a call writes, which code it
+  hands to an interpreter or to a shell, and who reads the body of a heredoc. A command handed to a
+  shell is read again, to the fourth shell inside it. A copy into a folder names the file it makes
+  there; a folder without a slash at the end is asked from the disk. Not seen: a redirection inside
+  backquotes, a group in braces that takes a body by a pipe, `case` inside a substitution, a command of
+  a container or of another machine, a path the code puts together from parts.
+- **The parse tells a file written whole from a file added to.** The guard of overrides judges only the
+  first; `>>`, `tee -a`, an edit in place and code that opens a file to append keep what stood there.
+- **Without the module of words a guard passes the action and stays silent.** A broken parse does not
+  stop the work: no target is named, and nothing is written into the error stream.
 - **The body of an interpreter without a write gives out none of its paths.** Inside the body there is
   nothing to parse a foreign language with, and everything looking like a path is taken from there; a
   body holding not a single write call gave out its paths on a par with one that writes. A command
   that loaded a laid-out helper and printed its answer was forbidden as an edit of that helper —
   three times in a row in one session, and not one call wrote anything. A body that does write gives
-  out the paths of its write lines: the path and the write call stand there on different lines, and
-  there is nothing to link them by.
+  out the paths of its write statements, and through a variable the last path given to it above. What
+  a statement reads, runs or copies from is not a target; a call counts as a write only with its
+  bracket, so the word `mkdir` in a string is text.
 - **A path inside a string the script writes or substitutes is the content of the write, not its
   target.** A script that edited a work file and named a laid-out copy in the text of a new line was
   refused by the name of the copy it never opened: a string `replace(` counts as a write line, and
@@ -73,17 +89,18 @@ turn.
 - **The body of a heredoc is data of the command, and the shell parse does not read it.** A markdown
   quote line inside a body opens with the same sign as a redirection: a path standing in the quote
   was taken as a write target, and an edit that wrote nothing into the tree was refused twice by it.
-  The bodies are parsed apart, by the interpreter branch, and what stands before the body is named
-  as before.
+  A body belongs to the call its mark stands in, to the pipe after it, or to whoever the same command
+  runs the written file by: an interpreter or a shell reads it as code, for anybody else it is data.
+  What stands before the body is named as before.
 - **An arrow inside quotes is text of the command, not a redirection.** A string argument with an
   arrow in it — a message, the code of an interpreter — read as a write into the word after the
-  arrow, and a command that wrote nothing was refused as an edit. The shell parse drops every `>`
-  inside single, double or back quotes before it looks for a redirection; a backslash outside
-  single quotes escapes the next sign, a quote runs over the lines until it closes, and a comment ends
-  its line. The code of `bash -c` is a command and keeps its arrows.
+  arrow, and a command that wrote nothing was refused as an edit. A sign inside single, double or back
+  quotes belongs to its word; a backslash outside single quotes escapes the next sign, a quote runs
+  over the lines until it closes, and a comment ends its line. A comparison of `[[ … ]]` and `(( … ))`
+  is no redirection either. The code of `bash -c` is a command and keeps its arrows.
 - **A writing word is a command only at the start of its part.** `grep -n 'cp -r' <file> | head` reads:
   behind `sudo`, `env`, an assignment, `xargs` or `bash -c` the word is still the command, elsewhere an
-  argument.
+  argument. Behind a runner the parse does not know, an interpreter named by a word of its own counts.
 - **Muted output is never a sign of a write, inside a body either.** A redirection into the empty
   device and into the error stream is removed before the parse — by the same technique the shell write
   sign removes it. Otherwise a body that writes nothing gives out all its paths again: a command with
