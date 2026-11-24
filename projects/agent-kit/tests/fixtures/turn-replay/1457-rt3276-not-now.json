@@ -7,6 +7,6 @@
     { "role": "owner", "at": "2026-11-14T17:10:00Z", "owner": "<order:RT-101>" },
     { "role": "agent", "at": "2026-11-14T17:12:00Z", "call": "Edit", "file": "projects/agent-kit/assets/rules/turn-conduct.md", "code": 0 },
     { "role": "owner", "at": "2026-11-14T17:13:00Z", "owner": "не сейчас" },
-    { "role": "agent", "at": "2026-11-14T17:13:10Z", "say": "Understood, I stop here." }
+    { "role": "agent", "at": "2026-11-14T17:13:10Z", "say": "Понял, останавливаюсь." }
   ]
 }

@@ -281,7 +281,8 @@ When the snapshot run of the second kit starts a full session
 Then the index is read again a few times, because a lost entry came back on a repeat. An index that
 stays incomplete ends the run before any frame is taken, with a refusal naming the missing story ids.
 A reference belongs to the story whose id is its name without `.png` and without a `--w<width>` tail.
-A pointed re-take does not match the directory, since it opens part of it
+A pointed run — a match or a re-take of the named files — does not match the directory, since it opens
+part of it
 
 Covered by `tools/tests/showcase-probe.test.sh` — the pure matching of references against story ids,
 without a showcase. The wait and the refusal of the run itself need a raised showcase that loses its

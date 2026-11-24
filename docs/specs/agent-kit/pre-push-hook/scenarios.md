@@ -128,3 +128,12 @@ When the branch is pushed through the git hook
 Then the hook starts the step and the push leaves
 
 Covered: `projects/agent-kit/tests/pre-push.test.sh`.
+
+### SC-AK-1944 — a step of the set gets nothing of the call it runs in
+
+Given the call of the set holds the address of the repository in the variables of git and the parsed
+call of the agent in those of the dispatcher
+When the set runs a step
+Then the step sees none of them
+
+Covered: `projects/agent-kit/tests/push-set-runs.test.sh`.

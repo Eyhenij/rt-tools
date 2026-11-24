@@ -25,7 +25,8 @@ Part of [SKILL.md](SKILL.md). What refuses along the loop and what to do instead
   itself in `.claude/rt-kit/tree-name`, and the row goes into `.claude/rt-kit/assignments.md`.
 - **The run ahead writes marks only for a clean copy.** Commit first, then run it; a touch of the
   tree after a green run drops the marks.
-- **A visible kit edit is refused at the push without both approvals** — the rule `kit-approval`.
+- **A visible kit edit is refused at the push without the lines of its record** — the rule
+  `kit-approval`: both approvals, or the no-look line.
 
 ## End of the turn
 
@@ -43,4 +44,9 @@ Part of [SKILL.md](SKILL.md). What refuses along the loop and what to do instead
   and «Оставшийся шаг», a draft into a base the pipeline does not wake for, and a token whose
   account equals the reviewer. It is fixed, never bypassed by REST.
 - **The delivery guards read a delivery word anywhere in the command text.** A script or a probe
-  that only mentions `gh pr create` is judged as the call itself: such text goes into a file.
+  that only mentions `gh pr create` after a separator is judged as the call itself. Such text is
+  written by the edit tool into a file that is read, not run; in a script that is run, comments and
+  heredoc bodies are text.
+- **The PR is opened by a typed call, never from a script file.** The delivery guard reads the script
+  a command runs, so a wrapper meets the same conditions; a wrapper in a tracked file is not read and
+  stays forbidden.

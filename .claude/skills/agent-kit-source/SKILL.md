@@ -19,7 +19,10 @@ Cold part: `pitfalls.md` — the whole text, every section and article with its 
 - **A release is not started from here.**
 - **A release names its metric.**
 - **A resource the consumer does not carry out is never a package resource.**
-- **A new package resource passes `check:spec-coverage` and `check-descriptions` before its first commit.**
+- **A new package resource passes the spec, description and layout checks before its first commit.**
+- **A shell block of a command or a pattern is run by its scenario in bash and in zsh.**
+- **A replay whose judge did not run leaves the hook text unmeasured.**
+- **A guard over shell commands names the harmless parts, not the writing ones.**
 - **Nothing builds the package while the push set runs.**
 - **A guard released by the owner's word is tested on a refusal and on an unrelated answer, not only
   on consent.**

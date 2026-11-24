@@ -438,7 +438,7 @@ Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
 ### SC-AK-936 — the command creates an epic
 
-Given the tree named the label of an epic and the directory of plans
+Given the tree named the label of an epic and the directory of plans, with no remote main branch
 When the command of creating is called with the argument about an epic
 Then the card is created with the label of an epic, a draft of the plan is laid in the directory of
 plans with the number and the branch filled in, the body of the card names the path to it, and the

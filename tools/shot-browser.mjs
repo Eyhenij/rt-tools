@@ -16,6 +16,7 @@ import { connect } from 'node:net';
 import { fileURLToPath } from 'node:url';
 
 import { shotDefaults } from './shot-browser-name.mjs';
+import { CONNECT_LIMIT, CONNECT_TRIES, forwardPort, RETRY_PAUSE } from './shot-forward.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 
@@ -119,13 +120,9 @@ const SHOT_LOCALE = ['-e', 'LC_ALL=ru_RU.UTF-8', '-e', 'LANG=ru_RU.UTF-8'];
  */
 const SHOT_SCRIPT = `const { chromium } = require('@playwright/test');
 const net = require('node:net');
+${forwardPort.toString()}
 for (const port of ${JSON.stringify(FORWARDED_PORTS)}) {
-    net.createServer((page) => {
-        const machine = net.connect(port, 'host.docker.internal');
-        page.on('error', () => machine.destroy());
-        machine.on('error', () => page.destroy());
-        page.pipe(machine).pipe(page);
-    }).listen(port, '127.0.0.1');
+    forwardPort(net, port, ${CONNECT_LIMIT}, ${CONNECT_TRIES}, ${RETRY_PAUSE});
 }
 chromium
     .launchServer({ port: 3000, host: '0.0.0.0', wsPath: '${SHOT_PATH}', args: ${JSON.stringify(SHOT_ARGS)} })

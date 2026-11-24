@@ -5,7 +5,7 @@ statement: a removed statement is removed together with its line.
 
 - **Officialese and words not written in the tree do not go away into a document.** — `projects/agent-kit/assets/hooks/prose-style-guard.sh:found`
 - **Every finding is named together with a replacement.** — `projects/agent-kit/assets/checks/check-prose-style.mjs:MARKS`
-- **A write by a shell command is judged the same as one by the edit tool.** — `projects/agent-kit/assets/hooks/prose-style-guard.sh:rt_write_targets` — the shared parse names the document among the write targets; scenario `SC-AK-928`
+- **A write by a shell command is judged the same as one by the edit tool.** — `projects/agent-kit/assets/hooks/prose-style-guard.sh:rt_write_targets` — the shared parse names the document among the write targets, `rt_prose_heredoc_bodies` and `rt_prose_printed` take the text; scenarios `SC-AK-928`, `SC-AK-1136`
 - **The boundary of the judgement is the project root.** — `projects/agent-kit/assets/hooks/prose-style-guard.sh:rt_root` — an absolute path outside the declared root passes; scenario `SC-AK-1137`
 - **Only the new text of the edit is judged.** — `projects/agent-kit/assets/hooks/prose-style-guard.sh:added`
 - **The boundaries of a word are counted by letters, not by the class `\w`.** — `projects/agent-kit/assets/checks/check-prose-style.mjs:GLOSSARY_BANS`

@@ -47,10 +47,14 @@ The first sentence answers the question; a claim about the tree comes with its c
 
 ## The language of the text
 
-The texts are in the language of the owner's chat and cards, English included. Addressee and
-register are checked before the first line; the usual miss is a task in the words and language of
-a rule just read, or with a rule article copied in.
+The texts are in the language of the owner's chat and cards, English included: the task, the PR and
+every line to the owner between two tool calls. Addressee and register are checked before the first
+line of each; the usual miss is a text in the words and language of a rule just read, or with a rule
+article copied in. The owner's remark about the language holds for every later message of the session,
+not for the one it answered.
 
+> ✗ Running the push set ahead · ✓ Запускаю набор перед отправкой
+>
 > ✓ [RT-1849] Проверки слога, словаря и описаний считают только кириллицу
 
 ## A guide for an executor in another tree

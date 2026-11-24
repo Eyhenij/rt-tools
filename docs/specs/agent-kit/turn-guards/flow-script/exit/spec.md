@@ -39,8 +39,8 @@ not by a person.
 - **A turn is released by the first release case of the description that is met, in the order of the cases.**
 - **A held turn names one move: the action of the measured state, and in a running stage the current step with the command that measures it.**
 - **A held turn in a running stage with no current step names by its number the first step of the plan not done or without a matched mark.**
-  On a taken-apart folder the progress comes from the history, and the refusal adds the move `git
-  revert` of the commit that took it apart; a folder a live step run put back is read from the history too.
+  On a taken-apart folder the progress comes from the history, and the refusal adds the move
+  `git revert` of the commit that took it apart; a folder a live step run put back is read from the history too.
   The history is asked only in the state of a running stage. A step the plan names and the progress
   lacks counts as not done. A step done with no matched mark gets the measuring command, and the
   revert move only for a fix inside the folder.
@@ -72,6 +72,7 @@ not by a person.
 - **A stop made while a background task of the session runs names no owner's menu.**
 - **A background task the session has not read is the first move, and no owner's menu is offered over it: the refusal names the task and its output file.**
 - **Two running tasks release two stops, and the end of a task gives its stop back.**
+- **The end of a task counts from the delivery of its notice: a turn that ends while the notice stands in the queue takes no stop of a neighbour.**
 - **A release on a wait is written to the journal with the session.**
 - **The session source and the source of the records read a record by pieces and never hold it as one string.**
 - **The forecast judges a background task by the time of the stop it replays and names the longest run of held stops in a row; a released stop and a word of the owner break a run.**
@@ -79,12 +80,15 @@ not by a person.
 - **A refusal of a stop names the hook after «BLOCKED by» in its first line; after the opening of the model check only a name right after it counts, else the model check; otherwise none.**
 - **A stop again with no call, after refusals of a stop by other hooks only, is no idle one: the refusal names those hooks and the move of the state, with no owner's menu.**
 - **The menu of a refusal carries exactly the options of the description: «отложить RT-N» with the task number and «подскажу путь», and the question says the way goes into its free field.**
+- **While the boundary of an autonomous session lies ahead, the refusal names the default of the rule `autonomous-work` with the morning list instead of the owner's menu; once the boundary has passed, the menu is back.**
+- **The command `/night` continues only a list whose boundary lies ahead, and the owner's new words rewrite its head; any other night gets a new list with its own boundary and words, and a boundary that is no moment ahead starts none.**
 - **The owner's choice is carried out: a deferral marks the task «отложено» and the next unblocked task is taken; a way the owner wrote is taken in the same step.**
 - **The menu hook lets exactly this menu through, and one question with a free field after a bare «подскажу путь».**
 - **An engine that fails, runs past its limit or cannot be called releases the turn and writes «движок упал» to the journal.**
 - **The eighth refusal in a row is written to the journal.**
 - **A service message is no word of the owner.**
 - **The engine measures the copy the session works in, and a worktree copy whose branch does not carry the engine is not judged.**
+
 ## What is out of scope
 
 The CI hold, read before the release cases, is the subdomain
@@ -164,12 +168,21 @@ Not applicable: the guard judges one turn of one session.
   nothing: the turn is judged by the scenario.
 - **The stuck menu asks for a way, not for a stop.** The second option «подскажу путь» takes the owner's way in the free field of the same menu. A bare answer gets one
   more question with a free field; otherwise the next idle stop gives the same menu again.
+- **At night the default takes the place of the menu.** In the night of 23 November 2026 the menu
+  opened in the middle of unattended work, and the session stood until the owner's answer. The
+  boundary is read from the line «Автономно до:» of the newest morning list, not from the age of
+  the file: a list of the past night lies next to the day's work.
 - **The forecast leans to the better side.** In the records a refused stop spends no task, so the
   replay releases every recorded stop of a wait, and the live engine releases one per task.
 
 - **The owner source still reads the record as one string.** Its file is outside the plan of the
   task that brought the reader by pieces, so a record past the string limit of the runtime, about
   536 MB, still fails the engine there; a failed engine releases the turn and writes the journal.
+- **The handover directory of the tree profile is not read by the engine.** It takes
+  `RT_HANDOFF_DIR` from the environment, otherwise `.claude/handoff`, the same way it takes the
+  tasks directory; a tree that keeps the list elsewhere gets the menu at night too.
+- **A night with no next work is not released.** The default says to complete the list; the turn
+  is held until the scenario is over or the harness ends it.
 - **A monitor is no background task.** A persistent monitor never ends, and a turn would be
   released on it for as long as it runs.
 
@@ -236,5 +249,7 @@ None.
 - 2026-11-22 — after the first review round: a message typed mid-turn is the owner's word; a mark
   of Esc within five seconds after a typed message delivers it; an agent past the bound is not hung;
   a step another check refused twice comes before a hung task; Esc lifts the CI hold.
+- 2026-11-24 — before the boundary of an autonomous session the default takes the place of the
+  owner's menu; scenario 1930.
 - 2026-11-24 — the stop word releases a turn again, as a release case before the interrupt: scenario
   1912 holds its cases. The stop word lifts the CI hold of a fresh head.

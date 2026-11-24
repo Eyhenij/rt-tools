@@ -111,10 +111,22 @@ and from sorting out the cargo it needs one step: the list of what is not sorted
   it. "No" to even one — the resource stays this tree's own resource, on a par with a package one:
   the same shape, the same law above, its own branch in the gate map. This is held by the boundary
   check, and it stands in the push gate.
-- **A new package resource passes the spec and description checks before its first commit.**
+- **A new package resource passes the spec, description and layout checks before its first commit.**
   `npm run check:spec-coverage` and `node tools/check-descriptions.mjs` run before the first
   commit of a new skill, rule or pattern, not only at the push gate: a red found at review costs a
-  second commit and a second review round.
+  second commit and a second review round. After the layout two more are asked:
+  `node tools/check-format-ignore.mjs` — the laid-out file hides from the formatter — and
+  `node tools/push-inputs.mjs verify` — the table of reads knows what the new check reads. A new
+  hook is executable: the suite of the resources asks the right to run.
+- **A shell block of a command or a pattern is run by its scenario in bash and in zsh.** The block is
+  written in one shell and runs in the session's one: a comparison inside `[ … ]` and a pattern that
+  matches nothing differ there. The scenario cuts the block out of the text and runs it whole.
+- **A replay whose judge did not run leaves the hook text unmeasured.** `judge-replay.mjs` stops on
+  the first call with no verdict, prints the answer and ends with the code 2: an expired sign-in is
+  no divergence. Readers who judge the records blind instead are named in the record as readers.
+- **A guard over shell commands names the harmless parts, not the writing ones.** The list of writing
+  forms was passed by usual spellings in both review rounds; a short list of the parts known to write
+  nothing errs towards a refusal instead.
 - **Nothing builds the package while the push set runs.** The set calls `pnpm run agent-kit:check`,
   and its build begins by removing `dist/agent-kit`. A role or a second session that builds the
   package in the same minute — the metrics report of the pattern `task-flow-cycle` builds it too —

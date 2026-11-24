@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load at the start of work from the owner — exploration before the first question, the six mandatory questions, the product agreement, creating the task, the branch and the folder. Returning to work — pattern task-flow-resume.
 ---
-<!-- rt-kit v0.39.1 · patterns/task-flow-start.md · 09f3677337dd · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · patterns/task-flow-start.md · 11b3e77ebfa6 · правится надстройкой, не здесь -->
 
 # Starting the work
 
@@ -29,7 +29,7 @@ A question whose answer lies in the code is not put to the owner: it devalues th
 
 ### State `просьба-не-разобрана`: the grill with the owner
 
-Led by the main agent: a subagent cannot reach the owner. The command is `/grill-me`, one question at a time, each with its recommended answer and the reason.
+Led by the main agent: a subagent cannot reach the owner. The command is `/grill-me`, one question at a time, each with its recommended answer and the reason. The card and the owner's words behind it are answers: an option that repeats the text of the task means the question is not asked, and its decision goes into the grill with a reference. A finding against a recorded decision is a cost line in the grill, not a new question.
 
 ### State `разбор-закрыт`: the pipeline after the grill
 

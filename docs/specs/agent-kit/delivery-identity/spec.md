@@ -44,7 +44,9 @@ own turn.
   cannot be changed afterwards.
 - **A request opened by a record other than the machine one passes, and the record is named aloud.**
   What matters is the clash with the reviewer, not the name; silence about a foreign record, though,
-  is indistinguishable from a check that did not fire.
+  is indistinguishable from a check that did not fire. It holds for a command without a substitution.
+- **A command that substitutes the token and is answered by a foreign record is refused.** It promises
+  the machine record; another answer means the substitution is empty, and the author cannot be changed.
 - **When there is nothing to learn the author by, the substitution of the machine record token is
   demanded.** No helper to ask the hosting with, or an empty answer from it, means the author stays
   unknown — and then the only lawful call is the one that names the record in its own text.

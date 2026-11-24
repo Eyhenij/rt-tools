@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/git-workflow.2.github.md · d00af08b872a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · pitfalls/git-workflow.2.github.md · f26dc629dd17 · правится надстройкой, не здесь -->
 # Delivery — cold part, second file
 
 The sections the rule `git-workflow` handed over when it was cut to its statements and split in
@@ -62,7 +62,7 @@ flowchart TD
     J -->|Run red| K[Fixed in the same branch]
     K --> J
     J -->|Green| L[The draft, if there was one, is lifted]
-    L --> M[A person presses the merge into the epic branch: the executor asks and names the number]
+    L --> M[A person presses the merge into the epic branch: the executor asks and names the number, or merges by a named allowance]
     M --> N{Tasks of the epic are left}
     N -->|Yes| B
     N -->|No| O[The PR of the epic into main opens: all the folders are taken apart, and the main branch takes the epic whole]
@@ -197,8 +197,8 @@ flowchart TD
   source piles up silently, and the audit is not in the pipeline.
 - **After merging the base in, the check set is revised by what the branch now carries.** Checking by
   what the author edited means checking half: the branch answers whole.
-- **The main branch is taken by the remote ref — in words and in actions.** The local one is
-  yesterday's snapshot and silent about it: by it a merged branch counts as unmerged.
+- **The main branch is taken by the remote ref — in words and in actions.** The local one is a
+  silent snapshot; it is fast-forwarded by the same fetch.
 - **A commit lands with its final content, and a later commit of the same branch does not correct
   it.** It is made after the check against the mockup, the sample and the measurement; what is not
   checked stays in the working tree. A third commit fixing the first shows the reviewer the miss
@@ -236,8 +236,8 @@ flowchart TD
 - **The draft is not lifted while the PR has no review.** The guard reads the requested reviewer and
   the review left: a lifted draft reads as "may be merged", and there is nobody to merge.
 - **The PR merge is pressed by a person, not by the work's executor.** Button and merge call are
-  equal. The executor merges their own PR only when a person said so about this PR; said about
-  one, it does not carry to the next.
+  equal. The executor merges their own PR only on a person's word: about this PR, or a named allowance
+  that names the PRs and the condition in advance; nothing past it. Form: `--merge` or the tree's.
 - **The identity of the call opening a PR is guarded by the delivery guard, not by the executor's
   memory.** It shows in the command text only by an explicit token substitution; judged is the
   clash with the reviewer, not the account name.
@@ -256,20 +256,21 @@ flowchart TD
   leaves signed by a stranger.
 - **The identity of the machine account is confirmed by the host's answer:** asked with the token,
   login and number come together.
-- **Guard scenarios set the git settings themselves, not take them from the machine.** Author, email
-  and signature go as `-c` flags.
+- **Guard scenarios set the git settings and the locale themselves, not take them from the machine.**
+  Author, email and signature go as `-c` flags; the push guard runs steps under `C.UTF-8`, and bash
+  3.2 breaks `$var»`.
 
 - **Every commit of the branch's contribution is signed by the machine account, and the push set
   checks it.** The guard judges a commit that named itself as it; a person's passes by.
-- **The PR state is reread from the host right after publishing.** Opening and setting a reviewer
-  answer zero even having done nothing.
+- **The PR state is reread from the host right after publishing.** Opening and setting a
+  reviewer answer zero, done or not.
 - **Reviewers are asked by a REST call, not by the client's selection.** Its fields come from GraphQL,
   where the account has no rights.
 
 - **A second working copy is for reading, and the call goes from the copy the session stands in.**
   The gate runs its set where the session was started, and a neighbour's uncommitted work refuses it.
-- **The working tree is not emptied for a tool run.** The comparison goes on a second copy: stashing
-  takes uncommitted work where neither the tree state nor the audit sees it.
+- **The working tree is not emptied for a tool run.** Compare on a second copy: a stash hides
+  uncommitted work from tree state and audit.
 
 ## What of the law is not here
 

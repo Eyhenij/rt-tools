@@ -24,6 +24,17 @@ The rule is `turn-conduct`; the articles that hold the law stand there.
   the output would have stopped being parsed whole.
 - **Handed-over work with the draft not lifted.** Two finished PRs stood like that until the owner
   brought the executor back himself.
+- **An incident record written past its role and not sent.** It was written by hand, past
+  `cargo-writer` and the template, and stayed on disk: the file alone satisfied the hook. Where a
+  permission prompt refused the send, the turn names to the owner the unsent record and the permission
+  it needs; the record stays to be sent. So it is where the intake does not answer, the tree has none
+  or the owner said not to send. In an autonomous session that named no send it goes into the
+  morning list, by `autonomous-work`.
+- **A withdrawn question.** The owner is told by which of their answers the work was done.
+- **One's own question not recognised.** «I did not ask this» is not written without a search of the
+  session's record.
+- **A question in a turn that goes on to the next work.** It is not asked there: a finding that can wait is filed as a
+  task, and a question without whose answer the work cannot go stops the turn.
 - **The repeated tail of a refused command.** A branch switch left in the discarded beginning
   carried six task files into the branch of the previous work together with the commit.
 - **The judgement "this is safe" instead of the list.** In one session the same command was first
