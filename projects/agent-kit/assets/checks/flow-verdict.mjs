@@ -232,7 +232,7 @@ export function holdReason(model, result, step, menu = null) {
     const lines = [`The scenario is not over: the work stands in the state \`${result.state}\` (${result.index} of ${total}), whose exit is not met.`];
     if (result.gaps) {
         lines.push('The code does not hold what the decision of the plan promised:', ...result.gaps.map((gap) => `- ${gap}`));
-        lines.push('Fix the code and commit the fix — the measurer reads the head, not the working tree — or lift a mismatch by a line of the decisions of the progress — of a commit, once the folder is taken apart: the path, or the place `path:symbol` of a place, the word «превышение» or «отказ от» («overrun», «waived») and the reason; a mismatch of links takes the line with its outgoing numbers. A refusal of `check-coupling` is lifted only as the command itself lifts it.');
+        lines.push('Fix the code and commit the fix — places, suites and budgets are read at the head, not in the working tree — or lift a mismatch by a line of the decisions of the progress — of a commit, once the folder is taken apart: the path, or the place `path:symbol` of a place, or its symbol in backticks on a line about its own file, the word «превышение» or «отказ от» («overrun», «waived») and the reason; a mismatch of links takes the line with its outgoing numbers. A refusal of `check-coupling` is lifted only as the command itself lifts it.');
     }
     if (menu?.cause?.unread) {
         const { task, output, agent } = menu.cause.unread;

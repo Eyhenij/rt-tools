@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · task-flow/measure/design.mjs · cfc0d8f2f141 · правится надстройкой, не здесь
+// rt-kit v0.39.1 · task-flow/measure/design.mjs · 7bc81b712f44 · правится надстройкой, не здесь
 /**
  * The measurer «measure.design» — exit 8 beside the footprint: the code of the head holds what the
  * decision of the plan promised, the plan as its first commit wrote it. `gaps` is the list of the
@@ -6,8 +6,8 @@
  *
  * Judged are the places, the suites, the new files, the outgoing links and the budget. A line of the
  * decisions of the progress, or of an own commit once the folder is taken apart, lifts a mismatch when it
- * names its path, place or symbol, the word and the reason; a line of outgoing links lifts only a mismatch
- * of links. A refusal of the coupling command is lifted only as the command lifts it. What was not read is
+ * names its path or place, or a symbol in backticks with no other path, the word and the reason; a line of
+ * outgoing links lifts only a mismatch of links. A refusal of the coupling command is lifted only as the command lifts it. What was not read is
  * not judged: a plan without the decision, a binary file, a command that did not answer or count.
  *
  * The reading of the decision, the history and the answer of the coupling command come through ports.
@@ -60,7 +60,13 @@ function declares(text, path, symbol) {
 }
 
 const SHOWN = new RegExp(`^[ \\t]*${WORDS}(?:function\\*?|class)\\s+(${NAME})|^export\\s+${WORDS}(?:const|let|var|type|interface|enum)\\s+(${NAME})|^(?:const|let|var)\\s+(${NAME})[^=\\n]*=\\s*(?:async\\s*)?(?:function\\b|\\([^\\n]*\\)[^=\\n]*=>|${NAME}\\s*=>)`, 'gmu');
-const EXPORTS = /^[ \t]*export\s*\{([^}]*)\}|^[ \t]*export\s+(default)\b/gmu;
+/** The lists and the single names of exports: `export {…}`, a destructured export, `module.exports = {…}`, the rest. */
+const LISTS = [
+    [/^[ \t]*export\s*(?:type\s*)?\{([^}]*)\}/gmu, (part) => part.trim().split(/\s+/).pop()],
+    [/^[ \t]*export\s+(?:const|let|var)\s*[{[]([^}\]]*)[}\]]/gmu, (part) => part.replace(/=[^]*$/, '').trim().split(/[\s:]+/).pop()],
+    [/^[ \t]*module\.exports\s*=\s*\{([^}]*)\}/gmu, (part) => part.trim().split(/[\s:(]+/)[0]],
+];
+const EXPORTS = new RegExp(`^[ \\t]*export\\s+(default)\\b|^[ \\t]*export\\s*\\*\\s*as\\s+(${NAME})|^[ \\t]*(?:module\\.)?exports\\.(${NAME})\\s*=(?!=)|^[ \\t]*export\\s*\\*\\s*from\\s*['"]([^'"]+)['"]`, 'gmu');
 const SHELL_NAME = /^[ \t]*(?:function\s+([\p{L}_][\p{L}\p{N}_-]*)|([\p{L}_][\p{L}\p{N}_-]*)\s*\(\))/gmu;
 const PYTHON_NAME = /^[ \t]*(?:async\s+)?(?:def|class)\s+([\p{L}_][\p{L}\p{N}_]*)/gmu;
 
@@ -70,7 +76,9 @@ function declaredNames(text, path) {
     const named = (pattern) => [...bare.matchAll(pattern)].map(([, ...names]) => names.find(Boolean));
     if (/\.sh$/.test(path)) return named(SHELL_NAME);
     if (/\.py$/.test(path)) return named(PYTHON_NAME);
-    return [...named(SHOWN), ...named(EXPORTS).flatMap((list) => list.split(',').map((part) => part.trim().split(/\s+/).pop()).filter(Boolean))];
+    const listed = LISTS.flatMap(([pattern, pick]) => named(pattern).flatMap((list) => list.split(',').map(pick)));
+    const single = [...bare.matchAll(EXPORTS)].map(([, one, all, field, from]) => one ?? all ?? field ?? `* from ${from}`);
+    return [...named(SHOWN), ...listed, ...single].filter((name) => /^[\p{L}_$*]/u.test(name ?? ''));
 }
 
 // --- The head of the branch --------------------------------------------------------------------------
@@ -110,6 +118,8 @@ function headOf(git, sha) {
 // --- The mismatches ----------------------------------------------------------------------------------
 
 const gap = (text, ...keys) => ({ text, keys });
+/** A place lifts by itself, or by its symbol in backticks on a line that names no other path. */
+const placeGap = (text, path, symbol) => ({ text, keys: [`${path}:${symbol}`], symbol: { path, symbol } });
 const rowsBy = (rows, name) => rows.filter((row) => name.test(row.name));
 
 /** A place promised is declared, and a place that goes away is not. */
@@ -118,7 +128,7 @@ function placeGaps(rows, head) {
     return [...places.values()].filter(({ fate }) => fate === '' || fate === 'removed').flatMap(({ path, symbol, fate }) => {
         const stands = head.named(path).some((file) => declares(head.text(file) ?? '', file, symbol));
         if (stands === (fate === '')) return [];
-        return [gap(`\`${path}:${symbol}\` ${fate === '' ? 'is not declared in the code' : 'was to be removed and is declared'}`, `${path}:${symbol}`, symbol)];
+        return [placeGap(`\`${path}:${symbol}\` ${fate === '' ? 'is not declared in the code' : 'was to be removed and is declared'}`, path, symbol)];
     });
 }
 
@@ -145,14 +155,13 @@ function fileGaps(rows, head, plan, design) {
 }
 const newCode = (head) => head.added.filter((file) => CODE.test(file) && !head.isCopy(file));
 
-/** «No decision» beside a new file of code, a new suite among them, and a new function, class or export outside a suite. */
-function noneGaps(head, design) {
+/** «No decision» beside a new file of code, a new suite among them, and a new function, class or export of an old file. */
+function noneGaps(head) {
     const files = newCode(head);
-    const suites = design.suites(head.touched);
-    const old = head.touched.filter((file) => CODE.test(file) && !files.includes(file) && !suites.includes(file) && !head.isCopy(file));
+    const old = head.touched.filter((file) => CODE.test(file) && !files.includes(file) && !head.isCopy(file));
     return [
         ...files.map((file) => gap(`«No decision», and the branch added \`${file}\``, file)),
-        ...old.flatMap((file) => head.brought(file, declaredNames).map((name) => gap(`«No decision», and the branch declared \`${file}:${name}\``, `${file}:${name}`, name))),
+        ...old.flatMap((file) => head.brought(file, declaredNames).map((name) => placeGap(`«No decision», and the branch declared \`${file}:${name}\``, file, name))),
     ];
 }
 
@@ -183,16 +192,17 @@ function budgetGaps(rows, head, sha) {
 
 /**
  * What the coupling command refuses — lifted only as the command itself lifts it, or the push refuses it later — and the
- * promised decrease it does not judge. A short path is the one module of the head that is no copy; a module the branch
- * touched and the command did not print is one it does not count, and is not judged.
+ * promised decrease it does not judge. A short path is the one module of the head that is no copy. A touched module
+ * whose numbers did not change is counted by the command one by one; one the command does not read is not judged.
  */
-function couplingGaps(rows, head, { answered, problems, now }, design) {
+function couplingGaps(rows, head, coupling, sha, design) {
+    const promised = [...design.links(rowsBy(rows, COUPLING).map((row) => row.text).join('\n\n'), head.files)]
+        .filter(([, link]) => link.now < link.was).map(([written, link]) => ({ written, link, paths: head.named(written) })).filter(({ paths }) => paths.length === 1);
+    const { answered, problems, now } = coupling.from(sha, promised.map(({ paths: [path] }) => path).filter((path) => head.touched.includes(path)));
     if (!answered) return [];
     const refused = problems.map((text) => ({ text, keys: [], hard: true }));
-    const promised = [...design.links(rowsBy(rows, COUPLING).map((row) => row.text).join('\n\n'), head.files)];
-    const kept = promised.filter(([, link]) => link.now < link.was).flatMap(([written, link]) => {
-        const [path, ...more] = head.named(written);
-        if (!path || more.length > 0 || (!now.has(path) && head.touched.includes(path))) return [];
+    const kept = promised.flatMap(({ written, link, paths: [path] }) => {
+        if (!now.has(path) && head.touched.includes(path)) return [];
         const text = now.has(path) ? (now.get(path) > link.now ? `it is ${now.get(path)}` : null) : 'and the branch did not touch it';
         return text ? [{ ...gap(`\`${path}\` outgoing was to be ${link.now}, ${text}`, path, written), links: true }] : [];
     });
@@ -211,6 +221,9 @@ function liftsOf(git, head, design, folder) {
 }
 /** A line names the key whole or by its tail after a `/`: a full path of the plan, a short one of the progress. */
 const lifts = (item, key) => new RegExp(`(?:^|[\\s\`(«])(?:${key.split('/').map((_, at, parts) => escaped(parts.slice(at).join('/'))).join('|')})(?=[\\s\`),.;:»]|$)`, 'iu').test(item);
+/** The paths a line names in backticks: a token with a slash or the extension of a file, a place by its path. */
+const pathsIn = (item) => [...item.matchAll(/`([^`]+)`/g)].map(([, token]) => token.split(':')[0]).filter((token) => /\/|\.(?:[mc]?[jt]sx?|sh|py|md|json|s?css|less|html|ya?ml)$/.test(token));
+const alone = (item, { path, symbol }) => item.includes(`\`${symbol}\``) && pathsIn(item).every((named) => path === named || path.endsWith(`/${named}`));
 
 /** The mismatches of one history port, counted once per head: the engine asks `held` and then `gaps`. */
 const known = new WeakMap();
@@ -232,12 +245,13 @@ function listOf(git, design, coupling) {
     const { state, rows } = plan === null ? { state: 'absent', rows: [] } : design.rows(plan);
     if (state !== 'table' && state !== 'none') return [];
     const head = headOf(git, sha);
-    const found = state === 'none' ? noneGaps(head, design) : [
+    const found = state === 'none' ? noneGaps(head) : [
         ...placeGaps(rows, head), ...suiteGaps(rows, head, sha), ...fileGaps(rows, head, plan, design),
-        ...budgetGaps(rows, head, sha), ...couplingGaps(rows, head, coupling.from(sha), design),
+        ...budgetGaps(rows, head, sha), ...couplingGaps(rows, head, coupling, sha, design),
     ];
     const items = found.length > 0 ? liftsOf(git, head, design, folder) : [];
-    const left = found.filter(({ keys, hard, links = false }) => hard || !keys.some((key) => items.some((item) => LINKS.test(item) === links && lifts(item, key))));
+    const lifted = ({ keys, symbol, links = false }) => items.filter((item) => LINKS.test(item) === links).some((item) => keys.some((key) => lifts(item, key)) || (symbol && alone(item, symbol)));
+    const left = found.filter((one) => one.hard || !lifted(one));
     return [...new Set(left.map(({ text }) => text))];
 }
 

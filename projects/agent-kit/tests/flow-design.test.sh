@@ -42,7 +42,8 @@ const history = ({ before = {}, text, after = [], branch = B, planBranch = B }) 
     branch,
     commits: [{ sha: 'b', files: before }, { sha: 'p', files: { [`docs/tasks/${planBranch}/plan.md`]: text } }, ...[after].flat().map((commit, at) => ({ sha: `c${at}`, ...(commit.files ? commit : { files: commit }) }))],
 });
-const found = (spec) => gaps({ git: history(spec), design: openDesign(), coupling: { from: () => spec.coupling ?? SILENT } })();
+// Ответ о зацеплении — готовый или по списку модулей, которые мерило просит счесть поштучно.
+const found = (spec) => gaps({ git: history(spec), design: openDesign(), coupling: { from: (sha, modules) => (typeof spec.coupling === 'function' ? spec.coupling(modules) : spec.coupling ?? SILENT) } })();
 // Случай: чего ждут — «чисто» или кусок названного расхождения.
 const check = (label, spec, want = 'чисто') => {
     const all = found(spec).join('; ');
@@ -146,6 +147,17 @@ none('новая функция в Python', { 'a/b.py': 'def one():\n    pass\n'
 none('новая функция стрелкой', OLD, { 'a/b.mjs': 'export function one() {\n}\nconst two = (a) => a;\n' }, 'declared `a/b.mjs:two`');
 none('функцию оболочки добавили и убрали', { 'a/b.sh': 'one() { :; }\n' }, [{ 'a/b.sh': 'one() { :; }\ntwo() { :; }\n' }, { 'a/b.sh': 'one() { :; }\n' }]);
 none('функцию привезло слияние', OLD, [{ own: false, files: { 'a/b.mjs': 'export function one() {\n}\nfunction two() {\n}\n' } }, { 'x.md': 'y\n' }]);
+none('экспорт типов списком', { 'a/b.ts': 'let one;\n' }, { 'a/b.ts': 'let one;\nexport type { Two } from "./c";\n' }, 'declared `a/b.ts:Two`');
+none('переотдача всего под именем', OLD, { 'a/b.mjs': "export function one() {\n}\nexport * as two from './c.mjs';\n" }, 'declared `a/b.mjs:two`');
+none('переотдача всего', OLD, { 'a/b.mjs': "export function one() {\n}\nexport * from './c.mjs';\n" }, 'declared `a/b.mjs:* from ./c.mjs`');
+none('экспорт с разбором на части', OLD, { 'a/b.mjs': 'export function one() {\n}\nexport const { two, three: four } = all;\n' }, 'declared `a/b.mjs:four`');
+none('module.exports списком', { 'a/b.cjs': 'let one;\n' }, { 'a/b.cjs': 'let one;\nmodule.exports = { one, two: 2 };\n' }, 'declared `a/b.cjs:two`');
+none('exports полем', { 'a/b.cjs': 'let one;\n' }, { 'a/b.cjs': 'let one;\nexports.two = 2;\n' }, 'declared `a/b.cjs:two`');
+none('новая функция в прежнем наборе', { 'a/b.test.sh': 'one() { :; }\n' }, { 'a/b.test.sh': 'one() { :; }\ntwo() { :; }\n' }, 'declared `a/b.test.sh:two`');
+const TWO = { 'a/b.mjs': 'export function one() {\n}\nfunction two() {\n}\n' };
+const decided = (line) => ({ ...TWO, [`${F}/progress.md`]: `# Progress\n\n## Decisions along the way\n\n- ${line}\n` });
+none('новая функция, снятие символом', OLD, decided('`two` — отказ от: функция нужна разбору'));
+none('новая функция, символ в строке о другом файле не снимает', OLD, decided('`a/c.md` — превышение: `two` принесло слияние строк'), 'declared `a/b.mjs:two`');
 
 const LOST = decision({ Модули: ONE }, []);
 check('SC-AK-1974 — план без раздела', { text: plan('Текст.'), after: { 'a/b.mjs': 'let two;\n' } });
@@ -205,18 +217,22 @@ refused('новый цикл с путём в кавычках не снимае
 refused('рост связей строкой решений не снимается: его снимает сама команда', '`a/b.mjs` outgoing 1 → 3; the branch named 2');
 lift('строка связей не снимает бюджета', '`a/b.mjs` исходящие 1 → 2 — превышение: разбор стоит в том же модуле', OVER);
 place('снятие места одним символом', '`one` — отказ от: чтение уходит в другой модуль', 'чисто', '`a/b.mjs` до 9 строк');
+place('символ в строке о другом файле места не снимает', '`a/c.mjs` — превышение: `one` держит кэш ответа', '`a/b.mjs:one` is not declared', '`a/b.mjs` до 9 строк');
+place('символ без кавычек места не снимает', 'one — отказ от: чтение уходит в другой модуль', '`a/b.mjs:one` is not declared', '`a/b.mjs` до 9 строк');
+place('символ рядом с путём своего файла снимает', '`b.mjs` и `one` — отказ от: чтение уходит в другой модуль', 'чисто', '`a/b.mjs` до 9 строк');
 budget('снятие коммитом при живой папке не снимает', '`a/b.mjs` до 3 строк', {}, [{ 'a/b.mjs': L(4), ...progress('Decisions along the way', 'нет') }, { text: '`a/b.mjs` — превышение: разбор стоит в том же модуле', files: { 'x.md': 'y\n' } }], OVER);
 JS
 
 # --- SC-AK-1976 — отказ зацепления и обещанное снижение связей ----------------------------------------
 fd_group << 'JS'
 const GREW = '`a/b.mjs` outgoing 1 → 3; the branch named 2';
-const links = (label, cell, { before = { 'a/b.mjs': 'let a;\n' }, after = { 'a/b.mjs': 'let b;\n' }, answer = {}, want = 'чисто', lift = null } = {}) =>
+// `count` — сколько исходящих команда насчитает модулю, о котором мерило спросит поштучно.
+const links = (label, cell, { before = { 'a/b.mjs': 'let a;\n' }, after = { 'a/b.mjs': 'let b;\n' }, answer = {}, want = 'чисто', lift = null, count = null } = {}) =>
     check(`SC-AK-1976 — ${label}`, {
         text: decision({ Зацепление: cell }, ['a/b.mjs', 'x/a/b.mjs']),
         before,
         after: lift ? { ...after, [`${F}/progress.md`]: `# Progress\n\n## Decisions along the way\n\n- ${lift}\n` } : after,
-        coupling: { answered: true, problems: [], now: new Map(), ...answer },
+        coupling: (modules) => ({ answered: true, problems: [], ...answer, now: new Map([...(count === null ? [] : modules.map((path) => [path, count])), ...(answer.now ?? [])]) }),
     }, want);
 links('строка violations названа', 'циклов нет', { answer: { problems: [GREW] }, want: GREW });
 links('команда ответила без отказа', 'циклов нет');
@@ -226,7 +242,10 @@ const DOWN = '`a/b.mjs` исходящие 3 → 1';
 links('снижение не выполнено', DOWN, { answer: { now: new Map([['a/b.mjs', 3]]) }, want: '`a/b.mjs` outgoing was to be 1, it is 3' });
 links('снижение выполнено не целиком', DOWN, { answer: { now: new Map([['a/b.mjs', 2]]) }, want: '`a/b.mjs` outgoing was to be 1, it is 2' });
 links('снижение: модуль не тронут', DOWN, { after: { 'a/c.md': 'y\n' }, want: '`a/b.mjs` outgoing was to be 1, and the branch did not touch it' });
-links('снижение: тронутый модуль, которого команда не печатает, не судится', DOWN);
+links('снижение: тронутый модуль, которого команда не читает, не судится', DOWN);
+links('снижение: числа тронутого модуля не изменились — команда считает его поштучно', DOWN, { count: 3, want: '`a/b.mjs` outgoing was to be 1, it is 3' });
+links('снижение: поштучный счёт показал снижение', DOWN, { count: 1 });
+links('снижение: нетронутый модуль поштучно не считается', DOWN, { after: { 'a/c.md': 'y\n' }, count: 1, want: 'and the branch did not touch it' });
 links('снижение: строка бюджета его не снимает', DOWN, { answer: { now: new Map([['a/b.mjs', 3]]) }, lift: '`a/b.mjs` — превышение: разбор стоит в том же модуле', want: '`a/b.mjs` outgoing was to be 1, it is 3' });
 links('снижение коротким путём двух модулей не судится', '`b.mjs` исходящие 3 → 1', { before: { 'x/a/b.mjs': 'let a;\n', 'y/a/b.mjs': 'let a;\n' }, after: { 'x/a/b.mjs': 'let b;\n' }, answer: { now: new Map([['x/a/b.mjs', 3]]) } });
 links('снижение коротким путём рядом с разложенной копией', '`b.mjs` исходящие 3 → 1', { before: { 'x/a/b.mjs': 'let a;\n', 'tools/a/b.mjs': '// rt-kit v1.0.0 · a/b.mjs · ff\nlet a;\n' }, after: { 'x/a/b.mjs': 'let b;\n' }, answer: { now: new Map([['x/a/b.mjs', 3]]) }, want: '`x/a/b.mjs` outgoing was to be 1, it is 3' });
@@ -250,18 +269,21 @@ if (mode === 'crash') throw new Error('broken');
 const fail = (text) => console.error(text) ?? process.exit(1);
 if (mode === 'unknown') fail('check-coupling: the revision is not known');
 if (mode === 'refuse') fail('\ncheck-coupling: violations 1\n\n  `a/b.mjs` outgoing 1 → 3; the branch named 2\n\nFix the code.');
+const [, one] = /^--module=(.+)$/.exec(process.argv[2]) ?? [];
+if (one === 'a/x.mjs') console.log('a/x.mjs: incoming 0, outgoing 4, past an entry 0, shown 1, taken by nobody 0') ?? process.exit(0);
+if (one) fail(`check-coupling: the module «${one}» is not among 3 read`);
 console.log('  a/b.mjs: incoming 0 → 0, outgoing 1 → 2, total 2\n  a/c.mjs: removed, outgoing was 3');
 JS
 cat > "$FD_DIR/ask.mjs" << 'JS'
 const { open } = await import(process.env.FD_SOURCE);
-const { answered, problems, now } = open().from(process.argv[2]);
+const { answered, problems, now } = open().from(process.argv[2], (process.argv[3] ?? '').split(',').filter(Boolean));
 console.log([answered, problems.join(' / '), [...now].map(([path, links]) => `${path}=${links}`).join(',')].join('|'));
 JS
 FD_REPO="$(fixture_repo_branched main RT-1-x)"
 fixture_commit "$FD_REPO" tools/check-coupling.mjs "$(cat "$FD_DIR/command.mjs")" 'chore: команда'
 FD_PLAN="$(git -C "$FD_REPO" rev-parse HEAD)"
 export FD_CALLS="$FD_DIR/calls" FD_MODE="$FD_DIR/mode" FD_SOURCE="$TESTS/../assets/task-flow/source/coupling.mjs"
-fd_ask() { printf '%s\n' "$1" > "$FD_MODE" && (cd "$FD_REPO" && node "$FD_DIR/ask.mjs" "$FD_PLAN" 2>&1); }
+fd_ask() { printf '%s\n' "$1" > "$FD_MODE" && (cd "$FD_REPO" && node "$FD_DIR/ask.mjs" "$FD_PLAN" "${2:-}" 2>&1); }
 fd_calls() { if [ -f "$FD_CALLS" ]; then wc -l < "$FD_CALLS" | tr -d ' '; else echo 0; fi; }
 fd_fresh() { rm -rf "$FD_REPO/.git/rt-kit" "$FD_CALLS"; }
 FD_GREW='`a/b.mjs` outgoing 1 → 3; the branch named 2'
@@ -292,6 +314,10 @@ report "SC-AK-1976 — новый файл вне истории зовёт ко
 rm "$FD_REPO/a/f.mjs"
 report "SC-AK-1976 — ответ нового файла не портит ответ вершины" "$(fd_ask ok | cut -d'|' -f2)|$(fd_calls)" "$FD_GREW|5"
 fd_fresh
+report "SC-AK-1976 — модуль без изменения чисел считается поштучно, непрочитанный не числится" "$(fd_ask ok a/b.mjs,a/x.mjs,a/nope.mjs)|$(fd_calls)" "true||a/b.mjs=2,a/c.mjs=0,a/x.mjs=4|3"
+report "SC-AK-1976 — поштучный счёт хранится с ответом" "$(fd_ask ok a/b.mjs,a/x.mjs,a/nope.mjs | cut -d'|' -f3)|$(fd_calls)" "a/b.mjs=2,a/c.mjs=0,a/x.mjs=4|3"
+report "SC-AK-1976 — другой список модулей зовёт команду" "$(fd_ask ok a/b.mjs | cut -d'|' -f3)|$(fd_calls)" "a/b.mjs=2,a/c.mjs=0|4"
+fd_fresh
 fd_ask ok > /dev/null
 report "SC-AK-1976 — без слияния база команды — коммит плана" "$(tail -1 "$FD_CALLS")" "--base=$FD_PLAN"
 git -C "$FD_REPO" checkout -q main
@@ -309,7 +335,13 @@ FD_S="$(fixture_repo_branched main RT-3-z)" && fixture_commit "$FD_S" tools/chec
 git -C "$FD_S" checkout -q main && fixture_commit "$FD_S" a/m.mjs 'let m;' 'feat: m' && git -C "$FD_S" checkout -q RT-3-z && git -C "$FD_S" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false merge -q --no-edit main 2>/dev/null
 (cd "$FD_S" && node "$FD_DIR/ask.mjs" "$(git rev-parse HEAD^1)" > /dev/null 2>&1)
 report "SC-AK-1976 — стопка: слитая вершина без нижней задачи базой не служит" "$(tail -1 "$FD_CALLS")" "--base=$(git -C "$FD_S" rev-parse HEAD^1)"
-rm -rf "$FD_REPO" "$FD_S"
+# Разбор перед планом — свой коммит ветки без кода: слитая вершина базой служит.
+FD_Q="$(fixture_repo_branched main RT-4-q)" && git -C "$FD_Q" checkout -q main && fixture_commit "$FD_Q" tools/check-coupling.mjs "$(cat "$FD_DIR/command.mjs")" 'chore: команда'
+git -C "$FD_Q" checkout -q RT-4-q && git -C "$FD_Q" reset -q --hard main && fixture_commit "$FD_Q" docs/g.md 'g' 'docs: разбор' && fixture_commit "$FD_Q" docs/p.md 'p' 'docs: план'
+git -C "$FD_Q" checkout -q main && fixture_commit "$FD_Q" a/m.mjs 'let m;' 'feat: m' && git -C "$FD_Q" checkout -q RT-4-q && git -C "$FD_Q" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false merge -q --no-edit main 2>/dev/null
+(cd "$FD_Q" && node "$FD_DIR/ask.mjs" "$(git rev-parse HEAD^1)" > /dev/null 2>&1)
+report "SC-AK-1976 — разбор перед планом: база — привезённая вершина" "$(tail -1 "$FD_CALLS")" "--base=$(git -C "$FD_Q" rev-parse main)"
+rm -rf "$FD_REPO" "$FD_S" "$FD_Q"
 
 # --- SC-AK-1978 — движок: символ, лишний импорт, разложенная копия, отказ в конце хода ---------------
 # Описание без шести первых состояний начинается с «этапы-кончились»: ветке не нужны ни хостинг, ни метки.
