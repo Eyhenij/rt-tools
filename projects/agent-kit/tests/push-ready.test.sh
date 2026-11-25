@@ -21,7 +21,7 @@ input="${RT_HOOK_INPUT:-$(cat)}"
 printf '%s\n' "$input" >>"$PROBE_LOG"
 printf '%s\n' "${CLAUDE_PROJECT_DIR:-none}" >>"$PROBE_LOG.root"
 [ -f "$(printf '%s' "$input" | jq -r .cwd)/refuse" ] || exit 0
-jq -n '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:"BLOCKED by probe-guard: no test of the suite\nsecond line"}}'
+jq -n '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:"\nBLOCKED by probe-guard: no test of the suite\nsecond line"}}'
 EOF
 export PROBE_LOG="$BOX/probe"
 
@@ -130,6 +130,33 @@ for call in '--no-pr' '--no-pr=x' '--fast now' '--no-pr <reason>' '--no-pr ab' '
     run "$t" $call
     report "SC-AK-1993 — «${call}» without a reason or another argument starts nothing" "$code:$(started "$t"):$(said usage)" 3:held:yes
 done
+two_lines='half
+push ahead: green'
+for reason in 'a  ' 'ab <x' "$two_lines"; do
+    run "$t" --no-pr "$reason"
+    report "SC-AK-1993 — the reason «${reason%%$'\n'*}» of a wrong form starts nothing" "$code:$(started "$t"):$(said usage)" 3:held:yes
+done
+rm -rf "$t"
+
+# The question is a step of the run: it reads no input of the caller, and a stop ends what it holds.
+t="$(tree_of)"
+printf '%s\n' 'rt_task_state() { cat >"$CLAUDE_PROJECT_DIR/.claude/read"; printf "{}"; }' >>"$t/.claude/rt-kit/project.sh"
+printf 'typed\n' | (cd "$t" && CLAUDE_PROJECT_DIR="$t" bash "$KIT/hooks/git-guard-push-ahead.sh" >"$BOX/log" 2>&1)
+report "SC-AK-1993 — the question reads no input of the caller" "$(wc -c <"$t/.claude/read" | tr -d ' '):$(started "$t")" 0:started
+rm -f "$t/.claude/started"
+printf 'rt_task_state() { sleep 30.%s; }\n' "$$" >>"$t/.claude/rt-kit/project.sh"
+(cd "$t" && CLAUDE_PROJECT_DIR="$t" RT_PUSH_STOP_WAIT=1 exec bash "$KIT/hooks/git-guard-push-ahead.sh" >"$BOX/log" 2>&1) &
+asked_pid=$!
+for _ in $(seq 50); do
+    [ -n "$(pgrep -f "sleep 30[.]$$\$")" ] && break
+    sleep 0.2
+done
+kill -TERM "$(sed -nE 's/^push ahead: base .*, pid ([0-9]+)$/\1/p' "$BOX/log")" 2>/dev/null
+wait "$asked_pid"
+code=$?
+report "SC-AK-1993 — a stop ends the question and what it holds" \
+    "$code:$(started "$t"):$(grep '^push ahead:' "$BOX/log" | head -1 | cut -c1-16):$(verdict | cut -c1-19):$(pgrep -f "sleep 30[.]$$\$" | wc -l | tr -d ' ')" \
+    '143:held:push ahead: base:push ahead: stopped:0'
 rm -rf "$t"
 
 t="$(tree_of probe)"
@@ -180,7 +207,7 @@ PLAN="$PLAN
 folder_of "$t" x touched
 PLAN="$PLAN_KEPT"
 run "$t"
-report "SC-AK-1994 — a step marked past the engine is named" "$code:$(said 'has no green mark')" 3:yes
+report "SC-AK-1994 — a step marked past the engine is named" "$code:$(said 'with no green mark of the engine')" 3:yes
 rm -rf "$t"
 
 t="$(tree_of)"
@@ -202,6 +229,60 @@ printf 'broken(\n' >"$t/.claude/rt-kit/overrides/task-flow/flow.js"
 folder_of "$t" '>' touched
 run "$t"
 report "SC-AK-1994 — a broken description is said and judges nothing" "$code:$(said 'the task folder is not judged')" 0:yes
+rm -rf "$t"
+
+# The agreement of an epic lives until its last task: the plan that names it holds nothing.
+t="$(tree_of)"
+PLAN_KEPT="$PLAN"
+PLAN="**Draft:** \`docs/specs/x/proposed/y/\`
+
+$PLAN"
+put "$t" docs/specs/x/proposed/y/spec.md '# Agreement'
+folder_of "$t" x touched
+PLAN="$PLAN_KEPT"
+run "$t"
+report "SC-AK-1994 — an agreement under proposed holds nothing" "$code:$(reasons)" 0:0
+rm -rf "$t"
+
+# What the engine reads in another place than the tree has: the run says so and goes on.
+t="$(tree_of)"
+folder_of "$t" '>' untouched
+git -C "$t" update-ref refs/remotes/origin/master main
+git -C "$t" update-ref -d refs/remotes/origin/main
+printf 'RT_MAIN_BRANCH=master\n' >>"$t/.claude/rt-kit/project.sh"
+run "$t"
+report "SC-AK-1994 — a tree with another main branch: the folder is not judged" "$code:$(said 'not judged: the copy has no origin/main')" 0:yes
+rm -rf "$t"
+
+t="$(tree_of)"
+folder_of "$t" '>' untouched
+git -C "$t" mv docs/tasks docs/work
+keep "$t" 'docs: moved'
+printf 'RT_TASKS_DIR=docs/work\n' >>"$t/.claude/rt-kit/project.sh"
+run "$t"
+report "SC-AK-1994 — a tree with another directory of tasks: the folder is not judged" "$code:$(said 'not judged: the head has no docs/tasks/RT-7-probe')" 0:yes
+rm -rf "$t"
+
+t="$(tree_of)"
+folder_of "$t" '>' untouched
+ref "$t" main RT-7-probe
+put "$t" src/d.txt d
+keep "$t"
+run "$t"
+report "SC-AK-1994 — a plan that lies in the main branch: the folder is not judged" "$code:$(said 'already lies in origin/main')" 0:yes
+rm -rf "$t"
+
+# An engine that breaks answers nothing, and an engine called by a link judges all the same.
+t="$(tree_of)"
+folder_of "$t" '>' touched
+mv "$KIT/checks/flow-override.mjs" "$BOX/kept.mjs"
+run "$t"
+report "SC-AK-1994 — a broken engine is said and judges nothing" "$code:$(said 'flow-ready.mjs ended with no answer')" 0:yes
+mv "$BOX/kept.mjs" "$KIT/checks/flow-override.mjs"
+ln -s "$KIT" "$BOX/link"
+rm -f "$t/.claude/started"
+(cd "$t" && CLAUDE_PROJECT_DIR="$t" bash "$BOX/link/hooks/git-guard-push-ahead.sh" >"$BOX/log" 2>&1)
+report "SC-AK-1994 — an engine called by a link judges the folder" "$(started "$t"):$(said 'open steps: 1.2')" held:yes
 rm -rf "$t"
 
 # A taken-apart folder: a fix after the review of an open PR is held by neither the folder nor the base.
@@ -320,6 +401,9 @@ ref "$t" main
 git -C "$t" checkout -q RT-7-probe
 run "$t"
 report "SC-AK-1995 — main moved outside an epic is named" "$code:$(reasons):$(said 'git merge origin/main')" 3:1:yes
+words="$(grep 'unmet branch_has_main_tip no' "$ASSETS/hooks/git-guard-delivery.sh" | sed 's/^ *//')"
+report "SC-AK-1995 — main moved: the words are those of the delivery guard" \
+    "$(printf '%s\n' "$words" | grep -c .):$(sed 's/^ *//' "$ASSETS/hooks/git-guard-push-ready.sh" | grep -cxF -- "$words")" 1:1
 card "$t" ''
 run "$t"
 report "SC-AK-1995 — main moved and a silent host: the base is not judged" "$code:$(reasons)" 0:0

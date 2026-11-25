@@ -31,7 +31,9 @@ not_judged=101
 
 no_pr=''
 if [ "$#" -gt 0 ]; then
-    [ "$#" -eq 2 ] && [ "$1" = --no-pr ] && printf '%s' "$2" | grep -qE '^[[:space:]]*[^[:space:]<][^<]{2,}' && no_pr="$2"
+    [ "$#" -eq 2 ] && [ "$1" = --no-pr ] && no_pr="$(printf '%s' "$2" | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//')"
+    # One line of three characters with no angle bracket: the sample of the usage is no reason.
+    case "$no_pr" in *'<'* | *$'\n'*) no_pr='' ;; ???*) ;; *) no_pr='' ;; esac
     [ -n "$no_pr" ] || {
         printf "push ahead: usage: git-guard-push-ahead.sh [--no-pr '<reason>'] — the reason of at least three characters\n" >&2
         exit "$not_started"
@@ -109,32 +111,11 @@ if command -v rt_push_adds_nothing >/dev/null 2>&1 && rt_push_adds_nothing "$bas
     exit 0
 fi
 
-# What the opening of a PR would refuse is asked before the first step: the fix of it changes the
-# tree, and the set would run again. No helper — nothing is asked, as before.
-# shellcheck disable=SC1090
-. "$rt_hooks_dir/git-guard-push-ready.sh" 2>/dev/null || true
-# shellcheck disable=SC1091
-[ -f "$rt_hooks_dir/observe.sh" ] && . "$rt_hooks_dir/observe.sh" 2>/dev/null
-command -v rt_note >/dev/null 2>&1 || rt_note() { return 0; }
-if [ -n "$no_pr" ]; then
-    rt_note push-ready res=skipped
-    printf 'push ahead: the PR is not asked about — %s\n' "$no_pr"
-elif command -v rt_push_ready_unmet >/dev/null 2>&1; then
-    unmet_lines="$(rt_push_ready_unmet "$base_name")"
-    if [ -n "$unmet_lines" ]; then
-        rt_note push-ready res=refused
-        printf '%s\n' "$unmet_lines" | sed 's/^/— /'
-        printf "push ahead: not ready for a PR — no step started; fix the lines above and run the set again, or pass --no-pr '<reason>' for a branch that is not going into a PR yet\n"
-        exit "$not_started"
-    fi
-fi
-
 head_tree="$(git rev-parse --verify --quiet 'HEAD^{tree}')"
 sign="$(rt_tree_sign .)"
 # Whether the change touched the subject of each step, for the run lines; a step the selection
 # drops leaves a line of its own.
 subjects="$(rt_push_checks "$base" | rt_push_subjects "$base")"
-rt_push_note_not_run "$sign" "$base" "$subjects"
 
 red=""
 marked=""
@@ -235,6 +216,36 @@ trap 'rt_ahead_stop INT 130' INT
 trap 'rt_ahead_stop TERM 143' TERM
 
 printf 'push ahead: base %s, tree %s, pid %s\n' "$(rt_push_base_label "$base")" "$(git rev-parse --short 'HEAD^{tree}')" "$$"
+
+# What the opening of a PR would refuse is asked before the first step: the fix of it changes the
+# tree, and the set would run again. No helper — nothing is asked, as before. The question is asked in
+# a group of its own, as a step: a silent host is waited for, and a stop ends it.
+# shellcheck disable=SC1090
+. "$rt_hooks_dir/git-guard-push-ready.sh" 2>/dev/null || true
+# shellcheck disable=SC1091
+[ -f "$rt_hooks_dir/observe.sh" ] && . "$rt_hooks_dir/observe.sh" 2>/dev/null
+command -v rt_note >/dev/null 2>&1 || rt_note() { return 0; }
+if [ -n "$no_pr" ]; then
+    rt_note push-ready res=skipped
+    printf 'push ahead: the PR is not asked about — %s\n' "$no_pr"
+elif command -v rt_push_ready_unmet >/dev/null 2>&1; then
+    check='whether a PR of this branch would open'
+    starting="${!:-none}"
+    set -m
+    rt_push_ready_unmet "$base_name" </dev/null >"$step_out" &
+    step_pid="$!"
+    set +m
+    starting=""
+    wait "$step_pid"
+    step_pid=""
+    if [ -s "$step_out" ]; then
+        rt_note push-ready res=refused
+        sed 's/^/— /' "$step_out"
+        printf "push ahead: not ready for a PR — no step started; fix the lines above and run the set again, or pass --no-pr '<reason>' for a branch that is not going into a PR yet\n"
+        exit "$not_started"
+    fi
+fi
+rt_push_note_not_run "$sign" "$base" "$subjects"
 
 set_started="$(date +%s)"
 while IFS= read -r check; do

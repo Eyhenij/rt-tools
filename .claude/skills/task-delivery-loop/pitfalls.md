@@ -139,7 +139,8 @@ The table in `implementation.md` next to it.
 11. **Bring the set to green.** It starts only where a PR would open: the code 3 with «not ready for a PR»
     names an end-to-end test, a moved base or a folder that cannot be taken apart yet — an open step, an
     untouched footprint, an edited plan. Each is fixed, not bypassed; `--no-pr '<reason>'` is for a branch
-    that is not going into a PR. A round without fixes — the run beside it is the one; with fixes, where
+    that is not going into a PR. One more use: the only line left is a path of the footprint the work turned
+    out not to need, and a decision in the progress says why. A round without fixes — the run beside it is the one; with fixes, where
     the set waited for the round and where no second round is due, it runs now, in the background. A red
     is fixed here, while the folder still stands.
 12. **Then take the folder apart by the last commit and push.** Pattern `task-flow-archive`. The push

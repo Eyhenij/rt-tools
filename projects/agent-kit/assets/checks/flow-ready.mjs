@@ -6,14 +6,17 @@
  *   node flow-ready.mjs   a line per reason the folder cannot be taken apart yet
  *
  * Exits with 1 when a reason was printed, with 0 when there is none, and with 2 when there is
- * nothing to judge by: the description of the flow does not build, or a source did not answer. The
- * caller — the helper of the push set — says so and goes on.
+ * nothing to judge by: the description of the flow does not build, a source did not answer, or the
+ * tree has another main branch or another directory of tasks than the engine reads. The caller — the
+ * helper of the push set — says so and goes on.
  *
- * The same measurers the exits of the states read: `measure.progress.done` and
- * `measure.footprint.touched`. No other exit is read: a lost approval mark or a silent board holds
- * neither the folder nor the PR.
+ * The steps are judged by the measurer of their exit, `measure.progress.done`, the footprint by the
+ * rows of the plan. The agreement under `proposed/` is not asked about: the draft of an epic lives until
+ * its last task. No other exit is read: a lost approval mark or a silent board holds neither the folder
+ * nor the PR.
  */
-import { existsSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { existsSync, realpathSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -26,6 +29,16 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const { footprintRows, touches } = await import(
     pathToFileURL([join(HERE, 'task-flow/measure/text.mjs'), join(HERE, '../task-flow/measure/text.mjs')].find((path) => existsSync(path))).href
 );
+
+const gitOk = (...args) => spawnSync('git', args, { stdio: 'ignore' }).status === 0;
+
+/** Why the engine has nothing to judge the folder of the branch by, or an empty string. */
+function unjudged(branch) {
+    const folder = `docs/tasks/${branch}`;
+    if (!gitOk('rev-parse', '--verify', '--quiet', 'origin/main')) return 'the copy has no origin/main';
+    if (!gitOk('cat-file', '-e', `HEAD:${folder}`)) return `the head has no ${folder}`;
+    return gitOk('cat-file', '-e', `origin/main:${folder}/plan.md`) ? `the plan of ${folder} already lies in origin/main` : '';
+}
 
 /** The numbers of the steps the progress does not mark done, for the words of the reason. */
 function openSteps({ steps, tree }, plan) {
@@ -60,29 +73,26 @@ function folderReasons(sources, model, read) {
         reasons.push(
             open.length > 0
                 ? `the plan has open steps: ${open.join(', ')} — finish each and run \`node tools/task-flow-script.mjs step N.M\``
-                : 'a step marked done has no green mark: run `node tools/task-flow-script.mjs step --done`',
+                : 'the progress marks done a step with no green mark of the engine, or its steps are not those of the plan: run `node tools/task-flow-script.mjs step --done`',
         );
     }
-    if (read('measure.footprint.touched') !== true) {
-        const paths = untouchedPaths(sources, plan);
-        reasons.push(
-            paths.length > 0
-                ? `the footprint of the plan is untouched: ${paths.join(', ')}`
-                : 'the agreement the plan names under `proposed/` still lies in the branch: merge it into the domain spec',
-        );
-    }
+    const paths = untouchedPaths(sources, plan);
+    if (paths.length > 0) reasons.push(`the footprint of the plan is untouched: ${paths.join(', ')}`);
     const changed = changedSincePlan(sources.git, plan);
     if (changed.length > 0) reasons.push(`the task folder differs from the commit of the plan: ${changed.join(', ')} — put each back as that commit holds it`);
     return reasons;
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href) {
     try {
         const path = flowPath();
         const model = buildModel(path, { override: overridePath() });
         const source = await openSources(model, dirname(path));
+        const git = source('git');
+        const why = unjudged(git.branch());
+        if (why) throw new Error(why);
         const read = await openReaders(model, dirname(path));
-        const reasons = folderReasons({ git: source('git'), steps: source('steps'), tree: source('tree') }, model, read);
+        const reasons = folderReasons({ git, steps: source('steps'), tree: source('tree') }, model, read);
         for (const reason of reasons) console.log(reason);
         process.exit(reasons.length > 0 ? 1 : 0);
     } catch (error) {

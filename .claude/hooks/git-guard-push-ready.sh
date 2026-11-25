@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/git-guard-push-ready.sh · f3de1af6e702 · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/git-guard-push-ready.sh · 23a5dfb21faa · правится надстройкой, не здесь
 # Whether a PR of the checked-out branch would open, asked before the push set starts. NOT a guard: it
 # has no `rt-hook:` declaration and hooks into no agent event. The run ahead
 # (`git-guard-push-ahead.sh`) sources it and calls `rt_push_ready_unmet <the base of the set>`.
@@ -7,10 +7,11 @@
 # A PR used to learn what it lacks after the set: a missing end-to-end test, a moved branch of the
 # epic, a task folder that cannot be taken apart. The fix changes the tree, and the set ran again.
 #
-# The conditions are judged by the code the opening of a PR is judged by, not by a list of its own: the
-# functions of `git-guard-delivery-epic.sh` with an `unmet` that prints, and the guards the tree names
-# in `RT_PUSH_READY_HOOKS`, each called with a `gh pr create` into the base of the future PR. The
-# folder is judged by `flow-ready.mjs`.
+# The epic and the rules of the tree are judged by the code the opening of a PR is judged by, not by a
+# list of its own: the functions of `git-guard-delivery-epic.sh` with an `unmet` that prints, and the
+# guards the tree names in `RT_PUSH_READY_HOOKS`, each called with a `gh pr create` into the base of the
+# future PR; a refusal is the `deny` an agent reads. A moved main branch outside an epic repeats the
+# words of the delivery guard. The folder is judged by `flow-ready.mjs`, with the measurers of the flow.
 #
 # What is judged depends on what lies in the head:
 #   - any task branch            — the guards of the tree;
@@ -45,8 +46,9 @@ rt_push_ready_ask() {
     jq -cn --arg c "gh pr create --base $3" --arg d "$2" \
         '{session_id:"push-ready", tool_name:"Bash", tool_input:{command:$c}, cwd:$d}' \
         | CLAUDE_PROJECT_DIR="$2" bash "$1" 2>/dev/null \
-        | jq -r 'select(.hookSpecificOutput.permissionDecision == "deny") | .hookSpecificOutput.permissionDecisionReason // empty' 2>/dev/null \
-        | head -n 1
+        | jq -r --arg h "${1##*/}" 'select(.hookSpecificOutput.permissionDecision == "deny")
+            | [(.hookSpecificOutput.permissionDecisionReason // "") | split("\n")[] | select(test("\\S"))][0]
+            // ($h + " refuses the opening of the PR")' 2>/dev/null
 }
 
 # Every unmet condition of the future PR, a line each. A subshell: the names it declares — `unmet`, the
@@ -95,7 +97,13 @@ rt_push_ready_unmet() (
             said="$(cd "$root" && node "$engine" 2>/dev/null)"
             case $? in
                 0) ;;
-                1) printf '%s\n' "$said" ;;
+                1)
+                    if [ -n "$said" ]; then
+                        printf '%s\n' "$said"
+                    else
+                        printf 'push ahead: the task folder is not judged: %s ended with no answer\n' "${engine##*/}" >&2
+                    fi
+                    ;;
                 *) printf 'push ahead: %s\n' "${said:-the task folder is not judged}" >&2 ;;
             esac
             break
@@ -105,8 +113,8 @@ rt_push_ready_unmet() (
         elif [ -n "$state" ] && git rev-parse --verify --quiet "refs/remotes/origin/$main_branch" >/dev/null 2>&1 \
             && ! git merge-base --is-ancestor "origin/$main_branch" HEAD 2>/dev/null; then
             behind="$(git rev-list --count "HEAD..origin/$main_branch" 2>/dev/null)"
-            printf '«%s» has moved ahead by %s commits and is not merged into the branch: git fetch origin && git merge origin/%s — by the block of the pattern git-workflow-merge.\n' \
-                "$main_branch" "${behind:-several}" "$main_branch"
+            # The words of the delivery guard, letter by letter: a scenario compares the two.
+            unmet branch_has_main_tip no "«${main_branch}» has moved ahead by ${behind:-several} commits and is not merged into the branch. A PR from a diverged branch shows the reviewer the edit mixed with someone else, and the checks on it run from a stale base. Merge it in and repeat: git fetch origin && git merge origin/${main_branch} — by the block of the pattern git-workflow-merge, which keeps conflict markers out of the guards; the resolving of the conflict is there too."
         fi
     fi
 

@@ -17,10 +17,14 @@ Given the same branch and `--no-pr` with a reason
 When the set runs ahead
 Then nothing is asked, the reason is printed, the first step starts and the observations keep a line
 
-Given `--no-pr` without a reason, with a reason shorter than three characters, with the sample of the reason,
-or another argument
+Given `--no-pr` without a reason, with a reason shorter than three characters, of two lines or with an angle
+bracket, or another argument
 When the run is called
 Then it ends with 3 and the line of the usage
+
+Given a question that waits for a silent host
+When the run is stopped by `TERM`
+Then it ends with 143, and nothing the question started is left
 
 Given a branch with no task number, or one named not by the form of the tree
 When the set runs ahead
@@ -39,7 +43,12 @@ Given a folder with every step done and no approval mark on the machine
 When the set runs ahead
 Then the first step starts
 
-Given a description of the flow that does not build
+Given a plan that names an agreement still lying under `proposed/`
+When the set runs ahead
+Then the agreement holds nothing
+
+Given a description of the flow that does not build, an engine that breaks, another main branch or another
+directory of tasks, or a plan that lies in the main branch already
 When the set runs ahead
 Then the run says the folder is not judged and starts the first step
 

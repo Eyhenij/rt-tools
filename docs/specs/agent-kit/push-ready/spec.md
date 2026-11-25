@@ -11,8 +11,8 @@ What the run ahead asks about a future PR before its first step, and how it ends
 
 The opening of a PR refuses after the set: a missing end-to-end test, a moved branch of the epic, a task
 folder that differs from its plan. The fix changes the tree, the marks fall, and the set runs again. From 21
-to 25 November 2026 thirty PRs were opened in one tree and 14 openings were refused on 11 branches. Every one
-of those conditions was known before the set began.
+to 25 November 2026 thirty PRs were opened in one tree and 14 openings were refused on 11 branches. Five of
+those branches were refused by a condition known before the set began.
 
 ## Terminology
 
@@ -32,12 +32,14 @@ There is no interface: the run answers with lines of output and an exit code.
 - **A run ahead whose PR would not open starts no step.** It prints a line per unmet condition, all of them at
   once, ends with the line `push ahead: not ready for a PR` and the code 3, and leaves a line in the
   observations.
-- **The conditions are judged by the code the opening of a PR is judged by.** The functions of the epic helper
-  of the delivery guard, and the guards the tree names, each called with an opening of a PR. A list of its own
-  would drift from them.
+- **The conditions of the epic and of the tree are judged by the code the opening of a PR is judged by.** The
+  functions of the epic helper of the delivery guard, and the guards the tree names, each called with an
+  opening of a PR. A list of its own would drift from them. A moved main branch outside an epic repeats the
+  line of the delivery guard, and a scenario compares the two; the folder is judged by the measurers of the
+  flow.
 - **The guards a tree opens a PR through are named by its profile.** Each is asked with the base of the PR and
-  the root of the copy the run stands in, and the first line of its refusal is the condition. With none named
-  no guard is asked; a named guard that is absent holds nothing.
+  the root of the copy the run stands in, and the first line of its `deny` that holds words is the condition.
+  With none named no guard is asked; a named guard that is absent, or one that answers otherwise, holds nothing.
 - **The base of the PR is the branch of the epic where the set is counted against the main branch.** An epic
   moved by a plain commit is no base of the set, and its task would be judged by the whole epic. In a chain
   the base of the set is the branch below, and so is the base of the PR.
@@ -49,11 +51,15 @@ There is no interface: the run answers with lines of output and an exit code.
   so a lost approval mark holds nothing.
 - **The folders of tasks left in the branch of an epic hold its run.** The branch of an epic is told by the
   label of its card.
-- **A branch not going into a PR yet is run with a reason.** `--no-pr '<reason>'`, at least three characters:
-  nothing is asked, the reason is printed, and the observations keep a line. Without a reason, or with any
-  other argument, the run does not start.
-- **What cannot be judged does not hold the run.** A branch with no task number, a silent host, no engine, a
-  description of the flow that does not build: the opening of the PR judges it.
+- **A branch not going into a PR yet is run with a reason.** `--no-pr '<reason>'`, one line of at least three
+  characters with no angle bracket: nothing is asked, the reason is printed, and the observations keep a line
+  without its words — they hold no free text. Without a reason, or with any other argument, the run does not
+  start.
+- **What cannot be judged does not hold the run.** A branch with no task number, a silent host, no engine or
+  one that breaks, a description of the flow that does not build, a tree whose main branch or directory of
+  tasks is not the one the engine reads: the opening of the PR judges it.
+- **The question is a step of the run.** It comes after the line with the process number, reads no input of the
+  caller, and a stop ends it with everything it holds.
 
 ## What is out of scope
 
@@ -97,8 +103,8 @@ Not applicable.
 
 ### Several objects
 
-A run judges the copy it stands in: the profile, the folder and the guards are read from its root, whatever
-copy the session stands in.
+A run judges the copy it stands in: the profile and the folder are read from its root, and the guards are
+called with it, whatever copy the session stands in. The guards themselves are those next to the called script.
 
 ## Decisions
 
