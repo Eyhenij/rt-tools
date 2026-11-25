@@ -21,6 +21,26 @@ test.describe('оболочка админки', () => {
         await expect(qa(page, 'container-no-sections')).toHaveCount(0);
     });
 
+    test('SC-MB-458 — токены кита доходят до страницы приложения', async ({ page }: { page: Page }) => {
+        await openSection(page, 'postmortems');
+
+        // Токены приходят файлом стилей кита; если часть выпала из сборки (файл не подключён или
+        // порезан не там), корень не знает их и экран рисуется значениями по умолчанию браузера.
+        const tokens: Record<string, string> = await page.evaluate((): Record<string, string> => {
+            const style: CSSStyleDeclaration = getComputedStyle(document.documentElement);
+
+            return {
+                surface: style.getPropertyValue('--rt-color-bg-surface').trim(),
+                inputHeight: style.getPropertyValue('--rt-input-height').trim(),
+                space: style.getPropertyValue('--rt-space-md').trim(),
+            };
+        });
+
+        expect(tokens['surface']).not.toBe('');
+        expect(tokens['inputHeight']).not.toBe('');
+        expect(tokens['space']).not.toBe('');
+    });
+
     test('SC-MB-142 — разделы стоят верхним рядом, а колонки с ними слева нет', async ({ page }: { page: Page }) => {
         await openSection(page, 'postmortems');
 
