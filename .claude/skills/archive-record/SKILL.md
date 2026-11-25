@@ -42,22 +42,32 @@ npm run task:archive -- <body of the PR> --title '<title of the PR>'
 ```
 
 The command writes the record of the branch, takes the task folder off the disk and the index and
-leaves the commit to the executor. It runs after the push set is green and the body is whole.
+leaves the commit to the executor. It runs after the push set is green, the body is whole and
+`goal-critic` has read it.
 
-- **From the folder, word for word:** the request, the questions and answers, the decisions of the
-  grill and of the progress, the approvals of the kit, and each item of the progress that quotes the owner.
-- **From the approval mark:** the answer that approved the plan.
+- **From the folder, word for word:** the approvals of the kit; the grill, all but what it says of the
+  tree and of the rules, its head with the keys of the cargo included; the decisions of the progress.
+- **«Цитаты из разбора и хода работы»** — each item of the rest that quotes someone and names the owner,
+  a menu or an approval, and each quoted block. A quote longer than 20 characters the record already
+  holds is not repeated. Words said with no quotation marks are not found: they are quoted in the progress.
+- **From the approval mark:** the answer that approved the plan; a mark of another plan says so.
 - **From the body:** «Чем подтверждено» and «Оставшийся шаг». What the work leaves outside itself
   goes into «Оставшийся шаг»: nothing else of the body reaches the record.
 
-What the command cannot know the executor writes into the decisions of the progress before it: the
-item `- **Цена:** …`, without which it refuses, and each decision of the grill the work cancelled.
-The folder goes with no files but its own; a script the commit of the plan holds leaves with it. A
-refusal writes and removes nothing.
+What the command cannot know the executor writes into the decisions of the progress before the set,
+by the commit of the last round, and without either item it refuses: `- **Цена:** …` and
+`- **Отменено из разбора:** …` — each decision of the grill the work cancelled, or «нет». The folder
+goes with no files but its own; a script the commit of the plan holds leaves with it. A refusal writes
+and removes nothing.
+
+The record does not change after the command: a red at the push and the remarks of the owner live in
+the body of the PR. A fix that needs the folder takes it back by `git revert` of the commit that took
+it apart, and the record is built anew. The epic is named by the one plan in `docs/plans/` whose table
+holds the task; with none or two the record names no epic.
 
 ## What goes into a record
 
-On the third line — the task number, the request number and the day the record is written. Then what
+On the third line — the task number, the epic and the day the record is written. Then what
 explains the decision that took place:
 
 - the grill of the request: the owner's answers in their own words, there is nowhere else to

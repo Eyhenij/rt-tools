@@ -123,7 +123,8 @@ The table in `implementation.md` next to it.
 8. **Check every finding against the code, fix the confirmed ones, check live again.** Then the quick
    checks with `node tools/check-dupes.mjs` and `pnpm run check:unused`, then one commit for the round.
 9. **Make the copy ready on every path, then run the push set beside round two where it is due.** In this
-   order: on the full path `--round-two` and, where it says «нужен», the diff
+   order: the items «Цена» and «Отменено из разбора» into the decisions of the progress, by the commit of
+   the round — the record of step 12 refuses without them; on the full path `--round-two` and, where it says «нужен», the diff
    of the round — both before the base is merged in, after it the diff carries another branch's content;
    then the base, the agreement into the domain spec, the texts up to date — pattern `task-flow-close` —
    and the expired archive records by `node tools/archive-prune.mjs --apply` in their own commit. No round
@@ -144,8 +145,8 @@ The table in `implementation.md` next to it.
     out not to need, and a decision in the progress says why. A round without fixes — the run beside it is the one; with fixes, where
     the set waited for the round and where no second round is due, it runs now, in the background. A red
     is fixed here, while the folder still stands.
-12. **Then write the body of the PR whole, take the folder apart by the last commit and push.** The record is
-    built by `npm run task:archive` from the body and the folder (rule `archive-record`); what a requirement
+12. **Then write the body of the PR whole, take the folder apart by the last commit and push.** The body is
+    read by `goal-critic` before the command. The record is built by `npm run task:archive` from the body and the folder (rule `archive-record`); what a requirement
     of the folder leaves in the spec is there before the call, by `task-flow-archive`. The push reads the
     marks of the run ahead; a step the last commit reached runs at the push.
 13. **Open the PR by `gh pr create` with the machine account's token.** The body lists what each

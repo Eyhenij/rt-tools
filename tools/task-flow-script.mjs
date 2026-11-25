@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.39.1 · checks/task-flow-script.mjs · afd0ca1f2ef4 · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/task-flow-script.mjs · f1e9c09017d7 · правится надстройкой, не здесь
 /**
  * The engine of the task flow: reads the description `flow.js` through the model and answers about
  * the scenario. The description lies next to the engine as `task-flow/flow.js` where the engine is
@@ -306,7 +306,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
         else if (command === 'step') {
             const source = await openSources(model, dirname(path));
             const sources = { git: source('git'), steps: source('steps'), marks: source('marks'), owner: source('owner') };
-            if (/^\d+$/.test(target)) process.exit(await runStage(sources, model, target));
+            if (/^\d+$/.test(target)) process.exit(await runStage(sources, model, target, args.slice(2)));
             process.exit(await runStepCommand(sources, model, target, process.argv.includes('--pr') ? '--pr' : ''));
         } else if (command === 'plan-check') {
             const source = await openSources(model, dirname(path));

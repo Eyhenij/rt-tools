@@ -246,7 +246,8 @@ ps -p "${P:-0}" -o command= | grep -q 'git-guard-push-ahead' && kill -TERM "$P" 
 
 A red here is fixed while the task folder still stands. On green the body of the PR is written whole, by
 section 13, and the folder is taken apart by the last commit: the record is built from both, and the
-refusals of the command write nothing (rule `archive-record`):
+refusals of the command write nothing (rule `archive-record`). It refuses without the items «Цена» and
+«Отменено из разбора» in the decisions of the progress: they go by the commit of the last round.
 
 ```bash
 npm run task:archive -- <body file> --title '[RT-N] <что сделано>'

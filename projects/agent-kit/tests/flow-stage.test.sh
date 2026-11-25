@@ -63,7 +63,8 @@ progress() {
     done
     rm -rf "$MARKS"
 }
-green() { mkdir -p "$MARKS" && for n in "$@"; do printf '{"matched":true}\n' > "$MARKS/$n.json"; done; }
+# A green mark of the plan of the branch; `GREEN` overrides its fields.
+green() { mkdir -p "$MARKS" && for n in "$@"; do printf '{"matched":true,"plan":"%s","replaced":false}\n' "${GREEN:-$PRINT}" > "$MARKS/$n.json"; done; }
 step() {
     local code
     OUT="$(cd "$R" && node "$ENGINE" step "$@" 2>&1)"
@@ -81,6 +82,12 @@ edit() {
     jq -n --arg f "$P" --arg d "$R" \
         '{session_id:"tests",tool_name:"Edit",cwd:$d,tool_input:{file_path:$f,old_string:"- **Stage:** 1",new_string:"- **Stage:** 1 of 3"}}'
 }
+
+# The fingerprint of the plan as the engine writes it.
+states
+progress '>      '
+step 1.1
+PRINT="$(node -p "require('$MARKS/1.1.json').plan")"
 
 # --- every step matched ---------------------------------------------------------------------
 states
@@ -146,6 +153,36 @@ progress 'x>     '
 report "SC-AK-2001 — a mark without a green one is measured: code 1" "$(code_of 1)" 1
 report "SC-AK-2001 — a mark without a green one is measured: its verdict" "$(out | grep -c '^1.1 .*· не совпало$')" 1
 
+states 1.1
+progress 'x>     '
+mkdir -p "$MARKS" && printf '{"matched":false,"plan":"%s","replaced":false}\n' "$PRINT" > "$MARKS/1.1.json"
+report "SC-AK-2001 — a mark without a green one is measured: a mark that did not match" "$(code_of 1; out | grep -c '^1.1 .*· не совпало$')" '11'
+progress 'x>     '
+GREEN=0000000000000000 green 1.1
+report "SC-AK-2001 — a mark without a green one is measured: the mark of another plan" "$(code_of 1; out | grep -c '^1.1 .*· не совпало$')" '11'
+report "SC-AK-2001 — a done step that did not match keeps its mark in the progress, its mark on disk is gone" "$(marks) $(disk)" 'xxx>... 1.2 1.3'
+states 1.1
+progress 'x>     '
+green 1.1
+printf '\n## Decisions along the way\n\n- **Check of step 1.1 replaced:** `echo no` → `ok`\n' >> "$P"
+report "SC-AK-2001 — a mark without a green one is measured: the check is replaced since" "$(code_of 1; out | grep -c '^1.1 .*· не совпало$')" '11'
+
+# --- a progress whose lines do not follow the plan ------------------------------------------
+# The case, the edit of the progress, and the marks and the open step it leaves.
+broken() {
+    states ${4:-}
+    progress '>      '
+    sed -i.bak -E "$2" "$P" && rm "$P.bak"
+    local before="$(cat "$P")"
+    report "SC-AK-2000 — a line that cannot be marked in order stops the marking: $1" "$(code_of 1) $(out | grep -c "not marked: $3")" '1 '"${5:-1}"
+    report "SC-AK-2000 — a line that cannot be marked in order stops the marking: $1, the progress stays" "$([ "$before" = "$(cat "$P")" ] && echo same)" same
+    expect_decision "SC-AK-2000 — an edit of the progress passes the guard after it: $1" flow-step-guard.sh "$(edit)" PASS
+}
+broken 'a note with the number of a step above the steps' 's/^- \*\*Stage.*/&\n- [ ] 1.1 One (a note)/' 'the progress holds no line of it'
+broken 'no line of the step' '/\] 1\.1 One/d; s/\[ \] 1\.2/[>] 1.2/' 'the progress holds no line of it'
+broken 'no line of a step that did not match' '/\] 1\.1 One/d; s/\[ \] 1\.2/[>] 1.2/' '1.1 stands open before it' 1.1 2
+broken 'the lines swapped' 's/^- \[>\] 1\.1 One/- [>] 1.9 Two/; s/^- \[ \] 1\.2 Two/- [ ] 1.1 One/; s/^- \[>\] 1\.9/- [>] 1.2/' 'the progress holds no line of it' 1.2
+
 # --- refusals -------------------------------------------------------------------------------
 states
 progress '>      '
@@ -153,6 +190,8 @@ before="$(cat "$P")"
 report "SC-AK-2002 — no such stage: code 1" "$(code_of 3)" 1
 report "SC-AK-2002 — no such stage: the refusal" "$(out)" 'step: the plan names no stage 3'
 report "SC-AK-2002 — no such stage: nothing is measured" "$(disk) $([ "$before" = "$(cat "$P")" ] && echo same)" ' same'
+report "SC-AK-2002 — one stage per call: a second number" "$(code_of 1 2) $(out)" '1 step: one stage per call: 2 is not read'
+report "SC-AK-2002 — one stage per call: a flag of the final rerun" "$(code_of 1 --pr) $(disk)" '1 '
 progress 'xxxxx> '
 report "SC-AK-2002 — no such stage: 1 is not 10" "$(code_of 1; out | grep -c '^10')" '00'
 report "SC-AK-2002 — a step with no check: code 1" "$(code_of 10)" 1
@@ -164,7 +203,15 @@ progress '>      '
 report "SC-AK-2003 — one step as before: step 1.1" "$(step 1.1; out)" 'ожидалось `ok` · получено ok · совпало'
 report "SC-AK-2003 — one step as before: marked" "$(marks)" 'x>.....'
 step --done
-report "SC-AK-2003 — one step as before: step --done" "$(out | tail -1)" 'steps re-measured 1, matched 1'
+report "SC-AK-2003 — one step as before: step --done prints its line and the count" "$(out | tr '\n' '|')" '1.1 ожидалось `ok` · получено ok · совпало|steps re-measured 1, matched 1|'
+
+# --- no progress, another directory ---------------------------------------------------------
+rm "$P" && rm -rf "$MARKS"
+report "SC-AK-1998 — a progress that is not there is not written" "$(code_of 1; out | tail -1; ls "$F")" '1stage 1: measured 3, matched 3, left open 3
+plan.md'
+progress '>      '
+report "SC-AK-2002 — a call from a directory below the root is refused" "$(cd "$R/state" && node "$ENGINE" step 1 2>&1 | grep -c 'is not from the root of the tree')" 1
+progress 'x>     '
 
 # --- a taken-apart folder -------------------------------------------------------------------
 fixture_commit "$R" "docs/tasks/$B/progress.md" "$(cat "$P")" 'docs: progress'

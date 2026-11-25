@@ -76,6 +76,10 @@ pnpm run storybook:ui-kit-v2   # the kit's showcase, port 6007
 # View dependency graph
 pnpm run graph
 
+# The archive record of the branch from its task folder and the body of the PR; the folder leaves the
+# disk and the index. Its inputs and refusals — the rule archive-record
+npm run task:archive -- <body of the PR> --title '<title of the PR>'
+
 # Rebuild the code graphs: the root one and one per directory under projects/, apps/ and libs/.
 # Only graph.json goes into history; how a session reads them is the pattern task-flow-graph
 pnpm run graph:build

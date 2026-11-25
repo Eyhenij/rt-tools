@@ -305,7 +305,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
         else if (command === 'step') {
             const source = await openSources(model, dirname(path));
             const sources = { git: source('git'), steps: source('steps'), marks: source('marks'), owner: source('owner') };
-            if (/^\d+$/.test(target)) process.exit(await runStage(sources, model, target));
+            if (/^\d+$/.test(target)) process.exit(await runStage(sources, model, target, args.slice(2)));
             process.exit(await runStepCommand(sources, model, target, process.argv.includes('--pr') ? '--pr' : ''));
         } else if (command === 'plan-check') {
             const source = await openSources(model, dirname(path));

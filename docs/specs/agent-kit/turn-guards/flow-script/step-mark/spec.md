@@ -74,12 +74,17 @@ prints a line per fixture.
 ### The stage
 
 - **`step <N>` measures the steps of stage N that lack a done mark with a green one, side by side; with none lacking it measures them all.**
+  A mark on disk is green for the step when it was written by this plan, and by a check replaced or not
+  as it stands now.
 - **After the measurement `step <N>` marks the matched steps done in the order of the whole plan, up to the first step that stays open.**
   A step that matched behind an open one, of its stage or of an earlier, writes its mark and stays open
   in the progress, and its line names the open step. A done mark behind an open step is refused by the
-  guard on every edit of the progress, so the call does not lead there.
+  guard on every edit of the progress, so the call does not lead there. A step whose line the progress
+  lacks, or holds out of order, stops the marking the same way. A done step that does not match keeps
+  its done mark, loses the one on disk, and does not stop the steps behind it: the code is 1.
 - **`step <N>` exits with 0 only when every measured step matched and is marked done.**
-  A step with no check is one line of refusal, and the others are measured.
+  A step with no check is one line of refusal, and the others are measured. A call takes one stage: a
+  second number or a flag is refused, and nothing is measured.
 - **`step <N>` is refused on a stage the plan does not name and on a taken-apart task folder, one standing on disk and not in the head included.**
 
 ### The final rerun
