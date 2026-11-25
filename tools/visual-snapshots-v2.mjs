@@ -20,6 +20,7 @@
  *
  *   node tools/visual-snapshots-v2.mjs                      # matching against the references
  *   node tools/visual-snapshots-v2.mjs '<file>'             # matching of the named story files
+ *   node tools/visual-snapshots-v2.mjs --files <list>       # matching of the story files the list names, a path a line
  *   node tools/visual-snapshots-v2.mjs --update '<file>'    # a re-take of the named story files
  *   node tools/visual-snapshots-v2.mjs --update-all         # a re-take of the whole directory
  */
@@ -182,14 +183,26 @@ if (updateIndex >= 0 && (updateOne === undefined || updateOne.startsWith('--')))
 
 // A path sample without `--update` matches the named files and takes nothing anew.
 const matchOne = updateIndex < 0 && !updateAll && args[0] !== undefined && !args[0].startsWith('--') ? args[0] : undefined;
-const pointed = updateOne ?? matchOne;
+const listIndex = args.indexOf('--files');
+const listed = listIndex >= 0 ? args[listIndex + 1] : undefined;
+
+if (listIndex >= 0 && (listed === undefined || !existsSync(listed))) {
+    fail(`The list of story files is not named or does not lie at «${listed ?? ''}».`);
+}
+
+/** Every path of the list whole: without the slash and the end a file would open its namesakes too. */
+const filesOfList = listed === undefined ? undefined : readFileSync(listed, 'utf8').split('\n').filter(Boolean);
+const samplesOfList = filesOfList?.map((file) => `/${file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`).join('|');
+const pointed = updateOne ?? samplesOfList ?? matchOne;
 
 // A pointed run opens part of the directory, and the match of the directory is for a full session only.
-const own = await requireOwnShowcase(pointed === undefined);
+// A list is matched against the whole index: its references are checked by the caller's registry.
+const own = await requireOwnShowcase(pointed === undefined || filesOfList !== undefined);
 console.log(`The second kit's showcase on ${URL}: stories ${own}.`);
 
+// A caller that matches the registry itself gives its own: created here, it would be erased unread.
 const registryDir = mkdtempSync(join(tmpdir(), 'rt-snapshots-'));
-const registryPath = join(registryDir, 'taken.txt');
+const registryPath = filesOfList && process.env.RT_SNAPSHOT_REGISTRY ? process.env.RT_SNAPSHOT_REGISTRY : join(registryDir, 'taken.txt');
 writeFileSync(registryPath, '');
 
 /**
@@ -256,5 +269,7 @@ if (run.status !== 0) {
 console.log(
     pointed === undefined
         ? `References in the directory: ${stored}. There are no orphaned ones.`
-        : `Only the files of «${pointed}» were opened: the directory of references is not matched.`
+        : filesOfList
+          ? `Only the ${filesOfList.length} listed files were opened.`
+          : `Only the files of «${pointed}» were opened: the directory of references is not matched.`
 );

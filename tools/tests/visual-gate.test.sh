@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# The pure part of the showcase gate `tools/visual-gate.mjs`: the command a re-take is launched with
-# and the references no opened story named.
+# The showcase gate `tools/visual-gate.mjs`: the command a re-take is launched with, the references no
+# opened story named, and the run of the stories a branch touched.
 #
-# No showcase and no browser here: the gate's decisions are functions of their inputs, and the script
-# runs nothing when it is imported rather than called.
+# No showcase and no browser here. The decisions are functions of their inputs, and the script runs
+# nothing when it is imported rather than called; the run of the touched stories is called whole in a
+# one-off kit, with a build and a shooting that only write down that they were called.
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 echo "the showcase gate: the re-take command and the orphaned references"
@@ -83,5 +84,94 @@ report "the kit's orphans are left to its own wrapper" "$(drive references ui-ki
 # Importing the gate must launch nothing: otherwise the scenarios above would raise a showcase.
 report "importing the gate raises no showcase" \
     "$(node -e "import('$TOOLS/visual-gate.mjs').then(() => console.log('imported'))" 2>&1)" 'imported'
+
+# The run of the touched stories, called whole: the build, the shooting and the probes are stand-ins.
+RUN="$WORK/kit"
+KIT=projects/ui-kit-v2
+SHOTS=$KIT/.storybook/__snapshots__
+REAL_NODE="$(command -v node)"
+mkdir -p "$WORK/bin" "$RUN/$KIT/src" "$RUN/$SHOTS" "$RUN/dist/storybook/@rt-tools/ui-kit-v2"
+
+cat > "$WORK/bin/pnpm" <<SH
+#!/bin/sh
+echo "pnpm \$*" >> "$WORK/calls"
+SH
+cat > "$WORK/bin/node" <<SH
+#!/bin/sh
+case "\$1" in
+    tools/serve-static.mjs) shift; exec "$REAL_NODE" "$TOOLS/serve-static.mjs" "\$@" ;;
+    tools/shot-browser.mjs)
+        echo "shot \$*" >> "$WORK/calls"
+        for last; do :; done
+        [ -f "\$last" ] && cp "\$last" "$WORK/list"
+        [ -n "\$RT_SNAPSHOT_REGISTRY" ] && cp "$WORK/taken" "\$RT_SNAPSHOT_REGISTRY"
+        exit "\$(cat "$WORK/shot-code")" ;;
+    *) exec "$REAL_NODE" "\$@" ;;
+esac
+SH
+chmod +x "$WORK/bin/pnpm" "$WORK/bin/node"
+
+for name in one two; do
+    printf "import './%s.scss';\nexport default { title: 'Atoms/%s' };\n" "$name" "$name" > "$RUN/$KIT/src/$name.stories.ts"
+    printf '.x { color: red; }\n' > "$RUN/$KIT/src/$name.scss"
+done
+printf 'export default {};\n' > "$RUN/$KIT/.storybook/preview.ts"
+touch "$RUN/$SHOTS/atoms-one--base.png" "$RUN/$SHOTS/atoms-one--base--w480.png" "$RUN/$SHOTS/atoms-two--base.png"
+cat > "$RUN/dist/storybook/@rt-tools/ui-kit-v2/index.json" <<JSON
+{ "entries": {
+  "atoms-one--base": { "id": "atoms-one--base", "type": "story", "importPath": "./$KIT/src/one.stories.ts" },
+  "atoms-two--base": { "id": "atoms-two--base", "type": "story", "importPath": "./$KIT/src/two.stories.ts" }
+} }
+JSON
+printf 'dist\n' > "$RUN/.gitignore"
+(cd "$RUN" && git init -q -b main . && git add -A && git -c user.name=t -c user.email=t@t -c commit.gpgsign=false commit -q -m base)
+
+# `gate <edited file or -> <what the shooting wrote down> <its code> <arguments>`: the output lies in
+# `$WORK/out`, the exit code in CODE, the calls of the stand-ins in `$WORK/calls`.
+gate() {
+    local edited="$1"
+    printf '%b' "$2" > "$WORK/taken"
+    printf '%s' "$3" > "$WORK/shot-code"
+    shift 3
+    : > "$WORK/calls"
+    rm -f "$WORK/list"
+    [ "$edited" = - ] || printf '/* edit */\n' >> "$RUN/$edited"
+    (cd "$RUN" && PATH="$WORK/bin:$PATH" "$REAL_NODE" "$TOOLS/visual-gate.mjs" "$@" > "$WORK/out" 2>&1)
+    CODE=$?
+    (cd "$RUN" && git reset -q --hard && git clean -qfd)
+}
+
+calls() { grep -c "$1" "$WORK/calls"; }
+said() { if grep -qF "$1" "$WORK/out"; then printf 'yes'; else printf 'no'; fi; }
+
+gate - '' 0 ui-kit-v2 --affected main
+report "the affected run that touched nothing builds no showcase" "$CODE:$(calls .):$(said 'снять: нечего')" '0:0:yes'
+gate $KIT/src/one.scss 'atoms-one--base\natoms-one--base--w480\n' 0 ui-kit-v2 --affected main
+report "the affected run shoots the named files alone" "$CODE:$(tr '\n' ' ' < "$WORK/list")" "0:$KIT/src/one.stories.ts"
+report "the affected run ends with what it shot" "$(tail -1 "$WORK/out")" 'снято 1 файлов историй из 2, кадров 2'
+report "the affected run builds the showcase and calls the probes" "$(calls 'nx run'):$(calls 'check:icons'):$(calls 'check:window')" '1:1:1'
+gate $KIT/src/one.scss 'atoms-one--base\n' 0 ui-kit-v2 --affected main
+report "the affected run refuses a reference of a width nobody took" "$CODE:$(said 'atoms-one--base--w480.png — no story')" '1:yes'
+gate $KIT/src/one.scss '' 0 ui-kit-v2 --affected main
+report "the affected run refuses a file that fell out, at a green shooting" \
+    "$CODE:$(said 'one.stories.ts — not one frame'):$(tail -1 "$WORK/out")" '1:yes:снято 0 файлов историй из 2, кадров 0'
+gate $KIT/src/one.scss 'atoms-one--base\natoms-one--base--w480\n' 1 ui-kit-v2 --affected main
+report "the affected run is red with the shooting" "$CODE" '1'
+printf "export default { title: 'Atoms/New' };\n" > "$RUN/$KIT/src/new.stories.ts"
+gate - '' 0 ui-kit-v2 --affected main
+report "the affected run refuses a file the showcase does not hold" "$CODE:$(said 'new.stories.ts — the showcase holds no story')" '1:yes'
+touch "$RUN/$SHOTS/atoms-two--gone.png"
+gate - 'atoms-two--base\n' 0 ui-kit-v2 --affected main
+report "the affected run refuses a reference without a story" "$CODE:$(said 'atoms-two--gone — the reference')" '1:yes'
+gate $KIT/.storybook/preview.ts '' 0 ui-kit-v2 --affected main
+report "the affected run of a shared edit is the whole set" "$CODE:$(said 'снять: всё'):$(calls 'shot .*pnpm run test:visual:v2$')" '0:yes:1'
+gate $KIT/src/one.scss '' 0 ui-kit-v2 --affected
+report "the affected run without a base is the whole set" "$CODE:$(calls 'shot .*pnpm run test:visual:v2$')" '0:1'
+gate - '' 0 ui-kit-v2 --affected no-such-ref
+report "the affected run of a base that does not read is the whole set" "$CODE:$(calls 'shot .*pnpm run test:visual:v2$')" '0:1'
+gate - '' 0 ui-kit-v2 --afected main
+report "the affected run misspelled is refused before the build" "$CODE:$(calls .)" '1:0'
+gate - '' 0 ui-kit-v2 --affected main --update
+report "the affected run takes no re-take" "$CODE:$(calls .)" '1:0'
 
 suite_result "visual-gate"
