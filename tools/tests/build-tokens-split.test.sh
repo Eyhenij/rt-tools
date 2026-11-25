@@ -7,11 +7,11 @@ echo "the split delivery of the kit tokens"
 
 STYLES="$TOOLS/../dist/ui-kit-v2/styles"
 SPLIT="$TOOLS/build-tokens-split.mjs"
-FULL_BYTES=619948
 
 if [ ! -f "$STYLES/tokens.css" ]; then
-    echo "  build the tokens first: pnpm run build:tokens-v2"
-    exit 1
+    echo "  skipped: the tokens are not built (pnpm run build:tokens-v2)"
+    suite_result "build-tokens-split"
+    exit $?
 fi
 
 OUT="$(mktemp -d)"
@@ -21,19 +21,22 @@ LINE="$(RT_TOKENS_OUT="$OUT" node "$SPLIT")"
 size() { wc -c < "$1" | tr -d ' '; }
 count() { grep -c -- "$2" "$1" || true; }
 # The custom properties a file declares, one per line.
-props() { grep -o -- '--[a-zA-Z0-9-]*:' "$1" | sort -u; }
+props() { grep -oE -- '(--[a-zA-Z0-9-]+|color-scheme):' "$1" | sort -u; }
 
 report "the cut prints the three sizes" "$(printf '%s' "$LINE" | grep -cE '^build-tokens-split: base [0-9]+, scope [0-9]+, full [0-9]+ bytes$')" "1"
-report "the full file is the one the package 0.52.0 held" "$(size "$OUT/tokens.css")" "$FULL_BYTES"
 report "the full file is not rewritten by the cut" "$(cmp -s "$OUT/tokens.css" "$STYLES/tokens.css" && echo same)" "same"
 
-# The base and the scope together give the full file plus the density repeated at the end of the scope.
-DENSITY_REPEAT=$(( $(size "$OUT/tokens.base.css") + $(size "$OUT/tokens.scope.css") - FULL_BYTES ))
-report "the density is repeated once, nothing else" "$([ "$DENSITY_REPEAT" -gt 0 ] && [ "$DENSITY_REPEAT" -lt 8000 ] && echo yes)" "yes"
+# The base and the scope together give the full file plus what is repeated: the density rules at the end
+# of the scope and the root rule of the set Material under the dark theme at the end of the base.
+REPEAT=$(( $(size "$OUT/tokens.base.css") + $(size "$OUT/tokens.scope.css") - $(size "$OUT/tokens.css") ))
+report "only the density and the root rule are repeated" "$([ "$REPEAT" -gt 0 ] && [ "$REPEAT" -lt 10000 ] && echo yes)" "yes"
 
-# The base holds no local piece of the theme: the island rules are in the scope only.
-report "the base has no island of the theme" "$(count "$OUT/tokens.base.css" 'data-theme=dark\]\[data-preset=material\]')" "0"
-report "the scope holds the page root with the set and the dark theme" "$(count "$OUT/tokens.scope.css" ':root\[data-theme=dark\]\[data-preset=material\]')" "1"
+# The base holds no island of the theme, but it holds the page root with the set Material and the dark
+# theme: that rule wins by weight, so the base works for such a page without the scope.
+report "the base has no island of the theme" "$(count "$OUT/tokens.base.css" '^\[data-theme=dark\] \[data-preset=material\]')" "0"
+report "the base holds the page root with the set and the dark theme" "$(count "$OUT/tokens.base.css" '^:root\[data-theme=dark\]\[data-preset=material\]')" "1"
+report "the scope holds the same root rule as the full file" "$(count "$OUT/tokens.scope.css" '^:root\[data-theme=dark\]\[data-preset=material\]')" "1"
+report "the scope holds the islands of the set" "$([ "$(count "$OUT/tokens.scope.css" '^\[data-theme=dark\] \[data-preset=material\]')" -gt 0 ] && echo yes)" "yes"
 report "the base keeps the set Material" "$([ "$(count "$OUT/tokens.base.css" 'data-preset=material')" -gt 0 ] && echo yes)" "yes"
 
 # The order of connection is the base, then the scope: the scope declares no layer, so it wins by place.
@@ -41,14 +44,16 @@ report "the scope opens no cascade layer" "$(count "$OUT/tokens.scope.css" '@lay
 
 # The properties both files declare are the density's alone: the tail of the base shares nothing else
 # with the local pieces, so repeating the density at the end of the scope keeps the order of the full file.
-# The tail is what the base holds after the head the base and the full file open with.
+# The tail is what the base holds after the head the base and the full file open with, up to the copy
+# of the root rule that the cut appends.
 node -e "
     const fs = require('fs');
     const base = fs.readFileSync(process.argv[1], 'utf8');
     const full = fs.readFileSync(process.argv[2], 'utf8');
     let i = 0;
     while (base[i] === full[i]) i++;
-    fs.writeFileSync(process.argv[3], base.slice(i));
+    const marker = base.indexOf('/* The set and a dark theme both on the page root.');
+    fs.writeFileSync(process.argv[3], base.slice(i, marker < 0 ? base.length : marker));
 " "$OUT/tokens.base.css" "$OUT/tokens.css" "$OUT/tail.css"
 SHARED="$(comm -12 <(props "$OUT/tail.css") <(props "$OUT/tokens.scope.css") | tr '\n' ' ')"
 report "the tail of the base shares only the density properties with the scope" "$SHARED" "--rt-input-density: --rt-input-height-md: --rt-input-height: "

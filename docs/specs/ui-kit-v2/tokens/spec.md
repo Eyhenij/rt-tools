@@ -177,12 +177,12 @@ threshold.
   one. A transition needing ends of its own gets names of its own rather than borrowing two neighbouring roles.
 
 - **The tokens come in one whole file and in two halves, and the halves are cut from the whole, not rebuilt.**
-  `tokens.css` stays as it was. `tokens.base.css` is the same file without the local pieces of the theme;
-  `tokens.scope.css` holds those pieces and the density rules after them. An application without a light or
-  dark island, without a node of the set Material under a page of the other theme and without the root that
-  carries the set Material and the dark theme together takes the base alone. One that has any of the three
-  takes the base and then the scope, in that order: the density rules of the scope end the file as they end
-  the whole one. The scope without the base works for nothing. The cut refuses a whole file that does not
+  `tokens.css` stays as it was. `tokens.base.css` is the same file without the local pieces of the theme, and
+  it carries a copy of the root rule of the set Material under the dark theme, which wins by weight and not by
+  place. `tokens.scope.css` holds the local pieces and the density rules after them. An application without a
+  light or dark island and without a node of the set Material below the page root takes the base alone. One
+  that has either takes the base and then the scope, in that order: the density rules of the scope end the
+  file as they end the whole one. The scope without the base works for nothing. The cut refuses a whole file that does not
   fold from the head, the middle and the tail.
 
 ## What is out of scope
