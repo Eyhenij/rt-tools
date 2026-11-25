@@ -77,7 +77,7 @@ commit.
 
 At the end of the stages the engine compares the code of the head with the decision as the commit of
 the plan wrote it: every place, suite, new file, budget and promised decrease of links. Each mismatch
-holds the state and is named. A line of the decisions with the path or the symbol, «превышение» or
+holds the state and is named. A line of the decisions with the path or the place, «превышение» or
 «отказ от» and the reason lifts it; a new cycle and an import past an entry are fixed in the code.
 
 | Row | Example |

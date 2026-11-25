@@ -106,7 +106,7 @@ function placeGaps(rows, head) {
     return [...places.values()].filter(({ fate }) => fate === '' || fate === 'removed').flatMap(({ path, symbol, fate }) => {
         const stands = head.named(path).some((file) => declares(head.text(file) ?? '', file, symbol));
         if (stands === (fate === '')) return [];
-        return [gap(`\`${path}:${symbol}\` ${fate === '' ? 'is not declared in the code' : 'was to be removed and is declared'}`, `${path}:${symbol}`, path, symbol)];
+        return [gap(`\`${path}:${symbol}\` ${fate === '' ? 'is not declared in the code' : 'was to be removed and is declared'}`, `${path}:${symbol}`)];
     });
 }
 
@@ -141,7 +141,7 @@ function noneGaps(head, design) {
     const old = head.touched.filter((file) => CODE.test(file) && !files.includes(file) && !suites.includes(file) && !head.isCopy(file));
     return [
         ...fresh.map((file) => gap(`«No decision», and the branch added \`${file}\``, file)),
-        ...old.flatMap((file) => head.brought(file, declaredNames).map((name) => gap(`«No decision», and the branch declared \`${file}:${name}\``, `${file}:${name}`, file, name))),
+        ...old.flatMap((file) => head.brought(file, declaredNames).map((name) => gap(`«No decision», and the branch declared \`${file}:${name}\``, `${file}:${name}`))),
     ];
 }
 

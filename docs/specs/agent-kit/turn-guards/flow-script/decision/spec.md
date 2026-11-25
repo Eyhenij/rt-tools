@@ -21,7 +21,7 @@ decision, and the refusal names every mismatch.
 - **A mismatch** — a line about what the decision promised and the code of the head does not hold:
   a place, a suite, a new file, a budget, a refusal of the coupling command, a decrease of links.
 - **A lift** — an item of the decisions of the progress, or of the text of an own commit after the
-  plan, that names the path or the symbol of a mismatch, the word «превышение» or «отказ от»
+  plan, that names the path or the place of a mismatch, the word «превышение» or «отказ от»
   («overrun», «waived») and a reason of two words at least.
 - **An own commit** — a commit of the branch on its first-parent line that is no merge; what a merge
   brought is no edit of the branch.
@@ -41,7 +41,7 @@ an item of the refusal at the end of a turn.
 - **A budget of lines, of new code files and of new dependencies is not exceeded, and what a merge brought is not counted.**
 - **The refusal of the coupling command is a mismatch, and so is a promised decrease of outgoing links the module did not reach.** The command runs against the plan, or against the tip the newest merge after the plan brought.
 - **The answer of the coupling command is kept by the head, the branch, the base and the unsaved edits, and a command that did not answer is asked again.**
-- **A lift names the path of a mismatch whole or by its tail, or its symbol, and lifts it; a new cycle and an import past an entry are not lifted.**
+- **A lift names the path of a mismatch, or the place of a place mismatch, whole or by its tail, and lifts it; a new cycle and an import past an entry are not lifted.** A lift of a budget names the path and leaves a place of the same file standing.
 - **What was not read is not judged: a plan without a decision, a binary file, a command that did not answer.**
 - **A footprint path with a mask is touched by a file the mask unfolds to: one star holds no slash, two stars hold any.**
 - **The measured state and the refusal at the end of a turn name every mismatch, one line each, and how to lift it.**

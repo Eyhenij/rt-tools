@@ -149,7 +149,7 @@ JS
 
 # --- SC-AK-1975 — бюджет и снятие --------------------------------------------------------------------
 fd_group << 'JS'
-const L = (n) => 'x\n'.repeat(n);
+const [L, PKG] = [(n) => 'x\n'.repeat(n), (deps) => JSON.stringify({ name: 'a', dependencies: deps }, null, 2)];
 const pathsOf = (...sets) => [...new Set(sets.flatMap((set) => [set].flat()).flatMap((one) => Object.keys(one.files ?? one)))].filter((path) => !path.startsWith('docs/'));
 const budget = (label, cell, before, after, want, coupling) => check(`SC-AK-1975 — ${label}`, { text: decision({ Бюджет: cell }, pathsOf(before, after)), before, after, coupling }, want);
 budget('«до N», файл короче', '`a/b.mjs` до 3 строк', {}, { 'a/b.mjs': L(2) });
@@ -164,17 +164,17 @@ budget('удалённый файл', '`a/b.mjs` до 3 строк', { 'a/b.mjs'
 budget('число без пути', 'файлы до 3 строк', {}, { 'a/b.mjs': L(9) });
 budget('новых файлов кода больше', 'новых файлов кода: 1', {}, { 'a/b.mjs': L(1), 'a/c.mjs': L(1) }, 'new code files 2, the budget is 1');
 budget('новых файлов кода столько же', 'новых файлов кода: 2', {}, { 'a/b.mjs': L(1), 'a/c.mjs': L(1), 'a/d.md': L(1) });
-const PKG = (deps) => JSON.stringify({ name: 'a', dependencies: deps }, null, 2);
 budget('новая зависимость', 'новых зависимостей: 0', { 'package.json': PKG({ a: '1' }) }, { 'package.json': PKG({ a: '1', b: '2' }) }, 'new dependencies 1, the budget is 0');
 budget('правка версии зависимости', 'новых зависимостей: 0', { 'package.json': PKG({ a: '1' }) }, { 'package.json': PKG({ a: '2' }) });
 budget('зависимости не правились', 'новых зависимостей: 0', { 'package.json': PKG({ a: '1' }) }, { 'a/b.mjs': L(1) });
 budget('слита база с чужой зависимостью', 'новых зависимостей: 0', { 'package.json': PKG({ a: '1' }) }, [{ own: false, files: { 'package.json': PKG({ a: '1', b: '2' }) } }, { 'package.json': PKG({ a: '2', b: '2' }) }]);
 budget('слита база с чужим новым файлом', 'новых файлов кода: 0', {}, [{ own: false, files: { 'a/c.mjs': L(1) } }, { 'a/d.md': L(1) }]);
 
-const progress = (part, line) => ({ [`${F}/progress.md`]: `# Progress\n\n## ${part}\n\n- ${line}\n` });
-const OVER = '`a/b.mjs` holds 4 lines';
-const lift = (label, line, want = 'чисто', { cell = '`a/b.mjs` до 3 строк', file = 'a/b.mjs', part = 'Decisions along the way' } = {}) =>
-    budget(label, cell, {}, { [file]: L(4), ...progress(part, line) }, want);
+const [progress, OVER] = [(part, line) => ({ [`${F}/progress.md`]: `# Progress\n\n## ${part}\n\n- ${line}\n` }), '`a/b.mjs` holds 4 lines'];
+const lift = (label, line, want = 'чисто', { cell = '`a/b.mjs` до 3 строк', file = 'a/b.mjs', part = 'Decisions along the way' } = {}) => budget(label, cell, {}, { [file]: L(4), ...progress(part, line) }, want);
+const place = (label, line, want, cell) => check(`SC-AK-1975 — ${label}`, { text: decision({ Модули: '`a/b.mjs:one` — читает', Бюджет: cell }, ['a/b.mjs']), after: { 'a/b.mjs': L(4), ...progress('Decisions along the way', line) } }, want);
+place('снятие бюджета пути не снимает удалённого места', '`a/b.mjs` — превышение: разбор стоит в том же модуле', '`a/b.mjs:one` is not declared', '`a/b.mjs` до 3 строк');
+place('снятие места его местом', '`a/b.mjs:one` — отказ от: чтение уходит в другой модуль', 'чисто', '`a/b.mjs` до 9 строк');
 lift('снятие строкой решений с причиной', '**`a/b.mjs` — 4 строки: превышение.** Довод: разбор стоит в том же модуле.');
 lift('снятие словами «отказ от»', '`a/b.mjs`: отказ от бюджета, разбор стоит в том же модуле');
 lift('снятие по-английски', '`a/b.mjs` overrun: the parser stays in the module');

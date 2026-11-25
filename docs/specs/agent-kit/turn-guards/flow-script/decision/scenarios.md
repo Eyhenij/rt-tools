@@ -22,6 +22,7 @@ When the head holds longer files, more new files of code or a new dependency
 Then each excess is named, and a binary file, a removed file, a number without a path and what a merge brought are not
 And an item of the decisions of the progress, or of an own commit once the folder is taken apart, with the path whole or by its tail, the word of an overrun and a reason lifts it
 And an item without a reason or the word, outside the decisions, of a foreign commit or of another task does not, and a new cycle and an import past an entry are never lifted
+And a lift of the path of a budget leaves a removed place of the same file named, and a lift by the place lets it go
 
 Covered: `projects/agent-kit/tests/flow-design.test.sh`.
 
