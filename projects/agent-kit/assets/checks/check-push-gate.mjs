@@ -72,9 +72,6 @@ function pipelineSteps() {
  * There is no profile, no function in it, or the shell refused — the set is unknown, and then the
  * check judges only the completeness of the declarations: there is nothing to compare the lines
  * against.
- *
- * The profile finds the files of the tree by the root in the environment. The shell gets the root of
- * the checked tree: a root inherited from a caller in another working copy prints that copy's set.
  */
 function gateChecks() {
     const present = PROFILES.filter((path) => existsSync(join(ROOT, path)));
@@ -85,7 +82,7 @@ function gateChecks() {
 command -v rt_push_checks >/dev/null 2>&1 || exit 42
 rt_push_checks ""`;
     try {
-        return execFileSync('bash', ['-c', script], { cwd: ROOT, encoding: 'utf8', env: { ...process.env, CLAUDE_PROJECT_DIR: ROOT } })
+        return execFileSync('bash', ['-c', script], { cwd: ROOT, encoding: 'utf8' })
             .split('\n')
             .map((line) => line.trim())
             .filter(Boolean);
