@@ -1,0 +1,65 @@
+/**
+ * The source «source.coupling» of the task flow description: the answer of the command
+ * `check-coupling.mjs --base=<revision>`, the only count of the links.
+ *
+ *   from(sha)  { answered, problems, now } — whether the command answered, the lines it refuses by and
+ *              path → the outgoing links a module of the branch has now, 0 for a removed one
+ *
+ * An answer is a run with no refusal or with the line of violations: an unknown revision, an absent or a
+ * broken command answers nothing. The command takes seconds and an exit is measured at every stop, so an
+ * answer is kept in the common directory of git by the head, the branch, the base and the unsaved edits.
+ */
+import { spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const NAME = 'check-coupling.mjs';
+const SILENT = { answered: false, problems: [], now: new Map() };
+const run = (args, cwd) => spawnSync('git', args, { cwd, encoding: 'utf8', maxBuffer: 512 * 1024 * 1024 }).stdout ?? '';
+
+/** The command next to the laid-out engine, or the one laid out in the tree. */
+const commandIn = (root) => [join(dirname(fileURLToPath(import.meta.url)), '..', '..', NAME), join(root, process.env.RT_CHECKS_DIR || 'tools', NAME)].find((path) => existsSync(path));
+
+/** What the answer depends on: a new file outside the history counts too. */
+function keyOf(root, sha) {
+    const fresh = run(['ls-files', '-z', '--others', '--exclude-standard'], root).split('\0').filter(Boolean);
+    const hash = createHash('sha256');
+    [sha, run(['rev-parse', 'HEAD'], root), run(['branch', '--show-current'], root), run(['diff', 'HEAD', '--binary'], root)].forEach((part) => hash.update(`${part}\0`));
+    fresh.forEach((path) => hash.update(path).update(existsSync(join(root, path)) ? readFileSync(join(root, path)) : ''));
+    return hash.digest('hex');
+}
+
+function ask(root, sha) {
+    const command = commandIn(root);
+    if (!command) return SILENT;
+    const { status, stdout, stderr } = spawnSync(process.execPath, [command, `--base=${sha}`], { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+    const [, refusal] = /check-coupling: violations \d+\n\n((?:  .*\n)+)/.exec(stderr ?? '') ?? [];
+    if (status !== 0 && !refusal) return SILENT;
+    const changed = [...stdout.matchAll(/^  (\S+): incoming .*?, outgoing \d+ → (\d+),/gm)].map(([, path, links]) => [path, Number(links)]);
+    const removed = [...stdout.matchAll(/^  (\S+): removed, outgoing was/gm)].map(([, path]) => [path, 0]);
+    return { answered: true, problems: (refusal ?? '').split('\n').map((line) => line.trim()).filter(Boolean), now: new Map([...changed, ...removed]) };
+}
+
+export function open() {
+    return {
+        from(sha) {
+            const root = run(['rev-parse', '--show-toplevel']).trim();
+            if (!root) return SILENT;
+            const dir = join(resolve(root, run(['rev-parse', '--git-common-dir'], root).trim()), 'rt-kit', 'coupling');
+            const file = join(dir, `${keyOf(root, sha)}.json`);
+            try {
+                const { problems, now } = JSON.parse(readFileSync(file, 'utf8'));
+                return { answered: true, problems, now: new Map(now) };
+            } catch {
+                const answer = ask(root, sha);
+                if (answer.answered) {
+                    mkdirSync(dir, { recursive: true });
+                    writeFileSync(file, JSON.stringify({ problems: answer.problems, now: [...answer.now] }));
+                }
+                return answer;
+            }
+        },
+    };
+}
