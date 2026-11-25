@@ -54,6 +54,11 @@ pnpm run check:ngdoctor
 # The last step of `check:all`, a step of the pipeline and of the push set; any finding turns it red
 pnpm run check:unused
 
+# Where the time of agent sessions goes: the journals of this working copy, or the one named by
+# `--file`; `--steps` — the steps of the task flow, `--branches <keys>` — the mean of a task,
+# `--since`, `--until`, `--by-branch`, `--json`. It prints numbers and no text of a message
+pnpm run session:time
+
 # Raise the applications on one's own machine. The database is needed only by the receiver;
 # the admin panel proxies /api to port 3000, and without the receiver it shows empty lists and a
 # read refusal — that is its honest state rather than a breakage.
