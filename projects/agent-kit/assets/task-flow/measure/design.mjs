@@ -77,12 +77,13 @@ function headOf(git, sha) {
         return texts.get(key);
     };
     const files = git.filesAt('.', head);
+    const [now, then] = [new Set(files), new Set(git.filesAt('.', sha))];
     const isCopy = (path) => COPY.test(text(path) ?? '');
-    const standing = (pick) => [...new Set(after.flatMap(pick))].filter((path) => text(path) !== null);
+    const standing = (pick) => [...new Set(after.flatMap(pick))].filter((path) => now.has(path));
     return {
         after, text, files, isCopy,
         touched: standing((commit) => [...commit.added, ...commit.modified]),
-        added: standing((commit) => commit.added).filter((path) => git.versionAt(path, sha) === null),
+        added: standing((commit) => commit.added).filter((path) => !then.has(path)),
         /** The names own commits brought into a file of the head: those of each commit its parent did not have. */
         brought: (path, read) =>
             [...new Set(after.filter((commit) => commit.added.includes(path) || commit.modified.includes(path)).flatMap((commit) => {
@@ -154,9 +155,9 @@ const dependencies = (text) => {
 
 function budgetGaps(rows, head, sha) {
     const limits = rows.flatMap((row) => row.limits).flatMap(({ path, grows, lines }) =>
-        head.named(path).map((file) => ({ path, grows, lines, text: head.text(file) ?? '', old: head.text(file, sha) ?? '' })));
+        head.named(path).map((file) => ({ path, grows, lines, text: head.text(file) ?? '', old: () => head.text(file, sha) ?? '' })));
     const long = limits.filter(({ text }) => !text.includes('\0')).flatMap(({ path, grows, lines, text, old }) => {
-        const grown = linesOf(text) - (grows ? (old === '' ? 0 : linesOf(old)) : 0);
+        const grown = linesOf(text) - (grows ? (old() === '' ? 0 : linesOf(old())) : 0);
         return grown > lines ? [gap(`\`${path}\` ${grows ? 'grew by' : 'holds'} ${grown} lines, the budget is ${lines}`, path)] : [];
     });
     const files = newCode(head).length;
@@ -193,24 +194,33 @@ function liftsOf(git, head, design, folder) {
 /** A line names the key whole or by its tail after a `/`: a full path of the plan, a short one of the progress. */
 const lifts = (item, key) => new RegExp(`(?:^|[\\s\`(«])(?:${key.split('/').map((_, at, parts) => escaped(parts.slice(at).join('/'))).join('|')})(?=[\\s\`),.;:»]|$)`, 'iu').test(item);
 
+/** The mismatches of one history port, counted once per head: the engine asks `held` and then `gaps`. */
+const known = new WeakMap();
+
 /** The mismatches of the code with the decision of the plan, each as one line. */
 export function gaps({ git, design, coupling }) {
     return () => {
-        const branch = git.branch();
-        const folder = taskFolder(branch);
-        const sha = branch ? git.addedBy(`${folder}/plan.md`) : null;
-        const plan = sha ? git.versionAt(`${folder}/plan.md`, sha) : null;
-        const { state, rows } = plan === null ? { state: 'absent', rows: [] } : design.rows(plan);
-        if (state !== 'table' && state !== 'none') return [];
-        const head = headOf(git, sha);
-        const found = state === 'none' ? noneGaps(head, design) : [
-            ...placeGaps(rows, head), ...suiteGaps(rows, head, sha), ...fileGaps(rows, head, plan, design),
-            ...budgetGaps(rows, head, sha), ...couplingGaps(rows, head, coupling.from(sha), design),
-        ];
-        const items = found.length > 0 ? liftsOf(git, head, design, folder) : [];
-        const left = found.filter(({ keys, hard }) => hard || !keys.some((key) => items.some((item) => lifts(item, key))));
-        return [...new Set(left.map(({ text }) => text))];
+        const at = git.head();
+        if (known.get(git)?.at !== at) known.set(git, { at, list: listOf(git, design, coupling) });
+        return known.get(git).list;
     };
+}
+
+function listOf(git, design, coupling) {
+    const branch = git.branch();
+    const folder = taskFolder(branch);
+    const sha = branch ? git.addedBy(`${folder}/plan.md`) : null;
+    const plan = sha ? git.versionAt(`${folder}/plan.md`, sha) : null;
+    const { state, rows } = plan === null ? { state: 'absent', rows: [] } : design.rows(plan);
+    if (state !== 'table' && state !== 'none') return [];
+    const head = headOf(git, sha);
+    const found = state === 'none' ? noneGaps(head, design) : [
+        ...placeGaps(rows, head), ...suiteGaps(rows, head, sha), ...fileGaps(rows, head, plan, design),
+        ...budgetGaps(rows, head, sha), ...couplingGaps(rows, head, coupling.from(sha), design),
+    ];
+    const items = found.length > 0 ? liftsOf(git, head, design, folder) : [];
+    const left = found.filter(({ keys, hard }) => hard || !keys.some((key) => items.some((item) => lifts(item, key))));
+    return [...new Set(left.map(({ text }) => text))];
 }
 
 /** The code holds what the decision promised. */

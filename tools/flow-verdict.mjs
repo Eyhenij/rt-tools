@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · checks/flow-verdict.mjs · 982e8fe241d2 · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/flow-verdict.mjs · 366076d15193 · правится надстройкой, не здесь
 /**
  * The verdict at the end of a turn — the engine command `verdict`, called by the hook on Stop.
  *
@@ -231,6 +231,10 @@ export function holdReason(model, result, step, menu = null) {
     const total = model.states.length;
     const state = model.states[result.index - 1];
     const lines = [`The scenario is not over: the work stands in the state \`${result.state}\` (${result.index} of ${total}), whose exit is not met.`];
+    if (result.gaps) {
+        lines.push('The code does not hold what the decision of the plan promised:', ...result.gaps.map((gap) => `- ${gap}`));
+        lines.push('Fix the code, or lift a mismatch by a line of the decisions of the progress — of a commit, once the folder is taken apart: the path or the symbol, the word «превышение» or «отказ от» («overrun», «waived») and the reason. A new cycle and an import past an entry are not lifted so.');
+    }
     if (menu?.cause?.unread) {
         const { task, output, agent } = menu.cause.unread;
         if (agent) {

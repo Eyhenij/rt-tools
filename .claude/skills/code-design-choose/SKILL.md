@@ -4,7 +4,7 @@ kind: pattern
 rule: code-design
 description: Pattern of rule code-design. Load when a request is taken apart, a plan is written or a module is split — the table from the problem to the technique and its check, coupling, cohesion and isolation, the rows of the decision in the plan. Names and types — rule typescript-conventions.
 ---
-<!-- rt-kit v0.39.1 · patterns/code-design-choose.md · 249867d958bf · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · patterns/code-design-choose.md · 117d116262b0 · правится надстройкой, не здесь -->
 
 # Choosing the design
 
@@ -75,6 +75,11 @@ folder that stood before every module is named by itself. Growth named nowhere r
 overrun is the same line with the word «overrun» or «превышение» and its reason after the numbers —
 among the decisions of the progress or, once the folder of the task is taken apart, in the text of a
 commit.
+
+At the end of the stages the engine compares the code of the head with the decision as the commit of
+the plan wrote it: every place, suite, new file, budget and promised decrease of links. Each mismatch
+holds the state and is named. A line of the decisions with the path or the symbol, «превышение» or
+«отказ от» and the reason lifts it; a new cycle and an import past an entry are fixed in the code.
 
 | Row | Example |
 | --- | --- |

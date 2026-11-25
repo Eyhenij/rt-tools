@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · checks/coupling-plan.mjs · 7977ea2afaab · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/coupling-plan.mjs · 9b32b5a9841c · правится надстройкой, не здесь
 /**
  * The outgoing links a text names: a path in backticks and, before the next backtick or the line end, the
  * word «исходящие» or «outgoing» with two numbers and an arrow between — now and after.
@@ -40,8 +40,11 @@ function isOverrun(bare, start, next) {
     return line.search(MARK) >= 0 && (reason.match(/\p{L}{2,}/gu) ?? []).length >= 2;
 }
 
-/** The numbers of a text by path; `overrun` — only those of the lines that are an overrun with its reason. */
-export function namedOf(text, paths = new Map(), { overrun = false } = {}) {
+/**
+ * The numbers of a text by path; `overrun` — only those of the lines that are an overrun with its reason,
+ * `pairs` — `{ was, now }` instead of the number after the arrow.
+ */
+export function namedOf(text, paths = new Map(), { overrun = false, pairs = false } = {}) {
     const bare = text.replace(TORN, ' ').replace(PASTED, '');
     const found = [...bare.matchAll(SEGMENT)]
         .map(({ index, 0: segment, 1: written, 2: rest }) => ({ index, written, numbers: NUMBERS.exec(rest), start: index + segment.length - rest.length }))
@@ -50,8 +53,9 @@ export function namedOf(text, paths = new Map(), { overrun = false } = {}) {
     found.forEach(({ written, numbers, start }, at) => {
         if (!overrun || isOverrun(bare, start + numbers.index + numbers[0].length, found[at + 1]?.index)) {
             const path = whole(written, paths);
-            named.set(path, Math.max(named.get(path) ?? 0, Number(numbers[2])));
+            const [was, now] = [Number(numbers[1]), Number(numbers[2])];
+            if (!(named.get(path)?.now > now)) named.set(path, { was, now });
         }
     });
-    return named;
+    return pairs ? named : new Map([...named].map(([path, { now }]) => [path, now]));
 }

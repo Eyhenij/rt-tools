@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · task-flow/flow.js · e88a9fd56f4d · правится надстройкой, не здесь
+// rt-kit v0.39.1 · task-flow/flow.js · 5732377122d8 · правится надстройкой, не здесь
 // The task flow as an executable scenario: the data language of `flow-syntax.mjs`, nothing here runs.
 // A state is left when its exit is measured; the first state whose exit is unmet is where the work
 // stands. A release case says when a turn may end before the scenario does. A new fact is a new
@@ -13,6 +13,8 @@
     session: { open: {} },
     steps: { open: {} },
     records: { open: {} },
+    design: { open: {} },
+    coupling: { open: {} },
   },
 
   measure: {
@@ -31,6 +33,10 @@
       done: { git: source.git, tree: source.tree, marks: source.marks, steps: source.steps },
     },
     footprint: { touched: { git: source.git } },
+    design: {
+      held: { git: source.git, design: source.design, coupling: source.coupling },
+      gaps: { git: source.git, design: source.design, coupling: source.coupling },
+    },
     folder: { archived: { git: source.git } },
     pr: { handed: { git: source.git, host: source.host } },
     copy: {
@@ -105,7 +111,7 @@
       title: 'этапы-кончились',
       action: 'merge the agreement, bring the texts up to date, run the suite',
       pattern: 'task-flow-close',
-      exit: measure.footprint.touched,
+      exit: { all: [measure.footprint.touched, measure.design.held] },
     },
     reviewOver: {
       title: 'разбор-кончился',
