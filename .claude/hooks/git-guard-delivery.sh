@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/git-guard-delivery.sh · 1693ad5a7b3e · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/git-guard-delivery.sh · 9f3ca36fc943 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/git-guard-delivery-merged.sh, hooks/git-guard-delivery-task.sh, hooks/git-guard-delivery-folder.sh,hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-pipeline.sh, hooks/git-guard-delivery-identity.sh, hooks/script-files.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/git-guard-delivery-rerun.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
@@ -281,7 +281,8 @@ if [ -n "$branch_arg" ]; then
         # checked, not the tip of the working copy: otherwise the command that takes the base fresh —
         # `git checkout -b <branch> origin/<main>` — would be forbidden.
         # A redirect is no base and hides none: it is cut out before the base is read.
-        base_arg="$(printf '%s' "$cmd" | sed -E 's/([[:space:]][0-9]+)?[<>]+[|]?(\&[0-9-]+|[[:space:]]*("[^"]*"|[^[:space:];\&|<>]+))/ /g' | sed -nE 's/.*git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]+[^[:space:];&|]+[[:space:]]+([^[:space:];&|-][^[:space:];&|]*).*/\4/p' | head -1)"
+        base_arg="$(printf '%s' "$cmd" | sed -E 's/([[:space:]][0-9]+)?[<>]+[|]?(\&[0-9-]+|[[:space:]]*("[^"]*"|[^[:space:];\&|<>]+))/ /g' | sed -nE 's/.*git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]+[^[:space:];&|]+([[:space:]]+-[^[:space:];&|]+)*[[:space:]]+([^[:space:];&|-][^[:space:];&|]*).*/\5/p' | head -1)"
+        base_arg="${base_arg%[\'\"]}"; base_arg="${base_arg#[\'\"]}"
         base_ref="${base_arg:-HEAD}"
         command -v rt_assignment_unmet >/dev/null 2>&1 && rt_assignment_unmet "$epic_arg" "the branch «${branch_arg}»"
         if [ -n "$epic_arg" ] && command -v rt_epic_base >/dev/null 2>&1; then

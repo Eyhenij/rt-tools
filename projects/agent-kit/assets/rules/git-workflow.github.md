@@ -13,7 +13,7 @@ Rule under the law `docs/constitution/delivery.md`, for a tree on GitHub. Cold p
 
 - **A commit into the main branch is refused by the guard.**
 - **A branch without a task number opens no PR.**
-- **Work begins with the epic, and the branch of a task is taken from the epic branch.**
+- **Work begins with the epic, and the branch of a task is taken from the epic branch.** Outside an epic — from the main one.
 - **The PR of an epic into the main branch opens after all its tasks are merged and their folders are taken apart.**
 - **The epic branch carries the plan of the epic and the merges of its tasks, and no edits of its own.**
 - **The main branch is merged into the epic branch, and the epic branch into the branches of its tasks — while the work runs, not before the hand-over.** A merge needing repairs goes into the epic branch alone, the repairs into the task branch from that tip. The folder is created in the task branch.

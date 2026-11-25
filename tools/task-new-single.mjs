@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.39.1 · checks/task-new-single.github.mjs · ec76c5d01ac3 · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/task-new-single.github.mjs · 5cd9ef0418dd · правится надстройкой, не здесь
 /**
  * The only task of a grill: work outside an epic by the count the grill names, not by a word of the
  * owner about that work.
@@ -17,6 +17,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { SINGLE_WORDS, declaredEpicOf, outsideReasonOf } from './board-epic-link.mjs';
+import { adoptDraft } from './board-task-dirs.mjs';
 import { OWNER, REPO, TASK_KEY, botToken, gh, ghJson } from './board.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 import { assignmentOf } from './tree-assignment.mjs';
@@ -50,12 +51,12 @@ async function grillFault(folders) {
     if (!grillAnswered(text)) {
         return `${where} is not answered: the request of the owner as a quote and at least one answer come before the task`;
     }
-    const { count, why } = tasksOfGrill(text);
+    const { count, line, why } = tasksOfGrill(text);
     if (count === undefined) {
         return `${where}: ${why}. The line stands once and holds the number`;
     }
     if (count > 1) {
-        return `${where} says «**Задач в разборе:** ${count}»: a grill of several tasks is an epic, declared by --epic, and its tasks go under it`;
+        return `${where} says «${line}»: a grill of several tasks is an epic, declared by --epic, and its tasks go under it`;
     }
     return null;
 }
@@ -98,13 +99,16 @@ async function writeLine(number, slug) {
     const token = botToken() ?? undefined;
     const branch = `${TASK_KEY}-${number}-${slug}`;
     let card = null;
-    const cardOf = () => (card ??= ghJson(['issue', 'view', String(number), '--json', 'body,labels'], { token }));
+    const cardOf = () => (card ??= ghJson(['issue', 'view', String(number), '--json', 'state,body,labels'], { token }));
     const fault = await singleFault({ folders: [branch, `_draft-${slug}`], body: () => cardOf().body ?? '', number, token });
     if (fault !== null) {
         return fault;
     }
     if (carriesEpicLabel(cardOf())) {
         return `#${number} is an epic, and the line is of a task`;
+    }
+    if (cardOf().state !== 'OPEN') {
+        return `#${number} is closed: the line is written into a card whose work is ahead`;
     }
     const before = cardOf().body ?? '';
     const after = withSingleLine(before);
@@ -114,9 +118,9 @@ async function writeLine(number, slug) {
         gh(['api', '-X', 'PATCH', `repos/${OWNER}/${REPO}/issues/${number}`, '-f', `body=${after}`], { token });
         console.log(`#${number}: the card got the line «${SINGLE_LINE}»`);
     }
-    const draft = !existsSync(join(ROOT, TASKS, branch));
+    // One grill of one task answers for one card: a draft left in place would answer for the next one too.
+    adoptDraft({ slug, branch, number });
     console.log(`The branch is created by a separate call:\n  git checkout -b ${branch} origin/${MAIN}`);
-    console.log(draft ? `The task folder is a draft yet: ${TASKS}/_draft-${slug}/ is renamed to ${TASKS}/${branch}/` : `The task folder: ${TASKS}/${branch}/`);
     return null;
 }
 

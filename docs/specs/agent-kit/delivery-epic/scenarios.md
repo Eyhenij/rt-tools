@@ -193,7 +193,11 @@ When the work queue audit runs
 Then the task is named as naming no epic, with `--single` among the ways; the same words as a line of
 their own keep the audit silent
 
-Covered: `projects/agent-kit/tests/checks-board-epic-base.test.sh`.
+Given the line in a fence, in a comment, with a placeholder, with no words, or broken by a newline
+When the line is read
+Then there is none
+
+Covered: `projects/agent-kit/tests/checks-board-epic-base.test.sh`, `projects/agent-kit/tests/single-task.test.sh`.
 
 ### SC-AK-1988 — `--single` is refused before the card, in one order
 
@@ -203,9 +207,10 @@ When `task:new --single` is called
 Then each is refused by its own words before the card, and at a count of two the refusal names `--epic`
 even where the body and the copy name an epic
 
-Given the words of `--single` typed as the reason of `--outside-epic`
+Given the words of `--single` as the reason of `--outside-epic`, with another letter case, with a tail on
+the next line, or as a line of the body
 When the command is called
-Then no card is created
+Then no card is created; neither is it by `--single` over a body that stands outside an epic by another word
 
 Covered: `projects/agent-kit/tests/single-task.test.sh`.
 
@@ -229,7 +234,12 @@ When `task-new-single` is called with its number
 Then the line is added after its body and the branch is printed from the main one; the row of the copy
 naming this very task does not hold the call
 
-Given a card under an epic, the card of an epic, a count of two, a card that already stands outside one
+Given the draft, and after it a second card with the same slug
+When the same call goes
+Then the draft becomes the folder of the first branch, and the second card is refused: there is no grill
+
+Given a card under an epic, the card of an epic, a closed card, a count of two, a card that already stands
+outside one
 When the same call goes
 Then the body stays as it was
 
@@ -239,8 +249,9 @@ Covered: `projects/agent-kit/tests/single-task.test.sh`.
 
 Given a card whose line is written by `--single`
 When its branch is created from the main branch, from a named branch of another task, from the tip of
-the working copy, from a hash of that tip and from another branch of the same task
-Then the first and the last pass, the rest are refused with the ready call from the main branch
+the working copy, from a hash of that tip, from a quoted name and from another branch of the same task
+Then the first and the last pass, the rest are refused with the ready call from the main branch and with
+the epic for a task that needs those commits
 
 Given work outside an epic by the owner's word
 When its branch is created from a branch of another task

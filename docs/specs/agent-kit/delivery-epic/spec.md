@@ -100,17 +100,23 @@ their own turn.
   epic of the copy is an open card with the label of an epic: a row holds the number of a plain task
   too. Its refusal names both lawful ways — under that epic, or outside by the owner's word.
 - **A card that already stands gets the same line by a call of its own.** The grill is read from the
-  folder of the branch, or from the draft; a card under an epic and the card of an epic are not touched,
-  and a card already outside one gets no second line.
+  folder of the branch, or from the draft, and the draft becomes that folder: one grill of one task
+  answers for one card. A card under an epic, the card of an epic and a closed card are not touched, and a
+  card already outside an epic gets no second line.
 - **The line of work outside an epic is read on its own place and in one place.** The audit, the state of
-  a card and the creating command take it from one function; the words inside a sentence are not a line.
-  The words of `--single` are not taken as a reason of the owner.
+  a card and the creating command take it from one function; the words inside a sentence, a fenced sample,
+  a comment and a placeholder in angle brackets are not a line. The words of `--single` are not taken as a
+  reason of the owner, wherever in the body they stand, and `--single` is refused over a word of the owner.
 - **The branch of the only task of a grill grows from the main branch, with no commit of another task
   under it.** Two such tasks in a row would otherwise stand one on the other with no epic above them,
-  and the request of the second would carry the first. The branch of the task itself is a lawful base.
+  and the request of the second would carry the first. The refusal names the epic for a task that needs
+  those commits, and the call from the main branch for the rest. The branch of the task itself is a lawful
+  base. A base the guard cannot read as a ref is not judged.
 
 ## What is out of scope
 
+- The base of the request of the only task of a grill: the law sends it into the main branch, and no guard
+  judges it.
 - The readiness of the work going on now: the base of the branch, the signature of the commit and
   the state of the task are judged by the subdomain of the delivery guards.
 - The stop at the end of an epic: the refusal to take new work after the last task lives in its own

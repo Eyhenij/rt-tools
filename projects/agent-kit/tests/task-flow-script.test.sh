@@ -164,6 +164,10 @@ out('host: SC-AK-1984 — outside an epic: память не держит кар
 const quiet = (met) => { try { return run(epic.declared, { host: { silent: true, met } }); } catch (error) { return error.name; } };
 out('host: SC-AK-1984 — outside an epic: хостинг молчит — держит память карточки', quiet([`exit2:outside:${B}`]), 'true');
 out('host: SC-AK-1984 — outside an epic: хостинг молчит без памяти — ответа нет', quiet([]), 'HostSilent');
+// Ответ карточки записывается: держит его память, которую оставил сам замер.
+const wrote = hostDouble({ issues: { 12: { open: true, status: 'in-progress', epic: null, outside: 'слово' } } });
+epic.declared({ git: gitDouble({ branch: B }), host: wrote, tree: tree([]) })();
+out('host: SC-AK-1984 — outside an epic: пройденный ответ карточки записан', String(wrote.recalled(`exit2:outside:${B}`)), 'true');
 const drafted = (grills, { copyEpic = null, issues = {} } = {}) =>
     String(epic.declared({ git: gitDouble({ branch: 'main' }), host: hostDouble({ issues }), tree: treeDouble(Object.fromEntries(grills.map((text, i) => [`docs/tasks/_draft-${i}/grill.md`, text])), copyEpic) })());
 const ONE = '**Задач в разборе:** 1\n';

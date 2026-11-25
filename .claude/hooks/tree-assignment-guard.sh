@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/tree-assignment-guard.sh · 57c9111a6bd0 · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/tree-assignment-guard.sh · 5316cbb15a73 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh, checks/tree-assignment.mjs
 # Guard of the assignment of an epic to a working copy. PreToolUse on a call that takes new work
@@ -91,10 +91,24 @@ said="$(printf '%s' "$unmet" | jq -r '.text // empty' 2>/dev/null)"
 
 # The only task of a grill has no number before its card, so the owner can write no row for it yet: a
 # copy with no row creates it, and its row is judged by the taking of the branch. A dash is an answer of
-# the owner, and it holds. Words inside quotes are no flag.
+# the owner, and it holds.
+#
+# The call is read as the shell reads it: a continued line is one line, a quoted text, a here-document and
+# a comment are no flag, a redirect ends nothing. A quoted text holding the call itself is opened. The call
+# must be the only one that takes work: its neighbour would go past the table with it.
 creates_single() {
-    printf '%s' "$cmd" | sed -E "s/'[^']*'//g; s/\"[^\"]*\"//g" \
-        | grep -qE '(task:new|task-new\.mjs)[^|;&]*--single([[:space:]]|$)' 2>/dev/null
+    command -v perl >/dev/null 2>&1 || return 1
+    printf '%s' "$cmd" | perl -0777 -ne '
+        my $new = qr/task:new|task-new\.mjs/;
+        s/\\\n/ /g;
+        s/<<-?\s*(["\x27]?)(\w+)\1([^\n]*)\n.*?\n\s*\2(?=\n|\z)/$3/sg;
+        s/\x27([^\x27]*)\x27|"((?:[^"\\]|\\.)*)"|\\./my $in = defined $1 ? $1 : defined $2 ? $2 : ""; $in =~ $new ? " $in " : "_"/gse;
+        s/(^|\s)#[^\n]*/$1/mg;
+        s/\d*[<>]+&?\d*-?/ /g;
+        my @taken = /$new/g;
+        exit 1 if @taken != 1 || /task:move|board\.mjs\s+move/;
+        exit(/(?:$new)[^|;&\n]*?\s--single(?![\w=-])/ ? 0 : 1);
+    ' 2>/dev/null
 }
 case "$kind" in
     no_row | unnamed) creates_single && exit 0 ;;

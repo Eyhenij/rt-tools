@@ -38,11 +38,9 @@
  * With `--single` the task is the only one of its grill: `task-new-single.mjs` reads the count from the
  * draft, and the body gets the line of work outside an epic without a word of the owner about it.
  */
-import { cpSync, existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { readFileSync } from 'node:fs';
 
-import { SINGLE_WORDS } from './board-epic-link.mjs';
+import { SINGLE_WORDS, outsideReasonOf } from './board-epic-link.mjs';
 import { planPathOf } from './board-epic-plan.mjs';
 import {
     BACKLOG_OPTION_ID,
@@ -59,8 +57,8 @@ import {
     ghJson,
     graphql,
     numberFromTitle,
-    unstampFolder,
 } from './board.mjs';
+import { adoptDraft } from './board-task-dirs.mjs';
 import { layEpicPlan } from './task-new-epic.mjs';
 import { confirmInQueue } from './task-new-queue.mjs';
 import { CONFIG } from './rt-kit-checks.config.mjs';
@@ -169,9 +167,6 @@ if (EPIC_LABEL && !args.single && !args.epic && args.epicOf === null && args.out
 }
 if (args.outsideEpic !== null && args.outsideEpic.trim() === '') {
     fail('--outside-epic "<the reason of the owner>": an empty reason is indistinguishable from a flag typed to get past the refusal');
-}
-if (args.outsideEpic?.trim() === SINGLE_WORDS) {
-    fail(`--outside-epic '${SINGLE_WORDS}': these words are written by --single, which reads the count of tasks from the grill`);
 }
 if (args.outsideEpic !== null && (args.epic || args.epicOf !== null)) {
     fail('--outside-epic goes with neither --epic nor --epic-of: work is either under an epic or outside one, and the word of the owner is needed only for the second');
@@ -298,13 +293,16 @@ function epicBranchOf(plan, epicNumber) {
 
 const epic = args.epicOf === null ? null : epicOfCard(args.epicOf);
 const written = readBody();
-const single = args.single ? await import('./task-new-single.mjs') : null;
+const said = (error) => fail(String(error.message ?? error));
+// Taken by its own call alone: a tree without the engine or the assignments creates its tasks as before.
+const single = args.single ? await import('./task-new-single.mjs').catch(said) : null;
 if (single) {
-    const fault = await single
-        .singleFault({ folders: [`_draft-${args.slug}`], body: () => written, token })
-        .catch((error) => String(error.message ?? error));
+    const fault = await single.singleFault({ folders: [`_draft-${args.slug}`], body: () => written, token }).catch(said);
     if (fault !== null) {
         fail(fault);
+    }
+    if (outsideReasonOf(written) !== null && outsideReasonOf(written) !== SINGLE_WORDS) {
+        fail(`the body already stands outside an epic by «${outsideReasonOf(written)}»: a word of the owner goes by --outside-epic`);
     }
 }
 const body = [
@@ -315,6 +313,11 @@ const body = [
 ]
     .filter((part) => part !== '')
     .join('\n\n');
+
+// The words of --single are read as a count of the grill, so no other call writes them.
+if (!single && !epic && outsideReasonOf(body)?.toLowerCase() === SINGLE_WORDS) {
+    fail(`«${SINGLE_WORDS}»: these words are written by --single, which reads the count of tasks from the grill`);
+}
 
 let number = null;
 try {
@@ -379,62 +382,8 @@ try {
 
 const branch = args.slug ? `${TASK_KEY}-${number}-${args.slug}` : `${TASK_KEY}-${number}-<short-slug>`;
 
-/**
- * The task folder is renamed here, because the number and the branch name are known at this moment
- * for the only time in the whole work. The grill of the owner's request goes before the task is
- * created — until the grill is over it is not even known how many tasks will come out of it — and
- * lies in `docs/tasks/_draft-<slug>`. Left as a draft, it stays outside the history, and the next
- * session does not find it: the startup hook looks for the folder by the branch name.
- */
-
-function adoptDraft() {
-    if (!args.slug) {
-        console.log(`\nThe task folder: --slug is not set, there is nothing to rename the draft by.`);
-        return;
-    }
-    const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-    const draft = join(root, 'docs/tasks', `_draft-${args.slug}`);
-    const target = join(root, 'docs/tasks', branch);
-
-    if (existsSync(target)) {
-        console.log(`\nThe task folder is already in place: docs/tasks/${branch}/`);
-    } else if (existsSync(draft)) {
-        renameSync(draft, target);
-        // The draft too is assembled from the sample, and the header in it is the same: it is
-        // taken off here as well.
-        unstampFolder(target);
-        console.log(`\nThe task folder: docs/tasks/_draft-${args.slug}/ → docs/tasks/${branch}/`);
-    } else {
-        const template = join(root, 'docs/tasks/_template');
-
-        if (!existsSync(template)) {
-            console.log(`\nThere is no task folder and nothing to assemble it from: the sample ${'docs/tasks/_template'} does not lie in the tree`);
-            return;
-        }
-
-        cpSync(template, target, { recursive: true });
-        unstampFolder(target);
-        console.log(`\nThe task folder is assembled from the sample: docs/tasks/${branch}/`);
-    }
-
-    // The header of the plan is read by a guard: by it the guard finds the product agreement. The
-    // number in it is set right here — by hand it is copied over from a hint and mistyped.
-    const plan = join(target, 'plan.md');
-    if (!existsSync(plan)) {
-        return;
-    }
-    const before = readFileSync(plan, 'utf8');
-    // The key is read under two names: the package sample is English, and a tree folder created
-    // before the layer was translated is Russian. It is written in English.
-    const after = before.replace(/^\*\*(?:Task|Задача):\*\*.*$/m, `**Task:** ${TASK_KEY}-${number} · **Branch:** ${branch}`);
-    if (after !== before) {
-        writeFileSync(plan, after);
-        console.log(`The header of the plan is filled in: docs/tasks/${branch}/plan.md`);
-    }
-}
-
 if (!args.epic) {
-    adoptDraft();
+    adoptDraft({ slug: args.slug, branch, number });
 }
 
 console.log(`[${TASK_KEY}-${number}] ${args.title}`);

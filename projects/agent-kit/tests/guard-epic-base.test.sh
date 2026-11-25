@@ -187,9 +187,26 @@ report "SC-AK-1991 — single task: от вершины рабочей копи�
     "$(ge_decision "$GE_SINGLE" | grep -c 'the base «RT-1921-work-by-epics» carries 1 commits')" 1
 report "SC-AK-1991 — single task: от вершины, названной хешем, отбита" \
     "$(ge_decision "$GE_SINGLE" "$(git -C "$GE_REPO" rev-parse HEAD)" | grep -c 'carries 1 commits over it')" 1
+report "SC-AK-1991 — single task: отказ называет эпик для задачи, которой нужны эти коммиты" \
+    "$(ge_decision "$GE_SINGLE" origin/RT-1921-work-by-epics | grep -c 'a series is an epic: npm run task:new -- --epic\.')" 1
+for GE_QUOTED in "'origin/RT-1921-work-by-epics'" '"origin/RT-1921-work-by-epics"' '@'; do
+    report "SC-AK-1991 — single task: база ${GE_QUOTED} отбита" "$(ge_decision "$GE_SINGLE" "$GE_QUOTED" | grep -c 'carries 1 commits over it')" 1
+done
+for GE_FLAG in --no-track -t --track; do
+    report "SC-AK-1991 — single task: база от главной после флага ${GE_FLAG} проходит" "$(ge_silent "$(ge_decision "$GE_SINGLE" "$GE_FLAG origin/main")")" прошло
+done
 git -C "$GE_REPO" branch -q RT-1925-first-try HEAD
-report "SC-AK-1991 — single task: своя ветка основанием годится" "$(ge_silent "$(ge_decision "$GE_SINGLE" RT-1925-first-try)")" прошло
+git -C "$GE_REPO" update-ref refs/remotes/origin/RT-1925-first-try HEAD
+for GE_OWN in RT-1925-first-try origin/RT-1925-first-try refs/heads/RT-1925-first-try refs/remotes/origin/RT-1925-first-try; do
+    report "SC-AK-1991 — single task: своя ветка ${GE_OWN} основанием годится" "$(ge_silent "$(ge_decision "$GE_SINGLE" "$GE_OWN")")" прошло
+done
+git -C "$GE_REPO" checkout -q RT-1925-first-try
+for GE_OWN in HEAD @; do
+    report "SC-AK-1991 — single task: вершина своей ветки ${GE_OWN} основанием годится" "$(ge_silent "$(ge_decision "$GE_SINGLE" "$GE_OWN")")" прошло
+done
+git -C "$GE_REPO" checkout -q RT-1921-work-by-epics
 git -C "$GE_REPO" branch -q -D RT-1925-first-try
+git -C "$GE_REPO" update-ref -d refs/remotes/origin/RT-1925-first-try
 report "SC-AK-1991 — работа вне эпика по слову судится как прежде" "$(ge_silent "$(ge_decision "$GE_OUTSIDE" origin/RT-1921-work-by-epics)")" прошло
 
 # --- SC-AK-1164 — основание со свежей главной снимает отказ об отставании эпика ----------

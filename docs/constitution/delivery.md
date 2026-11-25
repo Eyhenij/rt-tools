@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · laws/delivery.md · feed6592d351 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · laws/delivery.md · 8d546780f5fc · правится надстройкой, не здесь -->
 # Law on delivery
 
 How a change reaches the running application. The law covers both the history of changes and what
@@ -15,8 +15,9 @@ application stops responding, and the reason is found from the history.
   half of a thought: the rest of the series arrives later, or never, and the main branch holds a
   state nobody planned. An epic names what the whole is, so that the main branch takes it whole or
   does not take it. Work stands outside an epic in two cases: the owner's word about that work, and
-  a grill that says in its own line that it gave one task. Where the grill gave one task, the whole is
-  that task: an epic above it adds a branch and a second request and holds nothing more.
+  a grill that says in its own line that it gave one task, where no open epic is led. Where the grill
+  gave one task, the whole is that task: an epic above it adds a branch and a second request and holds
+  nothing more.
 - **An epic has a branch of its own, and it is taken from the main branch.** Without it the epic
   lives as a plan alone, and a plan is not merged: its tasks stand on the main branch apart from one
   another, half a finished epic is already rolled out while the rest is being written, and a

@@ -170,6 +170,34 @@ report "SC-AK-1992 — single task: копия без строки заводи�
 report "SC-AK-1992 — без флага той же копии отказано" "$(decision_of 'npm run task:new -- --title t --slug s')" deny
 report "SC-AK-1992 — single task: слова флага в кавычках не флаг" \
     "$(decision_of "npm run task:new -- --outside-epic слово --title 'о --single в тексте' --slug s")" deny
+report "SC-AK-1992 — single task: слова флага в двойных кавычках не флаг" \
+    "$(decision_of 'npm run task:new -- --outside-epic слово --title "о --single в тексте" --slug s')" deny
+# Вызов читается так, как его читает оболочка.
+while IFS= read -r FORM; do
+    report "SC-AK-1992 — single task: законная форма проходит: ${FORM}" "$(decision_of "$(printf '%b' "$FORM")")" PASS
+done <<'FORMS'
+npm run task:new -- \\\n    --title "Заголовок" \\\n    --slug mail --single
+out="$(npm run task:new -- --single --title t --slug s < b.md)"
+(cd /x && npm run task:new -- --title t --slug s --single)
+npm run task:new -- --title t --slug s --single; echo done
+npm run task:new -- --title t --slug s --single<body.md
+npm run task:new -- --title t 2>&1 --slug s --single
+bash -c 'npm run task:new -- --single --title t --slug s'
+npm run task:new -- --title "The owner's letters" --single --slug s <<< 'x'
+npm run task:new -- --title A\\&B --single --slug s
+npm run task:new -- --title "a\nb" --single --slug s
+npm run task:new -- --single --title t --slug s <<'EOF'\nсмотри task:new и it's\nEOF
+npm run task:new -- --title t --slug s \\\n--single
+FORMS
+while IFS= read -r FORM; do
+    report "SC-AK-1992 — single task: не единственный вызов работы отбит: ${FORM}" "$(decision_of "$(printf '%b' "$FORM")")" deny
+done <<'FORMS'
+npm run task:new -- --single --title t --slug s; npm run task:move -- 55 in-progress
+npm run task:move -- 55 in-progress # task:new --single x
+npm run task:new -- --title t --slug s # --single
+npm run task:new -- --title t --slug s <<'EOF'\ntask:new -- --single\nEOF
+npm run task:new -- --title t --slug s; npm run task:new -- --single --title u --slug v
+FORMS
 rm -f "$TREE/.claude/rt-kit/tree-name"
 report "SC-AK-1992 — single task: копия без имени заводит" "$(decision_of "$SINGLE_CALL")" PASS
 printf 'rt-tools\n' > "$TREE/.claude/rt-kit/tree-name"

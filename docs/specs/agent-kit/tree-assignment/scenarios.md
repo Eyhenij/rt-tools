@@ -37,6 +37,11 @@ Given a copy with no row in the table, and a copy that names itself in no way
 When `task:new --single` is called, and the same call without the flag or with its words in quotes
 Then the first passes and the rest are refused; a row with a dash refuses the first too
 
+Given the same call continued by a backslash, inside `$(…)`, parentheses or `bash -c`, with a redirect or a
+here-document; and a command that takes other work beside it
+When the guard reads it
+Then the first forms pass and the last is refused
+
 Covered: `projects/agent-kit/tests/guard-tree-assignment.test.sh`.
 
 ### SC-AK-1232 — the refusal names the owner's word as the move of the assignment

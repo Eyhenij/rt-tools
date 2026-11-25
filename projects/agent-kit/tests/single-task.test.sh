@@ -122,6 +122,19 @@ report "SC-AK-1988 — single refused: у копии открытый эпик, 
 report "SC-AK-1988 — single refused: хостинг молчит об эпике копии" "$(ST_OFFLINE=1 st_refused '^task-new: .*dial tcp' --single --slug mail)" '1|нет'
 report "SC-AK-1988 — single refused: слова команды, набранные доводом владельца" \
     "$(st_refused 'these words are written by --single' --outside-epic 'разбор дал одну задачу')" '1|нет'
+report "SC-AK-1988 — single refused: те же слова с другой буквы и с хвостом на новой строке" \
+    "$(st_refused 'these words are written by --single' --outside-epic $'Разбор дал одну задачу\nещё')" '1|нет'
+report "SC-AK-1988 — single refused: те же слова строкой тела при доводе владельца" \
+    "$(ST_BODY='Работа вне эпика — разбор дал одну задачу' st_refused 'these words are written by --single' --outside-epic слово)" '1|нет'
+st_reset
+st_grill _draft-mail "$ONE"
+report "SC-AK-1988 — single refused: тело уже стоит вне эпика словом владельца" \
+    "$(ST_BODY='Работа вне эпика — слово' st_refused 'already stands outside an epic by «слово»' --single --slug mail)" '1|нет'
+st_grill _draft-mail '**Tasks of the grill:** 2'
+report "SC-AK-1988 — single refused: названа строка, которая стоит в разборе" "$(st_refused 'says «\*\*Tasks of the grill:\*\* 2»' --single --slug mail)" '1|нет'
+mv "$ST_TREE/tools/tree-assignment.mjs" "$ST_TREE/aside.mjs"
+report "SC-AK-1988 — single refused: без модуля назначений отказ словами" "$(st_refused '^task-new: .*tree-assignment' --single --slug mail)" '1|нет'
+mv "$ST_TREE/aside.mjs" "$ST_TREE/tools/tree-assignment.mjs"
 
 # --- SC-AK-1989 — задача заведена ----------------------------------------------------------------
 st_reset
@@ -165,12 +178,54 @@ report "SC-AK-1990 — single card: карточка самого эпика н�
 st_grill RT-55-mail '**Задач в разборе:** 2'
 printf '{"body":"Описание.","labels":[],"state":"OPEN"}\n' > "$ST_TREE/issue-55.json"
 report "SC-AK-1990 — single card: из двух задач карточка не тронута" "$(st_card 55 --slug mail | grep -c -e '--epic,')|$([ -f "$ST_TREE/patched" ] && echo писал)" '1|'
-# Папки ветки ещё нет, разбор лежит черновиком: команда его не переименовывает и говорит об этом.
+# Папки ветки ещё нет, разбор лежит черновиком: он становится её папкой и на вторую карточку не годится.
 rm -rf "$ST_TREE/docs/tasks/RT-55-mail"
 st_grill _draft-mail "$ONE"
-report "SC-AK-1990 — single card: черновик прочитан и назван" \
-    "$(st_card 55 --slug mail | grep -c 'docs/tasks/_draft-mail/ is renamed to docs/tasks/RT-55-mail/')|$([ -d "$ST_TREE/docs/tasks/_draft-mail" ] && echo стоит)" '1|стоит'
+report "SC-AK-1990 — single card: черновик стал папкой ветки" \
+    "$(st_card 55 --slug mail | grep -c 'docs/tasks/_draft-mail/ → docs/tasks/RT-55-mail/')|$(ls "$ST_TREE/docs/tasks")" '1|RT-55-mail'
+rm -f "$ST_TREE/patched"
+printf '{"body":"Вторая.","labels":[],"state":"OPEN"}\n' > "$ST_TREE/issue-56.json"
+report "SC-AK-1990 — single card: вторая карточка по тому же разбору отбита" \
+    "$(st_card 56 --slug mail | grep -c 'there is no grill')|$([ -f "$ST_TREE/patched" ] && echo писал)" '1|'
+printf '{"body":"Описание.","labels":[],"state":"CLOSED"}\n' > "$ST_TREE/issue-55.json"
+report "SC-AK-1990 — single card: закрытая карточка не тронута" "$(st_card 55 --slug mail | grep -c '#55 is closed')|$([ -f "$ST_TREE/patched" ] && echo писал)" '1|'
 report "SC-AK-1990 — single card: вызов без номера называет свой вид" "$(st_card --slug mail | grep -c 'task-new-single.mjs <number> --slug <slug>')" 1
+
+# --- SC-AK-1986 — строка читается на своём месте одной функцией ----------------------------------
+st_outside() {
+    ( cd "$ST_TREE" && ST_TEXT="$1" node --input-type=module -e "
+        import { outsideReasonOf } from './tools/board-epic-link.mjs';
+        process.stdout.write(outsideReasonOf(process.env.ST_TEXT) ?? 'нет');" )
+}
+report "SC-AK-1986 — outside line: CRLF и перечень" "$(st_outside $'Описание.\r\n- Работа вне эпика — слово\r\n')" слово
+report "SC-AK-1986 — outside line: пустой довод не берёт следующую строку" "$(st_outside $'Работа вне эпика —\n\n## Дальше')" нет
+report "SC-AK-1986 — outside line: слова через перевод строки не строка" "$(st_outside $'Работа\nвне эпика — слово')" нет
+report "SC-AK-1986 — outside line: образец в скобках не слово" "$(st_outside 'Работа вне эпика — <слово владельца>')" нет
+report "SC-AK-1986 — outside line: ограда кода и комментарий не строка" "$(st_outside $'```\nРабота вне эпика — а\n```\n<!--\nРабота вне эпика — б\n-->')" нет
+
+# --- SC-AK-1985 — число разбора: пробелы, CRLF, ограда ---------------------------------------------
+st_count() {
+    ( cd "$ST_TREE" && ST_TEXT="$1" node --input-type=module -e "
+        import { tasksOfGrill } from './tools/task-flow/measure/text.mjs';
+        process.stdout.write(String(tasksOfGrill(process.env.ST_TEXT).count ?? 'нет'));" )
+}
+report "SC-AK-1985 — число с хвостовыми пробелами и CRLF" "$(st_count $'**Задач в разборе:** 1  \r\n')" 1
+report "SC-AK-1985 — пример в ограде рядом с настоящей строкой" "$(st_count $'```\n**Задач в разборе:** 2\n```\n**Задач в разборе:** 1\n')" 1
+report "SC-AK-1985 — одна ограда и комментарий числом не считаются" "$(st_count $'```\n**Задач в разборе:** 1\n```\n<!-- \n**Задач в разборе:** 1\n-->')" нет
+
+# --- SC-AK-1984 — движок читает карточку с хостинга, а не двойник порта ----------------------------
+cp -R "$CHECKS/../task-flow/." "$ST_TREE/tools/task-flow/"
+git -C "$ST_TREE" -c init.defaultBranch=main init -q
+st_issue() {
+    ( cd "$ST_TREE" && GH_BIN="$ST_TREE/gh" RT_GH_RETRY_MS=1 node --input-type=module -e "
+        import { open } from './tools/task-flow/source/host.mjs';
+        const card = open().issue($1);
+        process.stdout.write([card.epic ?? 'нет', card.outside ?? 'нет', card.isEpic].join('|'));" 2>&1 )
+}
+printf '{"number":61,"title":"[RT-61] Одна","body":"Работа вне эпика — разбор дал одну задачу","labels":[],"assignees":[],"state":"OPEN"}\n' > "$ST_TREE/issue-61.json"
+report "SC-AK-1984 — outside an epic: источник хостинга отдаёт слова строки" "$(st_issue 61)" 'нет|разбор дал одну задачу|false'
+printf '{"number":62,"title":"[RT-62] Эпик","body":"Описание.","labels":[{"name":"epic"}],"assignees":[],"state":"OPEN"}\n' > "$ST_TREE/issue-62.json"
+report "SC-AK-1985 — outside an epic: источник хостинга узнаёт эпик по метке" "$(st_issue 62)" 'нет|нет|true'
 
 rm -rf "$ST_TREE"
 
