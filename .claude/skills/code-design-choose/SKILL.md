@@ -4,7 +4,7 @@ kind: pattern
 rule: code-design
 description: Pattern of rule code-design. Load when a request is taken apart, a plan is written or a module is split — the table from the problem to the technique and its check, coupling, cohesion and isolation, the rows of the decision in the plan. Names and types — rule typescript-conventions.
 ---
-<!-- rt-kit v0.39.1 · patterns/code-design-choose.md · 2d5c1b804316 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · patterns/code-design-choose.md · 32e1d94be498 · правится надстройкой, не здесь -->
 
 # Choosing the design
 
@@ -61,6 +61,13 @@ plans in Russian and «Decision» otherwise. A row each; a row that does not app
 named down to the class or the function that gets the edit, and a thing the goal does not need has no
 row. A decision that outlives the task goes to the spec of the domain, where the texts keep it.
 
+Where the engine of the task flow is laid out, a plan is not written and not approved until every row
+below stands and names what its example names: a module and every pattern — a place `path:symbol`, an
+input row — the scenario number and the suite, the budget — a path with «up to N» or «plus N» and both
+counts. A symbol after the word «dropped» is not a place. Instead of the place: «no pattern: <reason>»,
+«no code: <reason>» for the coupling, «no input: <reason>», «no number: <reason>» in a tree without
+scenarios. A change that adds no symbol writes one line instead of the table, «No decision: <reason>».
+
 The check reads the row Coupling: the path in backticks, then the outgoing links with an arrow. A new
 folder is named by one number, the path with a slash at the end: what it imports from outside. In a
 folder that stood before every module is named by itself. Growth named nowhere refuses the push; an
@@ -75,10 +82,10 @@ commit.
 | Coupling | `mail/reader.ts` incoming 1 → 1, outgoing 2 → 3; cycles none; imports past the entry none |
 | Patterns | Adapter — `mail/reader.ts:readMail`; the mail format leaks into three callers; dropped: a cast at each |
 | Terms | letter — what came by mail; record — what the domain keeps; both stand in the glossary |
-| Input | from the mail server: a letter with a file, a letter without one, a broken header — refused |
+| Input | from the mail server: a letter with a file, a letter without one, a broken header — refused. SC-MA-12, `mail/reader.spec.ts` |
 | Bounds | the record keeps its fields; the old letters are read; no new network address |
 | Priority | reliability over speed: a lost letter costs more than a second; a letter in under 2 s, 50 MB |
-| Budget | two files, 120 lines, no dependency |
+| Budget | `mail/reader.ts` up to 120 lines; `mail/index.ts` plus 2; new code files: 1; new dependencies: 0 |
 
 ## Common misses
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/flow-step-guard.sh · da574a40b493 · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/flow-step-guard.sh · 110848087b3b · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash
 # Requires: checks/task-flow-script.mjs, checks/flow-plan.mjs, checks/decide.mjs, hooks/decide.sh, hooks/deny-tail.sh, hooks/facts.sh
 # PreToolUse guard of the course of work: the scenario moves by a measurement, not by a declaration.
@@ -10,7 +10,8 @@
 # mark without a green mark, done and current marks out of order, a state line ahead of the measured
 # state, a shell write into the progress, the plan, the epic plan or the marks, «отложено» without the
 # owner's word naming the task, and an edit of the description of the task flow outside a task whose
-# approved plan names it. A plan not yet approved is refused a check whose form hides its result.
+# approved plan names it. A plan not yet approved is refused a check whose form hides its result and
+# a decision that is not complete.
 #
 # The decisions live in the engine — `task-flow-script.mjs guard` — and this file only hands it the
 # input and turns its line into a refusal. The whole rule — rule `task-flow`.
@@ -48,8 +49,8 @@ dir="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)"
 [ -d "$dir" ] || dir="${CLAUDE_PROJECT_DIR:-.}"
 
 verdict="$(cd "$dir" && printf '%s' "$input" | timeout 60 node "$engine" guard 2>/dev/null)" || exit 0
-# A plan is judged by the form of its checks when it is written: a pipe without `pipefail` and an
-# absence counted by `grep -c` measure nothing. An approved plan is not asked again.
+# A plan is judged when it is written: a check that is a pipe without `pipefail` or counts an absence by
+# `grep -c` measures nothing, and the decision names its rows. An approved plan is not asked again.
 [ -n "$verdict" ] || case "$(printf '%s' "$input" | jq -r '.tool_input.file_path // empty' 2>/dev/null)" in
     */plan.md) verdict="$(cd "$dir" && printf '%s' "$input" | timeout 60 node "$(dirname "$engine")/flow-plan.mjs" written 2>/dev/null)" || exit 0 ;;
 esac
@@ -68,6 +69,7 @@ case "$verdict" in
     *"the replacement of the check of step"*"is the owner's decision"*) action=replace_step_check ;;
     *"шаг владельца"*"is not written into a row"*) action=owner_step_row ;;
     "the check of step "*) action=write_plan_check ;;
+    "the decision of the plan "*) action=write_plan_decision ;;
     *) action=defer_task ;;
 esac
 

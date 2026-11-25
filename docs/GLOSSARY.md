@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · docs/GLOSSARY.md · 4042a86ec49c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · docs/GLOSSARY.md · 0ee03b9a0e04 · правится надстройкой, не здесь -->
 # Project glossary
 
 Words that mean something definite in this tree. Read before writing a spec, a rule, a comment,
@@ -52,6 +52,8 @@ sections through the override; they merge here by heading, and a package edit do
 - **Progress** — a file of the task folder: "Where we stand", decisions along the way with reasons, session entries. The only place where done work is marked. Not called a log
 - **Work state** — the unit by which work is conducted: each has a named entry, a mandatory action and an exit. Measured by the flow script from the branch, the task folder and the host; the line in the "Where we stand" section of the progress mirrors it and never stands ahead of it
 - **Task footprint** — a section of the plan: which specs, laws, rules and parts of the code the work touches
+- **Decision** — a section of the plan: how the code will be built, written before the code. A row of its table is a decision row
+- **Place** — a path and a symbol joined by a colon, `path:symbol`: where in the code a decision row stands
 - **Session** — one sitting of work on a task. Work lives longer than a session, and between sessions its state is held by the progress
 - **Window fill** — the share of the session's room already taken: the input, the cache write, the cache read and the last reply's output, divided by the window size. Not "spend" and not "budget": it is about room, not cost
 - **Handover** — the text that closes a session: working tree, branch, task, where the progress lies, what is done, the next step, what was special about the session. Written as a section of the progress and travels with the branch; without a task folder, and from the session-closing command, it is a file outside the tree
@@ -87,6 +89,8 @@ one, so that the same notion does not arrive under three names.
 | binding           | привязка                  |
 | check             | проверка                  |
 | companion         | файл привязок                 |
+| decision          | решение                   |
+| decision row      | строка решения            |
 | digest            | сводка                    |
 | disabled role     | выключенная роль          |
 | domain            | домен                     |
@@ -111,6 +115,7 @@ one, so that the same notion does not arrive under three names.
 | owner             | владелец                  |
 | pattern           | паттерн                   |
 | pipeline, step    | конвейер, шаг             |
+| place             | место                         |
 | plan              | план                          |
 | PR                | PR                            |
 | product agreement | описание фичи                 |
