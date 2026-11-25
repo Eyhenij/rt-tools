@@ -168,7 +168,9 @@ application stops responding, and the reason is found from the history.
   task, and there is nobody left to return to it. The executor of the work merges their own PR only
   on the person's direct word and only about the named PR; silence is never permission, and a word
   said about one PR does not carry over to the next. Otherwise the review is passed by the one being
-  reviewed, and the PR queue looks reviewed without being so.
+  reviewed, and the PR queue looks reviewed without being so. A word named in advance counts the same
+  when it names the PRs and the condition: the tasks of a named epic into its branch, the epic into
+  main after a green run. It covers what it names and nothing past it.
 - **A requirement that stands before an irreversible step stands where that step is taken.** A guard
   on the executor's machine judges their commands and stays silent about the same action done with a
   button at the hosting. The bypass comes out not deliberate but unnoticed: the one who pressed does

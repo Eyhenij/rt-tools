@@ -19,7 +19,7 @@ import { RtDialogService, RtFileInputComponent, RtIconButtonComponent } from '@r
 
 import { openNameDialog } from '../../dialog/cms-name-dialog/cms-name-dialog.component';
 import { BaseListPageDirective } from '../../list/base-list-page.directive';
-import { CmsListPageComponent } from '../../list/cms-list-page/cms-list-page.component';
+import { CmsListPageComponent, CmsListToolbarRightDirective } from '../../list/cms-list-page/cms-list-page.component';
 import { provideCmsListPage } from '../../list/list-page.tokens';
 import { CmsMediaFoldersComponent } from '../../media/cms-media-folders/cms-media-folders.component';
 import { CmsMediaTableComponent } from '../../media/cms-media-table/cms-media-table.component';
@@ -56,6 +56,7 @@ interface IFolderNameRequest {
 
         // components
         CmsListPageComponent,
+        CmsListToolbarRightDirective,
         CmsMediaFoldersComponent,
         CmsMediaTableComponent,
     ],

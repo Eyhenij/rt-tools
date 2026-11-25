@@ -1,4 +1,4 @@
-// rt-kit v0.39.0 · task-flow/measure/pr.mjs · 58ddc9270c74 · правится надстройкой, не здесь
+// rt-kit v0.39.1 · task-flow/measure/pr.mjs · 58ddc9270c74 · правится надстройкой, не здесь
 /**
  * The measurer «measure.pr» — exit 10: a branch on the server holds the commit that took the task
  * folder apart; the branch has a PR in any state with a reviewer; the task left the work column.

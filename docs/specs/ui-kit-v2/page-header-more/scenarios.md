@@ -43,3 +43,11 @@ Then the container keeps its width and the sections that do not fit stand in «M
 
 Not covered: a test has no layout at all — the width is seen by the showcase frame of the header
 themes, where the header stands in grid cells.
+
+### SC-UKV-1749 — the narrow-screen menu reports every press to the header
+
+Given the narrow-screen menu that the burger and the «More» of the compact strip open, with a section
+with a panel, a link and an item without an address
+When the section with a panel, the item without an address and the link are pressed
+Then the menu reports the section to unfold, the item by its id and the navigation, and draws the
+groups of the sections the header holds unfolded

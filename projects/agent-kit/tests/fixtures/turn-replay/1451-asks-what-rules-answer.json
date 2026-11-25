@@ -8,7 +8,7 @@
     { "role": "owner", "at": "2026-11-12T10:00:00Z", "owner": "<order:RT-101>" },
     { "role": "agent", "at": "2026-11-12T10:06:00Z", "call": "Edit", "file": "projects/agent-kit/assets/rules/turn-conduct.md", "code": 0 },
     { "role": "agent", "at": "2026-11-12T10:07:00Z", "call": "Bash", "command": "git commit -q -F msg.txt", "code": 0 },
-    { "role": "agent", "at": "2026-11-12T10:08:00Z", "say": "Step 1.1 is committed. Should I go on with step 1.2 or stop here?" }
+    { "role": "agent", "at": "2026-11-12T10:08:00Z", "say": "Шаг 1.1 закоммичен. Идти дальше на шаг 1.2 или остановиться?" }
   ],
   "next": { "owner": "<nudge>" }
 }

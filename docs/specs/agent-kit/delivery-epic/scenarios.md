@@ -43,9 +43,10 @@ Given a task whose state names an epic, and the branch of that epic is in the re
 When the guard judges the creation of a branch from the main one
 Then it refuses and names the branch of the epic
 
-Given the same branch is created from the branch of the epic
+Given the same branch is created from the branch of the epic, or from the tip of the working copy
+standing on it with a redirect after the branch name
 When the guard judges it
-Then it lets it through
+Then it lets it through: a redirect is no base
 
 Given the state of the task names no epic
 When the guard judges the creation of a branch from the main one
@@ -57,13 +58,32 @@ Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
 
 Given the remote copy of the epic branch lags behind the main branch
 When the guard judges the creation of a branch from that remote copy
-Then it refuses and names the lag
+Then it refuses, names the lag and the task branch as the place of the repairs the merge needs
 
 Given the local epic branch has the main branch merged in, and the remote copy still lags
 When the guard judges the creation of a branch from the local one
 Then it lets it through: the merge is done, and the task branch carries the main tip
 
 Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
+
+### SC-AK-1936 — the draft of the epic plan goes to the host from a temporary clone
+
+Given the working copy stands on the branch of other work with edits of its own
+When the command of creating is called with the argument about an epic
+Then the branch of the epic is taken from the tip of the main branch in a temporary clone, committed
+with the draft and pushed through the hooks of the tree; the working copy keeps its branch, edits and
+settings, the clone is gone, and the printed line takes the ready branch
+
+Given a plan written before the card, which history does not hold
+When the same call goes
+Then it goes to the host word for word and leaves the working copy
+
+Given the host refuses the push
+When the same call goes
+Then the draft lies in the working copy, the reason is named, and the printed line takes the branch
+from the main one
+
+Covered: `projects/agent-kit/tests/task-new-epic.test.sh`.
 
 ### SC-AK-994 — the request of a task of an epic goes into the branch of the epic
 
@@ -124,6 +144,20 @@ When the guard judges the opening, and the audit reads the open request
 Then the guard refuses and names the epic branch, and the audit names the request
 
 Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`, `projects/agent-kit/tests/checks-board-epic-base.test.sh`.
+
+### SC-AK-1937 — five misses of the call are refused for a task of an epic too
+
+Given a task of an epic and a task outside one, each with every condition of delivery met
+When a request opens with no number in its title, with a foreign number, with its author as the
+reviewer or without the demanded section of the body
+Then every one of them is refused with its reason, and a request without a miss passes
+
+Given the same task of the epic
+When a draft opens into a base the pipeline does not wake for, or the branch of the epic has moved
+ahead and the title carries no number
+Then the draft is refused, and one refusal names both the branch of the epic and the title
+
+Covered: `projects/agent-kit/tests/delivery-epic-classes.test.sh`.
 
 ### SC-AK-1256 — a draft on a base the pipeline does not wake for is refused
 

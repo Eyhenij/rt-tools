@@ -34,22 +34,22 @@
  * read from a broken description would measure what nobody wrote.
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { evaluateCondition } from './flow-condition.mjs';
 import { runForecast } from './flow-forecast.mjs';
 import { judgeCall } from './flow-guard.mjs';
 import { callOf, guardContext } from './flow-guard-run.mjs';
-import { isWriteCommand, retiredLines } from './flow-data.mjs';
+import { isWriteCommand, saysStop } from './flow-data.mjs';
 import { FlowModelError, buildModel } from './flow-model.mjs';
 import { overridePath, removedLines } from './flow-override.mjs';
 import { planProblems, readRecord, runPlanRed } from './flow-plan.mjs';
 import { runStepCommand } from './flow-step.mjs';
 import { FlowSyntaxError } from './flow-syntax.mjs';
-import { currentStep, decide, holdReason, menuCause, stageStep } from './flow-verdict.mjs';
+import { currentStep, decide, holdReason, menuCause, nightBoundary, stageStep } from './flow-verdict.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 // The history source puts a taken-apart folder back; it lies next to the laid-out engine, one level up in the package.
@@ -132,7 +132,7 @@ export async function openReaders(model, base, given = {}) {
     const source = await openSources(model, base, given);
     const modules = {};
     for (const m of model.measures) modules[m.entry] = await import(pathToFileURL(join(base, m.file)).href);
-    const data = { words: model.words, expect: model.expect, rules: { isWriteCommand } };
+    const data = { words: model.words, expect: model.expect, rules: { saysStop, isWriteCommand } };
     const caps = new Map(model.measures.map((m) => [m.entry, m.caps]));
     return (name) => {
         const [, entry, cap] = name.split('.');
@@ -176,6 +176,7 @@ const USAGE = 'usage: node task-flow-script.mjs states | measure [--json] | step
 export const GUARD_SETTINGS = {
     tasksDir: process.env.RT_FLOW_TASKS_DIR || 'docs/tasks',
     plansDir: process.env.RT_FLOW_PLANS_DIR || 'docs/plans',
+    handoffDir: process.env.RT_HANDOFF_DIR || '.claude/handoff',
     overridePath: '.claude/rt-kit/overrides/task-flow/flow.js',
     protectedPaths: [
         '^projects/agent-kit/assets/task-flow/',
@@ -199,6 +200,23 @@ async function runGuard(model, base) {
     const measure = () => measureStates(model, readers).index;
     const ctx = guardContext({ root, model, marks: source('marks'), owner: source('owner'), measure, settings: GUARD_SETTINGS });
     return judgeCall(call, ctx);
+}
+
+/**
+ * The autonomous session by the newest morning list of the project: `{ until, list }` while the boundary
+ * lies ahead, otherwise null. The lists are named by their day, so the newest one is the last by name.
+ * The directory is the project's of the session, as in the guards; a list that cannot be read is none.
+ */
+function nightOf(root) {
+    try {
+        const dir = resolve(process.env.CLAUDE_PROJECT_DIR || root || '.', GUARD_SETTINGS.handoffDir);
+        const names = readdirSync(dir).filter((file) => file.endsWith('-ночь.md'));
+        const name = names.sort().at(-1);
+        const until = name ? nightBoundary(readFileSync(join(dir, name), 'utf8'), new Date()) : null;
+        return until ? { until, list: `${GUARD_SETTINGS.handoffDir}/${name}` } : null;
+    } catch {
+        return null;
+    }
 }
 
 /**
@@ -232,7 +250,8 @@ async function runVerdict(model, base) {
         step = stageStep(source('git'), source('marks'), folder, branch, text);
     }
     const task = branch?.match(/^[A-Z]+-(\d+)-/)?.[1] ?? null;
-    return { block: holdReason(model, result, step, { cause: menuCause(measured), task }) };
+    const cause = menuCause(measured);
+    return { block: holdReason(model, result, step, { cause, task, night: cause ? nightOf(root) : null }) };
 }
 
 /**
@@ -304,7 +323,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
             process.exit(runPlanRed(sources, model, readRecord(process.env.RT_FLOW_TRANSCRIPT)));
         } else {
             const result = measureStates(model, await openReaders(model, dirname(path)));
-            console.log(json ? JSON.stringify(measureJson(model, result)) : [...measureLines(model, result), ...removedLines(model), ...retiredLines(model)].join('\n'));
+            console.log(json ? JSON.stringify(measureJson(model, result)) : [...measureLines(model, result), ...removedLines(model)].join('\n'));
         }
     } catch (error) {
         if (error instanceof FlowSyntaxError) {

@@ -9,6 +9,7 @@ import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
 import { RtAsideFooterComponent } from '../../../../lib/components/aside/footer/rt-aside-footer.component';
 import { RtAsideHeaderComponent } from '../../../../lib/components/aside/header/rt-aside-header.component';
+import { RtAsideContentDirective } from '../../../../lib/components/aside/rt-aside-content.directive';
 import { RtAsideComponent } from '../../../../lib/components/aside/rt-aside.component';
 import { RtAsideSectionComponent } from '../../../../lib/components/aside-section/rt-aside-section.component';
 import { RtButtonDirective } from '../../../../lib/components/button/rt-button.directive';
@@ -79,6 +80,7 @@ const SOURCE_LABEL_KEYS: Readonly<Record<EBookingSource, string>> = {
 
         // components
         RtAsideComponent,
+        RtAsideContentDirective,
         RtAsideFooterComponent,
         RtAsideHeaderComponent,
         RtAsideSectionComponent,

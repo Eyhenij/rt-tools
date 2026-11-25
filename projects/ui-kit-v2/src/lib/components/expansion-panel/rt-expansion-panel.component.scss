@@ -170,11 +170,6 @@
                 padding-block-end: 0;
             }
 
-            &--leaving {
-                height: 0;
-                padding-block-end: 0;
-            }
-
             /* Сохранённое тело свёрнутой панели: высота уходит в ноль, содержимое остаётся в разметке
                со своим состоянием. Скрытость убирает его из порядка фокуса и от чтения с экрана. */
             &--collapsed {
@@ -186,6 +181,23 @@
                     visibility 0s linear var(--rt-expansion-panel-duration);
                 visibility: hidden;
             }
+
+            @media (prefers-reduced-motion: reduce) {
+                transition: none;
+            }
+        }
+
+        /* Ленивое тело при сворачивании: видимость гаснет в конце движения высоты, и узел уходит по
+           окончании перехода — тело сворачивается с содержимым, а не пустым. */
+
+        /* Обёртка ленивого тела — обычный блок: отступы содержимого внутри тела те же, что без неё. */
+        &__lazy {
+            display: block;
+        }
+
+        &__lazy--leaving {
+            transition: visibility 0s linear var(--rt-expansion-panel-duration);
+            visibility: hidden;
 
             @media (prefers-reduced-motion: reduce) {
                 transition: none;

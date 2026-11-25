@@ -1,9 +1,12 @@
 import { ChangeDetectionStrategy, Component, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { PlatformService } from '@rt-tools/core';
+
 import {
     IRtDataTableRowHost,
     RT_DATA_TABLE_ROW_HOST,
+    RT_DATA_TABLE_STOP_ROW_CLICK_ATTRIBUTE,
     RtDataTableRowClickDirective,
     RtDataTableStopRowClickDirective,
 } from './rt-data-table-row-click.directive';
@@ -114,5 +117,27 @@ describe('RtDataTableRowClickDirective', () => {
         press(node('text'), 'dblclick');
 
         expect(host.order).toEqual([]);
+    });
+
+    it('отказавшаяся часть носит атрибут, по которому строка её узнаёт', () => {
+        expect(node('opt-out').hasAttribute(RT_DATA_TABLE_STOP_ROW_CLICK_ATTRIBUTE)).toBe(true);
+    });
+});
+
+describe('RtDataTableStopRowClickDirective на сервере', () => {
+    it('не ставит атрибута, пока страница рисуется не в браузере', () => {
+        TestBed.configureTestingModule({
+            imports: [RowHostComponent],
+            providers: [
+                { provide: RT_DATA_TABLE_ROW_HOST, useValue: new RowHostStub() },
+                { provide: PlatformService, useValue: { isPlatformBrowser: false } },
+            ],
+        });
+
+        const fixture: ComponentFixture<RowHostComponent> = TestBed.createComponent(RowHostComponent);
+        fixture.detectChanges();
+        const optOut: HTMLElement = fixture.nativeElement.querySelector('[qa-dataid="opt-out"]');
+
+        expect(optOut.hasAttribute(RT_DATA_TABLE_STOP_ROW_CLICK_ATTRIBUTE)).toBe(false);
     });
 });

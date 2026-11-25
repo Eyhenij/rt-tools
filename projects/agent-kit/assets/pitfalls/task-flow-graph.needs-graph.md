@@ -13,8 +13,8 @@ Pattern of the rule `task-flow`. What must be true meanwhile — the law
 The graph is a build artefact of the tool `graphify`: it lies next to the tree and is rebuilt from
 the code. It answers relations, not behaviour. The tool is not part of the package, and the pattern
 is laid out only to a tree that names the trait `graph`. A copy that names the trait and has no
-artefact on disk — a fresh clone, a new working tree — builds it by `graphify update .` before the
-first exploration of the turn, or the turn names that there is no graph, and none of the steps below
+artefact on disk — a fresh clone, a new working tree — builds it by `graphify update .` and removes
+the page `graphify-out/graph.html` it draws before the first exploration of the turn, or the turn names that there is no graph, and none of the steps below
 applies.
 
 ## When to use
@@ -45,10 +45,12 @@ A tree that keeps the graph in history is always one commit behind: the graph co
 after the one it was built from. A difference that holds only graph files is that commit, and the
 graph describes the head; the graph is stale when the difference holds a code file.
 
-A rebuild re-extracts code files and calls no model:
+A rebuild re-extracts code files and calls no model. The page it draws next to the graph is removed
+at once: nobody reads it, and a check that walks ignored files counts it as code.
 
 ```bash
 graphify update .
+rm -f graphify-out/graph.html
 ```
 
 A stale graph not rebuilt is not a source: the turn names why it was not rebuilt, and no answer

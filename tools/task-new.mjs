@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.39.0 · checks/task-new.github.mjs · 85c51af6e426 · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/task-new.github.mjs · d9f2e38798ae · правится надстройкой, не здесь
 /**
  * Creating the task an edit starts with.
  *
@@ -26,8 +26,8 @@
  * has nothing to tell an epic card from an ordinary task by; a draft of the plan in the tree's
  * plans directory, because the card carries neither the makeup of the epic nor the order of its
  * tasks; and the path to that draft in the card body — the audit reads the plan by it, and a card
- * without the path points into emptiness. The branch line printed at the end is taken from the main
- * branch: the branch of an epic is the base for the branches of its tasks.
+ * without the path points into emptiness. The branch of the epic is taken from the main branch,
+ * committed with the draft and pushed from a temporary clone: `task-new-epic.mjs`.
  *
  * With `--epic-of <number>` the created task is a task of that epic: the body says so in the very
  * shape the audit reads the link by, and the printed branch line takes the branch of the epic as
@@ -35,7 +35,7 @@
  * read by a machine from two sides at once, and the base of the branch is otherwise taken from the
  * working copy, where at that minute any branch may be checked out.
  */
-import { cpSync, existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -57,8 +57,9 @@ import {
     numberFromTitle,
     unstampFolder,
 } from './board.mjs';
+import { layEpicPlan } from './task-new-epic.mjs';
 import { confirmInQueue } from './task-new-queue.mjs';
-import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
+import { CONFIG } from './rt-kit-checks.config.mjs';
 
 /**
  * What an epic is created by: the label of its card and the directory its plan is put in. Both are
@@ -280,8 +281,8 @@ function epicBranchOf(plan, epicNumber) {
 const epic = args.epicOf === null ? null : epicOfCard(args.epicOf);
 const body = [
     readBody(),
-    args.epic ? `Замысел эпика — ${planPath}` : '',
-    epic ? `Задача эпика #${args.epicOf}, замысел — ${epic.plan}` : '',
+    args.epic ? `План эпика — ${planPath}` : '',
+    epic ? `Задача эпика #${args.epicOf}, план — ${epic.plan}` : '',
     args.outsideEpic ? `Работа вне эпика — ${args.outsideEpic}` : '',
 ]
     .filter((part) => part !== '')
@@ -404,63 +405,7 @@ function adoptDraft() {
     }
 }
 
-/**
- * The draft of the epic plan. It is assembled here and not copied from a sample: the sample would
- * have to be laid out at a fixed address, while the directory of plans is each tree's own — and a
- * draft assembled here comes with the number, the title and the branch already filled in, which a
- * copied one would leave to be typed by hand.
- *
- * An existing file is not overwritten: a plan written before the card is a lawful order — the
- * makeup is thought out first, and the card is created under a ready one.
- */
-function writeEpicPlan() {
-    const path = join(ROOT, planPath);
-    if (existsSync(path)) {
-        console.log(`\nThe plan of the epic is already in place: ${planPath}`);
-        return;
-    }
-    mkdirSync(dirname(path), { recursive: true });
-    writeFileSync(
-        path,
-        [
-            `# ${args.title}`,
-            '',
-            `**Эпик:** ${TASK_KEY}-${number} · **Ветка эпика:** \`${branch}\``,
-            '',
-            '## Что даёт',
-            '',
-            '<Возможность, ради которой эпик заведён: что владелец получит и чего не может сегодня.>',
-            '',
-            '## Точки',
-            '',
-            '- **A:** <где продукт стоит сейчас>',
-            `- **B (${TASK_KEY}-<номер>):** <изменение, которое увидит человек>. Признак: <команда, страница или число>`,
-            '- **G (веха эпика):** <состояние продукта, ради которого заведены задачи>. Признак: <команда, страница или число>',
-            '',
-            '## Как стоят ветки',
-            '',
-            `Ветка эпика отведена от главной, ветки задач — от неё, заявки задач идут в неё. <Стопкой`,
-            'ветки задач стоят или каждая от ветки эпика — решает этот план, а не тот, кто заводит',
-            'ветку.>',
-            '',
-            '## Состав',
-            '',
-            '| #   | Задача                                   | Состояние |',
-            '| --- | ---------------------------------------- | --------- |',
-            `| 1   | ${TASK_KEY}-<номер> — <что делает>        | впереди   |`,
-            '',
-            '## Чего эпик не делает',
-            '',
-            '- <Что лежит рядом и в эпик не входит.>',
-            '',
-        ].join('\n')
-    );
-    console.log(`\nThe draft of the epic plan: ${planPath}`);
-}
-
-if (args.epic) {
-    writeEpicPlan();
-} else {
+if (!args.epic) {
     adoptDraft();
 }
 
@@ -474,6 +419,10 @@ for (const line of answer.lines) {
     (answer.ok ? console.log : console.error)(`task-new: ${line}`);
 }
 
+// The branch of an epic goes to the host last: its push runs the set of the tree, and a call cut short
+// there has already named the card.
+const epicSent = args.epic && layEpicPlan({ title: args.title, number, branch, planPath }).sent;
+
 /**
  * The branch of an epic is taken from the main branch, and the branches of its tasks from it: a
  * base named here saves the executor from taking it from the working copy, where any branch may be
@@ -483,7 +432,11 @@ const base = args.epic ? ` origin/${CONFIG.deploy?.mainBranch || 'main'}` : epic
 if (epic && !epic.branch) {
     console.error(`task-new: the plan «${epic.plan}» does not name the branch of the epic — the base of the branch is taken by hand, and it is the branch of the epic, not the main one`);
 }
-console.log(`\nThe branch is created by a separate call:\n  git checkout -b ${branch}${base}`);
+console.log(
+    epicSent
+        ? `\nThe branch of the epic is taken and pushed with the draft; the plan is filled in there:\n  git checkout ${branch}`
+        : `\nThe branch is created by a separate call:\n  git checkout -b ${branch}${base}`
+);
 console.log(`A task taken into work is moved on the board:\n  npm run task:move -- ${number} ${IN_PROGRESS_STATUS}`);
 
 if (!answer.ok) {

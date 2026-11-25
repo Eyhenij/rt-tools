@@ -9,6 +9,7 @@
  * before.
  */
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -39,6 +40,27 @@ export const CLOCK_MARGIN = 5_000;
 /** The file compose reads the variables from next to its own file; it lies outside the history. */
 export const STAND_DOTENV = 'deploy/auth/.env';
 
+/** The container of Keycloak the composition names. */
+export const KEYCLOAK_CONTAINER = 'rt-auth-keycloak-1';
+
+/** Where `serve:auth` writes the digest of the archive it raises the stand with; outside the history. */
+export const THEME_RECORD = 'node_modules/.cache/rt-auth-theme.sha256';
+
+/**
+ * Whether Keycloak runs with another theme than the archive. The build gives an archive back from its
+ * cache with the former time of the file, so the time alone misses a theme of another branch: the
+ * digest the stand was raised with is asked too. The container times come from the clock of the Docker
+ * machine and the file times from the host: a file written within the margin before the start counts
+ * as written after it.
+ */
+export function themeStale(facts) {
+    if (facts.keycloak === null) {
+        return false;
+    }
+    const written = facts.archiveWrittenAt === null || facts.archiveWrittenAt >= facts.keycloak.startedAt - CLOCK_MARGIN;
+    return written || facts.theme.digest !== facts.theme.raised;
+}
+
 /**
  * The decision itself, over facts already read. Returns the reason the stand is raised again, or
  * null when it may be used as it stands.
@@ -53,13 +75,10 @@ export function staleReason(facts) {
     if (facts.keycloak.themeSource !== join(facts.root, THEME_ARCHIVE)) {
         return 'Keycloak mounts the theme of another tree';
     }
-    // The container times come from the clock of the Docker machine and the file times from the
-    // host: a file written within the margin before the start counts as written after it.
-    const startedAt = facts.keycloak.startedAt - CLOCK_MARGIN;
-    if (facts.archiveWrittenAt === null || facts.archiveWrittenAt >= startedAt) {
-        return 'the theme archive was written after Keycloak started';
+    if (themeStale(facts)) {
+        return 'Keycloak was raised with another theme archive';
     }
-    if (facts.standFilesWrittenAt >= startedAt) {
+    if (facts.standFilesWrittenAt >= facts.keycloak.startedAt - CLOCK_MARGIN) {
         return 'the stand composition was edited after Keycloak started';
     }
     if (facts.config.exitCode !== 0 || facts.config.finishedAt - CLOCK_MARGIN <= facts.standFilesWrittenAt) {
@@ -95,6 +114,21 @@ function writtenAt(path) {
     }
 }
 
+/** The digest of the archive on disk and the one the stand was raised with; an absent one is null. */
+function themeOf(root, record) {
+    const read = (path, then) => {
+        try {
+            return then(readFileSync(path));
+        } catch {
+            return null;
+        }
+    };
+    return {
+        digest: read(join(root, THEME_ARCHIVE), (body) => createHash('sha256').update(body).digest('hex')),
+        raised: read(record, (body) => body.toString('utf8').trim()),
+    };
+}
+
 /** The `NAME=value` lines of the compose variables file; an absent file gives nothing. */
 function dotenvOf(path) {
     try {
@@ -116,15 +150,21 @@ function dotenvOf(path) {
     }
 }
 
+/** The file of the digest; the scenarios name their own by `RT_AUTH_THEME_RECORD`. */
+export function themeRecord(root, env = process.env) {
+    return env.RT_AUTH_THEME_RECORD || join(root, THEME_RECORD);
+}
+
 /** Reads the facts the decision needs: the two containers of the stand and the files of the tree. */
 export function readFacts(root, env = process.env) {
-    const keycloak = inspect('rt-auth-keycloak-1');
+    const keycloak = inspect(KEYCLOAK_CONTAINER);
     const config = inspect('rt-auth-keycloak-config-1');
     const containers = { keycloak, config };
     const dotenv = dotenvOf(join(root, STAND_DOTENV));
     return {
         root,
         archiveWrittenAt: writtenAt(join(root, THEME_ARCHIVE)),
+        theme: themeOf(root, themeRecord(root, env)),
         standFilesWrittenAt: Math.max(...STAND_FILES.map((file) => writtenAt(join(root, file)) ?? Infinity)),
         // Compose takes a variable set in the command environment, even an empty one, over its
         // variables file, and `${NAME:-default}` puts the default in place of an empty value.

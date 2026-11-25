@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.0 · laws/verifiability.md · 6b540ff71cbe · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · laws/verifiability.md · 868efbbb95d2 · правится надстройкой, не здесь -->
 # Law on verifiability
 
 What counts as confirmation that work is done. The law is needed because a retelling looks as
@@ -87,7 +87,10 @@ that "should work" and code that was checked look the same in the history.
   nor in a question to the owner.
 - **A red check means wrong code, not a wrong check.** A place taken out from under the check so
   that it goes quiet fixes the reading, not what the check pointed at: the code stays the same, and
-  nobody has a signal about it any more. There is one move out of a red check — fix what it pointed
+  nobody has a signal about it any more. Code reshaped so that the check stops recognising a
+  construct that is still there — a key assembled from parts, a call through an alias, a value hidden
+  from the parser — is the same taking-out: the construct stays, and the signal goes. There is one
+  move out of a red check — fix what it pointed
   at. Stopping the work and a question to the owner are not a move: the question names them a
   choice that does not exist, and it costs as much as the fix. The known list is accumulated by the
   day the check is created and only shrinks — it is not added to by the executor's decision, nor by

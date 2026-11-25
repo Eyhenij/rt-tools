@@ -32,6 +32,17 @@
                 --rt-overlay-menu-item-min-height: var(--rt-overlay-menu-sm-item-min-height);
                 --rt-overlay-menu-item-icon-size: var(--rt-overlay-menu-sm-item-icon-size);
             }
+
+            /* Меню закрыто, а пункт ждёт ответа окна подтверждения: панель в странице, но не видна. */
+            &--held {
+                visibility: hidden;
+            }
+        }
+
+        /* Коробка шторки меню: закрытое меню, чей пункт ждёт ответа окна подтверждения, держит её
+           на странице, но не видной — вместе с ручкой, заголовком и подложкой. */
+        &__sheet--held {
+            visibility: hidden;
         }
     }
 }

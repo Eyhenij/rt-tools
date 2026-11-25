@@ -7,7 +7,7 @@
     { "role": "owner", "at": "2026-10-21T14:00:00Z", "owner": "<nudge>" },
     { "role": "agent", "at": "2026-10-21T14:02:00Z", "call": "Read", "file": "docs/tasks/RT-101-replay-task/progress.md", "code": 0 },
     { "role": "agent", "at": "2026-10-21T14:05:00Z", "call": "Edit", "file": "projects/agent-kit/assets/rules/task-flow.md", "code": 0 },
-    { "role": "agent", "at": "2026-10-21T14:06:00Z", "say": "Here is what is done so far: the rule text is rewritten." }
+    { "role": "agent", "at": "2026-10-21T14:06:00Z", "say": "Вот что сделано: текст правила переписан." }
   ],
   "next": { "owner": "<nudge>" }
 }

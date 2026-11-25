@@ -24,7 +24,7 @@
                 }
                 @case ('money-list') {
                     <rt-money-list [radius]="col">
-                        <rt-money-row label="Работы">120 ₽</rt-money-row>
+                        <rt-money-row label="Работы"><ng-template rtMoneyRowContent>120 ₽</ng-template></rt-money-row>
                     </rt-money-list>
                 }
                 @case ('stepper') {

@@ -4,7 +4,7 @@
 тот же, что в `cdkColumnDef` и в `[columnsConfig]`.
 
 ```html
-<th *cdkHeaderCellDef cdk-header-cell rtSortHeader="checkIn">Заезд</th>
+<th *cdkHeaderCellDef cdk-header-cell rtSortHeader="checkIn"><ng-template rtTableSortHeaderContent>Заезд</ng-template></th>
 ```
 
 | вход           | тип      | умолчание    |

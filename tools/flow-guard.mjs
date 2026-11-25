@@ -1,4 +1,4 @@
-// rt-kit v0.39.0 · checks/flow-guard.mjs · 8fafb056b985 · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/flow-guard.mjs · 8bc0c725669f · правится надстройкой, не здесь
 /**
  * The guard of the course of work — the engine command `guard`, called by the hook `flow-step-guard.sh`
  * before Edit, Write, MultiEdit and a shell command. It refuses what would move the scenario by a
@@ -492,6 +492,6 @@ function judgeOverride(call, ctx) {
 function judgeProtected(path, ctx, planPath) {
     const fault = ctx.legacy.includes(ctx.branch) ? null : ctx.approvalFault ? ctx.approvalFault() : ctx.approved() ? null : 'there is no approval mark';
     if (!fault && namedBy(path, editedPaths(ctx.read(planPath)))) return null;
-    const why = fault ? ` — ${fault}: ask the owner again and run \`node tools/task-flow-script.mjs plan-red\`` : '';
+    const why = fault ? ` — ${fault}: run \`node tools/task-flow-script.mjs plan-red\`, it finds the owner's answer in the record; ask the owner only when it finds none` : '';
     return `${path} belongs to the description of the task flow and its engine: it is edited only in a task whose approved plan names it in a footprint row marked «${EDITED_ROW}»${why}`;
 }

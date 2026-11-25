@@ -28,7 +28,7 @@ import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtInputNumberComponent } from '@rt-tools/ui-kit-v2/input-number';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { RtMenuItemComponent } from '@rt-tools/ui-kit-v2/menu';
-import { RtMenuComponent } from '@rt-tools/ui-kit-v2/menu';
+import { RtMenuComponent, RtMenuContentDirective } from '@rt-tools/ui-kit-v2/menu';
 import { RtSelectComponent } from '@rt-tools/ui-kit-v2/select';
 import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
 import { dataTableIconName } from '../rt-data-table-cell.logic';
@@ -89,6 +89,7 @@ interface IOperatorItem {
         RtInputComponent,
         RtInputNumberComponent,
         RtMenuComponent,
+        RtMenuContentDirective,
         RtMenuItemComponent,
         RtSelectComponent,
 

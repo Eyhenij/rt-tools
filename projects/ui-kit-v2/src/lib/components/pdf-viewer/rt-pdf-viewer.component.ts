@@ -106,7 +106,7 @@ export class RtPdfViewerComponent {
     readonly #dialogRef: RtDialogRef<void> = inject(RtDialogRef<void>);
     readonly #config: IRtPdfViewer.Config = inject(RT_PDF_VIEWER_CONFIG);
     readonly #host: ElementRef<HTMLElement> = inject(ElementRef<HTMLElement>);
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
     readonly #window: Window & typeof globalThis = inject(WINDOW) as Window & typeof globalThis;
     readonly #injector: Injector = inject(Injector);
 
@@ -228,11 +228,11 @@ export class RtPdfViewerComponent {
     protected async download(): Promise<void> {
         const source: IRtPdfViewer.Source = this.#data.source;
         if (typeof source !== 'string') {
-            downloadPdf(this.#document, this.#window, source, this.fileName);
+            downloadPdf(this.#doc, this.#window, source, this.fileName);
             return;
         }
         const bytes: Uint8Array | null = this.#pdf ? await this.#pdf.getData().catch((): null => null) : null;
-        downloadPdf(this.#document, this.#window, bytes ?? source, this.fileName);
+        downloadPdf(this.#doc, this.#window, bytes ?? source, this.fileName);
     }
 
     /**
@@ -247,7 +247,7 @@ export class RtPdfViewerComponent {
         this.printing.set(true);
         try {
             this.#printSheet?.dispose();
-            const sheet: IRtPdfViewer.PrintSheet = await preparePrintSheet(pdf, this.#document, this.#window);
+            const sheet: IRtPdfViewer.PrintSheet = await preparePrintSheet(pdf, this.#doc, this.#window);
             if (this.#destroyed) {
                 sheet.dispose();
                 return;
@@ -395,7 +395,7 @@ export class RtPdfViewerComponent {
         this.currentPage.set(visiblePageIndex(tops, heights, scrollTop, clientHeight));
 
         const keep: Set<number> = new Set<number>(pagesToRender(tops, heights, scrollTop, clientHeight, KEEP_OVERSCAN));
-        for (const index of [...this.#rendered.keys()]) {
+        for (const index of this.#rendered.keys()) {
             if (!keep.has(index)) {
                 this.#clearPage(index);
             }
@@ -466,8 +466,8 @@ export class RtPdfViewerComponent {
     }
 
     #focusedElement(): HTMLElement | null {
-        const active: Element | null = this.#document.activeElement;
+        const active: Element | null = this.#doc.activeElement;
 
-        return active instanceof HTMLElement && active !== this.#document.body ? active : null;
+        return active instanceof HTMLElement && active !== this.#doc.body ? active : null;
     }
 }

@@ -5,6 +5,7 @@ import { createRtFixture, el, hostClasses } from '../../../testing/rt-kit-testin
 import { IRtIconButton } from '../icon-button/rt-icon-button.model';
 import { IRtMenu } from './rt-menu.model';
 import { RtMenuItemComponent } from './rt-menu-item.component';
+import { RtMenuContentDirective } from './rt-menu-content.directive';
 import { RtMenuComponent } from './rt-menu.component';
 
 /** Панель меню живёт в оверлее CDK — ищем её в документе. */
@@ -26,12 +27,19 @@ function items(): HTMLElement[] {
             [triggerSize]="triggerSize()"
             [disabled]="disabled()"
             (openedChange)="opened.push($event)">
-            <rt-menu-item label="Открыть" icon="ico-eye" (selected)="picked = picked + 1" />
-            <rt-menu-item label="Удалить" icon="ico-trash" [danger]="true" [disabled]="itemDisabled()" (selected)="removed = removed + 1" />
+            <ng-template rtMenuContent>
+                <rt-menu-item label="Открыть" icon="ico-eye" (selected)="picked = picked + 1" />
+                <rt-menu-item
+                    label="Удалить"
+                    icon="ico-trash"
+                    [danger]="true"
+                    [disabled]="itemDisabled()"
+                    (selected)="removed = removed + 1" />
+            </ng-template>
         </rt-menu>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtMenuComponent, RtMenuItemComponent],
+    imports: [RtMenuComponent, RtMenuContentDirective, RtMenuItemComponent],
 })
 class MenuHostComponent {
     public readonly ariaLabel: WritableSignal<string> = signal<string>('');

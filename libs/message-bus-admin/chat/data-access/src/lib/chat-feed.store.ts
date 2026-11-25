@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, Signal } from '@angular/core';
+import { computed, inject, Signal, Service } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ChatApiService } from '@rt/message-bus-admin/chat/api';
 import { chatArrived, chatResending, chatSendAnswered, chatSentMessage, EChatSendState, IChat } from '@rt/message-bus-admin/chat/util';
@@ -37,7 +37,7 @@ const INITIAL_STATE: IChatFeedState = { ...BASE_INITIAL_STATE.ASYNC, talkId: '',
  * Чтение ленты идёт `switchMap`: человек открывает соседний разговор, не дождавшись первого.
  * Отправка — `concatMap`: две реплики подряд должны уйти в том порядке, в каком их набрали.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class ChatFeedStore extends BaseAsyncStoreService<IChatFeedState, TChatFeedMessage> {
     readonly #api: ChatApiService = inject(ChatApiService);
     readonly #readSource: Subject<string> = new Subject<string>();

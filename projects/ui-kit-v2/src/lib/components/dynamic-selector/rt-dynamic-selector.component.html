@@ -5,7 +5,9 @@
         <div rtElem="content">
             <!-- Под приглашением пустой список не рисуется: узел нулевой высоты сдвигал бы приглашение зазором. -->
             @if (rows().length > 0 || !invitation()) {
-                <rt-dynamic-selector-list>
+                <rt-dynamic-selector-list [addButton]="addButtonTpl" />
+                <!-- Кнопку добавления рисует список: она создаётся, только пока его полоса действий показана. -->
+                <ng-template #addButtonTpl>
                     @if (isAddShown()) {
                         <button
                             rtButton
@@ -26,7 +28,7 @@
                             (rtPopoverClosed)="onClosed()"
                             (click)="onAdd(addPopover)"></button>
                     }
-                </rt-dynamic-selector-list>
+                </ng-template>
             }
 
             @if (invitation()) {

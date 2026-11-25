@@ -38,7 +38,8 @@ on. Name separately the layers the task will touch — they are underestimated m
 - the second application, if the entity is shown there too.
 
 For each step state a **checkable readiness sign** — one that can be shown by command output or
-by a browser measurement, not by the words "it works".
+by a browser measurement, not by the words "it works". A count the review rounds may grow
+is a lower bound, `>= N`, never `= N`: it is met again when the step is measured before the PR.
 
 ## Acceptance
 

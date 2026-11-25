@@ -43,13 +43,13 @@ interface IAsideFooterZoneCase {
                     <ng-template let-zoneCase>
                         <rt-aside-footer class="app-aside-footer-matrix__footer">
                             @if (zoneCase.dismiss) {
-                                <button rtButton asideDismiss appearance="text">Закрыть</button>
+                                <button type="button" rtButton asideDismiss appearance="text">Закрыть</button>
                             }
                             @if (zoneCase.primary) {
-                                <button rtButton asidePrimary theme="primary">Сохранить</button>
+                                <button type="button" rtButton asidePrimary theme="primary">Сохранить</button>
                             }
                             @if (zoneCase.stray) {
-                                <button rtButton>Без атрибута</button>
+                                <button type="button" rtButton>Без атрибута</button>
                             }
                         </rt-aside-footer>
                     </ng-template>
@@ -60,8 +60,8 @@ interface IAsideFooterZoneCase {
                 <app-story-presets caption="Футер в обоих наборах оформления">
                     <ng-template>
                         <rt-aside-footer class="app-aside-footer-matrix__footer">
-                            <button rtButton asideDismiss appearance="text">Закрыть</button>
-                            <button rtButton asidePrimary theme="primary">Сохранить</button>
+                            <button type="button" rtButton asideDismiss appearance="text">Закрыть</button>
+                            <button type="button" rtButton asidePrimary theme="primary">Сохранить</button>
                         </rt-aside-footer>
                     </ng-template>
                 </app-story-presets>
@@ -71,8 +71,8 @@ interface IAsideFooterZoneCase {
                 <app-story-themes caption="Футер в обеих темах">
                     <ng-template>
                         <rt-aside-footer class="app-aside-footer-matrix__footer">
-                            <button rtButton asideDismiss appearance="text">Закрыть</button>
-                            <button rtButton asidePrimary theme="primary">Сохранить</button>
+                            <button type="button" rtButton asideDismiss appearance="text">Закрыть</button>
+                            <button type="button" rtButton asidePrimary theme="primary">Сохранить</button>
                         </rt-aside-footer>
                     </ng-template>
                 </app-story-themes>

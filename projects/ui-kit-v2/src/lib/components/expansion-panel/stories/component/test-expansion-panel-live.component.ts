@@ -38,18 +38,23 @@ const GROUP_ITEMS: readonly IGroupItem[] = [
                 <div class="app-expansion-panel-live">
                     <rt-expansion-panel [(expanded)]="actionsOpen">
                         <span class="app-expansion-panel-live__title">Номера</span>
-                        <span rtExpansionPanelActions class="app-expansion-panel-live__actions">
-                            <rt-checkbox qa-dataid="expansion-live-publish" [checked]="published()" (checkedChange)="published.set($event)">
-                                На сайте
-                            </rt-checkbox>
-                            <rt-icon-button
-                                qa-dataid="expansion-live-add"
-                                icon="plus-circle"
-                                size="sm"
-                                ariaLabel="Добавить номер"
-                                tooltip="Добавить номер"
-                                (clicked)="added.set(added() + 1)" />
-                        </span>
+                        <ng-template rtExpansionPanelActions>
+                            <span class="app-expansion-panel-live__actions">
+                                <rt-checkbox
+                                    qa-dataid="expansion-live-publish"
+                                    [checked]="published()"
+                                    (checkedChange)="published.set($event)">
+                                    На сайте
+                                </rt-checkbox>
+                                <rt-icon-button
+                                    qa-dataid="expansion-live-add"
+                                    icon="plus-circle"
+                                    size="sm"
+                                    ariaLabel="Добавить номер"
+                                    tooltip="Добавить номер"
+                                    (clicked)="added.set(added() + 1)" />
+                            </span>
+                        </ng-template>
                         <p rtExpansionPanelBody class="app-expansion-panel-live__text">Сорок два номера на четырёх этажах.</p>
                     </rt-expansion-panel>
                     <span class="app-expansion-panel-live__note">

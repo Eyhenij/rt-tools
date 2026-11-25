@@ -65,6 +65,9 @@ and the application translates them by `provideCmsLabels`.
 - **The site server answers by a CMS redirect before drawing the page and carries the query over;
   without an answer from the CMS the former list stays.** A redirect lost for a minute is better
   than a site that does not answer.
+- **The toolbar of a list page takes its filters and actions as templates.** An element written for
+  the bar is not drawn and warns in development mode: the bar sits in a template of the kit toolbar,
+  and a projection there is lost.
 
 ## What is out of scope
 

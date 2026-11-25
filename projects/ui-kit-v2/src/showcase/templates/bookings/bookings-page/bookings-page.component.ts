@@ -43,6 +43,7 @@ import {
     IBooking,
 } from '../booking.model';
 import { BookingsStore } from '../bookings.store';
+import { AppListToolbarLeftDirective } from '../list-page/app-list-page.component';
 import { AppListPageComponent } from '../list-page/app-list-page.component';
 import { IListPage } from '../list-page/list-page.model';
 import { provideListPage } from '../list-page/list-page.token';
@@ -180,6 +181,7 @@ function bookingRowHasActions(row: IBookingRow): boolean {
 
         // components
         AppListPageComponent,
+        AppListToolbarLeftDirective,
         AppSortHeaderDirective,
         RtButtonDirective,
         RtCopyCellComponent,
@@ -200,7 +202,7 @@ function bookingRowHasActions(row: IBookingRow): boolean {
         class: BEM_BLOCK,
     },
 })
-export class BookingsPageComponent implements IListPage.Host<IBooking.State, EBookingSortProperty>, OnInit {
+export class BookingsPageComponent implements OnInit, IListPage.Host<IBooking.State, EBookingSortProperty> {
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #transloco: TranslocoService = inject(TranslocoService);
     readonly #router: Router = inject(Router);

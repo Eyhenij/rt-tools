@@ -15,7 +15,7 @@
  * Four things are checked:
  *   the size      — the bytes of the laid-out map against the declared limit;
  *   the states    — the names from the table of the rule against the names in the map, both ways;
- *   the exits     — both ends of a turn are named: the end of the scenario and the owner's Esc;
+ *   the exits     — the ends of a turn are named: the end of the scenario, the owner's stop and Esc;
  *   the old exits — none of the former exits is named as an item of the map.
  *
  * FAIL-OPEN: there is no map in the tree — nothing to check, a zero code. The tree may leave it
@@ -88,12 +88,13 @@ function statesOf(text, { listed: readListed = false } = {}) {
 }
 
 /**
- * The ends of a turn: the scenario is over, or the owner pressed Esc. Each has two
+ * The ends of a turn: the scenario is over, or the owner stopped it by a word or by Esc. Each has two
  * names: the English one is brought by the package, the Russian one is held by a tree whose map is
  * still its own. Either of the two is enough.
  */
 const EXITS = [
     ['the end of the scenario', 'конец сценария'],
+    ['a stop word of the owner', 'слово остановки'],
     ['the owner interrupted the turn', 'прерывание владельца'],
 ];
 

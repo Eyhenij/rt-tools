@@ -19,6 +19,7 @@ import { createRtFixture, provideRtKitTesting, qa } from '../../../testing/rt-ki
 import { RtDialogRef } from '../dialog/rt-dialog-ref';
 import { RtAsideHeaderComponent } from './header/rt-aside-header.component';
 import { RtAsideRef, TRtAsideCloseRequest } from './rt-aside-ref';
+import { RtAsideContentDirective } from './rt-aside-content.directive';
 import { RtAsideComponent } from './rt-aside.component';
 import { IRtAsideConfig, RtAsideService } from './rt-aside.service';
 
@@ -31,11 +32,13 @@ const OWNER_VALUE: string = 'Карточка заказа';
     selector: 'rt-aside-owned-content',
     template: `
         <rt-aside>
-            <p qa-dataid="owner-name">{{ ownerName }}</p>
+            <ng-template rtAsideContent>
+                <p qa-dataid="owner-name">{{ ownerName }}</p>
+            </ng-template>
         </rt-aside>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtAsideComponent],
+    imports: [RtAsideComponent, RtAsideContentDirective],
 })
 class OwnedContentComponent {
     public readonly ownerName: string | null = inject(OWNER_NAME, { optional: true });
@@ -57,12 +60,14 @@ class OwnerComponent {
     selector: 'rt-aside-focus-host',
     template: `
         <rt-aside [trapFocus]="trap()">
-            <input qa-dataid="first" />
-            <input qa-dataid="initial" cdkFocusInitial />
+            <ng-template rtAsideContent>
+                <input qa-dataid="first" />
+                <input qa-dataid="initial" cdkFocusInitial />
+            </ng-template>
         </rt-aside>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtAsideComponent],
+    imports: [RtAsideComponent, RtAsideContentDirective],
 })
 class FocusHostComponent {
     public readonly trap: WritableSignal<boolean> = signal(false);

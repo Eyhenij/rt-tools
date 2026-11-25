@@ -68,7 +68,8 @@ Then it names this directory a divergence
 
 Given the document names a path inside a directory that begins with a dot
 When the check of the paths goes
-Then it stays silent: the file is in the tree
+Then it stays silent: the file is in the tree; and a draft the ignore settings cover is not judged,
+a draft with a Cyrillic name included
 
 ### SC-AK-50 — the task folders are taken out of the check of the paths
 

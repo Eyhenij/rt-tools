@@ -13,6 +13,7 @@ import {
     inject,
     Injector,
     input,
+    InputSignal,
     InputSignalWithTransform,
     output,
     OutputEmitterRef,
@@ -25,11 +26,13 @@ import {
 import { firstValueFrom } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+import { isNil } from '@rt-tools/utils';
 
 import { BreakpointsService, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { RtAsideRef, RtAsideService } from '@rt-tools/ui-kit-v2/aside';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtToolbarFiltersAsideComponent } from './filters-aside/rt-toolbar-filters-aside.component';
+import { RtToolbarFiltersHub } from './rt-toolbar-filters-hub';
 import { IRtToolbar } from './rt-toolbar.model';
 
 /**
@@ -158,11 +161,13 @@ const BEM_BLOCK: string = 'rt-toolbar';
     },
 })
 export class RtToolbarComponent {
-    readonly #narrow: Signal<boolean> = inject(BreakpointsService).narrow;
+    /** Отборы уходят за кнопку на месте уже 1080: на ровно 1080 они ещё стоят в строке. */
+    readonly #narrow: Signal<boolean> = inject(BreakpointsService).belowNarrow;
+    readonly #hub: RtToolbarFiltersHub = inject(RtToolbarFiltersHub);
     readonly #asideService: RtAsideService = inject(RtAsideService);
     readonly #injector: Injector = inject(Injector);
     readonly #host: HTMLElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
     readonly #interactivity: InteractivityChecker = inject(InteractivityChecker);
     readonly #filtersActiveLabel: Signal<string> = rtKitLabel('uiFiltersActive');
 
@@ -206,6 +211,15 @@ export class RtToolbarComponent {
         transform: booleanAttribute,
     });
 
+    /**
+     * Кто открывает панель отборов по кнопке: `kit` — сама полоса панелью кита, `app` — приложение
+     * своим маршрутом по выходу `filtersOpen`, с `rt-toolbar-filters-panel` внутри.
+     */
+    public readonly filtersPanel: InputSignal<IRtToolbar.TFiltersPanel> = input<IRtToolbar.TFiltersPanel>('kit');
+
+    /** Нажата кнопка фильтров при `filtersPanel="app"`: приложение открывает панель своим маршрутом. */
+    public readonly filtersOpen: OutputEmitterRef<void> = output<void>();
+
     /** Нажата «Применить» панели отборов; панель после этого закрыта. */
     public readonly filtersApply: OutputEmitterRef<void> = output<void>();
 
@@ -220,9 +234,35 @@ export class RtToolbarComponent {
                 untracked((): void => this.#closeFilters());
             }
         });
+
+        // Панель приложения стоит в другом месте страницы и полосы не видит: полоса отдаёт ей
+        // отборы через связку кита, пока живёт и пока панель открывает приложение
+        effect((onCleanup: (cleanup: () => void) => void): void => {
+            const template: TemplateRef<IRtToolbar.IFiltersContext> | undefined = this.filtersTpl();
+            if (this.filtersPanel() !== 'app' || template === undefined) {
+                return;
+            }
+            const release: () => void = untracked((): (() => void) =>
+                this.#hub.register({
+                    template,
+                    collapsed: this.collapsed,
+                    reset: (): void => this.filtersReset.emit(),
+                    apply: (): void => this.filtersApply.emit(),
+                    // Поля возвращаются в полосу со следующей отрисовкой: фокус ставится после неё
+                    focusBar: (): void => {
+                        afterNextRender({ write: (): void => this.#focusBar() }, { injector: this.#injector });
+                    },
+                })
+            );
+            onCleanup(release);
+        });
     }
 
     protected openFilters(): void {
+        if (this.filtersPanel() === 'app') {
+            this.filtersOpen.emit();
+            return;
+        }
         const template: TemplateRef<IRtToolbar.IFiltersContext> | undefined = this.filtersTpl();
         // Подложка ловит нажатия только со следующего кадра: второе нажатие до него открыло бы
         // вторую панель поверх первой
@@ -259,7 +299,7 @@ export class RtToolbarComponent {
         }
         // Кнопка, с которой панель открыли, на широком месте уже снята, и вернуть фокус панели
         // некуда: он уходит в левую секцию полосы, куда вернулись поля отборов
-        const focusInPanel: boolean = this.#document.activeElement?.closest('rt-toolbar-filters-aside') != null;
+        const focusInPanel: boolean = !isNil(this.#doc.activeElement?.closest('rt-toolbar-filters-aside'));
         this.#filtersRef.close();
         this.#filtersRef = null;
         if (focusInPanel) {

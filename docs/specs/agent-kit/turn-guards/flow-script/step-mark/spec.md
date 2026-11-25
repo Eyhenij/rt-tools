@@ -110,8 +110,8 @@ prints a line per fixture.
 
 - **An edit of the description and the engine needs the owner's approving answer found at the place the approval mark names.**
 - **An approval mark whose place holds no approving answer counts as no approval.** The answer must
-  be a menu option the owner chose after the calls of both roles, beginning with «Одобряю» and
-  naming the plan or the task — the same test `plan-red` applies when it writes the mark.
+  be a menu option or a typed message after the calls of both roles that approves the plan of the
+  task by `approvalOf` — the same test `plan-red` applies when it writes the mark.
 - **An approval given in any working copy of the repository holds in every other.**
 - **A record outside the record directories gives no approval, the one `RT_FLOW_TRANSCRIPT` names included.**
   The variable is set by whoever calls the engine, and the agent can set it.
@@ -129,7 +129,7 @@ prints a line per fixture.
   its end. A rebuilt plan whose checks are green on the branch is approved by one command.
 - **A worktree that cannot be made is a refusal with its reason, and no check runs.** A run on the
   current tree in its place would refuse the plan as green again.
-- **An answer that can no longer be found at its place is refused, and the refusal names the move: ask the owner again and run `plan-red`.**
+- **An answer that can no longer be found at its place is refused, and the refusal names the move: run `plan-red`, which finds the answer in the record; the owner is asked only when it finds none.**
   A record removed by the retention cleanup of the harness and an entry gone from a record are both
   such cases.
 - **Exit 5 confirms the approval at its place as the guard does, and does not read the answer from the mark.**
@@ -147,6 +147,8 @@ prints a line per fixture.
   none.
 - **The script compares the judge's verdict with the expected verdicts after the judge answered.**
 - **A judge answer that is not one verdict, `allow` or `block`, is a mismatch.**
+- **A judge that did not run stops the replay, and no case of it counts as a mismatch.** An expired login
+  of the CLI answered every case, and the replay read as a text that judges everything wrong.
 - **The verdicts are taken only from the judge's answers in the same run.** The verdict files an agent
   wrote for the earlier replay are removed and never read.
 - **The replay runs by hand and as a plan step, not in the set before a push.** It calls a model once
@@ -164,8 +166,8 @@ prints a line per fixture.
 
 Two scenarios of the neighbouring specs follow these rules: `SC-AK-1414` of `guard/` (an edit that
 marks a step done is refused) and `SC-AK-1411` of the engine (the approval mark carries the place of
-the answer). `SC-AK-1726` rests on the rule of the engine that refuses a step while a file of the task
-folder differs from the commit of the plan, and adds only that such a step stays not done.
+the answer). `SC-AK-1726` rests on the rule of the engine that refuses a step while the plan or the
+grill differs from the commit of the plan, and adds only that such a step stays not done.
 
 ## What is out of scope
 
@@ -187,7 +189,8 @@ The hook of the course of work stays as the subdomain `guard/` describes it. Its
 edit that marks a step done, and a write into the session records; the first maps to the action
 `mark_step_done` of the decision table with the move `node tools/task-flow-script.mjs step <N.M>`,
 the second to the action `write_marks`. A refusal of the approval maps to `edit_flow_description` with
-the move: ask the owner again and run `plan-red`.
+the move: run `plan-red`, which finds the answer in the record; the owner is asked only when it
+finds none.
 
 The command `step <N.M>` keeps its output and codes; on a match it also writes the progress.
 

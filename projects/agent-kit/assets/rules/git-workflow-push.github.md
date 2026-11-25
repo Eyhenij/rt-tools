@@ -25,4 +25,4 @@ Rule under the law `docs/constitution/delivery.md`, for a tree on GitHub. Cold p
 - **An exclusion reason naming a task is judged on whether that task is alive.**
 - **The layout audit stands in the push gate set on a par with lint and the build.**
 - **After merging the base in, the check set is revised by what the branch now carries.**
-- **Guard scenarios set the git settings themselves, not take them from the machine.**
+- **Guard scenarios set the git settings and the locale themselves, not take them from the machine.**

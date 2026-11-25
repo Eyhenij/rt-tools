@@ -77,7 +77,7 @@ Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
 
 Given the same plan, and an approval mark naming a record that lies on disk but no longer holds the entry of that `uuid`
 When an edit of the engine is made
-Then it is refused, and the refusal names the move: ask the owner again and run `plan-red`
+Then it is refused, and the refusal names the move: run `plan-red`, which finds the answer in the record
 
 Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
 
@@ -137,6 +137,14 @@ Then the fixture counts as a mismatch, and the code is 1
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
+### SC-AK-1941 — a judge that did not run stops the replay and is no mismatch
+
+Given two fixtures and a judge that ends with code 1 and the words «Please run /login», or with code 0 and nothing
+When the replay runs
+Then it stops on the first call, the answer of the judge is printed, and the code is 2; an answer with no verdict stays a mismatch
+
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
+
 ### SC-AK-1716 — a plan stripped of its checks in the working copy does not lift the refusal
 
 Given a plan whose commit wrote a check under step 1.1, and the same plan in the working copy with every check line removed
@@ -165,7 +173,7 @@ Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
 
 Given an approval mark naming plan commit A with its answer in place, and the branch rewritten so that commit B adds the plan
 When an edit of the engine is made
-Then it is refused, and the refusal names the move: ask the owner again and run `plan-red`
+Then it is refused, and the refusal names the move: run `plan-red`, which finds the answer in the record
 
 Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
 
@@ -185,9 +193,9 @@ Then the opening is refused naming step 1.1 and the network as the cause
 
 Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
-### SC-AK-1726 — a task folder changed since the plan commit refuses the step
+### SC-AK-1726 — a grill changed since the plan commit refuses the step
 
-Given a check of step 1.1 that matches, and a file of the task folder other than the progress changed since the commit of the plan
+Given a check of step 1.1 that matches, and the grill changed since the commit of the plan
 When `step 1.1` is run
 Then the step is refused with its reason, and the progress keeps step 1.1 not done
 
@@ -213,7 +221,7 @@ Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
 Given an approved plan and an approval mark whose record the retention cleanup of the harness removed
 When an edit of the engine is made
-Then it is refused, and the refusal names the move: ask the owner again and run `plan-red`
+Then it is refused, and the refusal names the move: run `plan-red`, which finds the answer in the record
 
 Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
 
@@ -329,7 +337,7 @@ Given a tree whose `.nvmrc` names a version installed in the nvm directory, and 
 When the PR opens and the final rerun runs
 Then the engine runs on the pinned node; without `.nvmrc` it runs on the node of the session
 
-Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-script-node.test.sh`.
 
 ### SC-AK-1736 — a step command that does not match leaves the progress as it was
 
@@ -360,7 +368,7 @@ When `step 1.3` is run
 Then it is refused with the move `git revert --no-edit <the commit that took the folder apart>`
 And a number the plan does not name is refused as such, with no move and no folder put back
 And the step guard lets that command through, refuses a hand mark of a step, and the command brings the folder back
-And a folder file edited after the commit of the plan refuses the step by its name, with the revert move
+And a grill edited after the commit of the plan refuses the step by its name, with the revert move
 
 Covered: `projects/agent-kit/tests/task-flow-script-archive.test.sh`.
 

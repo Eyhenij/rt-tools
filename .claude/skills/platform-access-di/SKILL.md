@@ -4,7 +4,7 @@ kind: pattern
 rule: platform-access
 description: Pattern of rule platform-access. Load when the window, the document or an environment check enters the code — ready-made token injects, casting to Window & typeof globalThis, the window as a parameter of a pure function, DOM initialisation after the first render. Not under libs/api and apps/api.
 ---
-<!-- rt-kit v0.39.0 · patterns/platform-access-di.md · 1483daf56f8c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · patterns/platform-access-di.md · 07a930f95a49 · правится надстройкой, не здесь -->
 
 # The window, the document and the environment check
 
@@ -21,13 +21,13 @@ Pattern of the rule `platform-access`. What must be true — the law
 
 ```typescript
 import { DOCUMENT } from '@angular/common';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { PlatformService, WINDOW } from '@rt-tools/core';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class SomeService {
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
     readonly #platform: PlatformService = inject(PlatformService);
     readonly #window: Window = inject(WINDOW);
 }

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.0 · pitfalls/component-structure.md · 497323c67683 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · pitfalls/component-structure.md · a73397500934 · правится надстройкой, не здесь -->
 # Component file — how it works here — cold part
 
 What the rule `component-structure` handed over when cut to its statements, every article whole.
@@ -96,7 +96,9 @@ environment either — that is `Q-FA-1` in the law.
   kit icon files: some names carry the `ico-` prefix and most do not.
 - **A component that grew past the file limit is split, not squeezed.** An edit of a component does
   not load the rule of plain TypeScript files, where the 500-line article lives, so it is repeated
-  in one line here: what the component does on its own moves out into a file next to it.
+  in one line here: what the component does on its own moves out into a file next to it. Moving
+  comments out, dropping blank lines and joining lines are squeezing: the limit is met and the
+  component is as large as before.
 
 ## Content that arrived from outside is built as nodes
 

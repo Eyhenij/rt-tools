@@ -4,6 +4,7 @@ import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtMoneyListComponent } from '../../rt-money-list.component';
+import { RtMoneyRowContentDirective } from '../../rt-money-row-content.directive';
 import { RtMoneyRowComponent } from '../../rt-money-row.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
@@ -30,22 +31,38 @@ export type TMoneyListMatrixPart = 'total' | 'loading' | 'length' | 'edges' | 'p
                                 @switch (total) {
                                     @case ('без итога') {
                                         <rt-money-list>
-                                            <rt-money-row label="Работы">120 000 ₽</rt-money-row>
-                                            <rt-money-row label="Материалы">28 000 ₽</rt-money-row>
+                                            <rt-money-row label="Работы">
+                                                <ng-template rtMoneyRowContent>120 000 ₽</ng-template>
+                                            </rt-money-row>
+                                            <rt-money-row label="Материалы">
+                                                <ng-template rtMoneyRowContent>28 000 ₽</ng-template>
+                                            </rt-money-row>
                                         </rt-money-list>
                                     }
                                     @case ('с итогом') {
                                         <rt-money-list>
-                                            <rt-money-row label="Работы">120 000 ₽</rt-money-row>
-                                            <rt-money-row label="Материалы">28 000 ₽</rt-money-row>
-                                            <rt-money-row total label="Итого">148 000 ₽</rt-money-row>
+                                            <rt-money-row label="Работы">
+                                                <ng-template rtMoneyRowContent>120 000 ₽</ng-template>
+                                            </rt-money-row>
+                                            <rt-money-row label="Материалы">
+                                                <ng-template rtMoneyRowContent>28 000 ₽</ng-template>
+                                            </rt-money-row>
+                                            <rt-money-row total label="Итого">
+                                                <ng-template rtMoneyRowContent>148 000 ₽</ng-template>
+                                            </rt-money-row>
                                         </rt-money-list>
                                     }
                                     @case ('итог не равен сумме') {
                                         <rt-money-list>
-                                            <rt-money-row label="Работы">120 000 ₽</rt-money-row>
-                                            <rt-money-row label="Материалы">28 000 ₽</rt-money-row>
-                                            <rt-money-row total label="К оплате со скидкой">140 600 ₽</rt-money-row>
+                                            <rt-money-row label="Работы">
+                                                <ng-template rtMoneyRowContent>120 000 ₽</ng-template>
+                                            </rt-money-row>
+                                            <rt-money-row label="Материалы">
+                                                <ng-template rtMoneyRowContent>28 000 ₽</ng-template>
+                                            </rt-money-row>
+                                            <rt-money-row total label="К оплате со скидкой">
+                                                <ng-template rtMoneyRowContent>140 600 ₽</ng-template>
+                                            </rt-money-row>
                                         </rt-money-list>
                                     }
                                 }
@@ -61,8 +78,12 @@ export type TMoneyListMatrixPart = 'total' | 'loading' | 'length' | 'edges' | 'p
                         <app-story-row slotWidth="20rem" [items]="loadings" [itemLabel]="loadingLabel">
                             <ng-template let-value>
                                 <rt-money-list>
-                                    <rt-money-row label="Работы" [loading]="value">120 000 ₽</rt-money-row>
-                                    <rt-money-row total label="Итого" [loading]="value">148 000 ₽</rt-money-row>
+                                    <rt-money-row label="Работы" [loading]="value">
+                                        <ng-template rtMoneyRowContent>120 000 ₽</ng-template>
+                                    </rt-money-row>
+                                    <rt-money-row total label="Итого" [loading]="value">
+                                        <ng-template rtMoneyRowContent>148 000 ₽</ng-template>
+                                    </rt-money-row>
                                 </rt-money-list>
                             </ng-template>
                         </app-story-row>
@@ -77,9 +98,11 @@ export type TMoneyListMatrixPart = 'total' | 'loading' | 'length' | 'edges' | 'p
                             <ng-template let-count>
                                 <rt-money-list>
                                     @for (row of rows.slice(0, count); track row.label) {
-                                        <rt-money-row [label]="row.label">{{ row.value }}</rt-money-row>
+                                        <rt-money-row [label]="row.label">
+                                            <ng-template rtMoneyRowContent>{{ row.value }}</ng-template>
+                                        </rt-money-row>
                                     }
-                                    <rt-money-row total label="Итого">148 000 ₽</rt-money-row>
+                                    <rt-money-row total label="Итого"><ng-template rtMoneyRowContent>148 000 ₽</ng-template></rt-money-row>
                                 </rt-money-list>
                             </ng-template>
                         </app-story-row>
@@ -98,12 +121,16 @@ export type TMoneyListMatrixPart = 'total' | 'loading' | 'length' | 'edges' | 'p
                                     }
                                     @case ('только итог') {
                                         <rt-money-list>
-                                            <rt-money-row total label="Итого">0 ₽</rt-money-row>
+                                            <rt-money-row total label="Итого">
+                                                <ng-template rtMoneyRowContent>0 ₽</ng-template>
+                                            </rt-money-row>
                                         </rt-money-list>
                                     }
                                     @case ('длинная подпись') {
                                         <rt-money-list>
-                                            <rt-money-row label="Пусконаладочные работы на объекте заказчика">64 000 ₽</rt-money-row>
+                                            <rt-money-row label="Пусконаладочные работы на объекте заказчика">
+                                                <ng-template rtMoneyRowContent>64 000 ₽</ng-template>
+                                            </rt-money-row>
                                         </rt-money-list>
                                     }
                                     @case ('пустая сумма') {
@@ -124,9 +151,11 @@ export type TMoneyListMatrixPart = 'total' | 'loading' | 'length' | 'edges' | 'p
                         <div style="width: 20rem">
                             <rt-money-list>
                                 @for (row of rows; track row.label) {
-                                    <rt-money-row [label]="row.label">{{ row.value }}</rt-money-row>
+                                    <rt-money-row [label]="row.label">
+                                        <ng-template rtMoneyRowContent>{{ row.value }}</ng-template>
+                                    </rt-money-row>
                                 }
-                                <rt-money-row total label="Итого">148 000 ₽</rt-money-row>
+                                <rt-money-row total label="Итого"><ng-template rtMoneyRowContent>148 000 ₽</ng-template></rt-money-row>
                             </rt-money-list>
                         </div>
                     </ng-template>
@@ -141,9 +170,13 @@ export type TMoneyListMatrixPart = 'total' | 'loading' | 'length' | 'edges' | 'p
                                 <div style="width: 20rem">
                                     <rt-money-list>
                                         @for (row of rows; track row.label) {
-                                            <rt-money-row [label]="row.label">{{ row.value }}</rt-money-row>
+                                            <rt-money-row [label]="row.label">
+                                                <ng-template rtMoneyRowContent>{{ row.value }}</ng-template>
+                                            </rt-money-row>
                                         }
-                                        <rt-money-row total label="Итого">148 000 ₽</rt-money-row>
+                                        <rt-money-row total label="Итого">
+                                            <ng-template rtMoneyRowContent>148 000 ₽</ng-template>
+                                        </rt-money-row>
                                     </rt-money-list>
                                 </div>
                             </ng-template>
@@ -158,6 +191,7 @@ export type TMoneyListMatrixPart = 'total' | 'loading' | 'length' | 'edges' | 'p
         // components
         RtMoneyListComponent,
         RtMoneyRowComponent,
+        RtMoneyRowContentDirective,
 
         // showcase
         StoryPresetsComponent,

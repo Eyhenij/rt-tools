@@ -22,7 +22,7 @@ Takes a contract request, returns a contract response, wraps the wait into a str
 query nor the model translation is in it:
 
 ```typescript
-@Injectable({ providedIn: 'root' })
+@Service()
 export class PromoCodeApiFacade implements IListApiFacade<
     MessageInitShape<typeof ListPromoCodesRequestSchema>,
     ListPromoCodesResponse,

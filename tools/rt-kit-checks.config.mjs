@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.39.0 · checks/rt-kit-checks.config.mjs · 542140f9eed7 · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/rt-kit-checks.config.mjs · 7c15113664e5 · правится надстройкой, не здесь
 /**
  * Check settings: what counts as sources, where not to go and where the debt lists lie.
  *
@@ -298,6 +298,11 @@ const DEFAULTS = {
          * task.
          */
         epicLabel: '',
+        /**
+         * The command the temporary clone of `task:new --epic` is set up by for the hooks of the tree.
+         * Empty — the `node_modules` of the working copy are linked there.
+         */
+        epicTreeInstall: '',
         /**
          * The labels marking cargo in the work queue — the incident analyses and proposals sent by
          * trees. They are not judged as tasks at all: they have no title with a number, no executor

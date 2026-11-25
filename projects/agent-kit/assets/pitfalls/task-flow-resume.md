@@ -108,6 +108,17 @@ pipeline's acceptance is the readiness sign of that stage. Its goal phase compar
 the whole request of the grill, so for one stage its verdict "goal not met" is expected and is not
 the readiness sign.
 
+**A step leaves an approved plan only by the owner's word, and the plan text stays.** A step deleted
+from the plan makes the engine refuse every step after it: it reads the plan of the approval. The
+owner's word goes into the decisions of the progress, and next to it a replacement of the check of
+that step, which reads the record of the word instead of the dropped work:
+
+```markdown
+- **Check of step N.M replaced:** `grep -cF "<the owner's words>" <progress of the task>` → >= 1 · the owner's word: «<их слова>»
+```
+
+The owner allows that edit in the window. The step is then marked by the engine like any other.
+
 The "Where we stand" section is **rewritten**, not appended — it is the first thing the next session
 reads, and the only thing that survives trimming by size:
 
@@ -131,8 +142,8 @@ host by the branch. A PR reopened for remarks after the folder left keeps its st
 - **PR:** не открыт · осталось: разбор папки, сверка очереди
 ```
 
-The progress carries no line about a stop. The exit guard reads the owner's Esc from their last
-entry in the record of the session, and a stop written on disk would only retell it. A task
+The progress carries no line about a stop. The exit guard reads the owner's stop word or Esc from
+their last entry in the record of the session, and a stop written on disk would only retell it. A task
 the owner put off gets the mark «отложено» in the epic plan, set by their word naming it, and the
 work goes on with the next task.
 

@@ -7,6 +7,6 @@
     { "role": "owner", "at": "2026-10-29T15:00:00Z", "owner": "<order:RT-101>" },
     { "role": "agent", "at": "2026-10-29T15:02:00Z", "call": "Bash", "command": "git commit -q -F msg.txt", "code": 0 },
     { "role": "owner", "at": "2026-10-29T15:03:00Z", "owner": "жди конца набора" },
-    { "role": "agent", "at": "2026-10-29T15:03:10Z", "say": "Waiting." }
+    { "role": "agent", "at": "2026-10-29T15:03:10Z", "say": "Жду." }
   ]
 }

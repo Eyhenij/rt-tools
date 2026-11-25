@@ -47,8 +47,8 @@ const PROMISES: Readonly<Record<string, ISuffixPromise>> = {
     module: { promised: 'a module mark', decorators: ['Module', 'NgModule'] },
     procedure: { promised: 'a `@ConnectProcedure` mark', decorators: ['ConnectProcedure'] },
     service: {
-        promised: 'either an `@Injectable` mark or a class named ending in `Service`',
-        decorators: ['Injectable'],
+        promised: 'either an `@Injectable` or `@Service` mark or a class named ending in `Service`',
+        decorators: ['Injectable', 'Service'],
         named: /Service$/,
     },
     store: { promised: 'a declaration named ending in `Store`', named: /Store$/ },

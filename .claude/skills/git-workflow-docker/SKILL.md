@@ -4,7 +4,7 @@ kind: pattern
 rule: deploy-flow
 description: Pattern of rule deploy-flow. Load when working with images on your own machine — starting and restarting the daemon, diagnosing a hanging command, building for the production server platform, registry login from a service. Production server commands — pattern git-workflow-restart.
 ---
-<!-- rt-kit v0.39.0 · patterns/git-workflow-docker.md · 4b047e4a5c21 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · patterns/git-workflow-docker.md · 4b047e4a5c21 · правится надстройкой, не здесь -->
 
 # Images on one's own machine
 

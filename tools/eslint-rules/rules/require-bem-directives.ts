@@ -8,7 +8,7 @@ import { ESLintUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
  *  1. `class="..."` — a static attribute.
  *  2. the binding `[class]="..."` — EXCEPT the pipe form `… | concatClasses`.
  *  3. `[class.foo]="..."` boolean class binding.
- *  4. `[ngClass]="..."`.
+ *  4. the ngClass directive bound as a property.
  *
  * It demands `rtBlock`, `rtElem` and `[rtMod]` from `@rt-tools/core`.
  *
@@ -34,7 +34,7 @@ interface IBoundAttributeNode {
      * it into the field `__originalType`: the native `.type` is overwritten with the string
      * `"BoundAttribute"` for compatibility with the ESLint AST. The values:
      *
-     *  - 0 — `BindingType.Property` (`[disabled]=`, `[class]=`, `[ngClass]=`)
+     *  - 0 — `BindingType.Property` (`[disabled]=`, `[class]=`, the ngClass directive)
      *  - 1 — `BindingType.Attribute` (`[attr.aria-label]=`)
      *  - 2 — `BindingType.Class` (`[class.foo]=`)
      *  - 3 — `BindingType.Style` (`[style.color]=`)
@@ -88,7 +88,7 @@ export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = createRule<TOpti
         docs: {
             description:
                 'Forbids every form of working with CSS classes directly in Angular templates ' +
-                '(class=, [class]=, [class.foo]=, [ngClass]=) except the escape hatch ' +
+                '(class=, [class]=, [class.foo]=, the ngClass directive) except the escape hatch ' +
                 '[class]="… | concatClasses". Demands rtBlock/rtElem/[rtMod] from @rt-tools/core.',
         },
         schema: [],
@@ -104,7 +104,7 @@ export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = createRule<TOpti
             boundClassDot:
                 '[class.NAME]="…" boolean class binding is not allowed. ' + 'Use [rtMod]="{ NAME: condition }" from @rt-tools/core.',
             ngClass:
-                '[ngClass] directive is not allowed. ' +
+                'The ngClass directive is not allowed. ' +
                 'Use [rtMod] from @rt-tools/core (string | array | object — same input shapes as ngClass).',
         },
     },

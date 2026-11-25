@@ -17,11 +17,11 @@ import {
     effect,
     EnvironmentProviders,
     inject,
-    Injectable,
     makeEnvironmentProviders,
     Signal,
     signal,
     WritableSignal,
+    Service,
 } from '@angular/core';
 import { StorageService } from '@rt-tools/core';
 import { RT_KIT_LOCALE, RT_KIT_TRANSLATOR, TRtKitTranslator } from '@rt-tools/ui-kit-v2';
@@ -59,10 +59,10 @@ const noLabels: TRtKitTranslator = (): string => '';
  * Сигнал, а не постоянная: язык меняется без перезагрузки, и всё, что от него считано, —
  * подписи админки, подписи кита и его локаль — пересчитывается само.
  */
-@Injectable({ providedIn: 'root' })
+@Service()
 export class AdminLocaleService {
     readonly #storage: StorageService = inject(StorageService);
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
 
     readonly #locale: WritableSignal<EAdminLocale> = signal<EAdminLocale>(this.#readOrDefault());
 
@@ -80,7 +80,7 @@ export class AdminLocaleService {
         // Страница объявляет тот язык, на котором написана: русский текст под английским
         // признаком синтезатор речи читает по английским правилам, и наоборот.
         effect((): void => {
-            this.#document.documentElement.lang = this.#locale();
+            this.#doc.documentElement.lang = this.#locale();
         });
     }
 

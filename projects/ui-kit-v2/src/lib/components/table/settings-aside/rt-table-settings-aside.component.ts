@@ -2,7 +2,8 @@ import {
     computed,
     effect,
     inject,
-    signal,
+    linkedSignal,
+    untracked,
     ChangeDetectionStrategy,
     Component,
     Signal,
@@ -15,7 +16,7 @@ import { Observable, of } from 'rxjs';
 import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
 import { RtAsideFooterComponent } from '@rt-tools/ui-kit-v2/aside';
 import { RtAsideHeaderComponent } from '@rt-tools/ui-kit-v2/aside';
-import { RtAsideComponent } from '@rt-tools/ui-kit-v2/aside';
+import { RtAsideComponent, RtAsideContentDirective } from '@rt-tools/ui-kit-v2/aside';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtContainerRightSidenavPanelDirective } from '@rt-tools/ui-kit-v2/container';
 import { RtRouteAsideComponent } from '@rt-tools/ui-kit-v2/container';
@@ -45,6 +46,7 @@ const BEM_BLOCK: string = 'rt-table-settings-aside';
     encapsulation: ViewEncapsulation.None,
     imports: [
         RtAsideComponent,
+        RtAsideContentDirective,
         RtAsideFooterComponent,
         RtAsideHeaderComponent,
         RtButtonDirective,
@@ -74,11 +76,29 @@ export class RtTableSettingsAsideComponent extends RtRouteAsideComponent<never> 
     /** Рабочая копия списка колонок (сидится из регистрации, редактируется телом-панелью). */
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
-    protected readonly items: WritableSignal<ReadonlyArray<IRtTable.ColumnSettingItem>> = signal<ReadonlyArray<IRtTable.ColumnSettingItem>>(
-        []
-    );
-
-    #seeded: boolean = false;
+    /**
+     * Засевается колонками регистрации один раз — когда она впервые появилась; дальше это правка
+     * человека, и смена регистрации её не перезаписывает.
+     */
+    protected readonly items: WritableSignal<ReadonlyArray<IRtTable.ColumnSettingItem>> = linkedSignal<
+        IRtTableSettingsRegistration | null,
+        ReadonlyArray<IRtTable.ColumnSettingItem>
+    >({
+        source: this.#registration,
+        computation: (
+            registration: IRtTableSettingsRegistration | null,
+            previous?: { source: IRtTableSettingsRegistration | null; value: ReadonlyArray<IRtTable.ColumnSettingItem> }
+        ): ReadonlyArray<IRtTable.ColumnSettingItem> => {
+            if (previous !== undefined && previous.source !== null) {
+                return previous.value;
+            }
+            return registration === null
+                ? []
+                : untracked((): ReadonlyArray<IRtTable.ColumnSettingItem> => registration.columns()).map(
+                      (c: IRtTable.ColumnSettingItem): IRtTable.ColumnSettingItem => ({ ...c })
+                  );
+        },
+    });
 
     /** Асайд восстановил `active` сам (после F5) — дальше живёт по штатным правилам. */
     #adopted: boolean = false;
@@ -110,22 +130,11 @@ export class RtTableSettingsAsideComponent extends RtRouteAsideComponent<never> 
             if (panel === undefined || !panel.ready()) {
                 return;
             }
-            if (registration === null) {
-                // Штатно открытый (или уже усыновивший таблицу) асайд закрывается,
-                // когда регистрация исчезла — уход со страницы таблицы. Асайд,
-                // восстановленный после F5, регистрацию ещё ЖДЁТ — не закрываемся.
-                if (this.#initialActive !== null || this.#adopted) {
-                    this.onClose();
-                }
-                return;
-            }
-            if (!this.#seeded) {
-                this.#seeded = true;
-                this.items.set(
-                    registration.columns().map((c: IRtTable.ColumnSettingItem): IRtTable.ColumnSettingItem => ({
-                        ...c,
-                    }))
-                );
+            // Штатно открытый (или уже усыновивший таблицу) асайд закрывается,
+            // когда регистрация исчезла — уход со страницы таблицы. Асайд,
+            // восстановленный после F5, регистрацию ещё ЖДЁТ — не закрываемся.
+            if (registration === null && (this.#initialActive !== null || this.#adopted)) {
+                this.onClose();
             }
         });
     }

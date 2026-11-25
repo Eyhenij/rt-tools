@@ -4,6 +4,7 @@ import { provideRouter, Router } from '@angular/router';
 
 import { createRtFixture, el } from '../../../testing/rt-kit-testing';
 import { RtMenuItemComponent } from './rt-menu-item.component';
+import { RtMenuContentDirective } from './rt-menu-content.directive';
 import { RtMenuComponent } from './rt-menu.component';
 
 /** Страница, куда ведёт пункт-ссылка: самой разметки у неё нет. */
@@ -15,17 +16,19 @@ class UserPageComponent {}
     selector: 'rt-menu-link-host',
     template: `
         <rt-menu ariaLabel="Действия">
-            <rt-menu-item
-                label="Карточка"
-                icon="ico-eye"
-                [link]="['/users', 7]"
-                [disabled]="linkDisabled()"
-                (selected)="opened = opened + 1" />
-            <rt-menu-item label="Удалить" icon="ico-trash" (selected)="removed = removed + 1" />
+            <ng-template rtMenuContent>
+                <rt-menu-item
+                    label="Карточка"
+                    icon="ico-eye"
+                    [link]="['/users', 7]"
+                    [disabled]="linkDisabled()"
+                    (selected)="opened = opened + 1" />
+                <rt-menu-item label="Удалить" icon="ico-trash" (selected)="removed = removed + 1" />
+            </ng-template>
         </rt-menu>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtMenuComponent, RtMenuItemComponent],
+    imports: [RtMenuComponent, RtMenuContentDirective, RtMenuItemComponent],
 })
 class MenuLinkHostComponent {
     public readonly linkDisabled: WritableSignal<boolean> = signal<boolean>(false);

@@ -28,8 +28,8 @@ te_run() {
 # --- случаи отпуска и измерители, над двойниками --------------------------------------------------
 te_run <<'JS'
 import { buildModel } from '../assets/checks/flow-model.mjs';
-import { isWriteCommand } from '../assets/checks/flow-data.mjs';
-import { releaseCase, holdReason, menuCause, menuOptions, decide } from '../assets/checks/flow-verdict.mjs';
+import { isWriteCommand, saysStop } from '../assets/checks/flow-data.mjs';
+import { releaseCase, holdReason, menuCause, menuOptions, nightBoundary, decide } from '../assets/checks/flow-verdict.mjs';
 import * as ci from '../assets/task-flow/measure/ci.mjs';
 import { judgeCall } from '../assets/checks/flow-guard.mjs';
 import { wordOf as sourceWordOf } from '../assets/task-flow/source/owner.mjs';
@@ -41,7 +41,7 @@ import * as host from '../assets/task-flow/measure/host.mjs';
 
 const path = new URL('../assets/task-flow/flow.js', import.meta.url).pathname;
 const model = buildModel(path);
-const data = { words: model.words, expect: model.expect, rules: { isWriteCommand } };
+const data = { words: model.words, expect: model.expect, rules: { saysStop, isWriteCommand } };
 const out = (label, got, want) => console.log(`${label}|${got}|${want}`);
 
 // Ответы измерителей по ссылкам; всё неназванное — «нет».
@@ -60,8 +60,11 @@ out('end: SC-AK-1839 — отметка Esc — прерывание', esc('[Req
 out('end: SC-AK-1839 — отметка Esc во время вызова — прерывание', esc('[Request interrupted by user for tool use]'), 'true');
 for (const word of ['стоп', 'Стоп, на сегодня хватит', 'не сейчас', 'подожди']) out(`end: SC-AK-1839 — «${word}» — не прерывание`, esc(word), 'false');
 out('end: SC-AK-1839 — случай отпуска по Esc', released({ ...WROTE, 'measure.owner.interrupted': true }), 'the owner interrupted the turn');
-const ownerReader = (word) => (name) => (name === 'measure.owner.interrupted' ? owner.interrupted(last(word))(data) : (WROTE[name] ?? false));
-out('end: SC-AK-1839 — «стоп» в «этап-идёт» с несделанным шагом держит ход', String(decide(model, ownerReader('стоп'), { state: 'этап-идёт', index: 7, reason: null })), 'null');
+out('end: SC-AK-1912 — случай отпуска по слову остановки', released({ ...WROTE, 'measure.owner.saidStop': true }), 'a stop word of the owner');
+const STOP = { 'measure.owner.saidStop': owner.saidStop, 'measure.owner.interrupted': owner.interrupted };
+const ownerReader = (word) => (name) => (STOP[name] ? STOP[name](last(word))(data) : (WROTE[name] ?? false));
+out('end: SC-AK-1839 — Esc кончает ход своим случаем и при слове остановки в списке', released({ ...WROTE, 'measure.owner.interrupted': true, 'measure.owner.saidStop': false }), 'the owner interrupted the turn');
+out('end: SC-AK-1912 — «стоп» в «этап-идёт» с несделанным шагом отпускает ход', decide(model, ownerReader('стоп'), { state: 'этап-идёт', index: 7, reason: null })?.release ?? 'held', 'a stop word of the owner');
 
 const uses = (list) => ({ session: { toolUses: () => list } });
 const wrote = (list) => String(session.wrote(uses(list))(data));
@@ -197,6 +200,34 @@ out('menu: SC-AK-1842 — меню отказа несёт «отложить RT
 out('menu: SC-AK-1842 — без номера задачи вариант остаётся «отложить RT-N»', menuOptions(model.words, null).join(', '), 'отложить RT-N, подскажу путь');
 out('menu: SC-AK-1842 — удержание просит путь в свободном поле того же меню', String(ownerMenu.includes('the way goes into its free field') && ownerMenu.includes('A bare «подскажу путь»')), 'true');
 
+// --- автономная сессия: до границы вместо меню — умолчание ----------------------------------------
+const AT_NIGHT = new Date('2026-11-24T03:00');
+const boundary = (line) => String(nightBoundary(`# Список к утру\n\nГраница: до 8 утра\n${line}\nРазрешено: «нет»\n\n| Работа | Ветка |\n`, AT_NIGHT));
+out('menu: SC-AK-1930 — граница впереди читается из головы списка', boundary('Автономно до: 2026-11-24T08:00'), '2026-11-24T08:00');
+out('menu: SC-AK-1930 — прошедшая граница — не ночь', boundary('Автономно до: 2026-11-24T02:59'), 'null');
+out('menu: SC-AK-1930 — граница ровно сейчас — не ночь', boundary('Автономно до: 2026-11-24T03:00'), 'null');
+out('menu: SC-AK-1930 — без строки границы и без списка — не ночь', `${boundary('')} ${nightBoundary(null, AT_NIGHT)}`, 'null null');
+out('menu: SC-AK-1930 — граница словами или без времени — не ночь', `${boundary('Автономно до: 8 утра')} ${boundary('Автономно до: 2026-11-25')}`, 'null null');
+out('menu: SC-AK-1930 — строка после таблицы границей не считается', String(nightBoundary('# Список\n\n| Работа |\n| --- |\n| RT-1 |\nАвтономно до: 2026-11-24T08:00\n', AT_NIGHT)), 'null');
+out('menu: SC-AK-1930 — строка не с начала границей не считается', `${boundary('Слова: Автономно до: 2026-11-24T08:00')} ${boundary('**Автономно до:** 2026-11-24T08:00')}`, 'null null');
+out('menu: SC-AK-1930 — момент, которого нет на часах, — не граница', ['2026-11-24T25:00', '2026-13-01T08:00', '2026-11-32T08:00', '2026-11-24T08:60'].map((at) => boundary(`Автономно до: ${at}`)).join(' '), 'null null null null');
+out('menu: SC-AK-1930 — граница с возвратом каретки читается', boundary('Автономно до: 2026-11-24T08:00\r'), '2026-11-24T08:00');
+const NIGHT = { until: '2026-11-24T08:00', list: '.claude/handoff/2026-11-24-ночь.md' };
+const nightOfCause = (cause) => holdReason(model, stage, null, { ...HOLD_MENU, cause, night: NIGHT });
+const isDefault = (text) => String(text.includes('An autonomous session does not ask the owner') && text.includes(NIGHT.list) && text.includes(NIGHT.until) && !text.includes("owner's menu:") && !text.includes('подскажу путь'));
+out('menu: SC-AK-1930 — night boundary ahead gives a default: шаг запрещает другая проверка', isDefault(nightOfCause(menuCause(forbiddenBy))), 'true');
+out('menu: SC-AK-1930 — night boundary ahead gives a default: простой', isDefault(nightOfCause({ idle: true })), 'true');
+out('menu: SC-AK-1930 — простой ночью называет шаг, дважды отказанный шаг заново не зовётся', [{ idle: true }, menuCause(forbiddenBy)].map((cause) => String(nightOfCause(cause).includes('The next move is'))).join(' '), 'true false');
+out('menu: SC-AK-1930 — умолчание всё равно называет отказавшую проверку', String(nightOfCause(menuCause(forbiddenBy)).includes('`git-guard-delivery` refused the same step twice')), 'true');
+out('menu: SC-AK-1930 — без ночи меню прежнее', String(ownerMenu.includes("The one move is the owner's menu:")), 'true');
+out('menu: SC-AK-1930 — ночь без причины меню шаг не меняет', String(holdReason(model, stage, { number: '2.1', name: 'x', left: 1 }, { ...HOLD_MENU, night: NIGHT }).includes('The next move is step 2.1')), 'true');
+const waitOrStop = nightOfCause({ idle: true });
+out('menu: SC-AK-1930 — умолчание: работа, ждущая внешнего шага, оставляет карточку и ветку', String(/outside step[^\n]*«Разрешено:»[^\n]*guard's window[^\n]*its card and its branch stay/.test(waitOrStop)), 'true');
+out('menu: SC-AK-1930 — умолчание: остановленная работа возвращает карточку', String(/owner's word[^\n]*its card goes back/.test(waitOrStop)), 'true');
+out('menu: SC-AK-1930 — умолчание: без следующей работы список дописывается', String(waitOrStop.includes('With no next work left, the list is completed')), 'true');
+out('menu: SC-AK-1930 — ночь не прячет зависшую задачу и отказ другой проверки', String(nightOfCause({ hung: { task: 'task-h', minutes: 95, output: null } }).includes('`task-h`') && nightOfCause({ foreign: ['git-guard-draft-ready'] }).includes('`git-guard-draft-ready`')), 'true');
+out('menu: SC-AK-1930 — ночь не прячет непрочитанную задачу',String(nightOfCause({ unread: { task: 'task-a', output: '/t/a.output', agent: false } }).includes('`task-a`')), 'true');
+
 const answered = (option) => sourceWordOf({ type: 'user', toolUseResult: { answers: { 'Что делать?': option } }, message: { content: [] } });
 out('menu: SC-AK-1467 — вариант меню отказа — слово владельца', answered('подскажу путь'), 'подскажу путь');
 out('menu: SC-AK-1467 — вариант меню отказа ход не отпускает', String(owner.interrupted(last(answered('подскажу путь')))(data)), 'false');
@@ -326,8 +357,10 @@ out('end: SC-AK-1811 — три остановки — один отказ', Str
 const second = decide(model, ciReader({ 'measure.ci.hold': redHold, 'measure.session.idle': true }), stageState)?.block ?? '';
 out('end: SC-AK-1812 — вторая остановка без вызова называет запуск, не меню', `${second.startsWith(`The CI run ${RUN}`)} ${second.includes("The one move is the owner's menu")}`, 'true false');
 
-// SC-AK-1839 — слово владельца удержание CI не снимает
-out('end: SC-AK-1839 — «стоп» не снимает свежую вершину без запуска', kindOf(holdOf({ events: [bash(`git push origin ${PR.head}`, END)], word: 'стоп', now: END + 60_000 })), 'fresh -');
+// SC-AK-1912 — слово остановки снимает только свежую вершину
+out('end: SC-AK-1912 — «стоп» снимает свежую вершину без запуска', kindOf(holdOf({ events: [bash(`git push origin ${PR.head}`, END)], word: 'стоп', now: END + 60_000 })), 'none');
+out('end: SC-AK-1912 — красный запуск после «стоп» держит до чтения', kindOf(holdOf({ host: onHead(redRun), word: 'стоп' })), `red ${RUN}`);
+out('end: SC-AK-1801 — «стоп» не снимает слежение: идущий без слежения держит', kindOf(holdOf({ host: onHead(goingRun), word: 'стоп', now: T0 + 120_000 })), `running ${RUN}`);
 const ESC = '[Request interrupted by user]';
 const queuedEntry = (prompt, kind = 'human') => ({ type: 'attachment', attachment: { type: 'queued_command', prompt, origin: { kind } } });
 out('end: SC-AK-1839 — сообщение, набранное во время хода, — слово владельца', String(sourceWordOf(queuedEntry('нет, продолжай шаг 2'))), 'нет, продолжай шаг 2');
@@ -347,10 +380,12 @@ expect_stop "удержанный ход: сессия писала, сцена�
     "$(input_stop "$(transcript "$(say 'делай')" "$(edited)")")" BLOCK
 expect_reason "отказ называет измеренное состояние" \
     "$(input_stop "$(transcript "$(say 'делай')" "$(edited)")")" 'просьба-не-разобрана'
-expect_stop "end: SC-AK-1839 — «стоп» ход через хук не отпускает" \
-    "$(input_stop "$(transcript "$(edited)" "$(say 'Стоп, хватит')")")" BLOCK
-expect_stop "end: SC-AK-1839 — «не сейчас» ход через хук не отпускает" \
-    "$(input_stop "$(transcript "$(edited)" "$(say 'не сейчас')")")" BLOCK
+expect_stop "end: SC-AK-1912 — «Стоп, на сегодня хватит» отпускает ход через хук" \
+    "$(input_stop "$(transcript "$(edited)" "$(say 'Стоп, на сегодня хватит')")")" PASS
+expect_stop "end: SC-AK-1912 — «хватит останавливаться, продолжай» держит ход через хук" \
+    "$(input_stop "$(transcript "$(edited)" "$(say 'хватит останавливаться, продолжай')")")" BLOCK
+expect_stop "end: SC-AK-1912 — «Стой, не туда — делай RT-12» держит ход через хук" \
+    "$(input_stop "$(transcript "$(edited)" "$(say 'Стой, не туда — делай RT-12')")")" BLOCK
 expect_stop "end: SC-AK-1839 — Esc отпускает ход через хук" \
     "$(input_stop "$(transcript "$(edited)" "$(say '[Request interrupted by user]')")")" PASS
 queued() { jq -c -n --arg t "$1" '{type:"attachment",attachment:{type:"queued_command",prompt:$t,origin:{kind:"human"}}}'; }
@@ -457,5 +492,6 @@ expect_stop "end: SC-AK-1434 — сессия роли отпускает ход
 
 . "$TESTS/turn-exit-guard-foreign.test.sh"
 . "$TESTS/turn-exit-guard-wait.test.sh"
+. "$TESTS/turn-exit-guard-night.test.sh"
 
 suite_result "проверка выхода из хода"

@@ -108,4 +108,20 @@ report "draft-ready: a copy on a detached head holds no branch" "$(names "$OUT" 
 git -C "$REPO" worktree remove --force "$WORK/loose" >/dev/null 2>&1
 git -C "$REPO" worktree remove --force "$WORK/side" >/dev/null 2>&1
 
+# A branch this copy never had is named once per head in a session: this session cannot lift it.
+judge_again() {
+    jq -n --arg d "$REPO" --arg s "$1" '{stop_hook_active:false,cwd:$d,session_id:$s}' \
+        | CLAUDE_PROJECT_DIR="$REPO" RT_GH_BIN="$GH" RT_BOT=rt-bot TMPDIR="$WORK/cache" bash "$HOOK" 2>/dev/null \
+        | jq -r '.reason // ""' 2>/dev/null
+}
+rm -rf "$WORK/cache" && mkdir -p "$WORK/cache"
+report "draft-ready: a draft of a branch this copy never had is named" "$(names "$(judge_again one)" 14)" "1"
+OUT="$(judge_again one)"
+report "draft-ready: чужой черновик назван один раз на вершину" "$(names "$OUT" 14)" "0"
+report "draft-ready: this copy's own draft is named at every end of a turn" "$(names "$OUT" 12)" "1"
+report "draft-ready: another session is told of it once too" "$(names "$(judge_again two)" 14)" "1"
+sed -i.bak "s/$(sha RT-4-foreign)/$(sha RT-6-past)/g" "$GH"
+rm -f "$WORK"/cache/rt-draft-abandoned-*
+report "draft-ready: a new head of it is named again" "$(names "$(judge_again one)" 14)" "1"
+
 suite_result "the draft check, the second tier"

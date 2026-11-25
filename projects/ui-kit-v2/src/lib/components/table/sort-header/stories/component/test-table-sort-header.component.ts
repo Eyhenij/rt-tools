@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, signal, Signal, WritableSignal } fr
 
 import { EListSortOrder, ISortModel } from '@rt-tools/utils';
 
+import { RtTableSortHeaderContentDirective } from '../../rt-table-sort-header-content.directive';
 import { RtTableSortHeaderComponent } from '../../rt-table-sort-header.component';
 import { IRtTable } from '../../../rt-table.model';
 import { RtTableComponent } from '../../../rt-table.component';
@@ -44,12 +45,15 @@ class StoryTable {
 @Component({
     selector: 'app-table-sort-header',
     template: `
-        <rt-table-sort-header [rtSortHeader]="rtSortHeader">Название</rt-table-sort-header>
+        <rt-table-sort-header [rtSortHeader]="rtSortHeader">
+            <ng-template rtTableSortHeaderContent>Название</ng-template>
+        </rt-table-sort-header>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
         RtTableSortHeaderComponent,
+        RtTableSortHeaderContentDirective,
     ],
     providers: [{ provide: RtTableComponent, useClass: StoryTable }],
 })

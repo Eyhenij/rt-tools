@@ -59,7 +59,7 @@ const BEM_BLOCK: string = 'rt-bottom-sheet';
     },
 })
 export class RtBottomSheetComponent {
-    readonly #document: Document = inject(DOCUMENT);
+    readonly #doc: Document = inject(DOCUMENT);
     readonly #stack: RtBottomSheetStackService = inject(RtBottomSheetStackService);
     readonly #onDragMove: (event: PointerEvent) => void = (event: PointerEvent): void => this.#handleDragMove(event);
     readonly #onDragEnd: () => void = (): void => this.#handleDragEnd();
@@ -99,8 +99,8 @@ export class RtBottomSheetComponent {
         this.#dragStartY = event.clientY;
         this.dragging.set(true);
         this.dragDeltaY.set(0);
-        this.#document.addEventListener('pointermove', this.#onDragMove);
-        this.#document.addEventListener('pointerup', this.#onDragEnd);
+        this.#doc.addEventListener('pointermove', this.#onDragMove);
+        this.#doc.addEventListener('pointerup', this.#onDragEnd);
     }
 
     protected dismiss(): void {
@@ -113,8 +113,8 @@ export class RtBottomSheetComponent {
 
     #handleDragEnd(): void {
         this.dragging.set(false);
-        this.#document.removeEventListener('pointermove', this.#onDragMove);
-        this.#document.removeEventListener('pointerup', this.#onDragEnd);
+        this.#doc.removeEventListener('pointermove', this.#onDragMove);
+        this.#doc.removeEventListener('pointerup', this.#onDragEnd);
         if (shouldDismissDrag(this.dragDeltaY())) {
             this.openChange.emit(false);
         }

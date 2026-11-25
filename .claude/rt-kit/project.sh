@@ -58,7 +58,7 @@ RT_TASK_BOT='rt-tools-dev'
 RT_HUMAN_EMAILS='72300075+Eyhenij@users.noreply.github.com 41898282+github-actions[bot]@users.noreply.github.com sviathut@gmail.com'
 
 RT_PULL_TOKEN_VAR='GH_TOKEN'
-RT_PULL_TOKEN_HINT='GH_TOKEN=$(cat ~/.config/rt-tools-bot-token)'
+RT_PULL_TOKEN_HINT='test -s ~/.config/rt-tools-bot-token && GH_TOKEN=$(cat ~/.config/rt-tools-bot-token)'
 
 # Who will come to the hosting by this token. The same file is read as in the substitution above:
 # there is no file — the value is empty, the client answers from the owner's signed-in account, and
@@ -198,6 +198,8 @@ node tools/check-preset-stories.mjs
 node tools/check-showcase-links.mjs
 node tools/check-kit-coverage.mjs
 node tools/check-boolean-inputs.mjs
+pnpm run check:ngdoctor
+pnpm run check:unused
 node tools/check-tokens-styles.mjs
 node tools/check-cascade-layer.mjs
 node tools/check-format-ignore.mjs
@@ -319,7 +321,7 @@ rt_push_touched() {
             projects/ui-kit-v2/*.spec.ts) ;;
             projects/ui-kit-v2/.storybook/*|projects/ui-kit-v2/src/showcase/*|projects/ui-kit-v2/*.stories.ts|projects/ui-kit-v2/*.mdx) _add show2 ;;
             # The snapshot step's scripts shoot the showcase.
-            tools/visual-snapshots-v2.mjs|tools/visual-gate.mjs|tools/shot-browser.mjs|tools/shot-browser-name.mjs|tools/showcase-probe.mjs|tools/serve-static.mjs) _add show2 ;;
+            tools/visual-snapshots-v2.mjs|tools/visual-gate.mjs|tools/shot-browser.mjs|tools/shot-forward.mjs|tools/shot-browser-name.mjs|tools/showcase-probe.mjs|tools/serve-static.mjs) _add show2 ;;
             # A code graph is data the session reads; above the subjects, as it lies inside a project.
             # The formatter's ignore list is read by the formatter alone, and no heavy step runs it.
             docs/*|*.md|.claude/*|projects/agent-kit/*|tools/*|graphify-out/*|*/graphify-out/*|.prettierignore) ;;

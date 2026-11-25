@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.0 · hooks/exam-guard.sh · 620654a1ae0e · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/exam-guard.sh · 620654a1ae0e · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file|Bash|mcp__webstorm__execute_terminal_command
 # Requires: checks/decide.mjs, hooks/decide.sh, hooks/facts.sh, agents/strict-teacher.md, hooks/roles.sh, hooks/deny-tail.sh, hooks/write-targets.sh
 # Exam guard: no edit goes through until the exam on the loaded rules has been passed this session.

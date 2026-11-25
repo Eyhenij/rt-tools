@@ -5,6 +5,7 @@ import { firstValueFrom } from 'rxjs';
 
 import { createRtFixture, hostClasses, provideRtKitTesting, qa, textOf } from '../../../testing/rt-kit-testing';
 import { RtAsideRef } from './rt-aside-ref';
+import { RtAsideContentDirective } from './rt-aside-content.directive';
 import { TRtAsideContentLayout, TRtAsideSize, RtAsideComponent } from './rt-aside.component';
 import { RtAsideService } from './rt-aside.service';
 import { RT_ASIDE_DATA } from './rt-aside.tokens';
@@ -14,12 +15,14 @@ import { RT_ASIDE_DATA } from './rt-aside.tokens';
     selector: 'rt-aside-content',
     template: `
         <rt-aside ariaLabel="Карточка">
-            <p qa-dataid="aside-body">{{ data }}</p>
-            <button type="button" qa-dataid="aside-save" (click)="save()">Сохранить</button>
+            <ng-template rtAsideContent>
+                <p qa-dataid="aside-body">{{ data }}</p>
+                <button type="button" qa-dataid="aside-save" (click)="save()">Сохранить</button>
+            </ng-template>
         </rt-aside>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtAsideComponent],
+    imports: [RtAsideComponent, RtAsideContentDirective],
 })
 class AsideContentComponent {
     public readonly data: string = inject(RT_ASIDE_DATA) as string;

@@ -8,6 +8,9 @@
 // answered, and only the answers of this run count: a verdict file left by an earlier replay is never
 // read.
 //
+// A judge that did not run — no CLI, an expired login, an empty answer — stops the replay on its first
+// call: the answer is printed and the code is 2. Every later case would read as a mismatch of the text.
+//
 // The replay calls a model once per pair of a fixture and a hook, so it runs by hand and as a plan
 // step, not in the set before a push.
 //
@@ -98,17 +101,29 @@ export function hookModel(root) {
     return null;
 }
 
-function ask(prompt, root) {
+/** A judge that did not run: the replay stops on it, because no verdict of it says anything of the hook. */
+export class JudgeDidNotRun extends Error {}
+
+/**
+ * The answer of a judge run. A run that did not start, ended with a code other than zero or said
+ * nothing is no answer: an expired login of the CLI read as a mismatch of every case. `timeoutIsAnswer`
+ * keeps a run past its limit as an empty answer — the time is what the caller measures.
+ */
+function answerOf(run, file, timeoutIsAnswer = false) {
+    if (timeoutIsAnswer && run.error?.code === 'ETIMEDOUT') return '';
+    const out = (run.stdout ?? '').trim();
+    if (!run.error && run.status === 0 && out !== '') return out;
+    const said = [out, (run.stderr ?? '').trim(), run.error?.message].filter(Boolean).join(' · ') || 'an empty answer';
+    throw new JudgeDidNotRun(`the judge did not run on ${file}: exit ${run.status ?? 'none'} · ${said}`);
+}
+
+function ask(prompt, root, file) {
     const runner = process.env.RT_JUDGE_RUNNER;
-    if (runner) {
-        const run = spawnSync('sh', ['-c', runner], { input: prompt, encoding: 'utf8' });
-        return run.stdout ?? '';
-    }
+    if (runner) return answerOf(spawnSync('sh', ['-c', runner], { input: prompt, encoding: 'utf8' }), file);
     const cwd = mkdtempSync(join(tmpdir(), 'judge-'));
     try {
         const { cmd, args } = judgeCommand({ model: hookModel(root), cwd });
-        const run = spawnSync(cmd, args, { cwd, input: prompt, encoding: 'utf8', timeout: 300_000 });
-        return run.stdout ?? '';
+        return answerOf(spawnSync(cmd, args, { cwd, input: prompt, encoding: 'utf8', timeout: 300_000 }), file);
     } finally {
         rmSync(cwd, { recursive: true, force: true });
     }
@@ -125,7 +140,7 @@ export function replay({ root, fixtures, hooksDir, expectedFile }) {
     const answers = pairs.map(({ file, key }) => {
         const fixture = JSON.parse(readFileSync(join(fixtures, file), 'utf8'));
         const hookText = readFileSync(join(hooksDir, HOOKS[key]), 'utf8');
-        return { file, key, got: verdictOf(ask(promptOf(hookText, fixture), root)) };
+        return { file, key, got: verdictOf(ask(promptOf(hookText, fixture), root, file)) };
     });
     const expected = JSON.parse(readFileSync(expectedFile, 'utf8'));
     return answers.map((a) => ({ ...a, want: expected[a.file][a.key], ok: a.got !== null && a.got === expected[a.file][a.key] }));
@@ -216,13 +231,13 @@ export function replayAsHook({ root, fixtures, expectedFile, model = null, pad =
             let answer;
             const runner = process.env.RT_JUDGE_RUNNER;
             if (runner) {
-                answer = spawnSync('sh', ['-c', runner], { input: prompt, encoding: 'utf8' }).stdout ?? '';
+                answer = answerOf(spawnSync('sh', ['-c', runner], { input: prompt, encoding: 'utf8' }), file);
             } else {
                 // `default` asks for the model the CLI takes by itself, past the declaration.
                 const chosen = model === 'default' ? null : (model ?? hook.model ?? null);
                 const { cmd, args } = asHookCommand({ model: chosen, cwd: work });
                 const run = spawnSync(cmd, args, { cwd: work, input: prompt, encoding: 'utf8', timeout: (hook.timeout ?? 120) * 1000 });
-                answer = run.error ? '' : (run.stdout ?? '');
+                answer = answerOf(run, file, true);
             }
             return { file, got: hookVerdictOf(answer), seconds: (Date.now() - started) / 1000 };
         } finally {
@@ -305,6 +320,17 @@ export function liveRuns(tree, dir = join(homedir(), '.claude/projects', resolve
     return { runs: seconds.length, median: median(seconds), timeouts };
 }
 
+/** The call of a replay: a judge that did not run is printed with its answer, and the code is 2. */
+function replayed(run) {
+    try {
+        return run();
+    } catch (error) {
+        if (!(error instanceof JudgeDidNotRun)) throw error;
+        console.log(`judge replay: ${error.message}`);
+        process.exit(2);
+    }
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url) && (process.argv.includes('--as-hook') || process.argv.includes('--live'))) {
     const flag = (name) => {
         const at = process.argv.indexOf(name);
@@ -317,13 +343,15 @@ if (process.argv[1] === fileURLToPath(import.meta.url) && (process.argv.includes
         process.exit(0);
     }
     const model = flag('--model') ?? stopHookOf(root)?.model ?? 'default';
-    const results = replayAsHook({
-        root,
-        fixtures: join(HERE, 'fixtures/turn-replay'),
-        expectedFile: join(HERE, 'turn-replay.expected.json'),
-        model,
-        pad: flag('--pad'),
-    });
+    const results = replayed(() =>
+        replayAsHook({
+            root,
+            fixtures: join(HERE, 'fixtures/turn-replay'),
+            expectedFile: join(HERE, 'turn-replay.expected.json'),
+            model,
+            pad: flag('--pad'),
+        })
+    );
     for (const r of results)
         console.log(`${r.ok ? 'ok' : 'mismatch'} ${r.file}: expected ${r.want}, got ${r.got ?? 'no verdict'}, ${r.seconds.toFixed(1)} s`);
     const bad = results.filter((r) => !r.ok).length;
@@ -333,12 +361,14 @@ if (process.argv[1] === fileURLToPath(import.meta.url) && (process.argv.includes
     const at = process.argv.indexOf('--root');
     const root = at > 0 ? process.argv[at + 1] : join(HERE, '../../..');
     const laid = existsSync(join(root, '.claude/hooks/turn-judge.md'));
-    const results = replay({
-        root,
-        fixtures: join(HERE, 'fixtures/turn-replay'),
-        hooksDir: laid ? join(root, '.claude/hooks') : join(HERE, '../assets/hooks'),
-        expectedFile: join(HERE, 'turn-replay.expected.json'),
-    });
+    const results = replayed(() =>
+        replay({
+            root,
+            fixtures: join(HERE, 'fixtures/turn-replay'),
+            hooksDir: laid ? join(root, '.claude/hooks') : join(HERE, '../assets/hooks'),
+            expectedFile: join(HERE, 'turn-replay.expected.json'),
+        })
+    );
     for (const r of results)
         console.log(`${r.ok ? 'ok' : 'mismatch'} ${r.file} ${r.key}: expected ${r.want}, got ${r.got ?? 'no verdict'}`);
     const bad = results.filter((r) => !r.ok).length;

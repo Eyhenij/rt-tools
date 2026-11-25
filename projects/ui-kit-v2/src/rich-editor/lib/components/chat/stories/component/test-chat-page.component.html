@@ -92,9 +92,11 @@
                     subtitle="WhatsApp · +66 81 234 5678"
                     [messages]="scheduled ? scheduledMessages : drafting ? draftingMessages : messages"
                     [sign]="sign">
-                    @if (editing) {
-                        <app-chat-edit-bar rtChatComposerBar />
-                    }
+                    <ng-template rtChatComposerBar>
+                        @if (editing) {
+                            <app-chat-edit-bar />
+                        }
+                    </ng-template>
                     <ng-template rtChatMessageButtons>
                         <rt-icon-button icon="reply" variant="ghost" size="sm" ariaLabel="Ответить" />
                     </ng-template>
@@ -102,30 +104,31 @@
                         <rt-menu-item icon="reply" label="Ответить" />
                         <rt-menu-item icon="copy" label="Скопировать текст" />
                     </ng-template>
-                    <div rtChatHeaderActions style="display: flex; gap: 0.25rem">
-                        <rt-icon-button icon="calendar-plus" variant="ghost" size="sm" ariaLabel="Завести бронь" />
-                        <rt-menu icon="ellipsis-v" triggerSize="sm" ariaLabel="Действия с перепиской">
-                            <rt-menu-item icon="box" label="Перенести в архив" />
-                        </rt-menu>
-                    </div>
-                    <rt-icon-button
-                        rtChatComposerTools
-                        rtPopoverTrigger="click"
-                        qa-dataid="story-quick-replies"
-                        icon="bolt"
-                        variant="ghost"
-                        size="sm"
-                        iconColor="muted"
-                        ariaLabel="Быстрые ответы"
-                        [rtPopover]="drafting ? replies : null"
-                        [rtPopoverPositions]="quickRepliesPositions" />
-                    <rt-icon-button
-                        rtChatComposerTools
-                        icon="clock"
-                        variant="ghost"
-                        size="sm"
-                        iconColor="muted"
-                        ariaLabel="Отправить позже" />
+                    <ng-template rtChatHeaderActions>
+                        <div style="display: flex; gap: 0.25rem">
+                            <rt-icon-button icon="calendar-plus" variant="ghost" size="sm" ariaLabel="Завести бронь" />
+                            <rt-menu icon="ellipsis-v" triggerSize="sm" ariaLabel="Действия с перепиской">
+                                <ng-template rtMenuContent>
+                                    <rt-menu-item icon="box" label="Перенести в архив" />
+                                </ng-template>
+                            </rt-menu>
+                        </div>
+                    </ng-template>
+                    <ng-template rtChatComposerTools>
+                        <rt-icon-button
+                            rtPopoverTrigger="click"
+                            qa-dataid="story-quick-replies"
+                            icon="bolt"
+                            variant="ghost"
+                            size="sm"
+                            iconColor="muted"
+                            ariaLabel="Быстрые ответы"
+                            [rtPopover]="drafting ? replies : null"
+                            [rtPopoverPositions]="quickRepliesPositions" />
+                    </ng-template>
+                    <ng-template rtChatComposerTools>
+                        <rt-icon-button icon="clock" variant="ghost" size="sm" iconColor="muted" ariaLabel="Отправить позже" />
+                    </ng-template>
                 </rt-chat>
             </ng-template>
 

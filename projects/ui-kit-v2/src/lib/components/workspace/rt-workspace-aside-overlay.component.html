@@ -6,7 +6,9 @@
     [contentLayout]="data.contentLayout()"
     [ariaLabel]="t().uiDetails">
     <rt-aside-header qa-dataid="workspace-aside-overlay-header" [overline]="t().uiAsideDetails" [title]="data.title()" />
-    <ng-container [ngTemplateOutlet]="data.template" [ngTemplateOutletContext]="data.context" [ngTemplateOutletInjector]="injector" />
+    <ng-template rtAsideContent>
+        <ng-container [ngTemplateOutlet]="data.template" [ngTemplateOutletContext]="data.context" [ngTemplateOutletInjector]="injector" />
+    </ng-template>
     <rt-aside-footer>
         <button
             rtButton

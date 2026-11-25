@@ -249,6 +249,16 @@ release() {
     report "$label — случай отпуска «${log}»" "$got" "$log"
 }
 
+# Записанное слово остановки: одна строка на сообщение — хук молчит, а движок называет его случай.
+stopped() {
+    local fixture="$1" tree="$2" label="$3" input out got
+    input="$(stop_input "$fixture" "$tree")"
+    out="$(run_hook "$input" "$tree")"
+    got="$(cd "$WORK/$tree" && node "$(engine_of "$tree")" verdict <<< "$input" 2>/dev/null | jq -r '.release // .block' 2>/dev/null)"
+    [ -z "$out" ] || got="хук держит: $out"
+    report "$label" "$got" 'a stop word of the owner'
+}
+
 STAGE='этап-идёт'
 STEP='step 1.2'
 
@@ -273,20 +283,26 @@ release 1455-deadlock-menus-held archived "replay: SC-AK-1455 — тупик RT-
 
 # --- шесть живых ходов RT-3276 ----------------------------------------------------------------------
 release 1456-rt3276-question stage "replay: SC-AK-1456 — RT-3276: вопрос в сессии без записи" 'no write to the tree, or a branch outside the scenario'
-hold 1457-rt3276-not-now stage "replay: SC-AK-1457 — RT-3276: «не сейчас»" "$STAGE" "$STEP"
-hold 1458-rt3276-stop stage "replay: SC-AK-1458 — RT-3276: «стоп»" "$STAGE" "$STEP"
+stopped 1457-rt3276-not-now stage "replay: SC-AK-1913 — RT-3276: «не сейчас» отпускает ход (SC-AK-1457)"
+stopped 1458-rt3276-stop stage "replay: SC-AK-1913 — RT-3276: «стоп» отпускает ход (SC-AK-1458)"
 release 1459-rt3276-abuse stage "replay: SC-AK-1459 — RT-3276: ругань без поручения" 'no write to the tree, or a branch outside the scenario'
-hold 1460-rt3276-menu-after-refusal archived "replay: SC-AK-1460 — RT-3276: меню после отказа, ответ «стоп»" 'папка-разобрана'
+stopped 1460-rt3276-menu-after-refusal archived "replay: SC-AK-1460 — RT-3276: меню после отказа, ответ «стоп»"
 hold 1461-rt3276-promise stage "replay: SC-AK-1461 — RT-3276: обещание без запуска" "$STAGE" "$STEP"
 
 # --- законные концы хода ----------------------------------------------------------------------------
 release 1462-epic-end epicEnd "replay: SC-AK-1462 — конец эпика по истории последнего закрытого эпика" 'the end of the scenario'
-# Слово владельца ход не отпускает: остановить работу может только Esc.
-hold 1548-stop-hold stage "replay: SC-AK-1548 — записанное слово «Стой»" "$STAGE" "$STEP"
-hold 1548-wait-for-suite stage "replay: SC-AK-1548 — записанное слово «жди конца набора»" "$STAGE" "$STEP"
-hold 1548-wait-for-neighbour handed "replay: SC-AK-1548 — записанное слово «жди соседа»" 'работа-отдана'
-hold 1548-stop-at-point stage "replay: SC-AK-1548 — записанное слово «Остановись на логической точке»" "$STAGE" "$STEP"
-hold 1548-not-now taken "replay: SC-AK-1548 — записанное слово «Не сейчас»" 'задача-взята'
+stopped 1548-stop-hold stage "replay: SC-AK-1913 — записанное слово «Стой» отпускает ход (SC-AK-1548)"
+stopped 1548-wait-for-suite stage "replay: SC-AK-1913 — записанное слово «жди конца набора» отпускает ход (SC-AK-1548)"
+stopped 1548-wait-for-neighbour handed "replay: SC-AK-1913 — записанное слово «жди соседа» отпускает ход (SC-AK-1548)"
+stopped 1548-stop-at-point stage "replay: SC-AK-1913 — записанное слово «Остановись на логической точке» отпускает ход (SC-AK-1548)"
+stopped 1548-not-now taken "replay: SC-AK-1913 — записанное слово «Не сейчас» отпускает ход (SC-AK-1548)"
+
+# Разбор промаха: движок держит ход по этапу, а отправку судит хук модели.
+hold 1932-incident-not-sent stage "replay: SC-AK-1932 — разбор записан и не отправлен" "$STAGE" "$STEP"
+hold 1932-incident-sent stage "replay: SC-AK-1932 — разбор записан и отправлен" "$STAGE" "$STEP"
+hold 1932-incident-send-refused stage "replay: SC-AK-1932 — отправка разбора отбита проверкой слов" "$STAGE" "$STEP"
+hold 1932-incident-no-role stage "replay: SC-AK-1932 — разбор записан мимо роли" "$STAGE" "$STEP"
+hold 1932-incident-night stage "replay: SC-AK-1932 — ночью разбор записан в утренний список" "$STAGE" "$STEP"
 
 # --- хуки модели: их текст ----------------------------------------------------------------------------
 TURN_JUDGE="$ASSETS/hooks/turn-judge.md"
@@ -295,16 +311,40 @@ ASK_JUDGE="$ASSETS/hooks/ask-judge.md"
 has() { grep -qF -- "$2" "$1" && echo есть || echo нет; }
 report "replay: SC-AK-1451 — хук модели на Stop держит вопрос с готовым ответом" "$(has "$TURN_JUDGE" 'asks the owner something already answered in the conversation')" есть
 report "replay: SC-AK-1451 — хук модели на Stop не судит открытую работу" "$(has "$TURN_JUDGE" 'Open work is not yours to judge')" есть
+report "replay: SC-AK-1932 — хук модели на Stop держит разбор без отправки" "$(has "$TURN_JUDGE" 'wrote an incident record and the turn did not run `agent-kit propose`')" есть
+report "replay: SC-AK-1932 — отклонённая запросом отправка называется владельцу" "$(has "$TURN_JUDGE" 'a permission prompt refused counts when the reply names the unsent record')" есть
+report "replay: SC-AK-1932 — отбитая отправка не считается отправкой" "$(has "$TURN_JUDGE" 'A run whose output refuses this record (`отбито … <its file>`) does not')" есть
+report "replay: SC-AK-1932 — отправка, которой не провести, называется владельцу" "$(has "$TURN_JUDGE" 'So does one the agent cannot carry through')" есть
+report "replay: SC-AK-1932 — разбор мимо роли держится" "$(has "$TURN_JUDGE" 'the transcript shows no call of the role `cargo-writer`')" есть
+report "replay: SC-AK-1932 — ночью без названной отправки ход не держится" "$(has "$TURN_JUDGE" 'the boundary of an autonomous session that named no send')" есть
 report "replay: SC-AK-1455 — хук меню пропускает меню отказа проверки выхода" "$(has "$ASK_JUDGE" 'The question is the menu named by a refusal of the exit check')" есть
 report "replay: SC-AK-1455 — меню отказа — ровно два варианта" "$(has "$ASK_JUDGE" 'The options are exactly two: «отложить RT-N» with the task number')" есть
 report "replay: SC-AK-1842 — хук меню пропускает «подскажу путь» и вопрос о пути" "$(has "$ASK_JUDGE" 'answered that menu with a bare «подскажу путь»')" есть
 report "replay: SC-AK-1841 — хук модели на Stop отпускает ожидание своей фоновой задачи" "$(has "$TURN_JUDGE" 'A background task the session started still runs')" есть
-report "replay: SC-AK-1839 — хук модели на Stop не отпускает по слову владельца" "$(has "$TURN_JUDGE" '«стоп»')" нет
+report "replay: SC-AK-1912 — хук модели на Stop отпускает по слову остановки" "$(has "$TURN_JUDGE" "The owner's latest word says to stop or to wait — «стоп»")" есть
 report "replay: SC-AK-1470 — хук меню задерживает вариант, который снимает проверку" "$(has "$ASK_JUDGE" 'removes, disables or weakens a hook or a check')" есть
 report "replay: SC-AK-1470 — и в меню отказа проверки выхода" "$(has "$ASK_JUDGE" 'Hold it in any menu, the menu of')" есть
+report "replay: SC-AK-1933 — хук модели на Stop держит реплику не на языке владельца" "$(has "$TURN_JUDGE" "The final reply is not in the owner's language")" есть
+report "replay: SC-AK-1933 — команда и её вывод языком не судятся" "$(has "$TURN_JUDGE" 'are judged in no language')" есть
+report "replay: SC-AK-1933 — запись отвечает не на языке владельца" \
+    "$(jq -r '[.turns[].say // empty | select(test("[А-я]") | not)] | length' "$FIXTURES/1933-owner-language.json")" 1
+report "replay: SC-AK-1934 — хук меню держит вопрос не на языке владельца" "$(has "$ASK_JUDGE" "The question or its options are not in the owner's language")" есть
+report "replay: SC-AK-1934 — выбор продукта уходит владельцу" "$(has "$ASK_JUDGE" 'what the product sanitizes or allows is a product')" есть
+report "replay: SC-AK-1934 — запись спрашивает, что продукт оставляет после очистки" \
+    "$(jq -r '[.turns[].menu // empty | select(.[0] | test("очистки"))] | length' "$FIXTURES/1934-question-product-choice.json")" 1
+report "replay: SC-AK-1939 — хук меню держит меню, где работа вся у владельца" "$(has "$ASK_JUDGE" 'Every option hands the work to the owner')" есть
+report "replay: SC-AK-1939 — меню отказа проверки выхода таким не считается" "$(has "$ASK_JUDGE" 'The menu of the exit check is not')" есть
+report "replay: SC-AK-1939 — запись несёт отказ с готовым ходом и меню без хода" \
+    "$(jq -r '[.turns[] | select((.says // "" | test("Assemble the task folder")) or (.menu // [] | index("Солью сам")))] | length' "$FIXTURES/1939-menu-hands-work-over.json")" 2
 hold 1470-menu-lifts-check archived "replay: SC-AK-1470 — меню задержано один раз — ход держится" 'папка-разобрана'
 report "replay: SC-AK-1470 — фикстура несёт меню отказа с таким вариантом" \
     "$(jq -r '[.turns[] | select(.menu) | .menu[] | select(test("снять проверку"))] | length' "$FIXTURES/1470-menu-lifts-check.json")" 1
+report "replay: SC-AK-1911 — хук меню пускает одобрение плана, который правит проверку" "$(has "$ASK_JUDGE" 'The approval of a plan is never held, a plan that changes a hook or a check included')" есть
+report "replay: SC-AK-1911 — запрет на снятие проверки не задевает решение владельца" "$(has "$ASK_JUDGE" 'An option that only records the owner'"'"'s decision is not such an option')" есть
+report "replay: SC-AK-1911 — одобрение без плана и ролей держится" "$(has "$ASK_JUDGE" 'Without the plan or without both roles the option is held')" есть
+report "replay: SC-AK-1914 — план эпика держанию без папки задачи не подлежит" "$(has "$ASK_JUDGE" 'An option approves the plan of a task, not the plan of an epic')" есть
+report "replay: SC-AK-1914 — фикстура несёт одобрение с приписанным снятием проверки" \
+    "$(jq -r '[.turns[] | select(.menu) | .menu[] | select(test("turn the check of marks off"))] | length' "$FIXTURES/1914-approval-appends-lift-held.json")" 1
 
 # --- прогон судьи: ему нечем читать ожидаемое ---------------------------------------------------------
 JUDGE="$TESTS/judge-replay.mjs"
@@ -336,6 +376,25 @@ report "replay: SC-AK-1713 — ответ без вердикта — не со�
 printf '%s\n' '{ "a.json": { "judge": "block" } }' > "$J/fixtures/judge-verdicts.turn-judge.json"
 report "replay: SC-AK-1714 — старый файл вердиктов не читается, считается ответ этого прогона" "$(run_replay allow | jq -r '.[0].got')" allow
 report "replay: SC-AK-1714 — в каталоге фикстур нет файлов вердиктов прошлых прогонов" "$(ls "$FIXTURES" | grep -c '^judge-verdicts')" 0
+
+# SC-AK-1941 — судья, который не запустился, — не расхождение: повтор встаёт на первом вызове
+cp "$FIXTURES/1450-answer-mid-work.json" "$J/fixtures/b.json"
+printf '%s\n' '{ "a.json": { "judge": "block" }, "b.json": { "judge": "block" } }' > "$J/two.json"
+dead_replay() {
+    RT_JUDGE_RUNNER="cat > /dev/null; echo вызов >> '$J/calls'; $1" judge_js \
+        "try { console.log(JSON.stringify(j.replay({root:'$J', fixtures:'$J/fixtures', hooksDir:'$J/hooks', expectedFile:'$J/two.json'}))) } catch (e) { console.log(e instanceof j.JudgeDidNotRun ? 'не запустился: ' + e.message : 'иная ошибка: ' + e.message) }"
+}
+: > "$J/calls"
+got="$(dead_replay "echo 'Invalid API key · Please run /login'; exit 1")"
+report "replay: SC-AK-1941 — судья не запустился: ответ назван" \
+    "$(printf '%s' "$got" | grep -c '^не запустился: .*a.json: exit 1 · Invalid API key')" 1
+report "replay: SC-AK-1941 — судья не запустился: второго вызова нет" "$(grep -c вызов "$J/calls")" 1
+report "replay: SC-AK-1941 — судья не запустился: пустой ответ с кодом 0 — тоже" \
+    "$(dead_replay 'exit 0' | grep -c '^не запустился: .*an empty answer')" 1
+report "replay: SC-AK-1941 — ответ без вердикта — по-прежнему расхождение" \
+    "$(dead_replay "printf 'не знаю'" | jq -r 'map(.ok) | any')" false
+RT_JUDGE_RUNNER="cat > /dev/null; echo 'Please run /login'; exit 1" node "$JUDGE" > "$J/out.txt" 2>&1
+report "replay: SC-AK-1941 — судья не запустился: код вызова 2, и ответ напечатан" "$?/$(grep -c 'Please run /login' "$J/out.txt")" '2/1'
 
 # --- судья как хук: стенограмма на диске, инструменты агент-хука, секунды ----------------------------
 mkdir -p "$J/.claude"

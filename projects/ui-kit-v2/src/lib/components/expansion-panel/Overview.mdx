@@ -37,7 +37,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | вид       | карточка, простая                         | карточка  |
 | раскрытие | свёрнута, раскрыта, без шеврона           | свёрнута  |
 | длина     | короткий заголовок, режется, длинное тело | —         |
-| действия  | без действий, `rtExpansionPanelActions`   | без       |
+| действия  | без действий, шаблон `rtExpansionPanelActions` | без       |
 | группа    | одна панель, открыта одна, `multi`        | одна      |
 | тело      | уходит, `preserveContent`                 | уходит    |
 
@@ -60,16 +60,18 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Действия в заголовке
 
-Узел с `rtExpansionPanelActions` встаёт в строку заголовка между подписью и шевроном, но вне
+Шаблон `<ng-template rtExpansionPanelActions>` встаёт в строку заголовка между подписью и шевроном, но вне
 кнопки-переключателя: кнопка внутри кнопки недопустима, и нажатие по действию панель не раскрывает.
 Шеврон тогда стоит вне кнопки и нажимается сам.
 
 ```html
 <rt-expansion-panel>
     <span>Номера</span>
-    <span rtExpansionPanelActions>
-        <rt-icon-button icon="plus-circle" size="sm" ariaLabel="Добавить номер" (clicked)="add()" />
-    </span>
+    <ng-template rtExpansionPanelActions>
+        <span>
+            <rt-icon-button icon="plus-circle" size="sm" ariaLabel="Добавить номер" (clicked)="add()" />
+        </span>
+    </ng-template>
     <ng-template rtExpansionPanelContent>…</ng-template>
 </rt-expansion-panel>
 ```

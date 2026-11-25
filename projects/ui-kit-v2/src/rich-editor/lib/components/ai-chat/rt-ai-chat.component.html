@@ -232,18 +232,20 @@
             <ng-template let-row [rtThreadListRowActions]="threadRows()">
                 @if (threadMenu()) {
                     <rt-menu qa-dataid="ai-chat-thread-menu" icon="ellipsis-v" triggerSize="xs" size="sm" [ariaLabel]="t().uiMoreActions">
-                        <rt-menu-item
-                            qa-dataid="ai-chat-thread-copy-id"
-                            icon="copy"
-                            [label]="t().aiCopyThreadId"
-                            (selected)="onCopyThreadId(row.id)" />
-                        <rt-menu-item
-                            qa-dataid="ai-chat-thread-delete"
-                            icon="trash"
-                            danger
-                            [label]="t().uiRemove"
-                            [disabled]="sending() && row.id === activeThreadId()"
-                            (selected)="deleteThread.emit(row.id)" />
+                        <ng-template rtMenuContent>
+                            <rt-menu-item
+                                qa-dataid="ai-chat-thread-copy-id"
+                                icon="copy"
+                                [label]="t().aiCopyThreadId"
+                                (selected)="onCopyThreadId(row.id)" />
+                            <rt-menu-item
+                                qa-dataid="ai-chat-thread-delete"
+                                icon="trash"
+                                danger
+                                [label]="t().uiRemove"
+                                [disabled]="sending() && row.id === activeThreadId()"
+                                (selected)="deleteThread.emit(row.id)" />
+                        </ng-template>
                     </rt-menu>
                 } @else {
                     <rt-icon-button

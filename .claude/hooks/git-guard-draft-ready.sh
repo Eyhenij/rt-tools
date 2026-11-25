@@ -49,7 +49,8 @@
 # neighbour that led it had moved on along its chain. A draft whose head lies in a task branch
 # another working copy holds — the branch itself or a later branch of its chain — is skipped too:
 # that copy's session leads it now. A copy whose directory is gone holds nothing, and a branch no
-# copy remembers is judged as before.
+# copy remembers is judged, but a branch this copy never had is named once per head in a session: the
+# session cannot lift a draft it does not lead, and the refusal would repeat at every end of a turn.
 #
 # The host's answer is put into a cache for a minute: the guard fires at every end of a turn, and a
 # network call on each of them is paid for with the owner's time.
@@ -317,6 +318,7 @@ judge_abandoned() {
         journal "$dir"
     done)"
 
+    named_file="$cache_dir/rt-draft-named-$(safe_name "$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)")"
     left=''
     count=0
     while IFS='	' read -r number ref sha; do
@@ -343,6 +345,13 @@ HELD
 
         [ "$(carries_folder "$ref")" = "no" ] || continue
         [ "$(run_verdict "$ref" "$sha")" = "green" ] || continue
+
+        # A branch this copy never had is no work of this session: its draft is named once, and the
+        # same head is not named again. A new head is a new draft to look at.
+        if ! printf '%s\n' "$taken" | grep -qxF -- "$ref"; then
+            grep -qxF -- "$ref $sha" "$named_file" 2>/dev/null && continue
+            printf '%s\n' "$ref $sha" >> "$named_file" 2>/dev/null
+        fi
 
         left="$left
     #$number  $ref  head ${sha:0:8}    $gh_bin pr ready $number"

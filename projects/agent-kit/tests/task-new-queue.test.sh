@@ -19,6 +19,7 @@ cp "$CHECKS/board-epic-plan.github.mjs" "$TQ_TREE/tools/board-epic-plan.mjs"
 cp "$CHECKS/board-task-dirs.github.mjs" "$TQ_TREE/tools/board-task-dirs.mjs"
 cp "$CHECKS/task-new.github.mjs" "$TQ_TREE/tools/task-new.mjs"
 cp "$CHECKS/task-new-queue.github.mjs" "$TQ_TREE/tools/task-new-queue.mjs"
+cp "$CHECKS/task-new-epic.github.mjs" "$TQ_TREE/tools/task-new-epic.mjs"
 
 cat > "$TQ_TREE/.claude/rt-kit/checks.json" <<'CFG'
 {

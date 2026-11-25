@@ -5,6 +5,7 @@ import { IPageModel } from '@rt-tools/utils';
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { RtDynamicListEmptyDirective, RtDynamicListErrorDirective } from '../../rt-dynamic-list-states.directive';
+import { RtDynamicListContentDirective } from '../../rt-dynamic-list-content.directive';
 import { RtDynamicListComponent } from '../../rt-dynamic-list.component';
 
 /** Случай динамического списка: ошибка, пустота и какой свой шаблон стоит. */
@@ -38,6 +39,7 @@ const PAGE: IPageModel = { pageNumber: 1, pageSize: 20, totalCount: 55 };
     imports: [
         // components
         RtDynamicListComponent,
+        RtDynamicListContentDirective,
 
         // directives
         RtDynamicListEmptyDirective,

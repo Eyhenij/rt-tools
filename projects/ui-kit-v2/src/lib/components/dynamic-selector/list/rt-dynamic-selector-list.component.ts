@@ -1,6 +1,17 @@
 import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList } from '@angular/cdk/drag-drop';
 import { NgTemplateOutlet } from '@angular/common';
-import { inject, signal, ChangeDetectionStrategy, Component, Signal, TemplateRef, ViewEncapsulation, WritableSignal } from '@angular/core';
+import {
+    inject,
+    input,
+    signal,
+    ChangeDetectionStrategy,
+    Component,
+    InputSignal,
+    Signal,
+    TemplateRef,
+    ViewEncapsulation,
+    WritableSignal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
@@ -83,6 +94,12 @@ export class RtDynamicSelectorListComponent<TItem> {
     protected readonly titleWrap: Signal<boolean> = this.#source.titleWrap;
     protected readonly titleTpl: Signal<TemplateRef<IRtDynamicSelector.RowContext<TItem>> | null> = this.#source.titleTpl;
     protected readonly controlsTpl: Signal<TemplateRef<IRtDynamicSelector.RowContext<TItem>> | null> = this.#source.controlsTpl;
+
+    /**
+     * Кнопка добавления, нарисованная владельцем: выбор или поле набранных строк. Встаёт в полосу
+     * действий и создаётся, только пока полоса показана.
+     */
+    public readonly addButton: InputSignal<TemplateRef<unknown> | null> = input<TemplateRef<unknown> | null>(null);
 
     /** Строка, взятая из чужого списка, ничего не меняет; брошенная на своё место — тоже. */
     protected onDrop(event: CdkDragDrop<unknown>): void {

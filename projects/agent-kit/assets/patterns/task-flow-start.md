@@ -26,7 +26,7 @@ A question whose answer lies in the code is not put to the owner: it devalues th
 
 ### State `просьба-не-разобрана`: the grill with the owner
 
-Led by the main agent: a subagent cannot reach the owner. The command is `/grill-me`, one question at a time, each with its recommended answer and the reason.
+Led by the main agent: a subagent cannot reach the owner. The command is `/grill-me`, one question at a time, each with its recommended answer and the reason. The card and the owner's words behind it are answers: an option that repeats the text of the task means the question is not asked, and its decision goes into the grill with a reference. A finding against a recorded decision is a cost line in the grill, not a new question.
 
 ### State `разбор-закрыт`: the pipeline after the grill
 

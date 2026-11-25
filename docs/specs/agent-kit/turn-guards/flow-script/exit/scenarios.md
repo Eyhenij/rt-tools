@@ -19,20 +19,28 @@ Then the first is released as the end of the scenario and the second is held
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-1839 — a typed word to stop releases no turn, and Esc releases it
+### SC-AK-1912 — a stop word of the owner releases the turn
 
-Given the owner's last word «стоп», «Стоп, на сегодня хватит», «не сейчас» or «подожди», and the mark of Esc with and without a tool call
+Given a session that wrote, and the owner's last word «Стоп, на сегодня хватит», «хватит останавливаться, продолжай» or «Стой, не туда — делай RT-12»
+When the hook on Stop reads the turn, and the release cases are read
+Then the first is released as «a stop word of the owner», and the other two are held: one asks to go on, the other orders work
+And «стоп» in the running stage with a step not done releases the turn
+And «стоп» lifts the CI hold of a fresh head with no run, and a red run holds the stop until one read
+And the text of the model hook on Stop lets the turn end on a word to stop
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`, `projects/agent-kit/tests/turn-replay.test.sh`.
+
+### SC-AK-1839 — Esc releases the turn until the owner writes again
+
+Given the mark of Esc with and without a tool call, and the owner's last word «стоп», «Стоп, на сегодня хватит», «не сейчас» or «подожди»
 When the interrupt is measured, and the release cases are read for a session that wrote
-Then only the mark of Esc is an interrupt, and only it releases the turn as «the owner interrupted the turn»
-And «стоп» in the running stage with a step not done holds the turn
-And through the hook after a write «Стоп, хватит» and «не сейчас» are held, and the mark of Esc is released
-And «стоп» does not lift the CI hold of a fresh head with no run
+Then only the mark of Esc is an interrupt, and it releases the turn as «the owner interrupted the turn»
+And through the hook after a write the mark of Esc is released
 And after Esc neither a red run nor a running one with no watch holds the stop, and a new word of the owner brings the hold back
 And a message typed mid-turn, kept as a queued command from a person, is the owner's word, and after Esc it holds the turn again; a queued notice of a task or a wrapper is no word
 And a mark of Esc a second and a half or a minute after a typed order releases the turn
 And a pasted text queued after Esc is a word and holds the turn again, and a wrapper of a shell or a command after Esc is none
-And the text of the model hook on Stop names no «стоп»
-And the pattern of the owner's words in that hook takes the mark of Esc from a record of the owner and not from a request blob that repeats it next to a newer word
+And the pattern of the owner's words in the model hook on Stop takes the mark of Esc from a record of the owner and not from a request blob that repeats it next to a newer word
 And that hook reads an order sent a second before the mark as stopped by it
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`, `projects/agent-kit/tests/turn-replay.test.sh`.
@@ -159,6 +167,30 @@ And the text of the menu hook lets one question with a free field through after 
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`, `projects/agent-kit/tests/turn-exit-guard-foreign.test.sh`, `projects/agent-kit/tests/turn-replay.test.sh`.
 
+### SC-AK-1930 — before the boundary of an autonomous session the default takes the place of the menu
+
+Given a held turn whose next move is the owner's menu, and a newest morning list whose head carries «Автономно до:» with a moment ahead
+When the refusal is named
+Then it names the boundary, the default of the rule `autonomous-work` and that list, and no menu and no option of it
+And it still names the check that refused the step twice
+And an idle stop is told its step, and a step refused twice is not called again
+And the default tells work that waits for an outside step or a guard's window, whose card and branch stay, from stopped work, whose card goes back
+And a passed boundary, a boundary in words, a moment the clock does not have, a row of the table quoting the line, an older list, a list that cannot be read or no list gives the menu
+And a step of the scenario, an unread or hung background task and a refusal of another stop hook are named as by day
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`, `projects/agent-kit/tests/turn-exit-guard-night.test.sh`.
+
+### SC-AK-1931 — the head of a new night does not live by the past one
+
+Given the block of the command `/night` that starts the morning list, and lists of past nights on disk
+When it is run by bash or by zsh, from the root or from a subdirectory
+Then a list whose boundary lies ahead is continued: run unfilled, its head stays; run with the owner's new words, its head is rewritten and its rows stay
+And a list with a passed boundary, with none or with one the guards cannot read gives a new one with this night's boundary and words; the old one is put aside, not erased, where it would stand newer
+And quotes, several lines and a substitution in the words, and a missing directory, break nothing
+And a boundary that is no moment ahead or a value left unfilled starts no list and is named, and a failed write is not called done
+
+Covered: `projects/agent-kit/tests/turn-exit-guard-night.test.sh`.
+
 ### SC-AK-1467 — an option of the menu is the owner's word and releases no turn
 
 Given the owner chose «подскажу путь» in the menu
@@ -246,9 +278,10 @@ And the bound is ninety minutes
 And a turn that ended on the task spends it: a second stop with no call is held, and a call makes the task fresh
 And a refused stop does not spend the task
 And two running tasks release two stops, and the end of one gives its stop back
+And a turn that ended while the notice of one of two tasks stood in the queue left the stop of the other whole; after the delivery the next ended turn takes it
 And a task whose start is stamped ahead of the clock is no wait
 
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`, `projects/agent-kit/tests/background-delivery.test.sh`.
 
 ### SC-AK-1838 — a background task past the bound is hung, and the hold names it
 

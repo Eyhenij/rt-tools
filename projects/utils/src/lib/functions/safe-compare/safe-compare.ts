@@ -1,3 +1,5 @@
+import { isNil } from '../is-nil/index.js';
+
 /**
  * A two-argument comparison function of the shape `Array.prototype.sort` expects.
  */
@@ -19,14 +21,14 @@ export type TComparatorType<T> = (aa: T, bb: T) => number;
  * [3, null, 1].sort((a, b) => safeCompare(a, b, (x, y) => x - y)); // [1, 3, null]
  */
 export function safeCompare<T>(a: T, b: T, comparator: TComparatorType<T>): number {
-    if (a == null) {
-        if (b == null) {
+    if (isNil(a)) {
+        if (isNil(b)) {
             return 0;
         } else {
             return 1;
         }
     } else {
-        if (b == null) {
+        if (isNil(b)) {
             return -1;
         } else {
             return comparator(a, b);

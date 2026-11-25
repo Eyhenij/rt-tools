@@ -1,4 +1,5 @@
 import { areObjectsEqual } from '../deep-equal/index.js';
+import { isNil } from '../is-nil/index.js';
 
 /**
  * Two elements read as the same value: nested arrays stay order-insensitive, objects go structural,
@@ -10,7 +11,7 @@ function sameElement<T>(one: T, other: T): boolean {
         return areArraysEqualUnordered(one, other);
     }
 
-    if (typeof one === 'object' && one != null && typeof other === 'object' && other != null) {
+    if (typeof one === 'object' && !isNil(one) && typeof other === 'object' && !isNil(other)) {
         return areObjectsEqual(one, other);
     }
 

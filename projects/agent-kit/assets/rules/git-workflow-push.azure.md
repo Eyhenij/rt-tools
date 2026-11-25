@@ -25,4 +25,4 @@ Rule under the law `docs/constitution/delivery.md`, for a tree on Azure DevOps. 
 - **The layout audit stands in the push gate set on a par with lint and the build.**
 - **After merging the base in, the check set is revised by what the branch now carries.**
 - **A merge with auto-complete does not replace the checks before a push.**
-- **Guard scenarios set the git settings themselves, not take them from the machine.**
+- **Guard scenarios set the git settings and the locale themselves, not take them from the machine.**
