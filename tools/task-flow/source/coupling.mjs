@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · task-flow/source/coupling.mjs · 8c86638964c8 · правится надстройкой, не здесь
+// rt-kit v0.39.1 · task-flow/source/coupling.mjs · 8c4947ad4950 · правится надстройкой, не здесь
 /**
  * The source «source.coupling» of the task flow description: the answer of the command
  * `check-coupling.mjs --base=<revision>`, the only count of the links.
@@ -32,8 +32,16 @@ function keyOf(root, sha) {
     return hash.digest('hex');
 }
 
-/** The plan, or the tip the newest merge after it brought: a cycle a merge brought is no edit of the branch. */
-const baseOf = (root, sha) => run(['log', '--merges', '--format=%P', `${sha}..HEAD`], root).split('\n')[0].split(' ')[1] || sha;
+/**
+ * The plan, or the tip the newest merge after it brought, when that tip holds what stood before the plan and not the
+ * plan: a cycle a merge brought is no edit of the branch, a tip without the lower task of a stack would judge that task
+ * by this plan, and a tip of the branch itself on the server would hide its own growth.
+ */
+function baseOf(root, sha) {
+    const holds = (part, tip) => spawnSync('git', ['merge-base', '--is-ancestor', part, tip], { cwd: root }).status === 0;
+    const tips = run(['log', '--merges', '--format=%P', `${sha}..HEAD`], root).split('\n').flatMap((line) => line.split(' ').slice(1));
+    return tips.filter(Boolean).find((tip) => holds(`${sha}^`, tip) && !holds(sha, tip)) ?? sha;
+}
 
 function ask(root, sha) {
     const command = commandIn(root);
@@ -58,9 +66,13 @@ export function open() {
                 return { answered: true, problems, now: new Map(now) };
             } catch {
                 const answer = ask(root, sha);
-                if (answer.answered) {
-                    mkdirSync(dir, { recursive: true });
-                    writeFileSync(file, JSON.stringify({ problems: answer.problems, now: [...answer.now] }));
+                try {
+                    if (answer.answered) {
+                        mkdirSync(dir, { recursive: true });
+                        writeFileSync(file, JSON.stringify({ problems: answer.problems, now: [...answer.now] }));
+                    }
+                } catch {
+                    // An answer not kept is asked again: a directory closed to writes costs time, not the measurement.
                 }
                 return answer;
             }

@@ -4,7 +4,7 @@ kind: pattern
 rule: code-design
 description: Pattern of rule code-design. Load when a request is taken apart, a plan is written or a module is split — the table from the problem to the technique and its check, coupling, cohesion and isolation, the rows of the decision in the plan. Names and types — rule typescript-conventions.
 ---
-<!-- rt-kit v0.39.1 · patterns/code-design-choose.md · 9ae38c480445 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · patterns/code-design-choose.md · 24cec7a415de · правится надстройкой, не здесь -->
 
 # Choosing the design
 
@@ -79,7 +79,9 @@ commit.
 At the end of the stages the engine compares the code of the head with the decision as the commit of
 the plan wrote it: every place, suite, new file, budget and promised decrease of links. Each mismatch
 holds the state and is named. A line of the decisions with the path or the place, «превышение» or
-«отказ от» and the reason lifts it; a new cycle and an import past an entry are fixed in the code.
+«отказ от» and the reason lifts it; a mismatch of links takes the line with its numbers. A refusal of
+the coupling command is lifted only as the command lifts it, a new cycle and an import past an entry
+never.
 
 | Row | Example |
 | --- | --- |

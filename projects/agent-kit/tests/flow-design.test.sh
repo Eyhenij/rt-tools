@@ -92,6 +92,10 @@ at('элемент хвостом родителя', '`a/b.scss:.rt-mail__head` 
 at('класс с тем же началом', '`a/b.scss:.rt-mail` — письмо', { 'a/b.scss': '.rt-mailbox {\n}\n' }, 'is not declared');
 at('свойство с дефисом', '`a/b.scss:--rt-color` — цвет', { 'a/b.scss': ':root {\n    --rt-color: red;\n}\n' });
 at('файл незнакомого языка', '`a/b.yml:one` — задание', { 'a/b.yml': 'jobs:\n    one:\n' });
+at('def объявлен', '`a/b.py:one` — читает', { 'a/b.py': 'async def one():\n    pass\n' });
+at('в Python только импорт и вызов', '`a/b.py:one` — читает', { 'a/b.py': 'from c import one\none()\n' }, 'is not declared');
+at('функция оболочки без скобок', '`a/b.sh:rt_one` — читает', { 'a/b.sh': 'function rt_one {\n    :\n}\n' });
+at('метод с декоратором в той же строке', '`a/b.ts:Mail.onClick` — щелчок', { 'a/b.ts': "class Mail {\n    @HostListener('click') onClick(): void {\n    }\n}\n" });
 at('незнакомый язык, слово в комментарии', '`a/b.yml:one` — задание', { 'a/b.yml': '# one\njobs: 1\n' }, 'is not declared');
 at('место после слова «отброшено»', 'чтение; отброшено: `a/b.mjs:one`', { 'a/c.mjs': 'let two;\n' });
 at('место до слова «отброшено» в том же предложении', '`a/b.mjs:one`; отброшено: приведение', { 'a/b.mjs': 'let two;\n' }, GONE);
@@ -112,7 +116,8 @@ suite('набор не тронут и номера не нёс', `письмо.
 suite('набор тронут, номера нет', `письмо. SC-AK-10007, \`${SUITE}\``, { [SUITE]: 'a\n' }, { [SUITE]: 'b\n' }, 'does not carry SC-AK-10007');
 suite('без номера сценария, набор тронут', `письмо; номера нет: дерево без описаний. \`${SUITE}\``, {}, { [SUITE]: 'a\n' });
 suite('без номера сценария, набор не тронут', `письмо; номера нет: дерево без описаний. \`${SUITE}\``, { [SUITE]: 'a\n' }, { 'x.md': 'y\n' }, 'was not touched');
-suite('ввода нет', 'ввода нет: правка текста', {}, { 'x.md': 'y\n' });
+suite('номер внутри большего номера не засчитан', `письмо. SC-AK-10001, \`${SUITE}\``, {}, { [SUITE]: 'SC-AK-100012\n' }, 'does not carry SC-AK-10001');
+suite('ввода нет','ввода нет: правка текста', {}, { 'x.md': 'y\n' });
 
 const fresh = (label, rows, foot, files, want) => check(`SC-AK-1974 — ${label}`, { text: decision(rows, foot), after: files }, want);
 const NEW = 'the new file `a/b.mjs` is named neither';
@@ -134,6 +139,10 @@ none('новый файл кода', OLD, { 'a/c.mjs': 'let one;\n' }, 'the bran
 none('новая функция в прежнем файле', OLD, { 'a/b.mjs': 'export function one() {\n}\nfunction two() {\n}\n' }, 'declared `a/b.mjs:two`');
 none('новый класс в прежнем файле', OLD, { 'a/b.mjs': 'export function one() {\n}\nclass Two {\n}\n' }, 'declared `a/b.mjs:Two`');
 none('новый экспорт в прежнем файле', OLD, { 'a/b.mjs': 'export function one() {\n}\nexport const two = 1;\n' }, 'declared `a/b.mjs:two`');
+none('новый экспорт списком', OLD, { 'a/b.mjs': 'export function one() {\n}\nconst two = 1;\nexport { two };\n' }, 'declared `a/b.mjs:two`');
+none('экспорт по умолчанию', OLD, { 'a/b.mjs': 'export function one() {\n}\nexport default 1;\n' }, 'declared `a/b.mjs:default`');
+none('новый набор', OLD, { 'a/b.test.sh': 'echo\n' }, 'the branch added `a/b.test.sh`');
+none('новая функция в Python', { 'a/b.py': 'def one():\n    pass\n' }, { 'a/b.py': 'def one():\n    pass\ndef two():\n    pass\n' }, 'declared `a/b.py:two`');
 none('новая функция стрелкой', OLD, { 'a/b.mjs': 'export function one() {\n}\nconst two = (a) => a;\n' }, 'declared `a/b.mjs:two`');
 none('функцию оболочки добавили и убрали', { 'a/b.sh': 'one() { :; }\n' }, [{ 'a/b.sh': 'one() { :; }\ntwo() { :; }\n' }, { 'a/b.sh': 'one() { :; }\n' }]);
 none('функцию привезло слияние', OLD, [{ own: false, files: { 'a/b.mjs': 'export function one() {\n}\nfunction two() {\n}\n' } }, { 'x.md': 'y\n' }]);
@@ -193,7 +202,10 @@ const refused = (label, problem, want = problem) => budget(label, '`a/b.mjs` д�
 refused('новый цикл не снимается', 'a new cycle: a/b.mjs → a/c.mjs → a/b.mjs');
 refused('новый обход входа не снимается', 'a/b.mjs imports c/d.mjs past the entry c/index.mjs');
 refused('новый цикл с путём в кавычках не снимается', 'a new cycle: `a/b.mjs` → `a/c.mjs` → `a/b.mjs`');
-refused('рост связей снимается', '`a/b.mjs` outgoing 1 → 3; the branch named 2', 'чисто');
+refused('рост связей строкой решений не снимается: его снимает сама команда', '`a/b.mjs` outgoing 1 → 3; the branch named 2');
+lift('строка связей не снимает бюджета', '`a/b.mjs` исходящие 1 → 2 — превышение: разбор стоит в том же модуле', OVER);
+place('снятие места одним символом', '`one` — отказ от: чтение уходит в другой модуль', 'чисто', '`a/b.mjs` до 9 строк');
+budget('снятие коммитом при живой папке не снимает', '`a/b.mjs` до 3 строк', {}, [{ 'a/b.mjs': L(4), ...progress('Decisions along the way', 'нет') }, { text: '`a/b.mjs` — превышение: разбор стоит в том же модуле', files: { 'x.md': 'y\n' } }], OVER);
 JS
 
 # --- SC-AK-1976 — отказ зацепления и обещанное снижение связей ----------------------------------------
@@ -213,14 +225,18 @@ links('число в плане, команда молчит', '`a/b.mjs` исх
 const DOWN = '`a/b.mjs` исходящие 3 → 1';
 links('снижение не выполнено', DOWN, { answer: { now: new Map([['a/b.mjs', 3]]) }, want: '`a/b.mjs` outgoing was to be 1, it is 3' });
 links('снижение выполнено не целиком', DOWN, { answer: { now: new Map([['a/b.mjs', 2]]) }, want: '`a/b.mjs` outgoing was to be 1, it is 2' });
-links('снижение: модуль не тронут', DOWN, { after: { 'a/c.md': 'y\n' }, want: '`a/b.mjs` outgoing was to be 1, it is 3' });
+links('снижение: модуль не тронут', DOWN, { after: { 'a/c.md': 'y\n' }, want: '`a/b.mjs` outgoing was to be 1, and the branch did not touch it' });
+links('снижение: тронутый модуль, которого команда не печатает, не судится', DOWN);
+links('снижение: строка бюджета его не снимает', DOWN, { answer: { now: new Map([['a/b.mjs', 3]]) }, lift: '`a/b.mjs` — превышение: разбор стоит в том же модуле', want: '`a/b.mjs` outgoing was to be 1, it is 3' });
+links('снижение коротким путём двух модулей не судится', '`b.mjs` исходящие 3 → 1', { before: { 'x/a/b.mjs': 'let a;\n', 'y/a/b.mjs': 'let a;\n' }, after: { 'x/a/b.mjs': 'let b;\n' }, answer: { now: new Map([['x/a/b.mjs', 3]]) } });
+links('снижение коротким путём рядом с разложенной копией', '`b.mjs` исходящие 3 → 1', { before: { 'x/a/b.mjs': 'let a;\n', 'tools/a/b.mjs': '// rt-kit v1.0.0 · a/b.mjs · ff\nlet a;\n' }, after: { 'x/a/b.mjs': 'let b;\n' }, answer: { now: new Map([['x/a/b.mjs', 3]]) }, want: '`x/a/b.mjs` outgoing was to be 1, it is 3' });
 links('снижение выполнено', DOWN, { answer: { now: new Map([['a/b.mjs', 1]]) } });
 links('снижение с запасом', DOWN, { answer: { now: new Map([['a/b.mjs', 0]]) } });
 links('снижение: модуль удалён, команда его не числит', DOWN, { after: { 'a/b.mjs': null } });
 links('снижения нет: число без изменения', '`a/b.mjs` исходящие 2 → 2', { answer: { now: new Map([['a/b.mjs', 3]]) } });
 links('снижение папки не судится', '`a/` исходящие 3 → 1', { answer: { now: new Map([['a/', 3]]) } });
 links('снижение коротким путём', '`b.mjs` исходящие 3 → 1', { before: { 'x/a/b.mjs': 'let a;\n' }, after: { 'x/a/b.mjs': 'let b;\n' }, answer: { now: new Map([['x/a/b.mjs', 3]]) }, want: '`x/a/b.mjs` outgoing was to be 1, it is 3' });
-links('снижение не выполнено, снятие с причиной', DOWN, { answer: { now: new Map([['a/b.mjs', 3]]) }, lift: '`a/b.mjs` — превышение: связь с разбором осталась' });
+links('снижение не выполнено, снятие с причиной', DOWN, { answer: { now: new Map([['a/b.mjs', 3]]) }, lift: '`a/b.mjs` исходящие 3 → 3 — превышение: связь с разбором осталась' });
 JS
 
 # --- SC-AK-1976 — источник: ответ команды и его хранение ----------------------------------------------
@@ -284,7 +300,16 @@ git -C "$FD_REPO" checkout -q RT-1-x
 git -C "$FD_REPO" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false merge -q --no-edit main 2>/dev/null
 fd_ask ok > /dev/null
 report "SC-AK-1976 — после слияния база команды — привезённая вершина" "$(tail -1 "$FD_CALLS")" "--base=$(git -C "$FD_REPO" rev-parse main)"
-rm -rf "$FD_REPO"
+git -C "$FD_REPO" branch -q mirror && git -C "$FD_REPO" checkout -q mirror && fixture_commit "$FD_REPO" a/h.mjs 'let h;' 'feat: h'
+git -C "$FD_REPO" checkout -q RT-1-x && fixture_commit "$FD_REPO" a/i.mjs 'let i;' 'feat: i' && git -C "$FD_REPO" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false merge -q --no-edit mirror 2>/dev/null
+fd_ask ok > /dev/null
+report "SC-AK-1976 — слитая своя же ветка базой не служит" "$(tail -1 "$FD_CALLS")" "--base=$(git -C "$FD_REPO" rev-parse main)"
+# Стопка: под планом коммит нижней задачи, которого нет в слитой главной ветке, — база остаётся коммитом плана.
+FD_S="$(fixture_repo_branched main RT-3-z)" && fixture_commit "$FD_S" tools/check-coupling.mjs "$(cat "$FD_DIR/command.mjs")" 'feat: нижняя задача' && fixture_commit "$FD_S" docs/p.md 'p' 'docs: план'
+git -C "$FD_S" checkout -q main && fixture_commit "$FD_S" a/m.mjs 'let m;' 'feat: m' && git -C "$FD_S" checkout -q RT-3-z && git -C "$FD_S" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false merge -q --no-edit main 2>/dev/null
+(cd "$FD_S" && node "$FD_DIR/ask.mjs" "$(git rev-parse HEAD^1)" > /dev/null 2>&1)
+report "SC-AK-1976 — стопка: слитая вершина без нижней задачи базой не служит" "$(tail -1 "$FD_CALLS")" "--base=$(git -C "$FD_S" rev-parse HEAD^1)"
+rm -rf "$FD_REPO" "$FD_S"
 
 # --- SC-AK-1978 — движок: символ, лишний импорт, разложенная копия, отказ в конце хода ---------------
 # Описание без шести первых состояний начинается с «этапы-кончились»: ветке не нужны ни хостинг, ни метки.
@@ -325,6 +350,13 @@ printf '%s\n' '{"type":"assistant","message":{"content":[{"type":"tool_use","id"
 got="$(cd "$FD_T" && printf '{"transcript_path":"%s"}' "$FD_DIR/record.jsonl" | node "$FD_DIR/kit/checks/task-flow-script.mjs" verdict --flow "$FD_DIR/kit/task-flow/flow.js" 2>&1)"
 report "SC-AK-1978 — отказ в конце хода называет расхождение" "$(printf '%s' "$got" | grep -cF -- '\n- `a/b.mjs` outgoing 0 → 1')" 1
 report "SC-AK-1978 — отказ в конце хода называет способ снятия" "$(printf '%s' "$got" | grep -c 'lift a mismatch by a line of the decisions')" 1
+# Своё и привезённое различает настоящий git: файл из слитой главной ветки новым файлом ветки не судится.
+git -C "$FD_T" checkout -q main && mkdir -p "$FD_T/a" && printf 'export const z = 1;\n' > "$FD_T/a/z.mjs" && "${FD_G[@]}" add -A && "${FD_G[@]}" commit -q -m 'feat: z'
+git -C "$FD_T" checkout -q RT-7-dec && "${FD_G[@]}" merge -q --no-edit main && rm -rf "$FD_T/.git/rt-kit"
+report "SC-AK-1978 — файл, привезённый слиянием, движок новым не считает" "$(git -C "$FD_T" log -1 --format=%p | wc -w | tr -d ' ')|$(fd_kit | grep -c '^not held: .*a/z.mjs')" '2|0'
+rm -rf "$FD_T/docs/tasks/RT-7-dec"
+fd_code "import { c } from './c.mjs';\nexport function two() {\n    return c;\n}\n" $'docs: папка разобрана\n\n- `a/b.mjs:one` — отказ от: чтение уходит в другой модуль'
+report "SC-AK-1978 — снятие текстом коммита после разбора папки" "$(fd_kit | grep -c '^not held: `a/b.mjs:one`')" 0
 rm -rf "$FD_T"
 
 suite_result "код против решения плана"

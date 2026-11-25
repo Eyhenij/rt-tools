@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · docs/GLOSSARY.md · 1a9a224dcc70 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · docs/GLOSSARY.md · 1ac8d5e8fb96 · правится надстройкой, не здесь -->
 # Project glossary
 
 Words that mean something definite in this tree. Read before writing a spec, a rule, a comment,
@@ -55,7 +55,7 @@ sections through the override; they merge here by heading, and a package edit do
 - **Decision** — a section of the plan: how the code will be built, written before the code. A row of its table is a decision row
 - **Place** — a path and a symbol joined by a colon, `path:symbol`: where in the code a decision row stands
 - **Mismatch** — a line about what the decision of the plan promised and the code of the head does not hold. The stages are not over while one stands
-- **Lift** — an item of the decisions of the progress, or of a commit once the folder is taken apart, that names the path or the place of a mismatch, the word of an overrun and a reason. A new cycle and an import past an entry are not lifted
+- **Lift** — an item of the decisions of the progress, or of a commit once the folder is taken apart. It names the path, the place or the symbol of a mismatch, the word of an overrun and a reason. A refusal of the coupling command is lifted only by the command itself
 - **Session** — one sitting of work on a task. Work lives longer than a session, and between sessions its state is held by the progress
 - **Window fill** — the share of the session's room already taken: the input, the cache write, the cache read and the last reply's output, divided by the window size. Not "spend" and not "budget": it is about room, not cost
 - **Handover** — the text that closes a session: working tree, branch, task, where the progress lies, what is done, the next step, what was special about the session. Written as a section of the progress and travels with the branch; without a task folder, and from the session-closing command, it is a file outside the tree
