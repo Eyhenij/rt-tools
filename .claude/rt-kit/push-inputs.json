@@ -36,7 +36,7 @@
             "probes": []
         },
         "node tools/check-specs.mjs": {
-            "seconds": 4,
+            "seconds": 5,
             "history": [
                 "git log"
             ],
@@ -132,11 +132,13 @@
                 ".claude/hooks/end-conversation-guard.sh",
                 ".claude/hooks/epic-stop-guard.sh",
                 ".claude/hooks/facts-flow.sh",
+                ".claude/hooks/flow-step-guard.sh",
                 ".claude/hooks/git-guard-delivery-body.sh",
                 ".claude/hooks/git-guard-delivery-conflict.sh",
                 ".claude/hooks/git-guard-delivery-draft.sh",
                 ".claude/hooks/git-guard-delivery-epic.sh",
                 ".claude/hooks/git-guard-delivery-folder.sh",
+                ".claude/hooks/git-guard-delivery-identity.sh",
                 ".claude/hooks/git-guard-delivery-merge.sh",
                 ".claude/hooks/git-guard-delivery-pipeline.sh",
                 ".claude/hooks/git-guard-delivery-signature.sh",
@@ -156,6 +158,7 @@
                 ".claude/hooks/push-set.sh",
                 ".claude/hooks/rerun-guard.sh",
                 ".claude/hooks/rule-article.sh",
+                ".claude/hooks/script-files.sh",
                 ".claude/hooks/skill-gate-layers.sh",
                 ".claude/hooks/skill-gate.sh",
                 ".claude/hooks/task-context-load.sh",
@@ -238,7 +241,7 @@
             "probes": []
         },
         "node tools/check-hooks.mjs": {
-            "seconds": 9,
+            "seconds": 14,
             "history": [],
             "untraced": [
                 "bash"
@@ -759,7 +762,7 @@
             "probes": []
         },
         "pnpm run check:ngdoctor": {
-            "seconds": 9,
+            "seconds": 11,
             "history": [],
             "untraced": [
                 "angular-doctor",
@@ -772,7 +775,6 @@
                 {
                     "dir": ".",
                     "exts": [
-                        ".env",
                         ".html",
                         ".json",
                         ".mjs",
@@ -786,7 +788,7 @@
             "probes": []
         },
         "pnpm run check:unused": {
-            "seconds": 4,
+            "seconds": 5,
             "history": [],
             "untraced": [
                 "knip"
@@ -822,7 +824,7 @@
             "probes": []
         },
         "node tools/check-tokens-styles.mjs": {
-            "seconds": 3,
+            "seconds": 2,
             "history": [],
             "untraced": [],
             "self": [
@@ -1020,6 +1022,7 @@
                         ".code",
                         ".conf",
                         ".crontab",
+                        ".diff",
                         ".example",
                         ".excluded",
                         ".gitattributes",
@@ -1179,7 +1182,7 @@
             "probes": []
         },
         "node tools/check-doc-paths.mjs": {
-            "seconds": 0,
+            "seconds": 1,
             "history": [
                 "git remote"
             ],
@@ -1202,7 +1205,7 @@
             "probes": []
         },
         "node tools/check-file-size.mjs": {
-            "seconds": 1,
+            "seconds": 0,
             "history": [],
             "untraced": [],
             "self": [
@@ -1266,7 +1269,7 @@
             "probes": []
         },
         "node tools/check-glossary.mjs": {
-            "seconds": 3,
+            "seconds": 1,
             "history": [],
             "untraced": [],
             "self": [
@@ -1287,7 +1290,7 @@
             "probes": []
         },
         "node tools/check-lib-layers.mjs": {
-            "seconds": 1,
+            "seconds": 0,
             "history": [],
             "untraced": [],
             "self": [
@@ -1342,7 +1345,7 @@
             "probes": []
         },
         "node tools/check-reuse.mjs": {
-            "seconds": 1,
+            "seconds": 0,
             "history": [],
             "untraced": [],
             "self": [
@@ -1537,7 +1540,7 @@
             "probes": []
         },
         "node tools/check-archive-age.mjs": {
-            "seconds": 1,
+            "seconds": 0,
             "history": [
                 "git log"
             ],
@@ -1606,7 +1609,7 @@
             "probes": []
         },
         "node tools/check-coupling.mjs": {
-            "seconds": 2,
+            "seconds": 1,
             "history": [],
             "untraced": [],
             "self": [
@@ -1636,7 +1639,7 @@
             "probes": []
         },
         "pnpm run lint:styles": {
-            "seconds": 7,
+            "seconds": 3,
             "history": [],
             "untraced": [
                 "stylelint"
@@ -1650,7 +1653,6 @@
                     "exts": [
                         ".cjs",
                         ".editorconfig",
-                        ".env",
                         ".js",
                         ".json",
                         ".mjs",
