@@ -348,6 +348,12 @@ jobs:
             - name: Unused files, dependencies and exports
               run: pnpm run check:unused
 
+            # Вес частей кита на старте потребителя и файлов токенов равен порогу из
+            # tools/kit-weight-threshold.json. Рост — кит утяжелился, снижение — порог не записан
+            # заново и позволил бы вернуть сброшенные байты. Шаг собирает кит сам.
+            - name: Kit weight
+              run: pnpm run check:kit-weight
+
             # Сборка темы Keycloak зовёт `mvn --version` и без Maven падает строкой «Apache Maven
             # required». Раннеров у дерева два, и Maven стоит не на обоих: задание, попавшее на
             # машину без него, краснеет, хотя код цел. Поэтому JDK и Maven ставятся здесь, в
