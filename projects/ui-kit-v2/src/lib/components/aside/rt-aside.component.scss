@@ -197,13 +197,6 @@
         border-bottom: var(--rt-bottom-sheet-footer-border-width) solid var(--rt-color-border-default);
     }
 
-    /* Подвал панели-шторки: 12 над кнопками и 24 под ними, как нижнее поле шторки в макете. Только у
-       своей шторки панели — шторки, открытые из содержимого, держат свой подвал. */
-    rt-aside > rt-bottom-sheet > .rt-bottom-sheet__panel > .rt-bottom-sheet__footer {
-        padding-top: calc(var(--rt-space-2) + var(--rt-space-1));
-        padding-bottom: calc(var(--rt-space-6) + env(safe-area-inset-bottom));
-    }
-
     /* Вкладки панели-шторки — одна строка, как чипы периода в шторке: ряд прокручивается вбок по
        кругу, края затеняются на 32, стрелки прокрутки не нужны — ряд листают пальцем. */
     rt-aside .rt-aside--sheet.rt-aside--content--tabs {

@@ -93,11 +93,11 @@ describe('стили панели-шторки', (): void => {
         expect(icons).toContain('--rt-icon-step-md: var(--rt-size-4)');
     });
 
-    it('SC-UKV-1810 — подвал панели-шторки: 12 над кнопками и 24 под ними, только у своей шторки', (): void => {
-        const footer: string = ruleBody(frame, 'rt-aside > rt-bottom-sheet > .rt-bottom-sheet__panel > .rt-bottom-sheet__footer');
-
-        expect(footer).toContain('padding-top: calc(var(--rt-space-2) + var(--rt-space-1))');
-        expect(footer).toContain('padding-bottom: calc(var(--rt-space-6) + env(safe-area-inset-bottom))');
+    it('SC-UKV-1810 — подвал панели-шторки — подвал шторки кита: 12 над кнопками и под ними, своего правила у панели нет', (): void => {
+        expect(ruleBody(frame, 'rt-aside > rt-bottom-sheet > .rt-bottom-sheet__panel > .rt-bottom-sheet__footer')).toBe('');
+        expect(ruleBody(sheet, '.rt-bottom-sheet__footer')).toContain(
+            'padding: calc(var(--rt-space-2) + var(--rt-space-1)) var(--rt-space-5) calc(var(--rt-space-2) + var(--rt-space-1) + env(safe-area-inset-bottom))'
+        );
     });
 
     it('SC-UKV-1810 — под шапкой панели-шторки черта подвала шторки: та же толщина, тот же цвет, на всю ширину', (): void => {

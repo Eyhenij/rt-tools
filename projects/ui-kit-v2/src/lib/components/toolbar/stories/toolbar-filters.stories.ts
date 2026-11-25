@@ -5,8 +5,11 @@ import { TestRtToolbarFiltersComponent } from './component/test-toolbar-filters.
 /** Окно телефона из макета «Телефон · Toolbar · фильтры за кнопкой»: 375 в ширину. */
 const PHONE_375: { width: number; height: number } = { width: 375, height: 812 };
 
-/** Узел, по которому видно, что панель отборов открыта: без него кадр снимался бы пустым. */
-const FILTERS_PANEL: string = 'rt-toolbar-filters-aside';
+/**
+ * Узел, по которому видно, что панель отборов открыта: без него кадр снимался бы пустым. На 375
+ * панель открывается шторкой во всю высоту, и видна именно шторка.
+ */
+const FILTERS_PANEL: string = '.rt-bottom-sheet__panel';
 
 /**
  * Отборы списка за кнопкой — три состояния узкого места: отбор выключен, включён с точкой в углу
