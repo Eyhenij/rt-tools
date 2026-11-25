@@ -244,7 +244,8 @@ When Escape is pressed with the focus in the sheet
 Then the sheet closes and the layer does not get the key; Escape already taken by a layer above
 the sheet does not close it
 
-Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-focus.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-focus.spec.ts`; end to end
+— `apps/auth-example-e2e/src/language-sheet.spec.ts`.
 
 ### SC-UKV-1759 — the answer "do not apply" is reported apart from the closing
 
