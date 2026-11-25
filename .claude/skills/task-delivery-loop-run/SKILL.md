@@ -30,11 +30,14 @@ git branch --list 'RT-N-*'
 The three last lines answer empty for an untaken task. Empty answers alone do not make it untaken:
 a card in progress or a folder with a written plan is a start too.
 
-Outside an epic the task is created by the owner's word, the body from a file:
+Outside an epic the body comes from a file too. The only task of its grill is created by the count in
+the draft; other work — by the owner's word. A card that already stands gets the line by the third call:
 
 ```bash
+npm run task:new -- --single --title '<Что не так>' --label <label> --slug <slug> < <body file>
 npm run task:new -- --outside-epic '<слово владельца>' --title '<Что не так>' \
     --label <label> --slug <slug> < <body file>
+node tools/task-new-single.mjs N --slug <slug>
 ```
 
 Then the branch and the card, as separate calls:

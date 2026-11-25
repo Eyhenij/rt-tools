@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/task-flow-start.md · 6ff9f762de6f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · pitfalls/task-flow-start.md · a783d0d5a63d · правится надстройкой, не здесь -->
 # Starting the work — cold part
 
 The pattern `task-flow-start` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.
@@ -168,10 +168,12 @@ first.
 
 ### State `договорённость-записана`: a series of tasks is declared an epic
 
-The grill ended with one task — no epic is declared for it: it goes into the epic in work, or, by the
-owner's word, outside any epic with `--outside-epic`. Several came out, and the order between them
-matters — the epic is declared and its branch is taken by the pattern `epic-flow-declare`, and the
-work comes back here with its first task.
+The grill says how many tasks it gave, by the line `**Tasks of the grill:** <number>`; the engine and
+the creating command read it, and one task found with another put off by the owner is two. The grill
+gave one task — no epic is declared for it: it goes into the epic in work, and a copy with no open epic
+creates it with `--single`. Beside an open epic a small order goes outside it only by the owner's word,
+with `--outside-epic`. Several came out, and the order between them matters — the epic is declared and
+its branch is taken by the pattern `epic-flow-declare`, and the work comes back here with its first task.
 
 **Next move:** one task — the task, the branch and the folder below; a series — the pattern
 `epic-flow-declare`, in the same turn.
@@ -189,9 +191,11 @@ owner, and it can be filled in later only on the owner's word.
 
 The call writes the line about the epic into the body itself and prints the branch line with the
 branch of the epic as its base: the shape of that line is read by a machine from both sides, and by
-hand it comes out in a shape of its own once out of three. Work outside an epic goes by the same
-call with `--outside-epic '<слово владельца>'` — a refusal without that second way out is read as
-"there is no way" and gets bypassed by a call to the hosting past this command.
+hand it comes out in a shape of its own once out of three. The only task of its grill goes by the same
+call with `--single`, and a card that already stands gets the line by
+`node tools/task-new-single.mjs <номер> --slug <slug>`; both print the branch from the main one. Other
+work outside an epic goes by `--outside-epic '<слово владельца>'` — a refusal without these ways out is
+read as "there is no way" and gets bypassed by a call to the hosting past this command.
 
 `task:new` renames `_draft-<slug>` to `<КЛЮЧ>-<номер>-<slug>` and fills in the plan header. The
 branch is created by a second call: a compound "create and commit at once" is refused by the

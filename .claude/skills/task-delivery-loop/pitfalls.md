@@ -90,8 +90,9 @@ The table in `implementation.md` next to it.
 
 1. **Load this skill, then `task-flow`.** Before the first command of the task.
 2. **Take the task.** In an epic the order and the states come from `node tools/epic-table.mjs
-   <epic>` on a fresh epic branch; a started task goes first, by `task-flow-resume`. Outside an
-   epic the task is created by `npm run task:new -- --outside-epic '<the owner's word>'`. The host
+   <epic>` on a fresh epic branch; a started task goes first, by `task-flow-resume`. Where the
+   grill gave one task and the copy leads no open epic, the task is created by `npm run task:new -- --single`;
+   other work outside an epic by `--outside-epic '<the owner's word>'`. The host
    is asked for a branch or a PR with the number before the branch is taken.
 3. **Take the branch and move the card.** From the previous branch while the chain of the epic is
    unbroken (pattern `git-workflow-stack`), from the epic branch for the chain's first work, from

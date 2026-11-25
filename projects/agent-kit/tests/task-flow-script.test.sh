@@ -154,6 +154,33 @@ out('host: SC-AK-1381 — выход 4 держится памятью, когд
 out('host: SC-AK-1381 — выход 2 держится памятью после коммита', run(epic.declared, { commits: [{ sha: 'b', files: { x: 'y' } }], host: { met: ['exit2:10'] } }), 'true');
 out('host: SC-AK-1381 — задача в первой колонке — выход 4 не выполнен', run(task.taken, { commits: folder, host: { issues: { 12: { open: true, status: 'backlog', epic: '10' } } } }), 'false');
 
+// SC-AK-1984, SC-AK-1985 — выход 2 у работы вне эпика: карточка задачи и черновик
+const away = (over, met = []) => ({ host: { issues: { 12: { open: true, status: 'in-progress', epic: null, outside: 'разбор дал одну задачу', ...over } }, met } });
+out('host: SC-AK-1984 — outside an epic: карточка со строкой', run(epic.declared, away({})), 'true');
+out('host: SC-AK-1984 — outside an epic: строка со словом владельца', run(epic.declared, away({ outside: 'сделай отдельно' })), 'true');
+out('host: SC-AK-1984 — outside an epic: карточка без строки и без эпика — не выход', run(epic.declared, away({ outside: null })), 'false');
+out('host: SC-AK-1984 — outside an epic: карточка с эпиком и строкой судится по эпику', run(epic.declared, away({ epic: '10' })), 'false');
+out('host: SC-AK-1984 — outside an epic: память не держит карточку, получившую эпик', run(epic.declared, away({ epic: '10', outside: null }, [`exit2:outside:${B}`])), 'false');
+const quiet = (met) => { try { return run(epic.declared, { host: { silent: true, met } }); } catch (error) { return error.name; } };
+out('host: SC-AK-1984 — outside an epic: хостинг молчит — держит память карточки', quiet([`exit2:outside:${B}`]), 'true');
+out('host: SC-AK-1984 — outside an epic: хостинг молчит без памяти — ответа нет', quiet([]), 'HostSilent');
+// Ответ карточки записывается: держит его память, которую оставил сам замер.
+const wrote = hostDouble({ issues: { 12: { open: true, status: 'in-progress', epic: null, outside: 'слово' } } });
+epic.declared({ git: gitDouble({ branch: B }), host: wrote, tree: tree([]) })();
+out('host: SC-AK-1984 — outside an epic: пройденный ответ карточки записан', String(wrote.recalled(`exit2:outside:${B}`)), 'true');
+const drafted = (grills, { copyEpic = null, issues = {} } = {}) =>
+    String(epic.declared({ git: gitDouble({ branch: 'main' }), host: hostDouble({ issues }), tree: treeDouble(Object.fromEntries(grills.map((text, i) => [`docs/tasks/_draft-${i}/grill.md`, text])), copyEpic) })());
+const ONE = '**Задач в разборе:** 1\n';
+out('host: SC-AK-1985 — outside an epic: черновик с числом 1', drafted([ONE]), 'true');
+out('host: SC-AK-1985 — outside an epic: та же строка по-английски', drafted(['**Tasks of the grill:** 1\n']), 'true');
+out('host: SC-AK-1985 — outside an epic: число 2 — не выход', drafted(['**Задач в разборе:** 2\n']), 'false');
+out('host: SC-AK-1985 — outside an epic: строки нет — не выход', drafted(['# Разбор\n']), 'false');
+out('host: SC-AK-1985 — outside an epic: двух строк не выбирают', drafted([ONE + ONE]), 'false');
+out('host: SC-AK-1985 — outside an epic: двух черновиков не выбирают', drafted([ONE, ONE]), 'false');
+out('host: SC-AK-1985 — outside an epic: эпик копии открыт, план лишь в его ветке — не выход', drafted([ONE], { copyEpic: 10, issues: { 10: { open: true, isEpic: true, epic: null } } }), 'false');
+out('host: SC-AK-1985 — outside an epic: эпик копии закрыт', drafted([ONE], { copyEpic: 10, issues: { 10: { open: false, isEpic: true, epic: null } } }), 'true');
+out('host: SC-AK-1985 — outside an epic: в строке копии номер самой задачи', drafted([ONE], { copyEpic: 12, issues: { 12: { open: true, isEpic: false, epic: null } } }), 'true');
+
 // SC-AK-1382, SC-AK-1383 — ответы по часам и их сброс
 const store = createStore(join(mkdtempSync(join(tmpdir(), 'tf-')), 'answers.json'));
 let calls = 0;

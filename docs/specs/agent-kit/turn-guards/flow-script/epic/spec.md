@@ -1,6 +1,6 @@
 # The end of an epic
 
-**Status:** in force · **Revision:** 2026-11-19 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-25 · **Scenario prefix:** `SC-AK`
 **Depends on:** `docs/specs/agent-kit/turn-guards/flow-script/spec.md`
 **Laws:** `work-conduct`, `delivery`
 **Procedures:** none
@@ -13,7 +13,10 @@ opens. Each state has an exit measured from the epic plan, the branches and the 
 merged last has no next branch to mark it by, so its merged PR counts alone: otherwise the end of
 every epic would wait for a menu of the owner.
 
-This subdomain of the engine holds the rules of exits 11, 12 and 13. They carry the prefix `SC-AK`
+Work outside an epic has none of this and starts by exit 2 alone: without it the engine held such work
+at its second state, and an epic was declared above one task to let it through.
+
+This subdomain of the engine holds the rules of exits 11, 12 and 13, and of exit 2 outside an epic. They carry the prefix `SC-AK`
 of the domain, so the scenarios share one numbering.
 
 ## Terminology
@@ -38,10 +41,16 @@ There is no interface: the engine prints the measured state and the exits read.
   task whose merged PR the hosting no longer lists counts only when no branch of it is left on the
   server and no PR of its branches is open or closed unmerged.
 - **Exit 13 is met when the tip of every task not deferred lies in the epic branch or the main branch, and the PR of the epic into the main branch exists.**
+- **Exit 2 is met outside an epic by the line of the card.** A card that names no epic and carries the
+  line of work outside one meets it, whatever the words. An epic named later is judged before the kept
+  answer; the answer is kept for the branch and stands only while the hosting is silent.
+- **Exit 2 is met outside an epic by the only draft that counts one task.** The branch has no number and
+  the copy has no live epic: an epic of the copy is an open card with the label of an epic, wherever its
+  plan lies. This answer is not kept, and a second draft takes it away.
 
 ## What is out of scope
 
-The epic of the work, the epic of the copy and exit 2 are in the domain
+The epic of the work, the epic of the copy and exit 2 in an epic are in the domain
 `docs/specs/agent-kit/turn-guards/flow-script/`. The rule that a row of the epic plan is never marked «шаг владельца»
 is of the same domain; exit 11 reads a row with the old mark as an ordinary row.
 
@@ -97,3 +106,4 @@ None.
 
 - 2026-11-19 — exits 11, 12 and 13 moved here from the domain; the task merged last and the task of
   the last row count by the merged PR without the mark.
+- 2026-11-25 — exit 2 outside an epic, by the line of the card and by the only draft.

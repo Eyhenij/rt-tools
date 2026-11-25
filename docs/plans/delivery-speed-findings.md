@@ -82,3 +82,65 @@ The findings of the rules review of every closed task of the epic «Проста
 2. **`check-doc-paths` is red in a fresh copy** — tree. Two texts name ignored directories that only a
    lived-in copy has: the one of incident analyses and the one of handovers. Proposed: an ignored directory
    named by a text is not judged, or a post-install creates both.
+
+## RT-3630 — the review of 25 November 2026
+
+1. **`git-guard-no-verify` knows a separator only as a word of its own** — package, the hook, its test and
+   `docs/specs/agent-kit/no-verify-guard/`. A commit followed at once by `; sed -n` or `|tail -n` is refused,
+   and `git commit -m "a b"; git push --no-verify` passes: a quote closed before `;` hides the rest of the
+   line. The hole weighs more than the false refusals. Proposed rule: a separator outside quotes ends the
+   call and the value before it, whether or not a space stands before it; two scenarios.
+2. **`agent-kit-source` forbids what the loop now demands** — tree, the cold part, the end of «Nothing builds
+   the package while the push set runs». «Roles run before the set or after it, not beside it» becomes: a
+   role that has to build runs before or after; the roles of round two stand beside it under the frame that
+   forbids builds. Item 2 of RT-3626 above reads «before the set is run again».
+3. **Records and the mark of their step by one commit** — package, `flow-step.mjs`. The rerun before the PR
+   reads the progress before the mark, and the step went red there: the folder came back, the check was
+   replaced. Proposed: a check that names `progress.md` is refused while its records are not committed; the
+   same article in the cold part of `task-flow-plan`.
+4. **A rewritten order loses a duty, and the diff reads whole without it** — package, `spec-driven-rule`,
+   «Common misses». Proposed: the duties of the old steps are written out on every branch of the order, each
+   with its new place or the reason it is dropped; the list goes to the reviewers.
+5. **A process is ended by its number, never by a name** — tree, `task-delivery-loop`, the duties. `pkill`
+   reached the same tool of a neighbour project; the frame says it to the reviewers alone.
+6. **A run of broken variants names the survivors, and between fixes only they and the touched lines run
+   again** — tree, `agent-kit-source`. A whole run took 10–15 minutes after every fix. Next to it: a scenario
+   of a broken output writes by `process.stdout.write`, for the console of node swallows EPIPE.
+7. **The way of the slowed set, if item 1 of the second round is put off** — tree, `GUARDS.md`: a copy outside
+   the tree with the owner's word. The measurement took such a copy without that word, against the rule of
+   `git-workflow`; it was removed after the push.
+8. **A repeat in `task-delivery-loop-run`** — tree, «9, 11–12»: the stop of the own showcase and stand is
+   said twice.
+
+## RT-3640 — the review of 25 November 2026
+
+1. **The quick checks stand in the section that starts the round** — tree, `task-delivery-loop-run`, «7, 9».
+   `check-file-size` was red in the diff of round one and a role found it: the demand lay in «5–6», already
+   passed. Proposed: the block of quick checks before the diff of every round.
+2. **A refused commit stops the call** — tree, `task-delivery-loop-run`, «8, 9». A commit refused by the
+   subject case went by `;`, and the pruning commit took its files; the set was stopped. Proposed: files by
+   name, `&&` after a commit, no `git add` before the commit of the pruning.
+3. **The merge of the previous branch is asked before branching** — tree, `task-delivery-loop-run`, «2–3».
+   The branch was taken from a ref merged nine minutes earlier, seen only at the closing.
+4. **On the light path the fixes of a serious finding in a check are read by one role** — tree,
+   `tools/review-path.mjs` and `task-delivery-loop`; the owner's decision, it narrows the word of 24.11. The
+   fixes of RT-3640 replaced the mechanism, read by nobody. Price: 3–4 minutes beside the set.
+5. **Broken variants run in a copy, in the background and against the code that ships** — tree,
+   `agent-kit-source`, one article with item 6 of RT-3630. A runner ended by `timeout` left a broken line in
+   the tree, and four variants were counted for a line rewritten later.
+6. **A check does not stand on file permissions** — package, `pitfalls/testing.md`. Mode 0 is listed by root
+   and by Windows, and the `rmSync` of Node 24 cannot remove it.
+7. **A plan asks how long the file is that it adds to** — package, `pitfalls/task-flow-start.md`. The
+   scenarios outgrew the limit, and the part they left for stands in no row of the footprint.
+8. **The PR call of the loop passes the gate without `git-workflow-hosting`** — tree, the gate map: the form
+   with the token and `$(…)` is missed; `docs/archive/*` is in neither map against `archive-record`. The
+   owner's choice: two loads more per task.
+
+## RT-3627 — along the work, 25 November 2026
+
+1. **The footprint names files before it is known whether they change** — package, the sample of the plan and
+   `task-flow-plan`. Exit 8 asks an edit under every path marked «(правится)», and the plan cannot be edited.
+   Four files were named with no edit in view and got one at the close; three of the four were worth it, the
+   words of one override were not.
+2. **An edit made before the plan's commit is not counted by exit 8** — package, the engine. The findings of
+   the second reading went into this file by the commit before the plan's, and the row stayed untouched.

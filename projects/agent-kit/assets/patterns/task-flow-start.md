@@ -32,7 +32,7 @@ Led by the main agent: a subagent cannot reach the owner. The command is `/grill
 
 ### State `договорённость-записана`: a series of tasks is declared an epic
 
-The grill ended with one task — no epic is declared for it: it goes into the epic in work, or, by the owner's word, outside any epic with `--outside-epic`.
+The grill says how many tasks it gave, by the line `**Tasks of the grill:** <number>`. The grill gave one task — no epic is declared for it: it goes into the epic in work; a copy with no open epic creates it with `--single`. Beside an open epic a small order goes outside it only by the owner's word, with `--outside-epic`.
 
 ### State `договорённость-записана`: the task, the branch, the folder
 

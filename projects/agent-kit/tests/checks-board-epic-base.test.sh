@@ -91,6 +91,18 @@ report "SC-AK-1338 — конфликт с базой эпика назван" "
 report "SC-AK-1338 — строки о прогоне при конфликте нет" "$(board_says 'there will be none while it conflicts')" 0
 export STUB_RUNS=1
 
+# --- SC-AK-1986 — строка работы вне эпика читается на своём месте ----------------------------
+# Слова в середине предложения — рассказ о такой работе, а не её объявление.
+export STUB_PULLS='[]'
+outside_body() {
+    printf '[{"number":704,"title":"[RT-704] Задача","state":"OPEN","assignees":[{"login":"probe"}],"labels":[],"body":"%s"}]' "$1"
+}
+export STUB_ISSUES="$(outside_body 'Описание.\n\nРабота вне эпика — разбор дал одну задачу')"
+report "SC-AK-1986 — outside line: своя строка молчит" "$(board_says '#704: the task names no epic')" 0
+export STUB_ISSUES="$(outside_body 'Движок держит: работа вне эпика — стоит на втором шаге')"
+report "SC-AK-1986 — outside line: слова в предложении не объявление" "$(board_says '#704: the task names no epic')" 1
+report "SC-AK-1986 — outside line: названа команда единственной задачи" "$(board_says '\-\-single')" 1
+
 rm -rf "$BOARD_TREE"
 
 suite_result "очередь работ, база стопки и таблица эпика"

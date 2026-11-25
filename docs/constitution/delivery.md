@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · laws/delivery.md · 06f0fb0818a7 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · laws/delivery.md · 8d546780f5fc · правится надстройкой, не здесь -->
 # Law on delivery
 
 How a change reaches the running application. The law covers both the history of changes and what
@@ -14,14 +14,19 @@ application stops responding, and the reason is found from the history.
   application no less than a series of them, and merged on its own it reaches the main branch as
   half of a thought: the rest of the series arrives later, or never, and the main branch holds a
   state nobody planned. An epic names what the whole is, so that the main branch takes it whole or
-  does not take it. Work outside an epic exists only by the owner's word about that work.
+  does not take it. Work stands outside an epic in two cases: the owner's word about that work, and
+  a grill that says in its own line that it gave one task, where no open epic is led. Where the grill
+  gave one task, the whole is that task: an epic above it adds a branch and a second request and holds
+  nothing more.
 - **An epic has a branch of its own, and it is taken from the main branch.** Without it the epic
   lives as a plan alone, and a plan is not merged: its tasks stand on the main branch apart from one
   another, half a finished epic is already rolled out while the rest is being written, and a
   rollback goes task by task.
 - **The branch of a task is taken from the branch of its epic, and the PR of the task goes there.**
   Taken from the main branch, a task branch carries into the main branch what the epic has not
-  finished; opened into the main branch, its PR makes the epic branch a copy nobody merges.
+  finished; opened into the main branch, its PR makes the epic branch a copy nobody merges. Where the
+  grill gave one task and no epic stands above it, the branch is taken from the main branch, with no
+  commit of another task under it, and the PR goes there.
 - **The PR of an epic into the main branch opens after the folders of all its tasks are taken
   apart.** What lies in them explains the decisions of one piece of work and dies with it: what is
   worth keeping leaves for the description of the past by that same moment. An epic branch that
@@ -58,7 +63,8 @@ application stops responding, and the reason is found from the history.
   lines both wrote to. The cost does not vanish but moves: the one who branches pays it once,
   instead of the one who merges paying it as many times as there are open PRs. The first work of a
   series branches from the branch of its epic, and so does any work not connected to the previous
-  one.
+  one. Work outside an epic branches from the main branch, whether by the owner's word or because the
+  grill gave one task.
 - **A series of branches is handed over bottom up, and the order is named to the owner.** The PR of
   each stands on the previous one, not on main, so one merged out of order drags along everything
   beneath it. The order is known to the one who branched and invisible to the one who merges:
