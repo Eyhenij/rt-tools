@@ -110,7 +110,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 `rtPopoverBackdropClass`, `rtPopoverDisabled`, `rtPopoverOffsetY`, `rtPopoverOffsetX`, `rtPopoverOrigin`,
 `rtPopoverPositions`, `rtPopoverSheet`, `rtPopoverSheetTitle`.
 
-Входы шторки `RtPopoverSheetComponent` — её директива создаёт сама, приложение их не задаёт:
+Входы шторки — её директива создаёт сама, приложение их не задаёт. Код шторки подгружается при первом открытии, а не на старте; приложение, которому первая задержка мешает, зовёт `rtPreloadPopoverSheet()` в простое:
 
 | вход    | тип       | умолчание                                                      |
 | ------- | --------- | -------------------------------------------------------------- |

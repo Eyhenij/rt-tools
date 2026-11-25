@@ -14,7 +14,8 @@ paths are given from the root of the tree.
 - **A field that searches as it is typed opens the sheet on a tap, and the typing goes to a search at the top of the sheet.** — `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete.component.ts:onSheetQuery`
 - **A panel that opens on hover opens in the sheet only by a press, and the pointer leaving does not close the sheet.** — `projects/ui-kit-v2/src/lib/components/popover/rt-popover.directive.ts:#isMouseHover`
 - **A sheet closed by its backdrop, by a drag or by Escape closes the panel the same way a press outside it does.** — `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet.component.ts:openChange`
-- **The panel inside the sheet takes the full width of the sheet.** — `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet.component.ts:RtPopoverSheetComponent`
+- **The panel inside the sheet takes the full width of the sheet.** — `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet.component.ts:template`
+- **The code of the sheet is loaded lazily, at the first opening on a phone, not at the start of the application.** — `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet.helper.ts:loadSheetCode`
 
 The scenarios of the subdomain are bound to the tests by the number in the title of a test, not by a
 table here: the bond is checked both ways by the checking of the specs.

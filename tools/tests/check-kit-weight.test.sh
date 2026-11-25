@@ -56,4 +56,16 @@ report "a gzip drift inside the tolerance passes" "$GZIPNEAR" ""
 OTHER_SET="{\"set\":[\"menu\"],\"total\":1000,\"gzip\":400,\"parts\":{\"menu\":600,\"popover\":400},\"styles\":{\"tokens.css\":5000}}"
 report "a changed set is named" "$(count "$(failures "$SAME" "$OTHER_SET")" 'the set of parts changed')" "1"
 
+# One call of the lookups that tell a part from the lazy chunk the build cuts out of it.
+chunk_lookup() {
+    node --input-type=module -e "
+        import { entryNamesFromExports, partOfFile } from '$TOOLS/check-kit-weight.mjs';
+        const exportsMap = { '.': { default: './fesm2022/rt-tools-ui-kit-v2.mjs' }, './popover': { default: './fesm2022/rt-tools-ui-kit-v2-popover.mjs' }, './popover-backdrop': { default: './fesm2022/rt-tools-ui-kit-v2-popover-backdrop.mjs' } };
+        const entries = new Set(entryNamesFromExports(exportsMap));
+        console.log(JSON.stringify([...entries]), partOfFile('popover-rt-popover-sheet.component-D_jvRxv9', entries), partOfFile('popover-backdrop-x-AbCd1234', entries), partOfFile('dialog', entries));
+    "
+}
+
+report "a lazy chunk of a part is no part and goes to its part, the longest name wins" "$(chunk_lookup)" '["popover","popover-backdrop"] popover popover-backdrop null'
+
 suite_result "check-kit-weight"
