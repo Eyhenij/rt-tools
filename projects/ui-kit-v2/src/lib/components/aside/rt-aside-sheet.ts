@@ -1,4 +1,4 @@
-import { InjectionToken, Signal, signal, WritableSignal } from '@angular/core';
+import { computed, InjectionToken, Signal, signal, WritableSignal } from '@angular/core';
 
 import { defer, Observable, Subject, take } from 'rxjs';
 
@@ -37,9 +37,23 @@ export class RtAsideSheet {
     readonly #gesturesSource: Subject<IRtAsideSheetCloseRequest> = new Subject<IRtAsideSheetCloseRequest>();
     readonly #asksSource: Subject<void> = new Subject<void>();
     readonly #answersSource: Subject<ERtAsideUnsavedOutcome> = new Subject<ERtAsideUnsavedOutcome>();
+    readonly #screen: WritableSignal<Signal<boolean> | null> = signal<Signal<boolean> | null>(null);
+    readonly #headers: WritableSignal<number> = signal<number>(0);
 
     /** Панель рисуется шторкой: решено при открытии. */
     public readonly active: Signal<boolean> = this.#active.asReadonly();
+
+    /**
+     * Шторка панели открыта из другой шторки — она второй экран той же шторки: шапка панели рисует
+     * слева шеврон «назад» вместо «×».
+     */
+    public readonly nested: Signal<boolean> = computed((): boolean => this.#screen()?.() ?? false);
+
+    /**
+     * У панели есть шапка кита: главной кнопке подвала есть куда встать в шторке. Без шапки кнопка
+     * остаётся в подвале.
+     */
+    public readonly hasHeader: Signal<boolean> = computed((): boolean => this.#headers() > 0);
 
     /** Шторка поднята; снятый признак опускает её вниз. */
     public readonly shown: Signal<boolean> = this.#shown.asReadonly();
@@ -50,6 +64,18 @@ export class RtAsideSheet {
     /** Вид, выбранный при открытии панели. */
     public activate(active: boolean): void {
         this.#active.set(active);
+    }
+
+    /** Признак второго экрана берётся у шторки, которой нарисована панель. */
+    public followScreen(nested: Signal<boolean>): void {
+        this.#screen.set(nested);
+    }
+
+    /** Шапка панели встала; отданная функция снимает её. */
+    public addHeader(): () => void {
+        this.#headers.update((count: number): number => count + 1);
+
+        return (): void => this.#headers.update((count: number): number => count - 1);
     }
 
     /** Поднять шторку или опустить её. */

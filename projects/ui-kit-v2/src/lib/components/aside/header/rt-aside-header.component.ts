@@ -120,6 +120,9 @@ export class RtAsideHeaderComponent {
     /** Шапка стоит в шторке телефона. */
     protected readonly sheetMode: Signal<boolean> = computed((): boolean => this.#sheet?.active() ?? false);
 
+    /** Шторка панели — второй экран другой шторки: слева шеврон «назад» вместо «×». */
+    protected readonly sheetBack: Signal<boolean> = computed((): boolean => this.#sheet?.nested() ?? false);
+
     public readonly title: InputSignal<string | null> = input<string | null>(null);
 
     /**
@@ -175,7 +178,11 @@ export class RtAsideHeaderComponent {
             this.loading();
             untracked((): void => this.#titleFit.attach(row));
         });
-        inject(DestroyRef).onDestroy((): void => this.#titleFit.detach());
+        const leave: (() => void) | undefined = this.#sheet?.addHeader();
+        inject(DestroyRef).onDestroy((): void => {
+            this.#titleFit.detach();
+            leave?.();
+        });
     }
 
     /**

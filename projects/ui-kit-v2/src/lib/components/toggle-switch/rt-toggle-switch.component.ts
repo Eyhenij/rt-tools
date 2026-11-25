@@ -20,7 +20,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
-import { IRtIcon, rtAnnounceChange } from '@rt-tools/ui-kit-v2/core';
+import { IRtIcon, rtAnnounceChange, rtRegisterControlValue } from '@rt-tools/ui-kit-v2/core';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { IRtToggleSwitch } from './rt-toggle-switch.model';
 
@@ -144,6 +144,10 @@ export class RtToggleSwitchComponent implements ControlValueAccessor {
     public readonly disabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
+
+    constructor() {
+        rtRegisterControlValue(this.#host, (): boolean => this.isOn());
+    }
 
     public writeValue(value: boolean | null | undefined): void {
         this.isOn.set(value === true);

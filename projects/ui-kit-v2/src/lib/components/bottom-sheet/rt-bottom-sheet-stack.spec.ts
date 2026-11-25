@@ -64,7 +64,7 @@ describe('Стопка шторок', (): void => {
         expect(sheet(fixture, 'sheet-status').classList.contains('rt-bottom-sheet--open')).toBe(false);
     });
 
-    it('SC-UKV-1631 — шторка из шторки — второй экран той же шторки: её высота и шеврон «назад» вместо «×»', (): void => {
+    it('SC-UKV-1631 — шторка из шторки — второй экран той же шторки не ниже её, шеврон «назад» вместо «×»', (): void => {
         const fixture: ComponentFixture<StackHostComponent> = createRtFixture(StackHostComponent);
         const filters: HTMLElement = sheet(fixture, 'sheet-filters');
         const status: HTMLElement = sheet(fixture, 'sheet-status');
@@ -129,7 +129,7 @@ describe('Стопка шторок', (): void => {
         const covered: string = css.slice(css.indexOf('.rt-bottom-sheet--open.rt-bottom-sheet--covered > .rt-bottom-sheet__panel {'));
 
         expect(nestedPanel.slice(0, nestedPanel.indexOf('}'))).toContain('transition: none');
-        expect(nestedPanel.slice(0, nestedPanel.indexOf('}'))).toContain('height: var(--rt-bottom-sheet-nested-height, auto)');
+        expect(nestedPanel.slice(0, nestedPanel.indexOf('}'))).toContain('min-height: min(var(--rt-bottom-sheet-nested-height)');
         expect(covered.slice(0, covered.indexOf('}'))).toContain('visibility: hidden');
     });
 });

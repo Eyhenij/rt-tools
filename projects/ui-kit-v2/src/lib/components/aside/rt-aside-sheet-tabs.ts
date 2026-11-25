@@ -10,6 +10,32 @@ const EDGE_PX: number = 1;
 /** Ряд не влазит в шторку: стили панели затеняют его края. */
 const RT_ASIDE_TABS_OVERFLOW_CLASS: string = 'rt-aside__tabs--overflow';
 
+/** Ширины ряда вкладок, по которым решается его перестановка у края. */
+export interface IRtTabsScroll {
+    readonly left: number;
+    readonly client: number;
+    readonly scroll: number;
+}
+
+/** Край, до которого дошёл ряд: `1` — левый, крайняя справа уходит влево; `-1` — правый; `0` — ни один. */
+export function rtWrapStep(row: IRtTabsScroll): number {
+    if (row.left <= EDGE_PX) {
+        return 1;
+    }
+
+    return row.left + row.client >= row.scroll - EDGE_PX ? -1 : 0;
+}
+
+/**
+ * Прокрутка после перестановки: прежняя плюс сдвиг выбранной вкладки, который дала перестановка.
+ * `null` — запаса прокрутки ряда не хватает, чтобы удержать вкладку на месте.
+ */
+export function rtWrapTarget(row: IRtTabsScroll, shift: number): number | null {
+    const target: number = row.left + shift;
+
+    return target >= 0 && target <= row.scroll - row.client ? target : null;
+}
+
 /**
  * Ряд вкладок панели-шторки — карусель, как ряд чипов периода в шторке, когда вкладки не влазят:
  * ряд прокручивается вбок по кругу, выбранная вкладка встаёт по центру, края затенены на 32. Ряд,
@@ -106,20 +132,46 @@ export class RtAsideSheetTabs {
         list.scrollLeft += chosen.left + chosen.width / 2 - (row.left + list.clientLeft + list.clientWidth / 2);
     }
 
-    /** Ряд дошёл до края: крайняя вкладка переходит на другой край, прокрутка сдвигается на её ширину. */
+    /**
+     * Ряд дошёл до края: крайняя вкладка переходит на другой край, а прокрутка сдвигается так, чтобы
+     * выбранная вкладка осталась на месте. Запас прокрутки меньше ширины вкладки не даёт её удержать:
+     * тогда перестановка отменяется, и ряд стоит у края, а не прыгает.
+     */
     #wrap(): void {
         const list: HTMLElement | null = this.#list;
         if (list === null || list.scrollWidth <= list.clientWidth) {
             return;
         }
-        const items: HTMLElement[] = this.#items(list);
-        if (list.scrollLeft <= EDGE_PX) {
-            list.scrollLeft += this.#shift(items, 1)?.offsetWidth ?? 0;
+        const row: IRtTabsScroll = { left: list.scrollLeft, client: list.clientWidth, scroll: list.scrollWidth };
+        const step: number = rtWrapStep(row);
+        if (step === 0) {
             return;
         }
-        if (list.scrollLeft + list.clientWidth >= list.scrollWidth - EDGE_PX) {
-            list.scrollLeft -= this.#shift(items, -1)?.offsetWidth ?? 0;
+        const items: HTMLElement[] = this.#items(list);
+        const anchor: HTMLElement = this.#anchor(items, step);
+        const before: number = anchor.getBoundingClientRect().left;
+        this.#shift(items, step);
+        const target: number | null = rtWrapTarget(row, anchor.getBoundingClientRect().left - before);
+        if (target === null) {
+            this.#shift(items, -step);
+            return;
         }
+        list.scrollLeft = target;
+    }
+
+    /**
+     * Вкладка, которая держится на месте: выбранная, а если на другой край уходит она сама — соседняя
+     * с ней со стороны, где ряд остаётся.
+     */
+    #anchor(items: HTMLElement[], step: number): HTMLElement {
+        const leaving: number = step > 0 ? items.length - 1 : 0;
+        const byOrder: HTMLElement[] = [...items].sort(
+            (a: HTMLElement, b: HTMLElement): number => Number(a.style.order) - Number(b.style.order)
+        );
+        const selected: number = byOrder.findIndex((item: HTMLElement): boolean => item.querySelector(SELECTED_SELECTOR) !== null);
+        const at: number = selected < 0 ? Math.floor(byOrder.length / 2) : selected;
+
+        return byOrder[at === leaving ? at - step : at];
     }
 
     /** Сдвигает порядок по кругу и возвращает вкладку, перешедшую на другой край. */

@@ -16,6 +16,21 @@ export interface IRtSheetTitleBox {
 const ROUNDING_PX: number = 0.5;
 
 /**
+ * Ширина заголовка одной строкой — по самому тексту, а не по его колонке. Между кнопками колонка
+ * заголовка тянется на всё место, и её ширина равна месту, а не тексту: по ней заголовок, ставший
+ * короче, к центру бы не вернулся. Без мер текста браузера — ширина содержимого узла.
+ */
+function naturalWidth(node: HTMLElement | null): number {
+    if (node === null) {
+        return 0;
+    }
+    const range: Range = node.ownerDocument.createRange();
+    range.selectNodeContents(node);
+
+    return typeof range.getBoundingClientRect === 'function' ? range.getBoundingClientRect().width : node.scrollWidth;
+}
+
+/**
  * Заголовок не встаёт по центру шапки: место по центру между частями шапки — ряд без двух зазоров и
  * без двух больших частей — уже, чем заголовок одной строкой. Тогда он занимает всё место между
  * левой и правой частями.
@@ -79,7 +94,7 @@ export class RtAsideSheetTitleFit {
                 start: parts[0]?.getBoundingClientRect().width ?? 0,
                 end: parts[1]?.getBoundingClientRect().width ?? 0,
                 gap: Number.parseFloat(view?.getComputedStyle(row).columnGap ?? '') || 0,
-                title: parts[2]?.scrollWidth ?? 0,
+                title: naturalWidth(parts[2]),
             })
         );
     }

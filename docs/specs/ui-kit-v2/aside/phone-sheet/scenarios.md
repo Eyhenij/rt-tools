@@ -186,7 +186,7 @@ Then the panel's content is seen again with the typed text and the picked value
 
 Given an open panel sheet with a date field
 When the date field opens its sheet
-Then the date picker takes the place of the panel's content in the same sheet at the same height,
+Then the date picker takes the place of the panel's content in the same sheet, not lower than it,
 the title names the field, the left of the header holds a back chevron instead of «×», and the
 chevron brings the panel's content back
 
@@ -320,10 +320,12 @@ with the focus, and «Остаться» stands below in a card of its own
 
 ### SC-UKV-1852 — a filter typed and returned is no change
 
-Given the toolbar filters sheet on a phone with a field whose value was changed and typed back, or
-a select of the kit whose value was picked and cleared back
+Given the toolbar filters sheet on a phone with a field whose value was changed and typed back, a
+select of the kit whose value was picked and cleared back, or a radio button picked and then the
+one picked before it again
 When the person presses «×»
-Then the sheet closes and no question is shown
+Then the sheet closes and no question is shown; a radio button picked with no return makes the
+sheet ask
 
 ### SC-UKV-1853 — a move to another record keeps the form
 
@@ -421,3 +423,25 @@ Then «Отправить» stands on the right of the header, and «Сохра�
 Given a record panel sheet open in the right panel of a frame in a window 375 points wide
 When the application switches the dim of the right panel off or on
 Then the panel stays a full-height sheet as wide as the window, with one dim — its own
+
+### SC-UKV-1869 — a panel opened from a sheet shows a back chevron
+
+Given a window 375 points wide and an open panel sheet or an open sheet of the kit
+When the application opens a panel from it
+Then the panel is the second screen of the same sheet, the left of its header holds a back chevron
+instead of «×», and the chevron closes the panel and shows the first screen again; a panel opened
+from no sheet keeps «×»
+
+### SC-UKV-1872 — a panel without the kit header keeps its buttons in the footer
+
+Given a window 375 points wide and a panel with no header of the kit, whose footer holds
+«Закрыть» and «Сохранить»
+When the panel opens
+Then both buttons stand in the footer of the sheet, and the sheet draws no place for a main action
+
+### SC-UKV-1870 — a value written by code counts the same as an edit
+
+Given the toolbar filters open in the sheet on a phone
+When the application writes a value into a kit field by code, without an edit of the person
+Then a value other than at the opening makes the sheet ask before it closes, and a value returned
+to the one at the opening closes the sheet at once

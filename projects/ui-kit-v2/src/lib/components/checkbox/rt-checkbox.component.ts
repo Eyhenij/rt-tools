@@ -21,7 +21,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { rtAnnounceChange } from '@rt-tools/ui-kit-v2/core';
+import { rtAnnounceChange, rtRegisterControlValue } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 
@@ -125,6 +125,10 @@ export class RtCheckboxComponent implements ControlValueAccessor {
 
     /** Пояснение второй строкой под подписью. */
     public readonly description: InputSignal<string> = input<string>('');
+
+    constructor() {
+        rtRegisterControlValue(this.#host, (): boolean => this.isChecked());
+    }
 
     public writeValue(value: boolean | null | undefined): void {
         this.#model.set(value === true);

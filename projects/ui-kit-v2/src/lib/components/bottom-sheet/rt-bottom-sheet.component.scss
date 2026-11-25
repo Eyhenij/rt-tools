@@ -15,9 +15,18 @@
         /* Скругление карточек вопроса — 14, как у листа действий телефона: шагов 8 и 6 шкалы. */
         --rt-bottom-sheet-confirm-radius: calc(var(--rt-radius-md) + var(--rt-radius-ms));
 
+        /* Пояснение вопроса — кегль 13, тот же, что у кнопки шага `sm` (`--rt-btn-font-size`). */
+        --rt-bottom-sheet-confirm-message-size: 0.8125rem;
+
+        /* Кольцо фокуса строки ответа — внутри строки: снаружи его срезал бы край карточки. */
+        --rt-bottom-sheet-confirm-focus-shadow: inset 0 0 0 var(--rt-focus-ring-width) var(--rt-focus-ring-color);
+
         /* Место над клавиатурой телефона: оба свойства шторка пишет сама, пока клавиатура открыта. */
         --rt-bottom-sheet-keyboard-top: 0;
         --rt-bottom-sheet-keyboard-height: 100%;
+
+        /* Высота первого экрана, под которым стоит второй: её шторка пишет сама, пока она второй экран. */
+        --rt-bottom-sheet-nested-height: 0px;
 
         position: fixed;
         z-index: 1000;
@@ -145,7 +154,8 @@
         }
 
         /* Подвал не прокручивается: кнопки стоят внизу при любой длине тела. Поля над и под кнопками
-           12, по бокам 20: кнопка шага `sm` высотой 32 даёт подвал 56, как в макете. Нижний отступ
+           12, по бокам 20: кнопка шага `sm` высотой 32 даёт подвал 56, кнопка шага
+           `md` высотой 40 — подвал 64. Нижний отступ
            прибавляет вырез экрана, иначе кнопки уходят под полосу жестов телефона. Без
            спроецированного подвала элемент пуст и места не занимает. Спроецированное встаёт в
            строку с зазором и переносится, когда не помещается в ширину; прижать кнопки вправо — `margin-inline-start: auto` у первой. */
@@ -211,7 +221,7 @@
         &__confirm-message {
             margin: 0;
             color: var(--rt-color-text-muted);
-            font-size: 0.8125rem;
+            font-size: var(--rt-bottom-sheet-confirm-message-size);
             line-height: var(--rt-space-5);
         }
 
@@ -227,7 +237,7 @@
             border: none;
             margin: 0;
             background: transparent;
-            color: var(--rt-color-action-primary-on-surface);
+            color: var(--rt-color-sheet-confirm-apply);
             cursor: pointer;
             font: inherit;
             font-size: var(--rt-text-md);
@@ -241,7 +251,7 @@
 
             /* Кольцо внутри строки: снаружи его срезал бы край карточки. */
             &:focus-visible {
-                box-shadow: inset 0 0 0 var(--rt-focus-ring-width) var(--rt-focus-ring-color);
+                box-shadow: var(--rt-bottom-sheet-confirm-focus-shadow);
                 outline: 2px solid transparent;
             }
 
@@ -256,7 +266,7 @@
             }
 
             &--danger {
-                color: var(--rt-color-action-danger-on-surface);
+                color: var(--rt-color-sheet-confirm-danger);
             }
 
             &--stay {
@@ -309,8 +319,10 @@
             }
         }
 
-        /* Второй экран: та же высота и место, без выезда и без своего затемнения. Видим и внутри
-           спрятанной панели нижней шторки. */
+        /* Второй экран: то же место, без выезда и без своего затемнения. Видим и внутри спрятанной
+           панели нижней шторки. Не ниже первого экрана — его высота наименьшая — и растёт по
+           содержимому до предела шторки во всю высоту, полосы 12 сверху: предел панели остаётся
+           свой. Переход высоты и въезд содержимого ведёт `rt-bottom-sheet-screens.ts`. */
         &--nested {
             visibility: visible;
 
@@ -320,8 +332,7 @@
             }
 
             > .rt-bottom-sheet__panel {
-                height: var(--rt-bottom-sheet-nested-height, auto);
-                max-height: none;
+                min-height: min(var(--rt-bottom-sheet-nested-height), calc(100% - var(--rt-space-2) - var(--rt-space-1)));
                 transition: none;
             }
         }

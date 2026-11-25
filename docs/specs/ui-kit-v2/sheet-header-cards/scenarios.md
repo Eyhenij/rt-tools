@@ -134,6 +134,15 @@ Then the application learns of the apply only in the first case
 
 Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-unsaved.spec.ts`.
 
+### SC-UKV-1871 — a value typed or picked and returned in the page filters is no change
+
+Given the page filters open in the sheet
+When a value is typed into a field and erased, or a kit field is picked and returned to its value
+at the opening
+Then the close button closes the sheet at once, without a question
+
+Covered: `projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.component.spec.ts`.
+
 ### SC-UKV-1787 — a sheet with nothing changed closes at once
 
 Given the page filters open in the sheet with nothing changed

@@ -111,10 +111,10 @@ checkbox or a switch on the right. The question before closing offers «Apply»,
   in one cell; the part of the other tab stays in the layout, unseen and untouchable, whether it is
   the month, the month grid or the year grid. The time columns stand in the middle of its height.
 - **A sheet whose choice reaches the application only by a button asks before it closes with a
-  choice not applied.** The dynamic selector asks with marks set. The page filters ask after any
-  input made in the fields of the sheet since it opened, and when the application says the filters
-  are changed: a kit list inside the sheet reports its change to the application, not to the
-  sheet. The sheets of a time, of a date with time and of a period ask with a value chosen and
+  choice not applied.** The dynamic selector asks with marks set. The page filters ask when a field
+  of the sheet — of the browser or of the kit — holds a value other than at the opening or after
+  the reset, and when the application says the filters are changed. A value typed or picked and
+  returned is no change. The sheets of a time, of a date with time and of a period ask with a value chosen and
   not applied. The question offers three answers: apply, do not apply, cancel. It stands at the
   bottom of the screen as an action sheet of a phone, two cards: the first holds the title, the
   message, the red «do not apply» and «apply», the second holds «cancel» alone. The focus goes to

@@ -459,7 +459,7 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
             return;
         }
 
-        this.value.set(keys);
+        this.takeValue(keys);
         this.#initial.set([...keys]);
     }
 

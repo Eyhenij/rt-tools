@@ -1,10 +1,13 @@
 import { InteractivityChecker } from '@angular/cdk/a11y';
 import { ApplicationRef, ChangeDetectionStrategy, Component, getDebugNode, Signal, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { BreakpointsService } from '../../platform';
 import { DRAG_DISMISS_THRESHOLD_PX } from '../bottom-sheet/rt-bottom-sheet.logic';
 import { provideRtKitTesting } from '../../../testing/rt-kit-testing';
+import { RtRadioButtonComponent } from '../radio-button/rt-radio-button.component';
+import { RtRadioGroupComponent } from '../radio-button/rt-radio-group.component';
 import { RtSelectComponent } from '../select/rt-select.component';
 import { IRtSelect } from '../select/rt-select.model';
 import { RtToolbarComponent, RtToolbarFiltersDirective } from './rt-toolbar.component';
@@ -39,15 +42,28 @@ class PhoneBreakpointsService {
             (filtersDiscard)="discards.set(discards() + 1)">
             <ng-template rtToolbarFilters let-place>
                 <input qa-dataid="slot-filter" [attr.data-place]="place" />
-                <rt-select qa-dataid="slot-payment" placeholder="Любая" [options]="payments" />
+                <rt-select qa-dataid="slot-payment" placeholder="Любая" [options]="payments" [formControl]="payment" />
+                <rt-radio-group ariaLabel="Счета">
+                    <rt-radio-button qa-dataid="slot-all" value="all" label="Все" [formControl]="kind" />
+                    <rt-radio-button qa-dataid="slot-paid" value="paid" label="Оплаченные" [formControl]="kind" />
+                </rt-radio-group>
             </ng-template>
         </rt-toolbar>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtToolbarComponent, RtToolbarFiltersDirective, RtSelectComponent],
+    imports: [
+        RtToolbarComponent,
+        RtToolbarFiltersDirective,
+        RtSelectComponent,
+        RtRadioGroupComponent,
+        RtRadioButtonComponent,
+        ReactiveFormsModule,
+    ],
 })
 class ToolbarFiltersSheetHostComponent {
     protected readonly payments: ReadonlyArray<IRtSelect.Option<string>> = PAYMENTS;
+    public readonly payment: FormControl<string | null> = new FormControl<string | null>(null);
+    public readonly kind: FormControl<string> = new FormControl<string>('all', { nonNullable: true });
     public readonly applied: WritableSignal<number> = signal(0);
     public readonly resets: WritableSignal<number> = signal(0);
     public readonly discards: WritableSignal<number> = signal(0);
@@ -244,5 +260,60 @@ describe('Отборы полосы на телефоне — шторка', ():
 
         expect(node('bottom-sheet-confirm')).toBeNull();
         expect(sheetUp()).toBe(false);
+    });
+
+    it('SC-UKV-1852 — радиокнопка, выбранная и возвращённая назад, изменением не считается', async (): Promise<void> => {
+        const fixture: ComponentFixture<ToolbarFiltersSheetHostComponent> = await openFilters();
+        await settle();
+        node('slot-paid')?.querySelector<HTMLElement>('[role="radio"]')?.click();
+        await settle();
+        node('slot-all')?.querySelector<HTMLElement>('[role="radio"]')?.click();
+        await settle();
+
+        pressClose();
+        await settle();
+
+        expect(fixture.componentInstance.kind.value).toBe('all');
+        expect(node('bottom-sheet-confirm')).toBeNull();
+        expect(sheetUp()).toBe(false);
+    });
+
+    it('SC-UKV-1852 — радиокнопка, выбранная без возврата, — изменение, и шторка спрашивает', async (): Promise<void> => {
+        await openFilters();
+        await settle();
+        node('slot-paid')?.querySelector<HTMLElement>('[role="radio"]')?.click();
+        await settle();
+
+        pressClose();
+        await settle();
+
+        expect(node('bottom-sheet-confirm-title')?.textContent?.trim()).toBe('Apply the changes?');
+    });
+
+    it('SC-UKV-1870 — сброс кодом к значению при открытии снимает признак: шторка закрывается без вопроса', async (): Promise<void> => {
+        const fixture: ComponentFixture<ToolbarFiltersSheetHostComponent> = await openFilters();
+        await settle();
+        pick('cash');
+        await settle();
+
+        fixture.componentInstance.payment.setValue(null);
+        await settle();
+        pressClose();
+        await settle();
+
+        expect(node('bottom-sheet-confirm')).toBeNull();
+        expect(sheetUp()).toBe(false);
+    });
+
+    it('SC-UKV-1870 — значение, записанное кодом не как при открытии, — изменение, и шторка спрашивает', async (): Promise<void> => {
+        const fixture: ComponentFixture<ToolbarFiltersSheetHostComponent> = await openFilters();
+        await settle();
+
+        fixture.componentInstance.payment.setValue('card');
+        await settle();
+        pressClose();
+        await settle();
+
+        expect(node('bottom-sheet-confirm-title')?.textContent?.trim()).toBe('Apply the changes?');
     });
 });

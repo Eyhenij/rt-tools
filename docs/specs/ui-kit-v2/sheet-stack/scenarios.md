@@ -7,20 +7,25 @@ covered by is said under it.
 
 Given the filters sheet open on a phone
 When the list of a select in it opens in a sheet of its own
-Then the list stands as the second screen of the same sheet, at its height and with a back chevron
+Then the list stands as the second screen of the same sheet, not lower than it and with a back chevron
 instead of «×», and the filters sheet is hidden, takes no taps and stays reachable to the focus of
 its field
 
 Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-stack.spec.ts`.
 
-### SC-UKV-1867 — the second screen follows the height of the first one
+### SC-UKV-1867 — the second screen grows past the first one with an animation
 
-Given the list's sheet open in place of the filters sheet
-When the window changes its size or turns, and the filters sheet becomes lower
-Then the list's sheet takes the new height of the filters sheet, and its back chevron stays on the
-screen
+Given the filters sheet open on a phone and the list of a select taller than it
+When the list opens as the second screen, and then the chevron brings the filters back
+Then the list is not lower than the filters sheet and shows all its rows up to the limit of a
+full-height sheet; the height passes from screen to screen and the content slides in, by the
+duration of the sheet's slide, and with reduced motion the screens switch without motion; when the
+window changes its size and the filters sheet becomes lower, the list follows its new height; when
+the whole page goes away with both screens, the filters sheet switches nothing and nothing fails. The
+owner's word: «рсти и переключение и рост с анимацией а не скачком».
 
-Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-stack.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-stack.spec.ts`,
+`projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-screens.spec.ts`.
 
 ### SC-UKV-1632 — closing the top sheet shows the previous one
 

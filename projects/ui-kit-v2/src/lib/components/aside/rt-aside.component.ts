@@ -267,6 +267,8 @@ export class RtAsideComponent {
                 this.#sheetTabs.attach(carousel ? this.#host.querySelector<HTMLElement>('.rt-aside__content .rt-tabs__tab-list') : null)
             );
         });
+        // Шапка панели узнаёт, что шторка — второй экран, от самой шторки.
+        this.#sheet?.followScreen(computed((): boolean => this.bottomSheet()?.templateContext.nested() ?? false));
         // Вопрос открывшего — о несохранённом при просьбе закрыться — задаётся вопросом шторки.
         this.#sheet
             ?.asks()
@@ -308,7 +310,7 @@ export class RtAsideComponent {
         const panel: HTMLElement | null = this.#sheetPanel();
         const target: HTMLElement | null =
             panel?.querySelector<HTMLElement>('[cdkFocusInitial]') ??
-            panel?.querySelector<HTMLElement>('[qa-dataid="aside-sheet-close"] button') ??
+            panel?.querySelector<HTMLElement>('[qa-dataid="aside-sheet-close"] button, [qa-dataid="bottom-sheet-back"] button') ??
             null;
         target?.focus();
     }

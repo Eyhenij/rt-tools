@@ -84,7 +84,8 @@ and «Сохранить и закрыть», and «Остаться» in a card
 - **The main action moves from the footer to the right of the header as a filled button.** It is
   the button of the primary slot; with several there, the last one moves and the rest stay in the
   footer. A press on it does what the footer button did. A panel without a main action keeps the
-  right side of the header empty.
+  right side of the header empty. A panel without the header of the kit has no header to move to:
+  its main action and its close-only button stay in the footer of the sheet.
 - **The icon buttons of the panel header stand to the left of the main action.**
 - **A close-only button is not drawn in the sheet, and the other buttons of the footer stay in its
   footer.** «×» runs the road of the arrow, not the handler of the hidden button. A button of the
@@ -119,7 +120,7 @@ and «Сохранить и закрыть», and «Остаться» in a card
   focus goes to the sheet itself. From 481 points the question stays the window in the centre.
 - **The filters of the toolbar in the sheet ask before they close with a change not applied.** A
   change is a value of a field that differs from its value at the opening: a value typed and
-  returned is no change. A field of the kit without a text field — a select, a date field, a
+  returned is no change, and a value written by code counts the same as an edit. A field of the kit without a text field — a select, a date field, a
   checkbox, a switch, a radio button — counts the same way as a text field. The question is the one of the page filters sheet: «Применить» reports
   `filtersApply` and closes, «Не применять» reports the drop to the application apart from the
   closing and closes, «Отмена» keeps the sheet. With no change the sheet closes at once. From 481
@@ -136,7 +137,7 @@ and «Сохранить и закрыть», and «Остаться» in a card
 - **A sheet opened from a sheet opens in the same sheet: its content and title take the place of
   the first ones, and «×» on the left becomes a back chevron.** The list of a select, the sheet of
   a date field, the menu of a button — opened from any kit sheet, the panel sheet included. The
-  panel keeps its place and height; the first screen keeps what was typed in its form and the
+  second screen keeps the place of the panel and is not lower than it; the first screen keeps what was typed in its form and the
   focus of the field that opened the second one. The chevron, a choice, a swipe down and Escape on
   the second screen bring back the first one; they do not close the sheet. The owner's word:
   «нужно открывать в том же меняя содержимое а вместо кнопки крестик (слева в шапке) кнопка назад
@@ -146,7 +147,9 @@ and «Сохранить и закрыть», and «Остаться» in a card
   the overline, the subtitle, the badges and the content of the title column stand under the title.
 - **The tabs of a panel sheet are one row that scrolls round, like the presets of the period
   sheet.** Tabs that do not fit scroll sideways in a circle, the edges of the row fade over 32
-  points, and the selected tab stands in the centre. A row that fits keeps the order of its tabs
+  points, and the selected tab stands in the centre. When the row reaches its edge, the tab from the
+  far end comes to that edge and the selected tab keeps its place; a row whose scroll room is
+  narrower than a tab stops at its edge. A row that fits keeps the order of its tabs
   and fades nothing. The owner's word at the mockup: «прикинь как
   на дейтпикере в ботомшите чипы листаются и затеняются когда не влазят и листаются каруселькой».
 - **The panel sheet is announced as a modal dialog by the name of the panel, else by its title.** It
@@ -225,8 +228,9 @@ main action and of the header icon buttons in each of the five places of the kit
 
 ### Several objects
 
-Two panels open at once on a phone are two sheets in the order of opening: the later one replaces
-the earlier, and its closing shows the earlier one again.
+Two panels open at once on a phone are one sheet with two screens, by the rule of a sheet opened
+from a sheet: the later panel is the second screen with a back chevron on the left of its header,
+and the chevron, a swipe down and Escape close it and show the earlier panel again.
 
 ## Decisions
 

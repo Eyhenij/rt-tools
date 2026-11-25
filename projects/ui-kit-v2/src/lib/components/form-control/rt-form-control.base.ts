@@ -19,7 +19,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, ControlValueAccessor, NgControl, ValidationErrors, Validators } from '@angular/forms';
 
-import { IRtInput, IRtKitConfig, rtAnnounceChange, rtKitDefault } from '@rt-tools/ui-kit-v2/core';
+import { IRtInput, IRtKitConfig, rtAnnounceChange, rtKitDefault, rtRegisterControlValue } from '@rt-tools/ui-kit-v2/core';
 
 /**
  * Базовый класс input-семейства common/ui. Владеет единым CVA-ядром:
@@ -219,6 +219,7 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
     constructor() {
         this.value = signal<TValue>(this.getEmptyValue());
         this.#announced = this.getEmptyValue();
+        rtRegisterControlValue(this.#hostNode, (): TValue => this.value());
         // Self-inject NgControl + ручная привязка valueAccessor: доступ к
         // control.invalid/touched без NG_VALUE_ACCESSOR provider'а (тот
         // спровоцировал бы NG0200 cycle при self-reference).
@@ -300,6 +301,12 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
     /** Сбрасывает значение к пустому. Поля с display-сигналом расширяют. */
     protected clearValue(): void {
         this.value.set(this.getEmptyValue());
+    }
+
+    /** Значение, поставленное самим полем, а не человеком: правкой оно не объявляется и становится «до» следующей. */
+    protected takeValue(value: TValue): void {
+        this.value.set(value);
+        this.#announced = value;
     }
 
     /** Прокидывает change наружу — для обработчиков пользовательского ввода. */

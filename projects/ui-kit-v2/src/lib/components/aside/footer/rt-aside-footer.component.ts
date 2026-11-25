@@ -119,6 +119,9 @@ export class RtAsideFooterComponent {
     /** Подвал стоит в шторке телефона. */
     protected readonly sheetMode: Signal<boolean> = computed((): boolean => this.#sheet?.active() ?? false);
 
+    /** Главная кнопка уходит в шапку шторки; у панели без шапки кита ей некуда уйти, и она в подвале. */
+    protected readonly mainMoves: Signal<boolean> = computed((): boolean => this.sheetMode() && (this.#sheet?.hasHeader() ?? false));
+
     /**
      * В слоте `[asideDismiss]` стоит опасная кнопка — тема `danger`: это действие со своим смыслом,
      * «Удалить», а не выход. Она остаётся в подвале со своей подписью.
@@ -130,9 +133,12 @@ export class RtAsideFooterComponent {
         )
     );
 
-    /** Кнопка слота `[asideDismiss]` только закрывает панель: в шторке её место у «×» шапки. */
+    /**
+     * Кнопка слота `[asideDismiss]` только закрывает панель: в шторке её место у «×» шапки. У панели
+     * без шапки кита «×» нет, и кнопка остаётся в подвале.
+     */
     protected readonly closeOnlyHidden: Signal<boolean> = computed(
-        (): boolean => this.sheetMode() && this.phoneCloseLabel() && !this.dismissDanger()
+        (): boolean => this.mainMoves() && this.phoneCloseLabel() && !this.dismissDanger()
     );
 
     /**
@@ -153,10 +159,11 @@ export class RtAsideFooterComponent {
 
     /**
      * В шторке подвалу есть что показать: кнопка со своим смыслом в слоте `[asideDismiss]` или
-     * вторая кнопка слота `[asidePrimary]` — последняя ушла в шапку. Без них шторка без подвала.
+     * вторая кнопка слота `[asidePrimary]` — последняя ушла в шапку; у панели без шапки — любая
+     * кнопка этого слота. Без них шторка без подвала.
      */
     public readonly sheetFilled: Signal<boolean> = computed(
-        (): boolean => (this.#slots().dismiss > 0 && !this.closeOnlyHidden()) || this.#slots().primary > 1
+        (): boolean => (this.#slots().dismiss > 0 && !this.closeOnlyHidden()) || this.#slots().primary > (this.mainMoves() ? 1 : 0)
     );
 
     constructor() {
@@ -170,7 +177,7 @@ export class RtAsideFooterComponent {
             };
 
             // В шторке последняя кнопка слота `[asidePrimary]` стоит в шапке: её вид — вид шапки шторки.
-            const main: number = this.sheetMode()
+            const main: number = this.mainMoves()
                 ? hosts.map((host: ElementRef<HTMLElement>): boolean => host.nativeElement.closest(PRIMARY_SLOT) !== null).lastIndexOf(true)
                 : -1;
 

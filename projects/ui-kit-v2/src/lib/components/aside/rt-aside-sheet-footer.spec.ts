@@ -54,6 +54,22 @@ class SwapContentComponent {
 })
 class DangerContentComponent {}
 
+/** Панель без шапки кита: главной кнопке в шторке встать некуда. */
+@Component({
+    selector: 'rt-aside-sheet-headerless-content',
+    template: `
+        <rt-aside>
+            <rt-aside-footer>
+                <button rtButton asideDismiss qa-dataid="foot-close" type="button" label="Закрыть"></button>
+                <button rtButton asidePrimary qa-dataid="foot-save" type="button" label="Сохранить"></button>
+            </rt-aside-footer>
+        </rt-aside>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtAsideComponent, RtAsideFooterComponent, RtButtonDirective],
+})
+class HeaderlessContentComponent {}
+
 async function settle(): Promise<void> {
     const app: ApplicationRef = TestBed.inject(ApplicationRef);
     app.tick();
@@ -102,5 +118,15 @@ describe('Панель службы кита на телефоне — кноп�
         expect(node('foot-save')).toBeNull();
         expect(node('foot-send')?.closest('[qa-dataid="aside-sheet-main"]')).not.toBeNull();
         expect(node('aside-sheet-main')?.children.length).toBe(1);
+    });
+
+    it('SC-UKV-1872 — у панели без шапки кита «Сохранить» и «Закрыть» остаются в подвале шторки', async (): Promise<void> => {
+        TestBed.inject(RtAsideService).open(HeaderlessContentComponent);
+        await settle();
+        const footer: HTMLElement | null = node('bottom-sheet-footer');
+
+        expect(node('foot-save')?.closest('[qa-dataid="bottom-sheet-footer"]')).toBe(footer);
+        expect(node('foot-close')?.closest('[qa-dataid="bottom-sheet-footer"]')).toBe(footer);
+        expect(node('aside-sheet-main')).toBeNull();
     });
 });

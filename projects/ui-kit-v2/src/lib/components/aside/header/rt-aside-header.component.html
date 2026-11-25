@@ -1,16 +1,17 @@
 <ng-container rtBlock="rt-aside-header">
     <header #row rtElem="content" qa-dataid="aside-header" [rtMod]="{ sheet: sheetMode(), 'title-between': titleBetween() }">
         @if (sheetMode()) {
-            <!-- Шапка шторки: «×» слева идёт дорогой стрелки; шапка без стрелки «×» не рисует. -->
+            <!-- Шапка шторки: «×» слева идёт дорогой стрелки; шапка без стрелки «×» не рисует. Второй экран
+                 шторки рисует на месте «×» шеврон «назад», как шапка шторки кита; дорога та же. -->
             <div rtElem="start">
                 @if (closable()) {
                     <rt-icon-button
                         rtElem="close"
-                        qa-dataid="aside-sheet-close"
-                        icon="ico-close"
                         variant="secondary"
                         radius="full"
-                        [ariaLabel]="t().bottomSheetClose"
+                        [attr.qa-dataid]="sheetBack() ? 'bottom-sheet-back' : 'aside-sheet-close'"
+                        [icon]="sheetBack() ? 'chevron-left' : 'ico-close'"
+                        [ariaLabel]="sheetBack() ? t().uiBack : t().bottomSheetClose"
                         (clicked)="onSheetClose()" />
                 }
             </div>

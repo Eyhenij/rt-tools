@@ -220,7 +220,7 @@ describe('Панель-шторка на телефоне — Escape, фокус
         expect(document.activeElement).toBe(node('city-field'));
     });
 
-    it('SC-UKV-1831 — шторка поля открывается в той же шторке той же высоты с шевроном «назад»', async (): Promise<void> => {
+    it('SC-UKV-1831 — шторка поля открывается в той же шторке не ниже её, с шевроном «назад»', async (): Promise<void> => {
         await openFromPage();
         const panel: HTMLElement | null = node('aside-sheet')?.querySelector<HTMLElement>(':scope > .rt-bottom-sheet__panel') ?? null;
         jest.spyOn(panel as HTMLElement, 'getBoundingClientRect').mockReturnValue({ height: 800 } as DOMRect);
