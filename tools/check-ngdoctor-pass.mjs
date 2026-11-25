@@ -11,21 +11,17 @@
  * versions of the parser and eslint, and does not resolve oxlint and fast-glob at all.
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync, readFileSync, realpathSync, statSync } from 'node:fs';
+import { existsSync, readdir, readdirSync, readFileSync, realpathSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
+import { listNoDotDirs } from './ngdoctor-dot-dirs.mjs';
+
 /** The version of the tool whose file list, ignore list and oxlint settings the pass copies. */
 const PASS_VERSION = '0.3.0';
-/**
- * The dot directories, left out of the walk: no file of them comes into the tool's answer, and the
- * packages of a working copy lying there are hundreds of thousands. `ngdoctor-dot-dirs.mjs` gives
- * the tool the same ignore.
- */
-export const DOT_DIRS = '**/.*/**';
 const PASS_GLOBS = ['**/*.ts', '**/*.html'];
-const PASS_IGNORE = [DOT_DIRS, '**/node_modules/**', '**/dist/**', '**/.angular/**', '**/coverage/**', '**/*.spec.ts', '**/angular-doctor-report.html'];
+const PASS_IGNORE = ['**/node_modules/**', '**/dist/**', '**/.angular/**', '**/coverage/**', '**/*.spec.ts', '**/angular-doctor-report.html'];
 /** The oxlint settings version 0.3.0 writes; the pass uses them beside a saved output only. */
 export const PASS_OXLINT_SETTINGS = {
     $schema: './node_modules/oxlint/configuration_schema.json',
@@ -39,7 +35,19 @@ const PASS_TEMPLATE_FILES = ['**/*.html', '/**/*.html', '**/*.ts', '/**/*.ts'];
  */
 const PASS_PACKAGE_GLOB = '**/package.json';
 const PASS_STYLE_GLOB = '**/*.{css,scss}';
-const PASS_TOOL_IGNORE = [DOT_DIRS, '**/node_modules/**', '**/dist/**', '**/.angular/**'];
+const PASS_TOOL_IGNORE = ['**/node_modules/**', '**/dist/**', '**/.angular/**'];
+
+/**
+ * The files of `root` by the glob of the tool, the dot directories left out. A fast-glob that does not
+ * list by the given file system walks them again, so it is a failure, not a slow pass.
+ */
+async function listOf(fromTool, root, pattern, options) {
+    let listings = 0;
+    const fs = listNoDotDirs(root, { readdir, readdirSync }, () => (listings += 1));
+    const files = await fromTool('fast-glob')(pattern, { cwd: root, absolute: true, fs, ...options });
+    if (listings === 0) throw new Error('fast-glob does not list by the file system that skips the dot directories');
+    return files;
+}
 
 /**
  * The major version of `tailwindcss` a package names, as 0.3.0 takes it: the first section that
@@ -63,11 +71,10 @@ function tailwindMajor(pkg, semver) {
  * names tailwindcss 4 or later. Returns the counts.
  */
 async function packagesOf(fromTool, root, failures) {
-    const glob = fromTool('fast-glob');
     const semver = fromTool('semver');
     const listed = async (pattern, options) => {
         try {
-            return await glob(pattern, { cwd: root, absolute: true, ignore: PASS_TOOL_IGNORE, ...options });
+            return await listOf(fromTool, root, pattern, { ignore: PASS_TOOL_IGNORE, ...options });
         } catch (error) {
             failures.push(`the pass cannot list the ${pattern} files of ${root}: ${error.code ?? error.message}`);
             return [];
@@ -203,7 +210,7 @@ export async function passOver({ root, text, tool, version, settings, binary }) 
     const fromTool = createRequire(realpathSync(tool));
     let files;
     try {
-        files = await fromTool('fast-glob')(PASS_GLOBS, { cwd: root, absolute: true, ignore: PASS_IGNORE, dot: false });
+        files = await listOf(fromTool, root, PASS_GLOBS, { ignore: PASS_IGNORE, dot: false });
     } catch (error) {
         return { failures: [`the pass cannot list the files of ${root}: ${error.code ?? error.message}`], line: '' };
     }

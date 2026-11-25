@@ -75,9 +75,9 @@
  * About a second.
  *
  * Neither the tool nor the pass enters a dot directory: `dot: false` takes no file from there, but
- * the walk went through the packages of a working copy lying inside the tree. The tool is kept out
- * by `tools/ngdoctor-dot-dirs.mjs`, loaded before it; the probe holds a dot directory nobody can
- * list, so a run without that module is red.
+ * the walk went through the packages of a working copy lying inside the tree. The skip is
+ * `tools/ngdoctor-dot-dirs.mjs`, loaded before the tool and taken by the pass; a run of either whose
+ * fast-glob did not list by it is red — the tool's leaves a mark in the temporary directory.
  *
  * The tool is run here, not piped in: with a temporary directory of its own, removed after the run,
  * because the tool writes its oxlint settings into the shared temporary directory once and reads
@@ -134,15 +134,17 @@ const PROBE_SOURCES = [...new Set(PROBE_FINDINGS.map((f) => f.source))];
 
 /** The JSON text of a run of the tool, with its own temporary directory; `null` text on a failure. */
 function runTool(own, args) {
+    const mark = join(own, 'ngdoctor-dot-dirs');
     const run = spawnSync(process.execPath, ['--import', DOT_DIRS_MODULE, TOOL_BIN, '--json', ...args], {
         cwd: ROOT,
-        env: { ...process.env, TMPDIR: own },
+        env: { ...process.env, TMPDIR: own, NGDOCTOR_DOT_DIRS_MARK: mark },
         encoding: 'utf8',
         maxBuffer: 256 * 1024 * 1024,
     });
     if (run.error || run.status !== 0) {
         return { text: null, why: `angular-doctor did not finish: ${run.error?.message ?? `exit ${run.status}`} ${(run.stderr ?? '').trim()}` };
     }
+    if (!existsSync(mark)) return { text: null, why: 'angular-doctor listed its files without tools/ngdoctor-dot-dirs.mjs' };
     return { text: run.stdout, why: null };
 }
 
@@ -188,9 +190,6 @@ function writeProbe(own, omit) {
     mkdirSync(app, { recursive: true });
     const angular = versionOf(join(ROOT, 'package.json'), '@angular/core');
     writeFileSync(join(dir, 'angular.json'), JSON.stringify({ version: 1, projects: { probe: { root: '', sourceRoot: 'src', projectType: 'application' } } }));
-    // A dot directory the tool cannot list: it stops on it, unless it is kept out of them.
-    mkdirSync(join(dir, '.copy'));
-    mkdirSync(join(dir, '.copy', 'locked'), { mode: 0 });
     writeFileSync(join(dir, 'package.json'), JSON.stringify({ name: 'probe', version: '0.0.0', dependencies: { '@angular/core': angular } }));
     const type = omit === 'template-eslint' ? ' type="button"' : '';
     const compare = omit === 'oxlint' ? '===' : '==';

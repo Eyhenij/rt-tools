@@ -2,8 +2,8 @@
 # The scenarios of the Angular Doctor threshold check: the verdict on the JSON the tool prints and
 # the writing of the threshold. The tool does not scan the tree here — the output is written out by
 # `--input`, so that every verdict is reachable, the failed and the degraded run among them. It runs
-# seven times, half a second each: on the probe whole, without the constructs of each source, with and
-# without the skip of the dot directories, and on a tree of three files inside a dot directory.
+# on the probe, four times, half a second each: once whole and once without the constructs of each
+# source. The scenarios of the dot directories, in a file of their own, run it four times more.
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 echo "the Angular Doctor threshold check"
@@ -226,7 +226,7 @@ misuse "an angularDoctor field with a key other than the report path is refused"
 # probe and the tool run, so the copy of the check refuses at once.
 OWN="$WORK/own"
 mkdir -p "$OWN/tools"
-cp "$CHECK" "$TOOLS/check-ngdoctor-pass.mjs" "$TOOLS/check-ngdoctor-settings.mjs" "$OWN/tools/"
+cp "$CHECK" "$TOOLS/check-ngdoctor-pass.mjs" "$TOOLS/check-ngdoctor-settings.mjs" "$TOOLS/ngdoctor-dot-dirs.mjs" "$OWN/tools/"
 CHECK_OWN="$OWN/tools/check-ngdoctor.mjs"
 own_refuses() {
     local label="$1" reason="$2" got
@@ -460,57 +460,7 @@ fi
 report "the pass counts its package.json files and stylesheets" "$got" "counted"
 rm -rf "$PASS/sub" "$PASS/coverage" "$PASS/package.json"
 
-# The dot directories (RT-3640): neither the tool nor the pass enters one, and a directory nobody can
-# list shows it — a walk stops on it. A copy of the check in a tree of its own runs the installed tool.
-DOT="$WORK/dot"
-mkdir -p "$DOT/tools"
-cp "$CHECK" "$TOOLS/check-ngdoctor-pass.mjs" "$TOOLS/check-ngdoctor-settings.mjs" "$TOOLS/ngdoctor-dot-dirs.mjs" "$DOT/tools/"
-cp "$TOOLS/../package.json" "$TOOLS/../angular-doctor.config.json" "$DOT/"
-ln -s "$(cd "$TOOLS/.." && pwd -P)/node_modules" "$DOT/node_modules"
-dot_probe() {
-    if node "$DOT/tools/check-ngdoctor.mjs" --input "$WORK/tree.json" --threshold "$WORK/threshold.json" --probe-real > "$WORK/said.txt" 2>&1; then echo "green"
-    elif grep -q "EACCES.*/probe/\.copy/locked" "$WORK/said.txt"; then echo "red, named"; else echo "red, other reason"; fi
-}
-report "the real probe passes by its dot dir" "$(dot_probe)" "green"
-: > "$DOT/tools/ngdoctor-dot-dirs.mjs"
-report "the real probe without the skip is red on its dot dir" "$(dot_probe)" "red, named"
-
-# The fast-glob of the tool without the place the skip is added at.
-cp "$TOOLS/ngdoctor-dot-dirs.mjs" "$DOT/tools/"
-rm "$DOT/node_modules"
-mkdir -p "$DOT/node_modules/@abiramcodes/angular-doctor" "$DOT/node_modules/fast-glob/out/managers"
-printf '%s\n' '{"name": "@abiramcodes/angular-doctor", "version": "0.3.0"}' > "$DOT/node_modules/@abiramcodes/angular-doctor/package.json"
-printf '%s\n' '{"name": "fast-glob", "version": "4.0.0"}' > "$DOT/node_modules/fast-glob/package.json"
-printf '%s\n' 'exports.plan = () => [];' > "$DOT/node_modules/fast-glob/out/managers/tasks.js"
-dot_loaded() {
-    if node --import "$DOT/tools/ngdoctor-dot-dirs.mjs" -e '' > "$WORK/said.txt" 2>&1; then echo "went on"
-    elif grep -qF -- "$1" "$WORK/said.txt"; then echo "stopped, named"; else echo "stopped, other reason"; fi
-}
-report "a fast-glob that takes no skip of a dot dir stops the run" "$(dot_loaded "has no function «generate»")" "stopped, named"
-rm "$DOT/node_modules/fast-glob/out/managers/tasks.js"
-report "a fast-glob without the module of the dot dir skip stops the run" "$(dot_loaded "takes no ignore of the dot directories: Cannot find module")" "stopped, named"
-
-# A tree that itself lies in a dot directory, as a working copy of a session does, is read whole, and
-# the ignore list of the tool stays beside the skip: its own packages are left out.
-pass_tree
-mkdir -p "$WORK/.copies"
-cp -R "$PASS" "$WORK/.copies/one"
-mkdir -p "$WORK/.copies/one/node_modules/x"
-cp "$PASS/src/a.component.ts" "$WORK/.copies/one/node_modules/x/"
-printf '%s\n' '{"version": 1, "projects": {"p": {"root": "", "sourceRoot": "src", "projectType": "application"}}}' > "$WORK/.copies/one/angular.json"
-printf '%s\n' '{"name": "p"}' > "$WORK/.copies/one/package.json"
-node --import "$TOOLS/ngdoctor-dot-dirs.mjs" "$TOOLS/../node_modules/@abiramcodes/angular-doctor/bin/angular-doctor.js" --json "$WORK/.copies/one" > "$WORK/said.txt" 2>&1
-if grep -q '"filesScanned": 3,' "$WORK/said.txt"; then got="three files"; else got="$(grep filesScanned "$WORK/said.txt")"; fi
-report "the tool reads a tree inside a dot dir whole" "$got" "three files"
-printf '%s' "$(pass_output 3)" > "$WORK/pass-out.json"
-pass_green "the pass reads a tree inside a dot dir whole" --pass-root "$WORK/.copies/one"
-
-# The three lists of the pass — the files, the package.json files, the stylesheets of tailwindcss 4.
-mkdir -p "$PASS/.copy/locked"
-chmod 000 "$PASS/.copy/locked"
-printf '%s\n' '{"devDependencies": {"tailwindcss": "^4.1.0"}}' > "$PASS/package.json"
-pass_green "the pass leaves a dot dir it cannot list alone in all its lists" --pass-root "$PASS"
-rm -rf "$PASS/.copy" "$PASS/package.json"
+. "$(dirname "${BASH_SOURCE[0]}")/check-ngdoctor-dot-dirs.sh"
 
 misuse "--pass-root without a saved output is refused" "give --input too" --pass-root "$PASS"
 misuse "--pass-oxlint without --pass-root is refused" "give --pass-root too" "${T[@]}" --pass-oxlint "$WORK/fake-oxlint.mjs"
