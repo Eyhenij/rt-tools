@@ -144,3 +144,26 @@ The findings of the rules review of every closed task of the epic «Проста
    words of one override were not.
 2. **An edit made before the plan's commit is not counted by exit 8** — package, the engine. The findings of
    the second reading went into this file by the commit before the plan's, and the row stayed untouched.
+
+## RT-3627 — the review of 25 November 2026
+
+1. **The guard of the postponed mark reads prose as a mark** — package, `checks/flow-guard.mjs` (`deferChanges`)
+   and the same reading in `checks/action-of.mjs`. Any line with the word gives every task number in it, while
+   the engine reads the state cell alone. A true sentence of the epic plan was reworded into a vague one.
+   Proposed: only a plan row whose state cell is the mark counts; two scenarios.
+2. **An argument of the tree's own command is judged by the command, not by a guard that rereads the shell** —
+   tree, `agent-kit-source`. The reader `creates_single` was written three times and gave both serious findings
+   of round two; `task-new-single.mjs` has the arguments split already. Work behind it: the judgement moves into
+   the command and the reader leaves; the base reader of the delivery guard goes onto `hooks/script-files.sh`.
+3. **A task done by another task's work leaves the plan of its epic by the same word** — package,
+   `git-workflow-queue`, «Tasks fixed by one edit are merged before the merge». The menu about RT-3565 asked of
+   closing alone, and its row can now be neither merged nor truly postponed, so its epic cannot end. Proposed:
+   the menu names the erasing of the card and of the row.
+4. **The frame beside the set names the directory of each role** — tree, `task-delivery-loop-run`. A `cd` into a
+   missing directory failed, and the next line wrote into the copy. Proposed: directories made by the executor,
+   absolute paths, `cd <dir> || exit 1`.
+5. **A fix of the last round narrows and does not replace the mechanism** — tree, `task-delivery-loop`, the
+   duties: a mechanism found wrong twice is cut to the forms its scenarios hold, a new one is its own task.
+6. **The exception for the only task is retold in ten texts and has drifted** — package, `git-workflow-commit`
+   and `task-flow-start`; tree, the cold part of the loop. Proposed: the statement stays in `epic-flow`, the rest
+   keep the call.

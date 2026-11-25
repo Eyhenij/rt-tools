@@ -692,6 +692,11 @@
             "reason": "hooks into no agent event; guards source it"
         },
         {
+            "file": "git-guard-push-ready.sh",
+            "kind": "helper",
+            "reason": "hooks into no agent event; the run ahead sources it"
+        },
+        {
             "file": "git-guard-push-tests.sh",
             "kind": "guard"
         },

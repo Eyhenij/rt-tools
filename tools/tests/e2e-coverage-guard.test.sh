@@ -208,4 +208,48 @@ git -C "$J" checkout -q main
 report "--head names the branch judged" "$(decision "$J" "gh pr create --base main --head RT-11-probe --title probe")" deny
 report "a checked-out main without --head passes" "$(decision "$J" "$OPEN")" PASS
 
+# --- the same answer before the set ---------------------------------------------------------------
+
+# What the run ahead is told before its first step, by the profile of this tree.
+before_set() {
+    local said
+    said="$(cd "$1" && env -u RT_HOOK_PARSED -u RT_HOOK_INPUT CLAUDE_PROJECT_DIR="$1" bash -c '
+        . "$0/.claude/rt-kit/defaults/project.sh"
+        . "$1/.claude/rt-kit/project.sh"
+        . "$0/.claude/hooks/git-guard-push-ready.sh"
+        rt_push_ready_unmet "$2"' "$ROOT" "$1" "${2:-origin/main}" 2>/dev/null)"
+    case "$said" in *e2e-coverage-guard*) printf 'deny' ;; '') printf 'PASS' ;; *) printf '%s' "$said" ;; esac
+}
+# Both answers on one branch: before the set and at the opening of a PR.
+both() { printf '%s:%s' "$(before_set "$1")" "$(decision "$1" "$OPEN")"; }
+
+repo RT-14-probe M
+commit "$M" libs/message-bus-admin/src/a.ts 'export const a = 1;' 'fix: admin screen'
+report "before the set refused: an admin edit without its suite" "$(both "$M")" deny:deny
+commit "$M" apps/message-bus-admin-e2e/README.md 'text' 'docs: suite'
+report "before the set refused: a suite README is no test" "$(both "$M")" deny:deny
+commit "$M" apps/message-bus-admin-e2e/src/a.spec.ts 'test' 'test: receiver'
+report "before the set passes: the test of the suite" "$(both "$M")" PASS:PASS
+
+repo RT-15-probe N
+commit "$N" projects/auth-server/src/a.ts 'export const a = 1;' 'fix: auth package'
+report "before the set refused: an auth package edit" "$(both "$N")" deny:deny
+commit "$N" projects/auth-server/src/b.ts 'export const b = 1;' "$(printf 'refactor: auth\n\nE2E-skip: a pure refactor')"
+report "before the set passes: the bypass with a reason" "$(both "$N")" PASS:PASS
+
+repo RT-16-probe O
+commit "$O" docs/note.md 'text' 'docs: text'
+report "before the set passes: a text edit" "$(both "$O")" PASS:PASS
+commit "$O" projects/agent-kit/src/a.ts 'export const a = 1;' 'fix: package'
+report "before the set passes: code no suite walks" "$(both "$O")" PASS:PASS
+
+# A chain: the branch below carries the edit, and this branch answers for its own part alone.
+repo RT-17-probe P
+commit "$P" libs/message-bus-admin/src/a.ts 'export const a = 1;' 'fix: admin screen'
+publish "$P" RT-17-probe
+git -C "$P" checkout -q -b RT-18-probe
+commit "$P" docs/note.md 'text' 'docs: text'
+report "before the set passes: the edit of the branch below in a chain" "$(before_set "$P" origin/RT-17-probe)" PASS
+report "before the set refused: the same branch against main" "$(before_set "$P")" deny
+
 suite_result "the end-to-end coverage guard"

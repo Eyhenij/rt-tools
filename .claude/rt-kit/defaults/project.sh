@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · defaults/project.sh · 497ad2da7034 · правится надстройкой, не здесь
+# rt-kit v0.39.1 · defaults/project.sh · 472fbaae0957 · правится надстройкой, не здесь
 # Tree profile: what checks an edit here and what counts as reinvention.
 #
 # The package default. Everything the trees of this workshop have in common lives here: the Nx
@@ -141,6 +141,7 @@ RT_PLANS_DIR="${RT_PLANS_DIR:-docs/plans}"
 # with the task folder and with the archive. If there is no common ancestor, there is nothing to
 # compare with — the check stays silent.
 RT_MAIN_BRANCH="${RT_MAIN_BRANCH:-main}"
+RT_PUSH_READY_HOOKS="${RT_PUSH_READY_HOOKS:-}" # the guards asked before the push set whether a PR would open, by spaces
 
 # The name of the hosting client in the launch line. By it the restart guard recognises the call:
 # each kind of hosting has its own client, and a guessed name matches nothing. The default is

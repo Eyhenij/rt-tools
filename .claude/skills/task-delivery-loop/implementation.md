@@ -9,6 +9,7 @@ The names and bindings of this tree next to the rule `SKILL.md`.
 - **the review roles** — `.claude/agents/qa-engineer.md`, `.claude/agents/product-strategist.md`, `.claude/agents/goal-critic.md`, `.claude/agents/skill-curator.md`
 - **the review lenses** — `.claude/workflows/feature.js:LENSES`
 - **the push set** — `.claude/rt-kit/project.sh:rt_push_checks`, run ahead by `.claude/hooks/git-guard-push-ahead.sh`
+- **a PR asked about before the set** — `.claude/hooks/git-guard-push-ready.sh`; this tree's guard in it is `.claude/rt-kit/project.sh:RT_PUSH_READY_HOOKS`
 - **the epic table** — `tools/epic-table.mjs`
 - **the review path** — `tools/review-path.mjs`, its signs in `tools/review-path-signs.mjs`, the outer shape of a file in `tools/review-path-api.mjs`
 - **the stands** — the showcase by `pnpm run storybook:ui-kit-v2`, the receiver and the admin panel by `pnpm run serve:stand`
