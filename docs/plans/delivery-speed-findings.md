@@ -167,3 +167,33 @@ The findings of the rules review of every closed task of the epic «Проста
 6. **The exception for the only task is retold in ten texts and has drifted** — package, `git-workflow-commit`
    and `task-flow-start`; tree, the cold part of the loop. Proposed: the statement stays in `epic-flow`, the rest
    keep the call.
+
+## RT-3628 — the review of 25 November 2026
+
+1. **The handover of a compaction writes a second state line into the progress** — package,
+   `hooks/handoff-write.sh`, with a scenario. The edit of the state matches twice and fails. Proposed: the
+   four lines of the handover go without the list mark and the bold — «State at that minute: …».
+2. **A call that records an edit waits for the answer of the edit** — tree, `task-delivery-loop-run`, «8, 9».
+   A failed state edit did not stop the commit of the same message: 55af55c43 left without it, and the push
+   went in one message with the question about the base. Proposed: the commit in the message after the
+   answers of its edits, the push in the message after the commit, the diff of a round after both.
+3. **The suite of the package resources stands among the quick checks** — tree, `task-delivery-loop-run`,
+   «5–6», and the cold part of `agent-kit-source`: `bash projects/agent-kit/tests/syntax.test.sh`, three
+   seconds. A hook without the execute bit turned the set red after 449 seconds. One edit with item 1 of
+   RT-3640.
+4. **The first broken variant of a fix is the fix taken away whole** — tree, the cold part of
+   `agent-kit-source`. Sixteen of sixteen by the changed lines, and the former code passed all sixty
+   scenarios. One edit with item 6 of RT-3630 and item 5 of RT-3640.
+5. **A scenario of a stop measures its time and stops only what it started** — package,
+   `pitfalls/testing.md`. A short wait ends by itself with the same code and words; an empty number is «not
+   reached»; the group of the target is compared with the group of the test before a kill.
+6. **A check that comes earlier asks the judge it runs ahead of** — package, `pitfalls/testing.md`. A list of
+   its own diverged in both first editions of the plan and once in the code. A new refusal is named and waits
+   for the owner's word; a condition whose repair needs the checked step is left to the last line.
+7. **The flow guard reads every literal of a written script as a target** — package, `checks/flow-guard.mjs`.
+   Four false refusals in one task; the same script by the Write tool passes. Proposed: where every write
+   goes to a literal path, the judged names are those paths. The owner's choice: whether the run of a script
+   written by another call is judged.
+8. **The discard guard reads the session's tree after a `cd` in the command** — package,
+   `hooks/git-guard-discard.sh` and its spec. A clean clone is refused and a dirty copy passes. Proposed: a
+   literal `cd` before the call and `git -C` name the directory; an unread one is the session's.
