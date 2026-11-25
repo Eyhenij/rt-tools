@@ -1,6 +1,6 @@
 # The product metrics of the rules package
 
-**Status:** in force · **Revision:** 8 November 2026 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 25 November 2026 · **Scenario prefix:** `SC-AK`
 **Depends on:** `observations`, `observations/cargo`, `context-cost`, `exam`, `message-bus/usage`, `message-bus/intake`, `message-bus/access-rights`, `message-bus/cargo-state`
 **Laws:** `observability`, `verifiability`, `work-conduct`, `entity-models`, `lists`, `frontend-application`
 **Procedures:** none
@@ -114,6 +114,13 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
 - **A request is counted once.** The tree keeps the numbers it counted in a file that does not leave.
   The file and the signs of a request lie in the store shared by the copies of the tree, under a lock.
   An older request read later does not change an outcome already counted.
+- **The rework of a task is counted from the history.** The lines of the commit of the first review
+  round, without laid-out copies, the task folder, the archive and the plans, and the files the
+  branch touched that the first version of its plan does not name. Over the last merged tasks, or
+  those merged after a revision, the command adds the new cycles, imports past an entry and overruns
+  of each merge, and the median of the first rounds; a task without a round stays out of the median
+  and is named apart. The command prints and refuses nothing: the milestone of an epic is judged by
+  its report.
 
 ### What sends it
 

@@ -109,4 +109,33 @@ if [ -f "$ROOT_TREE/tools/specs-for.mjs" ]; then
 fi
 report "SC-AK-1146 — непокрытых ресурсов не осталось" "$left" 0
 
+# --- SC-AK-1970 — ревью получает структуру кода, план и зацепление против базы -------------------
+# Конвейер идёт с заглушками ролей; печатается запрос грани structure или отказ.
+lens_of() {
+    node -e '
+const body = require("fs").readFileSync(process.argv[1], "utf8").replace(/^export const meta/m, "const meta");
+const prompts = {};
+const empty = { steps: [], risks: [], acceptance: [], findings: [], checked: [] };
+const agent = async (prompt, opts) => ((prompts[opts.label] = prompt), opts.schema ? empty : "done");
+const parallel = (jobs) => Promise.all(jobs.map((job) => job()));
+const run = new (Object.getPrototypeOf(async function () {}).constructor)("args", "phase", "agent", "parallel", "log", body);
+run(JSON.parse(process.argv[2]), () => {}, agent, parallel, () => {})
+    .then(() => process.stdout.write(prompts["qa: structure"] ?? "no lens"))
+    .catch((error) => process.stdout.write(`refused: ${error.message}`));
+' "$ASSETS/workflows/feature.js" "$1"
+}
+section="$(sed -n '/^## Structure of the code$/,/^## Reply/p' "$AGENTS/qa-engineer.md")"
+report "SC-AK-1970 — раздел о структуре стоит в тексте роли" "$(printf '%s\n' "$section" | grep -c '^## Structure of the code$')" 1
+report "SC-AK-1970 — раздел называет «Dependencies» и «Bounds»" "$(printf '%s\n' "$section" | grep -cE '«Dependencies»|«Bounds»')" 2
+full='{"task":"t","grill":"docs/tasks/RT-0-x/grill.md","base":"origin/RT-1-epic","plan":"docs/tasks/RT-0-x/other.md"}'
+report "SC-AK-1970 — грань structure стоит в конвейере" "$(lens_of "$full" | grep -c 'Structure of the code')" 1
+report "SC-AK-1970 — запрос грани несёт путь плана" "$(lens_of "$full" | grep -c 'docs/tasks/RT-0-x/other\.md')" 1
+report "SC-AK-1970 — запрос грани несёт команду зацепления с базой" \
+    "$(lens_of "$full" | grep -cF 'node tools/check-coupling.mjs --base=origin/RT-1-epic')" 1
+report "SC-AK-1970 — без пути плана берётся plan.md рядом с разбором" \
+    "$(lens_of '{"task":"t","grill":"docs/tasks/RT-0-x/grill.md","base":"origin/main"}' | grep -c 'docs/tasks/RT-0-x/plan\.md')" 1
+report "SC-AK-1970 — вызов без базы отказан" "$(lens_of '{"task":"t","grill":"docs/tasks/RT-0-x/grill.md"}' | grep -c '^refused: .*base')" 1
+launches="$(grep -c 'Workflow(name: "feature".*base: ' "$ASSETS/pitfalls/task-flow-resume.md") $(grep -c '{ task, grill, base }' "$ASSETS/../README.md")"
+report "SC-AK-1970 — строки запуска в ловушке и README передают базу" "$launches" "1 1"
+
 suite_result "проверки: роли, навыки, заготовки и объявления"

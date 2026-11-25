@@ -89,6 +89,7 @@ The main session writes the diff to a file. Reviewers get the file and never run
 
 ```bash
 git diff origin/<base>...HEAD > <scratchpad>/review-N.diff
+node tools/check-coupling.mjs --base=origin/<base> > <scratchpad>/coupling-N.txt 2>&1
 ```
 
 Each of the three agents gets this frame and its own inputs, never your conclusions:
@@ -98,7 +99,14 @@ Review <scratchpad>/review-N.diff (branch RT-N-<slug>). Do not run git, do not e
 Return findings with file:line, the failure scenario and a severity.
 ```
 
-`qa-engineer` gets the agreement and the review lens of `.claude/workflows/feature.js`.
+`qa-engineer` also gets this line, after the frame:
+
+```text
+The plan: <plan>; the coupling against the base: <scratchpad>/coupling-N.txt.
+```
+
+`qa-engineer` gets the agreement, the lenses `review` and `structure` of `.claude/workflows/feature.js`,
+and the plan for its section «Решение»: the green set does not show the coupling.
 `product-strategist` gets the plan's points and their signs. `goal-critic` gets the owner's words
 from the grill and the result, never the plan. The replies of the roles are saved to a file of the
 scratchpad as they come: the PR body takes their tables word for word.
