@@ -36,6 +36,7 @@ has_step() {
     if steps_for "$1" | grep -qxF "$2"; then printf 'yes'; else printf 'no'; fi
 }
 
+# Covers SC-UKV-1802 of the spec `docs/specs/ui-kit-v2/snapshots`.
 # With a base the step is asked about the stories the branch touched; without one it is the whole
 # set, the very line the pipeline has and check-push-gate compares against.
 SHOT='node tools/visual-gate.mjs ui-kit-v2'

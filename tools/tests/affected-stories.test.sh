@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # The scenarios of the touched stories: which story files an edit reaches and when it is everything.
+# Covers SC-UKV-1802 and SC-UKV-1803 of the spec `docs/specs/ui-kit-v2/snapshots`.
 #
 # A one-off kit with three story files. `card` draws itself through a barrel, a template and a style;
 # `chart` takes a neighbour package and an `import()`; `plain` takes nothing. An edit the command

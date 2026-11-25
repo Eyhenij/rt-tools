@@ -85,6 +85,7 @@ report "the kit's orphans are left to its own wrapper" "$(drive references ui-ki
 report "importing the gate raises no showcase" \
     "$(node -e "import('$TOOLS/visual-gate.mjs').then(() => console.log('imported'))" 2>&1)" 'imported'
 
+# Covers SC-UKV-1802, SC-UKV-1803 and SC-UKV-1804 of the spec `docs/specs/ui-kit-v2/snapshots`.
 # The run of the touched stories, called whole: the build, the shooting and the probes are stand-ins.
 RUN="$WORK/kit"
 KIT=projects/ui-kit-v2
