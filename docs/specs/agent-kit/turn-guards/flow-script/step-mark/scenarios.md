@@ -404,7 +404,7 @@ Given a tree whose `planRolesCommand` answers `none`, one without the settings, 
 When the roles of a plan are asked, and then an answer before the plan commit, after it and with no moment is read with no roles to wait for
 Then the first tree needs no role and every other needs both, and only the answer after the commit approves
 
-Covered: `projects/agent-kit/tests/flow-approval.test.sh`.
+Covered: `projects/agent-kit/tests/flow-approval.test.sh`, `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
 ### SC-AK-1826 — the line of an unmatched step names its command, output and errors
 

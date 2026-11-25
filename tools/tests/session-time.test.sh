@@ -266,12 +266,21 @@ report 'a step is of the period alone' "$(run --steps --since 2026-11-22 --file 
 node "$TOOLS/session-time.mjs" --branches RT-2 --since 2026-11-22 --file "$WORK/late.jsonl" > "$WORK/out" 2>&1
 report 'a task cut by the period is refused' "$?:$(grep -c 'cuts RT-2' "$WORK/out")" 1:1
 report 'the text holds the steps and what was left out' \
-    "$(node "$TOOLS/session-time.mjs" --steps --file "$WORK/steps.jsonl" | grep -cE 'Код и живая проверка +21|Вне полного хода: веток 0')" 2
+    "$(node "$TOOLS/session-time.mjs" --steps --file "$WORK/steps.jsonl" | grep -cE 'Код и живая проверка +21|Вне хода: веток 0')" 2
 OUT="$(run --steps --file "$WORK/branch.jsonl")"
 report 'a branch without rounds has no row of steps' "$(printf '%s' "$OUT" | field 'steps.branches')" 0
 report 'its hours are named as left out' "$(printf '%s' "$OUT" | field 'steps.left.branches + ":" + j.steps.left.hours')" 1:1
 report 'no full course is said in words' \
-    "$(node "$TOOLS/session-time.mjs" --steps --file "$WORK/branch.jsonl" | grep -cE 'Веток полного хода нет|без двух кругов 1')" 2
+    "$(node "$TOOLS/session-time.mjs" --steps --file "$WORK/branch.jsonl" | grep -cE 'Веток полного хода нет|без круга ревью 1')" 2
+SPEC="${COURSE/00:43:00|call:Agent:q2:/00:43:00|call:Edit:q2:}" journal single
+OUT="$(run --steps --file "$WORK/single.jsonl")"
+report 'a branch of one round is no full course' "$(printf '%s' "$OUT" | field 'steps.branches + ":" + j.steps.left.branches')" 0:0
+report 'a branch of one round has a row with no second round' \
+    "$(printf '%s' "$OUT" | field 'steps.oneRound.branches + ":" + Object.values(j.steps.oneRound.medians).join(" ")')" '1:5 4 21 8 17 0 0 15 3'
+report 'the steps of one round add up to the active time' "$(printf '%s' "$OUT" | field 'steps.oneRound.perBranch["RT-2-step"]')" 73
+report 'the branches of one round are printed apart' \
+    "$(node "$TOOLS/session-time.mjs" --steps --file "$WORK/single.jsonl" | grep -cE 'Веток полного хода нет|медиана по 1 веткам с одним кругом')" 2
+report 'a full course leaves the group of one round empty' "$(run --steps --file "$WORK/steps.jsonl" | field 'steps.oneRound.branches')" 0
 SPEC="${COURSE/Bash:ps:bash/Bash:ps:cat}" journal noset
 report 'a branch without the set lacks it' "$(run --steps --file "$WORK/noset.jsonl" | field 'steps.branches + ":" + j.steps.left.lacks.set')" 0:1
 SPEC="${COURSE/gh pr create/gh pr view}" journal nopr

@@ -13,12 +13,14 @@
  *   to what follows. Where nobody read the plan, all that comes before round one is the code step;
  * - a group ends with the last report of its members; a launch whose report no journal holds is
  *   counted in `open`, because its group then ends too early;
- * - the delivery begins with the first run of the push set after round two, or with the end of the
+ * - the delivery begins with the first run of the push set after the last round, or with the end of the
  *   round where the set ran only earlier, and ends with the result of the last call that opens a PR.
  *
- * A branch without both rounds, the set and a PR call has no full course and gets no row: its gaps
- * would be read as steps nobody made. The branches left out are reported with their active hours and
- * with what each lacked first; a PR opened by a script of one's own is not seen.
+ * A branch of one round — the light path, or the full one whose second round was not due — goes into a
+ * group of its own, and the medians of the two rounds stay comparable with the measurement of 24.11.
+ * Which of the two paths it took no journal says. A branch without a round, the set or a PR call gets
+ * no row: its gaps would be read as steps nobody made. The branches left out are reported with their
+ * active hours and with what each lacked first; a PR opened by a script of one's own is not seen.
  */
 import { OWNER, opensPr, runsSet } from './session-time-model.mjs';
 
@@ -95,22 +97,25 @@ function marksOf(calls, from, to) {
     return marks;
 }
 
-/** What a branch lacks first for the full course, in the words of the report. */
-export const LACKS = { rounds: 'двух кругов', set: 'набора', pr: 'вызова PR' };
+/** What a branch lacks first for a row of steps, in the words of the report. */
+export const LACKS = { rounds: 'круга ревью', set: 'набора', pr: 'вызова PR' };
 
 /** The moments that bound the steps of a branch, each not earlier than the previous, or what it lacks for them. */
 function boundsOf({ launches, sets, pr }, ends) {
     const groups = reviewGroups(launches, ends);
     const [first, second] = groups.filter((group) => group.qa);
-    if (!second) return { lacks: 'rounds' };
+    if (!first) return { lacks: 'rounds' };
     if (sets.length === 0) return { lacks: 'set' };
     if (pr === null) return { lacks: 'pr' };
+    const last = second ?? first;
     const readings = groups.filter((group) => !group.qa && group.start < first.start);
-    const afterRound = sets.filter((at) => at >= second.end);
-    const set = afterRound.length > 0 ? Math.min(...afterRound) : second.end;
+    const afterRound = sets.filter((at) => at >= last.end);
+    const set = afterRound.length > 0 ? Math.min(...afterRound) : last.end;
     const read = readings.length > 0 ? [readings[0].start, Math.min(readings.at(-1).end, first.start)] : [0, 0];
+    // With one round all up to the set is its fixes, and the second round takes no time.
+    const rounds = second ? [first.end, second.start, second.end] : [first.end, set, set];
     let high = 0;
-    return { bounds: [...read, first.start, first.end, second.start, second.end, set, pr].map((at) => (high = Math.max(high, at))) };
+    return { single: !second, bounds: [...read, first.start, ...rounds, set, pr].map((at) => (high = Math.max(high, at))) };
 }
 
 /** The minutes of one branch by step, and of every step by category. */
@@ -135,16 +140,17 @@ export function stepsOf({ gaps, calls, ends, from, to, takes }) {
     }
     const marks = marksOf(calls, from, to);
     const rows = [];
+    const singles = [];
     const left = [];
     let open = 0;
     for (const [branch, branchGaps] of own) {
         const mark = marks.get(branch) ?? { launches: [], sets: [], pr: null };
-        const { bounds, lacks } = boundsOf(mark, ends);
+        const { bounds, lacks, single } = boundsOf(mark, ends);
         open += mark.launches.filter(({ id }) => !ends.has(id)).length;
-        if (bounds) rows.push(rowOf(branch, branchGaps, bounds));
+        if (bounds) (single ? singles : rows).push(rowOf(branch, branchGaps, bounds));
         else left.push({ lacks, hours: branchGaps.reduce((total, { hours }) => total + hours, 0) });
     }
-    return { rows, left, open };
+    return { rows, singles, left, open };
 }
 
 const median = (values) => {
@@ -157,8 +163,8 @@ const median = (values) => {
 const sum = (values) => values.reduce((a, b) => a + b, 0);
 const tenth = (value) => Math.round(value * 10) / 10;
 
-/** The median of every step, the mean minutes of its categories, and what was left out. */
-export function stepsReport({ rows, left, open }) {
+/** The median of every step over the rows and the mean minutes of its categories. */
+function groupReport(rows) {
     const kindsOf = (i) => {
         const keys = new Set(rows.flatMap((row) => Object.keys(row.kinds[i])));
         return Object.fromEntries([...keys].map((kind) => [kind, tenth(sum(rows.map((row) => row.kinds[i][kind] ?? 0)) / rows.length)]));
@@ -168,6 +174,14 @@ export function stepsReport({ rows, left, open }) {
         medians: Object.fromEntries(STEPS.map(([key], i) => [key, Math.round(median(rows.map((row) => row.minutes[i])))])),
         kinds: Object.fromEntries(STEPS.map(([key], i) => [key, kindsOf(i)])),
         perBranch: Object.fromEntries(rows.map((row) => [row.branch, tenth(sum(row.minutes))])),
+    };
+}
+
+/** The steps of the branches of two rounds, of the branches of one round under `oneRound`, and what was left out. */
+export function stepsReport({ rows, singles, left, open }) {
+    return {
+        ...groupReport(rows),
+        oneRound: groupReport(singles),
         left: {
             branches: left.length,
             hours: Math.round(sum(left.map(({ hours }) => hours)) * 100) / 100,

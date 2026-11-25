@@ -270,6 +270,17 @@ rm -f "$TF_APPROVAL"
 printf '%s\n' '{"type":"user","toolUseResult":{"answers":{"Одобряешь?":"Одобряю план RT-2"}}}' > "$TF_REC"
 report "plan: SC-AK-1411 — без вызовов ролей метки нет" "$(tf_red | grep -c 'no approving answer.* code=1')" 1
 
+# SC-AK-1950 — дерево ответило none: метка без вызова ролей, по ответу после коммита плана
+mkdir -p "$TF_RED/.claude/rt-kit"
+printf '{"planRolesCommand":"grep -q Steps \\"$1\\" && echo none #"}' > "$TF_RED/.claude/rt-kit/checks.json"
+printf '%s\n' '{"type":"user","uuid":"o1","timestamp":"2020-01-01T00:00:00Z","toolUseResult":{"answers":{"Одобряешь?":"Одобряю план RT-2"}}}' > "$TF_REC"
+report "plan: SC-AK-1950 — ответ до коммита плана метки не даёт, отказ называет коммит" "$(tf_red | grep -c 'no approving answer of the owner after the plan commit .* code=1')" 1
+printf '%s\n' '{"type":"user","uuid":"l1","timestamp":"2099-01-01T00:00:00Z","toolUseResult":{"answers":{"Одобряешь?":"Одобряю план RT-2"}}}' > "$TF_REC"
+report "plan: SC-AK-1950 — ответ после коммита плана даёт метку без ролей" \
+    "$(tf_red | grep -c 'approval mark is written.* code=0')/$(node -e "console.log(require('$TF_APPROVAL').place.uuid)" 2>&1)" '1/l1'
+rm -rf "$TF_APPROVAL" "$TF_RED/.claude"
+report "plan: SC-AK-1950 — без команды дерева тот же ответ метки не даёт" "$(tf_red | grep -c 'no approving answer.* code=1')" 1
+
 # SC-AK-1412 — проверка зелёная в минуту записи — отказ
 printf 'готово\n' > "$TF_RED/out.txt"
 tf_record 'Одобряю план RT-2'
