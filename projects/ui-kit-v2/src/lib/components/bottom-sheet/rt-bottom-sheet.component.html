@@ -57,42 +57,36 @@
     </div>
     @if (confirming()) {
         <div rtElem="confirm" qa-dataid="bottom-sheet-confirm" role="alertdialog" aria-modal="true" [attr.aria-labelledby]="confirmTitleId">
-            <div rtElem="confirm-card">
-                <h2 rtElem="confirm-title" qa-dataid="bottom-sheet-confirm-title" [attr.id]="confirmTitleId">
-                    {{ confirmText().title }}
-                </h2>
-                <p rtElem="confirm-message" qa-dataid="bottom-sheet-confirm-message">{{ confirmText().message }}</p>
-                <div rtElem="confirm-actions">
-                    <button
-                        #confirmFirst
-                        rtButton
-                        qa-dataid="bottom-sheet-confirm-apply"
-                        type="button"
-                        size="md"
-                        appearance="filled"
-                        [label]="confirmText().apply"
-                        [attr.aria-label]="confirmText().apply"
-                        (click)="onConfirmApply()"></button>
-                    <button
-                        rtButton
-                        qa-dataid="bottom-sheet-confirm-discard"
-                        type="button"
-                        size="md"
-                        theme="secondary"
-                        appearance="outlined"
-                        [label]="confirmText().discard"
-                        [attr.aria-label]="confirmText().discard"
-                        (click)="onConfirmDiscard()"></button>
-                    <button
-                        rtButton
-                        qa-dataid="bottom-sheet-confirm-cancel"
-                        type="button"
-                        size="md"
-                        appearance="text"
-                        [label]="confirmText().stay"
-                        [attr.aria-label]="confirmText().stay"
-                        (click)="onConfirmCancel()"></button>
+            <!-- Две карточки, как лист действий телефона: вопрос с отказом и согласием, ниже отдельно «остаться».
+                 Фокус встаёт на согласие, как прежде; Tab идёт по строкам сверху вниз. -->
+            <div rtElem="confirm-card" qa-dataid="bottom-sheet-confirm-card">
+                <div rtElem="confirm-heading">
+                    <h2 rtElem="confirm-title" qa-dataid="bottom-sheet-confirm-title" [attr.id]="confirmTitleId">
+                        {{ confirmText().title }}
+                    </h2>
+                    <p rtElem="confirm-message" qa-dataid="bottom-sheet-confirm-message">{{ confirmText().message }}</p>
                 </div>
+                <button
+                    rtElem="confirm-row"
+                    qa-dataid="bottom-sheet-confirm-discard"
+                    type="button"
+                    [rtMod]="{ danger: true }"
+                    (click)="onConfirmDiscard()">
+                    {{ confirmText().discard }}
+                </button>
+                <button #confirmFirst rtElem="confirm-row" qa-dataid="bottom-sheet-confirm-apply" type="button" (click)="onConfirmApply()">
+                    {{ confirmText().apply }}
+                </button>
+            </div>
+            <div rtElem="confirm-card" qa-dataid="bottom-sheet-confirm-stay-card">
+                <button
+                    rtElem="confirm-row"
+                    qa-dataid="bottom-sheet-confirm-cancel"
+                    type="button"
+                    [rtMod]="{ stay: true }"
+                    (click)="onConfirmCancel()">
+                    {{ confirmText().stay }}
+                </button>
             </div>
         </div>
     }

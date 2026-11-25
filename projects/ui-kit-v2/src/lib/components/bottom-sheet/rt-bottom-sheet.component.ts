@@ -31,7 +31,6 @@ import {
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
-import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { IRtSheetKeyboardBox, rtWatchSheetKeyboard } from './rt-bottom-sheet-keyboard';
@@ -67,7 +66,6 @@ function takeConfirmId(): string {
         ModDirective,
 
         // kit
-        RtButtonDirective,
         RtIconButtonComponent,
     ],
     hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],

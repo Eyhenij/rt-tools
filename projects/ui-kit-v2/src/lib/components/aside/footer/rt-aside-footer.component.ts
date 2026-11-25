@@ -59,7 +59,8 @@ function slotNode(host: HTMLElement, slot: string): HTMLElement | null {
  * проецируются иконками в `<rt-aside-header>` слот `[asideActions]`.
  *
  * Вид кнопок задаёт подвал, а не разметка потребителя: «Закрыть» в рамке темы
- * secondary, позитивный глагол залитый и без значка. На телефоне первая кнопка
+ * secondary, позитивный глагол залитый и без значка. Кнопка с темой `danger` остаётся красной
+ * в любом слоте и на любой ширине: место меняет её вид, но не цвет. На телефоне первая кнопка
  * подписана коротко — «Закрыть» из подписей кита. Кнопка может стоять в слоте
  * не сама, а внутри обёртки с атрибутом слота: так ставят подсказку на кнопку.
  *
@@ -158,12 +159,11 @@ export class RtAsideFooterComponent {
 
             this.buttons().forEach((button: RtButtonDirective, index: number): void => {
                 const look: IButton.PlaceLook | null = slotLook(hosts[index]?.nativeElement, dismissLook);
+                const inSlot: IButton.PlaceLook | null = look && sheet ? { ...look, size: 'sm' } : look;
+                const placed: IButton.PlaceLook | null = index === main ? SHEET_MAIN_LOOK : inSlot;
 
-                if (index === main) {
-                    button.placeLook.set(SHEET_MAIN_LOOK);
-                } else {
-                    button.placeLook.set(look && sheet ? { ...look, size: 'sm' } : look);
-                }
+                // Опасную кнопку приложение помечает темой `danger`: место меняет её вид и шаг, но не цвет.
+                button.placeLook.set(placed && button.theme() === 'danger' ? { ...placed, theme: 'danger' } : placed);
             });
         });
     }

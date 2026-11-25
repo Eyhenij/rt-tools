@@ -211,7 +211,7 @@ describe('Панель записи на телефоне — вопрос о п
         expect(dialog.opens).toBe(0);
     });
 
-    it('SC-UKV-1851 — ответы стоят в порядке шторки, первый залит и с фокусом', async (): Promise<void> => {
+    it('SC-UKV-1851 — ответы стоят листом действий: отказ красный, согласие с фокусом, «остаться» отдельной карточкой', async (): Promise<void> => {
         const fixture: TFixture = await openDirty();
 
         node('aside-sheet-close')?.querySelector('button')?.click();
@@ -221,9 +221,11 @@ describe('Панель записи на телефоне — вопрос о п
         );
 
         expect(node('bottom-sheet-confirm-title')?.textContent?.trim()).toBe('Unsaved changes');
-        expect(answers).toEqual(['Save and close', 'Close without saving', 'Stay']);
+        expect(answers).toEqual(['Close without saving', 'Save and close', 'Stay']);
         expect(document.activeElement).toBe(node('bottom-sheet-confirm-apply'));
-        expect(node('bottom-sheet-confirm-apply')?.classList).not.toContain('rt-button--outlined');
+        expect(node('bottom-sheet-confirm-discard')?.classList).toContain('rt-bottom-sheet__confirm-row--danger');
+        expect(node('bottom-sheet-confirm-apply')?.closest('[qa-dataid="bottom-sheet-confirm-card"]')).not.toBeNull();
+        expect(node('bottom-sheet-confirm-cancel')?.closest('[qa-dataid="bottom-sheet-confirm-stay-card"]')).not.toBeNull();
     });
 
     it('SC-UKV-1821 — «Сохранить и закрыть» пишет запись и закрывает панель после записи', async (): Promise<void> => {

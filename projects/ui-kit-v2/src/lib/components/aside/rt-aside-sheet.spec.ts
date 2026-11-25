@@ -27,6 +27,8 @@ interface ISheetData {
     primaries: readonly string[];
     trap: boolean;
     overline: string | null;
+    /** Кнопка слота `[asideDismiss]` — опасная «Удалить» со своим смыслом, а не «Закрыть». */
+    danger: boolean;
 }
 
 /** Счёт нажатий: панель пишет сюда, что сделали её кнопки. */
@@ -53,8 +55,15 @@ function count(key: string): void {
                 <input qa-dataid="first-field" />
                 <input qa-dataid="marked-field" cdkFocusInitial />
             </ng-template>
-            <rt-aside-footer>
-                <button rtButton asideDismiss qa-dataid="foot-close" type="button" label="Закрыть" (click)="press('close')"></button>
+            <rt-aside-footer [phoneCloseLabel]="!data.danger">
+                <button
+                    rtButton
+                    asideDismiss
+                    qa-dataid="foot-close"
+                    type="button"
+                    [theme]="data.danger ? 'danger' : 'primary'"
+                    [label]="data.danger ? 'Удалить' : 'Закрыть'"
+                    (click)="press('close')"></button>
                 @for (label of data.primaries; track label) {
                     <button
                         rtButton
@@ -85,7 +94,15 @@ class SheetContentComponent {
     }
 }
 
-const DEFAULTS: ISheetData = { title: 'Запись', name: null, closable: true, primaries: ['save'], trap: false, overline: null };
+const DEFAULTS: ISheetData = {
+    title: 'Запись',
+    name: null,
+    closable: true,
+    primaries: ['save'],
+    trap: false,
+    overline: null,
+    danger: false,
+};
 
 async function settle(): Promise<void> {
     const app: ApplicationRef = TestBed.inject(ApplicationRef);
@@ -332,6 +349,26 @@ describe('Панель службы кита на телефоне — штор�
             expect(node('foot-delete')?.closest('[qa-dataid="bottom-sheet-footer"]')).not.toBeNull();
             // Кнопки подвала шторки — того же шага `sm`, что главная кнопка в шапке.
             expect(node('foot-delete')?.classList).toContain('rt-button--sm');
+        });
+
+        it('SC-UKV-1863 — опасная кнопка, помеченная панелью, остаётся в подвале шторки красной в рамке', async (): Promise<void> => {
+            setup(true);
+            await open({ danger: true });
+            const remove: HTMLElement | null = node('foot-close');
+
+            expect(remove?.closest('[qa-dataid="bottom-sheet-footer"]')).not.toBeNull();
+            expect(remove?.classList).toContain('rt-button--danger');
+            expect(remove?.classList).toContain('rt-button--outlined');
+            expect(remove?.classList).not.toContain('rt-button--secondary');
+            expect(remove?.classList).toContain('rt-button--sm');
+        });
+
+        it('SC-UKV-1863 — от 481 точки опасная кнопка подвала тоже красная', async (): Promise<void> => {
+            setup(false);
+            await open({ danger: true });
+
+            expect(node('foot-close')?.classList).toContain('rt-button--danger');
+            expect(node('foot-close')?.classList).toContain('rt-button--outlined');
         });
 
         it('SC-UKV-1836 — значки шапки стоят справа, левее главной кнопки', async (): Promise<void> => {

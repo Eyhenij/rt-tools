@@ -69,7 +69,7 @@ export class TestRtAsideSheetRecordComponent {
     protected readonly badges: readonly IRtAsideHeader.Badge[] = BOOKING_BADGES;
 }
 
-/** Панель приложения: новый тур с полями контактов, «Сохранить» в шапке, «Удалить» в подвале. */
+/** Панель приложения: новый тур с полями контактов, «Сохранить» в шапке, красная «Удалить» в подвале. */
 @Component({
     selector: 'app-aside-sheet-app',
     template: `
@@ -83,7 +83,7 @@ export class TestRtAsideSheetRecordComponent {
                 </rt-aside-section>
             </ng-template>
             <rt-aside-footer phoneCloseLabel="false">
-                <button rtButton asideDismiss qa-dataid="story-app-delete" type="button" label="Удалить"></button>
+                <button rtButton asideDismiss qa-dataid="story-app-delete" type="button" theme="danger" label="Удалить"></button>
                 <button rtButton asidePrimary qa-dataid="story-app-save" type="button" label="Сохранить"></button>
             </rt-aside-footer>
         </rt-aside>
@@ -195,7 +195,7 @@ export class TestRtAsideSheetLongTabsComponent {}
 
 /**
  * Панель с подвалом: «Сохранить» уходит в шапку шторки, в подвале остаются «Удалить» — кнопка
- * слева со своим смыслом, обведённая, — и «Дублировать»; над ними черта подвала, под шапкой такая же.
+ * слева со своим смыслом, обведённая красным как опасная, — и «Дублировать»; над ними черта подвала, под шапкой такая же.
  */
 @Component({
     selector: 'app-aside-sheet-footer',
@@ -210,7 +210,7 @@ export class TestRtAsideSheetLongTabsComponent {}
                 </rt-detail-list>
             </ng-template>
             <rt-aside-footer phoneCloseLabel="false">
-                <button rtButton asideDismiss qa-dataid="story-footer-delete" type="button" label="Удалить"></button>
+                <button rtButton asideDismiss qa-dataid="story-footer-delete" type="button" theme="danger" label="Удалить"></button>
                 <button rtButton asidePrimary qa-dataid="story-footer-copy" type="button" label="Дублировать"></button>
                 <button rtButton asidePrimary qa-dataid="story-footer-save" type="button" label="Сохранить"></button>
             </rt-aside-footer>

@@ -49,8 +49,8 @@ The person sees a panel that slides up from the bottom of the screen and takes a
 a thin strip on top. It has a handle, a close button «×» on the left of the header, the title in
 its centre and the main button on the right, «Сохранить» or «Применить». The other buttons of the
 panel stand at its bottom. Before closing a panel with unsaved edits the person sees the question
-«Несохранённые правки» at the bottom of the screen with «Сохранить и закрыть», «Закрыть без
-сохранения» and «Остаться». The filters ask «Применить изменения?» with «Применить», «Не
+«Несохранённые правки» at the bottom of the screen with «Закрыть без сохранения», «Сохранить и
+закрыть» and «Остаться». The filters ask «Применить изменения?» with «Применить», «Не
 применять» and «Отмена».
 
 ## Rules
@@ -87,7 +87,8 @@ panel stand at its bottom. Before closing a panel with unsaved edits the person 
   footer.** «×» runs the road of the arrow, not the handler of the hidden button. A button of the
   dismiss slot with a meaning of its own stays seen when its footer switches the short label off. A
   footer left with nothing takes no room. The buttons left in the footer take the size of the main
-  action in the header: 32 px high, 13 px type.
+  action in the header: 32 px high, 13 px type, with 12 px above and below them. A button the panel
+  marks dangerous stays red in the footer.
 - **The panel sheet closes by «×», by a swipe down past the threshold of a sheet, by a tap on the
   strip above it and by Escape.** A shorter swipe returns the sheet to its place. The swipe obeys
   the switch of the tap on the dim, Escape obeys its own switch of the opening and of the setting
@@ -104,9 +105,11 @@ panel stand at its bottom. Before closing a panel with unsaved edits the person 
   panel; «Остаться» keeps it. A panel held from closing refuses before it asks. Without the sign
   the panel closes or refuses as before, and from 481 points the sign changes nothing.
 - **On a phone the question about the unsaved edits stands at the bottom of the screen in the look
-  of the sheet's question.** It keeps the words and the three outcomes of the panel's question, in
-  the order of the sheet's question: «Сохранить и закрыть» first, filled, and it takes the focus,
-  then «Закрыть без сохранения», then «Остаться». The sheet under the question is out of reach.
+  of the sheet's question.** It keeps the words and the three outcomes of the panel's question. The
+  question is an action sheet of a phone: two cards 12 px from the sides and 24 px from the bottom.
+  The first holds the title and the message, then the red «Закрыть без сохранения» and «Сохранить и
+  закрыть», which takes the focus; the second holds «Остаться». The sheet under the question is out
+  of reach.
   «Остаться» returns the focus to where the close was asked from; asked by a swipe or a tap, the
   focus goes to the sheet itself. From 481 points the question stays the window in the centre.
 - **The filters of the toolbar in the sheet ask before they close with a change not applied.** A
@@ -238,7 +241,9 @@ are shown to him by the frames.
 - **The question keeps the panel's words in the sheet's order.** The panel asks about edits of a
   record, not about a choice not applied: «Применить» would name the wrong outcome. The order and
   the place are the sheet's, by the owner's choice «Внизу, как у шторки»: one question on a phone
-  reads the same wherever it comes from. Rejected: the panel's order with the save answer last.
+  reads the same wherever it comes from. The approved mockup draws it as an action sheet of a phone,
+  the drop in red above the save and «Остаться» apart. Rejected: the panel's order with the save
+  answer last.
 - **The record panel is a sheet too, in both modes of the frame.** Leaving it at the side would
   split one rule into two.
 - **The form is chosen at each opening and kept until the closing.** A form changing under the
@@ -284,9 +289,11 @@ None.
 
 ## History of changes
 
-| Date       | What changed                                                                       |
-| ---------- | ---------------------------------------------------------------------------------- |
-| 2026-11-24 | The agreement is written by task RT-3532, scenarios 1802…1833                      |
-| 2026-11-24 | The eleven open questions are decided under the owner's word, scenarios 1834…1846  |
-| 2026-11-24 | The remarks of the review: the road of «×», the inputs of the sheet, the back      |
-|            | button, the order of the answers, the opening; scenarios 1847…1862                 |
+| Date       | What changed                                                                      |
+| ---------- | --------------------------------------------------------------------------------- |
+| 2026-11-24 | The agreement is written by task RT-3532, scenarios 1802…1833                     |
+| 2026-11-24 | The eleven open questions are decided under the owner's word, scenarios 1834…1846 |
+| 2026-11-24 | The remarks of the review: the road of «×», the inputs of the sheet, the back     |
+|            | button, the order of the answers, the opening; scenarios 1847…1862                |
+| 2026-11-25 | The approved mockup: the footer fields of 12, a dangerous button stays red, the   |
+|            | question as an action sheet of two cards; scenario 1863                           |

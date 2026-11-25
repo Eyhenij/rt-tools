@@ -11,7 +11,9 @@
         --rt-bottom-sheet-shadow: var(--rt-shadow-card-soft);
         --rt-bottom-sheet-transition-duration: var(--rt-duration-base);
         --rt-bottom-sheet-footer-border-width: var(--rt-border-width-thin);
-        --rt-bottom-sheet-confirm-radius: var(--rt-radius-xl);
+
+        /* Скругление карточек вопроса — 14, как у листа действий телефона: шагов 8 и 6 шкалы. */
+        --rt-bottom-sheet-confirm-radius: calc(var(--rt-radius-md) + var(--rt-radius-ms));
 
         /* Место над клавиатурой телефона: оба свойства шторка пишет сама, пока клавиатура открыта. */
         --rt-bottom-sheet-keyboard-top: 0;
@@ -142,7 +144,8 @@
             padding-block-start: var(--rt-space-1);
         }
 
-        /* Подвал не прокручивается: кнопки стоят внизу при любой длине тела. Нижний отступ
+        /* Подвал не прокручивается: кнопки стоят внизу при любой длине тела. Поля над и под кнопками
+           12, по бокам 20: кнопка шага `sm` высотой 32 даёт подвал 56, как в макете. Нижний отступ
            прибавляет вырез экрана, иначе кнопки уходят под полосу жестов телефона. Без
            спроецированного подвала элемент пуст и места не занимает. Спроецированное встаёт в
            строку с зазором и переносится, когда не помещается в ширину; прижать кнопки вправо — `margin-inline-start: auto` у первой. */
@@ -151,7 +154,8 @@
             flex-shrink: 0;
             flex-wrap: wrap;
             align-items: center;
-            padding: var(--rt-space-4) var(--rt-space-5) calc(var(--rt-space-4) + env(safe-area-inset-bottom));
+            padding: calc(var(--rt-space-2) + var(--rt-space-1)) var(--rt-space-5)
+                calc(var(--rt-space-2) + var(--rt-space-1) + env(safe-area-inset-bottom));
             border-top: var(--rt-bottom-sheet-footer-border-width) solid var(--rt-color-border-default);
             gap: var(--rt-space-2);
 
@@ -160,27 +164,38 @@
             }
         }
 
-        /* Вопрос перед закрытием стоит в нижней части экрана поверх шторки и затемняет её. Нижний
-           отступ прибавляет вырез экрана. */
+        /* Вопрос перед закрытием стоит в нижней части экрана поверх шторки и затемняет её: две карточки
+           листа действий телефона в 12 от краёв и в 24 от низа, между ними 8. Нижний отступ прибавляет
+           вырез экрана. */
         &__confirm {
             position: absolute;
             display: flex;
-            align-items: flex-end;
+            flex-direction: column;
+            justify-content: flex-end;
             padding: calc(var(--rt-space-2) + var(--rt-space-1)) calc(var(--rt-space-2) + var(--rt-space-1))
                 calc(var(--rt-space-6) + env(safe-area-inset-bottom));
             background: var(--rt-overlay-black-50);
+            gap: var(--rt-space-2);
             inset: 0;
         }
 
+        /* Карточка обрезает строки по своему скруглению: черта и подсветка строки не выходят за угол. */
         &__confirm-card {
             display: flex;
-            width: 100%;
+            overflow: hidden;
             flex-direction: column;
-            padding: var(--rt-space-5);
             border-radius: var(--rt-bottom-sheet-confirm-radius);
             background: var(--rt-color-bg-surface);
             box-shadow: var(--rt-bottom-sheet-shadow);
-            gap: var(--rt-space-2);
+        }
+
+        /* Шапка вопроса высотой 80: поля 16 и 20, строки 24 и 20 через зазор 4. */
+        &__confirm-heading {
+            display: flex;
+            flex-direction: column;
+            padding: var(--rt-space-4) var(--rt-space-5);
+            gap: var(--rt-space-1);
+            text-align: center;
         }
 
         &__confirm-title {
@@ -191,19 +206,58 @@
             line-height: var(--rt-leading-normal);
         }
 
-        /* Строка 20 из макета — шаг шкалы отступов: множителя с такой высотой у кегля 14 нет. */
+        /* Кегль 13 — тот же, что у кнопки шага `sm`; строка 20 — шаг шкалы отступов: с ней шапка
+           вопроса 16 + 24 + 4 + 20 + 16 = 80, как в макете. */
         &__confirm-message {
             margin: 0;
             color: var(--rt-color-text-muted);
-            font-size: var(--rt-text-sm);
+            font-size: 0.8125rem;
             line-height: var(--rt-space-5);
         }
 
-        &__confirm-actions {
+        /* Строка ответа во всю ширину карточки, 56 вместе с чертой сверху; подпись по центру кеглем 16.
+           Цвет основной темы; отказ красный, «остаться» полужирный. */
+        &__confirm-row {
             display: flex;
-            flex-direction: column;
-            margin-top: calc(var(--rt-space-2) + var(--rt-space-1));
-            gap: var(--rt-space-2);
+            height: calc(var(--rt-space-12) + var(--rt-space-2));
+            box-sizing: border-box;
+            align-items: center;
+            justify-content: center;
+            padding: 0 var(--rt-space-5);
+            border: none;
+            margin: 0;
+            background: transparent;
+            color: var(--rt-color-action-primary-on-surface);
+            cursor: pointer;
+            font: inherit;
+            font-size: var(--rt-text-md);
+            font-weight: var(--rt-font-weight-regular);
+            line-height: var(--rt-leading-normal);
+            -webkit-tap-highlight-color: transparent;
+
+            &:hover {
+                background: var(--rt-color-bg-hover);
+            }
+
+            /* Кольцо внутри строки: снаружи его срезал бы край карточки. */
+            &:focus-visible {
+                box-shadow: inset 0 0 0 var(--rt-focus-ring-width) var(--rt-focus-ring-color);
+                outline: 2px solid transparent;
+            }
+
+            &--danger {
+                color: var(--rt-color-action-danger-on-surface);
+            }
+
+            &--stay {
+                font-weight: var(--rt-font-weight-semibold);
+            }
+        }
+
+        /* Черта между шапкой вопроса и строками и между строками — та же, что над подвалом шторки. */
+        &__confirm-heading + &__confirm-row,
+        &__confirm-row + &__confirm-row {
+            border-top: var(--rt-bottom-sheet-footer-border-width) solid var(--rt-color-border-default);
         }
 
         /* Экранная клавиатура открыта: шторка встаёт в видимую часть окна над ней. Клавиатура ложится

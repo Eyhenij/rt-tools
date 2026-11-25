@@ -306,11 +306,12 @@ Given a panel sheet opened with the tap on the dim switched off
 When the person swipes it down past the threshold
 Then the sheet returns to its place and the panel reports a close request of the kind `backdrop`
 
-### SC-UKV-1851 — the answers of the question stand in the sheet's order
+### SC-UKV-1851 — the answers of the question stand as an action sheet
 
 Given a window 375 points wide and a record panel sheet with an edits guard and a changed form
 When the person presses «×»
-Then «Сохранить и закрыть» stands first with the focus, then «Закрыть без сохранения», «Остаться»
+Then the first card holds the question, the red «Закрыть без сохранения» and «Сохранить и закрыть»
+with the focus, and «Остаться» stands below in a card of its own
 
 ### SC-UKV-1852 — a filter typed and returned is no change
 
@@ -377,3 +378,10 @@ Then the title stands in one line in the centre and ends with an ellipsis
 Given a window 375 points wide and a panel with a title and no accessible name of its own
 When the panel opens
 Then the sheet is announced as a modal dialog named by the title
+
+### SC-UKV-1863 — a dangerous footer button stays red
+
+Given a window 375 points wide and a panel whose footer holds «Удалить» marked dangerous
+When the panel opens
+Then «Удалить» stands in the footer of the sheet with a red border and red text, and so it does
+from 481 points
