@@ -153,8 +153,17 @@ export class RtAsideFooterComponent {
                 ? hosts.map((host: ElementRef<HTMLElement>): boolean => host.nativeElement.closest(PRIMARY_SLOT) !== null).lastIndexOf(true)
                 : -1;
 
+            // В шторке кнопки, оставшиеся в подвале, того же шага `sm`, что главная кнопка в шапке.
+            const sheet: boolean = this.sheetMode();
+
             this.buttons().forEach((button: RtButtonDirective, index: number): void => {
-                button.placeLook.set(index === main ? SHEET_MAIN_LOOK : slotLook(hosts[index]?.nativeElement, dismissLook));
+                const look: IButton.PlaceLook | null = slotLook(hosts[index]?.nativeElement, dismissLook);
+
+                if (index === main) {
+                    button.placeLook.set(SHEET_MAIN_LOOK);
+                } else {
+                    button.placeLook.set(look && sheet ? { ...look, size: 'sm' } : look);
+                }
             });
         });
     }

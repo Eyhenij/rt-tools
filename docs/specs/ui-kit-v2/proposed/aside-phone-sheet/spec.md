@@ -86,7 +86,8 @@ panel stand at its bottom. Before closing a panel with unsaved edits the person 
 - **A close-only button is not drawn in the sheet, and the other buttons of the footer stay in its
   footer.** «×» runs the road of the arrow, not the handler of the hidden button. A button of the
   dismiss slot with a meaning of its own stays seen when its footer switches the short label off. A
-  footer left with nothing takes no room.
+  footer left with nothing takes no room. The buttons left in the footer take the size of the main
+  action in the header: 32 px high, 13 px type.
 - **The panel sheet closes by «×», by a swipe down past the threshold of a sheet, by a tap on the
   strip above it and by Escape.** A shorter swipe returns the sheet to its place. The swipe obeys
   the switch of the tap on the dim, Escape obeys its own switch of the opening and of the setting

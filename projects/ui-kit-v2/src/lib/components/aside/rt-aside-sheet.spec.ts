@@ -330,6 +330,8 @@ describe('Панель службы кита на телефоне — штор�
 
             expect(node('foot-save')?.closest('[qa-dataid="aside-sheet-main"]')).not.toBeNull();
             expect(node('foot-delete')?.closest('[qa-dataid="bottom-sheet-footer"]')).not.toBeNull();
+            // Кнопки подвала шторки — того же шага `sm`, что главная кнопка в шапке.
+            expect(node('foot-delete')?.classList).toContain('rt-button--sm');
         });
 
         it('SC-UKV-1836 — значки шапки стоят справа, левее главной кнопки', async (): Promise<void> => {

@@ -222,7 +222,8 @@ Then the reset icon stands on the right side of the header to the left of «Со
 
 Given a window 375 points wide and a panel with «Удалить» and «Сохранить» in the primary slot
 When the panel opens
-Then «Сохранить» stands on the right of the header and «Удалить» stays in the footer
+Then «Сохранить» stands on the right of the header and «Удалить» stays in the footer at the size of
+«Сохранить»
 
 ### SC-UKV-1838 — the panel's own first-focus node wins over «×»
 

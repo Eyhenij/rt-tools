@@ -82,15 +82,8 @@ export class TestRtAsideSheetRecordComponent {
                     <rt-field label="Почта"><rt-input placeholder="name@example.com" /></rt-field>
                 </rt-aside-section>
             </ng-template>
-            <rt-aside-footer>
-                <button
-                    rtButton
-                    asidePrimary
-                    qa-dataid="story-app-delete"
-                    type="button"
-                    theme="danger"
-                    appearance="text"
-                    label="Удалить"></button>
+            <rt-aside-footer phoneCloseLabel="false">
+                <button rtButton asideDismiss qa-dataid="story-app-delete" type="button" label="Удалить"></button>
                 <button rtButton asidePrimary qa-dataid="story-app-save" type="button" label="Сохранить"></button>
             </rt-aside-footer>
         </rt-aside>
