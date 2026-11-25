@@ -52,6 +52,8 @@ There is no interface: the run answers with lines of output and an exit code.
 
 - The git hook before a push and the push guard: they run the light steps inside their own limit.
 - `KILL` sent to the run itself: the run cannot see it, and the tree of the step stays.
+- A container a step raised and did not put down: it is no process of the step. The step that names
+  its container by the working copy removes the former one at its next start.
 - When a tree starts the run — its own rules.
 
 ## Contract
