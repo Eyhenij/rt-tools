@@ -20,7 +20,7 @@ if (!task || typeof args?.grill !== 'string' || !args.grill || typeof args?.base
     throw new Error('A task, the grill and the base are needed: pass { task, grill, base } in args');
 }
 // The plan of the structure lens: from args, or the plan next to the grill.
-const planPath = args.plan || args.grill.replace(/[^/]*$/, 'plan.md');
+const planPath = typeof args.plan === 'string' && args.plan ? args.plan : args.grill.replace(/[^/]*$/, 'plan.md');
 
 const PLAN = {
     type: 'object',

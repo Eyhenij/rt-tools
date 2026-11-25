@@ -1,57 +1,62 @@
-Seven findings, three of them high. The decision is in `plan.md` («Решение»). `libs/till/` doesn't exist in this tree (`ls: libs/till: No such file or directory`), so the diff is all I could read. `rows.mjs` and `db/raw.mjs` weren't available. I ran no git and edited no files.
+Eight findings, three of them high. The plan says the sample's paths don't exist in this tree, and none turned up when I searched, so the diff was all I could read. `report.mjs` and `cli.mjs` are new files, so the diff shows them whole. For `ledger.mjs` I saw only its one hunk, and I couldn't read `rows.mjs` or `db/raw.mjs` at all. Line numbers below are file lines counted from the hunk headers, not diff lines. I ran no git and edited no files.
 
 ## Findings
 
-1. **`libs/till/src/ledger.mjs:18`** edits `ledger.mjs`: **an edit off the row «Границы»** (Bounds). **High.**
-   - **Decision says:** «libs/till/src/ledger.mjs и формат записи кассы не правятся» (`ledger.mjs` and the till record format stay untouched).
-   - **What the diff does:** it changes both. `` `${order.number};${order.sum}` `` becomes `` `${order.number};${order.sum.toFixed(2)}` ``.
-   - **Failure 1:** every new ledger row changes format (`12;5` → `12;5.00`). Anything that compares or parses the old rows will break.
-   - **Failure 2:** if `sum` arrives as a string, it crashes. `node -e '"5".toFixed(2)'` gives `TypeError "5".toFixed is not a function`. No plan step needs this edit.
+1. **`libs/till/src/ledger.mjs:3`**, editing `ledger.mjs`: **an edit off the row «Границы»** (Bounds). **High.**
+   - **The plan says:** «libs/till/src/ledger.mjs и формат записи кассы не правятся» (`ledger.mjs` and the till record format stay untouched).
+   - **What the code does:** `${order.sum}` became `${order.sum.toFixed(2)}`. A sum of 12.5 used to be written as `12.5` and is now `12.50`, so the record format changed.
+   - **Failure:**
+     - Anything that compares or parses ledger rows now gets different text.
+     - If `order.sum` arrives as a string (a parsed field), `toFixed` is not a function and the row write throws a `TypeError`. The old line wrote it as-is.
 
-2. **`libs/till/src/report.mjs:28`** imports `./db/raw.mjs` (also `:26` `node:fs` and `:29` `./rows.mjs`): **a link off the row «Зависимости»** (Dependencies). **High.**
-   - **Decision says:** «libs/till/src/report.mjs ничего не импортирует; к базе кассы libs/till/src/db/raw.mjs новый код не ходит» (`report.mjs` imports nothing; new code doesn't touch the till database).
-   - **What the diff does:** `report.mjs` has three imports, and one of them is the database layer the row forbids. It is also **knowledge of a neighbour's insides**: the report learns where the till's database lives. Coupling reports `past an entry 0 → 0`, so the entry rule itself isn't broken.
+2. **`libs/till/src/report.mjs:3`**, importing `./db/raw.mjs`. The same file also imports `node:fs` at `:1` and `./rows.mjs` at `:4`. This is **a link off the row «Зависимости»** (Dependencies). **High.**
+   - **The plan says:** «libs/till/src/report.mjs ничего не импортирует; к базе кассы libs/till/src/db/raw.mjs новый код не ходит» (`report.mjs` imports nothing; new code doesn't touch the till database).
+   - **Confirmed by:** the line from `coupling.txt`: `libs/till/src/db/raw.mjs: incoming 0 → 1 … taken by nobody 1 → 0 of 1`.
+   - **Failure:** the text-building module now depends on the database layer and the file system. You can't test `textOf` without a file, and a change in the storage format breaks the report.
 
-3. **`libs/till/src/cli.mjs:7`** imports only `./report.mjs`: **a link off the row «Зависимости»**, the other way round. **Medium.**
-   - **Decision says:** «cli.mjs зовёт libs/till/src/rows.mjs и libs/till/src/report.mjs» (`cli.mjs` calls `rows.mjs` and `report.mjs`).
-   - **What the diff does:** `cli.mjs` never reads the file or calls `rowsOf`. It hands that to `report.mjs` through `ordersOf`.
+3. **`libs/till/src/cli.mjs:1`**, importing only `./report.mjs`: **a link off the row «Зависимости»** (Dependencies). **Medium.**
+   - **The plan says:** «libs/till/src/cli.mjs зовёт libs/till/src/rows.mjs и libs/till/src/report.mjs» (`cli.mjs` calls `rows.mjs` and `report.mjs`).
+   - **What the code does:** the CLI doesn't call `rows.mjs`. Reading the file moved into `report.mjs`, which is the other side of finding 2.
 
-4. **`libs/till/src/report.mjs:31-34`** (`ordersOf`) next to **`:46-51`** (`textOf`/`largestOf`): **a module with two duties**, against the row «Модули» (Modules). **Medium-high.**
-   - **What the module does:** it reads the orders of a day from the till file *and* composes the report text.
-   - **Why that is two modules:** the two groups share no call and no data. `ordersOf` never calls `textOf`/`largestOf`, and they never call it. They meet only in `cli.mjs:9`.
-   - **Decision says:** «report.mjs:textOf — складывает текст отчёта… cli.mjs — читает файл кассы через rows.mjs:rowsOf» (`report.mjs` only builds the text; `cli.mjs` reads the file through `rowsOf`). Reading the file belongs in `cli.mjs`.
-   - **Consequence:** `textOf` can't be tested without a module that pulls in `fs` and the database layer.
+4. **`libs/till/src/report.mjs:7`** (`ordersOf`) next to **`:22`** (`textOf`, `largestOf` at `:12`): **a module with two duties**, against the row «Модули» (Modules). **Medium-high.**
+   - **The plan says:** «report.mjs:textOf — складывает текст отчёта по заказам дня. cli.mjs — читает файл кассы через rows.mjs:rowsOf» (`report.mjs` builds the report text; `cli.mjs` reads the till file).
+   - **In one sentence:** the module "reads the orders from the till file **and** builds the report text".
+   - **Why that is two modules:** `ordersOf` and `textOf` share no call and no data. `textOf` takes ready orders, and only `cli.mjs:3` joins the two. Reading belongs in `cli.mjs`.
 
-5. **`libs/till/src/report.mjs:41-44`** (`legacyTotalsOf`): **shown outside, called by nobody**, and **lines no step needs**. **Medium.**
-   - **Search by symbol:** it occurs only at its own definition (`review.diff:42`); nothing imports it.
-   - **Coupling agrees:** `report.mjs: … taken by nobody 0 → 1 of 3`.
-   - **No step reaches it:** «Паттерны» (Patterns) says «три функции и одно правило» (three functions and one rule). This is a fourth function.
-   - **Duplication:** its body repeats the total that `textOf:49` already computes, so the two can drift apart.
+5. **`libs/till/src/report.mjs:17`** (`legacyTotalsOf`): **shown outside, called by nobody**, and **lines no step needs**. **Medium.**
+   - **Confirmed by:**
+     - Searching the whole tree for `legacyTotalsOf` finds only its definition, at `review.diff:42`.
+     - `coupling.txt` says `report.mjs: … taken by nobody 0 → 1 of 3`.
+   - **Why it matters:**
+     - Neither step of the plan asks for a "former total".
+     - It repeats the sum in `textOf:24` word for word. When one copy is fixed, the other stays wrong.
 
-6. **`coupling.txt`** against the row «Зацепление» (Coupling): **a number off the design**. **Medium**, a consequence of findings 2–3.
-   - **Measured:**
+6. **The coupling of `cli.mjs` and `report.mjs`**: **a number off the design**, against the row «Зацепление» (Coupling). **Medium.**
+   - **The plan says:** «cli.mjs исходящие 0 → 2; report.mjs исходящие 0 → 0» (`cli.mjs` outgoing 0 → 2; `report.mjs` outgoing 0 → 0).
+   - **`check-coupling` says:**
      - `libs/till/src/cli.mjs: incoming 0 → 0, outgoing 0 → 1`
      - `libs/till/src/report.mjs: incoming 0 → 1, outgoing 0 → 2`
-   - **Planned:** «cli.mjs исходящие 0 → 2; report.mjs исходящие 0 → 0» (`cli.mjs` outgoing 0 → 2; `report.mjs` outgoing 0 → 0). Both numbers are wrong.
-   - **The check missed the plan:** it says `grown, the tree keeps no plans … nobody named a number for it`, but the plan does name these numbers. So it didn't flag the mismatch itself.
-   - **Budget («Бюджет»):** two new files and 29 lines, within «два новых файла, 40 строк» (two new files, 40 lines). But a third file, `ledger.mjs`, was edited (finding 1).
+     - `grown, the tree keeps no plans: … nobody named a number for it` (printed for both files)
+   - **Also:** the link `report.mjs → db/raw.mjs` adds a link between blocks (`src` → `src/db`) that the plan doesn't name.
 
-7. **`libs/till/src/report.mjs:49-50` and `:33`**: output and data defects. **Low.**
-   - **Unformatted float total:** `node -e 'console.log(0.1+0.2)'` gives `0.30000000000000004`, which prints as the report total.
-   - **Bad sum:** a row with a non-numeric sum becomes `Number(sum)` = `NaN`. It goes into `total` (`total: NaN`). If it is the first order, `largestOf` keeps it as the largest, because `3 > NaN` is false. Measured: `{ sum: NaN, number: 1 }`.
-   - **Empty day:** it prints `total: 0\nno orders`. Step 2 says only «no orders», so the wording is ambiguous.
-   - **No argument:** `cli.mjs:9` calls `readFileSync(undefined)` and crashes with a stack trace.
+7. **`libs/till/src/report.mjs:24-25`**: an output defect. **Low.**
+   - **What happens:** the total is printed with no rounding. For sums 0.1 and 0.2 it prints `total: 0.30000000000000004`.
+   - **Why it is worse after this diff:** the ledger now writes two decimal places (finding 1), so the report and the ledger disagree about the same day.
 
-## What I checked that turned out fine
+8. **`libs/till/src/report.mjs:8` and `cli.mjs:3`**: input defects. **Low.**
+   - **Bad sum:** `Number(sum)` gives `NaN` for an empty or malformed sum, so the report prints `total: NaN`. Nothing rejects the row.
+   - **Skipping empty lines:** the row «Данные» (Data) says an empty line is skipped. That is left to `rowsOf`, which I couldn't read, so it is unchecked.
+   - **No argument:** with no path argument, `readFileSync(undefined)` throws a raw stack trace instead of a usage message.
 
-- **«Паттерны»:** there is no layer, interface or factory without a problem behind it.
-- **`largestOf`:** called once, but step 1 needs it («самый большой заказ», the largest order), so not a finding.
-- **«Бюджет»:** the line count is within budget, and there are no npm dependencies (`node:fs` is built in).
-- **Coupling:** no cycles (`cycles 0 → 0`) and no imports past an entry (`past the entry 0 → 0`).
-- **Ties:** the first order wins (strict `>`).
+## Checked and fine
+
+- **Budget:** two new files with 29 lines (3 + 26) and no new external dependencies. That is within «два новых файла, 40 строк, зависимостей ноль» (two new files, 40 lines, no dependencies).
+- **Patterns:** no layer, interface or factory, which matches «паттерна нет» (no pattern).
+- **Cycles:** `check-coupling` shows `cycles 0 → 0, cycles of blocks 0 → 0, past the entry 0 → 0`, which matches «циклов и обходов нет» (no cycles or bypasses).
+- **Step 2:** an empty day gives `best === null` and prints `no orders`, as the plan asks. When two orders tie for the largest sum, the first one wins, because the comparison is a strict `>`.
+- **Step 1:** the total and the largest order are both printed.
 
 ## Not checked
 
-- **Not read:** `rows.mjs` and `db/raw.mjs` are not in the tree. So I couldn't confirm that `rowsOf` skips the empty line (row «Данные», Data), what format `rawOf` returns, or whether the `db/` subfolder has its own entry.
-- **Not run:** `SC-0-1` / `report.test.sh` aren't in the diff or the tree.
-- **Not done:** no build, linters or browser checks, since there is nothing to build here.
+- **`rows.mjs` and `db/raw.mjs`:** not available in this tree, so I couldn't check the empty-line skipping or what `rawOf` returns.
+- **Tests:** no tests or `report.test.sh` exist in this tree for the sample, so I ran nothing.

@@ -14,13 +14,13 @@
  * them, and a copy changes with its source.
  *
  * A task with no plan in the history is said so in words, not shown as a zero; a merge whose task has no
- * plan — the merge of an epic — is skipped. A task without a commit of the round stays out of the median
- * and is named apart.
+ * plan — the merge of an epic — leaves the count and is named apart. A task without a commit of the round
+ * stays out of the median and is named apart. A plan version that names no path — the template — is no plan.
  */
 import { execFileSync, spawnSync } from 'node:child_process';
-import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { couplingOf } from './task-rework-coupling.mjs';
 import { footprintRows, touches } from './task-flow/measure/text.mjs';
 
 const ROUND = /после первого круга ревью \(RT-\d+\)$/;
@@ -79,12 +79,12 @@ function linesOf(sha) {
         .reduce((sum, [added, removed]) => sum + (Number(added) || 0) + (Number(removed) || 0), 0);
 }
 
-/** The first version of the plan of the task: what the branch promised before the code. */
+/** The first version of the plan that names a path: what the branch promised before the code, the template skipped. */
 function planOf(task, commits) {
     for (const { sha } of [...commits].reverse()) {
         const path = filesOf(sha).find((file) => new RegExp(`^docs/tasks/${task}-[^/]+/plan\\.md$`).test(file));
         const shown = path && spawnSync('git', ['show', `${sha}:${path}`], { encoding: 'utf8' });
-        if (shown?.status === 0) {
+        if (shown?.status === 0 && footprintRows(shown.stdout).length) {
             return shown.stdout;
         }
     }
@@ -114,12 +114,13 @@ const roundText = ({ round }) =>
 const outsideText = ({ outside }) =>
     outside === null ? 'no plan in the history' : `${outside.length} file${outside.length === 1 ? '' : 's'} outside the footprint`;
 
-/** The merged requests of tasks after the revision, the newest first, up to the count. */
+/** The merged requests of tasks after the revision, the newest first, up to the count; the tasks without a plan apart. */
 function mergesOf({ count = Infinity, since = null }) {
     const merges = rowsOf(git('log', '--merges', '--format=%H%x09%s', since ? `${since}..HEAD` : 'HEAD'))
         .map(([sha, subject]) => ({ sha, task: REQUEST.exec(subject)?.[1] }))
         .filter(({ task }) => task);
     const found = [];
+    const skipped = [];
     const seen = new Set();
     for (const { sha, task } of merges) {
         if (seen.has(task)) {
@@ -127,37 +128,15 @@ function mergesOf({ count = Infinity, since = null }) {
         }
         seen.add(task);
         const result = reworkOf(task);
-        if (result.outside !== null) {
-            found.push({ sha, result });
-        }
+        (result.outside === null ? skipped : found).push(result.outside === null ? task : { sha, result });
         if (found.length === count) {
             break;
         }
     }
-    return found;
+    return { found, skipped };
 }
 
-/**
- * What the coupling check says of the branch of a merge: the totals «was → now» and the overruns. The tip
- * of the branch is asked: at the merge itself the branch has no commits of its own.
- */
-function couplingOf(sha) {
-    const check = join(dirname(fileURLToPath(import.meta.url)), 'check-coupling.mjs');
-    const { stdout, stderr } = spawnSync('node', [check, `--base=${sha}^1`, `--at=${sha}^2`], { encoding: 'utf8', maxBuffer: BUFFER });
-    const text = `${stdout}${stderr}`;
-    const totals = text.split('\n').find((line) => line.startsWith('check-coupling: modules')) ?? '';
-    const grown = (name) => {
-        const found = new RegExp(`${name} (\\d+) → (\\d+)`).exec(totals);
-        return found ? Number(found[2]) - Number(found[1]) : null;
-    };
-    return {
-        cycles: grown('cycles'),
-        past: grown('past the entry'),
-        overruns: totals ? (text.match(/the branch named \d+|nobody named a number for it/g) ?? []).length : null,
-    };
-}
-
-function report(rows) {
+function report(rows, skipped) {
     const signed = (value) => (value === null ? 'not counted' : value > 0 ? `+${value}` : String(value));
     rows.forEach((row) =>
         console.log(
@@ -169,6 +148,10 @@ function report(rows) {
         rows.some((row) => row[key] === null) ? 'not counted' : rows.reduce((sum, row) => sum + Math.max(0, row[key]), 0);
     const rounds = rows.filter((row) => row.round).map((row) => row.round.lines);
     const without = rows.filter((row) => !row.round).map((row) => row.task);
+    // A merged task without a plan in the history leaves the count, and the count says which.
+    if (skipped.length) {
+        console.log(`without a plan: ${skipped.join(', ')}`);
+    }
     console.log(
         `tasks ${rows.length}: new cycles ${grown('cycles')}, new imports past an entry ${grown('past')}, overruns ${grown('overruns')}; ` +
             `first round in ${rounds.length}, median ${median(rounds) ?? 'none'} lines; without a round: ${without.join(', ') || 'none'}`
@@ -188,8 +171,10 @@ function main(argv) {
         return 2;
     }
     if (last || since) {
+        const { found, skipped } = mergesOf(last ? { count: Number(last[1]) } : { since: since[1] });
         report(
-            mergesOf(last ? { count: Number(last[1]) } : { since: since[1] }).map(({ sha, result }) => ({ ...result, ...couplingOf(sha) }))
+            found.map(({ sha, result }) => ({ ...result, ...couplingOf(sha) })),
+            skipped
         );
         return 0;
     }

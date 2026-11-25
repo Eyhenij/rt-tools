@@ -378,8 +378,8 @@ Then the counter of the branch grows, and the text stands in no file of the rule
 
 ### SC-AK-1968 — the rework of one task is counted from its history
 
-Given a task with a commit of the first review round, a plan whose footprint has a mask, a folder
-and a file, and later commits that touch a copy, the task folder, the archive, a plan, a binary and a
+Given a task with a commit of the first review round, a plan from the template first and then one
+whose footprint has a mask, a folder and a file, and later commits that touch a copy, the task folder, the archive, a plan, a binary and a
 removed file, a copy with its header after a shebang and one after the front matter
 When the command is called with the task
 Then it prints the lines of the oldest commit of the round without the copy and the own places, and
@@ -399,7 +399,8 @@ Given merges of tasks with and without a first round, the merge of an epic, a me
 a merge that adds a cycle
 When the command is called with a count, or with a revision
 Then it names the newest tasks of the count, or the tasks merged after the revision, and skips the
-epic and the merge without a task
+merge without a task; a merged task without a plan, the epic among them, leaves the count and is named
+apart
 And it sums the new cycles, the imports past an entry and the overruns of each merge, growth nobody
 named and growth past the named number alike, a task merged twice once, and leaves the totals uncounted when the check counted nothing
 And it takes the median over the tasks with a round and names the others apart

@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · workflows/feature.js · fcd89efb4443 · правится надстройкой, не здесь
+// rt-kit v0.39.1 · workflows/feature.js · 6832b1c0e7bc · правится надстройкой, не здесь
 export const meta = {
     name: 'feature',
     description: 'A plan from the PM, implementation step by step, a fan of QA checks and acceptance against the original request',
@@ -21,7 +21,7 @@ if (!task || typeof args?.grill !== 'string' || !args.grill || typeof args?.base
     throw new Error('A task, the grill and the base are needed: pass { task, grill, base } in args');
 }
 // The plan of the structure lens: from args, or the plan next to the grill.
-const planPath = args.plan || args.grill.replace(/[^/]*$/, 'plan.md');
+const planPath = typeof args.plan === 'string' && args.plan ? args.plan : args.grill.replace(/[^/]*$/, 'plan.md');
 
 const PLAN = {
     type: 'object',

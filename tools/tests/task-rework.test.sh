@@ -15,7 +15,7 @@ g() { git -C "$T" "$@"; }
 fresh() {
     T="$WORK/$1"
     mkdir -p "$T/tools/task-flow/measure" "$T/.claude/rt-kit"
-    cp "$TOOLS/task-rework.mjs" "$TOOLS/rt-kit-checks.config.mjs" "$TOOLS/check-coupling.mjs" "$TOOLS"/coupling-*.mjs "$T/tools/"
+    cp "$TOOLS"/task-rework*.mjs "$TOOLS/rt-kit-checks.config.mjs" "$TOOLS/check-coupling.mjs" "$TOOLS"/coupling-*.mjs "$T/tools/"
     cp "$TOOLS/task-flow/measure/text.mjs" "$T/tools/task-flow/measure/"
     printf '{"sourceRoots":["src"],"barrelFiles":["index.mjs"],"board":{"taskKey":"RT"},"tasksDir":"docs/tasks"}\n' > "$T/.claude/rt-kit/checks.json"
     g init -q -b main
@@ -36,6 +36,8 @@ total() { run "$@" | tail -1; }
 
 # --- SC-AK-1968 — one task ---------------------------------------------------------------------------
 fresh one
+plan RT-7-name '`projects/<package>/`'
+save 'docs: the folder from the template (RT-7)'
 plan RT-7-name '`src/a.mjs`, `lib/*.mjs`, `deep/**`, `flow/`'
 save 'docs: plan (RT-7)'
 put src/a.mjs 'a\nb\nc\n'
@@ -63,8 +65,7 @@ put src/a.mjs 'A\n'
 save 'fix: правка после второго круга ревью (RT-7)'
 put src/other.mjs 'x\n'
 save 'feat: edit (RT-71)'
-report "SC-AK-1968 — the first round is counted by its lines, copies and own places left out" \
-    "$(first RT-7 | sed -E 's/ \([0-9a-f]+\)//')" "RT-7: first round 5 lines; 3 files outside the footprint"
+report "SC-AK-1968 — the first round is counted by its lines, copies and own places left out" "$(first RT-7 | sed -E 's/ \([0-9a-f]+\)//')" "RT-7: first round 5 lines; 3 files outside the footprint"
 report "SC-AK-1968 — the files outside are named, the covered by a mask and a folder are not" "$(rest RT-7)" "lib/sub/out.mjs src/extra.mjs src/b.bin"
 report "SC-AK-1968 — a task whose number begins the same is another task" "$(first RT-71)" "RT-71: first round no commit of the first round; no plan in the history"
 report "SC-AK-1968 — a task without commits is said so" "$(first RT-9)" "task-rework: no commit of RT-9 in this history"
@@ -98,8 +99,7 @@ fresh foreign
 plan RT-80-name '`src/a.mjs`'
 put src/a.mjs 'a\n'
 save 'feat: edit (RT-8)'
-report "SC-AK-1968 — a plan of another task is not taken" "$(first RT-8)" \
-    "RT-8: first round no commit of the first round; no plan in the history"
+report "SC-AK-1968 — a plan of another task is not taken" "$(first RT-8)" "RT-8: first round no commit of the first round; no plan in the history"
 
 # A header only mentioned below the top is a source; the board bookkeeping is no file outside.
 fresh marks
@@ -151,8 +151,8 @@ g checkout -q main
 g merge -q --no-ff -m 'Merge branch aside' aside
 report "SC-AK-1969 — the last tasks are named, an epic and a merge without a task are not" "$(names --last=5)" "RT-3 RT-2 RT-1 "
 report "SC-AK-1969 — the count takes the newest" "$(names --last=2)" "RT-3 RT-2 "
-report "SC-AK-1969 — the median is taken over the tasks with a first round" "$(total --last=5 | sed -E 's/.*overruns 0; //')" \
-    "first round in 2, median 2 lines; without a round: RT-3"
+report "SC-AK-1969 — a merged task without a plan leaves the count and is named" "$(run --last=5 | grep '^without a plan')" "without a plan: RT-50"
+report "SC-AK-1969 — the median is taken over the tasks with a first round" "$(total --last=5 | sed -E 's/.*overruns 0; //')" "first round in 2, median 2 lines; without a round: RT-3"
 report "SC-AK-1969 — one task is its own median" "$(total --last=2 | sed -E 's/.*(median [^;]*);.*/\1/')" "median 3 lines"
 report "SC-AK-1969 — a task without a round is named apart" "$(total --last=1 | sed -E 's/.*; //')" "without a round: RT-3"
 report "SC-AK-1969 — the window after a revision takes only the later merges" "$(names --since="$MARK")" "RT-3 RT-2 "

@@ -95,10 +95,10 @@ names the module, the line and the words of the decision it departs from:
 
 A finding here opens, as the reply format below asks, with where it is — the file and its line, read
 from the hunk header, not the line of the diff, and the file it imports or edits — then the bold words
-of its kind, the row by its name above and the severity, in one line. Of the commands of the tree you
-run only `check-coupling` against the base yourself, and never git: the diff, or the list of the
-changed files, is given. If the decision was not given, say so in the reply and look for the first
-five by the code alone.
+of its kind, the row as the plan names it with its name above in brackets, and the severity, in one
+line. For this section you run only `check-coupling` against the base, and never git: the diff, or the
+list of the changed files, is given. If the decision was not given, say so in the reply and look for
+the first five by the code alone.
 
 ## Reply format
 
