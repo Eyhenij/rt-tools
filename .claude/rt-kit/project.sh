@@ -112,6 +112,8 @@ RT_BOARD_EPIC_LABEL='epic'
 # showcase snapshots, the admin suite and the auth stand — over 30 minutes, past the hook limit: the
 # guard was cut by the limit and the push stood with no verdict (task RT-3092).
 RT_PUSH_HEAVY_AHEAD=1
+# The guards of this tree a PR is opened through, asked before the set as well.
+RT_PUSH_READY_HOOKS='e2e-coverage-guard.sh'
 
 # What the records about finished work that outstayed their retention are removed by. The work
 # guard does not judge this command: the records age by the calendar, and the retention step turns

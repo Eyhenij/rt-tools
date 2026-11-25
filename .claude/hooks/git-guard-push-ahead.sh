@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/git-guard-push-ahead.sh · 28f2603641a3 · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/git-guard-push-ahead.sh · a195fbd0fb65 · правится надстройкой, не здесь
 # The push set run ahead of the push: every check of `rt_push_checks <base>`, a green mark for each
 # that passed. The push guard then reads the marks instead of running the steps again.
 #
@@ -12,9 +12,13 @@
 # and the same profile files — so a mark written here answers exactly the line the guard asks
 # about. A check already green on this tree and base is not run again.
 #
+# Before the first step it asks whether a PR of this branch would open, by `git-guard-push-ready.sh`,
+# and starts nothing while a condition is unmet. A branch not meant for a PR yet goes with
+# `--no-pr '<reason>'`: the reason is printed and the run leaves a line in the observations.
+#
 # Exit codes: 0 — the set is green; 1…100 — the number of red checks; 3 is also «the run did not
-# start» (no profile, no repository, edits outside the index), and the last `push ahead:` line tells
-# the two apart; 101 — the copy changed while the set ran, and the run vouches for nothing; 129,
+# start» (no profile, no repository, edits outside the index, a PR that would not open), and the last
+# `push ahead:` line tells the two apart; 101 — the copy changed while the set ran, and the run vouches for nothing; 129,
 # 130, 143 — the run was stopped by HUP, INT or TERM. Not 2: to a hook that code means "refuse", and this
 # command refuses nothing.
 #
@@ -22,9 +26,18 @@
 # processes it holds end with it. A process that left both its parent and its group is not found, and
 # KILL sent to the run leaves them all: the run cannot see it.
 #
-# Requires: hooks/git-guard-push-marks.sh, hooks/facts.sh
+# Requires: hooks/git-guard-push-marks.sh, hooks/facts.sh, hooks/git-guard-push-ready.sh
 not_started=3
 not_judged=101
+
+no_pr=''
+if [ "$#" -gt 0 ]; then
+    [ "$#" -eq 2 ] && [ "$1" = --no-pr ] && printf '%s' "$2" | grep -qE '^[[:space:]]*[^[:space:]<][^<]{2,}' && no_pr="$2"
+    [ -n "$no_pr" ] || {
+        printf "push ahead: usage: git-guard-push-ahead.sh [--no-pr '<reason>'] — the reason of at least three characters\n" >&2
+        exit "$not_started"
+    }
+fi
 
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -84,6 +97,7 @@ rt_push_mark_clean || {
 }
 
 base="$(rt_push_base "${RT_MAIN_BRANCH:-main}")"
+base_name="$base"
 skip_code="${RT_SKIP_CODE:-7}"
 # The steps run against a ref pinned at the commit of the base, and the push takes that ref while the
 # record fits its head: a branch merged, removed, moved or put next to this one during the set
@@ -94,6 +108,26 @@ command -v rt_push_base_label >/dev/null 2>&1 || rt_push_base_label() { printf '
 if command -v rt_push_adds_nothing >/dev/null 2>&1 && rt_push_adds_nothing "$base"; then
     printf 'push ahead: the head adds no commit to %s — there is nothing to run, the push passes\n' "$(rt_push_base_label "$base")"
     exit 0
+fi
+
+# What the opening of a PR would refuse is asked before the first step: the fix of it changes the
+# tree, and the set would run again. No helper — nothing is asked, as before.
+# shellcheck disable=SC1090
+. "$rt_hooks_dir/git-guard-push-ready.sh" 2>/dev/null || true
+# shellcheck disable=SC1091
+[ -f "$rt_hooks_dir/observe.sh" ] && . "$rt_hooks_dir/observe.sh" 2>/dev/null
+command -v rt_note >/dev/null 2>&1 || rt_note() { return 0; }
+if [ -n "$no_pr" ]; then
+    rt_note push-ready res=skipped
+    printf 'push ahead: the PR is not asked about — %s\n' "$no_pr"
+elif command -v rt_push_ready_unmet >/dev/null 2>&1; then
+    unmet_lines="$(rt_push_ready_unmet "$base_name")"
+    if [ -n "$unmet_lines" ]; then
+        rt_note push-ready res=refused
+        printf '%s\n' "$unmet_lines" | sed 's/^/— /'
+        printf "push ahead: not ready for a PR — no step started; fix the lines above and run the set again, or pass --no-pr '<reason>' for a branch that is not going into a PR yet\n"
+        exit "$not_started"
+    fi
 fi
 
 head_tree="$(git rev-parse --verify --quiet 'HEAD^{tree}')"

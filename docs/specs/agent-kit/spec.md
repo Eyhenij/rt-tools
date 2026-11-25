@@ -78,6 +78,7 @@ subdomains are the ones the rule groups had already drawn.
 | [The git hook before a push](pre-push-hook/spec.md)                      | the gate set on a push the session guard does not see, the mark of a judged commit                |
 | [The push set from its marks and ahead](push-gate-ahead/spec.md)         | the base the set is counted against, green marks by tree, heavy steps run outside the hook limit  |
 | [The run ahead and its copy](push-ahead-copy/spec.md)                    | a copy that changed under the run, a run that was stopped                                         |
+| [A PR asked about before the set](push-ready/spec.md)                    | what would refuse a PR and is named before the first step of the set                              |
 | [The guard scenarios in the push set](push-gate-hooks/spec.md)           | a push editing the guards in a tree without a run file names the missing file                     |
 | [An unmerged agreement at opening a PR](delivery-agreement/spec.md)      | a PR does not open while the draft the plan named lies in the branch                              |
 | [The epic in the delivery guards](delivery-epic/spec.md)                 | the base of a task branch and of its request, the declaration of an epic, the request of the epic |
