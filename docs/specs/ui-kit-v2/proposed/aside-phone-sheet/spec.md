@@ -123,11 +123,15 @@ panel stand at its bottom. Before closing a panel with unsaved edits the person 
   panel sheet only: the other sheets of the kit keep their focus. It holds for a sheet opened from a
   button, by code and by an address. A focus already moved elsewhere, or an opener no longer on the
   page, is left alone. A panel that keeps Tab inside keeps it inside the sheet.
-- **A sheet opened from the panel sheet replaces it, and its closing shows the panel sheet as it
-  was.** The list of a select, the sheet of a date field, the menu of a button: the panel sheet
-  under them is hidden, takes no taps and keeps what was typed in its form and the focus of the
-  field that opened the top one. Closing the top sheet by a choice, a swipe, «×» or Escape shows the
-  panel sheet again.
+- **A sheet opened from a sheet opens in the same sheet: its content and title take the place of
+  the first ones, and «×» on the left becomes a back chevron.** The list of a select, the sheet of
+  a date field, the menu of a button — opened from any kit sheet, the panel sheet included. The
+  panel keeps its place and height; the first screen keeps what was typed in its form and the
+  focus of the field that opened the second one. The chevron, a choice, a swipe down and Escape on
+  the second screen bring back the first one; they do not close the sheet. The owner's word:
+  «нужно открывать в том же меняя содержимое а вместо кнопки крестик (слева в шапке) кнопка назад
+  шеврон». At the merge the subdomain `sheet-stack` takes this rule in place of «replaces it», and
+  its out-of-scope line about a back button goes.
 - **The parts of a panel live in the sheet unchanged.** The request error, the empty content, the
   pending layer, the tabs layout and the row under the header stand where they stand in the panel;
   the overline, the subtitle, the badges and the content of the title column stand under the title.

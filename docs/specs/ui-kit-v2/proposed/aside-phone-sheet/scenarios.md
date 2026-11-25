@@ -155,11 +155,11 @@ Given an open panel sheet with no unsaved edits and the focus on the page under 
 When the person presses Escape
 Then the panel sheet closes
 
-### SC-UKV-1827 — Escape closes the sheet over the panel first
+### SC-UKV-1827 — Escape on the second screen brings back the first one
 
-Given an open panel sheet and the list of its select open in a sheet over it
+Given an open panel sheet and the list of its select open in the same sheet
 When the person presses Escape
-Then only the list's sheet closes, and the panel sheet is seen again
+Then the list leaves, the panel's own content and title come back, and the sheet stays open
 
 ### SC-UKV-1828 — the opened panel sheet puts the focus on «×»
 
@@ -176,14 +176,16 @@ Then the focus returns to that button
 ### SC-UKV-1830 — a select in the panel sheet keeps the form
 
 Given an open panel sheet with a text typed into one of its fields and a select
-When the list of the select opens in its sheet and the person picks a value
-Then the panel sheet is seen again with the typed text and the picked value
+When the list of the select opens in the same sheet and the person picks a value
+Then the panel's content is seen again with the typed text and the picked value
 
-### SC-UKV-1831 — a date field in the panel sheet replaces it
+### SC-UKV-1831 — a date field opens in the same sheet with a back chevron
 
 Given an open panel sheet with a date field
-When the sheet of the date field opens
-Then only the date sheet is seen, and the panel sheet under it takes no taps
+When the date field opens its sheet
+Then the date picker takes the place of the panel's content in the same sheet at the same height,
+the title names the field, the left of the header holds a back chevron instead of «×», and the
+chevron brings the panel's content back
 
 ### SC-UKV-1832 — the tabs of a panel in the sheet
 
