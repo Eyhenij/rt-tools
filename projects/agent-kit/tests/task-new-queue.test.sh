@@ -134,6 +134,10 @@ report "SC-AK-1228 — карточка при этом не создавала�
 TQ_OUT="$(tq_run_label bug)"
 report "SC-AK-1228 — существующая метка проходит к заведению" "$(grep -c 'issue create' "$TQ_LOG")" 1
 
+# Модуля единственной задачи в этой фикстуре нет: вызов без `--single` его и не ищет.
+report "SC-AK-1228 — вызов прошёл без модуля единственной задачи" \
+    "$([ -e "$TQ_TREE/tools/task-new-single.mjs" ] && echo стоит)|$(printf '%s' "$TQ_OUT" | grep -c 'exit=0')" '|1'
+
 rm -rf "$TQ_TREE"
 
 suite_result "команда: подтверждение заведённой задачи очередью"

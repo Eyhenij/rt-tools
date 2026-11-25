@@ -205,6 +205,8 @@ if printf '%s' "$TN_OUT" | grep -q -- '--epic-of'; then got="есть"; else got
 report "SC-AK-939 — отказ называет первый выход: назвать эпик" "$got" "есть"
 if printf '%s' "$TN_OUT" | grep -q -- '--outside-epic'; then got="есть"; else got="нет"; fi
 report "SC-AK-939 — отказ называет второй выход: слово владельца" "$got" "есть"
+if printf '%s' "$TN_OUT" | grep -q -- '--single'; then got="есть"; else got="нет"; fi
+report "SC-AK-939 — отказ называет третий выход: единственную задачу разбора" "$got" "есть"
 
 # Пустой довод неотличим от флага, набранного ради обхода отказа.
 TN_OUT="$(tn_run --outside-epic '' --title 'Письма владельцу не уходят' --slug mail-silence)"
