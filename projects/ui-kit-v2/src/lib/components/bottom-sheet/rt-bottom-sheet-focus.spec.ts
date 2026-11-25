@@ -73,7 +73,7 @@ function escapeOn(target: EventTarget): KeyboardEvent {
 }
 
 describe('RtBottomSheetComponent — фокус и Escape', (): void => {
-    it('SC-UKV-1756 — вопрос берёт фокус на первый ответ, шторка под ним недоступна, «Отмена» возвращает фокус', (): void => {
+    it('SC-UKV-1756 — вопрос берёт фокус на ответ «применить», шторка под ним недоступна, «Отмена» возвращает фокус', (): void => {
         const fixture: TFixture = setup(true);
         node(fixture, 'bottom-sheet-close').focus();
 

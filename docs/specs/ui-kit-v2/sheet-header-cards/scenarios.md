@@ -215,7 +215,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.comp
 
 Given a sheet with a choice not applied and the focus on its close button
 When the close button is pressed
-Then the focus stands on the first answer of the question and the panel and the backdrop of the
+Then the focus stands on the apply answer of the question and the panel and the backdrop of the
 sheet are inert; the cancel answer returns the focus to the close button
 
 Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-focus.spec.ts`.
