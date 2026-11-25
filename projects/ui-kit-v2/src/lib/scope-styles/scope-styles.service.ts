@@ -53,7 +53,7 @@ export class RtScopeStylesService {
     /**
      * Загружает файл один раз. На сервере не делает ничего. Без объявленного адреса не грузит и в режиме
      * разработки один раз сообщает об этом обработчику ошибок. Файл, который приложение уже подключило само
-     * на тот же адрес, считается загруженным. Ссылку, что ещё идёт, ждёт и вторая копия службы. Отказ или
+     * на тот же адрес, ждётся, но не убирается при отказе. Ссылку, что ещё идёт, ждёт и вторая копия службы. Отказ или
      * молчание дольше `RT_SCOPE_STYLES_TIMEOUT` убирает ссылку и возвращается отказом: следующий вызов
      * пробует снова.
      */
@@ -73,11 +73,12 @@ export class RtScopeStylesService {
         const marked: HTMLLinkElement | null = this.#document.head.querySelector<HTMLLinkElement>(`link[${RT_SCOPE_STYLES_MARK}]`);
         if (marked !== null) {
             this.#link = marked;
-            this.#pending = this.#settle(marked, href);
+            this.#pending = this.#settle(marked, href, true);
             return this.#pending;
         }
-        if (this.#applicationHolds(href)) {
-            return Promise.resolve();
+        const own: HTMLLinkElement | null = this.#applicationLink(href);
+        if (own !== null) {
+            return this.#settle(own, href, false);
         }
 
         const link: HTMLLinkElement = this.#document.createElement('link');
@@ -85,14 +86,17 @@ export class RtScopeStylesService {
         link.href = href;
         link.setAttribute(RT_SCOPE_STYLES_MARK, '');
         this.#link = link;
-        this.#pending = this.#settle(link, href);
+        this.#pending = this.#settle(link, href, true);
         this.#document.head.appendChild(link);
 
         return this.#pending;
     }
 
-    /** Ждёт `load` ссылки; `error` и молчание дольше срока убирают ссылку и отказывают. */
-    #settle(link: HTMLLinkElement, href: string): Promise<void> {
+    /**
+     * Ждёт `load` ссылки; `error` и молчание дольше срока отказывают. Ссылку службы они ещё и убирают,
+     * чужую ссылку приложения не трогают.
+     */
+    #settle(link: HTMLLinkElement, href: string, ours: boolean): Promise<void> {
         if (link.sheet) {
             return Promise.resolve();
         }
@@ -101,26 +105,41 @@ export class RtScopeStylesService {
             const guard: { timer?: ReturnType<typeof setTimeout> } = {};
             const fail: () => void = (): void => {
                 clearTimeout(guard.timer);
-                link.remove();
-                this.#pending = null;
-                this.#link = null;
+                if (ours) {
+                    link.remove();
+                }
+                if (this.#link === link) {
+                    this.#pending = null;
+                    this.#link = null;
+                }
                 reject(new Error(`the scope styles did not load: ${href}`));
             };
             guard.timer = setTimeout(fail, RT_SCOPE_STYLES_TIMEOUT);
-            link.addEventListener('load', (): void => {
-                clearTimeout(guard.timer);
-                resolve();
-            });
-            link.addEventListener('error', fail);
+            link.addEventListener(
+                'load',
+                (): void => {
+                    clearTimeout(guard.timer);
+                    resolve();
+                },
+                { once: true }
+            );
+            link.addEventListener('error', fail, { once: true });
         });
     }
 
-    /** Есть ли в странице ссылка приложения на тот же адрес: сравниваются разрешённые адреса, не строки. */
-    #applicationHolds(href: string): boolean {
-        const wanted: string = new URL(href, this.#document.baseURI).href;
+    /** Ссылка приложения на тот же адрес в `head`: сравниваются разрешённые адреса, не строки. */
+    #applicationLink(href: string): HTMLLinkElement | null {
+        let wanted: string;
+        try {
+            wanted = new URL(href, this.#document.baseURI).href;
+        } catch {
+            return null;
+        }
 
-        return Array.from(this.#document.head.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]')).some(
-            (link: HTMLLinkElement): boolean => link.href === wanted
+        return (
+            Array.from(this.#document.head.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]')).find(
+                (link: HTMLLinkElement): boolean => link.href === wanted
+            ) ?? null
         );
     }
 
@@ -147,8 +166,10 @@ export function provideRtScopeStyles(options: IRtScopeStylesOptions): Environmen
                   provideAppInitializer((): Promise<void> => {
                       const errors: ErrorHandler = inject(ErrorHandler);
 
-                      return inject(RtScopeStylesService)
-                          .ensure()
+                      const service: RtScopeStylesService = inject(RtScopeStylesService);
+
+                      return Promise.resolve()
+                          .then((): Promise<void> => service.ensure())
                           .catch((error: Error): void => errors.handleError(error));
                   }),
               ]

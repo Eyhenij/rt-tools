@@ -58,14 +58,59 @@ describe('SC-UKV-1781 — the scope styles are loaded by the word of the applica
         await first;
     });
 
-    it('SC-UKV-1781 — the application link to the same address counts as loaded', async () => {
+    it('SC-UKV-1781 — a link of the application to the same address is waited for until it loads', async () => {
         const own: HTMLLinkElement = document.createElement('link');
         own.rel = 'stylesheet';
         own.setAttribute('href', HREF);
         document.head.appendChild(own);
 
-        await expect(configure({ href: HREF }).ensure()).resolves.toBeUndefined();
+        const waiting: Promise<void> = configure({ href: HREF }).ensure();
+        finish(own, 'load');
+        await expect(waiting).resolves.toBeUndefined();
         expect(scopeLinks()).toHaveLength(0);
+    });
+
+    it('SC-UKV-1781 — a link of the application that is still loading is waited for and kept on failure', async () => {
+        const own: HTMLLinkElement = document.createElement('link');
+        own.rel = 'stylesheet';
+        own.setAttribute('href', HREF);
+        document.head.appendChild(own);
+
+        const waiting: Promise<void> = configure({ href: HREF }).ensure();
+        finish(own, 'error');
+        await expect(waiting).rejects.toThrow(HREF);
+        expect(own.isConnected).toBe(true);
+    });
+
+    it('SC-UKV-1781 — an old link that fails late does not wipe the state of a newer one', async () => {
+        jest.useFakeTimers();
+        try {
+            const service: RtScopeStylesService = configure({ href: HREF });
+            const first: Promise<void> = service.ensure();
+            const outcome: Promise<void> = expect(first).rejects.toThrow(HREF);
+            scopeLinks()[0].remove();
+            jest.advanceTimersByTime(RT_SCOPE_STYLES_TIMEOUT - 1);
+            const second: Promise<void> = service.ensure();
+            jest.advanceTimersByTime(1);
+            await outcome;
+
+            expect(service.ensure()).toBe(second);
+            expect(scopeLinks()).toHaveLength(1);
+            finish(scopeLinks()[0], 'load');
+            await second;
+        } finally {
+            jest.useRealTimers();
+        }
+    });
+
+    it('SC-UKV-1781 — an invalid address does not stop an eager start', async () => {
+        TestBed.configureTestingModule({ providers: [{ provide: ErrorHandler, useValue: { handleError: (): void => undefined } }] });
+        configure({ href: 'http://[', eager: true });
+        const started: Promise<void> = TestBed.inject(ApplicationInitStatus).donePromise;
+        await Promise.resolve();
+        finish(scopeLinks()[0], 'error');
+
+        await expect(started).resolves.toBeUndefined();
     });
 
     it('SC-UKV-1781 — without a declared address nothing is loaded', async () => {
@@ -96,6 +141,7 @@ describe('SC-UKV-1781 — the scope styles are loaded by the word of the applica
     it('SC-UKV-1781 — eager loads at start and the start stays pending until the file loads', async () => {
         configure({ href: HREF, eager: true });
         const started: Promise<void> = TestBed.inject(ApplicationInitStatus).donePromise;
+        await Promise.resolve();
         let settled: boolean = false;
         void started.then((): void => {
             settled = true;
@@ -118,6 +164,7 @@ describe('SC-UKV-1781 — the scope styles are loaded by the word of the applica
         });
         configure({ href: HREF, eager: true });
         const started: Promise<void> = TestBed.inject(ApplicationInitStatus).donePromise;
+        await Promise.resolve();
 
         finish(scopeLinks()[0], 'error');
         await expect(started).resolves.toBeUndefined();
@@ -167,7 +214,9 @@ describe('SC-UKV-1781 — the scope styles are loaded by the word of the applica
         own.setAttribute('href', `${document.baseURI.replace(/\/$/, '')}${HREF}`);
         document.head.appendChild(own);
 
-        await expect(configure({ href: HREF }).ensure()).resolves.toBeUndefined();
+        const waiting: Promise<void> = configure({ href: HREF }).ensure();
+        finish(own, 'load');
+        await expect(waiting).resolves.toBeUndefined();
         expect(scopeLinks()).toHaveLength(0);
     });
 

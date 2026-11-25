@@ -194,7 +194,7 @@ threshold.
   the service into the start of every consumer. The application asks: `ensure()` at its moment or `eager`,
   which waits for the file before the first frame. A failed load or silence past ten seconds removes the
   link and rejects, and the next call tries again; a marked link still loading is waited for, and a link of the
-  application to the same resolved address counts as loaded. At an eager start the failure goes to the error
+  application to the same resolved address is waited for and is not removed on failure. At an eager start the failure goes to the error
   handler of the application and the start goes on. On the server the service does nothing; without an
   address it does nothing and reports it once to the error handler in the development mode.
 
