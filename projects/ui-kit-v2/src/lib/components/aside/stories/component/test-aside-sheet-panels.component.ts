@@ -154,3 +154,84 @@ export class TestRtAsideSheetAppComponent {}
 export class TestRtAsideSheetTabsComponent {
     protected readonly badges: readonly IRtAsideHeader.Badge[] = BOOKING_BADGES;
 }
+
+/**
+ * Карточка тура с длинным рядом вкладок: семь вкладок не помещаются в окно телефона, ряд листается
+ * вбок, выбрана «Оплаты» — середина ряда.
+ */
+@Component({
+    selector: 'app-aside-sheet-long-tabs',
+    template: `
+        <rt-aside contentLayout="tabs">
+            <rt-aside-header title="Сочи, 7 ночей" overline="Тур №318" />
+            <ng-template rtAsideContent>
+                <rt-tabs activeId="payments">
+                    <ng-template rtTab="common" label="Общее">Сведения тура</ng-template>
+                    <ng-template rtTab="guests" label="Туристы">Анна Смирнова, Илья Смирнов</ng-template>
+                    <ng-template rtTab="hotel" label="Отель">Морская, 4*</ng-template>
+                    <ng-template rtTab="payments" label="Оплаты">
+                        <rt-detail-list>
+                            <rt-detail-row label="Предоплата">50 000 ₽</rt-detail-row>
+                            <rt-detail-row label="Остаток">98 600 ₽</rt-detail-row>
+                        </rt-detail-list>
+                    </ng-template>
+                    <ng-template rtTab="transfer" label="Трансфер">Из аэропорта</ng-template>
+                    <ng-template rtTab="documents" label="Документы">Договор, ваучер</ng-template>
+                    <ng-template rtTab="history" label="История">Создан 2 апреля</ng-template>
+                </rt-tabs>
+            </ng-template>
+            <rt-aside-footer>
+                <button rtButton asidePrimary qa-dataid="story-long-tabs-save" type="button" label="Сохранить"></button>
+            </rt-aside-footer>
+        </rt-aside>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        RtAsideComponent,
+        RtAsideHeaderComponent,
+        RtAsideFooterComponent,
+        RtAsideContentDirective,
+        RtTabsComponent,
+        RtTabDirective,
+        RtDetailListComponent,
+        RtDetailRowComponent,
+        RtButtonDirective,
+    ],
+})
+export class TestRtAsideSheetLongTabsComponent {}
+
+/**
+ * Панель с подвалом: «Сохранить» уходит в шапку шторки, в подвале остаются «Удалить» — кнопка
+ * слева со своим смыслом, обведённая, — и «Дублировать»; над ними черта подвала, под шапкой такая же.
+ */
+@Component({
+    selector: 'app-aside-sheet-footer',
+    template: `
+        <rt-aside>
+            <rt-aside-header title="Сочи, 7 ночей" overline="Тур №318" />
+            <ng-template rtAsideContent>
+                <rt-detail-list>
+                    <rt-detail-row label="Заезд">12 мая 2026</rt-detail-row>
+                    <rt-detail-row label="Отель">Морская, 4*</rt-detail-row>
+                    <rt-detail-row label="Сумма">148 600 ₽</rt-detail-row>
+                </rt-detail-list>
+            </ng-template>
+            <rt-aside-footer phoneCloseLabel="false">
+                <button rtButton asideDismiss qa-dataid="story-footer-delete" type="button" label="Удалить"></button>
+                <button rtButton asidePrimary qa-dataid="story-footer-copy" type="button" label="Дублировать"></button>
+                <button rtButton asidePrimary qa-dataid="story-footer-save" type="button" label="Сохранить"></button>
+            </rt-aside-footer>
+        </rt-aside>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        RtAsideComponent,
+        RtAsideHeaderComponent,
+        RtAsideFooterComponent,
+        RtAsideContentDirective,
+        RtDetailListComponent,
+        RtDetailRowComponent,
+        RtButtonDirective,
+    ],
+})
+export class TestRtAsideSheetFooterComponent {}

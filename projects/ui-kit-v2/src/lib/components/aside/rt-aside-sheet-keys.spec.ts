@@ -284,6 +284,42 @@ describe('Панель-шторка на телефоне — Escape, фокус
         list.remove();
     });
 
+    it('SC-UKV-1832 — шрифт догрузился и сменил ширину подписей: выбранная вкладка снова встаёт по центру', async (): Promise<void> => {
+        const list: HTMLElement = document.createElement('div');
+        ['a', 'b', 'c'].forEach((id: string): void => {
+            const item: HTMLElement = document.createElement('div');
+            item.dataset['tabitem'] = id;
+            item.innerHTML = `<button role="tab" aria-selected="${id === 'b'}"></button>`;
+            list.appendChild(item);
+        });
+        document.body.appendChild(list);
+        let loaded: () => void = (): void => undefined;
+        const ready: Promise<void> = new Promise<void>((resolve: () => void): void => {
+            loaded = resolve;
+        });
+        Object.defineProperty(document, 'fonts', { value: { ready }, configurable: true });
+        const rect: (left: number, width: number) => DOMRect = (left: number, width: number): DOMRect =>
+            ({ left, width, right: left + width, top: 0, bottom: 0, height: 0, x: left, y: 0 }) as DOMRect;
+        Object.defineProperty(list, 'clientWidth', { value: 335 });
+        jest.spyOn(list, 'getBoundingClientRect').mockReturnValue(rect(20, 335));
+        const chosen: jest.SpyInstance = jest
+            .spyOn(list.children[1] as HTMLElement, 'getBoundingClientRect')
+            .mockReturnValue(rect(142.5, 90));
+        const tabs: RtAsideSheetTabs = new RtAsideSheetTabs();
+
+        tabs.attach(list);
+        expect(list.scrollLeft).toBe(0);
+        // Шрифт загрузился: подписи шире, середина выбранной ушла на 11 вправо.
+        chosen.mockReturnValue(rect(153.5, 90));
+        loaded();
+        await ready;
+
+        expect(list.scrollLeft).toBe(11);
+        tabs.detach();
+        list.remove();
+        delete (document as { fonts?: unknown }).fonts;
+    });
+
     it('SC-UKV-1832 — ряд вкладок шторки — одна строка с затенёнными на 32 краями и без полосы прокрутки', (): void => {
         const css: string = sass.compile(join(__dirname, 'rt-aside.component.scss')).css;
         const selector: string = 'rt-aside .rt-aside--sheet.rt-aside--content--tabs .rt-tabs__tab-list';

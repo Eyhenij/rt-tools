@@ -78,7 +78,9 @@ describe('стили панели-шторки', (): void => {
         expect(meta).toContain('padding-inline: var(--rt-space-2)');
         expect(ruleBody(sheet, '.rt-bottom-sheet__header')).toContain('padding: 0 calc(var(--rt-space-2) + var(--rt-space-1))');
         expect(ruleBody(frame, 'rt-aside .rt-aside.rt-aside--sheet')).toContain('--rt-aside-inset: var(--rt-space-5)');
-        expect(ruleBody(frame, 'rt-aside .rt-aside.rt-aside--sheet > .rt-aside__content')).toContain('padding-top: 0');
+        expect(ruleBody(frame, 'rt-aside .rt-aside.rt-aside--sheet > .rt-aside__content')).toContain(
+            'padding-top: calc(var(--rt-space-2) + var(--rt-space-1))'
+        );
     });
 
     it('SC-UKV-1811 — заголовок шторки строкой 24, значки шапки шторки 32 со значком 16', (): void => {
@@ -96,5 +98,15 @@ describe('стили панели-шторки', (): void => {
 
         expect(footer).toContain('padding-top: calc(var(--rt-space-2) + var(--rt-space-1))');
         expect(footer).toContain('padding-bottom: calc(var(--rt-space-6) + env(safe-area-inset-bottom))');
+    });
+
+    it('SC-UKV-1810 — под шапкой панели-шторки черта подвала шторки: та же толщина, тот же цвет, на всю ширину', (): void => {
+        const divider: string = ruleBody(frame, 'rt-aside > rt-bottom-sheet > .rt-bottom-sheet__panel > .rt-bottom-sheet__header');
+        const footerLine: string = 'var(--rt-bottom-sheet-footer-border-width) solid var(--rt-color-border-default)';
+
+        expect(ruleBody(sheet, '.rt-bottom-sheet__footer')).toContain(`border-top: ${footerLine}`);
+        expect(divider).toContain(`border-bottom: ${footerLine}`);
+        // Черта идёт по краю шапки, а у шапки нет внешних полей — значит, на всю ширину панели.
+        expect(ruleBody(sheet, '.rt-bottom-sheet__header')).not.toContain('margin');
     });
 });

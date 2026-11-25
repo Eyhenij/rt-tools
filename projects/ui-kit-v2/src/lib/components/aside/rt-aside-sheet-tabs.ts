@@ -39,6 +39,16 @@ export class RtAsideSheetTabs {
             this.#observer.observe(list, { subtree: true, attributes: true, attributeFilter: ['aria-selected'] });
         }
         this.center();
+        // Подписи вкладок меняют ширину, когда догружается шрифт: ряд, отцентрованный по шрифту замены,
+        // уводил выбранную вкладку на десяток точек вбок. После загрузки шрифтов ряд центруется снова.
+        const doc: Document = list.ownerDocument;
+        if ('fonts' in doc) {
+            void doc.fonts.ready.then((): void => {
+                if (this.#list === list) {
+                    this.center();
+                }
+            });
+        }
     }
 
     /** Отпускает ряд: вкладки возвращаются в порядок разметки. */

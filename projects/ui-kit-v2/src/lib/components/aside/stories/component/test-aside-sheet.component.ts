@@ -23,12 +23,15 @@ import { RtAsideRef } from '../../rt-aside-ref';
 import { RtAsideService } from '../../rt-aside.service';
 import {
     TestRtAsideSheetAppComponent,
+    TestRtAsideSheetFooterComponent,
+    TestRtAsideSheetLongTabsComponent,
     TestRtAsideSheetRecordComponent,
     TestRtAsideSheetTabsComponent,
 } from './test-aside-sheet-panels.component';
 
 /** Кадр макета асайда-шторки: что открыто поверх страницы. */
-export type TAsideSheetFrame = 'record' | 'question' | 'filters' | 'workspace' | 'columns' | 'list' | 'app' | 'tabs';
+export type TAsideSheetFrame =
+    'record' | 'question' | 'filters' | 'workspace' | 'columns' | 'list' | 'app' | 'tabs' | 'long-tabs' | 'footer';
 
 /** Колонки таблицы броней: их показывает панель настроек колонок. */
 const COLUMNS: ReadonlyArray<IRtTable.ColumnSettingItem> = [
@@ -177,6 +180,12 @@ export class TestRtAsideSheetComponent {
                 return;
             case 'tabs':
                 this.#aside.open(TestRtAsideSheetTabsComponent, { position: 'right' });
+                return;
+            case 'long-tabs':
+                this.#aside.open(TestRtAsideSheetLongTabsComponent, { position: 'right' });
+                return;
+            case 'footer':
+                this.#aside.open(TestRtAsideSheetFooterComponent, { position: 'right' });
                 return;
             case 'list':
                 this.#aside.open(RtDataListSettingsAsideComponent, { data: LIST_CONFIG, position: 'right' });
