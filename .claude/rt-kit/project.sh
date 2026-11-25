@@ -209,6 +209,8 @@ node tools/check-package-imports.mjs
 node tools/check-package-release.mjs
 node tools/check-kit-approval.mjs
 EOF
+    # The review path is judged from the base of this push: a branch of a chain, from the previous one.
+    printf '%s\n' "node tools/review-path.mjs --check${1:+ --base $1}"
     # The tree's check scenarios run only the files the change reaches; the selection is there.
     printf '%s\n' "${1:+RT_SUITES_BASE=$1 }bash tools/tests/run.sh"
 

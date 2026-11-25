@@ -1,11 +1,13 @@
-# Every task through a live check and two review rounds — cold part
+# Every task through a live check and a review — cold part
 
 What the rule `task-delivery-loop` handed over when cut to its statements, every article whole.
 
 A rule of this tree under the law `docs/constitution/work-conduct.md`. The rule `task-flow` leads
 one task from the request to the merge and names no review before the push. This loop stands on
-top of it: the states and the guards of `task-flow` stay, the loop adds the live check and two
-review rounds. The owner's word of 19.11.2026 makes it the way every task here is led.
+top of it: the states and the guards of `task-flow` stay, the loop adds the live check and the
+review. The owner's word of 19.11.2026 makes it the way every task here is led; their word of
+24.11.2026 on the plan of the epic RT-3624 gives a small change the light path and the full path a
+second round by risk.
 
 Ready commands are in the pattern `task-delivery-loop-run`, the guards the loop meets are in
 [GUARDS.md](GUARDS.md), the bindings are in `implementation.md` next to it.
@@ -15,7 +17,7 @@ Ready commands are in the pattern `task-delivery-loop-run`, the guards the loop 
 | In the law                      | Here                                                                                   |
 | ------------------------------- | -------------------------------------------------------------------------------------- |
 | work checked before it is given | the live check on the session's own stand or the showcase, with numbers in the progress |
-| a reader other than the author  | a review round: `qa-engineer`, `product-strategist` and `goal-critic`, started in one message |
+| a reader other than the author  | a review round, its roles started in one message: `qa-engineer` and `goal-critic`, on the full path `product-strategist` too |
 | a finding                       | a defect a reviewer names with `file:line`, a failure scenario and a severity           |
 | the check before delivery       | the push set printed by `rt_push_checks` in `.claude/rt-kit/project.sh`                 |
 | the review of the rules         | the role `skill-curator`, started in the background after the PR                        |
@@ -28,13 +30,30 @@ The table in `implementation.md` next to it.
 
 - **The skill is loaded as the first action of work on a task.** It comes before the first command
   of the task: before `task:new`, before the epic is declared and before the branch is taken.
-- **The loop has no exceptions.** A task of texts, a config, a hook or a tool setting goes through
-  it like one with screens, and so does the task that opens an epic.
+- **Every task goes through the loop.** A task of texts, a config, a hook or a tool setting goes
+  through it like one with screens, and so does the task that opens an epic.
+- **The path of a change is named by the command, not by the executor.** `tools/review-path.mjs`
+  takes a change for the light path when its code is at most 150 changed lines without tests, stories
+  and texts, and it holds none of the signs: the public API, security, migrations, a change of look,
+  the guards of the rules. Before the code `--plan` judges the edited rows of the footprint and the
+  header line `**Путь:** лёгкий · N строк`, with the words «API и вид не меняются» for a file of a
+  package or the kit; `--roles` is called before the menu of the approval, and any answer but `none`
+  sends the plan to the roles first. Before round one the diff against the base is judged again: a
+  change that grew goes on by the full path. The other checks of the tree under `tools/check-*` are no
+  guards of the rules for the path and are guards for the second round.
 - **Every change is checked live before the first review round.** What the task is about is
   reproduced and measured; the numbers go into the progress.
-- **Every change passes two review rounds before the push.** Each round reads the whole diff of
+- **Every change is read by one review round before the push.** The round reads the whole diff of
   the branch against its base, by fresh readers, who get the diff and their inputs and never the
-  executor's conclusions.
+  executor's conclusions. On the light path these are `qa-engineer` and `goal-critic`.
+- **On the full path the second round is due by risk and reads the fixes of the first.** It is due on
+  a serious finding of the first round and on a change of the kit, of the guards and checks or of
+  security. A serious finding is `blocker` or `major` of `qa-engineer`, a line «не выполнено» or
+  «частично» of `goal-critic`, «не достигает» of `product-strategist`. Where the first round changed
+  nothing and found nothing serious, there is nothing to read. Without the number the answer is «нужен».
+- **A light plan with a full diff is refused at the push.** The plan was read by no role and the change
+  by two: the second round then reads the whole branch by the three roles of the full path, and its
+  commit lifts the refusal.
 - **A finding is checked against the code before it is fixed.** One that does not hold is written
   off with its reason; a confirmed one about the diff of the branch is fixed in the same branch.
 - **A finding about the diff is never parked in a file.** It is fixed in the branch or written off
@@ -43,8 +62,9 @@ The table in `implementation.md` next to it.
   that is a product choice goes to the owner by menu before the fix.
 - **The fixes of a round go as one commit named by the round.** «… после первого круга ревью
   (RT-N)», then «второго круга». The owner reads the rounds in history: this is the one place
-  where a later commit of a branch corrects an earlier one by design.
-- **The push set runs once per branch, after round two.** The fixes are committed together, the
+  where a later commit of a branch corrects an earlier one by design. A round without findings closes
+  by a record in the progress, committed under that name.
+- **The push set runs once per branch, after the last round.** The fixes are committed together, the
   base is merged in once, and between the green run and the push only the folder is taken apart, by the
   last commit: a red found after the take-apart is fixed after it. A fix
   for the owner's remarks after the PR is a new content and runs the set again.
@@ -78,14 +98,17 @@ The table in `implementation.md` next to it.
    `pnpm run serve:stand`. A rule, a hook, a check or a text — the guard or the check is run on a
    real record and its scenarios run — the tree's checks by `tools/tests/run.sh`, the guards by
    `nx affected -t test-hooks`. The numbers go into the progress.
-7. **Review round one: three subagents in one message.** `qa-engineer` reads the diff file with the
-   review lens of `.claude/workflows/feature.js` and edits nothing. `product-strategist` runs the
-   signs of the plan's points. `goal-critic` compares the result with the owner's words in the
-   grill and never gets the plan.
+7. **Review round one: the path first, then its roles in one message.** `node tools/review-path.mjs
+   --base origin/<base>` names the path; a light plan whose diff came out full goes on by the full
+   path. `qa-engineer` reads the diff file with the review lens of `.claude/workflows/feature.js` and
+   edits nothing. `goal-critic` compares the result with the owner's words in the grill and never
+   gets the plan. On the full path `product-strategist` runs the signs of the plan's points; on the
+   light path the executor runs them.
 8. **Check every finding against the code, fix the confirmed ones, check live again.** One commit
    for the round.
-9. **Review round two.** Fresh subagents read the whole diff again; step 8 repeats. The last live
-   check runs on the code that ships. Before the round's commit the quick checks run once more, with
+9. **Review round two, on the full path where `--round-two` says it is due.** Fresh subagents read the
+   fixes since the tip of round one; step 8 repeats. The last live check runs on the code that ships.
+   Before the commit of the last round the quick checks run once more, with
    `node tools/check-dupes.mjs` and `pnpm run check:unused`: their findings join the round.
 10. **Show a screen to the owner before the closing steps.** A kit or admin change of look: the address,
     the screen and the width to look at, and the turn waits for the answer. A change of texts,
@@ -117,7 +140,7 @@ The table in `implementation.md` next to it.
 
 ## What never happens in this loop
 
-- A push or a PR before the live check and both rounds.
+- A push or a PR before the live check and the rounds the path asks for.
 - A finding fixed unverified, or a subagent's verdict taken as the evidence.
 - A merge without the owner's word: the rule `git-workflow` keeps the button with a person, and
   the executor merges only what the owner said to merge.
@@ -125,7 +148,8 @@ The table in `implementation.md` next to it.
 
 ## What of the law is not here
 
-Neither the review rounds nor the live check are counted by a guard: the loop is demanded by the gate, and that it
+Neither the review rounds nor the live check are counted by a guard, and the number of serious findings is the
+executor's word: the loop is demanded by the gate, the path is judged by the command, and that the loop
 was carried out is seen only by the commits named by the rounds and by the PR body. The owner
 judges both. The order "this rule, then `task-flow`" is held by the gate printing this rule first
 on a task folder edit; on a command the default rule comes along with it.

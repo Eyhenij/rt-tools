@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the work states. Load at the start of any work, on any edit of a task folder and on return to unfinished work. Its parts: task-flow-plan, -owner, -handover. Patterns task-flow-start, -graph.
 ---
-<!-- rt-kit v0.39.1 · rules/task-flow.md · 6dd5a9148c2c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · rules/task-flow.md · 2318c8067b3f · правится надстройкой, не здесь -->
 
 # Work conduct — the states
 
@@ -42,6 +42,6 @@ Whole in `pitfalls-2.md`.
 
 - **The rule `task-delivery-loop` is loaded as the first action of work on a task.** The gate
   demands it on an edit of a task folder or an epic plan and on delivery commands.
-- **Every change passes a live check and two review rounds before the push.** Fresh readers take
-  the whole diff against the base; confirmed findings are fixed in the same branch.
-- **The loop has no exceptions.** Texts, configs, tools and an epic's first task too.
+- **Every change passes a live check and the review its path asks for before the push.** One round on
+  the light path, a second by risk on the full one; confirmed findings are fixed in the same branch.
+- **Every task goes through it.** Texts, configs, tools and an epic's first task too.
