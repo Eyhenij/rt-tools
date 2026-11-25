@@ -39,8 +39,11 @@ function isOverrun(bare, start, next) {
     return line.search(MARK) >= 0 && (reason.match(/\p{L}{2,}/gu) ?? []).length >= 2;
 }
 
-/** The numbers of a text by path; `overrun` — only those of the lines that are an overrun with its reason. */
-export function namedOf(text, paths = new Map(), { overrun = false } = {}) {
+/**
+ * The numbers of a text by path; `overrun` — only those of the lines that are an overrun with its reason,
+ * `pairs` — `{ was, now }` instead of the number after the arrow.
+ */
+export function namedOf(text, paths = new Map(), { overrun = false, pairs = false } = {}) {
     const bare = text.replace(TORN, ' ').replace(PASTED, '');
     const found = [...bare.matchAll(SEGMENT)]
         .map(({ index, 0: segment, 1: written, 2: rest }) => ({ index, written, numbers: NUMBERS.exec(rest), start: index + segment.length - rest.length }))
@@ -49,8 +52,9 @@ export function namedOf(text, paths = new Map(), { overrun = false } = {}) {
     found.forEach(({ written, numbers, start }, at) => {
         if (!overrun || isOverrun(bare, start + numbers.index + numbers[0].length, found[at + 1]?.index)) {
             const path = whole(written, paths);
-            named.set(path, Math.max(named.get(path) ?? 0, Number(numbers[2])));
+            const [was, now] = [Number(numbers[1]), Number(numbers[2])];
+            if (!(named.get(path)?.now > now)) named.set(path, { was, now });
         }
     });
-    return named;
+    return pairs ? named : new Map([...named].map(([path, { now }]) => [path, now]));
 }
