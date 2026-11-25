@@ -105,11 +105,11 @@ check('SC-AK-1974 — паттерн удалён из кода, а рядом �
 
 const SUITE = 'a/b.test.sh';
 const suite = (label, cell, before, after, want) => check(`SC-AK-1974 — ${label}`, { text: decision({ 'Данные: письмо': cell }, []), before, after }, want);
-suite('набор есть и тронут', `письмо. SC-AK-7, \`${SUITE}\``, {}, { [SUITE]: 'SC-AK-7\n' });
-suite('набора нет', `письмо. SC-AK-7, \`${SUITE}\``, {}, { 'x.md': 'y\n' }, `the suite \`${SUITE}\` is not there`);
-suite('набор не тронут, но нёс номер', `письмо. SC-AK-7, \`${SUITE}\``, { [SUITE]: 'SC-AK-7\n' }, { 'x.md': 'y\n' });
-suite('набор не тронут и номера не нёс', `письмо. SC-AK-7, \`${SUITE}\``, { [SUITE]: 'SC-AK-8\n' }, { 'x.md': 'y\n' }, 'does not carry SC-AK-7');
-suite('набор тронут, номера нет', `письмо. SC-AK-7, \`${SUITE}\``, { [SUITE]: 'a\n' }, { [SUITE]: 'b\n' }, 'does not carry SC-AK-7');
+suite('набор есть и тронут', `письмо. SC-AK-10007, \`${SUITE}\``, {}, { [SUITE]: 'SC-AK-10007\n' });
+suite('набора нет', `письмо. SC-AK-10007, \`${SUITE}\``, {}, { 'x.md': 'y\n' }, `the suite \`${SUITE}\` is not there`);
+suite('набор не тронут, но нёс номер', `письмо. SC-AK-10007, \`${SUITE}\``, { [SUITE]: 'SC-AK-10007\n' }, { 'x.md': 'y\n' });
+suite('набор не тронут и номера не нёс', `письмо. SC-AK-10007, \`${SUITE}\``, { [SUITE]: 'SC-AK-10008\n' }, { 'x.md': 'y\n' }, 'does not carry SC-AK-10007');
+suite('набор тронут, номера нет', `письмо. SC-AK-10007, \`${SUITE}\``, { [SUITE]: 'a\n' }, { [SUITE]: 'b\n' }, 'does not carry SC-AK-10007');
 suite('без номера сценария, набор тронут', `письмо; номера нет: дерево без описаний. \`${SUITE}\``, {}, { [SUITE]: 'a\n' });
 suite('без номера сценария, набор не тронут', `письмо; номера нет: дерево без описаний. \`${SUITE}\``, { [SUITE]: 'a\n' }, { 'x.md': 'y\n' }, 'was not touched');
 suite('ввода нет', 'ввода нет: правка текста', {}, { 'x.md': 'y\n' });
