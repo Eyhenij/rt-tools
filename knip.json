@@ -68,7 +68,6 @@
     "projects/ui-kit-v2": {
       "entry": [
         "src/lib/components/*/index.ts",
-        "src/lib/scope-styles/index.ts",
         "src/**/*.spec.ts",
         "src/**/*.stories.ts",
         ".storybook/*.{ts,js}",
