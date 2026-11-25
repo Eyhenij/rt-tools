@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · task-flow/measure/design.mjs · 7bc81b712f44 · правится надстройкой, не здесь
+// rt-kit v0.39.1 · task-flow/measure/design.mjs · 65cff5732f40 · правится надстройкой, не здесь
 /**
  * The measurer «measure.design» — exit 8 beside the footprint: the code of the head holds what the
  * decision of the plan promised, the plan as its first commit wrote it. `gaps` is the list of the
@@ -59,14 +59,14 @@ function declares(text, path, symbol) {
     return forms.some((form) => new RegExp(form, 'mu').test(bareOf(text)));
 }
 
-const SHOWN = new RegExp(`^[ \\t]*${WORDS}(?:function\\*?|class)\\s+(${NAME})|^export\\s+${WORDS}(?:const|let|var|type|interface|enum)\\s+(${NAME})|^(?:const|let|var)\\s+(${NAME})[^=\\n]*=\\s*(?:async\\s*)?(?:function\\b|\\([^\\n]*\\)[^=\\n]*=>|${NAME}\\s*=>)`, 'gmu');
+const SHOWN = new RegExp(`^[ \\t]*${WORDS}(?:function\\*?|class)\\s+(${NAME})|^export\\s+${WORDS}(?:const|let|var|type|interface|enum|namespace|module)\\s+(${NAME})|^(?:const|let|var)\\s+(${NAME})[^=\\n]*=\\s*(?:async\\s*)?(?:function\\b|\\([^\\n]*\\)[^=\\n]*=>|${NAME}\\s*=>)`, 'gmu');
 /** The lists and the single names of exports: `export {…}`, a destructured export, `module.exports = {…}`, the rest. */
 const LISTS = [
     [/^[ \t]*export\s*(?:type\s*)?\{([^}]*)\}/gmu, (part) => part.trim().split(/\s+/).pop()],
     [/^[ \t]*export\s+(?:const|let|var)\s*[{[]([^}\]]*)[}\]]/gmu, (part) => part.replace(/=[^]*$/, '').trim().split(/[\s:]+/).pop()],
     [/^[ \t]*module\.exports\s*=\s*\{([^}]*)\}/gmu, (part) => part.trim().split(/[\s:(]+/)[0]],
 ];
-const EXPORTS = new RegExp(`^[ \\t]*export\\s+(default)\\b|^[ \\t]*export\\s*\\*\\s*as\\s+(${NAME})|^[ \\t]*(?:module\\.)?exports\\.(${NAME})\\s*=(?!=)|^[ \\t]*export\\s*\\*\\s*from\\s*['"]([^'"]+)['"]`, 'gmu');
+const EXPORTS = new RegExp(`^[ \\t]*(?:export\\s+(default)\\b|(export)\\s*=(?!=)|(module)\\.exports\\s*=(?!=)\\s*(?!\\{))|^[ \\t]*export\\s*\\*\\s*as\\s+(${NAME})|^[ \\t]*(?:module\\.)?exports\\.(${NAME})\\s*=(?!=)|^[ \\t]*export\\s*\\*\\s*from\\s*['"]([^'"]+)['"]`, 'gmu');
 const SHELL_NAME = /^[ \t]*(?:function\s+([\p{L}_][\p{L}\p{N}_-]*)|([\p{L}_][\p{L}\p{N}_-]*)\s*\(\))/gmu;
 const PYTHON_NAME = /^[ \t]*(?:async\s+)?(?:def|class)\s+([\p{L}_][\p{L}\p{N}_]*)/gmu;
 
@@ -77,7 +77,7 @@ function declaredNames(text, path) {
     if (/\.sh$/.test(path)) return named(SHELL_NAME);
     if (/\.py$/.test(path)) return named(PYTHON_NAME);
     const listed = LISTS.flatMap(([pattern, pick]) => named(pattern).flatMap((list) => list.split(',').map(pick)));
-    const single = [...bare.matchAll(EXPORTS)].map(([, one, all, field, from]) => one ?? all ?? field ?? `* from ${from}`);
+    const single = [...bare.matchAll(EXPORTS)].map(([, one, equal, common, all, field, from]) => (one ?? equal ?? common ? 'default' : all ?? field ?? `* from ${from}`));
     return [...named(SHOWN), ...listed, ...single].filter((name) => /^[\p{L}_$*]/u.test(name ?? ''));
 }
 
@@ -222,8 +222,17 @@ function liftsOf(git, head, design, folder) {
 /** A line names the key whole or by its tail after a `/`: a full path of the plan, a short one of the progress. */
 const lifts = (item, key) => new RegExp(`(?:^|[\\s\`(«])(?:${key.split('/').map((_, at, parts) => escaped(parts.slice(at).join('/'))).join('|')})(?=[\\s\`),.;:»]|$)`, 'iu').test(item);
 /** The paths a line names in backticks: a token with a slash or the extension of a file, a place by its path. */
-const pathsIn = (item) => [...item.matchAll(/`([^`]+)`/g)].map(([, token]) => token.split(':')[0]).filter((token) => /\/|\.(?:[mc]?[jt]sx?|sh|py|md|json|s?css|less|html|ya?ml)$/.test(token));
-const alone = (item, { path, symbol }) => item.includes(`\`${symbol}\``) && pathsIn(item).every((named) => path === named || path.endsWith(`/${named}`));
+/** The paths a text names, in backticks or not: a word with a slash or an extension, a place by its path; the symbol is none. */
+const pathsIn = (text, names) =>
+    text.split(/[\s,;()«»]+/).map((token) => token.replace(/^[`*]+|[`*.]+$/g, '').split(':')[0]).filter((token) => token && !names.includes(token) && /\/|\.[\p{L}\p{N}]+$/u.test(token));
+/** The subject of a line: what stands before its first dash or colon, the place `path:symbol` whole. */
+const subjectOf = (item) => item.replace(/\*/g, '').split(/\s[—–-]\s|:\s/)[0];
+/** A symbol, or the last part of `Class.method`, stands in the subject of the line, and the subject names no other path. */
+const alone = (item, { path, symbol }) => {
+    const subject = subjectOf(item);
+    const names = [symbol, symbol.replace(/^.*[.#](?=[\p{L}_$])/u, '')];
+    return names.some((name) => lifts(subject, name)) && pathsIn(subject, names).every((named) => path === named || path.endsWith(`/${named}`));
+};
 
 /** The mismatches of one history port, counted once per head: the engine asks `held` and then `gaps`. */
 const known = new WeakMap();

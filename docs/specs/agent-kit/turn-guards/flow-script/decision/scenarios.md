@@ -13,8 +13,8 @@ And a place declared by a function, a method, a key, a field, a type, a shell fu
 And a suite touched or carrying the number before, a new suite, a laid-out copy and a text are silent
 And a function of Python, a shell function without brackets and a method behind a decorator are declarations, and an import of Python is none
 And «No decision» names a new file of code, a new suite and a new function, class or export of an own commit, in a suite too
-And a list of exports, a list of types, a default export, a re-export of all, a destructured export and the exports of a common module are exports
-And a symbol in backticks lifts a new function, and the same symbol on a line about another file does not
+And a list of exports, a list of types, a default export, `export =`, a namespace, a re-export of all, a destructured export and the exports of a common module are exports
+And a symbol as the subject of a line lifts a new function, and the same symbol on a line about another file does not
 And a plan without a decision is not judged, and a number inside a longer number is not carried
 
 Covered: `projects/agent-kit/tests/flow-design.test.sh`.
@@ -28,7 +28,8 @@ And new files and dependencies a merge brought are not counted, and the lines it
 And an item of the decisions of the progress, or of an own commit once the folder is taken apart, with the path whole or by its tail, the word of an overrun and a reason lifts it
 And an item without a reason or the word, outside the decisions, of a foreign commit, of a commit while the folder stands or of another task does not
 And a lift of the path of a budget leaves a removed place of the same file named, a lift by the place or the symbol lets it go, and a line of links lifts no budget
-And a symbol lifts only in backticks and only on a line that names no path but the path of its place
+And a symbol lifts only as the subject of the line, in backticks or not, where no path but the path of its place stands, bold or of any extension
+And of `Class.method` the last part lifts
 And a refusal of the coupling command, a new cycle and an import past an entry among them, is never lifted here
 
 Covered: `projects/agent-kit/tests/flow-design.test.sh`.
@@ -40,7 +41,7 @@ When the coupling command refuses, answers or does not answer, and the module ha
 Then the line of the refusal is named, an answer without a refusal and no answer are silent
 And a decrease not reached, reached in part or of a module not touched is named; one reached, passed, of a removed module, an unchanged number and a folder are silent
 And a short path is the module beside its laid-out copy, a short path of two modules is not judged, and a budget line lifts no decrease
-And a touched module whose numbers did not change is counted by the command one by one; a module the command does not read is not judged, and an untouched one is not counted
+And a touched module whose numbers did not change is counted by the command one by one; a module the command does not read is not judged, an untouched one is not counted, and a count that crashed answers nothing and is not kept
 And the answer is kept by the head and the modules; another head, another branch, other modules, an unsaved edit and a new file outside the history ask again
 And a command that crashed, is absent or knows no revision answers nothing, and no answer is kept
 And after a merge the command runs against the tip the merge brought, a commit of the grill before the plan among them

@@ -21,7 +21,7 @@ decision, and the refusal names every mismatch.
 - **A mismatch** — a line about what the decision promised and the code of the head does not hold:
   a place, a suite, a new file, a budget, a refusal of the coupling command, a decrease of links.
 - **A lift** — an item of the decisions of the progress, or of the text of an own commit once the
-  folder is taken apart, that names the path, the place or the symbol in backticks of a mismatch, the word «превышение» or «отказ от»
+  folder is taken apart, that names the path, the place or the symbol of a mismatch as the subject of the line, the word «превышение» or «отказ от»
   («overrun», «waived») and a reason of two words at least.
 - **An own commit** — a commit of the branch on its first-parent line that is no merge; what a merge
   brought is no edit of the branch.
@@ -39,9 +39,9 @@ an item of the refusal at the end of a turn.
 - **A new file of code is named by the modules or by an exact path of the footprint; a suite, a laid-out copy and a text are free.**
 - **«No decision» holds no new file of code, a new suite among them, and no new function, class or export in an old file, a suite among them.**
 - **A budget of lines, of new code files and of new dependencies is not exceeded; new files and dependencies a merge brought are not counted, and lines a merge brought are lifted.**
-- **The refusal of the coupling command is a mismatch, and so is a promised decrease of outgoing links the module did not reach.** The command runs against the plan, or against the tip the newest merge after the plan brought when that tip lacks the plan and differs from what stood before the plan in no file of code. A touched module whose numbers did not change is counted by the command one by one, and a module the command does not read is not judged.
+- **The refusal of the coupling command is a mismatch, and so is a promised decrease of outgoing links the module did not reach.** The command runs against the plan, or against the tip the newest merge after the plan brought when that tip lacks the plan and differs from what stood before the plan in no file of code. A touched module whose numbers did not change is counted by the command one by one, and a module the command does not read is not judged; a count that did not answer makes the whole answer none.
 - **The answer of the coupling command is kept by the head, the branch, the base, the modules and the unsaved edits, and a command that did not answer is asked again.**
-- **A lift names the path of a mismatch or the place of a place mismatch, whole or by its tail, or the symbol of a place in backticks on a line that names no other path.** A line with outgoing numbers lifts only a mismatch of links, and any other line only the rest. A lift of a budget leaves a place and a decrease of the same file standing. A refusal of the coupling command is lifted only as the command itself lifts it.
+- **A lift names the path of a mismatch or the place of a place mismatch, whole or by its tail, or the symbol of a place as the subject of the line with no other path there.** The subject is what stands before the first dash or colon; of `Class.method` the last part lifts too. A line with outgoing numbers lifts only a mismatch of links, and any other line only the rest. A lift of a budget leaves a place and a decrease of the same file standing. A refusal of the coupling command is lifted only as the command itself lifts it.
 - **What was not read is not judged: a plan without a decision, a binary file, a command that did not answer.**
 - **A footprint path with a mask is touched by a file the mask unfolds to: one star holds no slash, two stars hold any.**
 - **The measured state and the refusal at the end of a turn name every mismatch, one line each, and how to lift it.**
@@ -109,8 +109,9 @@ Not applicable: one branch is measured at a time.
 - **A touched module the command did not print is counted by its module mode.** The command prints
   only the modules whose numbers changed, so a module left as it was looked unread, and an edit of a
   comment let a decrease not reached through.
-- **A symbol lifts in backticks and on a line about its own file only.** A common name such as
-  `open` or `main` stood in lines about other files and lifted a place in silence.
+- **A symbol lifts as the subject of its line: before the first dash or colon, with no other path
+  there.** A common name such as `open` or `main` stood in lines about other files and lifted a
+  place in silence. Backticks are not asked: the owner's words name a path or a symbol, nothing more.
 - **A lift takes the tail of a path.** The budget of a plan writes the full path, and the progress
   writes a short one.
 - **A lift of a path does not lift a place, and a line without numbers does not lift links.** A live

@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · task-flow/source/coupling.mjs · f2a0f849d769 · правится надстройкой, не здесь
+// rt-kit v0.39.1 · task-flow/source/coupling.mjs · 73d9c46f7200 · правится надстройкой, не здесь
 /**
  * The source «source.coupling» of the task flow description: the answer of the command
  * `check-coupling.mjs --base=<revision>`, the only count of the links.
@@ -6,7 +6,8 @@
  *   from(sha, modules)  { answered, problems, now } — whether the command answered against the plan `sha`,
  *                       the lines it refuses by and path → the outgoing links a module of the branch has now,
  *                       0 for a removed one; a module of `modules` the base run did not print is counted
- *                       by `--module`, and one the command does not read stays out
+ *                       by `--module`, one the command does not read stays out, and a run of it that
+ *                       did not answer makes the whole answer none
  *
  * An answer is a run with no refusal or with the line of violations: an unknown revision, an absent or a
  * broken command answers nothing. The command takes seconds and an exit is measured at every stop, so an
@@ -52,10 +53,12 @@ function baseOf(root, sha) {
     return tips.filter(Boolean).find((tip) => !holds(sha, tip) && !apart(tip)) ?? sha;
 }
 
-/** The outgoing links of one module now, or nothing for a module the command does not read. */
+/** The outgoing links of one module now, nothing for a module the command does not read, null for no answer. */
 function countOf(root, command, path) {
-    const [, links] = /^\S+: incoming \d+, outgoing (\d+)/.exec(node(root, [command, `--module=${path}`]).stdout ?? '') ?? [];
-    return links === undefined ? [] : [[path, Number(links)]];
+    const { status, stdout, stderr } = node(root, [command, `--module=${path}`]);
+    const [, links] = status === 0 ? /^\S+: incoming \d+, outgoing (\d+)/m.exec(stdout ?? '') ?? [] : [];
+    if (links !== undefined) return [[path, Number(links)]];
+    return status === 1 && / is not among \d+ read/.test(stderr ?? '') ? [] : null;
 }
 
 function ask(root, sha, modules) {
@@ -67,7 +70,9 @@ function ask(root, sha, modules) {
     const changed = [...stdout.matchAll(/^  (\S+): incoming .*?, outgoing \d+ → (\d+),/gm)].map(([, path, links]) => [path, Number(links)]);
     const removed = [...stdout.matchAll(/^  (\S+): removed, outgoing was/gm)].map(([, path]) => [path, 0]);
     const printed = new Map([...changed, ...removed]);
-    const counted = modules.filter((path) => !printed.has(path)).flatMap((path) => countOf(root, command, path));
+    const counts = modules.filter((path) => !printed.has(path)).map((path) => countOf(root, command, path));
+    if (counts.includes(null)) return SILENT;
+    const counted = counts.flat();
     return { answered: true, problems: (refusal ?? '').split('\n').map((line) => line.trim()).filter(Boolean), now: new Map([...printed, ...counted]) };
 }
 

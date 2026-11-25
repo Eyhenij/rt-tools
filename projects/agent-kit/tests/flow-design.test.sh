@@ -158,6 +158,11 @@ const TWO = { 'a/b.mjs': 'export function one() {\n}\nfunction two() {\n}\n' };
 const decided = (line) => ({ ...TWO, [`${F}/progress.md`]: `# Progress\n\n## Decisions along the way\n\n- ${line}\n` });
 none('новая функция, снятие символом', OLD, decided('`two` — отказ от: функция нужна разбору'));
 none('новая функция, символ в строке о другом файле не снимает', OLD, decided('`a/c.md` — превышение: `two` принесло слияние строк'), 'declared `a/b.mjs:two`');
+none('новая функция, свой путь и символ без кавычек снимают', OLD, decided('`a/b.mjs`, two — отказ от: функция нужна разбору'));
+none('module.exports одним именем', { 'a/b.cjs': 'let one;\n' }, { 'a/b.cjs': 'let one;\nmodule.exports = one;\n' }, 'declared `a/b.cjs:default`');
+none('module.exports выражением', { 'a/b.cjs': 'let one;\n' }, { 'a/b.cjs': 'let one;\nmodule.exports = make.plugin(one);\n' }, 'declared `a/b.cjs:default`');
+none('export =', { 'a/b.ts': 'let one;\n' }, { 'a/b.ts': 'let one;\nexport = one;\n' }, 'declared `a/b.ts:default`');
+none('export namespace', { 'a/b.ts': 'let one;\n' }, { 'a/b.ts': 'let one;\nexport namespace Two {\n}\n' }, 'declared `a/b.ts:Two`');
 
 const LOST = decision({ Модули: ONE }, []);
 check('SC-AK-1974 — план без раздела', { text: plan('Текст.'), after: { 'a/b.mjs': 'let two;\n' } });
@@ -218,7 +223,14 @@ refused('рост связей строкой решений не снимает
 lift('строка связей не снимает бюджета', '`a/b.mjs` исходящие 1 → 2 — превышение: разбор стоит в том же модуле', OVER);
 place('снятие места одним символом', '`one` — отказ от: чтение уходит в другой модуль', 'чисто', '`a/b.mjs` до 9 строк');
 place('символ в строке о другом файле места не снимает', '`a/c.mjs` — превышение: `one` держит кэш ответа', '`a/b.mjs:one` is not declared', '`a/b.mjs` до 9 строк');
-place('символ без кавычек места не снимает', 'one — отказ от: чтение уходит в другой модуль', '`a/b.mjs:one` is not declared', '`a/b.mjs` до 9 строк');
+place('символ без кавычек снимает место', 'one — отказ от: чтение уходит в другой модуль', 'чисто', '`a/b.mjs` до 9 строк');
+place('символ после пути другого файла жирным места не снимает', '**a/c.mjs** — превышение: `one` держит кэш ответа', '`a/b.mjs:one` is not declared', '`a/b.mjs` до 9 строк');
+place('символ после файла с редким расширением места не снимает', '`schema.prisma` — превышение: `one` держит кэш ответа', '`a/b.mjs:one` is not declared', '`a/b.mjs` до 9 строк');
+place('символ рядом с путём другого файла в начале строки не снимает', '`a/c.mjs` и `one` — превышение: кэш ответа', '`a/b.mjs:one` is not declared', '`a/b.mjs` до 9 строк');
+place('символ рядом с путём жирным в начале строки не снимает', '**a/c.mjs** и `one` — превышение: кэш ответа', '`a/b.mjs:one` is not declared', '`a/b.mjs` до 9 строк');
+place('символ рядом с редким расширением в начале строки не снимает', '`schema.prisma` и `one` — превышение: кэш ответа', '`a/b.mjs:one` is not declared', '`a/b.mjs` до 9 строк');
+place('символ в начале строки снимает, другой файл после тире не мешает', '`one` — отказ от: чтение переехало в `a/c.mjs`', 'чисто', '`a/b.mjs` до 9 строк');
+check('SC-AK-1975 — метод снимается последней частью имени', { text: decision({ Модули: '`a/b.ts:Mail.one` — читает' }, ['a/b.ts']), after: { 'a/b.ts': 'class Mail {\n}\n', [`${F}/progress.md`]: '# Progress\n\n## Decisions along the way\n\n- `one` — отказ от: чтение уходит в другой модуль\n' } });
 place('символ рядом с путём своего файла снимает', '`b.mjs` и `one` — отказ от: чтение уходит в другой модуль', 'чисто', '`a/b.mjs` до 9 строк');
 budget('снятие коммитом при живой папке не снимает', '`a/b.mjs` до 3 строк', {}, [{ 'a/b.mjs': L(4), ...progress('Decisions along the way', 'нет') }, { text: '`a/b.mjs` — превышение: разбор стоит в том же модуле', files: { 'x.md': 'y\n' } }], OVER);
 JS
@@ -270,6 +282,7 @@ const fail = (text) => console.error(text) ?? process.exit(1);
 if (mode === 'unknown') fail('check-coupling: the revision is not known');
 if (mode === 'refuse') fail('\ncheck-coupling: violations 1\n\n  `a/b.mjs` outgoing 1 → 3; the branch named 2\n\nFix the code.');
 const [, one] = /^--module=(.+)$/.exec(process.argv[2]) ?? [];
+if (one === 'a/crash.mjs') throw new Error('broken');
 if (one === 'a/x.mjs') console.log('a/x.mjs: incoming 0, outgoing 4, past an entry 0, shown 1, taken by nobody 0') ?? process.exit(0);
 if (one) fail(`check-coupling: the module «${one}» is not among 3 read`);
 console.log('  a/b.mjs: incoming 0 → 0, outgoing 1 → 2, total 2\n  a/c.mjs: removed, outgoing was 3');
@@ -317,6 +330,8 @@ fd_fresh
 report "SC-AK-1976 — модуль без изменения чисел считается поштучно, непрочитанный не числится" "$(fd_ask ok a/b.mjs,a/x.mjs,a/nope.mjs)|$(fd_calls)" "true||a/b.mjs=2,a/c.mjs=0,a/x.mjs=4|3"
 report "SC-AK-1976 — поштучный счёт хранится с ответом" "$(fd_ask ok a/b.mjs,a/x.mjs,a/nope.mjs | cut -d'|' -f3)|$(fd_calls)" "a/b.mjs=2,a/c.mjs=0,a/x.mjs=4|3"
 report "SC-AK-1976 — другой список модулей зовёт команду" "$(fd_ask ok a/b.mjs | cut -d'|' -f3)|$(fd_calls)" "a/b.mjs=2,a/c.mjs=0|4"
+report "SC-AK-1976 — упавший поштучный счёт: ответа нет" "$(fd_ask ok a/crash.mjs)" "false||"
+report "SC-AK-1976 — упавший поштучный счёт не хранится" "$(fd_ask ok a/crash.mjs >/dev/null; fd_calls)" "8"
 fd_fresh
 fd_ask ok > /dev/null
 report "SC-AK-1976 — без слияния база команды — коммит плана" "$(tail -1 "$FD_CALLS")" "--base=$FD_PLAN"
