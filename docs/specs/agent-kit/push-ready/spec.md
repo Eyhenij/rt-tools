@@ -43,7 +43,7 @@ There is no interface: the run answers with lines of output and an exit code.
   the base of the set is the branch below, and so is the base of the PR.
 - **A moved base holds the run while the task folder lies in the branch.** Of a task of an epic the branch of
   the epic is asked, of a task outside one the main branch. Once the folder is taken apart the fix after a
-  review goes on without a merge. A card that did not answer judges no base.
+  review goes on without a merge. A card that did not answer, or that the host does not know, judges no base.
 - **A folder that cannot be taken apart holds the run, and each reason has a line of its own.** The folder that
   merely lies in the branch does not: it is taken apart after the green set. No other exit of the flow is read,
   so a lost approval mark holds nothing.

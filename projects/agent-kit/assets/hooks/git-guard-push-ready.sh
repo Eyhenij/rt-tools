@@ -80,6 +80,8 @@ rt_push_ready_unmet() (
 
     state=''
     command -v rt_task_state >/dev/null 2>&1 && state="$(cd "$root" && rt_task_state "$number" 2>/dev/null)"
+    # A card the hosting does not know is no answer about its epic: it is read as silence.
+    printf '%s' "$state" | jq -e '.exists == true' >/dev/null 2>&1 || state=''
     epic="$(printf '%s' "$state" | jq -r '.epic // empty' 2>/dev/null)"
     epic_branch=''
     [ -n "$epic" ] && command -v rt_epic_branch >/dev/null 2>&1 && epic_branch="$(rt_epic_branch "$epic")"

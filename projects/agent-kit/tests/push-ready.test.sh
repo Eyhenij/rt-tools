@@ -316,6 +316,9 @@ report "SC-AK-1995 — main moved outside an epic is named" "$code:$(reasons):$(
 card "$t" ''
 run "$t"
 report "SC-AK-1995 — main moved and a silent host: the base is not judged" "$code:$(reasons)" 0:0
+card "$t" '{"exists":false}'
+run "$t"
+report "SC-AK-1995 — main moved and a card the host does not know: the base is not judged" "$code:$(reasons)" 0:0
 rm -rf "$t"
 
 # --- SC-AK-1996 — the guards of the tree and the copy that is judged ----------------------------------

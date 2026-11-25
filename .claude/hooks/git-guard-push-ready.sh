@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/git-guard-push-ready.sh · 23a59a0416fa · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/git-guard-push-ready.sh · f3de1af6e702 · правится надстройкой, не здесь
 # Whether a PR of the checked-out branch would open, asked before the push set starts. NOT a guard: it
 # has no `rt-hook:` declaration and hooks into no agent event. The run ahead
 # (`git-guard-push-ahead.sh`) sources it and calls `rt_push_ready_unmet <the base of the set>`.
@@ -81,6 +81,8 @@ rt_push_ready_unmet() (
 
     state=''
     command -v rt_task_state >/dev/null 2>&1 && state="$(cd "$root" && rt_task_state "$number" 2>/dev/null)"
+    # A card the hosting does not know is no answer about its epic: it is read as silence.
+    printf '%s' "$state" | jq -e '.exists == true' >/dev/null 2>&1 || state=''
     epic="$(printf '%s' "$state" | jq -r '.epic // empty' 2>/dev/null)"
     epic_branch=''
     [ -n "$epic" ] && command -v rt_epic_branch >/dev/null 2>&1 && epic_branch="$(rt_epic_branch "$epic")"
