@@ -79,8 +79,8 @@ The table in `implementation.md` next to it.
    real record and its scenarios run — the tree's checks by `tools/tests/run.sh`, the guards by
    `nx affected -t test-hooks`. The numbers go into the progress.
 7. **Review round one: three subagents in one message.** `qa-engineer` reads the diff file with the
-   lenses `review` and `structure` of `.claude/workflows/feature.js`, the plan and the coupling
-   against the base, and edits nothing. `product-strategist` runs the
+   lens `review` of `.claude/workflows/feature.js`, the plan and the coupling against the base by
+   the section «Structure of the code» of its role, and edits nothing. `product-strategist` runs the
    signs of the plan's points. `goal-critic` compares the result with the owner's words in the
    grill and never gets the plan.
 8. **Check every finding against the code, fix the confirmed ones, check live again.** One commit

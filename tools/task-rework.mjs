@@ -26,8 +26,8 @@ import { footprintRows, touches } from './task-flow/measure/text.mjs';
 const ROUND = /после первого круга ревью \(RT-\d+\)$/;
 const REQUEST = /^\[(RT-\d+)\] .*\(#\d+\)$/;
 const OWN_PLACES = /^docs\/(?:tasks|archive|plans)\/|^\.claude\/rt-kit\/assignments\.md$/;
-// The header of a laid-out copy on its first line, after a shebang: a mention further down is a source.
-const STAMP = /^(?:#!.*\n)?(?:\/\/|#|<!--|\/\*\*?) rt-kit v\d/;
+// The header of a laid-out copy on its first line, after a shebang or the front matter: a mention further down is a source.
+const STAMP = /^(?:#!.*\n)?(?:---\n(?:.*\n)*?---\n)?(?:\/\/|#|<!--|\/\*\*?) rt-kit v\d/;
 const BUFFER = 64 * 1024 * 1024;
 
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8', maxBuffer: BUFFER });
@@ -53,11 +53,12 @@ function median(numbers) {
     return sorted.length % 2 ? sorted[half] : (sorted[half - 1] + sorted[half]) / 2;
 }
 
-/** The own commits of a task, the newest first: a number that only begins the same is another task. */
+/** The own commits of a task, newest first: a subject that ends with a task in brackets is that task's alone. */
 function commitsOf(task) {
+    const ownOf = (subject) => /\((RT-\d+)\)"?$/.exec(subject)?.[1] ?? (new RegExp(`\\b${task}(?!\\d)`).test(subject) ? task : null);
     return rowsOf(git('log', '--no-merges', '--format=%H%x09%s', `--grep=${task}`, 'HEAD'))
         .map(([sha, subject]) => ({ sha, subject }))
-        .filter(({ subject }) => new RegExp(`\\b${task}(?!\\d)`).test(subject));
+        .filter(({ subject }) => ownOf(subject) === task);
 }
 
 const filesOf = (sha) => git('show', '--no-renames', '--name-only', '--format=', sha).split('\n').filter(Boolean);
@@ -65,7 +66,7 @@ const filesOf = (sha) => git('show', '--no-renames', '--name-only', '--format=',
 /** A file of the commit that is a laid-out copy: its text carries the header of the layout. */
 function isCopy(sha, file) {
     const shown = spawnSync('git', ['show', `${sha}:${file}`], { encoding: 'utf8', maxBuffer: BUFFER });
-    return shown.status === 0 && STAMP.test(shown.stdout.slice(0, 400));
+    return shown.status === 0 && STAMP.test(shown.stdout.slice(0, 4000));
 }
 
 /** The added and removed lines of a commit, its own places and copies left out; a binary file adds none. */
@@ -152,7 +153,7 @@ function couplingOf(sha) {
     return {
         cycles: grown('cycles'),
         past: grown('past the entry'),
-        overruns: totals ? (text.match(/overrun, named after the plan:|nobody named a number for it/g) ?? []).length : null,
+        overruns: totals ? (text.match(/the branch named \d+|nobody named a number for it/g) ?? []).length : null,
     };
 }
 

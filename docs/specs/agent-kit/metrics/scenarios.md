@@ -380,11 +380,12 @@ Then the counter of the branch grows, and the text stands in no file of the rule
 
 Given a task with a commit of the first review round, a plan whose footprint has a mask, a folder
 and a file, and later commits that touch a copy, the task folder, the archive, a plan, a binary and a
-removed file
+removed file, a copy with its header after a shebang and one after the front matter
 When the command is called with the task
 Then it prints the lines of the oldest commit of the round without the copy and the own places, and
 the files no first version of the plan names; a source that only mentions the header of a copy and
-the board bookkeeping are no copy and no file outside
+the board bookkeeping are no copy and no file outside, and a commit that ends with another task belongs to
+that task alone
 And a task whose number only begins the same, a task with no plan and one without a round are said
 so in words
 And no argument, two, a word, a count that is no number or zero, and an unknown revision end with code
@@ -399,8 +400,8 @@ a merge that adds a cycle
 When the command is called with a count, or with a revision
 Then it names the newest tasks of the count, or the tasks merged after the revision, and skips the
 epic and the merge without a task
-And it sums the new cycles, the imports past an entry and the overruns of each merge, a task merged
-twice once, and leaves the totals uncounted when the check counted nothing
+And it sums the new cycles, the imports past an entry and the overruns of each merge, growth nobody
+named and growth past the named number alike, a task merged twice once, and leaves the totals uncounted when the check counted nothing
 And it takes the median over the tasks with a round and names the others apart
 
 Covered: `tools/tests/task-rework.test.sh`.

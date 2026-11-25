@@ -8,7 +8,8 @@ description: A pattern of the rule task-delivery-loop. Take it at each step of t
 # Ready commands for the task delivery loop
 
 A pattern of the rule `task-delivery-loop`; the steps are numbered as there. `N` is the task number, `E` the epic
-card, `<base>` the base of the branch: the previous branch of the chain, the epic branch or `main`. Shell variables do not live from one call to the next,
+card, `<base>` the base of the branch: the previous branch of the chain, the epic branch or `main`, `<plan>` the
+file `docs/tasks/RT-N-<slug>/plan.md`. Shell variables do not live from one call to the next,
 so every block sets the client and the token itself.
 
 Every call with the token starts with `test -s`: an empty or missing file would leave the variable
@@ -105,8 +106,9 @@ Return findings with file:line, the failure scenario and a severity.
 The plan: <plan>; the coupling against the base: <scratchpad>/coupling-N.txt.
 ```
 
-`qa-engineer` gets the agreement, the lenses `review` and `structure` of `.claude/workflows/feature.js`,
-and the plan for its section «Решение»: the green set does not show the coupling.
+`qa-engineer` gets the agreement, the lens `review` of `.claude/workflows/feature.js`, the plan and the
+coupling for the section «Structure of the code» of its role: the green set does not show the coupling. The
+lens `structure` is the pipeline's, where no diff is given.
 `product-strategist` gets the plan's points and their signs. `goal-critic` gets the owner's words
 from the grill and the result, never the plan. The replies of the roles are saved to a file of the
 scratchpad as they come: the PR body takes their tables word for word.
@@ -228,4 +230,5 @@ node tools/task-rework.mjs RT-N                    # the lines of the first roun
 ```
 
 The numbers of the task go into the archive record. The milestone of an epic is judged after the kit release
-by `node tools/task-rework.mjs --since=<the release tag>` once twenty tasks are merged after it.
+by `node tools/task-rework.mjs --since=<the release tag>` on the twentieth merge after it: the report takes every
+merge after the tag, so the release opens a card for that run.
