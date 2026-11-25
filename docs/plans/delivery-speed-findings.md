@@ -2,7 +2,7 @@
 
 The findings of the rules review of every closed task of the epic «Простая правка доходит до слияния за
 полчаса» accumulate here and wait for the owner's word. The file lies next to the plan of the epic —
-`docs/plans/delivery-speed.md`. Nothing of it is ordered yet.
+`docs/plans/delivery-speed.md`. An ordered item names its task, the rest is not ordered.
 
 ## RT-3625 — the review of 25 November 2026
 
