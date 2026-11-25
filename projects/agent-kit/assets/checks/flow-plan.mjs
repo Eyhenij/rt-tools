@@ -306,7 +306,7 @@ export function runPlanRed({ git, steps, marks }, model, record, limitMs = STEP_
     }
     const root = gitOut(['rev-parse', '--show-toplevel']).stdout.trim();
     const roles = rolesOfPlan(root, plan.text);
-    const since = Number(gitOut(['show', '-s', '--format=%at', plan.sha]).stdout.trim()) * 1000;
+    const since = Number(gitOut(['show', '-s', '--format=%ct', plan.sha]).stdout.trim()) * 1000;
     const found = approvingEntry(record, task, roles, since);
     if (found === null || !found.uuid) {
         const word = uncounted(record);

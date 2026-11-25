@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · checks/flow-plan.mjs · 881bb254370a · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/flow-plan.mjs · 729c276c2ce2 · правится надстройкой, не здесь
 /**
  * The approval of a plan and the forms of its checks — the engine commands `plan-check` and
  * `plan-red`.
@@ -307,7 +307,7 @@ export function runPlanRed({ git, steps, marks }, model, record, limitMs = STEP_
     }
     const root = gitOut(['rev-parse', '--show-toplevel']).stdout.trim();
     const roles = rolesOfPlan(root, plan.text);
-    const since = Number(gitOut(['show', '-s', '--format=%at', plan.sha]).stdout.trim()) * 1000;
+    const since = Number(gitOut(['show', '-s', '--format=%ct', plan.sha]).stdout.trim()) * 1000;
     const found = approvingEntry(record, task, roles, since);
     if (found === null || !found.uuid) {
         const word = uncounted(record);

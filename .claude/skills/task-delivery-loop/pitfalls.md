@@ -38,7 +38,8 @@ The table in `implementation.md` next to it.
   the guards of the rules. Before the code `--plan` judges the edited rows of the footprint and the
   header line `**Путь:** лёгкий · N строк`, with the words «API и вид не меняются» for a file of a
   package or the kit; `--roles` is called before the menu of the approval, and any answer but `none`
-  sends the plan to the roles first. Before round one the diff against the base is judged again: a
+  sends the plan to the roles first. The edited rows name files: a folder, a pattern or a row without
+  a path is the full path, and so is a branch whose plan does not call itself light. Before round one the diff against the base is judged again: a
   change that grew goes on by the full path. The other checks of the tree under `tools/check-*` are no
   guards of the rules for the path and are guards for the second round.
 - **Every change is checked live before the first review round.** What the task is about is
@@ -50,10 +51,11 @@ The table in `implementation.md` next to it.
   a serious finding of the first round and on a change of the kit, of the guards and checks or of
   security. A serious finding is `blocker` or `major` of `qa-engineer`, a line «не выполнено» or
   «частично» of `goal-critic`, «не достигает» of `product-strategist`. Where the first round changed
-  nothing and found nothing serious, there is nothing to read. Without the number the answer is «нужен».
+  nothing but the records of the task and found nothing serious, there is nothing to read. Without the number the answer is «нужен».
 - **A light plan with a full diff is refused at the push.** The plan was read by no role and the change
   by two: the second round then reads the whole branch by the three roles of the full path, and its
-  commit lifts the refusal.
+  commit lifts the refusal: one of the branch itself, not empty and with no code after it. A base or a
+  branch name that cannot be read is refused too, and an edit left in the copy counts as unread.
 - **A finding is checked against the code before it is fixed.** One that does not hold is written
   off with its reason; a confirmed one about the diff of the branch is fixed in the same branch.
 - **A finding about the diff is never parked in a file.** It is fixed in the branch or written off

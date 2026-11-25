@@ -12,21 +12,37 @@
  *   node tools/review-path.mjs --check [--base <ref>]          code 1: the plan says light, the diff full
  *
  * The base is the branch the work is pushed against, not always `main`: a branch of a chain is judged
- * from the previous one. A diff or a plan that cannot be read is the full path.
+ * from the previous one. A branch whose plan does not call itself light is on the full path whatever
+ * its diff; a named `--head` is judged by the diff alone. What cannot be read — a base, a diff, a plan,
+ * the name of the branch — is the full path, and for `--check` the code 1.
  *
- * `--check` finds the plan in the commit of the branch that added it, so a folder taken apart does not
- * hide it. Its refusal is lifted by the round the full path would have had: a commit of the branch
- * named «…после второго круга ревью (RT-N)».
+ * `--check` reads the plans in the commits of the branch that added them, so a folder taken apart or a
+ * renamed branch does not hide one. Its refusal is lifted by the round the full path would have had: a
+ * commit of the branch itself named «…после второго круга ревью (RT-N)», not empty and with no code
+ * after it.
  */
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 
 import { parseApprovals } from './check-kit-approval.mjs';
-import { isLightPlan, judgeDiff, judgePlan, riskOf } from './review-path-signs.mjs';
+import { isCode, isLightPlan, isRecord, judgeDiff, judgePlan, riskOf, signsOfFile } from './review-path-signs.mjs';
 
 const ROLES = 'product-strategist goal-critic';
 const FLAGS = new Set(['--base', '--head', '--plan', '--roles', '--serious', '--since']);
 const COMMANDS = new Set(['--round-two', '--check']);
+/** The diff the same on every machine: no settings, no attributes and no outside program. */
+const DIFF = [
+    '-c',
+    'core.quotePath=false',
+    'diff',
+    '--no-ext-diff',
+    '--no-textconv',
+    '--text',
+    '--no-renames',
+    '--no-color',
+    '--src-prefix=a/',
+    '--dst-prefix=b/',
+];
 
 function parseArgs(argv) {
     const args = {};
@@ -48,62 +64,69 @@ const tryGit = (...args) => {
         return null;
     }
 };
+const linesOf = (text) => (text ?? '').split('\n').filter(Boolean);
 
-/** The changed lines of every file of the range, without their sign. */
+/** The changed lines of every file of the range, with their sign, in the order git prints the files. */
 function changedLines(from, to) {
-    const byFile = new Map();
-    let current = null;
+    const files = [];
+    let inHunk = false;
 
-    for (const line of git('-c', 'core.quotePath=false', 'diff', '--no-renames', '--unified=0', '--no-color', from, to).split('\n')) {
+    for (const line of git(...DIFF, '--unified=0', from, to).split('\n')) {
         if (line.startsWith('diff --git ')) {
-            current = [];
-            byFile.set(line.slice(line.lastIndexOf(' b/') + 3), current);
-        } else if (/^[+-](?![+-]{2} )/.test(line)) current?.push(line.slice(1));
+            files.push([]);
+            inHunk = false;
+        } else if (line.startsWith('@@ ')) inHunk = true;
+        else if (inHunk && /^[+-]/.test(line)) files.at(-1).push(line);
     }
 
-    return byFile;
+    return files;
 }
 
-/** The changed files between the two commits, or null when git does not give them. */
+/** The changed files between the two commits, or null when git does not give them whole. */
 function filesBetween(from, to) {
     try {
-        const lines = changedLines(from, to);
+        const changes = changedLines(from, to);
+        const paths = git(...DIFF, '--name-only', '-z', from, to)
+            .split('\0')
+            .filter(Boolean);
 
-        return git('-c', 'core.quotePath=false', 'diff', '--no-renames', '--numstat', from, to)
-            .split('\n')
-            .filter(Boolean)
-            .map((row) => {
-                const [added, removed, path] = row.split('\t');
+        if (paths.length !== changes.length) return null;
 
-                return {
-                    path,
-                    added: Number(added) || 0,
-                    removed: Number(removed) || 0,
-                    before: tryGit('show', `${from}:${path}`),
-                    after: tryGit('show', `${to}:${path}`),
-                    lines: lines.get(path) ?? [],
-                };
-            });
+        return paths.map((path, index) => {
+            const file = { path, before: tryGit('show', `${from}:${path}`), after: tryGit('show', `${to}:${path}`) };
+
+            if (file.before === null && file.after === null) throw new Error(path);
+
+            const added = changes[index].filter((line) => line.startsWith('+')).length;
+
+            return {
+                ...file,
+                added,
+                removed: changes[index].length - added,
+                lines: changes[index].map((line) => line.slice(1)),
+            };
+        });
     } catch {
         return null;
     }
 }
 
+const mergeBase = (base, head) => tryGit('merge-base', base, head)?.trim() ?? null;
+
 /** The files the branch changed since it left the base. */
 function filesOfBranch(base, head) {
-    const from = tryGit('merge-base', base, head)?.trim();
+    const from = mergeBase(base, head);
 
     return from ? filesBetween(from, head) : null;
 }
 
-/** Whether a record of the branch — in the task folder or in the archive — says the look is not touched. */
+/** Whether the record the branch added — approvals or archive — says the look is not touched. */
 function saysInvisible(files) {
-    return files.some(
-        ({ path, after }) =>
-            /^docs\/(tasks\/[^/]+\/approvals\.md|archive\/[^/]+\.md)$/.test(path) &&
-            after !== null &&
-            parseApprovals(after).invisible !== null
+    const records = files.filter(
+        ({ path, before }) => before === null && /^docs\/(tasks\/[^/]+\/approvals\.md|archive\/[^/]+\.md)$/.test(path)
     );
+
+    return records.length > 0 && records.every(({ after }) => parseApprovals(after ?? '').invisible !== null);
 }
 
 function judgeBranch(base, head) {
@@ -112,33 +135,60 @@ function judgeBranch(base, head) {
     return { files, verdict: judgeDiff(files, { invisible: files !== null && saysInvisible(files) }) };
 }
 
-/** The plan of the checked-out branch as the commit that added it holds it, or null. */
-function planOfBranch(base) {
-    const branch = tryGit('rev-parse', '--abbrev-ref', 'HEAD')?.trim();
-    const from = tryGit('merge-base', base, 'HEAD')?.trim();
-    const path = `docs/tasks/${branch}/plan.md`;
-    const added = from ? tryGit('log', '--diff-filter=A', '--format=%H', `${from}..HEAD`, '--', path) : null;
-    const sha = added?.trim().split('\n').filter(Boolean).at(-1);
+/**
+ * The plans of the checked-out branch, as the commits that added them hold them: `{ branch, plans }`, or
+ * null when the base or the name of the branch cannot be read. A plan the base already holds is found by
+ * the name of the branch.
+ */
+function plansOfBranch(base) {
+    const branch = tryGit('symbolic-ref', '--short', 'HEAD')?.trim();
+    const from = mergeBase(base, 'HEAD');
 
-    return sha ? { branch, text: tryGit('show', `${sha}:${path}`) } : null;
+    if (!branch || !from) return null;
+
+    const added = (range, path) => linesOf(tryGit('log', '--diff-filter=A', '--format=%H', ...range, '--', path)).at(-1) ?? null;
+    const paths = linesOf(tryGit('log', '--diff-filter=A', '--format=', '--name-only', `${from}..HEAD`, '--', 'docs/tasks/*/plan.md'));
+    const own = `docs/tasks/${branch}/plan.md`;
+    const plans = [...new Set([own, ...paths])].map((path) => {
+        const sha = added([`${from}..HEAD`], path) ?? (path === own ? added(['HEAD'], path) : null);
+
+        return sha ? tryGit('show', `${sha}:${path}`) : null;
+    });
+
+    return { branch, plans: plans.filter((text) => text !== null) };
 }
 
 const printPath = ({ light, reasons }) =>
     console.log([`путь: ${light ? 'лёгкий' : 'полный'}`, ...reasons.map((reason) => `  ${reason}`)].join('\n'));
 
-function readPlan(path) {
+const readText = (path) => {
     try {
-        return judgePlan(readFileSync(path, 'utf8'));
+        return readFileSync(path, 'utf8');
     } catch {
-        return { light: false, reasons: [`план нельзя прочесть: ${path}`] };
+        return null;
     }
+};
+
+function readPlan(path) {
+    const text = readText(path);
+
+    return text === null ? { light: false, reasons: [`план нельзя прочесть: ${path}`] } : judgePlan(text, readText);
+}
+
+/** The path of the branch: its diff, and the word of its plan where the checked-out branch is judged. */
+function pathOfBranch(base, head) {
+    const { verdict } = judgeBranch(base, head ?? 'HEAD');
+    const own = head === undefined ? plansOfBranch(base) : null;
+
+    if (own === null || own.plans.length === 0 || own.plans.some(isLightPlan)) return verdict;
+
+    return { light: false, reasons: ['план ветки не назван лёгким', ...verdict.reasons] };
 }
 
 /** The answer about the second round, a line; the decision is in the rule `task-delivery-loop`. */
 function roundTwo({ base, serious, since }) {
     const { files, verdict } = judgeBranch(base, 'HEAD');
-    const plan = planOfBranch(base);
-    const planned = plan !== null && isLightPlan(plan.text);
+    const planned = plansOfBranch(base)?.plans.some(isLightPlan) ?? false;
 
     if (planned && verdict.light) return 'второй круг: не нужен — путь лёгкий';
     if (planned) return `второй круг: нужен — план лёгкий, а разница полная (${verdict.reasons[0]}); вся ветка, три роли`;
@@ -148,20 +198,57 @@ function roundTwo({ base, serious, since }) {
     const risky = files === null ? 'разницу нельзя прочесть' : riskOf(files);
 
     if (risky === null) return 'второй круг: не нужен — серьёзных находок нет, кит, защиты и безопасность не тронуты';
+    if (linesOf(tryGit('status', '--porcelain', '--untracked-files=no')).length > 0) {
+        return 'второй круг: нужен — в копии лежат незакоммиченные правки';
+    }
 
     const fixes = since === undefined ? null : filesBetween(since, 'HEAD');
 
-    if (fixes !== null && fixes.length === 0) return 'второй круг: не нужен — читать нечего';
+    if (fixes !== null && fixes.every(({ path }) => isRecord(path))) return 'второй круг: не нужен — читать нечего';
 
     return `второй круг: нужен — ${risky}`;
 }
 
+/** Whether a commit of the branch itself closes the second round and no code came after it. */
+function readBySecondRound(base, task) {
+    for (const row of linesOf(tryGit('log', '--first-parent', '--format=%H %P%x09%s', `${base}..HEAD`))) {
+        const [ids, subject] = row.split('\t');
+        const [sha, parent, merged] = ids.split(' ');
+
+        // A merge of the base brings what its own branch has read.
+        if (merged) continue;
+
+        const files = parent ? filesBetween(parent, sha) : null;
+
+        if (files === null) return false;
+        if (subject.endsWith(`после второго круга ревью (${task})`)) return files.length > 0;
+        if (files.some((file) => isCode(file.path) || signsOfFile(file).length > 0)) return false;
+    }
+
+    return false;
+}
+
+function refuse(reasons, task) {
+    console.error('review-path: the plan of the branch is light, and its diff is full\n');
+    reasons.forEach((reason) => console.error(`  ${reason}`));
+    console.error(
+        `\nThe full path has not read this change: run the second round over the whole branch by qa-engineer, product-strategist and goal-critic, and close it by a commit «…после второго круга ревью (${task ?? 'RT-N'})» that is not empty and has no code after it. A round without findings closes by its record in progress.md, committed under that name.`
+    );
+
+    return 1;
+}
+
 /** Code 1 when the plan of the branch is light and its diff is full without the round that answers for it. */
 function check(base) {
-    const plan = planOfBranch(base);
+    const own = plansOfBranch(base);
 
-    if (plan === null || !isLightPlan(plan.text)) {
-        console.log('review-path: the plan of the branch is not light, nothing to compare');
+    if (own === null) {
+        console.error(`review-path: the base «${base}» or the name of the branch cannot be read, and the path is not known`);
+
+        return 1;
+    }
+    if (!own.plans.some(isLightPlan)) {
+        console.log('review-path: no plan of the branch is light, nothing to compare');
 
         return 0;
     }
@@ -174,22 +261,15 @@ function check(base) {
         return 0;
     }
 
-    const task = /^([A-Z]+-\d+)-/.exec(plan.branch)?.[1];
-    const subjects = tryGit('log', '--format=%s', `${base}..HEAD`)?.split('\n') ?? [];
+    const task = /^([A-Z]+-\d+)-/.exec(own.branch)?.[1];
 
-    if (task && subjects.some((subject) => subject.endsWith(`после второго круга ревью (${task})`))) {
+    if (task && readBySecondRound(base, task)) {
         console.log('review-path: the plan is light, the diff is full, and the second round has read it');
 
         return 0;
     }
 
-    console.error('review-path: the plan of the branch is light, and its diff is full\n');
-    verdict.reasons.forEach((reason) => console.error(`  ${reason}`));
-    console.error(
-        `\nThe full path has not read this change: run the second round over the whole branch by qa-engineer, product-strategist and goal-critic, and close it by a commit «…после второго круга ревью (${task ?? 'RT-N'})»; a round without findings closes by the record in progress.md.`
-    );
-
-    return 1;
+    return refuse(verdict.reasons, task);
 }
 
 function main() {
@@ -200,7 +280,7 @@ function main() {
     else if (args.plan !== undefined) printPath(readPlan(args.plan));
     else if (args['round-two']) console.log(roundTwo({ base, serious: args.serious, since: args.since }));
     else if (args.check) process.exitCode = check(base);
-    else printPath(judgeBranch(base, args.head ?? 'HEAD').verdict);
+    else printPath(pathOfBranch(base, args.head));
 }
 
 try {

@@ -13,22 +13,40 @@ export const LINE_LIMIT = 150;
 
 /** Files whose lines are not counted: tests, texts, frames and what a tool writes. */
 const NOT_CODE =
-    /^docs\/|\.mdx?$|\.(spec|test)\.[a-z]+$|\.stories\.ts$|^apps\/[^/]*-e2e\/|(^|\/)__snapshots__\/|\.(png|snap)$|(^|\/)(graphify-out|rules-graph)\/|^pnpm-lock\.yaml$|^tools\/tests\/|^projects\/agent-kit\/tests\//;
+    /^docs\/|\.mdx?$|\.(spec|test)\.[a-z]+$|\.stories\.ts$|^apps\/[^/]*-e2e\/|(^|\/)__snapshots__\/|\.snap$|(^|\/)(graphify-out|rules-graph)\/|^pnpm-lock\.yaml$|^tools\/tests\/|^projects\/agent-kit\/tests\//;
 
 const SECURITY_PATH =
-    /^projects\/auth-|^apps\/auth-example|^deploy\/|^docker-compose|^\.github\/|(^|\/)\.env|\.(guard|interceptor)\.ts$|^(apps|libs)\/(.*\/)?(access|auth|entry|permissions|security)\//;
-const SECURITY_LINE = /DomSanitizer|bypassSecurityTrust|innerHTML|javascript:|\.protocol\b/;
+    /^projects\/auth-|^apps\/auth-example|^deploy\/|^docker-compose|^\.(github|verdaccio)\/|(^|\/)\.env|\.(guard|interceptor|middleware)\.ts$|^(apps|libs)\/(.*\/)?(access|auth|entry|permissions|security)\/|^(apps|libs|projects\/(?!ui-kit-v2\/))(.*\/)[^/]*(token|invite|secret|redact|sign-in|visitor|rights|cors|crypt)[^/]*$|^tools\/(auth-|cargo-sign-in|[^/]*secret)/;
+const SECURITY_LINE =
+    /DomSanitizer|bypassSecurityTrust|(inner|outer)HTML|insertAdjacentHTML|javascript:|\.protocol\b(?!['"/.])|\beval\(|new Function\(|\$(query|execute)RawUnsafe|node:crypto|createHash|createHmac|timingSafeEqual|randomBytes|\bjwt\b/i;
 const MIGRATION_PATH = /^prisma\/|(^|\/)migrations\//;
-const LOOK_PATH = /\.(scss|css|html|svg)$/;
+const LOOK_PATH = /\.(scss|css|html|svg|ico|png|jpe?g|gif|webp|woff2?|ttf)$/;
+/** The files of the root, its texts aside, hold the settings of the checks, the packages and the agent. */
 const GUARD_PATH =
-    /^\.claude\/(?!rt-kit\/(assignments\.md$|postmortems\/|proposals\/|observations\/))|^docs\/constitution\/|^projects\/agent-kit\/(assets|src)\/|^\.husky\/|^tools\/(flow-|task-flow|review-path|work-steps-lib|check-(kit-approval|push-gate|hooks|boundary)\.mjs)|^tools\/[^/]*-allowlist\.json$/;
+    /^(?!.*\.md$|LICENSE$|docker-compose|pnpm-lock\.yaml$|\.env)[^/]+$|^\.claude\/(?!rt-kit\/(assignments\.md$|postmortems\/|proposals\/|observations\/))|^\.(?!claude\/|github\/|verdaccio\/|idea\/|vscode\/)[^/]+\/|^docs\/constitution\/|^projects\/agent-kit\/(?!graphify-out\/|rules-graph\/|CHANGELOG|README)|^tools\/(flow-|task-flow|review-path|work-steps-lib|check-(kit-approval|push-gate|hooks|boundary)\.mjs)|^tools\/[^/]*-allowlist\.json$|^tools\/tests\/(run|lib|review-path|gate-map|check-(kit-approval|push-gate|hooks|boundary))/;
+const TEST_DIR = /^tools\/tests\/|^projects\/agent-kit\/tests\//;
 /** A guard for the second round only: a check of the tree judges the work, and П2 says «защит» without «правил». */
-const CHECK_PATH = /^tools\/(check-|eslint-rules\/|stylelint-rules\/)|^eslint\/|^(eslint|stylelint)\.config\./;
-const API_PATH = /^projects\/[^/]+\/(src\/)?(index|public-api)\.ts$|^(apps\/message-bus|libs\/message-bus-api)\/.*\.(controller|dto)\.ts$/;
-const PACKAGE_SOURCE = /^projects\/(?!agent-kit\/|auth-keycloak-theme\/)[^/]+\/.*\.ts$/;
-const PACKAGE_FILE = /^projects\/[^/]+\/package\.json$/;
-const PACKAGE_KEYS = ['exports', 'main', 'module', 'types', 'typings', 'bin', 'dependencies', 'peerDependencies', 'peerDependenciesMeta'];
-const LAID_OUT = /^.{0,200}rt-kit v\d/s;
+const CHECK_PATH = /^tools\/(check-|visual-gate|eslint-rules\/|stylelint-rules\/)|^eslint\//;
+const API_PATH =
+    /^projects\/[^/]+\/(.*\/)?(src\/)?(index|public-api)\.ts$|^projects\/(.*\/)?(ng-package|tsconfig\.lib[^/]*)\.json$|^projects\/.*\.proto$|^projects\/[^/]+\/(.*\/)?src\/.*\.(mts|cts|tsx|js|mjs|cjs)$|^(apps\/message-bus|libs\/message-bus-api)\/.*\.(controller|dto)\.ts$/;
+const PACKAGE_SOURCE = /^projects\/(?!agent-kit\/|auth-keycloak-theme\/)[^/]+\/(.*\/)?src\/.*\.ts$|^libs\/message-bus-common\/.*\.ts$/;
+/** The receiver answers by the types of its libraries; their functions are its own. */
+const RECEIVER_SOURCE = /^libs\/message-bus-api\/.*\.ts$/;
+const PACKAGE_FILE = /^projects\/.*package\.json$/;
+/** The keys of a package nobody installs by. */
+const PACKAGE_WORDS = new Set([
+    'version',
+    'description',
+    'keywords',
+    'author',
+    'homepage',
+    'repository',
+    'bugs',
+    'license',
+    'devDependencies',
+]);
+const KIT_CODE = /^projects\/[^/]+\/(.*\/)?src\//;
+const LAID_OUT = /rt-kit v\d/;
 
 /** Whether the lines of the file count. */
 export const isCode = (path) => !NOT_CODE.test(path);
@@ -39,14 +57,42 @@ const isLaidOut = (text) => LAID_OUT.test((text ?? '').slice(0, 300));
 function packageKeysDiffer(before, after) {
     try {
         const [a, b] = [JSON.parse(before ?? '{}'), JSON.parse(after ?? '{}')];
+        const keys = [...new Set([...Object.keys(a), ...Object.keys(b)])].filter((key) => !PACKAGE_WORDS.has(key));
 
-        return PACKAGE_KEYS.some((key) => JSON.stringify(a[key]) !== JSON.stringify(b[key]));
+        return keys.some((key) => JSON.stringify(a[key]) !== JSON.stringify(b[key]));
     } catch {
         return true;
     }
 }
 
-const differ = (by, before, after) => by(before ?? '') !== by(after ?? '');
+const differ = (by, { before, after }) => by(before ?? '') !== by(after ?? '');
+
+function isGuard({ path, before, after, removed }) {
+    const dropped = TEST_DIR.test(path) && after === null && before !== null && removed > 0;
+
+    return GUARD_PATH.test(path) || dropped || isLaidOut(before) || isLaidOut(after);
+}
+
+function isApi(file) {
+    const { path } = file;
+
+    if (!isCode(path)) return false;
+    if (API_PATH.test(path)) return true;
+    if (PACKAGE_FILE.test(path)) return packageKeysDiffer(file.before, file.after);
+    if (PACKAGE_SOURCE.test(path)) return differ(shapeOf, file);
+
+    return RECEIVER_SOURCE.test(path) && differ((text) => shapeOf(text, { types: true }), file);
+}
+
+function isLook(file, invisible) {
+    const { path } = file;
+
+    if (!isCode(path)) return false;
+    if (LOOK_PATH.test(path)) return true;
+    if (isVisibleKitFile(path)) return !invisible;
+
+    return path.endsWith('.ts') && differ(viewOf, file);
+}
 
 /**
  * The signs of one changed file: `{ path, added, removed, before, after, lines }`, where `before` and
@@ -54,20 +100,15 @@ const differ = (by, before, after) => by(before ?? '') !== by(after ?? '');
  * record of the branch holds the line «Без вида».
  */
 export function signsOfFile(file, { invisible = false } = {}) {
-    const { path, before, after, lines = [] } = file;
+    const { path, lines = [] } = file;
     const found = [];
-    const test = !isCode(path);
-    const source = path.endsWith('.ts') && !test;
+    const code = isCode(path);
 
-    if (GUARD_PATH.test(path) || isLaidOut(before) || isLaidOut(after)) found.push('защиты правил');
+    if (isGuard(file)) found.push('защиты правил');
     if (MIGRATION_PATH.test(path)) found.push('миграции');
-    if (SECURITY_PATH.test(path) || (!test && lines.some((line) => SECURITY_LINE.test(line)))) found.push('безопасность');
-    if (!test && (API_PATH.test(path) || (PACKAGE_FILE.test(path) && packageKeysDiffer(before, after)))) found.push('публичный API');
-    if (!found.includes('публичный API') && source && PACKAGE_SOURCE.test(path) && differ(shapeOf, before, after))
-        found.push('публичный API');
-    if (!test && LOOK_PATH.test(path)) found.push('смена вида');
-    else if (isVisibleKitFile(path) && !invisible) found.push('смена вида');
-    else if (source && path.startsWith('projects/') === false && differ(viewOf, before, after)) found.push('смена вида');
+    if (code && (SECURITY_PATH.test(path) || lines.some((line) => SECURITY_LINE.test(line)))) found.push('безопасность');
+    if (isApi(file)) found.push('публичный API');
+    if (isLook(file, invisible)) found.push('смена вида');
 
     return found;
 }
@@ -84,51 +125,82 @@ export function judgeDiff(files, options = {}) {
     return { light: reasons.length === 0, lines, reasons };
 }
 
-/** Whether the change must be read the second time on the full path by what it touches. */
+/** The first file by which the change must be read the second time on the full path, or null. */
 export function riskOf(files) {
     const risky = files.find((file) => {
-        if (!isCode(file.path) && !GUARD_PATH.test(file.path)) return false;
         const signs = signsOfFile(file, { invisible: true });
 
         return (
-            signs.includes('защиты правил') || signs.includes('безопасность') || CHECK_PATH.test(file.path) || /^projects\//.test(file.path)
+            signs.includes('защиты правил') ||
+            signs.includes('безопасность') ||
+            (isCode(file.path) && (CHECK_PATH.test(file.path) || KIT_CODE.test(file.path)))
         );
     });
 
     return risky ? risky.path : null;
 }
 
-const HEADER = /^\*\*(?:Путь|Path):\*\*\s+(?:лёгкий|light)\s+·\s+(\d+)\s+(?:строк|lines?)(.*)$/mu;
-const STATEMENT = /API и вид не меняются/u;
-const EDITED_ROW = /^\|[^|]*\(правится\)[^|]*\|(.*)\|\s*$/gmu;
+/** Files a round leaves behind that nobody reads again: the records of the task. */
+export const isRecord = (path) => /^docs\/(tasks|archive)\//.test(path);
+
+const HEADER = /^\*\*(?:Путь|Path):\*\*\s+(?:лёгкий|light)\s+·\s+(\d+)\s+(?:строк[аи]?|lines?)\s*(?:·\s*(.+?)\s*)?$/u;
+const ANY_HEADER = /^\*\*(?:Путь|Path):\*\*/u;
+const STATEMENT = /^(API и вид не меняются|the API and the look do not change)$/iu;
+
+/** The text without code fences and comments: a quoted sample is no word of the plan. */
+const spoken = (text) => (text ?? '').replace(/<!--[\s\S]*?-->/g, '').replace(/^ *(`{3,}|~{3,})[\s\S]*?^ *\1[^\n]*$/gm, '');
+
+/** The header of the plan: `{ count, stated }`, or null where it is absent, doubled or in other words. */
+function headerOf(text) {
+    const head = spoken(text).split(/^## /m)[0].split(/\r?\n/);
+    const lines = head.map((line) => line.trim()).filter((line) => ANY_HEADER.test(line));
+    const match = lines.length === 1 ? HEADER.exec(lines[0]) : null;
+
+    if (!match || (match[2] !== undefined && !STATEMENT.test(match[2]))) return null;
+
+    return { count: Number(match[1]), stated: match[2] !== undefined };
+}
 
 /** Whether the plan calls itself light. */
-export const isLightPlan = (text) => HEADER.test(text ?? '');
+export const isLightPlan = (text) => headerOf(text) !== null;
 
-/** The paths of the rows «(правится)» of the footprint. */
-export const editedPaths = (text) => [...text.matchAll(EDITED_ROW)].flatMap((row) => [...row[1].matchAll(/`([^`]+)`/g)].map((m) => m[1]));
+/** The rows of the footprint the work edits: the paths of each in backticks. */
+const editedRows = (text) =>
+    spoken(text)
+        .split('\n')
+        .filter((line) => /^\s*\|/.test(line) && /правится/iu.test(line))
+        .map((line) => [...line.matchAll(/`([^`]+)`/g)].map((m) => m[1].trim().replace(/^(\.\/)+/, '')));
 
-/** The path of a plan before the code: its header and the paths it says it edits. */
-export function judgePlan(text) {
-    const header = HEADER.exec(text ?? '');
+/** Why a path of the footprint keeps the plan from the light path; `read` gives the text of a file or null. */
+function pathReasons(path, stated, read) {
+    if (/[*?{}[\]]/.test(path)) return [`в следе образец, а не файл: ${path}`];
+    if (!/[^/]\.[a-z0-9]+$/i.test(path)) return [`в следе папка, а не файл: ${path}`];
 
-    if (!header) return { light: false, reasons: ['в заголовке плана нет строки «**Путь:** лёгкий · N строк»'] };
+    const text = read(path);
+    const reasons = signsOfFile({ path, before: text, after: text, removed: 0 }, { invisible: true }).map((sign) => `${sign}: ${path}`);
 
-    const reasons = [];
-    const paths = editedPaths(text);
-    const stated = STATEMENT.test(header[2]);
+    if (/^(projects|libs\/message-bus-(common|api))\//.test(path) && isCode(path) && !stated) {
+        reasons.push(`в заголовке нет слов «API и вид не меняются»: ${path}`);
+    }
 
-    if (Number(header[1]) > LINE_LIMIT) reasons.push(`строк в плане ${header[1]}, предел ${LINE_LIMIT}`);
-    if (paths.length === 0) reasons.push('в следе нет строк «(правится)»');
-    for (const path of paths) {
-        if (/^[^/]*\/?$/.test(path) && !/\.[a-z]+$/.test(path)) reasons.push(`след шире папки: ${path}`);
+    return reasons;
+}
 
-        const probe = { path, before: null, after: null };
-        const signs = signsOfFile(probe, { invisible: true });
+/** The path of a plan before the code: its header and the files it says it edits. */
+export function judgePlan(text, read = () => null) {
+    const header = headerOf(text);
 
-        reasons.push(...signs.map((sign) => `${sign}: ${path}`));
-        if (/^projects\/(?!agent-kit\/)/.test(path) && isCode(path) && !stated)
-            reasons.push(`в заголовке нет слов «API и вид не меняются»: ${path}`);
+    if (header === null) {
+        return { light: false, reasons: ['в заголовке плана нет одной строки «**Путь:** лёгкий · N строк»'] };
+    }
+
+    const reasons = header.count > LINE_LIMIT ? [`строк в плане ${header.count}, предел ${LINE_LIMIT}`] : [];
+    const rows = editedRows(text);
+
+    if (rows.length === 0) reasons.push('в следе нет строк «(правится)»');
+    for (const row of rows) {
+        if (row.length === 0) reasons.push('в следе строка «(правится)» без файла');
+        for (const path of row) reasons.push(...pathReasons(path, header.stated, read));
     }
 
     return { light: reasons.length === 0, reasons };
