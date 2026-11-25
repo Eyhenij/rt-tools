@@ -71,8 +71,11 @@ export class RtAsideSheetTabs {
         items.forEach((item: HTMLElement, at: number): void => {
             item.style.order = String((at - selected + middle + items.length) % items.length);
         });
-        const chosen: HTMLElement = items[selected];
-        list.scrollLeft = chosen.offsetLeft + chosen.offsetWidth / 2 - list.clientWidth / 2;
+        // Середина по прямоугольникам, а не по `offset*`: те округлены до пикселя, и выбранная вкладка
+        // вставала на полпикселя мимо середины ряда.
+        const chosen: DOMRect = items[selected].getBoundingClientRect();
+        const row: DOMRect = list.getBoundingClientRect();
+        list.scrollLeft += chosen.left + chosen.width / 2 - (row.left + list.clientLeft + list.clientWidth / 2);
     }
 
     /** Ряд дошёл до края: крайняя вкладка переходит на другой край, прокрутка сдвигается на её ширину. */

@@ -36,6 +36,9 @@ const PHONE_WINDOW: { readonly width: number; readonly height: number } = { widt
 /** Узкое окно шире телефона: панель выезжает сбоку, как прежде. */
 const SIDE_WINDOW: { readonly width: number; readonly height: number } = { width: 600, height: 812 };
 
+/** Сколько ждать список, открытый из шторки: он встаёт без выезда, ждать нужно только отрисовку. */
+const LIST_OPEN_MS: number = 300;
+
 /** Поднятая шторка панели: по ней кадр ждёт, что шторка встала на место. */
 const OPEN_SHEET: string = '.rt-aside-overlay .rt-bottom-sheet--open';
 
@@ -58,6 +61,8 @@ export default {
     component: TestRtAsideSheetComponent,
     parameters: {
         controls: { disable: true },
+        // Без полей витрины: страница ровно в окно, и полоса прокрутки не съедает ширину кадра.
+        layout: 'fullscreen',
     },
 } as Meta<TestRtAsideSheetComponent>;
 
@@ -104,6 +109,29 @@ export const ToolbarFilters: TStory = {
     decorators: [PHONE],
     parameters: PHONE_SHOT,
     play: openFilters,
+};
+
+/** Отборы и список «Статуса», открытый из них: второй экран той же шторки. */
+async function openStatus(context: { canvasElement: HTMLElement }): Promise<void> {
+    await openFilters(context);
+    // Поле стоит в оверлее шторки, вне холста истории: его нажимают прямо, и кадр ждёт открытый список.
+    context.canvasElement.ownerDocument
+        .querySelector<HTMLElement>('.rt-aside-overlay [qa-dataid="story-filter-status"] [qa-dataid="select-trigger"]')
+        ?.click();
+    await new Promise<void>((resolve: () => void): void => {
+        setTimeout(resolve, LIST_OPEN_MS);
+    });
+}
+
+/**
+ * Шторка из шторки: список «Статуса», открытый из отборов, встаёт в той же шторке вторым экраном —
+ * на её месте и высоте, с заголовком поля и шевроном «назад» слева вместо «×».
+ */
+export const SheetInSheet: TStory = {
+    args: { frame: 'filters' },
+    decorators: [PHONE],
+    parameters: { snapshot: { fullPage: true, overlay: '.rt-popover-sheet .rt-bottom-sheet--open', viewport: PHONE_WINDOW } },
+    play: openStatus,
 };
 
 /** Сведения рабочего стола: надзаголовок «Сведения», заголовок из входа, без главной кнопки. */

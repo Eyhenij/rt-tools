@@ -297,10 +297,20 @@ describe('Панель службы кита на телефоне — штор�
             // Залитая кнопка — вид кнопки по умолчанию, без модификатора рамки или текста.
             expect(save?.classList).not.toContain('rt-button--outlined');
             expect(save?.classList).not.toContain('rt-button--text');
+            // Шаг действия шапки шторки — `sm`, как «Применить» отборов: высота подвала резала бы заголовок.
+            expect(save?.classList).toContain('rt-button--sm');
 
             save?.click();
 
             expect(presses['save']).toBe(1);
+        });
+
+        it('SC-UKV-1803 — от 481 точки главная кнопка остаётся в подвале своим размером', async (): Promise<void> => {
+            setup(false);
+            await open();
+
+            expect(node('foot-save')?.closest('[qa-dataid="aside-footer"]')).not.toBeNull();
+            expect(node('foot-save')?.classList).not.toContain('rt-button--sm');
         });
 
         it('SC-UKV-1813 — без главной кнопки правая колонка пуста, заголовок по центру', async (): Promise<void> => {

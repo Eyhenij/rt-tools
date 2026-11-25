@@ -57,7 +57,9 @@ const LIST_CONFIG: IRtDataTable.Config.Data<Record<string, unknown>> = {
 
 const STATUSES: ReadonlyArray<IRtSelect.Option<string>> = [
     { value: 'new', label: 'Новая' },
-    { value: 'confirmed', label: 'Подтверждена' },
+    { value: 'work', label: 'В работе', description: 'Заявку взял исполнитель' },
+    { value: 'waiting', label: 'Ожидает ответа', description: 'Клиенту задан вопрос' },
+    { value: 'closed', label: 'Закрыта' },
 ];
 
 const PAYMENTS: ReadonlyArray<IRtSelect.Option<string>> = [
@@ -81,7 +83,9 @@ const TABLE_ID: string = 'story-bookings';
                 <rt-toolbar data-story-trigger>
                     <ng-template rtToolbarFilters>
                         <div>
-                            <rt-field label="Статус"><rt-select placeholder="Любой" [options]="statuses" /></rt-field>
+                            <rt-field label="Статус">
+                                <rt-select qa-dataid="story-filter-status" placeholder="Любой" [options]="statuses" />
+                            </rt-field>
                             <rt-field label="Оплата"><rt-select placeholder="Любая" [options]="payments" /></rt-field>
                         </div>
                     </ng-template>

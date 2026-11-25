@@ -13,6 +13,7 @@ import { RtTabsComponent } from '../tabs/rt-tabs.component';
 import { RtAsideHeaderComponent } from './header/rt-aside-header.component';
 import { RtAsideContentDirective } from './rt-aside-content.directive';
 import { RtAsideRef } from './rt-aside-ref';
+import { RtAsideSheetTabs } from './rt-aside-sheet-tabs';
 import { RtAsideComponent } from './rt-aside.component';
 import { RtAsideService } from './rt-aside.service';
 import { RT_ASIDE_DATA } from './rt-aside.tokens';
@@ -39,7 +40,8 @@ const PHONE_QUERY: string = '(max-width: 480px)';
                 } @else {
                     <input qa-dataid="record-name" />
                     <button type="button" qa-dataid="city-field" (click)="cityOpen.set(true)">{{ city() }}</button>
-                    <rt-bottom-sheet title="Город" [open]="cityOpen()" (openChange)="cityOpen.set($event)">
+                    <rt-bottom-sheet [open]="cityOpen()" (openChange)="cityOpen.set($event)">
+                        <span sheetHeader qa-dataid="city-title">Город</span>
                         <button type="button" qa-dataid="city-option" (click)="pick('Казань')">Казань</button>
                     </rt-bottom-sheet>
                 }
@@ -182,7 +184,7 @@ describe('Панель-шторка на телефоне — Escape, фокус
         expect(heard).toEqual([]);
     });
 
-    it('SC-UKV-1827 — Escape закрывает сперва шторку над панелью, панель видна снова', async (): Promise<void> => {
+    it('SC-UKV-1827 — Escape на втором экране возвращает первый, шторка остаётся открытой', async (): Promise<void> => {
         const fixture: ComponentFixture<KeysPageComponent> = await openFromPage();
         track(fixture);
         node('city-field')?.click();
@@ -195,14 +197,18 @@ describe('Панель-шторка на телефоне — Escape, фокус
         expect(sheetOf('city-option')?.classList).not.toContain('rt-bottom-sheet--open');
         expect(node('aside-sheet')?.classList).not.toContain('rt-bottom-sheet--covered');
         expect(node('aside-sheet')?.classList).toContain('rt-bottom-sheet--open');
+        expect(node('aside-title')?.textContent?.trim()).toBe('Запись');
         expect(closes).toBe(0);
     });
 
-    it('SC-UKV-1830 — список в своей шторке возвращает панель с набранным текстом и выбранным значением', async (): Promise<void> => {
+    it('SC-UKV-1830 — список в той же шторке возвращает содержимое панели с набранным текстом и выбором', async (): Promise<void> => {
         await openFromPage();
         (node('record-name') as HTMLInputElement).value = 'Новое имя';
+        node('city-field')?.focus();
         node('city-field')?.click();
         await settle();
+
+        expect(sheetOf('city-option')?.classList).toContain('rt-bottom-sheet--nested');
 
         node('city-option')?.click();
         await settle();
@@ -211,16 +217,34 @@ describe('Панель-шторка на телефоне — Escape, фокус
         expect(node('aside-sheet')?.classList).not.toContain('rt-bottom-sheet--covered');
         expect((node('record-name') as HTMLInputElement).value).toBe('Новое имя');
         expect(node('city-field')?.textContent?.trim()).toBe('Казань');
+        expect(document.activeElement).toBe(node('city-field'));
     });
 
-    it('SC-UKV-1831 — шторка поля над панелью подменяет её: панель под ней нажатий не берёт', async (): Promise<void> => {
+    it('SC-UKV-1831 — шторка поля открывается в той же шторке той же высоты с шевроном «назад»', async (): Promise<void> => {
         await openFromPage();
+        const panel: HTMLElement | null = node('aside-sheet')?.querySelector<HTMLElement>(':scope > .rt-bottom-sheet__panel') ?? null;
+        jest.spyOn(panel as HTMLElement, 'getBoundingClientRect').mockReturnValue({ height: 800 } as DOMRect);
+        node('city-field')?.focus();
 
         node('city-field')?.click();
         await settle();
+        const city: HTMLElement | null = sheetOf('city-option');
+        const back: HTMLElement | null = city?.querySelector<HTMLElement>('[qa-dataid="bottom-sheet-back"]') ?? null;
 
-        expect(sheetOf('city-option')?.classList).toContain('rt-bottom-sheet--open');
+        expect(city?.classList).toContain('rt-bottom-sheet--nested');
+        expect(city?.style.getPropertyValue('--rt-bottom-sheet-nested-height')).toBe('800px');
         expect(node('aside-sheet')?.classList).toContain('rt-bottom-sheet--covered');
+        expect(node('city-title')?.textContent?.trim()).toBe('Город');
+        expect(city?.querySelector('[qa-dataid="bottom-sheet-close"]')).toBeNull();
+        expect(back?.querySelector('button')?.getAttribute('aria-label')).toBe('Back');
+        expect(back?.querySelector('rt-icon')?.getAttribute('ng-reflect-name') ?? back?.innerHTML).toContain('chevron-left');
+
+        back?.querySelector('button')?.click();
+        await settle();
+
+        expect(city?.classList).not.toContain('rt-bottom-sheet--open');
+        expect(node('aside-sheet')?.classList).not.toContain('rt-bottom-sheet--covered');
+        expect(node('aside-sheet')?.classList).toContain('rt-bottom-sheet--open');
     });
 
     it('SC-UKV-1832 — вкладки шторки в одну строку по кругу: выбранная в середине ряда', async (): Promise<void> => {
@@ -234,6 +258,30 @@ describe('Панель-шторка на телефоне — Escape, фокус
         expect(orderOf('c')).toBe('2');
         expect(orderOf('a')).toBe('0');
         expect(orderOf('e')).toBe('4');
+    });
+
+    it('SC-UKV-1832 — выбранная вкладка встаёт серединой в середину ряда без округления до пикселя', (): void => {
+        const list: HTMLElement = document.createElement('div');
+        ['a', 'b', 'c'].forEach((id: string): void => {
+            const item: HTMLElement = document.createElement('div');
+            item.dataset['tabitem'] = id;
+            item.innerHTML = `<button role="tab" aria-selected="${id === 'b'}"></button>`;
+            list.appendChild(item);
+        });
+        document.body.appendChild(list);
+        const rect: (left: number, width: number) => DOMRect = (left: number, width: number): DOMRect =>
+            ({ left, width, right: left + width, top: 0, bottom: 0, height: 0, x: left, y: 0 }) as DOMRect;
+        Object.defineProperty(list, 'clientWidth', { value: 335 });
+        jest.spyOn(list, 'getBoundingClientRect').mockReturnValue(rect(20, 335));
+        // Выбранная после перестановки стоит у 115,3 шириной 145,1: её середина — 187,85, середина ряда — 187,5.
+        jest.spyOn(list.children[1] as HTMLElement, 'getBoundingClientRect').mockReturnValue(rect(115.3, 145.1));
+        const tabs: RtAsideSheetTabs = new RtAsideSheetTabs();
+
+        tabs.attach(list);
+
+        expect(list.scrollLeft).toBeCloseTo(0.35, 5);
+        tabs.detach();
+        list.remove();
     });
 
     it('SC-UKV-1832 — ряд вкладок шторки — одна строка с затенёнными на 32 краями и без полосы прокрутки', (): void => {

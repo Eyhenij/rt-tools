@@ -74,9 +74,27 @@ describe('стили панели-шторки', (): void => {
         const meta: string = ruleBody(header, '.rt-aside-header__sheet-meta');
 
         expect(meta).toContain('flex-direction: column');
-        expect(meta).toContain(
-            'padding-inline: calc(var(--rt-aside-content-inset, var(--rt-aside-inset)) - var(--rt-space-2) - var(--rt-space-1))'
-        );
+        // 12 шапки шторки и 8 блока — край содержимого шторки в 20.
+        expect(meta).toContain('padding-inline: var(--rt-space-2)');
         expect(ruleBody(sheet, '.rt-bottom-sheet__header')).toContain('padding: 0 calc(var(--rt-space-2) + var(--rt-space-1))');
+        expect(ruleBody(frame, 'rt-aside .rt-aside.rt-aside--sheet')).toContain('--rt-aside-inset: var(--rt-space-5)');
+        expect(ruleBody(frame, 'rt-aside .rt-aside.rt-aside--sheet > .rt-aside__content')).toContain('padding-top: 0');
+    });
+
+    it('SC-UKV-1811 — заголовок шторки строкой 24, значки шапки шторки 32 со значком 16', (): void => {
+        expect(ruleBody(header, '.rt-aside-header__content--sheet .rt-aside-header__title')).toContain(
+            'line-height: var(--rt-aside-header-title-leading, var(--rt-leading-normal))'
+        );
+        const icons: string = ruleBody(header, '.rt-aside-header__content--sheet .rt-aside-header__actions .rt-icon-button');
+
+        expect(icons).toContain('--rt-icon-button-size-step: var(--rt-control-height-sm)');
+        expect(icons).toContain('--rt-icon-step-md: var(--rt-size-4)');
+    });
+
+    it('SC-UKV-1810 — подвал панели-шторки: 12 над кнопками и 24 под ними, только у своей шторки', (): void => {
+        const footer: string = ruleBody(frame, 'rt-aside > rt-bottom-sheet > .rt-bottom-sheet__panel > .rt-bottom-sheet__footer');
+
+        expect(footer).toContain('padding-top: calc(var(--rt-space-2) + var(--rt-space-1))');
+        expect(footer).toContain('padding-bottom: calc(var(--rt-space-6) + env(safe-area-inset-bottom))');
     });
 });

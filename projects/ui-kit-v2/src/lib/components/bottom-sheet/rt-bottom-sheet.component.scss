@@ -233,17 +233,32 @@
             }
         }
 
-        /* Шторка, открытая из этой, подменяет её: эта уходит вниз, как закрытая, и возвращается,
-           когда верхнюю закроют. Стоит после `--open`, чтобы перекрыть его. */
+        /* Шторка, открытая из этой, открывается в ней же вторым экраном: панель этой прячется сразу,
+           без выезда, а затемнение остаётся — второй экран своего не рисует. Панель остаётся на месте:
+           шторка, объявленная в её содержимом, стоит от неё и встаёт ровно на её место. Стоит после
+           `--open`, чтобы перекрыть его. */
         &--open.rt-bottom-sheet--covered {
             pointer-events: none;
 
-            .rt-bottom-sheet__backdrop {
+            > .rt-bottom-sheet__panel {
+                visibility: hidden;
+            }
+        }
+
+        /* Второй экран: та же высота и место, без выезда и без своего затемнения. Видим и внутри
+           спрятанной панели нижней шторки. */
+        &--nested {
+            visibility: visible;
+
+            > .rt-bottom-sheet__backdrop {
                 opacity: 0;
+                transition: none;
             }
 
-            .rt-bottom-sheet__panel {
-                transform: translateY(100%);
+            > .rt-bottom-sheet__panel {
+                height: var(--rt-bottom-sheet-nested-height, auto);
+                max-height: none;
+                transition: none;
             }
         }
 

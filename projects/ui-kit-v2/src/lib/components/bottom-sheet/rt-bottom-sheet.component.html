@@ -27,12 +27,13 @@
         } @else {
             <div rtElem="header" qa-dataid="bottom-sheet-header">
                 <div rtElem="start">
+                    <!-- Второй экран шторки возвращается к первому шевроном «назад» на месте «×». -->
                     <rt-icon-button
-                        qa-dataid="bottom-sheet-close"
-                        icon="ico-close"
                         variant="secondary"
                         radius="full"
-                        [ariaLabel]="t().bottomSheetClose"
+                        [attr.qa-dataid]="nested() ? 'bottom-sheet-back' : 'bottom-sheet-close'"
+                        [icon]="nested() ? 'chevron-left' : 'ico-close'"
+                        [ariaLabel]="nested() ? t().uiBack : t().bottomSheetClose"
                         (clicked)="dismiss()" />
                 </div>
                 <div rtElem="title" qa-dataid="bottom-sheet-title">

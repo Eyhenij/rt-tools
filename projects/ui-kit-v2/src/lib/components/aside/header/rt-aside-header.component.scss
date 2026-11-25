@@ -155,6 +155,17 @@
             text-align: center;
         }
 
+        /* Заголовок шторки — строкой 24 при кегле 16, как заголовок шторки кита. */
+        &__content--sheet &__title {
+            line-height: var(--rt-aside-header-title-leading, var(--rt-leading-normal));
+        }
+
+        /* Значки шапки шторки — шагом `sm`, 32 со значком 16, как действие шапки шторки рядом. */
+        &__content--sheet &__actions .rt-icon-button {
+            --rt-icon-button-size-step: var(--rt-control-height-sm);
+            --rt-icon-step-md: var(--rt-size-4);
+        }
+
         &__content--sheet &__badges {
             justify-content: center;
         }
@@ -169,11 +180,12 @@
             display: flex;
             min-width: 0;
             flex-direction: column;
-            padding-top: calc(var(--rt-space-2) + var(--rt-space-1));
-            gap: var(--rt-space-0-5);
+            padding: calc(var(--rt-space-2) + var(--rt-space-1)) 0 var(--rt-space-1);
+            gap: calc(var(--rt-space-1) + var(--rt-space-0-5));
 
-            /* Левый край — край содержимого: шапка шторки уже отступила на 12, блок добирает остальное. */
-            padding-inline: calc(var(--rt-aside-content-inset, var(--rt-aside-inset)) - var(--rt-space-2) - var(--rt-space-1));
+            /* Левый край — край содержимого шторки (20): шапка шторки уже отступила на 12, блок
+               добирает 8. Снизу 4 и поле шапки 12 — 16 до содержимого, как в макете. */
+            padding-inline: var(--rt-space-2);
             text-align: start;
 
             &:empty {

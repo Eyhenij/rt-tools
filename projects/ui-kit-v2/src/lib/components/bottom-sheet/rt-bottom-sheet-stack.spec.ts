@@ -1,5 +1,8 @@
 import { ChangeDetectionStrategy, Component, WritableSignal, signal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
+import { join } from 'node:path';
+
+import * as sass from 'sass';
 
 import { createRtFixture } from '../../../testing/rt-kit-testing';
 import { RtBottomSheetComponent } from './rt-bottom-sheet.component';
@@ -59,5 +62,44 @@ describe('Стопка шторок', (): void => {
         expect(shown(sheet(fixture, 'sheet-filters'))).toBe(true);
         expect(sheet(fixture, 'sheet-filters').hasAttribute('inert')).toBe(false);
         expect(sheet(fixture, 'sheet-status').classList.contains('rt-bottom-sheet--open')).toBe(false);
+    });
+
+    it('SC-UKV-1631 — шторка из шторки — второй экран той же шторки: её высота и шеврон «назад» вместо «×»', (): void => {
+        const fixture: ComponentFixture<StackHostComponent> = createRtFixture(StackHostComponent);
+        const filters: HTMLElement = sheet(fixture, 'sheet-filters');
+        const status: HTMLElement = sheet(fixture, 'sheet-status');
+        const panel: HTMLElement = filters.querySelector<HTMLElement>(':scope > .rt-bottom-sheet__panel') as HTMLElement;
+        jest.spyOn(panel, 'getBoundingClientRect').mockReturnValue({ height: 420 } as DOMRect);
+
+        fixture.componentInstance.status.set(true);
+        fixture.detectChanges();
+        fixture.detectChanges();
+
+        expect(status.classList).toContain('rt-bottom-sheet--nested');
+        expect(status.style.getPropertyValue('--rt-bottom-sheet-nested-height')).toBe('420px');
+        expect(status.querySelector('[qa-dataid="bottom-sheet-back"] button')?.getAttribute('aria-label')).toBe('Back');
+        expect(status.querySelector('[qa-dataid="bottom-sheet-close"]')).toBeNull();
+        // Первый экран — не вложенный: у него «×».
+        expect(filters.classList).not.toContain('rt-bottom-sheet--nested');
+        expect(filters.querySelector('[qa-dataid="bottom-sheet-close"]')).not.toBeNull();
+
+        (status.querySelector('[qa-dataid="bottom-sheet-back"] button') as HTMLButtonElement).click();
+        fixture.componentInstance.status.set(false);
+        fixture.detectChanges();
+        fixture.detectChanges();
+
+        expect(shown(filters)).toBe(true);
+    });
+
+    it('SC-UKV-1631 — второй экран встаёт и уходит без выезда, первый прячется без выезда', (): void => {
+        const css: string = sass.compile(join(__dirname, 'rt-bottom-sheet.component.scss'), {
+            loadPaths: [join(__dirname, '../../../styles')],
+        }).css;
+        const nestedPanel: string = css.slice(css.indexOf('.rt-bottom-sheet--nested > .rt-bottom-sheet__panel {'));
+        const covered: string = css.slice(css.indexOf('.rt-bottom-sheet--open.rt-bottom-sheet--covered > .rt-bottom-sheet__panel {'));
+
+        expect(nestedPanel.slice(0, nestedPanel.indexOf('}'))).toContain('transition: none');
+        expect(nestedPanel.slice(0, nestedPanel.indexOf('}'))).toContain('height: var(--rt-bottom-sheet-nested-height, auto)');
+        expect(covered.slice(0, covered.indexOf('}'))).toContain('visibility: hidden');
     });
 });

@@ -47,6 +47,7 @@ const BOOKING_BADGES: readonly IRtAsideHeader.Badge[] = [
                 </rt-aside-section>
             </ng-template>
             <rt-aside-footer>
+                <button rtButton asideDismiss qa-dataid="story-record-close" type="button" label="Закрыть"></button>
                 <button rtButton asidePrimary qa-dataid="story-record-save" type="button" label="Сохранить"></button>
             </rt-aside-footer>
         </rt-aside>
@@ -113,7 +114,9 @@ export class TestRtAsideSheetAppComponent {}
     selector: 'app-aside-sheet-tabs',
     template: `
         <rt-aside contentLayout="tabs">
-            <rt-aside-header title="Анна Смирнова" />
+            <rt-aside-header title="Анна Смирнова" overline="Бронь №1042" [badges]="badges">
+                <rt-icon-button asideActions icon="ico-dotted-more-horizontal" ariaLabel="Ещё" />
+            </rt-aside-header>
             <ng-template rtAsideContent>
                 <rt-tabs activeId="bookings">
                     <ng-template rtTab="common" label="Общее">
@@ -140,6 +143,7 @@ export class TestRtAsideSheetAppComponent {}
         RtAsideHeaderComponent,
         RtAsideFooterComponent,
         RtAsideContentDirective,
+        RtIconButtonComponent,
         RtTabsComponent,
         RtTabDirective,
         RtDetailListComponent,
@@ -147,4 +151,6 @@ export class TestRtAsideSheetAppComponent {}
         RtButtonDirective,
     ],
 })
-export class TestRtAsideSheetTabsComponent {}
+export class TestRtAsideSheetTabsComponent {
+    protected readonly badges: readonly IRtAsideHeader.Badge[] = BOOKING_BADGES;
+}

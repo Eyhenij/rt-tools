@@ -75,6 +75,8 @@ function takeConfirmId(): string {
         class: BEM_BLOCK,
         '[class.rt-bottom-sheet--open]': 'open()',
         '[class.rt-bottom-sheet--covered]': 'covered()',
+        '[class.rt-bottom-sheet--nested]': 'nested()',
+        '[style.--rt-bottom-sheet-nested-height.px]': 'nestedHeight()',
         // Закрытый лист остаётся в разметке ради анимации, и спрятан он только
         // стилями — а `opacity`/`pointer-events` не убирают узел ни из порядка
         // табуляции, ни из дерева доступности. Без `inert` страница с закрытым
@@ -148,6 +150,16 @@ export class RtBottomSheetComponent {
 
     /** Открыта, но поверх неё открыта шторка из неё самой: эта спрятана до закрытия верхней. */
     protected readonly covered: Signal<boolean> = computed((): boolean => this.open() && this.#stack.top() !== this);
+
+    /**
+     * Шторка открыта из другой шторки: она — второй экран той же шторки. Встаёт без выезда на место и
+     * высоту нижней, слева в шапке у неё шеврон «назад». Признак держится и на закрытии: второй экран
+     * уходит так же без выезда, и нижняя видна сразу.
+     */
+    protected readonly nested: WritableSignal<boolean> = signal<boolean>(false);
+
+    /** Высота панели нижней шторки в миг открытия второго экрана; `null` — шторка не вложена. */
+    protected readonly nestedHeight: WritableSignal<number | null> = signal<number | null>(null);
 
     protected readonly ownHeader: Signal<RtSheetHeaderDirective | undefined> = contentChild(RtSheetHeaderDirective);
     protected readonly ownFooter: Signal<RtSheetFooterDirective | undefined> = contentChild(RtSheetFooterDirective);
@@ -251,6 +263,7 @@ export class RtBottomSheetComponent {
         // Порядок открытия — общий для всех шторок страницы; шторка встаёт в него с открытием.
         effect((): void => {
             if (this.open()) {
+                untracked((): void => this.#nestOver(this.#stack.top()));
                 this.#stack.push(this);
             } else {
                 this.#stack.remove(this);
@@ -290,6 +303,11 @@ export class RtBottomSheetComponent {
             this.#setScrollLock(false);
             this.#returnFocus();
         });
+    }
+
+    /** Высота панели шторки: по ней второй экран встаёт той же высоты. */
+    public panelHeight(): number {
+        return this.#host.querySelector<HTMLElement>(':scope > .rt-bottom-sheet__panel')?.getBoundingClientRect().height ?? 0;
     }
 
     /**
@@ -405,6 +423,13 @@ export class RtBottomSheetComponent {
     }
 
     /** Фокус, оставшийся в закрытой шторке или упавший с неё на страницу, уходит на открывший её узел. */
+    /** Открытие поверх другой шторки делает эту её вторым экраном той же высоты. */
+    #nestOver(below: object | null): void {
+        const under: RtBottomSheetComponent | null = below instanceof RtBottomSheetComponent && below !== this ? below : null;
+        this.nested.set(under !== null);
+        this.nestedHeight.set(under === null ? null : under.panelHeight());
+    }
+
     #returnFocus(): void {
         const target: HTMLElement | null = this.#openedFrom;
         this.#openedFrom = null;

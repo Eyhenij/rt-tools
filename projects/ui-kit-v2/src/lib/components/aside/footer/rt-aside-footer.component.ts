@@ -21,15 +21,24 @@ import { RT_ASIDE_SHEET, RtAsideSheet } from '../rt-aside-sheet';
 
 const BEM_BLOCK: string = 'rt-aside-footer';
 
+/** Селектор слота главной кнопки. */
+const PRIMARY_SLOT: string = '[asidePrimary]';
+
 /** Вид кнопки слота `[asidePrimary]`: залитая, основного цвета, без значка. */
 const PRIMARY_LOOK: IButton.PlaceLook = { appearance: 'filled', theme: 'primary', icon: null };
+
+/**
+ * Вид главной кнопки, ушедшей в шапку шторки: шаг `sm`, как у действия шапки самой шторки
+ * («Применить» отборов страницы и периода). Высота подвала шапке не подходит: заголовок резался бы.
+ */
+const SHEET_MAIN_LOOK: IButton.PlaceLook = { ...PRIMARY_LOOK, size: 'sm' };
 
 /** Вид кнопки по слоту, в котором она стоит сама или внутри его обёртки; вне слотов вида нет. */
 function slotLook(host: HTMLElement | undefined, dismissLook: IButton.PlaceLook): IButton.PlaceLook | null {
     if (host?.closest('[asideDismiss]')) {
         return dismissLook;
     }
-    if (host?.closest('[asidePrimary]')) {
+    if (host?.closest(PRIMARY_SLOT)) {
         return PRIMARY_LOOK;
     }
 
@@ -139,15 +148,20 @@ export class RtAsideFooterComponent {
                 ...(this.#phone() && this.phoneCloseLabel() ? { label: this.#closeLabel() } : {}),
             };
 
+            // В шторке последняя кнопка слота `[asidePrimary]` стоит в шапке: её вид — вид шапки шторки.
+            const main: number = this.sheetMode()
+                ? hosts.map((host: ElementRef<HTMLElement>): boolean => host.nativeElement.closest(PRIMARY_SLOT) !== null).lastIndexOf(true)
+                : -1;
+
             this.buttons().forEach((button: RtButtonDirective, index: number): void => {
-                button.placeLook.set(slotLook(hosts[index]?.nativeElement, dismissLook));
+                button.placeLook.set(index === main ? SHEET_MAIN_LOOK : slotLook(hosts[index]?.nativeElement, dismissLook));
             });
         });
     }
 
     /** Главная кнопка для шапки шторки: последний узел слота `[asidePrimary]`; нет его — `null`. */
     public mainActionNode(): HTMLElement | null {
-        const nodes: NodeListOf<HTMLElement> = this.#host.querySelectorAll<HTMLElement>('[asidePrimary]');
+        const nodes: NodeListOf<HTMLElement> = this.#host.querySelectorAll<HTMLElement>(PRIMARY_SLOT);
 
         return nodes.item(nodes.length - 1) ?? null;
     }
