@@ -12,8 +12,8 @@
         --rt-bottom-sheet-transition-duration: var(--rt-duration-base);
         --rt-bottom-sheet-footer-border-width: var(--rt-border-width-thin);
 
-        /* Скругление карточек вопроса — 14, как у листа действий телефона: шагов 8 и 6 шкалы. */
-        --rt-bottom-sheet-confirm-radius: calc(var(--rt-radius-md) + var(--rt-radius-ms));
+        /* Скругление карточек вопроса — шаг 15 шкалы, как у вопроса шторки до листа действий. */
+        --rt-bottom-sheet-confirm-radius: var(--rt-radius-xl);
 
         /* Пояснение вопроса — кегль 13, тот же, что у кнопки шага `sm` (`--rt-btn-font-size`). */
         --rt-bottom-sheet-confirm-message-size: 0.8125rem;

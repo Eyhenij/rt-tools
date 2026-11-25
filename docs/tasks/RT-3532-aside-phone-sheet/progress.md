@@ -95,12 +95,15 @@ The progress in full — `docs/tasks/RT-3532-aside-phone-sheet/progress.md`; the
 ### Uncommitted
 
 ```
-none
+ M docs/tasks/RT-3532-aside-phone-sheet/match/figma.json
+ M docs/tasks/RT-3532-aside-phone-sheet/match/showcase.json
+ M projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.component.scss
 ```
 
 ### Commits over the main branch
 
 ```
+86bf68d52 docs(rt:ui-kit-v2): прогресс RT-3532 перед набором отправки (RT-3532)
 a9d1287e4 fix(rt:ui-kit-v2): асайд-шторка проходит Angular Doctor и проверку готового — шаблоны историй в своих файлах (RT-3532)
 ba2e32754 docs: устаревшие записи архива сняты по сроку хранения (RT-3532)
 86a432d93 docs(rt:ui-kit-v2): витрина и кадры макета после двух кругов ревью одобрены владельцем (RT-3532)
@@ -120,7 +123,6 @@ dfc6020d7 feat(rt:ui-kit-v2): подвал шторки с полями 12, кр
 38d2f2f7d docs(rt:ui-kit-v2): совпадение витрины асайда-шторки с макетом — 303 из 303 после черты под шапкой (RT-3532)
 42fc6a39c test(rt:ui-kit-v2): эталоны асайда-шторки с чертой под шапкой, истории «Вкладки» и «Подвал»; совпадение 303 из 303 (RT-3532)
 b9d699e2a docs(rt:ui-kit-v2): сверка асайда-шторки с макетом и чертой под шапкой — 303 из 303 (RT-3532)
-a6ab54707 feat(rt:ui-kit-v2): под шапкой асайда-шторки черта как у подвала, истории «Вкладки» и «Подвал» (RT-3532)
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked
