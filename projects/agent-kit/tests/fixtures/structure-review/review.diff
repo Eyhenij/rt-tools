@@ -1,0 +1,51 @@
+diff --git a/libs/till/src/cli.mjs b/libs/till/src/cli.mjs
+new file mode 100644
+index 0000000..9571816
+--- /dev/null
++++ b/libs/till/src/cli.mjs
+@@ -0,0 +1,3 @@
++import { ordersOf, textOf } from './report.mjs';
++
++console.log(textOf(ordersOf(process.argv[2])));
+diff --git a/libs/till/src/ledger.mjs b/libs/till/src/ledger.mjs
+index 1722365..5eae967 100644
+--- a/libs/till/src/ledger.mjs
++++ b/libs/till/src/ledger.mjs
+@@ -1,4 +1,4 @@
+ /** A row of the ledger: the number of an order and its sum, as the till writes it. */
+ export function ledgerRowOf(order) {
+-    return `${order.number};${order.sum}`;
++    return `${order.number};${order.sum.toFixed(2)}`;
+ }
+diff --git a/libs/till/src/report.mjs b/libs/till/src/report.mjs
+new file mode 100644
+index 0000000..077f608
+--- /dev/null
++++ b/libs/till/src/report.mjs
+@@ -0,0 +1,26 @@
++import { readFileSync } from 'node:fs';
++
++import { rawOf } from './db/raw.mjs';
++import { rowsOf } from './rows.mjs';
++
++/** Reads the orders of a day from the file of the till. */
++export function ordersOf(path) {
++    return rowsOf(rawOf(readFileSync(path, 'utf8'))).map(([number, sum]) => ({ number, sum: Number(sum) }));
++}
++
++/** The order with the largest sum; a day without orders has none. */
++function largestOf(orders) {
++    return orders.reduce((best, order) => (best === null || order.sum > best.sum ? order : best), null);
++}
++
++/** The total of a day the way the former report counted it. */
++export function legacyTotalsOf(orders) {
++    return orders.reduce((total, order) => total + order.sum, 0);
++}
++
++/** The text of the report: a line for the total and one for the largest order. */
++export function textOf(orders) {
++    const best = largestOf(orders);
++    const total = orders.reduce((sum, order) => sum + order.sum, 0);
++    return [`total: ${total}`, best === null ? 'no orders' : `largest: ${best.number}`].join('\n');
++}
