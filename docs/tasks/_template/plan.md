@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · samples/tasks/_template/plan.md · 2e00850a144e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · samples/tasks/_template/plan.md · afdad87c9633 · правится надстройкой, не здесь -->
 # Plan
 
 **Task:** <KEY>-<number> · **Branch:** <branch>
@@ -34,7 +34,7 @@ a row, a place, a number or a suite is not written and is not approved.
 | Modules | <`path:symbol` — its one duty, what it shows; next ones the same way> |
 | Dependencies | <who imports whom, in which direction, what must not be imported> |
 | Coupling | <`path` outgoing N → M, every module of the change; or «no code: the reason»> |
-| Patterns | <Name — `path:symbol`, the problem it solves; dropped: the simpler way; or «no pattern: the reason»> |
+| Patterns | <Name — `path:symbol`, the problem it solves; dropped: the simpler way. The next one the same way; or «no pattern: the reason»> |
 | Terms | <the new words and where they are defined; or that there are none and why> |
 | Input | <from where, every form of it, what is refused. The scenario number, `the suite`; or «no input: the reason»> |
 | Bounds | <what does not change: contracts, old data, security> |

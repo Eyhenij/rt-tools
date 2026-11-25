@@ -2,15 +2,14 @@
  * The section «Decision» of a plan: what the plan says about the code before the code. The reading
  * and the judgement take a text alone — no file and no repository.
  *
- * Judged are the presence of a row, a place in the code, a number and a suite; the quality of the
- * decision is read by the roles. A change that adds no symbol writes one line under the heading
- * instead of the table: «No decision: <reason>».
+ * Judged are a row, a place, a number and a suite; the quality is read by the roles. A change that adds
+ * no symbol writes one line instead of the table: «No decision: <reason>».
  */
 import { namedOf } from './coupling-plan.mjs';
 
 const HEADING = /^##\s+(?:Решение|Decision)\s*$/iu;
 const NONE = /^\s*(?:Решения нет|No decision)(?:\s*[:—–-]\s*(.*))?$/iu;
-const SYMBOL = /`([^`\s:]+\.\w+):([#.$\p{L}_][\p{L}\p{N}_$.#-]*)(?:\(\))?`/gu;
+const SYMBOL = /`([^`\s:]+\.\w+|(?:[^`\s:]*\/)?[A-Z]\w*file):((?:--|[#.$\p{L}_])[\p{L}\p{N}_$.#-]*)(?:[<(][^`]*)?`/gu;
 const DROPPED = /(?<!\p{L})(?:отброшен[оы]|dropped)(?!\p{L})/iu;
 const REMOVED = /(?<!\p{L})(?:удаля(?:ет|ют)ся|(?:is|are) removed)(?!\p{L})/iu;
 const MOVED = /(?<!\p{L})(?:переезжа(?:ет|ют) в|moves? to)(?!\p{L})/iu;
@@ -23,8 +22,9 @@ const isBlank = (text) => /^<[^<>]+>$/.test(text.trim());
 const isReason = (text) => !isBlank(text) && (text.match(/\p{L}{2,}/gu) ?? []).length >= 2;
 /** Whether the cell opens with the words «there is none» and gives the reason. */
 const isAbsent = (text, words) => isReason(new RegExp(`^(?:${words})\\s*[:—–-]\\s*(.*)$`, 'iu').exec(text)?.[1] ?? '');
-const isSuite = (path) => /(?:^|[/._-])(?:tests?|specs?|e2e)[/._-]/i.test(path) && /\.\w+$/.test(path) && !/\.mdx?$/i.test(path);
-const sentencesOf = (text) => text.split(/(?<=[.!?])\s+/u);
+/** A suite by its folder or by the last part of its name: `check-specs.mjs` and `test-setup.ts` are none. */
+const isSuite = (path) => /(?:^|\/)(?:tests?|__tests__|[\w-]*e2e)\/.*\.(?!mdx?$)\w+$|[._](?:test|spec|e2e)\.\w+$|[a-z](?:Tests?|Spec)\.\w+$/.test(path);
+const sentencesOf = (text) => text.split(/(?<=[.!?])\s+(?=[\p{Lu}`«])/u);
 
 /**
  * The symbols of a text: the path, the name and the fate — `dropped` after the word to the end of its
@@ -33,25 +33,25 @@ const sentencesOf = (text) => text.split(/(?<=[.!?])\s+/u);
 function symbolsOf(text) {
     return sentencesOf(text).flatMap((sentence) => {
         const cut = sentence.search(DROPPED);
-        let at = 0;
-        return sentence.split(';').flatMap((part) => {
-            const start = at;
-            at += part.length + 1;
-            const moved = part.search(MOVED);
-            return [...part.matchAll(SYMBOL)].map(({ index, 1: path, 2: symbol }) => {
-                if (cut >= 0 && start + index > cut) return { path, symbol, fate: 'dropped' };
-                if (REMOVED.test(part)) return { path, symbol, fate: 'removed' };
-                return { path, symbol, fate: index < moved ? 'moved' : '' };
-            });
+        const [before, after] = cut < 0 ? [sentence, ''] : [sentence.slice(0, cut), sentence.slice(cut)];
+        const places = (part, fate) => [...part.matchAll(SYMBOL)].map(({ index, 1: path, 2: symbol }) => ({ path, symbol, fate: fate(index) }));
+        const kept = before.split(';').flatMap((part) => {
+            const [removed, moved] = [REMOVED.test(part), part.search(MOVED)];
+            return places(part, (index) => (removed ? 'removed' : index < moved ? 'moved' : ''));
         });
+        return [...kept, ...places(after, () => 'dropped')];
     });
 }
 
-/** A point of the row of patterns is a sentence with a dash after the name; one that opens with «dropped» is none. */
+/** A point has a dash after its name, opens a sentence or stands after «;» or «<br>» with a capital, and goes on to the next one or to «dropped». */
 function patternsFault({ text }) {
-    if (isAbsent(text, 'паттерн(?:а|ов) нет|no patterns?')) return null;
-    const points = sentencesOf(text).filter((sentence) => /\s[—–]\s/.test(sentence) && sentence.search(DROPPED) !== 0);
-    if (points.length === 0) return 'names no pattern: «<name> — `<path>:<symbol>`», or «паттерна нет: <reason>» («no pattern»)';
+    const absent = isAbsent(text, 'паттерн(?:а|ов) нет|no patterns?');
+    const points = sentencesOf(absent ? text.replace(/^[^;.<]*/, '') : text).flatMap((sentence) =>
+        sentence.split(DROPPED)[0].split(/;|<br\s*\/?>/iu).reduce((found, part, at) => {
+            if (/\s[—–]\s/.test(part) && (at === 0 || /^\s*\p{Lu}/u.test(part))) return [...found, part.trim()];
+            return found.length > 0 ? [...found.slice(0, -1), `${found.at(-1)};${part}`] : found;
+        }, []));
+    if (points.length === 0) return absent ? null : 'names no pattern: «<name> — `<path>:<symbol>`», or «паттерна нет: <reason>» («no pattern»)';
     const bare = points.find((point) => !symbolsOf(point).some(({ fate }) => fate === ''));
     return bare ? `names no place «\`<path>:<symbol>\`» for «${bare.split(/\s[—–]\s/)[0]}»` : null;
 }
@@ -95,7 +95,7 @@ const ROWS = [
 ];
 
 /** The lines of a text outside its blocks of code. */
-const plainLines = (text) => text.replace(/^[ \t]*(```|~~~)[^]*?^[ \t]*\1.*$/gm, '').split('\n');
+const plainLines = (text) => text.replace(/\r\n?/g, '\n').replace(/^[ \t]*(`{3,}|~{3,})[^`\n]*\n[^]*?^[ \t]*\1[`~]*[ \t]*$/gm, '').split('\n');
 
 function rowOf(line) {
     const [name, ...cells] = line.trim().replace(/^\|/, '').replace(/(?<!\\)\|$/, '').split(/(?<!\\)\|/);
@@ -124,7 +124,8 @@ export function decisionRows(text) {
     const rest = lines.slice(heads[0] + 1);
     const end = rest.findIndex((line) => /^##?\s/.test(line));
     const body = end < 0 ? rest : rest.slice(0, end);
-    const rows = body.filter((line) => /^\s*\|/.test(line) && !/^[\s|:-]+$/.test(line)).map(rowOf);
+    const isRule = (line) => /^\s*\|[\s|:-]+$/.test(line ?? '');
+    const rows = body.filter((line, at) => /^\s*\|/.test(line) && !isRule(line) && !isRule(body[at + 1])).map(rowOf);
     const none = body.map((line) => NONE.exec(line)).find(Boolean);
     if (none && !rows.some(({ name }) => ROWS.some((row) => row.name.test(name)))) return { state: 'none', reason: (none[1] ?? '').trim(), rows: [] };
     return { state: 'table', reason: null, rows };
@@ -133,7 +134,7 @@ export function decisionRows(text) {
 /** What the decision of a plan does not name, all of it; an empty list — it is complete. */
 export function decisionProblems(text) {
     const { state, reason, rows } = decisionRows(text);
-    if (state === 'absent') return ['the section «Решение» («Decision») is not there'];
+    const absent = state === 'absent' ? ['the section «Решение» («Decision») is not there'] : [];
     if (state === 'twice') return ['the section «Решение» («Decision») stands more than once'];
     if (state === 'none') return isReason(reason) ? [] : ['«Решения нет» («No decision») gives no reason in words'];
     const missing = ROWS.filter((row) => !rows.some(({ name }) => row.name.test(name))).map(({ label }) => label);
@@ -143,5 +144,5 @@ export function decisionProblems(text) {
         const fault = !isReason(row.text) ? 'says nothing; a row that does not apply says why' : known.fault?.(row);
         return fault ? [`the row «${row.name}» ${fault}`] : [];
     });
-    return missing.length > 0 ? [`no row ${missing.join(', ')}`, ...faults] : faults;
+    return [...absent, ...(missing.length > 0 ? [`no row ${missing.join(', ')}`] : []), ...faults];
 }

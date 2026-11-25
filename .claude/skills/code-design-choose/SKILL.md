@@ -4,7 +4,7 @@ kind: pattern
 rule: code-design
 description: Pattern of rule code-design. Load when a request is taken apart, a plan is written or a module is split — the table from the problem to the technique and its check, coupling, cohesion and isolation, the rows of the decision in the plan. Names and types — rule typescript-conventions.
 ---
-<!-- rt-kit v0.39.1 · patterns/code-design-choose.md · 32e1d94be498 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · patterns/code-design-choose.md · 249867d958bf · правится надстройкой, не здесь -->
 
 # Choosing the design
 
@@ -64,7 +64,8 @@ row. A decision that outlives the task goes to the spec of the domain, where the
 Where the engine of the task flow is laid out, a plan is not written and not approved until every row
 below stands and names what its example names: a module and every pattern — a place `path:symbol`, an
 input row — the scenario number and the suite, the budget — a path with «up to N» or «plus N» and both
-counts. A symbol after the word «dropped» is not a place. Instead of the place: «no pattern: <reason>»,
+counts. A pattern is a name, a dash and its place; the next one starts a sentence or, with a capital,
+follows «;». A symbol after the word «dropped» is not a place. Instead of the place: «no pattern: <reason>»,
 «no code: <reason>» for the coupling, «no input: <reason>», «no number: <reason>» in a tree without
 scenarios. A change that adds no symbol writes one line instead of the table, «No decision: <reason>».
 

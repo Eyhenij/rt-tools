@@ -42,6 +42,12 @@ report "SC-AK-1971 — таблица в блоке кода не считает
 report "SC-AK-1971 — строка причины рядом с таблицей суда не снимает" \
     "$(named "$(fd_body "$(printf 'Решения нет: правка двух слов\n\n%s' "$(fd_rows Бюджет -)")" | fd)" 'no row «Бюджет»')" назван
 
+report "SC-AK-1971 — раздела нет — строки названы тем же сообщением" "$(printf '# Plan\n' | fd | grep -o '([A-Z][a-z]*)' | wc -l | tr -d ' ')" 9
+report "SC-AK-1971 — строки после раздела ему не принадлежат" "$(named "$(printf '%s\n%s\n' "$(fd_body "$(fd_rows Бюджет -)")" "$(fd_rows | tail -1)" | fd)" 'no row «Бюджет»')" назван
+report "SC-AK-1971 — концы строк другой системы" "$(fd_body 'Решения нет: правка двух слов' | sed "s/$(printf '\r')*\$/$(printf '\r')/" | fd)/$(fd_plan | sed "s/\$/$(printf '\r')/" | fd)" чисто/чисто
+report "SC-AK-1971 — блок кода из тильд и из четырёх знаков не считается" \
+    "$(named "$(fd_body "$(printf '~~~\n%s\n~~~' "$(fd_rows)")" | fd)" 'no row')/$(named "$(fd_body "$(printf '````\n```\n%s\n```\n````' "$(fd_rows)")" | fd)" 'no row')" назван/назван
+report "SC-AK-1971 — код в строке блоком не считается" "$(printf '```один``` знак\n\n%s\n\n```text\nкод\n```\n' "$(fd_plan)" | fd)" чисто
 while IFS="$(printf '\t')" read -r row _; do
     report "SC-AK-1972 — строки «${row}» нет" "$(named "$(fd_plan "$row" - | fd)" "no row «${row}»")" назван
     report "SC-AK-1972 — ячейка строки «${row}» пуста" "$(named "$(fd_plan "$row" '' | fd)" "the row «${row}» says nothing")" назван
@@ -60,6 +66,15 @@ report "SC-AK-1972 — незнакомая строка" "$(fd_body "$(printf '
 for cell in 'модуль чтения письма' '`mail/read.mjs:12` — чтение письма' '`mail.test.sh:check` — случаи чтения' 'чтение письма. Отброшено: `mail/read.mjs:readMail`'; do
     report "SC-AK-1972 — модуль «${cell}» места не называет" "$(named "$(fd_plan Модули "$cell" | fd)" 'names no place')" назван
 done
+for place in 'checks/check-specs.mjs:main' 'src/test-setup.ts:setup' '_tokens.scss:--rt-color' 'a/store.ts:Base<T>' 'a/x.mjs:read(text)' 'apps/api/Dockerfile:runner'; do
+    report "SC-AK-1972 — место «${place}» узнано" "$(fd_plan Модули "\`$place\` — читает письмо" | fd)" чисто
+done
+report "SC-AK-1972 — шапка второй таблицы не строка" "$(fd_body "$(printf '%s\n\n| Термин | |\n| --- | --- |\n| письмо | почта |' "$(fd_rows)")" | fd)" чисто
+for cell in 'Adapter — `a/b.mjs:one`; Facade — один вход' 'Adapter — `a/b.mjs:one`<br>Facade — один вход' 'паттерна нет: обычная функция; Facade — один вход'; do
+    report "SC-AK-1972 — «${cell}» прячет паттерн без места" "$(named "$(fd_plan Паттерны "$cell" | fd)" 'for «Facade»')" назван
+done
+report "SC-AK-1972 — место после точки с запятой и сокращение" "$(fd_plan Паттерны 'Adapter — приводит письмо, т. е. меняет форму; в `a/b.mjs:one`' | fd)" чисто
+report "SC-AK-1972 — место, которое удаляется, паттерна не даёт" "$(named "$(fd_plan Паттерны 'Adapter — `a/b.mjs:one` удаляется' | fd)" 'for «Adapter»')" назван
 report "SC-AK-1972 — паттерн без места" "$(named "$(fd_plan Паттерны 'Adapter — чтение письма' | fd)" 'for «Adapter»')" назван
 report "SC-AK-1972 — у второго паттерна места нет" "$(named "$(fd_plan Паттерны 'Adapter — `a/b.mjs:one`. Facade — один вход' | fd)" 'for «Facade»')" назван
 report "SC-AK-1972 — предложение без тире не пункт" "$(fd_plan Паттерны 'Adapter — `a/b.mjs:one`. Вход у него один' | fd)" чисто
@@ -82,6 +97,11 @@ done
 report "SC-AK-1972 — описание набором не считается" "$(named "$(fd_plan Данные 'письмо с файлом. SC-AK-1972, `docs/specs/mail/spec.md`' | fd)" 'a test suite')" назван
 report "SC-AK-1972 — номера сценария нет" "$(named "$(fd_plan Данные 'письмо с файлом, `mail.test.sh`' | fd)" 'a scenario number')" назван
 report "SC-AK-1972 — «номера нет: причина» с набором" "$(fd_plan Данные 'письмо с файлом; номера нет: дерево без описаний. `mail.test.sh`' | fd)" чисто
+for cell in 'письмо. SC-AK-1972, `tools/check-specs.mjs`' 'письмо. SC-AK-1972, `projects/mail/tests/`' 'письмо. SC-, `mail.test.sh`' 'письмо; номера нет: да. `mail.test.sh`'; do
+    report "SC-AK-1972 — «${cell}» данных не подтверждает" "$(named "$(fd_plan Данные "$cell" | fd)" 'the row «Данные» does not name')" назван
+done
+report "SC-AK-1972 — набор со строкой" "$(fd_plan Данные 'письмо с файлом. SC-AK-1972, `mail/read.spec.ts:12`' | fd)" чисто
+report "SC-AK-1972 — английские слова строк" "$(fd_plan Бюджет '`a.mjs` up to 10; `b.mjs` plus 5; new code files: 2; new dependencies: 0' | fd)/$(fd_plan Данные 'no input: a text only' | fd)/$(fd_read Модули '`a.mjs:one` moves to `b.mjs:two`' 'r.symbols.map(s => s.fate || "есть").join()')" чисто/чисто/moved,есть
 report "SC-AK-1972 — ввода нет с причиной" "$(fd_plan Данные 'ввода нет: правка текста' | fd)" чисто
 report "SC-AK-1972 — «ввода нет» при названных формах" "$(named "$(fd_plan Данные 'письмо с файлом; ввода нет: так вышло само' | fd)" 'a scenario number and a test suite')" назван
 

@@ -226,7 +226,8 @@ Covered: `projects/agent-kit/tests/flow-plan-forms.test.sh`.
 
 Given a plan text
 When the decision is read
-Then a section that is not there, stands twice, holds no row or stands in a block of code is named; the heading
+Then a section that is not there or holds no row is named with all nine rows, one that stands twice is named, and
+a block of code and the text after the section are not the section; line ends are of either system; the heading
 «Решение» and «Decision» are one, and «Решения нет: <reason>» or «No decision: <reason>» of two words passes;
 without a reason, with one word or with the brackets of the template it is named, and beside a table it lifts nothing
 
@@ -242,7 +243,9 @@ Given a module or a pattern without a place, with a line number instead, with a 
 only after the word «dropped»; a coupling in words; an input without a scenario number or a suite; a budget
 without a path and a number, new code files or new dependencies
 When the decision is read
-Then the row is named with what it lacks; «no pattern», «no code», «no input» and «no number» with a reason pass
+Then the row is named with what it lacks; «no pattern», «no code», «no input» and «no number» with a reason pass;
+every pattern of the row is judged, whether it starts a sentence or follows «;» or «<br>», and a product file with
+«spec» or «test» in its name is a place and no suite
 
 Covered: `projects/agent-kit/tests/flow-decision.test.sh`.
 
