@@ -398,6 +398,14 @@ And on a taken-apart folder the second run of a group reads the progress of its 
 
 Covered: `projects/agent-kit/tests/task-flow-script-archive.test.sh`.
 
+### SC-AK-1950 — the tree names the roles a plan needs
+
+Given a tree whose `planRolesCommand` answers `none`, one without the settings, one without the key, one whose command fails, answers something else or lies in settings that do not parse
+When the roles of a plan are asked, and then an answer before the plan commit, after it and with no moment is read with no roles to wait for
+Then the first tree needs no role and every other needs both, and only the answer after the commit approves
+
+Covered: `projects/agent-kit/tests/flow-approval.test.sh`, `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+
 ### SC-AK-1826 — the line of an unmatched step names its command, output and errors
 
 Given a done step whose check prints four lines and an error and exits 3

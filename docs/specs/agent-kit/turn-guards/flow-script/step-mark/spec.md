@@ -1,6 +1,6 @@
 # A mark is measured again, not believed
 
-**Status:** in force · **Revision:** 2026-11-18 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-25 · **Scenario prefix:** `SC-AK`
 **Depends on:** `docs/specs/agent-kit/turn-guards/flow-script/spec.md`,
 `docs/specs/agent-kit/turn-guards/flow-script/guard/spec.md`,
 `docs/specs/agent-kit/turn-guards/flow-script/replay/spec.md`
@@ -110,13 +110,18 @@ prints a line per fixture.
 
 - **An edit of the description and the engine needs the owner's approving answer found at the place the approval mark names.**
 - **An approval mark whose place holds no approving answer counts as no approval.** The answer must
-  be a menu option or a typed message after the calls of both roles that approves the plan of the
+  be a menu option or a typed message after the calls the plan needs that approves the plan of the
   task by `approvalOf` — the same test `plan-red` applies when it writes the mark.
 - **An approval given in any working copy of the repository holds in every other.**
 - **A record outside the record directories gives no approval, the one `RT_FLOW_TRANSCRIPT` names included.**
   The variable is set by whoever calls the engine, and the agent can set it.
 - **An approval holds only for the plan commit it names.** A mark naming another commit counts as
   none, and a plan added again after the approval loses it.
+- **The tree may name the plans that need no roles.** A command of its check settings,
+  `planRolesCommand`, gets the path of the plan text of the plan commit, and the answer `none` lifts
+  the calls of both roles. No command, a command that failed and any other answer leave both. With
+  no roles to wait for, the approving answer must be later than the plan commit: an answer given
+  before it approved another text.
 - **An approval mark that names no place counts as no approval outside `words.legacyBranches`.** A
   mark written before this work is one such; a branch in progress asks the owner again.
 - **`plan-red` on a plan whose approval mark names the same commit and fingerprint takes the red output from that mark.**
@@ -269,3 +274,4 @@ None.
   plan in progress again by the red output of its own mark.
 - 2026-11-19 — `plan-red` runs the checks on the tree of the plan commit, in a temporary worktree
   past the plan commit: a plan commit rebuilt after the approval is approved again by one command.
+- 2026-11-25 — the tree may name the plans that need no roles by `planRolesCommand`.

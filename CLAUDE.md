@@ -108,7 +108,7 @@ carries only what a tree that installs it can execute: `rt-tools-storybook` for 
 `ui-component-tests` for the ready-made spec and the visual snapshot, `cargo-triage` with
 `cargo-triage-mark` for the intake of reports, `task-delivery-loop` with
 `task-delivery-loop-run` for the loop every task goes through and loads first (a live check and
-two review rounds before the push), and `agent-kit-source` for editing the rule package itself —
+the review before the push: one round on the light path, a second by risk on the full one), and `agent-kit-source` for editing the rule package itself —
 alongside the `/agent-kit-digest` and `/rules-review` commands. What may live
 in the package and what stays here is decided by the boundary test in
 `docs/specs/agent-kit/package-boundary/`, and `npm run check:boundary` keeps it.

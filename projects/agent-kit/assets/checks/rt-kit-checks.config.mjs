@@ -185,6 +185,11 @@ const DEFAULTS = {
      */
     proseRoots: [],
     /**
+     * The command that says which roles a plan needs before its approval: `plan-red` calls it with
+     * the path of the plan text, and `none` lifts the roles. Empty — every plan needs both.
+     */
+    planRolesCommand: '',
+    /**
      * The words of the left column of the tree's glossary: those it added beyond the package's
      * eight. The package ones stay the default, what the tree named lies over them — otherwise the
      * tree starts a second check alongside, and two sets of patterns for one requirement diverge

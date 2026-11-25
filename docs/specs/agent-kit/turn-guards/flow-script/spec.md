@@ -64,7 +64,7 @@ There is no interface: the description is read by the engine and by the executor
 - **A check runs with a limit of 540 seconds, and past it the step does not match.**
 - **The command for the done steps measures again every step the progress marks done.**
 - **A plan may be written only when every step carries a check of a known form that is no command of the work, and a form added to the description is known at once.**
-- **The approval mark is written when every check is red before the work, both roles were called and the owner then approved the plan by a menu option or a typed message; it names the place of that answer.** A refusal of the mark check sends the session to `plan-red`, which finds the answer in the record; the owner is asked only when it finds none.
+- **The approval mark is written when every check is red before the work, the roles the plan needs were called and the owner then approved the plan by a menu option or a typed message; it names the place of that answer.** Which roles a plan needs the subdomain `step-mark/` says. A refusal of the mark check sends the session to `plan-red`, which finds the answer in the record; the owner is asked only when it finds none.
 - **A check is replaced only by a decision in the progress the owner allowed in the window on its edit.**
 - **A row of the epic plan is never marked «шаг владельца»: the step is the executor's.** The edit is refused and names the deferral by the owner's word. A row that still carries the old mark is read as an ordinary row, and an edit that takes the mark off passes.
 - **A branch planned before the engine reads its plan from the newest commit that changed it.**

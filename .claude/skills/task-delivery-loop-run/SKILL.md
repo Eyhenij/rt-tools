@@ -83,15 +83,64 @@ pnpm run serve:stand             # the receiver on 3310, the admin panel on 4310
                                  # E2E_API_PORT and E2E_ADMIN_PORT move them
 ```
 
-## 7, 9. Review rounds
+## 4. The short plan of the light path
 
-The main session writes the diff to a file. Reviewers get the file and never run git:
+A plan of the light path holds what the engine asks for and no more:
+
+```markdown
+# План
+
+**Task:** RT-N · **Branch:** RT-N-<slug>
+**Путь:** лёгкий · <N> строк · API и вид не меняются
+**Behaviour:** unchanged — <причина>
+
+## Точки
+
+- **A:** <как сейчас>
+- **Эта задача доводит до:** <что увидит человек>
+- **Признак:** <команда и ответ>
+
+## След задачи
+
+| Что | Где |
+| --- | --- |
+| Code (правится) | `<path>` |
+
+## Этапы
+
+### 1. <name>
+
+- **Steps:**
+    1. <step>
+       Check: `<command>` → <expected>
+```
+
+The words «API и вид не меняются» are dropped for a change outside the packages. Before the menu of
+the approval the path is asked, and any answer but `none` sends the plan to both roles first:
 
 ```bash
+node tools/review-path.mjs --plan docs/tasks/RT-N-<slug>/plan.md   # the path and its reasons
+node tools/review-path.mjs --roles docs/tasks/RT-N-<slug>/plan.md  # none, or the roles
+```
+
+## 7, 9. Review rounds
+
+The path is asked first, then the diff goes to a file. Reviewers get the file and never run git:
+
+```bash
+node tools/review-path.mjs --base origin/<base>
 git diff origin/<base>...HEAD > <scratchpad>/review-N.diff
 ```
 
-Each of the three agents gets this frame and its own inputs, never your conclusions:
+On the light path the round is `qa-engineer` and `goal-critic`, on the full path `product-strategist`
+too. After the fixes of round one on the full path, with its tip and the number of serious findings:
+
+```bash
+node tools/review-path.mjs --round-two --base origin/<base> --serious <N> --since <tip of round one>
+git diff <tip of round one>..HEAD > <scratchpad>/review-N-2.diff   # when it is due
+```
+
+Each of the agents gets this frame and its own inputs, never your conclusions:
 
 ```text
 Review <scratchpad>/review-N.diff (branch RT-N-<slug>). Do not run git, do not edit files.
@@ -165,8 +214,8 @@ git push -u origin RT-N-<slug>
 ## 13. The PR
 
 The body goes to a file first, in the six sections of the pattern `git-workflow-pr-body`: the
-`Closes #N` line, «Что сделано», «Точки», «Цель», «Чем подтверждено» with both rounds, «Оставшийся
-шаг».
+`Closes #N` line, «Что сделано», «Точки», «Цель», «Чем подтверждено» with the path and
+its rounds, «Оставшийся шаг».
 
 The PR opens after the push has answered: two calls of one message run at once, and a refused push
 left a PR on a head the host did not have. The opening call is typed as `gh pr create` itself, by its full path, never through a variable

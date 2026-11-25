@@ -16,7 +16,7 @@
  * in, so the days add up to the whole.
  *
  * `--steps` adds the median minutes of every step of the task flow over the branches that went the
- * whole course; what tells a step from another is said in `session-time-steps.mjs`.
+ * whole course, and apart over the branches of one review round; what tells a step from another is said in `session-time-steps.mjs`.
  *
  * The journals are the client's own and lie outside the tree. Nothing is written and no text of a
  * message or of a command is printed: the output holds numbers, categories and branch names. The
@@ -173,15 +173,22 @@ const leading = (kinds) =>
         .map(([kind, minutes]) => `${LABELS.get(kind)} ${minutes}`)
         .join(', ');
 
-function printSteps({ branches, medians, kinds, left, open }) {
-    if (branches === 0) console.log('Веток полного хода нет');
-    else {
-        console.log(`Шаги task flow, медиана по ${branches} веткам полного хода, минуты; справа — среднее двух главных категорий шага`);
-        for (const [key, label] of STEPS) console.log(`  ${pad(label, 34)} ${String(medians[key]).padStart(5)}  ${leading(kinds[key])}`);
+function printGroup({ branches, medians, kinds }, name, none) {
+    if (branches === 0) {
+        console.log(none);
+
+        return;
     }
+    console.log(`Шаги task flow, медиана по ${branches} веткам ${name}, минуты; справа — среднее двух главных категорий шага`);
+    for (const [key, label] of STEPS) console.log(`  ${pad(label, 34)} ${String(medians[key]).padStart(5)}  ${leading(kinds[key])}`);
+}
+
+function printSteps({ oneRound, left, open, ...full }) {
+    printGroup(full, 'полного хода', 'Веток полного хода нет');
+    printGroup(oneRound, 'с одним кругом', 'Веток с одним кругом нет');
     const lacks = Object.entries(left.lacks).filter(([, count]) => count > 0);
     const why = lacks.map(([key, count]) => `без ${LACKS[key]} ${count}`).join(', ');
-    console.log(`Вне полного хода: веток ${left.branches}${why ? ` (${why})` : ''}, ${left.hours} ч активно`);
+    console.log(`Вне хода: веток ${left.branches}${why ? ` (${why})` : ''}, ${left.hours} ч активно`);
     if (open > 0) console.log(`Запусков ревью без найденного конца: ${open}`);
 }
 

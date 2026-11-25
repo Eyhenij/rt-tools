@@ -259,6 +259,19 @@ rm -f "$TF_RED/out.txt"
 printf '%s\n' '{"type":"user","uuid":"a1","toolUseResult":{"answers":{"Одобряешь?":"Одобряю план RT-2"}}}' > "$TF_DIR/outside.jsonl"
 report "plan: SC-AK-1411 — запись вне каталогов записей метки не даёт" "$(tf_red "$TF_DIR/outside.jsonl" | grep -c 'not a session record of this repository.* code=1')" 1
 rm -f "$TF_APPROVAL"
+# SC-AK-1950 — план, которому роли не нужны, переписан в 10:00 с прежней датой автора; $1 — время ответа
+tf_light() {
+    local light="$TF_DIR/red-light-${1%%:*}" record
+    cp -R "$TF_RED" "$light"
+    record="$TF_RED_HOME/$(printf '%s' "$(cd "$light" && pwd -P)" | sed 's#[/.]#-#g')/record.jsonl"
+    mkdir -p "$(dirname "$record")" "$light/.claude/rt-kit"
+    printf '{"planRolesCommand":"echo none #"}' > "$light/.claude/rt-kit/checks.json"
+    (cd "$light" && GIT_COMMITTER_DATE=2026-11-25T10:00:00Z "${TF_G[@]}" commit -q --amend --date=2026-11-25T08:00:00Z -m plan)
+    printf '{"type":"user","uuid":"a1","timestamp":"2026-11-25T%s:00Z","toolUseResult":{"answers":{"Одобряешь план?":"Одобряю план RT-2"}}}\n' "$1" > "$record"
+    (cd "$light" && RT_FLOW_RECORDS_HOME="$TF_RED_HOME" RT_FLOW_TRANSCRIPT="$record" node "$TESTS/../assets/checks/task-flow-script.mjs" plan-red 2>&1)
+}
+report "plan: SC-AK-1950 — ответ до переписанного плана не засчитан" "$(tf_light 09:00 | grep -c 'no approving answer of the owner after the plan commit')" 1
+report "plan: SC-AK-1950 — ответ после переписанного плана засчитан" "$(tf_light 11:00 | grep -c 'approval mark is written')" 1
 tf_record 'Переделай этап 1'
 report "plan: SC-AK-1411 — другой ответ меню метки не даёт" "$(tf_red | grep -c 'no approving answer.* code=1')" 1
 report "plan: SC-AK-1411 — после отказа метки нет" "$(test -e "$TF_APPROVAL" && echo есть || echo нет)" 'нет'
@@ -269,6 +282,17 @@ report "plan: SC-AK-1873 — набранное строчными «одобр�
 rm -f "$TF_APPROVAL"
 printf '%s\n' '{"type":"user","toolUseResult":{"answers":{"Одобряешь?":"Одобряю план RT-2"}}}' > "$TF_REC"
 report "plan: SC-AK-1411 — без вызовов ролей метки нет" "$(tf_red | grep -c 'no approving answer.* code=1')" 1
+
+# SC-AK-1950 — дерево ответило none: метка без вызова ролей, по ответу после коммита плана
+mkdir -p "$TF_RED/.claude/rt-kit"
+printf '{"planRolesCommand":"grep -q Steps \\"$1\\" && echo none #"}' > "$TF_RED/.claude/rt-kit/checks.json"
+printf '%s\n' '{"type":"user","uuid":"o1","timestamp":"2020-01-01T00:00:00Z","toolUseResult":{"answers":{"Одобряешь?":"Одобряю план RT-2"}}}' > "$TF_REC"
+report "plan: SC-AK-1950 — ответ до коммита плана метки не даёт, отказ называет коммит" "$(tf_red | grep -c 'no approving answer of the owner after the plan commit .* code=1')" 1
+printf '%s\n' '{"type":"user","uuid":"l1","timestamp":"2099-01-01T00:00:00Z","toolUseResult":{"answers":{"Одобряешь?":"Одобряю план RT-2"}}}' > "$TF_REC"
+report "plan: SC-AK-1950 — ответ после коммита плана даёт метку без ролей" \
+    "$(tf_red | grep -c 'approval mark is written.* code=0')/$(node -e "console.log(require('$TF_APPROVAL').place.uuid)" 2>&1)" '1/l1'
+rm -rf "$TF_APPROVAL" "$TF_RED/.claude"
+report "plan: SC-AK-1950 — без команды дерева тот же ответ метки не даёт" "$(tf_red | grep -c 'no approving answer.* code=1')" 1
 
 # SC-AK-1412 — проверка зелёная в минуту записи — отказ
 printf 'готово\n' > "$TF_RED/out.txt"
