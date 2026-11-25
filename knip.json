@@ -55,7 +55,7 @@
     "projects/agent-kit": {
       "entry": ["src/index.ts", "src/bin/*.ts", "src/**/*.spec.ts", "assets/**/*.{js,mjs,cjs}"],
       "project": ["src/**/*.ts", "assets/**/*.{js,mjs,cjs}"],
-      "ignoreUnresolved": ["^\\./board[\\w-]*\\.mjs$", "^\\./task-new-(queue|epic)\\.mjs$"]
+      "ignoreUnresolved": ["^\\./board[\\w-]*\\.mjs$", "^\\./task-new-(queue|epic|single)\\.mjs$"]
     },
     "projects/auth-import": {
       "entry": ["src/index.ts", "src/bin.ts", "src/**/*.spec.ts"],

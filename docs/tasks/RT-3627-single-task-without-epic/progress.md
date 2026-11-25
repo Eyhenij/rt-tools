@@ -11,9 +11,9 @@
 
 ## Steps
 
-- [>] 1.1 Сценарии выхода `эпик-заведён` вне эпика зелёные
-- [ ] 1.2 Аудит читает строку на своём месте
-- [ ] 2.1 Сценарии отказов, прохода и заведённой карточки зелёные
+- [x] 1.1 Сценарии выхода `эпик-заведён` вне эпика зелёные
+- [x] 1.2 Аудит читает строку на своём месте
+- [>] 2.1 Сценарии отказов, прохода и заведённой карточки зелёные
 - [ ] 2.2 Прежние сценарии заведения и очереди зелёные, раскладка сходится
 - [ ] 3.1 База ветки одиночной задачи
 - [ ] 3.2 Копия без строки заводит одиночную
@@ -75,3 +75,53 @@
 - Числа `grill.md` 251, 27 и 29 заменены планом: 232, 26, 28, 73 и 573.
 
 Слово владельца 25.11: «Одобряю план RT-3627 (Recommended)»; о RT-3565 — «Закрыть этой работой (Recommended)».
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/eyhenij/WebstormProjects/rt-tools
+**Branch:** RT-3627-single-task-without-epic
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 1 из 5 — движок хода и чтение строки
+- **Next step:** `outsideReasonOf`, `tasksOfGrill`, выход `declared`, сценарии
+- **PR:** не открыт
+
+The progress in full — `docs/tasks/RT-3627-single-task-without-epic/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+ M docs/tasks/RT-3627-single-task-without-epic/progress.md
+```
+
+### Commits over the main branch
+
+```
+4aaa89b8a feat(rt:agent-kit): движок ведёт работу вне эпика дальше второго шага (RT-3627)
+e5baf1d95 docs(rt:agent-kit): ход работы RT-3627, план одобрен (RT-3627)
+9d2632d53 docs(rt:agent-kit): план RT-3627 после второго чтения ролями (RT-3627)
+2bdae49b2 docs(rt:agent-kit): второе чтение плана RT-3627, находки ревью правил по RT-3640 (RT-3627)
+8d756b7b2 Merge branch 'RT-3640-ngdoctor-inner-copy' into RT-3627-single-task-without-epic
+83d9d482e docs(rt:agent-kit): папка RT-3640 разобрана в архив (RT-3640)
+75d8f017f docs(rt:agent-kit): отметка о слитой RT-3630, ход работы RT-3640 (RT-3640)
+3c9cb8816 docs(rt:agent-kit): записи архива старше недели удалены (RT-3640)
+29a703d23 Merge remote-tracking branch 'origin/RT-3624-delivery-speed' into RT-3640-ngdoctor-inner-copy
+b9256ca12 fix(rt:agent-kit): пропуск папок с точкой после первого круга ревью (RT-3640)
+fe008f3ad docs(rt:agent-kit): ход работы RT-3640, шаги закрыты (RT-3640)
+e9cc2cebe fix(rt:agent-kit): проверка Angular не заходит в папки с точкой (RT-3640)
+0fb6f1433 docs(rt:agent-kit): план RT-3640 (RT-3640)
+9e7ee1241 docs(rt:agent-kit): разбор RT-3640 и её строка в плане эпика (RT-3640)
+45f040f2d docs(rt:agent-kit): разбор RT-3627 поправлен чтением ролей, работа ждёт RT-3640 (RT-3627)
+3d128c401 [RT-3630] Набор перед отправкой идёт рядом со вторым кругом ревью (#3639)
+2bab79e9f docs(rt:agent-kit): разбор RT-3627, находки ревью правил по RT-3630 (RT-3627)
+a7427cd41 docs(rt:agent-kit): папка RT-3630 разобрана в архив (RT-3630)
+13854f713 docs(rt:agent-kit): проверка шага 4.1 читает последнюю запись хода работы (RT-3630)
+bb3f62859 revert(rt:agent-kit): папка RT-3630 возвращена для замены проверки шага 4.1 (RT-3630)
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.

@@ -158,6 +158,16 @@ report "SC-AK-1139 — назван эпик ветки" "$(et_says 'Эпик «
 report "SC-AK-1139 — отказа об объявлении нет" "$(et_says 'не объявляет эпика')" 0
 git -C "$ET_TREE" checkout -q RT-902-probe 2>/dev/null
 
+# --- SC-AK-1987 — ветка работы вне эпика названа такой, а не сломанной карточкой ------------
+# Код прежний в обоих режимах: нулевой код страж стоп-момента читает ответом об эпике.
+printf '%s\n' '{"number":905,"title":"[RT-905] Одна","state":"OPEN","labels":[],"body":"Описание.\n\nРабота вне эпика — разбор дал одну задачу"}' > "$ET_TREE/answers/issue-905.json"
+git -C "$ET_TREE" checkout -q -b RT-905-single 2>/dev/null
+report "SC-AK-1987 — таблица: код единица" "$(et_code)" 1
+report "SC-AK-1987 — таблица: названа работа вне эпика" "$(et_says 'задача #905 — работа вне эпика: «разбор дал одну задачу»')" 1
+report "SC-AK-1987 — незаконченные: код единица" "$(et_code --unfinished)" 1
+report "SC-AK-1987 — незаконченные: названа работа вне эпика" "$(et_says 'задача #905 — работа вне эпика' --unfinished)" 1
+git -C "$ET_TREE" checkout -q RT-902-probe 2>/dev/null
+
 # --- SC-AK-1341 — план, открытый разделом черновика, даёт абзац -----------------------------
 sed -i.bak 's/^## Зачем$/## Что даёт/' "$ET_TREE/docs/plans/probe.md" && rm -f "$ET_TREE/docs/plans/probe.md.bak"
 report "SC-AK-1341 — раздел черновика на месте" "$(grep -c '^## Что даёт$' "$ET_TREE/docs/plans/probe.md")" 1

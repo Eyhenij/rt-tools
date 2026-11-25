@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.39.1 · checks/task-new.github.mjs · d9f2e38798ae · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/task-new.github.mjs · 00ec812198c6 · правится надстройкой, не здесь
 /**
  * Creating the task an edit starts with.
  *
@@ -17,6 +17,7 @@
  *   npm run task:new -- --epic --title 'Delivery goes by epics' --slug work-by-epics
  *   npm run task:new -- --epic-of 1921 --title '…' --slug command-creates-epic
  *   npm run task:new -- --outside-epic 'the owner asked for it apart' --title '…'
+ *   npm run task:new -- --single --title '…' --slug mail-owner-silence
  *
  * The body is read from standard input. The author and the assignee are the bot account, the same
  * one the commits go from; `--assignee` overrides the assignee.
@@ -34,11 +35,15 @@
  * its base. Both are written here and not left to the executor's hand: the shape of the line is
  * read by a machine from two sides at once, and the base of the branch is otherwise taken from the
  * working copy, where at that minute any branch may be checked out.
+ *
+ * With `--single` the task is the only one of its grill: `task-new-single.mjs` reads the count from the
+ * draft, and the body gets the line of work outside an epic without a word of the owner about it.
  */
 import { cpSync, existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { SINGLE_WORDS } from './board-epic-link.mjs';
 import { planPathOf } from './board-epic-plan.mjs';
 import {
     BACKLOG_OPTION_ID,
@@ -70,7 +75,7 @@ const EPIC_LABEL = CONFIG.board?.epicLabel ?? '';
 const PLANS_DIR = CONFIG.plansDir ?? '';
 
 function parseArgs(argv) {
-    const args = { labels: [], assignee: BOT, title: null, slug: null, epic: false, epicOf: null, outsideEpic: null };
+    const args = { labels: [], assignee: BOT, title: null, slug: null, epic: false, epicOf: null, outsideEpic: null, single: false };
     for (let index = 0; index < argv.length; index += 1) {
         const value = argv[index + 1];
         switch (argv[index]) {
@@ -92,6 +97,9 @@ function parseArgs(argv) {
                 break;
             case '--epic':
                 args.epic = true;
+                break;
+            case '--single':
+                args.single = true;
                 break;
             case '--epic-of':
                 args.epicOf = Number(value);
@@ -135,9 +143,17 @@ if (args.slug !== null && !/^[a-z0-9][a-z0-9-]*$/.test(args.slug)) {
     fail('slug is lowercase latin letters, digits and dashes: the branch name is read in a list of fifty lines');
 }
 
+/** The only task of a grill is judged by the module of that kind; its neighbours and its slug — here. */
+if (args.single && (args.epic || args.epicOf !== null || args.outsideEpic !== null)) {
+    fail('--single goes with none of --epic, --epic-of, --outside-epic: it is the only task of its grill, and neither an epic nor a word of the owner is needed');
+}
+if (args.single && !args.slug) {
+    fail('--slug <short-slug> is required for --single: the draft of the grill is found by it');
+}
+
 /**
  * A task outside an epic is not created — that is the whole of the requirement, and the refusal
- * carries both lawful ways out of it, because in the shape «name the epic» alone it is read as
+ * carries the lawful ways out of it, because in the shape «name the epic» alone it is read as
  * "there is no way out" and gets bypassed by a call to the hosting past this command.
  *
  * The owner's word is the second way, and it goes into the call as text: work outside an epic
@@ -147,13 +163,16 @@ if (args.slug !== null && !/^[a-z0-9][a-z0-9-]*$/.test(args.slug)) {
  * A tree that has not named the epic label lives as before: there epics do not exist at all, and
  * demanding one of every task would stop the work of every such tree on the day of installation.
  */
-if (EPIC_LABEL && !args.epic && args.epicOf === null && args.outsideEpic === null) {
+if (EPIC_LABEL && !args.single && !args.epic && args.epicOf === null && args.outsideEpic === null) {
     fail(
-        'a task outside an epic is not taken. Two ways: name the epic — `--epic-of <number>` — or name the word of the owner about work outside an epic — `--outside-epic "<the reason of the owner>"`'
+        'a task outside an epic is not taken. Three ways: name the epic — `--epic-of <number>`; the only task of its grill — `--single`; the word of the owner about work outside an epic — `--outside-epic "<the reason of the owner>"`'
     );
 }
 if (args.outsideEpic !== null && args.outsideEpic.trim() === '') {
     fail('--outside-epic "<the reason of the owner>": an empty reason is indistinguishable from a flag typed to get past the refusal');
+}
+if (args.outsideEpic?.trim() === SINGLE_WORDS) {
+    fail(`--outside-epic '${SINGLE_WORDS}': these words are written by --single, which reads the count of tasks from the grill`);
 }
 if (args.outsideEpic !== null && (args.epic || args.epicOf !== null)) {
     fail('--outside-epic goes with neither --epic nor --epic-of: work is either under an epic or outside one, and the word of the owner is needed only for the second');
@@ -279,8 +298,18 @@ function epicBranchOf(plan, epicNumber) {
 }
 
 const epic = args.epicOf === null ? null : epicOfCard(args.epicOf);
+const written = readBody();
+const single = args.single ? await import('./task-new-single.mjs') : null;
+if (single) {
+    const fault = await single
+        .singleFault({ folders: [`_draft-${args.slug}`], body: () => written, token })
+        .catch((error) => String(error.message ?? error));
+    if (fault !== null) {
+        fail(fault);
+    }
+}
 const body = [
-    readBody(),
+    single ? single.withSingleLine(written) : written,
     args.epic ? `План эпика — ${planPath}` : '',
     epic ? `Задача эпика #${args.epicOf}, план — ${epic.plan}` : '',
     args.outsideEpic ? `Работа вне эпика — ${args.outsideEpic}` : '',
@@ -428,7 +457,7 @@ const epicSent = args.epic && layEpicPlan({ title: args.title, number, branch, p
  * base named here saves the executor from taking it from the working copy, where any branch may be
  * checked out at that minute.
  */
-const base = args.epic ? ` origin/${CONFIG.deploy?.mainBranch || 'main'}` : epic?.branch ? ` ${epic.branch}` : '';
+const base = args.epic || args.single ? ` origin/${CONFIG.deploy?.mainBranch || 'main'}` : epic?.branch ? ` ${epic.branch}` : '';
 if (epic && !epic.branch) {
     console.error(`task-new: the plan «${epic.plan}» does not name the branch of the epic — the base of the branch is taken by hand, and it is the branch of the epic, not the main one`);
 }
