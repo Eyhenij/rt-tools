@@ -167,7 +167,8 @@ The surface is the push guard's decision on a push call and the exit code of the
 Not applicable: the guard answers with a refusal text. The run ahead exits with 0 — green, the
 number of red checks, at most 100, — red, 3 — the run did not start. A code of 3 is also three red
 checks: the last `push ahead:` line of the output tells them apart. Not 2: to a hook that code means
-"refuse".
+"refuse". A copy that changed under the run and a run that was stopped have codes of their own —
+the subdomain `push-ahead-copy`.
 
 ## Data
 

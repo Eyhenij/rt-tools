@@ -66,10 +66,21 @@ The table in `implementation.md` next to it.
   (RT-N)», then «второго круга». The owner reads the rounds in history: this is the one place
   where a later commit of a branch corrects an earlier one by design. A round without findings closes
   by a record in the progress, committed under that name.
-- **The push set runs once per branch, after the last round.** The fixes are committed together, the
-  base is merged in once, and between the green run and the push only the folder is taken apart, by the
-  last commit: a red found after the take-apart is fixed after it. A fix
-  for the owner's remarks after the PR is a new content and runs the set again.
+- **The push set runs beside round two.** It starts in one message with the roles of the round, over a
+  copy that is ready to leave: the fixes of round one committed, the base merged in once, the texts
+  closed, the expired archive records removed, the own showcase and stand stopped. Nobody touches the
+  copy until both end: the replies of the roles go to the scratchpad, and a run over a changed copy says
+  «not judged» and costs a second one. A round without fixes is closed by a record in the progress, whose
+  commit takes no mark of a heavy step away: between the green run and the push only that record and the
+  take-apart commit stand. Where there is something to fix the run is stopped before the first edit, the
+  fixes land as one commit, and the set runs again; a red step found beside the round is fixed with its
+  findings. Of 57 second rounds since 19.11 six changed nothing but the records of the task: the others
+  get an early red and the warm cache of the builder. A fix for the owner's remarks after the PR is a new
+  content and runs the set again.
+- **The set waits for the round in two cases.** A change of look waits for the owner's answer at step 10,
+  and `check-kit-approval` is red until its line stands. A light plan with a full diff is refused by
+  `review-path.mjs --check` until the commit of the second round, and a heavy step is not started after
+  a red one. Where no second round is due the set runs right after the fixes of the first.
 - **Unattended work keeps the loop and the night rule both.** By the rule `autonomous-work` the
   show of step 10 becomes the session's own measurement, and the push and the PR wait for the
   owner's return where that rule keeps everything local.
@@ -108,16 +119,20 @@ The table in `implementation.md` next to it.
    light path the executor runs them.
 8. **Check every finding against the code, fix the confirmed ones, check live again.** One commit
    for the round.
-9. **Review round two, on the full path where `--round-two` says it is due.** Fresh subagents read the
-   fixes since the tip of round one; step 8 repeats. The last live check runs on the code that ships.
-   Before the commit of the last round the quick checks run once more, with
-   `node tools/check-dupes.mjs` and `pnpm run check:unused`: their findings join the round.
+9. **Ask `--round-two` and write the diff of the round, then close the texts, then run the push set
+   beside round two.** The answer and the diff are taken before the base is merged in: after it the diff
+   carries another branch's content. The quick checks with `node tools/check-dupes.mjs` and
+   `pnpm run check:unused` come before the round too. Merge the base in, merge the agreement into the
+   domain spec, bring the texts up to date — pattern `task-flow-close`. The executor runs the signs of the
+   plan's points and gives their output to `product-strategist`: the frame of a round beside the set
+   forbids builds, `nx`, snapshots, the browser and writes into the copy. Fresh subagents read the fixes
+   since the tip of round one; step 8 repeats. The last live check runs on the code that ships.
 10. **Show a screen to the owner before the closing steps.** A kit or admin change of look: the address,
     the screen and the width to look at, and the turn waits for the answer. A change of texts,
     rules or tools has nothing to show: its measurements go into the PR body.
-11. **Close the texts and run the push set until green.** Merge the base in, merge the agreement
-    into the domain spec, bring the texts up to date — pattern `task-flow-close`. The heavy steps go
-    ahead in the background; a red is fixed here, while the folder still stands.
+11. **Bring the set to green.** A round without fixes — the run beside it is the one; with fixes, or
+    where the set waited for the round, it runs now, in the background. A red is fixed here, while the
+    folder still stands.
 12. **Then take the folder apart by the last commit and push.** Pattern `task-flow-archive`. The push
     reads the marks of the run ahead; a step the last commit reached runs at the push.
 13. **Open the PR by `gh pr create` with the machine account's token.** The body lists what each

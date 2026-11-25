@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/git-guard-push-ahead.sh · 4a9e36955a67 · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/git-guard-push-ahead.sh · 0a1569dde6ae · правится надстройкой, не здесь
 # The push set run ahead of the push: every check of `rt_push_checks <base>`, a green mark for each
 # that passed. The push guard then reads the marks instead of running the steps again.
 #
@@ -12,12 +12,18 @@
 # and the same profile files — so a mark written here answers exactly the line the guard asks
 # about. A check already green on this tree and base is not run again.
 #
-# Exit codes: 0 — the set is green; 1 — a check is red; 3 — the run did not start (no profile, no
-# repository, edits outside the index). Not 2: to a hook that code means "refuse", and this command
-# refuses nothing.
+# Exit codes: 0 — the set is green; 1…100 — the number of red checks; 3 is also «the run did not
+# start» (no profile, no repository, edits outside the index), and the last `push ahead:` line tells
+# the two apart; 101 — the copy changed while the set ran, and the run vouches for nothing; 130,
+# 143 — the run was stopped by INT or TERM. Not 2: to a hook that code means "refuse", and this
+# command refuses nothing.
+#
+# The run is stopped by `kill -TERM <pid>`, the pid is in its first line: a step and everything it
+# started end with it. KILL leaves them running — the run cannot see it.
 #
 # Requires: hooks/git-guard-push-marks.sh, hooks/facts.sh
 not_started=3
+not_judged=101
 
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -89,7 +95,7 @@ if command -v rt_push_adds_nothing >/dev/null 2>&1 && rt_push_adds_nothing "$bas
     exit 0
 fi
 
-printf 'push ahead: base %s, tree %s\n' "$(rt_push_base_label "$base")" "$(git rev-parse --short 'HEAD^{tree}')"
+printf 'push ahead: base %s, tree %s, pid %s\n' "$(rt_push_base_label "$base")" "$(git rev-parse --short 'HEAD^{tree}')" "$$"
 sign="$(rt_tree_sign .)"
 # Whether the change touched the subject of each step, for the run lines; a step the selection
 # drops leaves a line of its own.
@@ -98,11 +104,73 @@ rt_push_note_not_run "$sign" "$base" "$subjects"
 
 red=""
 marked=""
+asked=""
+changed_at=""
+changed=""
+step_out="$(mktemp)" || exit "$not_started"
+step_pid=""
+# The seconds a stopped step gets after INT, and twice as many after TERM.
+stop_wait="${RT_PUSH_STOP_WAIT:-10}"
+trap 'rm -f "$step_out"' EXIT
+
+# The processes of `$*` and all they started, by the parents in the table of processes: a step puts
+# its servers and its scenarios into groups of their own, and the group of the step does not name them.
+rt_ahead_tree() {
+    ps -A -o pid=,ppid=,stat= 2>/dev/null | awk -v roots="$*" '
+        $3 !~ /^Z/ { kids[$2] = kids[$2] " " $1; alive[$1] = 1 }
+        END {
+            n = split(roots, queue, " ")
+            for (i = 1; i <= n; i++) {
+                if (seen[queue[i]]++ || !alive[queue[i]]) continue
+                print queue[i]
+                m = split(kids[queue[i]], found, " ")
+                for (j = 1; j <= m; j++) queue[++n] = found[j]
+            }
+        }'
+}
+
+# Waits up to `$1` seconds for the processes of `$left` to end; the ones they start meanwhile join them.
+rt_ahead_wait_left() {
+    local until=$(($(date +%s) + $1))
+    while :; do
+        # shellcheck disable=SC2086
+        left="$(rt_ahead_tree $left)"
+        [ -z "$left" ] && return 0
+        [ "$(date +%s)" -ge "$until" ] && return 1
+        sleep 0.2
+    done
+}
+
+# Ends the step and everything it started. INT first: a runner of end-to-end suites puts its stand
+# down by INT alone, and by TERM leaves it on the port. Then TERM: a builder takes its scenarios with
+# it within seconds. KILL only after that, by the list: it lets nobody clean up after itself.
+rt_ahead_stop() {
+    local left
+    trap '' INT TERM
+    if [ -n "$step_pid" ]; then
+        left="$(rt_ahead_tree "$step_pid")"
+        kill -INT -- "-$step_pid" 2>/dev/null
+        if ! rt_ahead_wait_left "$stop_wait"; then
+            kill -TERM -- "-$step_pid" 2>/dev/null
+            # shellcheck disable=SC2086
+            rt_ahead_wait_left $((stop_wait * 2)) || kill -KILL $left 2>/dev/null
+        fi
+        wait "$step_pid" 2>/dev/null
+        printf '\n~ stopped, no mark: %s\n' "$check"
+    fi
+    printf '\npush ahead: stopped by %s — the steps before it keep their marks\n' "$1"
+    exit "$2"
+}
+trap 'rt_ahead_stop INT 130' INT
+trap 'rt_ahead_stop TERM 143' TERM
+
 set_started="$(date +%s)"
 while IFS= read -r check; do
     [ -z "$check" ] && continue
     if rt_push_mark_has "$check" "$base"; then
         printf '= green already: %s\n' "$check"
+        asked="${asked}${check}
+"
         continue
     fi
     # After a red check a heavy one is not started: the push is refused anyway.
@@ -112,8 +180,16 @@ while IFS= read -r check; do
     fi
     key_before="$(rt_push_mark_key "$check" "$base")"
     started="$(date +%s)"
-    out="$(eval "$check" 2>&1)"
+    # A group of its own, so that a stop reaches the step whole; the shell waits by `wait`, and a
+    # signal runs its trap at once, not after the step.
+    set -m
+    (eval "$check") >"$step_out" 2>&1 </dev/null &
+    step_pid=$!
+    set +m
+    wait "$step_pid" 2>/dev/null
     status=$?
+    step_pid=""
+    out="$(cat "$step_out")"
     took=$(($(date +%s) - started))
     over="$(rt_push_over_budget "$check" "$took")"
     if [ "$status" -eq 0 ] && [ -n "$over" ]; then
@@ -125,6 +201,8 @@ while IFS= read -r check; do
         rt_push_mark_put "$check" "$base" "$key_before"
         marked="${marked}${marked:+
 }${check}"
+        asked="${asked}${check}
+"
         printf '+ green in %ss: %s\n' "$took" "$check"
     elif [ "$status" -eq "$skip_code" ]; then
         rt_run_note "$sign" "$started" skipped "$check" "$base" "$(rt_push_subject_of "$subjects" "$check")"
@@ -141,9 +219,29 @@ while IFS= read -r check; do
         printf '✗ red in %ss under LC_ALL=%s: %s\n%s\n' "$took" "${LC_ALL:-not set}" "$check" "$(printf '%s' "$out" | tail -n 25)"
         [ -n "$full" ] && printf '  the full output: %s\n' "$full"
     fi
+    # The rest would run over content no commit holds and leave no mark: an edit left in the copy ends
+    # the run. One put back before the step ends is not seen here.
+    if ! rt_push_mark_clean; then
+        changed_at="$check"
+        changed="$(rt_push_mark_dirt | head -n 10)"
+        break
+    fi
 done <<EOF
 $(rt_push_checks "$base" | rt_push_select "$base")
 EOF
+
+# Every green step of the run holds its mark on the head as it stands now, or the run did not judge
+# what the push sends: a commit made while a step ran changes its key and the keys of the steps before.
+unmarked=""
+if [ -z "$changed_at" ]; then
+    while IFS= read -r check; do
+        [ -z "$check" ] && continue
+        rt_push_mark_has "$check" "$base" || unmarked="${unmarked}${check}
+"
+    done <<EOF
+$asked
+EOF
+fi
 
 set_took=$(($(date +%s) - set_started))
 set_over="$(rt_push_set_over_budget "$set_took")"
@@ -156,6 +254,12 @@ if [ -n "$set_over" ]; then
 }the whole set: ${set_took}s"
 fi
 
+if [ -n "$changed_at" ]; then
+    printf '\n✗ the copy changed while the set ran, seen after: %s\n%s\n' "$changed_at" "$(printf '%s\n' "$changed" | sed 's/^/  /')"
+elif [ -n "$unmarked" ]; then
+    printf '\n✗ the head moved while the set ran, no mark for:\n%s\n' "$(printf '%s' "$unmarked" | sed 's/^/  /')"
+fi
+
 if [ -n "$red" ]; then
     # A red run refuses nothing: it reports. The code is the number of red checks, at most 100, and
     # the push guard refuses the push by the marks this run did not write.
@@ -163,6 +267,11 @@ if [ -n "$red" ]; then
     red_count="$(printf '%s\n' "$red" | grep -c .)"
     [ "$red_count" -gt 100 ] && red_count=100
     exit "$red_count"
+fi
+if [ -n "$changed_at$unmarked" ]; then
+    printf '\npush ahead: not judged — %s; run the set again\n' \
+        "$([ -n "$changed_at" ] && echo 'the copy changed under it' || echo 'the head moved under it')"
+    exit "$not_judged"
 fi
 printf '\npush ahead: the set is green, the push passes from the marks\n'
 exit 0

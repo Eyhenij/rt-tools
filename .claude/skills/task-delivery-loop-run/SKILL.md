@@ -140,11 +140,23 @@ node tools/review-path.mjs --round-two --base origin/<base> --serious <N> --sinc
 git diff <tip of round one>..HEAD > <scratchpad>/review-N-2.diff   # when it is due
 ```
 
+Both stand before the merge of the base: after it the range carries another branch's content. The set
+then starts beside round two, in one message with its roles — the block of steps 11–12 first, without
+its last command and the push. It waits for the round on a change of look and on a light plan whose
+diff is full.
+
 Each of the agents gets this frame and its own inputs, never your conclusions:
 
 ```text
 Review <scratchpad>/review-N.diff (branch RT-N-<slug>). Do not run git, do not edit files.
 Return findings with file:line, the failure scenario and a severity.
+```
+
+Beside the set the frame has one line more, and `product-strategist` gets the output of the signs:
+
+```text
+The push set runs in this copy: no builds, no nx, no snapshots, no browser, no writes into it. A single
+scenario or a mutant goes in a temporary directory of your own.
 ```
 
 `qa-engineer` gets the agreement and the review lens of `.claude/workflows/feature.js`.
@@ -196,11 +208,19 @@ set does not start:
 bash .claude/hooks/git-guard-push-ahead.sh > "${TMPDIR:-/tmp}/push-ahead-$(basename "$PWD").log" 2>&1
 ```
 
-The verdict is the code of the notice. The log says it in its last line `push ahead:`, and on red
-the lines after that line name the red checks:
+The verdict is the code of the notice. The log says it in its last line `push ahead:`; on red the
+lines after it name the red checks, and «not judged» (101) has the changed paths or the steps without
+a mark right above it:
 
 ```bash
-sed -n '/^push ahead: red/,$p' "${TMPDIR:-/tmp}/push-ahead-$(basename "$PWD").log"
+sed -n -e '/^✗ the /,$p' -e '/^push ahead: red/,$p' "${TMPDIR:-/tmp}/push-ahead-$(basename "$PWD").log"
+```
+
+Beside a round that found something to fix the run is stopped before the first edit. Its pid stands in
+the first line of the log; the step in flight gets up to half a minute to put down what it raised:
+
+```bash
+kill -TERM "$(sed -n 's/^push ahead: base .*, pid \([0-9]*\)$/\1/p' "${TMPDIR:-/tmp}/push-ahead-$(basename "$PWD").log")"
 ```
 
 A red here is fixed while the task folder still stands; the folder is taken apart by the last commit.

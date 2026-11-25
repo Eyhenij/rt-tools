@@ -26,4 +26,5 @@ The names and bindings of this tree next to the rule `SKILL.md`.
 - **A finding about the diff is never parked in a file.** — **Not checked by anything.** Held by this article; a finding beside the subject goes by the rule `task-flow`.
 - **Unattended work keeps the loop and the night rule both.** — **Not checked by anything.** Held by this article and by the rule `autonomous-work`.
 - **The fixes of a round go as one commit named by the round.** — **Not checked by anything.** The subject is checked for its form by `commitlint.config.cjs`, not for the round.
-- **The push set runs once per branch, after the last round.** — **Not checked by anything.** No guard counts the runs of the set; the marks of the run ahead only spare a second run of the same content.
+- **The push set runs beside round two.** — **Not checked by anything.** The progress holds the times of the roles and of the set. That a run over a changed copy is not called green is `.claude/hooks/git-guard-push-ahead.sh:not_judged`; that a commit of records takes no mark of the tree's scenarios is `.claude/rt-kit/project-texts.sh:rt_push_check_unread`.
+- **The set waits for the round** — **Not checked by anything.** `tools/check-kit-approval.mjs` and `tools/review-path.mjs:check` are red there until the round ends.
