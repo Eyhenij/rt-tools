@@ -73,14 +73,15 @@ The table in `implementation.md` next to it.
   «not judged» and costs a second one. A round without fixes is closed by a record in the progress, whose
   commit takes no mark of a heavy step away: between the green run and the push only that record and the
   take-apart commit stand. Where there is something to fix the run is stopped before the first edit, the
-  fixes land as one commit, and the set runs again; a red step found beside the round is fixed with its
-  findings. Of 57 second rounds since 19.11 six changed nothing but the records of the task: the others
+  fixes land as one commit, the texts they touched and the base are asked again, and only then the set runs
+  again; a red step found beside the round is fixed with its findings. Of 57 second rounds since 19.11 six changed nothing but the records of the task: the others
   get an early red and the warm cache of the builder. A fix for the owner's remarks after the PR is a new
   content and runs the set again.
 - **The set waits for the round in two cases.** A change of look waits for the owner's answer at step 10,
   and `check-kit-approval` is red until its line stands. A light plan with a full diff is refused by
   `review-path.mjs --check` until the commit of the second round, and a heavy step is not started after
-  a red one. Where no second round is due the set runs right after the fixes of the first.
+  a red one. Where no second round is due the set runs after the fixes of the first: at once, or after the
+  owner's answer of step 10 where there is a change of look.
 - **Unattended work keeps the loop and the night rule both.** By the rule `autonomous-work` the
   show of step 10 becomes the session's own measurement, and the push and the PR wait for the
   owner's return where that rule keeps everything local.
@@ -117,19 +118,20 @@ The table in `implementation.md` next to it.
    edits nothing. `goal-critic` compares the result with the owner's words in the grill and never
    gets the plan. On the full path `product-strategist` runs the signs of the plan's points; on the
    light path the executor runs them.
-8. **Check every finding against the code, fix the confirmed ones, check live again.** One commit
-   for the round.
+8. **Check every finding against the code, fix the confirmed ones, check live again.** Then the quick
+   checks with `node tools/check-dupes.mjs` and `pnpm run check:unused`, then one commit for the round.
 9. **Make the copy ready on every path, then run the push set beside round two where it is due.** In this
-   order: the quick checks with `node tools/check-dupes.mjs` and `pnpm run check:unused`, their findings
-   go into the commit of the round; on the full path `--round-two` and, where it says «нужен», the diff
+   order: on the full path `--round-two` and, where it says «нужен», the diff
    of the round — both before the base is merged in, after it the diff carries another branch's content;
    then the base, the agreement into the domain spec, the texts up to date — pattern `task-flow-close` —
    and the expired archive records by `node tools/archive-prune.mjs --apply` in their own commit. No round
-   two — step 10 and step 11 at once. Where it is due the executor runs the signs of the plan's points
+   two — step 10, after its answer step 11. Where it is due the executor runs the signs of the plan's points
    that the frame of a round beside the set forbids — a build, `nx`, snapshots, the browser — and gives
-   their output to `product-strategist`; the rest of the signs the role runs itself, and a sign that is
-   the set is filled after its green. Fresh subagents read the fixes since the tip of round one; step 8
-   repeats. The last live check runs on the code that ships.
+   their output to `product-strategist`; the rest of the signs the role runs itself. A sign that is the set
+   stays «не запущен» in the table of the role: the executor adds its output after the green under the
+   table, as their own line. Fresh subagents read the fixes since the tip of round one; step 8
+   repeats, and after its commit the copy is made ready again: the texts the fixes touched, the base if it
+   moved. The last live check runs on the code that ships.
 10. **Show a screen to the owner before the closing steps.** A kit or admin change of look: the address,
     the screen and the width to look at, and the turn waits for the answer. A change of texts,
     rules or tools has nothing to show: its measurements go into the PR body.

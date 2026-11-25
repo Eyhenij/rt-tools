@@ -69,3 +69,12 @@ The findings of the rules review of every closed task of the epic «Проста
    `bash`, `zsh` or `ssh` stays judged. It goes after item 4: both refusals stopped a shell edit of a test.
 6. **A scenario of `tools/tests` refuses braces with a comma inside `"$(… "…" …)"`** — tree. In bash 3.2 two
    scenarios came out green on nothing.
+
+## RT-3630 — found by the second review round on 25 November 2026
+
+1. **`check:ngdoctor` walks the packages of a working copy that lies inside this one** — tree,
+   `angular-doctor` 0.3.0 and `tools/check-ngdoctor.mjs`. With one copy under `.claude/worktrees` the step
+   went from 7 seconds to 426: of 560 thousand reads of a directory in 15 seconds 554 thousand fell into
+   its `node_modules`, since the tool leaves out the packages of the root alone. Every set and every push
+   pays it while such a copy stands. Proposed: the step gives the tool an ignore of `.claude/`, or the
+   copies of the sessions stand outside the tree.

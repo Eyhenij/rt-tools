@@ -156,7 +156,8 @@ Beside the set the frame has one line more, and `product-strategist` gets the ou
 
 ```text
 The push set runs in this copy: no builds, no nx, no snapshots, no browser, no writes into it. A single
-scenario or a mutant goes in a temporary directory of your own.
+scenario or a mutant goes in a temporary directory of your own, one at a time. A process is ended by its
+number, never by a name.
 ```
 
 `qa-engineer` gets the agreement and the review lens of `.claude/workflows/feature.js`.
@@ -189,8 +190,16 @@ EM=317887029+rt-tools-dev@users.noreply.github.com
 GIT_AUTHOR_EMAIL=$EM GIT_COMMITTER_EMAIL=$EM \
     GIT_AUTHOR_NAME=rt-tools-dev GIT_COMMITTER_NAME=rt-tools-dev git merge --no-edit origin/<base> \
     || { git diff --name-only --diff-filter=U -- .claude/hooks | while IFS= read -r f; do git checkout --ours -- "$f"; done; false; }
-node tools/archive-prune.mjs --apply    # what it removed goes by a commit of its own
 node tools/check-specs.mjs; node tools/check-doc-paths.mjs
+```
+
+After the merge and the texts, by a call of its own: the pruning writes into the index, and after a
+conflict its removals would leave in the commit of the merge. The same block asks the base again after
+the fixes of round two:
+
+```bash
+git fetch -q origin; git log --oneline HEAD..origin/<base>   # not empty: the base moved, the block above
+test -e "$(git rev-parse --git-path MERGE_HEAD)" || node tools/archive-prune.mjs --apply   # its own commit
 ```
 
 The host keeps a merged branch, so `git ls-remote` does not show that the base merged: the list of
@@ -219,11 +228,13 @@ awk '/^✗ (the copy changed|no mark on the head)/ || /^push ahead: red/ { on = 
 ```
 
 Beside a round that found something to fix the run is stopped before the first edit. Its pid stands in
-the first line of the log; the step in flight gets up to half a minute to put down what it raised. The
-next run starts after the notice with 143: both write into one log, and a stand holds its port till then:
+the first line of the log; the step in flight gets up to half a minute to put down what it raised. An
+ended run leaves its log with a number another process may hold by now, so the command asks whose it is.
+The next run starts after the notice with 143: both write into one log, and a stand holds its port till then:
 
 ```bash
-kill -TERM "$(sed -n 's/^push ahead: base .*, pid \([0-9]*\)$/\1/p' "${TMPDIR:-/tmp}/push-ahead-$(basename "$PWD").log")"
+P="$(sed -n 's/^push ahead: base .*, pid \([0-9]*\)$/\1/p' "${TMPDIR:-/tmp}/push-ahead-$(basename "$PWD").log" | head -1)"
+ps -p "${P:-0}" -o command= | grep -q 'git-guard-push-ahead' && kill -TERM "$P" || echo 'no run under this number'
 ```
 
 A red here is fixed while the task folder still stands; the folder is taken apart by the last commit.

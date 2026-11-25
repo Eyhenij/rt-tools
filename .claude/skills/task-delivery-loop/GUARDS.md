@@ -26,7 +26,8 @@ Part of [SKILL.md](SKILL.md). What refuses along the loop and what to do instead
 - **The run ahead writes marks only for a clean copy.** Commit first, then run it; a later
   commit drops the marks of the steps that read it — the records of a task are read by the light checks
   alone. An edit or a commit under the run, as beside round two, ends
-  it with the code 101 and «not judged»: nothing is refused, the set runs again.
+  it with the code 101 and «not judged»: nothing is refused, the set runs again. A context compaction
+  is such an edit too: its hook writes a section into the progress. The section is committed first.
 - **A visible kit edit is refused at the push without the lines of its record** — the rule
   `kit-approval`: both approvals, or the no-look line.
 

@@ -43,10 +43,10 @@ Tree rule under `work-conduct`, over `task-flow`. Cold part, steps whole: `pitfa
   by a record in the progress under that name.
 - **The push set runs beside round two.** It starts in the message of its roles, over closed texts and
   the base merged in once; nobody touches the copy meanwhile. Findings: the run is stopped, the fixes
-  land, the set runs again. No fixes: after green only the record of the round and the take-apart
-  commit, then the push.
+  land, their texts and the base are asked again, then the set. No fixes: after green only the record
+  of the round and the take-apart commit, then the push.
 - **The set waits for the round** where a change of look waits for the owner and where a light plan
-  has a full diff. With no round two it runs right after the fixes of the first.
+  has a full diff. With no round two it runs after the fixes of the first and the answer on the look.
 - **Unattended work keeps the loop and the night rule both.** By `autonomous-work` the owner's
   screen becomes a measurement; push and PR wait for the owner's return where it keeps all local.
 

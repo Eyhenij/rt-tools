@@ -76,7 +76,19 @@ Given a step that dies at once and held a deaf child in a group of its own, and 
 When the run is sent `TERM`
 Then nothing of them is left
 
-Given a machine with no table of processes and a step deaf to `INT`
+Given a step that dies at once and held a child in a group of its own that cleans up by `TERM`
+When the run is sent `TERM`
+Then the child cleans up and is gone
+
+Given a step of two commands, the first of which ends by `INT` itself
+When the run is sent `TERM`
+Then the second command does not start
+
+Given the same step
+When the run is sent `HUP`
+Then the run ends with 129 and the step is gone
+
+Given a machine with no table of processes, or one that fails once, and a step deaf to `INT`
 When the run is sent `TERM`
 Then the step is gone, and the run ends without waiting for it to finish
 

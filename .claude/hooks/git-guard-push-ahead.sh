@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/git-guard-push-ahead.sh · 32cd2b46bf64 · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/git-guard-push-ahead.sh · 28f2603641a3 · правится надстройкой, не здесь
 # The push set run ahead of the push: every check of `rt_push_checks <base>`, a green mark for each
 # that passed. The push guard then reads the marks instead of running the steps again.
 #
@@ -14,8 +14,8 @@
 #
 # Exit codes: 0 — the set is green; 1…100 — the number of red checks; 3 is also «the run did not
 # start» (no profile, no repository, edits outside the index), and the last `push ahead:` line tells
-# the two apart; 101 — the copy changed while the set ran, and the run vouches for nothing; 130,
-# 143 — the run was stopped by INT or TERM. Not 2: to a hook that code means "refuse", and this
+# the two apart; 101 — the copy changed while the set ran, and the run vouches for nothing; 129,
+# 130, 143 — the run was stopped by HUP, INT or TERM. Not 2: to a hook that code means "refuse", and this
 # command refuses nothing.
 #
 # The run is stopped by `kill -TERM <pid>`, the pid is in its first line: the step in flight and the
@@ -120,9 +120,12 @@ trap 'rm -f "$step_out"' EXIT
 
 # The processes of `$*` and all that hang on them: by the parent and by the group. A step puts its
 # servers and its scenarios into groups of their own, and a child whose parent is gone is told by the
-# group alone. The group of the run itself is never one of them. No `ps` — no list.
+# group alone. The group of the run itself is never one of them. No table of processes — no list and a
+# code of its own: an empty list says that nobody is left.
 rt_ahead_tree() {
-    ps -A -o pid=,ppid=,pgid=,stat= 2>/dev/null | awk -v roots="$*" -v self="$$" '
+    local table
+    table="$(ps -A -o pid=,ppid=,pgid=,stat= 2>/dev/null)" && [ -n "$table" ] || return 2
+    printf '%s\n' "$table" | awk -v roots="$*" -v self="$$" '
         $4 !~ /^Z/ { n++; pid[n] = $1; ppid[n] = $2; pgid[n] = $3 }
         $1 == self { own = $3 }
         END {
@@ -142,13 +145,18 @@ rt_ahead_tree() {
         }'
 }
 
-# Whether the step or something it holds still runs. With no `ps` the group of the step answers.
+# Whether the step or something it holds still runs. A list that could not be taken, once or ever,
+# leaves the former one: it and the group of the step answer.
 rt_ahead_holds() {
+    local now
     # shellcheck disable=SC2086
-    left="$(rt_ahead_tree ${left:-$step_pid})"
-    [ -n "$left" ] && return 0
-    ps -p $$ -o pid= >/dev/null 2>&1 && return 1
-    kill -0 -- "-$step_pid" 2>/dev/null
+    if now="$(rt_ahead_tree ${left:-$step_pid})"; then
+        left="$now"
+        [ -n "$left" ]
+        return
+    fi
+    # shellcheck disable=SC2086
+    { [ -n "$left" ] && kill -0 $left 2>/dev/null; } || kill -0 -- "-$step_pid" 2>/dev/null
 }
 
 # Waits up to `$1` seconds for the step and all it holds to end.
@@ -162,19 +170,22 @@ rt_ahead_wait_left() {
 }
 
 # Ends the step and everything it holds. INT first: a runner of end-to-end suites puts its stand
-# down by INT alone, and by TERM leaves it on the port. Then TERM: a builder takes its scenarios with
-# it within seconds. KILL only after that, by the list: it lets nobody clean up after itself.
+# down by INT alone, and by TERM leaves it on the port. Then TERM to the step: a builder takes its
+# scenarios with it within seconds. Then TERM to what is left: a process whose parent is gone hears
+# nothing sent to the group of the step. KILL only after that: it lets nobody clean up after itself.
 rt_ahead_stop() {
     local left
-    trap '' INT TERM
+    trap '' HUP INT TERM
     # A signal between the start of a step and the record of its number.
     [ -n "$starting" ] && [ "${!:-}" != "$starting" ] && step_pid="$!"
     if [ -n "$step_pid" ]; then
         left="$(rt_ahead_tree "$step_pid")"
         kill -INT -- "-$step_pid" 2>/dev/null
         if ! rt_ahead_wait_left "$stop_wait"; then
-            kill -TERM -- "-$step_pid" 2>/dev/null
-            if ! rt_ahead_wait_left $((stop_wait * 2)); then
+            kill -TERM -- "-$step_pid" 2>/dev/null && rt_ahead_wait_left "$stop_wait" && left=""
+            # shellcheck disable=SC2086
+            [ -n "$left" ] && kill -TERM $left 2>/dev/null
+            if ! rt_ahead_wait_left "$stop_wait"; then
                 # shellcheck disable=SC2086
                 [ -n "$left" ] && kill -KILL $left 2>/dev/null
                 kill -KILL -- "-$step_pid" 2>/dev/null
@@ -186,6 +197,7 @@ rt_ahead_stop() {
     printf '\npush ahead: stopped by %s — the steps before it keep their marks\n' "$1"
     exit "$2"
 }
+trap 'rt_ahead_stop HUP 129' HUP
 trap 'rt_ahead_stop INT 130' INT
 trap 'rt_ahead_stop TERM 143' TERM
 
@@ -217,9 +229,11 @@ while IFS= read -r check; do
         set -o pipefail
         (
             set +o pipefail
+            # A step of several commands does not go on to the next one after a stop.
+            trap 'exit 130' HUP INT TERM
             eval "$check"
         ) </dev/null 2>&1 | (
-            trap '' INT TERM
+            trap '' HUP INT TERM
             cat >"$step_out"
         )
     ) &

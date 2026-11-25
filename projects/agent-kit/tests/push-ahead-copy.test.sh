@@ -189,14 +189,22 @@ EOF
 # the same group the child left one whose parent is gone: the group alone names it.
 cat >"$BOX/keeper.mjs" <<'EOF'
 import { spawn } from 'node:child_process';
-import { writeFileSync } from 'node:fs';
 const [, , box] = process.argv;
 const deaf = 'while :; do sleep 1; done';
-const script = `trap '' INT TERM; (${deaf.replace(/done$/, 'done &')} echo $! >${box}/server-lost); : >${box}/ready; ${deaf}`;
-const child = spawn('bash', ['-c', script], { detached: true, stdio: 'ignore' });
-writeFileSync(`${box}/server-keeper`, String(child.pid));
+const script = `trap '' INT TERM; (${deaf.replace(/done$/, 'done &')} echo $! >${box}/server-lost); echo $$ >${box}/server-keeper; : >${box}/ready; ${deaf}`;
+spawn('bash', ['-c', script], { detached: true, stdio: 'ignore' });
 setInterval(() => {}, 1000);
 EOF
+# A step that dies by the first signal, and its child in a group of its own cleans up by TERM.
+cat >"$BOX/loner.mjs" <<'EOF'
+import { spawn } from 'node:child_process';
+const [, , box] = process.argv;
+const script = `trap ': >${box}/cleaned-loner; exit 0' TERM; echo $$ >${box}/server-loner; : >${box}/ready; while :; do sleep 0.2; done`;
+spawn('bash', ['-c', script], { detached: true, stdio: 'ignore' });
+setInterval(() => {}, 1000);
+EOF
+# A command that ends by INT itself: the shell of the step would go on to the next one.
+printf '%s\n' "trap 'exit 1' INT" 'echo $$ >"$1/server-polite"' ': >"$1/ready"' 'while :; do sleep 0.2; done' >"$BOX/polite.sh"
 # A step whose child outlived its parent and stayed in the group of the step.
 cat >"$BOX/orphan.sh" <<'EOF'
 (sleep 300 & echo $! >"$1/server-orphan")
@@ -207,9 +215,26 @@ printf '%s\n' "trap '' INT TERM" 'echo $$ >"$1/server-deaf"' ': >"$1/ready"' 'wh
 printf '%s\n' "trap '' INT" 'echo $$ >"$1/server-half"' ': >"$1/ready"' 'while :; do sleep 1; done' >"$BOX/half.sh"
 mkdir -p "$BOX/no-ps"
 printf '#!/bin/sh\nexit 1\n' >"$BOX/no-ps/ps"
-chmod +x "$BOX/no-ps/ps"
+# A table of processes that is not given once: the third time it is asked for.
+mkdir -p "$BOX/torn-ps"
+printf '%s\n' '#!/bin/sh' "echo x >>$BOX/asked" "[ \"\$(wc -l <$BOX/asked | tr -d ' ')\" = 3 ] && exit 1" 'exec /bin/ps "$@"' >"$BOX/torn-ps/ps"
+chmod +x "$BOX/no-ps/ps" "$BOX/torn-ps/ps"
 
-alive() { if kill -0 "$(cat "$BOX/server-$1" 2>/dev/null)" 2>/dev/null; then printf alive; else printf gone; fi; }
+# Whether a process of a step still runs. One that never came up is neither: a scenario that did not
+# reach its subject proves nothing.
+alive() {
+    local pid
+    pid="$(cat "$BOX/server-$1" 2>/dev/null)"
+    rm -f "$BOX/server-$1"
+    if [ -z "$pid" ]; then
+        printf absent
+    elif kill -0 "$pid" 2>/dev/null; then
+        kill -KILL "$pid" 2>/dev/null
+        printf alive
+    else
+        printf gone
+    fi
+}
 wait_for() {
     local n=0
     until [ -e "$1" ] || [ "$n" -ge "${2:-150}" ]; do
@@ -224,7 +249,7 @@ stopped() {
     local started
     rm -f "$BOX/ready" "$BOX/code" "$BOX/pid"
     RT_PUSH_STOP_WAIT="$3" node "$BOX/launch.mjs" "$BOX" "$HOOKS/git-guard-push-ahead.sh" "$1" &
-    wait_for "$BOX/ready"
+    wait_for "$BOX/ready" 300 || report "SC-AK-1983 — the step the run is stopped in came up" absent up
     started="$(date +%s)"
     kill "-$2" "$(cat "$BOX/pid")" 2>/dev/null
     if [ -n "${4:-}" ]; then
@@ -234,7 +259,10 @@ stopped() {
     wait_for "$BOX/code" 300 || kill -KILL "$(cat "$BOX/pid")" 2>/dev/null
     took=$(($(date +%s) - started))
     code="$(cat "$BOX/code" 2>/dev/null)"
+    run_pid="$(cat "$BOX/pid" 2>/dev/null)"
     wait 2>/dev/null
+    # The number of an ended run may go to a process of another: the sweep does not kill by it.
+    [ -n "$code" ] && rm -f "$BOX/pid"
 }
 
 for signal in SIGINT SIGTERM; do
@@ -242,7 +270,7 @@ for signal in SIGINT SIGTERM; do
     stopped "$t" TERM 4 again
     report "SC-AK-1983 — a stopped run ends with the code of the signal ($signal)" "$code" 143
     report "SC-AK-1983 — the first line names the process of the run ($signal)" \
-        "$(sed -n 's/^push ahead: base .*, pid \([0-9]*\)$/\1/p' "$BOX/log")" "$(cat "$BOX/pid")"
+        "$(sed -n 's/^push ahead: base .*, pid \([0-9]*\)$/\1/p' "$BOX/log")" "$run_pid"
     report "SC-AK-1983 — the server a step takes down by $signal is gone" "$(alive "$signal")" gone
     report "SC-AK-1983 — the step cleans up by $signal itself, a second signal to the run or not" "$([ -e "$BOX/cleaned-$signal" ] && echo cleaned || echo killed)" cleaned
     report "SC-AK-1983 — no step starts after the stop ($signal)" "$([ -e "$BOX/late-$signal" ] && echo started || echo held)" held
@@ -260,19 +288,39 @@ rm -rf "$t"
 
 t="$(tree_of "node $BOX/keeper.mjs $BOX # heavy keeper")"
 stopped "$t" TERM 1
-report "SC-AK-1983 — a deaf child of a step that died at once is gone" "$(alive keeper)" gone
+report "SC-AK-1983 — a deaf child of a step that died at once is gone" "$code:$(alive keeper)" 143:gone
 report "SC-AK-1983 — a child that outlived its parent in that group is gone too" "$(alive lost)" gone
+rm -rf "$t"
+
+t="$(tree_of "node $BOX/loner.mjs $BOX # heavy loner")"
+stopped "$t" TERM 2
+report "SC-AK-1983 — a child whose parent died at once hears TERM and cleans up" \
+    "$code:$([ -e "$BOX/cleaned-loner" ] && echo cleaned || echo killed):$(alive loner)" 143:cleaned:gone
 rm -rf "$t"
 
 t="$(tree_of "bash $BOX/deaf.sh $BOX # heavy deaf")"
 stopped "$t" TERM 1
-report "SC-AK-1983 — a step deaf to both signals is gone" "$(alive deaf)" gone
+report "SC-AK-1983 — a step deaf to both signals is gone" "$code:$(alive deaf)" 143:gone
+PATH="$BOX/no-ps:$PATH" stopped "$t" TERM 1
+report "SC-AK-1983 — and it is gone with no table of processes too" "$code:$(alive deaf)" 143:gone
+rm -rf "$t"
+
+t="$(tree_of "bash $BOX/polite.sh $BOX; touch $BOX/late-polite # heavy polite")"
+stopped "$t" TERM 2
+report "SC-AK-1983 — a step of two commands does not go on to the second one" \
+    "$code:$(alive polite):$([ -e "$BOX/late-polite" ] && echo started || echo held)" 143:gone:held
+stopped "$t" HUP 2
+report "SC-AK-1983 — HUP ends the run and its step" "$code:$(alive polite)" 129:gone
 rm -rf "$t"
 
 t="$(tree_of "bash $BOX/half.sh $BOX # heavy half")"
 PATH="$BOX/no-ps:$PATH" stopped "$t" TERM 1
 report "SC-AK-1983 — with no table of processes the group of the step still ends" \
     "$(alive half):$code:$([ "$took" -lt 10 ] && echo soon || echo "late ($took)")" gone:143:soon
+rm -f "$BOX/asked"
+PATH="$BOX/torn-ps:$PATH" stopped "$t" TERM 2
+report "SC-AK-1983 — a table of processes that failed once does not stop the stop" \
+    "$([ "$(wc -l <"$BOX/asked")" -ge 3 ] && echo asked):$(alive half):$code:$([ "$took" -lt 10 ] && echo soon || echo "late ($took)")" asked:gone:143:soon
 rm -rf "$t"
 
 suite_result "the run ahead and its copy"

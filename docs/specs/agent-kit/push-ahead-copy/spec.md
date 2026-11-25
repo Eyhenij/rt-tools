@@ -42,14 +42,17 @@ There is no interface: the run answers with lines of output and an exit code.
 - **An edit made and put back inside one step is not seen.** The copy is looked at between the steps;
   whoever reads the change beside the run writes nothing into the copy.
 - **A stopped run ends the tree of its step and keeps the marks of the steps before.** The first line of
-  the run names its process number; `TERM` or `INT` sent to it ends the run with the code of the signal.
-  The stopped step leaves no mark, and no step starts after it. A run started by `&` from a script
-  ignores `INT`, as everything started so does; `TERM` always reaches it.
+  the run names its process number; `TERM`, `INT` or `HUP` sent to it ends the run with the code of the
+  signal. The stopped step leaves no mark, no step starts after it, and a step of several commands does
+  not go on to the next one. A run started by `&` from a script ignores `INT`, as everything started so
+  does; `TERM` always reaches it.
 - **A stopped step gets `INT`, then `TERM`, then `KILL`.** The groups and the parents of its processes
   are told before the signal: a builder and a runner of end-to-end suites start theirs in groups of
   their own. A runner of suites puts its stand down by `INT` alone; a builder takes its scenarios with
-  it by `TERM` within seconds, and killed at once it leaves them running. A second signal to the run
-  changes nothing. With no table of processes the group of the step alone is ended.
+  it by `TERM` within seconds, and killed at once it leaves them running. Both go to the group of the
+  step; what outlives the step in a group of its own gets `TERM` by name, and `KILL` only after it. A
+  second signal to the run changes nothing. With no table of processes the group of the step alone is
+  ended, and a table that failed once does not end the stop.
 - **A step reads an empty input, and what it left in the background is waited for.** One that read the
   list of steps as its input ate the rest of the set; a process left behind edits the copy after the
   step, and the step ends with it.
@@ -69,8 +72,8 @@ The surface is the exit code and the lines of the run ahead.
 ### Refusal codes
 
 Not applicable: the run refuses nothing. It exits with 0 — green, 1…100 — the number of red checks,
-3 — the run did not start or three red checks, 101 — not judged, 130 and 143 — stopped by `INT` or
-`TERM`. The last `push ahead:` line tells them apart.
+3 — the run did not start or three red checks, 101 — not judged, 129, 130 and 143 — stopped by `HUP`,
+`INT` or `TERM`. The last `push ahead:` line tells them apart.
 
 ## Data
 
@@ -102,11 +105,11 @@ Working copies of one repository share the marks; a changed copy ends only its o
 
 - **The run is not moved to a copy of its own.** It would need its own installed packages, and the
   line of a step names the pinned base by the branch, which one copy alone holds.
-- **The processes of a step are found by their parents, not by the group.** On 25 November 2026 a step
-  of the guard scenarios was stopped by `TERM` and by `KILL` five seconds later: its group was empty
-  and 89 processes of the scenarios went on in another one.
-- **The wait is seconds, not a question to the step.** Ten after `INT`, twenty after `TERM`; a tree that
-  knows its steps moves the first by `RT_PUSH_STOP_WAIT`.
+- **The processes of a step are found by the parent and by the group, not by the group of the step
+  alone.** On 25 November 2026 a step of the guard scenarios was stopped by `TERM` and by `KILL` five
+  seconds later: its group was empty and 89 processes of the scenarios went on in another one.
+- **The wait is seconds, not a question to the step.** Ten after each of `INT`, `TERM` to the step and
+  `TERM` to what is left; a tree that knows its steps moves it by `RT_PUSH_STOP_WAIT`.
 
 ## Open questions
 
