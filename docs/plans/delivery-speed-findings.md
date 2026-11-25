@@ -111,3 +111,27 @@ The findings of the rules review of every closed task of the epic «Проста
    `git-workflow`; it was removed after the push.
 8. **A repeat in `task-delivery-loop-run`** — tree, «9, 11–12»: the stop of the own showcase and stand is
    said twice.
+
+## RT-3640 — the review of 25 November 2026
+
+1. **The quick checks stand in the section that starts the round** — tree, `task-delivery-loop-run`, «7, 9».
+   `check-file-size` was red in the diff of round one and a role found it: the demand lay in «5–6», already
+   passed. Proposed: the block of quick checks before the diff of every round.
+2. **A refused commit stops the call** — tree, `task-delivery-loop-run`, «8, 9». A commit refused by the
+   subject case went by `;`, and the pruning commit took its files; the set was stopped. Proposed: files by
+   name, `&&` after a commit, no `git add` before the commit of the pruning.
+3. **The merge of the previous branch is asked before branching** — tree, `task-delivery-loop-run`, «2–3».
+   The branch was taken from a ref merged nine minutes earlier, seen only at the closing.
+4. **On the light path the fixes of a serious finding in a check are read by one role** — tree,
+   `tools/review-path.mjs` and `task-delivery-loop`; the owner's decision, it narrows the word of 24.11. The
+   fixes of RT-3640 replaced the mechanism, read by nobody. Price: 3–4 minutes beside the set.
+5. **Broken variants run in a copy, in the background and against the code that ships** — tree,
+   `agent-kit-source`, one article with item 6 of RT-3630. A runner ended by `timeout` left a broken line in
+   the tree, and four variants were counted for a line rewritten later.
+6. **A check does not stand on file permissions** — package, `pitfalls/testing.md`. Mode 0 is listed by root
+   and by Windows, and the `rmSync` of Node 24 cannot remove it.
+7. **A plan asks how long the file is that it adds to** — package, `pitfalls/task-flow-start.md`. The
+   scenarios outgrew the limit, and the part they left for stands in no row of the footprint.
+8. **The PR call of the loop passes the gate without `git-workflow-hosting`** — tree, the gate map: the form
+   with the token and `$(…)` is missed; `docs/archive/*` is in neither map against `archive-record`. The
+   owner's choice: two loads more per task.
