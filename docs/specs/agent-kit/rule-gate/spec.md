@@ -75,12 +75,13 @@ The gate has no interface: only the executor sees it — as the text of a refusa
 - **The path of the layer of code design is read from the root of the tree.** A folder above the tree
   named like a test, a setting or a build would silence the layer in the whole tree.
 - **The target of a write by a command gets the layers by path.** Without that the same module written
-  by the shell passed every layer, and the domain rule alone came. A target is what a redirection,
-  `tee`, `sed -i`, `cp` or `mv` names; a script that is run and a file that is read stand in the same
-  line and are not targets. Not seen: a path in a variable or with a space, a write by the body of an
-  interpreter, by `perl -pi`, `install`, `dd`, `touch` or `>|`, a copy into a directory, a target
-  followed by a comment, a command torn by `\` at the end of a line, a `sed` expression with `;` inside.
-  The layers by the text of the edit stay silent: a command carries no field of the text.
+  by the shell passed every layer, and the domain rule alone came. The targets are asked of the shared
+  parse of writes, on every command and not only on one with the sign of a write; a script that is run
+  and a file that is read stand in the same line and are not targets. A path the command only names
+  gets the domain rule as before: `rm` and `touch` name no target. Not seen: a bare name without a
+  slash, a path through a variable the command gave no literal, a script file the command runs, and
+  what the shared parse does not see. The layers by the text of the edit stay silent: a command carries
+  no field of the text.
 - **The gate map counts as a command a call, not a mention.** A match by substring catches any
   mention: a line about a commit in the body of the commit itself was refused as a commit, and this
   was gone around by rewriting the text, not by the work.

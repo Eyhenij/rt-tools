@@ -17,6 +17,10 @@ identity server.
 | the entry example's admin panel | 4410  | by the same call                   |
 | the identity server, shared by both stands and the dev receiver | 58080 | `pnpm run serve:auth`; both stand scripts call it |
 
+`pnpm run serve:auth` removes the container of the identity server that started before the theme
+archive was written and raises a new one: the server reads its theme only at start, and the
+composition alone leaves the former container in place.
+
 The ports of the end-to-end stand are overridden by the variables `E2E_API_PORT` and
 `E2E_ADMIN_PORT` — they are declared in `apps/message-bus-admin-e2e/stand/stand.mjs`. The stand
 takes no working ports: on it one looks at what the working database does not have.

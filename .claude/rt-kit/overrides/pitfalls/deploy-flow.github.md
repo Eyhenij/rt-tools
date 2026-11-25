@@ -18,7 +18,7 @@ rule promised production that travels by itself.
 
 ```bash
 # what is actually rolled out: the last successful rollout and its commit
-GH_TOKEN=$(cat ~/.config/rt-tools-bot-token) command gh run list \
+test -s ~/.config/rt-tools-bot-token && GH_TOKEN=$(cat ~/.config/rt-tools-bot-token) command gh run list \
     --workflow=deploy.yml --status=success --limit 1 --json headSha,createdAt
 # by how much production lags the main branch
 git rev-list --count <sha of the rollout>..origin/main

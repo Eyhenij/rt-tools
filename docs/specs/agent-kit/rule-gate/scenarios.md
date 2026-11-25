@@ -371,10 +371,12 @@ Covered: `projects/agent-kit/tests/skill-gate-design.test.sh`.
 
 ### SC-AK-1919 — the target of a write by a command gets the layers by path
 
-Given a command writes a module or a script by a redirection, `tee`, `sed -i` or a copy
+Given a command writes a module or a script by a redirection, `>|`, `tee`, an edit in place, a copy
+into a file or a folder, a move, `install`, the code of a shell or the body of an interpreter
 When the gate decides what to demand
 Then every target gets its layers by path on top of the domain rule; a script that is run with its
-output sent to a file, a removed file and a file copied outside get none
+output sent to a file, a removed file, a file copied outside, a file read by code and a path through
+an unknown variable get none
 
 Covered: `projects/agent-kit/tests/skill-gate-design.test.sh`.
 

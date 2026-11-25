@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/task-flow-owner.md · f7658685bf36 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · pitfalls/task-flow-owner.md · 2a7d1272f841 · правится надстройкой, не здесь -->
 # Work conduct — the owner's word and the session — cold part
 
 This part of the rule `task-flow` keeps its statements hot and its explanation in the cold part
@@ -42,6 +42,8 @@ Rule under the law `docs/constitution/work-conduct.md`. Cold part: `pitfalls.md`
 - **The last run of the main branch is read first thing in a session and after every known merge.**
 - **A session does not start work by itself.** An empty message, one word or one path order no work.
 - **A refusal by an external limiter removes the way, not the task.** The way is taken from the guard that already described this fix.
+- **A refusal that names a ready command is carried out before any question to the owner.** A move the rules leave to the owner is asked.
+- **A menu where every option hands the work to the owner or stops it bypasses the task.** The move a refusal named comes first.
 - **A question written by a past session does not become a question to the owner.** It goes to the handover's author; some are closed by a work step.
 - **The owner's instruction holds until they cancel it, and a new fact against it is a line in the reply about the cost, not a new question.**
 - **An answer in the owner's message counts the same as an answer in a document.**

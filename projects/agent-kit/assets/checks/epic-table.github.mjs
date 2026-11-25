@@ -226,7 +226,7 @@ function gathered(argv) {
     const plan = found.text;
     const rows = makeupOf(plan);
     if (rows.length === 0) {
-        return { ok: false, why: `замысел «${found.path}» не несёт состава эпика: состав — таблица со столбцом задач` };
+        return { ok: false, why: `план «${found.path}» не несёт состава эпика: состав — таблица со столбцом задач` };
     }
 
     const board = fetchBoard(OPTIONS);

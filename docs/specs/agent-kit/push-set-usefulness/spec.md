@@ -48,6 +48,10 @@ The report prints in the owner's language: «Проверки набора», «
   base and no subject mark: it counts in the runs, the seconds, the refusals and the false refusals,
   and the idle runs of its check read «предмет не записан».
 
+- **A red step names the file of its full output and the locale it ran under.** The refusal keeps
+  the last 25 lines, and the failed suite of a long step stands above them. A rerun in a shell of
+  another locale comes out green, and the refusal then counts as false with no reason known.
+
 ### The numbers
 
 - **A false refusal is a red run followed by a green run of the same command on the same content

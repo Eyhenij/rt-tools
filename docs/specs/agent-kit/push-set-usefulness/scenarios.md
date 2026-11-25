@@ -81,6 +81,14 @@ Not covered: the run marks of this machine are outside history and live a month;
 them was read by the check of step 2.3 of RT-3283, and SC-AK-1665 holds the same lists on made-up
 lines.
 
+### SC-AK-1935 — a red step names the file of its full output and its locale
+
+Given a tree whose set holds a red check that prints sixty lines
+When the set runs ahead, or the push guard runs it
+Then the refusal names a file that holds all sixty lines, and the locale the step ran under
+
+Covered: `projects/agent-kit/tests/push-ahead-call-guard.test.sh`.
+
 ### SC-AK-1667 — one check on two bases is one line
 
 Given runs of `pnpm exec nx affected -t test-hooks` with `--base=origin/main` and with

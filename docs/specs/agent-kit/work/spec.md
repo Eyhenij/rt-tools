@@ -185,7 +185,7 @@ the merge, not after.
   print and what to end with is separated from the calls of the network: otherwise it is checked only
   by a live work queue.
 - **An epic is created by the same command as a task, and by three things at once.** The label on the
-  card, the draft of the plan in the directory of plans of the tree and the path to that draft in the
+  card, the draft of the plan in the directory of plans — in the branch of the epic — and the path to it in the
   body: the audit reads the plan by the path, and a card without it points into emptiness.
 - **Everything an epic cannot be created without is asked before the card is made.** An administrator
   alone takes a made card off the board, and a refusal after the call leaves an epic without a label

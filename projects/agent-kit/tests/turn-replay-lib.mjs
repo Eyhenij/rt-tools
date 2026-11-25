@@ -63,7 +63,7 @@ function answerOf(turn, id, at, options) {
         return result(
             at,
             id,
-            `PreToolUse:${turn.call} hook error: [${turn.guard}.sh]: BLOCKED by ${turn.guard}: the call is refused.`,
+            `PreToolUse:${turn.call} hook error: [${turn.guard}.sh]: BLOCKED by ${turn.guard}: ${turn.says ?? 'the call is refused.'}`,
             true
         );
     if (turn.code === 0) return result(at, id, turn.out ?? 'done', false);
@@ -90,7 +90,11 @@ export function recordOf(fixture) {
             entries.push(assistant(at, [{ type: 'tool_use', id, name: 'AskUserQuestion', input: { questions } }]));
             entries.push(answerOf(turn, id, at, turn.menu.slice(1)));
         } else if (turn.call) {
-            const input = turn.call === 'Bash' ? { command: turn.command ?? '' } : { file_path: turn.file ?? 'notes.md' };
+            const inputs = {
+                Bash: () => ({ command: turn.command ?? '' }),
+                Agent: () => ({ subagent_type: turn.agent ?? '', prompt: 'the facts of the record' }),
+            };
+            const input = inputs[turn.call]?.() ?? { file_path: turn.file ?? 'notes.md' };
             entries.push(assistant(at, [{ type: 'tool_use', id, name: turn.call, input }]));
             entries.push(answerOf(turn, id, at, []));
         }

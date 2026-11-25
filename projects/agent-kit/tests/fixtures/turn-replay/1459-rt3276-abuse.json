@@ -5,6 +5,6 @@
   "task": 101,
   "turns": [
     { "role": "owner", "at": "2026-11-14T17:20:00Z", "owner": "<abuse>" },
-    { "role": "agent", "at": "2026-11-14T17:20:20Z", "say": "I hear you. Tell me what to fix first." }
+    { "role": "agent", "at": "2026-11-14T17:20:20Z", "say": "Слышу вас. Скажите, что исправить первым." }
   ]
 }

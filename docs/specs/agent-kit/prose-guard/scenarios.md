@@ -206,8 +206,12 @@ Covered: `projects/agent-kit/tests/prose-style-guard.test.sh`.
 Given a command writes a document by a heredoc, and the previous wording of that document stands in
 the same command outside the heredoc
 When the guard of the wording checks the call
-Then it judges the bodies of the heredocs alone and lets the call through; a command without a
-heredoc is judged whole, as before
+Then it judges the bodies of the heredocs alone and lets the call through
+
+Given a command without a heredoc
+When the guard of the wording checks the call
+Then it judges it part by part, but for the commands of reading and the old wording of a `sed`
+replacement: a long chain of edits and checks passes, and any other form of a write is judged
 
 Covered: `projects/agent-kit/tests/prose-style-guard.test.sh`.
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/override-write-guard.sh · 2c36a0719127 · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/override-write-guard.sh · 986c717ef2b7 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Write|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Requires: hooks/deny-tail.sh, hooks/guard-note.sh
+# Requires: hooks/deny-tail.sh, hooks/guard-note.sh, hooks/write-targets.sh
 # Guard against wiping out an override: writing over is not the same as editing.
 #
 # The tree's override merges with the package resource by `## ` section: a section the tree has
@@ -64,22 +64,11 @@ refuse() {
     exit 0
 }
 
-# The targets of writing over, named by the command outright. Appending is not included here: `>>`
-# is hidden before the parsing and is not unfolded back, and `tee` is taken only without the
-# appending argument.
-rt_overwrite_targets() {
-    tr "\"'\`" '   ' \
-        | sed -E 's/>>/\
-APPEND/g' \
-        | sed -E 's/>/\
->/g' \
-        | sed -nE '
-            s/^>[[:space:]]*([^[:space:]|&;]+).*/\1/p
-            s/(^|.*[[:space:]])tee[[:space:]]+([^-[:space:]][^[:space:]|&;]*).*/\2/p
-            s/(^|.*[[:space:]])(cp|mv|install)[[:space:]]+([^[:space:]]+[[:space:]]+)+([^[:space:]|&;]+).*/\4/p
-        ' \
-        | sort -u
-}
+# The targets of writing over are read by the parse shared with the other guards: what adds to the end
+# and what edits in place it does not name.
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/write-targets.sh" 2>/dev/null || true
+command -v rt_overwrite_targets >/dev/null 2>&1 || rt_overwrite_targets() { cat >/dev/null; }
 
 tool="$(rt_hook_tool)"
 candidates=""
@@ -108,7 +97,8 @@ while IFS= read -r candidate; do
             candidate="$root/$candidate"
             ;;
     esac
-    case "$relative" in "$overrides_dir"/*) ;; *) continue ;; esac
+    # A copy of the tree inside it holds overrides of its own, and they are gained the same way.
+    case "$relative" in "$overrides_dir"/* | .claude/worktrees/*/"$overrides_dir"/*) ;; *) continue ;; esac
     [ -f "$candidate" ] || continue
 
     lines="$(wc -l <"$candidate" 2>/dev/null | tr -d ' ')"
@@ -116,7 +106,7 @@ while IFS= read -r candidate; do
     [ "$lines" -eq 0 ] && continue
 
     sections="$(grep -c '^## ' "$candidate" 2>/dev/null || printf '0')"
-    resource="${relative#"$overrides_dir"/}"
+    resource="${relative##*"$overrides_dir"/}"
 
     refuse write_override '{"override_nonempty":"yes"}' \
         "$(jq -cn --arg p "$relative" --arg l "$lines" --arg s "$sections" --arg r "$resource" '{path:$p, lines:$l, sections:$s, resource:$r}')" \

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/doc-style.2.md · c66fb035ff35 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · pitfalls/doc-style.2.md · 0a237c2c8100 · правится надстройкой, не здесь -->
 # Project texts — cold part, second file
 
 The sections the rule `doc-style` handed over when it was cut to its statements: its names,
@@ -123,6 +123,8 @@ flowchart TD
   words, and the guard refuses the edit for lines it does not add. A post-edit hook does not see such a write at
   all, and a replacement whose pattern matched nothing exits zero with the file untouched. A
   command that must write a document gets it as a file written by the edit tool beforehand.
+  An edit script saved to a file and run by its path is the same write: the guard of the place of an
+  edit reads an untracked script a command runs; one fed by a pipe or run by another script it misses.
 
 - **A document is no longer than the length limit.** A text that does not fit on one screen gets
   appended to without rereading the beginning — that is how one document ends up with two answers

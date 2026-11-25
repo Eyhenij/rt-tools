@@ -161,4 +161,26 @@ expect_no_reason "SC-AK-734 — правило двух записей одно�
 gate_session_reset
 unset RT_GATE_CONTEXT_LIMIT
 
+# Правила одной правки вместе весят больше предела: отказ несёт те, что влезли, по порядку карты, и
+# называет остальные. Прежде не приходило ни одно, и отказ повторялся после сжатия на той же правке.
+{ printf -- '---\nname: angular-patterns\nkind: rule\n---\n\n'; printf '%02000d\n' 0 | tr 0 a; } > "$TREE/.claude/skills/angular-patterns/SKILL.md"
+{ printf -- '---\nname: platform-access\nkind: rule\n---\n\n'; printf '%02000d\n' 0 | tr 0 p; } > "$TREE/.claude/skills/platform-access/SKILL.md"
+FIT_EDIT="$(input_edit "$TREE/libs/site/x/data-access/src/lib/z.service.ts" 'const w = inject(WINDOW); window.x = localStorage;')"
+reason="$(printf '%s' "$FIT_EDIT" | RT_GATE_CONTEXT_LIMIT=4200 "$HOOKS/skill-gate.sh" 2>/dev/null \
+    | jq -r '.hookSpecificOutput.permissionDecisionReason // empty')"
+case "$reason" in *aaaaaaaaaa*) got="первое пришло" ;; *) got="нет" ;; esac
+case "$reason" in *pppppppppp*) got="${got}, второе тоже" ;; esac
+report "SC-AK-1681 — delivers as many as fit, in the order of the map" "$got" "первое пришло"
+case "$reason" in *'«angular-patterns» of this call arrived'*'«platform-access» do not fit'*) got="названы" ;; *) got="нет" ;; esac
+report "SC-AK-1681 — отказ называет пришедшие и остальные" "$got" "названы"
+report "SC-AK-1681 — записано только пришедшее" \
+    "$(cat "${TMPDIR}claude-skill-gate/tests.loaded" 2>/dev/null)" "angular-patterns"
+[ "${#reason}" -le 4200 ] && got="да" || got="${#reason}"
+report "SC-AK-1681 — отказ с правилом не длиннее предела" "$got" "да"
+# Следующая правка того же места получает остальное доставкой.
+got="$(printf '%s' "$FIT_EDIT" | RT_GATE_CONTEXT_LIMIT=4200 "$HOOKS/skill-gate.sh" 2>/dev/null \
+    | jq -r '.hookSpecificOutput.additionalContext // empty' | grep -c '«platform-access»')"
+report "SC-AK-1681 — следующая правка получает остальное" "$got" 1
+gate_session_reset
+
 suite_result "текст отказа гейта правил"

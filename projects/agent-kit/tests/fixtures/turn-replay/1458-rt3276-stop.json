@@ -13,6 +13,6 @@
       "code": 0
     },
     { "role": "owner", "at": "2026-11-14T18:03:00Z", "owner": "стоп" },
-    { "role": "agent", "at": "2026-11-14T18:03:10Z", "say": "Stopped. The edit stays uncommitted." }
+    { "role": "agent", "at": "2026-11-14T18:03:10Z", "say": "Остановился. Правка не закоммичена." }
   ]
 }

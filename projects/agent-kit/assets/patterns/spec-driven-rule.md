@@ -259,6 +259,13 @@ reference — it changes how a story is written.
   next to it. The same pass checks the shape of the code — a sample declaring fields unlike the
   tree declares them teaches breaking the language rule, and the rule that forbids it will not
   know.
+- A block of commands was checked in one shell, while the session's shell runs it. A string comparison
+  inside `[ … ]`, a word that is not split and a pattern that matches nothing break in the other one.
+  A scenario cuts the block out of the text and runs it whole, in bash and in zsh, from the root and
+  from a subdirectory, with a quote and a second line in its values.
+- An article that orders something over another rule's subject — the plan, the progress, the PR — was
+  written without reading that rule, and the two say different things. The rule of the subject is
+  looked up first, and the new article quotes the nearest one of its articles.
 - A split left a pointer under the old state heading and cut its next-move line together with the
   moved text. A heading of the form «State `name`» keeps every duty of a state section wherever it
   stands, and the check of the next move reads it so: the pointer names its own next move, or the

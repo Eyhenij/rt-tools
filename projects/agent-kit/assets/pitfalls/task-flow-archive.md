@@ -239,6 +239,9 @@ indistinguishable from a sent one.
   A folder removed by its commit is the sign of handed-in work. A folder assembled anew would bring
   back the delivery guard's refusal on the very next call. The one exception is the `git revert` the
   engine names for a step whose fix lies in the folder; the last commit then takes the folder apart again.
+- **A red fixed after the taking-apart goes into the record by the commit that fixes it.** The record
+  was written before the set ended and closes with a green that is no longer the last word. The fixing
+  commit adds the red, its cause and the fix to it: nothing else keeps them.
 - **If the folder is simply deleted, `grill.md` is the first to go.** Deleting is easier than taking
   apart, and the owner's words are written only there, with nowhere to recover them from. So the
   guard demands that the branch add a record to the archive. What exactly was moved it does not

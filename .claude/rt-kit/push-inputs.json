@@ -238,7 +238,7 @@
             "probes": []
         },
         "node tools/check-hooks.mjs": {
-            "seconds": 16,
+            "seconds": 9,
             "history": [],
             "untraced": [
                 "bash"
@@ -759,7 +759,7 @@
             "probes": []
         },
         "pnpm run check:ngdoctor": {
-            "seconds": 19,
+            "seconds": 9,
             "history": [],
             "untraced": [
                 "angular-doctor",
@@ -772,6 +772,7 @@
                 {
                     "dir": ".",
                     "exts": [
+                        ".env",
                         ".html",
                         ".json",
                         ".mjs",
@@ -785,7 +786,7 @@
             "probes": []
         },
         "pnpm run check:unused": {
-            "seconds": 12,
+            "seconds": 4,
             "history": [],
             "untraced": [
                 "knip"
@@ -1110,7 +1111,7 @@
             "probes": []
         },
         "node tools/check-package-imports.mjs": {
-            "seconds": 6,
+            "seconds": 4,
             "history": [],
             "untraced": [
                 "npm"
@@ -1178,8 +1179,10 @@
             "probes": []
         },
         "node tools/check-doc-paths.mjs": {
-            "seconds": 1,
-            "history": [],
+            "seconds": 0,
+            "history": [
+                "git remote"
+            ],
             "untraced": [],
             "self": [
                 "tools/check-doc-paths.mjs",
@@ -1647,6 +1650,7 @@
                     "exts": [
                         ".cjs",
                         ".editorconfig",
+                        ".env",
                         ".js",
                         ".json",
                         ".mjs",

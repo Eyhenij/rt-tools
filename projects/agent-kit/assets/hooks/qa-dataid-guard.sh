@@ -62,7 +62,7 @@ case "$tool" in
     Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool)
         cmd="$(rt_hook_cmd)"
         [ -z "$cmd" ] && exit 0
-        path="$(printf '%s' "$cmd" | rt_write_targets | grep -m1 '\.html$')"
+        path="$(printf '%s' "$cmd" | RT_WT_SCRIPT=1 rt_write_targets | grep -m1 '\.html$')"
         ;;
     *) exit 0 ;;
 esac

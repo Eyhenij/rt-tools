@@ -89,7 +89,8 @@ export class TestRtToggleSwitchComponent {
 ```
 
 - `app-` selector (demo scaffolding, not a shipped `rt-` component).
-- Plain public fields — these are the Storybook control surface.
+- Plain public fields — these are the Storybook control surface. A wrapper that
+  derives its values by computed() declares its args `input()`, a boolean one with `booleanAttribute`.
 - Wrapper styles are exempt from the design-token stylelint rule (the
   `**/stories/**` ignore), so demo layout CSS is fine there.
 - The wrapper is **not** exported from any `public-api.ts` — it must never ship.

@@ -61,7 +61,7 @@ flowchart TD
     J -->|Run red| K[Fixed in the same branch]
     K --> J
     J -->|Green| L[The draft, if there was one, is lifted]
-    L --> M[A person presses the merge into the epic branch: the executor asks and names the number]
+    L --> M[A person presses the merge into the epic branch: the executor asks and names the number, or merges by a named allowance]
     M --> N{Tasks of the epic are left}
     N -->|Yes| B
     N -->|No| O[The MR of the epic into main opens: all the folders are taken apart, and the main branch takes the epic whole]
@@ -152,7 +152,8 @@ flowchart TD
   the draft and asking to merge are one turn, and an MR opened ready needs no such call.
 - **The MR merge is pressed by a person, not by the work's executor.** The button, `glab mr merge`
   and "Merge when pipeline succeeds" set by the executor are equal. The executor merges their own MR
-  only when a person said so about this MR; said about one, it does not carry to the next.
+  only on a person's word: about this MR, or a named allowance that names the MRs and the condition
+  in advance; nothing past it. A word about one does not carry.
 - **The draft is not lifted while the MR has no review.** The delivery guard reads the requested
   reviewer and the review left: a lifted draft reads as "may be merged", and there is nobody to
   merge. Earlier than this turn there is nowhere to ask — before the MR opens there is no reviewer
@@ -240,8 +241,8 @@ flowchart TD
   token does not see the project whole.
 - **A task is moved across lists by editing its labels.** The board's lists are labels: a move that
   did not remove the previous label leaves the task in two lists at once, and the queue reads wrong.
-- **Guard scenarios set the git settings themselves, not take them from the machine.** Author, email
-  and signature go as `-c` flags.
+- **Guard scenarios set the git settings and the locale themselves, not take them from the machine.**
+  Author, email and signature go as `-c` flags; the push guard runs steps under `C.UTF-8`.
 
 ## What of the law is not here
 

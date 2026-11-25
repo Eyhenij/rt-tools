@@ -264,10 +264,105 @@ Covered: `projects/agent-kit/tests/shell-write-paths.test.sh`.
 
 ### SC-AK-1251 — an arrow inside quotes is not a write target
 
-Given the command passes a string with an arrow in it — `echo "a->b"`, the code of `node -e` with
+Given the command passes a string with an arrow or a comparison in it — `echo "a->b"`,
+`process.exit(a>b?1:0)`, the code of `node -e` with
 an arrow function, a message in single or back quotes
 When the shared parse takes the write targets out of the command text
 Then it names nothing, while `echo x > out` next to it still names `out`, and an arrow after an
 escaped quote outside quotes is still a redirection
 
 Covered: `projects/agent-kit/tests/shell-write-paths.test.sh`.
+
+### SC-AK-1942 — every command of the line gives out its own targets
+
+Given a command line with an in-place edit, an interpreter with code in an argument and a check next
+to them, or a target named through a variable the same line gives a literal
+When the shared parse takes the write targets out of the command text
+Then the target of the edit and the paths of the code are named, every variable of a path is filled
+in, and the path of the neighbouring command, of a read on the same line and of a message in quotes is
+named by nothing
+
+Covered: `projects/agent-kit/tests/write-targets.test.sh`.
+
+### SC-AK-1943 — a script file run by an interpreter is read with the command
+
+Given a script outside the tree that edits a laid-out copy, or opens a PR with a bad title
+When the command runs it by an interpreter with or without keys, by `env`, by `source`, by `<`, by the
+code of `bash -c`, by its path, through a variable, from another directory or under a time limit
+Then the guard of the place of an edit and the delivery guard refuse it as they refuse the same call
+written outright, and a title the script computes is named as computed; a script that only reads, a
+comment, a heredoc body and an edit in a `mktemp` directory inside it, `bash -n`, a run named in
+quotes, a tracked file of the tree, a missing file, a file longer than 64 KB and a command that prints
+the script pass
+
+Covered: `projects/agent-kit/tests/script-file-read.test.sh`.
+
+### SC-AK-1946 — the refusal of a compound command names the judged part
+
+Given a line of several commands, one of which edits a laid-out copy or writes into the progress
+When the guard of the place of an edit or the guard of the course of work refuses it
+Then the refusal quotes that part and says none of the parts ran; a read of the same file next to
+the write is not the part named, also when a heredoc body holds the write, and then no part is named;
+the refusal of a plain command, one line or several joined by a backslash, holds no such words
+
+Covered: `projects/agent-kit/tests/combined-command-refusal.test.sh`.
+
+### SC-AK-1962 — every form of a write names its target
+
+Given a command writes by a redirection, `tee`, a copy or a move, an edit in place, code handed to an
+interpreter or to a shell, or a heredoc body one of them reads; before the name of the command stand
+assignments, words of the shell or runners with their flags
+When the shared parse takes the write targets out of the command text
+Then every target is named whole and nothing else is: a path with a space, two files of `tee`, the file
+a copy makes in a folder, a path through a variable the command gave a literal, and the body of a script
+the same command writes and runs; of code — a name, a list, a loop and a command the code runs
+
+Covered: `projects/agent-kit/tests/shell-words.test.sh`, `projects/agent-kit/tests/code-writes.test.sh`.
+
+### SC-AK-1963 — a read, a run and a text are not a write
+
+Given a command reads, runs, searches or quotes a path — with an arrow in quotes, in a comparison or
+in code, with a word of a write in a string, with a body handed to a script as its data
+When the shared parse takes the write targets out of the command text
+Then it names nothing of them, and a write that stands next to them is still named; a command of 40 KB,
+of four thousand substitutions and of three thousand comparisons is read within five seconds each
+
+Covered: `projects/agent-kit/tests/shell-words.test.sh`, `projects/agent-kit/tests/code-writes.test.sh`.
+
+### SC-AK-1964 — a file written whole is told from a file added to
+
+Given a command writes a file by a redirection, `tee`, a copy or code, or adds to it, edits it in
+place or reads it; code that reads the file it writes edits it in place
+When the parse is asked for the files written whole
+Then it names the first and stays silent about the rest
+
+Covered: `projects/agent-kit/tests/shell-words.test.sh`, `projects/agent-kit/tests/code-writes.test.sh`.
+
+### SC-AK-1965 — a second parse in a hook is refused
+
+Given a hook holds a pattern of a writing command or calls the module of words past the shared parse
+When the suite reads the hooks
+Then it names the hook; a comment about a write and a hook that runs `cp`, `tee` or `sed` itself pass
+
+Covered: `projects/agent-kit/tests/write-parse-one.test.sh`.
+
+### SC-AK-1966 — without the module of words a guard is silent
+
+Given the module of words is not laid out next to the shared parse
+When a guard judges a command that overwrites a non-empty override
+Then no target is named, the call passes and nothing goes into the error stream; with the module the
+same call is refused; without the module of code the writes of the shell are still named
+
+Covered: `projects/agent-kit/tests/write-parse-one.test.sh`.
+
+### SC-AK-1967 — a path stands from the directory of its call
+
+Given a command handed to a shell, a body or a script file writes relative paths before, after and
+between calls of `cd` and `pushd`, in a subshell, in a function, and in a directory given by a variable
+When the shared parse takes the write targets out of the command text
+Then each path is joined to the directory its own call stands in and loses its «.» and «..»; the root of
+the tree by name leaves it as it is; a directory the text computes otherwise and one above the tree leave
+the path out, and the rest of the targets stay; variables that name each other end the reading;
+`cd` on the line of the command itself joins nothing
+
+Covered: `projects/agent-kit/tests/write-dirs.test.sh`.

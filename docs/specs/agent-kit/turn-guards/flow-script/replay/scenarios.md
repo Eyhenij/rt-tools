@@ -147,6 +147,38 @@ Then the turn is held, and the menu hook holds such an option in any menu, the m
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
+### SC-AK-1932 — an incident record written and not sent holds the turn
+
+Given five turns that admit a miss and write its record: not sent, sent, refused by the send, written past its role, and left in the morning list of a night that named no send
+When the hook on Stop reads the turns, and the text of the model hook is read
+Then all five are held by the running stage, and the model hook lets only the sent one and the night end
+
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`; the verdicts of the model — `projects/agent-kit/tests/judge-replay.mjs`.
+
+### SC-AK-1933 — a reply not in the owner's language is held by the model hook
+
+Given a turn that answers the owner in another language, and one that answers in theirs and quotes a command with its English output
+When the text of the model hook on Stop is read
+Then it holds the first and lets the second end
+
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`; the verdicts of the model — `projects/agent-kit/tests/judge-replay.mjs`.
+
+### SC-AK-1934 — a question not in the owner's language is held, a product choice leaves
+
+Given a menu written in another language, and a menu in the owner's that asks what the product keeps after sanitizing
+When the text of the model hook before a question is read
+Then it holds the first and lets the second leave
+
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`; the verdicts of the model — `projects/agent-kit/tests/judge-replay.mjs`.
+
+### SC-AK-1939 — a menu whose every option hands the work to the owner is held
+
+Given a refusal of a guard that names a ready move, and a menu right after it with the options «Солью сам» and «Стоп, отложить»
+When the text of the menu hook is read, and the model judge reads the recorded question
+Then the menu is held; the menu of the exit check, «отложить RT-N» and «подскажу путь», leaves
+
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`; the verdicts of the model — `projects/agent-kit/tests/judge-replay.mjs`.
+
 ### SC-AK-1911 — the menu hook lets the owner's decision leave, the approval of a plan that changes a check included
 
 Given two questions with the option «Одобряю план RT-N»: one for a plan that changes the exit check, asked after the plan and both roles; one right after a refusal, with no plan and no roles

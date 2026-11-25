@@ -88,6 +88,8 @@ if printf '%s' "$said" | grep -q 'not delivered: agent-kit\. Load these'; then g
 report "SC-AK-1690 — названо только правило длиннее предела, без повторов" "$got" "есть"
 if printf '%s' "$said" | grep -qi 'comes back by itself'; then got="есть"; else got="нет"; fi
 report "SC-AK-1690 — сказано, что остальные вернутся сами" "$got" "есть"
+if printf '%s' "$said" | grep -q 'delivers as many as fit'; then got="есть"; else got="нет"; fi
+report "SC-AK-1690 — the line says the gate delivers as many as fit" "$got" "есть"
 gate_session_load git-workflow
 said="$(start tests compact | CLAUDE_PROJECT_DIR="$REARM_TREE" "$HOOKS/skill-gate-rearm.sh" 2>/dev/null \
     | jq -r '.hookSpecificOutput.additionalContext // ""' 2>/dev/null)"

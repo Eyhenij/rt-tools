@@ -1,0 +1,11 @@
+{
+  "case": "SC-AK-1934",
+  "kind": "a question to the owner not in the owner's language",
+  "record": "synthetic",
+  "task": 101,
+  "turns": [
+    { "role": "owner", "at": "2026-11-24T08:00:00Z", "owner": "возьми RT-101 и принеси план" },
+    { "role": "agent", "at": "2026-11-24T08:01:00Z", "call": "Read", "file": "docs/tasks/RT-101-replay-task/plan.md", "code": 0 },
+    { "role": "agent", "at": "2026-11-24T08:02:00Z", "menu": ["Do you approve the plan of RT-101?", "I approve RT-101", "Change the plan"], "answer": { "held": "ask-judge" } }
+  ]
+}

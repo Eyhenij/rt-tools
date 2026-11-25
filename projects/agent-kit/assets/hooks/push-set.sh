@@ -90,7 +90,7 @@ rt_push_set_base() {
 # named in `rt_push_set_ahead` instead of being started. The git hook has no such limit, leaves the
 # variable empty and runs the step itself.
 rt_push_set_run() {
-    local base="$1" check out status key_before skip_code="${RT_SKIP_CODE:-7}" sign started set_started set_took set_over over marked="" subjects
+    local base="$1" check out full status key_before skip_code="${RT_SKIP_CODE:-7}" sign started set_started set_took set_over over marked="" subjects
     local node_dir hook_path="$PATH"
     case "$skip_code" in '' | 0 | 1 | *[!0-9]*) skip_code=7 ;; esac
     command -v rt_push_check_heavy >/dev/null 2>&1 || rt_push_check_heavy() { return 1; }
@@ -136,7 +136,11 @@ rt_push_set_run() {
         key_before=""
         rt_push_mark_clean && key_before="$(rt_push_mark_key "$check" "$base" 2>/dev/null)"
         started="$(date +%s 2>/dev/null)"
-        out="$(eval "$check" 2>&1 </dev/null)"
+        # The step inherits nothing of the call it runs in: git gives its hook the address of the
+        # repository, the dispatcher gives the input of the agent's call, and a check that raises a
+        # repository of its own would work on the tree of the push, or judge the call of the push.
+        # shellcheck disable=SC2086
+        out="$(unset ${!RT_HOOK_@} GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_OBJECT_DIRECTORY GIT_ALTERNATE_OBJECT_DIRECTORIES GIT_COMMON_DIR GIT_PREFIX GIT_CONFIG_PARAMETERS GIT_CONFIG_COUNT; eval "$check" 2>&1 </dev/null)"
         status=$?
         over="$(rt_push_over_budget "$check" "$(($(date +%s 2>/dev/null) - started))")"
         if [ "$status" -eq 0 ] && [ -n "$over" ]; then
@@ -160,9 +164,12 @@ rt_push_set_run() {
         rt_run_note "$sign" "$started" red "$check" "$base" "$(rt_push_subject_of "$subjects" "$check")"
         rt_push_set_failed="${rt_push_set_failed}${rt_push_set_failed:+
 }${check}"
+        # The refusal keeps a tail; the full output stays in a file for a day, with the locale of the step.
+        find "${TMPDIR:-/tmp}/" -maxdepth 1 -name 'push-set-red.*' -mtime +0 -delete 2>/dev/null
+        full="$(mktemp "${TMPDIR:-/tmp}/push-set-red.XXXXXX" 2>/dev/null)" && printf '%s\n' "$out" >"$full"
         rt_push_set_output="${rt_push_set_output}${rt_push_set_output:+
 
-}── ${check}
+}── ${check} (LC_ALL=${LC_ALL:-not set}${full:+, the full output: ${full}})
 $(printf '%s' "$out" | tail -n 25)"
     done <<EOF
 $(rt_push_checks "$base" | rt_push_select "$base")

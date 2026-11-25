@@ -112,7 +112,7 @@ Where the pipeline wakes for the base, it checks the PR before the merge; where 
 push gate is the only check. Linters, unit tests, the build and hook scenarios are taken by the
 push gate either way — below is what it does not know.
 
-1. **The base is merged into this branch before the PR opens** — for a task branch that is the epic branch, for an epic branch the main one: `git fetch origin && git merge origin/<база>`.
+1. **The base is merged into this branch before the PR opens** — for a task branch that is the epic branch, for an epic branch the main one: `git fetch origin && git merge origin/<база>`, by the block of `git-workflow-merge`.
    Base freshness is not inherited between branches of one session: the second and the third
    are taken after their own `fetch`, not from the ref under the first. While work goes on, main
    moves ahead — most often by the same executor's own PR. Everything checked below is checked

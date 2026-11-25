@@ -373,7 +373,7 @@ case "${ctx%x}" in *'skills/angular-patterns/SKILL.md'*'skills/platform-access/S
 dc "SC-AK-1677 — правка идёт с правилом рода и вторым слоем" "$got" "оба, род первым"
 gate_session_reset
 
-# Правила, что не влезают вместе, отказаны вместе: отказ называет все, ничего не записано.
+# Рядом со словами отказа не влезает ни одно правило: отказ называет все, ничего не записано.
 { printf -- '---\nname: angular-patterns\nkind: rule\n---\n\n'; printf '%01500d\n' 0 | tr 0 a; } > "$TREE/.claude/skills/angular-patterns/SKILL.md"
 { printf -- '---\nname: platform-access\nkind: rule\n---\n\n'; printf '%01500d\n' 0 | tr 0 p; } > "$TREE/.claude/skills/platform-access/SKILL.md"
 out="$(RT_GATE_CONTEXT_LIMIT=2500 gate_answer "$ENV_EDIT")"

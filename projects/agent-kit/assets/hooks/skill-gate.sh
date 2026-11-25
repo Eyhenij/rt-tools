@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__claude-in-chrome__.*|mcp__figma__use_figma
-# Requires: checks/decide.mjs, hooks/decide.sh, hooks/deny-tail.sh
+# Requires: checks/decide.mjs, hooks/decide.sh, hooks/deny-tail.sh, hooks/write-targets.sh
 # The rules gate: it does not let a file be edited until the rule it falls under has been loaded.
 #
 # A law and a rule nobody opens do not act. A reminder in the prompt helps right up to the first
@@ -61,17 +61,11 @@ rt_gate_copy_path() {
     esac
 }
 
-# The path is the target of a write rather than a word of the command: a script that is run and a
-# file that is read stand in the same line. A body of an interpreter names no target.
-rt_gate_is_target() {
-    local path
-    # The list of paths drops a leading `./`, and the text of the command keeps it.
-    path="(\./)*$(printf '%s' "$2" | sed 's/[][\.*^$+?(){}|]/\\&/g')"
-    printf '%s\n' "$1" | tr "\"'" '  ' | grep -qE \
-        -e "(>|(^|[[:space:];&|])tee[[:space:]]([^;&|]*[[:space:]])?)[[:space:]]*${path}([[:space:];&|)<>]|\$)" \
-        -e "(^|[[:space:];&|])sed[[:space:]]+(-[a-zA-Z]+[[:space:]]+)*(-[a-zA-Z]*i|--in-place)([^;&]|&[^&])*[[:space:]]${path}([[:space:];&|)<>]|\$)" \
-        -e "(^|[[:space:];&|])(cp|mv)[[:space:]][^;&|]*[[:space:]]${path}[[:space:]]*([;&|)]|[0-9]?>|\$)"
-}
+# The targets of a write are read by the parse shared with the other guards. Without it a command
+# names none, and only the paths below bring the domain rule.
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/write-targets.sh" 2>/dev/null || true
+command -v rt_write_targets >/dev/null 2>&1 || rt_write_targets() { cat >/dev/null; }
 
 req=""
 target=""
@@ -140,34 +134,37 @@ case "$tool" in
             # shellcheck disable=SC1090
             [ -f "$profile" ] && . "$profile" 2>/dev/null
         done
-        if command -v rt_shell_writes >/dev/null 2>&1 && command -v rt_shell_paths >/dev/null 2>&1 \
-            && rt_shell_writes "$target"; then
-            gate_command="$target"
-            while IFS= read -r written_path; do
-                [ -z "$written_path" ] && continue
-                gate_raw="$written_path"
-                case "$written_path" in
-                    /*) ;;
-                    *) written_path="${CLAUDE_PROJECT_DIR:-.}/$written_path" ;;
-                esac
-                case "$written_path" in
-                    "${CLAUDE_PROJECT_DIR:-.}"/*) ;;
-                    *) continue ;;
-                esac
-                written_path="$(rt_gate_copy_path "$written_path")"
-                more="$(skill_for edit "$written_path" "" 2>/dev/null)"
-                [ -n "$more" ] && req="$req $more"
-                # The layers by path come to the target of a write too. The layers by the text of the
-                # edit stay silent: the command carries no field of the text.
-                rt_gate_is_target "$gate_command" "$gate_raw" || continue
-                target="$written_path"
-                # shellcheck disable=SC1090
-                [ -f "$rt_hooks_dir/skill-gate-layers.sh" ] && . "$rt_hooks_dir/skill-gate-layers.sh" 2>/dev/null
-                target="$gate_command"
-            done <<EOF
-$(rt_shell_paths "$target")
+        # A target of a write — `W` — gets the domain rule and the layers. A path the command only
+        # names — `P` — gets the domain rule when the command writes: `rm` and `touch` name no target.
+        gate_command="$target"
+        while IFS= read -r written_path; do
+            gate_mark="${written_path%% *}"
+            written_path="${written_path#* }"
+            # A bare name after `cd` elsewhere would read as a file of the root.
+            case "$written_path" in
+                /*) ;;
+                '$'* | '~'*) continue ;;
+                */*) written_path="${CLAUDE_PROJECT_DIR:-.}/${written_path#./}" ;;
+                *) [ "$gate_mark" = P ] && [ -n "$written_path" ] || continue; written_path="${CLAUDE_PROJECT_DIR:-.}/$written_path" ;;
+            esac
+            case "$written_path" in
+                "${CLAUDE_PROJECT_DIR:-.}"/*) ;;
+                *) continue ;;
+            esac
+            written_path="$(rt_gate_copy_path "$written_path")"
+            more="$(skill_for edit "$written_path" "" 2>/dev/null)"
+            [ -n "$more" ] && req="$req $more"
+            # The layers by path come to the target of a write too. The layers by the text of the
+            # edit stay silent: the command carries no field of the text.
+            [ "$gate_mark" = W ] || continue
+            target="$written_path"
+            # shellcheck disable=SC1090
+            [ -f "$rt_hooks_dir/skill-gate-layers.sh" ] && . "$rt_hooks_dir/skill-gate-layers.sh" 2>/dev/null
+            target="$gate_command"
+        done <<EOF
+$(printf '%s' "$target" | RT_WT_SCRIPT=1 rt_write_targets | sed 's/^/W /')
+$(command -v rt_shell_writes >/dev/null 2>&1 && command -v rt_shell_paths >/dev/null 2>&1 && rt_shell_writes "$target" && rt_shell_paths "$target" | sed 's/^/P /')
 EOF
-        fi
         ;;
     mcp__claude-in-chrome__*)
         req="$(skill_for browser "$tool" "" 2>/dev/null)"
@@ -277,6 +274,32 @@ for name in $rt_layer_before; do
 done
 gate_unread=""
 gate_why=""
+gate_given=""
+given=()
+rest=()
+# The names of the rules of a list, quoted.
+rt_gate_names() {
+    local out="" one
+    for one in "$@"; do out="${out}${out:+, }«${one}»"; done
+    printf '%s' "$out"
+}
+# Writes the delivered rules into the record of the session and into the observations.
+rt_gate_record() {
+    local dir="${TMPDIR:-/tmp}/claude-skill-gate" recorded=1 unrec=""
+    mkdir -p "$dir" 2>/dev/null || recorded=0
+    if [ "$recorded" = 1 ]; then
+        printf '%s\n' "$@" >> "$loaded" 2>/dev/null || recorded=0
+    fi
+    # shellcheck disable=SC1091
+    . "$rt_hooks_dir/observe.sh" 2>/dev/null
+    command -v rt_note >/dev/null 2>&1 || return 0
+    # An unwritten name costs one more delivery of the same rule; the note says so.
+    [ "$recorded" = 1 ] || unrec="unrecorded=yes"
+    for name in "$@"; do
+        rt_note gate-deliver "res=$name" "kind=$kind" "sid=$sid" $unrec
+    done
+    return 0
+}
 if [ "$sid" != "nosession" ] && [ "${#need[@]}" -gt 0 ]; then
     head_line="Passed by the rules gate: the call went through, and the text of"
     i=0
@@ -327,22 +350,7 @@ The companion of the rule — ${comp} — did not fit here and is read as a file
                 rt_gate_text
             fi
         done
-        dir="${TMPDIR:-/tmp}/claude-skill-gate"
-        recorded=1
-        mkdir -p "$dir" 2>/dev/null || recorded=0
-        if [ "$recorded" = 1 ]; then
-            printf '%s\n' "${need[@]}" >> "$loaded" 2>/dev/null || recorded=0
-        fi
-        # shellcheck disable=SC1091
-        . "$rt_hooks_dir/observe.sh" 2>/dev/null
-        if command -v rt_note >/dev/null 2>&1; then
-            # An unwritten name costs one more delivery of the same rule; the note says so.
-            unrec=""
-            [ "$recorded" = 1 ] || unrec="unrecorded=yes"
-            for name in "${need[@]}"; do
-                rt_note gate-deliver "res=$name" "kind=$kind" "sid=$sid" $unrec
-            done
-        fi
+        rt_gate_record "${need[@]}"
         jq -cn --arg c "$text" '{hookSpecificOutput:{hookEventName:"PreToolUse",additionalContext:$c}}'
         exit 0
     fi
@@ -363,6 +371,25 @@ The companion of the rule — ${comp} — did not fit here and is read as a file
                 break
             fi
         done
+        # The rules that fit arrive inside the refusal, in the order of the map, and the refusal is
+        # for the rest. The reserve is the refusal's own words with its tail: all of it together
+        # stays within the host limit.
+        gate_reserve=1800
+        for k in "${!need[@]}"; do
+            block="${rules[$k]}"
+            comp="$rules_dir/${need[$k]}/implementation.md"
+            [ -f "$root/$comp" ] && block="${block}
+
+The companion of the rule — ${comp} — is read as a file."
+            if [ $((${#gate_given} + ${#block} + gate_reserve)) -le "$gate_limit" ]; then
+                gate_given="${gate_given}${block}"
+                given+=("${need[$k]}")
+            else
+                rest+=("${need[$k]}")
+            fi
+        done
+        # The article and the companion of the refusal are those of a rule that did not arrive.
+        [ "$gate_why" = together ] && [ "${#given[@]}" -gt 0 ] && want="${rest[0]}"
     fi
 fi
 
@@ -417,8 +444,13 @@ fi
 # branches: there are three of them, and each rewrites the reason whole.
 [ -n "$ahead" ] && reason="${reason} Further along this same command these will be needed: ${ahead}."
 
-# Why the gate did not put the rule into the session itself. Rules that do not fit together are
-# refused together and named all at once: nothing was delivered, so they are loaded in one turn.
+# Why the gate did not put the rule into the session itself. The rules that fit arrived in this very
+# refusal; the rest are named all at once and loaded in one turn. The one longer than the limit is
+# named on top with its own move.
+if [ "${#given[@]}" -gt 0 ]; then
+    reason="Refused by the rules gate: the rules $(rt_gate_names "${given[@]}") of this call arrived below whole, the same as a load by the tool Skill. The rules $(rt_gate_names "${rest[@]}") do not fit the host limit of ${gate_limit} characters with them: repeat the action, and what fits arrives with it, or load all of these by the tool Skill first. ${fallback}"
+    [ "$gate_why" = together ] && gate_why=""
+fi
 case "$gate_why" in
     too-long)
         reason="${reason} The rule «${req}» is longer than the host limit of ${gate_limit} characters, so the gate does not put it into the session: read ${rules_dir}/${req}/SKILL.md by the tool Read, and the read counts as a load."
@@ -432,9 +464,7 @@ case "$gate_why" in
         reason="Refused by the rules gate: the rules ${names} are read before this text is composed, and delivered with the write they come after the design: load all of them by the tool Skill in one turn and repeat the action. ${fallback}"
         ;;
     together)
-        names=""
-        for name in "${need[@]}"; do names="${names}${names:+, }«${name}»"; done
-        reason="Refused by the rules gate: the rules ${names} of this call do not fit the host limit of ${gate_limit} characters together, so none of them arrived: load all of them by the tool Skill in one turn and repeat the action. ${fallback}"
+        reason="Refused by the rules gate: the rules $(rt_gate_names "${need[@]}") of this call do not fit the host limit of ${gate_limit} characters together, so none of them arrived: load all of them by the tool Skill in one turn and repeat the action. ${fallback}"
         ;;
 esac
 
@@ -454,6 +484,12 @@ The companion of the rule — ${companion} — is read together with it: the rul
 # as the slot `{reason}`. The action is the class of this call.
 # shellcheck disable=SC1091
 . "$rt_hooks_dir/decide.sh" 2>/dev/null
-command -v rt_decide >/dev/null 2>&1 \
-    && rt_decide skill-gate.sh "?edit_code" '{"rule_loaded":"no"}' "$(jq -cn --arg r "$reason" '{reason:$r}')" PreToolUse "$input"
+command -v rt_decide >/dev/null 2>&1 || exit 0
+answer="$(rt_decide skill-gate.sh "?edit_code" '{"rule_loaded":"no"}' "$(jq -cn --arg r "${reason}${gate_given}" '{reason:$r}')" PreToolUse "$input")"
+[ -n "$answer" ] || exit 0
+# A rule is recorded only by an answer that carries its text: the table may answer otherwise.
+if [ "${#given[@]}" -gt 0 ]; then
+    case "$answer" in *"=== ${rules_dir}/${given[0]}/SKILL.md ==="*) rt_gate_record "${given[@]}" ;; esac
+fi
+printf '%s\n' "$answer"
 exit 0
