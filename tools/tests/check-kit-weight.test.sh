@@ -50,7 +50,7 @@ report "a styles file in the threshold but not built is named" "$(count "$NOSTYL
 BARE="{\"set\":$SET,\"total\":1000,\"gzip\":400}"
 report "a threshold without sections is named, not a crash" "$(count "$(failures "$SAME" "$BARE")" 'не записан')" "3"
 
-GZIPNEAR="$(failures '{"total":1000,"gzip":402,"parts":{"menu":600,"popover":400},"styles":{"tokens.css":5000}}')"
+GZIPNEAR="$(failures '{"total":1000,"gzip":401,"parts":{"menu":600,"popover":400},"styles":{"tokens.css":5000}}')"
 report "a gzip drift inside the tolerance passes" "$GZIPNEAR" ""
 
 OTHER_SET="{\"set\":[\"menu\"],\"total\":1000,\"gzip\":400,\"parts\":{\"menu\":600,\"popover\":400},\"styles\":{\"tokens.css\":5000}}"

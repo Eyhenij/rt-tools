@@ -3,14 +3,14 @@
  * Вес частей кита на старте потребителя.
  *
  * Набор частей, которые потребитель тянет на старте, собирается esbuild'ом из собранного кита
- * (`dist/ui-kit-v2`) так же, как собирает потребитель: с минификацией и без отладочных веток
- * Angular. Байты набора и каждой части сверяются с порогом из `tools/kit-weight-threshold.json`.
+ * (`dist/ui-kit-v2`) близко к сборке потребителя: с минификацией и без отладочных веток Angular,
+ * со всеми экспортами частей (верхняя граница: потребитель берёт только нужное). Байты набора и каждой части сверяются с порогом из `tools/kit-weight-threshold.json`.
  * Расхождение с порогом в любую сторону красное; порог записывается командой `--write`: рост
  * принимается осознанно, снижение фиксируется ею же.
  *
- *   node tools/check-kit-weight.mjs           сверка с порогом
- *   node tools/check-kit-weight.mjs --print   таблица байтов без сверки
- *   node tools/check-kit-weight.mjs --write   запись порога по текущему измерению
+ *   pnpm run check:kit-weight                  сборка кита и сверка с порогом
+ *   pnpm run check:kit-weight -- --print   таблица байтов без сверки
+ *   pnpm run check:kit-weight -- --write   запись порога по текущему измерению
  */
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
@@ -27,7 +27,7 @@ const FILE_PREFIX = 'rt-tools-ui-kit-v2-';
 const GZIP_TOLERANCE = 0.005;
 const EXTERNAL = ['@angular/*', 'rxjs', 'rxjs/*', '@rt-tools/core', '@rt-tools/utils', 'd3-*'];
 
-/** Части, которые потребитель тянет на старте; расширяется правкой этого списка и порога. */
+/** Части, которые потребитель тянет на старте; расширяется правкой этого списка и записью порога. */
 const STARTUP_PARTS = ['select', 'menu', 'input', 'icon', 'popover', 'dialog', 'bottom-sheet'];
 
 /** Адрес точки входа кита в собранном пакете: часть `core` и корень лежат в файлах без суффикса. */
@@ -51,6 +51,7 @@ export async function measure(parts = STARTUP_PARTS) {
         write: false,
         metafile: true,
         outdir: 'out',
+        absWorkingDir: ROOT,
         splitting: true,
         define: { ngDevMode: 'false' },
         external: EXTERNAL,
@@ -77,6 +78,9 @@ export async function measure(parts = STARTUP_PARTS) {
         }
     };
     visit(entryKey);
+    if (startup.size === 0) {
+        throw new Error('в сборке набора нет файла точки входа: измерение из другого каталога или пустой набор');
+    }
     const code = Buffer.concat(
         result.outputFiles.filter((file) => startup.has(relative(ROOT, file.path))).map((file) => Buffer.from(file.contents)),
     );
@@ -127,7 +131,7 @@ function drift(label, limit, bytes) {
     }
     return bytes > limit
         ? `${label} вырос: ${limit} → ${bytes} байт`
-        : `${label} снизился: ${limit} → ${bytes} байт; запишите порог командой node tools/check-kit-weight.mjs --write`;
+        : `${label} снизился: ${limit} → ${bytes} байт; запишите порог командой pnpm run check:kit-weight -- --write`;
 }
 
 /**
@@ -138,7 +142,7 @@ function drift(label, limit, bytes) {
 export function compare(result, threshold) {
     const failures = [];
     if (JSON.stringify(threshold.set) !== JSON.stringify(STARTUP_PARTS)) {
-        failures.push('набор частей изменился: запишите порог командой node tools/check-kit-weight.mjs --write');
+        failures.push('набор частей изменился: запишите порог командой pnpm run check:kit-weight -- --write');
     }
     failures.push(drift('набор', threshold.total, result.total));
     // Размер gzip зависит от версии zlib в Node: он сверяется с допуском, а не побайтно.
