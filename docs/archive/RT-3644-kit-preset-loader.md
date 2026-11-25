@@ -38,4 +38,4 @@
 
 ## Как проверить
 
-`pnpm exec nx test @rt-tools/ui-kit-v2 --testFile=projects/ui-kit-v2/src/lib/scope-styles/scope-styles.service.spec.ts` — 16 passed; `node tools/check-kit-weight.mjs` — «331452 байт при пороге 331452».
+`pnpm exec nx test @rt-tools/ui-kit-v2 --testFile=projects/ui-kit-v2/src/lib/scope-styles/rt-scope-styles.service.spec.ts` — 16 passed; `node tools/check-kit-weight.mjs` — «331452 байт при пороге 331452».

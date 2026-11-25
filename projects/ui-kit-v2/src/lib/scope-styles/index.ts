@@ -1,1 +1,1 @@
-export * from './scope-styles.service';
+export * from './rt-scope-styles.service';

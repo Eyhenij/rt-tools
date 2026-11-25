@@ -7,7 +7,7 @@ import {
     RT_SCOPE_STYLES_TIMEOUT,
     RtScopeStylesService,
     provideRtScopeStyles,
-} from './scope-styles.service';
+} from './rt-scope-styles.service';
 
 const HREF: string = '/assets/tokens.scope.css';
 

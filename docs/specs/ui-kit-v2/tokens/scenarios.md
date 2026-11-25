@@ -227,4 +227,4 @@ address is waited for, not duplicated. Without an address and on the server noth
 seconds removes the link and rejects, and the next ask tries again; an eager start waits for the load, and its failure
 goes to the error handler of the application while the start goes on
 
-Covered: `projects/ui-kit-v2/src/lib/scope-styles/scope-styles.service.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/scope-styles/rt-scope-styles.service.spec.ts`.
