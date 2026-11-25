@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · samples/tasks/_template/progress.md · 9fc1c8a987e3 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · samples/tasks/_template/progress.md · 7cdc4943c1af · правится надстройкой, не здесь -->
 # Progress
 
 ## Where we stand
@@ -9,7 +9,6 @@ Rewritten by every session, not appended to.
 - **Stage:** <number> of <total> — <name>
 - **Done:** <briefly>
 - **Next step:** <what is done first in the new session>
-- **Uncommitted:** <what lies in the tree outside the index>
 - **PR:** <number and state, or "not open yet">
 
 ## Steps
@@ -28,6 +27,11 @@ reworded: a check matches the two lists, and the turn exit guard counts what is 
 ## Decisions along the way
 
 - **<decision>** — <reason>. Affected stage of the plan: <number>.
+
+<!-- «Цена» and «Отменено» are written before the set: `npm run task:archive` refuses without them. -->
+
+- **Цена:** <what was paid for the decision and how it came out>
+- **Отменено:** <each decision of the grill or of the progress the work cancelled and what replaced it, or «нет»>
 
 ## Sessions
 

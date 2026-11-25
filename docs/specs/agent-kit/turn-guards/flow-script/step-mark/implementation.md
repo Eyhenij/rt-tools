@@ -15,6 +15,13 @@ statement: a removed statement is removed together with its line.
 - **A step run while another live run holds the folder put back is refused, and its mark stays.** — `projects/agent-kit/assets/task-flow/source/git.mjs:liveRun` — the live run of another process; `projects/agent-kit/assets/checks/flow-step.mjs:restoreFolder` — the refusal; scenario `SC-AK-1822`
 - **`step --done` on a taken-apart folder measures the done steps the way the final rerun does.** — `projects/agent-kit/assets/checks/flow-step.mjs:runStepCommand` — the turn to `runBeforePull`; scenario `SC-AK-1822`
 
+## The stage
+
+- **`step <N>` measures the steps of stage N that lack a done mark with a green one, side by side; with none lacking it measures them all.** — `projects/agent-kit/assets/checks/flow-stage.mjs:runStage` — the steps of the stage and the choice of those measured; `projects/agent-kit/assets/checks/flow-step.mjs:measureSteps` — the runs side by side; scenarios `SC-AK-1997`, `SC-AK-2001`
+- **After the measurement `step <N>` marks the matched steps done in the order of the whole plan, up to the first step that stays open.** — `projects/agent-kit/assets/checks/flow-stage.mjs:markedStage` — the order and the first open step; scenarios `SC-AK-1997`, `SC-AK-1998`, `SC-AK-1999`, `SC-AK-2000`
+- **`step <N>` exits with 0 only when every measured step matched and is marked done.** — `projects/agent-kit/assets/checks/flow-stage.mjs:runStage` — the code; scenarios `SC-AK-1998`, `SC-AK-2000`, `SC-AK-2002`
+- **`step <N>` is refused on a stage the plan does not name and on a taken-apart task folder, one standing on disk and not in the head included.** — `projects/agent-kit/assets/checks/flow-stage.mjs:runStage` — both refusals; scenario `SC-AK-2002`
+
 ## The final rerun
 
 - **The PR of a task does not open until every done step matches on the final rerun.** — `projects/agent-kit/assets/hooks/git-guard-delivery-rerun.sh:rt_delivery_rerun` — the fact `steps_remeasured` of the opening; `projects/agent-kit/assets/checks/flow-step.mjs:runBeforePull` — the rerun over `projects/agent-kit/assets/checks/flow-step.mjs:doneSteps`; scenarios `SC-AK-1731`, `SC-AK-1732`

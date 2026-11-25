@@ -244,8 +244,16 @@ P="$(sed -n 's/^push ahead: base .*, pid \([0-9]*\)$/\1/p' "${TMPDIR:-/tmp}/push
 ps -p "${P:-0}" -o command= | grep -q 'git-guard-push-ahead' && kill -TERM "$P" || echo 'no run under this number'
 ```
 
-A red here is fixed while the task folder still stands; the folder is taken apart by the last commit.
-The push is a separate call after it; the push guard reads the marks the run ahead left, and a
+A red here is fixed while the task folder still stands. On green the body of the PR is written whole, by
+section 13, `goal-critic` reads it, and the folder is taken apart by the last commit: the record is built from both, and the
+refusals of the command write nothing (rule `archive-record`). It refuses without the items «Цена» and
+«Отменено» in the decisions of the progress: they go by the commit of the last round.
+
+```bash
+npm run task:archive -- <body file> --title '[RT-N] <что сделано>'
+```
+
+The push is a separate call after the commit; the push guard reads the marks the run ahead left, and a
 step without a mark runs at the push:
 
 ```bash
@@ -254,9 +262,9 @@ git push -u origin RT-N-<slug>
 
 ## 13. The PR
 
-The body goes to a file first, in the six sections of the pattern `git-workflow-pr-body`: the
+The PR opens by the body the record was built from, a file in the six sections of the pattern `git-workflow-pr-body`: the
 `Closes #N` line, «Что сделано», «Точки», «Цель», «Чем подтверждено» with the path and
-its rounds, «Оставшийся шаг».
+its rounds, «Оставшийся шаг» with all the work leaves outside itself: the record takes it from there.
 
 The PR opens after the push has answered: two calls of one message run at once, and a refused push
 left a PR on a head the host did not have. The opening call is typed as `gh pr create` itself, by its full path, never through a variable

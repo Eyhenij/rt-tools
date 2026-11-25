@@ -100,7 +100,7 @@ and the exits read up to it; `measure --json` prints the same as one object with
 `state`, `index`, `reason`, `exits`, `action` and `pattern`. `step <N.M>` runs the check of that
 step and prints `ожидалось … · получено … · совпало` with code 0, or `… · не совпало` with code 1;
 a refused step prints `step: <reason>` with code 1. `step --done` prints the same for every done
-step, each line led by its number. `plan-check <plan.md>` names every unfit check with code 1, and
+step, each line led by its number, and `step <N>` measures a whole stage of the plan. `plan-check <plan.md>` names every unfit check with code 1, and
 `plan-red` writes the approval mark with code 0 or names what is missing with code 1; it reads the
 record of the conversation the hook names in `RT_FLOW_TRANSCRIPT`. A description that does not build is named with its reason and code 1. A measurer gets
 its data through its ports and the data of the description; a source reads git, the working copy,

@@ -77,6 +77,7 @@
     "check:state-next": "node tools/check-state-next.mjs",
     "check:archive": "node tools/check-archive-age.mjs",
     "archive:prune": "node tools/archive-prune.mjs",
+    "task:archive": "node tools/archive-record.mjs",
     "task:new": "node tools/task-new.mjs",
     "task:move": "node tools/board.mjs move",
     "epic:table": "node tools/epic-table.mjs",

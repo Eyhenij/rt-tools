@@ -71,6 +71,23 @@ prints a line per fixture.
   way: its steps would read that progress.
 - **`step --done` on a taken-apart folder measures the done steps the way the final rerun does.**
 
+### The stage
+
+- **`step <N>` measures the steps of stage N that lack a done mark with a green one, side by side; with none lacking it measures them all.**
+  A mark on disk is green for the step when it was written by this plan, and by a check replaced or not
+  as it stands now.
+- **After the measurement `step <N>` marks the matched steps done in the order of the whole plan, up to the first step that stays open.**
+  A step that matched behind an open one, of its stage or of an earlier, writes its mark and stays open
+  in the progress, and its line names the open step. A done mark behind an open step is refused by the
+  guard on every edit of the progress, so the call does not lead there. A step whose line the progress
+  lacks stops the marking, and of the marks one after another the last set in order holds: a step marked
+  ahead is put in order by those before it. Only the section of the steps is marked. A done step that does not match keeps
+  its done mark, loses the one on disk, and does not stop the steps behind it: the code is 1.
+- **`step <N>` exits with 0 only when every measured step matched and is marked done.**
+  A step with no check is one line of refusal, and the others are measured. A call takes one stage: a
+  second number or a flag is refused, and nothing is measured.
+- **`step <N>` is refused on a stage the plan does not name and on a taken-apart task folder, one standing on disk and not in the head included.**
+
 ### The final rerun
 
 - **The PR of a task does not open until every done step matches on the final rerun.**
@@ -197,7 +214,9 @@ the second to the action `write_marks`. A refusal of the approval maps to `edit_
 the move: run `plan-red`, which finds the answer in the record; the owner is asked only when it
 finds none.
 
-The command `step <N.M>` keeps its output and codes; on a match it also writes the progress.
+The command `step <N.M>` keeps its output and codes; on a match it also writes the progress. The
+command `step <N>` prints a line per step of the stage, led by its number, and then
+`stage <N>: measured <n>, matched <m>, left open <k>`.
 
 The final rerun runs at the opening of the PR of a task, under the limit of the hook before a tool
 call, 1800 seconds. It runs `step --done`, and a line that did not match refuses the opening with
@@ -261,6 +280,9 @@ did not match. An approval is looked for in the record directories of every work
 - **The judge gets no tools instead of a prompt that forbids reading.** A sentence in the prompt is a
   request; a call without tools has nothing to read the file with.
 
+- **A stage is marked by one call up to the first step that stays open.** Rejected: marking every
+  matched step — the guard would then refuse every edit of the progress until the open one matched.
+
 ## Open questions
 
 None.
@@ -275,3 +297,4 @@ None.
 - 2026-11-19 — `plan-red` runs the checks on the tree of the plan commit, in a temporary worktree
   past the plan commit: a plan commit rebuilt after the approval is approved again by one command.
 - 2026-11-25 — the tree may name the plans that need no roles by `planRolesCommand`.
+- 2026-11-25 — `step <N>` measures and marks a whole stage.

@@ -12,6 +12,8 @@
  *   node task-flow-script.mjs step N.M  runs the check of that step of the plan, prints
  *                                      `ожидалось … · получено … · совпало|не совпало` and writes the
  *                                      mark of a matched step; exits 0 on a match, 1 otherwise
+ *   node task-flow-script.mjs step N    the steps of stage N with no green mark, side by side; marks the
+ *                                      matched in the order of the plan, up to the first that did not
  *   node task-flow-script.mjs step --done  the same for every step the progress marks done
  *   node task-flow-script.mjs step --done --pr  the rerun before a PR opens: a taken-apart folder
  *                                      comes back from the history for the run, a check that
@@ -47,6 +49,7 @@ import { isWriteCommand, saysStop } from './flow-data.mjs';
 import { FlowModelError, buildModel } from './flow-model.mjs';
 import { overridePath, removedLines } from './flow-override.mjs';
 import { planProblems, readRecord, runPlanRed } from './flow-plan.mjs';
+import { runStage } from './flow-stage.mjs';
 import { runStepCommand } from './flow-step.mjs';
 import { FlowSyntaxError } from './flow-syntax.mjs';
 import { currentStep, decide, holdReason, menuCause, nightBoundary, stageStep } from './flow-verdict.mjs';
@@ -167,7 +170,7 @@ export function measureJson(model, result) {
     return { ...result, action: state?.action ?? null, pattern: state?.pattern ?? null };
 }
 
-const USAGE = 'usage: node task-flow-script.mjs states | measure [--json] | step <N.M>|--done [--pr] | plan-check <plan.md> | plan-red | guard | verdict | forecast --days N [--until <date>] [--per-mille] [--guard]  [--flow <flow.js>]';
+const USAGE = 'usage: node task-flow-script.mjs states | measure [--json] | step <N.M>|<N>|--done [--pr] | plan-check <plan.md> | plan-red | guard | verdict | forecast --days N [--until <date>] [--per-mille] [--guard]  [--flow <flow.js>]';
 
 /**
  * What the guard guards: where the task folders and the epic plans lie, the tree override, and the
@@ -302,6 +305,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
         else if (command === 'step') {
             const source = await openSources(model, dirname(path));
             const sources = { git: source('git'), steps: source('steps'), marks: source('marks'), owner: source('owner') };
+            if (/^\d+$/.test(target)) process.exit(await runStage(sources, model, target, args.slice(2)));
             process.exit(await runStepCommand(sources, model, target, process.argv.includes('--pr') ? '--pr' : ''));
         } else if (command === 'plan-check') {
             const source = await openSources(model, dirname(path));

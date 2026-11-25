@@ -129,7 +129,6 @@ reads, and the only thing that survives trimming by size:
 - **Stage:** 3 of 6 — the guard and the startup hook
 - **Done:** the law is created, the task folder and the sample are written
 - **Next step:** the scenarios of both hooks, then wiring them into the settings
-- **Uncommitted:** everything, the branch has no commits yet
 - **PR:** not opened yet
 ```
 
