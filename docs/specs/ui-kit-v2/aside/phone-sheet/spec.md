@@ -1,6 +1,6 @@
 # The side panel as a full-height sheet on a phone
 
-**Status:** proposed · **Revision:** 24 November 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 25 November 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the side panel of the second kit and its service, the route panel of the frame
 `rt-container`, the filters of the toolbar, the bottom sheet of the second kit, the header of a
 sheet and its question before closing (subdomain `sheet-header-cards`), the sheet opened from a
@@ -8,9 +8,8 @@ sheet (subdomain `sheet-stack`)
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
 
-The product agreement of task RT-3532, epic RT-3530, written before the code. It merges into the
-second kit's spec as the subdomain `aside-phone-sheet` by one of the last commits of the branch,
-with the scenario numbers it has now.
+A subdomain of the side panel, subdomain `aside`, written by task RT-3532 of epic RT-3530. The
+scenario numbers are those of the agreement it was written from.
 
 ## Why
 
@@ -49,9 +48,9 @@ The person sees a panel that slides up from the bottom of the screen and takes a
 a thin strip on top. It has a handle, a close button «×» on the left of the header, the title in
 its centre and the main button on the right, «Сохранить» or «Применить». The other buttons of the
 panel stand at its bottom. Before closing a panel with unsaved edits the person sees the question
-«Несохранённые правки» at the bottom of the screen with «Закрыть без сохранения», «Сохранить и
-закрыть» and «Остаться». The filters ask «Применить изменения?» with «Применить», «Не
-применять» and «Отмена».
+«Несохранённые правки» at the bottom of the screen: a card with the red «Закрыть без сохранения»
+and «Сохранить и закрыть», and «Остаться» in a card of its own under it. The filters ask
+«Применить изменения?» the same way, with «Не применять», «Применить» and «Отмена».
 
 ## Rules
 
@@ -134,8 +133,7 @@ panel stand at its bottom. Before closing a panel with unsaved edits the person 
   focus of the field that opened the second one. The chevron, a choice, a swipe down and Escape on
   the second screen bring back the first one; they do not close the sheet. The owner's word:
   «нужно открывать в том же меняя содержимое а вместо кнопки крестик (слева в шапке) кнопка назад
-  шеврон». At the merge the subdomain `sheet-stack` takes this rule in place of «replaces it», and
-  its out-of-scope line about a back button goes.
+  шеврон». The rule holds for every sheet of the kit, subdomain `sheet-stack`.
 - **The parts of a panel live in the sheet unchanged.** The request error, the empty content, the
   pending layer, the tabs layout and the row under the header stand where they stand in the panel;
   the overline, the subtitle, the badges and the content of the title column stand under the title.
@@ -163,16 +161,11 @@ panel stand at its bottom. Before closing a panel with unsaved edits the person 
 - The threshold of 480 points and the setting `RT_POPOVER_SHEET`.
 - The release of the kit.
 
-Statements of the neighbouring subdomains change at the merge. In `toolbar-filters` the line «A
-bottom sheet instead of the panel» leaves the out-of-scope section, and the filters gain the
-question in the sheet. In `aside-options` the window about the unsaved edits on a phone becomes the
-question at the bottom, and scenario `SC-UKV-1043` changes its promise; the full-window width of
-the panel there holds from 481 points. In `workspace-breakpoint` the panel over the window keeps
-the header with the arrow and the button «Close» from 481 points, which scenarios `SC-UKV-1244`,
-`SC-UKV-1251`…`SC-UKV-1253` and `SC-UKV-1320` describe. In `popover-sheet` the asides leave the
-list of what does not open in the sheet. In `sheet-header-cards` the rule that every sheet has «×»
-gains the exception of a panel header without the arrow. The mobile layout of subdomain `aside`
-stops being «Not applicable».
+The neighbouring subdomains name the panel sheet where they meet it: `toolbar-filters` for the
+filters in the sheet, `aside-options` for the window about the unsaved edits and the full-window
+width from 481 points, `workspace-breakpoint` for the details panel with its arrow and «Close» from
+481 points, `popover-sheet` for what opens in a sheet, `sheet-header-cards` for the header without
+«×» and the question as an action sheet.
 
 ## Contract
 
@@ -217,10 +210,10 @@ Not applicable: the kit lives inside an application behind a sign-in.
 
 ### Mobile layout
 
-The whole agreement is about the phone, width 375. The sizes of the header, of «×» and of the
-strip on top are those of the sheet, subdomain `sheet-header-cards`. The frames are drawn and
-approved by the owner before the code; they show the place of the main action and of the header
-icon buttons in each of the five places of the kit.
+The whole subdomain is about the phone, up to 480 points, drawn at width 375. The sizes of the
+header, of «×» and of the strip on top are those of the sheet, subdomain `sheet-header-cards`. The
+owner approved the frames before the code and the showcase after it; they show the place of the
+main action and of the header icon buttons in each of the five places of the kit.
 
 ### Several objects
 
@@ -297,3 +290,4 @@ None.
 |            | button, the order of the answers, the opening; scenarios 1847…1862                |
 | 2026-11-25 | The approved mockup: the footer fields of 12, a dangerous button stays red, the   |
 |            | question as an action sheet of two cards; scenario 1863                           |
+| 2026-11-25 | The agreement is merged as the subdomain `aside/phone-sheet` with its numbers     |

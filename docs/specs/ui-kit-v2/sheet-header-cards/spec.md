@@ -43,7 +43,10 @@ checkbox or a switch on the right. The question before closing offers «Apply»,
   stands in the template of a part returns it itself, and a focus already moved elsewhere is left
   alone. The sheets of the date fields and of the page filters have the header too, and the
   sheet of a date field is titled by the label of the field, then by its accessible name. A
-  sheet whose header is replaced by a template is named by the title as a string.
+  sheet whose header is replaced by a template is named by the title as a string. Two exceptions:
+  the second screen of a sheet shows a back chevron in that place, subdomain `sheet-stack`, and a
+  side panel drawn as a sheet whose header switched its back arrow off draws no «×», subdomain
+  `aside/phone-sheet`.
 - **The action of a sheet stands on the right of its header as a filled button.** A choice of
   several values shows the done button there in both of its looks, the list and the toggles. The
   dynamic selector and the page filters show the apply button there. In the sheet the dynamic
@@ -113,8 +116,10 @@ checkbox or a switch on the right. The question before closing offers «Apply»,
   are changed: a kit list inside the sheet reports its change to the application, not to the
   sheet. The sheets of a time, of a date with time and of a period ask with a value chosen and
   not applied. The question offers three answers: apply, do not apply, cancel. It stands at the
-  bottom of the screen and takes the focus on its first answer; the sheet under it is out of
-  reach, and the cancel answer returns the focus to where the close was asked from. The answer
+  bottom of the screen as an action sheet of a phone, two cards: the first holds the title, the
+  message, the red «do not apply» and «apply», the second holds «cancel» alone. The focus goes to
+  «apply»; the sheet under it is out of reach, and the cancel answer returns the focus to where
+  the close was asked from. The answer
   "do not apply" is reported apart from the closing: the page filters pass it to the application,
   which owns the fields and returns them to the applied values. With nothing changed the sheet
   closes at once. Every other sheet closes without a question: its choice is written on every
@@ -179,7 +184,9 @@ Not applicable.
 
 The subject of the subdomain is a phone, width 375. The header is 52 px high with a 40 px close
 button 12 px from the left edge; a card is 56 px high without a description, cards stand 8 px
-apart, and the mark ends 36 px from the edge of the screen.
+apart, and the mark ends 36 px from the edge of the screen. The footer of a sheet keeps 12 px
+above and below its content and 20 px at the sides. The cards of the question stand 12 px from the
+sides and 24 px from the bottom, 8 px apart; an answer row is 56 px high.
 
 ### Several objects
 
@@ -205,5 +212,7 @@ None.
 |            | and the question of the date sheets, the time wheel, the place above the keyboard, the mark of a      |
 |            | hint, the apply request of a template, scenarios 1756…1767 (RT-3531)                                  |
 | 2026-11-23 | The wheel turns without an end and starts at the current time, scenarios 1768, 1769 (RT-3531)         |
+| 2026-11-25 | The question is an action sheet of two cards, the footer keeps 12 px above and below, the exceptions  |
+|            | of «×» (RT-3532)                                                                                      |
 | 2026-11-23 | A minute off the step, the keys of the wheel, Escape inside a date panel, scenarios 1770, 1771        |
 |            | (RT-3531)                                                                                             |

@@ -1,6 +1,9 @@
 # Scenarios — the side panel as a full-height sheet on a phone
 
-The prefix `SC-UKV` is shared across the domain; the numbers do not change after the merge.
+The prefix `SC-UKV` is shared across the domain together with the subdomains. The numbers are
+those of the agreement the subdomain was written from: the titles of the tests refer to them. Every
+scenario is covered by a test whose title starts with its number; most of them live next to the
+panel, the rest next to the frame, the toolbar, the workspace, the table and the data list.
 
 ### SC-UKV-1802 — on a phone a panel opened by the service rises as a full-height sheet
 
