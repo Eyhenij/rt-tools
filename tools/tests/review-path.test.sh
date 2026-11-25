@@ -129,6 +129,10 @@ report "a dropped test of the rules package is a guard" "$(
     path_of
     reason_of
 )" $'полный\nзащиты правил'
+for at in run.sh lib.sh judge-replay.mjs turn-replay.expected.json; do
+    report "what runs the tests of the rules package is a guard: $at" "$(changed "kitrun$(printf '%s' "$at" | tr -c 'a-z0-9' _)" "projects/agent-kit/tests/$at" 'exit 0' | paste -sd- -)" 'полный-защиты правил'
+done
+report "a sample of the package tests is light" "$(change kitfix projects/agent-kit/tests/fixtures/a.json 'x')" лёгкий
 report "a changed test of the rules package is light" "$(change kittest projects/agent-kit/tests/some.test.sh 'x')" лёгкий
 report "a file that was laid out is a guard after it loses the header" "$(
     repo unlaid
@@ -446,7 +450,7 @@ report "without the number it is needed" "$(two)" 'нужен'
 report "a word in place of the number is no number" "$(two --serious none)" 'нужен'
 report "a serious finding needs it" "$(two --serious 1)" 'нужен'
 report "without findings and risk it is not needed" "$(two --serious 0)" 'не нужен'
-for at in projects/utils/package.json projects/cms-contract/proto/a.proto tools/verify-x.cjs apps/message-bus/eslint.config.mjs tools/check-x.mjs .claude/hooks/x.sh projects/utils/src/lib/one.ts projects/ui-kit-v2/src/lib/a.logic.ts deploy/a.yml eslint/x.mjs .husky/x; do
+for at in projects/agent-kit/tests/run.sh projects/utils/package.json projects/cms-contract/proto/a.proto tools/verify-x.cjs apps/message-bus/eslint.config.mjs tools/check-x.mjs .claude/hooks/x.sh projects/utils/src/lib/one.ts projects/ui-kit-v2/src/lib/a.logic.ts deploy/a.yml eslint/x.mjs .husky/x; do
     light "r$(printf '%s' "$at" | tr -c 'a-z0-9' _)" 5 '**Task:** RT-7'
     put "$at" 'const z = 1;'
     commit risk

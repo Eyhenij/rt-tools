@@ -25,7 +25,7 @@ const MIGRATION_PATH = /^prisma\/|(^|\/)migrations\//;
 const LOOK_PATH = /\.(scss|css|html|svg|ico|png|jpe?g|gif|webp|woff2?|ttf)$|^apps\/.*\.(view|icons)\.ts$/;
 /** The files of the root, its texts aside, hold the settings of the checks, the packages and the agent. */
 const GUARD_PATH =
-    /^(?!.*\.md$|LICENSE$|docker-compose|pnpm-lock\.yaml$|\.env)[^/]+$|^\.claude\/(?!rt-kit\/(assignments\.md$|postmortems\/|proposals\/|observations\/))|^\.(?!claude\/|github\/|verdaccio\/|idea\/|vscode\/)[^/]+\/|^docs\/constitution\/|^projects\/agent-kit\/(?!tests\/|graphify-out\/|rules-graph\/|CHANGELOG|README)|^tools\/(flow-|task-flow|review-path|work-steps-lib|check-(kit-approval|push-gate|hooks|boundary)\.mjs)|^tools\/[^/]*-allowlist\.json$|^tools\/tests\/(run|lib|review-path|gate-map|check-(kit-approval|push-gate|hooks|boundary))/;
+    /^(?!.*\.md$|LICENSE$|docker-compose|pnpm-lock\.yaml$|\.env)[^/]+$|^\.claude\/(?!rt-kit\/(assignments\.md$|postmortems\/|proposals\/|observations\/))|^\.(?!claude\/|github\/|verdaccio\/|idea\/|vscode\/)[^/]+\/|^docs\/constitution\/|^projects\/agent-kit\/(?!tests\/([^/]*\.test\.sh$|fixtures\/|real-data\/)|graphify-out\/|rules-graph\/|CHANGELOG|README)|^tools\/(flow-|task-flow|review-path|work-steps-lib|check-(kit-approval|push-gate|hooks|boundary)\.mjs)|^tools\/[^/]*-allowlist\.json$|^tools\/tests\/(run|lib|review-path|gate-map|check-(kit-approval|push-gate|hooks|boundary))/;
 const TEST_DIR = /^tools\/tests\/|^projects\/agent-kit\/tests\//;
 /** A guard for the second round only: a check of the tree judges the work, and П2 says «защит» without «правил». */
 const CHECK_PATH =
