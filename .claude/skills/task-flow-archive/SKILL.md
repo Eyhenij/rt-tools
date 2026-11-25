@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow-handover
 description: Pattern of rule task-flow-handover. Load when the texts are up to date and the task folder is taken apart by the last commit before the PR opens. The move to the archive, the work queue audit, the rules review of the closed work and what to do with the findings.
 ---
-<!-- rt-kit v0.39.1 · patterns/task-flow-archive.md · 708837c810f6 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · patterns/task-flow-archive.md · 35d82d4b24de · правится надстройкой, не здесь -->
 
 # Taking the task folder apart and the rules review of the work
 
@@ -54,6 +54,5 @@ npm run task:archive -- <body of the PR> --title '<title of the PR>'
 ```
 
 The sorting stands before it: a standing requirement is moved into the layer, and the decisions of
-the progress name where each went. A grill in the layer's language is put into the owner's language
-in the record, after the command and before the commit; the quoted request stays verbatim. The taking
-apart of someone else's folder still goes by hand: the command takes the folder of its own branch.
+the progress name where each went. The taking apart of someone else's folder still goes by hand: the
+command takes the folder of its own branch.

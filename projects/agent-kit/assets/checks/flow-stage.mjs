@@ -18,23 +18,39 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { marksOutOfOrder } from './flow-guard.mjs';
 import { PROGRESS, StepRefused, markedProgress, measureSteps, planOfBranch, replacedCheck, stepLine } from './flow-step.mjs';
 
-/** The progress with the steps that matched marked done in the order of the plan, up to the first that did not. */
-export function markedStage(text, planned, stepsOf, matched) {
-    const done = (now) => new Set(stepsOf(now).filter((s) => s.mark === 'x').map((s) => s.number));
-    let now = text;
-    for (const { number } of planned) {
-        if (done(now).has(number)) continue;
-        if (!matched.has(number)) break;
-        const marked = markedProgress(now, number);
-        // The line of the step is not among the steps, or stands behind an open one: the mark is not written.
-        if (!done(marked).has(number) || marksOutOfOrder(marked)) break;
-        now = marked;
-    }
-    const has = done(now);
-    return { text: now, done: has, open: planned.find(({ number }) => !has.has(number))?.number ?? null };
+/** The text split around its section of the steps, so that a note elsewhere is never taken for a step. */
+function aroundSteps(text) {
+    const lines = text.split('\n');
+    const from = lines.findIndex((line) => /^##\s+(?:Steps|Шаги)\s*$/.test(line));
+    const next = lines.findIndex((line, i) => i > from && /^##\s/.test(line));
+    const to = next < 0 ? lines.length : next;
+    return from < 0 ? null : { head: lines.slice(0, from), steps: lines.slice(from, to).join('\n'), tail: lines.slice(to) };
 }
 
-const whyOpen = (number, open) => (open === number ? ' · not marked: the progress holds no line of it to mark in order' : ` · not marked: ${open} stands open before it`);
+/**
+ * The progress with the steps that matched marked done in the order of the plan, up to the first that did
+ * not. Of the marks one after another the last set that stands in order holds: a step marked ahead of the
+ * others is in order only with those before it marked too.
+ */
+export function markedStage(text, planned, stepsOf, matched) {
+    const done = (now) => new Set(stepsOf(now).filter((s) => s.mark === 'x').map((s) => s.number));
+    const parts = aroundSteps(text);
+    let best = text;
+    let now = text;
+    for (const { number } of parts ? planned : []) {
+        if (done(now).has(number)) continue;
+        if (!matched.has(number)) break;
+        parts.steps = markedProgress(parts.steps, number);
+        now = [...parts.head, parts.steps, ...parts.tail].join('\n');
+        // The line of the step is not among the steps: nothing behind it is marked.
+        if (!done(now).has(number)) break;
+        if (marksOutOfOrder(now) === null) best = now;
+    }
+    const has = done(best);
+    return { text: best, done: has, open: planned.find(({ number }) => !has.has(number))?.number ?? null };
+}
+
+const whyOpen = (number, open) => (open === number ? ' · not marked: its line in the progress cannot be marked in order' : ` · not marked: ${open} stands open before it`);
 
 /** Measures stage `stage` of the plan of the branch; 0 when every step of it matched and was marked. */
 export async function runStage(sources, model, stage, more = []) {
@@ -51,7 +67,7 @@ export async function runStage(sources, model, stage, more = []) {
         const read = () => (existsSync(path) ? readFileSync(path, 'utf8') : '');
         const stepsOf = (text) => steps.ofProgress(text).steps;
         const doneNow = new Set(stepsOf(read()).filter((s) => s.mark === 'x').map((s) => s.number));
-        // A mark of another plan, or of a check replaced since, says nothing about this step.
+        // A mark of another plan says nothing about this step, and one of a check replaced since neither.
         const holds = (number, mark) => {
             const step = planned.find((s) => s.number === number);
             return mark?.matched === true && mark.plan === plan.fingerprint && Boolean(mark.replaced) === replacedCheck(read(), number, step).replaced;

@@ -123,7 +123,7 @@ The table in `implementation.md` next to it.
 8. **Check every finding against the code, fix the confirmed ones, check live again.** Then the quick
    checks with `node tools/check-dupes.mjs` and `pnpm run check:unused`, then one commit for the round.
 9. **Make the copy ready on every path, then run the push set beside round two where it is due.** In this
-   order: the items «Цена» and «Отменено из разбора» into the decisions of the progress, by the commit of
+   order: the items «Цена» and «Отменено» into the decisions of the progress, by the commit of
    the round — the record of step 12 refuses without them; on the full path `--round-two` and, where it says «нужен», the diff
    of the round — both before the base is merged in, after it the diff carries another branch's content;
    then the base, the agreement into the domain spec, the texts up to date — pattern `task-flow-close` —

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · samples/tasks/_template/progress.md · 43f5e5ede29b · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · samples/tasks/_template/progress.md · 7cdc4943c1af · правится надстройкой, не здесь -->
 # Progress
 
 ## Where we stand
@@ -28,10 +28,10 @@ reworded: a check matches the two lists, and the turn exit guard counts what is 
 
 - **<decision>** — <reason>. Affected stage of the plan: <number>.
 
-The two items below are written before the set: `npm run task:archive` refuses without them.
+<!-- «Цена» and «Отменено» are written before the set: `npm run task:archive` refuses without them. -->
 
 - **Цена:** <what was paid for the decision and how it came out>
-- **Отменено из разбора:** <each decision of the grill the work cancelled and what replaced it, or «нет»>
+- **Отменено:** <each decision of the grill or of the progress the work cancelled and what replaced it, or «нет»>
 
 ## Sessions
 

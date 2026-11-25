@@ -71,8 +71,9 @@ PROGRESS='# Progress
 
 - **Решение хода работы.** Затронут этап 1.
 - **Цена:** заплачено сутками.
-- **Отменено из разбора:** нет.
+- **Отменено:** нет.
 - Владелец о решении: «Нет».
+<!-- подсказка решений -->
 
 ## Sessions
 
@@ -89,6 +90,9 @@ PROGRESS='# Progress
 - Владелец о выпуске: «Да».
 - Бери первый, «первый (Recommended)».
 - Ответ: «Одобряю как есть».
+- На вопрос «Что с порогом?» — «Поднять порог».
+- Владелец лапками: „слово в лапках“.
+- Владелец ещё раз о выпуске: «Делай оба (Recommended)».
 - Меню о пределе — «Поднять до 40».
 - Владелец прямыми: "слово в прямых".
 - Владелец назван, а `"строка кода"` не слово.
@@ -109,7 +113,9 @@ PROGRESS='# Progress
 ### Посторонний заголовок
 
 ### Ответ владельца: «слово в заголовке»
-Посторонняя строка.
+Строка под заголовком.
+
+### Дальше без слов
 
 Абзац, где the owner сказал
 «слово из абзаца» и дальше.
@@ -123,6 +129,43 @@ PROGRESS='# Progress
 > слово блоком
 > в две строки
 
+**Владелец ответил жирно:**
+
+- «слово после жирной»
+
+Владелец ответил абзацем:
+
+Слово абзацем без кавычек.
+
+Посторонний абзац.
+
+Владелец показал:
+
+```
+слово в показанном коде
+```
+
+- Владелец ответил соседом:
+- «слово соседа»
+
+Конец списка.
+
+### Ответы владельца за день
+
+Слово под заголовком.
+
+- Слово пункта под заголовком.
+
+### Дальше без него
+
+Посторонний абзац под другим заголовком.
+
+| Спросили | Владелец |
+| --- | --- |
+| порог | поднять |
+
+Между таблицами.
+
 | Кто | Что |
 | --- | --- |
 | владелец | «слово из таблицы» |
@@ -131,11 +174,21 @@ PROGRESS='# Progress
 - владелец в блоке кода: «слово из кода»
 ```
 
+### Меню в конце раздела
+
 ## Решения по ходу
 
 - **Решение второго раздела хода.**
 
+## Второе чтение плана
+
+<!-- подсказка -->
+
+- Отказ вычеркнут.
+
 ## Handover of the session
+
+Посторонняя строка передачи.
 
 - **Next step:** владелец сказал «шаг из передачи»
 
@@ -170,6 +223,7 @@ BODY='Closes #7
 
 Closes the hole of the guard.
 E2E-skip: правка текстов
+Docs-skip: правка текстов
 Closes #7
 
 ## Оставшийся шаг
@@ -234,10 +288,11 @@ report "the answers of the grill, each section of the name" "$(part 'Вопро�
 report "the decisions of the grill and of the progress: the grill" "$(part 'Решения разбора')" '- **Первое решение разбора.** С доводом.'
 report "the decisions of the grill and of the progress: a section of another name" "$(part 'Решения второго захода')" '- **Решение второго захода.**'
 report "the decisions of the grill and of the progress: both sections of the progress" "$(part 'Решения по ходу' | tr '\n' '|')" \
-    '- **Решение хода работы.** Затронут этап 1.|- **Цена:** заплачено сутками.|- **Отменено из разбора:** нет.|- Владелец о решении: «Нет».|- **Решение второго раздела хода.**|'
+    '- **Решение хода работы.** Затронут этап 1.|- **Цена:** заплачено сутками.|- **Отменено:** нет.|- Владелец о решении: «Нет».|- **Решение второго раздела хода.**|'
 report "the head of the grill keeps the keys of the cargo, the hint of the sample is dropped" "$(part 'Шапка разбора')" "Запись груза: $KEY"
 report "a section of the grill that says nothing is not taken" "$(has 'Что осталось неясным')" 0
 report "the owner word of the progress: each item whole" "$(part 'Цитаты из разбора и хода работы')" '- Владелец о дереве: «слово из разбора дерева».
+- **State:** `этапы-кончились`, владелец сказал «строка состояния»
 - **Done:** владелец сказал «слово из места работы»
 - Владелец: «слово из хода»
   и продолжение той же строки.
@@ -247,6 +302,9 @@ report "the owner word of the progress: each item whole" "$(part 'Цитаты �
 - Владелец о выпуске: «Да».
 - Бери первый, «первый (Recommended)».
 - Ответ: «Одобряю как есть».
+- На вопрос «Что с порогом?» — «Поднять порог».
+- Владелец лапками: „слово в лапках“.
+- Владелец ещё раз о выпуске: «Делай оба (Recommended)».
 - Меню о пределе — «Поднять до 40».
 - Владелец прямыми: "слово в прямых".
 - Владелец с кодом: «слово с кодом».
@@ -254,6 +312,7 @@ report "the owner word of the progress: each item whole" "$(part 'Цитаты �
 - Владелец: «слово из исправлений»
 Владелец вот: «слово перед заголовком»
 ### Ответ владельца: «слово в заголовке»
+Строка под заголовком.
 Абзац, где the owner сказал
 «слово из абзаца» и дальше.
 Владелец сказал подряд:
@@ -262,20 +321,40 @@ report "the owner word of the progress: each item whole" "$(part 'Цитаты �
 Он ответил:
 > слово блоком
 > в две строки
+**Владелец ответил жирно:**
+- «слово после жирной»
+Владелец ответил абзацем:
+Слово абзацем без кавычек.
+Владелец показал:
+```
+слово в показанном коде
+```
+- Владелец ответил соседом:
+- «слово соседа»
+### Ответы владельца за день
+Слово под заголовком.
+- Слово пункта под заголовком.
+| Спросили | Владелец |
+| --- | --- |
+| порог | поднять |
 | владелец | «слово из таблицы» |
+### Меню в конце раздела
+- **Next step:** владелец сказал «шаг из передачи»
 - Владелец после передачи: «слово после передачи»'
 report "a word the grill holds is not repeated" "$(has 'Снова владелец') $(has 'Владелец просил')" '0 0'
+report "a word the grill holds is not repeated, the answer to another question is kept" "$(has 'Владелец ещё раз о выпуске')" 1
+report "a section of the progress of its own name is taken whole, its comment is not" "$(part 'Второе чтение плана')" '- Отказ вычеркнут.'
 report "a word of the decisions is not repeated, however short" "$(has 'Владелец о решении: «Нет»')" 1
-report "the owner word of the progress: not the place of work, a code block, the rules" "$(has 'строка состояния') $(has 'шаг из передачи') $(has 'слово из кода') $(has 'слово из правил')" '0 0 0 0'
+report "the owner word of the progress: not a code block, not the rules, not what stands beside" "$(has 'слово из кода') $(has 'слово из правил') $(has 'Посторонн')" '0 0 0'
 report "the answer of the approval" "$(part 'Одобрение плана')" '«Одобряю план RT-7 (Recommended)»'
 report "the sections of the body: what confirms it" "$(part 'Чем подтверждено' | head -1)" '- Сценарии 12, провалов 0.'
 report "the sections of the body: a heading in a code block ends none" "$(has '## не заголовок')" 1
 report "the sections of the body: the step left" "$(part 'Оставшийся шаг')" 'Слить PR; вне задачи осталось одно.'
 report "the sections of the body: the others are not taken" "$(has 'Это в запись не идёт') $(has 'То, что в запись не идёт')" '0 0'
-report "the footer is dropped, and the lines of the checks with it" "$(has '🤖') $(has 'E2E-skip') $(has 'Closes #7')" '0 0 0'
+report "the footer is dropped, and the lines of the checks with it" "$(has '🤖') $(has 'E2E-skip') $(has 'Docs-skip') $(has 'Closes #7')" '0 0 0 0'
 report "the footer is dropped, a sentence of the same word is not" "$(has 'Closes the hole of the guard.')" 1
 report "the sections stand in one order" "$(grep '^## ' "$R/$REC" | grep -v 'не заголовок' | tr '\n' '|')" \
-    '## Шапка разбора|## Просьба владельца|## Вопросы и ответы|## Решения разбора|## Решения второго захода|## Вопросы и ответы|## Решения по ходу|## Цитаты из разбора и хода работы|## Одобрение плана|## Чем подтверждено|## Оставшийся шаг|'
+    '## Шапка разбора|## Просьба владельца|## Вопросы и ответы|## Решения разбора|## Решения второго захода|## Вопросы и ответы|## Решения по ходу|## Второе чтение плана|## Цитаты из разбора и хода работы|## Одобрение плана|## Чем подтверждено|## Оставшийся шаг|'
 report "the folder leaves the disk and the index" "$(test -e "$R/$F" && echo stands) $(git -C "$R" ls-files "$F" | wc -l | tr -d ' ')" ' 0'
 report "the folder leaves the disk and the index: the record is in the index" "$(git -C "$R" diff --cached --no-renames --name-status | grep -c "^A.*$REC")" 1
 report "the command says how long the record is" "$(said | grep -c "written $REC: $(node -p "[...require('fs').readFileSync('$R/$REC','utf8')].length") characters")" 1
@@ -322,12 +401,36 @@ report "the approvals of the kit" "$(part 'Согласия владельца �
 report "the approvals of the kit stand before any text the check could read instead" "$(grep '^## ' "$R/$REC" | head -1)" '## Согласия владельца по киту'
 
 # The headings of a progress written in the owner's language.
-repo "$(printf '%s\n' "$PROGRESS" | sed 's/^## Where we stand/## Где мы/; s/^## Decisions along the way/## Решения по ходу/; s/\*\*State:/**Состояние:/')"
-report "the owner word of the progress: the Russian headings" "$(code_of) $(has 'строка состояния') $(has 'слово из хода') $(has '- **Цена:** заплачено сутками.')" '0 0 1 1'
+repo "$(printf '%s\n' "$PROGRESS" | sed 's/^## Where we stand/## Где мы/; s/^## Decisions along the way/## Решения по ходу/; s/^## Steps/## Шаги/; s/^## Sessions/## Заходы/')"
+report "the owner word of the progress: the Russian headings" "$(code_of) $(has 'слово из места') $(has 'слово из хода') $(has '- **Цена:** заплачено сутками.')" '0 1 1 1'
+report "the owner word of the progress: the Russian headings stand for the course too" "$(has '## Шаги') $(has 'Прогнан набор') $(has '## Где мы') $(part 'Решения по ходу' | grep -c подсказка)" '0 0 0 0'
 
 # The price on the line below its mark is still a price.
 repo "$(printf '%s\n' "$PROGRESS" | sed 's/^- \*\*Цена:\*\* .*/- **Цена:**\n    - заплачено сутками/')"
 report "a price given below its mark is taken" "$(code_of) $(has '    - заплачено сутками')" '0 1'
+
+# --- the shapes of the owner's words, by the pure function ----------------------------------
+# The blocks taken of a text, `/` between them, with the second argument for the record.
+words() {
+    TEXT="$1" RECORD="${2:-}" node --input-type=module -e "
+import { ownerWords } from '$TOOLS/archive-record-text.mjs';
+console.log(ownerWords(process.env.TEXT.split('\\n'), process.env.RECORD).map((t) => t.replace(/\\n/g, '|')).join('/'));"
+}
+report "words: a known long quote is not repeated, a known short one is" \
+    "$(words $'- Владелец: «Делай оба по порядку (Recommended)».\n- Владелец: «Да».' 'Было «Делай оба по порядку (Recommended)» и «Да».')" '- Владелец: «Да».'
+report "words: one new quote beside a known one keeps the item" \
+    "$(words 'Владелец: «Делай оба по порядку (Recommended)», «совсем другое слово владельца».' '«Делай оба по порядку (Recommended)»')" 'Владелец: «Делай оба по порядку (Recommended)», «совсем другое слово владельца».'
+report "words: an approval, an answer by its label" "$(words $'- Скажу так: одобряю «первое».\n- Ответ: «второе».\n- Реплика: «третье».')" '- Скажу так: одобряю «первое»./- Ответ: «второе».'
+report "words: a quoted block with no owner named" "$(words $'Вот:\n\n> слово блоком\n\nИное.')" '> слово блоком'
+report "words: a heading ends what a line announced" "$(words $'Владелец ответил:\n### Иное\nСлово.')" 'Владелец ответил:'
+report "words: a heading takes no line with it" "$(words $'### Слово владельца «одно»\n## Иное\nСлово.')" '### Слово владельца «одно»'
+report "words: a paragraph ends at a heading, an item and a code block" \
+    "$(words $'Владелец «а»\n- Иное.\n\nВладелец «б»\n```\nкод\n```\nХвост.\n\n- Владелец «в»\n### Иное')" 'Владелец «а»/Владелец «б»/- Владелец «в»'
+report "words: code at the margin ends an item, code inside it does not" \
+    "$(words $'- Владелец «а»\n```\nкод\n```\nИное.')" '- Владелец «а»'
+report "words: a fence with words after it ends no block" "$(words $'```\n```js\nВладелец «в коде»\n```\nВладелец «снаружи»')" 'Владелец «снаружи»'
+report "words: a row below the header names the owner alone" "$(words $'| Кто | Что |\n| --- | --- |\n| владелец | «а» |\n| иной | «б» |')" '| владелец | «а» |'
+report "words: one item twice is taken once" "$(words $'- Владелец: «а».\n\nИное.\n\n- Владелец: «а».')" '- Владелец: «а».'
 
 # --- the epic -------------------------------------------------------------------------------
 repo
@@ -343,116 +446,6 @@ sed -i.bak 's/| RT-7 —/| RT-71 —/' "$R/docs/plans/epic.md" && rm "$R/docs/pl
 code_of >/dev/null
 report "the epic by its plan: the row of another task is not the row of this one" "$(sed -n 3p "$R/$REC" | grep -c 'эпика')" 0
 
-# --- refusals -------------------------------------------------------------------------------
-without() { printf '%s\n' "$1" | awk -v n="$2" '$0 == n {off = 1; next} /^## / {off = 0} !off'; }
-price() { printf '%s\n' "$PROGRESS" | sed "s/^- \*\*Цена:\*\* .*/$1/"; }
-FULL="$BODY"
-BODY="$(printf '%s\n' "$FULL" | sed '/^## Чем подтверждено/,/^Closes #7$/d')"
-repo
-refused "no section in the body: what confirms it" '«Чем подтверждено»'
-BODY="$(without "$FULL" '## Оставшийся шаг')"
-repo
-refused "no section in the body: the step left" '«Оставшийся шаг»'
-BODY="$(printf '%s\n' "$FULL" | grep -v '^Слить PR')"
-repo
-refused "no section in the body: only the footer in it" '«Оставшийся шаг»'
-BODY="$(printf '%s\n' "$FULL" | sed 's/^Closes #7/Closes #99/')"
-repo
-refused "the body of another task" 'the body closes RT-99, RT-99, the branch is of RT-7'
-BODY="$(printf '%s\n' "$FULL" | sed 's/^Closes #7/Часть #7/')"
-repo
-report "the body of a part of the task closes none" "$(code_of)" 0
-BODY="$FULL"
-repo
-refused "no section in the body: no body on disk" 'the body of the PR is not on disk' "$WORK/none.md"
-refused "no section in the body: a directory for the body" 'the body of the PR is not on disk' "$WORK"
-TITLE='[RT-7] ' refused "the title is empty" 'the title of the PR is empty'
-TITLE='--dry' refused "the title is empty: a flag in its place" 'the title of the PR is empty'
-TITLE='[RT-99] Чужая' refused "the title of another task" 'the title names RT-99, the branch is of RT-7'
-repo '' "$(without "$GRILL" '## Просьба владельца')"
-refused "no request in the grill" 'no request of the owner'
-repo '' "$(printf '%s\n' "$GRILL" | grep -v '^>' | sed 's/^## Что уже/<!-- слова владельца -->\n\n> <verbatim>\n\n&/')"
-refused "no request in the grill: a comment and the hint of the sample alone" 'no request of the owner'
-repo '' "$(printf '%s\n' "$GRILL" | sed 's/^> но не теряй слов/&\n\n```\n/')"
-refused "a code block of the grill does not end" 'the grill holds a code block that does not end'
-repo "$(printf '%s\n' "$PROGRESS" | sed 's/^## Handover/```\n&/')"
-refused "a code block of the progress does not end" 'the progress holds a code block that does not end'
-repo "$(without "$(without "$PROGRESS" '## Decisions along the way')" '## Решения по ходу')"
-refused "no decisions in the progress" 'no decisions along the way'
-repo "$(printf '%s\n' "$PROGRESS" | grep -v 'Цена:')"
-refused "no price among the decisions" 'do not say «Цена»'
-repo "$(price '- **Цена:**')"
-refused "no price among the decisions: the item is empty" 'do not say «Цена»'
-repo "$(price '- **Цена:**\n- Другое решение.')"
-refused "no price among the decisions: an empty item before another" 'do not say «Цена»'
-repo "$(price '- **Цена:** …')"
-refused "no price among the decisions: an ellipsis" 'do not say «Цена»'
-repo "$(price '- **Цена:** TODO')"
-refused "no price among the decisions: a stub" 'do not say «Цена»'
-repo "$(price '- **Цена:** <сколько>')"
-refused "no price among the decisions: the hint of the sample" 'do not say «Цена»'
-repo "$(price '<!--\n- **Цена:** в комментарии\n-->')"
-refused "no price among the decisions: in a comment" 'do not say «Цена»'
-repo "$(price '```\n- **Цена:** в коде\n```')"
-refused "no price among the decisions: in a code block" 'do not say «Цена»'
-repo "$(printf '%s\n- **Цена:** не там.\n' "$(printf '%s\n' "$PROGRESS" | grep -v 'Цена:')")"
-refused "no price among the decisions: it stands in another section" 'do not say «Цена»'
-repo "$(printf '%s\n' "$PROGRESS" | grep -v 'Отменено из разбора')"
-refused "the decisions of the grill that were cancelled are not named" 'do not say «Отменено из разбора»'
-repo
-printf 'ещё\n' >> "$R/$F/progress.md"
-refused "an edit in the folder" "edits past the commit: $F/progress.md"
-repo
-printf 'ещё\n' >> "$R/$F/progress.md"
-git -C "$R" add -A
-refused "an edit in the folder: staged" "edits past the commit: $F/progress.md"
-repo
-printf 'черновик\n' > "$R/$F/draft.md"
-refused "an untracked file in the folder" "untracked files: $F/draft.md"
-repo
-printf '*.log\n' > "$R/.gitignore" && commit ignore
-printf 'лог\n' > "$R/$F/run.log"
-refused "an untracked file in the folder: an ignored one" "untracked files: $F/run.log"
-repo
-printf 'заметки\n' > "$R/$F/notes.md" && commit notes
-refused "a foreign file in the folder" "the record does not take: $F/notes.md"
-repo
-printf 'echo 1\n' > "$R/$F/probe.sh" && commit probe
-refused "a foreign file in the folder: a script the commit of the plan lacks" "the record does not take: $F/probe.sh"
-for name in grill plan progress; do
-    repo
-    git -C "$R" rm -q "$F/$name.md" && commit apart
-    refused "the folder is not in the commit: $name" "the commit holds no $F/$name.md"
-done
-repo
-git -C "$R" checkout -q --detach
-refused "no branch is checked out" 'the branch carries no task number'
-repo
-mkdir -p "$R/docs/archive" && printf 'есть\n' > "$R/$REC"
-refused "the record already stands: on disk" 'the record already stands'
-# A record removed from the disk and standing in the commit is not written over either.
-repo
-mkdir -p "$R/docs/archive" && printf 'есть\n' > "$R/$REC" && commit record && rm "$R/$REC"
-refused "the record already stands: in the commit" 'the record already stands'
-# A folder git cannot remove and a record git does not take leave the copy as it was.
-repo
-mkdir -p "$R/docs/archive" && printf 'a\n' > "$R/docs/archive/a.md" && commit archive && chmod 555 "$R/$F"
-refused "the folder cannot be removed" 'git did not take the folder out, nothing is written'
-chmod 755 "$R/$F"
-repo
-mkdir -p "$R/docs/archive" && printf 'a\n' > "$R/docs/archive/a.md" && commit archive && printf 'docs/archive/\n' > "$R/.gitignore" && commit ignore
-refused "the record is ignored by the tree" 'git did not take the folder out, nothing is written'
-
-# A text the plan came with is not frozen: it is carried over or removed first.
-repo
-(cd "$R" && git reset -q --soft HEAD~1 && printf 'заметки\n' > "$F/notes.md" && git add -A && "${G[@]}" commit -q -m plan)
-refused "a foreign file in the folder: a text of the commit of the plan" "the record does not take: $F/notes.md"
-
-# A script the plan came with is frozen by the engine: it leaves with the folder and is named. An empty
-# directory leaves too: the rerun of the steps would take it for a file left behind.
-repo
-(cd "$R" && git reset -q --soft HEAD~1 && printf 'echo 1\n' > "$F/probe.sh" && git add -A && "${G[@]}" commit -q -m plan)
-mkdir "$R/$F/roles"
-report "a foreign file in the folder: a script of the commit of the plan leaves with it" "$(code_of) $(said | grep -c "the commit of the plan holds it: $F/probe.sh") $(test -e "$R/$F" && echo stands)" '0 1 '
+. "$(dirname "${BASH_SOURCE[0]}")/archive-record-refusals.sh"
 
 suite_result "the record of the closed work"

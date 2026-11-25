@@ -46,22 +46,28 @@ leaves the commit to the executor. It runs after the push set is green, the body
 `goal-critic` has read it.
 
 - **From the folder, word for word:** the approvals of the kit; the grill, all but what it says of the
-  tree and of the rules, its head with the keys of the cargo included; the decisions of the progress.
-- **«Цитаты из разбора и хода работы»** — each item of the rest that quotes someone and names the owner,
-  a menu or an approval, and each quoted block. A quote longer than 20 characters the record already
-  holds is not repeated. Words said with no quotation marks are not found: they are quoted in the progress.
+  tree and of the rules, its head with the keys of the cargo included; the decisions of the progress and
+  each section of it of its own name. The comments are dropped. The rounds of the review go under the
+  sessions: a section of their own makes the record long.
+- **«Цитаты из разбора и хода работы»** — of what the grill says of the tree, and of the place of work, the
+  steps, the sessions and the handover of the progress: each block that names the owner, a menu, a question
+  or an approval and holds a quote; each quoted block; what a line naming the owner announces by a colon,
+  all under a heading and all rows of a table that name the owner. A quote longer than 20 characters
+  the record already holds is not repeated when it stands alone. Words with no quotation marks in other
+  places and words in a code block are not found: they are quoted in the progress.
 - **From the approval mark:** the answer that approved the plan; a mark of another plan says so.
 - **From the body:** «Чем подтверждено» and «Оставшийся шаг». What the work leaves outside itself
   goes into «Оставшийся шаг»: nothing else of the body reaches the record.
 
 What the command cannot know the executor writes into the decisions of the progress before the set,
 by the commit of the last round, and without either item it refuses: `- **Цена:** …` and
-`- **Отменено из разбора:** …` — each decision of the grill the work cancelled, or «нет». The folder
+`- **Отменено:** …` — each decision of the grill or of the progress the work cancelled, or «нет». The folder
 goes with no files but its own; a script the commit of the plan holds leaves with it. A refusal writes
 and removes nothing.
 
-The record does not change after the command: a red at the push and the remarks of the owner live in
-the body of the PR. A fix that needs the folder takes it back by `git revert` of the commit that took
+A grill in the layer's language is put into the owner's language in the record, after the command and
+before its commit: the grill itself is frozen by the plan. After that commit the record does not change:
+a red at the push and the remarks of the owner live in the body of the PR. A fix that needs the folder takes it back by `git revert` of the commit that took
 it apart, and the record is built anew. The epic is named by the one plan in `docs/plans/` whose table
 holds the task; with none or two the record names no epic.
 

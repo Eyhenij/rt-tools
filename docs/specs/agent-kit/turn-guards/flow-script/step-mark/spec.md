@@ -80,7 +80,8 @@ prints a line per fixture.
   A step that matched behind an open one, of its stage or of an earlier, writes its mark and stays open
   in the progress, and its line names the open step. A done mark behind an open step is refused by the
   guard on every edit of the progress, so the call does not lead there. A step whose line the progress
-  lacks, or holds out of order, stops the marking the same way. A done step that does not match keeps
+  lacks stops the marking, and of the marks one after another the last set in order holds: a step marked
+  ahead is put in order by those before it. Only the section of the steps is marked. A done step that does not match keeps
   its done mark, loses the one on disk, and does not stop the steps behind it: the code is 1.
 - **`step <N>` exits with 0 only when every measured step matched and is marked done.**
   A step with no check is one line of refusal, and the others are measured. A call takes one stage: a

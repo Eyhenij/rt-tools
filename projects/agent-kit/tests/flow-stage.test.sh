@@ -178,10 +178,32 @@ broken() {
     report "SC-AK-2000 — a line that cannot be marked in order stops the marking: $1, the progress stays" "$([ "$before" = "$(cat "$P")" ] && echo same)" same
     expect_decision "SC-AK-2000 — an edit of the progress passes the guard after it: $1" flow-step-guard.sh "$(edit)" PASS
 }
-broken 'a note with the number of a step above the steps' 's/^- \*\*Stage.*/&\n- [ ] 1.1 One (a note)/' 'the progress holds no line of it'
-broken 'no line of the step' '/\] 1\.1 One/d; s/\[ \] 1\.2/[>] 1.2/' 'the progress holds no line of it'
+broken 'no line of the step' '/\] 1\.1 One/d; s/\[ \] 1\.2/[>] 1.2/' 'its line in the progress cannot be marked in order'
 broken 'no line of a step that did not match' '/\] 1\.1 One/d; s/\[ \] 1\.2/[>] 1.2/' '1.1 stands open before it' 1.1 2
-broken 'the lines swapped' 's/^- \[>\] 1\.1 One/- [>] 1.9 Two/; s/^- \[ \] 1\.2 Two/- [ ] 1.1 One/; s/^- \[>\] 1\.9/- [>] 1.2/' 'the progress holds no line of it' 1.2
+broken 'the lines swapped' 's/^- \[>\] 1\.1 One/- [>] 1.9 Two/; s/^- \[ \] 1\.2 Two/- [ ] 1.1 One/; s/^- \[>\] 1\.9/- [>] 1.2/' 'its line in the progress cannot be marked in order' 1.2
+
+# A note elsewhere that looks like a step is left as it is: the steps alone are marked.
+progress '>      '
+states
+sed -i.bak -E 's/^- \*\*Stage.*/&\n- [ ] 1.1 One (a note)\n- [ ] 9.9 todo/' "$P" && rm "$P.bak"
+report "SC-AK-1997 — a note with the number of a step above the steps is not marked" \
+    "$(code_of 1) $(grep -c '^- \[ \] 1.1 One (a note)$' "$P") $(grep -c '^- \[ \] 9.9 todo$' "$P") $(sed '1,/^## Steps/d' "$P" | grep -c '^- \[x\]')" '0 1 1 3'
+# A line behind the section of the steps is left as it is too.
+states
+progress 'xx>    '
+sed -i.bak '/\] 1\.3 Three/d' "$P" && rm "$P.bak"
+printf '\n## Sessions\n\n- [ ] 1.3 Three (a note)\n' >> "$P"
+report "SC-AK-2000 — a line behind the section of the steps is no line of the step" "$(code_of 1) $(grep -c '^- \[ \] 1.3 Three (a note)$' "$P")" '1 1'
+progress 'xxx>   '
+green 1.1 1.2 1.3
+sed -i.bak '/\] 10\./d' "$P" && rm "$P.bak"
+printf '\n## Sessions\n\n- [ ] 9.9 a note\n' >> "$P"
+report "SC-AK-1997 — a line behind the section of the steps is not made current" "$(code_of 2) $(grep -c '^- \[ \] 9.9 a note$' "$P")" '0 1'
+# A step marked ahead of the others is put in order by the stage: the marks are judged together.
+progress '>.x....'
+sed -i.bak 's/\[\.\]/[ ]/' "$P" && rm "$P.bak"
+report "SC-AK-1997 — a step marked ahead of the others is put in order by the stage" "$(code_of 1) $(marks)" '0 xxx>...'
+expect_decision "SC-AK-1997 — an edit of the progress passes the guard after it: a step was marked ahead" flow-step-guard.sh "$(edit)" PASS
 
 # --- refusals -------------------------------------------------------------------------------
 states
