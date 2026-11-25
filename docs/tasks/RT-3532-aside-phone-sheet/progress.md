@@ -85,9 +85,9 @@ Put together by a hook before the compaction of the context (auto).
 
 ### Where we stand at the minute of the compaction
 
-- **State:** `этап-идёт`
-- **Stage:** 2 of 4 — Асайд-шторка в коде
-- **Next step:** шторка асайда в сервисе до 480 точек
+- **State:** `этапы-кончились`
+- **Stage:** 4 of 4 — Тексты
+- **Next step:** влить договорённость `aside-phone-sheet` в спеки кита
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-3532-aside-phone-sheet/progress.md`; the plan lies next to it.
@@ -95,41 +95,32 @@ The progress in full — `docs/tasks/RT-3532-aside-phone-sheet/progress.md`; the
 ### Uncommitted
 
 ```
- M projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--app-aside.png
- M projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--column-settings.png
- M projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--list-view.png
- M projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--record.png
- M projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--tabs-carousel.png
- M projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--toolbar-filters.png
- M projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--unsaved-question.png
- M projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--workspace-details.png
-?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--footer.png
-?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--tabs.png
+none
 ```
 
 ### Commits over the main branch
 
 ```
+45cc99f04 fix(rt:ui-kit-v2): правки асайда-шторки после второго круга ревью (RT-3532)
+5da4cc3d4 fix(rt:ui-kit-v2): правки асайда-шторки после первого круга ревью (RT-3532)
+f6f502e22 docs(rt:ui-kit-v2): этапы RT-3532 кончились, первый круг ревью (RT-3532)
+62b2362fd docs(rt:ui-kit-v2): вопрос берёт фокус на ответ «применить» — сценарий 1756 и тест, этап 4 замерен (RT-3532)
+0980bcbdb docs(rt:ui-kit-v2): договорённость асайда-шторки влита в спеки кита — подраздел aside/phone-sheet и соседние спеки (RT-3532)
+c0caa14f5 docs(rt:ui-kit-v2): прогресс RT-3532 — этап 4, тексты (RT-3532)
+5eefe02d8 docs(rt:ui-kit-v2): витрина асайда-шторки одобрена владельцем, совпадение с макетом 348 из 348, шаг 3.4 замерен (RT-3532)
+c49ddd1ea fix(rt:ui-kit-v2): кольцо фокуса нижней строки вопроса идёт по скруглению карточки, а не срезается углом (RT-3532)
+95715c540 fix(rt:ui-kit-v2): подвал панели-шторки — подвал шторки кита с полями 12, эталоны шторок; совпадение с макетом 348 из 348 (RT-3532)
+dfc6020d7 feat(rt:ui-kit-v2): подвал шторки с полями 12, красная опасная кнопка асайда и вопрос листом действий (RT-3532)
+9e275dfac docs(rt:ui-kit-v2): макет подвала шторки, красных опасных кнопок и вопроса карточкой строк одобрен владельцем (RT-3532)
+8b18bbf0b feat(rt:ui-kit-v2): кнопки подвала асайда-шторки шагом шапки — высота 32, шрифт 13; совпадение с макетом 322 из 322 (RT-3532)
+38d2f2f7d docs(rt:ui-kit-v2): совпадение витрины асайда-шторки с макетом — 303 из 303 после черты под шапкой (RT-3532)
+42fc6a39c test(rt:ui-kit-v2): эталоны асайда-шторки с чертой под шапкой, истории «Вкладки» и «Подвал»; совпадение 303 из 303 (RT-3532)
 b9d699e2a docs(rt:ui-kit-v2): сверка асайда-шторки с макетом и чертой под шапкой — 303 из 303 (RT-3532)
 a6ab54707 feat(rt:ui-kit-v2): под шапкой асайда-шторки черта как у подвала, истории «Вкладки» и «Подвал» (RT-3532)
 e255e428b docs(rt:ui-kit-v2): совпадение витрины асайда-шторки с макетом записано — 264 из 264 (RT-3532)
 b9b614c3f test(rt:ui-kit-v2): эталоны витрины асайда-шторки, совпадение с макетом 264 из 264 (RT-3532)
 58c7177ad docs(rt:ui-kit-v2): сверка витрины асайда-шторки с макетом по числам — 264 из 264 (RT-3532)
 6017a7acd feat(rt:ui-kit-v2): шторка из шторки открывается в той же шторке вторым экраном с шевроном «назад» (RT-3532)
-4a2639aaf docs(rt:ui-kit-v2): шторка из шторки — в той же шторке с шевроном «назад», макет одобрен владельцем (RT-3532)
-9840b19ca feat(rt:ui-kit-v2): истории асайда-шторки на 375 и 600 точках — кадры макета от панели записи до вкладок каруселью (RT-3532)
-76cf21a90 fix(rt:ui-kit-v2): надзаголовок, подпись и бэйджи шторки стоят под шапкой по краю содержимого, в шапке только «×», заголовок и кнопки (RT-3532)
-c32e2fba8 docs(rt:ui-kit-v2): асайд приложения проверен вживую на 375, шаг 2.6 замерен (RT-3532)
-f28856b60 docs(rt:ui-kit-v2): сценарии асайда-шторки покрыты тестами, шаг 2.5 замерен (RT-3532)
-c59e2b01c test(rt:ui-kit-v2): прежние обещания асайда SC-UKV-1043, 1244, 1251…1253 и 1320 держатся в окне от 481 точки (RT-3532)
-b510d8101 docs(rt:ui-kit-v2): шаги 2.1–2.4 RT-3532 замерены зелёными (RT-3532)
-182d36a5c test(rt:ui-kit-v2): сценарии шага 2.4 — Escape, фокус, шторка из шторки и вкладки каруселью в асайде-шторке (RT-3532)
-812fb32ee test(rt:ui-kit-v2): сценарии шага 2.3 — закрытие асайда-шторки жестами и вопрос внизу у панели службы, панели записи и отборов полосы (RT-3532)
-bf13d84f2 feat(rt:ui-kit-v2): асайд-шторка закрывается свайпом, «×» и полосой с вопросом внизу, Escape, фокус и вкладки по правилам шторок (RT-3532)
-c1c5b4e5b test(rt:ui-kit-v2): сценарии асайда-шторки шагов 2.1 и 2.2 — открытие до 480 точек в службе и пяти местах кита, шапка и подвал шторки (RT-3532)
-d576dcbef feat(rt:ui-kit-v2): асайд до 480 точек открывается шторкой кита во всю высоту — служба, правая панель рамки, шапка и подвал шторки (RT-3532)
-89d32716d docs(rt:ui-kit-v2): макет асайда-шторки одобрен владельцем, вкладки каруселью (RT-3532)
-5032cddb5 docs(rt:ui-kit-v2): план RT-3532 одобрен владельцем, проверки красные до работы (RT-3532)
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked
