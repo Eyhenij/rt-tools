@@ -31,6 +31,20 @@ export function grillAnswered(text) {
     return request.some((line) => line.startsWith('>') && meaningful(line)) && answers.some(meaningful);
 }
 
+const TASKS_LINE = /^\*\*(?:Задач в разборе|Tasks of the grill):\*\*[ \t]*(.*)$/gm;
+
+/**
+ * The count of tasks the grill names: `{ count }`, or `{ why }` where it does not name one. The line
+ * stands once and holds a number; the engine and the creating command read it here alone.
+ */
+export function tasksOfGrill(text) {
+    const lines = [...text.matchAll(TASKS_LINE)].map((m) => m[1].trim());
+    if (lines.length === 0) return { why: 'no line «**Задач в разборе:** <число>» (or «**Tasks of the grill:** <number>»)' };
+    if (lines.length > 1) return { why: `${lines.length} lines of the count of tasks` };
+    if (!/^[1-9]\d*$/.test(lines[0])) return { why: `the count of tasks is not a number: «${lines[0]}»` };
+    return { count: Number(lines[0]) };
+}
+
 const PATH_LINE = /^\*\*(?:Описание фичи|Draft|Spec):\*\*\s+`([^`]+)`/gm;
 const REASON_LINE = /^\*\*(?:Описание фичи:\*\*\s+не нужно|Behaviour:\*\*\s+unchanged)\s+—\s+(.+)$/gm;
 

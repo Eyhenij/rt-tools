@@ -16,7 +16,7 @@
  * the command mode prints `{"offline":true}`.
  */
 import { OfflineError, botToken, gh, ghJson, graphql } from './board-gh.mjs';
-import { declaredEpicOf } from './board-epic-link.mjs';
+import { declaredEpicOf, outsideReasonOf } from './board-epic-link.mjs';
 import { verdictOnHead } from './board-runs.mjs';
 export { numberFromTaskDir, taskDirs, unstampFolder } from './board-task-dirs.mjs';
 import { CONFIG } from './rt-kit-checks.config.mjs';
@@ -331,6 +331,7 @@ export function taskState(number, options) {
         numbered: numberFromTitle(issue.title) === issue.number,
         labels: issue.labels.map((label) => label.name),
         epic: declaredEpicOf(issue.body) ?? null,
+        outside: outsideReasonOf(issue.body),
     };
 }
 

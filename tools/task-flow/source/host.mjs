@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · task-flow/source/host.mjs · 7512fd78a200 · правится надстройкой, не здесь
+// rt-kit v0.39.1 · task-flow/source/host.mjs · f4756a89fcb7 · правится надстройкой, не здесь
 /**
  * The source «source.host» of the task flow description: the hosting and the work queue, read by
  * the board module of the tree and by `git` against the server.
@@ -9,8 +9,9 @@
  * does not drop them. An answer for exits 10–13 lives `TTL_SECONDS`; `reset()` drops it — the hook
  * calls it after a call of the hosting client or of the column command.
  *
- *   issue(number)            { open, status, epic } of a card — `status` is the key of its column —
- *                            or null where there is none
+ *   issue(number)            { open, status, epic, outside, isEpic } of a card — `status` is the key
+ *                            of its column, `outside` the words of its line of work outside an epic,
+ *                            `isEpic` the label of an epic card — or null where there is none
  *   remoteBranch(name)       the server holds the branch
  *   remoteBranches(prefix)   [{ name, sha }] — the branches on the server whose name begins so
  *   remoteContains(sha)      a branch on the server holds the commit
@@ -193,6 +194,9 @@ const heads = (text) =>
 /** The PR pipeline file the tree names in its settings, or '' when it names none. */
 const pipelineFile = () => config?.CONFIG?.pushGate?.pipelineFile ?? '';
 
+/** The card carries the label the tree marks its epics by. */
+const isEpicCard = (labels) => Boolean(config?.CONFIG?.board?.epicLabel) && (labels ?? []).includes(config.CONFIG.board.epicLabel);
+
 /** The key of a column by its name on the board. */
 const columnKey = (name) => Object.entries(board?.STATUS_OPTIONS ?? {}).find(([, option]) => option.name === name)?.[0] ?? name;
 
@@ -211,7 +215,7 @@ export function open() {
         issue: (number) =>
             read(`issue:${number}`, () => {
                 const state = need().taskState(number);
-                return state?.exists ? { open: state.open, status: columnKey(state.status), epic: state.epic } : null;
+                return state?.exists ? { open: state.open, status: columnKey(state.status), epic: state.epic, outside: state.outside ?? null, isEpic: isEpicCard(state.labels) } : null;
             }),
         remoteBranch: (name) => read(`remote:${name}`, () => git(['ls-remote', '--heads', 'origin', name]).stdout.trim() !== ''),
         remoteBranches: (prefix) => read(`remotes:${prefix}`, () => heads(git(['ls-remote', '--heads', 'origin', `${prefix}*`]).stdout)),

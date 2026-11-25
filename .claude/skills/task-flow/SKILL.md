@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the work states. Load at the start of any work, on any edit of a task folder and on return to unfinished work. Its parts: task-flow-plan, -owner, -handover. Patterns task-flow-start, -graph.
 ---
-<!-- rt-kit v0.39.1 · rules/task-flow.md · 2318c8067b3f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · rules/task-flow.md · 0a0e687c3b60 · правится надстройкой, не здесь -->
 
 # Work conduct — the states
 
@@ -18,7 +18,7 @@ Rule under the law `docs/constitution/work-conduct.md`. Cold part: `pitfalls.md`
 | `просьба-не-разобрана` | `measure.grill.written` | explore the tree, then ask the questions | `task-flow-start` |
 | `эпик-заведён` | `measure.epic.declared` | take the epic branch from the main branch; the epic card moves with the first task | `epic-flow-declare` |
 | `разбор-закрыт` | `measure.agreement.named` | write the product agreement, or the reason there is none | `task-flow-start` |
-| `договорённость-записана` | `measure.task.taken` | create the task, the branch from the epic branch, and the folder | `task-flow-start` |
+| `договорённость-записана` | `measure.task.taken` | create the task, the branch from its base, and the folder | `task-flow-start` |
 | `задача-взята` | `measure.plan.approved` | write the plan; once the owner approves it, run plan-red | `task-flow-start` |
 | `замысел-записан` | `measure.progress.mirrors` | do the first stage | `task-flow-start` |
 | `этап-идёт` | `measure.progress.done` | finish the stage: `step N.M` measures each step and marks it done | `task-flow-resume` |

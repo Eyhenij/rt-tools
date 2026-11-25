@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · checks/board-epic-link.github.mjs · bc7955cefebd · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/board-epic-link.github.mjs · 6fd545d12e61 · правится надстройкой, не здесь
 /**
  * The declaration by which a task names its epic.
  *
@@ -40,3 +40,17 @@ export function declaredEpicOf(body, number = null) {
  * epic — the place in the line can.
  */
 const DECLARATION = new RegExp(`^\\s*(?:[-*]\\s+)?(?:\\S+\\s+)?задач[аи]\\s+эпика?\\s+(?:#|${TASK_KEY}-)(\\d+)`, 'im');
+
+/** The words of the line by which work declares itself outside an epic; the line opens with them. */
+const OUTSIDE = /^\s*(?:[-*]\s+)?работа\s+вне\s+эпика\s+[—–-]\s*(\S.*)$/im;
+
+/** The words the creating command writes after it for the only task of a grill. */
+export const SINGLE_WORDS = 'разбор дал одну задачу';
+
+/**
+ * The words a card stands outside an epic by, or null. The line is read on its own place, the same as
+ * the declaration of an epic: the words inside a sentence are prose about such work.
+ */
+export function outsideReasonOf(body) {
+    return String(body ?? '').match(OUTSIDE)?.[1].trim() ?? null;
+}
