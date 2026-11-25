@@ -17,8 +17,12 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 
-import { build } from 'esbuild';
+import { createRequire } from 'node:module';
 
+// esbuild приходит с `@angular/build`, который дерево объявляет само: свой пакет `esbuild` здесь не
+// заводится, потому что рабочая область держит его нижнюю границу переопределением безопасности.
+const require = createRequire(import.meta.url);
+const { build } = createRequire(require.resolve('@angular/build/package.json'))('esbuild');
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = join(ROOT, 'dist', 'ui-kit-v2', 'fesm2022');
 /** Файл порога; переменная окружения нужна сценариям, которые проверяют код возврата на своём пороге. */
