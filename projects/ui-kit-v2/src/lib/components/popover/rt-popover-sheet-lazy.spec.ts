@@ -5,6 +5,7 @@ import { By } from '@angular/platform-browser';
 import { createRtFixture } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
 import { RtPopoverDirective } from './rt-popover.directive';
+import { forgetSheetCode } from './rt-popover-sheet.code';
 
 /** Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. */
 class BreakpointsStub {
@@ -54,6 +55,10 @@ function sheets(): NodeListOf<Element> {
 }
 
 describe('Нижняя шторка поповера — код листа приходит позже ручки', (): void => {
+    beforeEach((): void => {
+        forgetSheetCode();
+    });
+
     afterEach((): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
@@ -63,6 +68,7 @@ describe('Нижняя шторка поповера — код листа пр�
 
         popover.open();
         expect(popover.isOpen()).toBe(true);
+        expect(sheets()).toHaveLength(0);
         popover.close();
         await flushSheetCode();
         settle(fixture);
@@ -75,6 +81,7 @@ describe('Нижняя шторка поповера — код листа пр�
         const { fixture, popover } = setup();
 
         popover.open();
+        expect(sheets()).toHaveLength(0);
         fixture.destroy();
         await flushSheetCode();
 
@@ -87,6 +94,7 @@ describe('Нижняя шторка поповера — код листа пр�
         popover.open();
         popover.close();
         popover.open();
+        expect(sheets()).toHaveLength(0);
         await flushSheetCode();
         settle(fixture);
 
@@ -104,9 +112,11 @@ describe('Нижняя шторка поповера — код листа пр�
         await flushSheetCode();
 
         popover.open();
+        // Код уже пришёл: лист встаёт сразу, без ожидания загрузки.
+        expect(sheets()).toHaveLength(1);
         settle(fixture);
 
-        expect(sheets().length).toBeGreaterThanOrEqual(1);
+        expect(sheets()).toHaveLength(1);
         expect(popover.isOpen()).toBe(true);
     });
 });

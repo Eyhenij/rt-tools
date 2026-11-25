@@ -8,8 +8,8 @@
     "dialog",
     "bottom-sheet"
   ],
-  "total": 327670,
-  "gzip": 58377,
+  "total": 327809,
+  "gzip": 58419,
   "parts": {
     "select": 67603,
     "form-control": 4967,
@@ -18,7 +18,7 @@
     "ripple": 2146,
     "tooltip": 7673,
     "input": 59692,
-    "popover": 12539,
+    "popover": 12678,
     "menu": 39642,
     "dialog": 18496,
     "button": 7098,

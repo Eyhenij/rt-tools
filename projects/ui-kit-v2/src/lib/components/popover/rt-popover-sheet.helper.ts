@@ -7,6 +7,7 @@ import { filter, merge, Observable, Subject, takeUntil, tap } from 'rxjs';
 
 import { carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
 import type { RtPopoverSheetComponent } from './rt-popover-sheet.component';
+import { sheetCodeState } from './rt-popover-sheet.code';
 
 /**
  * Открытая шторка. Компонент листа приходит позже, чем ручка: его код подгружается при первом
@@ -46,26 +47,21 @@ const attachedSheets: WeakMap<IRtPopoverSheetOpened, ComponentRef<RtPopoverSheet
     ComponentRef<RtPopoverSheetComponent>
 >();
 
-/** Обещание загрузки кода листа: одно на приложение, сбрасывается при ошибке, чтобы следующее открытие пробовало снова. */
-let sheetCodeLoading: Promise<typeof RtPopoverSheetComponent> | null = null;
-
-/** Класс листа после загрузки: следующие открытия берут его сразу, без ожидания и без лишнего прохода отрисовки. */
-let loadedSheetComponent: typeof RtPopoverSheetComponent | null = null;
-
+/** Подгружает код листа ленивым `import()`; вызовы до прихода кода делят одно обещание. */
 function loadSheetCode(): Promise<typeof RtPopoverSheetComponent> {
-    if (sheetCodeLoading === null) {
-        sheetCodeLoading = import('./rt-popover-sheet.component')
+    if (sheetCodeState.loading === null) {
+        sheetCodeState.loading = import('./rt-popover-sheet.component')
             .then((module: { RtPopoverSheetComponent: typeof RtPopoverSheetComponent }): typeof RtPopoverSheetComponent => {
-                loadedSheetComponent = module.RtPopoverSheetComponent;
-                return loadedSheetComponent;
+                sheetCodeState.loaded = module.RtPopoverSheetComponent;
+                return module.RtPopoverSheetComponent;
             })
             .catch((error: unknown): never => {
-                sheetCodeLoading = null;
+                sheetCodeState.loading = null;
                 throw error;
             });
     }
 
-    return sheetCodeLoading;
+    return sheetCodeState.loading;
 }
 
 /**
@@ -102,6 +98,7 @@ export function rtOpenPopoverSheet(request: IRtPopoverSheetRequest): IRtPopoverS
         })
     );
     carryThemeScope(overlayRef.overlayElement, request.host);
+    const errors: ErrorHandler = request.injector.get(ErrorHandler);
     const dismissedSource: Subject<void> = new Subject<void>();
     const sheet: IRtPopoverSheetOpened = { overlayRef, dismissed: dismissedSource.asObservable() };
 
@@ -137,15 +134,22 @@ export function rtOpenPopoverSheet(request: IRtPopoverSheetRequest): IRtPopoverS
         );
     };
 
-    if (loadedSheetComponent !== null) {
-        attach(loadedSheetComponent);
+    const loaded: typeof RtPopoverSheetComponent | null = sheetCodeState.loaded;
+    if (loaded !== null) {
+        attach(loaded);
     } else {
-        loadSheetCode().then(attach, (error: unknown): void => {
-            // Код листа не пришёл: оверлей снимается, панель закрывается тем же путём, что и по подложке.
-            overlayRef.dispose();
-            request.injector.get(ErrorHandler).handleError(error);
-            dismissedSource.next();
-        });
+        loadSheetCode()
+            .then(attach)
+            .catch((error: unknown): void => {
+                // Код листа не пришёл или лист не встал: оверлей снимается, панель закрывается тем же путём,
+                // что и по подложке. Закрытие не зависит от обработчика ошибок: он может сам бросить.
+                overlayRef.dispose();
+                try {
+                    errors.handleError(error);
+                } finally {
+                    dismissedSource.next();
+                }
+            });
     }
 
     return sheet;
@@ -252,7 +256,7 @@ function slideOut(sheet: IRtPopoverSheetOpened, panel: HTMLElement): void {
 export function rtClosePopoverSheet(sheet: IRtPopoverSheetOpened, returnFocusTo: HTMLElement | null): void {
     const sheetRef: ComponentRef<RtPopoverSheetComponent> | undefined = attachedSheets.get(sheet);
     // Лист ещё не пришёл или оверлей уже снят: снимать нечего, а пришедший код листа оверлея не найдёт.
-    if (sheetRef === undefined) {
+    if (sheetRef === undefined || !sheet.overlayRef.hasAttached()) {
         sheet.overlayRef.dispose();
         return;
     }

@@ -131,5 +131,5 @@ None.
 | 2026-11-19 | The multiselect with toggles, scenarios 1456…1460 (RT-3399)                                                                                   |
 | 2026-11-19 | Tabs switch the sheet off for their menus, scenario 1461 (RT-3399)                                                                            |
 | 2026-11-20 | The sheet opens on a phone, ≤480 px, by the owner's word «До 480 px» (RT-3399)                                                                |
-| 2026-11-25 | The code of the sheet is loaded at the first opening, the class of the sheet leaves the public entry, scenarios 1782…1784 (RT-3645)           |
 | 2026-11-20 | Scenarios renumbered to 1554…1627 after main took 1385…1389 and 1436…1505; the toggle choice left for the subdomain `toggle-choice` (RT-3399) |
+| 2026-11-25 | The code of the sheet is loaded at the first opening, the class of the sheet leaves the public entry, scenarios 1782…1784 (RT-3645)           |
