@@ -56,14 +56,6 @@ the same rows as before.
   outside it does.** The part of the kit learns of the close as before.
 - **The panel inside the sheet takes the full width of the sheet.** The width taken from the
   trigger does not apply there.
-- **The code of the sheet is loaded lazily, at the first opening on a phone, not at the start of the
-  application.** The first opening waits for the code once, later openings take it at once. A
-  panel closed, or a directive removed, before the code arrives leaves no sheet and the code that
-  arrives does not create one; a code that fails to load closes the panel and goes to the error
-  handler of the application. An application that does not want the first wait calls
-  `rtPreloadPopoverSheet` in an idle moment. While the code of the first opening is on its way nothing of the sheet is
-  drawn, and Escape pressed in that short time does not close the panel: the keyboard watcher of the overlay starts
-  with the sheet. The trigger already reports the panel as open in that time, and pressing it again closes it.
 
 ## What is out of scope
 
@@ -134,4 +126,4 @@ None.
 | 2026-11-19 | Tabs switch the sheet off for their menus, scenario 1461 (RT-3399)                                                                            |
 | 2026-11-20 | The sheet opens on a phone, ≤480 px, by the owner's word «До 480 px» (RT-3399)                                                                |
 | 2026-11-20 | Scenarios renumbered to 1554…1627 after main took 1385…1389 and 1436…1505; the toggle choice left for the subdomain `toggle-choice` (RT-3399) |
-| 2026-11-25 | The code of the sheet is loaded at the first opening, the class of the sheet leaves the public entry, scenarios 1782…1784 (RT-3645)           |
+| 2026-11-25 | The code of the sheet is loaded at the first opening; its rules and scenarios 1782…1784 live in the subdomain `popover-sheet-lazy` (RT-3645)   |
