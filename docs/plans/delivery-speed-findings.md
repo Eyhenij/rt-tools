@@ -135,3 +135,12 @@ The findings of the rules review of every closed task of the epic «Проста
 8. **The PR call of the loop passes the gate without `git-workflow-hosting`** — tree, the gate map: the form
    with the token and `$(…)` is missed; `docs/archive/*` is in neither map against `archive-record`. The
    owner's choice: two loads more per task.
+
+## RT-3627 — along the work, 25 November 2026
+
+1. **The footprint names files before it is known whether they change** — package, the sample of the plan and
+   `task-flow-plan`. Exit 8 asks an edit under every path marked «(правится)», and the plan cannot be edited.
+   Four files were named with no edit in view and got one at the close; three of the four were worth it, the
+   words of one override were not.
+2. **An edit made before the plan's commit is not counted by exit 8** — package, the engine. The findings of
+   the second reading went into this file by the commit before the plan's, and the row stayed untouched.
