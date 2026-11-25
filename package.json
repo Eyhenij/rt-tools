@@ -114,7 +114,7 @@
     "postinstall": "rimraf .angular .nx && pnpm run prisma:generate",
     "preinstall": "npx only-allow pnpm",
     "build:tokens-source": "node tools/build-tokens-v2.mjs",
-    "build:tokens-v2": "sass --no-source-map --load-path=projects/ui-kit-v2/src/styles projects/ui-kit-v2/src/styles/tokens.package.scss dist/ui-kit-v2/styles/tokens.css && sass --no-source-map --load-path=projects/ui-kit-v2/src/styles projects/ui-kit-v2/src/styles/tokens.coexist.scss dist/ui-kit-v2/styles/tokens.coexist.css"
+    "build:tokens-v2": "sass --no-source-map --load-path=projects/ui-kit-v2/src/styles projects/ui-kit-v2/src/styles/tokens.package.scss dist/ui-kit-v2/styles/tokens.css && sass --no-source-map --load-path=projects/ui-kit-v2/src/styles projects/ui-kit-v2/src/styles/tokens.coexist.scss dist/ui-kit-v2/styles/tokens.coexist.css && node tools/build-tokens-split.mjs"
   },
   "private": true,
   "repository": {
