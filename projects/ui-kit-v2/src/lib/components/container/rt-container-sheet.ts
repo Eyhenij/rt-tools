@@ -20,7 +20,7 @@ const SHEET_PANEL_SELECTOR: string = '[qa-dataid="bottom-sheet-panel"]';
  * другой записи в открытой панели — не открытие, а закрытая шторка остаётся шторкой, пока панель
  * не откроют снова.
  */
-export class RtContainerSheetDriver {
+export class RtContainerSheet {
     readonly #sheet: RtAsideSheet;
     readonly #renderer: Renderer2;
     readonly #window: Window | null;

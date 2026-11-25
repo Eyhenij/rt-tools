@@ -42,7 +42,7 @@ import { BreakpointsService, carryThemeScope, materialPresetClassesOf } from '@r
 import { clampWidth, listenTransitionEnd, RtResizeHandleComponent } from '@rt-tools/ui-kit-v2/drawer';
 import { RtToasterComponent } from '@rt-tools/ui-kit-v2/toast';
 import { rtHideBackdrop } from './rt-container-overlay';
-import { RT_OVERLAY_ENTERING_CLASS, RT_OVERLAY_LEAVING_CLASS, RT_OVERLAY_OPEN_CLASS, RtContainerSheetDriver } from './rt-container-sheet';
+import { RT_OVERLAY_ENTERING_CLASS, RT_OVERLAY_LEAVING_CLASS, RT_OVERLAY_OPEN_CLASS, RtContainerSheet } from './rt-container-sheet';
 import { RtContainerStateService } from './rt-container-state.service';
 import { rtMarkPlaceRoot } from './rt-place-root.logic';
 import {
@@ -127,7 +127,7 @@ export class RtContainerComponent {
     readonly #phone: Signal<boolean> = inject(BreakpointsService).phone;
     /** Вид правой панели на телефоне; его же панель в слоте читает через маркер слота. */
     readonly #rightSheet: RtAsideSheet = inject(RtContainerStateService).rightSheet;
-    readonly #sheetDriver: RtContainerSheetDriver = new RtContainerSheetDriver(this.#rightSheet, this.#renderer, this.#window);
+    readonly #sheetDriver: RtContainerSheet = new RtContainerSheet(this.#rightSheet, this.#renderer, this.#window);
 
     readonly #rightOverlaySource: Subject<OverlayRef> = new Subject<OverlayRef>();
 

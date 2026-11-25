@@ -1,14 +1,19 @@
 <ng-container rtBlock="rt-aside">
-    <!-- Шапка, тело и подвал панели — одной разметкой: в рамке у края окна и в шторке телефона. -->
-    <ng-template #headerSlot>
+    <!-- Рамка панели со слотами шапки и подвала — одна на оба вида: проекция объявлена один раз и не стоит
+         под условием. В шторке телефона панель переносит рамку в тело шторки, шапку — в её шапку,
+         подвал — в её подвал, пока в нём осталась кнопка. -->
+    <div
+        #frame
+        rtBlock="rt-aside"
+        qa-dataid="aside"
+        [attr.role]="frameRole()"
+        [attr.aria-modal]="frameModal()"
+        [rtMod]="frameMods()"
+        [style.--rt-aside-width]="frameWidth()"
+        [attr.aria-label]="frameLabel()"
+        [attr.aria-busy]="pending() || null">
         <ng-content select="rt-aside-header" />
-    </ng-template>
 
-    <ng-template #footerSlot>
-        <ng-content select="rt-aside-footer" />
-    </ng-template>
-
-    <ng-template #bodySlot>
         @if (hasRequestError()) {
             <rt-aside-error-box rtElem="error" [error]="requestError()" />
         }
@@ -32,47 +37,27 @@
                 <rt-spinner />
             </div>
         }
-    </ng-template>
+
+        <ng-content select="rt-aside-footer" />
+    </div>
 
     @if (sheetMode()) {
-        <!-- Телефон: панель — шторка кита во всю высоту. Шапка панели встаёт в шапку шторки, подвал —
-             в её подвал, только когда в нём осталась кнопка. -->
+        <!-- Телефон: панель — шторка кита во всю высоту. Свои шапку и подвал шторке даёт панель: пустой
+             шаблон оставляет в шторке их места, и панель ставит туда свои узлы. -->
         <rt-bottom-sheet
             fullHeight
             qa-dataid="aside-sheet"
             [open]="sheetShown()"
             [ariaLabel]="sheetName()"
-            [headerTemplate]="headerSlot"
+            [headerTemplate]="sheetSlot"
             [footerTemplate]="sheetFooter()"
             [confirmLabels]="sheetConfirm()"
             [closeOnApply]="false"
             (applyRequest)="onSheetAnswer(outcomes.Save)"
             (discardRequest)="onSheetAnswer(outcomes.Discard)"
             (stayRequest)="onSheetAnswer(outcomes.Stay)"
-            (closeRequest)="onSheetClose($event)">
-            <div
-                #frame
-                rtBlock="rt-aside"
-                qa-dataid="aside"
-                [rtMod]="{ sheet: true, content: contentLayout() }"
-                [attr.aria-busy]="pending() || null">
-                <ng-container [ngTemplateOutlet]="bodySlot" />
-            </div>
-        </rt-bottom-sheet>
-    } @else {
-        <div
-            #frame
-            rtBlock="rt-aside"
-            qa-dataid="aside"
-            [attr.role]="modal() ? 'dialog' : 'complementary'"
-            [attr.aria-modal]="modal() || null"
-            [rtMod]="{ size: size(), content: contentLayout() }"
-            [style.--rt-aside-width]="width()"
-            [attr.aria-label]="ariaLabel()"
-            [attr.aria-busy]="pending() || null">
-            <ng-container [ngTemplateOutlet]="headerSlot" />
-            <ng-container [ngTemplateOutlet]="bodySlot" />
-            <ng-container [ngTemplateOutlet]="footerSlot" />
-        </div>
+            (closeRequest)="onSheetClose($event)" />
     }
+
+    <ng-template #sheetSlot />
 </ng-container>

@@ -80,7 +80,7 @@ export function rtSwitchSheetScreen(host: HTMLElement, from: number, step: TRtSh
 /** Шторка, вторым экраном которой открыта эта: её высота и её смена экранов. */
 export interface IRtSheetUnder {
     readonly height: () => number;
-    readonly screens: RtSheetScreens;
+    readonly screens: RtBottomSheetScreens;
 }
 
 /**
@@ -88,7 +88,7 @@ export interface IRtSheetUnder {
  * её, без выезда, слева в шапке у неё шеврон «назад». Признак держится и на закрытии: второй экран
  * уходит так же без выезда, и первый виден сразу — переходом к своей высоте.
  */
-export class RtSheetScreens {
+export class RtBottomSheetScreens {
     readonly #host: HTMLElement;
     readonly #injector: Injector;
     /**

@@ -3,7 +3,7 @@ import { applicationConfig, Decorator, Meta, StoryObj } from '@storybook/angular
 
 import { openStoryOverlay } from '../../../../showcase/story-overlay';
 import { BreakpointsService } from '../../../platform';
-import { TestRtAsideSheetComponent } from './component/test-aside-sheet.component';
+import { TestRtAsideSheetComponent } from './component/test-rt-aside-sheet.component';
 
 /**
  * Служба брейкпоинтов с ответами окна заданной ширины. Вид шторки выбирается в миг открытия панели,

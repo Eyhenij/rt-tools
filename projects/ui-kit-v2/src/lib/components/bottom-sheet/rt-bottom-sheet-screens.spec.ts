@@ -4,7 +4,7 @@ import { ApplicationRef, createEnvironmentInjector, DestroyRef, EnvironmentInjec
 import { TestBed } from '@angular/core/testing';
 import * as sass from 'sass';
 
-import { rtMotionDurationMs, RtSheetScreens, rtSwitchSheetScreen } from './rt-bottom-sheet-screens';
+import { RtBottomSheetScreens, rtMotionDurationMs, rtSwitchSheetScreen } from './rt-bottom-sheet-screens';
 
 /** Правило второго экрана из собранных стилей шторки. */
 function nestedPanelRule(): string {
@@ -110,7 +110,7 @@ describe('Экраны шторки — высота второго экрана
             ],
             parent: overlay,
         });
-        const under: RtSheetScreens = new RtSheetScreens(sheet(346, []), view);
+        const under: RtBottomSheetScreens = new RtBottomSheetScreens(sheet(346, []), view);
         // Сама шторка и её оверлей ещё стоят, а приложение уже снято: так уходит страница целиком.
         application.destroy();
 

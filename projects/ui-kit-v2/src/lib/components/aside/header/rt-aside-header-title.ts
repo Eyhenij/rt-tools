@@ -46,7 +46,7 @@ export function rtSheetTitleBetween(box: IRtSheetTitleBox): boolean {
  * знает, влезет ли заголовок, поэтому ширины частей шапки меряются и пересчитываются, когда любая
  * из них меняет размер.
  */
-export class RtAsideSheetTitleFit {
+export class RtAsideHeaderTitle {
     #row: HTMLElement | null = null;
     #observer: ResizeObserver | null = null;
     readonly #onChange: (between: boolean) => void;

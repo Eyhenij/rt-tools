@@ -40,6 +40,7 @@ import { RtAsideHeaderComponent } from './header/rt-aside-header.component';
 import { RtAsideEmptyDirective } from './rt-aside-empty.directive';
 import { RtAsideContentDirective } from './rt-aside-content.directive';
 import { RtAsideMainAction } from './rt-aside-main-action';
+import { RtAsideNodePlace } from './rt-aside-node-place';
 import { RT_ASIDE_SHEET, RtAsideSheet, TRtAsideSheetGesture } from './rt-aside-sheet';
 import { RtAsideSheetTabs } from './rt-aside-sheet-tabs';
 import { ERtAsideUnsavedOutcome } from './unsaved-dialog/rt-aside-unsaved.logic';
@@ -132,6 +133,10 @@ export class RtAsideComponent {
     readonly #sheet: RtAsideSheet | null = inject(RT_ASIDE_SHEET, { optional: true });
     readonly #mainAction: RtAsideMainAction = new RtAsideMainAction();
     readonly #sheetTabs: RtAsideSheetTabs = new RtAsideSheetTabs();
+    /** Рамка, шапка и подвал панели в шторке: их места в шторке и возврат в рамку вне её. */
+    readonly #sheetFrame: RtAsideNodePlace = new RtAsideNodePlace();
+    readonly #sheetHeader: RtAsideNodePlace = new RtAsideNodePlace();
+    readonly #sheetFooter: RtAsideNodePlace = new RtAsideNodePlace();
 
     readonly #t_uiEmptyTitle: Signal<string> = rtKitLabel('uiEmptyTitle');
     readonly #t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
@@ -142,17 +147,46 @@ export class RtAsideComponent {
     #sheetFocused: boolean = false;
 
     protected readonly bottomSheet: Signal<RtBottomSheetComponent | undefined> = viewChild(RtBottomSheetComponent);
+    protected readonly bottomSheetHost: Signal<ElementRef<HTMLElement> | undefined> = viewChild(RtBottomSheetComponent, {
+        read: ElementRef,
+    });
 
     /** Ответы вопроса шторки — имена для шаблона. */
     protected readonly outcomes: typeof ERtAsideUnsavedOutcome = ERtAsideUnsavedOutcome;
 
     protected readonly header: Signal<RtAsideHeaderComponent | undefined> = contentChild(RtAsideHeaderComponent, { descendants: true });
     protected readonly footer: Signal<RtAsideFooterComponent | undefined> = contentChild(RtAsideFooterComponent, { descendants: true });
-    protected readonly footerSlot: Signal<TemplateRef<IRtSheetTemplateContext>> = viewChild.required('footerSlot', { read: TemplateRef });
+    protected readonly headerHost: Signal<ElementRef<HTMLElement> | undefined> = contentChild(RtAsideHeaderComponent, {
+        descendants: true,
+        read: ElementRef,
+    });
+    protected readonly footerHost: Signal<ElementRef<HTMLElement> | undefined> = contentChild(RtAsideFooterComponent, {
+        descendants: true,
+        read: ElementRef,
+    });
+    /** Пустой шаблон шапки и подвала шторки: шторка оставляет под ним место, панель ставит туда свои узлы. */
+    protected readonly sheetSlot: Signal<TemplateRef<IRtSheetTemplateContext>> = viewChild.required('sheetSlot', { read: TemplateRef });
 
     /** Панель — шторка телефона: так решил открывший её при открытии. */
     protected readonly sheetMode: Signal<boolean> = computed((): boolean => this.#sheet?.active() ?? false);
     protected readonly sheetShown: Signal<boolean> = computed((): boolean => this.#sheet?.shown() ?? false);
+
+    /**
+     * Рамка у края окна — дополнительная панель или модальный диалог своего размера и имени; в шторке
+     * роль, имя и размер у самой шторки, а у рамки — только вид содержимого.
+     */
+    protected readonly frameRole: Signal<string | null> = computed((): string | null => {
+        if (this.sheetMode()) {
+            return null;
+        }
+        return this.modal() ? 'dialog' : 'complementary';
+    });
+    protected readonly frameModal: Signal<true | null> = computed((): true | null => (!this.sheetMode() && this.modal()) || null);
+    protected readonly frameLabel: Signal<string | null> = computed((): string | null => (this.sheetMode() ? null : this.ariaLabel()));
+    protected readonly frameWidth: Signal<string | null> = computed((): string | null => (this.sheetMode() ? null : this.width()));
+    protected readonly frameMods: Signal<Record<string, string | boolean>> = computed((): Record<string, string | boolean> =>
+        this.sheetMode() ? { sheet: true, content: this.contentLayout() } : { size: this.size(), content: this.contentLayout() }
+    );
 
     /** Имя диалога шторки: имя панели, а без него — её заголовок. */
     protected readonly sheetName: Signal<string | null> = computed((): string | null => this.ariaLabel() || this.header()?.title() || null);
@@ -175,7 +209,7 @@ export class RtAsideComponent {
 
     /** Подвал шторки: только когда в подвале панели осталась кнопка, иначе шторка без подвала. */
     protected readonly sheetFooter: Signal<TemplateRef<IRtSheetTemplateContext> | null> = computed(
-        (): TemplateRef<IRtSheetTemplateContext> | null => (this.footer()?.sheetFilled() === true ? this.footerSlot() : null)
+        (): TemplateRef<IRtSheetTemplateContext> | null => (this.footer()?.sheetFilled() === true ? this.sheetSlot() : null)
     );
 
     protected readonly frame: Signal<ElementRef<HTMLElement>> = viewChild.required<ElementRef<HTMLElement>>('frame');
@@ -238,6 +272,17 @@ export class RtAsideComponent {
     public readonly emptyDescription: InputSignal<string | null> = input<string | null>(null);
 
     constructor() {
+        // Шторка поднята — рамка встаёт в её тело, шапка в её шапку, подвал в её подвал, а без кнопок
+        // подвал снят со страницы. Вне шторки всё возвращается в рамку. Перенос идёт первым: фокус и
+        // главная кнопка ниже ищут узлы уже на местах шторки.
+        afterRenderEffect((): void => {
+            const sheet: HTMLElement | null = this.bottomSheetHost()?.nativeElement ?? null;
+            const frame: HTMLElement = this.frame().nativeElement;
+            const header: HTMLElement | null = this.headerHost()?.nativeElement ?? null;
+            const footer: HTMLElement | null = this.footerHost()?.nativeElement ?? null;
+            const footerShown: boolean = this.sheetFooter() !== null;
+            untracked((): void => this.#placeSheetParts(sheet, frame, header, footer, footerShown));
+        });
         // После отрисовки: до неё у рамки нет ни полей, ни кнопок, и ловить фокус не на чем.
         // Шторка держит Tab во всей своей панели — с шапкой и подвалом, и ловит его, когда поднята:
         // опущенная шторка `inert`, и фокус в неё не встаёт.
@@ -292,6 +337,28 @@ export class RtAsideComponent {
      */
     protected onSheetClose(reason: TRtSheetCloseReason): void {
         this.#sheet?.requestClose(SHEET_GESTURES[reason]);
+    }
+
+    /** Узлы панели на местах шторки; шторки нет — на своих местах в рамке. */
+    #placeSheetParts(
+        sheet: HTMLElement | null,
+        frame: HTMLElement,
+        header: HTMLElement | null,
+        footer: HTMLElement | null,
+        footerShown: boolean
+    ): void {
+        const part: (name: string) => HTMLElement | null = (name: string): HTMLElement | null =>
+            sheet?.querySelector<HTMLElement>(`:scope > .rt-bottom-sheet__panel > .rt-bottom-sheet__${name}`) ?? null;
+        const body: HTMLElement | null = part('body');
+        if (body === null) {
+            this.#sheetFooter.restore();
+            this.#sheetHeader.restore();
+            this.#sheetFrame.restore();
+            return;
+        }
+        this.#sheetFrame.move([frame], body);
+        this.#sheetHeader.move(header === null ? [] : [header], part('header'));
+        this.#sheetFooter.move(footer === null ? [] : [footer], footerShown ? part('footer') : null);
     }
 
     /** Фокус подъёма шторки: один раз на подъём; держащая Tab панель ставит его ловушкой сама. */

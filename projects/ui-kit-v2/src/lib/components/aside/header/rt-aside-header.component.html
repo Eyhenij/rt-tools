@@ -27,7 +27,7 @@
                 (clicked)="onDismiss()" />
         }
 
-        <div rtElem="heading">
+        <div #heading rtElem="heading">
             @if (!sheetMode()) {
                 <ng-container [ngTemplateOutlet]="meta" [ngTemplateOutletContext]="{ $implicit: 'overline' }" />
             }
@@ -45,6 +45,8 @@
             @if (!sheetMode()) {
                 <ng-container [ngTemplateOutlet]="meta" [ngTemplateOutletContext]="{ $implicit: 'rest' }" />
             }
+            <!-- Проекция без условия: в шторке шапка переносит эти узлы в конец блока под собой. -->
+            <ng-content select="[asideHeadingContent]" />
         </div>
 
         <div rtElem="actions" qa-dataid="aside-actions">
@@ -59,14 +61,14 @@
     <!-- В шторке надзаголовок, подпись, бэйджи и содержимое колонки заголовка стоят под шапкой, в начале
          содержимого: в шапке шторки только «×», заголовок и кнопки. -->
     @if (sheetMode()) {
-        <div rtElem="sheet-meta" qa-dataid="aside-sheet-meta">
+        <div #sheetMeta rtElem="sheet-meta" qa-dataid="aside-sheet-meta">
             <ng-container [ngTemplateOutlet]="meta" [ngTemplateOutletContext]="{ $implicit: 'overline' }" />
             <ng-container [ngTemplateOutlet]="meta" [ngTemplateOutletContext]="{ $implicit: 'rest' }" />
         </div>
     }
 
-    <!-- Части колонки заголовка: надзаголовок над ним и подпись, бэйджи, содержимое под ним. Проекция
-         одна: шаблон выводится либо в колонке, либо под шапкой шторки. -->
+    <!-- Части колонки заголовка: надзаголовок над ним, подпись и бэйджи под ним. Шаблон выводится либо в
+         колонке, либо под шапкой шторки; содержимое колонки проецируется в колонку без условия. -->
     <ng-template #meta let-part>
         @if (part === 'overline') {
             @if (overline(); as overlineText) {
@@ -101,8 +103,6 @@
                     }
                 </div>
             }
-
-            <ng-content select="[asideHeadingContent]" />
         }
     </ng-template>
 

@@ -2,7 +2,7 @@ import { join } from 'node:path';
 
 import * as sass from 'sass';
 
-import { RtAsideSheetTitleFit, rtSheetTitleBetween } from './rt-aside-header-title';
+import { RtAsideHeaderTitle, rtSheetTitleBetween } from './rt-aside-header-title';
 
 /** Шапка шторки на 375 по утверждённому макету: ряд 351, «×» 40, зазор 8. */
 const ROW: number = 351;
@@ -57,7 +57,7 @@ describe('Место заголовка в шапке шторки', (): void =>
 
     it('SC-UKV-1861 — заголовок, ставший короче, из места между кнопками возвращается в центр', (): void => {
         const answers: boolean[] = [];
-        const fit: RtAsideSheetTitleFit = new RtAsideSheetTitleFit((between: boolean): number => answers.push(between));
+        const fit: RtAsideHeaderTitle = new RtAsideHeaderTitle((between: boolean): number => answers.push(between));
         const header: HTMLElement = row(ICON_AND_BUTTON, 120);
 
         fit.attach(header);
@@ -82,7 +82,7 @@ describe('Место заголовка в шапке шторки', (): void =>
 
     it('SC-UKV-1861 — мера частей шапки ставит заголовок между кнопками и снимает это, когда он влазит', (): void => {
         const answers: boolean[] = [];
-        const fit: RtAsideSheetTitleFit = new RtAsideSheetTitleFit((between: boolean): number => answers.push(between));
+        const fit: RtAsideHeaderTitle = new RtAsideHeaderTitle((between: boolean): number => answers.push(between));
         const long: HTMLElement = row(ICON_AND_BUTTON, 120);
         const short: HTMLElement = row(BUTTON, 60);
 

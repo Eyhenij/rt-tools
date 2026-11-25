@@ -92,6 +92,7 @@ function slotNode(host: HTMLElement, slot: string): HTMLElement | null {
     host: {
         class: BEM_BLOCK,
         '[class.rt-aside-footer--sheet]': 'sheetMode()',
+        '[class.rt-aside-footer--close-hidden]': 'closeOnlyHidden()',
     },
 })
 export class RtAsideFooterComponent {

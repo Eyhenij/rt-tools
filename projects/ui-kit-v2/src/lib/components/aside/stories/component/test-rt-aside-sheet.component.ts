@@ -21,17 +21,10 @@ import {
 } from '../../../workspace/rt-workspace.directives';
 import { RtAsideRef } from '../../rt-aside-ref';
 import { RtAsideService } from '../../rt-aside.service';
-import {
-    TestRtAsideSheetAppComponent,
-    TestRtAsideSheetFooterComponent,
-    TestRtAsideSheetLongTabsComponent,
-    TestRtAsideSheetRecordComponent,
-    TestRtAsideSheetTabsComponent,
-} from './test-aside-sheet-panels.component';
+import { TAsideSheetPanel, TestRtAsideSheetPanelComponent } from './test-rt-aside-sheet-panel.component';
 
 /** Кадр макета асайда-шторки: что открыто поверх страницы. */
-export type TAsideSheetFrame =
-    'record' | 'question' | 'filters' | 'workspace' | 'columns' | 'list' | 'app' | 'tabs' | 'long-tabs' | 'footer';
+export type TAsideSheetFrame = TAsideSheetPanel | 'question' | 'filters' | 'workspace' | 'columns' | 'list';
 
 /** Колонки таблицы броней: их показывает панель настроек колонок. */
 const COLUMNS: ReadonlyArray<IRtTable.ColumnSettingItem> = [
@@ -72,6 +65,9 @@ const PAYMENTS: ReadonlyArray<IRtSelect.Option<string>> = [
 
 const TABLE_ID: string = 'story-bookings';
 
+/** Блок обёртки на её узле: страница под панелью во всю высоту окна. */
+const BEM_BLOCK: string = 'app-aside-sheet';
+
 /**
  * Демонстрационная обёртка витрины асайда-шторки: страница со списком броней и открытая поверх неё
  * панель того кадра, который назван входом. Панели службы кита открываются при первой отрисовке,
@@ -80,55 +76,8 @@ const TABLE_ID: string = 'story-bookings';
  */
 @Component({
     selector: 'app-aside-sheet',
-    template: `
-        @switch (frame) {
-            @case ('filters') {
-                <rt-toolbar data-story-trigger>
-                    <ng-template rtToolbarFilters>
-                        <div>
-                            <rt-field label="Статус">
-                                <rt-select qa-dataid="story-filter-status" placeholder="Любой" [options]="statuses" />
-                            </rt-field>
-                            <rt-field label="Оплата"><rt-select placeholder="Любая" [options]="payments" /></rt-field>
-                        </div>
-                    </ng-template>
-                </rt-toolbar>
-            }
-            @case ('workspace') {
-                <rt-workspace hasActive asideTitle="Анна Смирнова" [singleColumnBreakpoint]="600">
-                    <ng-template rtWorkspaceList><p>Брони</p></ng-template>
-                    <ng-template rtWorkspaceCenter><p>Бронь №1042</p></ng-template>
-                    <ng-template rtWorkspaceAside>
-                        <rt-detail-list>
-                            <rt-detail-row label="Тур">Сочи, 7 ночей</rt-detail-row>
-                            <rt-detail-row label="Заезд">12 мая 2026</rt-detail-row>
-                            <rt-detail-row label="Телефон">+7 912 345-67-89</rt-detail-row>
-                        </rt-detail-list>
-                    </ng-template>
-                </rt-workspace>
-            }
-            @case ('columns') {
-                <rt-container>
-                    <ng-template rtContainerContent><p class="app-aside-sheet__page">Брони</p></ng-template>
-                    <ng-template rtContainerRightSidenav><rt-table-settings-aside /></ng-template>
-                </rt-container>
-            }
-            @default {
-                <p class="app-aside-sheet__page">Брони</p>
-            }
-        }
-    `,
-    styles: `
-        :host {
-            display: block;
-            min-height: 100dvh;
-        }
-
-        .app-aside-sheet__page {
-            margin: 0;
-            padding: 16px;
-        }
-    `,
+    templateUrl: './test-rt-aside-sheet.component.html',
+    styleUrl: './test-rt-aside-sheet.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         RtToolbarComponent,
@@ -146,6 +95,9 @@ const TABLE_ID: string = 'story-bookings';
         RtContainerRightSidenavDirective,
         RtTableSettingsAsideComponent,
     ],
+    host: {
+        class: BEM_BLOCK,
+    },
 })
 export class TestRtAsideSheetComponent {
     readonly #aside: RtAsideService = inject(RtAsideService);
@@ -173,19 +125,13 @@ export class TestRtAsideSheetComponent {
         switch (this.frame) {
             case 'record':
             case 'question':
-                this.#unsaved(this.#aside.open(TestRtAsideSheetRecordComponent, { position: 'right' }));
+                this.#unsaved(this.#panel('record'));
                 return;
             case 'app':
-                this.#aside.open(TestRtAsideSheetAppComponent, { position: 'right' });
-                return;
             case 'tabs':
-                this.#aside.open(TestRtAsideSheetTabsComponent, { position: 'right' });
-                return;
             case 'long-tabs':
-                this.#aside.open(TestRtAsideSheetLongTabsComponent, { position: 'right' });
-                return;
             case 'footer':
-                this.#aside.open(TestRtAsideSheetFooterComponent, { position: 'right' });
+                this.#panel(this.frame);
                 return;
             case 'list':
                 this.#aside.open(RtDataListSettingsAsideComponent, { data: LIST_CONFIG, position: 'right' });
@@ -199,6 +145,14 @@ export class TestRtAsideSheetComponent {
             default:
                 return;
         }
+    }
+
+    /** Панель кадра открывает служба кита: какую из панелей рисовать, панель узнаёт из данных открытия. */
+    #panel(panel: TAsideSheetPanel): RtAsideRef {
+        return this.#aside.open<TestRtAsideSheetPanelComponent, TAsideSheetPanel>(TestRtAsideSheetPanelComponent, {
+            data: panel,
+            position: 'right',
+        });
     }
 
     /** Кадр с вопросом: у записи несохранённые правки, и «×» спрашивает внизу экрана. */

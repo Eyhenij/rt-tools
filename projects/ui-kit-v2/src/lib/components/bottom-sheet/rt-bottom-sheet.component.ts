@@ -35,7 +35,7 @@ import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { IRtSheetKeyboardBox, rtWatchSheetKeyboard } from './rt-bottom-sheet-keyboard';
-import { RtSheetScreens } from './rt-bottom-sheet-screens';
+import { RtBottomSheetScreens } from './rt-bottom-sheet-screens';
 import { RtBottomSheetStackService } from './rt-bottom-sheet-stack.service';
 import { clampDragDelta, focusLeftBehind, innerFocus, isTypingTarget, outerFocus, shouldDismissDrag } from './rt-bottom-sheet.logic';
 import { IRtSheetConfirmLabels, IRtSheetTemplateContext, TRtSheetCloseReason } from './rt-bottom-sheet.model';
@@ -100,7 +100,7 @@ export class RtBottomSheetComponent {
     readonly #scrollLock: ScrollStrategy = inject(ScrollStrategyOptions).block();
     readonly #overlayContainer: OverlayContainer = inject(OverlayContainer);
     /** Экраны шторки: второй экран другой шторки и смена экранов. */
-    readonly #screens: RtSheetScreens = new RtSheetScreens(this.#host, inject(Injector));
+    readonly #screens: RtBottomSheetScreens = new RtBottomSheetScreens(this.#host, inject(Injector));
     readonly #onDragMove: (event: PointerEvent) => void = (event: PointerEvent): void => this.#handleDragMove(event);
     readonly #onDragEnd: () => void = (): void => this.#handleDragEnd();
     readonly #requestClose: () => void = (): void => this.dismiss('close');

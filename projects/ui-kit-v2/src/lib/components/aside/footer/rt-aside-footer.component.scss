@@ -38,5 +38,11 @@
             margin: 0;
             border-block-start: none;
         }
+
+        /* В шторке кнопка слота `[asideDismiss]`, которая только закрывает, не рисуется: её роль у «×»
+           шапки. Проекция слота стоит без условия, и кнопку прячет модификатор подвала. */
+        &--close-hidden &__content > [asideDismiss] {
+            display: none;
+        }
     }
 }
