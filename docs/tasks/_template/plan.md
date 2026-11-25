@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · samples/tasks/_template/plan.md · 8b0ec7dcd4d0 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · samples/tasks/_template/plan.md · afdad87c9633 · правится надстройкой, не здесь -->
 # Plan
 
 **Task:** <KEY>-<number> · **Branch:** <branch>
@@ -21,6 +21,25 @@ along the way.
 - **Sign:** <the command, the page or the number that shows it, and who sees it>
 - **Milestone G of the epic:** <the point named in the epic plan>
 - **Metric:** <only for an improvement of a rule, a hook, a check or a role: the number, the direction, the baseline — pattern `task-flow-cycle`; a repair writes «нет: <what was broken>»>
+
+## Decision
+
+The design of the code, before the code — pattern `code-design-choose`. A row that does not apply says
+why, in two words or more. A change that adds no symbol writes one line here instead of the table:
+«No decision: the reason». Where the engine of the task flow is laid out, a plan without the section,
+a row, a place, a number or a suite is not written and is not approved.
+
+| Part | What is chosen |
+| --- | --- |
+| Modules | <`path:symbol` — its one duty, what it shows; next ones the same way> |
+| Dependencies | <who imports whom, in which direction, what must not be imported> |
+| Coupling | <`path` outgoing N → M, every module of the change; or «no code: the reason»> |
+| Patterns | <Name — `path:symbol`, the problem it solves; dropped: the simpler way. The next one the same way; or «no pattern: the reason»> |
+| Terms | <the new words and where they are defined; or that there are none and why> |
+| Input | <from where, every form of it, what is refused. The scenario number, `the suite`; or «no input: the reason»> |
+| Bounds | <what does not change: contracts, old data, security> |
+| Priority | <what wins in a conflict and why> |
+| Budget | <`path` up to N lines, `path` plus N; new code files: N; new dependencies: N> |
 
 ## Task footprint
 
