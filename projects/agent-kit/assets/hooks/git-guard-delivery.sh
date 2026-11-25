@@ -290,6 +290,8 @@ if [ -n "$branch_arg" ]; then
             && ! git merge-base --is-ancestor "origin/${main_branch}" "$base_ref" 2>/dev/null; then
             behind="$(git rev-list --count "${base_ref}..origin/${main_branch}" 2>/dev/null)"
             unmet_class branch_create_stale_base "the branch will grow from a base that does not carry the tip of «${main_branch}» — it has moved ahead by ${behind:-several} commits. Take a fresh base: git fetch origin && git checkout -b ${branch_arg} origin/${main_branch}."
+        elif command -v rt_single_base >/dev/null 2>&1; then
+            rt_single_base "$state" "$number_arg" "$base_ref" "$branch_arg"
         fi
 
         # The second tier: the local reference to the main branch could itself have gone stale, and

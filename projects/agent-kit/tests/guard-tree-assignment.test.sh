@@ -162,4 +162,18 @@ report "SC-AK-1232 — чужой эпик: слово владельца наз
 report "SC-AK-1232 — закрытый эпик: слово владельца названо" \
     "$(stale_of '{"exists":true,"open":false}' | grep -c "$OWNER_WORD")" 1
 
+# --- SC-AK-1992 — копия без строки заводит единственную задачу разбора ------------------------
+# Номера до карточки нет, и строку под неё владельцу писать не о чем. Строку судит взятие ветки.
+SINGLE_CALL='npm run task:new -- --single --title t --slug s'
+table '| rt-worktree-9 | 1870 | docs/plans/one-kit.md | 2026-09-17 |'
+report "SC-AK-1992 — single task: копия без строки заводит" "$(decision_of "$SINGLE_CALL")" PASS
+report "SC-AK-1992 — без флага той же копии отказано" "$(decision_of 'npm run task:new -- --title t --slug s')" deny
+report "SC-AK-1992 — single task: слова флага в кавычках не флаг" \
+    "$(decision_of "npm run task:new -- --outside-epic слово --title 'о --single в тексте' --slug s")" deny
+rm -f "$TREE/.claude/rt-kit/tree-name"
+report "SC-AK-1992 — single task: копия без имени заводит" "$(decision_of "$SINGLE_CALL")" PASS
+printf 'rt-tools\n' > "$TREE/.claude/rt-kit/tree-name"
+table '| rt-tools | — | — | 2026-09-17 |'
+report "SC-AK-1992 — single task: прочерк держит и её" "$(decision_of "$SINGLE_CALL")" deny
+
 suite_result "назначение эпика рабочей копии"

@@ -88,6 +88,17 @@ kind="$(printf '%s' "$unmet" | jq -r '.kind // empty' 2>/dev/null)"
 said="$(printf '%s' "$unmet" | jq -r '.text // empty' 2>/dev/null)"
 [ -n "$said" ] || exit 0
 
+# The only task of a grill has no number before its card, so the owner can write no row for it yet: a
+# copy with no row creates it, and its row is judged by the taking of the branch. A dash is an answer of
+# the owner, and it holds. Words inside quotes are no flag.
+creates_single() {
+    printf '%s' "$cmd" | sed -E "s/'[^']*'//g; s/\"[^\"]*\"//g" \
+        | grep -qE '(task:new|task-new\.mjs)[^|;&]*--single([[:space:]]|$)' 2>/dev/null
+}
+case "$kind" in
+    no_row | unnamed) creates_single && exit 0 ;;
+esac
+
 # A foreign epic is a class of its own: the copy is assigned, and the work belongs elsewhere.
 if [ "$kind" = foreign ]; then
     action=task_new_other_epic

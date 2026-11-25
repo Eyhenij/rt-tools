@@ -168,6 +168,29 @@ report "SC-AK-993 — база после перенаправления суд�
 got="$(ge_silent "$(ge_decision "$GE_NO_EPIC" origin/main)")"
 report "SC-AK-993 — у задачи без эпика основание судится по главной, как прежде" "$got" "прошло"
 
+# --- SC-AK-1991 — единственная задача разбора растёт от главной -------------------------
+#
+# Две таких подряд иначе встают одна на другую без эпика над ними: заявка второй унесла бы коммиты
+# первой. Рабочая копия стоит на ветке с коммитом сверх главной.
+ge_single_state() {
+    ( cd "$GE_TREE" && GE_ISSUE_BODY="$1" GH_BIN="$GE_TREE/gh" RT_GH_RETRY_MS=1 node tools/board.mjs task 42 2>/dev/null | jq -r '.single' )
+}
+report "SC-AK-1991 — single task: состояние карточки со строкой команды" "$(ge_single_state '"Работа вне эпика — разбор дал одну задачу"')" true
+report "SC-AK-1991 — single task: слово владельца — не она" "$(ge_single_state '"Работа вне эпика — владелец попросил отдельно"')" false
+
+GE_SINGLE='{"exists":true,"open":true,"onBoard":true,"assigned":true,"numbered":true,"epic":null,"outside":"разбор дал одну задачу","single":true}'
+GE_OUTSIDE='{"exists":true,"open":true,"onBoard":true,"assigned":true,"numbered":true,"epic":null,"outside":"слово владельца","single":false}'
+report "SC-AK-1991 — single task: ветка от главной проходит" "$(ge_silent "$(ge_decision "$GE_SINGLE" origin/main)")" прошло
+report "SC-AK-1991 — single task: от названной ветки другой задачи отбита с готовым ходом" \
+    "$(ge_decision "$GE_SINGLE" origin/RT-1921-work-by-epics | grep -c 'carries 1 commits over it.*Take a fresh base: git fetch origin && git checkout -b RT-1925-guard-judges-epic-base origin/main')" 1
+report "SC-AK-1991 — single task: от вершины рабочей копии отбита" \
+    "$(ge_decision "$GE_SINGLE" | grep -c 'the base «RT-1921-work-by-epics» carries 1 commits')" 1
+report "SC-AK-1991 — single task: от вершины, названной хешем, отбита" \
+    "$(ge_decision "$GE_SINGLE" "$(git -C "$GE_REPO" rev-parse HEAD)" | grep -c 'carries 1 commits over it')" 1
+git -C "$GE_REPO" branch -q RT-1925-first-try HEAD
+report "SC-AK-1991 — single task: своя ветка основанием годится" "$(ge_silent "$(ge_decision "$GE_SINGLE" RT-1925-first-try)")" прошло
+git -C "$GE_REPO" branch -q -D RT-1925-first-try
+report "SC-AK-1991 — работа вне эпика по слову судится как прежде" "$(ge_silent "$(ge_decision "$GE_OUTSIDE" origin/RT-1921-work-by-epics)")" прошло
 
 # --- SC-AK-1164 — основание со свежей главной снимает отказ об отставании эпика ----------
 #
