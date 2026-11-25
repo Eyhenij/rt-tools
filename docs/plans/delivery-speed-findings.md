@@ -81,3 +81,32 @@ The findings of the rules review of every closed task of the epic «Проста
 2. **`check-doc-paths` is red in a fresh copy** — tree. Two texts name ignored directories that only a
    lived-in copy has: the one of incident analyses and the one of handovers. Proposed: an ignored directory
    named by a text is not judged, or a post-install creates both.
+
+## RT-3630 — the review of 25 November 2026
+
+1. **`git-guard-no-verify` knows a separator only as a word of its own** — package, the hook, its test and
+   `docs/specs/agent-kit/no-verify-guard/`. A commit followed at once by `; sed -n` or `|tail -n` is refused,
+   and `git commit -m "a b"; git push --no-verify` passes: a quote closed before `;` hides the rest of the
+   line. The hole weighs more than the false refusals. Proposed rule: a separator outside quotes ends the
+   call and the value before it, whether or not a space stands before it; two scenarios.
+2. **`agent-kit-source` forbids what the loop now demands** — tree, the cold part, the end of «Nothing builds
+   the package while the push set runs». «Roles run before the set or after it, not beside it» becomes: a
+   role that has to build runs before or after; the roles of round two stand beside it under the frame that
+   forbids builds. Item 2 of RT-3626 above reads «before the set is run again».
+3. **Records and the mark of their step by one commit** — package, `flow-step.mjs`. The rerun before the PR
+   reads the progress before the mark, and the step went red there: the folder came back, the check was
+   replaced. Proposed: a check that names `progress.md` is refused while its records are not committed; the
+   same article in the cold part of `task-flow-plan`.
+4. **A rewritten order loses a duty, and the diff reads whole without it** — package, `spec-driven-rule`,
+   «Common misses». Proposed: the duties of the old steps are written out on every branch of the order, each
+   with its new place or the reason it is dropped; the list goes to the reviewers.
+5. **A process is ended by its number, never by a name** — tree, `task-delivery-loop`, the duties. `pkill`
+   reached the same tool of a neighbour project; the frame says it to the reviewers alone.
+6. **A run of broken variants names the survivors, and between fixes only they and the touched lines run
+   again** — tree, `agent-kit-source`. A whole run took 10–15 minutes after every fix. Next to it: a scenario
+   of a broken output writes by `process.stdout.write`, for the console of node swallows EPIPE.
+7. **The way of the slowed set, if item 1 of the second round is put off** — tree, `GUARDS.md`: a copy outside
+   the tree with the owner's word. The measurement took such a copy without that word, against the rule of
+   `git-workflow`; it was removed after the push.
+8. **A repeat in `task-delivery-loop-run`** — tree, «9, 11–12»: the stop of the own showcase and stand is
+   said twice.
