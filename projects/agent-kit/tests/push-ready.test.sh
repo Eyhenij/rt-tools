@@ -130,9 +130,7 @@ for call in '--no-pr' '--no-pr=x' '--fast now' '--no-pr <reason>' '--no-pr ab' '
     run "$t" $call
     report "SC-AK-1993 — «${call}» without a reason or another argument starts nothing" "$code:$(started "$t"):$(said usage)" 3:held:yes
 done
-two_lines='half
-push ahead: green'
-for reason in 'a  ' 'ab <x' "$two_lines"; do
+for reason in 'a  ' 'ab <x' $'half\npush ahead: green' $'half\rdone'; do
     run "$t" --no-pr "$reason"
     report "SC-AK-1993 — the reason «${reason%%$'\n'*}» of a wrong form starts nothing" "$code:$(started "$t"):$(said usage)" 3:held:yes
 done
@@ -144,19 +142,41 @@ printf '%s\n' 'rt_task_state() { cat >"$CLAUDE_PROJECT_DIR/.claude/read"; printf
 printf 'typed\n' | (cd "$t" && CLAUDE_PROJECT_DIR="$t" bash "$KIT/hooks/git-guard-push-ahead.sh" >"$BOX/log" 2>&1)
 report "SC-AK-1993 — the question reads no input of the caller" "$(wc -c <"$t/.claude/read" | tr -d ' '):$(started "$t")" 0:started
 rm -f "$t/.claude/started"
-printf 'rt_task_state() { sleep 30.%s; }\n' "$$" >>"$t/.claude/rt-kit/project.sh"
+# A host that is silent for longer than a stop may take, and the limit counted in seconds tells the two apart.
+printf 'rt_task_state() { sleep 90.%s; }\n' "$$" >>"$t/.claude/rt-kit/project.sh"
 (cd "$t" && CLAUDE_PROJECT_DIR="$t" RT_PUSH_STOP_WAIT=1 exec bash "$KIT/hooks/git-guard-push-ahead.sh" >"$BOX/log" 2>&1) &
 asked_pid=$!
-for _ in $(seq 50); do
-    [ -n "$(pgrep -f "sleep 30[.]$$\$")" ] && break
+waiting() { pgrep -f "sleep 90[.]$$\$" | head -1; }
+run_pid=''
+for _ in $(seq 300); do
+    run_pid="$(sed -nE 's/^push ahead: base .*, pid ([0-9]+)$/\1/p' "$BOX/log")"
+    [ -n "$run_pid" ] && [ -n "$(waiting)" ] && break
     sleep 0.2
 done
-kill -TERM "$(sed -nE 's/^push ahead: base .*, pid ([0-9]+)$/\1/p' "$BOX/log")" 2>/dev/null
+group_of() { ps -o pgid= -p "$1" | tr -d ' '; }
+[ -n "$(waiting)" ] && [ "$(group_of "$(waiting)")" != "$(group_of "${run_pid:-0}")" ] && own=own || own=shared
+stopped_at="$(date +%s)"
+kill -TERM "${run_pid:-$asked_pid}" 2>/dev/null
 wait "$asked_pid"
 code=$?
+[ $(($(date +%s) - stopped_at)) -lt 45 ] && soon=soon || soon=late
+report "SC-AK-1993 — the question has a group of its own" "$own" own
 report "SC-AK-1993 — a stop ends the question and what it holds" \
-    "$code:$(started "$t"):$(grep '^push ahead:' "$BOX/log" | head -1 | cut -c1-16):$(verdict | cut -c1-19):$(pgrep -f "sleep 30[.]$$\$" | wc -l | tr -d ' ')" \
-    '143:held:push ahead: base:push ahead: stopped:0'
+    "$code:$soon:$(started "$t"):$(grep '^push ahead:' "$BOX/log" | head -1 | cut -c1-16):$(verdict | cut -c1-19):$(waiting)" \
+    '143:soon:held:push ahead: base:push ahead: stopped:'
+rm -rf "$t"
+
+# A question that died, and a profile that prints: neither is a condition, and the first is said.
+t="$(tree_of)"
+folder_of "$t" '>' untouched
+printf '%s\n' '#!/usr/bin/env bash' 'own="$(ps -o pgid= -p $$ | tr -d " ")"' '[ "$own" = "$TEST_GROUP" ] || kill -KILL "$own"' >"$KIT/hooks/bare-guard.sh"
+printf 'RT_PUSH_READY_HOOKS=bare-guard.sh\n' >>"$t/.claude/rt-kit/project.sh"
+TEST_GROUP="$(group_of $$)" run "$t"
+report "SC-AK-1993 — a question that died is said" "$(said 'the question about the PR ended with the code 137')" yes
+printf '%s\n' 'RT_PUSH_READY_HOOKS=' 'rt_task_branch_ok() { echo matched; }' >>"$t/.claude/rt-kit/project.sh"
+folder_of "$t" x touched
+run "$t"
+report "SC-AK-1993 — what a profile prints is no condition" "$code:$(reasons)" 0:0
 rm -rf "$t"
 
 t="$(tree_of probe)"
@@ -240,8 +260,10 @@ $PLAN"
 put "$t" docs/specs/x/proposed/y/spec.md '# Agreement'
 folder_of "$t" x touched
 PLAN="$PLAN_KEPT"
+card "$t" '{"exists":true,"epic":9,"labels":[]}'
+ref "$t" RT-9-epic main
 run "$t"
-report "SC-AK-1994 — an agreement under proposed holds nothing" "$code:$(reasons)" 0:0
+report "SC-AK-1994 — an agreement under proposed holds nothing" "$code:$(reasons):$(asked_base)" '0:0:gh pr create --base RT-9-epic'
 rm -rf "$t"
 
 # What the engine reads in another place than the tree has: the run says so and goes on.
@@ -251,7 +273,26 @@ git -C "$t" update-ref refs/remotes/origin/master main
 git -C "$t" update-ref -d refs/remotes/origin/main
 printf 'RT_MAIN_BRANCH=master\n' >>"$t/.claude/rt-kit/project.sh"
 run "$t"
-report "SC-AK-1994 — a tree with another main branch: the folder is not judged" "$code:$(said 'not judged: the copy has no origin/main')" 0:yes
+report "SC-AK-1994 — a tree with another main branch: the folder is not judged" "$code:$(said 'not judged: the engine reads main, and the tree has master')" 0:yes
+ref "$t" main main
+run "$t"
+report "SC-AK-1994 — another main branch next to a left one: the folder is not judged" "$code:$(said 'the engine reads main, and the tree has master')" 0:yes
+git -C "$t" update-ref -d refs/remotes/origin/main
+printf 'RT_MAIN_BRANCH=main\n' >>"$t/.claude/rt-kit/project.sh"
+run "$t"
+report "SC-AK-1994 — a copy with no main branch of the server: the folder is not judged" "$(said 'not judged: the copy has no origin/main')" yes
+rm -rf "$t"
+
+# A path of the footprint that is not ASCII is touched as any other.
+t="$(tree_of)"
+PLAN_KEPT="$PLAN"
+PLAN="${PLAN/src\/b.txt/src/ночь.txt}"
+folder_of "$t" x untouched
+PLAN="$PLAN_KEPT"
+put "$t" src/ночь.txt ночь
+keep "$t" 'feat: night'
+run "$t"
+report "SC-AK-1994 — a path of the footprint that is not ASCII counts" "$code:$(reasons)" 0:0
 rm -rf "$t"
 
 t="$(tree_of)"
@@ -260,7 +301,7 @@ git -C "$t" mv docs/tasks docs/work
 keep "$t" 'docs: moved'
 printf 'RT_TASKS_DIR=docs/work\n' >>"$t/.claude/rt-kit/project.sh"
 run "$t"
-report "SC-AK-1994 — a tree with another directory of tasks: the folder is not judged" "$code:$(said 'not judged: the head has no docs/tasks/RT-7-probe')" 0:yes
+report "SC-AK-1994 — a tree with another directory of tasks: the folder is not judged" "$code:$(said 'not judged: the engine reads docs/tasks, and the tree has docs/work')" 0:yes
 rm -rf "$t"
 
 t="$(tree_of)"
@@ -417,6 +458,16 @@ t="$(tree_of)"
 touch "$t/refuse"
 run "$t"
 report "SC-AK-1996 — the reason of a guard of the tree is one line" "$code:$(reasons):$(said 'second line')" 3:1:no
+# A refusal with no words, and one whose words are a list: each is named all the same.
+for words in '' ',"permissionDecisionReason":["no test"]'; do
+    printf '%s\n' '#!/usr/bin/env bash' "printf '%s' '{\"hookSpecificOutput\":{\"permissionDecision\":\"deny\"$words}}'" >"$KIT/hooks/bare-guard.sh"
+    printf 'RT_PUSH_READY_HOOKS=bare-guard.sh\n' >"$t/.claude/rt-kit/hooks"
+    cat "$BOX/profile" "$t/.claude/rt-kit/hooks" >"$t/.claude/rt-kit/project.sh"
+    run "$t"
+    report "SC-AK-1996 — a refusal «${words:-no words}» is a condition" "$code:$(reasons):$(said bare-guard.sh)$(said 'no test')" \
+        "3:1:$([ -z "$words" ] && echo yesno || echo noyes)"
+done
+cp "$BOX/profile" "$t/.claude/rt-kit/project.sh"
 rm -f "$t/refuse"
 run "$t"
 report "SC-AK-1996 — a guard that passes and one that is absent hold nothing" "$code:$(reasons)" 0:0
@@ -438,7 +489,6 @@ report "SC-AK-1996 — the copy the run stands in is judged, not another copy" \
     "$(jq -r .cwd "$PROBE_LOG" | tail -1):$(tail -1 "$PROBE_LOG.root"):$(reasons)" "$other:$other:0"
 rm -rf "$t" "$other"
 
-# Without the helper the set runs as before.
 rm -f "$KIT/hooks/git-guard-push-ready.sh"
 t="$(tree_of)"
 touch "$t/refuse"

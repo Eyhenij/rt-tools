@@ -30,13 +30,16 @@ const { footprintRows, touches } = await import(
     pathToFileURL([join(HERE, 'task-flow/measure/text.mjs'), join(HERE, '../task-flow/measure/text.mjs')].find((path) => existsSync(path))).href
 );
 
+/** The main branch and the directory of tasks the sources of the flow read; a tree names its own. */
+const READS = { RT_MAIN_BRANCH: 'main', RT_TASKS_DIR: 'docs/tasks' };
 const gitOk = (...args) => spawnSync('git', args, { stdio: 'ignore' }).status === 0;
 
 /** Why the engine has nothing to judge the folder of the branch by, or an empty string. */
 function unjudged(branch) {
+    const other = Object.entries(READS).find(([name, value]) => (process.env[name] || value) !== value);
+    if (other) return `the engine reads ${other[1]}, and the tree has ${process.env[other[0]]}`;
     const folder = `docs/tasks/${branch}`;
     if (!gitOk('rev-parse', '--verify', '--quiet', 'origin/main')) return 'the copy has no origin/main';
-    if (!gitOk('cat-file', '-e', `HEAD:${folder}`)) return `the head has no ${folder}`;
     return gitOk('cat-file', '-e', `origin/main:${folder}/plan.md`) ? `the plan of ${folder} already lies in origin/main` : '';
 }
 

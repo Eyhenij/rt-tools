@@ -17,14 +17,18 @@ Given the same branch and `--no-pr` with a reason
 When the set runs ahead
 Then nothing is asked, the reason is printed, the first step starts and the observations keep a line
 
-Given `--no-pr` without a reason, with a reason shorter than three characters, of two lines or with an angle
-bracket, or another argument
+Given `--no-pr` without a reason, with a reason shorter than three characters, of two lines, with `<` or a
+control character, or another argument
 When the run is called
 Then it ends with 3 and the line of the usage
 
 Given a question that waits for a silent host
 When the run is stopped by `TERM`
-Then it ends with 143, and nothing the question started is left
+Then it ends with 143 before the host would answer, and nothing the question started is left
+
+Given a question that died
+When the set runs ahead
+Then the log names its code
 
 Given a branch with no task number, or one named not by the form of the tree
 When the set runs ahead

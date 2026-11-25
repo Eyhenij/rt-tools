@@ -32,8 +32,8 @@ not_judged=101
 no_pr=''
 if [ "$#" -gt 0 ]; then
     [ "$#" -eq 2 ] && [ "$1" = --no-pr ] && no_pr="$(printf '%s' "$2" | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//')"
-    # One line of three characters with no angle bracket: the sample of the usage is no reason.
-    case "$no_pr" in *'<'* | *$'\n'*) no_pr='' ;; ???*) ;; *) no_pr='' ;; esac
+    # Three characters with no `<` and no control one: the sample of the usage is no reason.
+    case "$no_pr" in *'<'* | *[[:cntrl:]]*) no_pr='' ;; ???*) ;; *) no_pr='' ;; esac
     [ -n "$no_pr" ] || {
         printf "push ahead: usage: git-guard-push-ahead.sh [--no-pr '<reason>'] — the reason of at least three characters\n" >&2
         exit "$not_started"
@@ -237,7 +237,9 @@ elif command -v rt_push_ready_unmet >/dev/null 2>&1; then
     set +m
     starting=""
     wait "$step_pid"
+    asked_code="$?"
     step_pid=""
+    [ "$asked_code" -eq 0 ] || printf 'push ahead: the question about the PR ended with the code %s — what it did not say is judged at the opening\n' "$asked_code"
     if [ -s "$step_out" ]; then
         rt_note push-ready res=refused
         sed 's/^/— /' "$step_out"

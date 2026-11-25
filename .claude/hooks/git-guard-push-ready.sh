@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/git-guard-push-ready.sh · 23a5dfb21faa · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/git-guard-push-ready.sh · cd421817e00a · правится надстройкой, не здесь
 # Whether a PR of the checked-out branch would open, asked before the push set starts. NOT a guard: it
 # has no `rt-hook:` declaration and hooks into no agent event. The run ahead
 # (`git-guard-push-ahead.sh`) sources it and calls `rt_push_ready_unmet <the base of the set>`.
@@ -11,7 +11,7 @@
 # list of its own: the functions of `git-guard-delivery-epic.sh` with an `unmet` that prints, and the
 # guards the tree names in `RT_PUSH_READY_HOOKS`, each called with a `gh pr create` into the base of the
 # future PR; a refusal is the `deny` an agent reads. A moved main branch outside an epic repeats the
-# words of the delivery guard. The folder is judged by `flow-ready.mjs`, with the measurers of the flow.
+# words of the delivery guard. The folder is judged by `flow-ready.mjs`.
 #
 # What is judged depends on what lies in the head:
 #   - any task branch            — the guards of the tree;
@@ -47,7 +47,7 @@ rt_push_ready_ask() {
         '{session_id:"push-ready", tool_name:"Bash", tool_input:{command:$c}, cwd:$d}' \
         | CLAUDE_PROJECT_DIR="$2" bash "$1" 2>/dev/null \
         | jq -r --arg h "${1##*/}" 'select(.hookSpecificOutput.permissionDecision == "deny")
-            | [(.hookSpecificOutput.permissionDecisionReason // "") | split("\n")[] | select(test("\\S"))][0]
+            | [(.hookSpecificOutput.permissionDecisionReason // "") | tostring | split("\n")[] | select(test("\\S"))][0]
             // ($h + " refuses the opening of the PR")' 2>/dev/null
 }
 
@@ -56,6 +56,8 @@ rt_push_ready_ask() {
 #   rt_push_ready_unmet <the base of the set, as `rt_push_base` names it>
 rt_push_ready_unmet() (
     command -v jq >/dev/null 2>&1 || exit 0
+    # A question that asks the terminal is refused by it at once, not stopped for good.
+    trap '' TTIN TTOU
     root="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
     rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     # What a hook around the run was given is not the input of the guards asked here.
@@ -65,7 +67,7 @@ rt_push_ready_unmet() (
     command -v rt_fact_branch >/dev/null 2>&1 || . "$rt_hooks_dir/facts.sh" 2>/dev/null
     branch="$(rt_fact_branch 2>/dev/null)"
     [ -n "$branch" ] || exit 0
-    command -v rt_task_branch_ok >/dev/null 2>&1 && rt_task_branch_ok "$branch" || exit 0
+    command -v rt_task_branch_ok >/dev/null 2>&1 && rt_task_branch_ok "$branch" >/dev/null || exit 0
     command -v rt_task_branch_number >/dev/null 2>&1 || exit 0
     number="$(rt_task_branch_number "$branch")"
     [ -n "$number" ] || exit 0
@@ -94,7 +96,7 @@ rt_push_ready_unmet() (
     if [ -n "$(git ls-tree -d --name-only HEAD -- "$tasks_dir/$branch" 2>/dev/null)" ]; then
         for engine in "$rt_hooks_dir/../checks/flow-ready.mjs" "$root/tools/flow-ready.mjs"; do
             [ -f "$engine" ] || continue
-            said="$(cd "$root" && node "$engine" 2>/dev/null)"
+            said="$(cd "$root" && RT_MAIN_BRANCH="$main_branch" RT_TASKS_DIR="$tasks_dir" node "$engine" 2>/dev/null)"
             case $? in
                 0) ;;
                 1)

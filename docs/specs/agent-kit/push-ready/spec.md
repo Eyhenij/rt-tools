@@ -11,8 +11,9 @@ What the run ahead asks about a future PR before its first step, and how it ends
 
 The opening of a PR refuses after the set: a missing end-to-end test, a moved branch of the epic, a task
 folder that differs from its plan. The fix changes the tree, the marks fall, and the set runs again. From 21
-to 25 November 2026 thirty PRs were opened in one tree and 14 openings were refused on 11 branches. Five of
-those branches were refused by a condition known before the set began.
+to 25 November 2026 thirty PRs were opened in one tree and 14 openings were refused on 11 branches. Six of
+those branches were refused for a test, a folder or a base; one of the six also for a base that moved under
+the running set, which no question before it can tell.
 
 ## Terminology
 
@@ -35,8 +36,8 @@ There is no interface: the run answers with lines of output and an exit code.
 - **The conditions of the epic and of the tree are judged by the code the opening of a PR is judged by.** The
   functions of the epic helper of the delivery guard, and the guards the tree names, each called with an
   opening of a PR. A list of its own would drift from them. A moved main branch outside an epic repeats the
-  line of the delivery guard, and a scenario compares the two; the folder is judged by the measurers of the
-  flow.
+  line of the delivery guard, and a scenario compares the two; the folder is judged by an engine
+  of its own: the steps by the measurer of the flow, the footprint by the rows of the plan.
 - **The guards a tree opens a PR through are named by its profile.** Each is asked with the base of the PR and
   the root of the copy the run stands in, and the first line of its `deny` that holds words is the condition.
   With none named no guard is asked; a named guard that is absent, or one that answers otherwise, holds nothing.
@@ -52,14 +53,16 @@ There is no interface: the run answers with lines of output and an exit code.
 - **The folders of tasks left in the branch of an epic hold its run.** The branch of an epic is told by the
   label of its card.
 - **A branch not going into a PR yet is run with a reason.** `--no-pr '<reason>'`, one line of at least three
-  characters with no angle bracket: nothing is asked, the reason is printed, and the observations keep a line
+  characters with no `<` and no control character: nothing is asked, the reason is printed, and the observations keep a line
   without its words — they hold no free text. Without a reason, or with any other argument, the run does not
-  start.
+  start. A branch that goes into a PR takes it in one case: the only line left is a path of the footprint the
+  work turned out not to need, and a tree names the place of that decision.
 - **What cannot be judged does not hold the run.** A branch with no task number, a silent host, no engine or
   one that breaks, a description of the flow that does not build, a tree whose main branch or directory of
-  tasks is not the one the engine reads: the opening of the PR judges it.
+  tasks is not the one the engine reads, a plan that lies in the main branch already: the opening of the PR
+  judges it. An engine that answers nothing, and a question that ends with a code, are said in the log.
 - **The question is a step of the run.** It comes after the line with the process number, reads no input of the
-  caller, and a stop ends it with everything it holds.
+  caller and no terminal, runs in a group of its own, and a stop ends it with everything it holds.
 
 ## What is out of scope
 
