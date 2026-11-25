@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · task-flow/source/git.mjs · 2b9fb13e6f55 · правится надстройкой, не здесь
+// rt-kit v0.40.0 · task-flow/source/git.mjs · 2b9fb13e6f55 · правится надстройкой, не здесь
 /**
  * The source «source.git» of the task flow description: the history of the branch, read by `git`.
  *

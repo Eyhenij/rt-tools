@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · task-flow/source/coupling.mjs · 73d9c46f7200 · правится надстройкой, не здесь
+// rt-kit v0.40.0 · task-flow/source/coupling.mjs · 73d9c46f7200 · правится надстройкой, не здесь
 /**
  * The source «source.coupling» of the task flow description: the answer of the command
  * `check-coupling.mjs --base=<revision>`, the only count of the links.

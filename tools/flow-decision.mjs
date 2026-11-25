@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · checks/flow-decision.mjs · 220249dbd809 · правится надстройкой, не здесь
+// rt-kit v0.40.0 · checks/flow-decision.mjs · 220249dbd809 · правится надстройкой, не здесь
 /**
  * The section «Decision» of a plan: what the plan says about the code before the code. The reading
  * and the judgement take a text alone — no file and no repository.

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.39.1 · checks/task-flow-script.mjs · 563d3592ab6e · правится надстройкой, не здесь
+// rt-kit v0.40.0 · checks/task-flow-script.mjs · 563d3592ab6e · правится надстройкой, не здесь
 /**
  * The engine of the task flow: reads the description `flow.js` through the model and answers about
  * the scenario. The description lies next to the engine as `task-flow/flow.js` where the engine is

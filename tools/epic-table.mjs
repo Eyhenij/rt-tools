@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.39.1 · checks/epic-table.github.mjs · 6cc700e49acb · правится надстройкой, не здесь
+// rt-kit v0.40.0 · checks/epic-table.github.mjs · 6cc700e49acb · правится надстройкой, не здесь
 /**
  * The table of the epic's tasks: the order from the plan, the state from the hosting.
  *

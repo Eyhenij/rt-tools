@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · checks/coupling-judge.mjs · a363b9702328 · правится надстройкой, не здесь
+// rt-kit v0.40.0 · checks/coupling-judge.mjs · a363b9702328 · правится надстройкой, не здесь
 /**
  * Which numbers of the import graph are violations.
  *

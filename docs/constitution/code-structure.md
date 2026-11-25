@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · laws/code-structure.md · 9392e59f5a37 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · laws/code-structure.md · 9392e59f5a37 · правится надстройкой, не здесь -->
 # Law on code structure
 
 What must be true about the code itself regardless of what it does. The law is needed because

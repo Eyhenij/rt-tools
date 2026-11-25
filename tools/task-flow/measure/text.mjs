@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · task-flow/measure/text.mjs · cc83356bc094 · правится надстройкой, не здесь
+// rt-kit v0.40.0 · task-flow/measure/text.mjs · cc83356bc094 · правится надстройкой, не здесь
 /**
  * The reading of the task folder texts shared by the measurers: the sections of the grill, the line
  * of the agreement and the rows of the task footprint. Pure functions of text: the data reaches the

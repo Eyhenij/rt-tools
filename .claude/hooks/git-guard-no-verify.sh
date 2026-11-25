@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/git-guard-no-verify.sh · abffbd1f9fb2 · правится надстройкой, не здесь
+# rt-kit v0.40.0 · hooks/git-guard-no-verify.sh · abffbd1f9fb2 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: checks/decide.mjs, hooks/decide.sh, hooks/facts.sh, hooks/facts-docs.sh, hooks/git-guard-delivery-signature.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Guard of the commit hooks. PreToolUse on a git commit or push that skips the tree's git hooks.

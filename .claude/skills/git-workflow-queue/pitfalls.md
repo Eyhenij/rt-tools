@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/git-workflow-queue.github.md · 86dd70bcdf9e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · pitfalls/git-workflow-queue.github.md · 86dd70bcdf9e · правится надстройкой, не здесь -->
 # Delivery — the task, the board and the queue — cold part
 
 This part of the rule `git-workflow` keeps its statements hot and its explanation in the cold

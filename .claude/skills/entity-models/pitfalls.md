@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/entity-models.md · 77a9053a802c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · pitfalls/entity-models.md · 77a9053a802c · правится надстройкой, не здесь -->
 # Entity models — how it works here — cold part
 
 What the rule `entity-models` handed over when cut to its statements, every article whole.
