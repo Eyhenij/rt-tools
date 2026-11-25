@@ -119,7 +119,10 @@ GIT_AUTHOR_NAME=rt-tools-dev GIT_AUTHOR_EMAIL=$EM GIT_COMMITTER_NAME=rt-tools-de
     GIT_COMMITTER_EMAIL=$EM git -c commit.gpgsign=false commit -q -F <message file>
 ```
 
-The subject: `<type>(<scope>): <что изменилось> после первого круга ревью (RT-N)`. The identity is
+The subject: `<type>(<scope>): <что изменилось> после первого круга ревью (RT-N)`. A round with
+nothing to fix still leaves its commit, with `--allow-empty` and the written-off findings in the body:
+`tools/task-rework.mjs` counts it as 0 lines, and a task with no commit of the round reads as a round
+not recorded and stays out of the median. The identity is
 prefixed to the commit only: exported, it reaches a push in the same call. The four variables are
 written out in the command, never packed into one:
 zsh does not split `$E` into words, so `env $E git commit` passes one argument, and the commit leaves
@@ -221,4 +224,8 @@ git fetch -q origin; git fetch -q origin main:main || git merge -q --ff-only ori
 bot api repos/Eyhenij/rt-tools/pulls/<pr> --jq '{merged, merged_at}'
 bot api repos/Eyhenij/rt-tools/issues/N --jq .state
 npm run -s check:board
+node tools/task-rework.mjs RT-N                    # the lines of the first round, the files outside the footprint
 ```
+
+The numbers of the task go into the archive record. The milestone of an epic is judged after the kit release
+by `node tools/task-rework.mjs --since=<the release tag>` once twenty tasks are merged after it.

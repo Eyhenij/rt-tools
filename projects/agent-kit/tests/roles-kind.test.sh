@@ -135,6 +135,7 @@ report "SC-AK-1970 — запрос грани несёт команду зац�
 report "SC-AK-1970 — без пути плана берётся plan.md рядом с разбором" \
     "$(lens_of '{"task":"t","grill":"docs/tasks/RT-0-x/grill.md","base":"origin/main"}' | grep -c 'docs/tasks/RT-0-x/plan\.md')" 1
 report "SC-AK-1970 — вызов без базы отказан" "$(lens_of '{"task":"t","grill":"docs/tasks/RT-0-x/grill.md"}' | grep -c '^refused: .*base')" 1
+report "SC-AK-1970 — разбор не строкой отказан" "$(lens_of '{"task":"t","grill":true,"base":"origin/main"}' | grep -c '^refused: ')" 1
 launches="$(grep -c 'Workflow(name: "feature".*base: ' "$ASSETS/pitfalls/task-flow-resume.md") $(grep -c '{ task, grill, base }' "$ASSETS/../README.md")"
 report "SC-AK-1970 — строки запуска в ловушке и README передают базу" "$launches" "1 1"
 

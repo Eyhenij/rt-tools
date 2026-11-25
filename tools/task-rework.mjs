@@ -25,8 +25,9 @@ import { footprintRows, touches } from './task-flow/measure/text.mjs';
 
 const ROUND = /после первого круга ревью \(RT-\d+\)$/;
 const REQUEST = /^\[(RT-\d+)\] .*\(#\d+\)$/;
-const OWN_PLACES = /^docs\/(?:tasks|archive|plans)\//;
-const STAMP = /rt-kit v\d/;
+const OWN_PLACES = /^docs\/(?:tasks|archive|plans)\/|^\.claude\/rt-kit\/assignments\.md$/;
+// The header of a laid-out copy on its first line, after a shebang: a mention further down is a source.
+const STAMP = /^(?:#!.*\n)?(?:\/\/|#|<!--|\/\*\*?) rt-kit v\d/;
 const BUFFER = 64 * 1024 * 1024;
 
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8', maxBuffer: BUFFER });
@@ -37,13 +38,13 @@ const rowsOf = (text) =>
         .map((line) => [line.slice(0, line.indexOf('\t')), line.slice(line.indexOf('\t') + 1)]);
 
 /** The files no row of the plan names. */
-export function strayOf(files, plan) {
+function strayOf(files, plan) {
     const paths = footprintRows(plan).flatMap((row) => row.paths);
     return files.filter((file) => !paths.some((path) => touches(file, path)));
 }
 
 /** The middle of the numbers; none — nothing to take it from. */
-export function median(numbers) {
+function median(numbers) {
     const sorted = [...numbers].sort((a, b) => a - b);
     const half = Math.floor(sorted.length / 2);
     if (!sorted.length) {
@@ -64,7 +65,7 @@ const filesOf = (sha) => git('show', '--no-renames', '--name-only', '--format=',
 /** A file of the commit that is a laid-out copy: its text carries the header of the layout. */
 function isCopy(sha, file) {
     const shown = spawnSync('git', ['show', `${sha}:${file}`], { encoding: 'utf8', maxBuffer: BUFFER });
-    return shown.status === 0 && STAMP.test(shown.stdout.slice(0, 2000));
+    return shown.status === 0 && STAMP.test(shown.stdout.slice(0, 400));
 }
 
 /** The added and removed lines of a commit, its own places and copies left out; a binary file adds none. */
@@ -90,9 +91,9 @@ function planOf(task, commits) {
 }
 
 /** The numbers of one task; `null` in a field — there is nothing to count it from. */
-export function reworkOf(task) {
+function reworkOf(task) {
     const commits = commitsOf(task);
-    const round = commits.find(({ subject }) => ROUND.test(subject)) ?? null;
+    const round = [...commits].reverse().find(({ subject }) => ROUND.test(subject)) ?? null;
     const plan = planOf(task, commits);
     const touched = new Map();
     for (const { sha } of [...commits].reverse()) {
@@ -107,8 +108,10 @@ export function reworkOf(task) {
     };
 }
 
-const roundText = ({ round }) => (round ? `${round.lines} lines (${round.sha.slice(0, 9)})` : 'no commit of the first round');
-const outsideText = ({ outside }) => (outside === null ? 'no plan in the history' : `${outside.length} files outside the footprint`);
+const roundText = ({ round }) =>
+    round ? `${round.lines} line${round.lines === 1 ? '' : 's'} (${round.sha.slice(0, 9)})` : 'no commit of the first round';
+const outsideText = ({ outside }) =>
+    outside === null ? 'no plan in the history' : `${outside.length} file${outside.length === 1 ? '' : 's'} outside the footprint`;
 
 /** The merged requests of tasks after the revision, the newest first, up to the count. */
 function mergesOf({ count = Infinity, since = null }) {
@@ -116,7 +119,12 @@ function mergesOf({ count = Infinity, since = null }) {
         .map(([sha, subject]) => ({ sha, task: REQUEST.exec(subject)?.[1] }))
         .filter(({ task }) => task);
     const found = [];
+    const seen = new Set();
     for (const { sha, task } of merges) {
+        if (seen.has(task)) {
+            continue;
+        }
+        seen.add(task);
         const result = reworkOf(task);
         if (result.outside !== null) {
             found.push({ sha, result });
@@ -144,7 +152,7 @@ function couplingOf(sha) {
     return {
         cycles: grown('cycles'),
         past: grown('past the entry'),
-        overruns: (text.match(/overrun, named after the plan:|nobody named a number for it/g) ?? []).length,
+        overruns: totals ? (text.match(/overrun, named after the plan:|nobody named a number for it/g) ?? []).length : null,
     };
 }
 
@@ -152,10 +160,12 @@ function report(rows) {
     const signed = (value) => (value === null ? 'not counted' : value > 0 ? `+${value}` : String(value));
     rows.forEach((row) =>
         console.log(
-            `${row.task}: first round ${roundText(row)}; ${outsideText(row)}; cycles ${signed(row.cycles)}, past an entry ${signed(row.past)}, overruns ${row.overruns}`
+            `${row.task}: first round ${roundText(row)}; ${outsideText(row)}; cycles ${signed(row.cycles)}, past an entry ${signed(row.past)}, overruns ${row.overruns ?? 'not counted'}`
         )
     );
-    const grown = (key) => rows.reduce((sum, row) => sum + Math.max(0, row[key] ?? 0), 0);
+    // A merge the check did not count leaves the total uncounted: a zero would read as «nothing new».
+    const grown = (key) =>
+        rows.some((row) => row[key] === null) ? 'not counted' : rows.reduce((sum, row) => sum + Math.max(0, row[key]), 0);
     const rounds = rows.filter((row) => row.round).map((row) => row.round.lines);
     const without = rows.filter((row) => !row.round).map((row) => row.task);
     console.log(

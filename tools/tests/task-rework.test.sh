@@ -100,6 +100,22 @@ save 'feat: edit (RT-8)'
 report "SC-AK-1968 — a plan of another task is not taken" "$(first RT-8)" \
     "RT-8: first round no commit of the first round; no plan in the history"
 
+# A header only mentioned below the top is a source; the board bookkeeping is no file outside.
+fresh marks
+plan RT-6-name '`src/a.mjs`'
+save 'docs: plan (RT-6)'
+put src/a.mjs 'a\n'
+put tests/source.test.sh '#!/usr/bin/env bash\n# A suite of the header check.\nprintf "# rt-kit v0.0.0 · x\\n"\n'
+put .claude/rt-kit/assignments.md 'x\n'
+save 'feat: edit (RT-6)'
+put src/a.mjs 'a\nb\n'
+save 'fix: правка после первого круга ревью (RT-6)'
+put src/a.mjs 'a\nb\nc\nd\ne\n'
+save 'fix: ещё правка после первого круга ревью (RT-6)'
+report "SC-AK-1968 — a source that only mentions the header is no copy" "$(rest RT-6)" "tests/source.test.sh"
+report "SC-AK-1968 — the board bookkeeping stays inside, one file is said once" "$(first RT-6 | sed -E 's/.*; //')" "1 file outside the footprint"
+report "SC-AK-1968 — the oldest commit of the first round is counted" "$(first RT-6 | sed -E 's/ \([0-9a-f]+\)//; s/;.*//')" "RT-6: first round 1 line"
+
 # --- SC-AK-1969 — the last merged tasks and the tasks after a revision -------------------------------
 # A task: the branch, the plan, the code, the first round, the merge by its request.
 task() {
@@ -148,5 +164,15 @@ task 5 "import { d } from './m4.mjs';\nexport const e = 1;\nexport const f = () 
 report "SC-AK-1969 — a new cycle of a merge is counted" "$(total --last=1 | sed -E 's/, new imports.*//')" "tasks 1: new cycles 1"
 report "SC-AK-1969 — growth nobody named is counted as an overrun" "$(total --last=1 | grep -oE 'overruns [0-9]+')" "overruns 1"
 report "SC-AK-1969 — the row of a task holds its numbers" "$(run --last=1 | head -1 | sed -E 's/.*; (cycles.*)/\1/')" "cycles +1, past an entry 0, overruns 1"
+
+g checkout -q -b RT-1-again main
+put src/m1b.mjs 'export const g = 1;\n'
+save 'feat: more (RT-1)'
+g checkout -q main
+g merge -q --no-ff -m '[RT-1] Название, вторая часть (#201)' RT-1-again
+report "SC-AK-1969 — a task merged twice is counted once" "$(names --last=10)" "RT-1 RT-5 RT-4 RT-3 RT-2 "
+put tools/check-coupling.mjs 'process.exit(3);\n'
+report "SC-AK-1969 — a merge the check did not count leaves the totals uncounted" "$(total --last=1 | sed -E 's/; first round.*//')" \
+    "tasks 1: new cycles not counted, new imports past an entry not counted, overruns not counted"
 
 suite_result "the rework of a task"

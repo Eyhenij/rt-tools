@@ -118,9 +118,10 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
   round, without laid-out copies, the task folder, the archive and the plans, and the files the
   branch touched that the first version of its plan does not name. Over the last merged tasks, or
   those merged after a revision, the command adds the new cycles, imports past an entry and overruns
-  of each merge, and the median of the first rounds; a task without a round stays out of the median
-  and is named apart. The command prints and refuses nothing: the milestone of an epic is judged by
-  its report.
+  of each merge, and the median of the first rounds. A round with nothing to fix leaves an empty commit
+  and counts 0; a task without a commit of the round is a round not recorded, stays out of the median
+  and is named apart. A merge the coupling check did not count leaves the totals uncounted, not zero.
+  The command prints and refuses nothing: the milestone of an epic is judged by its report.
 
 ### What sends it
 

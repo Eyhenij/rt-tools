@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · workflows/feature.js · 48b0e4fd105e · правится надстройкой, не здесь
+// rt-kit v0.39.1 · workflows/feature.js · 68bfd87f2483 · правится надстройкой, не здесь
 export const meta = {
     name: 'feature',
     description: 'A plan from the PM, implementation step by step, a fan of QA checks and acceptance against the original request',
@@ -17,7 +17,7 @@ export const meta = {
 // compare the result with, and a string call would spend the whole run to learn that at the end.
 // The base is required the same way: the structure lens measures the coupling against it.
 const task = args?.task ?? '';
-if (!task || !args?.grill || !args?.base) {
+if (!task || typeof args?.grill !== 'string' || !args.grill || !args?.base) {
     throw new Error('A task, the grill and the base are needed: pass { task, grill, base } in args');
 }
 // The plan of the structure lens: from args, or the plan next to the grill.
@@ -115,7 +115,8 @@ const LENSES = [
         prompt:
             `Review the structure of the code by the section «Structure of the code» of your role. The plan of the ` +
             `task: ${planPath}, its section «Решение». The coupling against the base: run ` +
-            `\`node tools/check-coupling.mjs --base=${args.base}\` and quote its numbers.`,
+            `\`node tools/check-coupling.mjs --base=${args.base}\` and quote its numbers. There is no diff here: ` +
+            `the changed files are those the steps name in «What was done»; read them whole against «Границы».`,
     },
 ];
 const reports = (
