@@ -65,14 +65,38 @@ function declaredNames(statement) {
     return statement.name && ts.isIdentifier(statement.name) ? [statement.name.text] : [];
 }
 
-/** The text of a style without its comments: an example of `@use` stands in one. */
+/** The text of a style without its comments, read left to right: one kind of comment may hold the sign of the other. */
 function withoutComments(text) {
-    return text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
+    return text.replace(/("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*')|\/\*[\s\S]*?\*\/|(?<!:)\/\/[^\n]*/g, (whole, quoted) => quoted ?? '');
+}
+
+/** The files a style names: the one of `@use` and `@forward`, every one of `@import`, that of `load-css`. */
+function stylesNamedBy(text) {
+    const named = [];
+    const code = withoutComments(text);
+
+    for (const [, rule, rest] of code.matchAll(/@(use|import|forward)\s+([^;{}]*)/g)) {
+        const paths = [...rest.matchAll(/['"]([^'"]+)['"]|url\(([^'")]+)\)/g)].map(([, quoted, bare]) => quoted ?? bare);
+
+        named.push(...(rule === 'import' ? paths : paths.slice(0, 1)));
+    }
+
+    for (const [, argument] of code.matchAll(/load-css\(\s*(?:\$url:\s*)?([^,)]*)/g)) {
+        named.push(argument.match(/^['"]([^'"]+)['"]/)?.[1] ?? `./${argument.trim()}`);
+    }
+
+    return named;
+}
+
+/** The name of a property, in quotes or without. */
+function propertyName(node) {
+    return node.name && (ts.isIdentifier(node.name) || ts.isStringLiteralLike(node.name)) ? node.name.text : null;
 }
 
 export function storyGraph(source) {
     const aliases = pathAliases(source);
     const packages = outsidePackages(source);
+    const roots = new Set([...source.files].filter((path) => path.includes('/')).map((path) => path.split('/')[0]));
     const parsed = new Map();
 
     const firstFile = (candidates) => candidates.find((path) => source.has(path)) ?? null;
@@ -104,11 +128,18 @@ export function storyGraph(source) {
             }
         }
 
+        // The base settings also let an import go from the root of the tree.
+        if (roots.has(specifier.split('/')[0]) && !packages.has(packageOf(specifier))) {
+            const file = scriptFile(specifier);
+
+            return file ? { file } : { lost: specifier };
+        }
+
         return null;
     }
 
     function resolveStyle(from, specifier) {
-        if (/^(sass:|https?:)/.test(specifier)) {
+        if (/^(sass:|https?:|data:)/.test(specifier)) {
             return null;
         }
 
@@ -153,11 +184,7 @@ export function storyGraph(source) {
         };
 
         if (STYLE.test(file)) {
-            for (const [, specifier] of withoutComments(source.read(file)).matchAll(
-                /@(?:use|import|forward)\s+(?:url\()?['"]([^'"]+)['"]/g
-            )) {
-                take(resolveStyle(file, specifier), null);
-            }
+            stylesNamedBy(source.read(file)).forEach((specifier) => take(resolveStyle(file, specifier), null));
         } else if (SCRIPT.test(file)) {
             readScript(file, out, take);
         }
@@ -167,12 +194,19 @@ export function storyGraph(source) {
 
     function readScript(file, out, take) {
         const tree = ts.createSourceFile(file, source.read(file), ts.ScriptTarget.Latest, true);
-        const near = (path, names) => take(source.has(path) ? { file: path } : { lost: path }, names);
+        const near = (text) => {
+            const path = text && ts.isStringLiteralLike(text) ? join(dirname(file), text.text) : null;
+
+            // A place named by anything but a plain string is unknown, and so is what stands behind it.
+            take(path !== null && source.has(path) ? { file: path } : { lost: path ?? text?.getText(tree) ?? 'пусто' }, null);
+        };
+        const module = (text) =>
+            take(text && ts.isStringLiteralLike(text) ? resolveScript(file, text.text) : { lost: text?.getText(tree) ?? 'пусто' }, null);
 
         for (const statement of tree.statements) {
             if (ts.isImportDeclaration(statement)) {
                 const named = statement.importClause?.namedBindings;
-                const whole = statement.importClause?.name || !named || ts.isNamespaceImport(named);
+                const whole = statement.importClause?.name || !named || ts.isNamespaceImport(named) || named.elements.length === 0;
 
                 take(
                     resolveScript(file, statement.moduleSpecifier.text),
@@ -196,18 +230,21 @@ export function storyGraph(source) {
         }
 
         const visit = (node) => {
-            if (ts.isPropertyAssignment(node) && /^(templateUrl|styleUrls?)$/.test(node.name.getText(tree))) {
-                const texts = ts.isArrayLiteralExpression(node.initializer) ? node.initializer.elements : [node.initializer];
-
-                texts.filter(ts.isStringLiteralLike).forEach((text) => near(join(dirname(file), text.text), null));
-            }
-
-            if (ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword) {
-                const [target] = node.arguments;
-
-                if (target && ts.isStringLiteralLike(target)) {
-                    take(resolveScript(file, target.text), null);
-                }
+            if (ts.isPropertyAssignment(node) && /^(templateUrl|styleUrls?)$/.test(propertyName(node) ?? '')) {
+                (ts.isArrayLiteralExpression(node.initializer) ? node.initializer.elements : [node.initializer]).forEach(near);
+            } else if (ts.isShorthandPropertyAssignment(node) && /^(templateUrl|styleUrls?)$/.test(node.name.text)) {
+                near(node.name);
+            } else if (
+                ts.isCallExpression(node) &&
+                (node.expression.kind === ts.SyntaxKind.ImportKeyword || node.expression.getText(tree) === 'require')
+            ) {
+                module(node.arguments[0]);
+            } else if (
+                ts.isNewExpression(node) &&
+                node.expression.getText(tree) === 'URL' &&
+                node.arguments?.[1]?.getText(tree) === 'import.meta.url'
+            ) {
+                near(node.arguments[0]);
             }
 
             ts.forEachChild(node, visit);
@@ -269,9 +306,10 @@ export function storyGraph(source) {
 
     /** Every file the named one is drawn from, itself included, and what did not resolve on the way. */
     function reach(start) {
-        const files = new Set([start]);
+        // What the file itself gives out on is drawn too: a story taken from its neighbour, a setting from another file.
+        const files = new Set(everythingOf(start));
         const lost = new Set();
-        const queue = [start];
+        const queue = [...files];
 
         while (queue.length > 0) {
             const { deps, lost: here } = facts(queue.pop());

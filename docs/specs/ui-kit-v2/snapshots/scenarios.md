@@ -338,9 +338,10 @@ Covered by `tools/tests/affected-stories.test.sh` and `tools/tests/visual-gate.t
 
 ### SC-UKV-1804 — a run of the touched stories answers for every file it was given
 
-Given the run of the touched stories ended, and a named file has no story, no frame or no frame of a width
-its reference names, or a reference without a story lies in the catalogue
-When the step matches the registry of the taken frames
-Then the step ends with a refusal naming the file or the reference, whatever the shooting answered
+Given the run of the touched stories ended, and a named file has no story or a story the run did not reach,
+or a frame of a width its reference names is absent, or a reference without a story lies in the catalogue
+When the step matches the registry of the taken frames and the exceptions
+Then the step ends with a refusal naming the file, the story or the reference, whatever the shooting answered.
+A red run does not call a frame it did not reach an orphan
 
 Covered by `tools/tests/visual-gate.test.sh`.

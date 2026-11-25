@@ -86,7 +86,8 @@ report "importing the gate raises no showcase" \
     "$(node -e "import('$TOOLS/visual-gate.mjs').then(() => console.log('imported'))" 2>&1)" 'imported'
 
 # Covers SC-UKV-1802, SC-UKV-1803 and SC-UKV-1804 of the spec `docs/specs/ui-kit-v2/snapshots`.
-# The run of the touched stories, called whole: the build, the shooting and the probes are stand-ins.
+# The run of the touched stories, called whole with the script of the kit's run inside: the build, the
+# browser of the image, the story runner and the probes are stand-ins.
 RUN="$WORK/kit"
 KIT=projects/ui-kit-v2
 SHOTS=$KIT/.storybook/__snapshots__
@@ -96,6 +97,14 @@ mkdir -p "$WORK/bin" "$RUN/$KIT/src" "$RUN/$SHOTS" "$RUN/dist/storybook/@rt-tool
 cat > "$WORK/bin/pnpm" <<SH
 #!/bin/sh
 echo "pnpm \$*" >> "$WORK/calls"
+case "\$1 \$2" in
+    "run test:visual:v2") shift 2; exec "$REAL_NODE" "$TOOLS/visual-snapshots-v2.mjs" "\$@" ;;
+    "exec test-storybook")
+        for last; do :; done
+        printf '%s' "\$last" > "$WORK/sample"
+        cat "$WORK/taken" >> "\$RT_SNAPSHOT_REGISTRY"
+        exit "\$(cat "$WORK/shot-code")" ;;
+esac
 SH
 cat > "$WORK/bin/node" <<SH
 #!/bin/sh
@@ -103,10 +112,7 @@ case "\$1" in
     tools/serve-static.mjs) shift; exec "$REAL_NODE" "$TOOLS/serve-static.mjs" "\$@" ;;
     tools/shot-browser.mjs)
         echo "shot \$*" >> "$WORK/calls"
-        for last; do :; done
-        [ -f "\$last" ] && cp "\$last" "$WORK/list"
-        [ -n "\$RT_SNAPSHOT_REGISTRY" ] && cp "$WORK/taken" "\$RT_SNAPSHOT_REGISTRY"
-        exit "\$(cat "$WORK/shot-code")" ;;
+        shift; exec "\$@" ;;
     *) exec "$REAL_NODE" "\$@" ;;
 esac
 SH
@@ -121,7 +127,9 @@ touch "$RUN/$SHOTS/atoms-one--base.png" "$RUN/$SHOTS/atoms-one--base--w480.png" 
 cat > "$RUN/dist/storybook/@rt-tools/ui-kit-v2/index.json" <<JSON
 { "entries": {
   "atoms-one--base": { "id": "atoms-one--base", "type": "story", "importPath": "./$KIT/src/one.stories.ts" },
-  "atoms-two--base": { "id": "atoms-two--base", "type": "story", "importPath": "./$KIT/src/two.stories.ts" }
+  "atoms-one--docs": { "id": "atoms-one--docs", "type": "docs", "importPath": "./$KIT/src/one.stories.ts" },
+  "atoms-two--base": { "id": "atoms-two--base", "type": "story", "importPath": "./$KIT/src/two.stories.ts" },
+  "atoms-two--plain": { "id": "atoms-two--plain", "type": "story", "importPath": "./$KIT/src/two.stories.ts" }
 } }
 JSON
 printf 'dist\n' > "$RUN/.gitignore"
@@ -135,9 +143,9 @@ gate() {
     printf '%s' "$3" > "$WORK/shot-code"
     shift 3
     : > "$WORK/calls"
-    rm -f "$WORK/list"
+    : > "$WORK/sample"
     [ "$edited" = - ] || printf '/* edit */\n' >> "$RUN/$edited"
-    (cd "$RUN" && PATH="$WORK/bin:$PATH" "$REAL_NODE" "$TOOLS/visual-gate.mjs" "$@" > "$WORK/out" 2>&1)
+    (cd "$RUN" && PATH="$WORK/bin:$PATH" RT_INDEX_REREAD_MS=1 "$REAL_NODE" "$TOOLS/visual-gate.mjs" "$@" > "$WORK/out" 2>&1)
     CODE=$?
     (cd "$RUN" && git reset -q --hard && git clean -qfd)
 }
@@ -148,31 +156,57 @@ said() { if grep -qF "$1" "$WORK/out"; then printf 'yes'; else printf 'no'; fi; 
 gate - '' 0 ui-kit-v2 --affected main
 report "the affected run that touched nothing builds no showcase" "$CODE:$(calls .):$(said 'снять: нечего')" '0:0:yes'
 gate $KIT/src/one.scss 'atoms-one--base\natoms-one--base--w480\n' 0 ui-kit-v2 --affected main
-report "the affected run shoots the named files alone" "$CODE:$(tr '\n' ' ' < "$WORK/list")" "0:$KIT/src/one.stories.ts"
+report "the affected run opens the named files alone" "$CODE:$(cat "$WORK/sample")" "0:'/$KIT/src/one\\.stories\\.ts\$'"
 report "the affected run ends with what it shot" "$(tail -1 "$WORK/out")" 'снято 1 файлов историй из 2, кадров 2'
 report "the affected run builds the showcase and calls the probes" "$(calls 'nx run'):$(calls 'check:icons'):$(calls 'check:window')" '1:1:1'
 gate $KIT/src/one.scss 'atoms-one--base\n' 0 ui-kit-v2 --affected main
-report "the affected run refuses a reference of a width nobody took" "$CODE:$(said 'atoms-one--base--w480.png — no story')" '1:yes'
+report "the affected run refuses a reference of a width nobody took" "$CODE:$(said 'atoms-one--base--w480.png — no story takes')" '1:yes'
+gate $KIT/src/one.scss 'atoms-one--base\n' 1 ui-kit-v2 --affected main
+report "the affected run that fell does not call a lost frame an orphan" "$CODE:$(said 'w480.png — the frame was not taken'):$(said 'no story takes')" '1:yes:no'
+gate $KIT/src/two.scss 'atoms-two--base\nskip atoms-two--plain\n' 0 ui-kit-v2 --affected main
+report "the affected run takes an exception for a reached story" "$CODE:$(tail -1 "$WORK/out")" '0:снято 1 файлов историй из 2, кадров 1'
+gate $KIT/src/two.scss 'atoms-two--base\n' 0 ui-kit-v2 --affected main
+report "the affected run refuses a story without a reference the runner lost" "$CODE:$(said 'atoms-two--plain — the story was not reached')" '1:yes'
 gate $KIT/src/one.scss '' 0 ui-kit-v2 --affected main
 report "the affected run refuses a file that fell out, at a green shooting" \
-    "$CODE:$(said 'one.stories.ts — not one frame'):$(tail -1 "$WORK/out")" '1:yes:снято 0 файлов историй из 2, кадров 0'
+    "$CODE:$(said 'one.stories.ts — not one story'):$(tail -1 "$WORK/out")" '1:yes:снято 0 файлов историй из 2, кадров 0'
 gate $KIT/src/one.scss 'atoms-one--base\natoms-one--base--w480\n' 1 ui-kit-v2 --affected main
 report "the affected run is red with the shooting" "$CODE" '1'
 printf "export default { title: 'Atoms/New' };\n" > "$RUN/$KIT/src/new.stories.ts"
 gate - '' 0 ui-kit-v2 --affected main
 report "the affected run refuses a file the showcase does not hold" "$CODE:$(said 'new.stories.ts — the showcase holds no story')" '1:yes'
 touch "$RUN/$SHOTS/atoms-two--gone.png"
-gate - 'atoms-two--base\n' 0 ui-kit-v2 --affected main
-report "the affected run refuses a reference without a story" "$CODE:$(said 'atoms-two--gone — the reference')" '1:yes'
-gate $KIT/.storybook/preview.ts '' 0 ui-kit-v2 --affected main
+gate - 'atoms-two--base\nskip atoms-two--plain\n' 0 ui-kit-v2 --affected main
+report "the affected run refuses a reference without a story" \
+    "$CODE:$(said 'atoms-two--gone — the reference'):$(said 'lacks 1 stories'):$(cat "$WORK/sample")" '1:yes:yes:'
+WHOLE='atoms-one--base\natoms-one--base--w480\natoms-two--base\nskip atoms-two--plain\n'
+gate $KIT/.storybook/preview.ts "$WHOLE" 0 ui-kit-v2 --affected main
 report "the affected run of a shared edit is the whole set" "$CODE:$(said 'снять: всё'):$(calls 'shot .*pnpm run test:visual:v2$')" '0:yes:1'
-gate $KIT/src/one.scss '' 0 ui-kit-v2 --affected
+gate $KIT/.storybook/preview.ts 'atoms-one--base\natoms-one--base--w480\nskip atoms-two--base\n' 0 ui-kit-v2 --affected main
+report "the whole set takes no exception for a frame" "$CODE:$(said 'atoms-two--base.png')" '1:yes'
+gate $KIT/src/one.scss "$WHOLE" 0 ui-kit-v2 --affected
 report "the affected run without a base is the whole set" "$CODE:$(calls 'shot .*pnpm run test:visual:v2$')" '0:1'
-gate - '' 0 ui-kit-v2 --affected no-such-ref
+gate - "$WHOLE" 0 ui-kit-v2 --affected no-such-ref
 report "the affected run of a base that does not read is the whole set" "$CODE:$(calls 'shot .*pnpm run test:visual:v2$')" '0:1'
 gate - '' 0 ui-kit-v2 --afected main
 report "the affected run misspelled is refused before the build" "$CODE:$(calls .)" '1:0'
 gate - '' 0 ui-kit-v2 --affected main --update
 report "the affected run takes no re-take" "$CODE:$(calls .)" '1:0'
+gate - '' 0 ui-kit-v2 badge --affected main
+report "the affected run takes no sample" "$CODE:$(calls .)" '1:0'
+gate - '' 0 ui-kit-v2 --affected main badge
+report "the affected run takes no sample after the base" "$CODE:$(calls .)" '1:0'
+
+# The list of the run of the kit, refused before the showcase is asked.
+snapshots() { (cd "$RUN" && PATH="$WORK/bin:$PATH" STORYBOOK_URL=http://127.0.0.1:1 "$REAL_NODE" "$TOOLS/visual-snapshots-v2.mjs" "$@" 2>&1 | tr -d '\n'); }
+printf 'one\n' > "$WORK/one.txt"
+: > "$WORK/none.txt"
+refused() { case "$(snapshots "$@")" in *"$WANT"*) printf 'yes' ;; *) printf 'no' ;; esac; }
+WANT='A list is matched alone'
+report "an empty list is refused: its sample would open every file" "$(refused --files "$WORK/none.txt")" 'yes'
+report "a list with a whole re-take is refused" "$(refused --update-all --files "$WORK/one.txt")" 'yes'
+report "a list with a pointed re-take is refused" "$(refused --update one --files "$WORK/one.txt")" 'yes'
+WANT='The list of story files is not named'
+report "a list that does not lie there is refused" "$(refused --files "$WORK/absent.txt")" 'yes'
 
 suite_result "visual-gate"

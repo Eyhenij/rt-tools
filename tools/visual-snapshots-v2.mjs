@@ -29,7 +29,7 @@ import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSy
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { ensureIndex, storiesLostFromIndex } from './showcase-probe.mjs';
+import { ensureIndex, sampleOfFiles, storiesLostFromIndex } from './showcase-probe.mjs';
 
 /** The address of an already raised showcase: the run raises none of its own. */
 const URL = process.env.STORYBOOK_URL ?? 'http://localhost:6007';
@@ -45,7 +45,7 @@ const OWN_IMPORT_MARKER = 'projects/ui-kit-v2/';
 
 /** How many times the index is read again before it counts as incomplete, and how long between reads. */
 const INDEX_REREADS = 6;
-const INDEX_REREAD_MS = 5_000;
+const INDEX_REREAD_MS = Number(process.env.RT_INDEX_REREAD_MS ?? 5_000);
 
 function fail(message) {
     console.error(`\n  ${message}\n`);
@@ -190,10 +190,13 @@ if (listIndex >= 0 && (listed === undefined || !existsSync(listed))) {
     fail(`The list of story files is not named or does not lie at «${listed ?? ''}».`);
 }
 
-/** Every path of the list whole: without the slash and the end a file would open its namesakes too. */
 const filesOfList = listed === undefined ? undefined : readFileSync(listed, 'utf8').split('\n').filter(Boolean);
-const samplesOfList = filesOfList?.map((file) => `/${file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`).join('|');
-const pointed = updateOne ?? samplesOfList ?? matchOne;
+
+if (filesOfList !== undefined && (filesOfList.length === 0 || updateAll || updateIndex >= 0)) {
+    fail('A list is matched alone and names at least one story file: an empty sample would open every file.');
+}
+
+const pointed = updateOne ?? (filesOfList ? sampleOfFiles(filesOfList) : matchOne);
 
 // A pointed run opens part of the directory, and the match of the directory is for a full session only.
 // A list is matched against the whole index: its references are checked by the caller's registry.

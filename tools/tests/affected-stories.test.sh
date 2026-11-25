@@ -143,6 +143,84 @@ report "a template that is named and gone is everything" "$(after_change dropped
 bare_style() { printf '%s\n' "@use 'nowhere';" >> $CARD/_parts.scss; }
 report "a style without a dot that is neither a neighbour nor a package is everything" "$(after_change bare_style)" 'всё'
 
+# What the graph cannot follow is everything: it names no file an edit could be looked for in.
+lost_by() {
+    local file="$1"
+    shift
+    printf '%s\n' "$@" >> "$file"
+    short "$(answer)"
+    back
+}
+report "a lost alias is everything" "$(lost_by $PLAIN/plain.ts "import { x } from '@rt-tools/ui-kit-v2/gone';")" 'всё'
+report "a lost export is everything" "$(lost_by $PLAIN/plain.ts "export * from './gone';")" 'всё'
+report "a lost import() is everything" "$(lost_by $PLAIN/plain.ts "import('./gone');")" 'всё'
+report "an import() of a variable is everything" "$(lost_by $PLAIN/plain.ts 'import(where);')" 'всё'
+report "a lost require is everything" "$(lost_by $PLAIN/plain.ts "require('./gone');")" 'всё'
+report "a template named by a constant is everything" "$(lost_by $PLAIN/plain.ts '@Component({ templateUrl: TPL }) class X {}')" 'всё'
+report "a template named by a shorthand is everything" "$(lost_by $PLAIN/plain.ts '@Component({ templateUrl }) class X {}')" 'всё'
+report "a style named by a constant in a list is everything" "$(lost_by $PLAIN/plain.ts '@Component({ styleUrls: [CSS] }) class X {}')" 'всё'
+report "a worker named by a constant is everything" "$(lost_by $PLAIN/plain.ts 'new Worker(new URL(W, import.meta.url));')" 'всё'
+report "a style loaded by a variable is everything" "$(lost_by $CARD/_parts.scss '@include meta.load-css($theme);')" 'всё'
+report "an import from the root of the tree that is lost is everything" "$(lost_by $PLAIN/plain.ts "import { x } from 'projects/gone';")" 'всё'
+report "an outside module is no lost import" "$(lost_by $PLAIN/plain.ts "import { x } from '@angular/core';" "import q from 'quill';")" 'plain'
+
+# One source named by every form the graph follows: the edit of the source touches the story of `plain`.
+named_by() {
+    local file="$1" source="$2" line="$3" out
+    put "$source" "${4:-export const one: number = 1;}"
+    printf '%s\n' "$line" >> "$file"
+    save named
+    printf '%s\n' '/* edit */' >> "$source"
+    out="$(node "$TOOLS/affected-stories.mjs" --base HEAD)"
+    git reset -q --hard HEAD~1 && git clean -qfd
+    short "$out"
+}
+NEXT=$PLAIN/next.ts
+report "a default import is followed" "$(named_by $PLAIN/plain.ts $NEXT "import one from './next';")" 'plain'
+report "a namespace import is followed" "$(named_by $PLAIN/plain.ts $NEXT "import * as one from './next';")" 'plain'
+report "an import of the file alone is followed" "$(named_by $PLAIN/plain.ts $NEXT "import './next';")" 'plain'
+report "an import of no names is followed" "$(named_by $PLAIN/plain.ts $NEXT "import {} from './next';")" 'plain'
+report "a name the barrel does not declare brings the whole barrel" "$(named_by $PLAIN/plain.ts $NEXT "import { absent } from './next';")" 'plain'
+report "an import from the root of the tree is followed" "$(named_by $PLAIN/plain.ts $NEXT "import { one } from 'projects/ui-kit-v2/src/lib/components/plain/next';")" 'plain'
+report "a require is followed" "$(named_by $PLAIN/plain.ts $NEXT "require('./next');")" 'plain'
+report "a worker is followed" "$(named_by $PLAIN/plain.ts $NEXT "new Worker(new URL('./next.ts', import.meta.url));")" 'plain'
+report "a template in quotes of its name is followed" "$(named_by $PLAIN/plain.ts $PLAIN/next.html "@Component({ 'templateUrl': './next.html' }) class X {}" '<p></p>')" 'plain'
+report "a story given out from a neighbour is followed" "$(named_by $PLAIN/stories/plain.stories.ts $PLAIN/stories/base.ts "export { one } from './base';")" 'plain'
+report "a story given out whole from a neighbour is followed" "$(named_by $PLAIN/stories/plain.stories.ts $PLAIN/stories/base.ts "export * from './base';")" 'plain'
+report "what preview.ts gives out is everything" "$(named_by $BOOK/preview.ts $KIT/src/showcase/base.ts "export { one } from '../src/showcase/base';")" 'всё'
+report "what vendor.scss takes is everything" "$(named_by $BOOK/vendor.scss $KIT/src/showcase/_base.scss "@use '../src/showcase/base';" '.x { color: red; }')" 'всё'
+report "what main.ts takes is everything" "$(named_by $BOOK/main.ts $KIT/src/showcase/base.ts "import '../src/showcase/base';")" 'всё'
+report "a style by @import is followed" "$(named_by $CARD/_parts.scss $CARD/_next.scss "@import 'next';" '.x { color: red; }')" 'card'
+report "the second path of one @import is followed" "$(named_by $CARD/_parts.scss $CARD/_next.scss "@import 'parts', 'next';" '.x { color: red; }')" 'card'
+report "a style by @forward is followed" "$(named_by $CARD/_parts.scss $CARD/_next.scss "@forward 'next' show x;" '.x { color: red; }')" 'card'
+report "a style by load-css is followed" "$(named_by $CARD/_parts.scss $CARD/_next.scss "@include meta.load-css('next');" '.x { color: red; }')" 'card'
+report "a comment that holds the sign of the other kind hides no style" \
+    "$(named_by $CARD/_parts.scss $CARD/_next.scss "$(printf '// components/*.scss\n@use "next";\n/* end */')" '.x { color: red; }')" 'card'
+report "a setting of @use is no path" "$(lost_by $CARD/_parts.scss "@use 'card.component' with (\$a: 'gone');" | tr -d '\n')" 'card'
+report "a spec a story takes touches it" "$(named_by $PLAIN/plain.ts $PLAIN/fixture.spec.ts "import './fixture.spec';")" 'plain'
+
+# The longest alias wins: the starred one would lead to another file.
+report "an exact alias wins over the starred one" "$(
+    perl -pi -e 's#"\@rt-tools/ui-kit-v2/\*"#"\@rt-tools/ui-kit-v2/plain-core": ["projects/ui-kit-v2/src/lib/components/plain/exact.ts"],\n    "\@rt-tools/ui-kit-v2/*"#' tsconfig.base.json
+    named_by $PLAIN/plain.ts $PLAIN/exact.ts "import { one } from '@rt-tools/ui-kit-v2/plain-core';"
+    back
+)" 'plain'
+
+report "a title under as and satisfies is read" "$(
+    put $PLAIN/stories/plain.stories.ts 'export default { title: "Atoms/Wrapped" } as Meta satisfies Meta;'
+    put $BOOK/__snapshots__/atoms-wrapped--base.png png
+    short "$(answer)"
+    back
+)" 'plain'
+report "a reference of a title two files share touches both" "$(
+    put $CARD/stories/card-matrix.stories.ts 'export default { title: "Atoms/Card" };'
+    save both
+    rm $BOOK/__snapshots__/atoms-card--base.png
+    short "$(node "$TOOLS/affected-stories.mjs" --base HEAD)"
+    git reset -q --hard HEAD~1 && git clean -qfd
+)" 'card-matrix card'
+report "a setting of the showcase nothing imports is everything" "$(put $BOOK/test-runner-jest.config.js one; short "$(answer)"; back)" 'всё'
+
 report "a shared style of the showcase is everything" "$(after $KIT/src/styles/_form.scss)" 'всё'
 report "a shared style nothing reads is everything too" "$(after $KIT/src/styles/_unread.scss)" 'всё'
 report "a provider of preview.ts is everything" "$(after $KIT/src/lib/provider.ts)" 'всё'
@@ -157,6 +235,10 @@ add_label() {
 report "an added label is no story" "$(after_change add_label)" 'нечего'
 change_label() { perl -pi -e "s/'One'/'First'/" $KIT/src/lib/i18n/rt-kit-labels.en.ts; }
 report "a changed label is everything" "$(after_change change_label)" 'всё'
+double_label() { perl -pi -e "s/^    uiOne: 'Один',/    uiOne: 'Один',\n    uiOne: 'Другой',/" $BOOK/showcase-labels.ru.ts; }
+report "an added label of a taken key is everything" "$(after_change double_label)" 'всё'
+mode_only() { chmod +x $BOOK/showcase-labels.ru.ts; }
+report "a label set without a changed line is everything" "$(after_change mode_only)" 'всё'
 drop_label() { perl -ni -e 'print unless /uiOne/' $BOOK/showcase-labels.ru.ts; }
 report "a removed label is everything" "$(after_change drop_label)" 'всё'
 report "a line of the label set that is no label is everything" "$(after $KIT/src/lib/i18n/rt-kit-labels.en.ts)" 'всё'
@@ -193,13 +275,19 @@ peer() { perl -pi -e 's/"peerDependencies": \{\}/"peerDependencies": { "rxjs": "
 report "another line of a package manifest is everything" "$(after_change peer)" 'всё'
 report "a package the showcase does not reach is no story" "$(after projects/cms-server/package.json projects/cms-server/src/index.ts)" 'нечего'
 report "an icon is everything" "$(after $KIT/src/assets/icons/one.svg)" 'всё'
-report "a file of the root is everything" "$(after package.json | head -1)" 'всё'
-report "a script of the snapshot step is everything" "$(put tools/visual-gate.mjs one; short "$(answer)"; back)" 'всё'
+report "a file of the root is everything" "$(put nx.json '{}'; short "$(answer)"; back)" 'всё'
+report "a git setting of the root is no story" "$(put .gitattributes one; put .nxignore one; put .husky/pre-push one; short "$(answer)"; back)" 'нечего'
+for script in visual-gate visual-snapshots-v2 affected-stories story-graph shot-browser showcase-probe serve-static snapshot-icon-probe; do
+    report "the step's script $script is everything" "$(put tools/$script.mjs one; short "$(answer)"; back)" 'всё'
+done
 report "another tool is no story" "$(put tools/check-docs.mjs one; short "$(answer)"; back)" 'нечего'
 report "an unknown path is everything" "$(put something/new.txt one; short "$(answer)"; back)" 'всё'
 report "a new file of the copy is judged before it is committed" "$(put $CARD/stories/card-new.stories.ts 'export default { title: "Atoms/New" };'; short "$(answer)"; back)" 'card-new'
 
 report "a base that does not read is everything" "$(short "$(node "$TOOLS/affected-stories.mjs" --base no-such-ref)")" 'всё'
+report "a call from a directory of the tree judges the whole tree" \
+    "$(printf '%s\n' '/* edit */' >> $CARD/card.component.scss; short "$(cd projects && node "$TOOLS/affected-stories.mjs" --base main)"; back)" 'card'
+report "a tree without story files is everything" "$(git rm -q -r $CARD/stories $CHART/stories $PLAIN/stories && save bare; printf one > docs.md; short "$(node "$TOOLS/affected-stories.mjs" --base HEAD)"; git reset -q --hard HEAD~1 && git clean -qfd)" 'всё'
 report "a call without a base is everything" "$(short "$(node "$TOOLS/affected-stories.mjs")")" 'всё'
 report "an unknown argument is a refusal" "$(node "$TOOLS/affected-stories.mjs" --bass main >/dev/null 2>&1; printf '%s' $?)" '2'
 

@@ -136,27 +136,30 @@ export function refusalOf(args) {
 /**
  * What a run of the named story files did not shoot.
  *
- * `unopened` — the files the showcase holds no story of; `dropped` — those with references and not
- * one frame taken; `missing` — the other references of the named files nobody took, with the
- * `--wNNN` ones; `lost` — the stories references name and the index does not hold.
+ * `unopened` — the files the showcase holds no story of; `dropped` — those not one story of which was
+ * reached; `missed` — the other stories of the named files the run did not reach; `missing` — the
+ * references of the reached stories nobody took, with the `--wNNN` ones; `lost` — the stories
+ * references name and the index does not hold. A story is reached when its frame is taken or when the
+ * harness wrote down that it is an exception.
  */
 export function judgeTaken({ files, entries, references, taken }) {
-    const shot = new Set(taken.map((line) => line.trim()).filter((line) => line !== ''));
+    const written = new Set(taken.map((line) => line.trim()).filter((line) => line !== ''));
+    const shot = new Set([...written].filter((line) => !line.startsWith('skip ')));
     const stories = entries.filter((entry) => entry.type === 'story');
     const names = references.filter((name) => name.endsWith('.png'));
-    const result = { unopened: [], dropped: [], missing: [], frames: shot.size };
+    const result = { unopened: [], dropped: [], missed: [], missing: [], frames: shot.size };
 
     for (const file of files) {
-        const ids = new Set(stories.filter((entry) => entry.importPath === `./${file}`).map((entry) => entry.id));
-        const own = names.filter((name) => ids.has(storyOfReference(name)));
-        const absent = own.filter((name) => !shot.has(name.replace(/\.png$/, '')));
+        const ids = stories.filter((entry) => entry.importPath === `./${file}`).map((entry) => entry.id);
+        const reached = new Set(ids.filter((id) => written.has(id) || written.has(`skip ${id}`)));
 
-        if (ids.size === 0) {
+        if (ids.length === 0) {
             result.unopened.push(file);
-        } else if (own.length > 0 && absent.length === own.length) {
+        } else if (reached.size === 0) {
             result.dropped.push(file);
         } else {
-            result.missing.push(...absent);
+            result.missed.push(...ids.filter((id) => !reached.has(id)));
+            result.missing.push(...names.filter((name) => reached.has(storyOfReference(name)) && !shot.has(name.replace(/\.png$/, ''))));
         }
     }
 
@@ -430,8 +433,12 @@ async function main() {
         rmSync(runDir, { recursive: true, force: true });
         gaps = [
             ...shots.unopened.map((file) => `${file} — the showcase holds no story of the file`),
-            ...shots.dropped.map((file) => `${file} — not one frame of the file was taken`),
-            ...shots.missing.map((name) => `${name} — no story of its file takes this frame`),
+            ...shots.dropped.map((file) => `${file} — not one story of the file was reached`),
+            ...shots.missed.map((id) => `${id} — the story was not reached`),
+            ...shots.missing.map((name) =>
+                // A red run stops a story before its frame, and the reference is then no orphan.
+                (run.status ?? 1) === 0 ? `${name} — no story takes this frame` : `${name} — the frame was not taken: the run is red`
+            ),
             ...shots.lost.map((id) => `${id} — the reference has no story in the showcase`),
         ];
     }

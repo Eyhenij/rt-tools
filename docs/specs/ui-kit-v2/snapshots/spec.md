@@ -158,15 +158,17 @@ as an attachment.
 - **A branch shoots the stories its edit reaches, and the whole set goes once, on the way to the main branch.**
   The reach goes by the imports from a story file to its sources: the code, the template, the styles. A branch
   that reaches no story builds no showcase. The price is named: a divergence the imports do not carry is seen
-  on the request into the main branch, not on the branch that made it.
+  on the request into the main branch, not on the branch that made it. An overview page that stopped building
+  is seen there too: a page is no story, and an edit of it alone builds nothing on the branch.
 
 - **An edit whose reach is not recognised shoots everything.** Such are the settings of the showcase and what
   they read, the common styles, the icons, the root of the tree and the scripts of the run. An import that did
   not resolve and a base that did not read are everything too.
 
-- **A run of the touched stories answers for every file it was given.** A file without a story or without one
-  frame taken fells the run. So do a reference of a named file nobody took and a reference without a story.
-  The run ends with how many files of how many were shot and how many frames.
+- **A run of the touched stories answers for every file it was given.** Every story of a named file is reached:
+  its frame is taken, or the harness wrote down that it is an exception. A file without a story, a story the
+  run did not reach, a frame of a width nobody took and a reference without a story fell the run. It ends
+  with how many files of how many were shot and how many frames.
 
 - **A reshooting goes by a named story.** A reshooting of the whole catalogue erases the divergence that was
   not expected too — it stays a separate command, not a default.

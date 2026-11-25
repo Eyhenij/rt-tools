@@ -32,7 +32,7 @@ const SHOWCASE_ROOTS = ['preview.ts', 'test-runner.ts', 'main.ts', 'storybook.sc
 
 /** The label sets: a line added to one is read only by a component the same branch edits. */
 const LABELS = new Set([`${KIT}src/lib/i18n/rt-kit-labels.en.ts`, `${SHOWCASE}showcase-labels.ru.ts`]);
-const ADDED_LABEL = /^\+\s+(?:\w+|'[^']+'): '(?:[^'\\]|\\.)*',$/;
+const ADDED_LABEL = /^\+\s+(\w+): '(?:[^'\\]|\\.)*',$/;
 const VERSION_LINE = /^[+-]\s*"version": "[^"]*",?$/;
 
 /** The scripts of the snapshot step itself: an edit of one is checked by the whole set. */
@@ -45,14 +45,15 @@ const NO_STORY = [
     /(^|\/)graphify-out\//,
     /(^|\/)(ng-package|tsconfig\.spec|tsconfig\.lib[^/]*)\.json$/,
     /^(docs|\.claude|apps|libs|prisma|deploy|\.github|eslint)\//,
-    /^(\.prettierignore|commitlint\.config\.cjs|eslint\.config\.mjs|angular-doctor\.config\.json|knip\.json|docker-compose\.yml)$/,
+    /^\.husky\//,
+    /^(\.gitignore|\.gitattributes|\.nxignore|\.prettierignore|commitlint\.config\.cjs|eslint\.config\.mjs|angular-doctor\.config\.json|knip\.json|docker-compose\.yml)$/,
 ];
 
 const PACKAGE_SOURCE = /^projects\/[^/]+\/.*\.(ts|scss|html)$/;
 const SHARED_STYLES = /^projects\/[^/]+\/src\/styles\//;
 
-/** The diff the same on every machine: no settings, no outside program, no paths in quotes. */
-const DIFF = ['-c', 'core.quotePath=false', 'diff', '--no-ext-diff', '--no-textconv', '--no-renames', '--no-color'];
+/** The diff the same on every machine: no settings and no outside program. */
+const DIFF = ['diff', '--no-ext-diff', '--no-textconv', '--no-renames', '--no-color'];
 
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8', maxBuffer: 1 << 29, stdio: ['ignore', 'pipe', 'ignore'] });
 const lines = (text, by = '\n') => text.split(by).filter(Boolean);
@@ -120,6 +121,36 @@ function titleId(title) {
         .replace(/^-+|-+$/g, '');
 }
 
+/** The file an import of a deleted one falls to: `foo.ts` next to a live `foo/index.ts`, a partial of the same name. */
+function heirOf(source, path) {
+    const [, dir, name, kind] = path.match(/^(.*\/)?_?([^/]+)\.(ts|s?css)$/) ?? [];
+
+    if (kind === undefined) {
+        return undefined;
+    }
+
+    const at = `${dir ?? ''}${name}`;
+    const partial = `${dir ?? ''}_${name}`;
+
+    return (
+        kind === 'ts'
+            ? [`${at}/index.ts`, `${at}.d.ts`]
+            : [`${at}.scss`, `${partial}.scss`, `${at}/_index.scss`, `${at}/index.scss`, `${at}.css`]
+    ).find((heir) => heir !== path && source.has(heir));
+}
+
+/** Whether only new labels were added: every changed line is one, and its key stood nowhere before. */
+function onlyAddsLabels(text, changed) {
+    return (
+        changed.length > 0 &&
+        changed.every((line) => {
+            const key = line.match(ADDED_LABEL)?.[1];
+
+            return key !== undefined && text.match(new RegExp(`^\\s*['"]?${key}['"]?:`, 'gm'))?.length === 1;
+        })
+    );
+}
+
 /**
  * The answer about a set of changed files.
  *
@@ -155,15 +186,17 @@ export function judge(source, { rows, linesOf }) {
 
     const packagesShown = new Set([...shared, ...readers.keys()].map((path) => path.split('/').slice(0, 2).join('/')));
     const all = [...lost].map((one) => `импорт не разрешился — ${one}`);
+
+    if (stories.length === 0) {
+        all.push('в дереве нет файлов историй');
+    }
     const touched = new Set();
 
     for (const { status, path } of rows) {
-        // A deleted `foo.ts` next to a live `foo/index.ts` sends the same import to another file.
-        const heir = status === 'D' && path.endsWith('.ts') ? path.replace(/\.ts$/, '/index.ts') : null;
-        const drawn = heir !== null && source.has(heir) ? heir : path;
+        const drawn = (status === 'D' ? heirOf(source, path) : undefined) ?? path;
         const outside = /^projects\/[^/]+\//.test(path) && !packagesShown.has(path.split('/').slice(0, 2).join('/'));
 
-        if (LABELS.has(path) && status === 'M' && linesOf(path).every((line) => ADDED_LABEL.test(line))) {
+        if (LABELS.has(path) && status === 'M' && onlyAddsLabels(source.read(path), linesOf(path))) {
             continue;
         }
 
@@ -181,16 +214,17 @@ export function judge(source, { rows, linesOf }) {
             all.push(`настройка витрины — ${path}`);
         } else if (status === 'D' && path.endsWith('.stories.ts')) {
             all.push(`удалён файл историй — ${path}`);
+        } else if (readers.has(drawn)) {
+            readers.get(drawn).forEach((story) => touched.add(story));
         } else if (NO_STORY.some((sign) => sign.test(path)) || outside || (path.startsWith('tools/') && !STEP_SCRIPTS.test(path))) {
             continue;
         } else if (
             /^projects\/[^/]+\/package\.json$/.test(path) &&
             status === 'M' &&
+            linesOf(path).length > 0 &&
             linesOf(path).every((line) => VERSION_LINE.test(line))
         ) {
             continue;
-        } else if (readers.has(drawn)) {
-            readers.get(drawn).forEach((story) => touched.add(story));
         } else if (PACKAGE_SOURCE.test(path) && !SHARED_STYLES.test(path)) {
             continue;
         } else {
@@ -207,6 +241,9 @@ export function affectedStories(base, head) {
         if (!base) {
             throw new Error('нет базы');
         }
+
+        // The paths of git go from the root of the tree, wherever the call stands.
+        process.chdir(git('rev-parse', '--show-toplevel').trim());
 
         return judge(head ? commitSource(head) : diskSource(), changesOf(base, head));
     } catch (failure) {
