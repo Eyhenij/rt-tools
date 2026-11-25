@@ -8,7 +8,8 @@ description: A pattern of the rule task-delivery-loop. Take it at each step of t
 # Ready commands for the task delivery loop
 
 A pattern of the rule `task-delivery-loop`; the steps are numbered as there. `N` is the task number, `E` the epic
-card, `<base>` the base of the branch: the previous branch of the chain, the epic branch or `main`. Shell variables do not live from one call to the next,
+card, `<base>` the base of the branch: the previous branch of the chain, the epic branch or `main`, `<plan>` the
+file `docs/tasks/RT-N-<slug>/plan.md`. Shell variables do not live from one call to the next,
 so every block sets the client and the token itself.
 
 Every call with the token starts with `test -s`: an empty or missing file would leave the variable
@@ -89,6 +90,7 @@ The main session writes the diff to a file. Reviewers get the file and never run
 
 ```bash
 git diff origin/<base>...HEAD > <scratchpad>/review-N.diff
+node tools/check-coupling.mjs --base=origin/<base> > <scratchpad>/coupling-N.txt 2>&1
 ```
 
 Each of the three agents gets this frame and its own inputs, never your conclusions:
@@ -98,7 +100,15 @@ Review <scratchpad>/review-N.diff (branch RT-N-<slug>). Do not run git, do not e
 Return findings with file:line, the failure scenario and a severity.
 ```
 
-`qa-engineer` gets the agreement and the review lens of `.claude/workflows/feature.js`.
+`qa-engineer` also gets this line, after the frame:
+
+```text
+The plan: <plan>; the coupling against the base: <scratchpad>/coupling-N.txt.
+```
+
+`qa-engineer` gets the agreement, the lens `review` of `.claude/workflows/feature.js`, the plan and the
+coupling for the section «Structure of the code» of its role: the green set does not show the coupling. The
+lens `structure` is the pipeline's, where no diff is given.
 `product-strategist` gets the plan's points and their signs. `goal-critic` gets the owner's words
 from the grill and the result, never the plan. The replies of the roles are saved to a file of the
 scratchpad as they come: the PR body takes their tables word for word.
@@ -111,7 +121,10 @@ GIT_AUTHOR_NAME=rt-tools-dev GIT_AUTHOR_EMAIL=$EM GIT_COMMITTER_NAME=rt-tools-de
     GIT_COMMITTER_EMAIL=$EM git -c commit.gpgsign=false commit -q -F <message file>
 ```
 
-The subject: `<type>(<scope>): <что изменилось> после первого круга ревью (RT-N)`. The identity is
+The subject: `<type>(<scope>): <что изменилось> после первого круга ревью (RT-N)`. A round with
+nothing to fix still leaves its commit, with `--allow-empty` and the written-off findings in the body:
+`tools/task-rework.mjs` counts it as 0 lines, and a task with no commit of the round reads as a round
+not recorded and stays out of the median. The identity is
 prefixed to the commit only: exported, it reaches a push in the same call. The four variables are
 written out in the command, never packed into one:
 zsh does not split `$E` into words, so `env $E git commit` passes one argument, and the commit leaves
@@ -213,4 +226,9 @@ git fetch -q origin; git fetch -q origin main:main || git merge -q --ff-only ori
 bot api repos/Eyhenij/rt-tools/pulls/<pr> --jq '{merged, merged_at}'
 bot api repos/Eyhenij/rt-tools/issues/N --jq .state
 npm run -s check:board
+node tools/task-rework.mjs RT-N                    # the lines of the first round, the files outside the footprint
 ```
+
+The numbers of the task go into the archive record. The milestone of an epic is judged after the kit release
+by `node tools/task-rework.mjs --since=<the release tag>` on the twentieth merge after it: the report takes every
+merge after the tag, so the release opens a card for that run.

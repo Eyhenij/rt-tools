@@ -6,8 +6,9 @@
  *
  * The case names what the sources answer:
  *   branch    the checked-out branch
- *   commits   [{ sha, files: { path: text | null } }] — the branch history, oldest first; a text
- *             writes the file, null removes it, an unnamed file stays as it was
+ *   commits   [{ sha, text, own, files: { path: text | null } }] — the branch history, oldest first; a
+ *             text writes the file, null removes it, an unnamed file stays as it was; `text` is the
+ *             message, `own: false` — a commit a merge brought
  *   tree      { path: text } — the working copy
  *   main      [path] — the paths the main branch on the server holds in its history
  *   approval  the approval mark of the branch, or null; `placed(answer, plan)` writes one with a place
@@ -46,7 +47,7 @@ export function gitDouble({ branch = '', commits = [], main = [], local = [] }) 
     let current = {};
     for (const c of commits) {
         const next = { ...current };
-        const change = { sha: c.sha, added: [], deleted: [], modified: [] };
+        const change = { sha: c.sha, text: c.text ?? '', own: c.own ?? true, added: [], deleted: [], modified: [] };
         for (const [path, text] of Object.entries(c.files ?? {})) {
             if (text === null) {
                 if (path in next) change.deleted.push(path);
@@ -61,7 +62,7 @@ export function gitDouble({ branch = '', commits = [], main = [], local = [] }) 
         changes.push(change);
         current = next;
     }
-    const at = (sha) => snapshots[commits.findIndex((c) => c.sha === sha)];
+    const at = (sha) => snapshots[commits.findIndex((c) => c.sha === sha.replace(/\^$/, '')) - (sha.endsWith('^') ? 1 : 0)];
     return {
         branch: () => branch,
         commits: () => changes,
@@ -75,7 +76,7 @@ export function gitDouble({ branch = '', commits = [], main = [], local = [] }) 
         existsAtHead: (path) => Object.keys(snapshots.at(-1) ?? {}).some((k) => inside(path, k)),
         branches: (prefix) => local.filter((b) => b.name.startsWith(prefix)),
         head: () => commits.at(-1)?.sha ?? '',
-        filesAt: (dir, sha) => Object.keys(at(sha) ?? {}).filter((k) => inside(dir, k)),
+        filesAt: (dir, sha) => Object.keys(at(sha) ?? {}).filter((k) => dir === '.' || inside(dir, k)),
     };
 }
 

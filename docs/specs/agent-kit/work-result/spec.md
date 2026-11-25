@@ -115,7 +115,7 @@ and no dead end over a working day — is read from the same numbers.
 | the owner's words                | «слов владельца»                     |
 | owner corrections                | «Правки владельца»                   |
 | verdicts «goal not met»          | «Цель не достигнута»                 |
-| the rules gate line              | «проверка правил: отказов N (слишком длинное a, не помещаются вместе b, не прочитано c, без причины d), правил без отказа M» |
+| the rules gate line              | «проверка правил: отказов N (слишком длинное a, не помещаются вместе b, не прочитано c, читается до записи d, без причины e), правил без отказа M» |
 | a verdict with no task           | «без задачи»                         |
 | the milestone line               | «веха G: отказов X на сто (порог 5), тупиков N — достигнута» or «— не достигнута» |
 | a day not judged                 | «веха G: вызовов нет»                |

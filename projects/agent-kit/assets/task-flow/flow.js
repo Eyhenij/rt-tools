@@ -12,6 +12,8 @@
     session: { open: {} },
     steps: { open: {} },
     records: { open: {} },
+    design: { open: {} },
+    coupling: { open: {} },
   },
 
   measure: {
@@ -30,6 +32,10 @@
       done: { git: source.git, tree: source.tree, marks: source.marks, steps: source.steps },
     },
     footprint: { touched: { git: source.git } },
+    design: {
+      held: { git: source.git, design: source.design, coupling: source.coupling },
+      gaps: { git: source.git, design: source.design, coupling: source.coupling },
+    },
     folder: { archived: { git: source.git } },
     pr: { handed: { git: source.git, host: source.host } },
     copy: {
@@ -104,7 +110,7 @@
       title: 'этапы-кончились',
       action: 'merge the agreement, bring the texts up to date, run the suite',
       pattern: 'task-flow-close',
-      exit: measure.footprint.touched,
+      exit: { all: [measure.footprint.touched, measure.design.held] },
     },
     reviewOver: {
       title: 'разбор-кончился',

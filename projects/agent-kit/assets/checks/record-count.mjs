@@ -411,7 +411,7 @@ export const treeChanges = (entries) => eventsOf(entries).filter((e) => e.ev ===
 export const interrupts = (entries) => eventsOf(entries).filter((e) => e.ev === 'interrupt');
 
 /** The reasons the rules gate writes into its refusal note, in the order the report names them. */
-export const GATE_REASONS = ['too-long', 'together', 'not-read'];
+export const GATE_REASONS = ['too-long', 'together', 'not-read', 'before'];
 
 /**
  * The rules gate on a day, from its own notes in the observations: a refusal `gate-deny` counted by

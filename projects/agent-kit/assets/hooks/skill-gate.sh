@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__claude-in-chrome__.*|mcp__figma__use_figma
-# Requires: checks/decide.mjs, hooks/decide.sh, hooks/deny-tail.sh
+# Requires: checks/decide.mjs, hooks/decide.sh, hooks/deny-tail.sh, hooks/write-targets.sh
 # The rules gate: it does not let a file be edited until the rule it falls under has been loaded.
 #
 # A law and a rule nobody opens do not act. A reminder in the prompt helps right up to the first
@@ -61,9 +61,17 @@ rt_gate_copy_path() {
     esac
 }
 
+# The targets of a write are read by the parse shared with the other guards. Without it a command
+# names none, and only the paths below bring the domain rule.
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/write-targets.sh" 2>/dev/null || true
+command -v rt_write_targets >/dev/null 2>&1 || rt_write_targets() { cat >/dev/null; }
+
 req=""
 target=""
 kind=""
+# What the layers demand to be read before the text of this call is composed.
+rt_layer_before=""
 case "$tool" in
     # The environment tool creates a file with the same two pieces of data, only it calls them
     # differently — without this branch a file was created past the gate.
@@ -126,25 +134,37 @@ case "$tool" in
             # shellcheck disable=SC1090
             [ -f "$profile" ] && . "$profile" 2>/dev/null
         done
-        if command -v rt_shell_writes >/dev/null 2>&1 && command -v rt_shell_paths >/dev/null 2>&1 \
-            && rt_shell_writes "$target"; then
-            while IFS= read -r written_path; do
-                [ -z "$written_path" ] && continue
-                case "$written_path" in
-                    /*) ;;
-                    *) written_path="${CLAUDE_PROJECT_DIR:-.}/$written_path" ;;
-                esac
-                case "$written_path" in
-                    "${CLAUDE_PROJECT_DIR:-.}"/*) ;;
-                    *) continue ;;
-                esac
-                written_path="$(rt_gate_copy_path "$written_path")"
-                more="$(skill_for edit "$written_path" "" 2>/dev/null)"
-                [ -n "$more" ] && req="$req $more"
-            done <<EOF
-$(rt_shell_paths "$target")
+        # A target of a write — `W` — gets the domain rule and the layers. A path the command only
+        # names — `P` — gets the domain rule when the command writes: `rm` and `touch` name no target.
+        gate_command="$target"
+        while IFS= read -r written_path; do
+            gate_mark="${written_path%% *}"
+            written_path="${written_path#* }"
+            # A bare name after `cd` elsewhere would read as a file of the root.
+            case "$written_path" in
+                /*) ;;
+                '$'* | '~'*) continue ;;
+                */*) written_path="${CLAUDE_PROJECT_DIR:-.}/${written_path#./}" ;;
+                *) [ "$gate_mark" = P ] && [ -n "$written_path" ] || continue; written_path="${CLAUDE_PROJECT_DIR:-.}/$written_path" ;;
+            esac
+            case "$written_path" in
+                "${CLAUDE_PROJECT_DIR:-.}"/*) ;;
+                *) continue ;;
+            esac
+            written_path="$(rt_gate_copy_path "$written_path")"
+            more="$(skill_for edit "$written_path" "" 2>/dev/null)"
+            [ -n "$more" ] && req="$req $more"
+            # The layers by path come to the target of a write too. The layers by the text of the
+            # edit stay silent: the command carries no field of the text.
+            [ "$gate_mark" = W ] || continue
+            target="$written_path"
+            # shellcheck disable=SC1090
+            [ -f "$rt_hooks_dir/skill-gate-layers.sh" ] && . "$rt_hooks_dir/skill-gate-layers.sh" 2>/dev/null
+            target="$gate_command"
+        done <<EOF
+$(printf '%s' "$target" | RT_WT_SCRIPT=1 rt_write_targets | sed 's/^/W /')
+$(command -v rt_shell_writes >/dev/null 2>&1 && command -v rt_shell_paths >/dev/null 2>&1 && rt_shell_writes "$target" && rt_shell_paths "$target" | sed 's/^/P /')
 EOF
-        fi
         ;;
     mcp__claude-in-chrome__*)
         req="$(skill_for browser "$tool" "" 2>/dev/null)"
@@ -246,6 +266,12 @@ for name in $req; do
     case " ${need[*]} " in *" $name "*) continue ;; esac
     need+=("$name")
 done
+# A rule a text is designed by is refused instead of being delivered: delivered, it arrives with the
+# write, when the design is already in it.
+gate_before=""
+for name in $rt_layer_before; do
+    case " ${need[*]} " in *" $name "*) gate_before="${gate_before:-$name}" ;; esac
+done
 gate_unread=""
 gate_why=""
 gate_given=""
@@ -301,7 +327,7 @@ ${gate_body}")
         for k in "${!rules[@]}"; do text="${text}${rules[$k]}${comps[$k]}"; done
     }
     rt_gate_text
-    if [ -z "$gate_unread" ] && [ "${#text}" -le "$gate_limit" ]; then
+    if [ -z "$gate_unread" ] && [ -z "$gate_before" ] && [ "${#text}" -le "$gate_limit" ]; then
         # The companions go after the rules fit: a companion falls back to its path before a rule
         # is dropped. Each is placed whole right after its rule while the whole text still fits.
         for k in "${!need[@]}"; do
@@ -332,6 +358,9 @@ The companion of the rule — ${comp} — did not fit here and is read as a file
     if [ -n "$gate_unread" ]; then
         gate_why="not-read"
         want="$gate_unread"
+    elif [ -n "$gate_before" ]; then
+        gate_why="before"
+        want="$gate_before"
     else
         gate_why="together"
         for k in "${!rules[@]}"; do
@@ -428,6 +457,11 @@ case "$gate_why" in
         ;;
     not-read)
         reason="${reason} The gate could not read ${rules_dir}/${req}/SKILL.md, so it did not put the rule into the session."
+        ;;
+    before)
+        names=""
+        for name in "${need[@]}"; do names="${names}${names:+, }«${name}»"; done
+        reason="Refused by the rules gate: the rules ${names} are read before this text is composed, and delivered with the write they come after the design: load all of them by the tool Skill in one turn and repeat the action. ${fallback}"
         ;;
     together)
         reason="Refused by the rules gate: the rules $(rt_gate_names "${need[@]}") of this call do not fit the host limit of ${gate_limit} characters together, so none of them arrived: load all of them by the tool Skill in one turn and repeat the action. ${fallback}"

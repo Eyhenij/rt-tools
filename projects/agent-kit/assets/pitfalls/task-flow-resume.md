@@ -98,7 +98,7 @@ A large edit that crosses several layers — the contract, the storage, the appl
 by the role pipeline:
 
 ```
-Workflow(name: "feature", args: { task: "<the plan stage>", grill: "docs/tasks/<ветка>/grill.md" })
+Workflow(name: "feature", args: { task: "<the plan stage>", grill: "docs/tasks/<ветка>/grill.md", base: "origin/<base>" })
 ```
 
 The pipeline makes a plan of its own, up to six steps: its points role reads the task and epic plans,

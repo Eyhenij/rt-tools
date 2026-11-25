@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · docs/GLOSSARY.md · 8e55fcdc1425 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · docs/GLOSSARY.md · 6268f40dd3d1 · правится надстройкой, не здесь -->
 # Project glossary
 
 Words that mean something definite in this tree. Read before writing a spec, a rule, a comment,
@@ -25,6 +25,10 @@ sections through the override; they merge here by heading, and a package edit do
 - **Binding** — a `` `file:symbol` `` line in a companion or in a spec sidecar: the place where a statement is carried out
 - **Sidecar** — a file next to a spec or a rule: a companion, a list of scenarios
 - **Product agreement** — how the product will behave, written before the code: the only place where a spec speaks of the future. After the rollout it merges into the domain spec
+- **Coupling** — how many modules know a module and how many it knows; counted by imports, before an edit and after it
+- **Cohesion** — how far the parts of a module serve one duty. Said as one sentence without «and»
+- **SOLID, GRASP, Gang of Four** — the sets of design techniques. One of them is taken for a named problem, by the table of the pattern `code-design-choose`
+- **Isolation** — a module is called through its entry, tested and changed without its neighbours
 - **Resource** — a unit of what the rules package ships: a law, a rule, a pattern, a guard, a check, a role, a command, a pipeline, a template, a default, a document
 - **Layout** — the transfer of a resource from the package into the tree, by its kind and by the layer settings
 - **Laid-out file** — a file in the tree with the package header. Edited through the override, not in place: an in-place edit is lost on the next layout
@@ -48,6 +52,10 @@ sections through the override; they merge here by heading, and a package edit do
 - **Progress** — a file of the task folder: "Where we stand", decisions along the way with reasons, session entries. The only place where done work is marked. Not called a log
 - **Work state** — the unit by which work is conducted: each has a named entry, a mandatory action and an exit. Measured by the flow script from the branch, the task folder and the host; the line in the "Where we stand" section of the progress mirrors it and never stands ahead of it
 - **Task footprint** — a section of the plan: which specs, laws, rules and parts of the code the work touches
+- **Decision** — a section of the plan: how the code will be built, written before the code. A row of its table is a decision row
+- **Place** — a path and a symbol joined by a colon, `path:symbol`: where in the code a decision row stands
+- **Mismatch** — a line about what the decision of the plan promised and the code of the head does not hold. The stages are not over while one stands
+- **Lift** — an item of the decisions of the progress, or of a commit once the folder is taken apart. It names the path, the place or the symbol of a mismatch as the subject of the line, the word of an overrun and a reason. A refusal of the coupling command is lifted only by the command itself
 - **Session** — one sitting of work on a task. Work lives longer than a session, and between sessions its state is held by the progress
 - **Window fill** — the share of the session's room already taken: the input, the cache write, the cache read and the last reply's output, divided by the window size. Not "spend" and not "budget": it is about room, not cost
 - **Handover** — the text that closes a session: working tree, branch, task, where the progress lies, what is done, the next step, what was special about the session. Written as a section of the progress and travels with the branch; without a task folder, and from the session-closing command, it is a file outside the tree
@@ -83,6 +91,8 @@ one, so that the same notion does not arrive under three names.
 | binding           | привязка                  |
 | check             | проверка                  |
 | companion         | файл привязок                 |
+| decision          | решение                   |
+| decision row      | строка решения            |
 | digest            | сводка                    |
 | disabled role     | выключенная роль          |
 | domain            | домен                     |
@@ -100,13 +110,16 @@ one, so that the same notion does not arrive under three names.
 | laid-out file     | файл, установленный из пакета |
 | law               | закон                     |
 | layout            | установка файлов из пакета    |
+| lift              | снятие                        |
 | measurement       | измерение                     |
 | merge             | слияние                   |
+| mismatch          | расхождение                   |
 | observation       | наблюдение                |
 | override          | переопределение               |
 | owner             | владелец                  |
 | pattern           | паттерн                   |
 | pipeline, step    | конвейер, шаг             |
+| place             | место                         |
 | plan              | план                          |
 | PR                | PR                            |
 | product agreement | описание фичи                 |
