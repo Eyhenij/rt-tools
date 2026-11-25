@@ -63,9 +63,9 @@ End to end, the suites a change touches are the ones
 reaches. `everything` runs the whole set before the push and `show2` the showcase; neither demands a
 test. The coverage guard judges the pushed head: a commit with the test is pushed before `gh pr create`.
 
-The showcase frames have one road: `node tools/visual-gate.mjs ui-kit-v2`, the whole set, about
-eight minutes. A path sample after the kit matches the named story files alone, and after
-`--update` re-takes them; a pointed match is for the edit at hand, the push set runs the whole one.
+The showcase frames have one road: `node tools/visual-gate.mjs ui-kit-v2 --affected <base>`, the stories
+the branch touched, the push set's own line. The whole set is the step of a PR into `main`. A path
+sample after the kit matches the named story files, and after `--update` re-takes them.
 
 A heavy run goes alone and in the background: the two calls above, one after the other. The affected run outlasts a foreground call on a cold
 cache, and the showcase frames fall with ECONNRESET beside the tests of the packages.

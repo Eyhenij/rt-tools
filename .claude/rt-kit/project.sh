@@ -255,7 +255,8 @@ EOF
     # against: everything is run, and the completeness matching calls the function with that same
     # empty base — it sees the list whole.
     e2e='pnpm exec nx run message-bus-admin-e2e:e2e'
-    shot_v2='node tools/visual-gate.mjs ui-kit-v2'
+    # A branch shoots the stories it touched; with no base the whole set, the one the pipeline runs.
+    shot_v2="node tools/visual-gate.mjs ui-kit-v2${1:+ --affected $1}"
     img_api='docker build -f deploy/message-bus.Dockerfile -t message-bus:gate .'
     img_web='docker build -f deploy/message-bus-web.Dockerfile -t message-bus-web:gate .'
     auth_stand='pnpm run serve:auth && pnpm run check:auth-stand'
@@ -323,7 +324,7 @@ rt_push_touched() {
             projects/ui-kit-v2/*.spec.ts) ;;
             projects/ui-kit-v2/.storybook/*|projects/ui-kit-v2/src/showcase/*|projects/ui-kit-v2/*.stories.ts|projects/ui-kit-v2/*.mdx) _add show2 ;;
             # The snapshot step's scripts shoot the showcase.
-            tools/visual-snapshots-v2.mjs|tools/visual-gate.mjs|tools/shot-browser.mjs|tools/shot-forward.mjs|tools/shot-browser-name.mjs|tools/showcase-probe.mjs|tools/serve-static.mjs) _add show2 ;;
+            tools/visual-snapshots-v2.mjs|tools/visual-gate.mjs|tools/affected-stories.mjs|tools/story-graph.mjs|tools/snapshot-*-probe.mjs|tools/shot-browser.mjs|tools/shot-forward.mjs|tools/shot-browser-name.mjs|tools/showcase-probe.mjs|tools/serve-static.mjs) _add show2 ;;
             # A code graph is data the session reads; above the subjects, as it lies inside a project.
             # The formatter's ignore list is read by the formatter alone, and no heavy step runs it.
             docs/*|*.md|.claude/*|projects/agent-kit/*|tools/*|graphify-out/*|*/graphify-out/*|.prettierignore) ;;
