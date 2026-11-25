@@ -18,8 +18,14 @@ import { pathToFileURL } from 'node:url';
 
 /** The version of the tool whose file list, ignore list and oxlint settings the pass copies. */
 const PASS_VERSION = '0.3.0';
+/**
+ * The dot directories, left out of the walk: no file of them comes into the tool's answer, and the
+ * packages of a working copy lying there are hundreds of thousands. `ngdoctor-dot-dirs.mjs` gives
+ * the tool the same ignore.
+ */
+export const DOT_DIRS = '**/.*/**';
 const PASS_GLOBS = ['**/*.ts', '**/*.html'];
-const PASS_IGNORE = ['**/node_modules/**', '**/dist/**', '**/.angular/**', '**/coverage/**', '**/*.spec.ts', '**/angular-doctor-report.html'];
+const PASS_IGNORE = [DOT_DIRS, '**/node_modules/**', '**/dist/**', '**/.angular/**', '**/coverage/**', '**/*.spec.ts', '**/angular-doctor-report.html'];
 /** The oxlint settings version 0.3.0 writes; the pass uses them beside a saved output only. */
 export const PASS_OXLINT_SETTINGS = {
     $schema: './node_modules/oxlint/configuration_schema.json',
@@ -33,7 +39,7 @@ const PASS_TEMPLATE_FILES = ['**/*.html', '/**/*.html', '**/*.ts', '/**/*.ts'];
  */
 const PASS_PACKAGE_GLOB = '**/package.json';
 const PASS_STYLE_GLOB = '**/*.{css,scss}';
-const PASS_TOOL_IGNORE = ['**/node_modules/**', '**/dist/**', '**/.angular/**'];
+const PASS_TOOL_IGNORE = [DOT_DIRS, '**/node_modules/**', '**/dist/**', '**/.angular/**'];
 
 /**
  * The major version of `tailwindcss` a package names, as 0.3.0 takes it: the first section that

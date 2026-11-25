@@ -74,6 +74,11 @@
  * `tailwind.config.*`: the tool only finds that file. A pass that lost a file refuses `--write` too.
  * About a second.
  *
+ * Neither the tool nor the pass enters a dot directory: `dot: false` takes no file from there, but
+ * the walk went through the packages of a working copy lying inside the tree. The tool is kept out
+ * by `tools/ngdoctor-dot-dirs.mjs`, loaded before it; the probe holds a dot directory nobody can
+ * list, so a run without that module is red.
+ *
  * The tool is run here, not piped in: with a temporary directory of its own, removed after the run,
  * because the tool writes its oxlint settings into the shared temporary directory once and reads
  * them from there in every later run of any version.
@@ -93,7 +98,7 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { PASS_OXLINT_SETTINGS, passOver } from './check-ngdoctor-pass.mjs';
 import { configProblem, packageFieldProblem } from './check-ngdoctor-settings.mjs';
@@ -103,6 +108,10 @@ const THRESHOLD_FILE = join(ROOT, 'tools', 'ngdoctor-threshold.json');
 const CONFIG_FILE = join(ROOT, 'angular-doctor.config.json');
 const PACKAGE_FILE = join(ROOT, 'package.json');
 const TOOL_PACKAGE = join(ROOT, 'node_modules', '@abiramcodes', 'angular-doctor', 'package.json');
+
+const TOOL_BIN = join(dirname(TOOL_PACKAGE), 'bin', 'angular-doctor.js');
+/** What keeps the tool out of the dot directories; loaded into its process before it. */
+const DOT_DIRS_MODULE = pathToFileURL(join(ROOT, 'tools', 'ngdoctor-dot-dirs.mjs')).href;
 
 /** The value of a flag that takes one. */
 function flag(name) {
@@ -125,7 +134,7 @@ const PROBE_SOURCES = [...new Set(PROBE_FINDINGS.map((f) => f.source))];
 
 /** The JSON text of a run of the tool, with its own temporary directory; `null` text on a failure. */
 function runTool(own, args) {
-    const run = spawnSync('pnpm', ['run', '-s', 'ngdoctor', '--json', ...args], {
+    const run = spawnSync(process.execPath, ['--import', DOT_DIRS_MODULE, TOOL_BIN, '--json', ...args], {
         cwd: ROOT,
         env: { ...process.env, TMPDIR: own },
         encoding: 'utf8',
@@ -179,6 +188,9 @@ function writeProbe(own, omit) {
     mkdirSync(app, { recursive: true });
     const angular = versionOf(join(ROOT, 'package.json'), '@angular/core');
     writeFileSync(join(dir, 'angular.json'), JSON.stringify({ version: 1, projects: { probe: { root: '', sourceRoot: 'src', projectType: 'application' } } }));
+    // A dot directory the tool cannot list: it stops on it, unless it is kept out of them.
+    mkdirSync(join(dir, '.copy'));
+    mkdirSync(join(dir, '.copy', 'locked'), { mode: 0 });
     writeFileSync(join(dir, 'package.json'), JSON.stringify({ name: 'probe', version: '0.0.0', dependencies: { '@angular/core': angular } }));
     const type = omit === 'template-eslint' ? ' type="button"' : '';
     const compare = omit === 'oxlint' ? '===' : '==';
