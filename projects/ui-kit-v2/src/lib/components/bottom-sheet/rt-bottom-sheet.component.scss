@@ -245,6 +245,16 @@
                 outline: 2px solid transparent;
             }
 
+            /* Нижняя строка карточки скруглена как её низ: кольцо фокуса идёт по углу, а не срезается им. */
+            &:last-child {
+                border-radius: 0 0 var(--rt-bottom-sheet-confirm-radius) var(--rt-bottom-sheet-confirm-radius);
+            }
+
+            /* Строка «остаться» — вся карточка: кольцо скруглено со всех сторон. */
+            &:only-child {
+                border-radius: var(--rt-bottom-sheet-confirm-radius);
+            }
+
             &--danger {
                 color: var(--rt-color-action-danger-on-surface);
             }

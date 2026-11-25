@@ -93,6 +93,15 @@ describe('стили панели-шторки', (): void => {
         expect(icons).toContain('--rt-icon-step-md: var(--rt-size-4)');
     });
 
+    it('SC-UKV-1851 — нижняя строка карточки вопроса скруглена как карточка: кольцо фокуса не срезается углом', (): void => {
+        expect(ruleBody(sheet, '.rt-bottom-sheet__confirm-row:last-child')).toContain(
+            'border-radius: 0 0 var(--rt-bottom-sheet-confirm-radius) var(--rt-bottom-sheet-confirm-radius)'
+        );
+        expect(ruleBody(sheet, '.rt-bottom-sheet__confirm-row:only-child')).toContain(
+            'border-radius: var(--rt-bottom-sheet-confirm-radius)'
+        );
+    });
+
     it('SC-UKV-1810 — подвал панели-шторки — подвал шторки кита: 12 над кнопками и под ними, своего правила у панели нет', (): void => {
         expect(ruleBody(frame, 'rt-aside > rt-bottom-sheet > .rt-bottom-sheet__panel > .rt-bottom-sheet__footer')).toBe('');
         expect(ruleBody(sheet, '.rt-bottom-sheet__footer')).toContain(
