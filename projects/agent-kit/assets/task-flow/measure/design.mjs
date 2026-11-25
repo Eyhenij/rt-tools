@@ -190,7 +190,8 @@ function liftsOf(git, head, design, folder) {
         return LIFT.test(item) && (reason.match(/\p{L}{2,}/gu) ?? []).length >= 2;
     });
 }
-const lifts = (item, key) => new RegExp(`(?:^|[\\s\`(«])${escaped(key)}(?=[\\s\`),.;:»]|$)`, 'iu').test(item);
+/** A line names the key whole or by its tail after a `/`: a full path of the plan, a short one of the progress. */
+const lifts = (item, key) => new RegExp(`(?:^|[\\s\`(«])(?:${key.split('/').map((_, at, parts) => escaped(parts.slice(at).join('/'))).join('|')})(?=[\\s\`),.;:»]|$)`, 'iu').test(item);
 
 /** The mismatches of the code with the decision of the plan, each as one line. */
 export function gaps({ git, design, coupling }) {

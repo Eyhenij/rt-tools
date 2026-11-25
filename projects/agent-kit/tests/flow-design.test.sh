@@ -15,6 +15,8 @@ fd_run() {
     while IFS='|' read -r label got want; do
         [ -n "$label" ] || continue
         count=$((count + 1))
+        # Строка без ожидания — вывод упавшего JS, не случай.
+        [ -n "$want" ] || { report "строка случая: $label" "без ожидания" "с ожиданием"; continue; }
         report "$label" "$got" "$want"
     done <<< "$out"
     [ "$count" -gt 0 ] || report "группа случаев напечатала строки" "нет" "да"
@@ -142,6 +144,55 @@ check('SC-AK-1974 — план чужой ветки', { text: LOST, planBranch:
 check('SC-AK-1974 — ветки нет', { text: LOST, branch: '', after: { 'x.md': 'y\n' } });
 check('SC-AK-1974 — судится первая версия плана', { text: LOST, after: { [`${F}/plan.md`]: plan('Текст.') } }, GONE);
 check('SC-AK-1974 — папка разобрана', { text: LOST, after: { [`${F}/plan.md`]: null } }, GONE);
+JS
+
+# --- SC-AK-1975 — бюджет и снятие --------------------------------------------------------------------
+fd_group << 'JS'
+const L = (n) => 'x\n'.repeat(n);
+const pathsOf = (...sets) => [...new Set(sets.flatMap((set) => [set].flat()).flatMap((one) => Object.keys(one.files ?? one)))].filter((path) => !path.startsWith('docs/'));
+const budget = (label, cell, before, after, want, coupling) => check(`SC-AK-1975 — ${label}`, { text: decision({ Бюджет: cell }, pathsOf(before, after)), before, after, coupling }, want);
+budget('«до N», файл короче', '`a/b.mjs` до 3 строк', {}, { 'a/b.mjs': L(2) });
+budget('«до N», файл равен', '`a/b.mjs` до 3 строк', {}, { 'a/b.mjs': L(3) });
+budget('«до N», файл длиннее', '`a/b.mjs` до 3 строк', {}, { 'a/b.mjs': L(4) }, '`a/b.mjs` holds 4 lines, the budget is 3');
+budget('«до N» коротким путём', '`b.mjs` до 3 строк', {}, { 'x/a/b.mjs': L(4) }, '`b.mjs` holds 4 lines');
+budget('«плюс N» в пределах', '`a/b.mjs` плюс 2', { 'a/b.mjs': L(3) }, { 'a/b.mjs': L(5) });
+budget('«плюс N» сверх', '`a/b.mjs` плюс 2', { 'a/b.mjs': L(3) }, { 'a/b.mjs': L(6) }, '`a/b.mjs` grew by 3 lines, the budget is 2');
+budget('«плюс N» у нового файла', '`a/b.mjs` плюс 2', {}, { 'a/b.mjs': L(3) }, 'grew by 3 lines');
+budget('двоичный файл', '`a/b.png` до 1', {}, { 'a/b.png': 'a\0b\nc\nd\n' });
+budget('удалённый файл', '`a/b.mjs` до 3 строк', { 'a/b.mjs': L(9) }, { 'a/b.mjs': null });
+budget('число без пути', 'файлы до 3 строк', {}, { 'a/b.mjs': L(9) });
+budget('новых файлов кода больше', 'новых файлов кода: 1', {}, { 'a/b.mjs': L(1), 'a/c.mjs': L(1) }, 'new code files 2, the budget is 1');
+budget('новых файлов кода столько же', 'новых файлов кода: 2', {}, { 'a/b.mjs': L(1), 'a/c.mjs': L(1), 'a/d.md': L(1) });
+const PKG = (deps) => JSON.stringify({ name: 'a', dependencies: deps }, null, 2);
+budget('новая зависимость', 'новых зависимостей: 0', { 'package.json': PKG({ a: '1' }) }, { 'package.json': PKG({ a: '1', b: '2' }) }, 'new dependencies 1, the budget is 0');
+budget('правка версии зависимости', 'новых зависимостей: 0', { 'package.json': PKG({ a: '1' }) }, { 'package.json': PKG({ a: '2' }) });
+budget('зависимости не правились', 'новых зависимостей: 0', { 'package.json': PKG({ a: '1' }) }, { 'a/b.mjs': L(1) });
+budget('слита база с чужой зависимостью', 'новых зависимостей: 0', { 'package.json': PKG({ a: '1' }) }, [{ own: false, files: { 'package.json': PKG({ a: '1', b: '2' }) } }, { 'package.json': PKG({ a: '2', b: '2' }) }]);
+budget('слита база с чужим новым файлом', 'новых файлов кода: 0', {}, [{ own: false, files: { 'a/c.mjs': L(1) } }, { 'a/d.md': L(1) }]);
+
+const progress = (part, line) => ({ [`${F}/progress.md`]: `# Progress\n\n## ${part}\n\n- ${line}\n` });
+const OVER = '`a/b.mjs` holds 4 lines';
+const lift = (label, line, want = 'чисто', { cell = '`a/b.mjs` до 3 строк', file = 'a/b.mjs', part = 'Decisions along the way' } = {}) =>
+    budget(label, cell, {}, { [file]: L(4), ...progress(part, line) }, want);
+lift('снятие строкой решений с причиной', '**`a/b.mjs` — 4 строки: превышение.** Довод: разбор стоит в том же модуле.');
+lift('снятие словами «отказ от»', '`a/b.mjs`: отказ от бюджета, разбор стоит в том же модуле');
+lift('снятие по-английски', '`a/b.mjs` overrun: the parser stays in the module');
+lift('снятие без причины', '`a/b.mjs` — превышение 4', OVER);
+lift('снятие без слова превышения', '`a/b.mjs` — разбор стоит в том же модуле', OVER);
+lift('снятие другого пути', '`a/c.mjs` — превышение: разбор стоит в том же модуле', OVER);
+lift('снятие вне раздела решений', '`a/b.mjs` — превышение: разбор стоит в том же модуле', OVER, { part: 'Sessions' });
+lift('коротким путём снимается полный', '`a/b.mjs` — превышение: разбор стоит в том же модуле', 'чисто', { cell: '`x/a/b.mjs` до 3 строк', file: 'x/a/b.mjs' });
+lift('снятие числа новых файлов', 'новых файлов кода — превышение: набор нужен отдельный', 'чисто', { cell: 'новых файлов кода: 0' });
+const AFTER = (text, own = true) => [{ 'a/b.mjs': L(4), ...progress('Decisions along the way', 'нет') }, { own, text, files: { [`${F}/progress.md`]: null } }];
+budget('папка разобрана, снятие коммитом', '`a/b.mjs` до 3 строк', {}, AFTER('docs: архив\n\n`a/b.mjs` — превышение: разбор стоит в том же модуле'));
+budget('папка разобрана, снятие чужим коммитом', '`a/b.mjs` до 3 строк', {}, AFTER('`a/b.mjs` — превышение: разбор стоит в том же модуле', false), OVER);
+budget('стопка двух задач, снятие в папке нижней', '`a/b.mjs` до 3 строк', { 'docs/tasks/RT-0-z/progress.md': '# Progress\n\n## Decisions along the way\n\n- `a/b.mjs` — превышение: разбор стоит в том же модуле\n' }, { 'a/b.mjs': L(4) }, OVER);
+const HELD = '`a/b.mjs` — превышение: связь нужна разбору';
+const refused = (label, problem, want = problem) => budget(label, '`a/b.mjs` до 9 строк', {}, { 'a/b.mjs': L(1), ...progress('Decisions along the way', HELD) }, want, { answered: true, problems: [problem], now: new Map() });
+refused('новый цикл не снимается', 'a new cycle: a/b.mjs → a/c.mjs → a/b.mjs');
+refused('новый обход входа не снимается', 'a/b.mjs imports c/d.mjs past the entry c/index.mjs');
+refused('новый цикл с путём в кавычках не снимается', 'a new cycle: `a/b.mjs` → `a/c.mjs` → `a/b.mjs`');
+refused('рост связей снимается', '`a/b.mjs` outgoing 1 → 3; the branch named 2', 'чисто');
 JS
 
 suite_result "код против решения плана"
