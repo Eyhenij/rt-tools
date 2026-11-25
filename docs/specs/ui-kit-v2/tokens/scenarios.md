@@ -211,8 +211,9 @@ Covered: `projects/ui-kit-v2/src/styles/color-scheme.theme.spec.ts`.
 
 Given the tokens are built
 When the whole file is cut into the base and the local pieces of the theme
-Then the whole `tokens.css` keeps its bytes; the base holds no island of the theme and no root rule of the set
-Material under the dark theme; the scope holds them and ends with the density rules; the two files share only the
-density properties; a whole file that does not fold from the head, the middle and the tail refuses the cut
+Then the whole `tokens.css` keeps its bytes; the base holds a copy of the root rule of the set Material under the
+dark theme and no island of the theme; the scope holds the islands, the same root rule as the whole file and the
+density rules at its end; the two files share only the density properties; a whole file that does not fold from
+the head, the middle and the tail refuses the cut
 
 Covered: `tools/tests/build-tokens-split.test.sh`, called by `pnpm run test:checks`.

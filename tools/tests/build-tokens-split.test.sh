@@ -9,7 +9,11 @@ STYLES="$TOOLS/../dist/ui-kit-v2/styles"
 SPLIT="$TOOLS/build-tokens-split.mjs"
 
 if [ ! -f "$STYLES/tokens.css" ]; then
-    echo "  skipped: the tokens are not built (pnpm run build:tokens-v2)"
+    echo "  the tokens are not built (pnpm run build:tokens-v2)"
+    # In the pipeline and in the push set a missing build is a refusal, not a skip.
+    if [ -n "$CI" ] || [ -n "$RT_PUSH" ]; then
+        exit 1
+    fi
     suite_result "build-tokens-split"
     exit $?
 fi
@@ -33,7 +37,8 @@ report "only the density and the root rule are repeated" "$([ "$REPEAT" -gt 0 ] 
 
 # The base holds no island of the theme, but it holds the page root with the set Material and the dark
 # theme: that rule wins by weight, so the base works for such a page without the scope.
-report "the base has no island of the theme" "$(count "$OUT/tokens.base.css" '^\[data-theme=dark\] \[data-preset=material\]')" "0"
+report "the base has no island of the set under a page theme" "$(count "$OUT/tokens.base.css" '^\[data-theme=dark\] \[data-preset=material\]')" "0"
+report "the base has no island of a light or dark node" "$(grep -cE '^(\[data-theme=(light|dark)\]:not\(:root\)|\.rt-preset-material:not\(:root\)|html\.rt-theme-dark \[data-preset)' "$OUT/tokens.base.css" || true)" "0"
 report "the base holds the page root with the set and the dark theme" "$(count "$OUT/tokens.base.css" '^:root\[data-theme=dark\]\[data-preset=material\]')" "1"
 report "the scope holds the same root rule as the full file" "$(count "$OUT/tokens.scope.css" '^:root\[data-theme=dark\]\[data-preset=material\]')" "1"
 report "the scope holds the islands of the set" "$([ "$(count "$OUT/tokens.scope.css" '^\[data-theme=dark\] \[data-preset=material\]')" -gt 0 ] && echo yes)" "yes"
