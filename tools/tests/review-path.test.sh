@@ -44,8 +44,10 @@ repo() {
 }
 
 run() { (cd "$REPO" && node "$TOOLS/review-path.mjs" "$@" 2>&1); }
-path_of() { run --base base | head -1 | cut -d' ' -f2; }
-reason_of() { run --base base | sed -n 2p | sed 's/^ *//; s/:.*//'; }
+# The diff alone is judged, hence the named head: the word of the plan has cases of its own.
+path_of() { run --base base --head HEAD | head -1 | cut -d' ' -f2; }
+line_two() { run --base base "$@" | sed -n 2p | sed 's/^ *//'; }
+reason_of() { line_two --head HEAD | sed 's/:.*//'; }
 
 # change <name> <path> <text>: the answer for one changed file; `changed` adds the sign it names.
 change() {
@@ -62,7 +64,7 @@ changed() {
 # --- the size ------------------------------------------------------------------------------------------
 report "150 lines of code are light" "$(change l150 tools/new.mjs "$(lines 150)")" лёгкий
 report "151 lines of code are full" "$(change l151 tools/new.mjs "$(lines 151)")" полный
-report "the reason names the count and the limit" "$(REPO="$WORK/l151"; run --base base | sed -n 2p | sed 's/^ *//')" 'строк кода 151, предел 150'
+report "the reason names the count and the limit" "$(REPO="$WORK/l151"; line_two --head HEAD)" 'строк кода 151, предел 150'
 report "removed lines are counted too" "$(
     repo removed
     put tools/big.mjs "$(lines 151)"
@@ -88,19 +90,19 @@ for at in .claude/rt-kit/assignments.md .claude/rt-kit/postmortems/a.md tools/ch
 done
 report "a migration is full" "$(changed migration prisma/migrations/1/migration.sql 'x' | paste -sd- -)" 'полный-миграции'
 for at in projects/auth-server/src/lib/a.ts deploy/a.yml .github/workflows/ci.yml libs/message-bus-api/access/data-access/src/lib/a.ts apps/message-bus/src/app/a.guard.ts; do
-    report "$at is security" "$(change "s$(printf '%s' "$at" | tr -c 'a-z0-9' _)" "$at" 'const a = 1;' >/dev/null; run --base base | grep -c 'безопасность')" 1
+    report "$at is security" "$(change "s$(printf '%s' "$at" | tr -c 'a-z0-9' _)" "$at" 'const a = 1;' >/dev/null; run --base base --head HEAD | grep -c 'безопасность')" 1
 done
 report "a line with innerHTML is security" "$(changed html libs/x/src/a.ts 'el.innerHTML = v;' | paste -sd- -)" 'полный-безопасность'
 report "a test with innerHTML is not" "$(change htmlt libs/x/src/a.spec.ts 'el.innerHTML = v;')" лёгкий
 for at in libs/message-bus-admin/list/ui/src/lib/list.scss apps/message-bus-admin/src/index.html projects/ui-kit-v2/src/assets/icons/a.svg; do
-    report "$at is a change of look" "$(change "v$(printf '%s' "$at" | tr -c 'a-z0-9' _)" "$at" 'x' >/dev/null; run --base base | grep -c 'смена вида')" 1
+    report "$at is a change of look" "$(change "v$(printf '%s' "$at" | tr -c 'a-z0-9' _)" "$at" 'x' >/dev/null; run --base base --head HEAD | grep -c 'смена вида')" 1
 done
 LIST=libs/message-bus-admin/list/ui/src/lib/list.component.ts
 report "an inline template of the admin is a change of look" "$(repo inl; sed -i.bak 's/<i>/<u>/' "$REPO/$LIST"; rm "$REPO/$LIST.bak"; commit work; path_of; reason_of)" $'полный\nсмена вида'
 report "code of the admin beside its template is light" "$(repo inl2; sed -i.bak 's/return 1/return 2/' "$REPO/$LIST"; rm "$REPO/$LIST.bak"; commit work; path_of)" лёгкий
 
 for at in package.json eslint.config.mjs nx.json .husky/pre-push .gemini/a.json projects/agent-kit/src/a.ts projects/agent-kit/package.json tools/tests/run-all.sh; do
-    report "$at is a guard of the rules" "$(change "h$(printf '%s' "$at" | tr -c 'a-z0-9' _)" "$at" 'x' >/dev/null; run --base base | grep -c 'защиты правил')" 1
+    report "$at is a guard of the rules" "$(change "h$(printf '%s' "$at" | tr -c 'a-z0-9' _)" "$at" 'x' >/dev/null; run --base base --head HEAD | grep -c 'защиты правил')" 1
 done
 for at in CLAUDE.md README.md LICENSE; do
     report "a text of the root is no guard: $at" "$(change "u$(printf '%s' "$at" | tr -c 'a-zA-Z0-9' _)" "$at" 'x')" лёгкий
@@ -116,6 +118,18 @@ report "a dropped test of a guard is a guard" "$(
     path_of
     reason_of
 )" $'полный\nзащиты правил'
+report "a dropped test of the rules package is a guard" "$(
+    repo droppedkit
+    put projects/agent-kit/tests/some.test.sh 'x'
+    commit test
+    g branch -f base HEAD
+    g checkout -b RT-7-next
+    rm "$REPO/projects/agent-kit/tests/some.test.sh"
+    commit work
+    path_of
+    reason_of
+)" $'полный\nзащиты правил'
+report "a changed test of the rules package is light" "$(change kittest projects/agent-kit/tests/some.test.sh 'x')" лёгкий
 report "a file that was laid out is a guard after it loses the header" "$(
     repo unlaid
     put tools/own.mjs '// rt-kit v0.39.1 · checks/own.mjs\nconst a = 1;'
@@ -128,14 +142,26 @@ report "a file that was laid out is a guard after it loses the header" "$(
     reason_of
 )" $'полный\nзащиты правил'
 for at in docker-compose.yml apps/x/.env libs/message-bus-api/intake/src/lib/token.service.ts apps/message-bus/src/app/cors.ts apps/x/src/a.middleware.ts projects/core/src/lib/crypt.ts .verdaccio/config.yml; do
-    report "$at is security" "$(change "z$(printf '%s' "$at" | tr -c 'a-z0-9' _)" "$at" 'const a = 1;' >/dev/null; run --base base | grep -c 'безопасность')" 1
+    report "$at is security" "$(change "z$(printf '%s' "$at" | tr -c 'a-z0-9' _)" "$at" 'const a = 1;' >/dev/null; run --base base --head HEAD | grep -c 'безопасность')" 1
 done
 n=0
 for line in 'inject(DomSanitizer);' 'el.outerHTML = v;' 'el.insertAdjacentHTML(a, b);' 'if (url.protocol === p) {}' 'db.$queryRawUnsafe(q);' "import { createHash } from 'node:crypto';" 'eval(a);'; do
     n=$((n + 1))
-    report "the line is security: $line" "$(change "sl$n" libs/x/src/a.ts "$line" >/dev/null; run --base base | grep -c 'безопасность')" 1
+    report "the line is security: $line" "$(change "sl$n" libs/x/src/a.ts "$line" >/dev/null; run --base base --head HEAD | grep -c 'безопасность')" 1
 done
-report "the name of a design token of the kit is not security" "$(change dt projects/ui-kit-v2/src/lib/tokens.logic.ts 'const a = 1;' >/dev/null; run --base base | grep -c 'безопасность')" 0
+for at in projects/cms-server/src/lib/cms-access.ts libs/message-bus-api/chat/util/src/lib/chat-origin.logic.ts libs/message-bus-api/chat/util/src/lib/chat-entry.logic.ts libs/message-bus-admin/common/container/data-access/src/lib/auth.store.ts projects/cms-angular/src/lib/editor/editor-paste.function.ts projects/cms-angular/site/src/lib/block/embed-src.function.ts; do
+    report "$at is security" "$(change "y$(printf '%s' "$at" | tr -c 'a-z0-9' _)" "$at" 'const a = 1;' >/dev/null; run --base base --head HEAD | grep -c 'безопасность')" 1
+done
+repo imports
+put libs/x/src/a.ts "import { timingSafeEqual } from 'node:crypto';\nconst LIMIT = 1;"
+commit base2
+g branch -f base HEAD
+g checkout -b RT-7-next
+put libs/x/src/a.ts "import { timingSafeEqual } from 'node:crypto';\nconst LIMIT = 2;"
+commit work
+report "any line of a file that checks signatures is security" "$(path_of)-$(reason_of)" 'полный-безопасность'
+report "a drawn view of an application is a change of look" "$(changed view apps/chat-widget/src/lib/a.view.ts 'x' | paste -sd- -)" 'полный-смена вида'
+report "the name of a design token of the kit is not security" "$(change dt projects/ui-kit-v2/src/lib/tokens.logic.ts 'const a = 1;' >/dev/null; run --base base --head HEAD | grep -c 'безопасность')" 0
 report "a folder of migrations elsewhere is full" "$(changed migr2 libs/x/migrations/1.sql 'x' | paste -sd- -)" 'полный-миграции'
 # look <name> <before> <after>: the answer for a component of the admin changed from one text to the other.
 look() {
@@ -166,6 +192,8 @@ kit k1 's/return 1/return 2/' ''
 report "a visible kit file without its record is a change of look" "$(path_of)-$(reason_of)" 'полный-смена вида'
 kit k2 's/return 1/return 2/' '- **Без вида:** «одобряю»'
 report "with the record «Без вида» it is light" "$(path_of)" лёгкий
+kit k7 's/<b>/<u>/' '- **Без вида:** «одобряю»'
+report "an inline template of the kit is a change of look, record or not" "$(path_of)-$(reason_of)" 'полный-смена вида'
 kit k3 "s/'m'/'l'/" '- **Без вида:** «одобряю»'
 report "a changed input is the public API, record or not" "$(path_of)-$(reason_of)" 'полный-публичный API'
 kit k4 "s/rt-tag'/rt-tags'/" '- **Без вида:** «одобряю»'
@@ -232,7 +260,13 @@ report "a type of the receiver is full" "$(shape b10 'export interface A {\n    
 report "a function of the receiver is light" "$(shape b11 'export function f(a: string): void {}' 'export function f(a: number): void {}' libs/message-bus-api/trees/domain/src/lib/a.ts)" лёгкий
 report "the peers of a package are full" "$(api b12 projects/utils/package.json 's/"dependencies": {}/"dependencies": {}, "peerDependencies": {"a": "1"}/')" полный
 report "a key nobody named is full" "$(api b13 projects/utils/package.json 's/"dependencies": {}/"dependencies": {}, "sideEffects": true/')" полный
-report "a contract file is full" "$(change b14 projects/auth-x/proto/a.proto 'x')" полный
+report "a contract file is full" "$(changed b14 projects/cms-contract/proto/a.proto 'x' | paste -sd- -)" 'полный-публичный API'
+report "the value of a typed constant is full" "$(shape b16 "export const A: string = 'a';" "export const A: string = 'b';")" полный
+report "the value of a typed function is light" "$(shape b17 'export const f: F = () => 1;' 'export const f: F = () => 2;')" лёгкий
+report "a constant the file keeps and the shape names is full" "$(shape b18 "const K: string[] = ['a'];\nexport type T = (typeof K)[number];" "const K: string[] = ['b'];\nexport type T = (typeof K)[number];")" полный
+report "a constant named through another is full" "$(shape b19 "const K: string = 'a';\nconst M: string = K;\nexport { M };" "const K: string = 'b';\nconst M: string = K;\nexport { M };")" полный
+report "a constant the shape does not name is light" "$(shape b20 'const K: number = 1;\nexport function f(): void {}' 'const K: number = 2;\nexport function f(): void {}')" лёгкий
+report "the tag of a page of another site is full" "$(changed b21 apps/chat-talks-embed/src/lib/a.element.ts 'x' | paste -sd- -)" 'полный-публичный API'
 report "a script of a package is full" "$(change b15 projects/utils/src/lib/a.mjs 'x')" полный
 
 # --- what cannot be read, and a chain ------------------------------------------------------------------
@@ -243,7 +277,15 @@ report "an unknown argument ends with code 2" "$(run --bese base >/dev/null; ech
 repo tab
 put 'tools/a"b.mjs' "$(lines 151)"
 commit work
-report "a path git quotes is counted" "$(path_of)" полный
+report "a path git quotes is counted" "$(line_two --head HEAD)" 'строк кода 151, предел 150'
+repo moved
+put tools/big.mjs "$(lines 151)"
+commit big
+g branch -f base HEAD
+g checkout -b RT-7-next
+g mv tools/big.mjs tools/other.mjs
+commit work
+report "a moved file is counted on both sides" "$(git -C "$REPO" config diff.renames true; line_two --head HEAD)" 'строк кода 302, предел 150'
 repo attr
 put .gitattributes '*.mjs -diff'
 commit attr
@@ -251,11 +293,11 @@ g branch -f base HEAD
 g checkout -b RT-7-next
 put tools/new.mjs "$(lines 151)"
 commit work
-report "an attribute does not hide the lines" "$(run --base base | sed -n 2p | sed 's/^ *//')" 'строк кода 151, предел 150'
+report "an attribute does not hide the lines" "$(line_two --head HEAD)" 'строк кода 151, предел 150'
 repo nul
-printf 'const a = 1;\0\n' > "$REPO/tools/new.mjs"
+lines 151 | tr '1' '\0' > "$REPO/tools/new.mjs"
 commit work
-report "a file with a zero byte is read as text" "$(path_of)" лёгкий
+report "a file with a zero byte is read as text" "$(line_two --head HEAD)" 'строк кода 151, предел 150'
 repo minus
 put tools/new.mjs "-- x\n++ el.innerHTML = v;"
 commit work
@@ -263,14 +305,14 @@ report "a line that looks like a header of the diff is read" "$(reason_of)" 'б�
 repo extdiff
 put tools/new.mjs "$(lines 151)"
 commit work
-report "an outside diff program is not asked" "$(GIT_EXTERNAL_DIFF=true run --base base | head -1)" 'путь: полный'
+report "an outside diff program is not asked" "$(GIT_EXTERNAL_DIFF=true line_two --head HEAD)" 'строк кода 151, предел 150'
 repo chain
 put tools/first.mjs "$(lines 140)"
 commit first
 g checkout -b RT-8-next
 put tools/second.mjs "$(lines 20)"
 commit second
-report "a branch of a chain is judged from the previous one" "$(run --base RT-7-work | head -1)-$(run --base base | head -1)" 'путь: лёгкий-путь: полный'
+report "a branch of a chain is judged from the previous one" "$(run --base RT-7-work --head HEAD | head -1)-$(run --base base --head HEAD | head -1)" 'путь: лёгкий-путь: полный'
 
 # --- the plan ------------------------------------------------------------------------------------------
 plan() { printf '%b\n' "$1" > "$WORK/plan.md"; run --roles "$WORK/plan.md"; }
@@ -280,7 +322,7 @@ report "a plan without the header needs both roles" "$(plan "$ROW")" 'product-st
 report "a light header needs none" "$(plan "**Путь:** лёгкий · 90 строк\n$ROW")" none
 report "a light header over the limit needs both" "$(plan "**Путь:** лёгкий · 151 строк\n$ROW")" 'product-strategist goal-critic'
 report "a plan with no edited row needs both" "$(plan '**Путь:** лёгкий · 90 строк\n| Code | `tools/own.mjs` |')" 'product-strategist goal-critic'
-report "an edited guard needs both" "$(plan '**Путь:** лёгкий · 90 строк\n| Rules (правится) | `.claude/skills/x/` |')" 'product-strategist goal-critic'
+report "an edited guard needs both" "$(plan '**Путь:** лёгкий · 90 строк\n| Rules (правится) | `.claude/skills/x/SKILL.md` |')" 'product-strategist goal-critic'
 report "a row of a whole folder needs both" "$(plan '**Путь:** лёгкий · 90 строк\n| Code (правится) | `tools/` |')" 'product-strategist goal-critic'
 KITROW='| Code (правится) | `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts` |'
 report "a kit file without the statement needs both" "$(plan "**Путь:** лёгкий · 9 строк\n$KITROW")" 'product-strategist goal-critic'
@@ -355,8 +397,43 @@ g checkout RT-7-work
 g merge --no-ff -m merge RT-9-side
 report "a commit brought by a merge lifts nothing" "$(code_of)" 1
 light c9 20 '**Task:** RT-7'
-report "a small change under a full plan is full" "$(path_of)-$(run --base base | sed -n 2p | sed 's/^ *//')" 'полный-план ветки не назван лёгким'
+report "a small change under a full plan is full" "$(run --base base | head -1)-$(line_two)" 'путь: полный-план ветки не назван лёгким'
 report "a named head is judged by its diff" "$(run --base base --head HEAD | head -1)" 'путь: лёгкий'
+g checkout --detach
+report "a detached head is the full path" "$(line_two)" 'базу или имя ветки нельзя прочесть'
+light c10 20
+report "a small change under a light plan is light" "$(run --base base | head -1)" 'путь: лёгкий'
+repo c11
+put tools/new.mjs 'const a = 1;'
+commit work
+report "a branch without a plan is the full path for both commands" "$(line_two)-$(run --round-two --base base | cut -c1-19)" 'план ветки не назван лёгким-второй круг: нужен '
+light c12 20
+g checkout -b RT-8-next
+put docs/tasks/RT-8-next/plan.md '**Task:** RT-8'
+commit plan
+report "the light plan of another task does not stand for one's own" "$(line_two)-$(code_of)" 'план ветки не назван лёгким-0'
+light c13 200
+g branch -f base HEAD
+put tools/more.mjs "$(lines 160)"
+commit more
+report "a plan the base already holds is read" "$(code_of)" 1
+light c14 200
+put docs/tasks/RT-7-work/progress.md 'круг'
+commit 'docs: имя после второго круга ревью (RT-7)'
+g checkout base
+put docs/base.md 'x'
+commit moved
+g checkout RT-7-work
+g merge --no-ff -m merge base
+report "a merge of the base after the round keeps it lifted" "$(code_of)" 0
+g checkout base
+put docs/base.md 'y'
+commit moved2
+g checkout RT-7-work
+g merge --no-ff --no-commit base
+put tools/hidden.mjs 'const h = 1;'
+commit merge
+report "code added by the merge itself brings the refusal back" "$(code_of)" 1
 
 # --- the second round ----------------------------------------------------------------------------------
 two() { run --round-two --base base "$@" | sed 's/второй круг: //; s/ — .*//; s/ (.*//'; }
@@ -369,7 +446,7 @@ report "without the number it is needed" "$(two)" 'нужен'
 report "a word in place of the number is no number" "$(two --serious none)" 'нужен'
 report "a serious finding needs it" "$(two --serious 1)" 'нужен'
 report "without findings and risk it is not needed" "$(two --serious 0)" 'не нужен'
-for at in tools/check-x.mjs .claude/hooks/x.sh projects/utils/src/lib/one.ts projects/ui-kit-v2/src/lib/a.logic.ts deploy/a.yml eslint/x.mjs .husky/x; do
+for at in projects/utils/package.json projects/cms-contract/proto/a.proto tools/verify-x.cjs apps/message-bus/eslint.config.mjs tools/check-x.mjs .claude/hooks/x.sh projects/utils/src/lib/one.ts projects/ui-kit-v2/src/lib/a.logic.ts deploy/a.yml eslint/x.mjs .husky/x; do
     light "r$(printf '%s' "$at" | tr -c 'a-z0-9' _)" 5 '**Task:** RT-7'
     put "$at" 'const z = 1;'
     commit risk
@@ -382,6 +459,12 @@ report "records alone are nothing to read" "$(two --serious 0 --since HEAD~1)" '
 put tools/own.mjs 'const a = 3;'
 report "edits left in the copy are read" "$(two --serious 0 --since HEAD~1)" 'нужен'
 g checkout -- tools/own.mjs
+put projects/utils/src/lib/z.ts 'const z = 1;'
+report "a new file left in the copy is read" "$(two --serious 0 --since HEAD~1)" 'нужен'
+rm "$REPO/projects/utils/src/lib/z.ts"
+put docs/tasks/RT-7-work/progress.md 'круг дальше'
+report "a record left in the copy is nothing to read" "$(two --serious 0 --since HEAD~1)" 'не нужен'
+g checkout -- docs
 report "a serious finding is read even without fixes" "$(two --serious 2 --since HEAD)" 'нужен'
 put tools/fix.mjs 'const f = 1;'
 commit fix

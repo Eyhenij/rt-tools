@@ -4,9 +4,10 @@
  *
  * - `shapeOf(source)` — the declarations the file gives out: signatures without bodies, classes without
  *   private members, the decorator of a class without its template and styles, the initial call of an
- *   input, an output or a model. A changed field of an interface or a parameter on a line of its own
+ *   input, an output or a model, the value of a constant unless it is a function. A changed field of an interface or a parameter on a line of its own
  *   changes the shape while no changed line holds `export`, so the shape is judged and not the lines.
- *   Types and classes the file keeps are part of it: an exported signature may name them. With
+ *   Types and classes the file keeps are part of it, and so are its constants and functions the
+ *   shape names. With
  *   `types` only the interfaces, the types and the enums are read.
  * - `viewOf(source)` — what a component draws: inline templates and styles, the host bindings, and the
  *   constants of the file they name or that are called a template, a style or a css.
@@ -99,9 +100,8 @@ function classShape(node, print) {
 function variableShape(declaration, print) {
     const value = declaration.initializer;
 
-    if (declaration.type) return `${print(declaration.name)}${typed(declaration, print)}`;
     if (value && (ts.isArrowFunction(value) || ts.isFunctionExpression(value))) {
-        return `${print(declaration.name)} = ${signature(value, print)}`;
+        return `${print(declaration.name)}${typed(declaration, print)} = ${signature(value, print)}`;
     }
 
     return print(declaration);
@@ -134,12 +134,12 @@ function listedNames(file) {
 
 const isType = (node) => ts.isInterfaceDeclaration(node) || ts.isTypeAliasDeclaration(node) || ts.isEnumDeclaration(node);
 
-/** The shape of one statement, or null when a reader of the file cannot see it. */
-function statementShape(node, print, listed) {
+/** The shape of one statement, or null when a reader of the file cannot see it; `named` — the names it can. */
+function statementShape(node, print, named) {
     if (isType(node) || ts.isModuleDeclaration(node)) return print(node);
     if (ts.isClassDeclaration(node)) return classShape(node, print);
     if (ts.isExportDeclaration(node) || ts.isExportAssignment(node)) return print(node);
-    if (!has(node, ts.SyntaxKind.ExportKeyword) && !namesOf(node).some((name) => listed.has(name))) return null;
+    if (!has(node, ts.SyntaxKind.ExportKeyword) && !namesOf(node).some((name) => named.has(name))) return null;
     if (ts.isFunctionDeclaration(node)) return signature(node, print);
     if (ts.isVariableStatement(node)) {
         return `${flavour(node)} ${node.declarationList.declarations.map((one) => variableShape(one, print)).join('; ')}`;
@@ -151,12 +151,20 @@ function statementShape(node, print, listed) {
 /** What a reader of the file sees, one declaration a line, ordered by name. */
 export function shapeOf(source, { types = false } = {}) {
     const { file, print } = parse(source);
-    const listed = listedNames(file);
+    const named = listedNames(file);
+    const nodes = file.statements.filter((node) => !types || isType(node));
+    let shown = [];
 
-    return file.statements
-        .filter((node) => !types || isType(node))
-        .map((node) => ({ name: namesOf(node)[0] ?? '', text: statementShape(node, print, listed) }))
-        .filter(({ text }) => text !== null)
+    // A name the shape holds shows its declaration, and that one may name the next.
+    for (let before = -1; shown.length !== before;) {
+        before = shown.length;
+        shown = nodes
+            .map((node) => ({ name: namesOf(node)[0] ?? '', text: statementShape(node, print, named) }))
+            .filter(({ text }) => text !== null);
+        for (const { text } of shown) for (const word of text.match(/[\w$]+/g) ?? []) named.add(word);
+    }
+
+    return shown
         .sort((a, b) => (a.name < b.name ? -1 : Number(a.name > b.name)))
         .map(({ text }) => text)
         .join('\n');

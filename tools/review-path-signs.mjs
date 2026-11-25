@@ -16,19 +16,22 @@ const NOT_CODE =
     /^docs\/|\.mdx?$|\.(spec|test)\.[a-z]+$|\.stories\.ts$|^apps\/[^/]*-e2e\/|(^|\/)__snapshots__\/|\.snap$|(^|\/)(graphify-out|rules-graph)\/|^pnpm-lock\.yaml$|^tools\/tests\/|^projects\/agent-kit\/tests\//;
 
 const SECURITY_PATH =
-    /^projects\/auth-|^apps\/auth-example|^deploy\/|^docker-compose|^\.(github|verdaccio)\/|(^|\/)\.env|\.(guard|interceptor|middleware)\.ts$|^(apps|libs)\/(.*\/)?(access|auth|entry|permissions|security)\/|^(apps|libs|projects\/(?!ui-kit-v2\/))(.*\/)[^/]*(token|invite|secret|redact|sign-in|visitor|rights|cors|crypt)[^/]*$|^tools\/(auth-|cargo-sign-in|[^/]*secret)/;
+    /^projects\/auth-|^apps\/auth-example|^deploy\/|^docker-compose|^\.(github|verdaccio)\/|(^|\/)\.env|\.(guard|interceptor|middleware)\.ts$|^(apps|libs)\/(.*\/)?(access|auth|entry|permissions|security)\/|^(apps|libs|projects\/(?!ui-kit-v2\/))(.*\/)[^/]*(access|auth|origin|entry|permission|token|invite|secret|redact|sign-in|visitor|rights|cors|crypt|paste|embed-src|chat-hook)[^/]*$|^tools\/(auth-|cargo-sign-in|[^/]*secret)/;
 const SECURITY_LINE =
-    /DomSanitizer|bypassSecurityTrust|(inner|outer)HTML|insertAdjacentHTML|javascript:|\.protocol\b(?!['"/.])|\beval\(|new Function\(|\$(query|execute)RawUnsafe|node:crypto|createHash|createHmac|timingSafeEqual|randomBytes|\bjwt\b/i;
+    /DomSanitizer|bypassSecurityTrust|(inner|outer)HTML|insertAdjacentHTML|javascript:|\.protocol\b(?!['"/.])|\beval\(|new Function\(|\$(query|execute)RawUnsafe|node:crypto|createHash|createHmac|timingSafeEqual|randomBytes|\bjwt\b|DOMPurify|sanitiz|permitted\(|authorization|\bhmac/i;
+/** A file that imports these is judged by its text: a changed line of it need not name them. */
+const SECURITY_IMPORT = /from ['"](node:crypto|crypto|dompurify|jsonwebtoken|jose)['"]|\bDomSanitizer\b/;
 const MIGRATION_PATH = /^prisma\/|(^|\/)migrations\//;
-const LOOK_PATH = /\.(scss|css|html|svg|ico|png|jpe?g|gif|webp|woff2?|ttf)$/;
+const LOOK_PATH = /\.(scss|css|html|svg|ico|png|jpe?g|gif|webp|woff2?|ttf)$|^apps\/.*\.(view|icons)\.ts$/;
 /** The files of the root, its texts aside, hold the settings of the checks, the packages and the agent. */
 const GUARD_PATH =
-    /^(?!.*\.md$|LICENSE$|docker-compose|pnpm-lock\.yaml$|\.env)[^/]+$|^\.claude\/(?!rt-kit\/(assignments\.md$|postmortems\/|proposals\/|observations\/))|^\.(?!claude\/|github\/|verdaccio\/|idea\/|vscode\/)[^/]+\/|^docs\/constitution\/|^projects\/agent-kit\/(?!graphify-out\/|rules-graph\/|CHANGELOG|README)|^tools\/(flow-|task-flow|review-path|work-steps-lib|check-(kit-approval|push-gate|hooks|boundary)\.mjs)|^tools\/[^/]*-allowlist\.json$|^tools\/tests\/(run|lib|review-path|gate-map|check-(kit-approval|push-gate|hooks|boundary))/;
+    /^(?!.*\.md$|LICENSE$|docker-compose|pnpm-lock\.yaml$|\.env)[^/]+$|^\.claude\/(?!rt-kit\/(assignments\.md$|postmortems\/|proposals\/|observations\/))|^\.(?!claude\/|github\/|verdaccio\/|idea\/|vscode\/)[^/]+\/|^docs\/constitution\/|^projects\/agent-kit\/(?!tests\/|graphify-out\/|rules-graph\/|CHANGELOG|README)|^tools\/(flow-|task-flow|review-path|work-steps-lib|check-(kit-approval|push-gate|hooks|boundary)\.mjs)|^tools\/[^/]*-allowlist\.json$|^tools\/tests\/(run|lib|review-path|gate-map|check-(kit-approval|push-gate|hooks|boundary))/;
 const TEST_DIR = /^tools\/tests\/|^projects\/agent-kit\/tests\//;
 /** A guard for the second round only: a check of the tree judges the work, and П2 says «защит» without «правил». */
-const CHECK_PATH = /^tools\/(check-|visual-gate|eslint-rules\/|stylelint-rules\/)|^eslint\//;
+const CHECK_PATH =
+    /^tools\/(check-|verify-|kit-coverage|visual-gate|stylelint|eslint-rules\/|nx-plugins\/)|^eslint\/|(^|\/)(eslint|stylelint|jest|vitest|playwright)\.config\./;
 const API_PATH =
-    /^projects\/[^/]+\/(.*\/)?(src\/)?(index|public-api)\.ts$|^projects\/(.*\/)?(ng-package|tsconfig\.lib[^/]*)\.json$|^projects\/.*\.proto$|^projects\/[^/]+\/(.*\/)?src\/.*\.(mts|cts|tsx|js|mjs|cjs)$|^(apps\/message-bus|libs\/message-bus-api)\/.*\.(controller|dto)\.ts$/;
+    /^projects\/[^/]+\/(.*\/)?(src\/)?(index|public-api)\.ts$|^projects\/(.*\/)?(ng-package|tsconfig\.lib[^/]*)\.json$|^projects\/.*\.proto$|^projects\/[^/]+\/(.*\/)?src\/.*\.(mts|cts|tsx|js|mjs|cjs)$|^(apps\/message-bus|libs\/message-bus-api)\/.*\.(controller|dto)\.ts$|^apps\/chat-[^/]+\/.*\.element\.ts$/;
 const PACKAGE_SOURCE = /^projects\/(?!agent-kit\/|auth-keycloak-theme\/)[^/]+\/(.*\/)?src\/.*\.ts$|^libs\/message-bus-common\/.*\.ts$/;
 /** The receiver answers by the types of its libraries; their functions are its own. */
 const RECEIVER_SOURCE = /^libs\/message-bus-api\/.*\.ts$/;
@@ -45,7 +48,7 @@ const PACKAGE_WORDS = new Set([
     'license',
     'devDependencies',
 ]);
-const KIT_CODE = /^projects\/[^/]+\/(.*\/)?src\//;
+const KIT_CODE = /^projects\//;
 const LAID_OUT = /rt-kit v\d/;
 
 /** Whether the lines of the file count. */
@@ -73,6 +76,12 @@ function isGuard({ path, before, after, removed }) {
     return GUARD_PATH.test(path) || dropped || isLaidOut(before) || isLaidOut(after);
 }
 
+function isSecurity({ path, before, after, lines = [] }) {
+    const texts = [before, after].map((text) => text ?? '');
+
+    return SECURITY_PATH.test(path) || lines.some((line) => SECURITY_LINE.test(line)) || texts.some((text) => SECURITY_IMPORT.test(text));
+}
+
 function isApi(file) {
     const { path } = file;
 
@@ -89,7 +98,7 @@ function isLook(file, invisible) {
 
     if (!isCode(path)) return false;
     if (LOOK_PATH.test(path)) return true;
-    if (isVisibleKitFile(path)) return !invisible;
+    if (isVisibleKitFile(path) && !invisible) return true;
 
     return path.endsWith('.ts') && differ(viewOf, file);
 }
@@ -100,13 +109,12 @@ function isLook(file, invisible) {
  * record of the branch holds the line «Без вида».
  */
 export function signsOfFile(file, { invisible = false } = {}) {
-    const { path, lines = [] } = file;
+    const { path } = file;
     const found = [];
-    const code = isCode(path);
 
     if (isGuard(file)) found.push('защиты правил');
     if (MIGRATION_PATH.test(path)) found.push('миграции');
-    if (code && (SECURITY_PATH.test(path) || lines.some((line) => SECURITY_LINE.test(line)))) found.push('безопасность');
+    if (isCode(path) && isSecurity(file)) found.push('безопасность');
     if (isApi(file)) found.push('публичный API');
     if (isLook(file, invisible)) found.push('смена вида');
 
