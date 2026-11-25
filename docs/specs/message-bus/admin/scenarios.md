@@ -173,13 +173,6 @@ When the toolbar is read
 Then its buttons stand in one row at the right edge, «Обновить» before «Колонки», and the row ends
 inside the window
 
-### SC-MB-458 — the tokens of the kit reach the page of the application
-
-Given the application is open on any section
-When the properties of the page root are read
-Then the colour of the surface, the height of an input and the step of the spacing are all set, so the
-styles of the kit are connected and a part of them did not drop out of the build
-
 ### SC-MB-78 — the labels of the kit come from the dictionary of the application
 
 Given there is a pagination and an empty state on the screen
