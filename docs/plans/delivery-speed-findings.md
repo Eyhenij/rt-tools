@@ -2,7 +2,7 @@
 
 The findings of the rules review of every closed task of the epic «Простая правка доходит до слияния за
 полчаса» accumulate here and wait for the owner's word. The file lies next to the plan of the epic —
-`docs/plans/delivery-speed.md`. Nothing of it is ordered yet.
+`docs/plans/delivery-speed.md`. An ordered item names its task, the rest is not ordered.
 
 ## RT-3625 — the review of 25 November 2026
 
@@ -77,7 +77,8 @@ The findings of the rules review of every closed task of the epic «Проста
    went from 7 seconds to 426, and the same commit in a copy outside it took 8: of 560 thousand reads of a
    directory in 15 seconds 554 thousand fell into the `node_modules` of the inner copy, since the tool
    leaves out the packages of the root alone. Every set and every push pays it while such a copy stands.
-   Proposed: the step gives the tool an ignore of `.claude/`, or the copies stand outside the tree.
+   Ordered as RT-3640: the tool and the pass enter no dot directory, the run takes 6 seconds with the
+   copy inside.
 2. **`check-doc-paths` is red in a fresh copy** — tree. Two texts name ignored directories that only a
    lived-in copy has: the one of incident analyses and the one of handovers. Proposed: an ignored directory
    named by a text is not judged, or a post-install creates both.
