@@ -8,19 +8,25 @@
 echo "the run ahead and its copy"
 
 BOX="$(mktemp -d)"
-trap 'rm -rf "$BOX"' EXIT
+# A scenario that fell leaves its run and its servers: they end with the set.
+sweep() {
+    local file
+    for file in "$BOX"/pid "$BOX"/server-*; do
+        [ -s "$file" ] && kill -KILL "$(cat "$file")" 2>/dev/null
+    done
+    rm -rf "$BOX"
+}
+trap sweep EXIT
 
 # A tree whose set is the steps given, one per argument. The profile is ignored, so that a step is
-# changed without a commit; the last step of the calls leaves its trace outside the copy.
+# changed without a commit.
 tree_of() {
     local t step
     t="$(fixture_repo_branched main work)"
     mkdir -p "$t/.claude/rt-kit" "$t/docs"
     printf '.claude/\n' >"$t/.gitignore"
     printf 'a\n' >"$t/docs/a.md"
-    : >"$BOX/steps"
-    for step in "$@"; do printf '%s\n' "$step" >>"$BOX/steps"; done
-    cp "$BOX/steps" "$t/.claude/steps"
+    for step in "$@"; do printf '%s\n' "$step"; done >"$t/.claude/steps"
     cat >"$t/.claude/rt-kit/project.sh" <<'EOF'
 rt_push_checks() { cat "$CLAUDE_PROJECT_DIR/.claude/steps"; }
 rt_push_check_unread() { case "$1" in *heavy*) printf '%s\n' ':(exclude)docs' ;; esac; }
@@ -38,6 +44,8 @@ run() {
 said() { if grep -qF -- "$1" "$BOX/log"; then printf yes; else printf no; fi; }
 verdict() { grep '^push ahead:' "$BOX/log" | tail -1; }
 marks() { ls "$1/.git/rt-kit/push-green" 2>/dev/null | wc -l | tr -d ' '; }
+# How many times a step is named among the ones without a mark.
+unmarked() { sed -n '/^✗ no mark on the head/,/^$/p' "$BOX/log" | grep -cF -- "$1"; }
 
 COMMIT='git -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q -m x'
 
@@ -59,13 +67,32 @@ report "SC-AK-1980 — a red step outweighs the edit" "$code" 1
 report "SC-AK-1980 — and the edit is named still" "$(said 'the copy changed while the set ran')" yes
 rm -rf "$t"
 
+# A new file is an edit whatever the machine says of untracked ones, and its name is readable.
+t="$(tree_of 'echo b >docs/новый.md # adder')"
+git -C "$t" config status.showUntrackedFiles no
+run "$t"
+report "SC-AK-1980 — a new file is an edit, hidden by the settings or not" "$code:$(said '?? docs/новый.md')" 101:yes
+rm -rf "$t"
+
+# A process the step left in the background writes after the step: it is waited for.
+t="$(tree_of '(sleep 1; echo late >>docs/a.md) & echo started # leaver')"
+run "$t"
+report "SC-AK-1980 — an edit of a process the step left behind is seen" "$code" 101
+rm -rf "$t"
+
 # --- SC-AK-1981 — a commit made under the run -------------------------------------------------------
 t="$(tree_of 'true # first' "echo b >>x.txt; git add -A; $COMMIT # committer" 'true # last')"
 run "$t"
 report "SC-AK-1981 — a run whose head moved ends with its own code" "$code" 101
-report "SC-AK-1981 — the step it moved under is named" "$(sed -n '/no mark for/,$p' "$BOX/log" | grep -c '# committer')" 1
-report "SC-AK-1981 — a step that ran before it is named too" "$(sed -n '/no mark for/,$p' "$BOX/log" | grep -c '# first')" 1
-report "SC-AK-1981 — a step that ran on the new head is not" "$(sed -n '/no mark for/,$p' "$BOX/log" | grep -c '# last')" 0
+report "SC-AK-1981 — the step it moved under is named" "$(unmarked '# committer')" 1
+report "SC-AK-1981 — a step that ran before it is named too" "$(unmarked '# first')" 1
+report "SC-AK-1981 — a step that ran on the new head is not" "$(unmarked '# last')" 0
+report "SC-AK-1981 — the verdict says the head moved" "$(verdict)" 'push ahead: not judged — the head moved under it; run the set again'
+rm -rf "$t"
+
+t="$(tree_of 'true # first' "echo b >>x.txt; git add -A; $COMMIT; false # red committer")"
+run "$t"
+report "SC-AK-1981 — a red step outweighs the commit, and the lost mark is named" "$code:$(unmarked '# first')" 1:1
 rm -rf "$t"
 
 # The second run finds the first step green already, and a commit of a text takes its mark away: the
@@ -76,8 +103,16 @@ printf '%s\n' 'true # first' 'true # heavy' "echo c >>docs/a.md; git add -A; $CO
 run "$t"
 report "SC-AK-1981 — the first step was green already" "$(said '= green already: true # first')" yes
 report "SC-AK-1981 — a run that lost the mark of such a step is not judged" "$code" 101
-report "SC-AK-1981 — the lost one is named and the heavy one is not" \
-    "$(sed -n '/no mark for/,/^$/p' "$BOX/log" | grep -c '# first') $(sed -n '/no mark for/,/^$/p' "$BOX/log" | grep -c 'true # heavy')" '1 0'
+report "SC-AK-1981 — the lost one is named and the heavy one is not" "$(unmarked '# first') $(unmarked 'true # heavy')" '1 0'
+rm -rf "$t"
+
+# Marks that cannot be written are no moved head.
+t="$(tree_of 'true # first')"
+mkdir -p "$t/.git/rt-kit"
+: >"$t/.git/rt-kit/push-green"
+run "$t"
+report "SC-AK-1981 — marks that cannot be written are named by their own words" \
+    "$code:$(said 'marks of green steps are missing'):$(said 'the head moved')" 101:yes:no
 rm -rf "$t"
 
 # --- SC-AK-1982 — a copy nobody touched -------------------------------------------------------------
@@ -97,7 +132,6 @@ report "SC-AK-1982 — the record of observations is no edit, ignored or not" "$
 rm -rf "$t"
 
 t="$(tree_of 'read line; echo "got $line" # reader' "touch $BOX/after # after")"
-rm -f "$BOX/after"
 run "$t"
 report "SC-AK-1982 — a step that reads its input does not eat the next steps" "$([ -e "$BOX/after" ] && echo ran || echo eaten)" ran
 printf 'b\n' >>"$t/docs/a.md"
@@ -105,9 +139,30 @@ run "$t"
 report "SC-AK-1982 — a run that did not start keeps its code" "$code:$(said 'edits outside the index')" 3:yes
 rm -rf "$t"
 
+# The output of a red step and its code pass through the pipe whole.
+t="$(tree_of 'seq 1 30; exit 5 # red talker')"
+run "$t"
+report "SC-AK-1982 — the output of a red step reaches the line" "$code:$(grep -cx 30 "$BOX/log")" 1:1
+rm -rf "$t"
+
 # --- SC-AK-1983 — a run that was stopped ------------------------------------------------------------
-# The step keeps a server in a group of its own and takes it down by INT alone, some time after it: a
-# stand of end-to-end suites behaves so. A second process of the step takes its child down by TERM.
+# The run is started by node: it gives the child the default answer to every signal, as the call of
+# an agent does. A shell that starts it by `&` makes it and all its steps deaf to INT.
+cat >"$BOX/launch.mjs" <<'EOF'
+import { spawn } from 'node:child_process';
+import { openSync, writeFileSync } from 'node:fs';
+const [, , box, hook, tree] = process.argv;
+const log = openSync(`${box}/log`, 'w');
+const child = spawn('bash', [hook], {
+    cwd: tree,
+    stdio: ['ignore', log, log],
+    env: { ...process.env, CLAUDE_PROJECT_DIR: tree },
+});
+writeFileSync(`${box}/pid`, String(child.pid));
+child.on('close', (code) => writeFileSync(`${box}/code`, String(code)));
+EOF
+# A step with a server in a group of its own, taken down by one signal alone, some time after it: a
+# stand of end-to-end suites does so by INT, a builder by TERM.
 cat >"$BOX/stand.mjs" <<'EOF'
 import { spawn } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
@@ -119,51 +174,105 @@ for (const name of ['SIGINT', 'SIGTERM', 'SIGHUP'])
         if (name !== signal) return;
         setTimeout(() => {
             process.kill(server.pid);
-            writeFileSync(`${box}/cleaned-${signal}`, '');
-            process.exit(1);
+            // A broken output ends the step here, before the end of its cleaning; the console would swallow it.
+            process.stdout.write('down\n');
+            setTimeout(() => {
+                writeFileSync(`${box}/cleaned-${signal}`, '');
+                process.exit(1);
+            }, 200);
         }, 1500);
     });
-writeFileSync(`${box}/ready-${signal}`, '');
+writeFileSync(`${box}/ready`, '');
 setInterval(() => {}, 1000);
 EOF
-alive() { if kill -0 "$(cat "$1" 2>/dev/null)" 2>/dev/null; then printf alive; else printf gone; fi; }
-wait_for() { local n=0; until [ -e "$1" ] || [ "$n" -ge 100 ]; do sleep 0.1; n=$((n + 1)); done; }
+# A step that dies by the first signal and holds a child deaf to every one, in a group of its own. In
+# the same group the child left one whose parent is gone: the group alone names it.
+cat >"$BOX/keeper.mjs" <<'EOF'
+import { spawn } from 'node:child_process';
+import { writeFileSync } from 'node:fs';
+const [, , box] = process.argv;
+const deaf = 'while :; do sleep 1; done';
+const script = `trap '' INT TERM; (${deaf.replace(/done$/, 'done &')} echo $! >${box}/server-lost); : >${box}/ready; ${deaf}`;
+const child = spawn('bash', ['-c', script], { detached: true, stdio: 'ignore' });
+writeFileSync(`${box}/server-keeper`, String(child.pid));
+setInterval(() => {}, 1000);
+EOF
+# A step whose child outlived its parent and stayed in the group of the step.
+cat >"$BOX/orphan.sh" <<'EOF'
+(sleep 300 & echo $! >"$1/server-orphan")
+: >"$1/ready"
+sleep 300
+EOF
+printf '%s\n' "trap '' INT TERM" 'echo $$ >"$1/server-deaf"' ': >"$1/ready"' 'while :; do sleep 1; done' >"$BOX/deaf.sh"
+printf '%s\n' "trap '' INT" 'echo $$ >"$1/server-half"' ': >"$1/ready"' 'while :; do sleep 1; done' >"$BOX/half.sh"
+mkdir -p "$BOX/no-ps"
+printf '#!/bin/sh\nexit 1\n' >"$BOX/no-ps/ps"
+chmod +x "$BOX/no-ps/ps"
+
+alive() { if kill -0 "$(cat "$BOX/server-$1" 2>/dev/null)" 2>/dev/null; then printf alive; else printf gone; fi; }
+wait_for() {
+    local n=0
+    until [ -e "$1" ] || [ "$n" -ge "${2:-150}" ]; do
+        sleep 0.1
+        n=$((n + 1))
+    done
+    [ -e "$1" ]
+}
+# A run stopped in the middle of a step: the tree, the signal, the seconds of the wait, and one more
+# signal when a fourth argument stands. The code in $code, the seconds in $took.
+stopped() {
+    local started
+    rm -f "$BOX/ready" "$BOX/code" "$BOX/pid"
+    RT_PUSH_STOP_WAIT="$3" node "$BOX/launch.mjs" "$BOX" "$HOOKS/git-guard-push-ahead.sh" "$1" &
+    wait_for "$BOX/ready"
+    started="$(date +%s)"
+    kill "-$2" "$(cat "$BOX/pid")" 2>/dev/null
+    if [ -n "${4:-}" ]; then
+        sleep 0.4
+        kill "-$2" "$(cat "$BOX/pid")" 2>/dev/null
+    fi
+    wait_for "$BOX/code" 300 || kill -KILL "$(cat "$BOX/pid")" 2>/dev/null
+    took=$(($(date +%s) - started))
+    code="$(cat "$BOX/code" 2>/dev/null)"
+    wait 2>/dev/null
+}
 
 for signal in SIGINT SIGTERM; do
     t="$(tree_of 'true # first' "node $BOX/stand.mjs $BOX $signal # heavy stand" "touch $BOX/late-$signal # late")"
-    (cd "$t" && CLAUDE_PROJECT_DIR="$t" RT_PUSH_STOP_WAIT=4 exec bash "$HOOKS/git-guard-push-ahead.sh" >"$BOX/log" 2>&1) &
-    ahead=$!
-    wait_for "$BOX/ready-$signal"
-    pid="$(sed -n 's/^push ahead: base .*, pid \([0-9]*\)$/\1/p' "$BOX/log")"
-    kill -TERM "$pid" 2>/dev/null
-    wait "$ahead" 2>/dev/null
-    code=$?
+    stopped "$t" TERM 4 again
     report "SC-AK-1983 — a stopped run ends with the code of the signal ($signal)" "$code" 143
-    report "SC-AK-1983 — the server a step takes down by $signal is gone" "$(alive "$BOX/server-$signal")" gone
-    report "SC-AK-1983 — the step cleans up by $signal itself before it is killed" "$([ -e "$BOX/cleaned-$signal" ] && echo cleaned || echo killed)" cleaned
+    report "SC-AK-1983 — the first line names the process of the run ($signal)" \
+        "$(sed -n 's/^push ahead: base .*, pid \([0-9]*\)$/\1/p' "$BOX/log")" "$(cat "$BOX/pid")"
+    report "SC-AK-1983 — the server a step takes down by $signal is gone" "$(alive "$signal")" gone
+    report "SC-AK-1983 — the step cleans up by $signal itself, a second signal to the run or not" "$([ -e "$BOX/cleaned-$signal" ] && echo cleaned || echo killed)" cleaned
     report "SC-AK-1983 — no step starts after the stop ($signal)" "$([ -e "$BOX/late-$signal" ] && echo started || echo held)" held
     report "SC-AK-1983 — the steps before keep their marks, the stopped one has none ($signal)" "$(marks "$t")" 1
     report "SC-AK-1983 — the copy is clean after the stop ($signal)" "$(git -C "$t" status --porcelain | wc -l | tr -d ' ')" 0
     report "SC-AK-1983 — the run names the stopped step ($signal)" "$(said '~ stopped, no mark: node')" yes
-    kill "$(cat "$BOX/server-$signal")" 2>/dev/null
     rm -rf "$t"
 done
 
-# A step that ignores both is killed: nothing is left of it.
-cat >"$BOX/deaf.sh" <<'EOF'
-trap '' INT TERM
-echo $$ >"$1/server-deaf"
-: >"$1/ready-deaf"
-while :; do sleep 1; done
-EOF
+t="$(tree_of "bash $BOX/orphan.sh $BOX # heavy orphan")"
+stopped "$t" INT 1
+report "SC-AK-1983 — INT ends the run with its own code" "$code:$(said 'stopped by INT')" 130:yes
+report "SC-AK-1983 — a child that outlived its parent in the group of the step is gone" "$(alive orphan)" gone
+rm -rf "$t"
+
+t="$(tree_of "node $BOX/keeper.mjs $BOX # heavy keeper")"
+stopped "$t" TERM 1
+report "SC-AK-1983 — a deaf child of a step that died at once is gone" "$(alive keeper)" gone
+report "SC-AK-1983 — a child that outlived its parent in that group is gone too" "$(alive lost)" gone
+rm -rf "$t"
+
 t="$(tree_of "bash $BOX/deaf.sh $BOX # heavy deaf")"
-(cd "$t" && CLAUDE_PROJECT_DIR="$t" RT_PUSH_STOP_WAIT=1 exec bash "$HOOKS/git-guard-push-ahead.sh" >"$BOX/log" 2>&1) &
-ahead=$!
-wait_for "$BOX/ready-deaf"
-kill -TERM "$(sed -n 's/^push ahead: base .*, pid \([0-9]*\)$/\1/p' "$BOX/log")" 2>/dev/null
-wait "$ahead" 2>/dev/null
-report "SC-AK-1983 — a step deaf to both signals is gone" "$(alive "$BOX/server-deaf")" gone
-kill -KILL "$(cat "$BOX/server-deaf")" 2>/dev/null
+stopped "$t" TERM 1
+report "SC-AK-1983 — a step deaf to both signals is gone" "$(alive deaf)" gone
+rm -rf "$t"
+
+t="$(tree_of "bash $BOX/half.sh $BOX # heavy half")"
+PATH="$BOX/no-ps:$PATH" stopped "$t" TERM 1
+report "SC-AK-1983 — with no table of processes the group of the step still ends" \
+    "$(alive half):$code:$([ "$took" -lt 10 ] && echo soon || echo "late ($took)")" gone:143:soon
 rm -rf "$t"
 
 suite_result "the run ahead and its copy"

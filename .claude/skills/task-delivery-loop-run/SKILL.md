@@ -140,10 +140,10 @@ node tools/review-path.mjs --round-two --base origin/<base> --serious <N> --sinc
 git diff <tip of round one>..HEAD > <scratchpad>/review-N-2.diff   # when it is due
 ```
 
-Both stand before the merge of the base: after it the range carries another branch's content. The set
-then starts beside round two, in one message with its roles — the block of steps 11–12 first, without
-its last command and the push. It waits for the round on a change of look and on a light plan whose
-diff is full.
+Both stand before the merge of the base: after it the range carries another branch's content. Then the
+copy is made ready by the first block of steps 9, 11–12, and the set starts beside round two: one message
+holds the calls of the roles and the call of `git-guard-push-ahead.sh` from that section. The set waits
+for the round on a change of look and on a light plan whose diff is full.
 
 Each of the agents gets this frame and its own inputs, never your conclusions:
 
@@ -178,7 +178,9 @@ written out in the command, never packed into one:
 zsh does not split `$E` into words, so `env $E git commit` passes one argument, and the commit leaves
 under the local identity.
 
-## 11–12. Closing, the push set, the push
+## 9, 11–12. Closing, the push set, the push
+
+The copy is made ready first, with a round two and without one; the own showcase and stand are stopped:
 
 ```bash
 /opt/homebrew/bin/gh pr list --head <base> --state merged   # a merged base: the next one down is taken
@@ -187,8 +189,8 @@ EM=317887029+rt-tools-dev@users.noreply.github.com
 GIT_AUTHOR_EMAIL=$EM GIT_COMMITTER_EMAIL=$EM \
     GIT_AUTHOR_NAME=rt-tools-dev GIT_COMMITTER_NAME=rt-tools-dev git merge --no-edit origin/<base> \
     || { git diff --name-only --diff-filter=U -- .claude/hooks | while IFS= read -r f; do git checkout --ours -- "$f"; done; false; }
+node tools/archive-prune.mjs --apply    # what it removed goes by a commit of its own
 node tools/check-specs.mjs; node tools/check-doc-paths.mjs
-pnpm exec nx affected -t test-hooks --base=origin/<base>    # the guard scenarios, when a hook moved
 ```
 
 The host keeps a merged branch, so `git ls-remote` does not show that the base merged: the list of
@@ -213,11 +215,12 @@ lines after it name the red checks, and «not judged» (101) has the changed pat
 a mark right above it:
 
 ```bash
-sed -n -e '/^✗ the /,$p' -e '/^push ahead: red/,$p' "${TMPDIR:-/tmp}/push-ahead-$(basename "$PWD").log"
+awk '/^✗ (the copy changed|no mark on the head)/ || /^push ahead: red/ { on = 1 } on' "${TMPDIR:-/tmp}/push-ahead-$(basename "$PWD").log"
 ```
 
 Beside a round that found something to fix the run is stopped before the first edit. Its pid stands in
-the first line of the log; the step in flight gets up to half a minute to put down what it raised:
+the first line of the log; the step in flight gets up to half a minute to put down what it raised. The
+next run starts after the notice with 143: both write into one log, and a stand holds its port till then:
 
 ```bash
 kill -TERM "$(sed -n 's/^push ahead: base .*, pid \([0-9]*\)$/\1/p' "${TMPDIR:-/tmp}/push-ahead-$(basename "$PWD").log")"

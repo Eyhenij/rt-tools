@@ -119,20 +119,23 @@ The table in `implementation.md` next to it.
    light path the executor runs them.
 8. **Check every finding against the code, fix the confirmed ones, check live again.** One commit
    for the round.
-9. **Ask `--round-two` and write the diff of the round, then close the texts, then run the push set
-   beside round two.** The answer and the diff are taken before the base is merged in: after it the diff
-   carries another branch's content. The quick checks with `node tools/check-dupes.mjs` and
-   `pnpm run check:unused` come before the round too. Merge the base in, merge the agreement into the
-   domain spec, bring the texts up to date — pattern `task-flow-close`. The executor runs the signs of the
-   plan's points and gives their output to `product-strategist`: the frame of a round beside the set
-   forbids builds, `nx`, snapshots, the browser and writes into the copy. Fresh subagents read the fixes
-   since the tip of round one; step 8 repeats. The last live check runs on the code that ships.
+9. **Make the copy ready on every path, then run the push set beside round two where it is due.** In this
+   order: the quick checks with `node tools/check-dupes.mjs` and `pnpm run check:unused`, their findings
+   go into the commit of the round; on the full path `--round-two` and, where it says «нужен», the diff
+   of the round — both before the base is merged in, after it the diff carries another branch's content;
+   then the base, the agreement into the domain spec, the texts up to date — pattern `task-flow-close` —
+   and the expired archive records by `node tools/archive-prune.mjs --apply` in their own commit. No round
+   two — step 10 and step 11 at once. Where it is due the executor runs the signs of the plan's points
+   that the frame of a round beside the set forbids — a build, `nx`, snapshots, the browser — and gives
+   their output to `product-strategist`; the rest of the signs the role runs itself, and a sign that is
+   the set is filled after its green. Fresh subagents read the fixes since the tip of round one; step 8
+   repeats. The last live check runs on the code that ships.
 10. **Show a screen to the owner before the closing steps.** A kit or admin change of look: the address,
     the screen and the width to look at, and the turn waits for the answer. A change of texts,
     rules or tools has nothing to show: its measurements go into the PR body.
-11. **Bring the set to green.** A round without fixes — the run beside it is the one; with fixes, or
-    where the set waited for the round, it runs now, in the background. A red is fixed here, while the
-    folder still stands.
+11. **Bring the set to green.** A round without fixes — the run beside it is the one; with fixes, where
+    the set waited for the round and where no second round is due, it runs now, in the background. A red
+    is fixed here, while the folder still stands.
 12. **Then take the folder apart by the last commit and push.** Pattern `task-flow-archive`. The push
     reads the marks of the run ahead; a step the last commit reached runs at the push.
 13. **Open the PR by `gh pr create` with the machine account's token.** The body lists what each

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/git-guard-push-ahead.sh · 0a1569dde6ae · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/git-guard-push-ahead.sh · 32cd2b46bf64 · правится надстройкой, не здесь
 # The push set run ahead of the push: every check of `rt_push_checks <base>`, a green mark for each
 # that passed. The push guard then reads the marks instead of running the steps again.
 #
@@ -18,8 +18,9 @@
 # 143 — the run was stopped by INT or TERM. Not 2: to a hook that code means "refuse", and this
 # command refuses nothing.
 #
-# The run is stopped by `kill -TERM <pid>`, the pid is in its first line: a step and everything it
-# started end with it. KILL leaves them running — the run cannot see it.
+# The run is stopped by `kill -TERM <pid>`, the pid is in its first line: the step in flight and the
+# processes it holds end with it. A process that left both its parent and its group is not found, and
+# KILL sent to the run leaves them all: the run cannot see it.
 #
 # Requires: hooks/git-guard-push-marks.sh, hooks/facts.sh
 not_started=3
@@ -95,7 +96,7 @@ if command -v rt_push_adds_nothing >/dev/null 2>&1 && rt_push_adds_nothing "$bas
     exit 0
 fi
 
-printf 'push ahead: base %s, tree %s, pid %s\n' "$(rt_push_base_label "$base")" "$(git rev-parse --short 'HEAD^{tree}')" "$$"
+head_tree="$(git rev-parse --verify --quiet 'HEAD^{tree}')"
 sign="$(rt_tree_sign .)"
 # Whether the change touched the subject of each step, for the run lines; a step the selection
 # drops leaves a line of its own.
@@ -107,53 +108,77 @@ marked=""
 asked=""
 changed_at=""
 changed=""
-step_out="$(mktemp)" || exit "$not_started"
+step_out="$(mktemp)" || {
+    printf 'push ahead: no temporary file for the output of a step\n' >&2
+    exit "$not_started"
+}
 step_pid=""
+starting=""
 # The seconds a stopped step gets after INT, and twice as many after TERM.
 stop_wait="${RT_PUSH_STOP_WAIT:-10}"
 trap 'rm -f "$step_out"' EXIT
 
-# The processes of `$*` and all they started, by the parents in the table of processes: a step puts
-# its servers and its scenarios into groups of their own, and the group of the step does not name them.
+# The processes of `$*` and all that hang on them: by the parent and by the group. A step puts its
+# servers and its scenarios into groups of their own, and a child whose parent is gone is told by the
+# group alone. The group of the run itself is never one of them. No `ps` — no list.
 rt_ahead_tree() {
-    ps -A -o pid=,ppid=,stat= 2>/dev/null | awk -v roots="$*" '
-        $3 !~ /^Z/ { kids[$2] = kids[$2] " " $1; alive[$1] = 1 }
+    ps -A -o pid=,ppid=,pgid=,stat= 2>/dev/null | awk -v roots="$*" -v self="$$" '
+        $4 !~ /^Z/ { n++; pid[n] = $1; ppid[n] = $2; pgid[n] = $3 }
+        $1 == self { own = $3 }
         END {
-            n = split(roots, queue, " ")
-            for (i = 1; i <= n; i++) {
-                if (seen[queue[i]]++ || !alive[queue[i]]) continue
-                print queue[i]
-                m = split(kids[queue[i]], found, " ")
-                for (j = 1; j <= m; j++) queue[++n] = found[j]
-            }
+            m = split(roots, root, " ")
+            for (i = 1; i <= m; i++) held[root[i]] = 1
+            do {
+                grew = 0
+                for (i = 1; i <= n; i++) {
+                    if (pid[i] == self) continue
+                    if (!listed[i] && (held[pid[i]] || held[ppid[i]] || group[pgid[i]])) {
+                        listed[i] = held[pid[i]] = grew = 1
+                        if (pgid[i] != own) group[pgid[i]] = 1
+                    }
+                }
+            } while (grew)
+            for (i = 1; i <= n; i++) if (listed[i]) print pid[i]
         }'
 }
 
-# Waits up to `$1` seconds for the processes of `$left` to end; the ones they start meanwhile join them.
+# Whether the step or something it holds still runs. With no `ps` the group of the step answers.
+rt_ahead_holds() {
+    # shellcheck disable=SC2086
+    left="$(rt_ahead_tree ${left:-$step_pid})"
+    [ -n "$left" ] && return 0
+    ps -p $$ -o pid= >/dev/null 2>&1 && return 1
+    kill -0 -- "-$step_pid" 2>/dev/null
+}
+
+# Waits up to `$1` seconds for the step and all it holds to end.
 rt_ahead_wait_left() {
     local until=$(($(date +%s) + $1))
-    while :; do
-        # shellcheck disable=SC2086
-        left="$(rt_ahead_tree $left)"
-        [ -z "$left" ] && return 0
+    while rt_ahead_holds; do
         [ "$(date +%s)" -ge "$until" ] && return 1
         sleep 0.2
     done
+    return 0
 }
 
-# Ends the step and everything it started. INT first: a runner of end-to-end suites puts its stand
+# Ends the step and everything it holds. INT first: a runner of end-to-end suites puts its stand
 # down by INT alone, and by TERM leaves it on the port. Then TERM: a builder takes its scenarios with
 # it within seconds. KILL only after that, by the list: it lets nobody clean up after itself.
 rt_ahead_stop() {
     local left
     trap '' INT TERM
+    # A signal between the start of a step and the record of its number.
+    [ -n "$starting" ] && [ "${!:-}" != "$starting" ] && step_pid="$!"
     if [ -n "$step_pid" ]; then
         left="$(rt_ahead_tree "$step_pid")"
         kill -INT -- "-$step_pid" 2>/dev/null
         if ! rt_ahead_wait_left "$stop_wait"; then
             kill -TERM -- "-$step_pid" 2>/dev/null
-            # shellcheck disable=SC2086
-            rt_ahead_wait_left $((stop_wait * 2)) || kill -KILL $left 2>/dev/null
+            if ! rt_ahead_wait_left $((stop_wait * 2)); then
+                # shellcheck disable=SC2086
+                [ -n "$left" ] && kill -KILL $left 2>/dev/null
+                kill -KILL -- "-$step_pid" 2>/dev/null
+            fi
         fi
         wait "$step_pid" 2>/dev/null
         printf '\n~ stopped, no mark: %s\n' "$check"
@@ -163,6 +188,8 @@ rt_ahead_stop() {
 }
 trap 'rt_ahead_stop INT 130' INT
 trap 'rt_ahead_stop TERM 143' TERM
+
+printf 'push ahead: base %s, tree %s, pid %s\n' "$(rt_push_base_label "$base")" "$(git rev-parse --short 'HEAD^{tree}')" "$$"
 
 set_started="$(date +%s)"
 while IFS= read -r check; do
@@ -181,10 +208,23 @@ while IFS= read -r check; do
     key_before="$(rt_push_mark_key "$check" "$base")"
     started="$(date +%s)"
     # A group of its own, so that a stop reaches the step whole; the shell waits by `wait`, and a
-    # signal runs its trap at once, not after the step.
+    # signal runs its trap at once, not after the step. The output goes through a pipe, so that a
+    # process the step left in the background is waited for; its reader outlives the signals of a
+    # stop, or a step cleaning up would end by a broken pipe.
+    starting="${!:-none}"
     set -m
-    (eval "$check") >"$step_out" 2>&1 </dev/null &
+    (
+        set -o pipefail
+        (
+            set +o pipefail
+            eval "$check"
+        ) </dev/null 2>&1 | (
+            trap '' INT TERM
+            cat >"$step_out"
+        )
+    ) &
     step_pid=$!
+    starting=""
     set +m
     wait "$step_pid" 2>/dev/null
     status=$?
@@ -257,7 +297,7 @@ fi
 if [ -n "$changed_at" ]; then
     printf '\n✗ the copy changed while the set ran, seen after: %s\n%s\n' "$changed_at" "$(printf '%s\n' "$changed" | sed 's/^/  /')"
 elif [ -n "$unmarked" ]; then
-    printf '\n✗ the head moved while the set ran, no mark for:\n%s\n' "$(printf '%s' "$unmarked" | sed 's/^/  /')"
+    printf '\n✗ no mark on the head of the copy for:\n%s\n' "$(printf '%s' "$unmarked" | sed 's/^/  /')"
 fi
 
 if [ -n "$red" ]; then
@@ -269,8 +309,10 @@ if [ -n "$red" ]; then
     exit "$red_count"
 fi
 if [ -n "$changed_at$unmarked" ]; then
-    printf '\npush ahead: not judged — %s; run the set again\n' \
-        "$([ -n "$changed_at" ] && echo 'the copy changed under it' || echo 'the head moved under it')"
+    why='marks of green steps are missing: another run took them, the base moved, or they cannot be written'
+    [ "$head_tree" = "$(git rev-parse --verify --quiet 'HEAD^{tree}')" ] || why='the head moved under it'
+    [ -n "$changed_at" ] && why='the copy changed under it'
+    printf '\npush ahead: not judged — %s; run the set again\n' "$why"
     exit "$not_judged"
 fi
 printf '\npush ahead: the set is green, the push passes from the marks\n'

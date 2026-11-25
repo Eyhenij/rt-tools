@@ -10,4 +10,4 @@ statement: a removed statement is removed together with its line.
 - **An edit made and put back inside one step is not seen.** — **Not checked by anything.** The copy is looked at by `rt_push_mark_clean` after each step.
 - **A stopped run ends the tree of its step and keeps the marks of the steps before.** — `projects/agent-kit/assets/hooks/git-guard-push-ahead.sh:rt_ahead_stop`; scenario `SC-AK-1983`
 - **A stopped step gets `INT`, then `TERM`, then `KILL`.** — `projects/agent-kit/assets/hooks/git-guard-push-ahead.sh:rt_ahead_stop`, the processes by `projects/agent-kit/assets/hooks/git-guard-push-ahead.sh:rt_ahead_tree`; scenario `SC-AK-1983`
-- **A step reads an empty input.** — `projects/agent-kit/assets/hooks/git-guard-push-ahead.sh:step_out`; scenario `SC-AK-1982`
+- **A step reads an empty input, and what it left in the background is waited for.** — `projects/agent-kit/assets/hooks/git-guard-push-ahead.sh:step_out`; scenarios `SC-AK-1980`, `SC-AK-1982`

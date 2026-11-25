@@ -19,7 +19,8 @@ has to be fixed, and the run in the background goes on over what is being edited
 
 - **The run ahead**, **a green mark** — as in `push-gate-ahead`.
 - **A changed copy** — a copy with an edit outside the index, the record of observations aside.
-- **The tree of a step** — the step and every process it started, in whatever group.
+- **The tree of a step** — the step and every process that hangs on it by its parent or by the group of
+  one that does. A process that left both is none of it: nothing in the table of processes names it.
 
 ### What it is called in the interface
 
@@ -32,7 +33,8 @@ There is no interface: the run answers with lines of output and an exit code.
 - **A run every green step of which holds its mark on the head is green; any other is not judged.** The
   marks are asked at the end, of the steps the run started and of the ones it found green already: a
   commit made under a step changes the key of that step and of the steps before it. Steps that had
-  nothing to look at hold no mark and are not asked.
+  nothing to look at hold no mark and are not asked. The verdict says «the head moved» only when it did;
+  marks another run took, a moved base and marks that cannot be written have words of their own.
 - **A run that is not judged ends with a code of its own and is never called green.** The code 101 lies
   past the number of red checks. The last `push ahead:` line says «not judged».
 - **A red check outweighs a changed copy.** The run ends with the number of red checks and names the
@@ -41,12 +43,16 @@ There is no interface: the run answers with lines of output and an exit code.
   whoever reads the change beside the run writes nothing into the copy.
 - **A stopped run ends the tree of its step and keeps the marks of the steps before.** The first line of
   the run names its process number; `TERM` or `INT` sent to it ends the run with the code of the signal.
-  The stopped step leaves no mark, and no step starts after it.
+  The stopped step leaves no mark, and no step starts after it. A run started by `&` from a script
+  ignores `INT`, as everything started so does; `TERM` always reaches it.
 - **A stopped step gets `INT`, then `TERM`, then `KILL`.** The groups and the parents of its processes
   are told before the signal: a builder and a runner of end-to-end suites start theirs in groups of
   their own. A runner of suites puts its stand down by `INT` alone; a builder takes its scenarios with
-  it by `TERM` within seconds, and killed at once it leaves them running.
-- **A step reads an empty input.** One that read the list of steps as its input ate the rest of the set.
+  it by `TERM` within seconds, and killed at once it leaves them running. A second signal to the run
+  changes nothing. With no table of processes the group of the step alone is ended.
+- **A step reads an empty input, and what it left in the background is waited for.** One that read the
+  list of steps as its input ate the rest of the set; a process left behind edits the copy after the
+  step, and the step ends with it.
 
 ## What is out of scope
 

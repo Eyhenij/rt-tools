@@ -4,8 +4,8 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 4 из 4 — живая проверка
-- **Done:** план одобрен («Одобряю план RT-3630 (Recommended)»), крючок, ключ, спека и правило написаны
-- **Next step:** живое снятие набора на `nx` и на сквозных, первый круг ревью
+- **Done:** план одобрен («Одобряю план RT-3630 (Recommended)»), крючок, ключ, спека и правило написаны, первый круг ревью закрыт правками
+- **Next step:** второй круг по риску рядом с набором: влить базу, чистка архива, роли и набор одним сообщением
 - **Uncommitted:** нет
 - **PR:** не открыт
 
@@ -48,7 +48,8 @@
 
 ## Живые запуски
 
-- **Мутанты:** 11 из 11 роняют `push-ahead-copy.test.sh`.
+- **Мутанты:** 22 из 22 роняют `push-ahead-copy.test.sh`: два выживших получили сценарии — сирота в чужой
+  группе и обрыв вывода под сигналом.
 - **Без записей:** 1139 = 1139 = 1139 — набор `tools/tests/run.sh` на целой копии, на копии без `docs/plans`,
   `docs/archive`, `docs/tasks/RT-*` и таблицы назначений, на копии с битыми файлами на их месте.
 
@@ -66,3 +67,77 @@
 - План читали две роли трижды. Первое чтение: две блокирующие — красный по устройству набор и снятие без
   средства; проверки, зелёные до работы. Второе: расширенный ключ тяжёлых шагов пропускал бы сквозные и
   образы на правке исходника пакета правил; ключи сняты. Третье: чисто.
+
+### Первый круг ревью
+
+- Серьёзных 11: `qa-engineer` 3, `product-strategist` 3, `goal-critic` пять строк «частично». Вершина, которую
+  читали, — `16a713aa4`. Каждая находка проверена по коду.
+- Исправлено в запуске: снятие находит и процессы, чей родитель умер, по группе; сценарии снятия идут под
+  обычными сигналами, а не под выключенным `INT`; машина без `ps` снимает группу шага; брошенный шагом фон
+  дожидается; итог называет свою причину — копия, вершина или отметки; второй сигнал ничего не меняет.
+- Исправлено в текстах: однозначная готовая команда, условие шага 9, чистка архива до набора, ожидание кода 143,
+  разбор журнала; план эпика называет неподтвердившуюся посылку и числа.
+- Списано: правка, поставленная и убранная внутри одного шага (предел одобренного плана, стоит в спеке); окно в
+  миллисекунды у bash 3.2 перед `wait` — его снимает второй `TERM`; `KILL` самому запуску.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/eyhenij/WebstormProjects/rt-tools
+**Branch:** RT-3630-set-beside-round-two
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 4 из 4 — живая проверка
+- **Next step:** живое снятие набора на `nx` и на сквозных, первый круг ревью
+- **PR:** не открыт
+
+The progress in full — `docs/tasks/RT-3630-set-beside-round-two/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+ M .claude/rt-kit/project-texts.sh
+ M .claude/skills/task-delivery-loop-run/SKILL.md
+ M .claude/skills/task-delivery-loop/GUARDS.md
+ M .claude/skills/task-delivery-loop/SKILL.md
+ M .claude/skills/task-delivery-loop/implementation.md
+ M .claude/skills/task-delivery-loop/pitfalls.md
+ M docs/plans/delivery-speed.md
+ M docs/specs/agent-kit/push-ahead-copy/implementation.md
+ M docs/specs/agent-kit/push-ahead-copy/scenarios.md
+ M docs/specs/agent-kit/push-ahead-copy/spec.md
+ M projects/agent-kit/assets/hooks/git-guard-push-ahead.sh
+ M projects/agent-kit/assets/hooks/git-guard-push-marks.sh
+ M projects/agent-kit/tests/push-ahead-copy.test.sh
+```
+
+### Commits over the main branch
+
+```
+16a713aa4 docs(rt:agent-kit): ход работы RT-3630, живое снятие набора (RT-3630)
+8e12fcf39 feat(rt:agent-kit): набор рядом со вторым кругом, честный итог и снятие запуска (RT-3630)
+12ff646dc docs(rt:agent-kit): ход работы RT-3630, способ снятия набора по четвёртому чтению (RT-3630)
+dd741e3dd docs(rt:agent-kit): план RT-3630 после чтения ролями (RT-3630)
+f43269765 docs(rt:agent-kit): разбор RT-3630, находки ревью правил по RT-3629 (RT-3630)
+e25bd08e0 docs(rt:agent-kit): папка RT-3629 разобрана в архив (RT-3629)
+4356ddb44 docs(rt:agent-kit): ход работы RT-3629, ревью закрыто, дальше набор (RT-3629)
+bf135c030 docs(rt:agent-kit): записи архива старше недели удалены (RT-3629)
+cbe7b2c51 Merge remote-tracking branch 'origin/RT-3624-delivery-speed' into RT-3629-affected-story-snapshots
+b4067639a docs(rt:agent-kit): план эпика скорости отмечает RT-3626 влитой (RT-3629)
+c281541f3 fix(rt:agent-kit): съёмка затронутых историй после второго круга ревью (RT-3629)
+b52f9dcd8 fix(rt:agent-kit): съёмка затронутых историй после первого круга ревью (RT-3629)
+2e45be5b7 docs(rt:agent-kit): спека и правила называют съёмку затронутых историй, причины красных запусков (RT-3629)
+c7c637a4f feat(rt:agent-kit): ветка снимает только затронутые истории витрины (RT-3629)
+9959fb6a1 docs(rt:agent-kit): план RT-3629 после второго чтения ролями, работа ждёт одобрения плана (RT-3629)
+109e9f689 [RT-3626] Мелкая правка идёт лёгким путём, второй круг ревью — по риску (#3634)
+b51c0d806 docs(rt:agent-kit): папка RT-3626 разобрана в архив (RT-3626)
+f78a57951 fix(rt:agent-kit): запуск тестов пакета правил — защита, после второго круга ревью (RT-3626)
+f00663a7e Merge remote-tracking branch 'origin/RT-3624-delivery-speed' into RT-3626-light-path
+941fc59e6 fix(rt:agent-kit): путь ревью правки после второго круга ревью (RT-3626)
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.

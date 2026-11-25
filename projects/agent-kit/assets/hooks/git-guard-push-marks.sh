@@ -147,9 +147,10 @@ rt_push_mark_clean() {
     [ -z "$(rt_push_mark_dirt)" ]
 }
 
-# What makes the copy unclean, a line per path as `git status` prints it.
+# What makes the copy unclean, a line per path as `git status` prints it. A new file counts whatever
+# the machine says of untracked ones, and a name is printed as written.
 rt_push_mark_dirt() {
-    git status --porcelain -- . ':(exclude).claude/rt-kit/observations' 2>/dev/null
+    git -c core.quotePath=false status --porcelain --untracked-files=normal -- . ':(exclude).claude/rt-kit/observations' 2>/dev/null
 }
 
 # Whether the head adds nothing to its base: every commit of it already lies in that branch on the

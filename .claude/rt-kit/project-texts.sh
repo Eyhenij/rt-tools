@@ -65,7 +65,7 @@ rt_push_docs_only() {
 # texts and of the tree are not named: they are what reads such a commit.
 #
 # The scenarios of the tree's checks work in fixtures of their own and open no record of this tree:
-# with those paths taken away, and with garbage in their place, they gave the same 1139 green ones.
+# with those paths taken away, and with garbage in their place, they gave the same count of green ones.
 # The markdown files of the root stay in their key. A commit of the progress ran them again, 83 s.
 rt_push_check_unread() {
     case "$1" in
