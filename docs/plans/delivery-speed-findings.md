@@ -73,8 +73,11 @@ The findings of the rules review of every closed task of the epic «Проста
 ## RT-3630 — found by the second review round on 25 November 2026
 
 1. **`check:ngdoctor` walks the packages of a working copy that lies inside this one** — tree,
-   `angular-doctor` 0.3.0 and `tools/check-ngdoctor.mjs`. With one copy under `.claude/worktrees` the step
-   went from 7 seconds to 426: of 560 thousand reads of a directory in 15 seconds 554 thousand fell into
-   its `node_modules`, since the tool leaves out the packages of the root alone. Every set and every push
-   pays it while such a copy stands. Proposed: the step gives the tool an ignore of `.claude/`, or the
-   copies of the sessions stand outside the tree.
+   `angular-doctor` 0.3.0 and `tools/check-ngdoctor.mjs`. With one copy of a session inside the tree the step
+   went from 7 seconds to 426, and the same commit in a copy outside it took 8: of 560 thousand reads of a
+   directory in 15 seconds 554 thousand fell into the `node_modules` of the inner copy, since the tool
+   leaves out the packages of the root alone. Every set and every push pays it while such a copy stands.
+   Proposed: the step gives the tool an ignore of `.claude/`, or the copies stand outside the tree.
+2. **`check-doc-paths` is red in a fresh copy** — tree. Two texts name ignored directories that only a
+   lived-in copy has: the one of incident analyses and the one of handovers. Proposed: an ignored directory
+   named by a text is not judged, or a post-install creates both.
