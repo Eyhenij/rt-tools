@@ -207,7 +207,7 @@ blue. A ramp without the step 500 or with a step outside the line refuses the bu
 
 Covered: `projects/ui-kit-v2/src/styles/color-scheme.theme.spec.ts`.
 
-### SC-UKV-480 — the tokens come as a whole file and as a base with local pieces
+### SC-UKV-1780 — the tokens come as a whole file and as a base with local pieces
 
 Given the tokens are built
 When the whole file is cut into the base and the local pieces of the theme

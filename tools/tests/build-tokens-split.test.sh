@@ -3,7 +3,7 @@
 # theme hold, in which order they are connected, and when the cut refuses.
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
-echo "the split delivery of the kit tokens"
+echo "SC-UKV-1780 — the split delivery of the kit tokens"
 
 STYLES="$TOOLS/../dist/ui-kit-v2/styles"
 SPLIT="$TOOLS/build-tokens-split.mjs"
