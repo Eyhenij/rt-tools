@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/git-workflow-commit.github.md · 8a8bd3cb6b10 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · pitfalls/git-workflow-commit.github.md · 60814260e945 · правится надстройкой, не здесь -->
 # Task, branch and commit — cold part
 
 The pattern `git-workflow-commit` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.
@@ -70,10 +70,10 @@ npm run task:new -- --epic-of <номер эпика> --title 'Письма вл
 
 The body is read from standard input, `--slug` is optional and goes only into the hint with the
 branch name. The epic is named by `--epic-of`, and the command writes the line about it into the
-body itself and prints the branch line from the branch of the epic; work outside an epic goes by
-`--outside-epic '<слово владельца>'`, and without either of the two the call is refused before the
-card is created. The epic itself is created by the same command with `--epic`. Author and assignee — the machine account; the command reads the token itself, from
-a file outside the repository.
+body itself and prints the branch line from the branch of the epic. Where the grill gave one task,
+`--single` takes it from the main branch; other work outside an epic goes by `--outside-epic '<слово
+владельца>'`. Without one of the three the call is refused before the card is created. The epic itself
+is created with `--epic`. Author and assignee — the machine account, its token read from a file.
 
 A task created under an epic that has closed since is taken outside the epic, not by reviving
 the epic branch. The delivery guard reads the epic from the line in the task body, and for a closed

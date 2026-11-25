@@ -64,6 +64,9 @@ refusal in the executor's own turn.
   moved into the work column are both work taken.
 - **Creating an epic is not taking work.** The epic is the owner's order written down, and the
   assignment under it is given after, by the owner, in the table.
+- **The only task of a grill is created by a copy without a row.** Its number does not exist before the
+  card, so the owner has nothing to write a row about; the row is judged by the taking of the branch. A
+  dash is the owner's answer and holds it too, and the flag inside a quoted text is no flag.
 - **Work that names no epic is not judged by the assignment.** The assignment judges belonging, not
   the right to work at all: the word of the owner about work outside an epic stays as it was.
 - **An assignment whose epic is closed is refused on a par with a foreign one.** That is exactly how

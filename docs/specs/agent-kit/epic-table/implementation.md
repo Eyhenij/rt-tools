@@ -7,6 +7,7 @@ statement: a removed statement is removed together with its line.
 - **The order of the tasks is taken from the epic plan, not from the work queue.** — `projects/agent-kit/assets/checks/epic-table.github.mjs:makeupOf` — the rows of the table with the task column; scenario `SC-AK-971`
 - **The epic is taken from the current branch, and the argument names another one.** — `projects/agent-kit/assets/checks/epic-table.github.mjs:epicAsked` — scenarios `SC-AK-969`, `SC-AK-970`
 - **On the branch of the epic itself the number is taken from its own card.** — `projects/agent-kit/assets/checks/epic-table.github.mjs:epicLabel` — a card carrying the label of an epic is taken as the epic; scenario `SC-AK-1139`
+- **On the branch of work outside an epic the answer names that work.** — `projects/agent-kit/assets/checks/epic-table.github.mjs:outside` — the words come from the line of the card; scenario `SC-AK-1987`
 - **What the task is about is taken from the plan, and its name from the card.** — `projects/agent-kit/assets/checks/epic-table.github.mjs:nameOf` — the name comes from the card, what it is about from the makeup
 - **A task named by the plan and missing from the queue stands in the table by a row of its own.** — `projects/agent-kit/assets/checks/epic-table.github.mjs:rowOf` — scenario `SC-AK-972`
 - **The cell of the state carries a number from the answer of the hosting.** — `projects/agent-kit/assets/checks/epic-table.github.mjs:VERDICT` — the number of the request and the outcome of the run; scenario `SC-AK-973`

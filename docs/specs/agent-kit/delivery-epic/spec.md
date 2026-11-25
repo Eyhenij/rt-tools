@@ -1,6 +1,6 @@
 # The epic in the delivery guards
 
-**Status:** in force · **Revision:** 2026-11-05 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-25 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `delivery`, `work-conduct`
 **Procedures:** none
@@ -90,6 +90,24 @@ their own turn.
   epic on the merge, and a task left in it would be refused with no way out. A merge commit of the
   remote main branch that names the epic by its key and its number, matched whole, is the sign of
   the merge; the task then grows from the main branch.
+- **The task whose grill gave one task is created outside an epic by the count the grill names.** An
+  epic above one task is a branch, a plan and a second request that hold nothing more. `--single` reads
+  the count from the draft, before the card, and writes the line «Работа вне эпика — разбор дал одну
+  задачу». A count other than one, a missing line and two lines are refused; at two and more the refusal
+  names `--epic`. The count is read by the same function the engine reads it by.
+- **The refusals of `--single` go in one order, and the count stands before the epic.** The neighbour
+  flags, the draft, the answers, the count, the epic named in the body, the open epic of the copy. An
+  epic of the copy is an open card with the label of an epic: a row holds the number of a plain task
+  too. Its refusal names both lawful ways — under that epic, or outside by the owner's word.
+- **A card that already stands gets the same line by a call of its own.** The grill is read from the
+  folder of the branch, or from the draft; a card under an epic and the card of an epic are not touched,
+  and a card already outside one gets no second line.
+- **The line of work outside an epic is read on its own place and in one place.** The audit, the state of
+  a card and the creating command take it from one function; the words inside a sentence are not a line.
+  The words of `--single` are not taken as a reason of the owner.
+- **The branch of the only task of a grill grows from the main branch, with no commit of another task
+  under it.** Two such tasks in a row would otherwise stand one on the other with no epic above them,
+  and the request of the second would carry the first. The branch of the task itself is a lawful base.
 
 ## What is out of scope
 
@@ -156,3 +174,4 @@ None.
   from the subdomain of the delivery guards, and the freshness of the main branch began to be asked
   of the base as well.
 - 2026-11-05 — a draft on a base the pipeline does not wake for is refused by task RT-3047.
+- 2026-11-25 — the only task of a grill is created outside an epic without a word of the owner.

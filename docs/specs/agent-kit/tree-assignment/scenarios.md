@@ -31,6 +31,14 @@ a dash give no such refusal
 
 Covered: `projects/agent-kit/tests/guard-tree-assignment.test.sh`.
 
+### SC-AK-1992 — a copy without a row creates the only task of a grill
+
+Given a copy with no row in the table, and a copy that names itself in no way
+When `task:new --single` is called, and the same call without the flag or with its words in quotes
+Then the first passes and the rest are refused; a row with a dash refuses the first too
+
+Covered: `projects/agent-kit/tests/guard-tree-assignment.test.sh`.
+
 ### SC-AK-1232 — the refusal names the owner's word as the move of the assignment
 
 Given the row of this copy is missing, holds a dash, names another epic or names a closed one

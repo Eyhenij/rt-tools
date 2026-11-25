@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/task-flow.2.md · 3ce8d198daa8 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · pitfalls/task-flow.2.md · 0c4dce36d31c · правится надстройкой, не здесь -->
 # Work conduct — cold part, second file
 
 The sections the rule `task-flow` handed over when it was cut to its statements and split in
@@ -84,7 +84,7 @@ flowchart TD
     F --> Z
     Z -->|No| Y[The epic is declared: a card, all its tasks and a plan — then its branch from the main branch]
     Z -->|Yes| G[Task, branch from the epic branch, task folder by branch name; the epic card moves with its first task]
-    Z -->|The owner's word about work outside an epic| X[Task, branch from the main branch, task folder by branch name]
+    Z -->|The grill gave one task, or the owner's word for work outside an epic| X[Task, branch from the main branch, task folder by branch name]
     X --> H
     Y --> G
     G --> H[A plan with stages; not edited after it is written]

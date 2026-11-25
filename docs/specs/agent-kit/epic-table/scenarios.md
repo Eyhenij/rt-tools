@@ -87,6 +87,14 @@ come
 
 Covered: `projects/agent-kit/tests/epic-table.test.sh`.
 
+### SC-AK-1987 — the branch of work outside an epic is named such
+
+Given the card of the branch names no epic and carries the line of work outside one
+When the command is called without an argument, in the table mode and in the machine mode
+Then the answer names the work outside an epic with its words, and the code is 1 in both
+
+Covered: `projects/agent-kit/tests/epic-table.test.sh`.
+
 ### SC-AK-1341 — a plan opened by the section the draft writes gives the paragraph
 
 Given the plan of the epic opens with the section «Что даёт», as the draft of the plan writes it

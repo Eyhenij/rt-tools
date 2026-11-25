@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/epic-flow.md · 9c959ae06b3a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · pitfalls/epic-flow.md · 724e4378195a · правится надстройкой, не здесь -->
 # Epics — how it works here — cold part
 
 What the rule `epic-flow` handed over when cut to its statements, every article whole.
@@ -44,8 +44,10 @@ flowchart TD
 ## How the law applies here
 
 - **Work begins with the epic, and a task outside one is not taken.** The main branch takes the
-  whole or does not take it. Work outside an epic exists only by
-  the owner's word about that work, said about that work.
+  whole or does not take it. Two exceptions: the owner's word about that work, said about that work,
+  and the case where the grill gave one task and the copy leads no open epic. The count is the line
+  `**Tasks of the grill:** <number>`, and the creating command reads it; the epic of one task cost an
+  epic branch, its plan and a second request for nothing.
 - **The epic branch is taken before the first task of the epic, not with it.** Taken later, it
   leaves the first task on the main branch.
 - **The epic card moves to in progress by the same turn that takes its first task.** The owner

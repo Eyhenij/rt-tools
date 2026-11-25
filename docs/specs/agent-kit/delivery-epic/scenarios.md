@@ -185,3 +185,65 @@ Then the first is refused and the second is not. A trigger without a branch filt
 `pull_request_target` trigger, a missing pipeline file and a tree without the setting are not judged
 
 Covered: `projects/agent-kit/tests/git-guards-draft-base.test.sh`.
+
+### SC-AK-1986 — the line of work outside an epic is read on its own place
+
+Given an open task whose body holds the words of work outside an epic inside a sentence
+When the work queue audit runs
+Then the task is named as naming no epic, with `--single` among the ways; the same words as a line of
+their own keep the audit silent
+
+Covered: `projects/agent-kit/tests/checks-board-epic-base.test.sh`.
+
+### SC-AK-1988 — `--single` is refused before the card, in one order
+
+Given a neighbour flag, no slug, no draft, an unanswered grill, no line of the count, a count that is
+not a number, two lines, a count of two, a body naming an epic, an open epic of the copy
+When `task:new --single` is called
+Then each is refused by its own words before the card, and at a count of two the refusal names `--epic`
+even where the body and the copy name an epic
+
+Given the words of `--single` typed as the reason of `--outside-epic`
+When the command is called
+Then no card is created
+
+Covered: `projects/agent-kit/tests/single-task.test.sh`.
+
+### SC-AK-1989 — the only task of a grill is created from the main branch
+
+Given a draft that counts one task, by the Russian line or by the English one
+When `task:new --single` is called
+Then the body carries the line of work outside an epic, the printed branch grows from the main branch
+and the draft becomes the folder of the branch
+
+Given the row of the copy names a closed epic or a plain task
+When the same call goes
+Then the task is created
+
+Covered: `projects/agent-kit/tests/single-task.test.sh`.
+
+### SC-AK-1990 — a card that already stands gets the line
+
+Given a card outside an epic whose folder, or whose draft, counts one task
+When `task-new-single` is called with its number
+Then the line is added after its body and the branch is printed from the main one; the row of the copy
+naming this very task does not hold the call
+
+Given a card under an epic, the card of an epic, a count of two, a card that already stands outside one
+When the same call goes
+Then the body stays as it was
+
+Covered: `projects/agent-kit/tests/single-task.test.sh`.
+
+### SC-AK-1991 — the branch of the only task of a grill grows from the main branch
+
+Given a card whose line is written by `--single`
+When its branch is created from the main branch, from a named branch of another task, from the tip of
+the working copy, from a hash of that tip and from another branch of the same task
+Then the first and the last pass, the rest are refused with the ready call from the main branch
+
+Given work outside an epic by the owner's word
+When its branch is created from a branch of another task
+Then it is judged as before
+
+Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
