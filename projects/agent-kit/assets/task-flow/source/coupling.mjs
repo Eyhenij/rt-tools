@@ -2,8 +2,9 @@
  * The source «source.coupling» of the task flow description: the answer of the command
  * `check-coupling.mjs --base=<revision>`, the only count of the links.
  *
- *   from(sha)  { answered, problems, now } — whether the command answered, the lines it refuses by and
- *              path → the outgoing links a module of the branch has now, 0 for a removed one
+ *   from(sha)  { answered, problems, now } — whether the command answered against the plan `sha`, the
+ *              lines it refuses by and path → the outgoing links a module of the branch has now, 0 for a
+ *              removed one
  *
  * An answer is a run with no refusal or with the line of violations: an unknown revision, an absent or a
  * broken command answers nothing. The command takes seconds and an exit is measured at every stop, so an
@@ -31,10 +32,13 @@ function keyOf(root, sha) {
     return hash.digest('hex');
 }
 
+/** The plan, or the tip the newest merge after it brought: a cycle a merge brought is no edit of the branch. */
+const baseOf = (root, sha) => run(['log', '--merges', '--format=%P', `${sha}..HEAD`], root).split('\n')[0].split(' ')[1] || sha;
+
 function ask(root, sha) {
     const command = commandIn(root);
     if (!command) return SILENT;
-    const { status, stdout, stderr } = spawnSync(process.execPath, [command, `--base=${sha}`], { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+    const { status, stdout, stderr } = spawnSync(process.execPath, [command, `--base=${baseOf(root, sha)}`], { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
     const [, refusal] = /check-coupling: violations \d+\n\n((?:  .*\n)+)/.exec(stderr ?? '') ?? [];
     if (status !== 0 && !refusal) return SILENT;
     const changed = [...stdout.matchAll(/^  (\S+): incoming .*?, outgoing \d+ → (\d+),/gm)].map(([, path, links]) => [path, Number(links)]);

@@ -174,7 +174,7 @@ function couplingGaps(rows, head, { answered, problems, now }, design) {
     if (!answered) return [];
     const refused = problems.map((text) => ({ text, keys: [...text.matchAll(/`([^`\s]+)`/g)].map((found) => found[1]), hard: HARD.test(text) }));
     const promised = [...design.links(rowsBy(rows, COUPLING).map((row) => row.text).join('\n\n'), head.files)];
-    const kept = promised.filter(([path, link]) => link.now < link.was && !path.endsWith('/') && head.files.includes(path)).flatMap(([path, link]) => {
+    const kept = promised.filter(([path, link]) => link.now < link.was && head.files.includes(path)).flatMap(([path, link]) => {
         const links = now.get(path) ?? link.was;
         return links > link.now ? [gap(`\`${path}\` outgoing was to be ${link.now}, it is ${links}`, path)] : [];
     });

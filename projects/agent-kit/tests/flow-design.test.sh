@@ -195,4 +195,102 @@ refused('новый цикл с путём в кавычках не снимае
 refused('рост связей снимается', '`a/b.mjs` outgoing 1 → 3; the branch named 2', 'чисто');
 JS
 
+# --- SC-AK-1976 — отказ зацепления и обещанное снижение связей ----------------------------------------
+fd_group << 'JS'
+const GREW = '`a/b.mjs` outgoing 1 → 3; the branch named 2';
+const links = (label, cell, { before = { 'a/b.mjs': 'let a;\n' }, after = { 'a/b.mjs': 'let b;\n' }, answer = {}, want = 'чисто', lift = null } = {}) =>
+    check(`SC-AK-1976 — ${label}`, {
+        text: decision({ Зацепление: cell }, ['a/b.mjs', 'x/a/b.mjs']),
+        before,
+        after: lift ? { ...after, [`${F}/progress.md`]: `# Progress\n\n## Decisions along the way\n\n- ${lift}\n` } : after,
+        coupling: { answered: true, problems: [], now: new Map(), ...answer },
+    }, want);
+links('строка violations названа', 'циклов нет', { answer: { problems: [GREW] }, want: GREW });
+links('команда ответила без отказа', 'циклов нет');
+links('команда не ответила', 'циклов нет', { answer: { answered: false, problems: [GREW] } });
+links('число в плане, команда молчит', '`a/b.mjs` исходящие 1 → 2', { answer: { now: new Map([['a/b.mjs', 2]]) } });
+const DOWN = '`a/b.mjs` исходящие 3 → 1';
+links('снижение не выполнено', DOWN, { answer: { now: new Map([['a/b.mjs', 3]]) }, want: '`a/b.mjs` outgoing was to be 1, it is 3' });
+links('снижение выполнено не целиком', DOWN, { answer: { now: new Map([['a/b.mjs', 2]]) }, want: '`a/b.mjs` outgoing was to be 1, it is 2' });
+links('снижение: модуль не тронут', DOWN, { after: { 'a/c.md': 'y\n' }, want: '`a/b.mjs` outgoing was to be 1, it is 3' });
+links('снижение выполнено', DOWN, { answer: { now: new Map([['a/b.mjs', 1]]) } });
+links('снижение с запасом', DOWN, { answer: { now: new Map([['a/b.mjs', 0]]) } });
+links('снижение: модуль удалён, команда его не числит', DOWN, { after: { 'a/b.mjs': null } });
+links('снижения нет: число без изменения', '`a/b.mjs` исходящие 2 → 2', { answer: { now: new Map([['a/b.mjs', 3]]) } });
+links('снижение папки не судится', '`a/` исходящие 3 → 1', { answer: { now: new Map([['a/', 3]]) } });
+links('снижение коротким путём', '`b.mjs` исходящие 3 → 1', { before: { 'x/a/b.mjs': 'let a;\n' }, after: { 'x/a/b.mjs': 'let b;\n' }, answer: { now: new Map([['x/a/b.mjs', 3]]) }, want: '`x/a/b.mjs` outgoing was to be 1, it is 3' });
+links('снижение не выполнено, снятие с причиной', DOWN, { answer: { now: new Map([['a/b.mjs', 3]]) }, lift: '`a/b.mjs` — превышение: связь с разбором осталась' });
+JS
+
+# --- SC-AK-1976 — источник: ответ команды и его хранение ----------------------------------------------
+# Поддельная команда пишет вызов в файл вне репозитория и отвечает по режиму из другого такого файла:
+# файл внутри репозитория сам менял бы ключ ответа.
+cat > "$FD_DIR/command.mjs" << 'JS'
+import { appendFileSync, readFileSync } from 'node:fs';
+appendFileSync(process.env.FD_CALLS, `${process.argv[2]}\n`);
+const mode = readFileSync(process.env.FD_MODE, 'utf8').trim();
+if (mode === 'crash') throw new Error('broken');
+if (mode === 'unknown') {
+    console.error('check-coupling: the revision is not known');
+    process.exit(1);
+}
+if (mode === 'refuse') {
+    console.error('\ncheck-coupling: violations 1\n\n  `a/b.mjs` outgoing 1 → 3; the branch named 2\n\nFix the code.');
+    process.exit(1);
+}
+console.log('  a/b.mjs: incoming 0 → 0, outgoing 1 → 2, total 2\n  a/c.mjs: removed, outgoing was 3');
+JS
+cat > "$FD_DIR/ask.mjs" << 'JS'
+const { open } = await import(process.env.FD_SOURCE);
+const { answered, problems, now } = open().from(process.argv[2]);
+console.log([answered, problems.join(' / '), [...now].map(([path, links]) => `${path}=${links}`).join(',')].join('|'));
+JS
+FD_REPO="$(fixture_repo_branched main RT-1-x)"
+fixture_commit "$FD_REPO" tools/check-coupling.mjs "$(cat "$FD_DIR/command.mjs")" 'chore: команда'
+FD_PLAN="$(git -C "$FD_REPO" rev-parse HEAD)"
+export FD_CALLS="$FD_DIR/calls" FD_MODE="$FD_DIR/mode" FD_SOURCE="$TESTS/../assets/task-flow/source/coupling.mjs"
+fd_ask() {
+    printf '%s\n' "$1" > "$FD_MODE"
+    (cd "$FD_REPO" && node "$FD_DIR/ask.mjs" "$FD_PLAN" 2>&1)
+}
+fd_calls() { if [ -f "$FD_CALLS" ]; then wc -l < "$FD_CALLS" | tr -d ' '; else echo 0; fi; }
+fd_fresh() { rm -rf "$FD_REPO/.git/rt-kit" "$FD_CALLS"; }
+FD_GREW='`a/b.mjs` outgoing 1 → 3; the branch named 2'
+
+fd_fresh
+report "SC-AK-1976 — команда молчит: числа связей прочитаны" "$(fd_ask ok)" "true||a/b.mjs=2,a/c.mjs=0"
+fd_fresh
+report "SC-AK-1976 — строка violations прочитана" "$(fd_ask refuse)" "true|$FD_GREW|"
+fd_fresh
+report "SC-AK-1976 — неизвестная ревизия: ответа нет" "$(fd_ask unknown)" "false||"
+report "SC-AK-1976 — команда упала: ответа нет" "$(fd_ask crash)" "false||"
+report "SC-AK-1976 — команды нет: ответа нет" "$(RT_CHECKS_DIR=nowhere fd_ask ok)" "false||"
+report "SC-AK-1976 — «не ответила» не хранится" "$(fd_ask ok | cut -d'|' -f1)" "true"
+fd_fresh
+fd_ask refuse > /dev/null
+report "SC-AK-1976 — ответ хранится по вершине" "$(fd_ask ok | cut -d'|' -f2)|$(fd_calls)" "$FD_GREW|1"
+fixture_commit "$FD_REPO" a/d.mjs 'let d;' 'feat: d'
+report "SC-AK-1976 — новая вершина зовёт команду" "$(fd_ask refuse | cut -d'|' -f2)|$(fd_calls)" "$FD_GREW|2"
+git -C "$FD_REPO" checkout -q -b RT-2-y
+report "SC-AK-1976 — две ветки на одной вершине ответа не делят" "$(fd_ask ok | cut -d'|' -f2)|$(fd_calls)" "|3"
+git -C "$FD_REPO" checkout -q RT-1-x
+printf 'let e;\n' >> "$FD_REPO/a/d.mjs"
+report "SC-AK-1976 — незаписанная правка зовёт команду" "$(fd_ask ok | cut -d'|' -f2)|$(fd_calls)" "|4"
+git -C "$FD_REPO" checkout -q -- a/d.mjs
+report "SC-AK-1976 — ответ правки не портит ответ вершины" "$(fd_ask ok | cut -d'|' -f2)|$(fd_calls)" "$FD_GREW|4"
+printf 'let f;\n' > "$FD_REPO/a/f.mjs"
+report "SC-AK-1976 — новый файл вне истории зовёт команду" "$(fd_ask ok | cut -d'|' -f2)|$(fd_calls)" "|5"
+rm "$FD_REPO/a/f.mjs"
+report "SC-AK-1976 — ответ нового файла не портит ответ вершины" "$(fd_ask ok | cut -d'|' -f2)|$(fd_calls)" "$FD_GREW|5"
+fd_fresh
+fd_ask ok > /dev/null
+report "SC-AK-1976 — без слияния база команды — коммит плана" "$(tail -1 "$FD_CALLS")" "--base=$FD_PLAN"
+git -C "$FD_REPO" checkout -q main
+fixture_commit "$FD_REPO" a/g.mjs 'let g;' 'feat: g'
+git -C "$FD_REPO" checkout -q RT-1-x
+git -C "$FD_REPO" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false merge -q --no-edit main 2>/dev/null
+fd_ask ok > /dev/null
+report "SC-AK-1976 — после слияния база команды — привезённая вершина" "$(tail -1 "$FD_CALLS")" "--base=$(git -C "$FD_REPO" rev-parse main)"
+rm -rf "$FD_REPO"
+
 suite_result "код против решения плана"
