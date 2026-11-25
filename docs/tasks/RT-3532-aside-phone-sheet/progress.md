@@ -84,31 +84,33 @@ The progress in full — `docs/tasks/RT-3532-aside-phone-sheet/progress.md`; the
 ### Uncommitted
 
 ```
- M docs/tasks/RT-3532-aside-phone-sheet/progress.md
- M projects/ui-kit-v2/src/lib/components/aside/header/rt-aside-header.component.html
- M projects/ui-kit-v2/src/lib/components/aside/header/rt-aside-header.component.ts
- M projects/ui-kit-v2/src/lib/components/aside/rt-aside-ref.ts
- M projects/ui-kit-v2/src/lib/components/aside/rt-aside-sheet.ts
- M projects/ui-kit-v2/src/lib/components/aside/rt-aside.component.html
- M projects/ui-kit-v2/src/lib/components/aside/rt-aside.component.scss
- M projects/ui-kit-v2/src/lib/components/aside/rt-aside.component.ts
- M projects/ui-kit-v2/src/lib/components/aside/rt-aside.service.ts
- M projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.component.html
- M projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.component.ts
- M projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.model.ts
- M projects/ui-kit-v2/src/lib/components/container/rt-container.component.ts
- M projects/ui-kit-v2/src/lib/components/container/rt-route-aside.base.ts
- M projects/ui-kit-v2/src/lib/components/container/rt-route-aside.unsaved.ts
- M projects/ui-kit-v2/src/lib/components/toolbar/filters-aside/rt-toolbar-filters-aside.component.ts
- M projects/ui-kit-v2/src/lib/components/toolbar/rt-toolbar.component.ts
- M projects/ui-kit-v2/src/lib/components/toolbar/rt-toolbar.model.ts
-?? projects/ui-kit-v2/src/lib/components/aside/rt-aside-sheet-tabs.ts
-?? projects/ui-kit-v2/src/lib/components/container/rt-route-aside-sheet.spec.ts
+ M projects/ui-kit-v2/src/lib/components/bottom-sheet/Overview.mdx
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--app-aside.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--column-settings.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--list-view.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--record.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--side-panel-at-600.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--tabs-carousel.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--toolbar-filters.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--unsaved-question.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--workspace-details.png
 ```
 
 ### Commits over the main branch
 
 ```
+58c7177ad docs(rt:ui-kit-v2): сверка витрины асайда-шторки с макетом по числам — 264 из 264 (RT-3532)
+6017a7acd feat(rt:ui-kit-v2): шторка из шторки открывается в той же шторке вторым экраном с шевроном «назад» (RT-3532)
+4a2639aaf docs(rt:ui-kit-v2): шторка из шторки — в той же шторке с шевроном «назад», макет одобрен владельцем (RT-3532)
+9840b19ca feat(rt:ui-kit-v2): истории асайда-шторки на 375 и 600 точках — кадры макета от панели записи до вкладок каруселью (RT-3532)
+76cf21a90 fix(rt:ui-kit-v2): надзаголовок, подпись и бэйджи шторки стоят под шапкой по краю содержимого, в шапке только «×», заголовок и кнопки (RT-3532)
+c32e2fba8 docs(rt:ui-kit-v2): асайд приложения проверен вживую на 375, шаг 2.6 замерен (RT-3532)
+f28856b60 docs(rt:ui-kit-v2): сценарии асайда-шторки покрыты тестами, шаг 2.5 замерен (RT-3532)
+c59e2b01c test(rt:ui-kit-v2): прежние обещания асайда SC-UKV-1043, 1244, 1251…1253 и 1320 держатся в окне от 481 точки (RT-3532)
+b510d8101 docs(rt:ui-kit-v2): шаги 2.1–2.4 RT-3532 замерены зелёными (RT-3532)
+182d36a5c test(rt:ui-kit-v2): сценарии шага 2.4 — Escape, фокус, шторка из шторки и вкладки каруселью в асайде-шторке (RT-3532)
+812fb32ee test(rt:ui-kit-v2): сценарии шага 2.3 — закрытие асайда-шторки жестами и вопрос внизу у панели службы, панели записи и отборов полосы (RT-3532)
+bf13d84f2 feat(rt:ui-kit-v2): асайд-шторка закрывается свайпом, «×» и полосой с вопросом внизу, Escape, фокус и вкладки по правилам шторок (RT-3532)
 c1c5b4e5b test(rt:ui-kit-v2): сценарии асайда-шторки шагов 2.1 и 2.2 — открытие до 480 точек в службе и пяти местах кита, шапка и подвал шторки (RT-3532)
 d576dcbef feat(rt:ui-kit-v2): асайд до 480 точек открывается шторкой кита во всю высоту — служба, правая панель рамки, шапка и подвал шторки (RT-3532)
 89d32716d docs(rt:ui-kit-v2): макет асайда-шторки одобрен владельцем, вкладки каруселью (RT-3532)
@@ -117,18 +119,6 @@ d576dcbef feat(rt:ui-kit-v2): асайд до 480 точек открывает�
 a2e9d8e3d docs(rt:ui-kit-v2): договорённость асайда-шторки после ревью критика, сценарии до SC-UKV-1862 (RT-3532)
 26fde5fbb docs(rt:ui-kit-v2): договорённость асайда-шторки на телефоне, сценарии SC-UKV-1802…1846 (RT-3532)
 523eaad1a docs(rt:ui-kit-v2): папка задачи RT-3532 — разбор асайда-шторки на телефоне (RT-3532)
-7be51f391 [RT-3617] Шторки на телефоне: правки владельца — карусель чипов, высота шести недель, вкладки без скачка, высота по клавиатуре и по содержимому (#3620)
-9c533fbc5 docs(rt:ui-kit-v2): папка задачи RT-3617 разобрана в запись архива (RT-3617)
-fc6b5b036 docs(rt:ui-kit-v2): проверка шага 1.3 RT-3617 заменена в ходе работы — в плане она без кавычек (RT-3617)
-a613324cd docs(rt:ui-kit-v2): разбор просьбы RT-3617 — в виде на момент плана, ответ владельца о высоте — в ходе работы (RT-3617)
-8609dccb0 Revert "docs(rt:ui-kit-v2): папка задачи RT-3617 разобрана в запись архива (RT-3617)"
-c682f4cb6 docs(rt:ui-kit-v2): сценарий высоты длинной шторки называет файл своей истории (RT-3617)
-75b6c63c8 docs(rt:ui-kit-v2): папка задачи RT-3617 разобрана в запись архива (RT-3617)
-a0f21bd9a fix(rt:ui-kit-v2): правки шторок после второго круга ревью (RT-3617)
-957458824 fix(rt:ui-kit-v2): правки шторок после первого круга ревью (RT-3617)
-78adf73d6 docs(rt:ui-kit-v2): макеты правок шторок и витрина одобрены владельцем, шаги этапа закрыты (RT-3617)
-ca6a1175c fix(rt:ui-kit-v2): шторка встаёт во всю высоту, только пока показана экранная клавиатура (RT-3531)
-16d88125e fix(rt:ui-kit-v2): календарь в шторке держит высоту шести недель, месяц покороче по центру (RT-3531)
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked
