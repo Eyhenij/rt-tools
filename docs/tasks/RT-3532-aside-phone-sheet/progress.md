@@ -84,21 +84,25 @@ The progress in full — `docs/tasks/RT-3532-aside-phone-sheet/progress.md`; the
 ### Uncommitted
 
 ```
- M projects/ui-kit-v2/src/lib/components/bottom-sheet/Overview.mdx
-?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--app-aside.png
-?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--column-settings.png
-?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--list-view.png
-?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--record.png
-?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--side-panel-at-600.png
-?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--tabs-carousel.png
-?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--toolbar-filters.png
-?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--unsaved-question.png
-?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--workspace-details.png
+ M projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--app-aside.png
+ M projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--column-settings.png
+ M projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--list-view.png
+ M projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--record.png
+ M projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--tabs-carousel.png
+ M projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--toolbar-filters.png
+ M projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--unsaved-question.png
+ M projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--workspace-details.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--footer.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-asidesheet--tabs.png
 ```
 
 ### Commits over the main branch
 
 ```
+b9d699e2a docs(rt:ui-kit-v2): сверка асайда-шторки с макетом и чертой под шапкой — 303 из 303 (RT-3532)
+a6ab54707 feat(rt:ui-kit-v2): под шапкой асайда-шторки черта как у подвала, истории «Вкладки» и «Подвал» (RT-3532)
+e255e428b docs(rt:ui-kit-v2): совпадение витрины асайда-шторки с макетом записано — 264 из 264 (RT-3532)
+b9b614c3f test(rt:ui-kit-v2): эталоны витрины асайда-шторки, совпадение с макетом 264 из 264 (RT-3532)
 58c7177ad docs(rt:ui-kit-v2): сверка витрины асайда-шторки с макетом по числам — 264 из 264 (RT-3532)
 6017a7acd feat(rt:ui-kit-v2): шторка из шторки открывается в той же шторке вторым экраном с шевроном «назад» (RT-3532)
 4a2639aaf docs(rt:ui-kit-v2): шторка из шторки — в той же шторке с шевроном «назад», макет одобрен владельцем (RT-3532)
@@ -115,10 +119,6 @@ c1c5b4e5b test(rt:ui-kit-v2): сценарии асайда-шторки шаг�
 d576dcbef feat(rt:ui-kit-v2): асайд до 480 точек открывается шторкой кита во всю высоту — служба, правая панель рамки, шапка и подвал шторки (RT-3532)
 89d32716d docs(rt:ui-kit-v2): макет асайда-шторки одобрен владельцем, вкладки каруселью (RT-3532)
 5032cddb5 docs(rt:ui-kit-v2): план RT-3532 одобрен владельцем, проверки красные до работы (RT-3532)
-874b8f32c docs(rt:ui-kit-v2): план RT-3532 — макет, асайд-шторка в коде, витрина, тексты; проверки прогоном тестов и счётом сценариев (RT-3532)
-a2e9d8e3d docs(rt:ui-kit-v2): договорённость асайда-шторки после ревью критика, сценарии до SC-UKV-1862 (RT-3532)
-26fde5fbb docs(rt:ui-kit-v2): договорённость асайда-шторки на телефоне, сценарии SC-UKV-1802…1846 (RT-3532)
-523eaad1a docs(rt:ui-kit-v2): папка задачи RT-3532 — разбор асайда-шторки на телефоне (RT-3532)
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked
