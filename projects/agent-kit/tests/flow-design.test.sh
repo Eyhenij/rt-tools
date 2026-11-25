@@ -23,7 +23,8 @@ fd_run() {
 }
 
 # Общая часть групп: план, история и вызов мерила.
-FD_DIR="$(mktemp -d)"
+# Настоящий путь: движок, запущенный по пути через ссылку, не узнаёт себя и молчит.
+FD_DIR="$(cd "$(mktemp -d)" && pwd -P)"
 trap 'rm -rf "$FD_DIR"' EXIT
 cat > "$FD_DIR/prelude.mjs" << 'JS'
 import { gitDouble } from './flow-doubles.mjs';
@@ -230,14 +231,9 @@ import { appendFileSync, readFileSync } from 'node:fs';
 appendFileSync(process.env.FD_CALLS, `${process.argv[2]}\n`);
 const mode = readFileSync(process.env.FD_MODE, 'utf8').trim();
 if (mode === 'crash') throw new Error('broken');
-if (mode === 'unknown') {
-    console.error('check-coupling: the revision is not known');
-    process.exit(1);
-}
-if (mode === 'refuse') {
-    console.error('\ncheck-coupling: violations 1\n\n  `a/b.mjs` outgoing 1 → 3; the branch named 2\n\nFix the code.');
-    process.exit(1);
-}
+const fail = (text) => console.error(text) ?? process.exit(1);
+if (mode === 'unknown') fail('check-coupling: the revision is not known');
+if (mode === 'refuse') fail('\ncheck-coupling: violations 1\n\n  `a/b.mjs` outgoing 1 → 3; the branch named 2\n\nFix the code.');
 console.log('  a/b.mjs: incoming 0 → 0, outgoing 1 → 2, total 2\n  a/c.mjs: removed, outgoing was 3');
 JS
 cat > "$FD_DIR/ask.mjs" << 'JS'
@@ -249,10 +245,7 @@ FD_REPO="$(fixture_repo_branched main RT-1-x)"
 fixture_commit "$FD_REPO" tools/check-coupling.mjs "$(cat "$FD_DIR/command.mjs")" 'chore: команда'
 FD_PLAN="$(git -C "$FD_REPO" rev-parse HEAD)"
 export FD_CALLS="$FD_DIR/calls" FD_MODE="$FD_DIR/mode" FD_SOURCE="$TESTS/../assets/task-flow/source/coupling.mjs"
-fd_ask() {
-    printf '%s\n' "$1" > "$FD_MODE"
-    (cd "$FD_REPO" && node "$FD_DIR/ask.mjs" "$FD_PLAN" 2>&1)
-}
+fd_ask() { printf '%s\n' "$1" > "$FD_MODE" && (cd "$FD_REPO" && node "$FD_DIR/ask.mjs" "$FD_PLAN" 2>&1); }
 fd_calls() { if [ -f "$FD_CALLS" ]; then wc -l < "$FD_CALLS" | tr -d ' '; else echo 0; fi; }
 fd_fresh() { rm -rf "$FD_REPO/.git/rt-kit" "$FD_CALLS"; }
 FD_GREW='`a/b.mjs` outgoing 1 → 3; the branch named 2'
@@ -292,5 +285,46 @@ git -C "$FD_REPO" -c user.name=probe -c user.email=probe@example.com -c commit.g
 fd_ask ok > /dev/null
 report "SC-AK-1976 — после слияния база команды — привезённая вершина" "$(tail -1 "$FD_CALLS")" "--base=$(git -C "$FD_REPO" rev-parse main)"
 rm -rf "$FD_REPO"
+
+# --- SC-AK-1978 — движок: символ, лишний импорт, разложенная копия, отказ в конце хода ---------------
+# Описание без шести первых состояний начинается с «этапы-кончились»: ветке не нужны ни хостинг, ни метки.
+# Копия пакета лежит в каталоге набора, разложенная — в `tools/` репозитория вместе с настоящей командой.
+fd_trim() { node -e 'const fs = require("fs"), t = fs.readFileSync(process.argv[1], "utf8"); fs.writeFileSync(process.argv[1], t.slice(0, t.indexOf("    request: {")) + t.slice(t.indexOf("    stagesOver: {")));' "$1"; }
+FD_T="$(cd "$(fixture_repo_branched main RT-7-dec)" && pwd -P)"
+FD_G=(git -C "$FD_T" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false)
+mkdir -p "$FD_DIR/kit" "$FD_T/tools" "$FD_T/.claude/rt-kit" "$FD_T/a" "$FD_T/docs/tasks/RT-7-dec"
+cp -R "$TESTS/../assets/task-flow" "$TESTS/../assets/checks" "$FD_DIR/kit/" && cp -R "$TESTS/../assets/task-flow" "$TESTS"/../assets/checks/*.mjs "$FD_T/tools/"
+fd_trim "$FD_DIR/kit/task-flow/flow.js" && fd_trim "$FD_T/tools/task-flow/flow.js"
+printf '{"sourceRoots":["a"],"board":{"taskKey":"RT"},"tasksDir":"docs/tasks"}\n' > "$FD_T/.claude/rt-kit/checks.json"
+printf 'export const c = 1;\n' > "$FD_T/a/c.mjs"
+"${FD_G[@]}" add -A && "${FD_G[@]}" commit -q -m 'chore: основа' && git -C "$FD_T" update-ref refs/remotes/origin/main HEAD
+printf '# План\n\n**Task:** RT-7 · **Branch:** RT-7-dec\n**Behaviour:** unchanged — проба\n\n## Решение\n\n| Часть | Что выбрано |\n| --- | --- |\n| Модули | `a/b.mjs:one` — читает письмо |\n| Зацепление | `a/b.mjs` исходящие 0 → 0 |\n\n## Task footprint\n\n| What | Where |\n| --- | --- |\n| Code (правится) | `a/b.mjs` |\n' > "$FD_T/docs/tasks/RT-7-dec/plan.md"
+"${FD_G[@]}" add -A && "${FD_G[@]}" commit -q -m 'docs: план'
+fd_code() { printf '%b' "$1" > "$FD_T/a/b.mjs" && "${FD_G[@]}" add -A && "${FD_G[@]}" commit -q -m "$2" && rm -rf "$FD_T/.git/rt-kit"; }
+fd_flow() { (cd "$FD_T" && node "$1/task-flow-script.mjs" measure --flow "$2/task-flow/flow.js" 2>&1); }
+fd_kit() { fd_flow "$FD_DIR/kit/checks" "$FD_DIR/kit"; }
+fd_laid() { fd_flow "$FD_T/tools" "$FD_T/tools"; }
+FD_HELD='^state: этапы-кончились'
+fd_code 'export function one() {\n    return 1;\n}\n' 'feat: one'
+fd_code 'export function two() {\n    return 2;\n}\n' 'feat: one удалён'
+got="$(fd_kit)"
+report "SC-AK-1978 — символ удалён: движок стоит на «этапы-кончились»" "$(printf '%s' "$got" | grep -c "$FD_HELD")" 1
+report "SC-AK-1978 — символ удалён: строка состояния печатает символ" "$(printf '%s' "$got" | grep -c '^not held: `a/b.mjs:one` is not declared')" 1
+report "SC-AK-1978 — разложенная копия: символ удалён — названо" "$(fd_laid | grep -c '^not held: `a/b.mjs:one` is not declared')" 1
+fd_code 'export function one() {\n    return 1;\n}\n' 'feat: one возвращён'
+got="$(fd_kit)"
+report "SC-AK-1978 — символ возвращён: движок идёт дальше" "$(printf '%s' "$got" | grep -c "$FD_HELD")|$(printf '%s' "$got" | grep -c '^state: ')" '0|1'
+report "SC-AK-1978 — символ возвращён: расхождений нет" "$(printf '%s' "$got" | grep -c '^not held')" 0
+fd_code "import { c } from './c.mjs';\nexport function one() {\n    return c;\n}\n" 'feat: one читает c'
+got="$(fd_kit)"
+report "SC-AK-1978 — лишний импорт: настоящая команда держит движок" "$(printf '%s' "$got" | grep -c "$FD_HELD")" 1
+report "SC-AK-1978 — лишний импорт: строка называет рост связей" "$(printf '%s' "$got" | grep -c '^not held: `a/b.mjs` outgoing 0 → 1')" 1
+rm -rf "$FD_T/.git/rt-kit"
+report "SC-AK-1978 — разложенная копия: лишний импорт — назван" "$(fd_laid | grep -c '^not held: `a/b.mjs` outgoing 0 → 1')" 1
+printf '%s\n' '{"type":"assistant","message":{"content":[{"type":"tool_use","id":"e1","name":"Edit","input":{"file_path":"x"}}]}}' > "$FD_DIR/record.jsonl"
+got="$(cd "$FD_T" && printf '{"transcript_path":"%s"}' "$FD_DIR/record.jsonl" | node "$FD_DIR/kit/checks/task-flow-script.mjs" verdict --flow "$FD_DIR/kit/task-flow/flow.js" 2>&1)"
+report "SC-AK-1978 — отказ в конце хода называет расхождение" "$(printf '%s' "$got" | grep -cF -- '\n- `a/b.mjs` outgoing 0 → 1')" 1
+report "SC-AK-1978 — отказ в конце хода называет способ снятия" "$(printf '%s' "$got" | grep -c 'lift a mismatch by a line of the decisions')" 1
+rm -rf "$FD_T"
 
 suite_result "код против решения плана"

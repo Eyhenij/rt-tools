@@ -13,15 +13,14 @@
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { join, resolve } from 'node:path';
 
 const NAME = 'check-coupling.mjs';
 const SILENT = { answered: false, problems: [], now: new Map() };
 const run = (args, cwd) => spawnSync('git', args, { cwd, encoding: 'utf8', maxBuffer: 512 * 1024 * 1024 }).stdout ?? '';
 
-/** The command next to the laid-out engine, or the one laid out in the tree. */
-const commandIn = (root) => [join(dirname(fileURLToPath(import.meta.url)), '..', '..', NAME), join(root, process.env.RT_CHECKS_DIR || 'tools', NAME)].find((path) => existsSync(path));
+/** The command laid out in the tree, in the directory of the checks the engine is laid out in too. */
+const commandIn = (root) => [join(root, process.env.RT_CHECKS_DIR || 'tools', NAME)].find((path) => existsSync(path));
 
 /** What the answer depends on: a new file outside the history counts too. */
 function keyOf(root, sha) {
