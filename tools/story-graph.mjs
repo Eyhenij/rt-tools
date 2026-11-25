@@ -75,7 +75,7 @@ function stylesNamedBy(text) {
     const named = [];
     const code = withoutComments(text);
 
-    for (const [, rule, rest] of code.matchAll(/@(use|import|forward)\s+([^;{}]*)/g)) {
+    for (const [, rule, rest] of code.matchAll(/@(use|import|forward)\b([^;{}]*)/g)) {
         const paths = [...rest.matchAll(/['"]([^'"]+)['"]|url\(([^'")]+)\)/g)].map(([, quoted, bare]) => quoted ?? bare);
 
         named.push(...(rule === 'import' ? paths : paths.slice(0, 1)));
@@ -230,7 +230,13 @@ export function storyGraph(source) {
         }
 
         const visit = (node) => {
-            if (ts.isPropertyAssignment(node) && /^(templateUrl|styleUrls?)$/.test(propertyName(node) ?? '')) {
+            if (ts.isPropertyAssignment(node) && propertyName(node) === 'styles') {
+                // The styles of a component may stand in the file itself and take others.
+                (ts.isArrayLiteralExpression(node.initializer) ? node.initializer.elements : [node.initializer])
+                    .filter(ts.isStringLiteralLike)
+                    .flatMap((text) => stylesNamedBy(text.text))
+                    .forEach((specifier) => take(resolveStyle(file, specifier), null));
+            } else if (ts.isPropertyAssignment(node) && /^(templateUrl|styleUrls?)$/.test(propertyName(node) ?? '')) {
                 (ts.isArrayLiteralExpression(node.initializer) ? node.initializer.elements : [node.initializer]).forEach(near);
             } else if (ts.isShorthandPropertyAssignment(node) && /^(templateUrl|styleUrls?)$/.test(node.name.text)) {
                 near(node.name);

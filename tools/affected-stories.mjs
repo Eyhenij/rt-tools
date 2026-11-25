@@ -46,7 +46,7 @@ const NO_STORY = [
     /(^|\/)(ng-package|tsconfig\.spec|tsconfig\.lib[^/]*)\.json$/,
     /^(docs|\.claude|apps|libs|prisma|deploy|\.github|eslint)\//,
     /^\.husky\//,
-    /^(\.gitignore|\.gitattributes|\.nxignore|\.prettierignore|commitlint\.config\.cjs|eslint\.config\.mjs|angular-doctor\.config\.json|knip\.json|docker-compose\.yml)$/,
+    /^(\.gitattributes|\.prettierignore|commitlint\.config\.cjs|eslint\.config\.mjs|angular-doctor\.config\.json|knip\.json|docker-compose\.yml)$/,
 ];
 
 const PACKAGE_SOURCE = /^projects\/[^/]+\/.*\.(ts|scss|html)$/;
@@ -123,7 +123,7 @@ function titleId(title) {
 
 /** The file an import of a deleted one falls to: `foo.ts` next to a live `foo/index.ts`, a partial of the same name. */
 function heirOf(source, path) {
-    const [, dir, name, kind] = path.match(/^(.*\/)?_?([^/]+)\.(ts|s?css)$/) ?? [];
+    const [, dir, name, kind] = path.match(/^(.*\/)?(?:_(?=[^/]+\.s?css$))?([^/]+)\.(ts|s?css)$/) ?? [];
 
     if (kind === undefined) {
         return undefined;

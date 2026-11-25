@@ -102,6 +102,7 @@ case "\$1 \$2" in
     "exec test-storybook")
         for last; do :; done
         printf '%s' "\$last" > "$WORK/sample"
+        printf '%s %s' "\$RT_SNAPSHOT_UPDATE" "\$*" > "$WORK/runner"
         cat "$WORK/taken" >> "\$RT_SNAPSHOT_REGISTRY"
         exit "\$(cat "$WORK/shot-code")" ;;
 esac
@@ -157,6 +158,7 @@ gate - '' 0 ui-kit-v2 --affected main
 report "the affected run that touched nothing builds no showcase" "$CODE:$(calls .):$(said 'снять: нечего')" '0:0:yes'
 gate $KIT/src/one.scss 'atoms-one--base\natoms-one--base--w480\n' 0 ui-kit-v2 --affected main
 report "the affected run opens the named files alone" "$CODE:$(cat "$WORK/sample")" "0:'/$KIT/src/one\\.stories\\.ts\$'"
+report "the affected run matches and re-takes nothing" "$(cut -c1 < "$WORK/runner"):$(grep -c -- ' -u' "$WORK/runner")" '0:0'
 report "the affected run ends with what it shot" "$(tail -1 "$WORK/out")" 'снято 1 файлов историй из 2, кадров 2'
 report "the affected run builds the showcase and calls the probes" "$(calls 'nx run'):$(calls 'check:icons'):$(calls 'check:window')" '1:1:1'
 gate $KIT/src/one.scss 'atoms-one--base\n' 0 ui-kit-v2 --affected main
@@ -167,6 +169,19 @@ gate $KIT/src/two.scss 'atoms-two--base\nskip atoms-two--plain\n' 0 ui-kit-v2 --
 report "the affected run takes an exception for a reached story" "$CODE:$(tail -1 "$WORK/out")" '0:снято 1 файлов историй из 2, кадров 1'
 gate $KIT/src/two.scss 'atoms-two--base\n' 0 ui-kit-v2 --affected main
 report "the affected run refuses a story without a reference the runner lost" "$CODE:$(said 'atoms-two--plain — the story was not reached')" '1:yes'
+gate $KIT/src/two.scss 'atoms-two--base\n' 1 ui-kit-v2 --affected main
+report "the affected run that fell says so of a story it did not reach" "$CODE:$(said 'was not reached: the run is red')" '1:yes'
+printf '/* edit */\n' >> "$RUN/$KIT/src/one.scss"
+gate $KIT/src/two.scss 'atoms-one--base\natoms-one--base--w480\natoms-two--base\nskip atoms-two--plain\n' 0 ui-kit-v2 --affected main
+report "the affected run opens every named file" "$CODE:$(cat "$WORK/sample"):$(tail -1 "$WORK/out")" \
+    "0:'/$KIT/src/one\\.stories\\.ts\$|/$KIT/src/two\\.stories\\.ts\$':снято 2 файлов историй из 2, кадров 3"
+judged() { "$REAL_NODE" -e "import('$TOOLS/visual-gate.mjs').then((gate) => console.log(gate.judgeTaken(JSON.parse(process.argv[1])).missed.join()))" "$1"; }
+UNTAGGED='{"id":"a--off","type":"story","importPath":"./a","tags":["dev"]},{"id":"a--on","type":"story","importPath":"./a","tags":["test"]}'
+REST='],"references":[],"taken":["a--on"]}'
+WITHOUT='{"files":["a"],"entries":['"$UNTAGGED$REST"
+WITH='{"files":["a"],"entries":['"$UNTAGGED"',{"id":"a--x","type":"story","importPath":"./a"}'"$REST"
+report "a story the runner does not open by its tag is not asked for" "$(judged "$WITHOUT")" ''
+report "a story the runner opens is asked for" "$(judged "$WITH")" 'a--x'
 gate $KIT/src/one.scss '' 0 ui-kit-v2 --affected main
 report "the affected run refuses a file that fell out, at a green shooting" \
     "$CODE:$(said 'one.stories.ts — not one story'):$(tail -1 "$WORK/out")" '1:yes:снято 0 файлов историй из 2, кадров 0'
@@ -206,6 +221,7 @@ WANT='A list is matched alone'
 report "an empty list is refused: its sample would open every file" "$(refused --files "$WORK/none.txt")" 'yes'
 report "a list with a whole re-take is refused" "$(refused --update-all --files "$WORK/one.txt")" 'yes'
 report "a list with a pointed re-take is refused" "$(refused --update one --files "$WORK/one.txt")" 'yes'
+report "a list with a sample is refused" "$(refused badge --files "$WORK/one.txt")" 'yes'
 WANT='The list of story files is not named'
 report "a list that does not lie there is refused" "$(refused --files "$WORK/absent.txt")" 'yes'
 

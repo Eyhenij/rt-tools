@@ -196,6 +196,13 @@ report "a style by @forward is followed" "$(named_by $CARD/_parts.scss $CARD/_ne
 report "a style by load-css is followed" "$(named_by $CARD/_parts.scss $CARD/_next.scss "@include meta.load-css('next');" '.x { color: red; }')" 'card'
 report "a comment that holds the sign of the other kind hides no style" \
     "$(named_by $CARD/_parts.scss $CARD/_next.scss "$(printf '// components/*.scss\n@use "next";\n/* end */')" '.x { color: red; }')" 'card'
+report "a style by @use without a space is followed" "$(named_by $CARD/_parts.scss $CARD/_next.scss '@use"next";' '.x { color: red; }')" 'card'
+# A variable: the bash of macOS expands braces with a comma inside a quoted substitution.
+OWN_STYLES='@Component({ styles: [`.y {}`, `@use "next";`] }) class X {}'
+report "a style the component's own styles take is followed" \
+    "$(named_by $PLAIN/plain.ts $PLAIN/_next.scss "$OWN_STYLES" '.x { color: red; }')" 'plain'
+report "an address in a style is no comment" \
+    "$(named_by $CARD/_parts.scss $CARD/_next.scss "\$x: url(https://a.b/c); @use 'next';" '.x { color: red; }')" 'card'
 report "a setting of @use is no path" "$(lost_by $CARD/_parts.scss "@use 'card.component' with (\$a: 'gone');" | tr -d '\n')" 'card'
 report "a spec a story takes touches it" "$(named_by $PLAIN/plain.ts $PLAIN/fixture.spec.ts "import './fixture.spec';")" 'plain'
 
@@ -263,6 +270,33 @@ move_to_directory() {
 }
 report "a file that became a directory still touches its readers" "$(after_change move_to_directory)" 'plain'
 heir_only() { rm $PLAIN/plain.ts; }
+style_heir() {
+    put "$1" '.parts { color: blue; }'
+    save heirs
+    rm $CARD/_parts.scss
+    short "$(node "$TOOLS/affected-stories.mjs" --base HEAD)"
+    git reset -q --hard HEAD~1 && git clean -qfd
+}
+report "a deleted style whose name falls to a directory touches its readers" "$(style_heir $CARD/parts/_index.scss)" 'card'
+report "a deleted style whose name falls to another file touches its readers" "$(style_heir $CARD/parts.css)" 'card'
+kept_heir() { put $PLAIN/kept.ts 'export const kept: number = 1;'; put $PLAIN/kept/index.ts 'export const kept: number = 1;'; put $PLAIN/index.ts "export * from './plain';" "export * from './kept/index';"; }
+report "an edited file is judged by itself, not by the directory of its name" "$(
+    kept_heir
+    printf '%s\n' "import '../kept/index';" >> $PLAIN/stories/plain.stories.ts
+    save kept
+    printf '%s\n' '/* edit */' >> $PLAIN/kept.ts
+    short "$(node "$TOOLS/affected-stories.mjs" --base HEAD)"
+    git reset -q --hard HEAD~1 && git clean -qfd
+)" 'нечего'
+put $PLAIN/_under.ts 'export const under: number = 1;'
+put $PLAIN/_under/index.ts 'export const under: number = 2;'
+printf '%s\n' "import './_under';" >> $PLAIN/plain.ts
+report "a deleted file of an underscored name falls to its directory" "$(
+    save under
+    rm $PLAIN/_under.ts
+    short "$(node "$TOOLS/affected-stories.mjs" --base HEAD)"
+    git reset -q --hard HEAD~1 && git clean -qfd
+)" 'plain'
 mkdir -p $PLAIN/plain && put $PLAIN/plain/index.ts 'export const plain: number = 2;' && save heir
 report "a deleted file whose import falls to a directory touches its readers" "$(after_change heir_only)" 'plain'
 
@@ -276,7 +310,10 @@ report "another line of a package manifest is everything" "$(after_change peer)"
 report "a package the showcase does not reach is no story" "$(after projects/cms-server/package.json projects/cms-server/src/index.ts)" 'нечего'
 report "an icon is everything" "$(after $KIT/src/assets/icons/one.svg)" 'всё'
 report "a file of the root is everything" "$(put nx.json '{}'; short "$(answer)"; back)" 'всё'
-report "a git setting of the root is no story" "$(put .gitattributes one; put .nxignore one; put .husky/pre-push one; short "$(answer)"; back)" 'нечего'
+report "a git setting of the root is no story" "$(put .gitattributes one; put .husky/pre-push one; short "$(answer)"; back)" 'нечего'
+report "what narrows the inputs of a build is everything" "$(put .nxignore one; short "$(answer)"; back)" 'всё'
+manifest_mode() { chmod +x projects/core/package.json; }
+report "a manifest without a changed line is everything" "$(after_change manifest_mode)" 'всё'
 for script in visual-gate visual-snapshots-v2 affected-stories story-graph shot-browser showcase-probe serve-static snapshot-icon-probe; do
     report "the step's script $script is everything" "$(put tools/$script.mjs one; short "$(answer)"; back)" 'всё'
 done

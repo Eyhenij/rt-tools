@@ -192,7 +192,7 @@ if (listIndex >= 0 && (listed === undefined || !existsSync(listed))) {
 
 const filesOfList = listed === undefined ? undefined : readFileSync(listed, 'utf8').split('\n').filter(Boolean);
 
-if (filesOfList !== undefined && (filesOfList.length === 0 || updateAll || updateIndex >= 0)) {
+if (filesOfList !== undefined && (filesOfList.length === 0 || updateAll || updateIndex >= 0 || matchOne !== undefined)) {
     fail('A list is matched alone and names at least one story file: an empty sample would open every file.');
 }
 

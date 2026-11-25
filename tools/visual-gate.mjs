@@ -145,7 +145,8 @@ export function refusalOf(args) {
 export function judgeTaken({ files, entries, references, taken }) {
     const written = new Set(taken.map((line) => line.trim()).filter((line) => line !== ''));
     const shot = new Set([...written].filter((line) => !line.startsWith('skip ')));
-    const stories = entries.filter((entry) => entry.type === 'story');
+    // The runner opens what carries the tag, and the index holds the rest too.
+    const stories = entries.filter((entry) => entry.type === 'story' && (entry.tags ?? ['test']).includes('test'));
     const names = references.filter((name) => name.endsWith('.png'));
     const result = { unopened: [], dropped: [], missed: [], missing: [], frames: shot.size };
 
@@ -434,7 +435,7 @@ async function main() {
         gaps = [
             ...shots.unopened.map((file) => `${file} — the showcase holds no story of the file`),
             ...shots.dropped.map((file) => `${file} — not one story of the file was reached`),
-            ...shots.missed.map((id) => `${id} — the story was not reached`),
+            ...shots.missed.map((id) => `${id} — the story was not reached${(run.status ?? 1) === 0 ? '' : ': the run is red'}`),
             ...shots.missing.map((name) =>
                 // A red run stops a story before its frame, and the reference is then no orphan.
                 (run.status ?? 1) === 0 ? `${name} — no story takes this frame` : `${name} — the frame was not taken: the run is red`
