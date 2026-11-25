@@ -27,8 +27,8 @@ The findings of the rules review of every closed task of the epic «Проста
    `node tools/archive-prune.mjs` before the set; a set run after midnight turned red on records that were in
    term when the work closed.
 8. **The replies of the roles and the body of the PR are lost with the scratchpad** — tree, the second case;
-   the wording stands in the proposals of RT-3607. RT-3631 pulls the other way and is settled together with
-   it.
+   the wording stands in the proposals of RT-3607. Closed by RT-3631: the record is built from the folder
+   and the body, the tables of the roles stay in the body on the hosting and are not repeated.
 
 ## RT-3626 — the review of 25 November 2026
 

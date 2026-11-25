@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · samples/tasks/_template/progress.md · 9fc1c8a987e3 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.39.1 · samples/tasks/_template/progress.md · 143007cab9d4 · правится надстройкой, не здесь -->
 # Progress
 
 ## Where we stand
@@ -9,7 +9,6 @@ Rewritten by every session, not appended to.
 - **Stage:** <number> of <total> — <name>
 - **Done:** <briefly>
 - **Next step:** <what is done first in the new session>
-- **Uncommitted:** <what lies in the tree outside the index>
 - **PR:** <number and state, or "not open yet">
 
 ## Steps

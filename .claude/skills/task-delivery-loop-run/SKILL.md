@@ -244,8 +244,15 @@ P="$(sed -n 's/^push ahead: base .*, pid \([0-9]*\)$/\1/p' "${TMPDIR:-/tmp}/push
 ps -p "${P:-0}" -o command= | grep -q 'git-guard-push-ahead' && kill -TERM "$P" || echo 'no run under this number'
 ```
 
-A red here is fixed while the task folder still stands; the folder is taken apart by the last commit.
-The push is a separate call after it; the push guard reads the marks the run ahead left, and a
+A red here is fixed while the task folder still stands. On green the body of the PR is written whole, by
+section 13, and the folder is taken apart by the last commit: the record is built from both, and the
+refusals of the command write nothing (rule `archive-record`):
+
+```bash
+npm run task:archive -- <body file> --title '[RT-N] <что сделано>'
+```
+
+The push is a separate call after the commit; the push guard reads the marks the run ahead left, and a
 step without a mark runs at the push:
 
 ```bash
@@ -254,7 +261,7 @@ git push -u origin RT-N-<slug>
 
 ## 13. The PR
 
-The body goes to a file first, in the six sections of the pattern `git-workflow-pr-body`: the
+The PR opens by the body the record was built from, a file in the six sections of the pattern `git-workflow-pr-body`: the
 `Closes #N` line, «Что сделано», «Точки», «Цель», «Чем подтверждено» with the path and
 its rounds, «Оставшийся шаг».
 

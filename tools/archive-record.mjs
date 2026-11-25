@@ -24,7 +24,7 @@ const ALONG = ['Решения по ходу', 'Decisions along the way'];
 const CONFIRMED = ['Чем подтверждено'];
 const LEFT = ['Оставшийся шаг'];
 const OWN = ['grill.md', 'plan.md', 'progress.md', 'approvals.md'];
-const PRICE = /^\s*-\s+\*\*Цена:\*\*\s*\S/m;
+const PRICE = /^\s*-\s+\*\*Цена:\*\*[ \t]*(?:\n[ \t]+)?\S/m;
 const QUOTE = /«[^«»]*(?:«[^«»]*»[^«»]*)*»/g;
 const OWNER_WORD = /recommended|владел|одобряю|the owner/i;
 /** Lines of the body that speak to the hosting and to the checks, not to whoever reads the record. */
@@ -104,13 +104,13 @@ const flat = (text) => text.replace(/^\s*>\s?/gm, '').replace(/\s+/g, ' ');
 /** The items of the progress that quote the owner and whose quotes the record does not hold yet. */
 export function ownerWords(progress, record) {
     const known = flat(record);
-    const place = ({ name }) => name === null || !(/^(?:Where we stand|Где мы|Handover)/.test(name) || ALONG.includes(name));
+    const place = ({ name }) => !/^(?:Where we stand|Где мы|Handover)/.test(name ?? '');
     return sectionsOf(progress)
         .filter(place)
         .flatMap(({ lines }) => unitsOf(lines))
         .filter((unit) => {
             const quotes = flat(unit).match(QUOTE) ?? [];
-            return quotes.length > 0 && OWNER_WORD.test(unit) && !quotes.every((quote) => known.includes(quote));
+            return OWNER_WORD.test(unit) && !quotes.every((quote) => known.includes(quote));
         });
 }
 

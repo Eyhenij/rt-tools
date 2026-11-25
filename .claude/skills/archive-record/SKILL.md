@@ -35,6 +35,26 @@ ls docs/archive/RT-1130-*                  # by task number
 grep -rl "<what was done>" docs/archive/   # by content
 ```
 
+## The record is built, not written
+
+```bash
+npm run task:archive -- <body of the PR> --title '<title of the PR>'
+```
+
+The command writes the record of the branch, takes the task folder off the disk and the index and
+leaves the commit to the executor. It runs after the push set is green and the body is whole.
+
+- **From the folder, word for word:** the request, the questions and answers, the decisions of the
+  grill and of the progress, the approvals of the kit, and each item of the progress that quotes the owner.
+- **From the approval mark:** the answer that approved the plan.
+- **From the body:** «Чем подтверждено» and «Оставшийся шаг». What the work leaves outside itself
+  goes into «Оставшийся шаг»: nothing else of the body reaches the record.
+
+What the command cannot know the executor writes into the decisions of the progress before it: the
+item `- **Цена:** …`, without which it refuses, and each decision of the grill the work cancelled.
+The folder goes with no files but its own; a script the commit of the plan holds leaves with it. A
+refusal writes and removes nothing.
+
 ## What goes into a record
 
 On the third line — the task number, the request number and the day the record is written. Then what

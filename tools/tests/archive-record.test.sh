@@ -61,6 +61,11 @@ PROGRESS='# Progress
   и продолжение той же строки.
     - вложенный пункт под ней
 - Снова владелец: «Делай оба (Recommended)».
+- Владелец сказал оба слова: «Делай оба (Recommended)» и «слово рядом с прежним».
+
+  Продолжение через пустую строку.
+- Меню: «Бери первый (Recommended)».
+- Ответ: «Одобряю как есть».
 - Строка без кавычек, хотя владелец назван.
 
 Абзац, где the owner сказал
@@ -97,6 +102,7 @@ BODY='Closes #7
 ```
 
 E2E-skip: правка текстов
+Closes #7
 
 ## Оставшийся шаг
 
@@ -158,6 +164,10 @@ report "the decisions of the grill and of the progress: the progress" "$(part '�
 report "the owner word of the progress: an item whole, a paragraph, a row of a table" "$(part 'Слова владельца в ходе работы')" '- Владелец: «слово из хода»
   и продолжение той же строки.
     - вложенный пункт под ней
+- Владелец сказал оба слова: «Делай оба (Recommended)» и «слово рядом с прежним».
+  Продолжение через пустую строку.
+- Меню: «Бери первый (Recommended)».
+- Ответ: «Одобряю как есть».
 Абзац, где the owner сказал
 «слово из абзаца» и дальше.
 | владелец | «слово из таблицы» |'
@@ -189,6 +199,14 @@ commit approvals
 code_of >/dev/null
 report "the approvals of the kit" "$(part 'Согласия владельца по киту')" '### Согласия
 - макет: «да, так»'
+
+# The headings of a progress written in the owner's language.
+repo "$(printf '%s\n' "$PROGRESS" | sed 's/^## Where we stand/## Где мы/; s/^## Decisions along the way/## Решения по ходу/')"
+report "the owner word of the progress: the Russian headings" "$(code_of) $(has 'слово из места') $(has 'слово из хода') $(has '- **Цена:** заплачено сутками.')" '0 0 1 1'
+
+# The price on the line below its mark is still a price.
+repo "$(printf '%s\n' "$PROGRESS" | sed 's/^- \*\*Цена:\*\* .*/- **Цена:**\n    - заплачено сутками/')"
+report "a price given below its mark is taken" "$(code_of) $(part 'Решения по ходу' | tail -1)" '0     - заплачено сутками'
 
 # --- the epic -------------------------------------------------------------------------------
 repo
@@ -230,6 +248,8 @@ repo "$(printf '%s\n' "$PROGRESS" | grep -v 'Цена:')"
 refused "no price among the decisions" 'name no price'
 repo "$(printf '%s\n' "$PROGRESS" | sed 's/^- \*\*Цена:.*/- **Цена:**/')"
 refused "no price among the decisions: the item is empty" 'name no price'
+repo "$(printf '%s\n' "$PROGRESS" | sed 's/^- \*\*Цена:\*\* .*/- **Цена:**\n- Другое решение./')"
+refused "no price among the decisions: an empty item before another" 'name no price'
 repo "$(printf '%s\n- **Цена:** не там.\n' "$(printf '%s\n' "$PROGRESS" | grep -v 'Цена:')")"
 refused "no price among the decisions: it stands in another section" 'name no price'
 repo
@@ -265,6 +285,11 @@ refused "the record already stands: on disk" 'the record already stands'
 repo
 mkdir -p "$R/docs/archive" && printf 'есть\n' > "$R/$REC" && commit record && rm "$R/$REC"
 refused "the record already stands: in the commit" 'the record already stands'
+
+# A text the plan came with is not frozen: it is carried over or removed first.
+repo
+(cd "$R" && git reset -q --soft HEAD~1 && printf 'заметки\n' > "$F/notes.md" && git add -A && "${G[@]}" commit -q -m plan)
+refused "a foreign file in the folder: a text of the commit of the plan" "the record does not take: $F/notes.md"
 
 # A script the plan came with is frozen by the engine: it leaves with the folder and is named.
 repo

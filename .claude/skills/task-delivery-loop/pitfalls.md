@@ -105,7 +105,8 @@ The table in `implementation.md` next to it.
 5. **Do the stages.** Tests, lint, types and
    the quick checks of the push set over what is touched: the linter after an edit does not judge
    `tools/` and texts, and the push set is too late for them. Each step is
-   marked by the engine: `node tools/task-flow-script.mjs step N.M` runs its check and writes the mark.
+   marked by the engine: `node tools/task-flow-script.mjs step N` measures a whole stage and marks it, `step
+   N.M` one step.
    The executor edits neither the marks nor a state ahead of the measured one. A kit edit that changes the look first goes through the rule `kit-approval`: the mockup
    and the owner's approval come before the code. One that keeps it is named in the plan.
 6. **Check live.** A kit edit — in the showcase on port 6007, measured in the pinned Chrome by the
@@ -143,8 +144,10 @@ The table in `implementation.md` next to it.
     out not to need, and a decision in the progress says why. A round without fixes — the run beside it is the one; with fixes, where
     the set waited for the round and where no second round is due, it runs now, in the background. A red
     is fixed here, while the folder still stands.
-12. **Then take the folder apart by the last commit and push.** Pattern `task-flow-archive`. The push
-    reads the marks of the run ahead; a step the last commit reached runs at the push.
+12. **Then write the body of the PR whole, take the folder apart by the last commit and push.** The record is
+    built by `npm run task:archive` from the body and the folder (rule `archive-record`); what a requirement
+    of the folder leaves in the spec is there before the call, by `task-flow-archive`. The push reads the
+    marks of the run ahead; a step the last commit reached runs at the push.
 13. **Open the PR by `gh pr create` with the machine account's token.** The body lists what each
     round found and fixed. Reviewer, assignee and labels go in the same call; a PR into `main` is
     a draft, one into an epic branch opens ready. Then `npm run task:move -- N in-review`.
