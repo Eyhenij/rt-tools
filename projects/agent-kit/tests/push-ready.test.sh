@@ -45,7 +45,7 @@ tree_of() {
     printf '.claude/\nrefuse\n' >>"$t/.git/info/exclude"
     cat >"$t/.claude/rt-kit/project.sh" <<'EOF'
 rt_push_checks() { printf 'touch %s # first\n' "$CLAUDE_PROJECT_DIR/.claude/started"; }
-rt_task_branch_ok() { printf '%s' "$1" | grep -qE '^RT-[0-9]+-'; }
+rt_task_branch_ok() { printf '%s' "$1" | grep -qE '^RT-[0-9]+-[a-z-]+$'; }
 rt_task_branch_number() { printf '%s' "$1" | sed -nE 's/^RT-([0-9]+)-.*/\1/p'; }
 rt_task_state() { cat "$CLAUDE_PROJECT_DIR/.claude/card" 2>/dev/null; }
 RT_BOARD_EPIC_LABEL=epic
@@ -136,6 +136,12 @@ t="$(tree_of probe)"
 touch "$t/refuse"
 run "$t"
 report "SC-AK-1993 — a branch with no task number is not asked" "$code:$(started "$t")" 0:started
+rm -rf "$t"
+
+t="$(tree_of RT-7-Probe)"
+touch "$t/refuse"
+run "$t"
+report "SC-AK-1993 — a branch named not by the form of the tree is not asked" "$code:$(started "$t")" 0:started
 rm -rf "$t"
 
 # --- SC-AK-1994 — the task folder that cannot be taken apart ------------------------------------------
@@ -273,6 +279,7 @@ card "$t" '{"exists":true,"epic":9,"labels":[]}'
 git -C "$t" update-ref refs/remotes/origin/RT-9-second main
 run "$t"
 report "SC-AK-1995 — several branches of one epic judge no base" "$code:$(reasons)" 0:0
+report "SC-AK-1996 — several branches of one epic: the guards are asked with the base of the set" "$(asked_base)" 'gh pr create --base main'
 rm -rf "$t"
 
 # The merge of the host is told by its committer.
@@ -301,7 +308,7 @@ keep "$t" 'docs: epic edited'
 ref "$t" RT-9-epic
 git -C "$t" checkout -q RT-7-probe
 run "$t"
-report "SC-AK-1995 — the lower branch of a chain does not hide a moved epic" "$code:$(said 'git merge origin/RT-9-epic')" 3:yes
+report "SC-AK-1995 — the lower branch of a chain does not hide a moved epic" "$code:$(reasons):$(said 'git merge origin/RT-9-epic')" 3:1:yes
 rm -rf "$t"
 
 t="$(tree_of)"

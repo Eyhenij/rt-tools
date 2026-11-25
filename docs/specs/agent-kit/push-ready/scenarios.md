@@ -22,7 +22,7 @@ or another argument
 When the run is called
 Then it ends with 3 and the line of the usage
 
-Given a branch with no task number
+Given a branch with no task number, or one named not by the form of the tree
 When the set runs ahead
 Then nothing is asked
 
