@@ -4,6 +4,7 @@ import {
     computed,
     DestroyRef,
     Directive,
+    ElementRef,
     inject,
     input,
     InputSignal,
@@ -18,7 +19,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, ControlValueAccessor, NgControl, ValidationErrors, Validators } from '@angular/forms';
 
-import { IRtInput, IRtKitConfig, rtKitDefault } from '@rt-tools/ui-kit-v2/core';
+import { IRtInput, IRtKitConfig, rtAnnounceChange, rtKitDefault } from '@rt-tools/ui-kit-v2/core';
 
 /**
  * Базовый класс input-семейства common/ui. Владеет единым CVA-ядром:
@@ -72,6 +73,7 @@ function stateOf(control: AbstractControl): IControlState {
 export abstract class RtFormControlBase<TValue> implements ControlValueAccessor, OnInit {
     readonly #ngControl: NgControl | null = inject(NgControl, { self: true, optional: true });
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
+    readonly #hostNode: HTMLElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
     readonly #clearTabbableDefault: boolean = rtKitDefault(
         'formControl',
         (it: IRtKitConfig.FormControl): boolean | undefined => it.clearTabbable,
@@ -80,6 +82,8 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
 
     #onChange: (value: TValue) => void = (): void => undefined;
     #onTouched: () => void = (): void => undefined;
+    /** Значение, о котором поле сообщило последним или которое записала форма: «до» следующей правки. */
+    #announced: TValue | null = null;
 
     // Состояние, которым управляет родительский rt-field (через публичные сеттеры):
     // авто-id для связки label[for], read-only режим, зеркало ошибок/required.
@@ -214,6 +218,7 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
 
     constructor() {
         this.value = signal<TValue>(this.getEmptyValue());
+        this.#announced = this.getEmptyValue();
         // Self-inject NgControl + ручная привязка valueAccessor: доступ к
         // control.invalid/touched без NG_VALUE_ACCESSOR provider'а (тот
         // спровоцировал бы NG0200 cycle при self-reference).
@@ -243,6 +248,7 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
 
     public writeValue(value: TValue | null): void {
         this.value.set(value ?? this.getEmptyValue());
+        this.#announced = this.value();
     }
 
     public registerOnChange(fn: (value: TValue) => void): void {
@@ -285,6 +291,7 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
         }
         this.clearValue();
         this.#onChange(this.value());
+        this.#announce(this.value());
         this.#onTouched();
         this.focusAfterClear();
         this.cleared.emit();
@@ -298,6 +305,14 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
     /** Прокидывает change наружу — для обработчиков пользовательского ввода. */
     protected emitChange(value: TValue): void {
         this.#onChange(value);
+        this.#announce(value);
+    }
+
+    /** Правка человека всплывает событием `change` с тега поля: её слышит и тот, кто слушает форму по событиям. */
+    #announce(value: TValue): void {
+        const previous: TValue | null = this.#announced;
+        this.#announced = value;
+        rtAnnounceChange(this.#hostNode, value, previous);
     }
 
     /** Собственная подпись контрола на рамке; у контрола без неё — `null`. Читается сигналами. */

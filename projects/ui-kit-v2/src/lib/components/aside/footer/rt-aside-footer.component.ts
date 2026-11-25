@@ -69,7 +69,8 @@ function slotNode(host: HTMLElement, slot: string): HTMLElement | null {
  *
  * В шторке телефона последняя кнопка слота `[asidePrimary]` встаёт справа в шапку шторки, а кнопка
  * слота `[asideDismiss]` с короткой подписью «Закрыть» не рисуется: её роль у «×» шапки. Кнопка
- * этого слота со своим смыслом — подвал выключил короткую подпись — остаётся в подвале.
+ * этого слота со своим смыслом — подвал выключил короткую подпись или кнопка опасная, с темой
+ * `danger`, — остаётся в подвале. Опасная кнопка и на телефоне держит свою подпись.
  *
  * `ViewEncapsulation.None` — для единообразия с rt-aside.
  *
@@ -118,8 +119,21 @@ export class RtAsideFooterComponent {
     /** Подвал стоит в шторке телефона. */
     protected readonly sheetMode: Signal<boolean> = computed((): boolean => this.#sheet?.active() ?? false);
 
+    /**
+     * В слоте `[asideDismiss]` стоит опасная кнопка — тема `danger`: это действие со своим смыслом,
+     * «Удалить», а не выход. Она остаётся в подвале со своей подписью.
+     */
+    protected readonly dismissDanger: Signal<boolean> = computed((): boolean =>
+        this.buttons().some(
+            (button: RtButtonDirective, index: number): boolean =>
+                button.theme() === 'danger' && (this.hosts()[index]?.nativeElement.closest('[asideDismiss]') ?? null) !== null
+        )
+    );
+
     /** Кнопка слота `[asideDismiss]` только закрывает панель: в шторке её место у «×» шапки. */
-    protected readonly closeOnlyHidden: Signal<boolean> = computed((): boolean => this.sheetMode() && this.phoneCloseLabel());
+    protected readonly closeOnlyHidden: Signal<boolean> = computed(
+        (): boolean => this.sheetMode() && this.phoneCloseLabel() && !this.dismissDanger()
+    );
 
     /**
      * На телефоне кнопка слота `[asideDismiss]` читается «Закрыть»: так она названа у всех панелей.
@@ -129,8 +143,13 @@ export class RtAsideFooterComponent {
         transform: booleanAttribute,
     });
 
-    /** Сколько кнопок в подвале: по нему панель заново ищет главную кнопку, когда кнопки меняются. */
-    public readonly slotCount: Signal<number> = computed((): number => this.#slots().dismiss + this.#slots().primary);
+    /**
+     * Узлы кнопок подвала: по ним панель заново ищет главную кнопку, когда кнопки меняются, — и когда
+     * их столько же, но одна встала на место другой.
+     */
+    public readonly slotNodes: Signal<readonly HTMLElement[]> = computed((): readonly HTMLElement[] =>
+        this.hosts().map((host: ElementRef<HTMLElement>): HTMLElement => host.nativeElement)
+    );
 
     /**
      * В шторке подвалу есть что показать: кнопка со своим смыслом в слоте `[asideDismiss]` или
@@ -143,9 +162,10 @@ export class RtAsideFooterComponent {
     constructor() {
         effect((): void => {
             const hosts: readonly ElementRef<HTMLElement>[] = this.hosts();
+            // Опасная кнопка слота `[asideDismiss]` — не выход: короткая подпись «Закрыть» ей не даётся.
+            const ownLook: IButton.PlaceLook = { appearance: 'outlined', theme: 'secondary' };
             const dismissLook: IButton.PlaceLook = {
-                appearance: 'outlined',
-                theme: 'secondary',
+                ...ownLook,
                 ...(this.#phone() && this.phoneCloseLabel() ? { label: this.#closeLabel() } : {}),
             };
 
@@ -158,7 +178,10 @@ export class RtAsideFooterComponent {
             const sheet: boolean = this.sheetMode();
 
             this.buttons().forEach((button: RtButtonDirective, index: number): void => {
-                const look: IButton.PlaceLook | null = slotLook(hosts[index]?.nativeElement, dismissLook);
+                const look: IButton.PlaceLook | null = slotLook(
+                    hosts[index]?.nativeElement,
+                    button.theme() === 'danger' ? ownLook : dismissLook
+                );
                 const inSlot: IButton.PlaceLook | null = look && sheet ? { ...look, size: 'sm' } : look;
                 const placed: IButton.PlaceLook | null = index === main ? SHEET_MAIN_LOOK : inSlot;
 

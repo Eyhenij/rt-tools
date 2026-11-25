@@ -7,10 +7,13 @@ const SELECTED_SELECTOR: string = '[role="tab"][aria-selected="true"]';
 /** Столько до края ряда прокрутка считается дошедшей до него. */
 const EDGE_PX: number = 1;
 
+/** Ряд не влазит в шторку: стили панели затеняют его края. */
+const RT_ASIDE_TABS_OVERFLOW_CLASS: string = 'rt-aside__tabs--overflow';
+
 /**
- * Ряд вкладок панели-шторки — карусель, как ряд чипов периода в шторке: вкладки стоят в одну
- * строку, ряд прокручивается вбок по кругу, выбранная вкладка встаёт по центру. Вид — одну строку и
- * затенение краёв на 32 — дают стили панели.
+ * Ряд вкладок панели-шторки — карусель, как ряд чипов периода в шторке, когда вкладки не влазят:
+ * ряд прокручивается вбок по кругу, выбранная вкладка встаёт по центру, края затенены на 32. Ряд,
+ * который влазит, стоит в порядке разметки и без затенения. Одну строку дают стили панели.
  *
  * Чипы периода ходят по кругу тремя повторами ряда. Вкладки повторить нельзя — у каждой своя роль
  * и своя связь с содержимым, — поэтому по кругу ходит порядок: выбранная вкладка ставится в середину
@@ -20,6 +23,7 @@ const EDGE_PX: number = 1;
 export class RtAsideSheetTabs {
     #list: HTMLElement | null = null;
     #observer: MutationObserver | null = null;
+    #resizeObserver: ResizeObserver | null = null;
     readonly #onScroll: () => void = (): void => this.#wrap();
 
     /** Ведёт ряд по кругу; другой ряд — бросает прежний. Без ряда — отпускает. */
@@ -37,6 +41,11 @@ export class RtAsideSheetTabs {
         if (view !== null && 'MutationObserver' in view) {
             this.#observer = new view.MutationObserver((): void => this.center());
             this.#observer.observe(list, { subtree: true, attributes: true, attributeFilter: ['aria-selected'] });
+        }
+        // Шторка сменила ширину — ряд мог начать или перестать влезать.
+        if (typeof ResizeObserver !== 'undefined') {
+            this.#resizeObserver = new ResizeObserver((): void => this.center());
+            this.#resizeObserver.observe(list);
         }
         this.center();
         // Подписи вкладок меняют ширину, когда догружается шрифт: ряд, отцентрованный по шрифту замены,
@@ -57,21 +66,30 @@ export class RtAsideSheetTabs {
         this.#list = null;
         this.#observer?.disconnect();
         this.#observer = null;
+        this.#resizeObserver?.disconnect();
+        this.#resizeObserver = null;
         if (list === null) {
             return;
         }
         list.removeEventListener('scroll', this.#onScroll);
-        this.#items(list).forEach((item: HTMLElement): void => {
-            item.style.removeProperty('order');
-        });
+        this.#unwind(list);
     }
 
-    /** Выбранная вкладка — в середину ряда по порядку и по центру по прокрутке. */
+    /**
+     * Выбранная вкладка — в середину ряда по порядку и по центру по прокрутке, когда ряд не влазит.
+     * Ряд, который влазит, стоит в порядке разметки.
+     */
     public center(): void {
         const list: HTMLElement | null = this.#list;
         if (list === null) {
             return;
         }
+        // Ширина ряда от порядка не зависит: прежняя перестановка на неё не влияет.
+        if (list.scrollWidth <= list.clientWidth) {
+            this.#unwind(list);
+            return;
+        }
+        list.classList.add(RT_ASIDE_TABS_OVERFLOW_CLASS);
         const items: HTMLElement[] = this.#items(list);
         const selected: number = items.findIndex((item: HTMLElement): boolean => item.querySelector(SELECTED_SELECTOR) !== null);
         if (items.length === 0 || selected < 0) {
@@ -117,6 +135,14 @@ export class RtAsideSheetTabs {
         });
 
         return moved;
+    }
+
+    /** Ряд без карусели: вкладки в порядке разметки, края не затенены. */
+    #unwind(list: HTMLElement): void {
+        list.classList.remove(RT_ASIDE_TABS_OVERFLOW_CLASS);
+        this.#items(list).forEach((item: HTMLElement): void => {
+            item.style.removeProperty('order');
+        });
     }
 
     #items(list: HTMLElement): HTMLElement[] {

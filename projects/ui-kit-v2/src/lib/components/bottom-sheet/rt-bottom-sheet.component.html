@@ -5,7 +5,7 @@
         qa-dataid="bottom-sheet-backdrop"
         [attr.aria-label]="t().bottomSheetClose"
         [attr.inert]="confirming() ? '' : null"
-        (click)="dismiss()"></button>
+        (click)="dismiss('backdrop')"></button>
     <!-- Пока показан вопрос, панель под ним недоступна: Tab ходит только по ответам. -->
     <div
         rtElem="panel"
@@ -34,7 +34,7 @@
                         [attr.qa-dataid]="nested() ? 'bottom-sheet-back' : 'bottom-sheet-close'"
                         [icon]="nested() ? 'chevron-left' : 'ico-close'"
                         [ariaLabel]="nested() ? t().uiBack : t().bottomSheetClose"
-                        (clicked)="dismiss()" />
+                        (clicked)="dismiss('close')" />
                 </div>
                 <div rtElem="title" qa-dataid="bottom-sheet-title">
                     <ng-content select="[sheetHeader]" />

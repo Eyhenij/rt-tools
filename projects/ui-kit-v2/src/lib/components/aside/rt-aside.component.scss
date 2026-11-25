@@ -197,11 +197,18 @@
         border-bottom: var(--rt-bottom-sheet-footer-border-width) solid var(--rt-color-border-default);
     }
 
-    /* Вкладки панели-шторки — одна строка, как чипы периода в шторке: ряд прокручивается вбок по
-       кругу, края затеняются на 32, стрелки прокрутки не нужны — ряд листают пальцем. */
+    /* Вкладки панели-шторки — одна строка, как чипы периода в шторке: стрелки прокрутки не нужны —
+       ряд листают пальцем. Ряд, который не влазит, прокручивается вбок по кругу, и его края
+       затеняются на 32; модификатор ставит карусель ряда. Ряд, который влазит, без затенения. */
     rt-aside .rt-aside--sheet.rt-aside--content--tabs {
         .rt-tabs__tab-list {
             flex-wrap: nowrap;
+            overflow-x: auto;
+            overscroll-behavior-x: contain;
+            scrollbar-width: none;
+        }
+
+        .rt-aside__tabs--overflow {
             mask-image: linear-gradient(
                 to right,
                 transparent,
@@ -209,9 +216,6 @@
                 currentcolor calc(100% - var(--rt-space-8)),
                 transparent
             );
-            overflow-x: auto;
-            overscroll-behavior-x: contain;
-            scrollbar-width: none;
         }
 
         .rt-tabs__rest {

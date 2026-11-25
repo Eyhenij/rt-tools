@@ -89,6 +89,25 @@ describe('RtBottomSheetComponent — фокус и Escape', (): void => {
         expect(document.activeElement).toBe(node(fixture, 'bottom-sheet-close'));
     });
 
+    it('SC-UKV-1756 — «Отмена» ставит фокус в панель, с которой уже снят запрет `inert` вопроса', (): void => {
+        const fixture: TFixture = setup(true);
+        node(fixture, 'bottom-sheet-close').focus();
+        press(fixture, 'bottom-sheet-close');
+        const panel: HTMLElement = raw(fixture, 'bottom-sheet-panel');
+        // jsdom фокус в `inert` не запрещает: проверяется сам запрет в миг фокуса. В браузере фокус
+        // в панели под `inert` падал на страницу.
+        const inertAtFocus: boolean[] = [];
+        const focus: jest.SpyInstance = jest.spyOn(HTMLElement.prototype, 'focus').mockImplementation(function (this: HTMLElement): void {
+            inertAtFocus.push(panel.hasAttribute('inert') || this.closest('[inert]') !== null);
+        });
+
+        node(fixture, 'bottom-sheet-confirm-cancel').click();
+        focus.mockRestore();
+        settle(fixture);
+
+        expect(inertAtFocus).toEqual([false]);
+    });
+
     it('SC-UKV-1757 — закрытая шторка возвращает фокус на узел, с которого её открыли', (): void => {
         const fixture: TFixture = setup();
         node(fixture, 'bottom-sheet-close').focus();

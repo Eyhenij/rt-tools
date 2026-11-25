@@ -1,13 +1,17 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import { NgTemplateOutlet } from '@angular/common';
 import {
+    afterRenderEffect,
     booleanAttribute,
     computed,
     inject,
     input,
     output,
+    signal,
+    untracked,
     ChangeDetectionStrategy,
     Component,
+    DestroyRef,
     ElementRef,
     InputSignal,
     InputSignalWithTransform,
@@ -15,6 +19,7 @@ import {
     Signal,
     ViewEncapsulation,
     viewChild,
+    WritableSignal,
 } from '@angular/core';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
@@ -25,6 +30,7 @@ import { RtSkeletonWrapperComponent, RtSkeletonWrapperContentDirective } from '@
 import { RtTagComponent } from '@rt-tools/ui-kit-v2/tag';
 import { RtAsideRef } from '../rt-aside-ref';
 import { RT_ASIDE_SHEET, RtAsideSheet } from '../rt-aside-sheet';
+import { RtAsideSheetTitleFit } from './rt-aside-header-title';
 import { IRtAsideHeader } from './rt-aside-header.model';
 
 const BEM_BLOCK: string = 'rt-aside-header';
@@ -52,9 +58,10 @@ const BEM_BLOCK: string = 'rt-aside-header';
  * Слот `[asideHeadingContent]` — содержимое в колонке заголовка, под подписью и бэйджами, по её
  * левому краю. Пустой слот ничего не рисует.
  *
- * В шторке телефона шапка рисуется шапкой шторки: «×» слева вместо стрелки, заголовок по центру в
- * одну строку, справа значки `[asideActions]` и за ними главная кнопка подвала, которую сюда
- * переносит панель. «×» идёт дорогой стрелки: `dismiss`, затем `asideRef.close()`.
+ * В шторке телефона шапка рисуется шапкой шторки: «×» слева вместо стрелки, заголовок в одну строку,
+ * справа значки `[asideActions]` и за ними главная кнопка подвала, которую сюда переносит панель.
+ * Заголовок стоит по центру шапки, если влазит; иначе — на всём месте между «×» и кнопками справа,
+ * по центру этого места, с многоточием. «×» идёт дорогой стрелки: `dismiss`, затем `asideRef.close()`.
  *
  * `ViewEncapsulation.None` — для единообразия с rt-dialog-header (стили
  * префиксованы `.rt-aside-header`).
@@ -95,6 +102,16 @@ const BEM_BLOCK: string = 'rt-aside-header';
 export class RtAsideHeaderComponent {
     readonly #asideRef: RtAsideRef | null = inject(RtAsideRef, { optional: true });
     readonly #sheet: RtAsideSheet | null = inject(RT_ASIDE_SHEET, { optional: true });
+    readonly #titleFit: RtAsideSheetTitleFit = new RtAsideSheetTitleFit((between: boolean): void => this.titleBetween.set(between));
+
+    /** Ряд шапки: по его частям решается место заголовка шторки. */
+    protected readonly row: Signal<ElementRef<HTMLElement>> = viewChild.required<ElementRef<HTMLElement>>('row');
+
+    /**
+     * Заголовок шторки не влазит по центру шапки: он стоит на всём месте между «×» и кнопками справа,
+     * по центру этого места, и режется многоточием.
+     */
+    protected readonly titleBetween: WritableSignal<boolean> = signal<boolean>(false);
 
     /** Текст заголовка — рендерится в `<h2>`. Null/пустая строка вместе с
      *  `[loading]=true` показывают skeleton вместо title. */
@@ -148,6 +165,18 @@ export class RtAsideHeaderComponent {
 
     /** Место главной кнопки справа в шапке шторки; вне шторки его нет. */
     public readonly sheetMainSlot: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('sheetMain');
+
+    constructor() {
+        // Место заголовка шторки — по центру шапки, если влазит, иначе между кнопками. Решается
+        // мерой после отрисовки и заново, когда меняется заголовок или ширина частей шапки.
+        afterRenderEffect((): void => {
+            const row: HTMLElement | null = this.sheetMode() ? this.row().nativeElement : null;
+            this.title();
+            this.loading();
+            untracked((): void => this.#titleFit.attach(row));
+        });
+        inject(DestroyRef).onDestroy((): void => this.#titleFit.detach());
+    }
 
     /**
      * «×» шторки идёт дорогой стрелки. У панели службы кита с признаком несохранённого служба

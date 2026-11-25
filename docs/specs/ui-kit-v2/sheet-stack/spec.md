@@ -28,7 +28,8 @@ same sheet with a back chevron on the left, and the filters come back when the l
 
 - **A sheet opened from a sheet opens in the same sheet.** Its content and title take the place of
   the first ones at the same place and height, without sliding and without a dim of its own, and
-  «×» on the left of the header becomes a back chevron. The first sheet hides without sliding and
+  «×» on the left of the header becomes a back chevron. A window that changes its size or turns
+  changes the height of both screens together. The first sheet hides without sliding and
   takes no taps. It keeps what was typed in its form and the focus of the field that opened the
   second screen: the keys of that field lead the list, and the focus goes back to it on close. The
   owner's word: «нужно открывать в том же меняя содержимое а вместо кнопки крестик (слева в шапке)

@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs';
 
 import { ERtAsideUnsavedOutcome, RT_ASIDE_DATA, RT_ASIDE_SHEET, RtAsideRef, RtAsideSheet } from '@rt-tools/ui-kit-v2/aside';
+import { IRtControlChange, rtControlChangeOf } from '@rt-tools/ui-kit-v2/core';
 import { RtToolbarFiltersPanelComponent } from '../filters-panel/rt-toolbar-filters-panel.component';
 import { IRtToolbar } from '../rt-toolbar.model';
 
@@ -21,6 +22,18 @@ function fieldValue(field: HTMLInputElement | HTMLSelectElement | HTMLTextAreaEl
     return field.value;
 }
 
+/** Значения поля кита равны: у списков и диапазонов дат сравнивается содержимое, а не ссылка. */
+function sameValue(left: unknown, right: unknown): boolean {
+    if (Object.is(left, right)) {
+        return true;
+    }
+    try {
+        return JSON.stringify(left) === JSON.stringify(right);
+    } catch {
+        return false;
+    }
+}
+
 /**
  * Панель отборов полосы `rt-toolbar` на узком экране.
  *
@@ -33,7 +46,9 @@ function fieldValue(field: HTMLInputElement | HTMLSelectElement | HTMLTextAreaEl
  * На телефоне панель — шторка, и шторка с изменённым и не применённым полем перед закрытием
  * спрашивает словами шторки: «Применить» применяет и закрывает, «Не применять» сообщает об отказе
  * и закрывает, «Отмена» оставляет шторку. Изменение — значение поля, отличное от значения при
- * открытии: введённое и возвращённое назад изменением не считается.
+ * открытии: введённое и возвращённое назад изменением не считается. Поле ввода браузера читается
+ * по его значению; поле кита без него — выпадающий список, поле даты, флажок, переключатель —
+ * сообщает правку событием `change` со значениями до и после.
  */
 @Component({
     selector: 'rt-toolbar-filters-aside',
@@ -46,8 +61,8 @@ function fieldValue(field: HTMLInputElement | HTMLSelectElement | HTMLTextAreaEl
     ],
     host: {
         class: BEM_BLOCK,
-        '(input)': 'onFieldChange()',
-        '(change)': 'onFieldChange()',
+        '(input)': 'onFieldChange($event)',
+        '(change)': 'onFieldChange($event)',
     },
 })
 export class RtToolbarFiltersAsideComponent {
@@ -57,6 +72,8 @@ export class RtToolbarFiltersAsideComponent {
 
     /** Значения полей при открытии; `null` — панель сбоку и ни о чём не спрашивает. */
     #opening: readonly string[] | null = null;
+    /** Поля кита, правленные с открытия: значение при открытии и нынешнее. */
+    readonly #kitFields: Map<EventTarget, IRtControlChange> = new Map<EventTarget, IRtControlChange>();
 
     protected readonly data: IRtToolbar.IFiltersPanelData = inject(RT_ASIDE_DATA) as IRtToolbar.IFiltersPanelData;
 
@@ -91,15 +108,29 @@ export class RtToolbarFiltersAsideComponent {
     }
 
     /** Поле изменилось: признак несохранённого — есть ли поле со значением не как при открытии. */
-    protected onFieldChange(): void {
+    protected onFieldChange(event: Event): void {
         const opening: readonly string[] | null = this.#opening;
         if (opening === null) {
             return;
         }
+        this.#noteKitField(event);
         const now: readonly string[] = this.#values();
-        this.#asideRef.unsaved.set(
-            now.length !== opening.length || now.some((value: string, at: number): boolean => value !== opening[at])
+        const kitChanged: boolean = Array.from(this.#kitFields.values()).some(
+            (field: IRtControlChange): boolean => !sameValue(field.value, field.previous)
         );
+        this.#asideRef.unsaved.set(
+            kitChanged || now.length !== opening.length || now.some((value: string, at: number): boolean => value !== opening[at])
+        );
+    }
+
+    /** Правка поля кита: значение при открытии — «до» его первой правки, нынешнее — «после» последней. */
+    #noteKitField(event: Event): void {
+        const change: IRtControlChange | null = rtControlChangeOf(event);
+        if (change === null || event.target === null) {
+            return;
+        }
+        const known: IRtControlChange | undefined = this.#kitFields.get(event.target);
+        this.#kitFields.set(event.target, { value: change.value, previous: known === undefined ? change.previous : known.previous });
     }
 
     #values(): readonly string[] {

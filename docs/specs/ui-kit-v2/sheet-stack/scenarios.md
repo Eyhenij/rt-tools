@@ -13,6 +13,15 @@ its field
 
 Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-stack.spec.ts`.
 
+### SC-UKV-1867 — the second screen follows the height of the first one
+
+Given the list's sheet open in place of the filters sheet
+When the window changes its size or turns, and the filters sheet becomes lower
+Then the list's sheet takes the new height of the filters sheet, and its back chevron stays on the
+screen
+
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-stack.spec.ts`.
+
 ### SC-UKV-1632 — closing the top sheet shows the previous one
 
 Given the list's sheet open in place of the filters sheet

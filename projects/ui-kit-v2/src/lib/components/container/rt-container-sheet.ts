@@ -54,6 +54,17 @@ export class RtContainerSheetDriver {
         });
     }
 
+    /**
+     * Коробка оверлея пересоздана, пока шторка поднята: новая коробка сразу встаёт открытой коробкой
+     * шторки. Шторка уже стоит на месте, и поднимать её второй раз не нужно.
+     */
+    public keepOverlay(overlayElement: HTMLElement): void {
+        this.#renderer.removeClass(overlayElement, RT_OVERLAY_ENTERING_CLASS);
+        this.#renderer.removeClass(overlayElement, RT_OVERLAY_LEAVING_CLASS);
+        this.#renderer.addClass(overlayElement, OVERLAY_SHEET_CLASS);
+        this.#renderer.addClass(overlayElement, RT_OVERLAY_OPEN_CLASS);
+    }
+
     /** Закрытая шторка в оверлее: коробка в закрытом положении панели сбоку, из него выедет панель. */
     public closeOverlay(overlayElement: HTMLElement): void {
         this.#renderer.removeClass(overlayElement, RT_OVERLAY_OPEN_CLASS);

@@ -247,17 +247,31 @@ describe('Панель-шторка на телефоне — Escape, фокус
         expect(node('aside-sheet')?.classList).toContain('rt-bottom-sheet--open');
     });
 
-    it('SC-UKV-1832 — вкладки шторки в одну строку по кругу: выбранная в середине ряда', async (): Promise<void> => {
+    it('SC-UKV-1832 — вкладки, которые не влазят, идут по кругу: выбранная в середине ряда, края затенены', async (): Promise<void> => {
+        // Ряд шире шторки: в jsdom раскладки нет, ширину ряда задаёт подмена.
+        const wide: jest.SpyInstance = jest.spyOn(Element.prototype, 'scrollWidth', 'get').mockReturnValue(600);
         await openFromPage('tabs');
         const list: HTMLElement | null = document.querySelector<HTMLElement>('.rt-aside__content .rt-tabs__tab-list');
         const items: HTMLElement[] = Array.from(list?.querySelectorAll<HTMLElement>(':scope > [data-tabitem]') ?? []);
         const orderOf: (id: string) => string | undefined = (id: string): string | undefined =>
             items.find((item: HTMLElement): boolean => item.dataset['tabitem'] === id)?.style.order;
+        wide.mockRestore();
 
         expect(items).toHaveLength(5);
         expect(orderOf('c')).toBe('2');
         expect(orderOf('a')).toBe('0');
         expect(orderOf('e')).toBe('4');
+        expect(list?.classList).toContain('rt-aside__tabs--overflow');
+    });
+
+    it('SC-UKV-1832 — вкладки, которые влазят, стоят в порядке разметки без затенения краёв', async (): Promise<void> => {
+        await openFromPage('tabs');
+        const list: HTMLElement | null = document.querySelector<HTMLElement>('.rt-aside__content .rt-tabs__tab-list');
+        const items: HTMLElement[] = Array.from(list?.querySelectorAll<HTMLElement>(':scope > [data-tabitem]') ?? []);
+
+        expect(items).toHaveLength(5);
+        expect(items.map((item: HTMLElement): string => item.style.order)).toEqual(['', '', '', '', '']);
+        expect(list?.classList).not.toContain('rt-aside__tabs--overflow');
     });
 
     it('SC-UKV-1832 — выбранная вкладка встаёт серединой в середину ряда без округления до пикселя', (): void => {
@@ -272,6 +286,7 @@ describe('Панель-шторка на телефоне — Escape, фокус
         const rect: (left: number, width: number) => DOMRect = (left: number, width: number): DOMRect =>
             ({ left, width, right: left + width, top: 0, bottom: 0, height: 0, x: left, y: 0 }) as DOMRect;
         Object.defineProperty(list, 'clientWidth', { value: 335 });
+        Object.defineProperty(list, 'scrollWidth', { value: 600 });
         jest.spyOn(list, 'getBoundingClientRect').mockReturnValue(rect(20, 335));
         // Выбранная после перестановки стоит у 115,3 шириной 145,1: её середина — 187,85, середина ряда — 187,5.
         jest.spyOn(list.children[1] as HTMLElement, 'getBoundingClientRect').mockReturnValue(rect(115.3, 145.1));
@@ -301,6 +316,7 @@ describe('Панель-шторка на телефоне — Escape, фокус
         const rect: (left: number, width: number) => DOMRect = (left: number, width: number): DOMRect =>
             ({ left, width, right: left + width, top: 0, bottom: 0, height: 0, x: left, y: 0 }) as DOMRect;
         Object.defineProperty(list, 'clientWidth', { value: 335 });
+        Object.defineProperty(list, 'scrollWidth', { value: 600 });
         jest.spyOn(list, 'getBoundingClientRect').mockReturnValue(rect(20, 335));
         const chosen: jest.SpyInstance = jest
             .spyOn(list.children[1] as HTMLElement, 'getBoundingClientRect')
@@ -320,17 +336,22 @@ describe('Панель-шторка на телефоне — Escape, фокус
         delete (document as { fonts?: unknown }).fonts;
     });
 
-    it('SC-UKV-1832 — ряд вкладок шторки — одна строка с затенёнными на 32 краями и без полосы прокрутки', (): void => {
+    it('SC-UKV-1832 — ряд вкладок шторки — одна строка без полосы прокрутки, края затенены на 32, только когда не влазит', (): void => {
         const css: string = sass.compile(join(__dirname, 'rt-aside.component.scss')).css;
-        const selector: string = 'rt-aside .rt-aside--sheet.rt-aside--content--tabs .rt-tabs__tab-list';
-        const at: number = css.indexOf(`${selector} {`);
-        const body: string = css.slice(css.indexOf('{', at) + 1, css.indexOf('}', at));
+        const ruleOf: (selector: string) => string = (selector: string): string => {
+            const at: number = css.indexOf(`${selector} {`);
+            expect(at).toBeGreaterThanOrEqual(0);
+            return css.slice(css.indexOf('{', at) + 1, css.indexOf('}', at));
+        };
+        const row: string = ruleOf('rt-aside .rt-aside--sheet.rt-aside--content--tabs .rt-tabs__tab-list');
+        const overflow: string = ruleOf('rt-aside .rt-aside--sheet.rt-aside--content--tabs .rt-aside__tabs--overflow');
 
-        expect(at).toBeGreaterThanOrEqual(0);
-        expect(body).toContain('flex-wrap: nowrap');
-        expect(body).toContain('overflow-x: auto');
-        expect(body).toContain('scrollbar-width: none');
-        expect(body).toContain('var(--rt-space-8)');
+        expect(row).toContain('flex-wrap: nowrap');
+        expect(row).toContain('overflow-x: auto');
+        expect(row).toContain('scrollbar-width: none');
+        expect(row).not.toContain('mask-image');
+        expect(overflow).toContain('mask-image');
+        expect(overflow).toContain('var(--rt-space-8)');
     });
 
     it('SC-UKV-1833 — при просьбе убавить движение шторка панели появляется без выезда', (): void => {

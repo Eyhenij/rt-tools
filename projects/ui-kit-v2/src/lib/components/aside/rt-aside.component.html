@@ -49,7 +49,7 @@
             (applyRequest)="onSheetAnswer(outcomes.Save)"
             (discardRequest)="onSheetAnswer(outcomes.Discard)"
             (stayRequest)="onSheetAnswer(outcomes.Stay)"
-            (openChange)="onSheetOpenChange($event)">
+            (closeRequest)="onSheetClose($event)">
             <div
                 #frame
                 rtBlock="rt-aside"

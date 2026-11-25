@@ -1,11 +1,19 @@
 import { InteractivityChecker } from '@angular/cdk/a11y';
-import { ApplicationRef, ChangeDetectionStrategy, Component, Signal, signal, WritableSignal } from '@angular/core';
+import { ApplicationRef, ChangeDetectionStrategy, Component, getDebugNode, Signal, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BreakpointsService } from '../../platform';
 import { DRAG_DISMISS_THRESHOLD_PX } from '../bottom-sheet/rt-bottom-sheet.logic';
 import { provideRtKitTesting } from '../../../testing/rt-kit-testing';
+import { RtSelectComponent } from '../select/rt-select.component';
+import { IRtSelect } from '../select/rt-select.model';
 import { RtToolbarComponent, RtToolbarFiltersDirective } from './rt-toolbar.component';
+
+/** Способы оплаты — варианты выпадающего списка кита в отборах. */
+const PAYMENTS: ReadonlyArray<IRtSelect.Option<string>> = [
+    { value: 'card', label: 'Карта' },
+    { value: 'cash', label: 'Наличные' },
+];
 
 /** Телефон: место узкое, окно 375 точек. */
 class PhoneBreakpointsService {
@@ -31,13 +39,15 @@ class PhoneBreakpointsService {
             (filtersDiscard)="discards.set(discards() + 1)">
             <ng-template rtToolbarFilters let-place>
                 <input qa-dataid="slot-filter" [attr.data-place]="place" />
+                <rt-select qa-dataid="slot-payment" placeholder="Любая" [options]="payments" />
             </ng-template>
         </rt-toolbar>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtToolbarComponent, RtToolbarFiltersDirective],
+    imports: [RtToolbarComponent, RtToolbarFiltersDirective, RtSelectComponent],
 })
 class ToolbarFiltersSheetHostComponent {
+    protected readonly payments: ReadonlyArray<IRtSelect.Option<string>> = PAYMENTS;
     public readonly applied: WritableSignal<number> = signal(0);
     public readonly resets: WritableSignal<number> = signal(0);
     public readonly discards: WritableSignal<number> = signal(0);
@@ -65,6 +75,20 @@ function type(value: string): void {
         field.value = value;
         field.dispatchEvent(new Event('input', { bubbles: true }));
     }
+}
+
+/** Зовёт обработчик списка кита — тот, что зовут нажатие по варианту и крестик. */
+function callSelect(method: 'select' | 'clear', ...args: unknown[]): void {
+    const select: RtSelectComponent<string> = getDebugNode(node('slot-payment'))?.componentInstance as RtSelectComponent<string>;
+    (Reflect.get(select, method) as (...rest: unknown[]) => void).apply(select, args);
+}
+
+/** Выбирает способ оплаты в списке кита так, как выбирает человек: нажатием по варианту. */
+function pick(value: string): void {
+    callSelect(
+        'select',
+        PAYMENTS.find((it: IRtSelect.Option<string>): boolean => it.value === value)
+    );
 }
 
 function pressClose(): void {
@@ -135,6 +159,36 @@ describe('Отборы полосы на телефоне — шторка', ():
 
         expect(node('bottom-sheet-confirm-title')?.textContent?.trim()).toBe('Apply the changes?');
         expect(sheetUp()).toBe(true);
+    });
+
+    it('SC-UKV-1843 — «×» шторки с выбранным в списке кита и не применённым отбором спрашивает внизу', async (): Promise<void> => {
+        await openFilters();
+        await settle();
+        pick('cash');
+        await settle();
+
+        pressClose();
+        await settle();
+
+        expect(node('bottom-sheet-confirm-title')?.textContent?.trim()).toBe('Apply the changes?');
+        expect(sheetUp()).toBe(true);
+    });
+
+    it('SC-UKV-1852 — выбор в списке кита, возвращённый назад, изменением не считается', async (): Promise<void> => {
+        await openFilters();
+        await settle();
+        pick('cash');
+        pick('card');
+        await settle();
+        // Список открывался с пустым значением: «Карта» — тоже правка, а вернуть пустое можно только крестиком.
+        callSelect('clear');
+        await settle();
+
+        pressClose();
+        await settle();
+
+        expect(node('bottom-sheet-confirm')).toBeNull();
+        expect(sheetUp()).toBe(false);
     });
 
     it('SC-UKV-1844 — «Не применять» сообщает об отказе и закрывает шторку без `filtersApply`', async (): Promise<void> => {

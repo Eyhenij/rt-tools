@@ -194,8 +194,9 @@ chevron brings the panel's content back
 
 Given a window 375 points wide and a panel in the tabs layout
 When the panel opens
-Then the strip of tabs stands right under the header of the sheet, scrolls round with faded edges,
-the selected tab stands in its centre, and the content of a tab scrolls under it
+Then the strip of tabs stands right under the header of the sheet and the content of a tab scrolls
+under it; a strip wider than the sheet scrolls round with faded edges and the selected tab in its
+centre, and a strip that fits keeps the order of its tabs with no fade
 
 ### SC-UKV-1833 — with reduced motion the panel sheet appears without sliding
 
@@ -263,7 +264,8 @@ Then the panel closes and no question is shown
 
 ### SC-UKV-1843 — the toolbar filters with a change not applied ask
 
-Given a window 375 points wide and the toolbar filters sheet with a value typed into a field
+Given a window 375 points wide and the toolbar filters sheet with a value typed into a field or
+picked in a select of the kit
 When the person presses «×»
 Then the question «Применить изменения?» stands at the bottom of the screen
 
@@ -318,7 +320,8 @@ with the focus, and «Остаться» stands below in a card of its own
 
 ### SC-UKV-1852 — a filter typed and returned is no change
 
-Given the toolbar filters sheet on a phone with a field whose value was changed and typed back
+Given the toolbar filters sheet on a phone with a field whose value was changed and typed back, or
+a select of the kit whose value was picked and cleared back
 When the person presses «×»
 Then the sheet closes and no question is shown
 
@@ -364,17 +367,21 @@ Given a panel sheet with the focus in one of its fields and a page that listens 
 When the person presses Escape
 Then the panel sheet closes and the page does not hear the key
 
-### SC-UKV-1860 — a second close request does not ask again
+### SC-UKV-1860 — a second close request does not ask again, Escape answers «Остаться»
 
 Given the question about the unsaved edits shown at the bottom of a phone screen
-When the person presses Escape or swipes the sheet again
-Then one question stays on the screen and nothing closes
+When the person swipes the sheet again or taps the strip above it
+Then one question stays on the screen and nothing closes; Escape answers the question as
+«Остаться» does: the question leaves and the sheet stays open
 
-### SC-UKV-1861 — a long title is cut by an ellipsis
+### SC-UKV-1861 — the title stands in the centre if it fits, else between the buttons
 
-Given a window 375 points wide and a panel whose title is longer than the header
-When the panel opens
-Then the title stands in one line in the centre and ends with an ellipsis
+Given a window 375 points wide and a panel sheet with «×» on the left and «⋮» and «Сохранить» on
+the right
+When the title fits between them symmetrically
+Then it stands in the centre of the header, its middle at 187.5; when it does not fit, it takes
+the whole room between «×» and «⋮», from 60 to 214, stands in the middle of that room at 137 in
+one line and ends with an ellipsis when it is longer still
 
 ### SC-UKV-1862 — a panel without a name is announced by its title
 
@@ -388,3 +395,29 @@ Given a window 375 points wide and a panel whose footer holds «Удалить»
 When the panel opens
 Then «Удалить» stands in the footer of the sheet with a red border and red text, and so it does
 from 481 points
+
+### SC-UKV-1864 — Escape obeys its own switch
+
+Given a panel sheet opened with Escape switched off
+When the person presses Escape
+Then the sheet stays open and the panel reports a close request of the kind `escape`; a panel
+opened with the tap on the dim switched off still closes by Escape
+
+### SC-UKV-1865 — a dangerous button of the dismiss slot stays in the sheet
+
+Given a window 375 points wide and a panel whose dismiss slot holds «Удалить» marked dangerous
+while its footer keeps the short label of a phone
+When the panel opens
+Then «Удалить» stays in the footer of the sheet with its own label
+
+### SC-UKV-1866 — a main action replaced by another moves too
+
+Given a panel sheet with «Сохранить» moved to the right of its header
+When the application replaces it with «Отправить» in the primary slot
+Then «Отправить» stands on the right of the header, and «Сохранить» is gone
+
+### SC-UKV-1868 — a frame panel sheet stays a sheet when the frame rebuilds its right panel
+
+Given a record panel sheet open in the right panel of a frame in a window 375 points wide
+When the application switches the dim of the right panel off or on
+Then the panel stays a full-height sheet as wide as the window, with one dim — its own

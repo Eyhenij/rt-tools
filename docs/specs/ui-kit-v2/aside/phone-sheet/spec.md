@@ -63,7 +63,8 @@ and «Сохранить и закрыть», and «Остаться» in a card
   that crosses 480 points while the panel is open, a phone turned on its side among them, changes
   neither the sheet into a panel nor the panel into a sheet. The panel of a frame beside the
   content is judged at each of its openings; a move to another record inside the open panel keeps
-  its form, and a panel restored on a reload is judged anew.
+  its form, and a panel restored on a reload is judged anew. A frame that rebuilds its right panel
+  while the sheet is open, for a dim switched off or on, keeps the sheet.
 - **The panel sheet takes the full height whatever its content.** It stands like a full-height
   sheet: the strip of 12 px on top is the dim, the body scrolls, the header and the footer stay in
   place. While the screen keyboard is shown the sheet stands in the visible part above it, as every
@@ -76,7 +77,10 @@ and «Сохранить и закрыть», and «Остаться» in a card
 - **The panel sheet has the header of a sheet: the handle, «×» on the left, the title in the
   centre, the main action on the right.** The back arrow is not drawn: «×» stands in its place and
   runs the road of the arrow. A header that switched the arrow off draws no «×» either. The title
-  stands in the centre whatever stands on its sides, in one line cut by an ellipsis.
+  stands in the centre of the header when it fits there between the larger of the two sides and
+  its mirror; otherwise it takes the whole room between «×» and the right side and stands in the
+  middle of that room, in one line cut by an ellipsis. The icons and the main action stand 8 points
+  apart. The owner's word: «если влазит по центру если не влазит то между кнопками».
 - **The main action moves from the footer to the right of the header as a filled button.** It is
   the button of the primary slot; with several there, the last one moves and the rest stay in the
   footer. A press on it does what the footer button did. A panel without a main action keeps the
@@ -84,7 +88,8 @@ and «Сохранить и закрыть», and «Остаться» in a card
 - **The icon buttons of the panel header stand to the left of the main action.**
 - **A close-only button is not drawn in the sheet, and the other buttons of the footer stay in its
   footer.** «×» runs the road of the arrow, not the handler of the hidden button. A button of the
-  dismiss slot with a meaning of its own stays seen when its footer switches the short label off. A
+  dismiss slot with a meaning of its own stays seen when its footer switches the short label off,
+  and a button of that slot marked dangerous has a meaning of its own: it stays with its own label. A
   footer left with nothing takes no room. The buttons left in the footer take the size of the main
   action in the header: 32 px high, 13 px type, with 12 px above and below them. A button the panel
   marks dangerous stays red in the footer.
@@ -96,7 +101,8 @@ and «Сохранить и закрыть», and «Остаться» in a card
 - **A panel with an edits guard asks about its unsaved edits before it closes by any of the four
   roads and by a navigation.** The back button of the browser or of the phone reaches the panel
   through its guard, as on a wide screen. While a write goes, a close is ignored. A second request
-  to close while the question is shown does not ask again.
+  to close while the question is shown does not ask again; Escape on the question answers it as
+  «Остаться».
 - **On a phone a panel opened by the service with the unsaved sign set asks the same question
   before it closes by a gesture or by «×».** A close by code through the handle closes it at once,
   whatever the sign. «Сохранить и закрыть» reports a save request to the application, which saves
@@ -113,7 +119,8 @@ and «Сохранить и закрыть», and «Остаться» in a card
   focus goes to the sheet itself. From 481 points the question stays the window in the centre.
 - **The filters of the toolbar in the sheet ask before they close with a change not applied.** A
   change is a value of a field that differs from its value at the opening: a value typed and
-  returned is no change. The question is the one of the page filters sheet: «Применить» reports
+  returned is no change. A field of the kit without a text field — a select, a date field, a
+  checkbox, a switch, a radio button — counts the same way as a text field. The question is the one of the page filters sheet: «Применить» reports
   `filtersApply` and closes, «Не применять» reports the drop to the application apart from the
   closing and closes, «Отмена» keeps the sheet. With no change the sheet closes at once. From 481
   points the filters ask nothing, as before.
@@ -138,8 +145,9 @@ and «Сохранить и закрыть», and «Остаться» in a card
   pending layer, the tabs layout and the row under the header stand where they stand in the panel;
   the overline, the subtitle, the badges and the content of the title column stand under the title.
 - **The tabs of a panel sheet are one row that scrolls round, like the presets of the period
-  sheet.** The tabs that do not fit scroll sideways in a circle, the edges of the row fade over
-  32 points, and the selected tab stands in the centre. The owner's word at the mockup: «прикинь как
+  sheet.** Tabs that do not fit scroll sideways in a circle, the edges of the row fade over 32
+  points, and the selected tab stands in the centre. A row that fits keeps the order of its tabs
+  and fades nothing. The owner's word at the mockup: «прикинь как
   на дейтпикере в ботомшите чипы листаются и затеняются когда не влазят и листаются каруселькой».
 - **The panel sheet is announced as a modal dialog by the name of the panel, else by its title.** It
   blocks the page and locks its scroll.

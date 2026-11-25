@@ -91,6 +91,36 @@ describe('Стопка шторок', (): void => {
         expect(shown(filters)).toBe(true);
     });
 
+    it('SC-UKV-1867 — второй экран идёт за высотой первого, когда окно меняет размер', (): void => {
+        const fixture: ComponentFixture<StackHostComponent> = createRtFixture(StackHostComponent);
+        const status: HTMLElement = sheet(fixture, 'sheet-status');
+        const panel: HTMLElement = sheet(fixture, 'sheet-filters').querySelector<HTMLElement>(
+            ':scope > .rt-bottom-sheet__panel'
+        ) as HTMLElement;
+        const height: jest.SpyInstance = jest.spyOn(panel, 'getBoundingClientRect').mockReturnValue({ height: 760 } as DOMRect);
+        fixture.componentInstance.status.set(true);
+        fixture.detectChanges();
+        fixture.detectChanges();
+        expect(status.style.getPropertyValue('--rt-bottom-sheet-nested-height')).toBe('760px');
+
+        // Окно повернули: первая шторка стала ниже.
+        height.mockReturnValue({ height: 340 });
+        window.dispatchEvent(new Event('resize'));
+        fixture.detectChanges();
+
+        expect(status.style.getPropertyValue('--rt-bottom-sheet-nested-height')).toBe('340px');
+
+        // Закрытый второй экран за окном больше не следит.
+        fixture.componentInstance.status.set(false);
+        fixture.detectChanges();
+        fixture.detectChanges();
+        height.mockReturnValue({ height: 500 });
+        window.dispatchEvent(new Event('resize'));
+        fixture.detectChanges();
+
+        expect(status.style.getPropertyValue('--rt-bottom-sheet-nested-height')).toBe('340px');
+    });
+
     it('SC-UKV-1631 — второй экран встаёт и уходит без выезда, первый прячется без выезда', (): void => {
         const css: string = sass.compile(join(__dirname, 'rt-bottom-sheet.component.scss'), {
             loadPaths: [join(__dirname, '../../../styles')],

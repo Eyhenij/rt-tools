@@ -1,5 +1,5 @@
 <ng-container rtBlock="rt-aside-header">
-    <header rtElem="content" qa-dataid="aside-header" [rtMod]="{ sheet: sheetMode() }">
+    <header #row rtElem="content" qa-dataid="aside-header" [rtMod]="{ sheet: sheetMode(), 'title-between': titleBetween() }">
         @if (sheetMode()) {
             <!-- Шапка шторки: «×» слева идёт дорогой стрелки; шапка без стрелки «×» не рисует. -->
             <div rtElem="start">

@@ -199,6 +199,32 @@ describe('RtContainerComponent — правая панель на телефон
         expect(document.querySelector('.rt-aside-backdrop--visible')).not.toBeNull();
     });
 
+    it('SC-UKV-1868 — открытая шторка остаётся шторкой, когда каркас пересоздал коробку правой панели', async (): Promise<void> => {
+        const fixture: TFixture = setup(true);
+        await openRight(fixture);
+
+        // Подложку правой панели выключили при открытой шторке: коробка оверлея пересоздаётся.
+        fixture.componentInstance.backdrop.set(false);
+        await settle(fixture);
+
+        expect(overlayPane()?.classList).toContain('rt-aside-overlay--sheet');
+        expect(overlayPane()?.classList).toContain('rt-aside-overlay--open');
+        expect(document.querySelector('.rt-aside-backdrop--visible')).toBeNull();
+        expect(recordSheet()?.classList).toContain('rt-bottom-sheet--open');
+    });
+
+    it('SC-UKV-1868 — шторка остаётся шторкой и с подложкой, включённой при открытой шторке', async (): Promise<void> => {
+        const fixture: TFixture = setup(true, (host: SheetHostComponent): void => host.backdrop.set(false));
+        await openRight(fixture);
+
+        fixture.componentInstance.backdrop.set(true);
+        await settle(fixture);
+
+        expect(overlayPane()?.classList).toContain('rt-aside-overlay--sheet');
+        // Затемнение одно — шторки: подложка каркаса не показана.
+        expect(document.querySelector('.rt-aside-backdrop--visible')).toBeNull();
+    });
+
     it('SC-UKV-1855 — панель, поднятая заново по адресу на телефоне, открывается шторкой', async (): Promise<void> => {
         // Перезагрузка: каркас создаётся заново, и панель адреса открывается первой же отрисовкой.
         setMediaQueryMatches(PHONE_QUERY, true);

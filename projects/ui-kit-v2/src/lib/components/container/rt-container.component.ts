@@ -279,13 +279,11 @@ export class RtContainerComponent {
             .pipe(takeUntilDestroyed())
             .subscribe((): void => this.backdropClick.emit());
 
-        // Persistent overlay: создаётся при появлении rightSidenavTpl и живёт
-        // до уничтожения rt-container'а. Это нужно чтобы <router-outlet name="ro">
-        // внутри slot template'а материализовался и мог активировать route.
-        // Без auto-attach landmine: route не активируется → driver не вызывается
-        // → ничего не открывается (chicken-and-egg).
-        // Смена режима или подложки пересоздаёт overlay; открытая панель остаётся открытой на
-        // новом месте без повторного `rightOpened`.
+        // Persistent overlay: создаётся при появлении rightSidenavTpl и живёт до уничтожения rt-container'а.
+        // Это нужно чтобы <router-outlet name="ro"> внутри slot template'а материализовался и мог
+        // активировать route. Без auto-attach landmine: route не активируется → driver не вызывается
+        // → ничего не открывается (chicken-and-egg). Смена режима или подложки пересоздаёт overlay;
+        // открытая панель остаётся открытой на новом месте без повторного `rightOpened`, шторка — шторкой.
         effect((onCleanup: (cleanup: () => void) => void): void => {
             const tpl: TemplateRef<unknown> | undefined = this.rightSidenavTpl();
             const pane: TemplateRef<unknown> | undefined = this.rightPaneTpl();
@@ -302,8 +300,7 @@ export class RtContainerComponent {
             this.#overlayRefSignal.set(overlayRef);
 
             if (untracked(this.rightOpen)) {
-                this.#showOverlay(overlayRef);
-                this.#renderer.addClass(overlayRef.overlayElement, RT_OVERLAY_OPEN_CLASS);
+                this.#reopenOverlay(overlayRef);
             }
 
             onCleanup((): void => {
@@ -427,6 +424,17 @@ export class RtContainerComponent {
             return;
         }
         listenTransitionEnd(this.#window, cell, 'inline-size', callback);
+    }
+
+    /** Новая коробка открытой панели — открытой без перехода; шторка — во всё окно, без сдвига и второго затемнения. */
+    #reopenOverlay(overlayRef: OverlayRef): void {
+        if (this.#rightSheet.active()) {
+            carryThemeScope(overlayRef.overlayElement, this.#host.nativeElement);
+            this.#sheetDriver.keepOverlay(overlayRef.overlayElement);
+            return;
+        }
+        this.#showOverlay(overlayRef);
+        this.#renderer.addClass(overlayRef.overlayElement, RT_OVERLAY_OPEN_CLASS);
     }
 
     /** Открытый вид оверлея без перехода: подложка видна, страница замирает, если подложка есть. */

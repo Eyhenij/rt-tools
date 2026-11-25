@@ -27,7 +27,12 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { IRtIcon, RT_KIT_LABELS, rtKitLabel, RtSlotOutletDirective, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
 import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
-import { IRtSheetConfirmLabels, IRtSheetTemplateContext, RtBottomSheetComponent } from '@rt-tools/ui-kit-v2/bottom-sheet';
+import {
+    IRtSheetConfirmLabels,
+    IRtSheetTemplateContext,
+    RtBottomSheetComponent,
+    TRtSheetCloseReason,
+} from '@rt-tools/ui-kit-v2/bottom-sheet';
 import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
 import { RtAsideErrorBoxComponent } from './error-box/rt-aside-error-box.component';
 import { RtAsideFooterComponent } from './footer/rt-aside-footer.component';
@@ -40,6 +45,17 @@ import { RtAsideSheetTabs } from './rt-aside-sheet-tabs';
 import { ERtAsideUnsavedOutcome } from './unsaved-dialog/rt-aside-unsaved.logic';
 
 const BEM_BLOCK: string = 'rt-aside';
+
+/**
+ * Жест шторки — жест закрытия панели: свайп слушается выключателя нажатия по затемнению, кнопка
+ * закрытия своего шаблона идёт как «×» шапки.
+ */
+const SHEET_GESTURES: Readonly<Record<TRtSheetCloseReason, TRtAsideSheetGesture>> = {
+    backdrop: 'backdrop',
+    swipe: 'backdrop',
+    escape: 'escape',
+    close: 'dismiss',
+};
 
 /**
  * Варианты ширины side-sheet:
@@ -122,10 +138,6 @@ export class RtAsideComponent {
 
     #focusTrap: FocusTrap | null = null;
     #restoreFocusTo: HTMLElement | null = null;
-    /** Каким жестом шторка просит закрыться: Escape отмечается на пути клавиши к шторке. */
-    #sheetGesture: TRtAsideSheetGesture = 'backdrop';
-    /** Шторку закрывает ответ на вопрос: следующая за ним просьба закрыться уже решена. */
-    #sheetAnswered: boolean = false;
     /** Фокус этого подъёма шторки уже поставлен. */
     #sheetFocused: boolean = false;
 
@@ -235,10 +247,11 @@ export class RtAsideComponent {
             untracked((): void => (enabled ? this.#holdFocus(this.#sheetPanel() ?? frame) : this.#releaseFocus()));
         });
         // Главная кнопка подвала встаёт справа в шапку шторки и возвращается в подвал вне шторки.
+        // Выбор идёт заново с каждой сменой кнопок подвала: и с новой кнопкой на месте прежней.
         afterRenderEffect((): void => {
             const slot: HTMLElement | null = this.header()?.sheetMainSlot()?.nativeElement ?? null;
             const footer: RtAsideFooterComponent | undefined = this.footer();
-            footer?.slotCount();
+            footer?.slotNodes();
             untracked((): void => this.#mainAction.place(slot, (): HTMLElement | null => footer?.mainActionNode() ?? null));
         });
         // Поднятая шторка ставит фокус на «×» — или на узел, который панель отметила для первого
@@ -259,20 +272,7 @@ export class RtAsideComponent {
             ?.asks()
             .pipe(takeUntilDestroyed())
             .subscribe((): void => this.bottomSheet()?.ask());
-        // Escape отмечается на пути вниз, до шторки: так видно, каким жестом её просят закрыться.
-        // Отметка ставится на документе — фокус бывает и на странице под шторкой.
-        const markEscape: (event: KeyboardEvent) => void = (event: KeyboardEvent): void => {
-            if (event.key === 'Escape') {
-                this.#sheetGesture = 'escape';
-                // Шторка закрывается в том же событии; клавиша, ничего не закрывшая, отметку не оставляет.
-                queueMicrotask((): void => {
-                    this.#sheetGesture = 'backdrop';
-                });
-            }
-        };
-        this.#doc.addEventListener('keydown', markEscape, { capture: true });
         inject(DestroyRef).onDestroy((): void => {
-            this.#doc.removeEventListener('keydown', markEscape, { capture: true });
             this.#mainAction.restore();
             this.#sheetTabs.detach();
             this.#releaseFocus();
@@ -281,19 +281,15 @@ export class RtAsideComponent {
 
     /** Ответ на вопрос шторки уходит открывшему: он записывает, закрывает или оставляет панель. */
     protected onSheetAnswer(outcome: ERtAsideUnsavedOutcome): void {
-        this.#sheetAnswered = outcome === ERtAsideUnsavedOutcome.Discard;
         this.#sheet?.answer(outcome);
     }
 
-    /** Шторка просит закрыться: решает открывший панель — служба кита или правая панель рамки. */
-    protected onSheetOpenChange(open: boolean): void {
-        const gesture: TRtAsideSheetGesture = this.#sheetGesture;
-        const answered: boolean = this.#sheetAnswered;
-        this.#sheetGesture = 'backdrop';
-        this.#sheetAnswered = false;
-        if (!open && !answered) {
-            this.#sheet?.requestClose(gesture);
-        }
+    /**
+     * Шторка просит закрыться и называет жест: решает открывший панель — служба кита или правая
+     * панель рамки. Закрытие ответом на вопрос сюда не приходит: его решает сам ответ.
+     */
+    protected onSheetClose(reason: TRtSheetCloseReason): void {
+        this.#sheet?.requestClose(SHEET_GESTURES[reason]);
     }
 
     /** Фокус подъёма шторки: один раз на подъём; держащая Tab панель ставит его ловушкой сама. */

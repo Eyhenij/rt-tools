@@ -36,7 +36,7 @@ import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { IRtSheetKeyboardBox, rtWatchSheetKeyboard } from './rt-bottom-sheet-keyboard';
 import { RtBottomSheetStackService } from './rt-bottom-sheet-stack.service';
 import { clampDragDelta, focusLeftBehind, innerFocus, isTypingTarget, outerFocus, shouldDismissDrag } from './rt-bottom-sheet.logic';
-import { IRtSheetConfirmLabels, IRtSheetTemplateContext } from './rt-bottom-sheet.model';
+import { IRtSheetConfirmLabels, IRtSheetTemplateContext, TRtSheetCloseReason } from './rt-bottom-sheet.model';
 import { RtSheetFooterDirective } from './rt-sheet-footer.directive';
 import { RtSheetHeaderDirective } from './rt-sheet-header.directive';
 
@@ -99,7 +99,8 @@ export class RtBottomSheetComponent {
     readonly #overlayContainer: OverlayContainer = inject(OverlayContainer);
     readonly #onDragMove: (event: PointerEvent) => void = (event: PointerEvent): void => this.#handleDragMove(event);
     readonly #onDragEnd: () => void = (): void => this.#handleDragEnd();
-    readonly #requestClose: () => void = (): void => this.dismiss();
+    readonly #requestClose: () => void = (): void => this.dismiss('close');
+    readonly #onResize: () => void = (): void => this.#followUnder();
     readonly #requestApply: () => void = (): void => this.applyRequest.emit();
     readonly #onKeyboardBox: (box: IRtSheetKeyboardBox | null) => void = (box: IRtSheetKeyboardBox | null): void =>
         this.keyboardBox.set(box);
@@ -110,6 +111,8 @@ export class RtBottomSheetComponent {
     #openedFrom: HTMLElement | null = null;
     /** Узел шторки, с которого её просили закрыть: ему возвращается фокус после ответа «Остаться». */
     #askedFrom: HTMLElement | null = null;
+    /** Шторка, вторым экраном которой открыта эта; `null` — шторка не вложена. */
+    #under: RtBottomSheetComponent | null = null;
 
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
@@ -156,7 +159,10 @@ export class RtBottomSheetComponent {
      */
     protected readonly nested: WritableSignal<boolean> = signal<boolean>(false);
 
-    /** Высота панели нижней шторки в миг открытия второго экрана; `null` — шторка не вложена. */
+    /**
+     * Высота панели нижней шторки: второй экран встаёт той же высоты и идёт за ней, когда окно меняет
+     * размер. `null` — шторка не вложена.
+     */
     protected readonly nestedHeight: WritableSignal<number | null> = signal<number | null>(null);
 
     protected readonly ownHeader: Signal<RtSheetHeaderDirective | undefined> = contentChild(RtSheetHeaderDirective);
@@ -248,6 +254,12 @@ export class RtBottomSheetComponent {
 
     public readonly openChange: OutputEmitterRef<boolean> = output<boolean>();
 
+    /**
+     * Шторку просят закрыть, и вопроса нет: чем просят — подложкой, свайпом, Escape или кнопкой
+     * закрытия. Приходит перед `openChange(false)` того же жеста; закрытие ответом на вопрос его не даёт.
+     */
+    public readonly closeRequest: OutputEmitterRef<TRtSheetCloseReason> = output<TRtSheetCloseReason>();
+
     /** Человек ответил на вопрос «Применить»: выбор нужно применить, следом придёт просьба закрыть. */
     public readonly applyRequest: OutputEmitterRef<void> = output<void>();
 
@@ -285,6 +297,15 @@ export class RtBottomSheetComponent {
                 }
             });
         });
+        // Второй экран идёт за высотой нижней шторки: окно, сменившее размер или повёрнутое, меняет
+        // её высоту, и шеврон второго экрана без этого уходил за край.
+        effect((onCleanup: EffectCleanupRegisterFn): void => {
+            const view: Window | null = this.#doc.defaultView;
+            if (this.open() && this.nested() && view !== null) {
+                view.addEventListener('resize', this.#onResize);
+                onCleanup((): void => view.removeEventListener('resize', this.#onResize));
+            }
+        });
         // Пока в шторке печатают, она следит за местом над экранной клавиатурой и встаёт в него;
         // место снимается само, когда печатать перестали.
         effect((onCleanup: EffectCleanupRegisterFn): void => {
@@ -316,7 +337,7 @@ export class RtBottomSheetComponent {
         if (this.confirming()) {
             this.onConfirmCancel();
         } else {
-            this.dismiss();
+            this.dismiss('escape');
         }
     }
 
@@ -372,6 +393,9 @@ export class RtBottomSheetComponent {
 
     protected onConfirmCancel(): void {
         this.confirming.set(false);
+        // Панель под вопросом `inert` до следующей отрисовки, и фокус в неё не встаёт: он падал на
+        // страницу. Запрет снимается здесь же, до фокуса; отрисовка снимет его второй раз.
+        this.#host.querySelectorAll<HTMLElement>(':scope > [inert]').forEach((node: HTMLElement): void => node.removeAttribute('inert'));
         // Закрыть просили подложкой или свайпом — узла с фокусом не было: фокус берёт панель шторки,
         // иначе он упал бы на страницу под открытой шторкой.
         (this.#askedFrom ?? this.#host.querySelector<HTMLElement>('[role="dialog"]'))?.focus({ preventScroll: true });
@@ -387,9 +411,10 @@ export class RtBottomSheetComponent {
         this.#doc.addEventListener('pointerup', this.#onDragEnd);
     }
 
-    /** Просьба закрыть: с неприменённым выбором сначала вопрос, без него — сразу наружу. */
-    protected dismiss(): void {
+    /** Просьба закрыть: с неприменённым выбором сначала вопрос, без него — сразу наружу с жестом. */
+    protected dismiss(reason: TRtSheetCloseReason): void {
         if (!this.unsaved()) {
+            this.closeRequest.emit(reason);
             this.openChange.emit(false);
             return;
         }
@@ -397,7 +422,6 @@ export class RtBottomSheetComponent {
         this.ask();
     }
 
-    /** Шторка панели выбора: прокрутку и Escape за неё держит её собственный оверлей. */
     /** Значение, к которому сигнал возвращается с каждой сменой открытости шторки. */
     #closedWith<T>(value: T): T {
         this.open();
@@ -412,6 +436,7 @@ export class RtBottomSheetComponent {
         return value;
     }
 
+    /** Шторка панели выбора: прокрутку и Escape за неё держит её собственный оверлей. */
     #inPopoverSheet(): boolean {
         return this.#host.closest('rt-popover-sheet') !== null;
     }
@@ -420,14 +445,20 @@ export class RtBottomSheetComponent {
         return this.open() && !this.covered() && !this.#inPopoverSheet();
     }
 
-    /** Фокус, оставшийся в закрытой шторке или упавший с неё на страницу, уходит на открывший её узел. */
     /** Открытие поверх другой шторки делает эту её вторым экраном той же высоты. */
     #nestOver(below: object | null): void {
         const under: RtBottomSheetComponent | null = below instanceof RtBottomSheetComponent && below !== this ? below : null;
+        this.#under = under;
         this.nested.set(under !== null);
-        this.nestedHeight.set(under === null ? null : under.panelHeight());
+        this.#followUnder();
     }
 
+    /** Высота второго экрана — нынешняя высота панели нижней шторки. */
+    #followUnder(): void {
+        this.nestedHeight.set(this.#under === null ? null : this.#under.panelHeight());
+    }
+
+    /** Фокус, оставшийся в закрытой шторке или упавший с неё на страницу, уходит на открывший её узел. */
     #returnFocus(): void {
         const target: HTMLElement | null = this.#openedFrom;
         this.#openedFrom = null;
@@ -460,7 +491,7 @@ export class RtBottomSheetComponent {
         this.#doc.removeEventListener('pointermove', this.#onDragMove);
         this.#doc.removeEventListener('pointerup', this.#onDragEnd);
         if (shouldDismissDrag(this.dragDeltaY())) {
-            this.dismiss();
+            this.dismiss('swipe');
         }
         this.dragDeltaY.set(0);
     }

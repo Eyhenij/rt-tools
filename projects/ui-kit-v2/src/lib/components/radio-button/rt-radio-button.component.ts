@@ -25,6 +25,7 @@ import { distinctUntilChanged, EMPTY, Observable, Subject, switchMap } from 'rxj
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { rtAnnounceChange } from '@rt-tools/ui-kit-v2/core';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 
 import { IRtRadioGroupHost, RT_RADIO_GROUP } from './rt-radio-group.token';
@@ -230,6 +231,7 @@ export class RtRadioButtonComponent implements ControlValueAccessor {
         if (!this.isChecked()) {
             this.#model.set(this.value());
             this.#onChange(this.value());
+            rtAnnounceChange(this.#host.nativeElement, true, false);
             this.checkedChange.emit(true);
         }
         this.#onTouched();

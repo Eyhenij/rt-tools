@@ -1,8 +1,9 @@
-import { ApplicationRef, ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ApplicationRef, ChangeDetectionStrategy, Component, getDebugNode, inject } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { resetMediaQueries, setMediaQueryMatches } from '../../../testing/match-media-stub';
 import { provideRtKitTesting } from '../../../testing/rt-kit-testing';
+import { RtBottomSheetComponent } from '../bottom-sheet/rt-bottom-sheet.component';
 import { DRAG_DISMISS_THRESHOLD_PX } from '../bottom-sheet/rt-bottom-sheet.logic';
 import { RtButtonDirective } from '../button/rt-button.directive';
 import { RtAsideFooterComponent } from './footer/rt-aside-footer.component';
@@ -81,6 +82,11 @@ async function open(config: Partial<IRtAsideConfig> = {}): Promise<RtAsideRef<st
 
 function node(id: string): HTMLElement | null {
     return document.querySelector(`[qa-dataid="${id}"]`);
+}
+
+/** Шторка панели — сам компонент шторки кита. */
+function sheet(): RtBottomSheetComponent {
+    return getDebugNode(node('aside-sheet'))?.componentInstance as RtBottomSheetComponent;
 }
 
 /** Шторка панели поднята: стоит открытой, а не уехала вниз. */
@@ -249,18 +255,55 @@ describe('Панель службы кита на телефоне — закр�
             expect(heard.closed).toEqual([]);
         });
 
-        it('SC-UKV-1860 — Escape при показанном вопросе ничего не закрывает и второго вопроса не даёт', async (): Promise<void> => {
+        it('SC-UKV-1860 — Escape при показанном вопросе отвечает «Остаться»: вопрос уходит, шторка открыта', async (): Promise<void> => {
             const ref: RtAsideRef<string> = await open();
             ref.unsaved.set(true);
             swipe();
             await settle();
+            expect(document.querySelectorAll('[qa-dataid="bottom-sheet-confirm"]').length).toBe(1);
 
             escape(document.activeElement ?? document.body);
             await settle();
 
-            expect(document.querySelectorAll('[qa-dataid="bottom-sheet-confirm"]').length).toBeLessThanOrEqual(1);
+            expect(document.querySelectorAll('[qa-dataid="bottom-sheet-confirm"]').length).toBe(0);
             expect(heard.closed).toEqual([]);
+            expect(heard.saves).toBe(0);
             expect(sheetUp()).toBe(true);
+        });
+    });
+
+    describe('выключатель Escape', (): void => {
+        it('SC-UKV-1864 — выключенный у открытия Escape шторку не закрывает и сообщает просьбу `escape`', async (): Promise<void> => {
+            await open({ closeOnEscape: false });
+
+            escape();
+            await settle();
+
+            expect(heard.closed).toEqual([]);
+            expect(heard.requests).toEqual(['escape']);
+            expect(sheetUp()).toBe(true);
+        });
+
+        it('SC-UKV-1864 — Escape самой шторки, без пути клавиши через документ, называется `escape`', async (): Promise<void> => {
+            await open({ closeOnEscape: false });
+
+            // Так Escape отдаёт шторке её оверлей; в браузере же между слушателями клавиши проходят
+            // микрозадачи, и отметка на пути клавиши к шторке до неё не доживала.
+            sheet().closeByEscape();
+            await settle();
+
+            expect(heard.closed).toEqual([]);
+            expect(heard.requests).toEqual(['escape']);
+        });
+
+        it('SC-UKV-1864 — Escape слушается своего выключателя, а не выключателя затемнения', async (): Promise<void> => {
+            await open({ closeOnBackdropClick: false });
+
+            escape();
+            await settle();
+
+            expect(heard.requests).toEqual([]);
+            expect(heard.closed).toEqual([undefined]);
         });
     });
 });

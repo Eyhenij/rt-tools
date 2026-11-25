@@ -33,6 +33,12 @@
             text-transform: uppercase;
         }
 
+        /* В шторке телефона «Сохранить» стоит в шапке главной кнопкой и пишется как главные кнопки
+           других панелей-шторок: так рисует макет. */
+        .rt-aside-header__content--sheet &__save {
+            text-transform: none;
+        }
+
         &__columns {
             display: flex;
             flex-direction: column;

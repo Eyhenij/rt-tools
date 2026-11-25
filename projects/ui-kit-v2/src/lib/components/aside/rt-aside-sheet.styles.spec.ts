@@ -93,6 +93,12 @@ describe('стили панели-шторки', (): void => {
         expect(icons).toContain('--rt-icon-step-md: var(--rt-size-4)');
     });
 
+    it('SC-UKV-1812 — «Сохранить» настроек списка в шапке шторки пишется строчными, как главные кнопки других панелей', (): void => {
+        const settings: string = compiled('../data-list/settings/rt-data-list-settings-aside.component.scss');
+
+        expect(ruleBody(settings, '.rt-aside-header__content--sheet .rt-data-list-settings-aside__save')).toContain('text-transform: none');
+    });
+
     it('SC-UKV-1851 — нижняя строка карточки вопроса скруглена как карточка: кольцо фокуса не срезается углом', (): void => {
         expect(ruleBody(sheet, '.rt-bottom-sheet__confirm-row:last-child')).toContain(
             'border-radius: 0 0 var(--rt-bottom-sheet-confirm-radius) var(--rt-bottom-sheet-confirm-radius)'
