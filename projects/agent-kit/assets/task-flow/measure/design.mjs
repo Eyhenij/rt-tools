@@ -48,7 +48,7 @@ const styleForms = (symbol) =>
     [escaped(symbol), ...[...symbol.matchAll(/(?:__|--)(?=\p{L})/gu)].map(({ index }) => `&${escaped(symbol.slice(index))}`)].map((form) => `${form}(?![\\p{L}\\p{N}_-])`);
 
 /** Whether the text of the file declares the symbol; in a language not known here — names it outside a comment. */
-export function declares(text, path, symbol) {
+function declares(text, path, symbol) {
     const name = `${escaped(symbol.replace(/^.*[\p{L}\p{N}_$][.#](?=[\p{L}_$#])/u, '').replace(/^#/, ''))}(?![\\p{L}\\p{N}_$])`;
     const word = `(?<![\\p{L}\\p{N}_-])${escaped(symbol)}(?![\\p{L}\\p{N}_-])`;
     const forms = /\.[mc]?[jt]sx?$/.test(path) ? scriptForms(name) : /\.sh$/.test(path) ? shellForms(name) : /\.(?:s?css|less)$/.test(path) ? styleForms(symbol) : [word];
