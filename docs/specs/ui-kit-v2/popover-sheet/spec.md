@@ -61,7 +61,9 @@ the same rows as before.
   panel closed, or a directive removed, before the code arrives leaves no sheet and the code that
   arrives does not create one; a code that fails to load closes the panel and goes to the error
   handler of the application. An application that does not want the first wait calls
-  `rtPreloadPopoverSheet` in an idle moment.
+  `rtPreloadPopoverSheet` in an idle moment. While the code of the first opening is on its way nothing of the sheet is
+  drawn, and Escape pressed in that short time does not close the panel: the keyboard watcher of the overlay starts
+  with the sheet. The trigger already reports the panel as open in that time, and pressing it again closes it.
 
 ## What is out of scope
 

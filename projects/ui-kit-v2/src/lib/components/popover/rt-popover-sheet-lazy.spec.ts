@@ -1,4 +1,4 @@
-import { ApplicationRef, ChangeDetectionStrategy, Component, signal, WritableSignal } from '@angular/core';
+import { ApplicationRef, ChangeDetectionStrategy, Component, ErrorHandler, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -25,11 +25,18 @@ class BreakpointsStub {
 })
 class SheetLazyHostComponent {}
 
+const handled: unknown[] = [];
+
 function setup(): { fixture: ComponentFixture<SheetLazyHostComponent>; popover: RtPopoverDirective } {
     const fixture: ComponentFixture<SheetLazyHostComponent> = createRtFixture(
         SheetLazyHostComponent,
         {},
-        { providers: [{ provide: BreakpointsService, useValue: new BreakpointsStub() }] }
+        {
+            providers: [
+                { provide: BreakpointsService, useValue: new BreakpointsStub() },
+                { provide: ErrorHandler, useValue: { handleError: (error: unknown): number => handled.push(error) } },
+            ],
+        }
     );
     fixture.detectChanges();
     const popover: RtPopoverDirective = fixture.debugElement.query(By.directive(RtPopoverDirective)).injector.get(RtPopoverDirective);
@@ -57,6 +64,7 @@ function sheets(): NodeListOf<Element> {
 describe('Нижняя шторка поповера — код листа приходит позже ручки', (): void => {
     beforeEach((): void => {
         forgetSheetCode();
+        handled.length = 0;
     });
 
     afterEach((): void => {
@@ -75,6 +83,7 @@ describe('Нижняя шторка поповера — код листа пр�
 
         expect(popover.isOpen()).toBe(false);
         expect(sheets()).toHaveLength(0);
+        expect(handled).toHaveLength(0);
     });
 
     it('SC-UKV-1782 — снос директивы до прихода кода листа не оставляет шторки', async (): Promise<void> => {
@@ -86,6 +95,7 @@ describe('Нижняя шторка поповера — код листа пр�
         await flushSheetCode();
 
         expect(sheets()).toHaveLength(0);
+        expect(handled).toHaveLength(0);
     });
 
     it('SC-UKV-1783 — открыть, закрыть и снова открыть до прихода кода даёт одну шторку', async (): Promise<void> => {
@@ -100,6 +110,7 @@ describe('Нижняя шторка поповера — код листа пр�
 
         expect(popover.isOpen()).toBe(true);
         expect(sheets()).toHaveLength(1);
+        expect(handled).toHaveLength(0);
     });
 
     it('SC-UKV-1783 — после прихода кода лист открывается и закрывается как прежде, повторное открытие берёт готовый код сразу', async (): Promise<void> => {
