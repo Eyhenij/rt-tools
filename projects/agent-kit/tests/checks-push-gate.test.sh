@@ -66,6 +66,14 @@ gate_profile 'npm run lint
     npm run build'
 report "SC-AK-117 — строка в наборе принята" "$(gate_code)" 0
 
+# Профиль ищет файлы дерева по корню из окружения; корень, унаследованный от вызова из другой
+# копии, сузил бы набор молча. Проверка зовёт профиль с корнем проверяемого дерева.
+printf '%s\n' 'rt_push_checks() {' \
+    '    [ -f "${CLAUDE_PROJECT_DIR:-.}/tools/check-push-gate.mjs" ] && printf "%s\n" "npm run build"' \
+    '    printf "%s\n" "npm run lint"' '}' > "$GATE_TREE/.claude/rt-kit/project.sh"
+report "SC-AK-117 — корень чужой копии в окружении набора не сужает" \
+    "$(cd "$GATE_TREE" && CLAUDE_PROJECT_DIR="$(mktemp -d)" node tools/check-push-gate.mjs >/dev/null 2>&1; printf '%s' "$?")" 0
+
 # Объявление шага, которого в конвейере нет, — устаревшее: иначе список копит мёртвое.
 gate_config '{"pushGate":{"pipelineFile":".github/workflows/ci.yml","steps":{"Lint":"npm run lint","Build":"npm run build","Gone":"npm run gone"}}}'
 report "гейт: устаревшее объявление названо" "$(gate_says 'the declaration «Gone» is stale')" 1

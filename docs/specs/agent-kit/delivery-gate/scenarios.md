@@ -67,6 +67,8 @@ Covered: `projects/agent-kit/tests/checks-push-gate.test.sh`.
 Given a pipeline step is declared closed by a line, and `rt_push_checks` does not print that line
 When the check of the completeness of the gate set runs
 Then it names the step and the missing line: a declaration without execution is the same hole
+And the set is read with the root of the checked tree: a root another working copy left in the
+environment does not narrow it
 
 Covered: `projects/agent-kit/tests/checks-push-gate.test.sh`.
 
