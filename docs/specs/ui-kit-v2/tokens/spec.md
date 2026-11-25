@@ -187,6 +187,15 @@ threshold.
   file as they end the whole one. The scope without the base works for nothing. The cut refuses a whole file that does not
   fold from the head, the middle and the tail.
 
+- **The scope is loaded by the word of the application, and the kit asks for it nowhere.** `RtScopeStylesService`
+  of the entry `scope-styles` puts one link to the address the application declared at the end of the head,
+  after the base. An island may be written by markup without the directive, and a node of the set Material is
+  put by the kit on its own panes, so a request from inside the kit would miss some of the ways and would put
+  the service into the start of every consumer. The application asks: `ensure()` at its moment or `eager`,
+  which waits for the file before the first frame. A failed load removes the link and rejects, and the next
+  call tries again; at an eager start the failure goes to the error handler of the application and the start goes on. Without an address and on the server the service does
+  nothing.
+
 ## What is out of scope
 
 - **A move to a foreign library of the themes:** the arrangement of a foreign kit is taken as a sample of the

@@ -217,3 +217,13 @@ density rules at its end; the two files share only the density properties; a who
 the head, the middle and the tail refuses the cut
 
 Covered: `tools/tests/build-tokens-split.test.sh`, called by `pnpm run test:checks`.
+
+### SC-UKV-1781 — the scope styles are loaded by the word of the application
+
+Given the application declared the address of `tokens.scope.css`
+When it asks for the file, once or again
+Then one link stands at the end of the head, and an asking again adds none; a link of the application to the same
+address counts as loaded. Without an address and on the server nothing is loaded. A failed load removes the link
+and rejects, and the next ask tries again; at an eager start the failure goes to the error handler of the application and the start goes on
+
+Covered: `projects/ui-kit-v2/src/lib/scope-styles/scope-styles.service.spec.ts`.
