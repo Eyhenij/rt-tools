@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · checks/board-epic-link.github.mjs · f992812b563a · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/board-epic-link.github.mjs · 642fa06089f8 · правится надстройкой, не здесь
 /**
  * The declaration by which a task names its epic.
  *
@@ -45,7 +45,7 @@ const DECLARATION = new RegExp(`^\\s*(?:[-*]\\s+)?(?:\\S+\\s+)?задач[аи]\
 const OUTSIDE = /^[ \t]*(?:[-*][ \t]+)?работа[ \t]+вне[ \t]+эпика[ \t]+[—–-][ \t]*([^\s<].*)$/im;
 
 /** A fenced sample and a comment are no line of the body. */
-const SHOWN = /```[\s\S]*?```|<!--[\s\S]*?-->/g;
+const SHOWN = /^[ \t]*(`{3,}|~{3,})[\s\S]*?^[ \t]*\1[`~]*[ \t\r]*$|^[ \t]*<!--[\s\S]*?-->/gm;
 
 /** The words the creating command writes after it for the only task of a grill. */
 export const SINGLE_WORDS = 'разбор дал одну задачу';

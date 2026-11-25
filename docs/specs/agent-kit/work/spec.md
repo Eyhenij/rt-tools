@@ -199,7 +199,8 @@ the merge, not after.
 - **A task outside an epic is not created, and the refusal carries every way out at once.** Named as
   "name the epic" alone, it is read as "there is no way out" and gets bypassed by a call to the
   hosting past the command. The only task of a grill goes by `--single`; the word of the owner goes into
-  the body of the task — what is said only in the call the next reader will not find.
+  the body of the task — what is said only in the call the next reader will not find, and a word the audit
+  does not read off the card is refused.
 - **A tree that named no label of an epic creates tasks as before.** There epics do not exist at all,
   and demanding one of every task would stop the work of such a tree on the day of installation.
 - **A run at the tip of an open request pushed out of the queue of the pipeline is a divergence of the

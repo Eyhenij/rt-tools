@@ -93,20 +93,39 @@ said="$(printf '%s' "$unmet" | jq -r '.text // empty' 2>/dev/null)"
 # the owner, and it holds.
 #
 # The call is read as the shell reads it: a continued line is one line, a quoted text, a here-document and
-# a comment are no flag, a redirect ends nothing. A quoted text holding the call itself is opened. The call
-# must be the only one that takes work: its neighbour would go past the table with it.
+# a comment are no flag and no call, a redirect ends nothing. A shell named with `-c` and a `$(…)` inside
+# double quotes are opened. The call must be the only one that takes work: its neighbour would go past the
+# table with it.
 creates_single() {
     command -v perl >/dev/null 2>&1 || return 1
     printf '%s' "$cmd" | perl -0777 -ne '
-        my $new = qr/task:new|task-new\.mjs/;
-        s/\\\n/ /g;
-        s/<<-?\s*(["\x27]?)(\w+)\1([^\n]*)\n.*?\n\s*\2(?=\n|\z)/$3/sg;
-        s/\x27([^\x27]*)\x27|"((?:[^"\\]|\\.)*)"|\\./my $in = defined $1 ? $1 : defined $2 ? $2 : ""; $in =~ $new ? " $in " : "_"/gse;
-        s/(^|\s)#[^\n]*/$1/mg;
-        s/\d*[<>]+&?\d*-?/ /g;
-        my @taken = /$new/g;
-        exit 1 if @taken != 1 || /task:move|board\.mjs\s+move/;
-        exit(/(?:$new)[^|;&\n]*?\s--single(?![\w=-])/ ? 0 : 1);
+        my $paren = qr/(\((?:[^()"\x27\\]++|\\.|\x27[^\x27]*\x27|"(?:[^"\\]|\\.)*"|(?-1))*\))/s;
+        sub shell {
+            my $t = shift;
+            $t =~ s/\\\n/ /g;
+            1 while $t =~ s/<<-?[ \t]*[\x27"\\]?([^\s\x27"\\<>|;&()]+)[\x27"]?([^\n]*)\n(?:.*?\n)?[ \t]*\1[ \t]*(?=\n|\z)/$2/s;
+            my ($out, $opened) = ("", "");
+            while ($t =~ /\G(?:
+                  (\b(?:ba|z|da|k)?sh(?:\s+-\w+)*?\s+-\w*c\s+)(?:\x27([^\x27]*)\x27|"((?:[^"\\]|\\.)*)")
+                | \x27[^\x27]*\x27
+                | "((?:[^"\\\$]++|\\.|\$$paren|\$)*)"
+                | \\(?s:.)
+                | (?<![^\s;&|(])\#[^\n]*
+                | ((?s:.))
+                )/gcx) {
+                if (defined $1) { $opened .= "\n" . shell(defined $2 ? $2 : $3); $out .= "_"; }
+                elsif (defined $4) { my $in = $4; my $p = $paren; while ($in =~ /\$($p)/g) { $opened .= "\n" . shell(substr($1, 1, -1)); } $out .= "_"; }
+                elsif (defined $6) { $out .= $6; }
+                elsif (substr($t, $-[0], 1) ne "#") { $out .= "_"; }
+            }
+            return $out . $opened;
+        }
+        my $all = shell($_);
+        $all =~ s/\d*[<>]+&?\d*-?/ /g;
+        my $new = qr/(?:\brun\s+(?:-\S+\s+)*|\b(?:pnpm|yarn)\s+)task:new\b|\bnode\s+(?:-\S+\s+)*\S*task-new\.mjs\b/;
+        my @taken = $all =~ /$new/g;
+        exit 1 if @taken != 1 || $all =~ /task:move|board\.mjs\s+move/;
+        exit($all =~ /$new[^|;&\n]*?\s--single(?![\w=-])/ ? 0 : 1);
     ' 2>/dev/null
 }
 case "$kind" in

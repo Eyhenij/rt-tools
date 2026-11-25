@@ -99,6 +99,10 @@ async function writeLine(number, slug) {
     const branch = `${TASK_KEY}-${number}-${slug}`;
     let card = null;
     const cardOf = () => (card ??= ghJson(['issue', 'view', String(number), '--json', 'state,body,labels'], { token }));
+    // Both at once, the draft would stay in place and answer for the next card.
+    if ([branch, `_draft-${slug}`].every((name) => existsSync(join(ROOT, TASKS, name)))) {
+        return `${TASKS}/${branch}/ and ${TASKS}/_draft-${slug}/ both stand: one grill answers for one card, remove the extra folder`;
+    }
     const fault = await singleFault({ folders: [branch, `_draft-${slug}`], body: () => cardOf().body ?? '', number, token });
     if (fault !== null) {
         return fault;

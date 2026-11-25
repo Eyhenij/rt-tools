@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/git-guard-delivery.sh · 9f3ca36fc943 · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/git-guard-delivery.sh · 3323a09a3386 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/git-guard-delivery-merged.sh, hooks/git-guard-delivery-task.sh, hooks/git-guard-delivery-folder.sh,hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-pipeline.sh, hooks/git-guard-delivery-identity.sh, hooks/script-files.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/git-guard-delivery-rerun.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
@@ -280,9 +280,11 @@ if [ -n "$branch_arg" ]; then
         # the tip of the main branch must lie in what the new branch grows from. The named base is
         # checked, not the tip of the working copy: otherwise the command that takes the base fresh —
         # `git checkout -b <branch> origin/<main>` — would be forbidden.
-        # A redirect is no base and hides none: it is cut out before the base is read.
-        base_arg="$(printf '%s' "$cmd" | sed -E 's/([[:space:]][0-9]+)?[<>]+[|]?(\&[0-9-]+|[[:space:]]*("[^"]*"|[^[:space:];\&|<>]+))/ /g' | sed -nE 's/.*git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]+[^[:space:];&|]+([[:space:]]+-[^[:space:];&|]+)*[[:space:]]+([^[:space:];&|-][^[:space:];&|]*).*/\5/p' | head -1)"
+        # A redirect is no base and hides none: it is cut out before the base is read. Nor is a comment, and
+        # a continued line is one line.
+        base_arg="$(printf '%s' "$cmd" | sed -e ':a' -e '/\\$/{' -e '$!N' -e 's/\\\n/ /' -e 'ta' -e '}' | sed -E 's/[[:space:]]#.*$//; s/([[:space:]][0-9]+)?[<>]+[|]?(\&[0-9-]+|[[:space:]]*("[^"]*"|[^[:space:];\&|<>]+))/ /g' | sed -nE 's/.*git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]+[^[:space:];&|]+([[:space:]]+(--conflict[[:space:]]+[a-z0-9]+|-[^[:space:];&|]+))*[[:space:]]+([^[:space:];&|()-][^[:space:];&|()]*).*/\6/p' | head -1)"
         base_arg="${base_arg%[\'\"]}"; base_arg="${base_arg#[\'\"]}"
+        case " $cmd " in *" ${branch_arg} - "*) base_arg='@{-1}' ;; esac
         base_ref="${base_arg:-HEAD}"
         command -v rt_assignment_unmet >/dev/null 2>&1 && rt_assignment_unmet "$epic_arg" "the branch «${branch_arg}»"
         if [ -n "$epic_arg" ] && command -v rt_epic_base >/dev/null 2>&1; then
@@ -292,9 +294,9 @@ if [ -n "$branch_arg" ]; then
             && ! git merge-base --is-ancestor "origin/${main_branch}" "$base_ref" 2>/dev/null; then
             behind="$(git rev-list --count "${base_ref}..origin/${main_branch}" 2>/dev/null)"
             unmet_class branch_create_stale_base "the branch will grow from a base that does not carry the tip of «${main_branch}» — it has moved ahead by ${behind:-several} commits. Take a fresh base: git fetch origin && git checkout -b ${branch_arg} origin/${main_branch}."
-        elif command -v rt_single_base >/dev/null 2>&1; then
-            rt_single_base "$state" "$number_arg" "$base_ref" "$branch_arg"
         fi
+        [ -n "$epic_arg" ] || ! command -v rt_single_base >/dev/null 2>&1 \
+            || rt_single_base "$state" "$number_arg" "$base_ref" "$branch_arg"
 
         # The second tier: the local reference to the main branch could itself have gone stale, and
         # then the silence of the first tier means "the base is not older than my reference", not

@@ -191,6 +191,17 @@ printf '{"body":"Описание.","labels":[],"state":"CLOSED"}\n' > "$ST_TREE
 report "SC-AK-1990 — single card: закрытая карточка не тронута" "$(st_card 55 --slug mail | grep -c '#55 is closed')|$([ -f "$ST_TREE/patched" ] && echo писал)" '1|'
 report "SC-AK-1990 — single card: вызов без номера называет свой вид" "$(st_card --slug mail | grep -c 'task-new-single.mjs <number> --slug <slug>')" 1
 
+printf '{"body":"Описание.","labels":[],"state":"OPEN"}\n' > "$ST_TREE/issue-55.json"
+st_grill _draft-mail "$ONE"
+report "SC-AK-1990 — single card: папка ветки рядом с черновиком — отказ" \
+    "$(st_card 55 --slug mail | grep -c 'both stand: one grill answers for one card')|$([ -f "$ST_TREE/patched" ] && echo писал)" '1|'
+
+# --- SC-AK-939 — довод владельца читается с карточки ----------------------------------------------
+st_reset
+report "SC-AK-939 — довод-образец в скобках отбит" "$(st_refused 'the reason stands on one line' --outside-epic '<слово владельца>')" '1|нет'
+report "SC-AK-939 — довод на второй строке отбит" "$(st_refused 'the reason stands on one line' --outside-epic $'\nслово')" '1|нет'
+report "SC-AK-939 — флаг вместо довода отбит" "$(st_refused 'takes a text, and «--single» is a flag' --outside-epic --single --slug mail)" '1|нет'
+
 # --- SC-AK-1986 — строка читается на своём месте одной функцией ----------------------------------
 st_outside() {
     ( cd "$ST_TREE" && ST_TEXT="$1" node --input-type=module -e "
@@ -211,6 +222,10 @@ st_count() {
 }
 report "SC-AK-1985 — число с хвостовыми пробелами и CRLF" "$(st_count $'**Задач в разборе:** 1  \r\n')" 1
 report "SC-AK-1985 — пример в ограде рядом с настоящей строкой" "$(st_count $'```\n**Задач в разборе:** 2\n```\n**Задач в разборе:** 1\n')" 1
+report "SC-AK-1985 — непарная ограда в цитате строки не съедает" "$(st_count $'> вот ``` так\n\n**Задач в разборе:** 1\n\n> и ``` так')" 1
+report "SC-AK-1985 — три знака посреди строки ограды не открывают" "$(st_count $'вот ``` так\n\n**Задач в разборе:** 1\n\n```\nкод\n```')" 1
+report "SC-AK-1985 — ограда из четырёх и из тильд" "$(st_count $'````\n```\n**Задач в разборе:** 2\n```\n````\n~~~\n**Задач в разборе:** 3\n~~~\n**Задач в разборе:** 1\n')" 1
+report "SC-AK-1985 — число за комментарием своей строки не открывает" "$(st_count '<!-- образец -->**Задач в разборе:** 1')" нет
 report "SC-AK-1985 — одна ограда и комментарий числом не считаются" "$(st_count $'```\n**Задач в разборе:** 1\n```\n<!-- \n**Задач в разборе:** 1\n-->')" нет
 
 # --- SC-AK-1984 — движок читает карточку с хостинга, а не двойник порта ----------------------------

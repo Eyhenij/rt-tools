@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/git-guard-delivery-epic.sh · 2087ddd16cd5 · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/git-guard-delivery-epic.sh · b4fbc59248d1 · правится надстройкой, не здесь
 # Delivery conditions about the epic of a task. NOT a guard: it has no `rt-hook:` declaration and
 # it hooks into no agent event. The delivery guard sources it — the same way it sources the task
 # folder conditions and the signature.
@@ -127,10 +127,9 @@ rt_single_base() {
     git rev-parse --verify --quiet "origin/${main_branch}" >/dev/null 2>&1 || return 0
     _over="$(git rev-list --count "origin/${main_branch}..$3" 2>/dev/null)"
     [ "${_over:-0}" -gt 0 ] 2>/dev/null || return 0
-    _name="${3#refs/heads/}"
-    _name="${_name#refs/remotes/}"
+    # The branch behind the ref, whatever its spelling; a hash and a detached tip have none.
+    _name="$(git rev-parse --abbrev-ref "$3" 2>/dev/null)"
     _name="${_name#origin/}"
-    case "$_name" in HEAD | @) _name="$(git symbolic-ref --quiet --short HEAD 2>/dev/null)" ;; esac
     [ "$(rt_task_branch_number "$_name" 2>/dev/null)" = "$2" ] && return 0
     unmet_class branch_create_stale_base "the only task of its grill grows from the main branch, and the base «${_name:-$3}» carries ${_over} commits over it: the request would take someone else's work with it. A task that needs those commits is the second one of a series, and a series is an epic: npm run task:new -- --epic. Otherwise take it from the main branch. Take a fresh base: git fetch origin && git checkout -b $4 origin/${main_branch}."
 }

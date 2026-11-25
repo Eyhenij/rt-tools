@@ -32,7 +32,7 @@ export function grillAnswered(text) {
 }
 
 /** A fenced sample and a comment are no line of the grill. */
-const SHOWN = /```[\s\S]*?```|<!--[\s\S]*?-->/g;
+const SHOWN = /^[ \t]*(`{3,}|~{3,})[\s\S]*?^[ \t]*\1[`~]*[ \t\r]*$|^[ \t]*<!--[\s\S]*?-->/gm;
 
 const TASKS_LINE = /^\*\*(?:Задач в разборе|Tasks of the grill):\*\*[ \t]*(.*)$/gm;
 
@@ -41,7 +41,7 @@ const TASKS_LINE = /^\*\*(?:Задач в разборе|Tasks of the grill):\*\
  * stands once and holds a number; the engine and the creating command read it here alone.
  */
 export function tasksOfGrill(text) {
-    const found = [...text.replace(SHOWN, '').matchAll(TASKS_LINE)];
+    const found = [...text.replace(SHOWN, ' ').matchAll(TASKS_LINE)];
     const lines = found.map((m) => m[1].trim());
     if (lines.length === 0) return { why: 'no line «**Задач в разборе:** <число>» (or «**Tasks of the grill:** <number>»)' };
     if (lines.length > 1) return { why: `${lines.length} lines of the count of tasks` };

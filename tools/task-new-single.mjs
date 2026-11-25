@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.39.1 · checks/task-new-single.github.mjs · 5cd9ef0418dd · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/task-new-single.github.mjs · 0b2cdeb4d617 · правится надстройкой, не здесь
 /**
  * The only task of a grill: work outside an epic by the count the grill names, not by a word of the
  * owner about that work.
@@ -100,6 +100,10 @@ async function writeLine(number, slug) {
     const branch = `${TASK_KEY}-${number}-${slug}`;
     let card = null;
     const cardOf = () => (card ??= ghJson(['issue', 'view', String(number), '--json', 'state,body,labels'], { token }));
+    // Both at once, the draft would stay in place and answer for the next card.
+    if ([branch, `_draft-${slug}`].every((name) => existsSync(join(ROOT, TASKS, name)))) {
+        return `${TASKS}/${branch}/ and ${TASKS}/_draft-${slug}/ both stand: one grill answers for one card, remove the extra folder`;
+    }
     const fault = await singleFault({ folders: [branch, `_draft-${slug}`], body: () => cardOf().body ?? '', number, token });
     if (fault !== null) {
         return fault;

@@ -188,6 +188,18 @@ npm run task:new -- --title A\\&B --single --slug s
 npm run task:new -- --title "a\nb" --single --slug s
 npm run task:new -- --single --title t --slug s <<'EOF'\nсмотри task:new и it's\nEOF
 npm run task:new -- --title t --slug s \\\n--single
+out="$(npm run task:new -- --single --title "имя" --slug s)"
+bash -lc "npm run task:new -- --single --title t --slug s"
+node tools/task-new.mjs --single --title t --slug s
+npm run -s task:new -- --single --title "#12 падает, цена 5$" --slug s
+npm run task:new -- --single --title "npm run task:new падает" --slug s
+npm run task:new -- --title "о task:move" --slug s --single
+printf '%s' 'Тело про npm run task:new' | npm run task:new -- --single --title t --slug s
+npm run task:new -- --single --title t --slug s <<\\EOF\nnpm run task:new и it's\nEOF
+npm run task:new -- --single --title t --slug s <<'END-1'\nnpm run task:new и it's\nEND-1
+grep -n x tools/task-new.mjs; npm run task:new -- --single --title t --slug s
+echo task:new; npm run task:new -- --single --title t --slug s
+# owner's word\nnpm run task:new -- --single --title t --slug s
 FORMS
 while IFS= read -r FORM; do
     report "SC-AK-1992 — single task: не единственный вызов работы отбит: ${FORM}" "$(decision_of "$(printf '%b' "$FORM")")" deny
@@ -197,6 +209,12 @@ npm run task:move -- 55 in-progress # task:new --single x
 npm run task:new -- --title t --slug s # --single
 npm run task:new -- --title t --slug s <<'EOF'\ntask:new -- --single\nEOF
 npm run task:new -- --title t --slug s; npm run task:new -- --single --title u --slug v
+npm run task:new -- --title t --slug s; echo --single
+bash -c 'npm run task:new -- --outside-epic w --title "о --single" --slug s'
+out="$(npm run task:new -- --outside-epic 'слово' --title 'о --single тут' --slug s)"
+# owner's word\nnpm run task:new -- --outside-epic 'слово' --title 'о --single' --slug s
+out="$(npm run task:move -- 55 in-progress)"; npm run task:new -- --single --title t
+bash -c 'npm run task:move -- 55 in-progress'; npm run task:new -- --single --title t
 FORMS
 rm -f "$TREE/.claude/rt-kit/tree-name"
 report "SC-AK-1992 — single task: копия без имени заводит" "$(decision_of "$SINGLE_CALL")" PASS

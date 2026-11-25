@@ -332,7 +332,7 @@ export function taskState(number, options) {
         labels: issue.labels.map((label) => label.name),
         epic: declaredEpicOf(issue.body) ?? null,
         outside: outsideReasonOf(issue.body),
-        single: outsideReasonOf(issue.body) === SINGLE_WORDS,
+        single: declaredEpicOf(issue.body) === undefined && outsideReasonOf(issue.body) === SINGLE_WORDS,
     };
 }
 

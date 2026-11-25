@@ -101,7 +101,7 @@ their own turn.
   too. Its refusal names both lawful ways — under that epic, or outside by the owner's word.
 - **A card that already stands gets the same line by a call of its own.** The grill is read from the
   folder of the branch, or from the draft, and the draft becomes that folder: one grill of one task
-  answers for one card. A card under an epic, the card of an epic and a closed card are not touched, and a
+  answers for one card, so a folder next to a draft is refused. A card under an epic, the card of an epic and a closed card are not touched, and a
   card already outside an epic gets no second line.
 - **The line of work outside an epic is read on its own place and in one place.** The audit, the state of
   a card and the creating command take it from one function; the words inside a sentence, a fenced sample,
@@ -115,8 +115,10 @@ their own turn.
 
 ## What is out of scope
 
-- The base of the request of the only task of a grill: the law sends it into the main branch, and no guard
-  judges it.
+- The request of the only task of a grill: the law sends it into the main branch with no commit of another
+  task, and no guard judges its base or what was merged into the branch after it was taken. The ways of
+  taking a branch the guard does not read — `git worktree add -b`, `git branch`, `checkout -B` and the
+  like — are not judged for it either, as for a task of an epic.
 - The readiness of the work going on now: the base of the branch, the signature of the commit and
   the state of the task are judged by the subdomain of the delivery guards.
 - The stop at the end of an epic: the refusal to take new work after the last task lives in its own

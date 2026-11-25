@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.39.1 · checks/board.github.mjs · db455a78a5c1 · правится надстройкой, не здесь
+// rt-kit v0.39.1 · checks/board.github.mjs · 13c07af099a3 · правится надстройкой, не здесь
 /**
  * Shared work with the work queue: the project board, the tasks and their state.
  *
@@ -333,7 +333,7 @@ export function taskState(number, options) {
         labels: issue.labels.map((label) => label.name),
         epic: declaredEpicOf(issue.body) ?? null,
         outside: outsideReasonOf(issue.body),
-        single: outsideReasonOf(issue.body) === SINGLE_WORDS,
+        single: declaredEpicOf(issue.body) === undefined && outsideReasonOf(issue.body) === SINGLE_WORDS,
     };
 }
 

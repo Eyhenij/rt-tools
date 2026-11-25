@@ -71,13 +71,21 @@ import { CONFIG } from './rt-kit-checks.config.mjs';
 const EPIC_LABEL = CONFIG.board?.epicLabel ?? '';
 const PLANS_DIR = CONFIG.plansDir ?? '';
 
+/** A text taken from a flag is not the next flag: `--outside-epic --single` named neither. */
+function textOf(flag, value) {
+    if (value?.startsWith('--')) {
+        fail(`${flag} takes a text, and «${value}» is a flag`);
+    }
+    return value;
+}
+
 function parseArgs(argv) {
     const args = { labels: [], assignee: BOT, title: null, slug: null, epic: false, epicOf: null, outsideEpic: null, single: false };
     for (let index = 0; index < argv.length; index += 1) {
         const value = argv[index + 1];
         switch (argv[index]) {
             case '--title':
-                args.title = value;
+                args.title = textOf(argv[index], value);
                 index += 1;
                 break;
             case '--label':
@@ -103,7 +111,7 @@ function parseArgs(argv) {
                 index += 1;
                 break;
             case '--outside-epic':
-                args.outsideEpic = value ?? '';
+                args.outsideEpic = textOf(argv[index], value ?? '');
                 index += 1;
                 break;
             default:
@@ -315,8 +323,13 @@ const body = [
     .join('\n\n');
 
 // The words of --single are read as a count of the grill, so no other call writes them.
-if (!single && !epic && outsideReasonOf(body)?.toLowerCase() === SINGLE_WORDS) {
+if (!single && outsideReasonOf(body)?.toLowerCase() === SINGLE_WORDS) {
     fail(`«${SINGLE_WORDS}»: these words are written by --single, which reads the count of tasks from the grill`);
+}
+
+// What the audit and the engine read off the card is asked here: a word they do not read leaves a task of no epic.
+if (args.outsideEpic !== null && outsideReasonOf(body) === null) {
+    fail('--outside-epic "<the reason of the owner>": the reason stands on one line and is no placeholder in angle brackets');
 }
 
 let number = null;

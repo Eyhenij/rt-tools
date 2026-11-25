@@ -176,6 +176,7 @@ ge_single_state() {
     ( cd "$GE_TREE" && GE_ISSUE_BODY="$1" GH_BIN="$GE_TREE/gh" RT_GH_RETRY_MS=1 node tools/board.mjs task 42 2>/dev/null | jq -r '.single' )
 }
 report "SC-AK-1991 — single task: состояние карточки со строкой команды" "$(ge_single_state '"Работа вне эпика — разбор дал одну задачу"')" true
+report "SC-AK-1991 — single task: задача эпика с той же строкой — не она" "$(ge_single_state '"Задача эпика #7\n\nРабота вне эпика — разбор дал одну задачу"')" false
 report "SC-AK-1991 — single task: слово владельца — не она" "$(ge_single_state '"Работа вне эпика — владелец попросил отдельно"')" false
 
 GE_SINGLE='{"exists":true,"open":true,"onBoard":true,"assigned":true,"numbered":true,"epic":null,"outside":"разбор дал одну задачу","single":true}'
@@ -192,12 +193,18 @@ report "SC-AK-1991 — single task: отказ называет эпик для 
 for GE_QUOTED in "'origin/RT-1921-work-by-epics'" '"origin/RT-1921-work-by-epics"' '@'; do
     report "SC-AK-1991 — single task: база ${GE_QUOTED} отбита" "$(ge_decision "$GE_SINGLE" "$GE_QUOTED" | grep -c 'carries 1 commits over it')" 1
 done
+for GE_HEAD in '-q # заметка' $'--no-track \\\n    origin/RT-1921-work-by-epics' '--conflict merge origin/RT-1921-work-by-epics' '-q )'; do
+    report "SC-AK-1991 — single task: чужая база отбита в форме: ${GE_HEAD}" "$(ge_decision "$GE_SINGLE" "$GE_HEAD" | grep -c 'carries 1 commits over it')" 1
+done
+git -C "$GE_REPO" checkout -q main && git -C "$GE_REPO" checkout -q RT-1921-work-by-epics && git -C "$GE_REPO" checkout -q main
+report "SC-AK-1991 — single task: база «-» — прошлая ветка, отбита" "$(ge_decision "$GE_SINGLE" - | grep -c 'the base «RT-1921-work-by-epics» carries 1 commits')" 1
+git -C "$GE_REPO" checkout -q RT-1921-work-by-epics
 for GE_FLAG in --no-track -t --track; do
     report "SC-AK-1991 — single task: база от главной после флага ${GE_FLAG} проходит" "$(ge_silent "$(ge_decision "$GE_SINGLE" "$GE_FLAG origin/main")")" прошло
 done
 git -C "$GE_REPO" branch -q RT-1925-first-try HEAD
 git -C "$GE_REPO" update-ref refs/remotes/origin/RT-1925-first-try HEAD
-for GE_OWN in RT-1925-first-try origin/RT-1925-first-try refs/heads/RT-1925-first-try refs/remotes/origin/RT-1925-first-try; do
+for GE_OWN in RT-1925-first-try origin/RT-1925-first-try heads/RT-1925-first-try refs/heads/RT-1925-first-try remotes/origin/RT-1925-first-try refs/remotes/origin/RT-1925-first-try; do
     report "SC-AK-1991 — single task: своя ветка ${GE_OWN} основанием годится" "$(ge_silent "$(ge_decision "$GE_SINGLE" "$GE_OWN")")" прошло
 done
 git -C "$GE_REPO" checkout -q RT-1925-first-try
@@ -220,6 +227,8 @@ fixture_commit "$GE_REPO" "docs/new-in-main.md" "главная ушла впе�
 git -C "$GE_REPO" update-ref refs/remotes/origin/main "$(git -C "$GE_REPO" rev-parse main)"
 git -C "$GE_REPO" checkout -q RT-1921-work-by-epics
 
+report "SC-AK-1991 — single task: отставшая чужая база называет и вершину главной, и эпик" \
+    "$(ge_decision "$GE_SINGLE" origin/RT-1921-work-by-epics | grep -c 'does not carry the tip of.*a series is an epic: npm run task:new -- --epic\.')" 1
 GE_OUT="$(ge_decision "$GE_WITH_EPIC" origin/RT-1921-work-by-epics)"
 if printf '%s' "$GE_OUT" | grep -q 'tip of\|вершин'; then got="отбито"; else got="прошло"; fi
 report "SC-AK-1164 — отставшая удалённая ветка эпика отбита" "$got" "отбито"
