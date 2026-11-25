@@ -222,6 +222,9 @@ set does not start:
 bash .claude/hooks/git-guard-push-ahead.sh > "${TMPDIR:-/tmp}/push-ahead-$(basename "$PWD").log" 2>&1
 ```
 
+A branch whose PR would not open gets the code 3 within seconds and no step: the lines «— …» of the log name
+what to fix. A branch that is not going into a PR yet takes `--no-pr '<reason>'` after the script.
+
 The verdict is the code of the notice. The log says it in its last line `push ahead:`; on red the
 lines after it name the red checks, and «not judged» (101) has the changed paths or the steps without
 a mark right above it:

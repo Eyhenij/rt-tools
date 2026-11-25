@@ -100,8 +100,8 @@ The table in `implementation.md` next to it.
    `.claude/rt-kit/tree-name` and has its row in `.claude/rt-kit/assignments.md`.
 4. **Run `task-flow-start` whole.** Exploration, the grill by menu, the agreement where the code
    asks for one, the plan with numbered steps, the progress. The plan names the
-   end-to-end suites its paths demand and a step that edits a test of each: found at the PR, each suite
-   is a refusal of its own.
+   end-to-end suites its paths demand and a step that edits a test of each: the run ahead refuses to start
+   without it. A sign that is the set itself is no step of a plan: the run ahead waits for the steps.
 5. **Do the stages.** Tests, lint, types and
    the quick checks of the push set over what is touched: the linter after an edit does not judge
    `tools/` and texts, and the push set is too late for them. Each step is
@@ -136,7 +136,10 @@ The table in `implementation.md` next to it.
 10. **Show a screen to the owner before the closing steps.** A kit or admin change of look: the address,
     the screen and the width to look at, and the turn waits for the answer. A change of texts,
     rules or tools has nothing to show: its measurements go into the PR body.
-11. **Bring the set to green.** A round without fixes — the run beside it is the one; with fixes, where
+11. **Bring the set to green.** It starts only where a PR would open: the code 3 with «not ready for a PR»
+    names an end-to-end test, a moved base or a folder that cannot be taken apart yet — an open step, an
+    untouched footprint, an edited plan. Each is fixed, not bypassed; `--no-pr '<reason>'` is for a branch
+    that is not going into a PR. A round without fixes — the run beside it is the one; with fixes, where
     the set waited for the round and where no second round is due, it runs now, in the background. A red
     is fixed here, while the folder still stands.
 12. **Then take the folder apart by the last commit and push.** Pattern `task-flow-archive`. The push
