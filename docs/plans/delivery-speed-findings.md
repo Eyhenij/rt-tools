@@ -50,3 +50,34 @@ The findings of the rules review of every closed task of the epic «Проста
    47» had no count behind it and was refuted by the second round.
 6. **The same without a text of its own:** a test edited through the shell although its article was loaded;
    the replies of the roles not saved, the second case under item 8 above.
+
+## RT-3629 — the review of 25 November 2026
+
+1. **`plan-red` goes red on a plan that moved after its commit** — package, `checks/flow-plan.mjs`
+   (`runPlanRed`, by `changedSincePlan` of `flow-step.mjs`). Its mark of 25 November fell on the text of 8
+   steps while the menu named the one of 9. Test: a plan added by one commit and changed by the next is
+   refused, no mark.
+2. **The first commit of the folder carries the grill and the progress, the plan comes by one commit after
+   its last reading** — package, `patterns/task-flow-start.md`. The written item stands in the cold part
+   alone, and the plan went by `git add -A` into the first commit.
+3. **The end of the readings is named** — tree, `task-delivery-loop-run`: the findings of both roles land by
+   one edit; a reading with no blocking finding changes the plan no more, a clarification goes to the
+   progress; a rule that sorts past changes is run on past merges before the first reading.
+4. **A guard of test edits by the shell** — package, the owner's decision. Four shell writes against 28 by
+   the tool, the third case. Price: a read of a test by an interpreter is refused too.
+5. **`git-guard-discard` does not judge the data of a heredoc** — package. Two false refusals; a body fed to
+   `bash`, `zsh` or `ssh` stays judged. It goes after item 4: both refusals stopped a shell edit of a test.
+6. **A scenario of `tools/tests` refuses braces with a comma inside `"$(… "…" …)"`** — tree. In bash 3.2 two
+   scenarios came out green on nothing.
+
+## RT-3630 — found by the second review round on 25 November 2026
+
+1. **`check:ngdoctor` walks the packages of a working copy that lies inside this one** — tree,
+   `angular-doctor` 0.3.0 and `tools/check-ngdoctor.mjs`. With one copy of a session inside the tree the step
+   went from 7 seconds to 426, and the same commit in a copy outside it took 8: of 560 thousand reads of a
+   directory in 15 seconds 554 thousand fell into the `node_modules` of the inner copy, since the tool
+   leaves out the packages of the root alone. Every set and every push pays it while such a copy stands.
+   Proposed: the step gives the tool an ignore of `.claude/`, or the copies stand outside the tree.
+2. **`check-doc-paths` is red in a fresh copy** — tree. Two texts name ignored directories that only a
+   lived-in copy has: the one of incident analyses and the one of handovers. Proposed: an ignored directory
+   named by a text is not judged, or a post-install creates both.

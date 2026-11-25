@@ -140,11 +140,24 @@ node tools/review-path.mjs --round-two --base origin/<base> --serious <N> --sinc
 git diff <tip of round one>..HEAD > <scratchpad>/review-N-2.diff   # when it is due
 ```
 
+Both stand before the merge of the base: after it the range carries another branch's content. Then the
+copy is made ready by the first block of steps 9, 11–12, and the set starts beside round two: one message
+holds the calls of the roles and the call of `git-guard-push-ahead.sh` from that section. The set waits
+for the round on a change of look and on a light plan whose diff is full.
+
 Each of the agents gets this frame and its own inputs, never your conclusions:
 
 ```text
 Review <scratchpad>/review-N.diff (branch RT-N-<slug>). Do not run git, do not edit files.
 Return findings with file:line, the failure scenario and a severity.
+```
+
+Beside the set the frame has one line more, and `product-strategist` gets the output of the signs:
+
+```text
+The push set runs in this copy: no builds, no nx, no snapshots, no browser, no writes into it. A single
+scenario or a mutant goes in a temporary directory of your own, one at a time. A process is ended by its
+number, never by a name.
 ```
 
 `qa-engineer` gets the agreement and the review lens of `.claude/workflows/feature.js`.
@@ -166,7 +179,9 @@ written out in the command, never packed into one:
 zsh does not split `$E` into words, so `env $E git commit` passes one argument, and the commit leaves
 under the local identity.
 
-## 11–12. Closing, the push set, the push
+## 9, 11–12. Closing, the push set, the push
+
+The copy is made ready first, with a round two and without one; the own showcase and stand are stopped:
 
 ```bash
 /opt/homebrew/bin/gh pr list --head <base> --state merged   # a merged base: the next one down is taken
@@ -176,7 +191,15 @@ GIT_AUTHOR_EMAIL=$EM GIT_COMMITTER_EMAIL=$EM \
     GIT_AUTHOR_NAME=rt-tools-dev GIT_COMMITTER_NAME=rt-tools-dev git merge --no-edit origin/<base> \
     || { git diff --name-only --diff-filter=U -- .claude/hooks | while IFS= read -r f; do git checkout --ours -- "$f"; done; false; }
 node tools/check-specs.mjs; node tools/check-doc-paths.mjs
-pnpm exec nx affected -t test-hooks --base=origin/<base>    # the guard scenarios, when a hook moved
+```
+
+After the merge and the texts, by a call of its own: the pruning writes into the index, and after a
+conflict its removals would leave in the commit of the merge. The same block asks the base again after
+the fixes of round two:
+
+```bash
+git fetch -q origin; git log --oneline HEAD..origin/<base>   # not empty: the base moved, the block above
+test -e "$(git rev-parse --git-path MERGE_HEAD)" || node tools/archive-prune.mjs --apply   # its own commit
 ```
 
 The host keeps a merged branch, so `git ls-remote` does not show that the base merged: the list of
@@ -196,11 +219,22 @@ set does not start:
 bash .claude/hooks/git-guard-push-ahead.sh > "${TMPDIR:-/tmp}/push-ahead-$(basename "$PWD").log" 2>&1
 ```
 
-The verdict is the code of the notice. The log says it in its last line `push ahead:`, and on red
-the lines after that line name the red checks:
+The verdict is the code of the notice. The log says it in its last line `push ahead:`; on red the
+lines after it name the red checks, and «not judged» (101) has the changed paths or the steps without
+a mark right above it:
 
 ```bash
-sed -n '/^push ahead: red/,$p' "${TMPDIR:-/tmp}/push-ahead-$(basename "$PWD").log"
+awk '/^✗ (the copy changed|no mark on the head)/ || /^push ahead: red/ { on = 1 } on' "${TMPDIR:-/tmp}/push-ahead-$(basename "$PWD").log"
+```
+
+Beside a round that found something to fix the run is stopped before the first edit. Its pid stands in
+the first line of the log; the step in flight gets up to half a minute to put down what it raised. An
+ended run leaves its log with a number another process may hold by now, so the command asks whose it is.
+The next run starts after the notice with 143: both write into one log, and a stand holds its port till then:
+
+```bash
+P="$(sed -n 's/^push ahead: base .*, pid \([0-9]*\)$/\1/p' "${TMPDIR:-/tmp}/push-ahead-$(basename "$PWD").log" | head -1)"
+ps -p "${P:-0}" -o command= | grep -q 'git-guard-push-ahead' && kill -TERM "$P" || echo 'no run under this number'
 ```
 
 A red here is fixed while the task folder still stands; the folder is taken apart by the last commit.

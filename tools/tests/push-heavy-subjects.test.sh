@@ -142,4 +142,32 @@ report "the browser script of the step runs the whole suite" \
 report "no base runs the whole suite" \
     "$(cd "$ROOT" && . .claude/rt-kit/project.sh && rt_admin_e2e_step '')" "$E2E_FULL"
 
+# RT-3630: the mark of the scenarios of the tree's checks. The key of the step before and after a
+# commit of one path, taken by the profile of this tree in a scratch repository.
+key_after() {
+    (
+        scratch="$(mktemp -d)"
+        trap 'rm -rf "$scratch"' EXIT
+        cd "$scratch" || exit 1
+        git init -q && printf 'a\n' > a.txt && git add -A && git -c user.name=t -c user.email=t@t commit -q -m base
+        # shellcheck disable=SC1091
+        . "$ROOT/.claude/rt-kit/project.sh"
+        # shellcheck disable=SC1091
+        . "$ROOT/.claude/hooks/git-guard-push-marks.sh"
+        step='RT_SUITES_BASE=origin/base bash tools/tests/run.sh'
+        before="$(rt_push_mark_key "$step" '')"
+        mkdir -p "$(dirname "$1")" && printf 'b\n' > "$1" && git add -A
+        git -c user.name=t -c user.email=t@t commit -q -m touched
+        after="$(rt_push_mark_key "$step" '')"
+        if [ -z "$before" ]; then printf 'no key'; elif [ "$before" = "$after" ]; then printf 'kept'; else printf 'lost'; fi
+    )
+}
+for path in docs/plans/x.md docs/archive/RT-1-x.md docs/tasks/RT-1-x/progress.md docs/tasks/_draft-x/grill.md \
+    .claude/rt-kit/assignments.md; do
+    report "a commit of $path keeps the mark of the scenarios" "$(key_after "$path")" kept
+done
+for path in docs/specs/ui-kit-v2/spec.md tools/check-x.mjs tools/tests/x.test.sh docs/tasks/_template/plan.md README.md; do
+    report "a commit of $path takes it away" "$(key_after "$path")" lost
+done
+
 suite_result "the heavy steps a branch pays for"

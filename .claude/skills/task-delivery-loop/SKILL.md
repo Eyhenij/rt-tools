@@ -41,8 +41,12 @@ Tree rule under `work-conduct`, over `task-flow`. Cold part, steps whole: `pitfa
 - **The fixes of a round go as one commit named by the round.** «… после первого/второго круга
   ревью (RT-N)»: the one place a later commit fixes an earlier one. A round without findings closes
   by a record in the progress under that name.
-- **The push set runs once per branch, after the last round.** Base merged in once; after green only the
-  take-apart commit, then the push; a fix after the PR reruns it.
+- **The push set runs beside round two.** It starts in the message of its roles, over closed texts and
+  the base merged in once; nobody touches the copy meanwhile. Findings: the run is stopped, the fixes
+  land, their texts and the base are asked again, then the set. No fixes: after green only the record
+  of the round and the take-apart commit, then the push.
+- **The set waits for the round** where a change of look waits for the owner and where a light plan
+  has a full diff. With no round two it runs after the fixes of the first and the answer on the look.
 - **Unattended work keeps the loop and the night rule both.** By `autonomous-work` the owner's
   screen becomes a measurement; push and PR wait for the owner's return where it keeps all local.
 
@@ -51,7 +55,8 @@ Tree rule under `work-conduct`, over `task-flow`. Cold part, steps whole: `pitfa
 - A PR into `main` is a draft, into an epic branch ready.
 - `goal-critic` never gets the plan.
 - On the light path the executor fills «Точки» with the output of the signs: the demand of
-  `task-flow-close` and `git-workflow-pr-body` for `product-strategist` is lifted there.
+  `task-flow-close` and `git-workflow-pr-body` for `product-strategist` is lifted there. Beside the set
+  the role takes from the executor the signs its frame forbids: step 9.
 - Before closing, a kit or admin change of look shows the owner address, screen, width; the turn waits.
   Texts, rules, tools: numbers in PR body.
 - After a merge, the next task in the same turn.

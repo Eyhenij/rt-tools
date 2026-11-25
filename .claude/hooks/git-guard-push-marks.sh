@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/git-guard-push-marks.sh · 690b9787eaa1 · правится надстройкой, не здесь
+# rt-kit v0.39.1 · hooks/git-guard-push-marks.sh · 04219294d2d5 · правится надстройкой, не здесь
 # The base of the push set and the marks of a green run, shared by the push guard and by the
 # command that runs the set ahead (`git-guard-push-ahead.sh`).
 #
@@ -145,7 +145,13 @@ EOF
 # what does not leave. The observations record is not counted: the guard writes it itself, on every
 # call, and a tree that does not ignore it would never get a single mark.
 rt_push_mark_clean() {
-    [ -z "$(git status --porcelain -- . ':(exclude).claude/rt-kit/observations' 2>/dev/null)" ]
+    [ -z "$(rt_push_mark_dirt)" ]
+}
+
+# What makes the copy unclean, a line per path as `git status` prints it. A new file counts whatever
+# the machine says of untracked ones, and a name is printed as written.
+rt_push_mark_dirt() {
+    git -c core.quotePath=false status --porcelain --untracked-files=normal -- . ':(exclude).claude/rt-kit/observations' 2>/dev/null
 }
 
 # Whether the head adds nothing to its base: every commit of it already lies in that branch on the
