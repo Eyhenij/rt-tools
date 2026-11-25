@@ -192,9 +192,11 @@ threshold.
   after the base. An island may be written by markup without the directive, and a node of the set Material is
   put by the kit on its own panes, so a request from inside the kit would miss some of the ways and would put
   the service into the start of every consumer. The application asks: `ensure()` at its moment or `eager`,
-  which waits for the file before the first frame. A failed load removes the link and rejects, and the next
-  call tries again; at an eager start the failure goes to the error handler of the application and the start goes on. Without an address and on the server the service does
-  nothing.
+  which waits for the file before the first frame. A failed load or silence past ten seconds removes the
+  link and rejects, and the next call tries again; a marked link still loading is waited for, and a link of the
+  application to the same resolved address counts as loaded. At an eager start the failure goes to the error
+  handler of the application and the start goes on. On the server the service does nothing; without an
+  address it does nothing and reports it once to the error handler in the development mode.
 
 ## What is out of scope
 
