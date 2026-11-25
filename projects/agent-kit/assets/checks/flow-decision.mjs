@@ -10,8 +10,9 @@ import { namedOf } from './coupling-plan.mjs';
 const HEADING = /^##\s+(?:Решение|Decision)\s*$/iu;
 const NONE = /^\s*(?:Решения нет|No decision)(?:\s*[:—–-]\s*(.*))?$/iu;
 const SYMBOL = /`([^`\s:]+\.\w+|(?:[^`\s:]*\/)?[A-Z]\w*file):((?:--|[#.$\p{L}_])[\p{L}\p{N}_$.#-]*)(?:[<(][^`]*)?`/gu;
-const DROPPED = /(?<!\p{L})(?:отброшен[оы]|dropped)(?!\p{L})/iu;
-const REMOVED = /(?<!\p{L})(?:удаля(?:ет|ют)ся|(?:is|are) removed)(?!\p{L})/iu;
+const DROPPED = /(?<!\p{L})(?:отброшен[аоы]?|dropped)(?!\p{L})/iu;
+/** The word right after the place, or after the list of places it ends. */
+const REMOVED = /^(?:(?:,\s*|\s+(?:и|and)\s+)`[^`]+`)*\s+(?:[—–-]\s+|\()?(?:удаля(?:ет|ют)ся|удал[её]н[аоы]?|(?:is|are) removed)(?!\p{L})/iu;
 const MOVED = /(?<!\p{L})(?:переезжа(?:ет|ют) в|moves? to)(?!\p{L})/iu;
 const LIMIT = /`([^`\s]+)`[^`;]*?(?<!\p{L})(до|плюс|up to|plus)\s+(\d+)/giu;
 const NEW_FILES = /(?:новых файлов кода|new code files):\s*(\d+)/iu;
@@ -24,36 +25,35 @@ const isReason = (text) => !isBlank(text) && (text.match(/\p{L}{2,}/gu) ?? []).l
 const isAbsent = (text, words) => isReason(new RegExp(`^(?:${words})\\s*[:—–-]\\s*(.*)$`, 'iu').exec(text)?.[1] ?? '');
 /** A suite by its folder or by the last part of its name: `check-specs.mjs` and `test-setup.ts` are none. */
 const isSuite = (path) => /(?:^|\/)(?:tests?|__tests__|[\w-]*e2e)\/.*\.(?!mdx?$)\w+$|[._](?:test|spec|e2e)\.\w+$|[a-z](?:Tests?|Spec)\.\w+$/.test(path);
-const sentencesOf = (text) => text.split(/(?<=[.!?])\s+(?=[\p{Lu}`«])/u);
+const sentencesOf = (text) => text.split(/<br\s*\/?>|(?<=[.!?])\s+(?=(?:\d+\)\s*)?[*_`«"]*\p{Lu})/u);
 
 /**
  * The symbols of a text: the path, the name and the fate — `dropped` after the word to the end of its
- * sentence, `removed` and `moved` within their part between semicolons, otherwise an empty string.
+ * sentence, `removed` right before its word, `moved` before the target of its part, otherwise empty.
  */
 function symbolsOf(text) {
     return sentencesOf(text).flatMap((sentence) => {
         const cut = sentence.search(DROPPED);
         const [before, after] = cut < 0 ? [sentence, ''] : [sentence.slice(0, cut), sentence.slice(cut)];
-        const places = (part, fate) => [...part.matchAll(SYMBOL)].map(({ index, 1: path, 2: symbol }) => ({ path, symbol, fate: fate(index) }));
-        const kept = before.split(';').flatMap((part) => {
-            const [removed, moved] = [REMOVED.test(part), part.search(MOVED)];
-            return places(part, (index) => (removed ? 'removed' : index < moved ? 'moved' : ''));
-        });
-        return [...kept, ...places(after, () => 'dropped')];
+        const places = (part, fateOf) =>
+            [...part.matchAll(SYMBOL)].map((found) => ({ path: found[1], symbol: found[2], fate: fateOf(part.slice(found.index + found[0].length)) }));
+        const kept = (rest) => (REMOVED.test(rest) ? 'removed' : MOVED.test(rest) ? 'moved' : '');
+        return [...before.split(';').flatMap((part) => places(part, kept)), ...places(after, () => 'dropped')];
     });
 }
 
-/** A point has a dash after its name, opens a sentence or stands after «;» or «<br>» with a capital, and goes on to the next one or to «dropped». */
+/** A point has a dash after its name, opens a sentence or stands after «;» with a capital, and goes on to the end of its sentence or to «dropped». */
 function patternsFault({ text }) {
     const absent = isAbsent(text, 'паттерн(?:а|ов) нет|no patterns?');
-    const points = sentencesOf(absent ? text.replace(/^[^;.<]*/, '') : text).flatMap((sentence) =>
-        sentence.split(DROPPED)[0].split(/;|<br\s*\/?>/iu).reduce((found, part, at) => {
-            if (/\s[—–]\s/.test(part) && (at === 0 || /^\s*\p{Lu}/u.test(part))) return [...found, part.trim()];
+    const points = sentencesOf(text).flatMap((sentence, nth) =>
+        sentence.split(DROPPED)[0].split(';').reduce((found, part, at) => {
+            const opens = at === 0 ? !absent || nth > 0 : /^[\s\d)*_`«"-]*\p{Lu}/u.test(part);
+            if (opens && /\s[—–]\s+\S/.test(part)) return [...found, part];
             return found.length > 0 ? [...found.slice(0, -1), `${found.at(-1)};${part}`] : found;
         }, []));
     if (points.length === 0) return absent ? null : 'names no pattern: «<name> — `<path>:<symbol>`», or «паттерна нет: <reason>» («no pattern»)';
     const bare = points.find((point) => !symbolsOf(point).some(({ fate }) => fate === ''));
-    return bare ? `names no place «\`<path>:<symbol>\`» for «${bare.split(/\s[—–]\s/)[0]}»` : null;
+    return bare ? `names no place «\`<path>:<symbol>\`» for «${bare.replace(/^[\s\d)*_`«"-]+/, '').split(/[*_`»"]*\s[—–]\s/)[0]}»` : null;
 }
 
 function inputFault({ text, scenarios, suites }) {
