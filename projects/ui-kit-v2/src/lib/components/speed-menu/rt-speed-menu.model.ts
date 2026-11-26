@@ -17,7 +17,7 @@ export namespace IRtSpeedMenu {
     export interface Action {
         /** Что уходит выходом `actionSelect` при выборе. */
         value: string;
-        /** Имя значка кита или имя Material — его кит переводит парой из своего набора. */
+        /** Значок действия: имя кита рисуется рисунком, другое — лигатурой шрифта Material. */
         icon: string;
         /** Имя действия: подсказка и доступное имя кнопки. */
         label: string;

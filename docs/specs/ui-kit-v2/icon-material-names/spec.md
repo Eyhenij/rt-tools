@@ -1,7 +1,7 @@
-# The Material names of an icon
+# The names and the sets of icons
 
-**Status:** in force · **Revision:** 9 October 2026 · **Scenario prefix:** `SC-UKV`
-**Depends on:** the icon of the second kit and its table of Material pairs; the material preset
+**Status:** in force · **Revision:** 26 November 2026 · **Scenario prefix:** `SC-UKV`
+**Depends on:** the icon of the second kit; the material preset
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
 
@@ -10,24 +10,29 @@ A subdomain of the second kit's spec, written before the code by task RT-2473 of
 ## Why
 
 An application moving from the first kit names its icons by Material names: the first kit drew them
-by the Material Symbols font. The second kit draws only its own names and 49 Material pairs from its
-table, and a name without a pair draws an empty place. The icon cannot spin, and its size is chosen
-from six steps, so 14, 48 and 56 pixels are out of reach. A button under the material preset draws
-the kit drawing where every other icon draws the Material one.
+by the Material Symbols font. The second kit draws its own names. It used to translate part of the
+Material names by a table that loaded on the start of every application, and a set of drawings was
+chosen once by the markup and never changed.
+
+Now every set of icons has the same names, a set is data the application can add, and the set changes
+on a live page. The kit no longer translates first-kit names: an application renames them itself, and
+the script `rename-icon-names` from the package does it in its templates.
 
 ## Terminology
 
-| Term         | What it is                                                                    |
-| ------------ | ----------------------------------------------------------------------------- |
-| a kit name   | a name the icon set of the kit draws                                          |
-| a glyph      | a Material name given to an icon instead of a kit name                        |
-| a pair       | the kit name the table of Material pairs gives to a glyph                     |
-| the ligature | the glyph drawn as text in the Material Symbols font                          |
-| the strategy | how a glyph is drawn: `map-first` — the pair first, `font` — the font at once |
+| Term         | What it is                                                                   |
+| ------------ | ---------------------------------------------------------------------------- |
+| a kit name   | a name the icon set of the kit draws                                         |
+| a glyph      | a name given to an icon by the input `glyph`, not checked by the type        |
+| the ligature | the glyph drawn as text in the Material Symbols font                         |
+| the strategy | how a glyph is drawn: `map-first` — a kit name first, `font` — the font      |
+| a set        | a folder of drawings with the names of the kit, published at its own address |
+| a fallback   | the set a missing drawing of a set is taken from                             |
+| a part       | a node of the page with a set of its own                                     |
 
 ### What it is called in the interface
 
-A person sees an icon; how it is drawn is invisible to them.
+A person sees an icon; how it is drawn and from which set is invisible to them.
 
 ## Rules
 
@@ -84,12 +89,23 @@ A person sees an icon; how it is drawn is invisible to them.
 ## What is out of scope
 
 - Shipping the Material Symbols font: the application connects it itself.
-- The empty button of the side menu without a pair — task RT-2482.
+- Drawing the missing material drawings: the set `material` takes them from `kit`.
+- Checking that a set of the application is complete.
+- Following a change of the material sign on a live page, and changing the set of a window already
+  open.
 - The icon of a toast — task RT-2478.
 
 ## Contract
 
-Not applicable: the surface is inputs of kit components and an argument of a provider function.
+The surface is inputs of kit components, the options of `provideRtIcons` — `sets`, `default`,
+`glyphStrategy` —, the method `use()` of `RtIconSetService` and the directive `rtIconSet`.
+
+An application of an earlier version has these breaking moves: `provideRtIcons` takes one object of
+options instead of two addresses; the table `iconMaterialMap`, the type `IRtIconMaterialEntry` and
+`materialPairOf` are gone; `RT_ICONS_BASE_URL`, `RT_ICONS_MATERIAL_BASE_URL` and `IRtIcon.Drawing`
+are gone; `request` and `symbolHref` of the registry take a set name and a fill sign; an icon name
+that comes as data must be a kit name. The script `rename-icon-names` renames the static attributes
+of templates and lists the other places.
 
 ### Refusal codes
 
@@ -103,8 +119,9 @@ Not applicable: the icon keeps nothing.
 
 | State                  | What is visible                                               |
 | ---------------------- | ------------------------------------------------------------- |
-| a glyph with a pair    | the kit drawing, or the material one under the preset         |
-| a glyph without a pair | the ligature of the font, after the fonts are ready           |
+| a glyph, a kit name    | the drawing of the set of the icon                            |
+| a glyph, another name  | the ligature of the font, after the fonts are ready           |
+| a set just changed     | the old drawing until the new one arrives                     |
 | the font not connected | the glyph text in the fallback font after the fonts are ready |
 | a spinning icon        | the icon turning round                                        |
 
@@ -124,17 +141,20 @@ Not applicable: an icon draws the same at any width.
 
 ### Several objects
 
-Every icon resolves its own name: a glyph with a pair and one without stand side by side and draw
-by their own ways.
+Every icon takes its own set: parts with different sets stand side by side on one page.
 
 ## Decisions
 
-- **The strategy is the third argument of `provideRtIcons`, not an object in place of the second.**
-  The second is the address of the material drawings, and changing its type breaks every call.
+- **The names are the same in every set, and the first-kit names are not translated.** The owner's
+  word of 26 November 2026: the table of pairs weighed on every start, and the old names were removed
+  at once.
+- **A set is data, not a class.** A name, an address, a fallback, a list of names and a fill sign are
+  enough for the registry to walk the chain.
+- **A directive and `use()` are stronger than the material sign.** A choice made in code is later and
+  more exact than the sign in the markup.
 - **`name` of the icon is no longer required.** The glyph stands next to it; a required name would
   force a placeholder name on every glyph.
-- **One resolver of a Material name lives in the icon folder.** The menu item and the side menu
-  resolved it by two copies of their own; they move onto it with their behaviour unchanged.
+- **One resolver of a glyph lives in the icon folder.** The menu item and the side menu use it.
 - **The size type stays as it is, and only the input takes pixels.** The type is read in many
   places, and widening it breaks consumers that map over the steps. Revised on 7 October 2026: the
   owner asked for the steps `3xl` and `4xl`, and the type grew by them; inside the kit only the
@@ -158,3 +178,5 @@ None.
 - 8 October 2026 — by task RT-2644 from the application's request: under `font` a kit name the
   font cannot draw takes the kit drawing instead of its own text.
 - 9 October 2026 — by task RT-2722: the sign of the icons alone, `data-rt-icon-preset`.
+- 26 November 2026 — by task RT-3648: one set of names, sets as data, a change of the set on a live
+  page; the table of Material pairs removed, the script `rename-icon-names` added.

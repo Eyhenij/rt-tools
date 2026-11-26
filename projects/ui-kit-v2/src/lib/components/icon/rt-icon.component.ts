@@ -196,14 +196,14 @@ export class RtIconComponent {
     public readonly name: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
 
     /**
-     * Имя Material вместо имени кита. Как оно рисуется — парой из перечня кита или лигатурой
-     * шрифта Material Symbols — решает настройка `glyphStrategy` у `provideRtIcons()`. Шрифт
+     * Значок строкой вместо имени кита. Нарисовать его рисунком кита или лигатурой шрифта
+     * Material Symbols — решает настройка `glyphStrategy` у `provideRtIcons()`. Шрифт
      * приложение подключает само; семья берётся из свойства `--rt-icon-glyph-font`.
      */
     public readonly glyph: InputSignal<string | null> = input<string | null>(null);
 
     /**
-     * Как рисовать имя Material у этого значка. Перекрывает `glyphStrategy` из `provideRtIcons()`;
+     * Как рисовать `glyph` у этого значка. Перекрывает `glyphStrategy` из `provideRtIcons()`;
      * `null` — берётся настройка приложения. Дефолт `null`.
      */
     public readonly glyphStrategy: InputSignal<IRtIcon.GlyphStrategy | null> = input<IRtIcon.GlyphStrategy | null>(null);

@@ -31,7 +31,7 @@ describe('RtIconComponent — глиф Material', (): void => {
         expect(glyphNode(fixture)).toBeNull();
     });
 
-    it('SC-UKV-544 — глиф без пары рисует лигатуру шрифта и в набор не ходит', (): void => {
+    it('SC-UKV-544 — глиф вне имён кита рисует лигатуру шрифта и в набор не ходит', (): void => {
         const fixture: ComponentFixture<RtIconComponent> = setup({ glyph: 'pets', size: 'lg' });
         const http: HttpTestingController = TestBed.inject(HttpTestingController);
 

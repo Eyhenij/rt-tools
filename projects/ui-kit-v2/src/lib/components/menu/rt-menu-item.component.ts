@@ -152,7 +152,7 @@ export class RtMenuItemComponent {
     /** Свой значок приложения — `<ng-template rtMenuItemIcon>` внутри пункта. */
     protected readonly ownIcon: Signal<RtMenuItemIconDirective | undefined> = contentChild(RtMenuItemIconDirective);
 
-    /** Значок пункта: свой `icon`, а без него — пара имени Material из перечня кита. */
+    /** Значок пункта: свой `icon`, а без него — `glyph`, если это имя кита. */
     protected readonly iconName: Signal<IRtIcon.Name | null> = computed((): IRtIcon.Name | null =>
         menuItemIconName(this.icon(), this.glyph())
     );
@@ -182,8 +182,8 @@ export class RtMenuItemComponent {
     });
 
     /**
-     * Имя значка Material, как его пишет пункт меню первого кита (`check_circle`). Рисует его набор
-     * кита через перечень соответствий; `icon` сильнее, а имя без пары рисует пункт без значка.
+     * Значок пункта строкой — для имён, приходящих данными. Рисуется, когда это имя кита; `icon`
+     * сильнее, а имя вне набора рисует пункт без значка.
      */
     public readonly glyph: InputSignal<string | null> = input<string | null>(null);
 
@@ -236,14 +236,14 @@ export class RtMenuItemComponent {
     public readonly selected: OutputEmitterRef<void> = output<void>();
 
     constructor() {
-        // Имя Material без пары рисует пункт без значка, и пропуск без предупреждения не заметен.
+        // `glyph` вне набора кита рисует пункт без значка, и пропуск без предупреждения не заметен.
         if (isDevMode()) {
             effect((): void => {
                 const glyph: string | null = unpairedGlyph(this.icon(), this.glyph(), this.ownIcon() !== undefined);
                 if (glyph !== null) {
                     // eslint-disable-next-line no-console -- предупреждение разработчику приложения: другого канала у кита нет
                     console.warn(
-                        `rt-menu-item «${this.label()}»: у значка Material «${glyph}» нет пары в перечне кита. ` +
+                        `rt-menu-item «${this.label()}»: значка «${glyph}» нет в наборе кита. ` +
                             'Задайте icon или свой значок через <ng-template rtMenuItemIcon>.'
                     );
                 }

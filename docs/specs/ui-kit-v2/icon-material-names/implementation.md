@@ -1,4 +1,4 @@
-# What it is carried out by — the Material names of an icon
+# What it is carried out by — the names and the sets of icons
 
 The first column is the rule of the spec next to it verbatim. The second is where it is carried out
 in the tree; the scenario it is checked by is named there too, and what exactly every scenario is
@@ -9,7 +9,7 @@ tree, or the tree holds what the spec is silent about.
 
 - **An icon is named by a kit name or by a glyph, and the kit name wins when both are given.** — `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.logic.ts:resolveIconGlyph` — the kit name is returned before the glyph is looked at; scenarios `SC-UKV-540`, `SC-UKV-545`
 - **By the strategy `map-first` a glyph that is a kit name draws that name.** — `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.logic.ts:kitNameOf` — no name is translated; scenarios `SC-UKV-541`, `SC-UKV-543`, `SC-UKV-1879`, `SC-UKV-1880`
-- **By the strategy `font` a glyph draws the ligature, unless it is a kit name the font cannot draw.** — `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.logic.ts:LIGATURE_NAME` — the pair is looked for only under `map-first`, and a kit name outside the ligature alphabet draws the kit drawing; scenarios `SC-UKV-542`, `SC-UKV-546`, `SC-UKV-774`
+- **By the strategy `font` a glyph draws the ligature, unless it is a kit name the font cannot draw.** — `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.logic.ts:LIGATURE_NAME` — the kit name is looked for first only under `map-first`, and a kit name outside the ligature alphabet draws the kit drawing; scenarios `SC-UKV-542`, `SC-UKV-546`, `SC-UKV-774`
 - **The strategy is set for the application by the option `glyphStrategy` of `provideRtIcons`, and `map-first` is the default.** — `projects/ui-kit-v2/src/lib/components/icon/rt-icon.providers.ts:provideRtIcons`, `projects/ui-kit-v2/src/lib/components/icon/rt-icon-font.service.ts:RT_ICON_GLYPH_STRATEGY`; scenarios `SC-UKV-549`, `SC-UKV-550`
 - **One icon sets its own strategy by the `glyphStrategy` input, and it overrides the application's.** — `projects/ui-kit-v2/src/lib/components/icon/rt-icon.component.ts:glyphStrategy` — the input stands before the injected strategy in the resolver call; scenario `SC-UKV-709`
 - **The font axes of the ligature are properties the application sets above the icon.** — `projects/ui-kit-v2/src/lib/components/icon/rt-icon.component.scss:font-variation-settings` — the fill is the glyph's own property, set by the filled modifier; scenario `SC-UKV-710`

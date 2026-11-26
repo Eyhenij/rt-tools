@@ -22,8 +22,8 @@ export namespace IRtIcon {
     export type SizeInput = Size | number;
 
     /**
-     * Как значок рисует имя Material: `map-first` — пара из перечня кита, без пары шрифт;
-     * `font` — шрифт для любого имени.
+     * Как значок рисует `glyph`: `map-first` — имя кита рисунком, другое шрифтом Material;
+     * `font` — шрифтом, кроме имён кита, которых шрифт нарисовать не может.
      */
     export type GlyphStrategy = 'map-first' | 'font';
 

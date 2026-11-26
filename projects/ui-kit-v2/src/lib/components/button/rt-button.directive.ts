@@ -131,9 +131,9 @@ export class RtButtonDirective {
     /** Текстовый лейбл кнопки. Если null — кнопка только с иконкой. */
     public readonly label: InputSignal<string | null> = input<string | null>(null);
     /**
-     * Значок кнопки: имя кита (`check`) или имя Material (`arrow_back`). Имя Material рисуется
-     * так же, как вход `glyph` у `rt-icon`: парой из перечня кита или лигатурой шрифта — по
-     * настройке `glyphStrategy` у `provideRtIcons()`. Если null — без иконки.
+     * Значок кнопки: имя кита (`check`) или имя шрифта Material (`pets`). Рисуется так же, как
+     * вход `glyph` у `rt-icon`: имя кита — рисунком, другое — лигатурой шрифта; способ задаёт
+     * `glyphStrategy` у `provideRtIcons()`. Если null — без иконки.
      */
     public readonly icon: InputSignal<string | null> = input<string | null>(null);
     /** Сторона размещения иконки относительно лейбла. */
@@ -409,7 +409,7 @@ export class RtButtonDirective {
         }
     }
 
-    /** Лигатура шрифта Material Symbols для имени без пары. Шрифт подключает приложение. */
+    /** Лигатура шрифта Material Symbols для имени вне набора кита. Шрифт подключает приложение. */
     #createGlyph(glyph: string): HTMLElement {
         const el: HTMLElement = this.#renderer.createElement('span') as HTMLElement;
         this.#renderer.addClass(el, `${BEM_BLOCK}__icon`);

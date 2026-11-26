@@ -6,8 +6,8 @@ import { PlatformService } from '@rt-tools/core';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 
 /**
- * Как значки приложения рисуют имя Material. Задаётся третьим аргументом `provideRtIcons()`;
- * по умолчанию `map-first` — пара из перечня кита, а без пары шрифт.
+ * Как значки приложения рисуют `glyph`. Задаётся настройкой `glyphStrategy` у `provideRtIcons()`;
+ * по умолчанию `map-first` — имя кита рисунком, другое шрифтом.
  */
 export const RT_ICON_GLYPH_STRATEGY: InjectionToken<IRtIcon.GlyphStrategy> = new InjectionToken<IRtIcon.GlyphStrategy>(
     'RT_ICON_GLYPH_STRATEGY',

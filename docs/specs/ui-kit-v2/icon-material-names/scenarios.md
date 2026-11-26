@@ -39,11 +39,11 @@ Then it refers to the kit symbol `arrow-left`, and no ligature stands in it
 
 Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.component.spec.ts`.
 
-### SC-UKV-544 — an icon with an unpaired glyph draws the ligature and asks for no file
+### SC-UKV-544 — an icon with a glyph outside the kit names draws the ligature and asks for no file
 
-Given the icon gets a glyph without a pair and the step `lg`
-When it is drawn
-Then the ligature stands in it with a font size of 24 pixels, and no request goes for a file
+Given the icon gets a glyph that is not a kit name and the step `lg`.
+When it is drawn.
+Then the ligature stands in it with a font size of 24 pixels, and no request goes for a file.
 
 Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.component.spec.ts`.
 
@@ -124,59 +124,60 @@ Then the first refers to the kit symbol, the second to the material one
 
 Covered: `projects/ui-kit-v2/src/lib/components/button/rt-button-glyph.directive.spec.ts`.
 
-### SC-UKV-554 — a button with a paired Material name draws the pair
+### SC-UKV-554 — a button with a kit name on `glyph` draws the drawing
 
-Given a button gets the icon `arrow_back`
-When it is drawn
-Then it refers to the kit symbol `arrow-left`
+Given a button gets the icon `arrow-left`.
+When it is drawn.
+Then it refers to the kit symbol `arrow-left`, and no ligature stands in it.
 
 Covered: `projects/ui-kit-v2/src/lib/components/button/rt-button-glyph.directive.spec.ts`.
 
-### SC-UKV-555 — a button with an unpaired Material name draws the ligature
+### SC-UKV-555 — a button with a name outside the kit names draws the ligature
 
-Given a button gets an icon name that is neither a kit name nor paired
-When it is drawn
-Then the ligature stands in place of the icon. Before, such a name drew an empty place
+Given a button gets the icon `pets`.
+When it is drawn.
+Then the ligature stands in place of the icon.
 
 Covered: `projects/ui-kit-v2/src/lib/components/button/rt-button-glyph.directive.spec.ts`.
 
 ### SC-UKV-556 — the icon button takes a glyph
 
-Given the icon button gets a glyph and no kit name
-When it is drawn
-Then its icon draws by the Material name
+Given the icon button gets the glyph `arrow-left` and no kit name.
+When it is drawn.
+Then its icon refers to the kit symbol `arrow-left`.
 
 Covered: `projects/ui-kit-v2/src/lib/components/icon-button/rt-icon-button.component.spec.ts`.
 
 ### SC-UKV-557 — a segment of the toggle button group takes a glyph
 
-Given a segment of the group is declared with a glyph
-When the group is drawn
-Then the segment's icon draws by the Material name
+Given a segment of the group is declared with the glyph `pets`.
+When the group is drawn.
+Then the segment's icon draws the ligature.
 
 Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group.component.spec.ts`.
 
 ### SC-UKV-558 — the empty state takes a glyph
 
-Given the empty state gets a glyph and no kit name
-When it is drawn
-Then its icon place is shown and draws by the Material name
+Given the empty state gets the glyph `pets` and no kit name.
+When it is drawn.
+Then its icon place is shown and draws the ligature.
 
 Covered: `projects/ui-kit-v2/src/lib/components/empty-state/rt-empty-state.component.spec.ts`.
 
-### SC-UKV-559 — a menu item of the split button draws a Material name
+### SC-UKV-559 — a menu item of the split button draws a name outside the kit names
 
-Given a menu item of the split button is declared with an unpaired Material name
-When the menu opens
-Then the item draws the ligature
+Given a menu item of the split button is declared with the icon `pets`.
+When the menu opens.
+Then the item draws the ligature.
 
 Covered: `projects/ui-kit-v2/src/lib/components/split-button/rt-split-button.component.spec.ts`.
 
 ### SC-UKV-709 — one icon overrides the application's strategy
 
-Given the application draws glyphs by the strategy `map-first`
-When an icon with the glyph `arrow_back` gets `glyphStrategy` `font`
-Then it draws the ligature, while a neighbour without the input draws the pair `arrow-left`
+Given the application draws glyphs by the strategy `map-first`.
+When an icon with the glyph `search` gets `glyphStrategy` `font`.
+Then it draws the ligature, while a neighbour without the input draws the kit drawing, and an icon
+without the input takes the strategy of the application.
 
 Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.component.spec.ts`.
 
@@ -355,5 +356,5 @@ Then the icons and the buttons refer to the symbols of the chosen set, and the c
 application does not change the part.
 
 Not covered: it cannot be closed by a test with an identifier — the scenario is about the live page
-of the showcase, and a `play` step of the story `Atoms/Icon/IconSet` holds it. The switching itself
+of the showcase, and a `play` step of the story IconSet of the icon holds it. The switching itself
 is covered by `SC-UKV-1876` and `SC-UKV-1877`.
