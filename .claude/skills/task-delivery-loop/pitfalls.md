@@ -1,6 +1,7 @@
 # Every task through a live check and a review — cold part
 
-What the rule `task-delivery-loop` handed over when cut to its statements, every article whole.
+What the rule `task-delivery-loop` handed over when cut to its statements, every article whole, and the
+reasons behind the commands of the pattern `task-delivery-loop-run`.
 
 A rule of this tree under the law `docs/constitution/work-conduct.md`. The rule `task-flow` leads
 one task from the request to the merge and names no review before the push. This loop stands on
@@ -180,8 +181,8 @@ The table in `implementation.md` next to it.
 
 ## Why the commands of the run pattern stand so
 
-- **A round with nothing to fix still leaves its commit,** with `--allow-empty` and the written-off
-  findings in the body: `tools/task-rework.mjs` counts it as 0 lines, and a task with no commit of the
+- **A round whose findings are all written off still leaves its commit,** with `--allow-empty` and the
+  written-off findings in the body; a round without any finding closes by the record in the progress: `tools/task-rework.mjs` counts it as 0 lines, and a task with no commit of the
   round reads as a round not recorded and stays out of the median.
 - **The identity is prefixed to the commit only:** exported, it reaches a push in the same call. The four
   variables are written out in the command, never packed into one: zsh does not split `$E` into words,

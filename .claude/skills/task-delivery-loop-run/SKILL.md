@@ -111,7 +111,7 @@ A plan of the light path holds what the engine asks for and no more:
 
 ## Решение
 
-Решения нет: правка не добавляет символов, она меняет только <что>
+Решения нет: <причина словами>
 
 ## Этапы
 
@@ -122,7 +122,8 @@ A plan of the light path holds what the engine asks for and no more:
        Check: `<command>` → <expected>
 ```
 
-The words «API и вид не меняются» are dropped for a change outside the packages. Before the menu of
+«Решения нет» stands only where the change adds no code file, suite or symbol; otherwise the table of the
+pattern `code-design-choose`. The words «API и вид не меняются» are dropped for a change outside the packages. Before the menu of
 the approval the path is asked, and any answer but `none` sends the plan to both roles first:
 
 ```bash
@@ -189,8 +190,10 @@ GIT_AUTHOR_NAME=rt-tools-dev GIT_AUTHOR_EMAIL=$EM GIT_COMMITTER_NAME=rt-tools-de
     GIT_COMMITTER_EMAIL=$EM git -c commit.gpgsign=false commit -q -F <message file>
 ```
 
-The subject: `<type>(<scope>): <что изменилось> после первого круга ревью (RT-N)`; a round with nothing to
-fix leaves its commit by `--allow-empty`. Why, and why the identity stands so: the cold part of the rule.
+The subject: `<type>(<scope>): <что изменилось> после первого круга ревью (RT-N)`; a round whose findings are
+all written off leaves its commit by `--allow-empty`, the written-off findings in the body. The four variables
+are written out in the command, never packed into one. Why: `task-delivery-loop/pitfalls.md`, «Why the
+commands of the run pattern stand so».
 
 ## 9, 11–12. Closing, the push set, the push
 
@@ -215,7 +218,8 @@ test -e "$(git rev-parse --git-path MERGE_HEAD)" || node tools/archive-prune.mjs
 ```
 
 A merged base is seen by the list of merged PRs, not by `git ls-remote`; a re-signing amend goes by a call of
-its own. The reasons, and why the own stands stop: the cold part of the rule.
+its own; the own showcase and stand stop before the run ahead. Why: the same section of
+`task-delivery-loop/pitfalls.md`.
 
 The heavy steps run ahead by a call of their own, in the background, on a clean copy. The output
 goes to a log outside the working copy, named by the copy, and nothing stands after the set: the
