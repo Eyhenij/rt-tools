@@ -27,6 +27,18 @@
 
 - Пробная сборка показала: таблица категорий значков приезжала в любое приложение со значком, а при разборе считалось, что сборка вырежет её сама. По слову владельца «Да, убрать» правила категорий переписаны без вызовов на верхнем уровне файла. Приложение только со значком и кнопкой: 29719 → 28721 байт. Порог веса переписан: 185452 байта, gzip 46402.
 
+- `projects/ui-kit-v2/migrations/rename-icon-names.mjs`, `projects/ui-kit-v2/src/lib/components/icon/rt-icon-sets.logic.ts`, `projects/ui-kit-v2/src/lib/components/icon/stories/component/test-icon-sets.component.ts`, `projects/ui-kit-v2/src/lib/components/icon/stories/icon-sets.stories.ts` — превышение списка модулей: скрипт замены назван в плане словами, чистая логика наборов вынесена из реестра, история переключения нужна шагу 2.4.
+- Новых файлов кода: 14 при бюджете 10 — превышение: к плану добавились тесты правил наборов и проверки скриптов, чистая логика наборов и история витрины.
+- `projects/ui-kit-v2/src/lib/components/aside/rt-aside.service.ts` исходящих 3 → 4 — превышение: панель берёт набор значков части, откуда её открыли.
+- `projects/ui-kit-v2/src/lib/components/dialog/rt-dialog.service.ts` исходящих 3 → 4 — превышение: диалог берёт набор значков части, откуда его открыли.
+- `projects/ui-kit-v2/src/lib/components/icon/rt-icon-set.directive.ts` исходящих 0 → 1 — превышение: директива проверяет имя набора службой наборов.
+- `projects/ui-kit-v2/src/lib/components/icon/rt-icon-set.service.ts` исходящих 0 → 2 — превышение: служба читает объявленные наборы из реестра и их разбор из чистой логики.
+- `projects/ui-kit-v2/src/lib/components/icon/rt-icon-sets.logic.ts` исходящих 0 → 3 — превышение: разбор наборов берёт встроенные наборы, приставки символов и тип имени.
+- `projects/ui-kit-v2/src/lib/components/icon/rt-icon-sets.ts` исходящих 0 → 1 — превышение: перечень набора material типизирован именами кита.
+- `projects/ui-kit-v2/src/lib/components/icon/rt-icon.component.ts` исходящих 7 → 8 — превышение: значок узнаёт свой набор у службы наборов.
+- `projects/ui-kit-v2/src/lib/components/icon/rt-icon.providers.ts` исходящих 3 → 5 — превышение: настройка наборов собирается чистой логикой и отдаётся реестру.
+- `projects/ui-kit-v2/src/lib/components/icon/rt-icon.registry.ts` исходящих 4 → 5 — превышение: реестр берёт адреса и проверку файла из чистой логики наборов.
+
 ## Sessions
 
 ### 2026-11-26
