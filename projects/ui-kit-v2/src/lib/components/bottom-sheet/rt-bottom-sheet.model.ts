@@ -1,4 +1,4 @@
-import { Signal } from '@angular/core';
+import { InjectionToken, Signal } from '@angular/core';
 
 /**
  * Что получает свой шаблон шапки или подвала шторки: просьбу закрыть, просьбу применить и признак
@@ -32,3 +32,15 @@ export interface IRtSheetConfirmLabels {
     readonly discard: string;
     readonly stay: string;
 }
+
+/** Ответы на вопрос шторки: экран вопроса зовёт их, решает шторка. */
+export interface IRtSheetConfirmAnswers {
+    readonly apply: () => void;
+    readonly discard: () => void;
+    readonly stay: () => void;
+}
+
+/** Ответы шторки для её экрана вопроса: шторка кладёт их в инжектор, когда ставит экран. */
+export const RT_SHEET_CONFIRM_ANSWERS: InjectionToken<IRtSheetConfirmAnswers> = new InjectionToken<IRtSheetConfirmAnswers>(
+    'RT_SHEET_CONFIRM_ANSWERS'
+);

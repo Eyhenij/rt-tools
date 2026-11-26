@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, signal, WritableSignal } from '@ang
 import { ComponentFixture } from '@angular/core/testing';
 
 import { createRtFixture, qa, textOf } from '../../../testing/rt-kit-testing';
+import { rtPreloadSheetConfirm } from './rt-bottom-sheet-confirm.loader';
 import { RtBottomSheetComponent } from './rt-bottom-sheet.component';
 import { RtSheetFooterDirective } from './rt-sheet-footer.directive';
 import { RtSheetHeaderDirective } from './rt-sheet-header.directive';
@@ -55,6 +56,10 @@ function press(fixture: TFixture, id: string): void {
 }
 
 describe('RtBottomSheetComponent — свои шаблоны шапки и подвала', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadSheetConfirm();
+    });
+
     it('SC-UKV-1750 — без своих шаблонов шторка рисует свою шапку и подвал из слота', (): void => {
         const fixture: TFixture = setup({});
 

@@ -4,6 +4,7 @@ import { provideRouter } from '@angular/router';
 
 import { createRtFixture, qa } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
+import { rtPreloadSheetConfirm } from '../bottom-sheet/rt-bottom-sheet-confirm.loader';
 import { rtPreloadPopoverSheet } from '../popover/rt-popover-sheet.helper';
 import { RtDynamicSelectorComponent } from './rt-dynamic-selector.component';
 
@@ -64,6 +65,7 @@ function inSheet(selector: string): HTMLElement[] {
 describe('Динамический селектор в нижней шторке (вход sheetCards)', (): void => {
     beforeAll(async (): Promise<void> => {
         await rtPreloadPopoverSheet();
+        await rtPreloadSheetConfirm();
     });
 
     afterEach((): void => {

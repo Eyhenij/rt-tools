@@ -2,18 +2,17 @@
 
 ## Where we stand
 
-- **State:** `задача-взята`
+- **State:** `этап-идёт`
 - **Stage:** 1 of 3 — The question screen arrives at the first question
-- **Done:** the grill and the plan are written; the base: the start set 218731 bytes, the specs of the
-  sheet and the select 168 of 168.
-- **Next step:** the reading of the plan by `product-strategist` and `goal-critic`, then the owner's
-  approval and plan-red.
+- **Done:** the plan read by `product-strategist` and `goal-critic`; the owner approved it: «Одобряю, вид
+  не меняется»; plan-red wrote the mark. The base: the start set 218731 bytes.
+- **Next step:** 1.1.
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Move the question screen of the sheet into its own component, loaded at the first question, with a preload for the specs
-- [ ] 2.1 Draw the radio of a select card in a deferred block that prefetches on idle
+- [x] 1.1 Move the question screen of the sheet into its own component, loaded at the first question, with a preload for the specs
+- [>] 2.1 Draw the radio of a select card in a deferred block that prefetches on idle
 - [ ] 3.1 Measure the start set
 - [ ] 3.2 Run the whole kit suite
 

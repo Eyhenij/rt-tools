@@ -5,6 +5,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { RT_KIT_LOCALE } from '../../i18n';
 import { By } from '@angular/platform-browser';
 
+import { rtPreloadSheetConfirm } from '../bottom-sheet/rt-bottom-sheet-confirm.loader';
 import { RT_POPOVER_SHEET, RtPopoverDirective } from '../popover';
 import { BreakpointsService } from '../../platform';
 import { createRtFixture, el, hostClasses, qa, textOf } from '../../../testing/rt-kit-testing';
@@ -62,6 +63,10 @@ function popupDay(iso: string): HTMLButtonElement {
 }
 
 describe('RtDateRangeComponent', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadSheetConfirm();
+    });
+
     it('несёт свой BEM-блок', (): void => {
         expect(hostClasses(setup())).toContain('rt-date-range');
     });
