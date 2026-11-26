@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.41.0 · checks/record-turn.mjs · e51523db5190 · правится надстройкой, не здесь
+// rt-kit v0.41.0 · checks/record-turn.mjs · 64826426a247 · правится надстройкой, не здесь
 /**
  * The count of one turn of a session record, written as observations. The hook at the end of a turn
  * and at the end of a session calls it; so does the recount of a past day.
@@ -90,7 +90,8 @@ export function takingsOf(entries, seen = new Set()) {
 /** The observation lines of the events of some entries, by the day of their moment. */
 export function observationsOf(entries, { sid, patterns, version, seen = new Set() }) {
     const pattern = patterns ? new RegExp(patterns, 'iu') : null;
-    const words = ownerWords(entries);
+    // The same main thread `eventsOf` reads: a word keyed here is the word that goes out as an event.
+    const words = ownerWords(entries.filter((entry) => !entry?.isSidechain));
     const corrected = new Set(pattern ? words.filter((w) => pattern.test(w.text)).map((w) => `${w.session}|${w.at}|${w.kind}`) : []);
     const about = new Map(words.map((w) => [`${w.session}|${w.at}|${w.kind}`, aboutOf(w.text, patterns)]));
     const byDay = new Map();

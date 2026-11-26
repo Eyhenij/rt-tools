@@ -258,16 +258,30 @@ EOF
 report "SC-AK-2004 — сообщение посреди хода, повторённое записью в одном ходе, — одно; в следующем ходе — второе" \
     "$(count "$WORK/queued-repeat.jsonl" ownerWords 'r.map((w) => w.kind).join(" ")')" "typed queued typed queued"
 
+# Копии в одну миллисекунду дают одно событие слова, а не по одному на копию. То же сообщение, набранное
+# в следующем ходе, — второе слово. Два настоящих одинаковых сообщения через 20 минут одного хода — два.
+cat > "$WORK/queued-same-ms.jsonl" <<'EOF'
+{"type":"user","uuid":"m0","sessionId":"s1","timestamp":"2026-11-23T10:00:00Z","message":{"role":"user","content":"делай"}}
+{"type":"attachment","uuid":"m1","sessionId":"s1","timestamp":"2026-11-23T10:00:05.100Z","attachment":{"type":"queued_command","commandMode":"prompt","origin":{"kind":"human"},"prompt":"стоп","delivery_id":"f1"}}
+{"type":"attachment","uuid":"m2","sessionId":"s1","timestamp":"2026-11-23T10:00:05.100Z","attachment":{"type":"queued_command","commandMode":"prompt","origin":{"kind":"human"},"prompt":"стоп","delivery_id":"f2"}}
+{"type":"attachment","uuid":"m3","sessionId":"s1","timestamp":"2026-11-23T10:20:00Z","attachment":{"type":"queued_command","commandMode":"prompt","origin":{"kind":"human"},"prompt":"стоп","delivery_id":"f3"}}
+{"type":"user","uuid":"m4","sessionId":"s1","timestamp":"2026-11-23T10:30:00Z","message":{"role":"user","content":"следующая"}}
+{"type":"user","uuid":"m5","sessionId":"s1","timestamp":"2026-11-23T11:00:00Z","message":{"role":"user","content":"стоп"}}
+EOF
+report "SC-AK-2004 — копии одной миллисекунды — одно событие слова; повтор через 20 минут и в другом ходе — новые слова" \
+    "$(count "$WORK/queued-same-ms.jsonl" eventsOf 'r.filter((e) => e.ev === "word").map((e) => e.kind).join(" ")')" \
+    "typed queued queued typed typed"
+
 # --- the kind of a typed message -----------------------------------------------------------------------
 # Вид берётся из слов сообщения: поправка по тому же набору образцов, что у хука поправок, вопрос «где
 # стоим», приказ начать или продолжить работу, остальное — прочее. Поправка в форме приказа — поправка.
 kinds() {
     node --input-type=module -e '
 const { aboutOf } = await import(process.argv[1]);
-const said = ["почему опять красный набор", "где стоим?", "Заведи новый эпик и задачу в нем", "продолжай", "переделай таблицу", "спасибо, хорошо"];
+const said = ["почему опять красный набор", "где стоим?", "Заведи новый эпик и задачу в нем", "продолжай", "переделай таблицу", "спасибо, хорошо", "ок, дальше", "do you see the red badge", "what is the status of RT-1"];
 process.stdout.write(said.map((t) => aboutOf(t, process.argv[2])).join(" ") + "\n");' "$COUNTER" "$1"
 }
 report "SC-AK-2005 — набранное сообщение получает вид: поправка, «где стоим», новый приказ, прочее" \
-    "$(kinds 'почему|опять|переделай')" "correction status order order correction other"
+    "$(kinds 'почему|опять|переделай')" "correction status order order correction other order other status"
 
 suite_result "счётчик записи разговора"

@@ -1,4 +1,4 @@
-// rt-kit v0.41.0 · checks/record-count.mjs · bec76ac482d2 · правится надстройкой, не здесь
+// rt-kit v0.41.0 · checks/record-count.mjs · 0018eaa5373b · правится надстройкой, не здесь
 /**
  * The counter of a session record: what the owner said and what the agent was refused, read from the
  * conversation record Claude Code keeps per session.
@@ -210,16 +210,20 @@ export function refusals(entries) {
     return out;
 }
 
+/** How far apart the record writes one queued message again: the harness repeats it within seconds. */
+export const QUEUED_ECHO_MS = 5000;
+
 /**
  * The owner's words of the entries, oldest first; an entry copied into a resumed session counts once.
- * A queued message the record repeats within one turn — the harness writes the same queued entry again
- * a millisecond later — counts once too; the turn ends at the next typed word of that session, so two
- * real messages with the same text in different turns count twice.
+ * A queued message the record writes again — the same text in the same session within
+ * `QUEUED_ECHO_MS` — counts once, so two real messages with the same text minutes apart count twice.
+ * A typed word that repeats a message queued since the previous typed word of the session is the same
+ * message delivered again and counts once; the same text typed in a later turn counts again.
  */
 export function ownerWords(entries) {
     const seen = new Set();
     const words = [];
-    const queuedInTurn = new Map();
+    const queuedSinceTyped = new Map();
     for (const entry of entries) {
         const id = entry?.uuid ?? entry?.attachment?.delivery_id;
         if (id && seen.has(id)) continue;
@@ -227,13 +231,18 @@ export function ownerWords(entries) {
         const word = typedOf(entry);
         if (!word) continue;
         const session = entry.sessionId ?? null;
-        const turn = queuedInTurn.get(session) ?? [];
-        if (word.kind === 'queued' && turn.some((text) => same(text, word.text))) continue;
-        const repeat =
-            word.kind === 'typed' && words.some((w) => w.kind === 'queued' && w.session === session && same(w.text, word.text));
-        queuedInTurn.set(session, word.kind === 'queued' ? [...turn, word.text] : []);
-        if (repeat) continue;
-        words.push({ ...word, at: entry.timestamp ?? entry.attachment?.timestamp ?? null, session });
+        const at = entry.timestamp ?? entry.attachment?.timestamp ?? null;
+        if (word.kind === 'queued') {
+            const echo = (w) =>
+                w.kind === 'queued' && w.session === session && same(w.text, word.text) && Math.abs(Date.parse(at) - Date.parse(w.at)) <= QUEUED_ECHO_MS;
+            if (words.some(echo)) continue;
+            queuedSinceTyped.set(session, [...(queuedSinceTyped.get(session) ?? []), word.text]);
+        } else {
+            const pending = queuedSinceTyped.get(session) ?? [];
+            queuedSinceTyped.set(session, []);
+            if (pending.some((text) => same(text, word.text))) continue;
+        }
+        words.push({ ...word, at, session });
     }
     return words;
 }
@@ -301,7 +310,8 @@ export function eventsOf(entries) {
             continue;
         }
         const word = typedOf(entry);
-        if (word && wordAt.has(`${where.session}|${where.at}|${word.kind}`)) out.push({ ...where, ev: 'word', kind: word.kind });
+        // A copy written in the same millisecond shares the key: the word goes out once, by its first copy.
+        if (word && wordAt.delete(`${where.session}|${where.at}|${word.kind}`)) out.push({ ...where, ev: 'word', kind: word.kind });
         if (entry.type !== 'user') continue;
         for (const refusal of refusals([entry])) out.push({ ...where, ev: 'refusal', kind: refusal.kind, check: refusal.check });
         for (const part of content) {
@@ -442,11 +452,11 @@ export function gateOf(observations, day) {
 }
 
 /** A question about where the work stands, in the owner's words. */
-const STATUS = /где стоим|какой статус|что со статусом|статус\??$|что сейчас|что делаешь|на каком этапе|сколько осталось|ну что там|where are we|what.s the status|status\??$/iu;
+const STATUS = /где стоим|статус|что сейчас|что делаешь|на каком этапе|сколько осталось|ну что там|where are we|\bstatus\b/iu;
 
 /** An order at the opening of a message: a verb of the imperative that starts or resumes work. */
 const ORDER =
-    /^(?:\S+,\s*)?(?:заведи|сделай|делай|возьми|бери|начни|начинай|продолжай|продолжи|запусти|почисти|веди|ставь|поставь|добавь|убери|удали|влей|слей|сливай|выпусти|напиши|проверь|посмотри|изучи|прочитай|перенеси|обнови|подними|go|do|start|continue|make|add|remove|merge|release|write|check)(?=[\s,.!:]|$)/iu;
+    /^(?:\S+,\s*)?(?:заведи|сделай|делай|возьми|бери|начни|начинай|продолжай|продолжи|дальше|давай|го|запусти|почисти|веди|ставь|поставь|добавь|убери|удали|влей|слей|сливай|выпусти|напиши|проверь|посмотри|изучи|прочитай|перенеси|обнови|подними|go|start|continue|make|add|remove|merge|release|write)(?=[\s,.!:]|$)/iu;
 
 /**
  * The kind of a message the owner typed, by the words of it alone: `correction` when the set of correction
