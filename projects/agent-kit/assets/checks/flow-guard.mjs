@@ -327,7 +327,7 @@ function judgeShell(command, ctx, level = 0, vars = new Map(), cwd = '.') {
         const scripted = (/^g?awk$/.test(name) && flag(/printf?[^;}]*>|system\s*\(|\|\s*"/)) || (/^g?sed$/.test(name) && flag(/(?:^|[;{}\n]|\/[gpiIme0-9]*)\s*w\s+\S/));
         const archive = args[args.findIndex((arg) => /^-?[a-zA-Z]*f$/.test(arg)) + 1] ?? '';
         const reads = READERS.has(name) ? !scripted && !(name === 'sort' && flag(/^-o|^--output/)) && !(name === 'find' && flag(/^-(?:delete|fprint)/))
-            : name === 'git' ? GIT_READERS.has(sub) || (sub === 'restore' && staged) || (sub === 'reset' && !flag(/^--(?:hard|merge|keep)$/)) || (['checkout', 'restore'].includes(sub) && flag(/^--(?:ours|theirs)$/) && !flag(/^-c$|^--config-env/) && choosesSide(gitPaths.map(at), ctx.merge))
+            : name === 'git' ? GIT_READERS.has(sub) || (sub === 'restore' && staged) || (sub === 'reset' && !flag(/^--(?:hard|merge|keep)$/)) || (['checkout', 'restore'].includes(sub) && flag(/^--(?:ours|theirs)$/) && !flag(/^-c$|^--(?:config-env|git-dir|work-tree|namespace)/) && ![...unit.words, ...vars.keys()].some((word) => /^GIT_\w*(?:=|$)/.test(word)) && choosesSide(gitPaths.map(at), ctx.merge))
             : ['cp', 'install', 'ln', 'rsync'].includes(name) ? into !== null && spared(into)
             : name === 'tar' || name === 'unzip' ? listing || (/c/.test(mode) && spared(archive))
             : ['prettier', 'eslint', 'markdownlint', 'markdownlint-cli2', 'iconv'].includes(name) ? !flag(/^(?:-w|--write|--fix\b.*|-o|--output\b.*)$/)

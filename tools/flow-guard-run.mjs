@@ -1,11 +1,11 @@
-// rt-kit v0.40.0 · checks/flow-guard-run.mjs · 7b982b13f766 · правится надстройкой, не здесь
+// rt-kit v0.40.0 · checks/flow-guard-run.mjs · c668a6d90b2b · правится надстройкой, не здесь
 /**
  * The reading half of the guard of the course of work: the hook input as a call, and the context the
  * decisions of `flow-guard.mjs` take. The owner's last word comes from the source «source.owner» of
  * the description.
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync, readdirSync, readFileSync, realpathSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, realpathSync } from 'node:fs';
 import { basename, dirname, isAbsolute, join, relative } from 'node:path';
 
 import { approvalFault, openRecords } from './flow-step.mjs';
@@ -42,30 +42,24 @@ const git = (root, ...args) => {
 
 const EPIC_BRANCH = /\*\*(?:Ветка эпика|Epic branch):\*\*\s*`([^`]+)`/u;
 
-/** The epic branch a plan file names, or null: a directory, a dangling link or an unreadable file names none. */
-const epicOf = (path) => {
-    try {
-        return statSync(path).isFile() ? (readFileSync(path, 'utf8').match(EPIC_BRANCH)?.[1] ?? null) : null;
-    } catch {
-        return null;
-    }
-};
-
 /**
- * The merge in progress of a reviewed base: its head lies in the remote main branch or in the remote
- * branch of an epic a plan of `plansDir` names. Its unmerged paths, relative to the root, and the root;
- * null with no merge, with a head nobody pushed, or when the merge cannot be read: then the rule of the
- * guarded files judges, never a failed engine that lets every call through.
+ * The merge in progress of a reviewed base: every head it merges lies in the remote-tracking main branch
+ * or in the remote-tracking branch of an epic a plan of `plansDir` committed at HEAD names — the merged
+ * head brings its own plans into the tree, not into HEAD. Its unmerged paths, relative to the root, and
+ * the root; null with no merge, with a head nobody pushed, or when the merge cannot be read: then the
+ * rule of the guarded files judges, never a failed engine that lets every call through.
  */
 export function reviewedMerge(root, plansDir) {
     try {
-        const head = git(root, 'rev-parse', '-q', '--verify', 'MERGE_HEAD');
-        if (!head) return null;
-        const holds = (ref) => spawnSync('git', ['-C', root, 'merge-base', '--is-ancestor', head, ref]).status === 0;
-        const mains = [git(root, 'symbolic-ref', '-q', '--short', 'refs/remotes/origin/HEAD'), 'origin/main'].filter(Boolean);
-        const dir = join(root, plansDir);
-        const epics = () => (existsSync(dir) ? readdirSync(dir).filter((name) => name.endsWith('.md')).map((name) => epicOf(join(dir, name))).filter(Boolean) : []);
-        if (!mains.some(holds) && !epics().some((branch) => holds(`origin/${branch}`))) return null;
+        const file = git(root, 'rev-parse', '--git-path', 'MERGE_HEAD');
+        const path = file && (isAbsolute(file) ? file : join(root, file));
+        const heads = path && existsSync(path) ? readFileSync(path, 'utf8').split('\n').map((line) => line.trim()).filter(Boolean) : [];
+        if (heads.length === 0) return null;
+        const holds = (ref) => heads.every((head) => spawnSync('git', ['-C', root, 'merge-base', '--is-ancestor', head, ref]).status === 0);
+        const mains = [git(root, 'symbolic-ref', '-q', 'refs/remotes/origin/HEAD'), 'refs/remotes/origin/main'].filter(Boolean);
+        const named = () => git(root, 'grep', '-h', '-E', '\\*\\*(Ветка эпика|Epic branch):\\*\\*', 'HEAD', '--', `${plansDir}/*.md`) ?? '';
+        const epics = () => [...named().matchAll(new RegExp(EPIC_BRANCH, 'gu'))].map((match) => `refs/remotes/origin/${match[1]}`);
+        if (!mains.some(holds) && !epics().some(holds)) return null;
         const unmerged = new Set((git(root, 'diff', '--name-only', '--diff-filter=U') ?? '').split('\n').filter(Boolean));
         return { unmerged, roots: [...new Set([root, realPath(root)])] };
     } catch {

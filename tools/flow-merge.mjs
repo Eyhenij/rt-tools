@@ -1,4 +1,4 @@
-// rt-kit v0.40.0 · checks/flow-merge.mjs · bc6864b6cdcd · правится надстройкой, не здесь
+// rt-kit v0.40.0 · checks/flow-merge.mjs · 0bfe40c2079b · правится надстройкой, не здесь
 /**
  * The resolution of a merge conflict in a guarded file of the description or the engine. While a merge
  * of a reviewed base runs, the guard of the course of work lets two moves through in a file git left
@@ -10,8 +10,8 @@
 import { isAbsolute, relative } from 'node:path';
 
 const [OPEN, BASE, MID, CLOSE] = [/^<{7}(?: .*)?$/, /^\|{7}(?: .*)?$/, /^={7}$/, /^>{7}(?: .*)?$/];
-/** Code, where two sides one after the other declare a name twice and break the engine. */
-const CODE = /\.(?:m?js|json)$/;
+/** A text, where two sides may stand one after the other; in code they declare a name twice and break the engine. */
+const TEXT = /\.md$/;
 
 /** The two sides of a text that is exactly one conflict block, the lines around it none; or null. */
 export function sidesOfBlock(text) {
@@ -48,7 +48,7 @@ export function resolvesBlock(call, merge, text) {
     const edits = call.edits ?? [];
     let now = text;
     for (const edit of edits) {
-        if (edit.replaceAll || !wholeLines(now, edit.oldString) || !choiceOf(edit.oldString, edit.newString, CODE.test(call.path))) return false;
+        if (edit.replaceAll || !wholeLines(now, edit.oldString) || !choiceOf(edit.oldString, edit.newString, !TEXT.test(call.path))) return false;
         now = now.replace(edit.oldString, () => edit.newString);
     }
     return edits.length > 0;

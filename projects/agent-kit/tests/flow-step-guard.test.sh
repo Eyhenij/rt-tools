@@ -476,16 +476,18 @@ d "merge: SC-AK-2016 — Write охраняемого файла отказан"
 d "merge: SC-AK-2016 — git checkout --ours и git restore --theirs проходят" "$(shell_input "git checkout --ours -- $L8 && git restore --theirs -- $F8" "$R8")" PASS
 d "merge: SC-AK-2016 — git checkout --theirs слитого пути отказан" "$(shell_input "git checkout --theirs -- $O8" "$R8")" deny
 d "merge: SC-AK-2016 — выбор стороны с git -c отказан" "$(shell_input "git -c filter.e.smudge=cat checkout --ours -- $L8" "$R8")" deny
-mkdir -p "$R8/docs/plans/broken.md"
-d "merge: SC-AK-2016 — каталог вместо плана не снимает охрану" "$(edit_input Write "$R8/$F8" '' 'x' "$R8")" deny
-# Голова, которую никто не отправил: ветка с вершиной главной и коммитом поверх.
-git -C "$R8" merge --abort && git -C "$R8" checkout -q -b raw8 main && both8 raw && git -C "$R8" checkout -q "$B8" && merge8 raw8
+d "merge: SC-AK-2016 — выбор стороны с GIT_* в окружении отказан" "$(shell_input "GIT_CONFIG_COUNT=1 git checkout --ours -- $L8" "$R8")" deny
+# Голова, которую никто не отправил: ветка с вершиной главной и коммитом поверх; план эпика лежит в HEAD,
+# а каталог среди планов не роняет движок.
+git -C "$R8" merge --abort && git -C "$R8" checkout -q -b raw8 main && both8 raw && git -C "$R8" checkout -q "$B8"
+fixture_commit "$R8" docs/plans/epic-12.md '**Эпик:** RT-12 · **Ветка эпика:** `RT-12-epic`' 'docs: план эпика' && mkdir -p "$R8/docs/plans/broken.md" && merge8 raw8
 BLOCK8="$(block8)"
 d "merge: SC-AK-2016 — слияние непроверенной ветки отказано" "$(e8 "$F8" "$BLOCK8" 'raw')" deny
 d "merge: SC-AK-2016 — git checkout --theirs при непроверенной ветке отказан" "$(shell_input "git checkout --theirs -- $L8" "$R8")" deny
 # Та же голова на сервере как ветка эпика, которую называет план эпика: база проверенная.
+git -C "$R8" branch -q origin/RT-12-epic raw8
+d "merge: SC-AK-2016 — локальная ветка с именем удалённой базой не считается" "$(e8 "$F8" "$BLOCK8" 'raw')" deny
 git -C "$R8" update-ref refs/remotes/origin/RT-12-epic raw8
-printf '# План эпика\n\n**Эпик:** RT-12 · **Ветка эпика:** `RT-12-epic`\n' > "$R8/docs/plans/epic-12.md"
 d "merge: SC-AK-2016 — голова в ветке эпика из плана эпика проходит" "$(e8 "$F8" "$BLOCK8" 'raw')" PASS
 git -C "$R8" merge --abort
 d "merge: SC-AK-2016 — без слияния выбор стороны отказан" "$(shell_input "git checkout --ours -- $L8" "$R8")" deny

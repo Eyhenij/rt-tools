@@ -218,14 +218,14 @@ Then they pass
 Given the same merge
 When an Edit of the code puts both sides one after the other, a line of neither side or the side of the common
 ancestor, takes the block with its closing marker cut or with a line around it, or removes a line outside the
-block; a Write puts the file whole; `git checkout --theirs` names a path git merged; a side is taken with
-`git -c`; or a plan of the plans directory is a directory
+block; a Write puts the file whole; `git checkout --theirs` names a path git merged; or a side is taken with
+`git -c` or with a `GIT_*` variable
 Then they are refused
 
-Given a merge of a local branch nobody pushed
-When the block is edited or `git checkout --theirs` takes a side
-Then they are refused, and the same head pushed as the branch of an epic a plan of the epic names lets the edit
-through
+Given a merge of a local branch nobody pushed, a directory among the plans and an epic plan committed at HEAD
+When the block is edited or `git checkout --theirs` takes a side, also after a local branch is named like the
+remote branch of the epic
+Then they are refused, and the same head pushed as the remote branch of the epic lets the edit through
 
 Given no merge in progress
 When `git checkout --ours` names a guarded file
