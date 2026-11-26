@@ -15,25 +15,25 @@ Then the kit name is drawn, and the glyph is not looked at
 
 Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.logic.spec.ts`.
 
-### SC-UKV-541 — by `map-first` a glyph takes its pair, and without a pair the font
+### SC-UKV-541 — by `map-first` a kit name on `glyph` draws the drawing
 
-Given the strategy is `map-first`
-When a glyph with a pair, a glyph that is itself a kit name and a glyph without a pair are resolved
-Then the first two draw kit names, and the third draws the ligature
-
-Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.logic.spec.ts`.
-
-### SC-UKV-542 — by `font` a Material glyph draws the font even with a pair
-
-Given the strategy is `font`
-When a glyph with a pair is resolved
-Then it draws the ligature, not the pair
+Given the strategy is `map-first`.
+When a glyph that is a kit name and a glyph that is not are resolved.
+Then the first draws the kit name, and the second draws the ligature.
 
 Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.logic.spec.ts`.
 
-### SC-UKV-543 — an icon with a paired glyph draws the pair
+### SC-UKV-542 — by `font` a kit name that is also a ligature draws the font
 
-Given the icon gets the glyph `arrow_back`, which has a pair
+Given the strategy is `font`.
+When the glyph `search` is resolved.
+Then it draws the ligature.
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.logic.spec.ts`.
+
+### SC-UKV-543 — an icon with a kit name on `glyph` draws the drawing
+
+Given the icon gets the glyph `arrow-left`.
 When it is drawn
 Then it refers to the kit symbol `arrow-left`, and no ligature stands in it
 
@@ -55,11 +55,11 @@ Then it refers to the symbol of the kit name, and no ligature stands in it
 
 Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.component.spec.ts`.
 
-### SC-UKV-546 — under the strategy `font` the icon draws a paired glyph as the ligature
+### SC-UKV-546 — under the strategy `font` the icon draws `search` as the ligature
 
-Given the application set the strategy `font`
-When the icon gets a glyph with a pair
-Then the ligature is drawn instead of the pair
+Given the application set the strategy `font`.
+When the icon gets the glyph `search`.
+Then the ligature is drawn.
 
 Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.component.spec.ts`.
 
@@ -223,3 +223,22 @@ When they are drawn
 Then both under the sign refer to the material symbol, like the one under the preset, while an icon outside refers to the kit symbol
 
 Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon.component.spec.ts`.
+
+### SC-UKV-1879 — a first-kit name is not translated into a kit name
+
+Given the strategy is `map-first`.
+When the glyphs `arrow_back`, `delete`, `add` and `account_circle` are resolved.
+Then each draws the ligature. None is turned into a kit name.
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.logic.spec.ts`.
+
+### SC-UKV-1880 — the places of the kit name their icons by kit names
+
+Given the filter operators, a table column, a menu item, a side menu item and the quick menu.
+When their icons are resolved.
+Then the kit itself names only kit names. A first-kit name from the application gives no icon here.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-glyphs.logic.spec.ts`,
+`projects/ui-kit-v2/src/lib/components/menu/rt-menu-item.logic.spec.ts`,
+`projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-icon.logic.spec.ts`,
+`projects/ui-kit-v2/src/lib/components/speed-menu/rt-speed-menu.component.spec.ts`.

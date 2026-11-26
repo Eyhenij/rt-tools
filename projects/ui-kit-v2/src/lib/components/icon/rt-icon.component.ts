@@ -22,7 +22,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RT_ICON_GLYPH_STRATEGY, RtIconFontService } from './rt-icon-font.service';
 import { resolveIconGlyph } from './rt-icon-glyph.logic';
-import { iconMaterialDrawn } from './rt-icon-material-map';
+import { iconMaterialDrawn } from './rt-icon-sets';
 import { RT_ICON_MATERIAL_PRESET_SELECTOR } from './rt-icon.const';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtIconRegistry } from './rt-icon.registry';

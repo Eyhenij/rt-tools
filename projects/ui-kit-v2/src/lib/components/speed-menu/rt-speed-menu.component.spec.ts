@@ -9,14 +9,14 @@ import { RtSpeedMenuComponent } from './rt-speed-menu.component';
 import { IRtSpeedMenu } from './rt-speed-menu.model';
 
 const ACTIONS: readonly IRtSpeedMenu.Action[] = [
-    { value: 'zoom-in', icon: 'add', label: 'Приблизить' },
-    { value: 'zoom-out', icon: 'remove', label: 'Отдалить' },
+    { value: 'zoom-in', icon: 'ico-plus', label: 'Приблизить' },
+    { value: 'zoom-out', icon: 'minus', label: 'Отдалить' },
     { value: 'reset', icon: 'undo', label: 'Сбросить' },
 ];
 
 const WITH_UNAVAILABLE: readonly IRtSpeedMenu.Action[] = [
-    { value: 'zoom-in', icon: 'add', label: 'Приблизить' },
-    { value: 'zoom-out', icon: 'remove', label: 'Отдалить', disabled: true },
+    { value: 'zoom-in', icon: 'ico-plus', label: 'Приблизить' },
+    { value: 'zoom-out', icon: 'minus', label: 'Отдалить', disabled: true },
     { value: 'reset', icon: 'undo', label: 'Сбросить' },
 ];
 
@@ -56,6 +56,12 @@ function triggerIcon(fixture: ComponentFixture<RtSpeedMenuComponent>): string | 
 }
 
 describe('RtSpeedMenuComponent', (): void => {
+    it('SC-UKV-1880 — значок кнопки по умолчанию рисуется рисунком набора кита', (): void => {
+        const fixture: ComponentFixture<RtSpeedMenuComponent> = setup();
+
+        expect(trigger(fixture).querySelector('use')?.getAttribute('href')).toBe('#rt-icon-bars');
+    });
+
     afterEach((): void => {
         jest.restoreAllMocks();
     });

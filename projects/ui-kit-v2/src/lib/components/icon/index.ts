@@ -5,4 +5,4 @@ export * from './rt-icon.component';
 export * from './rt-icon.const';
 export * from './rt-icon.providers';
 export * from './rt-icon.registry';
-export * from './rt-icon-material-map';
+export * from './rt-icon-sets';

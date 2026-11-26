@@ -23,8 +23,8 @@ describe('RtIconComponent — глиф Material', (): void => {
         document.getElementById(RT_ICON_SPRITE_ID)?.remove();
     });
 
-    it('SC-UKV-543 — глиф с парой рисует пару из набора кита', (): void => {
-        const fixture: ComponentFixture<RtIconComponent> = setup({ glyph: 'arrow_back' });
+    it('SC-UKV-543 — имя кита на glyph рисует рисунок из набора кита', (): void => {
+        const fixture: ComponentFixture<RtIconComponent> = setup({ glyph: 'arrow-left' });
 
         expect(el(fixture, 'use')?.attributes['href']).toBe('#rt-icon-arrow-left');
         expect(glyphNode(fixture)).toBeNull();
@@ -47,34 +47,34 @@ describe('RtIconComponent — глиф Material', (): void => {
         expect(glyphNode(fixture)).toBeNull();
     });
 
-    it('SC-UKV-546 — по стратегии font глиф с парой тоже рисуется лигатурой', (): void => {
-        const fixture: ComponentFixture<RtIconComponent> = setup({ glyph: 'arrow_back' }, [
+    it('SC-UKV-546 — по стратегии font имя кита, совпавшее с лигатурой, рисуется лигатурой', (): void => {
+        const fixture: ComponentFixture<RtIconComponent> = setup({ glyph: 'search' }, [
             { provide: RT_ICON_GLYPH_STRATEGY, useValue: 'font' },
         ]);
 
         expect(el(fixture, 'svg')).toBeNull();
-        expect(glyphNode(fixture)?.textContent?.trim()).toBe('arrow_back');
+        expect(glyphNode(fixture)?.textContent?.trim()).toBe('search');
     });
 
     it('SC-UKV-709 — вход glyphStrategy значка перекрывает стратегию приложения', (): void => {
-        const own: ComponentFixture<RtIconComponent> = setup({ glyph: 'arrow_back', glyphStrategy: 'font' }, [
+        const own: ComponentFixture<RtIconComponent> = setup({ glyph: 'search', glyphStrategy: 'font' }, [
             { provide: RT_ICON_GLYPH_STRATEGY, useValue: 'map-first' },
         ]);
-        const neighbour: ComponentFixture<RtIconComponent> = setup({ glyph: 'arrow_back' }, [
+        const neighbour: ComponentFixture<RtIconComponent> = setup({ glyph: 'search' }, [
             { provide: RT_ICON_GLYPH_STRATEGY, useValue: 'map-first' },
         ]);
 
         expect(el(own, 'svg')).toBeNull();
-        expect(glyphNode(own)?.textContent?.trim()).toBe('arrow_back');
-        expect(el(neighbour, 'use')?.attributes['href']).toBe('#rt-icon-arrow-left');
+        expect(glyphNode(own)?.textContent?.trim()).toBe('search');
+        expect(el(neighbour, 'use')?.attributes['href']).toBe('#rt-icon-search');
     });
 
     it('SC-UKV-709 — без входа glyphStrategy значок берёт стратегию приложения', (): void => {
-        const fixture: ComponentFixture<RtIconComponent> = setup({ glyph: 'arrow_back', glyphStrategy: null }, [
+        const fixture: ComponentFixture<RtIconComponent> = setup({ glyph: 'search', glyphStrategy: null }, [
             { provide: RT_ICON_GLYPH_STRATEGY, useValue: 'font' },
         ]);
 
-        expect(glyphNode(fixture)?.textContent?.trim()).toBe('arrow_back');
+        expect(glyphNode(fixture)?.textContent?.trim()).toBe('search');
     });
 
     it('SC-UKV-547 — заливка значка ставит заливку шрифта лигатуре', (): void => {

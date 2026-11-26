@@ -32,8 +32,8 @@ A person sees an icon; how it is drawn is invisible to them.
 ## Rules
 
 - **An icon is named by a kit name or by a glyph, and the kit name wins when both are given.**
-- **By the strategy `map-first` a glyph draws its pair, and without a pair the ligature.** A glyph
-  that is itself a kit name draws that name.
+- **By the strategy `map-first` a glyph that is a kit name draws that name.** Any other glyph draws
+  the ligature. A first-kit name is not translated: the kit names its icons by kit names only.
 - **By the strategy `font` a glyph draws the ligature, unless it is a kit name the font cannot
   draw.** Such a name, with a hyphen or a capital letter, draws the kit drawing; a kit name that is
   also a ligature, like `search`, stays the ligature.

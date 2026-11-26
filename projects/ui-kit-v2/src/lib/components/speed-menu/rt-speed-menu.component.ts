@@ -88,7 +88,7 @@ export class RtSpeedMenuComponent {
     public readonly actions: InputSignal<readonly IRtSpeedMenu.Action[]> = input.required<readonly IRtSpeedMenu.Action[]>();
 
     /** Значок кнопки меню: имя кита или Material. Открытая кнопка показывает крест. */
-    public readonly icon: InputSignal<string> = input<string>('menu');
+    public readonly icon: InputSignal<string> = input<string>('bars');
 
     /** Доступное имя кнопки меню. Пусто — подпись кита «Действия». */
     public readonly label: InputSignal<string> = input<string>('');

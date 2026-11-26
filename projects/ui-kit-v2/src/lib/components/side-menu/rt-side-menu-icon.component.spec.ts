@@ -14,7 +14,7 @@ class StubBreakpointsService {
 }
 
 const ITEMS: IRtSideMenu.Item[] = [
-    { id: 'settings', icon: 'settings', name: 'Настройки', link: '/settings' },
+    { id: 'cog', icon: 'cog', name: 'Настройки', link: '/settings' },
     {
         id: 'launches',
         icon: 'rocket_launch',
