@@ -175,7 +175,7 @@ export function measureJson(model, result) {
     return { ...result, action: state?.action ?? null, pattern: state?.pattern ?? null };
 }
 
-const USAGE = 'usage: node task-flow-script.mjs states | measure [--json] | step <N.M>|--done [--pr] | plan-check <plan.md> | plan-red | guard | verdict | forecast --days N [--until <date>] [--per-mille] [--guard]  [--flow <flow.js>]';
+const USAGE = 'usage: node task-flow-script.mjs states | measure [--json] | step <N.M>|--done [--pr] | plan-check <plan.md> | plan-red | guard | verdict | stop | forecast --days N [--until <date>] [--per-mille] [--guard]  [--flow <flow.js>]';
 
 /**
  * What the guard guards: where the task folders and the epic plans lie, the tree override, and the
@@ -263,6 +263,18 @@ async function runVerdict(model, base) {
 }
 
 /**
+ * The owner's stop on the Stop input from stdin: `{ stands, by }` as one JSON line, exit 0 while it
+ * stands. The guards that refuse an end of a turn ask it after their own refusal conditions.
+ */
+async function runStop(model, base) {
+    const input = JSON.parse(readFileSync(0, 'utf8') || '{}');
+    if (input.transcript_path) process.env.RT_FLOW_TRANSCRIPT = input.transcript_path;
+    const read = await openReaders(model, base);
+    const by = read('measure.owner.saidStop') ? 'word' : read('measure.owner.interrupted') ? 'esc' : null;
+    return { stands: by !== null, by };
+}
+
+/**
  * Cleans the folder a broken step run put back, at a start of the engine, by `cleanBroken` of the
  * history source: `{ verdict, folder }` or null. A folder kept because it was edited after the run is
  * named on stderr, so nobody reads its older progress for the branch's own.
@@ -275,9 +287,9 @@ export function cleanBrokenRun() {
     return broken;
 }
 
-const COMMANDS = ['states', 'measure', 'step', 'plan-check', 'plan-red', 'guard', 'verdict', 'forecast'];
+const COMMANDS = ['states', 'measure', 'step', 'plan-check', 'plan-red', 'guard', 'verdict', 'forecast', 'stop'];
 /** The commands the hooks call: they judge by the package description when the override breaks. */
-const HOOK_COMMANDS = ['guard', 'verdict'];
+const HOOK_COMMANDS = ['guard', 'verdict', 'stop'];
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
     const args = process.argv.slice(2);
@@ -318,6 +330,10 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
             process.exit(problems.length > 0 ? 1 : 0);
         } else if (command === 'verdict') {
             console.log(JSON.stringify(await runVerdict(model, dirname(path))));
+        } else if (command === 'stop') {
+            const stop = await runStop(model, dirname(path));
+            console.log(JSON.stringify(stop));
+            process.exit(stop.stands ? 0 : 1);
         } else if (command === 'guard') {
             console.log((await runGuard(model, dirname(path))) ?? '');
         } else if (command === 'forecast') {

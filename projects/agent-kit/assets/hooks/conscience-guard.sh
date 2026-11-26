@@ -127,6 +127,14 @@ verdict="$(printf '%s\n' "$found" | head -1)"
 
 detail="$(printf '%s\n' "$found" | tail -n +2)"
 
+# The owner's stop stands — a stop word or Esc with no working order after it: the turn ends, and
+# the finding waits for the owner's next word. The engine judges the record, as the exit check does.
+for engine in "${RT_FLOW_ENGINE:-}" "${CLAUDE_PROJECT_DIR:-.}/tools/task-flow-script.mjs"; do [ -f "$engine" ] && break; done
+if [ -f "$engine" ] && command -v node >/dev/null 2>&1 \
+    && printf '%s' "$input" | perl -e 'alarm shift; exec @ARGV' 30 node "$engine" stop >/dev/null 2>&1; then
+    exit 0
+fi
+
 # The decision and the words come from the decision table; the hook names what the conscience found.
 # shellcheck disable=SC1091
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/decide.sh" 2>/dev/null

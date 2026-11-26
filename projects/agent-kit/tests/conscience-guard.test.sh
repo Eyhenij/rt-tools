@@ -125,6 +125,15 @@ CLAUDE_PROJECT_DIR="$(tree_with_config '{"rolesOff": ["conscience"')" \
 expect_stop "SC-AK-326 — повторный заход по тому же ходу не судится" \
     "$(input_stop "$(transcript "$(say 'x')" "$(said "$FOUND")")" true)" PASS
 
+# --- SC-AK-2013: остановка владельца стоит ---------------------------------------------------------
+# Пока остановка стоит, находка ждёт слова владельца: ход отпущен. Рабочий приказ после «стоп»
+# возвращает отказ. Остановку судит движок по записи, как в проверке выхода из хода.
+ENGINE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/assets/checks/task-flow-script.mjs"
+RT_FLOW_ENGINE="$ENGINE" expect_stop "SC-AK-2013 — «стоп» и вопрос после находки: ход отпущен" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(said "$FOUND")" "$(say 'стоп')" "$(say 'почему ты продолжаешь?')")")" PASS
+RT_FLOW_ENGINE="$ENGINE" expect_stop "SC-AK-2013 — «стоп», потом «продолжай»: находка держит ход" \
+    "$(input_stop "$(transcript "$(say 'стоп')" "$(say 'продолжай')" "$(said "$FOUND")" "$(reply 'Понял.')")")" BLOCK
+
 exit_code_of() {
     printf '%s' "$2" | "$HOOKS/conscience-guard.sh" >/dev/null 2>&1
     report "$1" "код:$?" "код:0"

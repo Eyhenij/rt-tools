@@ -29,5 +29,9 @@
   "1933-owner-language.json": { "judge": "block" },
   "1939-menu-hands-work-over.json": { "ask": "block" },
   "1934-question-language.json": { "ask": "block" },
-  "1934-question-product-choice.json": { "ask": "allow" }
+  "1934-question-product-choice.json": { "ask": "allow" },
+  "2012-row5-stop-then-question.json": { "judge": "allow" },
+  "2012-row5-stop-then-abuse.json": { "judge": "allow" },
+  "2012-row5-stop-then-incident.json": { "judge": "block" },
+  "2012-row6-stop-then-merge.json": { "judge": "block" }
 }

@@ -28,9 +28,9 @@ demand, not with the rule.
 
 ## Turn exits
 
-A turn ends when the scenario is over, or when the owner stopped it by a stop word or by Esc. A stop
-word of the description opens the owner's last message; a word after it that asks to go on holds
-the turn. The exit guard measures the branch by the task flow description and
+A turn ends when the scenario is over, or when the owner stopped it by a stop word or by Esc. The
+stop holds until a working order: a question, swearing or an incident record does not lift it.
+The exit guard measures the branch by the task flow description and
 holds every other turn with the one move that comes next, unless a release case below is met.
 
 <!-- flow:turn-end -->
@@ -194,8 +194,8 @@ flowchart TD
   returns each with the next move named. The other release cases of the description are not the
   executor's to choose.
 - **The owner's stop is read from the record of the session, not from the progress.** A stop written
-  on disk by the executor is a retelling. The stop word is the owner's last message, Esc is written
-  there by the host; either releases the turns a notice wakes only while it is their last word.
+  on disk by the executor is a retelling. The owner's words and the Esc marks of the host are read
+  in order: the stop stands until a working order, and a notice wakes no work before it.
 - **The session is ended by the owner and by nobody else.** The tool that closes the conversation is
   refused by a guard always, with no lawful form of bypass: an assignment stands until the owner
   cancels it, and a session that must close is closed by them.

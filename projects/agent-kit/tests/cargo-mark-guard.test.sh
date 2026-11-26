@@ -135,4 +135,11 @@ expect_stop "SC-MB-285 — повторный заход проходит" "$(in
 # SC-MB-285 — записи хода нет вовсе
 expect_stop "SC-MB-285 — ход без записи проходит" "$(input_stop "$TURNS/нет-такого.jsonl")" PASS
 
+# SC-AK-2013 — пока остановка владельца стоит, отметка ждёт его слова: ход отпущен
+ENGINE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/assets/checks/task-flow-script.mjs"
+T="$(transcript "$(say 'закрывай')" "$(ran 'gh pr create --draft --base main')" "$(say 'стоп, что ты отдал?')")"
+RT_FLOW_ENGINE="$ENGINE" expect_stop "SC-AK-2013 — «стоп» после отдачи без отметки: ход отпущен" "$(input_stop "$T")" PASS
+T="$(transcript "$(say 'стоп')" "$(say 'продолжай')" "$(ran 'gh pr create --draft --base main')")"
+RT_FLOW_ENGINE="$ENGINE" expect_stop "SC-AK-2013 — «стоп», потом «продолжай»: отдача без отметки отбита" "$(input_stop "$T")" BLOCK
+
 suite_result "гард отметки груза"
