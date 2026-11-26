@@ -105,8 +105,10 @@ Given the owner's stop by Esc, «стоп», `/stop` left only in the queue, or 
 When a notice of a task, a line of `Monitor` or a message of another session opens a turn, and a call is made in it
 Then the call is refused — a call of a subagent, `Edit` and `Write` too — and the refusal names `TaskStop <id>` of own background
 And `TaskStop`, `KillShell`, `KillBash`, `CronDelete`, `CronList`, `ToolSearch` and `TaskOutput` pass
-And a turn opened by a bare «стоп», by «стоп» after Esc or by «блин, стоп» refuses its calls
-And a turn opened by «Стоп. Пиши инцидент», «стоп, откати последний коммит», a question, swearing, «продолжай», a typed command or a menu answer lets them through
+And a turn opened by a bare «стоп», by «стоп» after Esc, by «блин, стоп», «стоп, откати последний коммит» or «стой сука чмо тупое , не двигайся» refuses its calls
+And a turn opened by «Стоп. Пиши инцидент», a question, swearing, «продолжай», «<app-root> пустой, почини», a typed command or a menu answer lets them through
+And a word queued before «стоп» and delivered after it refuses; the delivery of a queued «стоп» is the same stop, its tasks are not named again
+And a second notice under the same stop takes the refusing mark without the engine; a word of the owner after the stop was lifted skips the engine, an old Esc in the tail notwithstanding
 And a word queued before Esc and delivered after it opens no turn for calls; the same word typed again after Esc does
 And a prompt whose entry the record does not hold yet is judged by the prompt: a notice after a question refuses, «продолжай» lets through
 And a text of the host with a leading new line or `<agent-message` after «стоп» refuses its calls

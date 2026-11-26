@@ -59,7 +59,7 @@ const PUT_OFF = /(?<![\p{L}])(?:пока\s+(?:я\s+)?|я\s+)?не\s+(?:скаж|
 /** A complaint that work was not stopped keeps the stop in its sentence: «почему ты всё бросил и не остановил набор?». */
 const notStopped = /(?<![\p{L}])(?:не\s+остановил|не\s+снял|без\s+присмотра|(?<!не\s)продолжаешь\s+работать)/iu;
 /** The sentence around `index`: «почему ты встал? набор без присмотра» is two. */
-const sentenceOf = (text, index) => ((to) => text.slice(Math.max(...[...'.!?\n'].map((m) => text.lastIndexOf(m, index - 1))) + 1, to < 0 ? undefined : index + to))(text.slice(index).search(/[.!?\n]/u));
+const sentenceOf = (text, index) => ((to) => text.slice(Math.max(...[...'.!?…\n'].map((m) => text.lastIndexOf(m, index - 1))) + 1, to < 0 ? undefined : index + to))(text.slice(index).search(/[.!?…\n]/u));
 
 /** The last signal of a message: 'stop', 'resume' or null. */
 function signalOf(message, words) {
@@ -128,15 +128,16 @@ export function stopStands({ owner }, words) {
             return;
         }
         const signal = signalOf(word.text, words);
-        if (signal === 'stop') state = { stands: true, by: 'word', word };
+        // The delivery of a queued stop repeats it: the stop keeps its place and time.
+        if (signal === 'stop') state = state.stands && state.word?.text?.trim() === word.text.trim() ? state : { stands: true, by: 'word', word };
         else if (signal === 'resume') state = { stands: false, by: null };
         else if (word.kind === 'menu' && state.stands && choosesWork(word.text, words)) state = { stands: false, by: null };
     });
     return state;
 }
 
-/** A stop that orders nothing else: the Esc mark, or a stop with one word more at most, no «?» and no word of `words.stay`. */
-const bare = (word, words) => word.kind === 'interrupt' || (signalOf(word.text, words) === 'stop' && !word.text.includes('?') && !listRe(words.stay, true)?.test(word.text) && (word.text.replace(listRe([...(words.stop ?? []), ...(words.stopInside ?? [])]) ?? /(?!)/, ' ').match(/\p{L}+/gu) ?? []).length <= 1);
+/** The word that set the stop and stays the owner's last: the Esc mark, or a stop with no «?» and no word of `words.stay`. */
+const bare = (word, words) => word.kind === 'interrupt' || (signalOf(word.text, words) === 'stop' && !word.text.includes('?') && !listRe(words.stay, true)?.test(word.text));
 
 /** Own background tasks and monitors started before the stop, not ended, queued as ended or stopped: [{ task, command }]. */
 function ownBackground(owner, session, words, stop = stopStands({ owner }, words)) {
@@ -152,7 +153,7 @@ function ownBackground(owner, session, words, stop = stopStands({ owner }, words
 export function backgroundBeforeStop({ owner, session }) {
     return ({ words }) => {
         const stop = stopStands({ owner }, words);
-        const refused = stop.stands ? session.events().filter((e) => e.kind === 'refusal' && e.at >= (stop.word.at ?? 0) && /owner stopped the work[^]*TaskStop /.test(e.text)).length : 0;
+        const refused = stop.stands ? session.events().filter((e) => e.kind === 'refusal' && !(e.at < (stop.word.at ?? 0)) && /owner stopped the work[^]*TaskStop /.test(e.text)).length : 0;
         return refused < 2 && ownBackground(owner, session, words, stop).length > 0;
     };
 }
@@ -166,10 +167,10 @@ export function stopCall({ owner, session }) {
     return ({ words }) => {
         const stop = stopStands({ owner }, words);
         const opener = owner.turnOpener?.() ?? null;
-        if (!stop.stands || opener === null) return { refuseCalls: false, background: ownBackground(owner, session, words, stop), since: null };
+        if (!stop.stands || opener === null) return { refuseCalls: false, background: ownBackground(owner, session, words, stop), since: null, stands: stop.stands };
         const own = [...(opener.by === 'owner' ? [{ text: opener.text, kind: 'typed', index: opener.index }] : []), ...wordsOf(owner).filter((w) => w.index > opener.index)];
         const last = own.filter((w) => w.index === stop.word.index || ((w.index === opener.index ? opener.at : w.at) ?? Infinity) >= (stop.word.at ?? -Infinity)).at(-1);
-        return { refuseCalls: !last || last.index < stop.word.index || bare(last, words), background: ownBackground(owner, session, words, stop), since: stop.word.index ?? null };
+        return { refuseCalls: !last || last.index < stop.word.index || bare(last, words), background: ownBackground(owner, session, words, stop), since: stop.word.index ?? null, stands: true };
     };
 }
 

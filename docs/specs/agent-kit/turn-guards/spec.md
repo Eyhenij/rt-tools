@@ -52,8 +52,9 @@ exits asks the engine of the task flow for a verdict: `docs/specs/agent-kit/turn
   task, a line of `Monitor` or a message of another session opens a turn the host starts by itself;
   in it every call is refused except the take-down of own background — `TaskStop`, `KillShell`,
   `KillBash`, `CronDelete`, `CronList`, `ToolSearch`, `TaskOutput`. A turn the owner opened by a bare
-  stop — Esc, «стоп», `/stop`, a stop with one word more at most — is the same; one opened by any other
-  word of theirs carries it out, «стоп, откати коммит» too. A word queued before the stop and delivered
+  stop — Esc, «стоп», `/stop`, «стоп, ничего не делай», any word that set the stop with no question and
+  no word of `words.stay` — is the same; one opened by any other word of theirs carries it out, a
+  question and «Стоп. Пиши инцидент» too. A word queued before the stop and delivered
   after it opens no turn for calls. A word the owner typed counts from the moment it was queued: behind
   a row of notices it waits a minute and more. The turn is judged by the prompt the host hands the
   entry of the turn: the entry of the prompt lands in the record after it. The host is not asked to

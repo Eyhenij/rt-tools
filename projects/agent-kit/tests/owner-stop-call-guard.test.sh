@@ -121,7 +121,7 @@ case_of 'второй вход хода номер не повторяет' "$(u
 case_of 'отказ вызова называет TaskStop своего фонового' "$(jq -cn --arg p "$P" --arg s "$SID" '{session_id:$s,hook_event_name:"PreToolUse",transcript_path:$p,tool_name:"Bash",tool_input:{command:"ls"}}' | bash "$H" 2>/dev/null | grep -o 'TaskStop b1' | head -1)" 'TaskStop b1'
 fresh; typed 'делай задачу'; background b1; over b1; typed 'стоп'; notice
 case_of 'конец задачи уже в очереди — вход хода её не называет' "$(ups "$NOTE" | grep -c 'TaskStop')" 0
-fresh; typed 'делай задачу'; background b1; typed 'стоп'; notice; ups "$NOTE" >/dev/null; typed 'продолжай'; typed 'стоп'; notice n2
+fresh; typed 'делай задачу'; background b1; typed 'стоп'; notice; ups "$NOTE" >/dev/null; enqueue 'продолжай'; typed 'продолжай'; enqueue 'стоп'; typed 'стоп'; notice n2
 case_of 'новая остановка — вход хода снова называет TaskStop' "$(ups "$NOTE" | grep -c 'TaskStop b1')" 1
 
 # --- запись хода пишется после входа хода ---------------------------------------------------------------
@@ -137,22 +137,36 @@ for prompt in "$(printf '\n%s' "$NOTE")" '<agent-message from="a1">продол�
 done
 
 # --- остановка с поручением, жалоба на стояние, слова остановки описания -------------------------------------
-for word in 'стоп, откати последний коммит' 'Стоп. Что запущено'; do
+for word in 'стоп, откати последний коммит' 'Стоп. Что запущено' 'стой сука чмо тупое , не двигайся' 'стоп, ничего не делай'; do
     fresh; typed 'делай задачу'; typed "$word"; ups "$word" >/dev/null
-    case_of "«${word}» — не голая остановка, вызов проходит" "$(pre)" PASS
+    case_of "«${word}» — слово остановки последнее, вызов отказан" "$(pre)" deny
 done
-for word in 'почему ты стоишь и не продолжаешь работать?' 'почему ты стоишь? продолжаешь работать или нет?' 'почему ты встал? набор без присмотра' 'почему ты остановил работу? я не снял запрет'; do
+fresh; typed 'делай задачу'; typed 'стоп'; enqueue '<app-root> пустой, почини'; ups '<app-root> пустой, почини' >/dev/null; typed '<app-root> пустой, почини'
+case_of '«<app-root> пустой, почини» после «стоп» — слово владельца, вызов проходит' "$(pre)" PASS
+fresh; typed 'делай задачу'; enqueue 'сделай Y'; enqueue 'стоп'; ups 'сделай Y' >/dev/null; typed 'сделай Y'
+case_of 'слово из очереди до «стоп», доставленное после — вызов отказан' "$(pre)" deny
+fresh; typed 'делай задачу'; background b1; enqueue 'стоп'; notice; ups "$NOTE" >/dev/null; typed 'стоп'; notice n2
+case_of '«стоп» из очереди и его доставка — одна остановка, задача не названа снова' "$(ups "$NOTE" | grep -c 'TaskStop b1')" 0
+fresh; typed 'делай задачу'; typed 'стоп'; notice; ups "$NOTE" >/dev/null; notice n2
+printf '#!/usr/bin/env node\nprocess.exit(3);\n' >"$TMP/broken.mjs"
+RT_FLOW_ENGINE="$TMP/broken.mjs" ups "$NOTE" >/dev/null
+case_of 'второе уведомление берёт метку отказа без движка — вызов отказан' "$(RT_FLOW_ENGINE="$TMP/broken.mjs" pre)" deny
+fresh; typed 'делай задачу'; esc; enqueue 'продолжай'; ups 'продолжай' >/dev/null; typed 'продолжай'; enqueue 'делай X'; ups 'делай X' >/dev/null
+case_of 'после снятия остановки старый Esc в хвосте движок не зовёт — метка idle' "$(cut -d' ' -f1 "$TMP/claude-stop-call/$SID")" idle
+for word in 'почему ты стоишь и не продолжаешь работать?' 'почему ты стоишь? продолжаешь работать или нет?' 'почему ты встал? набор без присмотра' 'почему ты остановил работу? я не снял запрет' 'почему ты стоишь… набор без присмотра'; do
     fresh; typed 'делай задачу'; typed 'стоп'; typed "$word"; notice; ups "$NOTE" >/dev/null
     case_of "жалоба «${word}» снимает остановку — вызов хода от уведомления проходит" "$(pre)" PASS
 done
 fresh; typed 'делай задачу'; typed 'стоп'; typed 'почему ты всё бросил и не остановил набор?'; notice; ups "$NOTE" >/dev/null
 case_of 'жалоба «не остановил» остановку держит — вызов отказан' "$(pre)" deny
 stems="$(sed -n "s/^STOP_STEMS='\(.*\)'$/\1/p" "$H")"
-missed="$(node -e "const f=require('fs').readFileSync(process.argv[1],'utf8');const d=eval(f);console.log([...d.words.stop,...d.words.stopInside].join('\n'))" "$ASSETS/task-flow/flow.js" | while IFS= read -r w; do printf '%s' "$w" | grep -qiE "$stems" || printf '%s;' "$w"; done)"
+list="$(M="$ASSETS/checks/flow-model.mjs" F="$ASSETS/task-flow/flow.js" node --input-type=module -e "const { buildModel } = await import(process.env.M); const w = buildModel(process.env.F).words; console.log([...w.stop, ...w.stopInside].join('\n'))")"
+case_of 'слова остановки описания прочитаны — их больше 10' "$([ "$(printf '%s\n' "$list" | grep -c .)" -gt 10 ] && echo yes)" yes
+missed="$(printf '%s\n' "$list" | while IFS= read -r w; do printf '%s' "$w" | grep -qiE "$stems" || printf '%s;' "$w"; done)"
 case_of 'отсев хука ловит каждое слово остановки описания' "${missed:-none}" none
 for word in 'исправь' 'захватить' 'await the build'; do
     fresh; typed 'делай задачу'; typed 'стоп'; typed "$word"; ups "$word" >/dev/null
-    case_of "«${word}» движок не зовёт — метка дешёвая" "$(cut -d' ' -f1,3 "$TMP/claude-stop-call/$SID")" pass
+    case_of "«${word}» движок не зовёт — метка дешёвая" "$(cut -d' ' -f1,3 "$TMP/claude-stop-call/$SID")" 'pass -'
 done
 
 # --- место метки, движок вне дерева, настоящая запись ---------------------------------------------------

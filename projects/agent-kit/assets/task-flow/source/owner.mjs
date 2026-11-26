@@ -2,11 +2,9 @@
  * The source «source.owner» of the task flow description: the words of the owner in this session,
  * read from the record of the conversation the hook names in `RT_FLOW_TRANSCRIPT`.
  *
- *   messages()    the texts the owner typed, oldest first, during a turn too; a tool result is
- *                 not a message
+ *   messages()    the texts the owner typed, oldest first, during a turn too; a tool result is not one
  *   said(quote)   a typed message holds the quote
- *   last()        the owner's last word: the last message typed or the options chosen in a menu,
- *                 or null
+ *   last()        the owner's last word: the last message typed or the options chosen in a menu, or null
  *   turnOpener()  what opened the current turn — a word of the owner or a notice — see `turnOpener`
  *
  * What the owner typed is read by the shared rule of the owner's words, `typedOf` of the laid-out
@@ -18,7 +16,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-
 const HERE = dirname(fileURLToPath(import.meta.url));
 // Next to the laid-out engine one level up, or among the checks of the package.
 const SHARED = [join(HERE, '..', '..', 'record-count.mjs'), join(HERE, '..', '..', 'checks', 'record-count.mjs')].find((p) => existsSync(p));
@@ -60,7 +57,6 @@ export function wordOf(entry) {
 
 /** The text the owner typed into a refused call: «… To tell you how to proceed, the user said:\n<text>». */
 const REFUSED_WITH_TEXT = /^The user doesn't want to proceed with this tool use\.[\s\S]*?the user said:\s*\n([\s\S]+)$/;
-
 const refusalOf = (entry) =>
     ownerEntry(entry) && Array.isArray(entry.message?.content)
         ? (entry.message.content.map((part) => (part?.type === 'tool_result' ? REFUSED_WITH_TEXT.exec(resultText(part.content).trim())?.[1]?.trim() : null)).find(Boolean) ?? null)
@@ -69,7 +65,8 @@ const refusalOf = (entry) =>
 const timeOf = (entry) => ((stamp) => (Number.isFinite(stamp) ? stamp : null))(Date.parse(entry?.timestamp ?? entry?.attachment?.timestamp ?? ''));
 /** A text a person queued counts when it is queued: `/stop` stays in the queue only, a word waits behind notices. */
 const enqueued = (entry) => (entry?.type === 'queue-operation' && entry.operation === 'enqueue' ? String(entry.content ?? '').trim() : null);
-const queuedWord = (text) => Boolean(text) && !text.startsWith('<') && !WAKE.test(text) && !NO_PROMPT.test(text);
+// A text of the harness is no word; «<app-root> пустой» the owner pasted is one.
+const queuedWord = (text) => Boolean(text) && !/^<(?:task-notification|agent-message|command-|local-command|system-reminder|bash-)/.test(text) && !WAKE.test(text) && !NO_PROMPT.test(text);
 /** The owner's words, oldest first: { text, at, kind, index } — typed, queued, interrupt, menu or refusal; `at` in ms or null, `index` the place of the entry. */
 export function wordsOf(entries) {
     return entries.flatMap((entry, index) => {
@@ -82,9 +79,8 @@ export function wordsOf(entries) {
         return word === null ? [] : [{ text: word, at, kind: INTERRUPT_MARK.test(word.trim()) ? 'interrupt' : 'menu', index }];
     });
 }
-const WAKE = /^(?:<task-notification>|Another Claude session sent a message|Background \(from the session)/;
+const WAKE = /^(?:<task-notification>|<agent-message[\s>]|Another Claude session sent a message|Background \(from the session)/;
 const NO_PROMPT = /^(?:\[Request interrupted by user|Stop hook feedback:|Caveat:|This session is being continued)/;
-
 /**
  * What opened the current turn: { by, text, at, index } — `by` 'owner' for a prompt a person typed, a
  * command included, 'wake' for a notice, a line of `Monitor` or a message of another session; `at` the
@@ -112,7 +108,7 @@ export function turnOpener(entries) {
 const promptOpener = (prompt, entries) => {
     const found = turnOpener(entries), text = String(prompt ?? '').trim(), queued = entries.findLastIndex((entry) => enqueued(entry) === text);
     if (!text || (found?.text === text && queued < found.index)) return found;
-    return { by: text.startsWith('<') || WAKE.test(text) ? 'wake' : 'owner', text, at: timeOf(entries[queued]) ?? Date.now(), index: entries.length };
+    return { by: WAKE.test(text) ? 'wake' : 'owner', text, at: timeOf(entries[queued]) ?? Date.now(), index: entries.length };
 };
 
 /** The approving word, in any case; «не одобряю», «не очень одобряю» and «нет одобряю» approve nothing. */
