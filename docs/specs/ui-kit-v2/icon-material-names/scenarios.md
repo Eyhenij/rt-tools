@@ -346,3 +346,14 @@ When a button inside it opens a second dialog, and when a button outside any par
 Then the second dialog takes `brand`, and the dialog from outside draws the set of the application.
 
 Covered: `projects/ui-kit-v2/src/lib/components/dialog/rt-dialog-icon-set.spec.ts`.
+
+### SC-UKV-1887 — the showcase switches the sets on a live page
+
+Given the showcase page of the sets with icons and buttons outside a part and inside it.
+When the buttons of the page switch the set of the application and of the part.
+Then the icons and the buttons refer to the symbols of the chosen set, and the choice of the
+application does not change the part.
+
+Not covered: it cannot be closed by a test with an identifier — the scenario is about the live page
+of the showcase, and a `play` step of the story `Atoms/Icon/IconSet` holds it. The switching itself
+is covered by `SC-UKV-1876` and `SC-UKV-1877`.
