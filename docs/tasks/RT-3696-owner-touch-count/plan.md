@@ -83,6 +83,8 @@
        Check: `set -o pipefail; node tools/owner-touches.mjs --json | jq -c '.kinds|keys'` → `["correction","order","other","status"]`
     5. Цель вехи по слову владельца записана в план эпика
        Check: `grep -cE 'Цель вехи — слово владельца: медиана не выше [0-9]' docs/plans/owner-touches.md` → >= 1
+    6. В плане эпика не осталось старой базы и старой цели
+       Check: `! grep -qE 'медиана 5|не больше 3' docs/plans/owner-touches.md` → exit 0
 - **Readiness sign:** команда даёт записанный ответ плана эпика.
 - **Verified by:** `pnpm run -s owner:touches -- --since 2026-11-21 --until 2026-11-26T11:00` — 43 задачи,
   237, медиана 4, 37 окон; в плане эпика база пересчитана с 5 на 4.
