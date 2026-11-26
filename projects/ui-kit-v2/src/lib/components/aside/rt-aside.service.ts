@@ -8,7 +8,8 @@ import { EMPTY, map, merge, mergeMap, Observable, Subject, Subscriber, takeUntil
 
 import { IRtKitConfig } from '@rt-tools/ui-kit-v2/core';
 import { rtKitDefault } from '@rt-tools/ui-kit-v2/core';
-import { carryThemeScopeOfFocus, materialPresetClassesOfFocus } from '@rt-tools/ui-kit-v2/core';
+import { carryThemeScopeOfFocus, iconSetScopeOfFocus, materialPresetClassesOfFocus } from '@rt-tools/ui-kit-v2/core';
+import { rtIconSetProviders } from '@rt-tools/ui-kit-v2/icon';
 import { RtAsideRef, TRtAsideCloseRequest } from './rt-aside-ref';
 import { RT_ASIDE_DATA } from './rt-aside.tokens';
 
@@ -198,6 +199,7 @@ export class RtAsideService {
 
         const overlayRef: OverlayRef = this.#overlay.create(overlayConfig);
         // До attach: содержимое панели может забрать фокус, и кусок темы у кнопки будет потерян.
+        const iconSet: string | null = iconSetScopeOfFocus(this.#doc);
         carryThemeScopeOfFocus(overlayRef.overlayElement, this.#doc);
         const closeRequests: Subject<TRtAsideCloseRequest> = new Subject<TRtAsideCloseRequest>();
         const asideRef: RtAsideRef<TResult> = new RtAsideRef<TResult>(overlayRef, this.#renderer, closeRequests);
@@ -218,6 +220,7 @@ export class RtAsideService {
             providers: [
                 { provide: RtAsideRef, useValue: asideRef },
                 { provide: RT_ASIDE_DATA, useValue: config?.data ?? null },
+                ...rtIconSetProviders(iconSet),
             ],
         });
 

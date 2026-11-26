@@ -1,4 +1,4 @@
-import { computed, inject, InjectionToken, Service, signal, Signal, WritableSignal } from '@angular/core';
+import { computed, inject, InjectionToken, Service, signal, Signal, StaticProvider, WritableSignal } from '@angular/core';
 
 import { RT_ICON_SETS_CONFIG } from './rt-icon.registry';
 import { IRtIconSetsConfig, RT_ICON_KIT_SET, RT_ICON_MATERIAL_SET } from './rt-icon-sets.logic';
@@ -10,6 +10,14 @@ export interface IRtIconSetScope {
 }
 
 export const RT_ICON_SET_SCOPE: InjectionToken<IRtIconSetScope> = new InjectionToken<IRtIconSetScope>('RT_ICON_SET_SCOPE');
+
+/**
+ * Провайдеры окна, открытого из части страницы: значки в нём берут набор этой части. Без набора
+ * провайдера нет, и окно берёт набор там, где объявлен его инжектор.
+ */
+export function rtIconSetProviders(set: string | null): StaticProvider[] {
+    return set === null ? [] : [{ provide: RT_ICON_SET_SCOPE, useValue: { set: signal<string | null>(set).asReadonly() } }];
+}
 
 /** Выбор набора значков всем приложением. */
 @Service()

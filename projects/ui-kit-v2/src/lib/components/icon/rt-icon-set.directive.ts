@@ -1,6 +1,5 @@
 import { computed, Directive, forwardRef, inject, input, InputSignal, Signal } from '@angular/core';
 
-import { RT_ICON_SET_ATTRIBUTE } from './rt-icon.const';
 import { IRtIconSetScope, RT_ICON_SET_SCOPE, RtIconSetService } from './rt-icon-set.service';
 
 /**
@@ -13,8 +12,10 @@ import { IRtIconSetScope, RT_ICON_SET_SCOPE, RtIconSetService } from './rt-icon-
 @Directive({
     selector: '[rtIconSet]',
     providers: [{ provide: RT_ICON_SET_SCOPE, useExisting: forwardRef(() => RtIconSetDirective) }],
+    // Имя атрибута — то же, что `RT_ICON_SET_ATTRIBUTE` входа core: компилятор требует здесь строку,
+    // а равенство держит тест директивы.
     host: {
-        [`[attr.${RT_ICON_SET_ATTRIBUTE}]`]: 'set()',
+        '[attr.data-rt-icon-set]': 'set()',
     },
 })
 export class RtIconSetDirective implements IRtIconSetScope {

@@ -68,6 +68,10 @@ A person sees an icon; how it is drawn is invisible to them.
   method of `RtIconSetService`.
 - **A change of the set redraws the drawn icons and buttons, and the old drawing stays until the new
   one arrives.** A new name of an icon does not keep the old drawing, and a button keeps its content.
+- **A panel and a window opened from a part take its set.** The panels of the menu, the popover, the
+  bottom sheet, the confirmation and the aside of the container take it on every opening. A dialog
+  and an aside take it from the focused node, and the confirmation of a menu item takes the set of
+  the item. A window already open keeps its set.
 - **Under the material preset a button asks for the material drawing of its icon, as the icon
   does.**
 - **A sign of the icons alone switches the drawings under it to the material set and carries no tokens.** The

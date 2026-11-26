@@ -30,7 +30,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { RtDialogService } from '@rt-tools/ui-kit-v2/dialog';
-import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { IRtIconSetScope, RT_ICON_SET_SCOPE, RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
@@ -135,6 +135,8 @@ export class RtMenuItemComponent {
     readonly #dialogService: RtDialogService = inject(RtDialogService);
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #errors: ErrorHandler = inject(ErrorHandler);
+    /* Набор значков той части, где объявлен пункт: подтверждение берёт его, а не смотрит на фокус. */
+    readonly #iconSetScope: IRtIconSetScope | null = inject(RT_ICON_SET_SCOPE, { optional: true });
 
     readonly #confirmRequestSource: Subject<IRtMenu.ConfirmData> = new Subject<IRtMenu.ConfirmData>();
 
@@ -267,7 +269,10 @@ export class RtMenuItemComponent {
                     return code.pipe(
                         mergeMap((dialog: Type<RtMenuConfirmDialogComponent>): Observable<boolean | undefined> =>
                             this.#dialogService
-                                .open<RtMenuConfirmDialogComponent, IRtMenu.ConfirmData, boolean>(dialog, { data })
+                                .open<RtMenuConfirmDialogComponent, IRtMenu.ConfirmData, boolean>(dialog, {
+                                    data,
+                                    iconSet: this.#iconSetScope?.set() ?? null,
+                                })
                                 .afterClosed()
                         ),
                         // Сбой загрузки куска не убивает поток подтверждений: ошибка идёт приложению,

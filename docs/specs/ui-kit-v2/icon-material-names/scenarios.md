@@ -321,3 +321,28 @@ Then a new name does not keep the old drawing, the server writes the reference a
 button keeps its spinner.
 
 Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-set.directive.spec.ts`.
+
+### SC-UKV-1884 — the confirmation of a menu item takes the set of the part
+
+Given an open menu inside a part with `rtIconSet="brand"`, and the focus outside the part.
+When the item with a confirmation is chosen.
+Then the confirmation window takes the set `brand`: the item passes the set of its own place.
+
+Covered: `projects/ui-kit-v2/src/lib/components/dialog/rt-dialog-icon-set.spec.ts`.
+
+### SC-UKV-1885 — a window opened from inside a popover takes the set of the part
+
+Given a popover opened from a button inside a part with `rtIconSet="brand"`, with its template
+declared outside the part.
+When a button inside the popover opens a dialog or an aside.
+Then the window and its panel take the set `brand`.
+
+Covered: `projects/ui-kit-v2/src/lib/components/dialog/rt-dialog-icon-set.spec.ts`.
+
+### SC-UKV-1886 — a dialog from a dialog keeps the set, and a window from outside takes none
+
+Given a dialog opened from a part with `rtIconSet="brand"`.
+When a button inside it opens a second dialog, and when a button outside any part opens a dialog.
+Then the second dialog takes `brand`, and the dialog from outside draws the set of the application.
+
+Covered: `projects/ui-kit-v2/src/lib/components/dialog/rt-dialog-icon-set.spec.ts`.

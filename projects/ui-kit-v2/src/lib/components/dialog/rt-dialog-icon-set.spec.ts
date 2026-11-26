@@ -1,0 +1,147 @@
+import { ApplicationRef, ChangeDetectionStrategy, Component, inject, Provider } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { createRtFixture } from '../../../testing/rt-kit-testing';
+import { RtAsideService } from '../aside/rt-aside.service';
+import { RtIconSetDirective } from '../icon/rt-icon-set.directive';
+import { RtIconComponent } from '../icon/rt-icon.component';
+import { RT_ICON_SPRITE_ID } from '../icon/rt-icon.const';
+import { provideRtIcons } from '../icon/rt-icon.providers';
+import { RtMenuContentDirective } from '../menu/rt-menu-content.directive';
+import { RtMenuItemComponent, rtPreloadMenuConfirmDialog } from '../menu/rt-menu-item.component';
+import { RtMenuComponent } from '../menu/rt-menu.component';
+import { RtPopoverDirective } from '../popover/rt-popover.directive';
+import { RtDialogService } from './rt-dialog.service';
+
+const BRAND: string = '#rt-icon-set-brand--close';
+
+/** Содержимое окна: значок и кнопка, открывающая следующее окно. */
+@Component({
+    selector: 'rt-icon-set-window',
+    template: `
+        <rt-icon name="close" />
+        <button type="button" qa-dataid="open-next" (click)="next()">Дальше</button>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtIconComponent],
+})
+class IconSetWindowComponent {
+    readonly #dialogs: RtDialogService = inject(RtDialogService);
+
+    protected next(): void {
+        this.#dialogs.open(IconSetWindowComponent);
+    }
+}
+
+/* Шаблон панели объявлен вне части, а кнопка, открывающая её, — внутри: набор окну даёт только панель. */
+@Component({
+    selector: 'rt-icon-set-windows-host',
+    template: `
+        <section rtIconSet="brand">
+            <rt-menu>
+                <ng-template rtMenuContent>
+                    <rt-menu-item label="Удалить" confirmMessage="Удалить запись?" />
+                </ng-template>
+            </rt-menu>
+            <button type="button" qa-dataid="origin" [rtPopover]="panel">Ещё</button>
+        </section>
+        <ng-template #panel>
+            <button type="button" qa-dataid="open-dialog" (click)="openDialog()">Диалог</button>
+            <button type="button" qa-dataid="open-aside" (click)="openAside()">Панель</button>
+        </ng-template>
+        <button type="button" qa-dataid="outside" (click)="openDialog()">Снаружи</button>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtIconSetDirective, RtMenuComponent, RtMenuContentDirective, RtMenuItemComponent, RtPopoverDirective],
+})
+class IconSetWindowsHostComponent {
+    readonly #dialogs: RtDialogService = inject(RtDialogService);
+    readonly #asides: RtAsideService = inject(RtAsideService);
+
+    protected openDialog(): void {
+        this.#dialogs.open(IconSetWindowComponent);
+    }
+
+    protected openAside(): void {
+        this.#asides.open(IconSetWindowComponent);
+    }
+}
+
+function setup(): ComponentFixture<IconSetWindowsHostComponent> {
+    const declared: Provider = provideRtIcons({ sets: [{ name: 'brand', url: '/brand' }] }) as unknown as Provider;
+
+    return createRtFixture(IconSetWindowsHostComponent, {}, { providers: [declared] });
+}
+
+function settle(fixture: ComponentFixture<IconSetWindowsHostComponent>): void {
+    fixture.detectChanges();
+    TestBed.inject(ApplicationRef).tick();
+}
+
+/** Нажимает так, как нажимает человек: фокус встаёт на кнопку, затем щелчок. */
+function press(fixture: ComponentFixture<IconSetWindowsHostComponent>, selector: string): void {
+    const node: HTMLElement = document.querySelector<HTMLElement>(selector) as HTMLElement;
+    node.focus();
+    node.click();
+    settle(fixture);
+}
+
+/** Ссылки значков всех открытых окон с этим содержимым и набор их коробок. */
+function windows(): { href: string | null; pane: string | null }[] {
+    return Array.from(document.querySelectorAll('rt-icon-set-window'), (node: Element): { href: string | null; pane: string | null } => ({
+        href: node.querySelector('use')?.getAttribute('href') ?? null,
+        pane: node.closest('.cdk-overlay-pane')?.getAttribute('data-rt-icon-set') ?? null,
+    }));
+}
+
+describe('набор значков части в открытых из неё окнах', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadMenuConfirmDialog();
+    });
+
+    afterEach((): void => {
+        document.getElementById(RT_ICON_SPRITE_ID)?.remove();
+        document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
+    });
+
+    it('SC-UKV-1884 — подтверждение пункта открытого меню получает набор части, где бы ни стоял фокус', (): void => {
+        const fixture: ComponentFixture<IconSetWindowsHostComponent> = setup();
+        press(fixture, '[qa-dataid="menu-trigger"] [qa-dataid="icon-button-control"]');
+        document.querySelector<HTMLElement>('[qa-dataid="outside"]')?.focus();
+
+        document.querySelector<HTMLElement>('rt-menu-item')?.click();
+        settle(fixture);
+
+        const pane: Element | null = document.querySelector('rt-menu-confirm-dialog')?.closest('.cdk-overlay-pane') ?? null;
+        expect(pane?.getAttribute('data-rt-icon-set')).toBe('brand');
+    });
+
+    it.each<[string]>([['open-dialog'], ['open-aside']])(
+        'SC-UKV-1885 — окно по кнопке %s внутри popover получает набор части',
+        (anchor: string): void => {
+            const fixture: ComponentFixture<IconSetWindowsHostComponent> = setup();
+            press(fixture, '[qa-dataid="origin"]');
+
+            press(fixture, `[qa-dataid="${anchor}"]`);
+
+            expect(windows()).toEqual([{ href: BRAND, pane: 'brand' }]);
+        }
+    );
+
+    it('SC-UKV-1886 — диалог из диалога получает тот же набор, а окно, открытое вне части, — набор приложения', (): void => {
+        const fixture: ComponentFixture<IconSetWindowsHostComponent> = setup();
+        press(fixture, '[qa-dataid="outside"]');
+
+        expect(windows()).toEqual([{ href: '#rt-icon-close', pane: null }]);
+
+        document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.replaceChildren());
+        press(fixture, '[qa-dataid="origin"]');
+        press(fixture, '[qa-dataid="open-dialog"]');
+        press(fixture, 'rt-icon-set-window [qa-dataid="open-next"]');
+
+        expect(windows().filter((it: { pane: string | null }): boolean => it.pane === 'brand')).toEqual([
+            { href: BRAND, pane: 'brand' },
+            { href: BRAND, pane: 'brand' },
+        ]);
+    });
+});

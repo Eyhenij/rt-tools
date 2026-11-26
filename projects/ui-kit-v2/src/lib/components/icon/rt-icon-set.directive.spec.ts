@@ -5,6 +5,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PlatformService } from '@rt-tools/core';
 
 import { createRtFixture } from '../../../testing/rt-kit-testing';
+import { RT_ICON_SET_ATTRIBUTE } from '../../util/material-preset';
 import { RtButtonDirective } from '../button/rt-button.directive';
 import { RtIconSetDirective } from './rt-icon-set.directive';
 import { RtIconSetService } from './rt-icon-set.service';
@@ -126,7 +127,7 @@ describe('набор значков: смена на ходу', (): void => {
         expect(page.href('part')).toBe('#rt-icon-material-close');
         expect(page.href('part-button')).toBe('#rt-icon-material-close');
         const section: Element | null = (page.fixture.nativeElement as HTMLElement).querySelector('[qa-dataid="section"]');
-        expect(section?.getAttribute('data-rt-icon-set')).toBe('material');
+        expect(section?.getAttribute(RT_ICON_SET_ATTRIBUTE)).toBe('material');
 
         page.fixture.componentInstance.part.set('brand');
         page.settle();
