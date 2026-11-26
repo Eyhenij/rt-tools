@@ -8,8 +8,8 @@
     "dialog",
     "bottom-sheet"
   ],
-  "total": 185750,
-  "gzip": 46592,
+  "total": 185830,
+  "gzip": 46644,
   "parts": {
     "select": 35426,
     "form-control": 3420,
@@ -19,9 +19,9 @@
     "bottom-sheet": 7167,
     "core": 25980,
     "radius": 498,
-    "icon": 14747,
-    "dialog": 11396,
-    "icon-button": 13898,
+    "icon": 14806,
+    "dialog": 11415,
+    "icon-button": 13901,
     "ripple": 1587,
     "tooltip": 5303
   },

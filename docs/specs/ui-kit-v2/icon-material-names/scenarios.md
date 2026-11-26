@@ -388,6 +388,31 @@ Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon.registry.spec.ts`.
 Given a node inside a part opens an aside with its own injector, and the focus is outside parts.
 When the aside opens.
 Then it takes the set of that part; with `iconSet` it takes the named set, and with `null` no part.
+An empty `iconSet` means none is named, and an unknown name gives the set `kit`, as in `use()`.
 
 Covered: `projects/ui-kit-v2/src/lib/components/dialog/rt-dialog-icon-set.spec.ts`.
 
+
+### SC-UKV-1892 — a button rendered again while a new set is loading
+
+Given a button draws its icon, and `use()` asked for a set whose drawing is not here yet.
+When the button renders its content again.
+Then the icon keeps the old drawing until the new one arrives.
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-set.directive.spec.ts`.
+
+### SC-UKV-1893 — an aside opened from an effect
+
+Given an `effect` opens an aside with an injector from a part.
+When the set of the part changes.
+Then no second aside opens, and the open one keeps its set.
+
+Covered: `projects/ui-kit-v2/src/lib/components/dialog/rt-dialog-icon-set.spec.ts`.
+
+### SC-UKV-1894 — the context menu of a tab takes the set of the part
+
+Given tabs stand in a part.
+When a person opens the context menu of a tab at the pointer.
+Then its panel takes the set of the part, so a window opened from it takes it too.
+
+Covered: `projects/ui-kit-v2/src/lib/components/dialog/rt-dialog-icon-set.spec.ts`.

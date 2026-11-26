@@ -288,7 +288,9 @@ describe('RtIconRegistry', (): void => {
 
         harness.registry.request('copy', 'brand');
         harness.http.expectOne('/brand/copy.svg').flush('<!doctype html><html><body><svg><circle r="1"/></svg></body></html>');
-        harness.http.expectOne('/icons/copy.svg').flush(`<?xml version="1.0"?>\n<!-- рисунок -->\n${SVG}`);
+        harness.http
+            .expectOne('/icons/copy.svg')
+            .flush(`<?xml version="1.0"?>\n<!-- рисунок -->\n<!DOCTYPE svg [ <!ENTITY ns "u"> ]>\n${SVG}`);
 
         const symbol: Element | null = document.getElementById(`${RT_ICON_SET_SYMBOL_ID_PREFIX}brand--copy`);
 

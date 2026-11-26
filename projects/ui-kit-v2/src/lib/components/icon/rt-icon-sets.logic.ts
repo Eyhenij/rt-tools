@@ -174,7 +174,7 @@ export function rtIconSetsConfig(added: ReadonlyArray<IRtIconSet> = [], defaultS
 }
 
 /* Что в файле SVG стоит перед корнем: объявление XML, комментарий, `DOCTYPE`. */
-const SVG_PROLOG_RE: RegExp = /^(?:<\?[\s\S]*?\?>|<!--[\s\S]*?-->|<!DOCTYPE\s[^>]*>)/i;
+const SVG_PROLOG_RE: RegExp = /^(?:<\?[\s\S]*?\?>|<!--[\s\S]*?-->|<!DOCTYPE\s[^>[]*(?:\[[^\]]*\]\s*)?>)/i;
 const SVG_ROOT_RE: RegExp = /^<svg[\s/>]/i;
 
 /**

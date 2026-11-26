@@ -37,6 +37,18 @@ export class RtIconSetService {
         this.#chosen.set(name === null ? null : this.known(name));
     }
 
+    /**
+     * Набор, названный настройкой окна. Пустая строка, как у директивы `rtIconSet`, значит «не
+     * назван»; незнакомое имя даёт то же, что и в `use()`.
+     */
+    public asked(name: string | null | undefined): string | null | undefined {
+        if (name === '') {
+            return undefined;
+        }
+
+        return name ? this.known(name) : name;
+    }
+
     /** Имя объявленного набора. Незнакомое имя даёт предупреждение и набор `kit`. */
     public known(name: string): string {
         if (this.#config.sets.has(name)) {

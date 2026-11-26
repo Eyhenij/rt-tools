@@ -110,6 +110,9 @@ export class RtButtonDirective {
     /* Значки кита, нарисованные в кнопке: смена набора меняет их ссылки, не трогая содержимое. */
     readonly #kitIcons: WritableSignal<ReadonlyArray<IKitIconNode>> = signal<ReadonlyArray<IKitIconNode>>([]);
 
+    /* Последний рисунок каждого значка: перерисовка содержимого не гасит его, пока едет новый набор. */
+    readonly #lastDrawn: Map<IRtIcon.Name, IRtIconRef> = new Map<IRtIcon.Name, IRtIconRef>();
+
     #iconEl: HTMLElement | null = null;
     #labelEl: HTMLElement | null = null;
     #spinnerEl: HTMLElement | null = null;
@@ -383,12 +386,12 @@ export class RtButtonDirective {
         this.#underMaterial.set(this.#el.nativeElement.closest(RT_ICON_MATERIAL_PRESET_SELECTOR) !== null);
         const set: string = this.#iconSet();
         this.#iconRegistry.request(name, set);
-        const drawn: IRtIconRef = this.#iconRegistry.drawing(name, set);
+        const drawn: IRtIconRef = untracked((): IRtIconRef => this.#drawnFor(name, this.#iconRegistry.drawing(name, set)));
 
         const use: SVGUseElement = this.#doc.createElementNS('http://www.w3.org/2000/svg', 'use');
         use.setAttribute('href', `#${drawn.id}`);
         svg.appendChild(use);
-        this.#kitIcons.update((icons: ReadonlyArray<IKitIconNode>): ReadonlyArray<IKitIconNode> => [...icons, { name, use, drawn }]);
+        this.#kitIcons.update((icons: ReadonlyArray<IKitIconNode>): ReadonlyArray<IKitIconNode> => [...icons, { name, use }]);
 
         return svg as unknown as HTMLElement;
     }
@@ -401,12 +404,18 @@ export class RtButtonDirective {
             const target: IRtIconRef = this.#iconRegistry.drawing(icon.name, set);
             untracked((): void => this.#iconRegistry.request(icon.name, set));
             this.#iconRegistry.ready(target.id)();
-            const drawn: IRtIconRef = untracked((): IRtIconRef =>
-                rtIconDrawn(icon.drawn, target, (id: string): boolean => this.#iconRegistry.ready(id)())
-            );
-            icon.drawn = drawn;
+            const drawn: IRtIconRef = untracked((): IRtIconRef => this.#drawnFor(icon.name, target));
             icon.use.setAttribute('href', `#${drawn.id}`);
         }
+    }
+
+    /* Что показать вместо `target`: прежний рисунок этого имени, пока новый не приехал. */
+    #drawnFor(name: IRtIcon.Name, target: IRtIconRef): IRtIconRef {
+        const previous: IRtIconRef | null = this.#lastDrawn.get(name) ?? null;
+        const drawn: IRtIconRef = rtIconDrawn(previous, target, (id: string): boolean => this.#iconRegistry.ready(id)());
+        this.#lastDrawn.set(name, drawn);
+
+        return drawn;
     }
 
     /** Лигатура шрифта Material Symbols для имени вне набора кита. Шрифт подключает приложение. */
@@ -441,9 +450,8 @@ export class RtButtonDirective {
     }
 }
 
-/* Значок кита внутри кнопки и рисунок, на который он сейчас ссылается. */
+/* Значок кита внутри кнопки: имя и ссылка, которую меняет смена набора. */
 interface IKitIconNode {
     readonly name: IRtIcon.Name;
     readonly use: SVGUseElement;
-    drawn: IRtIconRef;
 }

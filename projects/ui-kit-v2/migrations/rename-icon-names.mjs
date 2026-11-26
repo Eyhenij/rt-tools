@@ -30,10 +30,10 @@ const EXTENSIONS = new Set(['.html', '.ts']);
 const SKIPPED_DIRS = new Set(['node_modules', 'dist', '.git', '.angular', '.nx', 'coverage']);
 
 /** Открывающий тег с атрибутами; значения атрибутов в кавычках могут содержать `>`. */
-const TAG_RE = /<([A-Za-z][\w-]*)((?:\s+[^\s=<>/"']+(?:\s*=\s*(?:"[^"]*"|'[^']*'))?)*)\s*\/?>/g;
-const ATTRIBUTE_RE = /(\s+)([^\s=<>/"']+)(\s*=\s*)(?:"([^"]*)"|'([^']*)')/g;
+const TAG_RE = /<([A-Za-z][\w-]*)((?:\s+[^\s=<>/"']+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s"'=<>`]+))?)*)\s*\/?>/g;
+const ATTRIBUTE_RE = /(\s+)([^\s=<>/"']+)(\s*=\s*)(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/g;
 /** Свой способ рисования у тега: по `font` замена имени сменила бы лигатуру на текст. */
-const OWN_STRATEGY_RE = /\s(?:\[glyphStrategy\]\s*=|glyphStrategy\s*=\s*(?:"font"|'font'))/;
+const OWN_STRATEGY_RE = /\s(?:\[glyphStrategy\]\s*=|glyphStrategy\s*=\s*(?:"font"|'font'|font(?![\w-])))/;
 const QUOTED_RE = /(['"`])([a-z0-9_]+)\1/g;
 const ICON_LINE_RE = /icon|glyph/i;
 
@@ -90,12 +90,13 @@ function automatic(text) {
         const base = tag.index + 1 + name.length;
 
         for (const attribute of attributes.matchAll(ATTRIBUTE_RE)) {
-            const [, space, key, equals, double, single] = attribute;
-            const value = double ?? single;
+            const [, space, key, equals, double, single, bare] = attribute;
+            const value = double ?? single ?? bare;
 
             if (!ATTRIBUTES.has(key) || !pairs.has(value) || MANUAL_ONLY.has(value)) continue;
 
-            const start = base + attribute.index + space.length + key.length + equals.length + 1;
+            const quote = bare === undefined ? 1 : 0;
+            const start = base + attribute.index + space.length + key.length + equals.length + quote;
 
             found.push({ start, end: start + value.length, key, from: value, to: pairs.get(value) });
         }

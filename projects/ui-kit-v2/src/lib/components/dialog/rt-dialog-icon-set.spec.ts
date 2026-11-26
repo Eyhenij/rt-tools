@@ -1,4 +1,16 @@
-import { ApplicationRef, ChangeDetectionStrategy, Component, inject, Injector, Provider, Signal, viewChild } from '@angular/core';
+import {
+    effect,
+    inject,
+    signal,
+    viewChild,
+    ApplicationRef,
+    ChangeDetectionStrategy,
+    Component,
+    Injector,
+    Provider,
+    Signal,
+    WritableSignal,
+} from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { createRtFixture } from '../../../testing/rt-kit-testing';
@@ -11,6 +23,8 @@ import { RtMenuContentDirective } from '../menu/rt-menu-content.directive';
 import { RtMenuItemComponent, rtPreloadMenuConfirmDialog } from '../menu/rt-menu-item.component';
 import { RtMenuComponent } from '../menu/rt-menu.component';
 import { RtPopoverDirective } from '../popover/rt-popover.directive';
+import { RtTabDirective } from '../tabs/rt-tab.directive';
+import { RtTabsComponent } from '../tabs/rt-tabs.component';
 import { RtDialogService } from './rt-dialog.service';
 
 const BRAND: string = '#rt-icon-set-brand--close';
@@ -92,6 +106,53 @@ class IconSetOwnerHostComponent {
     public readonly owner: Signal<IconSetOwnerComponent> = viewChild.required(IconSetOwnerComponent);
 }
 
+@Component({
+    selector: 'rt-icon-set-tabs-host',
+    template: `
+        <section rtIconSet="brand">
+            <rt-tabs activeId="a">
+                <ng-template rtTab="a" label="Брони" [contextMenu]="tabMenu">A</ng-template>
+            </rt-tabs>
+        </section>
+        <ng-template #tabMenu><button type="button" qa-dataid="tab-item">Открыть</button></ng-template>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtIconSetDirective, RtTabsComponent, RtTabDirective],
+})
+class IconSetTabsHostComponent {}
+
+/* Панель открывается из `effect`, как делает приложение, у которого номер записи — сигнал. */
+@Component({
+    selector: 'rt-icon-set-effect-owner',
+    template: '',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+})
+class IconSetEffectOwnerComponent {
+    readonly #asides: RtAsideService = inject(RtAsideService);
+    readonly #injector: Injector = inject(Injector);
+
+    public readonly record: WritableSignal<string | null> = signal<string | null>(null);
+
+    constructor() {
+        effect((): void => {
+            if (this.record() !== null) {
+                this.#asides.open(IconSetWindowComponent, { injector: this.#injector });
+            }
+        });
+    }
+}
+
+@Component({
+    selector: 'rt-icon-set-effect-host',
+    template: '<section [rtIconSet]="part()"><rt-icon-set-effect-owner /></section>',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtIconSetDirective, IconSetEffectOwnerComponent],
+})
+class IconSetEffectHostComponent {
+    public readonly part: WritableSignal<string> = signal<string>('brand');
+    public readonly owner: Signal<IconSetEffectOwnerComponent> = viewChild.required(IconSetEffectOwnerComponent);
+}
+
 function setup(): ComponentFixture<IconSetWindowsHostComponent> {
     const declared: Provider = provideRtIcons({ sets: [{ name: 'brand', url: '/brand' }] }) as unknown as Provider;
 
@@ -157,9 +218,12 @@ describe('набор значков части в открытых из неё �
         ['без своего набора берёт набор части из injector', undefined, { href: BRAND, pane: 'brand' }],
         ['с iconSet берёт названный набор', 'kit', { href: '#rt-icon-close', pane: 'kit' }],
         ['с iconSet null не берёт набор части', null, { href: '#rt-icon-close', pane: null }],
+        ['с пустым iconSet берёт набор части из injector', '', { href: BRAND, pane: 'brand' }],
+        ['с незнакомым iconSet берёт набор kit', 'brnd', { href: '#rt-icon-close', pane: 'kit' }],
     ])(
         'SC-UKV-1891 — aside вне фокуса части %s',
         (_title: string, iconSet: string | null | undefined, expected: { href: string; pane: string | null }): void => {
+            jest.spyOn(console, 'warn').mockImplementation((): void => undefined);
             const declared: Provider = provideRtIcons({ sets: [{ name: 'brand', url: '/brand' }] }) as unknown as Provider;
             const fixture: ComponentFixture<IconSetOwnerHostComponent> = createRtFixture(
                 IconSetOwnerHostComponent,
@@ -174,6 +238,49 @@ describe('набор значков части в открытых из неё �
             expect(windows()).toEqual([expected]);
         }
     );
+
+    it('SC-UKV-1893 — панель, открытая из effect, на смене набора части не открывается снова', (): void => {
+        const declared: Provider = provideRtIcons({ sets: [{ name: 'brand', url: '/brand' }] }) as unknown as Provider;
+        const fixture: ComponentFixture<IconSetEffectHostComponent> = createRtFixture(
+            IconSetEffectHostComponent,
+            {},
+            { providers: [declared] }
+        );
+        const tick: () => void = (): void => {
+            fixture.detectChanges();
+            TestBed.inject(ApplicationRef).tick();
+        };
+        fixture.componentInstance.owner().record.set('1');
+        tick();
+
+        fixture.componentInstance.part.set('kit');
+        tick();
+
+        expect(windows()).toEqual([{ href: BRAND, pane: 'brand' }]);
+    });
+
+    it('SC-UKV-1894 — меню вкладки у точки нажатия берёт набор части, где стоят вкладки', (): void => {
+        const declared: Provider = provideRtIcons({ sets: [{ name: 'brand', url: '/brand' }] }) as unknown as Provider;
+        const fixture: ComponentFixture<IconSetTabsHostComponent> = createRtFixture(
+            IconSetTabsHostComponent,
+            {},
+            { providers: [declared] }
+        );
+        const tick: () => void = (): void => {
+            fixture.detectChanges();
+            TestBed.inject(ApplicationRef).tick();
+            fixture.detectChanges();
+        };
+        tick();
+
+        (fixture.nativeElement as HTMLElement)
+            .querySelector('[data-tabid="a"]')
+            ?.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 40, clientY: 30 }));
+        tick();
+
+        const pane: Element | null = document.querySelector('[qa-dataid="tab-item"]')?.closest('.cdk-overlay-pane') ?? null;
+        expect(pane?.getAttribute('data-rt-icon-set')).toBe('brand');
+    });
 
     it('SC-UKV-1886 — диалог из диалога получает тот же набор, а окно, открытое вне части, — набор приложения', (): void => {
         const fixture: ComponentFixture<IconSetWindowsHostComponent> = setup();

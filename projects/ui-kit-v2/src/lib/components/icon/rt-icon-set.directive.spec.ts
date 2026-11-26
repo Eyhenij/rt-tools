@@ -22,7 +22,7 @@ const SVG: string = '<svg viewBox="0 0 16 16"><path d="M0 0h16v16H0z"/></svg>';
     template: `
         <rt-icon qa-dataid="app" [name]="name()" />
         <!-- eslint-disable-next-line @angular-eslint/template/elements-content -->
-        <button rtButton qa-dataid="button" label="Закрыть" icon="close" [loading]="loading()"></button>
+        <button rtButton qa-dataid="button" icon="close" [label]="label()" [loading]="loading()"></button>
         <div data-preset="material"><rt-icon qa-dataid="sign" name="close" /></div>
         <section qa-dataid="section" [rtIconSet]="part()">
             <rt-icon qa-dataid="part" name="close" />
@@ -37,6 +37,7 @@ const SVG: string = '<svg viewBox="0 0 16 16"><path d="M0 0h16v16H0z"/></svg>';
 class IconSetHostComponent {
     public readonly name: WritableSignal<IRtIcon.Name> = signal<IRtIcon.Name>('close');
     public readonly loading: WritableSignal<boolean> = signal<boolean>(false);
+    public readonly label: WritableSignal<string> = signal<string>('Закрыть');
     public readonly part: WritableSignal<string> = signal<string>('material');
 }
 
@@ -168,6 +169,23 @@ describe('набор значков: смена на ходу', (): void => {
         expect(page.sets.chosen()).toBe('kit');
         expect(warn).toHaveBeenCalledWith('rt-icon: набора «gone» среди объявленных нет, взят набор «kit».');
         warn.mockRestore();
+    });
+
+    it('SC-UKV-1892 — кнопка, перерисованная, пока едет новый набор, держит старый рисунок', (): void => {
+        const page: IHarness = setup();
+        page.serve('/icons/close.svg');
+        page.serve('/icons-material/close.svg');
+        page.sets.use('brand');
+        page.settle();
+
+        page.fixture.componentInstance.label.set('Убрать');
+        page.settle();
+
+        expect(page.href('button')).toBe('#rt-icon-close');
+
+        page.serve('/brand/close.svg');
+
+        expect(page.href('button')).toBe('#rt-icon-set-brand--close');
     });
 
     it('SC-UKV-1883 — новое имя значка старый рисунок не держит', (): void => {

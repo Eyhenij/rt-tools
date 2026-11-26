@@ -51,6 +51,9 @@
 - Первый круг ревью. Исправлено: значок кнопки `rt-speed-menu` по умолчанию под `font`; общий символ залитого и контурного рисунка; ответ 200 со страницей вместо файла не вёл в запасной набор; aside с `injector` вне фокуса части и без входа `iconSet`; скрипт замены менял теги со своим `font`; проверка имён не ловила пару от имени кита; README, описание и план эпика. Сценарии 1888–1891. После правок: 4445 тестов кита, линтер и knip зелёные, вес 185750.
 - Не исправлено, потому что так решено планом: открытое окно набора не меняет; шаблон вне части берёт набор по месту объявления (то же для `ng-content`) — записано в описании; признак material сильнее `default`. Вес не вернулся к 0.51.0: это задача эпика, остаток записан в плане эпика.
 
+- Второй круг ревью. Исправлено: кнопка, перерисованная во время загрузки нового набора, теряла значок; aside, открытый из `effect`, открывался снова на смене набора части; пустой и незнакомый `iconSet` окна; меню вкладки у точки нажатия не брало набор части; SVG с расширенным `DOCTYPE` считался отказом; скрипт замены пропускал атрибуты без кавычек; `zoom_in` в примере и витрине `speed-menu`; в README — `info`, что видно без замены имён и пример `provideRtIcons`; устаревшие пометки в плане эпика. Сценарии 1892–1894 краснеют без исправлений. `.storybook/main.ts` назван в плане, но менять его код не понадобилось: переписан только комментарий о двух наборах. Вес 185830.
+- Не исправлено по решению плана: открытое окно набора не меняет; диалог берёт часть по фокусу (ограничение Safari названо в README); `default` слабее признака material. Не сделано: часть `button` вне набора проверки веса — это отдельное решение о проверке.
+
 ## Handover of the session
 
 Put together by a hook before the compaction of the context (auto).
@@ -62,7 +65,7 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 3 of 3 — Описание, вес и план эпика
-- **Next step:** шаг 3.2: порог веса, сборки приложений, тесты кита и соседних пакетов
+- **Next step:** второй круг ревью
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-3648-kit-icon-catalog-split/progress.md`; the plan lies next to it.
@@ -70,19 +73,36 @@ The progress in full — `docs/tasks/RT-3648-kit-icon-catalog-split/progress.md`
 ### Uncommitted
 
 ```
- M docs/specs/ui-kit-v2/icon-material-names/spec.md
- M projects/ui-kit-v2/README.md
- M projects/ui-kit-v2/src/lib/components/icon/CONTEXT.md
- M projects/ui-kit-v2/src/lib/components/icon/rt-icon-set.service.ts
- M projects/ui-kit-v2/src/lib/components/icon/rt-icon-sets.logic.ts
- M projects/ui-kit-v2/src/lib/components/icon/rt-icon.providers.ts
- M projects/ui-kit-v2/src/lib/components/icon/rt-icon.registry.ts
- M tools/kit-weight-threshold.json
+M  docs/plans/kit-presets-by-demand.md
+M  docs/specs/ui-kit-v2/icon-material-names/implementation.md
+M  docs/specs/ui-kit-v2/icon-material-names/scenarios.md
+M  docs/specs/ui-kit-v2/icon-material-names/spec.md
+M  docs/tasks/RT-3648-kit-icon-catalog-split/progress.md
+M  projects/ui-kit-v2/.storybook/main.ts
+M  projects/ui-kit-v2/README.md
+M  projects/ui-kit-v2/migrations/rename-icon-names.mjs
+M  projects/ui-kit-v2/src/lib/components/aside/rt-aside.service.ts
+M  projects/ui-kit-v2/src/lib/components/button/rt-button.directive.ts
+M  projects/ui-kit-v2/src/lib/components/dialog/rt-dialog-icon-set.spec.ts
+M  projects/ui-kit-v2/src/lib/components/dialog/rt-dialog.service.ts
+M  projects/ui-kit-v2/src/lib/components/icon/rt-icon-set.directive.spec.ts
+M  projects/ui-kit-v2/src/lib/components/icon/rt-icon-set.service.ts
+M  projects/ui-kit-v2/src/lib/components/icon/rt-icon-sets.logic.ts
+M  projects/ui-kit-v2/src/lib/components/icon/rt-icon.registry.spec.ts
+M  projects/ui-kit-v2/src/lib/components/speed-menu/Overview.mdx
+M  projects/ui-kit-v2/src/lib/components/speed-menu/stories/component/test-speed-menu.component.ts
+M  projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-context-menu.component.html
+M  projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-context-menu.component.ts
 ```
 
 ### Commits over the main branch
 
 ```
+d6f07dc43 docs(rt:ui-kit-v2): расхождения с планом по новым файлам и связям названы с причинами (RT-3648)
+ccfe5b904 fix(rt:ui-kit-v2): значки и наборы после первого круга ревью (RT-3648)
+79dd4c8c3 fix(rt:ui-kit-v2): таблица категорий значков не приезжает в приложение без неё (RT-3648)
+fc1470343 docs(rt:ui-kit-v2): результаты пробной сборки приложения записаны в план эпика (RT-3648)
+e4a084a7e fix(rt:ui-kit-v2): предупреждения о наборах значков остаются разработчику, порог веса переписан (RT-3648)
 c1f529f24 docs(rt:ui-kit-v2): описание единых имён значков и наборов, ломающие переносы названы (RT-3648)
 584c7d387 feat(rt:ui-kit-v2): витрина показывает смену набора значков на ходу (RT-3648)
 3eceb5295 feat(rt:ui-kit-v2): окна и панели получают набор значков той части, откуда их открыли (RT-3648)
@@ -98,11 +118,6 @@ f3a282469 docs(rt:ui-kit-v2): разбор RT-3648 — слово владель
 568562c94 docs(rt:ui-kit-v2): план эпика после второго круга ревью (RT-3678)
 a88fb6f4b fix(rt:ui-kit-v2): проверка веса после первого круга ревью (RT-3678)
 cd60580e7 docs(rt:ui-kit-v2): пересчитанный вес кита записан в план эпика, этап RT-3678 закрыт (RT-3678)
-652b85fb2 fix(rt:ui-kit-v2): проверка веса связывает файлы кита, как сборка приложения, и не считает стили дважды (RT-3678)
-8a9863aab docs(rt:ui-kit-v2): папка задачи RT-3678 — разбор и одобренный план проверки веса без двойного счёта (RT-3678)
-eda38f37f Merge branch 'RT-3641-kit-presets-by-demand' of origin with main
-675e9c84b [RT-3646] Кит: диалог подтверждения menu грузится при первом подтверждении (#3677)
-7895f6128 Merge branch 'main' into RT-3641-kit-presets-by-demand
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

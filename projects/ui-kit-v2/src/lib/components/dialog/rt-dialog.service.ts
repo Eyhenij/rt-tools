@@ -8,7 +8,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, map, merge, mergeMap, Observable, Subject, take, takeUntil } from 'rxjs';
 
 import { applyIconSetScope, carryThemeScopeOfFocus, iconSetScopeOfFocus, materialPresetClassesOfFocus } from '@rt-tools/ui-kit-v2/core';
-import { rtIconSetProviders } from '@rt-tools/ui-kit-v2/icon';
+import { rtIconSetProviders, RtIconSetService } from '@rt-tools/ui-kit-v2/icon';
 import { RtDialogRef } from './rt-dialog-ref';
 import { RT_DIALOG_DATA } from './rt-dialog.tokens';
 
@@ -131,6 +131,7 @@ interface IRtDialogOpenContext {
 export class RtDialogService {
     readonly #overlay: Overlay = inject(Overlay);
     readonly #injector: Injector = inject(Injector);
+    readonly #iconSets: RtIconSetService = inject(RtIconSetService);
     readonly #doc: Document = inject(DOCUMENT);
     readonly #focusTrapFactory: FocusTrapFactory = inject(FocusTrapFactory);
 
@@ -201,7 +202,8 @@ export class RtDialogService {
             disposeOnNavigation: true,
         });
         // До attach: содержимое диалога может забрать фокус, и кусок темы у кнопки будет потерян.
-        const iconSet: string | null = config?.iconSet === undefined ? iconSetScopeOfFocus(this.#doc) : config.iconSet;
+        const asked: string | null | undefined = this.#iconSets.asked(config?.iconSet);
+        const iconSet: string | null = asked === undefined ? iconSetScopeOfFocus(this.#doc) : asked;
         carryThemeScopeOfFocus(overlayRef.overlayElement, this.#doc);
         applyIconSetScope(overlayRef.overlayElement, iconSet);
 

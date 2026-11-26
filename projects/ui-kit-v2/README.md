@@ -349,7 +349,14 @@ node node_modules/@rt-tools/ui-kit-v2/migrations/rename-icon-names.mjs --write s
 #### Что изменилось и ломает прежний код
 
 - `provideRtIcons(adres, materialAdres, options)` заменён на
-  `provideRtIcons({ sets, default, glyphStrategy })`.
+  `provideRtIcons({ sets, default, glyphStrategy })`. Было `provideRtIcons('/a', '/b')`, стало
+  `provideRtIcons({ sets: [{ name: 'kit', url: '/a' }, { name: 'material', url: '/b' }] })`.
+- Без замены имён значок со старым именем выглядит иначе. `rt-icon`, кнопка и ячейка таблицы
+  раньше рисовали переведённое имя рисунком кита без шрифта, теперь это лигатура: без шрифта
+  Material Symbols на экране стоит слово, например `delete`. Меню и боковое меню остаются без
+  значка и пишут об этом только в сборке для разработки.
+- Старое имя `info` есть и в ките, но рисует другой значок. `rt-menu-item` и колонка таблицы
+  раньше рисовали по нему `info-circle`, теперь молча рисуют `info`: замените имя вручную.
 - Таблица соответствий имён `iconMaterialMap`, тип `IRtIconMaterialEntry` и функция
   `materialPairOf` убраны: имена первого кита не переводятся.
 - `RT_ICONS_BASE_URL`, `RT_ICONS_MATERIAL_BASE_URL` и тип `IRtIcon.Drawing` убраны.
