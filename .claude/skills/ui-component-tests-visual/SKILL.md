@@ -30,6 +30,7 @@ A story of its own is created for a state the snapshot does not reach by itself:
 
 ## Sorting out a fallen run
 
+- **A branch's run takes the touched story files: `--affected <base>`.** Their list: `node tools/affected-stories.mjs --base <base>`.
 - **The share of the divergence and the area**
 - **One's own divergence or a foreign one.**
 - **Re-taking — one reference at a time.**

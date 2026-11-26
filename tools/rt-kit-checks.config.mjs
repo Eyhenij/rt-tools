@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.40.0 · checks/rt-kit-checks.config.mjs · f142d6553cfc · правится надстройкой, не здесь
+// rt-kit v0.40.0 · checks/rt-kit-checks.config.mjs · d2692a4e45f6 · правится надстройкой, не здесь
 /**
  * Check settings: what counts as sources, where not to go and where the debt lists lie.
  *
@@ -185,6 +185,11 @@ const DEFAULTS = {
      * tree.
      */
     proseRoots: [],
+    /**
+     * The command that says which roles a plan needs before its approval: `plan-red` calls it with
+     * the path of the plan text, and `none` lifts the roles. Empty — every plan needs both.
+     */
+    planRolesCommand: '',
     /**
      * The words of the left column of the tree's glossary: those it added beyond the package's
      * eight. The package ones stay the default, what the tree named lies over them — otherwise the

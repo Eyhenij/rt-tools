@@ -54,6 +54,11 @@ pnpm run check:ngdoctor
 # The last step of `check:all`, a step of the pipeline and of the push set; any finding turns it red
 pnpm run check:unused
 
+# Where the time of agent sessions goes: the journals of this working copy, or the one named by
+# `--file`; `--steps` — the steps of the task flow, `--branches <keys>` — the mean of a task,
+# `--since`, `--until`, `--by-branch`, `--json`. It prints numbers and no text of a message
+pnpm run session:time
+
 # Raise the applications on one's own machine. The database is needed only by the receiver;
 # the admin panel proxies /api to port 3000, and without the receiver it shows empty lists and a
 # read refusal — that is its honest state rather than a breakage.
@@ -70,6 +75,10 @@ pnpm run storybook:ui-kit-v2   # the kit's showcase, port 6007
 
 # View dependency graph
 pnpm run graph
+
+# The archive record of the branch from its task folder and the body of the PR; the folder leaves the
+# disk and the index. Its inputs and refusals — the rule archive-record
+npm run task:archive -- <body of the PR> --title '<title of the PR>'
 
 # Rebuild the code graphs: the root one and one per directory under projects/, apps/ and libs/.
 # Only graph.json goes into history; how a session reads them is the pattern task-flow-graph
@@ -103,7 +112,7 @@ carries only what a tree that installs it can execute: `rt-tools-storybook` for 
 `ui-component-tests` for the ready-made spec and the visual snapshot, `cargo-triage` with
 `cargo-triage-mark` for the intake of reports, `task-delivery-loop` with
 `task-delivery-loop-run` for the loop every task goes through and loads first (a live check and
-two review rounds before the push), and `agent-kit-source` for editing the rule package itself —
+the review before the push: one round on the light path, a second by risk on the full one), and `agent-kit-source` for editing the rule package itself —
 alongside the `/agent-kit-digest` and `/rules-review` commands. What may live
 in the package and what stays here is decided by the boundary test in
 `docs/specs/agent-kit/package-boundary/`, and `npm run check:boundary` keeps it.

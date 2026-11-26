@@ -1,4 +1,4 @@
-<!-- rt-kit v0.40.0 · pitfalls/task-flow-resume.md · 596743932c5e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · pitfalls/task-flow-resume.md · fdd800dc54e7 · правится надстройкой, не здесь -->
 # Returning to unfinished work — cold part
 
 The pattern `task-flow-resume` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.
@@ -130,7 +130,6 @@ reads, and the only thing that survives trimming by size:
 - **Stage:** 3 of 6 — the guard and the startup hook
 - **Done:** the law is created, the task folder and the sample are written
 - **Next step:** the scenarios of both hooks, then wiring them into the settings
-- **Uncommitted:** everything, the branch has no commits yet
 - **PR:** not opened yet
 ```
 

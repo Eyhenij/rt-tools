@@ -8,7 +8,6 @@ Rewritten by every session, not appended to.
 - **Stage:** <number> of <total> — <name>
 - **Done:** <briefly>
 - **Next step:** <what is done first in the new session>
-- **Uncommitted:** <what lies in the tree outside the index>
 - **PR:** <number and state, or "not open yet">
 
 ## Steps

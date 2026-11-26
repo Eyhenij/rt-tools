@@ -155,6 +155,21 @@ as an attachment.
 - **A component that arrived into the showcase after this work brings its reference by the same change.** A
   show shot by a separate pass falls behind the code exactly as long as it lives between the passes.
 
+- **A branch shoots the stories its edit reaches, and the whole set goes once, on the way to the main branch.**
+  The reach goes by the imports from a story file to its sources: the code, the template, the styles. A branch
+  that reaches no story builds no showcase. The price is named: a divergence the imports do not carry is seen
+  on the request into the main branch, not on the branch that made it. An overview page that stopped building
+  is seen there too: a page is no story, and an edit of it alone builds nothing on the branch.
+
+- **An edit whose reach is not recognised shoots everything.** Such are the settings of the showcase and what
+  they read, the common styles, the icons, the root of the tree and the scripts of the run. An import that did
+  not resolve and a base that did not read are everything too.
+
+- **A run of the touched stories answers for every file it was given.** Every story of a named file is reached:
+  its frame is taken, or the harness wrote down that it is an exception. A file without a story, a story the
+  run did not reach, a frame of a width nobody took and a reference without a story fell the run. It ends
+  with how many files of how many were shot and how many frames.
+
 - **A reshooting goes by a named story.** A reshooting of the whole catalogue erases the divergence that was
   not expected too — it stays a separate command, not a default.
 
@@ -251,7 +266,7 @@ machine, and a heading inside a list breaks its reading off.
 ## Contract
 
 There is no contract of the network: the work serves no procedures. The surface is the command of the run, the
-command of a pinpoint reshooting, the command of the reshooting of the whole catalogue and the address of an
+same command of the touched stories with `--affected <base>`, the command of a pinpoint reshooting, the command of the reshooting of the whole catalogue and the address of an
 already raised showcase that they read. The run does not raise its showcase: it checks what is open at the
 named address, and refuses if it is not it that answers at the address.
 
@@ -347,6 +362,13 @@ the references, its own port, its own commands. It shares no file with them.
 - **The run has no repeats.** A blinking story must be visible as blinking, not pass at the second attempt. The
   price: the stories with overlays are obliged to have an open limit of the waiting, otherwise they fell the run by
   the time without a reason that can be told.
+
+- **The unit of a run of the touched stories is a story file, not a story.** A choice by the name of a story
+  breaks the environment of the run, so every story of the file is shot.
+- **The touched stories are found by the imports, not by the statistics of the build.** The statistics see a
+  barrel whole and ask for two builds of the showcase; the imports are read in under a second.
+- **A label that was only added touches no story.** The component that reads it is edited by the same branch,
+  and its own reach names the stories. A changed or removed label is everything: every story reads the set.
 
 ## Open questions
 

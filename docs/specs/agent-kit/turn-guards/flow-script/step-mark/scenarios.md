@@ -316,7 +316,7 @@ And the task folder taken apart after every step was marked done
 When the final rerun runs
 Then the step matches: its check reads the progress before the commit that marked the step done
 
-Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-script-recheck.test.sh`.
 
 ### SC-AK-1794 — the final rerun reads the replacement lines of the last progress
 
@@ -329,7 +329,7 @@ And of two replacement lines for one step the later one is taken
 And a replacement of an earlier version, taken away by the commit that marks the step, is not brought back
 And the later one of two replacement lines also decides the mark of the step
 
-Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`, `projects/agent-kit/tests/task-flow-script-recheck.test.sh`.
 
 ### SC-AK-1740 — the final rerun runs on the node the tree pins
 
@@ -398,6 +398,14 @@ And on a taken-apart folder the second run of a group reads the progress of its 
 
 Covered: `projects/agent-kit/tests/task-flow-script-archive.test.sh`.
 
+### SC-AK-1950 — the tree names the roles a plan needs
+
+Given a tree whose `planRolesCommand` answers `none`, one without the settings, one without the key, one whose command fails, answers something else or lies in settings that do not parse
+When the roles of a plan are asked, and then an answer before the plan commit, after it and with no moment is read with no roles to wait for
+Then the first tree needs no role and every other needs both, and only the answer after the commit approves
+
+Covered: `projects/agent-kit/tests/flow-approval.test.sh`, `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+
 ### SC-AK-1826 — the line of an unmatched step names its command, output and errors
 
 Given a done step whose check prints four lines and an error and exits 3
@@ -407,3 +415,61 @@ And a check that counts the lines of a pipe shows the failure line fed to its la
 And a `tee` goes before a closing `grep` only, never into `case`, `((`, a backslash, `PIPESTATUS` or `>|`
 
 Covered: `projects/agent-kit/tests/task-flow-script-archive.test.sh`.
+
+### SC-AK-1997 — a stage whose steps all match is marked by one call
+
+Given a stage of three open steps whose checks match
+When `step <N>` runs
+Then the three are marked done, the next step is current and the code is 0
+
+Covered: `projects/agent-kit/tests/flow-stage.test.sh`.
+
+### SC-AK-1998 — a first step that did not match leaves the stage open
+
+Given a stage whose first step does not match
+When `step <N>` runs
+Then no step is marked, the matched ones keep their marks on disk and their lines name the first
+And the code is 1, an edit of the progress passes the guard, and a call after the fix marks the stage
+
+Covered: `projects/agent-kit/tests/flow-stage.test.sh`.
+
+### SC-AK-1999 — a middle step that did not match stops the marking
+
+Given a stage whose second step does not match
+When `step <N>` runs
+Then the first is marked, the second is current and the third stays open
+
+Covered: `projects/agent-kit/tests/flow-stage.test.sh`.
+
+### SC-AK-2000 — an open step of an earlier stage stops the marking
+
+Given a stage whose steps match and an open step of the stage before it
+When `step <N>` runs
+Then no step is marked and the code is 1
+
+Covered: `projects/agent-kit/tests/flow-stage.test.sh`.
+
+### SC-AK-2001 — a done step is measured again by its mark
+
+Given a stage with done steps
+When `step <N>` runs
+Then a done step with a green mark is not measured while another is open, one without a mark is
+And with every step done and green all are measured, and a step that does not match loses its mark
+
+Covered: `projects/agent-kit/tests/flow-stage.test.sh`.
+
+### SC-AK-2002 — a stage that cannot be measured is refused
+
+Given a stage number the plan lacks, a step with no check, a taken-apart folder
+When `step <N>` runs
+Then the first and the last are refused and nothing is written; the step is refused on its line, the one before it is marked
+
+Covered: `projects/agent-kit/tests/flow-stage.test.sh`.
+
+### SC-AK-2003 — a step is measured as before
+
+Given a plan of several stages
+When `step <N.M>` and `step --done` run
+Then each prints and marks as it did
+
+Covered: `projects/agent-kit/tests/flow-stage.test.sh`.

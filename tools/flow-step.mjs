@@ -1,4 +1,4 @@
-// rt-kit v0.40.0 · checks/flow-step.mjs · 5cf8b06d73e8 · правится надстройкой, не здесь
+// rt-kit v0.40.0 · checks/flow-step.mjs · df9f7354b5af · правится надстройкой, не здесь
 /**
  * A step of the plan measured by its check — the engine command `step`.
  *
@@ -43,7 +43,7 @@ export const STEP_LIMIT_MS = 540_000;
 /** The budget of the rerun before a PR, in milliseconds: a second run of a group starts only within it. */
 export const RERUN_BUDGET_MS = 1_500_000;
 
-const PROGRESS = 'progress.md';
+export const PROGRESS = 'progress.md';
 /** What the owner approved: these files stay as the commit of the plan holds them. */
 const FROZEN = ['plan.md', 'grill.md'];
 

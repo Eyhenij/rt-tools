@@ -11,7 +11,7 @@ Rule under the law `docs/constitution/delivery.md`, for a tree on GitHub. Cold p
 
 ## How the law applies here
 
-- **The PR of a task has the epic branch as its base — `gh pr create --base <ветка эпика>`.**
+- **The PR of a task has the epic branch as its base — `gh pr create --base <ветка эпика>`.** Outside an epic — the main one.
 - **A PR in a chain has the previous branch as its base, not main.**
 - **What checks a PR whose base is not the main branch is asked before the first PR of an epic opens.**
 - **A code edit is handed to a person by an open PR, not by a pushed branch.**

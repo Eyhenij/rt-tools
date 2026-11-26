@@ -32,7 +32,8 @@ import { dirname, join } from 'node:path';
 const BASE = 'origin/main';
 
 const run = (args) => {
-    const out = spawnSync('git', args, { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+    // A path is read as it is written: by default git prints a non-ASCII one in octal codes.
+    const out = spawnSync('git', ['-c', 'core.quotePath=false', ...args], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
     return out.status === 0 ? out.stdout : null;
 };
 

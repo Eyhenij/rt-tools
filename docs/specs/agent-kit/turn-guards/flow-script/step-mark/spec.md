@@ -1,6 +1,6 @@
 # A mark is measured again, not believed
 
-**Status:** in force · **Revision:** 2026-11-18 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-25 · **Scenario prefix:** `SC-AK`
 **Depends on:** `docs/specs/agent-kit/turn-guards/flow-script/spec.md`,
 `docs/specs/agent-kit/turn-guards/flow-script/guard/spec.md`,
 `docs/specs/agent-kit/turn-guards/flow-script/replay/spec.md`
@@ -71,6 +71,23 @@ prints a line per fixture.
   way: its steps would read that progress.
 - **`step --done` on a taken-apart folder measures the done steps the way the final rerun does.**
 
+### The stage
+
+- **`step <N>` measures the steps of stage N that lack a done mark with a green one, side by side; with none lacking it measures them all.**
+  A mark on disk is green for the step when it was written by this plan, and by a check replaced or not
+  as it stands now.
+- **After the measurement `step <N>` marks the matched steps done in the order of the whole plan, up to the first step that stays open.**
+  A step that matched behind an open one, of its stage or of an earlier, writes its mark and stays open
+  in the progress, and its line names the open step. A done mark behind an open step is refused by the
+  guard on every edit of the progress, so the call does not lead there. A step whose line the progress
+  lacks stops the marking, and of the marks one after another the last set in order holds: a step marked
+  ahead is put in order by those before it. Only the section of the steps is marked. A done step that does not match keeps
+  its done mark, loses the one on disk, and does not stop the steps behind it: the code is 1.
+- **`step <N>` exits with 0 only when every measured step matched and is marked done.**
+  A step with no check is one line of refusal, and the others are measured. A call takes one stage: a
+  second number or a flag is refused, and nothing is measured.
+- **`step <N>` is refused on a stage the plan does not name and on a taken-apart task folder, one standing on disk and not in the head included.**
+
 ### The final rerun
 
 - **The PR of a task does not open until every done step matches on the final rerun.**
@@ -110,13 +127,18 @@ prints a line per fixture.
 
 - **An edit of the description and the engine needs the owner's approving answer found at the place the approval mark names.**
 - **An approval mark whose place holds no approving answer counts as no approval.** The answer must
-  be a menu option or a typed message after the calls of both roles that approves the plan of the
+  be a menu option or a typed message after the calls the plan needs that approves the plan of the
   task by `approvalOf` — the same test `plan-red` applies when it writes the mark.
 - **An approval given in any working copy of the repository holds in every other.**
 - **A record outside the record directories gives no approval, the one `RT_FLOW_TRANSCRIPT` names included.**
   The variable is set by whoever calls the engine, and the agent can set it.
 - **An approval holds only for the plan commit it names.** A mark naming another commit counts as
   none, and a plan added again after the approval loses it.
+- **The tree may name the plans that need no roles.** A command of its check settings,
+  `planRolesCommand`, gets the path of the plan text of the plan commit, and the answer `none` lifts
+  the calls of both roles. No command, a command that failed and any other answer leave both. With
+  no roles to wait for, the approving answer must be later than the plan commit: an answer given
+  before it approved another text.
 - **An approval mark that names no place counts as no approval outside `words.legacyBranches`.** A
   mark written before this work is one such; a branch in progress asks the owner again.
 - **`plan-red` on a plan whose approval mark names the same commit and fingerprint takes the red output from that mark.**
@@ -192,7 +214,9 @@ the second to the action `write_marks`. A refusal of the approval maps to `edit_
 the move: run `plan-red`, which finds the answer in the record; the owner is asked only when it
 finds none.
 
-The command `step <N.M>` keeps its output and codes; on a match it also writes the progress.
+The command `step <N.M>` keeps its output and codes; on a match it also writes the progress. The
+command `step <N>` prints a line per step of the stage, led by its number, and then
+`stage <N>: measured <n>, matched <m>, left open <k>`.
 
 The final rerun runs at the opening of the PR of a task, under the limit of the hook before a tool
 call, 1800 seconds. It runs `step --done`, and a line that did not match refuses the opening with
@@ -256,6 +280,9 @@ did not match. An approval is looked for in the record directories of every work
 - **The judge gets no tools instead of a prompt that forbids reading.** A sentence in the prompt is a
   request; a call without tools has nothing to read the file with.
 
+- **A stage is marked by one call up to the first step that stays open.** Rejected: marking every
+  matched step — the guard would then refuse every edit of the progress until the open one matched.
+
 ## Open questions
 
 None.
@@ -269,3 +296,5 @@ None.
   plan in progress again by the red output of its own mark.
 - 2026-11-19 — `plan-red` runs the checks on the tree of the plan commit, in a temporary worktree
   past the plan commit: a plan commit rebuilt after the approval is approved again by one command.
+- 2026-11-25 — the tree may name the plans that need no roles by `planRolesCommand`.
+- 2026-11-25 — `step <N>` measures and marks a whole stage.
