@@ -22,6 +22,19 @@
 - **The plan grew from one stage to four after the reading by the roles** — `product-strategist` found
   three more red steps of the push set after the merge: scenario numbers, Angular Doctor, kit weight.
   Affected stage of the plan: all.
+- **Step 2.1 renames only the epic's titles; the main branch keeps its own** — `check-specs` does not see a
+  title left with an old number, since the number stays valid for the main scenario. Epic files:
+  `sheet-header-cards` scenarios and bindings, `rt-dynamic-selector-sheet.spec.ts` (1780),
+  `rt-autocomplete-sheet.spec.ts:172` (1781), `rt-table-filter-header.component.spec.ts:295` (1782),
+  `rt-select-sheet.spec.ts:396–437`, `rt-bottom-sheet-focus.spec.ts:204`, `rt-bottom-sheet.logic.spec.ts:12,19`
+  (1783), `rt-page-bar.component.spec.ts:146` (1784), `auth/theme` and `language-sheet.spec.ts:11`
+  (SC-AUTH-121), `admin-shell` scenario at :39 and `shell.narrow.spec.ts:37` (SC-MB-458). Main files left as
+  they are: `tokens`, `rt-scope-styles.service.spec.ts`, `tools/tests/build-tokens-split.test.sh`,
+  `popover-sheet-lazy`, `rt-popover-sheet-lazy*.spec.ts`, `auth/example` with `entry.spec.ts`,
+  `admin-shell` scenario at :186 with `shell.spec.ts`. After the step the same grep finds only the main
+  files. `pnpm run check:unused` runs after stage 3. Next after this task: the push of the epic branch and
+  the PR of the epic into the main branch, whose pipeline shoots the whole showcase. Affected stage of the
+  plan: 2, 3.
 - **Цена:** нет
 - **Отменено:** нет
 
