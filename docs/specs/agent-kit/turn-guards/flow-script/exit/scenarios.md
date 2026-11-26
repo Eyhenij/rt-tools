@@ -55,6 +55,19 @@ And after «стоп», then «продолжай» it refuses as before
 
 Covered: `tools/tests/git-guard-draft-ready.test.sh`, `projects/agent-kit/tests/conscience-guard.test.sh`, `projects/agent-kit/tests/cargo-mark-guard.test.sh`.
 
+### SC-AK-2015 — own background started before the stop holds the end of a turn until it is taken down
+
+Given «стоп» or Esc, and a background task or a `Monitor` the session started before it
+When the verdict at the end of the turn is read
+Then the turn is refused, and the refusal names `TaskStop <id>` of each task
+And a task stopped by `TaskStop`, or one whose end is already in the queue, holds nothing
+And a task started after the stop holds nothing
+And one refusal holds again, and after two the stop releases the turn; two refusals of another check naming `TaskStop` hold again
+And after «продолжай» own background holds nothing: the stop is lifted
+And the start of a `Monitor` is an event of its own, and the wait for background work does not see it
+
+Covered: `projects/agent-kit/tests/turn-exit-guard-stop.test.sh`, `projects/agent-kit/tests/background-delivery.test.sh`.
+
 ### SC-AK-1839 — Esc releases the turn until the owner writes again
 
 Given the mark of Esc with and without a tool call, and the owner's last word «стоп», «Стоп, на сегодня хватит», «не сейчас» or «подожди»

@@ -46,6 +46,8 @@
       saidStop: { owner: source.owner },
       interrupted: { owner: source.owner },
       nudged: { owner: source.owner },
+      stopCall: { owner: source.owner, session: source.session },
+      backgroundBeforeStop: { owner: source.owner, session: source.session },
     },
     session: {
       wrote: { session: source.session },
@@ -152,7 +154,8 @@
       log: 'the end of the scenario',
     },
     // The owner stops the work by a stop word or by Esc; the turns a notice wakes after either are
-    // released until a working order of `words.resume`.
+    // released until a working order of `words.resume`. Own background started before the stop is held
+    // ahead of these cases by `stopHold` of the verdict, until it is taken down or two refusals named it.
     stopWord: { when: measure.owner.saidStop, order: 2, log: 'a stop word of the owner' },
     interrupted: { when: measure.owner.interrupted, order: 3, log: 'the owner interrupted the turn' },
     // The state «работа-отдана» sends work to the background by its own action and goes on: there
@@ -196,6 +199,7 @@
       'keep going', 'go on', 'continue', 'proceed', 'go ahead', 'resume', 'carry on', 'fix it', 'do it', 'merge it',
     ],
     // A complaint about a stop is a working order, a question too: the owner's word 26.11 «Жалоба — тоже приказ».
+    // A complaint that work was not stopped is none: `notStopped` of the stop measure keeps the stop.
     stopComplaint: [
       'почему ты стоишь', 'почему стоишь', 'почему ты встал', 'почему встал', 'почему ты остановил', 'почему остановил',
       'почему ты бросил', 'почему бросил', 'снова остановил', 'опять остановил', 'снова стоишь', 'опять стоишь', 'только что стоял',

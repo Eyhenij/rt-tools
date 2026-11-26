@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.40.0 · checks/task-flow-script.mjs · 5f67303ba84c · правится надстройкой, не здесь
+// rt-kit v0.40.0 · checks/task-flow-script.mjs · b3b96f4df3fb · правится надстройкой, не здесь
 /**
  * The engine of the task flow: reads the description `flow.js` through the model and answers about
  * the scenario. The description lies next to the engine as `task-flow/flow.js` where the engine is
@@ -176,7 +176,7 @@ export function measureJson(model, result) {
     return { ...result, action: state?.action ?? null, pattern: state?.pattern ?? null };
 }
 
-const USAGE = 'usage: node task-flow-script.mjs states | measure [--json] | step <N.M>|--done [--pr] | plan-check <plan.md> | plan-red | guard | verdict | stop | forecast --days N [--until <date>] [--per-mille] [--guard]  [--flow <flow.js>]';
+const USAGE = 'usage: node task-flow-script.mjs states | measure [--json] | step <N.M>|--done [--pr] | plan-check <plan.md> | plan-red | guard | verdict | stop | stop-call | forecast --days N [--until <date>] [--per-mille] [--guard]  [--flow <flow.js>]';
 
 /**
  * What the guard guards: where the task folders and the epic plans lie, the tree override, and the
@@ -276,6 +276,20 @@ async function runStop(model, base) {
 }
 
 /**
+ * What the owner's stop refuses in the current turn, on the hook input from stdin: `{ refuseCalls,
+ * background }` as one JSON line — `background` the own tasks and monitors started before the stop,
+ * `[{ task, command }]` — exit 0 while calls are refused. The guard of calls after a stop asks it.
+ */
+async function runStopCall(model, base) {
+    const input = JSON.parse(readFileSync(0, 'utf8') || '{}');
+    if (input.transcript_path) process.env.RT_FLOW_TRANSCRIPT = input.transcript_path;
+    // The prompt opens the turn the hook judges: its entry is written into the record after the hook.
+    if (input.hook_event_name === 'UserPromptSubmit' && input.prompt) process.env.RT_FLOW_PROMPT = input.prompt;
+    const read = await openReaders(model, base);
+    return read('measure.owner.stopCall');
+}
+
+/**
  * Cleans the folder a broken step run put back, at a start of the engine, by `cleanBroken` of the
  * history source: `{ verdict, folder }` or null. A folder kept because it was edited after the run is
  * named on stderr, so nobody reads its older progress for the branch's own.
@@ -288,9 +302,9 @@ export function cleanBrokenRun() {
     return broken;
 }
 
-const COMMANDS = ['states', 'measure', 'step', 'plan-check', 'plan-red', 'guard', 'verdict', 'forecast', 'stop'];
+const COMMANDS = ['states', 'measure', 'step', 'plan-check', 'plan-red', 'guard', 'verdict', 'forecast', 'stop', 'stop-call'];
 /** The commands the hooks call: they judge by the package description when the override breaks. */
-const HOOK_COMMANDS = ['guard', 'verdict', 'stop'];
+const HOOK_COMMANDS = ['guard', 'verdict', 'stop', 'stop-call'];
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
     const args = process.argv.slice(2);
@@ -335,6 +349,10 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
             const stop = await runStop(model, dirname(path));
             console.log(JSON.stringify(stop));
             process.exit(stop.stands ? 0 : 1);
+        } else if (command === 'stop-call') {
+            const call = await runStopCall(model, dirname(path));
+            console.log(JSON.stringify(call));
+            process.exit(call.refuseCalls ? 0 : 1);
         } else if (command === 'guard') {
             console.log((await runGuard(model, dirname(path))) ?? '');
         } else if (command === 'forecast') {

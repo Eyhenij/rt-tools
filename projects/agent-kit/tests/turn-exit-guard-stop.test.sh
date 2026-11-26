@@ -128,6 +128,30 @@ out('end: SC-AK-2011 — «стоп» и вопрос: красный запус
 out('end: SC-AK-2011 — Esc: идущий запуск без слежения не держит', kindOf(holdOf([runOf({ status: 'in_progress', conclusion: null })], ESCAPED)), 'none');
 out('end: SC-AK-2011 — «стоп»: свежая вершина не держит', kindOf(holdOf([], STOPPED)), 'none');
 out('end: SC-AK-2011 — после «продолжай» красный запуск снова держит', kindOf(holdOf([runOf({})], [...STOPPED, typed('продолжай')])), 'red');
+
+// SC-AK-2015: своё фоновое и Monitor, запущенные до остановки, держат конец хода, пока их не сняли.
+const started = (kind, task, at) => ({ kind, task, at, command: `cmd ${task}` });
+const verdictOf = (entries, events) => {
+    const sources = { owner: { ...sourceOf(entries).owner, turnOpener: () => null }, session: { events: () => events } };
+    const read = (name) =>
+        name === 'measure.owner.backgroundBeforeStop' ? owner.backgroundBeforeStop(sources)(data) : name === 'measure.owner.stopCall' ? owner.stopCall(sources)(data) : reader(entries)(name);
+    const verdict = decide(model, read, stage);
+    return verdict?.block ? (verdict.block.match(/TaskStop [\w-]+/g) ?? ['block']).join(' ') : (verdict?.release ?? 'held');
+};
+const before = clock - 1_000;
+const stop2 = [typed('делай задачу'), typed('стоп')];
+const esc2 = [typed('делай задачу'), esc(30_000)];
+out('end: SC-AK-2015 — «стоп» при живом фоновом до остановки — конец хода называет TaskStop', verdictOf(stop2, [started('background', 'b1', before)]), 'TaskStop b1');
+out('end: SC-AK-2015 — Esc при живом Monitor до остановки — конец хода называет TaskStop', verdictOf(esc2, [started('monitor', 'm1', before)]), 'TaskStop m1');
+out('end: SC-AK-2015 — фоновое и Monitor — оба номера', verdictOf(stop2, [started('background', 'b1', before), started('monitor', 'm1', before)]), 'TaskStop b1 TaskStop m1');
+out('end: SC-AK-2015 — фоновое снято TaskStop — ход отпущен словом', verdictOf(stop2, [started('background', 'b1', before), { kind: 'backgroundEnd', task: 'b1', stopped: true }]), 'a stop word of the owner');
+out('end: SC-AK-2015 — конец задачи уже в очереди — ход отпущен', verdictOf(esc2, [started('background', 'b1', before), { kind: 'backgroundEnd', task: 'b1', status: 'completed' }]), 'the owner interrupted the turn');
+out('end: SC-AK-2015 — задача запущена после остановки — не держит', verdictOf(stop2, [started('background', 'b2', clock + 1_000)]), 'a stop word of the owner');
+const named = (n, text = 'Stop hook feedback: The owner stopped the work, and … TaskStop b1 …') => Array.from({ length: n }, () => ({ kind: 'refusal', text, at: clock + 1_000 }));
+out('end: SC-AK-2015 — два отказа другой проверки с TaskStop — держит', verdictOf(stop2, [started('background', 'b1', before), ...named(2, 'Stop hook feedback: wait for TaskStop b1')]), 'TaskStop b1');
+out('end: SC-AK-2015 — один отказ о фоновом — держит ещё раз', verdictOf(stop2, [started('background', 'b1', before), ...named(1)]), 'TaskStop b1');
+out('end: SC-AK-2015 — два отказа о фоновом — ход отпущен', verdictOf(stop2, [started('background', 'b1', before), ...named(2)]), 'a stop word of the owner');
+out('end: SC-AK-2015 — «продолжай» после «стоп» — фоновое не держит', verdictOf([...stop2, typed('продолжай')], [started('background', 'b1', before)]), 'held');
 JS
 )"
 code=$?
