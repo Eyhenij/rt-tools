@@ -9,6 +9,7 @@ import {
     DestroyRef,
     effect,
     ElementRef,
+    ErrorHandler,
     inject,
     input,
     InputSignal,
@@ -17,12 +18,13 @@ import {
     output,
     OutputEmitterRef,
     Signal,
+    Type,
     ViewEncapsulation,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 
-import { mergeMap, Observable, Subject } from 'rxjs';
+import { catchError, from, mergeMap, Observable, of, Subject } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
@@ -32,12 +34,42 @@ import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
-import { RtMenuConfirmDialogComponent } from './rt-menu-confirm-dialog.component';
+import type { RtMenuConfirmDialogComponent } from './rt-menu-confirm-dialog.component';
+import { confirmDialogCodeState } from './rt-menu-confirm.code';
 import { RtMenuItemIconDirective } from './rt-menu-item-icon.directive';
 import { menuItemIconName, unpairedGlyph } from './rt-menu-item.logic';
 import { RT_MENU_CONFIRM_EVENT, RT_MENU_SELECT_EVENT, IRtMenu } from './rt-menu.model';
 
 const BEM_BLOCK: string = 'rt-menu-item';
+
+/**
+ * Код диалога подтверждения приходит отдельным куском при первом подтверждении, а не на старте
+ * приложения: подтверждение нужно немногим пунктам и открывается редко. Обещание загрузки
+ * кэшируется, при сбое сбрасывается, и следующее нажатие пробует снова.
+ */
+function loadConfirmDialog(): Promise<Type<RtMenuConfirmDialogComponent>> {
+    confirmDialogCodeState.loading ??= import('./rt-menu-confirm-dialog.component').then(
+        (module: typeof import('./rt-menu-confirm-dialog.component')): Type<RtMenuConfirmDialogComponent> => {
+            confirmDialogCodeState.loaded = module.RtMenuConfirmDialogComponent;
+
+            return module.RtMenuConfirmDialogComponent;
+        },
+        (error: unknown): never => {
+            confirmDialogCodeState.loading = null;
+            throw error;
+        }
+    );
+
+    return confirmDialogCodeState.loading;
+}
+
+/**
+ * Подгружает код диалога подтверждения заранее. Приложение, которому не нужно ожидание при первом
+ * подтверждении, зовёт её в свободный момент; повторный вызов ничего не грузит.
+ */
+export function rtPreloadMenuConfirmDialog(): Promise<void> {
+    return loadConfirmDialog().then((): void => undefined);
+}
 
 /**
  * Пункт меню `rt-menu`: иконка (опц.) + лейбл. Кликабелен и активируется с
@@ -102,6 +134,7 @@ export class RtMenuItemComponent {
     readonly #elementRef: ElementRef<HTMLElement> = inject<ElementRef<HTMLElement>>(ElementRef);
     readonly #dialogService: RtDialogService = inject(RtDialogService);
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
+    readonly #errors: ErrorHandler = inject(ErrorHandler);
 
     readonly #confirmRequestSource: Subject<IRtMenu.ConfirmData> = new Subject<IRtMenu.ConfirmData>();
 
@@ -214,11 +247,26 @@ export class RtMenuItemComponent {
         // (одноразовый стрим — комплитится при закрытии модалки).
         this.#confirmRequestSource
             .pipe(
-                mergeMap((data: IRtMenu.ConfirmData): Observable<boolean | undefined> =>
-                    this.#dialogService
-                        .open<RtMenuConfirmDialogComponent, IRtMenu.ConfirmData, boolean>(RtMenuConfirmDialogComponent, { data })
-                        .afterClosed()
-                ),
+                mergeMap((data: IRtMenu.ConfirmData): Observable<boolean | undefined> => {
+                    // Код уже пришёл — диалог встаёт сразу; иначе ждём кусок один раз.
+                    const code: Observable<Type<RtMenuConfirmDialogComponent>> =
+                        confirmDialogCodeState.loaded !== null ? of(confirmDialogCodeState.loaded) : from(loadConfirmDialog());
+
+                    return code.pipe(
+                        mergeMap((dialog: Type<RtMenuConfirmDialogComponent>): Observable<boolean | undefined> =>
+                            this.#dialogService
+                                .open<RtMenuConfirmDialogComponent, IRtMenu.ConfirmData, boolean>(dialog, { data })
+                                .afterClosed()
+                        ),
+                        // Сбой загрузки куска не убивает поток подтверждений: ошибка идёт приложению,
+                        // а пункт отвечает «не подтверждено» и меню не остаётся в ожидании.
+                        catchError((error: unknown): Observable<boolean | undefined> => {
+                            this.#errors.handleError(error);
+
+                            return of(false);
+                        })
+                    );
+                }),
                 takeUntilDestroyed(this.#destroyRef)
             )
             .subscribe((confirmed: boolean | undefined = false): void => {

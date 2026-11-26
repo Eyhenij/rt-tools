@@ -8,7 +8,7 @@ import { BreakpointsService } from '../../platform';
 import { RtDialogService } from '../dialog/rt-dialog.service';
 import { RT_POPOVER_SHEET } from '../popover/rt-popover-sheet.token';
 import { RtMenuContentDirective } from './rt-menu-content.directive';
-import { RtMenuItemComponent } from './rt-menu-item.component';
+import { RtMenuItemComponent, rtPreloadMenuConfirmDialog } from './rt-menu-item.component';
 import { RtMenuComponent } from './rt-menu.component';
 
 /** Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. */
@@ -84,6 +84,10 @@ function sheetPanel(): HTMLElement | null {
 }
 
 describe('RtMenuComponent — нижняя шторка', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadMenuConfirmDialog();
+    });
+
     afterEach((): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
