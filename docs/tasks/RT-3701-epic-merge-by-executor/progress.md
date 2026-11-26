@@ -47,3 +47,53 @@
   набора и ревью; эпик в main сливает владелец. Шаг 2.3 пишет это слово в план эпика.
 - **Что помнить:** слияние кнопкой хоста подписывает коммит личным адресом машинной учётной записи;
   ветка эпика переписана 26.11 по слову владельца «Переписать и force push (Recommended)».
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/eyhenij/WebstormProjects/rt-tools
+**Branch:** RT-3701-epic-merge-by-executor
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 1 of 2 — Хук слияния знает базу и автора
+- **Next step:** этап 1, шаг 1.1 — `pullState` несёт базу.
+- **PR:** not open yet
+
+The progress in full — `docs/tasks/RT-3701-epic-merge-by-executor/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+none
+```
+
+### Commits over the main branch
+
+```
+0b8570fca docs(rt:agent-kit): правило поставки называет слияние задачи в ветку эпика исполнителем, слово владельца в плане эпика (RT-3701)
+68648298e feat(rt:agent-kit): хук слияния знает базу PR и адрес автора, слияние в main — кнопка владельца (RT-3701)
+23662c3fc docs(rt:agent-kit): план RT-3701 одобрен, форма слияния — gh pr merge --author-email (RT-3701)
+b12b81f23 docs(rt:agent-kit): план RT-3701 — исполнитель сливает задачи в ветку эпика сам, хук знает базу и автора (RT-3701)
+7f36a31f2 docs(rt:agent-kit): разбор RT-3701 и находки ревью правил эпика RT-3693 (RT-3701)
+2c43cd889 chore(rt:agent-kit): главная влита в ветку эпика RT-3693 (RT-3693)
+1609057c8 chore(rt:agent-kit): главная влита в ветку эпика RT-3693 (RT-3693)
+49e421b37 [RT-3696] Обращения к владельцу считаются командой, без повторов и по видам (#3708)
+719b6980f docs(rt:agent-kit): папка RT-3696 разобрана в архив (RT-3696)
+9649eb082 docs(rt:agent-kit): цена и отменённое в ходе работы RT-3696 (RT-3696)
+eec7b689d fix(rt:agent-kit): слова одной миллисекунды и копии на другой ветке считаются верно после второго круга ревью (RT-3696)
+31c940b7b docs(rt:agent-kit): сценарии обращений к владельцу в спецификации счётчика (RT-3696)
+a9807c8d9 fix(rt:agent-kit): копии продолженной сессии и одной миллисекунды считаются один раз после первого круга ревью (RT-3696)
+f578aa484 feat(rt:agent-kit): команда owner:touches считает обращения к владельцу на задачу, план эпика на базе 43 / 237 / 4 (RT-3696)
+e088d4748 feat(rt:agent-kit): вид набранного сообщения, второй запуск хука не пишет строки повторно (RT-3696)
+3ad95193d fix(rt:agent-kit): сообщение посреди хода, повторённое записью, считается один раз (RT-3696)
+ebb0ad31e docs(rt:agent-kit): план RT-3696 одобрен, цель вехи — медиана не выше 2, передача (RT-3696)
+c510eaa36 docs(rt:agent-kit): план RT-3696 — шаг убирает старую базу и цель из плана эпика (RT-3696)
+bcc989cbb docs(rt:agent-kit): план RT-3696 — цель вехи числом из окна, база 4 на 43 в метрике (RT-3696)
+643336f44 docs(rt:agent-kit): план RT-3696 — медиана сопоставима, схлопывание в ходе, цель вехи словом владельца (RT-3696)
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.
