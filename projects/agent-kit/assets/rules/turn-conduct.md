@@ -29,7 +29,7 @@ demand, not with the rule.
 ## Turn exits
 
 A turn ends when the scenario is over, or when the owner stopped it by a stop word or by Esc. The
-stop holds until a working order: a question, swearing or an incident record does not lift it.
+stop holds until a working order: a question, swearing or an incident record does not lift it, a complaint does.
 The exit guard measures the branch by the task flow description and
 holds every other turn with the one move that comes next, unless a release case below is met.
 

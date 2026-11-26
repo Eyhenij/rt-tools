@@ -115,7 +115,8 @@ The guards have no interface: only the agent sees them, as the text of a refusal
   read in order, and the mark of Esc is written there by the host. A line on disk is a retelling,
   written by the one the stop suits. The stop holds until a working order: a question, swearing or
   «пиши инцидент» after it does not lift it. The owner decided so on 26 November 2026: «Одобряю
-  план RT-3672».
+  план RT-3672». A complaint about the stop lifts it, a question too: «Жалоба — тоже приказ», the
+  same day.
 - **A command that closes a session or writes a handover is not a word to stop.** It cleans up and
   hands over; the work it does not mention stays ordered.
 - **A question to the owner is held only when the owner already answered it or a rule answers it

@@ -4,8 +4,8 @@
 
 - **State:** `этапы-кончились`
 - **Stage:** 3 of 3 — Тексты и раскладка
-- **Done:** этапы 1–3 — `step 1.1`–`step 3.6` совпали; первый круг ревью прочитан, находки исправлены или списаны
-- **Next step:** второй круг ревью — `qa-engineer`, `product-strategist`, `goal-critic` по всему diff ветки
+- **Done:** этапы 1–3 — `step 1.1`–`step 3.6` совпали; два круга ревью прочитаны, находки исправлены или списаны
+- **Next step:** набор перед отправкой, разбор папки задачи, PR в ветку эпика
 - **Uncommitted:** нет
 - **PR:** not open yet
 
@@ -97,6 +97,27 @@
   ход, как до задачи. `words.stopExcept` и `saysStop` мера не читает, но их читают описание и наборы — убрать их — не
   эта задача. Раздел передачи ниже пишет хук перед сжатием, и он его перепишет.
 - **Повтор судьи 1451 неустойчив и до задачи.** Пять кругов: старый текст судьи — 3 из 5, новый — 4 из 5.
+- **Второй круг: правило первого круга «набранное до Esc ничего не приказывает» снято.** Оно отошло от одобренной
+  строки «Переходы» «Esc и сообщение быстрее 2 секунд — судится само сообщение» и гасило приказы, которые владелец
+  отправляет нажатием Esc: 24.11 в 00:38:44 «Исправляй это прямо сейчас», 19.11 ночной приказ «доведи все задачи
+  эпика». Вопрос владельцу, как судить сообщение без приказа сразу после Esc, не прошёл: на первый ответ «Я не понимаю
+  тебя», на второй судья вопросов ответил, что правило уже отвечает. Ответ — строка плана эпика. Её цена: брань или
+  вопрос без приказа, доставленные сразу после Esc (24.11 в 03:41:14 и 04:04:40), отменяют Esc.
+- **Второй круг: исправлено.** Слово ожидания отменяет остановку, только если стоит сразу после слова остановки:
+  «стоп, тебе надо стоять и ждать» и «стоп! сначала спрашивай меня» — остановка. Вопрос — это предложение до «.», «!»,
+  «?» или перевода строки, точка в «0.40» его не кончает: «сука! кто тебе сказал вливай?» приказ не несёт. Часть с
+  «пока я не скажу», «я не говорил» приказ не несёт. Ключ задачи — приказ: «давай RT-3673». Одно слово «стоп» в
+  вопросе — не остановка: «как работает стоп?». Ответ меню с номером «3600» снимает остановку. Жалобы добавлены:
+  «хватит стоять», «не останавливайся», «почему встал», «работа стоит», «чего ты ждёшь»; приказы — «продолжи»,
+  «продолжаем», «работаем», английские «continue», «proceed», «go ahead», «resume», «carry on», «fix it», «do it»,
+  «merge it»; «сделай перерыв» — остановка. Правило хода, карта, миссия и файл дерева называют жалобу. Записанный ход
+  «стоп → почему ты стоишь?» с ожиданием судьи `block`.
+- **Второй круг: списано.** «почему ты остановил набор только после пятого стопа?» снимает остановку, «иди дальше
+  нахуй» тоже, «сделай сводку», «обнови память» — приказы: цена сравнения по словам, «сделай» и «обнови» назвал план.
+  «кнопка стоп» и «Стоп hook сломан» — остановка: на записях за 7 дней новое чтение дало 2 лишние остановки, обе
+  настоящие. Запасной путь меры для двойника с одним `last` нужен наборам выхода и шагов работы. Проверки конца хода
+  берут движок из `CLAUDE_PROJECT_DIR`: без команды `stop` они держат ход, как до задачи. `saysStop` и
+  `words.stopExcept` мера не читает; их читают спек языка описания и наборы SC-AK-1849, и убрать их — отдельная правка.
 
 ## Sessions
 
@@ -118,6 +139,11 @@
   них работу возвращают 18, остановку держат 38. Прогноз на окне 7 дней до 26.11 09:00 UTC: старый движок — 166
   удержаны, новый — 144. Повтор судьи — 35 из 36 (1451, неустойчив и до задачи). Наборы ветки — 0 провалов, остановка
   68 ok; knip, спеки и длина файлов — без находок.
+- После второго круга ревью: запись 24.11 — те же 4 конца хода отпущены; первые слова после Esc — 56, работу
+  возвращают 29, остановку держат 27. Прогноз на том же окне: старый движок — 166 удержаны, новый — 156. Наборы ветки —
+  0 провалов, остановка 84 ok, записанные ходы 157 ok. Повтор судьи — 35 из 37: кроме 1451 разошёлся 1933. Пять
+  кругов 1933 на новом тексте судьи и пять на старом совпали все 10: это неустойчивость судьи, текст судьи вторым
+  кругом не менялся. knip — без находок.
 
 ## Handover of the session
 
@@ -128,9 +154,9 @@ Put together by a hook before the compaction of the context (auto).
 
 ### Where we stand at the minute of the compaction
 
-- **State:** `этап-идёт`
-- **Stage:** 1 of 3 — Остановка — состояние по записи
-- **Next step:** 1.1 — замер до правки
+- **State:** `этапы-кончились`
+- **Stage:** 3 of 3 — Тексты и раскладка
+- **Next step:** набор перед отправкой, разбор папки задачи, PR в ветку эпика
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-3672-owner-stop-state/progress.md`; the plan lies next to it.
@@ -138,20 +164,35 @@ The progress in full — `docs/tasks/RT-3672-owner-stop-state/progress.md`; the 
 ### Uncommitted
 
 ```
+ M .claude/rt-kit/defaults/turn-map.md
+ M .claude/skills/turn-conduct/SKILL.md
+ M .claude/skills/turn-conduct/implementation.md
+ M docs/specs/agent-kit/turn-guards/flow-script/exit/scenarios.md
+ M docs/specs/agent-kit/turn-guards/flow-script/exit/spec.md
+ M docs/specs/agent-kit/turn-guards/mission/spec.md
  M docs/tasks/RT-3672-owner-stop-state/progress.md
- M projects/agent-kit/assets/checks/flow-data.mjs
+ M projects/agent-kit/assets/defaults/turn-map.md
+ M projects/agent-kit/assets/rules/turn-conduct.md
  M projects/agent-kit/assets/task-flow/flow.js
- M projects/agent-kit/assets/task-flow/measure/ci.mjs
+ M projects/agent-kit/assets/task-flow/flow.md
  M projects/agent-kit/assets/task-flow/measure/owner.mjs
  M projects/agent-kit/assets/task-flow/source/owner.mjs
- M projects/agent-kit/tests/judge-replay.mjs
- M projects/agent-kit/tests/turn-exit-guard.test.sh
-?? projects/agent-kit/tests/turn-exit-guard-stop.test.sh
+ M projects/agent-kit/tests/turn-exit-guard-stop.test.sh
+ M projects/agent-kit/tests/turn-replay.expected.json
+ M projects/agent-kit/tests/turn-replay.test.sh
+ M tools/task-flow/flow.js
+ M tools/task-flow/flow.md
+ M tools/task-flow/measure/owner.mjs
+ M tools/task-flow/source/owner.mjs
 ```
 
 ### Commits over the main branch
 
 ```
+eade395d3 fix(rt:agent-kit): остановка владельца после первого круга ревью (RT-3672)
+0124dbea9 docs(rt:agent-kit): спеки остановки владельца и раскладка пакета (RT-3672)
+cbe3b9c13 feat(rt:agent-kit): вторые судьи читают ту же остановку владельца (RT-3672)
+1af4d956e feat(rt:agent-kit): остановка владельца — состояние по словам записи (RT-3672)
 a2fe53a46 docs(rt:agent-kit): план RT-3672 одобрен владельцем
 f97c4c191 docs(rt:agent-kit): ход работы RT-3672 после чтения плана ролями
 ac923ca10 docs(rt:agent-kit): разбор и ход работы RT-3672

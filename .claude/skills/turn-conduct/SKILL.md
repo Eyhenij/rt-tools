@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — about one turn. Load when a turn is being ended — what it ends with, what the owner is told about a step that is theirs, what backs a statement about the tree, what the guards watch. Pattern task-flow-handoff. The whole course of work — rule task-flow.
 ---
-<!-- rt-kit v0.40.0 · rules/turn-conduct.md · 4fdcdcb2a798 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · rules/turn-conduct.md · b4c886877989 · правится надстройкой, не здесь -->
 
 # Turn conduct — how it works here
 
@@ -30,7 +30,7 @@ demand, not with the rule.
 ## Turn exits
 
 A turn ends when the scenario is over, or when the owner stopped it by a stop word or by Esc. The
-stop holds until a working order: a question, swearing or an incident record does not lift it.
+stop holds until a working order: a question, swearing or an incident record does not lift it, a complaint does.
 The exit guard measures the branch by the task flow description and
 holds every other turn with the one move that comes next, unless a release case below is met.
 

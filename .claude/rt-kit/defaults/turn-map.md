@@ -1,4 +1,4 @@
-<!-- rt-kit v0.40.0 · defaults/turn-map.md · 3d4f51e6fbe0 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · defaults/turn-map.md · 8d5cdd63cf09 · правится надстройкой, не здесь -->
 # Turn map
 
 This is not the rule but its short digest: the rule explains, the map names. The full text is
@@ -33,7 +33,7 @@ merge go on without the executor and do not get faster from being watched.
 
 - **the end of the scenario** — the engine measured it; under an epic the table of its tasks is shown
 - **a stop word of the owner** — it stands until a working order; a question, swearing or an incident
-  record after it does not lift it
+  record after it does not lift it, a complaint about the stop does
 - **the owner interrupted the turn** — they pressed Esc; a turn a background notice wakes after it
   ends too, until a working order
 

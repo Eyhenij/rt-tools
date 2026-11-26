@@ -32,7 +32,7 @@ merge go on without the executor and do not get faster from being watched.
 
 - **the end of the scenario** — the engine measured it; under an epic the table of its tasks is shown
 - **a stop word of the owner** — it stands until a working order; a question, swearing or an incident
-  record after it does not lift it
+  record after it does not lift it, a complaint about the stop does
 - **the owner interrupted the turn** — they pressed Esc; a turn a background notice wakes after it
   ends too, until a working order
 

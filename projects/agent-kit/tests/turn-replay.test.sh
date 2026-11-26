@@ -306,6 +306,7 @@ release 2012-row3-refusal-esc stage "replay: SC-AK-2012 строка 3 — от�
 hold 2012-row4-stop-then-order stage "replay: SC-AK-2012 строка 4 — «хватит тупить, чини» держит ход" "$STAGE" "$STEP"
 for n in question abuse incident; do stopped "2012-row5-stop-then-$n" stage "replay: SC-AK-2012 строка 5 — «стоп», потом $n: остановка стоит"; done
 hold 2012-row6-stop-then-merge stage "replay: SC-AK-2012 строка 6 — «стоп», потом «вливай»: ход держится" "$STAGE" "$STEP"
+hold 2012-row6-stop-then-complaint stage "replay: SC-AK-2012 строка 6 — «стоп», потом жалоба «почему ты стоишь?»: ход держится" "$STAGE" "$STEP"
 stopped 2012-row7-stop-then-no-preference stage "replay: SC-AK-2012 строка 7 — «стоп», потом «без предпочтения»: остановка стоит"
 
 # Разбор промаха: движок держит ход по этапу, а отправку судит хук модели.

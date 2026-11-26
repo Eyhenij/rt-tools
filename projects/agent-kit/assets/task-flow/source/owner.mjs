@@ -67,25 +67,13 @@ const refusalOf = (entry) =>
         ? (entry.message.content.map((part) => (part?.type === 'tool_result' ? REFUSED_WITH_TEXT.exec(resultText(part.content).trim())?.[1]?.trim() : null)).find(Boolean) ?? null)
         : null;
 
-/**
- * The owner's words, oldest first: { text, at, kind } — typed, queued, interrupt, menu or refusal; `at` in ms or null.
- * A message the host delivers from its queue was typed when it was put there: its `at` is that time.
- */
+/** The owner's words, oldest first: { text, at, kind } — typed, queued, interrupt, menu or refusal; `at` in ms or null. */
 export function wordsOf(entries) {
-    const waiting = [];
     return entries.flatMap((entry) => {
         const stamp = Date.parse(entry?.timestamp ?? entry?.attachment?.timestamp ?? '');
         const at = Number.isFinite(stamp) ? stamp : null;
-        if (entry?.type === 'queue-operation' && typeof entry.content === 'string') {
-            if (entry.operation === 'enqueue') waiting.push({ text: entry.content.trim(), at });
-            else if (entry.operation === 'remove') waiting.splice(0, waiting.length, ...waiting.filter((q) => q.text !== entry.content.trim()));
-        }
         const typed = typedOf(entry);
-        if (typed) {
-            const put = waiting.filter((q) => q.text && typed.text.includes(q.text));
-            waiting.splice(0, waiting.length, ...waiting.filter((q) => !put.includes(q)));
-            return [{ text: typed.text, at: put.length > 0 && at !== null ? Math.min(at, ...put.map((q) => q.at ?? at)) : at, kind: typed.kind }];
-        }
+        if (typed) return [{ text: typed.text, at, kind: typed.kind }];
         const refused = refusalOf(entry);
         if (refused) return [{ text: refused, at, kind: 'refusal' }];
         const word = wordOf(entry);

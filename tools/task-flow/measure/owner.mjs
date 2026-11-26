@@ -1,4 +1,4 @@
-// rt-kit v0.40.0 · task-flow/measure/owner.mjs · 47c42295de41 · правится надстройкой, не здесь
+// rt-kit v0.40.0 · task-flow/measure/owner.mjs · e2dbde70dc57 · правится надстройкой, не здесь
 /**
  * The measurer «measure.owner» — what the owner's words say about the turn: a stop that stands, an
  * interrupt, or a push to go on.
@@ -48,15 +48,26 @@ const PART_SPLIT = /[.,;]+|\s(?:и|затем|потом)\s/iu;
 /** The positions of the matches of `re` in `text`. */
 const at = (re, text) => (re ? [...text.matchAll(re)].map((match) => match.index) : []);
 
+/** The sentence from `from` is a question: it ends with «?» before «.», «!» or a new line; «0.40» is no end. */
+const asked = (text, from) => /^(?:[^.!?\n]|\.(?=\d))*\?/u.test(text.slice(from));
+
+/** A task key, «RT-3673». */
+const TASK = /(?<![\p{L}\d])[A-Z]+-\d+(?!\d)/gu;
+
+/** A part that puts the order off: «жди, пока я не скажу продолжай», «я не говорил продолжай». */
+const PUT_OFF = /(?<![\p{L}])(?:пока\s+(?:я\s+)?|я\s+)?не\s+(?:скаж|говор|сказал|велел|просил|разреш)/iu;
+
 /** The last signal of a message: 'stop', 'resume' or null. */
 function signalOf(message, words) {
     const text = unquoted(message.trim());
     const signals = [];
     const head = text.replace(/^[\s\p{P}]+/u, '');
+    const stops = [...(words.stop ?? []), ...(words.stopInside ?? []).filter((w) => !w.includes(' '))].map(escapeRe).join('|') || '(?!)';
     const opening = head.match(new RegExp(`^(?:${(words.stop ?? []).map(escapeRe).join('|') || '(?!)'})(?![\\p{L}])`, 'iu'));
-    const hold = listRe(words.holdAfter, true);
-    // «хватит останавливаться» after a stop word asks to go on: the stop before it is no signal.
-    const held = (from) => Boolean(hold && at(hold, text.slice(from)).length > 0);
+    // «хватит останавливаться», «Стоп, хватит стоять»: the word right after the stop asks to go on.
+    const holdAlt = (words.holdAfter ?? []).map(escapeRe).join('|');
+    const holdRe = holdAlt ? new RegExp(`^[\\s\\p{P}]*(?:(?:${stops})(?![\\p{L}])[\\s\\p{P}]*)?(?:${holdAlt})`, 'iu') : null;
+    const held = (from) => Boolean(holdRe?.test(text.slice(from)));
     if (opening && !held(text.length - head.length + opening[0].length)) signals.push({ at: text.length - head.length, kind: 'stop' });
     const inside = listRe(words.stopInside);
     const resume = listRe(words.resume);
@@ -67,14 +78,15 @@ function signalOf(message, words) {
     for (const part of text.split(PART_SPLIT)) {
         const start = text.indexOf(part, offset);
         offset = start + part.length;
-        // A one-word stop inside a phrase closes its part: «чини стоп-хук» names a hook, it does not stop.
+        // A one-word stop inside a phrase closes its part and asks nothing: «чини стоп-хук», «как работает стоп?».
         for (const match of inside ? part.matchAll(inside) : []) {
             const end = match.index + match[0].length;
-            if ((match[0].includes(' ') || /^[\s!?…)]*$/u.test(part.slice(end))) && !held(start + end)) signals.push({ at: start + match.index, kind: 'stop' });
+            const closes = match[0].includes(' ') || (/^[\s!?…)]*$/u.test(part.slice(end)) && !asked(text, start + match.index));
+            if (closes && !held(start + end)) signals.push({ at: start + match.index, kind: 'stop' });
         }
-        // A part with a word of `words.stay`, or one of a question, carries no order: «кто сказал вливай?».
-        if ((stay && at(stay, part).length > 0) || /^[^.!]*\?/u.test(text.slice(start))) continue;
-        for (const index of at(resume, part)) signals.push({ at: start + index, kind: 'resume' });
+        // A part with a word of `words.stay`, or one that puts the order off, carries no order; nor does a question.
+        if ((stay && at(stay, part).length > 0) || PUT_OFF.test(part)) continue;
+        for (const index of [...at(resume, part), ...at(TASK, part)]) if (!asked(text, start + index)) signals.push({ at: start + index, kind: 'resume' });
     }
     // At one place the stop wins: «сделай паузу» is a stop, not the order «сделай».
     signals.sort((a, b) => a.at - b.at || (a.kind === 'stop') - (b.kind === 'stop'));
@@ -87,7 +99,7 @@ function signalOf(message, words) {
  */
 const choosesWork = (answer, words) =>
     !listRe(words.stay, true)?.test(answer) &&
-    (/(?<![\p{L}\d])[A-Z]+-\d+(?!\d)/u.test(answer) ||
+    (/(?<![\p{L}\d])(?:[A-Z]+-\d+|\d{4,5})(?!\d)/u.test(answer) ||
         (words.menu ?? []).some((option) => new RegExp(`^${escapeRe(option).replace('RT-N', '[A-Z]+-\\d+')}`, 'iu').test(answer.trim())));
 
 /** The owner's words as the source gives them; a double with `last` alone gives its one word. */
@@ -104,20 +116,16 @@ const wordsOf = (owner) => {
 export function stopStands({ owner }, words) {
     const list = wordsOf(owner);
     let state = { stands: false, by: null };
-    let mark = null;
     list.forEach((word, index) => {
         if (word.kind === 'interrupt') {
             const next = list[index + 1];
             const gap = next && next.kind !== 'interrupt' && word.at !== null && next.at !== null ? next.at - word.at : null;
             if (!(gap !== null && gap >= 0 && gap < ESC_WINDOW)) state = { stands: true, by: 'esc' };
-            mark = word.at;
             return;
         }
-        // A message typed before the mark of Esc and delivered after it orders nothing.
-        const early = mark !== null && word.at !== null && word.at < mark;
         const signal = signalOf(word.text, words);
         if (signal === 'stop') state = { stands: true, by: 'word' };
-        else if (signal === 'resume' && !early) state = { stands: false, by: null };
+        else if (signal === 'resume') state = { stands: false, by: null };
         else if (word.kind === 'menu' && state.stands && choosesWork(word.text, words)) state = { stands: false, by: null };
     });
     return state;

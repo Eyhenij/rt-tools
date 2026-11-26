@@ -36,13 +36,13 @@ Given the owner's words of a record in order: typed, queued, Esc, a menu answer,
 When the measure reads them by the transitions
 Then Esc, a stop word at the opening of a message, «не двигайся» and «остановить работу» anywhere in it, and `/stop` from the queue set the stop
 And «хватит тупить, чини», «подожди CI и вливай», «вливай и подожди CI» and «вливай, не жди CI» do not set it
-And a message within two seconds after the mark of Esc is judged alone
-And a question, swearing, «пиши инцидент», «не вливай пока», «без предпочтения», a notice and a message of another session leave it standing
+And a message within two seconds after the mark of Esc is judged alone, one the host delivers from its queue too
+And a question, swearing, «пиши инцидент», «не вливай пока», «жди, пока я не скажу продолжай», «сука! кто тебе сказал вливай?», «без предпочтения», a notice and a message of another session leave it standing
 And a working order, a menu answer naming a task and «Одобряю план» lift it, and a menu answer «синий» does not
-And a complaint about the stop lifts it, a question too: «почему ты бросил эпик?», «ты снова остановился»
-And «отправь отчёт об инциденте в приёмник, затем продолжай работу» lifts it: the order stands in a part of its own
-And «чини стоп-хук», «Ожидание и убрать «стоп»», «keep going, don't stop» and «Стоп, хватит останавливаться» do not set it
-And a message typed before the mark of Esc and delivered after it within two seconds orders nothing
+And a complaint about the stop lifts it, a question too: «почему ты бросил эпик?», «ты снова остановился», «хватит стоять»
+And «continue», «давай RT-3673» and «отправь отчёт об инциденте в приёмник, затем продолжай работу» lift it: the order stands in a part of its own
+And «чини стоп-хук», «как работает стоп?», «Ожидание и убрать «стоп»», «keep going, don't stop» and «Стоп, хватит останавливаться» do not set it
+And «стоп, тебе надо стоять и ждать» and «стоп! сначала спрашивай меня» set it
 
 Covered: `projects/agent-kit/tests/turn-exit-guard-stop.test.sh`.
 

@@ -52,7 +52,8 @@ not by a person.
   anywhere in it, and its one word where it closes its part. «не» or «don't» before a word cancels
   it, a quoted word is named and not said. Inside one message the last signal decides, and at one
   place the stop wins. The parts of a message are split by «.», «,», «;» and by «и», «затем»,
-  «потом»; a part with a word of `words.stay`, or one of a question, carries no order. A question,
+  «потом»; a part with a word of `words.stay`, or one that puts the order off («пока я не скажу»),
+  carries no order, nor does a sentence of a question. A task key orders its task. A question,
   swearing, «пиши инцидент», «без предпочтения», a notice and a message of another session leave the
   stop standing. A menu answer that names a task or is an option of `words.menu` lifts it. «хватит останавливаться, продолжай» and
   «Стой, не туда — делай RT-N» hold the turn.
@@ -269,5 +270,6 @@ None.
 - 2026-11-26 — the stop is a state of the owner's words, not their last word: scenario 2010 holds a
   case for every transition, 2013 the three checks at the end of a turn. A question, swearing and
   «пиши инцидент» after a stop no longer lift it. After the first review round, by the owner's word
-  «Жалоба — тоже приказ», a complaint about the stop lifts it; a message typed before the mark of Esc
-  and delivered after it orders nothing.
+  «Жалоба — тоже приказ», a complaint about the stop lifts it. After the second, a message the host
+  delivers within two seconds after the mark of Esc is judged alone, as the epic plan says, even when
+  it was typed before the mark.
