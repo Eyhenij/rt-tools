@@ -1,4 +1,4 @@
-// rt-kit v0.41.0 · checks/coupling-read.mjs · 2da7b3af24d2 · правится надстройкой, не здесь
+// rt-kit v0.41.1 · checks/coupling-read.mjs · 2da7b3af24d2 · правится надстройкой, не здесь
 /**
  * The texts the import graph is built from: the working tree, a revision, what a branch itself wrote.
  *

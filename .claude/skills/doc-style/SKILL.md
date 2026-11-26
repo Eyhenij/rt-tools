@@ -4,7 +4,7 @@ kind: rule
 law: project-documentation
 description: Rule under the project-documentation law. Load when editing any .md, code comments, commits and PR descriptions. Patterns doc-style-write, -human, -sweep, -trace.
 ---
-<!-- rt-kit v0.41.0 · rules/doc-style.md · b26f4a1c044f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.1 · rules/doc-style.md · b26f4a1c044f · правится надстройкой, не здесь -->
 
 # Project texts
 
