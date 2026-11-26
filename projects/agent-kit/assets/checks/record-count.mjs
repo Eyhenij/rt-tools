@@ -208,10 +208,16 @@ export function refusals(entries) {
     return out;
 }
 
-/** The owner's words of the entries, oldest first; an entry copied into a resumed session counts once. */
+/**
+ * The owner's words of the entries, oldest first; an entry copied into a resumed session counts once.
+ * A queued message the record repeats within one turn — the harness writes the same queued entry again
+ * a millisecond later — counts once too; the turn ends at the next typed word of that session, so two
+ * real messages with the same text in different turns count twice.
+ */
 export function ownerWords(entries) {
     const seen = new Set();
     const words = [];
+    const queuedInTurn = new Map();
     for (const entry of entries) {
         const id = entry?.uuid ?? entry?.attachment?.delivery_id;
         if (id && seen.has(id)) continue;
@@ -219,8 +225,11 @@ export function ownerWords(entries) {
         const word = typedOf(entry);
         if (!word) continue;
         const session = entry.sessionId ?? null;
+        const turn = queuedInTurn.get(session) ?? [];
+        if (word.kind === 'queued' && turn.some((text) => same(text, word.text))) continue;
         const repeat =
             word.kind === 'typed' && words.some((w) => w.kind === 'queued' && w.session === session && same(w.text, word.text));
+        queuedInTurn.set(session, word.kind === 'queued' ? [...turn, word.text] : []);
         if (repeat) continue;
         words.push({ ...word, at: entry.timestamp ?? entry.attachment?.timestamp ?? null, session });
     }

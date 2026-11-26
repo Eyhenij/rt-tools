@@ -244,4 +244,18 @@ report "SC-AK-1747 — отказы проверки правил разложе
 report "SC-AK-1748 — правила, доставленные без отказа, считаются по заметке доставки" \
     "$(count "$WORK/gate.jsonl" gateOf 'r.delivered' 2026-11-18)" "2"
 
+# --- a queued message the record repeats ---------------------------------------------------------------
+# Записи 23.11: одно сообщение посреди хода лежит в записи несколько раз через миллисекунду, под разными
+# идентификаторами. В одном ходе оно одно; то же сообщение в следующем ходе — уже второе.
+cat > "$WORK/queued-repeat.jsonl" <<'EOF'
+{"type":"user","uuid":"q0","sessionId":"s1","timestamp":"2026-11-23T10:04:00Z","message":{"role":"user","content":"делай задачу"}}
+{"type":"attachment","uuid":"q1","sessionId":"s1","timestamp":"2026-11-23T10:04:54.500Z","attachment":{"type":"queued_command","commandMode":"prompt","origin":{"kind":"human"},"prompt":"продолжай","delivery_id":"e1"}}
+{"type":"attachment","uuid":"q2","sessionId":"s1","timestamp":"2026-11-23T10:04:54.501Z","attachment":{"type":"queued_command","commandMode":"prompt","origin":{"kind":"human"},"prompt":"продолжай","delivery_id":"e2"}}
+{"type":"attachment","uuid":"q3","sessionId":"s1","timestamp":"2026-11-23T10:04:54.502Z","attachment":{"type":"queued_command","commandMode":"prompt","origin":{"kind":"human"},"prompt":"продолжай","delivery_id":"e3"}}
+{"type":"user","uuid":"q4","sessionId":"s1","timestamp":"2026-11-23T10:10:00Z","message":{"role":"user","content":"следующая"}}
+{"type":"attachment","uuid":"q5","sessionId":"s1","timestamp":"2026-11-23T10:11:00Z","attachment":{"type":"queued_command","commandMode":"prompt","origin":{"kind":"human"},"prompt":"продолжай","delivery_id":"e4"}}
+EOF
+report "SC-AK-2004 — сообщение посреди хода, повторённое записью в одном ходе, — одно; в следующем ходе — второе" \
+    "$(count "$WORK/queued-repeat.jsonl" ownerWords 'r.map((w) => w.kind).join(" ")')" "typed queued typed queued"
+
 suite_result "счётчик записи разговора"
