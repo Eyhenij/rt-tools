@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.41.1 · defaults/project.sh · cf27ac4e8132 · правится надстройкой, не здесь
+# rt-kit v0.41.1 · defaults/project.sh · 247f9ceec41a · правится надстройкой, не здесь
 # Tree profile: what checks an edit here and what counts as reinvention.
 #
 # The package default. Everything the trees of this workshop have in common lives here: the Nx
@@ -343,11 +343,7 @@ RT_BOARD_EPIC_LABEL="${RT_BOARD_EPIC_LABEL:-}"
 # The default stays silent, and then the signature is not judged: the package has no machine account
 # of its own, and an invented one would refuse work in someone else's tree.
 RT_COMMIT_EMAIL="${RT_COMMIT_EMAIL:-}"
-
-# Whether the executor's merge into the main branch is refused: `1` leaves it to the owner's button,
-# the merge of a task into its epic branch stays the executor's. The default stays silent: the law
-# lets a word named in advance cover the epic into the main branch, and a tree says otherwise itself.
-RT_MAIN_MERGE_BY_OWNER="${RT_MAIN_MERGE_BY_OWNER:-}"
+RT_MAIN_MERGE_BY_OWNER="${RT_MAIN_MERGE_BY_OWNER:-}" # 1: the executor's merge into main is refused; silent by default
 
 # The task state as one object: exists, open, onBoard, assigned, numbered. Asks the work queue
 # helper — the same one the audit and the create command use, so that the guard and the queue

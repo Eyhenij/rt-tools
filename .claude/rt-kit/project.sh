@@ -37,13 +37,9 @@ RT_STANDS='the receiver http://localhost:3000, the admin panel http://localhost:
 #
 # The same account stands as the assignee of the tasks: what it creates is visible both to the
 # owner and to the audits. The former one, `rt-tools-agent`, was limited by the hosting — under it
-# the owner had to be set as the assignee — and with the move to the new one that departure is
-# lifted.
+# the owner had to be set as the assignee — and with the move to the new one that departure is lifted.
 RT_COMMIT_EMAIL='317887029+rt-tools-dev@users.noreply.github.com'
-
-# The merge into the main branch is the owner's button here; the executor merges the tasks of an epic
-# into its branch by the owner's word on that epic (epic RT-3693, 26.11).
-RT_MAIN_MERGE_BY_OWNER=1
+RT_MAIN_MERGE_BY_OWNER=1 # the merge into main is the owner's button; an epic's tasks into its branch — the executor's
 
 # What the machine account's token is substituted into a call by, and how that substitution looks
 # whole. The hosting client is signed in as the owner, so a call without the substitution goes from

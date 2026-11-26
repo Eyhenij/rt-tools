@@ -97,3 +97,15 @@ machine record was judged, and an undeclared record passed silently
 Given the mails of the people are not named in the profile
 When the delivery guard judges the same send
 Then it stays silent: demanding a known signature of every commit would refuse work done by hand
+
+### SC-AK-2008 — the merge names the declared author
+
+Given a tree that declares the machine account's email, and a request into an epic branch
+When the merge command names no author, or a foreign one
+Then the guard refuses and names the declared email, while `--author-email` or `-A` with it passes
+
+### SC-AK-2009 — the merge into the main branch is the owner's where the tree says so
+
+Given a tree with `RT_MAIN_MERGE_BY_OWNER=1`
+When the executor merges a request into the main branch, or one whose base the host did not name
+Then the guard refuses, and without the setting the merge into the main branch is not judged
