@@ -178,6 +178,20 @@ The table in `implementation.md` next to it.
   the executor merges only what the owner said to merge.
 - A claim about the tree in a reply without the command that showed it.
 
+## Why the commands of the run pattern stand so
+
+- **A round with nothing to fix still leaves its commit,** with `--allow-empty` and the written-off
+  findings in the body: `tools/task-rework.mjs` counts it as 0 lines, and a task with no commit of the
+  round reads as a round not recorded and stays out of the median.
+- **The identity is prefixed to the commit only:** exported, it reaches a push in the same call. The four
+  variables are written out in the command, never packed into one: zsh does not split `$E` into words,
+  so `env $E git commit` passes one argument, and the commit leaves under the local identity.
+- **A merged base is seen by the list of merged PRs:** the host keeps a merged branch, so `git ls-remote`
+  does not show it. The merge carries the machine identity; a re-signing amend goes by a call of its own,
+  since the push guard judges the commits before the amend.
+- **The own showcase and stand are stopped before the run ahead:** under their load an end-to-end suite
+  went red and was green alone.
+
 ## What of the law is not here
 
 Neither the review rounds nor the live check are counted by a guard, and the number of serious findings is the

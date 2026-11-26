@@ -109,6 +109,10 @@ A plan of the light path holds what the engine asks for and no more:
 | --- | --- |
 | Code (правится) | `<path>` |
 
+## Решение
+
+Решения нет: правка не добавляет символов, она меняет только <что>
+
 ## Этапы
 
 ### 1. <name>
@@ -185,13 +189,8 @@ GIT_AUTHOR_NAME=rt-tools-dev GIT_AUTHOR_EMAIL=$EM GIT_COMMITTER_NAME=rt-tools-de
     GIT_COMMITTER_EMAIL=$EM git -c commit.gpgsign=false commit -q -F <message file>
 ```
 
-The subject: `<type>(<scope>): <что изменилось> после первого круга ревью (RT-N)`. A round with
-nothing to fix still leaves its commit, with `--allow-empty` and the written-off findings in the body:
-`tools/task-rework.mjs` counts it as 0 lines, and a task with no commit of the round reads as a round
-not recorded and stays out of the median. The identity is prefixed to the commit only: exported, it
-reaches a push in the same call. The four variables are written out in the command, never packed into
-one: zsh does not split `$E` into words, so `env $E git commit` passes one argument, and the commit
-leaves under the local identity.
+The subject: `<type>(<scope>): <что изменилось> после первого круга ревью (RT-N)`; a round with nothing to
+fix leaves its commit by `--allow-empty`. Why, and why the identity stands so: the cold part of the rule.
 
 ## 9, 11–12. Closing, the push set, the push
 
@@ -215,12 +214,8 @@ git fetch -q origin; git log --oneline HEAD..origin/<base>   # not empty: the ba
 test -e "$(git rev-parse --git-path MERGE_HEAD)" || node tools/archive-prune.mjs --apply   # its own commit
 ```
 
-The host keeps a merged branch, so `git ls-remote` does not show that the base merged: the list of
-merged PRs does. The merge carries the machine identity; a re-signing amend goes by a call of its own,
-since the push guard judges the commits before the amend.
-
-The own showcase and stand are stopped before the run ahead: under their load an end-to-end suite
-went red and was green alone.
+A merged base is seen by the list of merged PRs, not by `git ls-remote`; a re-signing amend goes by a call of
+its own. The reasons, and why the own stands stop: the cold part of the rule.
 
 The heavy steps run ahead by a call of their own, in the background, on a clean copy. The output
 goes to a log outside the working copy, named by the copy, and nothing stands after the set: the
