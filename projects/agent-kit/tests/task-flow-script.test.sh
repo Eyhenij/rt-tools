@@ -105,6 +105,16 @@ out('local: SC-AK-1557 — голое имя в строке следа нахо
 out('local: SC-AK-1557 — путь без корня находится отрезком', run(footprint.touched, after(['| Tests (правится) | `fixtures/turn-replay/` |'], { 'projects/kit/tests/fixtures/turn-replay/a.json': 'a' })), 'true');
 out('local: SC-AK-1557 — голое имя без правки — не выход', run(footprint.touched, after(BARE, { 'projects/kit/flow.js': 'a' })), 'false');
 out('local: SC-AK-1377 — план без пометок, Rules без правок — выход', run(footprint.touched, after(['| Rules | `docs/rules/a.md` |'], { 'x.md': 'y' })), 'true');
+const mask = (path, file) => run(footprint.touched, after([`| Code (правится) | \`${path}\` |`], { [file]: 'a' }));
+out('SC-AK-1977 — «*» в следе: файл в каталоге тронул путь', mask('tools/*.mjs', 'tools/a.mjs'), 'true');
+out('SC-AK-1977 — «*» не держит косой черты: файл глубже мимо', mask('tools/*.mjs', 'tools/a/b.mjs'), 'false');
+out('SC-AK-1977 — «**/» в начале: файл на любой глубине', mask('**/x.sh', 'a/b/x.sh'), 'true');
+out('SC-AK-1977 — «**/» в начале: файл в корне', mask('**/x.sh', 'x.sh'), 'true');
+out('SC-AK-1977 — «*» посреди пути: каталог под маской', mask('dir/*/a', 'dir/b/a/c.md'), 'true');
+out('SC-AK-1977 — «*» посреди пути не пуст: каталог без звена мимо', mask('dir/*/a', 'dir/a/c.md'), 'false');
+out('SC-AK-1977 — точка в имени — буква, не любой знак', mask('a.b/*.mjs', 'aXb/c.mjs'), 'false');
+out('SC-AK-1977 — маска не задевает имени длиннее себя', mask('tools/*.mjs', 'tools/a.mjs.bak'), 'false');
+out('SC-AK-1977 — прежний путь без маски отвечает так же', mask('docs/rules/a.md', 'docs/rules/a.md'), 'true');
 out('local: SC-AK-1377 — каталог proposed/ в вершине держит выход', run(footprint.touched, { commits: [{ sha: 'p', files: { [`${F}/plan.md`]: PLAN(DRAFT, ['| Rules | `docs/rules/a.md` |']), 'docs/specs/a/proposed/f/spec.md': 's' } }] }), 'false');
 
 // SC-AK-1378 — выход 9: запись в архиве
@@ -470,6 +480,7 @@ report "local: SC-AK-1371 — метка не JSON читается отсутс
 
 # --- Шаг плана, одобрение, фоновые задачи, прогноз, шаг после разбора папки и влитая база ---------
 . "$TESTS/task-flow-script-steps.test.sh"
+. "$TESTS/task-flow-script-recheck.test.sh"
 . "$TESTS/task-flow-script-node.test.sh"
 . "$TESTS/task-flow-script-session.test.sh"
 . "$TESTS/task-flow-script-forecast.test.sh"

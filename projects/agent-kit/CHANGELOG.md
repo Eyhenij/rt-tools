@@ -1,3 +1,54 @@
+# [0.40.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.39.1...rt-agent-kit%400.40.0) (2026-11-25)
+
+**Метрика выпуска:** принято с первого раза, вверх
+
+### Bug Fixes
+
+- **rt:agent-kit:** защита слога, узнавание записи и заведение эпика после второго круга ревью (RT-3589) ([881d864](https://github.com/Eyhenij/rt-tools/commit/881d864405f6bdadf42a8632205d69837870ac17))
+- **rt:agent-kit:** защиты, движок шагов и заведение эпика после первого круга ревью (RT-3589) ([b1d4c65](https://github.com/Eyhenij/rt-tools/commit/b1d4c65254dd9ca34443ac37b13ef8d5322586f5))
+- **rt:agent-kit:** защиты, проверки и тексты после первого круга ревью (RT-3607) ([7d408e1](https://github.com/Eyhenij/rt-tools/commit/7d408e198b1a83197b4eda6d8759608001bc3c5c))
+- **rt:agent-kit:** защиты, слияние и тексты после второго круга ревью (RT-3607) ([b296e2a](https://github.com/Eyhenij/rt-tools/commit/b296e2a49297103e3ed7a354ba42aea3dcd90050))
+- **rt:agent-kit:** защиты, статьи и скрипты дерева по оставшимся находкам эпика (RT-3607) ([04168c4](https://github.com/Eyhenij/rt-tools/commit/04168c420df5f93f0d65e660aebf867fb142e6ed))
+- **rt:agent-kit:** измерение зацепления после второго круга ревью (RT-3609) ([82b39ae](https://github.com/Eyhenij/rt-tools/commit/82b39ae2a2c57510859f2ecaa2b91cd1a3802430))
+- **rt:agent-kit:** измерение зацепления после первого круга ревью (RT-3609) ([47939f3](https://github.com/Eyhenij/rt-tools/commit/47939f31ec99d37fb73b6c4416fd7a60b6b8c1d5))
+- **rt:agent-kit:** мерило «Решения» после второго круга ревью (RT-3611) ([5efd92e](https://github.com/Eyhenij/rt-tools/commit/5efd92e00a03400391dde563643cf9273db02b32))
+- **rt:agent-kit:** мерило «Решения» после первого круга ревью (RT-3611) ([590c7c0](https://github.com/Eyhenij/rt-tools/commit/590c7c06dff825b3634431dcc6ef18b2da9d21b6))
+- **rt:agent-kit:** мерило «Решения» после третьего круга ревью (RT-3611) ([c9e9a55](https://github.com/Eyhenij/rt-tools/commit/c9e9a558e5f63f7e39fde2c4c64cd356f4b5dc40))
+- **rt:agent-kit:** правило проектирования после второго круга ревью (RT-3608) ([096e776](https://github.com/Eyhenij/rt-tools/commit/096e7763f421a0597fe91f2c15fae8d4fcce45f6))
+- **rt:agent-kit:** правило проектирования после первого круга ревью (RT-3608) ([713e896](https://github.com/Eyhenij/rt-tools/commit/713e89605c0c32f177f127ab8e0dcc093b8c319e))
+- **rt:agent-kit:** правки после второго круга ревью (RT-3587) ([22137b3](https://github.com/Eyhenij/rt-tools/commit/22137b34b6c7923cba1699ac191e4076acf48426))
+- **rt:agent-kit:** правки после первого круга ревью (RT-3587) ([60f710a](https://github.com/Eyhenij/rt-tools/commit/60f710aaaa84afcfc56eba404499588b547c9491))
+- **rt:agent-kit:** признак копии, превышения и коммиты задачи после второго круга ревью (RT-3612) ([ae0013e](https://github.com/Eyhenij/rt-tools/commit/ae0013e3217b97866ee311966f4ce23a0997c529))
+- **rt:agent-kit:** проверка состава набора читает профиль с корнем своего дерева (RT-3612) ([bd84ff2](https://github.com/Eyhenij/rt-tools/commit/bd84ff26f77a9accfe707aed846d5f4cc5a9abaf))
+- **rt:agent-kit:** разбор зацепления отдельным модулем и ответ роли на новом тексте после третьего круга ревью (RT-3612) ([ea0861f](https://github.com/Eyhenij/rt-tools/commit/ea0861f3baf9aa9e048c2feb29d03a9e332df348))
+- **rt:agent-kit:** разбор цели записи после второго круга ревью (RT-3615) ([3f8326c](https://github.com/Eyhenij/rt-tools/commit/3f8326c74c539d75f9df983f54f7bedf8d4f9f19))
+- **rt:agent-kit:** разбор цели записи после первого круга ревью (RT-3615) ([1cfcf1c](https://github.com/Eyhenij/rt-tools/commit/1cfcf1c5d49cea47d2ff19113f15e813aa099f4d))
+- **rt:agent-kit:** разбор цели записи после чтения плана ролями (RT-3615) ([10e48f8](https://github.com/Eyhenij/rt-tools/commit/10e48f8056599d1c1a7c5bcd82ea4cf73453727a))
+- **rt:agent-kit:** раздел «Решение» после второго круга ревью (RT-3610) ([c64a23f](https://github.com/Eyhenij/rt-tools/commit/c64a23f903965ee23215930007095c8e989a408e))
+- **rt:agent-kit:** раздел «Решение» после первого круга ревью (RT-3610) ([01f2dc9](https://github.com/Eyhenij/rt-tools/commit/01f2dc9e6c4162a471f9c25ff69ab65683fa056a))
+- **rt:agent-kit:** роль, конвейер и команда после первого круга ревью (RT-3612) ([8512d92](https://github.com/Eyhenij/rt-tools/commit/8512d927118b1de2b4a32804ae9e3013926c5f83))
+- **rt:agent-kit:** снятие бюджета не снимает удалённого места того же файла (RT-3611) ([8d413cb](https://github.com/Eyhenij/rt-tools/commit/8d413cbc0e8476facc1c3ce0894cc5711ace072a))
+- **rt:agent-kit:** цель записи читает один разбор (RT-3615) ([72a819d](https://github.com/Eyhenij/rt-tools/commit/72a819d28fea6e2600aa6925eb376406d76a0f3d))
+
+### Features
+
+- **rt:agent-kit:** до границы ночи защиты дают умолчание вместо окна (RT-3587) ([d63f8c9](https://github.com/Eyhenij/rt-tools/commit/d63f8c97fa3562845a3ae41c871b6fad1eaed8d8))
+- **rt:agent-kit:** зацепление модулей измеряется, а новый цикл, обход входа и рост отказаны (RT-3609) ([4b3735a](https://github.com/Eyhenij/rt-tools/commit/4b3735ac77f05dd5f4655dd1ab0624b407d678ff))
+- **rt:agent-kit:** защиты и проверки пакета по находкам ревью эпика Angular Doctor (RT-3589) ([600f5d2](https://github.com/Eyhenij/rt-tools/commit/600f5d2eacdd84de2f9984845b8d7644019ca993))
+- **rt:agent-kit:** мерило сравнивает код вершины с «Решением» плана (RT-3611) ([ff126de](https://github.com/Eyhenij/rt-tools/commit/ff126dea456e21162be31d3db60b1e98c7ee8397))
+- **rt:agent-kit:** план без раздела «Решение» не записывается и не одобряется (RT-3610) ([ce15297](https://github.com/Eyhenij/rt-tools/commit/ce1529760c11a5baaa1612b20aea8bb14e5de18c))
+- **rt:agent-kit:** правило проектирования кода и таблица приёмов (RT-3608) ([f339749](https://github.com/Eyhenij/rt-tools/commit/f339749b319e38818bad223e12a54cbce9fb3479))
+- **rt:agent-kit:** правило проектирования приходит на разборе, плане и коде (RT-3608) ([e609f4a](https://github.com/Eyhenij/rt-tools/commit/e609f4a89bbe2b56a127557906a8d9fc1504f42c))
+- **rt:agent-kit:** ревью смотрит структуру кода, команда считает переделки (RT-3612) ([afab7a9](https://github.com/Eyhenij/rt-tools/commit/afab7a992f2e0352bf00a01f6af254b25fca5a44))
+
+### Performance Improvements
+
+- **rt:agent-kit:** мерило «Решения» считает один раз на вершину и читает меньше версий (RT-3611) ([78d2be2](https://github.com/Eyhenij/rt-tools/commit/78d2be26ebff347da87f661c0caac32b608f9b9e))
+
+### Reverts
+
+- Revert "fix(rt:agent-kit): проверка состава набора читает профиль с корнем своего дерева (RT-3612)" ([aa8f225](https://github.com/Eyhenij/rt-tools/commit/aa8f225c43ba099d9193c99135db7a9f49b57b3c))
+
 ## [0.39.1](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.39.0...rt-agent-kit%400.39.1) (2026-11-24)
 
 **Метрика выпуска:** отказов проверок turn-exit-guard, вниз

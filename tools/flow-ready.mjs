@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.39.1 · checks/flow-ready.mjs · 8443c03f6de0 · правится надстройкой, не здесь
+// rt-kit v0.40.0 · checks/flow-ready.mjs · 8443c03f6de0 · правится надстройкой, не здесь
 /**
  * Whether the task folder of the checked-out branch can be taken apart: every step done, the
  * footprint of the plan touched, and the plan with the grill as the commit of the plan holds them.

@@ -8,13 +8,13 @@ description: A pattern of the rule task-delivery-loop. Take it at each step of t
 # Ready commands for the task delivery loop
 
 A pattern of the rule `task-delivery-loop`; the steps are numbered as there. `N` is the task number, `E` the epic
-card, `<base>` the base of the branch: the previous branch of the chain, the epic branch or `main`. Shell variables do not live from one call to the next,
-so every block sets the client and the token itself.
+card, `<base>` the base of the branch: the previous branch of the chain, the epic branch or `main`, `<plan>` the
+file `docs/tasks/RT-N-<slug>/plan.md`. Shell variables do not live from one call to the next, so every block sets the client and the token itself.
 
 Every call with the token starts with `test -s`: an empty or missing file would leave the variable
 empty, and the client answers from the owner's account. A block of several calls makes them through
-`bot`, where the check stands in each: one check on the first line would let the next lines run. Its
-«no machine token» is no empty answer.
+`bot`, where the check stands in each: one check on the first line would let the next lines run. Its «no
+machine token» is no empty answer.
 
 ## 2–3. The task and its branch
 
@@ -76,8 +76,8 @@ cache, and the showcase frames fall with ECONNRESET beside the tests of the pack
 The live check runs in the pinned Chrome. If it does not hold the local tab, the same measurement is
 made in the app's built-in browser, and the progress names it.
 
-A stand of another copy may already hold the port. Who listens is asked first; a held port is
-taken by the variables of the stand, not by stopping the neighbour:
+A stand of another copy may already hold the port. Who listens is asked first; a held port is taken by
+the variables of the stand, not by stopping the neighbour:
 
 ```bash
 lsof -nP -iTCP:6007 -sTCP:LISTEN; lsof -nP -iTCP:3310 -sTCP:LISTEN; lsof -nP -iTCP:4310 -sTCP:LISTEN
@@ -109,6 +109,10 @@ A plan of the light path holds what the engine asks for and no more:
 | --- | --- |
 | Code (правится) | `<path>` |
 
+## Решение
+
+Решения нет: <причина словами>
+
 ## Этапы
 
 ### 1. <name>
@@ -118,7 +122,8 @@ A plan of the light path holds what the engine asks for and no more:
        Check: `<command>` → <expected>
 ```
 
-The words «API и вид не меняются» are dropped for a change outside the packages. Before the menu of
+«Решения нет» stands only where the change adds no code file, suite or symbol; otherwise the table of the
+pattern `code-design-choose`. The words «API и вид не меняются» are dropped for a change outside the packages. Before the menu of
 the approval the path is asked, and any answer but `none` sends the plan to both roles first:
 
 ```bash
@@ -133,6 +138,7 @@ The path is asked first, then the diff goes to a file. Reviewers get the file an
 ```bash
 node tools/review-path.mjs --base origin/<base>
 git diff origin/<base>...HEAD > <scratchpad>/review-N.diff
+node tools/check-coupling.mjs --base=origin/<base> > <scratchpad>/coupling-N.txt 2>&1
 ```
 
 On the light path the round is `qa-engineer` and `goal-critic`, on the full path `product-strategist`
@@ -163,7 +169,15 @@ scenario or a mutant goes in a temporary directory of your own, one at a time. A
 number, never by a name.
 ```
 
-`qa-engineer` gets the agreement and the review lens of `.claude/workflows/feature.js`.
+`qa-engineer` also gets this line, after the frame:
+
+```text
+The plan: <plan>; the coupling against the base: <scratchpad>/coupling-N.txt.
+```
+
+`qa-engineer` gets the agreement, the lens `review` of `.claude/workflows/feature.js`, the plan and the
+coupling for the section «Structure of the code» of its role: the green set does not show the coupling. The
+lens `structure` is the pipeline's, where no diff is given.
 `product-strategist` gets the plan's points and their signs. `goal-critic` gets the owner's words
 from the grill and the result, never the plan. The replies of the roles are saved to a file of the
 scratchpad as they come: the PR body takes their tables word for word.
@@ -176,11 +190,10 @@ GIT_AUTHOR_NAME=rt-tools-dev GIT_AUTHOR_EMAIL=$EM GIT_COMMITTER_NAME=rt-tools-de
     GIT_COMMITTER_EMAIL=$EM git -c commit.gpgsign=false commit -q -F <message file>
 ```
 
-The subject: `<type>(<scope>): <что изменилось> после первого круга ревью (RT-N)`. The identity is
-prefixed to the commit only: exported, it reaches a push in the same call. The four variables are
-written out in the command, never packed into one:
-zsh does not split `$E` into words, so `env $E git commit` passes one argument, and the commit leaves
-under the local identity.
+The subject: `<type>(<scope>): <что изменилось> после первого круга ревью (RT-N)`; a round whose findings are
+all written off leaves its commit by `--allow-empty`, the written-off findings in the body. The four variables
+are written out in the command, never packed into one. Why: `task-delivery-loop/pitfalls.md`, «Why the
+commands of the run pattern stand so».
 
 ## 9, 11–12. Closing, the push set, the push
 
@@ -196,21 +209,17 @@ GIT_AUTHOR_EMAIL=$EM GIT_COMMITTER_EMAIL=$EM \
 node tools/check-specs.mjs; node tools/check-doc-paths.mjs
 ```
 
-After the merge and the texts, by a call of its own: the pruning writes into the index, and after a
-conflict its removals would leave in the commit of the merge. The same block asks the base again after
-the fixes of round two:
+After the merge and the texts, by a call of its own: the pruning writes into the index, and after a conflict its
+removals would leave in the commit of the merge. The same block asks the base again after the fixes of round two:
 
 ```bash
 git fetch -q origin; git log --oneline HEAD..origin/<base>   # not empty: the base moved, the block above
 test -e "$(git rev-parse --git-path MERGE_HEAD)" || node tools/archive-prune.mjs --apply   # its own commit
 ```
 
-The host keeps a merged branch, so `git ls-remote` does not show that the base merged: the list of
-merged PRs does. The merge carries the machine identity; a
-re-signing amend goes by a call of its own, since the push guard judges the commits before the amend.
-
-The own showcase and stand are
-stopped before the run ahead: under their load an end-to-end suite went red and was green alone.
+A merged base is seen by the list of merged PRs, not by `git ls-remote`; a re-signing amend goes by a call of
+its own; the own showcase and stand stop before the run ahead. Why: the same section of
+`task-delivery-loop/pitfalls.md`.
 
 The heavy steps run ahead by a call of their own, in the background, on a clean copy. The output
 goes to a log outside the working copy, named by the copy, and nothing stands after the set: the
@@ -311,4 +320,9 @@ git fetch -q origin; git fetch -q origin main:main || git merge -q --ff-only ori
 bot api repos/Eyhenij/rt-tools/pulls/<pr> --jq '{merged, merged_at}'
 bot api repos/Eyhenij/rt-tools/issues/N --jq .state
 npm run -s check:board
+node tools/task-rework.mjs RT-N                    # the lines of the first round, the files outside the footprint
 ```
+
+The numbers of the task go into the archive record. The milestone of an epic is judged after the kit release
+by `node tools/task-rework.mjs --since=<the release tag>` on the twentieth merge after it: the report takes every
+merge after the tag, so the release opens a card for that run.

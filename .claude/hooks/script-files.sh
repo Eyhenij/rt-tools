@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/script-files.sh · 04c244678d04 · правится надстройкой, не здесь
+# rt-kit v0.40.0 · hooks/script-files.sh · 04c244678d04 · правится надстройкой, не здесь
 # The script files a shell command runs, for the guards that judge a command by its text.
 #
 # NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The parse of write

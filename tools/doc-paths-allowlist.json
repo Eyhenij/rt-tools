@@ -19,6 +19,10 @@
     "projects/utils/CHANGELOG.md": {
       "reason": "the changelog is gathered by the release command: the addresses in it describe the day of the record, they are not edited, and there is nothing to match them against",
       "task": "RT-362"
+    },
+    "projects/agent-kit/tests/fixtures/structure-review/role-reply.md": {
+      "reason": "the recorded reply of the review role on a sample: its addresses are files of the sample's own tree, which does not exist here, and the reply is kept word for word",
+      "task": "RT-3612"
     }
   },
   "paths": {

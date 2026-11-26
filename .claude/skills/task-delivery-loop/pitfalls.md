@@ -1,6 +1,7 @@
 # Every task through a live check and a review — cold part
 
-What the rule `task-delivery-loop` handed over when cut to its statements, every article whole.
+What the rule `task-delivery-loop` handed over when cut to its statements, every article whole, and the
+reasons behind the commands of the pattern `task-delivery-loop-run`.
 
 A rule of this tree under the law `docs/constitution/work-conduct.md`. The rule `task-flow` leads
 one task from the request to the merge and names no review before the push. This loop stands on
@@ -116,7 +117,8 @@ The table in `implementation.md` next to it.
    `nx affected -t test-hooks`. The numbers go into the progress.
 7. **Review round one: the path first, then its roles in one message.** `node tools/review-path.mjs
    --base origin/<base>` names the path; a light plan whose diff came out full goes on by the full
-   path. `qa-engineer` reads the diff file with the review lens of `.claude/workflows/feature.js` and
+   path. `qa-engineer` reads the diff file with the lens `review` of `.claude/workflows/feature.js`, the
+   plan and the coupling against the base by the section «Structure of the code» of its role, and
    edits nothing. `goal-critic` compares the result with the owner's words in the grill and never
    gets the plan. On the full path `product-strategist` runs the signs of the plan's points; on the
    light path the executor runs them.
@@ -176,6 +178,20 @@ The table in `implementation.md` next to it.
 - A merge without the owner's word: the rule `git-workflow` keeps the button with a person, and
   the executor merges only what the owner said to merge.
 - A claim about the tree in a reply without the command that showed it.
+
+## Why the commands of the run pattern stand so
+
+- **A round whose findings are all written off still leaves its commit,** with `--allow-empty` and the
+  written-off findings in the body; a round without any finding closes by the record in the progress: `tools/task-rework.mjs` counts it as 0 lines, and a task with no commit of the
+  round reads as a round not recorded and stays out of the median.
+- **The identity is prefixed to the commit only:** exported, it reaches a push in the same call. The four
+  variables are written out in the command, never packed into one: zsh does not split `$E` into words,
+  so `env $E git commit` passes one argument, and the commit leaves under the local identity.
+- **A merged base is seen by the list of merged PRs:** the host keeps a merged branch, so `git ls-remote`
+  does not show it. The merge carries the machine identity; a re-signing amend goes by a call of its own,
+  since the push guard judges the commits before the amend.
+- **The own showcase and stand are stopped before the run ahead:** under their load an end-to-end suite
+  went red and was green alone.
 
 ## What of the law is not here
 

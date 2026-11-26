@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/git-workflow-pr-body.github.md · 7eca18a5c2dd · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · pitfalls/git-workflow-pr-body.github.md · 7eca18a5c2dd · правится надстройкой, не здесь -->
 # The PR body and the link to the task — cold part
 
 The pattern `git-workflow-pr-body` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.

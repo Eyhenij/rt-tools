@@ -1,0 +1,3 @@
+Review projects/agent-kit/tests/fixtures/structure-review/review.diff (branch RT-0-sample). Do not run git, do not edit files.
+Return findings with file:line, the failure scenario and a severity.
+The plan: projects/agent-kit/tests/fixtures/structure-review/plan.md; the coupling against the base: projects/agent-kit/tests/fixtures/structure-review/coupling.txt.

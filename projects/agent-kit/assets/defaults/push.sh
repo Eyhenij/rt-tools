@@ -84,6 +84,9 @@ rt_push_checks_default() {
         [ -f "$root/$RT_CHECKS_DIR/$check.mjs" ] && printf '%s\n' "node $RT_CHECKS_DIR/$check.mjs"
     done
 
+    # The coupling is judged against the base: growth is counted from the point the branch left it.
+    [ -f "$root/$RT_CHECKS_DIR/check-coupling.mjs" ] && printf '%s\n' "node $RT_CHECKS_DIR/check-coupling.mjs${1:+ --base=$1}"
+
     # The table of what each step reads against what the steps read now. The selection starts it
     # only when a step or the table itself is touched: a step's reads change with its code.
     [ -f "$root/$RT_CHECKS_DIR/push-inputs.mjs" ] && [ -f "$root/.claude/rt-kit/push-inputs.json" ] &&

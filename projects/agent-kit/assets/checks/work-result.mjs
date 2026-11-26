@@ -285,7 +285,7 @@ export function linesOf(result) {
 }
 
 /** The words of the report for the reasons of a gate refusal. */
-const GATE_WORDS = { 'too-long': 'слишком длинное', together: 'не помещаются вместе', 'not-read': 'не прочитано', none: 'без причины' };
+const GATE_WORDS = { 'too-long': 'слишком длинное', together: 'не помещаются вместе', 'not-read': 'не прочитано', before: 'читается до записи', none: 'без причины' };
 
 /** The rules gate over the period: its refusals by reason and the rules it delivered with no refusal. */
 export function gateLine(days) {

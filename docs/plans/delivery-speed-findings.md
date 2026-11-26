@@ -197,3 +197,46 @@ The findings of the rules review of every closed task of the epic «Проста
 8. **The discard guard reads the session's tree after a `cd` in the command** — package,
    `hooks/git-guard-discard.sh` and its spec. A clean clone is refused and a dirty copy passes. Proposed: a
    literal `cd` before the call and `git -C` name the directory; an unread one is the session's.
+
+## RT-3631 — the review of 25 November 2026
+
+1. **One added script name in the root `package.json` raises the whole heavy set** — tree,
+   `.claude/rt-kit/project.sh`, `tools/affected-stories.mjs` and their scenario. The branch added the line
+   `task:archive`; snapshots, the end-to-end suites and the images took 956 of 1650 seconds. Proposed: a
+   manifest that only gains script names raises nothing; a changed or removed script and any other key raise
+   the whole set, as now. `project.sh` stands at 499 of 500 lines: the judge goes to a module of its own.
+2. **A step of a plan repeats the suites of the push set** — tree, the cold part of `task-delivery-loop`,
+   step 4; package, `pitfalls/task-flow-start.md`. Step 1.2 ran nine suites of the engine and was red only by
+   a prefix; five reruns took 959 seconds. Proposed: a step measures what the work adds, that the former
+   suites stay green is the sign of the set. Price: a regression between `step --done` and the set is seen
+   by the set alone.
+3. **The body of the PR is read by `goal-critic` beside the set, not after it** — tree,
+   `task-delivery-loop-run`, `task-delivery-loop`, `archive-record`. The body stood 25 seconds after the set
+   began and was read for 8 minutes after it ended. «Only that record and the take-apart commit» between the
+   green run and the push was broken by the correction of the progress.
+4. **An internal error of the host is no answer** — package, `pitfalls/git-workflow-pr-body.github.md`; tree,
+   `task-delivery-loop-run`, the missing call of the assignee. The second refusal of `gh pr create` left PR
+   3667 without reviewer and assignee; 5xx followed on the reviewer and on the board. The merge of PR 3667
+   landed in the epic branch while the host kept the PR open. Proposed: the PRs of the head are asked first;
+   none — the same call again; one — what is missing is set and reread until the host confirms; a merge is
+   judged by the base branch, not by the PR record. One edit with item 5 of RT-3607. The owner's choice:
+   whether a green remeasure is remembered by the tip, 215 seconds a retry.
+5. **A line of the live check names the tip it was measured on** — tree, `task-delivery-loop-run`, «8, 9».
+   The three stages were marked on the code before the rounds. Proposed: after the last round a line whose
+   files the fixes touched is measured again before the set; a count put together from runs is written as a
+   sum.
+6. **The roles go after the answer of the call that wrote the diff** — tree, `task-delivery-loop-run`. A probe
+   of a guard inside that call refused it, and three roles read a file that was not there. One edit with item
+   2 of RT-3628.
+7. **The record quotes paragraphs of the executor** — tree, `archive-record`. Of five paragraphs among the
+   quotes one carries the owner's words. Proposed: in the sessions a name of a section, a command or a guard
+   goes in backticks, and the owner is named only in an item that quotes them.
+8. **A record opened for reading is not a write** — package, `checks/flow-guard.mjs`. The journal read by a
+   call that writes elsewhere is refused. One work with item 7 of RT-3628; a write whose target is not read
+   stays a refusal.
+9. **A commit subject never begins with a task key** — tree, `task-delivery-loop-run`. The second refusal of
+   the epic. One edit with item 2 of RT-3640.
+
+The items 3, 4 (its tree half), 5, 6 and 9 edit one file with sixteen lines of room. New cases: about 14 edits
+of tests by the shell (item 4 of RT-3629); six foreground runs of variants, up to 19 minutes (item 6 of
+RT-3630, item 5 of RT-3640); the size check red after the round (item 1 of RT-3640).
