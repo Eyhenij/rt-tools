@@ -1,4 +1,4 @@
-// rt-kit v0.41.0 · checks/record-count.mjs · a6f6c6ab5165 · правится надстройкой, не здесь
+// rt-kit v0.41.0 · checks/record-count.mjs · bec76ac482d2 · правится надстройкой, не здесь
 /**
  * The counter of a session record: what the owner said and what the agent was refused, read from the
  * conversation record Claude Code keeps per session.
@@ -10,6 +10,7 @@
  *   pairs(entries)         ordered pairs of different checks refusing one after another: { first, second, at, session }
  *   interrupts(entries)    the entries where the owner interrupted a turn: { at, session }
  *   corrections(entries, patterns)  the owner's words the set of correction patterns matches
+ *   aboutOf(text, patterns) the kind of a typed message: correction, status, order or other
  *
  * A pair is two refusals of different checks with no successful call between them in one session;
  * a repeat of the same check is not a pair. The set of correction patterns is passed in by the caller
@@ -209,10 +210,16 @@ export function refusals(entries) {
     return out;
 }
 
-/** The owner's words of the entries, oldest first; an entry copied into a resumed session counts once. */
+/**
+ * The owner's words of the entries, oldest first; an entry copied into a resumed session counts once.
+ * A queued message the record repeats within one turn — the harness writes the same queued entry again
+ * a millisecond later — counts once too; the turn ends at the next typed word of that session, so two
+ * real messages with the same text in different turns count twice.
+ */
 export function ownerWords(entries) {
     const seen = new Set();
     const words = [];
+    const queuedInTurn = new Map();
     for (const entry of entries) {
         const id = entry?.uuid ?? entry?.attachment?.delivery_id;
         if (id && seen.has(id)) continue;
@@ -220,8 +227,11 @@ export function ownerWords(entries) {
         const word = typedOf(entry);
         if (!word) continue;
         const session = entry.sessionId ?? null;
+        const turn = queuedInTurn.get(session) ?? [];
+        if (word.kind === 'queued' && turn.some((text) => same(text, word.text))) continue;
         const repeat =
             word.kind === 'typed' && words.some((w) => w.kind === 'queued' && w.session === session && same(w.text, word.text));
+        queuedInTurn.set(session, word.kind === 'queued' ? [...turn, word.text] : []);
         if (repeat) continue;
         words.push({ ...word, at: entry.timestamp ?? entry.attachment?.timestamp ?? null, session });
     }
@@ -429,6 +439,27 @@ export function gateOf(observations, day) {
         if (o.ev === 'gate-deliver') delivered += 1;
     }
     return { refused, delivered };
+}
+
+/** A question about where the work stands, in the owner's words. */
+const STATUS = /где стоим|какой статус|что со статусом|статус\??$|что сейчас|что делаешь|на каком этапе|сколько осталось|ну что там|where are we|what.s the status|status\??$/iu;
+
+/** An order at the opening of a message: a verb of the imperative that starts or resumes work. */
+const ORDER =
+    /^(?:\S+,\s*)?(?:заведи|сделай|делай|возьми|бери|начни|начинай|продолжай|продолжи|запусти|почисти|веди|ставь|поставь|добавь|убери|удали|влей|слей|сливай|выпусти|напиши|проверь|посмотри|изучи|прочитай|перенеси|обнови|подними|go|do|start|continue|make|add|remove|merge|release|write|check)(?=[\s,.!:]|$)/iu;
+
+/**
+ * The kind of a message the owner typed, by the words of it alone: `correction` when the set of correction
+ * patterns matches it, `status` for a question where the work stands, `order` for an order to start or
+ * resume work, and `other` for what no pattern knows. The kinds are checked in that order, so a correction
+ * worded as an order stays a correction.
+ */
+export function aboutOf(text, patterns) {
+    const said = String(text ?? '').trim();
+    if (patterns && new RegExp(patterns, 'iu').test(said)) return 'correction';
+    if (STATUS.test(said)) return 'status';
+    if (ORDER.test(said)) return 'order';
+    return 'other';
 }
 
 /** The owner's words the set of correction patterns matches, a message queued during a turn included. */

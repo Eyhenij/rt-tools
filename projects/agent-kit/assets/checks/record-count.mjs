@@ -9,6 +9,7 @@
  *   pairs(entries)         ordered pairs of different checks refusing one after another: { first, second, at, session }
  *   interrupts(entries)    the entries where the owner interrupted a turn: { at, session }
  *   corrections(entries, patterns)  the owner's words the set of correction patterns matches
+ *   aboutOf(text, patterns) the kind of a typed message: correction, status, order or other
  *
  * A pair is two refusals of different checks with no successful call between them in one session;
  * a repeat of the same check is not a pair. The set of correction patterns is passed in by the caller
@@ -437,6 +438,27 @@ export function gateOf(observations, day) {
         if (o.ev === 'gate-deliver') delivered += 1;
     }
     return { refused, delivered };
+}
+
+/** A question about where the work stands, in the owner's words. */
+const STATUS = /где стоим|какой статус|что со статусом|статус\??$|что сейчас|что делаешь|на каком этапе|сколько осталось|ну что там|where are we|what.s the status|status\??$/iu;
+
+/** An order at the opening of a message: a verb of the imperative that starts or resumes work. */
+const ORDER =
+    /^(?:\S+,\s*)?(?:заведи|сделай|делай|возьми|бери|начни|начинай|продолжай|продолжи|запусти|почисти|веди|ставь|поставь|добавь|убери|удали|влей|слей|сливай|выпусти|напиши|проверь|посмотри|изучи|прочитай|перенеси|обнови|подними|go|do|start|continue|make|add|remove|merge|release|write|check)(?=[\s,.!:]|$)/iu;
+
+/**
+ * The kind of a message the owner typed, by the words of it alone: `correction` when the set of correction
+ * patterns matches it, `status` for a question where the work stands, `order` for an order to start or
+ * resume work, and `other` for what no pattern knows. The kinds are checked in that order, so a correction
+ * worded as an order stays a correction.
+ */
+export function aboutOf(text, patterns) {
+    const said = String(text ?? '').trim();
+    if (patterns && new RegExp(patterns, 'iu').test(said)) return 'correction';
+    if (STATUS.test(said)) return 'status';
+    if (ORDER.test(said)) return 'order';
+    return 'other';
 }
 
 /** The owner's words the set of correction patterns matches, a message queued during a turn included. */
