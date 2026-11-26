@@ -66,9 +66,11 @@ not by a person.
 - **While the owner's stop stands, own background started before it holds the end of a turn until it is taken down.**
   A background task or a `Monitor` the session started before the stop, with no end in the record or
   in the queue and no `TaskStop` after it, refuses the end of the turn ahead of the stop release
-  cases. The refusal names `TaskStop <id>` for each task and nothing else to do; after two such
-  refusals within one stop the turn is released by the stop. A complaint that the work was not
-  stopped — «не остановил», «не снял», «без присмотра», «продолжаешь работать» — lifts no stop.
+  cases. The refusal names `TaskStop <id>` for each task and nothing else to do; a turn a notice
+  opened ends with no words. After two such refusals within one stop the turn is released by the
+  stop; a refusal of another check that names `TaskStop` is not counted. A complaint that the work
+  was not stopped — «не остановил», «не снял», «без присмотра», «продолжаешь работать» — lifts no
+  stop in its sentence; a complaint about standing in another sentence of the message still does.
 - **The draft check, the conscience check and the cargo mark check release the turn while the owner's stop stands.**
   Each asks the command `stop` of the engine after its own refusal conditions, with the same hook
   input, and ends the turn on its exit code 0.

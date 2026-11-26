@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.40.0 · checks/task-flow-script.mjs · f0caa6accb06 · правится надстройкой, не здесь
+// rt-kit v0.40.0 · checks/task-flow-script.mjs · b3b96f4df3fb · правится надстройкой, не здесь
 /**
  * The engine of the task flow: reads the description `flow.js` through the model and answers about
  * the scenario. The description lies next to the engine as `task-flow/flow.js` where the engine is
@@ -283,6 +283,8 @@ async function runStop(model, base) {
 async function runStopCall(model, base) {
     const input = JSON.parse(readFileSync(0, 'utf8') || '{}');
     if (input.transcript_path) process.env.RT_FLOW_TRANSCRIPT = input.transcript_path;
+    // The prompt opens the turn the hook judges: its entry is written into the record after the hook.
+    if (input.hook_event_name === 'UserPromptSubmit' && input.prompt) process.env.RT_FLOW_PROMPT = input.prompt;
     const read = await openReaders(model, base);
     return read('measure.owner.stopCall');
 }

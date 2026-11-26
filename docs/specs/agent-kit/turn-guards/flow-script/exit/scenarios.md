@@ -62,7 +62,7 @@ When the verdict at the end of the turn is read
 Then the turn is refused, and the refusal names `TaskStop <id>` of each task
 And a task stopped by `TaskStop`, or one whose end is already in the queue, holds nothing
 And a task started after the stop holds nothing
-And one refusal holds again, and after two the stop releases the turn
+And one refusal holds again, and after two the stop releases the turn; two refusals of another check naming `TaskStop` hold again
 And after «продолжай» own background holds nothing: the stop is lifted
 And the start of a `Monitor` is an event of its own, and the wait for background work does not see it
 

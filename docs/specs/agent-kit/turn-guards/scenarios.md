@@ -106,13 +106,18 @@ When a notice of a task, a line of `Monitor` or a message of another session ope
 Then the call is refused — a call of a subagent, `Edit` and `Write` too — and the refusal names `TaskStop <id>` of own background
 And `TaskStop`, `KillShell`, `KillBash`, `CronDelete`, `CronList`, `ToolSearch` and `TaskOutput` pass
 And a turn opened by a bare «стоп», by «стоп» after Esc or by «блин, стоп» refuses its calls
-And a turn opened by «Стоп. Пиши инцидент», a question, swearing, «продолжай», a typed command or a menu answer lets them through
+And a turn opened by «Стоп. Пиши инцидент», «стоп, откати последний коммит», a question, swearing, «продолжай», a typed command or a menu answer lets them through
 And a word queued before Esc and delivered after it opens no turn for calls; the same word typed again after Esc does
+And a prompt whose entry the record does not hold yet is judged by the prompt: a notice after a question refuses, «продолжай» lets through
+And a text of the host with a leading new line or `<agent-message` after «стоп» refuses its calls
+And a complaint about standing after «стоп» lifts the stop, «почему ты стоишь? продолжаешь работать или нет?» too; «всё бросил и не остановил набор?» keeps it
+And every stop word of the description reaches the engine, while «исправь», «захватить» and «await» do not
 And «стоп» queued in the middle of a turn opened by an order refuses the next call of that turn
 And «стоп» still waiting in the queue behind notices refuses the calls of the turns those notices open
 And with no stop, with no record, with a broken record or with an engine past its limit the call passes
-And after «стоп» and 20 MB of calls a notice still opens a turn with its calls refused
-And the entry of the turn names `TaskStop` of own background once per task, and not a task whose end is in the queue
+And after «стоп» and 20 MB of calls a notice still opens a turn with its calls refused, and a clean scan moves the place of the mark to the end of the record
+And the laid-out hook run outside the tree finds the engine, and on the saved record of 13.11 it answers as the engine
+And the entry of the turn names `TaskStop` of own background once per task and stop, and not a task whose end is in the queue
 
 Covered: `projects/agent-kit/tests/owner-stop-call-guard.test.sh`.
 

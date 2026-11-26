@@ -282,6 +282,8 @@ async function runStop(model, base) {
 async function runStopCall(model, base) {
     const input = JSON.parse(readFileSync(0, 'utf8') || '{}');
     if (input.transcript_path) process.env.RT_FLOW_TRANSCRIPT = input.transcript_path;
+    // The prompt opens the turn the hook judges: its entry is written into the record after the hook.
+    if (input.hook_event_name === 'UserPromptSubmit' && input.prompt) process.env.RT_FLOW_PROMPT = input.prompt;
     const read = await openReaders(model, base);
     return read('measure.owner.stopCall');
 }

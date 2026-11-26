@@ -76,7 +76,7 @@ export function stopHold(model, read) {
 /** The refusal of an end of a turn after the owner's stop: a `TaskStop` for each own task, then words. */
 export function stopHoldReason(list) {
     const moves = list.map(({ task, command }) => `\`TaskStop ${task}\`${command ? ` — ${String(command).slice(0, 80)}` : ''}`);
-    return [`The owner stopped the work, and own background started before the stop still runs.`, `The one move is to take it down: ${moves.join('; ')}. Then end the turn with words; nothing else is done.`].join('\n');
+    return [`The owner stopped the work, and own background started before the stop still runs.`, `The one move is to take it down: ${moves.join('; ')}. Then end the turn; a turn a notice opened ends with no words, and nothing else is done.`].join('\n');
 }
 
 /**

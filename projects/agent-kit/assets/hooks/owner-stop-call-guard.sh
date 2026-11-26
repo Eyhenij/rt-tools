@@ -21,7 +21,7 @@
 # task. On `PreToolUse` the mark answers while nothing the owner said came after its place: a queued
 # word, a queued command, the Esc mark or a menu answer makes it stale, and the engine is asked again.
 #
-# FAIL-OPEN: no input, no record, no jq or node, a broken engine or one past 5 seconds — the call
+# FAIL-OPEN: no input, no record, no jq or node, a broken engine or one past 10 seconds — the call
 # passes, and the next branches of the dispatcher judge it. The take-down calls pass always.
 
 RT_GUARD_NAME=owner-stop-call-guard
@@ -53,7 +53,8 @@ size() { wc -c <"$record" 2>/dev/null | tr -d ' '; }
 
 engine="${RT_FLOW_ENGINE:-}"
 root="${CLAUDE_PROJECT_DIR:-$(pwd)}"
-[ -n "$engine" ] || for candidate in "$here/../checks/task-flow-script.mjs" "$root/tools/task-flow-script.mjs"; do
+# Among the checks of the package, next to the laid-out hooks, then by the tree a session names.
+[ -n "$engine" ] || for candidate in "$here/../checks/task-flow-script.mjs" "$here/../../tools/task-flow-script.mjs" "$root/tools/task-flow-script.mjs"; do
     [ -f "$candidate" ] && engine="$candidate" && break
 done
 
@@ -65,25 +66,30 @@ ask() {
     # A mark of an earlier turn never outlives an engine that did not answer: the next call asks again.
     rm -f "$mark"
     at="$(size)"
-    answer="$(printf '%s' "$input" | perl -e 'alarm shift; exec @ARGV' "${RT_STOP_CALL_LIMIT:-5}" node "$engine" stop-call 2>/dev/null)"
+    answer="$(printf '%s' "$input" | perl -e 'alarm shift; exec @ARGV' "${RT_STOP_CALL_LIMIT:-10}" node "$engine" stop-call 2>/dev/null)"
     printf '%s' "$answer" | jq -e 'has("refuseCalls")' >/dev/null 2>&1 || return 0
     printf '%s' "$answer" | jq -r --arg at "$at" '"\(if .refuseCalls then "refuse" else "pass" end) \($at) \([.background[]?.task] | join(","))"' >"$mark" 2>/dev/null
     printf '%s' "$answer"
 }
 
+# The stems of the stop words of the description, `words.stop` and `words.stopInside`, from the start of a word.
+STOP_STEMS='(^|[^[:alpha:]])(стоп|стой|хват|прекрат|останов|подожд|погод|жди|пауз|отбой|перерыв|не сейчас|на сегодня|не двига|stop|wait|pause|not now)'
+
 if [ "$event" = UserPromptSubmit ]; then
     wake=no
-    case "$prompt" in '<task-notification>'* | 'Another Claude session sent a message'* | 'Background (from the session'*) wake=yes ;; esac
-    if [ "$wake" = no ] && ! printf '%s' "$prompt" | grep -qiE '(стоп|стой|хватит|прекрати|остановись|подожди|погоди|жди|пауза|отбой|stop|wait|pause)' &&
-        ! tail -c 200000 "$record" 2>/dev/null | grep -qE '\[Request interrupted by user|"content":"/stop'; then
+    # A text of the harness opens with «<», a leading new line or not: a notice, a message of a session.
+    case "${prompt#"${prompt%%[![:space:]]*}"}" in '<'* | 'Another Claude session sent a message'* | 'Background (from the session'*) wake=yes ;; esac
+    if [ "$wake" = no ] && ! printf '%s' "$prompt" | grep -qiE "$STOP_STEMS" &&
+        ! tail -c 200000 "$record" 2>/dev/null | LC_ALL=C grep -qE '\[Request interrupted by user|"content":"/stop'; then
         printf 'pass %s\n' "$(size)" >"$mark"
         exit 0
     fi
     answer="$(ask)"
     [ "$(printf '%s' "$answer" | jq -r '.refuseCalls // false' 2>/dev/null)" = true ] || exit 0
-    named="$mark.named"
-    tasks="$(printf '%s' "$answer" | jq -r '.background[]?.task' 2>/dev/null | while read -r task; do grep -qxF "$task" "$named" 2>/dev/null || { printf '%s\n' "$task" >>"$named"; printf 'TaskStop %s; ' "$task"; }; done)"
-    context="The owner's stop stands: every call of this turn is refused except the take-down of own background. Answer with no words."
+    # A task is named once per stop: `since` is the place of the stop in the record.
+    named="$mark.named" since="$(printf '%s' "$answer" | jq -r '.since // ""' 2>/dev/null)"
+    tasks="$(printf '%s' "$answer" | jq -r '.background[]?.task' 2>/dev/null | while read -r task; do grep -qxF "$since $task" "$named" 2>/dev/null || { printf '%s %s\n' "$since" "$task" >>"$named"; printf 'TaskStop %s; ' "$task"; }; done)"
+    context="The owner's stop stands: every call of this turn is refused except the take-down of own background. A turn a notice opened ends with no words."
     [ -n "$tasks" ] && context="$context Take down own background started before the stop: ${tasks%; }."
     jq -cn --arg c "$context" '{hookSpecificOutput:{hookEventName:"UserPromptSubmit", additionalContext:$c}}'
     exit 0
@@ -92,11 +98,15 @@ fi
 [ "$event" = PreToolUse ] || exit 0
 verdict="" place="" tasks=""
 [ -f "$mark" ] && read -r verdict place tasks <"$mark"
-# A mark is stale when the owner said something after its place, or the record is shorter than it.
-fresh="$( [ -n "$place" ] && [ "$(size)" -ge "$place" ] 2>/dev/null && tail -c +"$((place + 1))" "$record" 2>/dev/null)" || verdict=""
-if printf '%s' "$fresh" | grep -qE '"operation":"enqueue".*"content":"[^<]|\[Request interrupted by user|"answers":' ||
-    printf '%s' "$fresh" | grep '"queued_command"' | grep -q '"kind":"human"'; then
+# A mark is stale when the owner said something after its place, or the record is shorter than it. A
+# clean scan moves the place on: each call reads only what was written since the last one.
+now="$(size)"
+if [ -z "$place" ] || ! [ "$now" -ge "$place" ] 2>/dev/null ||
+    tail -c +"$((place + 1))" "$record" 2>/dev/null | head -c "$((now - place))" |
+    LC_ALL=C grep -qE '"operation":"enqueue".*"content":"[^<\\]|\[Request interrupted by user|"answers":|"queued_command".*"kind":"human"|"kind":"human".*"queued_command"'; then
     verdict=""
+else
+    printf '%s %s %s\n' "$verdict" "$now" "$tasks" >"$mark"
 fi
 if [ -z "$verdict" ]; then
     [ -n "$(ask)" ] || exit 0

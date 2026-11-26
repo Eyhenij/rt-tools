@@ -1,4 +1,4 @@
-// rt-kit v0.40.0 · checks/flow-verdict.mjs · e66fb85c1303 · правится надстройкой, не здесь
+// rt-kit v0.40.0 · checks/flow-verdict.mjs · 6ab4ec9677aa · правится надстройкой, не здесь
 /**
  * The verdict at the end of a turn — the engine command `verdict`, called by the hook on Stop.
  *
@@ -77,7 +77,7 @@ export function stopHold(model, read) {
 /** The refusal of an end of a turn after the owner's stop: a `TaskStop` for each own task, then words. */
 export function stopHoldReason(list) {
     const moves = list.map(({ task, command }) => `\`TaskStop ${task}\`${command ? ` — ${String(command).slice(0, 80)}` : ''}`);
-    return [`The owner stopped the work, and own background started before the stop still runs.`, `The one move is to take it down: ${moves.join('; ')}. Then end the turn with words; nothing else is done.`].join('\n');
+    return [`The owner stopped the work, and own background started before the stop still runs.`, `The one move is to take it down: ${moves.join('; ')}. Then end the turn; a turn a notice opened ends with no words, and nothing else is done.`].join('\n');
 }
 
 /**

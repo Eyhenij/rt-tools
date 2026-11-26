@@ -26,10 +26,8 @@ const { typedOf } = await import(pathToFileURL(SHARED).href);
 
 /** The menu answer as the text of a tool result carries it. */
 const ANSWERED = /^(?:The user answered|Your questions have been answered):/;
-
 /** The mark the host writes when the owner presses Esc. */
 const INTERRUPT_MARK = /^\[Request interrupted by user/;
-
 const ownerEntry = (entry) =>
     entry?.type === 'user' && !entry.isMeta && !entry.isCompactSummary && (entry.origin?.kind ?? 'human') === 'human';
 
@@ -110,6 +108,12 @@ export function turnOpener(entries) {
     }
     return null;
 }
+/** The opener of a turn by the prompt the hook names: its entry is written after the prompt hooks; a newer queueing is a new turn. */
+const promptOpener = (prompt, entries) => {
+    const found = turnOpener(entries), text = String(prompt ?? '').trim(), queued = entries.findLastIndex((entry) => enqueued(entry) === text);
+    if (!text || (found?.text === text && queued < found.index)) return found;
+    return { by: text.startsWith('<') || WAKE.test(text) ? 'wake' : 'owner', text, at: timeOf(entries[queued]) ?? Date.now(), index: entries.length };
+};
 
 /** The approving word, in any case; «не одобряю», «не очень одобряю» and «нет одобряю» approve nothing. */
 const APPROVING = /(?<![\p{L}])(?<!(?:не|нет)(?:\s+\p{L}+)?\s+)одобряю(?![\p{L}])/iu;
@@ -120,13 +124,10 @@ const APPROVING = /(?<![\p{L}])(?<!(?:не|нет)(?:\s+\p{L}+)?\s+)одобря
  */
 const LINE_HOLDS =
     /(?<![\p{L}])(?:если|когда|после|потом|позже|кроме|исключением|условии|частично|однако|хотя|переделай|переделать|перепиши|убери|исправь|сначала|напиши|написал|вариант)(?![\p{L}])/iu;
-
 /** Words that make their own clause no approval: «но» and «только» narrow what is approved. */
 const CLAUSE_HOLDS = /(?<![\p{L}])(?:но|только)(?![\p{L}])/iu;
-
 /** The words that name the plan itself, in their cases; «планшет» and «plan-red» are not it. */
 const PLAN_WORD = /(?<![\p{L}])(?:план(?:а|у|ом|е|ы|ов)?|plan_md|plan|замысел|замысла|замыслу|замыслом|замысле)(?![\p{L}-])/giu;
-
 /** Words that name another thing approved, not the plan. */
 const OTHER_THING = /(?<![\p{L}])(?:макет|витрин|дизайн|mockup|showcase|разбор|мерж|merge|спек|договорённост|выпуск|релиз|release|pr(?![\p{L}]))/iu;
 
@@ -229,5 +230,5 @@ export function open() {
         }
         return null;
     };
-    return { messages, said: (quote) => messages().some((text) => text.includes(quote)), last, words: () => wordsOf(entries()), turnOpener: () => turnOpener(entries()) };
+    return { messages, said: (quote) => messages().some((text) => text.includes(quote)), last, words: () => wordsOf(entries()), turnOpener: () => promptOpener(process.env.RT_FLOW_PROMPT, entries()) };
 }

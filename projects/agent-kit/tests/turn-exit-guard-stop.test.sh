@@ -147,7 +147,8 @@ out('end: SC-AK-2015 — фоновое и Monitor — оба номера', ver
 out('end: SC-AK-2015 — фоновое снято TaskStop — ход отпущен словом', verdictOf(stop2, [started('background', 'b1', before), { kind: 'backgroundEnd', task: 'b1', stopped: true }]), 'a stop word of the owner');
 out('end: SC-AK-2015 — конец задачи уже в очереди — ход отпущен', verdictOf(esc2, [started('background', 'b1', before), { kind: 'backgroundEnd', task: 'b1', status: 'completed' }]), 'the owner interrupted the turn');
 out('end: SC-AK-2015 — задача запущена после остановки — не держит', verdictOf(stop2, [started('background', 'b2', clock + 1_000)]), 'a stop word of the owner');
-const named = (n) => Array.from({ length: n }, () => ({ kind: 'refusal', text: 'Stop hook feedback: … TaskStop b1 …', at: clock + 1_000 }));
+const named = (n, text = 'Stop hook feedback: The owner stopped the work, and … TaskStop b1 …') => Array.from({ length: n }, () => ({ kind: 'refusal', text, at: clock + 1_000 }));
+out('end: SC-AK-2015 — два отказа другой проверки с TaskStop — держит', verdictOf(stop2, [started('background', 'b1', before), ...named(2, 'Stop hook feedback: wait for TaskStop b1')]), 'TaskStop b1');
 out('end: SC-AK-2015 — один отказ о фоновом — держит ещё раз', verdictOf(stop2, [started('background', 'b1', before), ...named(1)]), 'TaskStop b1');
 out('end: SC-AK-2015 — два отказа о фоновом — ход отпущен', verdictOf(stop2, [started('background', 'b1', before), ...named(2)]), 'a stop word of the owner');
 out('end: SC-AK-2015 — «продолжай» после «стоп» — фоновое не держит', verdictOf([...stop2, typed('продолжай')], [started('background', 'b1', before)]), 'held');

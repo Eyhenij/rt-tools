@@ -121,5 +121,49 @@ case_of 'второй вход хода номер не повторяет' "$(u
 case_of 'отказ вызова называет TaskStop своего фонового' "$(jq -cn --arg p "$P" --arg s "$SID" '{session_id:$s,hook_event_name:"PreToolUse",transcript_path:$p,tool_name:"Bash",tool_input:{command:"ls"}}' | bash "$H" 2>/dev/null | grep -o 'TaskStop b1' | head -1)" 'TaskStop b1'
 fresh; typed 'делай задачу'; background b1; over b1; typed 'стоп'; notice
 case_of 'конец задачи уже в очереди — вход хода её не называет' "$(ups "$NOTE" | grep -c 'TaskStop')" 0
+fresh; typed 'делай задачу'; background b1; typed 'стоп'; notice; ups "$NOTE" >/dev/null; typed 'продолжай'; typed 'стоп'; notice n2
+case_of 'новая остановка — вход хода снова называет TaskStop' "$(ups "$NOTE" | grep -c 'TaskStop b1')" 1
+
+# --- запись хода пишется после входа хода ---------------------------------------------------------------
+fresh; typed 'делай задачу'; esc; typed 'что там?'; enqueue "$NOTE"; ups "$NOTE" >/dev/null; notice
+case_of 'вопрос после Esc, уведомление пока только в очереди — вызов отказан' "$(pre)" deny
+fresh; typed 'делай задачу'; esc; enqueue 'продолжай'; ups 'продолжай' >/dev/null; typed 'продолжай'
+case_of '«продолжай» после Esc, запись ещё не легла — вызов проходит' "$(pre)" PASS
+fresh; typed 'продолжай'; esc; enqueue 'продолжай'; ups 'продолжай' >/dev/null
+case_of '«продолжай», Esc, снова «продолжай» в очереди — вызов проходит' "$(pre)" PASS
+for prompt in "$(printf '\n%s' "$NOTE")" '<agent-message from="a1">продолжай</agent-message>'; do
+    fresh; typed 'делай задачу'; typed 'стоп'; enqueue "$prompt"; ups "$prompt" >/dev/null
+    case_of "текст хоста «${prompt:0:16}…» после «стоп» — вызов отказан" "$(pre)" deny
+done
+
+# --- остановка с поручением, жалоба на стояние, слова остановки описания -------------------------------------
+for word in 'стоп, откати последний коммит' 'Стоп. Что запущено'; do
+    fresh; typed 'делай задачу'; typed "$word"; ups "$word" >/dev/null
+    case_of "«${word}» — не голая остановка, вызов проходит" "$(pre)" PASS
+done
+for word in 'почему ты стоишь и не продолжаешь работать?' 'почему ты стоишь? продолжаешь работать или нет?' 'почему ты встал? набор без присмотра' 'почему ты остановил работу? я не снял запрет'; do
+    fresh; typed 'делай задачу'; typed 'стоп'; typed "$word"; notice; ups "$NOTE" >/dev/null
+    case_of "жалоба «${word}» снимает остановку — вызов хода от уведомления проходит" "$(pre)" PASS
+done
+fresh; typed 'делай задачу'; typed 'стоп'; typed 'почему ты всё бросил и не остановил набор?'; notice; ups "$NOTE" >/dev/null
+case_of 'жалоба «не остановил» остановку держит — вызов отказан' "$(pre)" deny
+stems="$(sed -n "s/^STOP_STEMS='\(.*\)'$/\1/p" "$H")"
+missed="$(node -e "const f=require('fs').readFileSync(process.argv[1],'utf8');const d=eval(f);console.log([...d.words.stop,...d.words.stopInside].join('\n'))" "$ASSETS/task-flow/flow.js" | while IFS= read -r w; do printf '%s' "$w" | grep -qiE "$stems" || printf '%s;' "$w"; done)"
+case_of 'отсев хука ловит каждое слово остановки описания' "${missed:-none}" none
+for word in 'исправь' 'захватить' 'await the build'; do
+    fresh; typed 'делай задачу'; typed 'стоп'; typed "$word"; ups "$word" >/dev/null
+    case_of "«${word}» движок не зовёт — метка дешёвая" "$(cut -d' ' -f1,3 "$TMP/claude-stop-call/$SID")" pass
+done
+
+# --- место метки, движок вне дерева, настоящая запись ---------------------------------------------------
+fresh; typed 'делай задачу'; typed 'стоп'; notice; ups "$NOTE" >/dev/null; call; pre >/dev/null
+case_of 'чистый просмотр двигает место метки к концу записи' "$(cut -d' ' -f2 "$TMP/claude-stop-call/$SID")" "$(wc -c <"$P" | tr -d ' ')"
+LAID="$(cd "$ASSETS/../../.." && pwd)/.claude/hooks/owner-stop-call-guard.sh"
+fresh; typed 'делай задачу'; typed 'стоп'; notice; jq -cn --arg p "$P" --arg s "$SID" --arg t "$NOTE" '{session_id:$s,hook_event_name:"UserPromptSubmit",transcript_path:$p,prompt:$t}' | (cd "$TMP" && CLAUDE_PROJECT_DIR= bash "$LAID") >/dev/null 2>&1
+case_of 'разложенный хук вне дерева находит движок — метка отказа' "$(cut -d' ' -f1 "$TMP/claude-stop-call/$SID" 2>/dev/null)" refuse
+REAL="$ASSETS/../tests/fixtures/real-record/2026-11-13.jsonl"
+want="$(jq -cn --arg p "$REAL" '{hook_event_name:"PreToolUse",transcript_path:$p}' | node "$ASSETS/checks/task-flow-script.mjs" stop-call | jq -r 'if .refuseCalls then "deny" else "PASS" end')"
+P="$REAL"; SID="real"; rm -f "$TMP/claude-stop-call/real"
+case_of 'настоящая запись 13.11 — хук отвечает как движок' "$(pre)" "$want"
 
 suite_result "запрет вызовов после остановки"
