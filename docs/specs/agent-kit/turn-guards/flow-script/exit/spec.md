@@ -28,7 +28,8 @@ case of the description says it may.
 - **A hung task** — a background task of the session that runs past the bound of a wait with no
   notice of its end.
 - **A working order** — a word of `words.resume` in the owner's message, compared as a whole word:
-  «продолжай», «чини», «вливай», «одобряю». It lifts the owner's stop.
+  «продолжай», «чини», «вливай», «одобряю». A complaint about the stop of `words.stopComplaint` is
+  one too, in a question as well: «почему ты бросил эпик?». It lifts the owner's stop.
 
 ### What it is called in the interface
 
@@ -47,12 +48,13 @@ not by a person.
   lacks counts as not done. A step done with no matched mark gets the measuring command, and the
   revert move only for a fix inside the folder.
 - **The owner's stop word releases the turn while the stop stands: the owner's words are read in order, and the stop holds until a working order.**
-  A word of `words.stop` signals at the opening of a message, a word of `words.stopInside` anywhere
-  in it; «не» before a word cancels it. Inside one message the last signal decides. The parts of a
-  message are split by «.», «,», «;» and by «и», «затем», «потом», and a part with a word of
-  `words.stay` carries no order. A question, swearing, «пиши инцидент», «без предпочтения», a notice
-  and a message of another session leave the stop standing. An option chosen in a menu is the
-  owner's word too, and a choice of work lifts the stop. «хватит останавливаться, продолжай» and
+  A word of `words.stop` signals at the opening of a message, a phrase of `words.stopInside`
+  anywhere in it, and its one word where it closes its part. «не» or «don't» before a word cancels
+  it, a quoted word is named and not said. Inside one message the last signal decides, and at one
+  place the stop wins. The parts of a message are split by «.», «,», «;» and by «и», «затем»,
+  «потом»; a part with a word of `words.stay`, or one of a question, carries no order. A question,
+  swearing, «пиши инцидент», «без предпочтения», a notice and a message of another session leave the
+  stop standing. A menu answer that names a task or is an option of `words.menu` lifts it. «хватит останавливаться, продолжай» and
   «Стой, не туда — делай RT-N» hold the turn.
 - **The owner's interrupt releases the turn while the stop it set stands.**
   The mark of Esc sets the stop; a message within two seconds after the mark is judged alone. A turn
@@ -266,4 +268,6 @@ None.
   1912 holds its cases. The stop word lifts the CI hold of a fresh head.
 - 2026-11-26 — the stop is a state of the owner's words, not their last word: scenario 2010 holds a
   case for every transition, 2013 the three checks at the end of a turn. A question, swearing and
-  «пиши инцидент» after a stop no longer lift it.
+  «пиши инцидент» after a stop no longer lift it. After the first review round, by the owner's word
+  «Жалоба — тоже приказ», a complaint about the stop lifts it; a message typed before the mark of Esc
+  and delivered after it orders nothing.

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.40.0 · hooks/conscience-guard.sh · cacd567beaa2 · правится надстройкой, не здесь
+# rt-kit v0.40.0 · hooks/conscience-guard.sh · a925cf1f3b06 · правится надстройкой, не здесь
 # rt-hook: Stop
-# Requires: agents/conscience.md, hooks/roles.sh, hooks/deny-tail.sh
+# Requires: agents/conscience.md, hooks/roles.sh, hooks/deny-tail.sh, checks/task-flow-script.mjs
 # Guard of conscience: a turn in which the conscience role found a repeat of an analysed miss does
 # not end until the repeat has been dealt with or named to the owner.
 #
@@ -130,7 +130,7 @@ detail="$(printf '%s\n' "$found" | tail -n +2)"
 
 # The owner's stop stands — a stop word or Esc with no working order after it: the turn ends, and
 # the finding waits for the owner's next word. The engine judges the record, as the exit check does.
-for engine in "${RT_FLOW_ENGINE:-}" "${CLAUDE_PROJECT_DIR:-.}/tools/task-flow-script.mjs"; do [ -f "$engine" ] && break; done
+for engine in "${RT_FLOW_ENGINE:-}" "$rt_hooks_dir/../checks/task-flow-script.mjs" "${CLAUDE_PROJECT_DIR:-.}/tools/task-flow-script.mjs"; do [ -f "$engine" ] && break; done
 if [ -f "$engine" ] && command -v node >/dev/null 2>&1 \
     && printf '%s' "$input" | perl -e 'alarm shift; exec @ARGV' 30 node "$engine" stop >/dev/null 2>&1; then
     exit 0

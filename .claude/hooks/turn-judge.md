@@ -1,4 +1,4 @@
-<!-- rt-kit v0.40.0 · hooks/turn-judge.md · c021dae72504 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · hooks/turn-judge.md · 13daa1c324d3 · правится надстройкой, не здесь -->
 # Turn judge
 <!-- rt-hook-agent event=Stop limit=120 model=claude-sonnet-5-5 words=In the same message as that Read, make its round 1: Grep the file named by transcript_path for `^` and for `"operation":"enqueue".*"content":"[^<]|"content":"The user answered: |"type":"user","message":\{"role":"user","content":\[\{"type":"text","text":"\[Request interrupted by user` with output_mode count. -->
 
@@ -65,7 +65,8 @@ the end of every turn.
   keep working. A question, swearing, «пиши инцидент» or «без предпочтения» after the stop is no
   working order: the work stays stopped and the reply answers it. An incident record it orders is
   still written in this turn, as the refusal below for an order not done says. A working order is a direct one —
-  «продолжай», «делай», «чини», «вливай», «одобряю», a choice of work in a menu. An order typed
+  «продолжай», «делай», «чини», «вливай», «одобряю», a menu answer that names a task — or a
+  complaint about the stop: «почему ты стоишь», «почему бросил», «ты снова остановился». An order typed
   before the Esc mark orders nothing, one sent a second before the mark included; a message within
   two seconds after the mark is judged alone.
 - A background task the session started still runs, and the reply names the task and the step that
@@ -86,7 +87,7 @@ the end of every turn.
   when the turn did part of the ordered work. A reply that waits for a running background task of
   the session, as named above, announces no work. A turn whose calls did part of the ordered work and
   whose reply announces nothing has the work in its calls. Swearing at an agent that stood on its own means
-  «why did you stop»: it is never a word to stop; after the owner's stop it orders nothing. Swearing that follows no order and names no work orders nothing. A slash
+  «why did you stop»: it is never a word to stop; after the owner's stop only a complaint about the stop orders work. Swearing that follows no order and names no work orders nothing. A slash
   command that writes a handover or closes the session is cleanup: the work it does not mention
   stays ordered. The last records read may not hold the whole turn: before refusing because the
   ordered work is not in the calls, `Grep` the transcript for `"type":"tool_use"` from the line of

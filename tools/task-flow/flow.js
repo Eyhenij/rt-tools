@@ -1,4 +1,4 @@
-// rt-kit v0.40.0 · task-flow/flow.js · 436bdbaebb2a · правится надстройкой, не здесь
+// rt-kit v0.40.0 · task-flow/flow.js · 8b04dd82aaa4 · правится надстройкой, не здесь
 // The task flow as an executable scenario: the data language of `flow-syntax.mjs`, nothing here runs.
 // A state is left when its exit is measured; the first state whose exit is unmet is where the work
 // stands. A release case says when a turn may end before the scenario does. A new fact is a new
@@ -153,7 +153,7 @@
       log: 'the end of the scenario',
     },
     // The owner stops the work by a stop word or by Esc; the turns a notice wakes after either are
-    // released until the owner writes again.
+    // released until a working order of `words.resume`.
     stopWord: { when: measure.owner.saidStop, order: 2, log: 'a stop word of the owner' },
     interrupted: { when: measure.owner.interrupted, order: 3, log: 'the owner interrupted the turn' },
     // The state «работа-отдана» sends work to the background by its own action and goes on: there
@@ -192,9 +192,19 @@
     resume: [
       'продолжай', 'продолжить', 'работай', 'делай', 'сделай', 'делай дальше', 'доделывай', 'иди дальше', 'доведи',
       'исправляй', 'чини', 'вливай', 'влей', 'мержи', 'вмержи', 'отправляй', 'выпускай', 'выпусти', 'обнови', 'заведи',
-      'бери', 'верни', 'возвращай', 'ночной режим', 'одобряю', 'keep going', 'go on',
+      'бери', 'ночной режим', 'одобряю', 'доделай', 'заверши', 'закончи', 'исправь', 'почини', 'переделай', 'запушь',
+      'поехали', 'давай дальше', 'выпустить', 'вмержить', 'влить', 'запушить', 'keep going', 'go on',
     ],
-    stopInside: ['стоп', 'стой', 'stop', 'не двигайся', 'остановить работу', 'остановись'],
+    // A complaint about a stop is a working order, a question too: the owner's word 26.11 «Жалоба — тоже приказ».
+    stopComplaint: [
+      'почему ты стоишь', 'почему стоишь', 'почему ты встал', 'почему ты остановил', 'почему остановил', 'почему ты бросил',
+      'почему бросил', 'снова остановил', 'опять остановил', 'снова стоишь', 'опять стоишь', 'только что стоял',
+      'заблокировал работу', 'блокируешь работу',
+    ],
+    stopInside: [
+      'стоп', 'стой', 'stop', 'хватит', 'прекрати', 'не двигайся', 'остановить работу', 'остановись', 'прекрати работать',
+      'сделай паузу',
+    ],
     stay: ['без предпочтения', 'инцидент', 'разбор', 'приёмник', 'приемник'],
     nudge: '(?<![\\p{L}])(?<!не )(продолжай|доделывай|работай|делай дальше|работаешь)(?![\\p{L}])|почему (ты )?(стоишь|встал|остановил)|что дальше|дальше\\?|^(ну )?(и )?что там|^ну и\\s*[?!.]|какого .*останов',
     write: [

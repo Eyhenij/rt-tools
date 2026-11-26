@@ -15,10 +15,9 @@
  *     watch of it — the read; a watch call stands before the end and reads nothing;
  *   - there is no run yet, and the head was pushed or the PR opened less than `FRESH_MINUTES` ago.
  *
- * The owner's stop word passes a fresh head and nothing else. It lifts the wait, not the watch: a
- * running run still asks for one background watch, whose notice wakes the session when the run
- * ends, and a red run holds until one call reads it. The owner's Esc passes all three: after it a
- * notice does not put the work back on until the owner writes again.
+ * While the owner's stop stands — set by a stop word or by Esc, until a working order — no run holds
+ * the turn: neither a red one, nor a running one, nor a fresh head. A notice does not put the work
+ * back on before the working order.
  */
 import { epicOfWork } from './epic-of.mjs';
 import { stopStands } from './owner.mjs';
