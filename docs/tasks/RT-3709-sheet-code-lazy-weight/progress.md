@@ -40,6 +40,12 @@
   subscriptions — the tree forbids a subscription inside a method. Six spec files wait for the question code
   by `rtPreloadSheetConfirm()`; `rt-aside-sheet.styles.spec.ts` reads the question rules from the new styles
   file. Affected stage of the plan: 1.
+- `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-unsaved.spec.ts` — отказ от названных в плане
+  сценариев SC-UKV-1757, SC-UKV-1761, SC-UKV-1795 в этом наборе: план назвал набор по памяти, а сценарии живут в
+  `rt-bottom-sheet-focus.spec.ts` (1757), `rt-date-picker-sheet.spec.ts` (1761) и `rt-multiselect-sheet.spec.ts`
+  (1795); этот набор держит SC-UKV-1785…1787 вопроса перед закрытием; все пять наборов зелёные.
+- `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-confirm.loader.ts` outgoing 0 → 2 — превышение:
+  загрузчик берёт ещё модель шторки ради токена ответов `RT_SHEET_CONFIRM_ANSWERS`, без подписок в методе.
 - **Цена:** нет
 - **Отменено:** нет
 
