@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · defaults/merges.sh · c758aa2b24ff · правится надстройкой, не здесь
+# rt-kit v0.40.0 · defaults/merges.sh · c758aa2b24ff · правится надстройкой, не здесь
 # Reading the merges and the packages of the tree: what the epic windows and the release are judged by.
 #
 # The package default, part of the tree profile — loaded from `project.sh`, next to which it lies. A

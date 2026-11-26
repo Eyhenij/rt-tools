@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/end-conversation-guard.sh · 72d49de52d8f · правится надстройкой, не здесь
+# rt-kit v0.40.0 · hooks/end-conversation-guard.sh · 72d49de52d8f · правится надстройкой, не здесь
 # rt-hook: PreToolUse .*EndConversation.*
 # Requires: hooks/decide.sh
 # The guard of the end of the conversation: the executor does not end the session. PreToolUse on

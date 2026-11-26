@@ -1,0 +1,337 @@
+{
+  "accepted": {},
+  "debt": {
+    "blocks: projects/ui-kit-v2/src/lib/config | projects/ui-kit-v2/src/lib/platform": {
+      "reason": "The theme service reads the kit config, and the config takes the model of the theme: both stood before the check.",
+      "task": "RT-3618"
+    },
+    "blocks: projects/ui-kit-v2/src/rich-editor/lib/components/chat | projects/ui-kit-v2/src/rich-editor/lib/pipes": {
+      "reason": "The chat takes its own pipe, and the pipe takes the model of the chat: both stood before the check.",
+      "task": "RT-3618"
+    },
+    "blocks: projects/utils/src/lib/functions | projects/utils/src/lib/helpers | projects/utils/src/lib/interfaces": {
+      "reason": "Types, functions and helpers of the package name one another: all three stood before the check.",
+      "task": "RT-3618"
+    },
+    "libs/message-bus-api/observations/util/src/lib/quality-result.util.ts | libs/message-bus-api/observations/util/src/lib/quality.util.ts": {
+      "reason": "The two halves of the quality count were split and still import each other.",
+      "task": "RT-3618"
+    },
+    "projects/agent-kit/assets/checks/board-runs.github.mjs | projects/agent-kit/assets/checks/board.github.mjs": {
+      "reason": "The runs of the board take the client of the board, and the board takes the runs.",
+      "task": "RT-3618"
+    },
+    "projects/core/src/lib/directives/navigation.directive.ts -> projects/core/src/lib/services/platform.service.ts": {
+      "reason": "An import past the barrel of the neighbour folder that stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/core/src/lib/directives/navigation.directive.ts -> projects/core/src/lib/tokens/window.token.ts": {
+      "reason": "An import past the barrel of the neighbour folder that stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/core/src/lib/directives/scroll.directive.ts -> projects/core/src/lib/services/platform.service.ts": {
+      "reason": "An import past the barrel of the neighbour folder that stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/core/src/lib/directives/scroll.directive.ts -> projects/core/src/lib/tokens/window.token.ts": {
+      "reason": "An import past the barrel of the neighbour folder that stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/core/src/lib/providers.ts -> projects/core/src/lib/services/breakpoints.service.ts": {
+      "reason": "An import past the barrel of the neighbour folder that stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/core/src/lib/providers.ts -> projects/core/src/lib/services/platform.service.ts": {
+      "reason": "An import past the barrel of the neighbour folder that stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/core/src/lib/services/device-detector.service.ts -> projects/core/src/lib/tokens/navigator.token.ts": {
+      "reason": "An import past the barrel of the neighbour folder that stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/core/src/lib/services/device-detector.service.ts -> projects/core/src/lib/tokens/window.token.ts": {
+      "reason": "An import past the barrel of the neighbour folder that stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/store/src/lib/base-async-store.service.ts -> projects/store/src/lib/constants/base-initial-state.const.ts": {
+      "reason": "An import past the barrel of the neighbour folder that stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/store/src/lib/base-async-store.service.ts -> projects/store/src/lib/enums/async-state-status.enum.ts": {
+      "reason": "An import past the barrel of the neighbour folder that stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/store/src/lib/base-async-store.service.ts -> projects/store/src/lib/interfaces/async-store-service.interface.ts": {
+      "reason": "An import past the barrel of the neighbour folder that stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/store/src/lib/base-async-store.service.ts -> projects/store/src/lib/interfaces/devtools.interface.ts": {
+      "reason": "An import past the barrel of the neighbour folder that stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/store/src/lib/base-async-store.service.ts -> projects/store/src/lib/interfaces/state-base.interface.ts": {
+      "reason": "An import past the barrel of the neighbour folder that stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/store/src/lib/base-store.service.ts -> projects/store/src/lib/interfaces/action.interface.ts": {
+      "reason": "An import past the barrel of the neighbour folder that stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/store/src/lib/base-store.service.ts -> projects/store/src/lib/interfaces/base-store-service.interface.ts": {
+      "reason": "An import past the barrel of the neighbour folder that stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/store/src/lib/base-store.service.ts -> projects/store/src/lib/interfaces/devtools.interface.ts": {
+      "reason": "An import past the barrel of the neighbour folder that stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/store/src/lib/base-store.service.ts -> projects/store/src/lib/services/devtools-manager.service.ts": {
+      "reason": "An import past the barrel of the neighbour folder that stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/store/src/lib/services/devtools-manager.service.ts -> projects/store/src/lib/interfaces/devtools.interface.ts": {
+      "reason": "An import past the barrel of the neighbour folder that stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/store/src/lib/tokens/devtools.provider.ts -> projects/store/src/lib/interfaces/devtools.interface.ts": {
+      "reason": "An import past the barrel of the neighbour folder that stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/lib/platform/theme.service.ts -> projects/ui-kit-v2/src/lib/config/rt-kit-config.model.ts": {
+      "reason": "The theme service takes the config past its barrel; it leaves together with the cycle of the two blocks.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/lib/platform/theme.service.ts -> projects/ui-kit-v2/src/lib/config/rt-kit-config.providers.ts": {
+      "reason": "The theme service takes the config past its barrel; it leaves together with the cycle of the two blocks.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/rt-ai-chat.component.ts -> projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat-thread.logic.ts": {
+      "reason": "A component of the editor entry takes a neighbour past its barrel; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.component.ts -> projects/ui-kit-v2/src/rich-editor/lib/components/message-composer/rt-message-composer.component.ts": {
+      "reason": "A component of the editor entry takes a neighbour past its barrel; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.component.ts -> projects/ui-kit-v2/src/rich-editor/lib/components/message-composer/rt-message-composer.model.ts": {
+      "reason": "A component of the editor entry takes a neighbour past its barrel; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.component.ts -> projects/ui-kit-v2/src/rich-editor/lib/components/rich-editor/rt-rich-editor.component.ts": {
+      "reason": "A component of the editor entry takes a neighbour past its barrel; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.imports.ts -> projects/ui-kit-v2/src/rich-editor/lib/components/message-composer/rt-message-composer.component.ts": {
+      "reason": "A component of the editor entry takes a neighbour past its barrel; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.imports.ts -> projects/ui-kit-v2/src/rich-editor/lib/pipes/rt-chat-status-label.pipe.ts": {
+      "reason": "The chat takes its pipe past the barrel; it leaves together with the cycle of the two blocks.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/rich-editor/lib/components/message-composer/rt-message-composer.component.ts -> projects/ui-kit-v2/src/rich-editor/lib/components/rich-editor/rt-rich-editor.component.ts": {
+      "reason": "A component of the editor entry takes a neighbour past its barrel; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/story-option-tree.ts -> projects/ui-kit-v2/src/lib/components/select/rt-select.model.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/app-nav.items.ts -> projects/ui-kit-v2/src/lib/components/page-header/rt-page-header.model.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/booking-aside/booking-aside.component.ts -> projects/ui-kit-v2/src/lib/components/aside-section/rt-aside-section.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/booking-aside/booking-aside.component.ts -> projects/ui-kit-v2/src/lib/components/aside/footer/rt-aside-footer.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/booking-aside/booking-aside.component.ts -> projects/ui-kit-v2/src/lib/components/aside/header/rt-aside-header.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/booking-aside/booking-aside.component.ts -> projects/ui-kit-v2/src/lib/components/aside/rt-aside-content.directive.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/booking-aside/booking-aside.component.ts -> projects/ui-kit-v2/src/lib/components/aside/rt-aside.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/booking-aside/booking-aside.component.ts -> projects/ui-kit-v2/src/lib/components/button/rt-button.directive.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/booking-aside/booking-aside.component.ts -> projects/ui-kit-v2/src/lib/components/confirm-popover/rt-confirm.directive.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/booking-aside/booking-aside.component.ts -> projects/ui-kit-v2/src/lib/components/container/rt-container.directives.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/booking-aside/booking-aside.component.ts -> projects/ui-kit-v2/src/lib/components/container/rt-route-aside.base.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/booking-aside/booking-aside.component.ts -> projects/ui-kit-v2/src/lib/components/date-picker/rt-date-picker.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/booking-aside/booking-aside.component.ts -> projects/ui-kit-v2/src/lib/components/field/rt-field.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/booking-aside/booking-aside.component.ts -> projects/ui-kit-v2/src/lib/components/input-number/rt-input-number.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/booking-aside/booking-aside.component.ts -> projects/ui-kit-v2/src/lib/components/input/rt-input.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/booking-aside/booking-aside.component.ts -> projects/ui-kit-v2/src/lib/components/message/rt-message.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/booking-aside/booking-aside.component.ts -> projects/ui-kit-v2/src/lib/components/select/rt-select.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/booking-aside/booking-aside.component.ts -> projects/ui-kit-v2/src/lib/components/select/rt-select.model.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/booking-aside/booking-aside.component.ts -> projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/booking-aside/booking-aside.component.ts -> projects/ui-kit-v2/src/lib/components/tag/rt-tag.model.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/bookings-page/bookings-page.component.ts -> projects/ui-kit-v2/src/lib/components/button/rt-button.directive.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/bookings-page/bookings-page.component.ts -> projects/ui-kit-v2/src/lib/components/empty-state/rt-empty-state.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/bookings-page/bookings-page.component.ts -> projects/ui-kit-v2/src/lib/components/field/rt-field.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/bookings-page/bookings-page.component.ts -> projects/ui-kit-v2/src/lib/components/filter-control/rt-filter-control.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/bookings-page/bookings-page.component.ts -> projects/ui-kit-v2/src/lib/components/filter-control/rt-filter-control.model.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/bookings-page/bookings-page.component.ts -> projects/ui-kit-v2/src/lib/components/icon-button/rt-icon-button.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/bookings-page/bookings-page.component.ts -> projects/ui-kit-v2/src/lib/components/input-number/rt-input-number.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/bookings-page/bookings-page.component.ts -> projects/ui-kit-v2/src/lib/components/menu/rt-menu-item.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/bookings-page/bookings-page.component.ts -> projects/ui-kit-v2/src/lib/components/table/copy-cell/rt-copy-cell.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/bookings-page/bookings-page.component.ts -> projects/ui-kit-v2/src/lib/components/table/rt-table-row-actions.directive.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/bookings-page/bookings-page.component.ts -> projects/ui-kit-v2/src/lib/components/table/rt-table-row.directive.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/bookings-page/bookings-page.component.ts -> projects/ui-kit-v2/src/lib/components/table/rt-table-settings.registry.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/bookings-page/bookings-page.component.ts -> projects/ui-kit-v2/src/lib/components/table/rt-table.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/bookings-page/bookings-page.component.ts -> projects/ui-kit-v2/src/lib/components/table/rt-table.model.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/bookings-page/bookings-page.component.ts -> projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/bookings-page/bookings-page.component.ts -> projects/ui-kit-v2/src/lib/components/tag/rt-tag.model.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/bookings-page/bookings-page.component.ts -> projects/ui-kit-v2/src/lib/platform/notification-bus.service.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/bookings.routes.ts -> projects/ui-kit-v2/src/lib/components/container/rt-route-aside.guard.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/bookings.routes.ts -> projects/ui-kit-v2/src/lib/components/table/settings-aside/rt-table-settings-aside.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/list-page/app-list-page.component.ts -> projects/ui-kit-v2/src/lib/components/icon-button/rt-icon-button.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/list-page/app-list-page.component.ts -> projects/ui-kit-v2/src/lib/components/pagination/rt-pagination.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/list-page/app-list-page.component.ts -> projects/ui-kit-v2/src/lib/components/toolbar/rt-toolbar.component.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/list-page/app-list-page.component.ts -> projects/ui-kit-v2/src/lib/util/rt-slot-outlet.directive.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/ui-kit-v2/src/showcase/templates/bookings/list-page/app-list-page.component.ts -> projects/ui-kit-v2/src/lib/util/slot-template.ts": {
+      "reason": "A page of the showcase takes the kit by the file instead of the package entry; it stood before the check.",
+      "task": "RT-3618"
+    },
+    "projects/utils/src/lib/functions/debounce/debounce.ts -> projects/utils/src/lib/interfaces/nullable.type.ts": {
+      "reason": "An import past the barrel of the neighbour folder; it leaves together with the cycle of the three blocks.",
+      "task": "RT-3618"
+    },
+    "projects/utils/src/lib/functions/has-property-in-chain/has-property-in-chain.ts -> projects/utils/src/lib/interfaces/nullable.type.ts": {
+      "reason": "An import past the barrel of the neighbour folder; it leaves together with the cycle of the three blocks.",
+      "task": "RT-3618"
+    },
+    "projects/utils/src/lib/functions/is-empty-array/is-empty-array.ts -> projects/utils/src/lib/interfaces/nullable.type.ts": {
+      "reason": "An import past the barrel of the neighbour folder; it leaves together with the cycle of the three blocks.",
+      "task": "RT-3618"
+    },
+    "projects/utils/src/lib/functions/is-empty-object/is-empty-object.ts -> projects/utils/src/lib/interfaces/nullable.type.ts": {
+      "reason": "An import past the barrel of the neighbour folder; it leaves together with the cycle of the three blocks.",
+      "task": "RT-3618"
+    },
+    "projects/utils/src/lib/functions/is-empty-string/is-empty-string.ts -> projects/utils/src/lib/interfaces/nullable.type.ts": {
+      "reason": "An import past the barrel of the neighbour folder; it leaves together with the cycle of the three blocks.",
+      "task": "RT-3618"
+    },
+    "tools/check-preset-complete.mjs -> projects/ui-kit-v2/src/styles/tokens.source.mjs": {
+      "reason": "The check of presets reads the source of the tokens by the file: the package does not hand it out.",
+      "task": "RT-3618"
+    }
+  }
+}

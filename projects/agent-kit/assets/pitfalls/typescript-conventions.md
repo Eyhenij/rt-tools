@@ -102,6 +102,9 @@ flowchart TD
 
 ## What of the law is not here
 
+The articles of the law about a module — its duty, its links, what it shows — are held by the rule
+`code-design`.
+
 A one-step cast stays unchecked — that is `Q-CS-4` in the law: of seventy-six casts eight are
 mandatory, and a blanket ban would refuse them.
 

@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · checks/record-count.mjs · 39b7a76ff0e2 · правится надстройкой, не здесь
+// rt-kit v0.40.0 · checks/record-count.mjs · a6f6c6ab5165 · правится надстройкой, не здесь
 /**
  * The counter of a session record: what the owner said and what the agent was refused, read from the
  * conversation record Claude Code keeps per session.
@@ -412,7 +412,7 @@ export const treeChanges = (entries) => eventsOf(entries).filter((e) => e.ev ===
 export const interrupts = (entries) => eventsOf(entries).filter((e) => e.ev === 'interrupt');
 
 /** The reasons the rules gate writes into its refusal note, in the order the report names them. */
-export const GATE_REASONS = ['too-long', 'together', 'not-read'];
+export const GATE_REASONS = ['too-long', 'together', 'not-read', 'before'];
 
 /**
  * The rules gate on a day, from its own notes in the observations: a refusal `gate-deny` counted by

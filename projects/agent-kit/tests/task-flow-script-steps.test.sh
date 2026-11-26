@@ -174,6 +174,10 @@ report "plan: SC-AK-1506 — форма, вписанная в описание,
     cat > docs/tasks/RT-2-red/plan.md <<'PLAN'
 # Plan
 
+## Decision
+
+No decision: probe fixture
+
 ## Stages
 
 ### 1. Первый
@@ -211,7 +215,7 @@ tf_red() {
 TF_APPROVAL="$TF_RED/.git/rt-kit/approval/RT-2-red.json"
 
 # SC-AK-1410 — форма ожидаемого не распознана — запись плана отказана
-printf '# Plan\n\n## Stages\n\n### 1. Первый\n\n- **Steps:**\n    1. Сделать\n       Check: `true` → примерно ноль\n' > "$TF_DIR/bad-plan.md"
+printf '# Plan\n\n## Decision\n\nNo decision: probe fixture\n\n## Stages\n\n### 1. Первый\n\n- **Steps:**\n    1. Сделать\n       Check: `true` → примерно ноль\n' > "$TF_DIR/bad-plan.md"
 got="$(cd "$TF_RED" && node "$TESTS/../assets/checks/task-flow-script.mjs" plan-check "$TF_DIR/bad-plan.md" 2>&1 | tr '\n' ' '; printf 'code=%s' "${PIPESTATUS[0]}")"
 report "plan: SC-AK-1410 — неизвестная форма — план не записывается" "$(printf '%s' "$got" | grep -c 'step 1.1 is in no form: примерно ноль.* code=1')" 1
 got="$(cd "$TF_RED" && node "$TESTS/../assets/checks/task-flow-script.mjs" plan-check "$TF_RED/docs/tasks/RT-2-red/plan.md" 2>&1 | tr '\n' ' '; printf 'code=%s' "${PIPESTATUS[0]}")"

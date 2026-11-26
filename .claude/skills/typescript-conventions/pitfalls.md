@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/typescript-conventions.md · ee4d4c6b2f20 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · pitfalls/typescript-conventions.md · 775024ff8f2c · правится надстройкой, не здесь -->
 # Code structure — how it works here — cold part
 
 What the rule `typescript-conventions` handed over when cut to its statements, every article whole.
@@ -102,6 +102,9 @@ flowchart TD
       <!-- rt-when: *.ts -->
 
 ## What of the law is not here
+
+The articles of the law about a module — its duty, its links, what it shows — are held by the rule
+`code-design`.
 
 A one-step cast stays unchecked — that is `Q-CS-4` in the law: of seventy-six casts eight are
 mandatory, and a blanket ban would refuse them.

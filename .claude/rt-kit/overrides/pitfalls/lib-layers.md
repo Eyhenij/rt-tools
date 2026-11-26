@@ -1,7 +1,8 @@
 ## Import cycles inside the package
 
-The check is `npm run check:cycles`. It reads the relative imports of every file under
-`projects/` and names each cycle by its members, from file to file.
+The check is `npm run check:coupling`. It reads the imports of every module under the roots of
+`.claude/rt-kit/checks.json` and names each cycle by its members, of files and of blocks. The cycles
+that stood before it lie in `tools/coupling-allowlist.json`.
 
 - **A cycle starts through a directory barrel.** A file takes its neighbour not directly but from
   the `index.ts` next to it, and that one collects the file itself as well. It is broken by a

@@ -116,7 +116,8 @@ The table in `implementation.md` next to it.
    `nx affected -t test-hooks`. The numbers go into the progress.
 7. **Review round one: the path first, then its roles in one message.** `node tools/review-path.mjs
    --base origin/<base>` names the path; a light plan whose diff came out full goes on by the full
-   path. `qa-engineer` reads the diff file with the review lens of `.claude/workflows/feature.js` and
+   path. `qa-engineer` reads the diff file with the lens `review` of `.claude/workflows/feature.js`, the
+   plan and the coupling against the base by the section «Structure of the code» of its role, and
    edits nothing. `goal-critic` compares the result with the owner's words in the grill and never
    gets the plan. On the full path `product-strategist` runs the signs of the plan's points; on the
    light path the executor runs them.

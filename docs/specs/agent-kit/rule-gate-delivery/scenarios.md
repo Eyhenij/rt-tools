@@ -193,7 +193,8 @@ Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
 Given a refusal for a rule longer than the host limit
 When the observations of the session are read
 Then the gate refusal of that call carries the reason "too long", a refusal for rules that do not
-fit together carries "do not fit together", and a refusal for an unread rule carries "not read"
+fit together carries "do not fit together", a refusal for an unread rule carries "not read", and a
+refusal of a document of design carries "before"
 
 Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
 

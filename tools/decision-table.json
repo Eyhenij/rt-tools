@@ -1,4 +1,4 @@
-# rt-kit v0.39.1 · checks/decision-table.json · 684e76a628fe · правится надстройкой, не здесь
+# rt-kit v0.40.0 · checks/decision-table.json · c7dde220db29 · правится надстройкой, не здесь
 {
     "areas": {
         "browser": {
@@ -469,6 +469,7 @@
                 "defer_task",
                 "owner_step_row",
                 "write_plan_check",
+                "write_plan_decision",
                 "replace_step_check",
                 "edit_flow_description",
                 "copy_template",
@@ -643,6 +644,16 @@
             "file": "script-files.sh",
             "kind": "helper",
             "reason": "hooks into no agent event; guards source it"
+        },
+        {
+            "file": "shell-words.sh",
+            "kind": "helper",
+            "reason": "hooks into no agent event; write-targets.sh sources it"
+        },
+        {
+            "file": "code-writes.sh",
+            "kind": "helper",
+            "reason": "hooks into no agent event; write-targets.sh sources it"
         },
         {
             "file": "git-guard-delivery-rerun.sh",
@@ -12236,6 +12247,21 @@
             "says": "is a pipe without",
             "probe": {
                 "setup": "T=\"$(fixture_repo_branched main RT-1-probe)\"\nexport CLAUDE_PROJECT_DIR=\"$T\" TMPDIR=\"$T/.tmp\"\nmkdir -p \"$T/.tmp\"\nP=\"$(printf '# Plan\\n\\n## Stages\\n\\n### 1. Stage\\n\\n- **Steps:**\\n    1. First step\\n       Check: `cat a | tail -1` → `b`\\n')\"",
+                "input": "jq -n --arg d \"$T\" --arg f \"$T/docs/tasks/RT-1-probe/plan.md\" --arg c \"$P\" '{session_id:\"p\",hook_event_name:\"PreToolUse\",tool_name:\"Write\",cwd:$d,tool_input:{file_path:$f,content:$c}}'"
+            },
+            "text": "BLOCKED by flow-step-guard: {verdict}",
+            "tail": true
+        },
+        {
+            "area": "work",
+            "hook": "flow-step-guard.sh",
+            "when": {},
+            "action": "write_plan_decision",
+            "decision": "deny",
+            "move": "fix_text",
+            "says": "the decision of the plan is not complete",
+            "probe": {
+                "setup": "T=\"$(fixture_repo_branched main RT-1-probe)\"\nexport CLAUDE_PROJECT_DIR=\"$T\" TMPDIR=\"$T/.tmp\"\nmkdir -p \"$T/.tmp\"\nP=\"$(printf '# Plan\\n\\n## Stages\\n\\n### 1. Stage\\n\\n- **Steps:**\\n    1. First step\\n       Check: `true` → exit 0\\n')\"",
                 "input": "jq -n --arg d \"$T\" --arg f \"$T/docs/tasks/RT-1-probe/plan.md\" --arg c \"$P\" '{session_id:\"p\",hook_event_name:\"PreToolUse\",tool_name:\"Write\",cwd:$d,tool_input:{file_path:$f,content:$c}}'"
             },
             "text": "BLOCKED by flow-step-guard: {verdict}",

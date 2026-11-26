@@ -1,6 +1,6 @@
 # The rules gate
 
-**Status:** in force · **Revision:** 2026-09-10 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-24 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `verifiability`, `work-conduct`
 **Procedures:** none
@@ -60,6 +60,28 @@ The gate has no interface: only the executor sees it — as the text of a refusa
 - **The gate calls the file of the layers in its own shell, not as a separate process.** A layer
   answers by the same variables as the domain choice; a separate process would give them back through
   the disk.
+- **The rule of code design and its table come where the design is chosen.** That is the grill, the
+  plan of a task and the plan of an epic; the findings next to an epic plan are not a design.
+- **A document of design is refused until the rule and the table are loaded.** A delivery answers a
+  write that is already composed, so a rule delivered with the plan comes after the design. The
+  refusal stands whatever the length of the rules is: rested on their sum, it would go with the first
+  shortened neighbour.
+- **A module, a script and the entry file get the rule of code design alone.** With the table next to
+  it the rules of a new component do not fit into one delivery. Where the domain rules and a layer by
+  text already fill the limit, one more rule turns the delivery into a refusal once a session.
+- **The layer of code design is silent where there are no modules.** A spec, a story, a setting, a type
+  declaration, a built file and the agent's own file have no duties to divide, and a rule that comes
+  everywhere becomes background.
+- **The path of the layer of code design is read from the root of the tree.** A folder above the tree
+  named like a test, a setting or a build would silence the layer in the whole tree.
+- **The target of a write by a command gets the layers by path.** Without that the same module written
+  by the shell passed every layer, and the domain rule alone came. The targets are asked of the shared
+  parse of writes, on every command and not only on one with the sign of a write; a script that is run
+  and a file that is read stand in the same line and are not targets. A path the command only names
+  gets the domain rule as before: `rm` and `touch` name no target. Not seen: a bare name without a
+  slash, a path through a variable the command gave no literal, a script file the command runs, and
+  what the shared parse does not see. The layers by the text of the edit stay silent: a command carries
+  no field of the text.
 - **The gate map counts as a command a call, not a mention.** A match by substring catches any
   mention: a line about a commit in the body of the commit itself was refused as a commit, and this
   was gone around by rewriting the text, not by the work.
@@ -135,6 +157,7 @@ exit code.
 | What happened                                    | How it ends      | What it says                                               |
 | ------------------------------------------------ | ---------------- | ---------------------------------------------------------- |
 | an edit without the rule loaded                  | the call refused | the name of the rule, the law under it and how to load it  |
+| a document of design without its rules           | the call refused | the names of all the rules of the call, read beforehand    |
 | a layer has nothing to read the text of the edit | a pass           | nothing: the side duty of the gate stays silent            |
 | a path outside the tree                          | a pass           | nothing: the rules of the tree judge the files of the tree |
 
@@ -187,6 +210,8 @@ The open questions of the domain are shared, and they live in the spec next to i
 
 ## History of changes
 
+- 2026-11-24 — the layer of code design was added, and a file written by a command got the layers by
+  path: such a file used to pass all of them.
 - 2026-09-10 — the forgetting of loaded rules on compaction was written down. The hook stood in the
   package with neither an article nor a probe.
 - 2026-08-23 — the subdomain was split out of the subdomain of the edit guards, which had outgrown

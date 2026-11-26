@@ -1,6 +1,6 @@
 # The roles, the skills, the blanks and the declarations the package ships
 
-**Status:** in force · **Revision:** 2026-10-31 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-25 · **Scenario prefix:** `SC-AK`
 **Depends on:** `docs/specs/agent-kit/rules/spec.md`
 **Laws:** `project-documentation`
 **Procedures:** none
@@ -64,6 +64,11 @@ copied, a declaration is read by the layout.
 - **All four kinds are described by one subdomain.** None of them stands in the ladder of the law,
   the rule and the pattern; described apart, four subdomains would repeat one statement — that a
   name is the whole of the tie.
+- **The review of the code gets the decision of the plan and the coupling against the base.** The
+  role of the review holds a section on the structure of the code that names the rows «Dependencies»
+  and «Bounds»; the pipeline gives it the path of the plan and the coupling command with a base it
+  is passed, and refuses a call without one. Without them the role judges only breakage, and a
+  module with two duties stays a note.
 
 ## What is out of scope
 

@@ -63,3 +63,4 @@ so the pattern of the cycle carries them, and the anchor there is the word that 
 - **A release of the package does not start without its metric.** — `tools/release-metric.mjs:lineOf` — the required field and the call are `.github/workflows/publish-agent-kit.yml:RELEASE_METRIC`
 - **A cycle compares the same trees.** — `projects/agent-kit/assets/pitfalls/task-flow-cycle.md:themselves` — the same tree and version are narrowed by `libs/message-bus-api/observations/util/src/lib/quality.util.ts:narrowed`
 - **The role `goal-critic` gives the verdict from the numbers of the report.** — `projects/agent-kit/assets/pitfalls/task-flow-cycle.md:goal-critic`
+- **The rework of a task is counted from the history.** — `tools/task-rework.mjs:reworkOf` — `tools/task-rework.mjs:strayOf` — `tools/task-rework.mjs:median` — one task is SC-AK-1968, the last tasks and the window after a revision are SC-AK-1969

@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · checks/flow-plan.mjs · 729c276c2ce2 · правится надстройкой, не здесь
+// rt-kit v0.40.0 · checks/flow-plan.mjs · dd251d073eab · правится надстройкой, не здесь
 /**
  * The approval of a plan and the forms of its checks — the engine commands `plan-check` and
  * `plan-red`.
@@ -29,10 +29,11 @@
 import { spawnSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { dirname, join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { compareExpected, isWriteCommand } from './flow-data.mjs';
+import { decisionProblems } from './flow-decision.mjs';
 import { callOf } from './flow-guard-run.mjs';
 import { textAfter } from './flow-guard.mjs';
 import { STEP_LIMIT_MS, StepRefused, openRecords, planOfBranch, runCheck } from './flow-step.mjs';
@@ -72,12 +73,24 @@ export function rolesOfPlan(root, text) {
     }
 }
 
+/** The refusal of a plan whose decision is not complete: all it lacks in one line. An empty list — it is complete. */
+const decisionRefusal = (text) =>
+    [decisionProblems(text).join('; ')].filter(Boolean).map((lacks) =>
+        `the decision of the plan is not complete: ${lacks}. A change without new symbols writes one line under the heading instead of the table: «Решения нет: <reason>» («No decision: <reason>»)`);
+
+/** Whether the plan of a commit answers for its decision: one written before the engine read it does not. */
+const answersForDecision = (sha) => {
+    const own = relative(gitOut(['rev-parse', '--show-toplevel']).stdout.trim(), join(HERE, 'flow-decision.mjs'));
+    const holds = (rev) => gitOut(['cat-file', '-e', `${rev}:${own}`]).status === 0;
+    return own.startsWith('..') || !holds('HEAD') || holds(sha);
+};
+
 /**
- * What is wrong with the checks of a plan text; an empty list means it may be written. `forms: false`
- * leaves out the forms that hide a result: an approved plan keeps its checks.
+ * What is wrong with a plan text; an empty list means it may be written. `forms: false` leaves out the
+ * forms that hide a result and `decision: false` the decision: an approved plan keeps what it has.
  */
-export function planProblems(text, steps, model, { forms = true } = {}) {
-    const problems = forms ? formProblems(steps.ofPlan(text)) : [];
+export function planProblems(text, steps, model, { forms = true, decision = true } = {}) {
+    const problems = [...(forms ? formProblems(steps.ofPlan(text)) : []), ...(decision ? decisionRefusal(text) : [])];
     for (const step of steps.ofPlan(text)) {
         if (step.command === null) problems.push(`step ${step.number} has no check line`);
         else if (isWriteCommand(step.command, model.words)) problems.push(`the check of step ${step.number} is a command of the work: ${step.command}`);
@@ -141,8 +154,8 @@ export function formProblems(planSteps) {
 }
 
 /**
- * The first form problem of the plan of the branch the hook input writes, or null: another file, a
- * shell command and a plan with an approval mark are not judged. The hook of the step guard asks it.
+ * The first problem of the plan of the branch the hook input writes, or null: another file, a shell command
+ * and an approved plan are not judged, and a template filled in by edits has no decision yet. The step guard asks it.
  */
 export function writtenPlanProblem(input) {
     const root = gitOut(['rev-parse', '--show-toplevel']).stdout.trim();
@@ -153,7 +166,8 @@ export function writtenPlanProblem(input) {
     if (existsSync(join(common, 'rt-kit/approval', `${branch}.json`))) return null;
     const file = join(root, call.path);
     const after = textAfter(call, existsSync(file) ? readFileSync(file, 'utf8') : null);
-    return formProblems(stepsOfPlan(after))[0] ?? null;
+    const filling = call.edits && stepsOfPlan(after).some(({ name }) => /^<.+>$/.test(name));
+    return formProblems(stepsOfPlan(after))[0] ?? (filling ? null : (decisionRefusal(after)[0] ?? null));
 }
 
 /** The record of the conversation as entries, oldest first; a line that does not parse is skipped. */
@@ -254,9 +268,10 @@ export function runPlanRed({ git, steps, marks }, model, record, limitMs = STEP_
         console.log(`plan-red: ${error.message}`);
         return 1;
     }
-    const problems = planProblems(plan.text, steps, model, { forms: false });
+    const problems = planProblems(plan.text, steps, model, { forms: false, decision: !marks.approval(plan.branch) && answersForDecision(plan.sha) });
     if (problems.length > 0) {
         console.log(problems.map((p) => `plan-red: ${p}`).join('\n'));
+        console.log(`plan-red: the plan is read from the commit that added it, ${plan.sha.slice(0, 9)}: the fix goes into that commit before the push`);
         return 1;
     }
     const red = {};

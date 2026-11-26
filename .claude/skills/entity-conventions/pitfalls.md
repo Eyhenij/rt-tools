@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/entity-conventions.needs-admin.md · da7547161003 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · pitfalls/entity-conventions.needs-admin.md · da7547161003 · правится надстройкой, не здесь -->
 # Entity editing — how it works here — cold part
 
 What the rule `entity-conventions` handed over when cut to its statements, every article whole.

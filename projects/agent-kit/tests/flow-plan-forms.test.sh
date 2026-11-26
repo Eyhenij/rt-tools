@@ -11,7 +11,7 @@ PLAN="$PF/docs/tasks/RT-3-forms/plan.md"
 mkdir -p "$(dirname "$PLAN")"
 
 # Текст плана с одной проверкой; $1 — строка проверки целиком.
-pf_plan() { printf '# Plan\n\n## Stages\n\n### 1. Первый\n\n- **Steps:**\n    1. Шаг\n       Check: %s\n' "$1"; }
+pf_plan() { printf '# Plan\n\n## Decision\n\nNo decision: probe fixture\n\n## Stages\n\n### 1. Первый\n\n- **Steps:**\n    1. Шаг\n       Check: %s\n' "$1"; }
 # Ответ стража на запись плана: отказ — его довод, пусто — прошло.
 pf_write() {
     jq -n --arg d "$PF" --arg f "${2:-$PLAN}" --arg c "$(pf_plan "$1")" \
