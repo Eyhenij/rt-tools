@@ -1,16 +1,15 @@
 #!/usr/bin/env node
 /**
- * Вынимает рисунки Material для второго набора значков кита.
+ * Вынимает рисунки Material для набора значков `material`.
  *
  * Набор скачивается один раз и лежит под гитом: пакета Material в дереве нет ни в зависимостях
- * сборки, ни в смежных — ради этого набор и заводится. Скрипт остаётся рядом не ради обновлений,
- * а как запись происхождения: по нему видно, какое имя Material закрыло какое имя кита и откуда
- * приехал файл.
+ * сборки, ни в смежных. Скрипт остаётся рядом не ради обновлений, а как запись происхождения:
+ * по нему и по списку рядом видно, откуда приехал файл.
  *
- * Имена берутся из перечня соответствий, а не из своего списка: свой список разошёлся бы с
- * перечнем молча.
+ * Какое имя Material закрыло какое имя кита, говорит `material-icon-sources.json`.
  *
- * Запуск: node tools/fetch-material-icons.mjs
+ * Вызов: node tools/fetch-material-icons.mjs — без ключей. Любой аргумент даёт отказ: скрипт
+ * переписывает всю папку набора, и опечатка в ключе не должна начинать скачивание.
  */
 
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
@@ -18,24 +17,9 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const MAP_FILE = join(ROOT, 'projects/ui-kit-v2/src/lib/components/icon/rt-icon-material-map.ts');
+const SOURCES_FILE = join(ROOT, 'tools/material-icon-sources.json');
 const OUT_DIR = join(ROOT, 'projects/ui-kit-v2/src/assets/icons-material');
 const BASE = 'https://raw.githubusercontent.com/google/material-design-icons/master/symbols/web';
-
-/** Пара «имя первого кита — имя во втором»: `to` пустое у имён, которым рисунка не нашлось. */
-const ENTRY_RE = /\{\s*from:\s*'([^']+)'\s*,\s*to:\s*(?:'([^']+)'|null)/g;
-
-/**
- * Имена, переименованные Material между старым набором и нынешним. Первый кит звал значок так,
- * как звал его старый набор, и по этому имени нынешний отвечает «не найдено» — а читается это
- * как промах перечня соответствий, хотя перечень верен.
- */
-const RENAMED = {
-    // Ценник: старое имя `local_offer`, нынешнее `sell`.
-    local_offer: 'sell',
-    // Конверт: старое имя `email`, нынешнее `mail`.
-    email: 'mail',
-};
 
 /**
  * Два рисунка на имя — контурный и залитый, оба толщиной 700 и оптического размера 48: так первый
@@ -48,17 +32,6 @@ const DRAWINGS = [
     { variant: 'wght700', suffix: '' },
     { variant: 'wght700fill1', suffix: '.fill' },
 ];
-
-async function pairs() {
-    const src = await readFile(MAP_FILE, 'utf8');
-    const found = [];
-    for (const m of src.matchAll(ENTRY_RE)) {
-        if (m[2]) {
-            found.push({ material: m[1], kit: m[2] });
-        }
-    }
-    return found;
-}
 
 /**
  * Рисунок Material красится своим цветом: заливки в нём нет вовсе, и без неё значок выходит
@@ -82,22 +55,33 @@ function withViewBox(raw) {
 }
 
 async function main() {
-    const list = await pairs();
+    const unknown = process.argv.slice(2);
+
+    if (unknown.length > 0) {
+        console.error(`fetch-material-icons: незнакомый аргумент: ${unknown.join(', ')}. Ключей у скрипта нет, ничего не скачано.`);
+        process.exit(2);
+    }
+
+    const list = Object.entries(JSON.parse(await readFile(SOURCES_FILE, 'utf8')));
+
+    if (list.length === 0) {
+        console.error(`fetch-material-icons: список ${SOURCES_FILE} пуст, ничего не скачано.`);
+        process.exit(1);
+    }
+
     await mkdir(OUT_DIR, { recursive: true });
 
     const failed = [];
-    for (const { material, kit } of list) {
-        const symbol = RENAMED[material] ?? material;
+    for (const [kit, material] of list) {
         for (const drawing of DRAWINGS) {
-            const url = `${BASE}/${symbol}/materialsymbolsoutlined/${symbol}_${drawing.variant}_${OPTICAL_SIZE}.svg`;
+            const url = `${BASE}/${material}/materialsymbolsoutlined/${material}_${drawing.variant}_${OPTICAL_SIZE}.svg`;
             const answer = await fetch(url);
             if (!answer.ok) {
                 failed.push(`${material} ${drawing.variant} — ${answer.status}`);
                 continue;
             }
             const raw = await answer.text();
-            // Имя файла — имя КИТА: реестр просит значок именем кита, а какое имя Material его
-            // закрыло, знает перечень соответствий.
+            // Имя файла — имя КИТА: реестр просит значок именем кита.
             await writeFile(join(OUT_DIR, `${kit}${drawing.suffix}.svg`), `${paint(raw.trim())}\n`, 'utf8');
         }
     }

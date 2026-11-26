@@ -69,4 +69,23 @@ export const RT_ICON_MATERIAL_NAMES: ReadonlyArray<IRtIcon.Name> = [
     'window-minimize',
 ];
 
+/** Набор значков: папка рисунков с именами кита по своему адресу. */
+export interface IRtIconSet {
+    readonly name: string;
+    /** Адрес, по которому приложение публикует рисунки набора. */
+    readonly url: string;
+    /** Запасной набор — откуда берётся недостающий рисунок. У набора `kit` его нет. */
+    readonly fallback?: string;
+    /** Имена со своим рисунком. Набор без перечня считается полным. */
+    readonly names?: ReadonlyArray<IRtIcon.Name>;
+    /** Есть ли у набора залитые рисунки `<имя>.fill.svg`. */
+    readonly fill?: boolean;
+}
+
+/** Наборы, которые кит объявляет сам. */
+export const rtIconBuiltInSets: ReadonlyArray<IRtIconSet> = [
+    { name: 'kit', url: '/icons' },
+    { name: 'material', url: '/icons-material', fallback: 'kit', names: RT_ICON_MATERIAL_NAMES, fill: true },
+];
+
 export const iconMaterialDrawn: ReadonlySet<IRtIcon.Name> = new Set<IRtIcon.Name>(RT_ICON_MATERIAL_NAMES);
