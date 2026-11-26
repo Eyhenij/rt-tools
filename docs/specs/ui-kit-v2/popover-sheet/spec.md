@@ -133,3 +133,4 @@ None.
 | 2026-11-20 | Scenarios renumbered to 1554…1627 after main took 1385…1389 and 1436…1505; the toggle choice left for the subdomain `toggle-choice` (RT-3399) |
 | 2026-11-23 | The multiselect done button moved to the sheet header; the header, cards and height of a sheet are subdomain `sheet-header-cards` (RT-3531)   |
 | 2026-11-25 | A side panel on a phone is a sheet of its own, subdomain `aside/phone-sheet` (RT-3532)                                                        |
+| 2026-11-25 | The code of the sheet is loaded at the first opening; its rules and scenarios 1782…1784 live in the subdomain `popover-sheet-lazy` (RT-3645)   |

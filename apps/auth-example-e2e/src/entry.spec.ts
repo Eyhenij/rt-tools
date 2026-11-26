@@ -14,6 +14,27 @@ test.describe('the entry', () => {
         await expect(page.getByTestId('records-empty').or(page.getByTestId('records-list'))).toBeVisible();
     });
 
+    test('SC-AUTH-121 — the tokens of the kit reach the records screen', async ({ page }) => {
+        await signIn(page, 'reader');
+        await expect(page.getByTestId('records-person')).toBeVisible();
+
+        // The tokens arrive by the style files of the kit: a part that dropped out of the build leaves
+        // the root without them, and the screen is drawn by the defaults of the browser.
+        const tokens: Record<string, string> = await page.evaluate((): Record<string, string> => {
+            const style: CSSStyleDeclaration = getComputedStyle(document.documentElement);
+
+            return {
+                surface: style.getPropertyValue('--rt-color-bg-surface').trim(),
+                inputHeight: style.getPropertyValue('--rt-input-height').trim(),
+                space: style.getPropertyValue('--rt-space-md').trim(),
+            };
+        });
+
+        expect(tokens['surface']).not.toBe('');
+        expect(tokens['inputHeight']).not.toBe('');
+        expect(tokens['space']).not.toBe('');
+    });
+
     test('SC-AUTH-100 — the return from the entry form does not wait for the cookie probe of Keycloak', async ({ page }) => {
         const probe: Awaited<ReturnType<typeof lateCookieProbe>> = await lateCookieProbe(page);
         await page.goto('/');

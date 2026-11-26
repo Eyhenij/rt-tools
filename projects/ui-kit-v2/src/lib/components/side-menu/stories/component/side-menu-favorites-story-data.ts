@@ -8,7 +8,7 @@ import { SIDE_MENU_STORY_ITEMS } from './side-menu-story-data';
  * Данные историй избранного — те же, что в историях избранного первого кита: избранное включено у
  * «Content» и «Test long name», у «Collections» выключено. В «Content» разделы разложены по двум
  * вложенным папкам, у части разделов кнопка «+» создания записи. Значки Material заменены значками
- * кита по `rt-icon-material-map.ts`.
+ * кита по `rt-icon-sets.ts`.
  *
  * В пакет не уезжает: `tsconfig.lib.json` исключает папки историй.
  */

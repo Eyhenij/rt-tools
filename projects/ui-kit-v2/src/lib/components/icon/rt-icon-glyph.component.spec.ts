@@ -8,7 +8,8 @@ import { RtIconComponent } from './rt-icon.component';
 import { RT_ICON_SPRITE_ID } from './rt-icon.const';
 import { IRtIcon } from './rt-icon.model';
 import { provideRtIcons } from './rt-icon.providers';
-import { RT_ICONS_BASE_URL, RT_ICONS_MATERIAL_BASE_URL } from './rt-icon.registry';
+import { RT_ICON_SETS_CONFIG } from './rt-icon.registry';
+import { IRtIconSetsConfig } from './rt-icon-sets.logic';
 
 function setup(inputs: Readonly<Record<string, unknown>>, providers: Provider[] = []): ComponentFixture<RtIconComponent> {
     return createRtFixture(RtIconComponent, inputs, { providers });
@@ -23,14 +24,14 @@ describe('RtIconComponent — глиф Material', (): void => {
         document.getElementById(RT_ICON_SPRITE_ID)?.remove();
     });
 
-    it('SC-UKV-543 — глиф с парой рисует пару из набора кита', (): void => {
-        const fixture: ComponentFixture<RtIconComponent> = setup({ glyph: 'arrow_back' });
+    it('SC-UKV-543 — имя кита на glyph рисует рисунок из набора кита', (): void => {
+        const fixture: ComponentFixture<RtIconComponent> = setup({ glyph: 'arrow-left' });
 
         expect(el(fixture, 'use')?.attributes['href']).toBe('#rt-icon-arrow-left');
         expect(glyphNode(fixture)).toBeNull();
     });
 
-    it('SC-UKV-544 — глиф без пары рисует лигатуру шрифта и в набор не ходит', (): void => {
+    it('SC-UKV-544 — глиф вне имён кита рисует лигатуру шрифта и в набор не ходит', (): void => {
         const fixture: ComponentFixture<RtIconComponent> = setup({ glyph: 'pets', size: 'lg' });
         const http: HttpTestingController = TestBed.inject(HttpTestingController);
 
@@ -47,34 +48,34 @@ describe('RtIconComponent — глиф Material', (): void => {
         expect(glyphNode(fixture)).toBeNull();
     });
 
-    it('SC-UKV-546 — по стратегии font глиф с парой тоже рисуется лигатурой', (): void => {
-        const fixture: ComponentFixture<RtIconComponent> = setup({ glyph: 'arrow_back' }, [
+    it('SC-UKV-546 — по стратегии font имя кита, совпавшее с лигатурой, рисуется лигатурой', (): void => {
+        const fixture: ComponentFixture<RtIconComponent> = setup({ glyph: 'search' }, [
             { provide: RT_ICON_GLYPH_STRATEGY, useValue: 'font' },
         ]);
 
         expect(el(fixture, 'svg')).toBeNull();
-        expect(glyphNode(fixture)?.textContent?.trim()).toBe('arrow_back');
+        expect(glyphNode(fixture)?.textContent?.trim()).toBe('search');
     });
 
     it('SC-UKV-709 — вход glyphStrategy значка перекрывает стратегию приложения', (): void => {
-        const own: ComponentFixture<RtIconComponent> = setup({ glyph: 'arrow_back', glyphStrategy: 'font' }, [
+        const own: ComponentFixture<RtIconComponent> = setup({ glyph: 'search', glyphStrategy: 'font' }, [
             { provide: RT_ICON_GLYPH_STRATEGY, useValue: 'map-first' },
         ]);
-        const neighbour: ComponentFixture<RtIconComponent> = setup({ glyph: 'arrow_back' }, [
+        const neighbour: ComponentFixture<RtIconComponent> = setup({ glyph: 'search' }, [
             { provide: RT_ICON_GLYPH_STRATEGY, useValue: 'map-first' },
         ]);
 
         expect(el(own, 'svg')).toBeNull();
-        expect(glyphNode(own)?.textContent?.trim()).toBe('arrow_back');
-        expect(el(neighbour, 'use')?.attributes['href']).toBe('#rt-icon-arrow-left');
+        expect(glyphNode(own)?.textContent?.trim()).toBe('search');
+        expect(el(neighbour, 'use')?.attributes['href']).toBe('#rt-icon-search');
     });
 
     it('SC-UKV-709 — без входа glyphStrategy значок берёт стратегию приложения', (): void => {
-        const fixture: ComponentFixture<RtIconComponent> = setup({ glyph: 'arrow_back', glyphStrategy: null }, [
+        const fixture: ComponentFixture<RtIconComponent> = setup({ glyph: 'search', glyphStrategy: null }, [
             { provide: RT_ICON_GLYPH_STRATEGY, useValue: 'font' },
         ]);
 
-        expect(glyphNode(fixture)?.textContent?.trim()).toBe('arrow_back');
+        expect(glyphNode(fixture)?.textContent?.trim()).toBe('search');
     });
 
     it('SC-UKV-547 — заливка значка ставит заливку шрифта лигатуре', (): void => {
@@ -144,16 +145,17 @@ describe('provideRtIcons — настройки значков', (): void => {
         return createEnvironmentInjector([provideRtIcons(...args)], TestBed.inject(EnvironmentInjector));
     }
 
-    it('SC-UKV-549 — вызов с двумя адресами работает как прежде, стратегия map-first', (): void => {
-        const injector: EnvironmentInjector = injectorOf('/a', '/b');
+    it('SC-UKV-549 — вызов без настроек объявляет встроенные наборы, набор kit и стратегию map-first', (): void => {
+        const injector: EnvironmentInjector = injectorOf();
+        const config: IRtIconSetsConfig = injector.get(RT_ICON_SETS_CONFIG);
 
-        expect(injector.get(RT_ICONS_BASE_URL)).toBe('/a');
-        expect(injector.get(RT_ICONS_MATERIAL_BASE_URL)).toBe('/b');
+        expect([...config.sets.keys()]).toEqual(['kit', 'material']);
+        expect(config.defaultSet).toBe('kit');
         expect(injector.get(RT_ICON_GLYPH_STRATEGY)).toBe<IRtIcon.GlyphStrategy>('map-first');
     });
 
     it('SC-UKV-550 — третий аргумент задаёт стратегию', (): void => {
-        const injector: EnvironmentInjector = injectorOf(undefined, undefined, { glyphStrategy: 'font' });
+        const injector: EnvironmentInjector = injectorOf({ glyphStrategy: 'font' });
 
         expect(injector.get(RT_ICON_GLYPH_STRATEGY)).toBe<IRtIcon.GlyphStrategy>('font');
     });

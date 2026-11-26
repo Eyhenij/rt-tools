@@ -4,7 +4,7 @@ kind: pattern
 rule: autonomous-work
 description: Pattern of rule autonomous-work. Load when the owner has left and the work runs through the night — the cycle of one piece of work, chained branching, a written default instead of a question, the list by morning, handling a guard refusal. Not for ordinary work — patterns task-flow-start and -resume.
 ---
-<!-- rt-kit v0.40.0 · patterns/autonomous-work-run.md · 8d3b99a10427 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.0 · patterns/autonomous-work-run.md · 8d3b99a10427 · правится надстройкой, не здесь -->
 
 # A night without the owner
 

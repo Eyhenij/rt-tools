@@ -36,14 +36,15 @@ ref.afterClosed().subscribe((result?: ITour): void => …);
 | `emptyTitle`       | `string \| null`       | `null` → `uiEmptyTitle` |
 | `emptyDescription` | `string \| null`       | `null`                  |
 
-| настройка `open()`                       | умолчание                                 |
-| ---------------------------------------- | ----------------------------------------- |
-| `data`                                   | `null` — доезжает токеном `RT_ASIDE_DATA` |
-| `position`                               | `'right'`; на телефоне не читается        |
-| `closeOnBackdropClick` / `closeOnEscape` | `true`; второе — из настроек кита         |
-| `backdropClass` / `panelClass`           | `rt-aside-backdrop` / `rt-aside-overlay`  |
-| `injector`                               | корневой — уничтожение хозяина закрывает  |
-| `disposeOnNavigation`                    | `true` — переход по адресу снимает        |
+| настройка `open()`                       | умолчание                                  |
+| ---------------------------------------- | ------------------------------------------ |
+| `data`                                   | `null` — доезжает токеном `RT_ASIDE_DATA`  |
+| `position`                               | `'right'`; на телефоне не читается         |
+| `closeOnBackdropClick` / `closeOnEscape` | `true`; второе — из настроек кита          |
+| `backdropClass` / `panelClass`           | `rt-aside-backdrop` / `rt-aside-overlay`   |
+| `injector`                               | корневой — уничтожение хозяина закрывает   |
+| `iconSet`                                | набор части с фокусом, затем из `injector` |
+| `disposeOnNavigation`                    | `true` — переход по адресу снимает         |
 
 **На телефоне `backdropClass` и `position` не читаются.** Панель там — шторка во всю ширину окна
 со своим затемнением: подложки оверлея нет, и класс подложки повесить не на что, а сторона выезда

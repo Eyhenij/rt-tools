@@ -53,6 +53,12 @@
     "./styles/tokens.coexist.css": {
       "default": "./styles/tokens.coexist.css"
     },
+    "./styles/tokens.base.css": {
+      "default": "./styles/tokens.base.css"
+    },
+    "./styles/tokens.scope.css": {
+      "default": "./styles/tokens.scope.css"
+    },
     "./styles/*": {
       "sass": "./src/styles/_*.scss",
       "default": "./src/styles/_*.scss"

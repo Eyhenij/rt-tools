@@ -182,3 +182,17 @@ Given the markup or the code of the admin application
 When a label for a person is written into them instead of a key of the dictionary
 Then the check refuses and names the file and the word. A place that cannot be taken from the
 dictionary is let through only by name, with a reason and the number of a task
+
+### SC-MB-458 — the tokens of the kit reach the page of the application
+
+Given the application is open on any section
+When the properties of the page root are read
+Then the colour of the surface, the height of an input and the step of the spacing are all set.
+The styles of the kit are connected, and no part of them dropped out of the build
+
+### SC-MB-459 — every icon of a list screen has a symbol in the sprite
+
+Given the owner is on a list screen of a section
+When every icon drawn on the screen is read
+Then each of them points to a symbol that is in the sprite of the page: no name is left without a
+drawing

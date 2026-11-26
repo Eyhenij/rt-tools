@@ -81,3 +81,17 @@ Given a person entered the admin and is on the records screen
 When the kit has put the icons of the screen into the sprite of the page
 Then every symbol carries the shapes of its file, every node of it is an SVG node, and none carries
 an event handler
+
+### SC-AUTH-121 — the tokens of the kit reach the records screen
+
+Given a person entered the admin and is on the records screen
+When the properties of the page root are read
+Then the colour of the surface, the height of an input and the step of the spacing are all set.
+The styles of the kit are connected, and no part of them dropped out of the build
+
+### SC-AUTH-122 — every icon of the records screen has a symbol in the sprite
+
+Given a person entered the admin and is on the records screen
+When every icon drawn on the screen is read
+Then each of them points to a symbol that is in the sprite of the page: no name is left without a
+drawing

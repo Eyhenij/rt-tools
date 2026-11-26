@@ -4,7 +4,7 @@ kind: pattern
 rule: doc-style
 description: Pattern of rule doc-style. Load when writing a task in the work queue, a PR description and a chat reply to the owner. Samples and the words to replace; a status reply — rule status-report.
 ---
-<!-- rt-kit v0.40.0 · patterns/doc-style-human.md · e03e4ffba1af · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.0 · patterns/doc-style-human.md · e03e4ffba1af · правится надстройкой, не здесь -->
 
 # A task, a PR description and a reply to the owner
 

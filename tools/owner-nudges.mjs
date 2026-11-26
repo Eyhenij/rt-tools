@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.40.0 · checks/owner-nudges.mjs · 0cb9db3043df · правится надстройкой, не здесь
+// rt-kit v0.41.0 · checks/owner-nudges.mjs · 0cb9db3043df · правится надстройкой, не здесь
 /**
  * The measures of the guards of the end of a turn, read from the session records of this tree.
  *

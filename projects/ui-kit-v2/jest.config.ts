@@ -41,6 +41,7 @@ export default {
         // Every component is an entry of its own, and the components import each other by entry
         // name: the core lies apart, the rest by the name of the component directory.
         '^@rt-tools/ui-kit-v2/core$': '<rootDir>/src/lib/core.ts',
+        '^@rt-tools/ui-kit-v2/scope-styles$': '<rootDir>/src/lib/scope-styles/index.ts',
         '^@rt-tools/ui-kit-v2/([\\w-]+)$': '<rootDir>/src/lib/components/$1/index.ts',
         // @rt-tools/utils writes explicit .js extensions on its relative imports so its ESM output
         // is loadable by Node. Jest resolves the TypeScript sources, so the extension is stripped.
