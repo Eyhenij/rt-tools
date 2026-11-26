@@ -278,13 +278,19 @@ dlv_reason "SC-AK-2008 — отказ называет объявленный а
 dlv "SC-AK-2008 — чужой адрес автора отбит" "$EPIC" 'gh pr merge 917 --merge --author-email me@example.test' deny
 dlv "SC-AK-2008 — слияние в ветку эпика с объявленным адресом проходит" "$EPIC" 'gh pr merge 917 --merge --author-email bot@example.test' PASS
 dlv "SC-AK-2008 — короткий ключ -A тоже называет адрес" "$EPIC" 'gh pr merge 917 --merge -A bot@example.test' PASS
-dlv "SC-AK-2008 — слитный -A и вид с = называют адрес" "$EPIC" 'gh pr merge 917 -Abot@example.test && gh pr merge 917 --author-email=bot@example.test' PASS
+dlv "SC-AK-2008 — слитный -A называет адрес" "$EPIC" 'gh pr merge 917 --merge -Abot@example.test' PASS
+dlv "SC-AK-2008 — вид с = называет адрес" "$EPIC" 'gh pr merge 917 --merge --author-email=bot@example.test' PASS
+dlv "SC-AK-2008 — два слияния одной командой — не та форма" "$EPIC" 'gh pr merge 917 --merge -A bot@example.test && gh pr merge 917 --merge -A bot@example.test' deny
+dlv "SC-AK-2008 — слова слияния в сообщении коммита не судятся" "$EPIC" 'git commit -m "gh pr merge 917 --merge"' PASS
 dlv "SC-AK-2008 — адрес в теме слияния — текст, не автор" "$EPIC" "gh pr merge 917 --merge --subject 'see -A bot@example.test'" deny
 dlv "SC-AK-2008 — справка слиянием не судится" "$EPIC" 'gh pr merge --help' PASS
 rm -rf "$EPIC"
 TOKEN="$(who_repo '{"exists":true,"number":917,"run":"none","base":"RT-1-epic"}' 'RT_PULL_TOKEN_VAR=GH_TOKEN')"
 dlv "SC-AK-2008 — слияние без токена машинной записи отбито" "$TOKEN" 'gh pr merge 917 --merge -A bot@example.test' deny
 dlv "SC-AK-2008 — слияние с токеном машинной записи проходит" "$TOKEN" 'GH_TOKEN="$(cat t)" gh pr merge 917 --merge -A bot@example.test' PASS
+dlv "SC-AK-2008 — форма из профиля с токеном без кавычек проходит" "$TOKEN" 'test -s ~/t && GH_TOKEN=$(cat ~/t) /opt/homebrew/bin/gh pr merge 917 --merge -A bot@example.test' PASS
+dlv "SC-AK-2008 — токен в чужом звене цепочки отбит" "$TOKEN" 'GH_TOKEN=x true && gh pr merge 917 --merge -A bot@example.test' deny
+dlv "SC-AK-2008 — пустой токен отбит" "$TOKEN" 'GH_TOKEN= gh pr merge 917 --merge -A bot@example.test' deny
 rm -rf "$TOKEN"
 MAIN="$(who_repo '{"exists":true,"number":917,"run":"none","base":"main"}' 'RT_MAIN_MERGE_BY_OWNER=1')"
 dlv "SC-AK-2009 — слияние исполнителем в главную ветку отбито" "$MAIN" 'gh pr merge 917 --merge -A bot@example.test' deny
@@ -292,7 +298,13 @@ dlv "SC-AK-2009 — клиент полным путём отбит так же"
 dlv "SC-AK-2009 — обёртка клиента отбита так же" "$MAIN" 'bot() { gh "$@"; }; bot pr merge 917 --merge -A bot@example.test' deny
 dlv "SC-AK-2009 — номер после ключей отбит так же" "$MAIN" 'gh pr merge --merge -A bot@example.test 917' deny
 dlv "SC-AK-2009 — второе слияние цепочки судится" "$MAIN" 'true && gh pr merge 917 --merge -A bot@example.test' deny
-dlv_reason "SC-AK-2009 — слияние без номера просит назвать номер" "$MAIN" 'gh pr merge --merge -A bot@example.test' 'Name the number'
+dlv_reason "SC-AK-2009 — слияние без номера называет единственную форму" "$MAIN" 'gh pr merge --merge -A bot@example.test' 'in one form only'
+for form in 'env GH_TOKEN=x gh pr merge 917 --merge -A bot@example.test' 'timeout 60 gh pr merge 917 --merge -A bot@example.test' \
+    'sleep 0 & gh pr merge 917 --merge -A bot@example.test' 'bash -c "gh pr merge 917 --merge -A bot@example.test"' \
+    'x=$(gh pr merge 917 --merge -A bot@example.test)' 'gh -R o/r pr merge 917 --merge -A bot@example.test' \
+    'gh pr merge -mt 900 917 -A bot@example.test' '"gh" pr merge 917 --merge -A bot@example.test'; do
+    dlv "SC-AK-2009 — иная форма слияния отбита: ${form}" "$MAIN" "$form" deny
+done
 rm -rf "$MAIN"
 GONE="$(who_repo '{"exists":false}' 'RT_MAIN_MERGE_BY_OWNER=1')"
 dlv_reason "SC-AK-2009 — заявки нет на хосте — проверить номер" "$GONE" 'gh pr merge 917 --merge -A bot@example.test' 'Check the number'

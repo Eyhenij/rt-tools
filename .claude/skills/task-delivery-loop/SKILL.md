@@ -61,7 +61,7 @@ Tree rule under `work-conduct`, over `task-flow`. Cold part, steps whole: `pitfa
   Texts, rules, tools: numbers in PR body.
 - After a merge, the next task in the same turn.
 - The executor merges by the owner's word: a task of an epic with the word into its branch after the
-  green push set and the review, `GH_TOKEN=<machine token> gh pr merge <N> --merge --author-email <RT_COMMIT_EMAIL>`; into
+  green push set and the review, `<RT_PULL_TOKEN_HINT> gh pr merge <N> --merge --author-email <RT_COMMIT_EMAIL>` as the whole command; into
   `main` never — the owner's button.
 
 ## Patterns

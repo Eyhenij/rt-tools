@@ -101,11 +101,11 @@ Then it stays silent: demanding a known signature of every commit would refuse w
 ### SC-AK-2008 — the merge names the declared author
 
 Given a tree that declares the machine account's email, and a request into an epic branch
-When the merge command names no author, a foreign one, one only inside its subject, or no machine token
-Then the guard refuses and names the declared email, while `--author-email` or `-A` with it and the token pass
+When the merge command is not the one form — the token, the client, the number, `--merge`, the declared author
+Then the guard refuses and names the form, while that form passes and words inside quotes are not judged
 
 ### SC-AK-2009 — the merge into the main branch is the owner's where the tree says so
 
 Given a tree with `RT_MAIN_MERGE_BY_OWNER=1`
-When the executor merges a request into the main branch — by a path, a wrapper, the number after the flags or in a chain — or one whose base is not known
-Then the guard refuses and says whether to name the number, check it or repeat, and without the setting the merge into the main branch is not judged
+When the executor merges a request into the main branch, or by a runner, a wrapper, a subshell or a chain, or one whose base is not known
+Then the guard refuses, and without the setting the merge into the main branch is not judged
