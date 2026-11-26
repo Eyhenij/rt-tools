@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { createRtFixture, qa } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
+import { rtPreloadPopoverSheet } from '../popover/rt-popover-sheet.helper';
 import { IRtSelect } from '../select/rt-select.model';
 import { RtMultiselectComponent } from './rt-multiselect.component';
 
@@ -44,6 +45,10 @@ function panelClasses(): string[] {
 }
 
 describe('Карточки выбора мультиселекта в шторке (вход sheetCards)', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+    });
+
     afterEach((): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });

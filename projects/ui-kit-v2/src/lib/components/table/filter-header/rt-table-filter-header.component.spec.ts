@@ -5,6 +5,7 @@ import { EFilterOperatorType, IFilterModel } from '@rt-tools/utils';
 
 import { createRtFixture, qa, qaAll, setInputs } from '../../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../../platform';
+import { rtPreloadPopoverSheet } from '../../popover/rt-popover-sheet.helper';
 import { IRtTable } from '../rt-table.model';
 import { RtTableFilterHeaderComponent } from './rt-table-filter-header.component';
 
@@ -269,6 +270,10 @@ class BreakpointsStub {
 }
 
 describe('RtTableFilterHeaderComponent — виды сравнения в шторке (вход sheetCards)', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+    });
+
     function open(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtTableFilterHeaderComponent> {
         const providers: Provider[] = [{ provide: BreakpointsService, useValue: new BreakpointsStub() }];
         const fixture: ComponentFixture<RtTableFilterHeaderComponent> = createRtFixture(
@@ -292,7 +297,7 @@ describe('RtTableFilterHeaderComponent — виды сравнения в што
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1782 — виды сравнения стоят карточками с радиокнопкой кита, нынешний отмечен', (): void => {
+    it('SC-UKV-1916 — виды сравнения стоят карточками с радиокнопкой кита, нынешний отмечен', (): void => {
         open();
 
         const radios: HTMLElement[] = items().map((item: HTMLElement): HTMLElement => item.querySelector('[role="radio"]') as HTMLElement);

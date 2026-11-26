@@ -1,4 +1,4 @@
-// rt-kit v0.40.0 · checks/coupling-numbers.mjs · 6c615abcd3c3 · правится надстройкой, не здесь
+// rt-kit v0.41.1 · checks/coupling-numbers.mjs · 6c615abcd3c3 · правится надстройкой, не здесь
 /**
  * The numbers of the import graph: cycles, imports past an entry, links between blocks, and by module —
  * incoming and outgoing links, names shown and taken by nobody.

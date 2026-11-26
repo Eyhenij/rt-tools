@@ -1,4 +1,4 @@
-// rt-kit v0.40.0 · task-flow/measure/plan.mjs · 82e46ef9a7e9 · правится надстройкой, не здесь
+// rt-kit v0.41.1 · task-flow/measure/plan.mjs · 82e46ef9a7e9 · правится надстройкой, не здесь
 /**
  * The measurer «measure.plan» — exit 5: a commit of the branch added the plan; every step of the
  * plan as that commit wrote it has a check line whose expected result is a form of `expect`; and

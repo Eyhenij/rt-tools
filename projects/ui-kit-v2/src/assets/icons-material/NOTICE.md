@@ -13,8 +13,8 @@ Two things were changed on the way in and nothing else:
 
 - **The file is named by the kit name, not by the Material one; the filled drawing carries the suffix
   `.fill`.** The registry asks for a drawing
-  by the kit's own name, and which Material name closed it is known to the correspondence list in
-  `projects/ui-kit-v2/src/lib/components/icon/rt-icon-material-map.ts`.
+  by the kit's own name, and which Material name closed it is known to the list in
+  `tools/material-icon-sources.json`.
 - **`fill="currentColor"` is set on the body.** Without it the drawing paints itself black on
   every theme: the upstream file declares no fill at all.
 

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.40.0 · pitfalls/lists.md · 7d205d465675 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.1 · pitfalls/lists.md · 7d205d465675 · правится надстройкой, не здесь -->
 # List screen — how it works here — cold part
 
 What the rule `lists` handed over when cut to its statements, every article whole.

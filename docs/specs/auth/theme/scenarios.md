@@ -77,7 +77,7 @@ Given a realm with two languages
 When a page is drawn
 Then the language is chosen from one drop-down list, not from a row of buttons
 
-### SC-AUTH-121 — on a phone the language list is a bottom sheet that closes by its close button
+### SC-AUTH-123 — on a phone the language list is a bottom sheet that closes by its close button
 
 Given the entry page of a realm with two languages in a window of a phone width
 When a person opens the language list and then presses the close button in the header of the sheet

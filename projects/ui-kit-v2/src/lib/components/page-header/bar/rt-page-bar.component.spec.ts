@@ -11,6 +11,7 @@ import { RT_POPOVER_SHEET } from '../../popover/rt-popover-sheet.token';
 import { RtPageBarFilterDirective, RtPageBarSearchDirective } from './rt-page-bar-slots.directive';
 import { RtPageBarComponent } from './rt-page-bar.component';
 import { IRtPageBar } from './rt-page-bar.model';
+import { rtPreloadPopoverSheet } from '../../popover/rt-popover-sheet.helper';
 
 let resize: (() => void) | null = null;
 let hostWidth: number = 1390;
@@ -99,6 +100,10 @@ function typeSearch(fixture: ComponentFixture<PageBarHostComponent>, value: stri
 }
 
 describe('rt-page-bar', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+    });
+
     it('SC-UKV-1194 — a wide bar draws filters and actions in a row', (): void => {
         const fixture: ComponentFixture<PageBarHostComponent> = setup(1390);
 
@@ -138,7 +143,7 @@ describe('rt-page-bar', (): void => {
         expect(qa(fixture, 'page-bar-sheet')).toBeNull();
     });
 
-    it('SC-UKV-1784 — the filters sheet opens by the height of its fields, the apply button stands in its header', (): void => {
+    it('SC-UKV-1918 — the filters sheet opens by the height of its fields, the apply button stands in its header', (): void => {
         const fixture: ComponentFixture<PageBarHostComponent> = setup(375);
 
         (qa(fixture, 'page-bar-filters')?.nativeElement as HTMLElement).click();

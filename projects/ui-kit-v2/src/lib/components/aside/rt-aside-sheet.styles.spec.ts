@@ -29,6 +29,7 @@ describe('стили панели-шторки', (): void => {
     const frame: string = compiled('rt-aside.component.scss');
     const header: string = compiled('header/rt-aside-header.component.scss');
     const sheet: string = compiled('../bottom-sheet/rt-bottom-sheet.component.scss');
+    const confirm: string = compiled('../bottom-sheet/confirm/rt-bottom-sheet-confirm.component.scss');
 
     it('SC-UKV-1802 — коробка оверлея шторки во всё окно и без сдвига: шторка стоит от окна', (): void => {
         const body: string = ruleBody(overlay, '.rt-aside-overlay.rt-aside-overlay--sheet');
@@ -100,10 +101,10 @@ describe('стили панели-шторки', (): void => {
     });
 
     it('SC-UKV-1851 — нижняя строка карточки вопроса скруглена как карточка: кольцо фокуса не срезается углом', (): void => {
-        expect(ruleBody(sheet, '.rt-bottom-sheet__confirm-row:last-child')).toContain(
+        expect(ruleBody(confirm, '.rt-bottom-sheet__confirm-row:last-child')).toContain(
             'border-radius: 0 0 var(--rt-bottom-sheet-confirm-radius) var(--rt-bottom-sheet-confirm-radius)'
         );
-        expect(ruleBody(sheet, '.rt-bottom-sheet__confirm-row:only-child')).toContain(
+        expect(ruleBody(confirm, '.rt-bottom-sheet__confirm-row:only-child')).toContain(
             'border-radius: var(--rt-bottom-sheet-confirm-radius)'
         );
     });

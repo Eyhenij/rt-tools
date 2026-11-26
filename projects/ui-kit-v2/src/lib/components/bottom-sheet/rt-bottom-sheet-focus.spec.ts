@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, WritableSignal, signal } from '@ang
 import { ComponentFixture } from '@angular/core/testing';
 
 import { createRtFixture, qa } from '../../../testing/rt-kit-testing';
+import { rtPreloadSheetConfirm } from './rt-bottom-sheet-confirm.loader';
 import { RtBottomSheetComponent } from './rt-bottom-sheet.component';
 
 /** Шторка в шаблоне своей части: открывает её кнопка рядом, как у отборов страницы и полей даты. */
@@ -73,6 +74,10 @@ function escapeOn(target: EventTarget): KeyboardEvent {
 }
 
 describe('RtBottomSheetComponent — фокус и Escape', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadSheetConfirm();
+    });
+
     it('SC-UKV-1756 — вопрос берёт фокус на ответ «применить», шторка под ним недоступна, «Отмена» возвращает фокус', (): void => {
         const fixture: TFixture = setup(true);
         node(fixture, 'bottom-sheet-close').focus();
@@ -201,7 +206,7 @@ describe('RtBottomSheetComponent — фокус и Escape', (): void => {
         expect(document.querySelector('.cdk-overlay-container')).not.toBeNull();
     });
 
-    it('SC-UKV-1783 — высота под клавиатуру следующему открытию не достаётся', (): void => {
+    it('SC-UKV-1917 — высота под клавиатуру следующему открытию не достаётся', (): void => {
         const viewport: EventTarget & { height: number; offsetTop: number; scale: number } = Object.assign(new EventTarget(), {
             height: window.innerHeight - 300,
             offsetTop: 0,

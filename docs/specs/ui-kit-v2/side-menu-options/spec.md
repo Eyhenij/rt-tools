@@ -40,7 +40,7 @@ are invisible to them.
 - **The submenu search takes its size and look from the menu inputs on both screens.**
 - **Every submenu row and folder carries its item number as a mark.**
 - **The colours, sizes and paddings of the rail, the panel and the rows are menu properties, and without them the menu draws as before.**
-- **The folder icon has a Material pair.**
+- **The material set draws the folder icon.**
 - **Submenu row and folder icons are filled only by the input.**
 - **A submenu row hands its press to the consumer before the navigation, and a prevented press does not navigate.**
 - **A submenu opened by hover closes after the delay input, and the pointer coming back keeps it open.**

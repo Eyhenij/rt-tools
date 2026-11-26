@@ -72,7 +72,7 @@ for the autocomplete by `projects/ui-kit-v2/src/lib/components/autocomplete/rt-a
 for the dynamic selector by `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-sheet.spec.ts`,
 for the table column filter by `projects/ui-kit-v2/src/lib/components/table/filter-header/rt-table-filter-header.component.spec.ts`.
 
-### SC-UKV-1780 — the dynamic selector draws cards in the sheet
+### SC-UKV-1914 — the dynamic selector draws cards in the sheet
 
 Given a dynamic selector open in the sheet
 When its list is shown
@@ -80,7 +80,7 @@ Then every option is a card with the mark on the right
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-sheet.spec.ts`.
 
-### SC-UKV-1781 — the hints of an autocomplete are cards in the sheet
+### SC-UKV-1915 — the hints of an autocomplete are cards in the sheet
 
 Given an autocomplete open in the sheet
 When its hints are shown
@@ -88,7 +88,7 @@ Then every hint is a card
 
 Covered: `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-sheet.spec.ts`.
 
-### SC-UKV-1782 — the comparison kinds of a column filter are cards in the sheet
+### SC-UKV-1916 — the comparison kinds of a column filter are cards in the sheet
 
 Given a table column filter on a phone
 When the comparison kind is pressed
@@ -96,7 +96,7 @@ Then the kinds are cards with the kit radio button, and the current one is check
 
 Covered: `projects/ui-kit-v2/src/lib/components/table/filter-header/rt-table-filter-header.component.spec.ts`.
 
-### SC-UKV-1783 — a sheet with a search takes the full height only while the keyboard is shown
+### SC-UKV-1917 — a sheet with a search takes the full height only while the keyboard is shown
 
 Given a select with a search open in the sheet by the height of its content
 When the search takes the focus
@@ -107,9 +107,11 @@ at the next opening; the focus on a card, a checkbox, a radio button, a button o
 field does not start the watch: nobody types there
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`; which node is
-typed in — by `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.logic.spec.ts`.
+typed in — by `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.logic.spec.ts`;
+that nothing of it stays at the next opening — by
+`projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-focus.spec.ts`.
 
-### SC-UKV-1784 — the filters sheet opens by the height of its fields, the apply button stands in its header
+### SC-UKV-1918 — the filters sheet opens by the height of its fields, the apply button stands in its header
 
 Given the page filters on a phone
 When they are opened
@@ -405,3 +407,23 @@ seen and the body scrolls; short content keeps the sheet by its height
 Not covered: a test has no layout — the height is seen by the frame of the story `Content` in
 `projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/bottom-sheet-matrix.stories.ts` and by
 the match of the showcase with the mockup.
+
+### SC-UKV-1919 — every frame of the date sheet showcase puts the field of its kind
+
+Given the showcase wrapper of the date sheet
+When a frame of a time, a time from midnight, a date with time or a period is drawn
+Then it puts the field of that kind under its label, and the field carries the mark by which the
+story finds the button that opens its sheet
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/stories/component/test-rt-date-sheet.component.spec.ts`.
+
+### SC-UKV-1920 — the question before closing waits for its code and never locks the sheet
+
+Given a sheet with a choice not applied, whose question code has not arrived yet
+When the person closes it before the code arrives
+Then the question is drawn once when the code arrives, with the focus on «Apply»; a sheet removed while
+the code is on its way draws no question; a code that fails to load takes the question off, the sheet
+stays open and answers touches, and the error goes to the application's error handler
+
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-confirm-lazy.spec.ts`,
+`projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-confirm-failure.spec.ts`.

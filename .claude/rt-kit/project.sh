@@ -201,6 +201,7 @@ node tools/check-kit-coverage.mjs
 node tools/check-boolean-inputs.mjs
 pnpm run check:ngdoctor
 pnpm run check:unused
+pnpm run check:kit-weight
 node tools/check-tokens-styles.mjs
 node tools/check-cascade-layer.mjs
 node tools/check-format-ignore.mjs

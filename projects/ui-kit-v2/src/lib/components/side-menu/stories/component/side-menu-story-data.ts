@@ -6,7 +6,7 @@ const longItemName: string = 'Item 2 Lorem Ipsum is simply dummy text of the pri
 /**
  * Пункты меню витрины — те же, что в истории бокового меню первого кита: те же разделы, подписи,
  * вложенность и длинные подписи, чтобы два кадра сравнивались строка в строку. Значки Material
- * заменены значками кита по `rt-icon-material-map.ts`, а где пары там нет — ближайшими по рисунку.
+ * заменены значками кита по `rt-icon-sets.ts`, а где пары там нет — ближайшими по рисунку.
  * Стрелку у раздела с подменю второй кит рисует сам, поэтому кнопки со стрелкой у разделов нет.
  *
  * В пакет не уезжает: `tsconfig.lib.json` исключает папки историй.
@@ -130,15 +130,15 @@ export const SIDE_MENU_ICONS_STORY_ITEMS: readonly IRtSideMenu.Item[] = [
         icon: 'home',
         name: 'Главная',
         submenu: [
-            { id: 511, icon: 'insert_chart', name: 'Отчёты', link: '/reports', iconButton: { icon: 'arrow_forward' } },
-            { id: 512, icon: 'dashboard', name: 'Дашборды', link: '/dashboards', iconButton: { icon: 'add' } },
-            { id: 513, icon: 'monitoring', name: 'Мониторинг', link: '/monitoring' },
+            { id: 511, icon: 'chart-bar', name: 'Отчёты', link: '/reports', iconButton: { icon: 'arrow-right' } },
+            { id: 512, icon: 'th-large', name: 'Дашборды', link: '/dashboards', iconButton: { icon: 'ico-plus' } },
+            { id: 513, icon: 'chart-line', name: 'Мониторинг', link: '/monitoring' },
             { id: 516, icon: 'rocket_launch', name: 'Запуски', link: '/launches', iconButton: { icon: 'rocket_launch' } },
             { id: 514, icon: 'folder', name: 'Папка', submenu: [{ id: 515, name: 'Вложенный отчёт', link: '/reports/nested' }] },
         ],
     },
-    { id: 502, icon: 'settings', name: 'Настройки', link: '/settings' },
-    { id: 503, icon: 'dashboard', name: 'Дашборды', link: '/dashboards' },
+    { id: 502, icon: 'cog', name: 'Настройки', link: '/settings' },
+    { id: 503, icon: 'th-large', name: 'Дашборды', link: '/dashboards' },
     { id: 504, icon: 'rocket_launch', name: 'Запуски', link: '/launches' },
 ];
 

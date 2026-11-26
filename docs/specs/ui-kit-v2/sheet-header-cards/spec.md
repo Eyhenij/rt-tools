@@ -216,3 +216,9 @@ None.
 |            | of «×» (RT-3532)                                                                                      |
 | 2026-11-23 | A minute off the step, the keys of the wheel, Escape inside a date panel, scenarios 1770, 1771        |
 |            | (RT-3531)                                                                                             |
+| 2026-11-26 | Scenarios 1780…1784 move to 1914…1918: the main branch took those numbers; the frames of the date     |
+|            | sheet showcase, scenario 1919 (RT-3706)                                                               |
+| 2026-11-26 | The code of the question before closing arrives when a sheet that can ask opens, at the latest at the |
+|            | first question, `rtPreloadSheetConfirm` waits for it in specs; a failed load takes the question off,  |
+|            | scenario 1920; the radio of a select card comes with the first cards, its place keeps the size of the |
+|            | radio; the look is unchanged (RT-3709)                                                                |

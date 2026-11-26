@@ -34,7 +34,7 @@ test.describe('разделы на узком экране', () => {
         await expect(qa(page, SECTION.proposals.table)).toBeVisible();
     });
 
-    test('SC-MB-458 — список разделов на узком экране закрывается своей кнопкой закрытия', async ({ page }: { page: Page }) => {
+    test('SC-MB-460 — список разделов на узком экране закрывается своей кнопкой закрытия', async ({ page }: { page: Page }) => {
         await openSection(page, 'postmortems');
 
         const burger: ReturnType<Page['locator']> = qa(page, 'header-nav-burger');

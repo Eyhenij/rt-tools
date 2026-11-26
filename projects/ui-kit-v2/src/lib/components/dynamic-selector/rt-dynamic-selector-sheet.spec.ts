@@ -4,6 +4,8 @@ import { provideRouter } from '@angular/router';
 
 import { createRtFixture, qa } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
+import { rtPreloadSheetConfirm } from '../bottom-sheet/rt-bottom-sheet-confirm.loader';
+import { rtPreloadPopoverSheet } from '../popover/rt-popover-sheet.helper';
 import { RtDynamicSelectorComponent } from './rt-dynamic-selector.component';
 
 interface IPerson {
@@ -61,11 +63,16 @@ function inSheet(selector: string): HTMLElement[] {
 }
 
 describe('Динамический селектор в нижней шторке (вход sheetCards)', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+        await rtPreloadSheetConfirm();
+    });
+
     afterEach((): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1780 — выбор нескольких: каждый пункт — карточка с флажком кита', (): void => {
+    it('SC-UKV-1914 — выбор нескольких: каждый пункт — карточка с флажком кита', (): void => {
         open();
 
         expect(inSheet('[qa-dataid="dynamic-selector-options"]')[0].classList).toContain('rt-dynamic-selector-popup__list--cards');
@@ -74,7 +81,7 @@ describe('Динамический селектор в нижней шторке
         expect(boxes.every((box: HTMLElement): boolean => box.classList.contains('rt-checkbox--card'))).toBe(true);
     });
 
-    it('SC-UKV-1780 — выбор одной записи: каждый пункт — карточка с радиокнопкой кита', (): void => {
+    it('SC-UKV-1914 — выбор одной записи: каждый пункт — карточка с радиокнопкой кита', (): void => {
         open({ mode: 'single' });
 
         const radios: HTMLElement[] = inSheet('[qa-dataid="dynamic-selector-option"] [role="radio"]');

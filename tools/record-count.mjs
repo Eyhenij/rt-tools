@@ -1,4 +1,4 @@
-// rt-kit v0.40.0 · checks/record-count.mjs · a6f6c6ab5165 · правится надстройкой, не здесь
+// rt-kit v0.41.1 · checks/record-count.mjs · a6f6c6ab5165 · правится надстройкой, не здесь
 /**
  * The counter of a session record: what the owner said and what the agent was refused, read from the
  * conversation record Claude Code keeps per session.

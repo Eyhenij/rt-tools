@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, WritableSignal, signal } from '@ang
 import { ComponentFixture } from '@angular/core/testing';
 
 import { createRtFixture, qa, textOf } from '../../../testing/rt-kit-testing';
+import { rtPreloadSheetConfirm } from './rt-bottom-sheet-confirm.loader';
 import { RtBottomSheetComponent } from './rt-bottom-sheet.component';
 
 /**
@@ -44,6 +45,10 @@ function press(fixture: TFixture, id: string): void {
 }
 
 describe('RtBottomSheetComponent — вопрос перед закрытием', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadSheetConfirm();
+    });
+
     it('SC-UKV-1785 — кнопка закрытия при неприменённом выборе показывает вопрос, шторка остаётся открытой', (): void => {
         const fixture: TFixture = setup();
 

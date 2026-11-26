@@ -22,6 +22,7 @@
 - **rt:ui-kit-v2:** у шторки отборов `rt-page-bar` «Применить» стоит в шапке, перед закрытием с неприменённым вводом она спрашивает; новый вход `filtersChanged` (RT-3531)
 - **rt:ui-kit-v2:** в подвале шторки отборов `rt-page-bar` стоит «Сбросить», новое событие `filtersReset`; шторка после сброса остаётся открытой (RT-3531)
 - **rt:ui-kit-v2:** у шторки `rt-date-picker` и `rt-date-range` есть заголовок — подпись поля или его доступное имя (RT-3531)
+- **rt:ui-kit-v2:** код вопроса шторки перед закрытием и радиокнопки карточек выбора приходит при первом показе, а не со стартом приложения: стартовый набор кита 218731 → 207053 байт. Сбой загрузки снимает вопрос, шторка остаётся открытой. `rtPreloadSheetConfirm()` подгружает код вопроса заранее — для тестов и приложения, которому вопрос нужен сразу (RT-3709)
 
 ### BREAKING CHANGES
 
@@ -34,6 +35,53 @@
     - время в шторке выбирает барабан, и у поля без времени он стоит на текущем времени: «Готово» пишет его без выбора. То же у отдельной `rt-date-panel` со входом `sheet`; старт с 00:00 — `timeStart="midnight"`;
     - в подвале шторки отборов `rt-page-bar` стоит «Сбросить»: поля очищает приложение по выходу `filtersReset`, а к применённым значениям возвращает по `filtersDiscard`. Без этих подписок кнопка и ответ «Не применять» полей не меняют;
     - о выборе в списке кита внутри отборов `rt-page-bar` шторка узнаёт только от приложения — входом `filtersChanged`; ввод в текстовые поля она замечает сама.
+
+# [0.53.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.52.0...rt-ui-kit-v2%400.53.0) (2026-11-26)
+
+### Bug Fixes
+
+- **rt:agent-kit:** съёмка затронутых историй после первого круга ревью (RT-3629) ([b52f9dc](https://github.com/Eyhenij/rt-tools/commit/b52f9dcd86f2ea9917ed40cb44018b7567025de0))
+- **rt:ui-kit-v2:** диалог подтверждения меню после второго круга ревью (RT-3646) ([4263e99](https://github.com/Eyhenij/rt-tools/commit/4263e9907a63e1e46892773d891c5b0623a9f56f))
+- **rt:ui-kit-v2:** диалог подтверждения меню после первого круга ревью (RT-3646) ([35e996a](https://github.com/Eyhenij/rt-tools/commit/35e996a6dfda8a8cfb7e608ba3c2b7f10851bf23))
+- **rt:ui-kit-v2:** загрузчик местных стилей после второго круга ревью (RT-3644) ([73097c1](https://github.com/Eyhenij/rt-tools/commit/73097c1ccb4ffb51cba586ed8887e01d2d3d1e53))
+- **rt:ui-kit-v2:** загрузчик местных стилей после первого круга ревью (RT-3644) ([b1e4a99](https://github.com/Eyhenij/rt-tools/commit/b1e4a9979b83cffe0baa62a13d93498f618da2f8))
+- **rt:ui-kit-v2:** значки и наборы после второго круга ревью (RT-3648) ([20127c2](https://github.com/Eyhenij/rt-tools/commit/20127c215b4a0bea09fba4d288c6ce95d8160d37))
+- **rt:ui-kit-v2:** значки и наборы после первого круга ревью (RT-3648) ([ccfe5b9](https://github.com/Eyhenij/rt-tools/commit/ccfe5b904869f64bdeb7eccf161e181fa74a95b1))
+- **rt:ui-kit-v2:** значки и наборы проходят проверки перед отправкой (RT-3648) ([c70917c](https://github.com/Eyhenij/rt-tools/commit/c70917c928a6dbc6f87953abe5348ccdb1fbeda0))
+- **rt:ui-kit-v2:** истории значков и селектора после замены имён (RT-3648) ([8b69adb](https://github.com/Eyhenij/rt-tools/commit/8b69adb9f3913b4680b48c36aeb8f8e060ed4732))
+- **rt:ui-kit-v2:** лист popover после второго круга ревью (RT-3645) ([63a902d](https://github.com/Eyhenij/rt-tools/commit/63a902df194be0a11e8574d8de087378d9f063b7))
+- **rt:ui-kit-v2:** лист popover после первого круга ревью (RT-3645) ([e19acc2](https://github.com/Eyhenij/rt-tools/commit/e19acc2a57eadd7f44279b4c0d1a9e290e515d89))
+- **rt:ui-kit-v2:** предупреждения о наборах значков остаются разработчику, порог веса переписан (RT-3648) ([e4a084a](https://github.com/Eyhenij/rt-tools/commit/e4a084a7e8d54e9f39b0247c5d6db0cdf9f2ee72))
+- **rt:ui-kit-v2:** раздельные токены кита после второго круга ревью (RT-3643) ([3671389](https://github.com/Eyhenij/rt-tools/commit/367138904461f50adb57aca10e119eaad3f2d3d4))
+- **rt:ui-kit-v2:** раздельные токены кита после первого круга ревью (RT-3643) ([1fda9f4](https://github.com/Eyhenij/rt-tools/commit/1fda9f4fa8eb20ee73943c53e7cc9b588d3711a5))
+- **rt:ui-kit-v2:** таблица категорий значков не приезжает в приложение без неё (RT-3648) ([79dd4c8](https://github.com/Eyhenij/rt-tools/commit/79dd4c8c3df3924e332ab1979fdb88ebcc19009c))
+
+### Features
+
+- **rt:ui-kit-v2:** витрина показывает смену набора значков на ходу (RT-3648) ([584c7d3](https://github.com/Eyhenij/rt-tools/commit/584c7d387baff0e5b461bde99989732eb768972b))
+- **rt:ui-kit-v2:** значки в ките называются только именами кита, перевода старых имён нет (RT-3648) ([0e1917d](https://github.com/Eyhenij/rt-tools/commit/0e1917d6a860d52bc9a991a0df76261db5755454))
+- **rt:ui-kit-v2:** код диалога подтверждения пункта меню подгружается при первом подтверждении (RT-3646) ([17310d0](https://github.com/Eyhenij/rt-tools/commit/17310d0c0ce0d2e5f6b15f88fe5a91345a99f564))
+- **rt:ui-kit-v2:** код нижнего листа popover подгружается при первом открытии (RT-3645) ([d316105](https://github.com/Eyhenij/rt-tools/commit/d3161058f122ce6a1a6cf9cc9bea7edd635a802e))
+- **rt:ui-kit-v2:** набор значков меняется на ходу у приложения и у части страницы (RT-3648) ([4214d73](https://github.com/Eyhenij/rt-tools/commit/4214d73d866eae78d62b26a8030dd21c37a65fc7))
+- **rt:ui-kit-v2:** наборы значков объявляются данными, недостающий рисунок берётся из запасного (RT-3648) ([3edfc6a](https://github.com/Eyhenij/rt-tools/commit/3edfc6ab5bd5b9ca713c7f03d170752dc3a84622))
+- **rt:ui-kit-v2:** окна и панели получают набор значков той части, откуда их открыли (RT-3648) ([3eceb52](https://github.com/Eyhenij/rt-tools/commit/3eceb52959471af01be8f89920f7f49cd5f01b0e))
+- **rt:ui-kit-v2:** переходный скрипт имён значков и проверка наборов (RT-3648) ([29f81b7](https://github.com/Eyhenij/rt-tools/commit/29f81b7a7e22f782f54a6d1ce3aa4927da9170c7))
+- **rt:ui-kit-v2:** служба подгрузки местных стилей кита в точке входа scope-styles (RT-3644) ([0fe3d6c](https://github.com/Eyhenij/rt-tools/commit/0fe3d6cfe616f03af0a1823ebedb8675c528ed3b))
+- **rt:ui-kit-v2:** токены режутся на базу и местные куски темы (RT-3643) ([fd3236d](https://github.com/Eyhenij/rt-tools/commit/fd3236d40e059a798cef3e31a401a70538fb9c2b))
+
+### BREAKING CHANGES
+
+- **rt:ui-kit-v2:** iconMaterialMap, IRtIconMaterialEntry и materialPairOf убраны. Значение glyph,
+  равное имени кита, рисуется рисунком кита, любое другое — шрифтом Material приложения. Пункт меню,
+  боковое меню, таблица и панель списка больше не переводят имена первого кита в имена кита.
+- **rt:ui-kit-v2:** provideRtIcons(adres, materialAdres, options) заменён на provideRtIcons({ sets, default, glyphStrategy }); RT_ICONS_BASE_URL, RT_ICONS_MATERIAL_BASE_URL и тип IRtIcon.Drawing убраны; RtIconRegistry.request и symbolHref берут имя набора и признак заливки.
+- **rt:ui-kit-v2:** имя info в наборе кита рисует другой значок, это видно в
+  rt-menu-item и в колонке таблицы без замены имён в приложении.
+- **rt:ui-kit-v2:** имя значка, которое приходит данными, должно быть именем кита. Меню и боковое меню
+  не рисуют имён первого кита и под font. Значения операторов фильтра таблицы стали именами кита,
+  dataTableIconName ничего не переводит. Вход icon у rt-speed-menu по умолчанию пуст. Статические имена
+  в шаблонах заменяет migrations/rename-icon-names.mjs, таблица имён лежит рядом.
+- **rt:ui-kit-v2:** класс шторки убран из публичной точки @rt-tools/ui-kit-v2/popover, а ручка открытой шторки IRtPopoverSheetOpened больше не несёт поле sheetRef: она несёт оверлей и поток dismissed. Код шторки подгружается при первом открытии; rtPreloadPopoverSheet подгружает его заранее.
 
 # [0.52.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.51.0...rt-ui-kit-v2%400.52.0) (2026-11-24)
 

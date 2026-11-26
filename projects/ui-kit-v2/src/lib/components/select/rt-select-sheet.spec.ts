@@ -7,6 +7,7 @@ import { RtFieldComponent } from '../field/rt-field.component';
 import { RtMultiselectComponent } from '../multiselect/rt-multiselect.component';
 import { RtSelectComponent } from './rt-select.component';
 import { IRtSelect } from './rt-select.model';
+import { rtPreloadPopoverSheet } from '../popover/rt-popover-sheet.helper';
 
 const OPTIONS: ReadonlyArray<IRtSelect.Option<string>> = [
     { label: 'Москва', value: 'msk' },
@@ -94,6 +95,10 @@ function setupMultiselect(chosen: ReadonlyArray<string>): ComponentFixture<RtMul
 }
 
 describe('Панель выбора в нижней шторке', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+    });
+
     afterEach((): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
@@ -340,11 +345,14 @@ describe('Карточки выбора селекта в шторке (вход
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1794 — каждая опция — карточка с радиокнопкой кита справа, выбранная отмечена', (): void => {
+    it('SC-UKV-1794 — каждая опция — карточка с радиокнопкой кита справа, выбранная отмечена', async (): Promise<void> => {
         const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true);
         fixture.componentInstance.writeValue('msq');
 
         press(fixture, 'select-trigger');
+        // Код радиокнопки приходит с первыми карточками: отложенный блок дорисовывается после него.
+        await fixture.whenStable();
+        fixture.detectChanges();
 
         expect(document.querySelector('[qa-dataid="select-panel"]')?.classList).toContain('rt-select__panel--cards');
         const marks: HTMLElement[] = all('select-option-mark');
@@ -388,7 +396,7 @@ describe('Карточки выбора селекта в шторке (вход
         expect(document.activeElement).toBe(qa(fixture, 'select-trigger')?.nativeElement);
     });
 
-    describe('SC-UKV-1783 — высота под клавиатуру', (): void => {
+    describe('SC-UKV-1917 — высота под клавиатуру', (): void => {
         /** Видимая область окна, которую двигает экранная клавиатура. */
         let viewport: EventTarget & { height: number; offsetTop: number; scale: number };
 
@@ -406,7 +414,7 @@ describe('Карточки выбора селекта в шторке (вход
             viewport.dispatchEvent(new Event('resize'));
         }
 
-        it('SC-UKV-1783 — шторка с поиском во всю высоту только пока показана клавиатура', (): void => {
+        it('SC-UKV-1917 — шторка с поиском во всю высоту только пока показана клавиатура', (): void => {
             const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { filter: true });
             press(fixture, 'select-trigger');
             const panel: HTMLElement = document.querySelector('[qa-dataid="bottom-sheet-panel"]') as HTMLElement;
@@ -429,7 +437,7 @@ describe('Карточки выбора селекта в шторке (вход
             expect(panel.classList).not.toContain('rt-bottom-sheet__panel--typing');
         });
 
-        it('SC-UKV-1783 — фокус на карточке слежение за клавиатурой не включает: в неё не печатают', (): void => {
+        it('SC-UKV-1917 — фокус на карточке слежение за клавиатурой не включает: в неё не печатают', (): void => {
             const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { filter: true });
             press(fixture, 'select-trigger');
             const panel: HTMLElement = document.querySelector('[qa-dataid="bottom-sheet-panel"]') as HTMLElement;

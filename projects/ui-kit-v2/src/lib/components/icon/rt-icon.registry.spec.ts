@@ -8,10 +8,12 @@ import { provideRtKitTesting } from '../../../testing/rt-kit-testing';
 import {
     RT_ICON_MATERIAL_FILL_SYMBOL_ID_PREFIX,
     RT_ICON_MATERIAL_SYMBOL_ID_PREFIX,
+    RT_ICON_SET_SYMBOL_ID_PREFIX,
     RT_ICON_SPRITE_ID,
     RT_ICON_SYMBOL_ID_PREFIX,
 } from './rt-icon.const';
 import { IRtIcon } from './rt-icon.model';
+import { provideRtIcons, IRtIconsOptions } from './rt-icon.providers';
 import { RtIconRegistry } from './rt-icon.registry';
 
 const SVG: string = '<svg viewBox="0 0 16 16"><path d="M0 0h16v16H0z"/></svg>';
@@ -28,6 +30,11 @@ function setup(extra: Provider[] = []): IHarness {
         registry: TestBed.inject(RtIconRegistry),
         http: TestBed.inject(HttpTestingController),
     };
+}
+
+/** Набор приложения: свой адрес, назначенный набором по умолчанию. */
+function brand(options: IRtIconsOptions = { sets: [{ name: 'brand', url: '/brand' }], default: 'brand' }): Provider[] {
+    return [provideRtIcons(options) as unknown as Provider];
 }
 
 /** Просит имя и отдаёт ему файл значка. Возвращает запрос, который при этом ушёл. */
@@ -99,7 +106,7 @@ describe('RtIconRegistry', (): void => {
     it('SC-UKV-364 — не приехавший залитый рисунок закрывается контурным того же набора', (): void => {
         const harness: IHarness = setup();
 
-        harness.registry.request('close', 'material-fill');
+        harness.registry.request('close', 'material', true);
         harness.http.expectOne('/icons-material/close.fill.svg').flush('нет такого файла', { status: 404, statusText: 'Not Found' });
         harness.http.expectOne('/icons-material/close.svg').flush(SVG);
 
@@ -215,6 +222,80 @@ describe('RtIconRegistry', (): void => {
 
         expect(document.body.firstChild).toBe(document.getElementById(RT_ICON_SPRITE_ID));
         expect(document.querySelectorAll(`#${RT_ICON_SPRITE_ID}`)).toHaveLength(1);
+    });
+
+    it('SC-UKV-1873 — имя, которого нет в перечне набора, берётся из запасного без лишнего запроса', (): void => {
+        const harness: IHarness = setup();
+
+        harness.registry.request('wallet', 'material');
+        harness.http.expectOne('/icons/wallet.svg').flush(SVG);
+
+        harness.http.verify();
+        expect(symbolsInSprite()).toEqual([`${RT_ICON_SYMBOL_ID_PREFIX}wallet`]);
+        expect(harness.registry.symbolHref('wallet', 'material')).toBe(`#${RT_ICON_SYMBOL_ID_PREFIX}wallet`);
+    });
+
+    it('SC-UKV-1874 — рисунка нет нигде: одно предупреждение с именем значка и набора', (): void => {
+        const warn: jest.SpyInstance = jest.spyOn(console, 'warn').mockImplementation((): void => undefined);
+        const harness: IHarness = setup(brand());
+
+        harness.registry.request('close', 'brand');
+        harness.http.expectOne('/brand/close.svg').flush('нет такого файла', { status: 404, statusText: 'Not Found' });
+        harness.http.expectOne('/icons/close.svg').flush('нет такого файла', { status: 404, statusText: 'Not Found' });
+        harness.registry.request('close', 'brand');
+
+        harness.http.verify();
+        expect(warn.mock.calls).toEqual([['rt-icon: рисунка «close» нет ни в наборе «brand», ни в его запасных.']]);
+        expect(symbolsInSprite()).toEqual([]);
+        warn.mockRestore();
+    });
+
+    it('SC-UKV-1881 — набор приложения рисуется под своим символом, а недостающее берёт из kit', (): void => {
+        const harness: IHarness = setup(brand());
+
+        harness.registry.request('check', 'brand');
+        harness.http.expectOne('/brand/check.svg').flush(SVG);
+        harness.registry.request('wallet', 'brand');
+        harness.http.expectOne('/brand/wallet.svg').flush('нет такого файла', { status: 404, statusText: 'Not Found' });
+        harness.http.expectOne('/icons/wallet.svg').flush(SVG);
+
+        harness.http.verify();
+        expect(symbolsInSprite()).toEqual([`${RT_ICON_SET_SYMBOL_ID_PREFIX}brand--check`, `${RT_ICON_SET_SYMBOL_ID_PREFIX}brand--wallet`]);
+        expect(harness.registry.defaultSet).toBe('brand');
+    });
+
+    it('SC-UKV-1882 — один адрес скачивается один раз, и отказ по нему запоминается', (): void => {
+        const warn: jest.SpyInstance = jest.spyOn(console, 'warn').mockImplementation((): void => undefined);
+        const harness: IHarness = setup(brand());
+
+        // Два набора просят один и тот же адрес запасного, пока ответа ещё нет.
+        harness.registry.request('wallet', 'kit');
+        harness.registry.request('wallet', 'brand');
+        harness.http.expectOne('/brand/wallet.svg').flush('нет такого файла', { status: 404, statusText: 'Not Found' });
+        harness.http.expectOne('/icons/wallet.svg').flush(SVG);
+        harness.registry.request('close', 'brand');
+        harness.http.expectOne('/brand/close.svg').flush('нет такого файла', { status: 404, statusText: 'Not Found' });
+        harness.http.expectOne('/icons/close.svg').flush('нет такого файла', { status: 404, statusText: 'Not Found' });
+        harness.registry.request('close', 'kit');
+
+        harness.http.verify();
+        expect(symbolsInSprite()).toEqual([`${RT_ICON_SYMBOL_ID_PREFIX}wallet`, `${RT_ICON_SET_SYMBOL_ID_PREFIX}brand--wallet`]);
+        warn.mockRestore();
+    });
+
+    it('SC-UKV-1890 — страница с кодом 200 вместо файла ведёт в запасной набор', (): void => {
+        const harness: IHarness = setup(brand());
+
+        harness.registry.request('copy', 'brand');
+        harness.http.expectOne('/brand/copy.svg').flush('<!doctype html><html><body><svg><circle r="1"/></svg></body></html>');
+        harness.http
+            .expectOne('/icons/copy.svg')
+            .flush(`<?xml version="1.0"?>\n<!-- рисунок -->\n<!DOCTYPE svg [ <!ENTITY ns "u"> ]>\n${SVG}`);
+
+        const symbol: Element | null = document.getElementById(`${RT_ICON_SET_SYMBOL_ID_PREFIX}brand--copy`);
+
+        expect(symbol?.querySelector('path')).not.toBeNull();
+        expect(symbol?.querySelector('circle')).toBeNull();
     });
 
     it('SC-UKV-64 — на сервере набор не грузится', (): void => {

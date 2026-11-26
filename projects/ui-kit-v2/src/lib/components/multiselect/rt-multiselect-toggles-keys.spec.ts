@@ -6,6 +6,7 @@ import { BreakpointsService } from '../../platform';
 import { IRtSelect } from '../select/rt-select.model';
 import { RtMultiselectComponent } from './rt-multiselect.component';
 import { rtMultiselectCanReset, rtMultiselectKept, rtMultiselectToggleAllNext } from './rt-multiselect-toggles.logic';
+import { rtPreloadPopoverSheet } from '../popover/rt-popover-sheet.helper';
 
 const OPTIONS: ReadonlyArray<IRtSelect.Option<string>> = [
     { label: 'Продукты', value: 'food' },
@@ -60,6 +61,10 @@ function listen(fixture: ComponentFixture<RtMultiselectComponent<string>>): () =
 }
 
 describe('Мультиселект — «Показать все», «Сбросить» и клавиатура', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+    });
+
     afterEach((): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });

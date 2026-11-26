@@ -4,7 +4,7 @@ kind: pattern
 rule: turn-conduct
 description: Pattern of rule turn-conduct. Load when the session runs into window fill — choosing the stopping point, writing the progress, the shape of the handover and what the owner does with it. Not for returning to work in a new session — that is pattern task-flow-resume.
 ---
-<!-- rt-kit v0.40.0 · patterns/task-flow-handoff.md · a43ae59b7a87 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.1 · patterns/task-flow-handoff.md · a43ae59b7a87 · правится надстройкой, не здесь -->
 
 # Closing a session on window fill
 

@@ -5,6 +5,7 @@ import { createRtFixture } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
 import { RtSelectComponent } from '../select/rt-select.component';
 import { IRtSelect } from '../select/rt-select.model';
+import { rtPreloadPopoverSheet } from './rt-popover-sheet.helper';
 import { RtPopoverDirective } from './rt-popover.directive';
 
 /** Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. */
@@ -74,6 +75,10 @@ function inSheet(anchor: string): HTMLElement | null {
 }
 
 describe('Нижняя шторка поповера — свои шаблоны шапки и подвала', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+    });
+
     afterEach((): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });

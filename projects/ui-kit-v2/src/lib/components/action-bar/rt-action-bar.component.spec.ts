@@ -137,14 +137,14 @@ describe('RtActionBarComponent', (): void => {
         expect(qaAll(fixture, 'action-bar-action').map((node: DebugElement): string => textOf(node))).toEqual(['Скачать', 'Удалить']);
     });
 
-    it('SC-UKV-707 — имя Material у действия рисуется значком в полосе и в пункте вложенного списка', (): void => {
+    it('SC-UKV-707 — имя кита на glyph у действия рисуется значком в полосе и в пункте вложенного списка', (): void => {
         // Перечень кита ведёт `delete_forever` на свой рисунок `trash-x`: стратегия по умолчанию
         // берёт пару раньше шрифта, и значок ссылается на рисунок набора.
         const fixture: ComponentFixture<RtActionBarComponent> = setup(
             config({
                 actions: [
-                    { label: 'Удалить', glyph: 'delete_forever' },
-                    { label: 'Ещё', menu: [{ label: 'Стереть', glyph: 'delete_forever' }] },
+                    { label: 'Удалить', glyph: 'trash-x' },
+                    { label: 'Ещё', menu: [{ label: 'Стереть', glyph: 'trash-x' }] },
                 ],
             })
         );

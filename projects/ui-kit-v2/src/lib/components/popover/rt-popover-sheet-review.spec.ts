@@ -4,7 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { createRtFixture } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
 import { RtPopoverDirective } from './rt-popover.directive';
-import { rtPopoverSheetFocusTarget } from './rt-popover-sheet.helper';
+import { rtPopoverSheetFocusTarget, rtPreloadPopoverSheet } from './rt-popover-sheet.helper';
 
 /** Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. */
 class BreakpointsStub {
@@ -64,6 +64,10 @@ function mockDuration(duration: (panel: Element) => string): void {
 }
 
 describe('Нижняя шторка поповера — замечания ревью', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+    });
+
     afterEach((): void => {
         jest.restoreAllMocks();
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());

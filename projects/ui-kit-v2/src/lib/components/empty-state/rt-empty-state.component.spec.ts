@@ -96,7 +96,7 @@ describe('RtEmptyStateComponent', (): void => {
         });
     });
 
-    it('SC-UKV-558 — глиф рисует значок заглушки по имени Material', (): void => {
+    it('SC-UKV-558 — глиф вне имён кита рисует у заглушки лигатуру', (): void => {
         const fixture: ComponentFixture<RtEmptyStateComponent> = setup({ glyph: 'pets' });
 
         expect(qa(fixture, 'empty-state-icon')).not.toBeNull();

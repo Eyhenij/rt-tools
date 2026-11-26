@@ -11,6 +11,7 @@ import {
     effect,
     EffectCleanupRegisterFn,
     ElementRef,
+    ErrorHandler,
     inject,
     Injector,
     input,
@@ -24,6 +25,7 @@ import {
     TemplateRef,
     untracked,
     viewChild,
+    ViewContainerRef,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
@@ -34,6 +36,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
+import { RtSheetConfirmPlace } from './rt-sheet-confirm-place';
 import { IRtSheetKeyboardBox, rtWatchSheetKeyboard } from './rt-bottom-sheet-keyboard';
 import { RtBottomSheetScreens } from './rt-bottom-sheet-screens';
 import { RtBottomSheetStackService } from './rt-bottom-sheet-stack.service';
@@ -99,6 +102,12 @@ export class RtBottomSheetComponent {
     /** Блокировка прокрутки страницы — та же, что держит оверлей у шторки панели выбора. */
     readonly #scrollLock: ScrollStrategy = inject(ScrollStrategyOptions).block();
     readonly #overlayContainer: OverlayContainer = inject(OverlayContainer);
+    /** Экран вопроса: его код приходит при первом вопросе; ответы зовут методы шторки. */
+    readonly #confirmPlace: RtSheetConfirmPlace = new RtSheetConfirmPlace(inject(ErrorHandler), inject(Injector), {
+        apply: (): void => this.onConfirmApply(),
+        discard: (): void => this.onConfirmDiscard(),
+        stay: (): void => this.onConfirmCancel(),
+    });
     /** Экраны шторки: второй экран другой шторки и смена экранов. */
     readonly #screens: RtBottomSheetScreens = new RtBottomSheetScreens(this.#host, inject(Injector));
     readonly #onDragMove: (event: PointerEvent) => void = (event: PointerEvent): void => this.#handleDragMove(event);
@@ -150,6 +159,8 @@ export class RtBottomSheetComponent {
      */
     protected readonly confirming: WritableSignal<boolean> = linkedSignal<boolean>((): boolean => this.#closedWith(false));
     protected readonly confirmTitleId: string = takeConfirmId();
+    /** Место экрана вопроса в шаблоне. */
+    protected readonly confirmSlot: Signal<ViewContainerRef | undefined> = viewChild('confirmSlot', { read: ViewContainerRef });
 
     /** Открыта, но поверх неё открыта шторка из неё самой: эта спрятана до закрытия верхней. */
     protected readonly covered: Signal<boolean> = computed((): boolean => this.open() && this.#stack.top() !== this);
@@ -182,9 +193,6 @@ export class RtBottomSheetComponent {
                 stay: this.t().uiCancel,
             }
     );
-
-    /** Первый ответ вопроса: фокус встаёт на него, как только вопрос нарисован. */
-    protected readonly confirmFirst: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('confirmFirst');
 
     public readonly open: InputSignalWithTransform<boolean, BooleanInput> = input.required<boolean, BooleanInput>({
         transform: booleanAttribute,
@@ -309,15 +317,19 @@ export class RtBottomSheetComponent {
                 onCleanup(rtWatchSheetKeyboard(this.#doc.defaultView, this.#onKeyboardBox));
             }
         });
-        // Вопрос нарисован — фокус встаёт на первый ответ: иначе он остаётся под вопросом, на кнопке
-        // закрытия, и скринридер вопроса не объявляет.
-        // Вопрос стоит внизу экрана сам: фокус на его ответе страницу под шторкой не прокручивает.
-        effect((): void => this.confirmFirst()?.nativeElement.focus({ preventScroll: true }));
+        // Шторка, которая может спросить, берёт код вопроса, как только открыта; показан — ставит экран.
+        effect((): void => (this.open() && (this.unsaved() || this.confirmLabels()) ? this.#confirmPlace.prefetch() : undefined));
+        effect((): void => {
+            const slot: ViewContainerRef | undefined = this.confirmSlot();
+            const labels: IRtSheetConfirmLabels | null = this.confirming() ? this.confirmText() : null;
+            untracked((): void => this.#confirmPlace.sync(slot, labels, this.confirmTitleId));
+        });
         inject(DestroyRef).onDestroy((): void => {
             this.#screens.leave();
             this.#stack.remove(this);
             this.#setScrollLock(false);
             this.#returnFocus();
+            this.#confirmPlace.destroy();
         });
     }
 

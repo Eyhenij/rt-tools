@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub — opening a PR, its draft, review and merge, the machine account. Load for every call of the hosting client about a PR. Patterns git-workflow-pr, -pr-body.
 ---
-<!-- rt-kit v0.40.0 · rules/git-workflow-hosting.github.md · 193f836e88fb · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.1 · rules/git-workflow-hosting.github.md · 193f836e88fb · правится надстройкой, не здесь -->
 
 # Delivery — PR, its review and the machine account
 

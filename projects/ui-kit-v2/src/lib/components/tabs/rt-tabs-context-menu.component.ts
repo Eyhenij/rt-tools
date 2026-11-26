@@ -26,7 +26,7 @@ import { Observable, Subject, switchMap } from 'rxjs';
 
 import { BlockDirective } from '@rt-tools/core';
 
-import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
+import { BreakpointsService, carryThemeScope } from '@rt-tools/ui-kit-v2/core';
 import {
     IRtPopoverSheetOpened,
     RT_POPOVER_SHEET,
@@ -74,6 +74,8 @@ export class RtTabsContextMenuComponent {
     #sheet: IRtPopoverSheetOpened | null = null;
 
     protected readonly state: WritableSignal<IRtTabsContextMenuState | null> = signal<IRtTabsContextMenuState | null>(null);
+
+    protected readonly connected: Signal<CdkConnectedOverlay | undefined> = viewChild(CdkConnectedOverlay);
 
     protected readonly panelTpl: Signal<TemplateRef<unknown>> = viewChild.required<TemplateRef<unknown>>('panelTpl');
 
@@ -124,6 +126,14 @@ export class RtTabsContextMenuComponent {
             return { x: box.left, y: box.bottom };
         }
         return { x: event.clientX, y: event.clientY };
+    }
+
+    /** Панель у точки нажатия берёт тему и набор значков части, где стоят вкладки. */
+    protected onAttach(): void {
+        const pane: HTMLElement | undefined = this.connected()?.overlayRef?.overlayElement;
+        if (pane) {
+            carryThemeScope(pane, this.#host.nativeElement);
+        }
     }
 
     protected close(): void {

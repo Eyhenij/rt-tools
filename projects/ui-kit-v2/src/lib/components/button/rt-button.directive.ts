@@ -28,11 +28,13 @@ import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import {
     RT_ICON_GLYPH_STRATEGY,
     RT_ICON_MATERIAL_PRESET_SELECTOR,
+    rtIconDrawn,
+    rtIconSetOf,
+    IRtIconRef,
     RtIconFontService,
     RtIconRegistry,
     resolveIconGlyph,
 } from '@rt-tools/ui-kit-v2/icon';
-import { iconMaterialDrawn } from '@rt-tools/ui-kit-v2/icon';
 import { RtRippleDirective } from '@rt-tools/ui-kit-v2/ripple';
 import { IButton } from '@rt-tools/ui-kit-v2/core';
 
@@ -101,6 +103,16 @@ export class RtButtonDirective {
     );
     readonly #size: IButton.Size = rtKitDefault('button', (it: IRtKitConfig.Button): IButton.Size | undefined => it.size, 'md');
 
+    /* Признак material в разметке над кнопкой: читается при каждой отрисовке значка. */
+    readonly #underMaterial: WritableSignal<boolean> = signal<boolean>(false);
+    readonly #iconSet: Signal<string> = rtIconSetOf(this.#underMaterial);
+
+    /* Значки кита, нарисованные в кнопке: смена набора меняет их ссылки, не трогая содержимое. */
+    readonly #kitIcons: WritableSignal<ReadonlyArray<IKitIconNode>> = signal<ReadonlyArray<IKitIconNode>>([]);
+
+    /* Последний рисунок каждого значка: перерисовка содержимого не гасит его, пока едет новый набор. */
+    readonly #lastDrawn: Map<IRtIcon.Name, IRtIconRef> = new Map<IRtIcon.Name, IRtIconRef>();
+
     #iconEl: HTMLElement | null = null;
     #labelEl: HTMLElement | null = null;
     #spinnerEl: HTMLElement | null = null;
@@ -123,9 +135,9 @@ export class RtButtonDirective {
     /** Текстовый лейбл кнопки. Если null — кнопка только с иконкой. */
     public readonly label: InputSignal<string | null> = input<string | null>(null);
     /**
-     * Значок кнопки: имя кита (`check`) или имя Material (`arrow_back`). Имя Material рисуется
-     * так же, как вход `glyph` у `rt-icon`: парой из перечня кита или лигатурой шрифта — по
-     * настройке `glyphStrategy` у `provideRtIcons()`. Если null — без иконки.
+     * Значок кнопки: имя кита (`check`) или имя шрифта Material (`pets`). Рисуется так же, как
+     * вход `glyph` у `rt-icon`: имя кита — рисунком, другое — лигатурой шрифта; способ задаёт
+     * `glyphStrategy` у `provideRtIcons()`. Если null — без иконки.
      */
     public readonly icon: InputSignal<string | null> = input<string | null>(null);
     /** Сторона размещения иконки относительно лейбла. */
@@ -186,6 +198,8 @@ export class RtButtonDirective {
 
             untracked(() => this.#updateContent());
         });
+
+        effect((): void => this.#followIconSet());
     }
 
     /** Положение наружу: атрибута нет вовсе там, где положения у кнопки не бывает. */
@@ -291,6 +305,7 @@ export class RtButtonDirective {
         this.#iconEl = null;
         this.#labelEl = null;
         this.#spinnerEl = null;
+        this.#kitIcons.set([]);
     }
 
     #renderLoading(button: HTMLElement): void {
@@ -369,27 +384,42 @@ export class RtButtonDirective {
 
         // Тот же путь, что и у компонента значка: имя просится у реестра, а он ходит за файлом
         // один раз на страницу — значок, спрошенный обеими разметками сразу, едет одним запросом.
-        const drawing: IRtIcon.Drawing = this.#drawingOf(name);
-        this.#iconRegistry.request(name, drawing);
+        this.#underMaterial.set(this.#el.nativeElement.closest(RT_ICON_MATERIAL_PRESET_SELECTOR) !== null);
+        const set: string = this.#iconSet();
+        this.#iconRegistry.request(name, set);
+        const drawn: IRtIconRef = untracked((): IRtIconRef => this.#drawnFor(name, this.#iconRegistry.drawing(name, set)));
 
         const use: SVGUseElement = this.#doc.createElementNS('http://www.w3.org/2000/svg', 'use');
-        use.setAttribute('href', this.#iconRegistry.symbolHref(name, drawing));
+        use.setAttribute('href', `#${drawn.id}`);
         svg.appendChild(use);
+        this.#kitIcons.update((icons: ReadonlyArray<IKitIconNode>): ReadonlyArray<IKitIconNode> => [...icons, { name, use }]);
 
         return svg as unknown as HTMLElement;
     }
 
-    /**
-     * Набор рисунка — как у компонента значка: материальный рисунок под разметкой с признаком
-     * материального набора, если у имени он есть. Признак читается при каждой отрисовке
-     * содержимого, а после первой отрисовки она повторяется — контейнер к тому времени на месте.
-     */
-    #drawingOf(name: IRtIcon.Name): IRtIcon.Drawing {
-        const underMaterial: boolean = this.#el.nativeElement.closest(RT_ICON_MATERIAL_PRESET_SELECTOR) !== null;
-        return underMaterial && iconMaterialDrawn.has(name) ? 'material' : 'base';
+    /* Смена набора меняет только ссылки значков: загрузчик и подпись кнопки остаются на месте. */
+    #followIconSet(): void {
+        const set: string = this.#iconSet();
+
+        for (const icon of this.#kitIcons()) {
+            const target: IRtIconRef = this.#iconRegistry.drawing(icon.name, set);
+            untracked((): void => this.#iconRegistry.request(icon.name, set));
+            this.#iconRegistry.ready(target.id)();
+            const drawn: IRtIconRef = untracked((): IRtIconRef => this.#drawnFor(icon.name, target));
+            icon.use.setAttribute('href', `#${drawn.id}`);
+        }
     }
 
-    /** Лигатура шрифта Material Symbols для имени без пары. Шрифт подключает приложение. */
+    /* Что показать вместо `target`: прежний рисунок этого имени, пока новый не приехал. */
+    #drawnFor(name: IRtIcon.Name, target: IRtIconRef): IRtIconRef {
+        const previous: IRtIconRef | null = this.#lastDrawn.get(name) ?? null;
+        const drawn: IRtIconRef = rtIconDrawn(previous, target, (id: string): boolean => this.#iconRegistry.ready(id)());
+        this.#lastDrawn.set(name, drawn);
+
+        return drawn;
+    }
+
+    /** Лигатура шрифта Material Symbols для имени вне набора кита. Шрифт подключает приложение. */
     #createGlyph(glyph: string): HTMLElement {
         const el: HTMLElement = this.#renderer.createElement('span') as HTMLElement;
         this.#renderer.addClass(el, `${BEM_BLOCK}__icon`);
@@ -419,4 +449,10 @@ export class RtButtonDirective {
 
         return wrapper;
     }
+}
+
+/* Значок кита внутри кнопки: имя и ссылка, которую меняет смена набора. */
+interface IKitIconNode {
+    readonly name: IRtIcon.Name;
+    readonly use: SVGUseElement;
 }

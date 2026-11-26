@@ -3,7 +3,7 @@ import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
 import { openStoryOverlay } from '../../../../showcase/story-overlay';
 import { BreakpointsService } from '../../../platform';
-import { TestRtDateSheetComponent } from './component/test-date-sheet.component';
+import { TestRtDateSheetComponent } from './component/test-rt-date-sheet.component';
 
 /** Служба точек перехода, всегда отвечающая «узкий экран»: шторка нужна узкому окну, а окно историей не задать. */
 const NARROW_ANSWERS: Pick<BreakpointsService, 'mobile' | 'tablet' | 'desktop' | 'narrow' | 'viewportNarrow' | 'phone'> = {
