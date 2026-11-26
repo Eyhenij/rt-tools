@@ -109,6 +109,22 @@ describe('Пункт меню — код диалога подтверждени
         expect(dialog()).not.toBeNull();
     });
 
+    it('второй щелчок, пока код грузится, не открывает второго диалога и не даёт второго ответа меню', async (): Promise<void> => {
+        const { fixture, picks, pending } = setup();
+
+        click(fixture);
+        click(fixture);
+        await flushDialogCode(fixture);
+
+        expect(document.querySelectorAll('rt-menu-confirm-dialog')).toHaveLength(1);
+        expect(pending).toEqual([true]);
+        press('menu-confirm-accept');
+        fixture.detectChanges();
+
+        expect(picks).toHaveBeenCalledTimes(1);
+        expect(pending).toEqual([true, false]);
+    });
+
     it('снос пункта до прихода кода не открывает диалога и не даёт выбора', async (): Promise<void> => {
         const { fixture, picks } = setup();
 

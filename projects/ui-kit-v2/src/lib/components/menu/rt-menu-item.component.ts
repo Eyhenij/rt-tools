@@ -138,6 +138,12 @@ export class RtMenuItemComponent {
 
     readonly #confirmRequestSource: Subject<IRtMenu.ConfirmData> = new Subject<IRtMenu.ConfirmData>();
 
+    /**
+     * Подтверждение идёт: диалог открыт или его код ещё грузится. Пока подложки диалога нет, второй
+     * щелчок по пункту не должен открыть второй диалог.
+     */
+    #confirming: boolean = false;
+
     readonly #t_uiConfirm: Signal<string> = rtKitLabel('uiConfirm');
     readonly #t_uiCancel: Signal<string> = rtKitLabel('uiCancel');
 
@@ -270,6 +276,7 @@ export class RtMenuItemComponent {
                 takeUntilDestroyed(this.#destroyRef)
             )
             .subscribe((confirmed: boolean | undefined = false): void => {
+                this.#confirming = false;
                 if (confirmed === true) {
                     this.#commitSelection();
                 }
@@ -324,6 +331,10 @@ export class RtMenuItemComponent {
     }
 
     #openConfirm(message: string): void {
+        if (this.#confirming) {
+            return;
+        }
+        this.#confirming = true;
         const data: IRtMenu.ConfirmData = {
             message,
             title: this.confirmTitle(),
