@@ -25,6 +25,21 @@ if [ -f "$ROOT_DIR/dist/ui-kit-v2/fesm2022/rt-tools-ui-kit-v2-menu.mjs" ] && [ -
     LOWERED="$(cd "$ROOT_DIR" && RT_KIT_WEIGHT_THRESHOLD="$WORK/threshold.json" node tools/check-kit-weight.mjs 2>&1; echo "exit $?")"
     report "a threshold below the measurement exits with 1" "$(printf '%s\n' "$LOWERED" | tail -1)" "exit 1"
     report "and names the set" "$(printf '%s\n' "$LOWERED" | grep -c 'the set grew')" "1"
+
+    # The same measurement with the linking switched off: unlinked files carry a second copy of every
+    # component, so the run must refuse instead of printing an overstated weight.
+    UNLINKED="$(cd "$ROOT_DIR" && RT_KIT_WEIGHT_NO_LINK=1 node tools/check-kit-weight.mjs --print 2>&1; echo "exit $?")"
+    report "without linking the check refuses and names the leftover" \
+        "$(printf '%s\n' "$UNLINKED" | grep -c 'unlinked Angular calls are left in the set: ngDeclare') $(printf '%s\n' "$UNLINKED" | tail -1)" "1 exit 1"
+
+    # One rule of the input styles, written once in the source: the measured code holds it once.
+    ONCE="$(node --input-type=module -e "
+        const { measure } = await import('$TOOLS/check-kit-weight.mjs');
+        // The value is left out: the build of an application rewrites the names of the variables.
+        const rule = '.rt-input--appearance--pill .rt-input__floating-label{line-height:';
+        console.log((await measure()).code.split(rule).length - 1);
+    ")"
+    report "a style of a kit component lands in the set once" "$ONCE" "1"
 else
     echo "  skipped: the kit is not built here, there is nothing to measure"
 fi

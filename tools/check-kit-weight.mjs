@@ -3,14 +3,17 @@
  * Вес частей кита на старте потребителя.
  *
  * Набор частей, которые потребитель тянет на старте, собирается esbuild'ом из собранного кита
- * (`dist/ui-kit-v2`) близко к сборке потребителя: с минификацией и без отладочных веток Angular,
- * со всеми экспортами частей (верхняя граница: потребитель берёт только нужное). Байты набора и каждой части сверяются с порогом из `tools/kit-weight-threshold.json`.
+ * (`dist/ui-kit-v2`) близко к сборке потребителя: файлы кита связываются преобразованием самой
+ * сборки приложения, дальше минификация без отладочных веток Angular. Без связывания в наборе
+ * осталась бы вторая копия стилей и шаблона каждого компонента в метаданных класса. Берутся
+ * все экспорты частей (верхняя граница: потребитель берёт только нужное). Байты набора и каждой части сверяются с порогом из `tools/kit-weight-threshold.json`.
  * Расхождение с порогом в любую сторону красное; порог записывается командой `--write`: рост
  * принимается осознанно, снижение фиксируется ею же.
  *
  *   pnpm run check:kit-weight                  сборка кита и сверка с порогом
  *   pnpm run check:kit-weight -- --print   таблица байтов без сверки
  *   pnpm run check:kit-weight -- --write   запись порога по текущему измерению
+ *   node tools/check-kit-weight.mjs --print --package <каталог>   таблица для другого собранного кита
  */
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
@@ -23,8 +26,11 @@ import { createRequire } from 'node:module';
 // заводится, потому что рабочая область держит его нижнюю границу переопределением безопасности.
 const require = createRequire(import.meta.url);
 const { build } = createRequire(require.resolve('@angular/build/package.json'))('esbuild');
+// Преобразование из частного входа пакета: им связывает файлы сама сборка приложения. Сменится вход
+// или поведение — проверка откажет, а не измерит несвязанные файлы.
+const { JavaScriptTransformer } = require('@angular/build/private');
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const DIST = join(ROOT, 'dist', 'ui-kit-v2', 'fesm2022');
+const PACKAGE_DIR = join(ROOT, 'dist', 'ui-kit-v2');
 /** Файл порога; переменная окружения нужна сценариям, которые проверяют код возврата на своём пороге. */
 const THRESHOLD_FILE = process.env.RT_KIT_WEIGHT_THRESHOLD ?? join(ROOT, 'tools', 'kit-weight-threshold.json');
 const FILE_PREFIX = 'rt-tools-ui-kit-v2-';
@@ -32,23 +38,53 @@ const FILE_PREFIX = 'rt-tools-ui-kit-v2-';
 const GZIP_TOLERANCE = 0.005;
 const EXTERNAL = ['@angular/*', 'rxjs', 'rxjs/*', '@rt-tools/core', '@rt-tools/utils', 'd3-*'];
 
+/** Что остаётся в коде набора, если файлы не связаны. Имена ищутся без `ɵ`: esbuild пишет его кодом. */
+const UNLINKED_MARKS = ['ngDeclare', 'setClassMetadata', 'ngDevMode'];
+
 /** Части, которые потребитель тянет на старте; расширяется правкой этого списка и записью порога. */
 const STARTUP_PARTS = ['select', 'menu', 'input', 'icon', 'popover', 'dialog', 'bottom-sheet'];
 
 /** Адрес точки входа кита в собранном пакете: файл части называется по её имени; корень пакета лежит в файле без суффикса. */
-function entryFile(part) {
-    return join(DIST, `${FILE_PREFIX}${part}.mjs`);
+function entryFile(part, packageDir) {
+    return join(packageDir, 'fesm2022', `${FILE_PREFIX}${part}.mjs`);
+}
+
+/**
+ * Плагин esbuild: каждый файл сборки проходит преобразование приложения с теми же настройками, что
+ * в продакшен-сборке; файл, которому связывание не нужно, преобразование возвращает как есть.
+ * Переменная окружения выключает связывание для сценария, который проверяет отказ.
+ */
+function linkFiles(transformer) {
+    return {
+        name: 'link-angular-files',
+        setup(bundler) {
+            if (process.env.RT_KIT_WEIGHT_NO_LINK === '1') {
+                return;
+            }
+            bundler.onLoad({ filter: /\.m?js$/ }, async (args) => ({
+                contents: await transformer.transformFile(args.path, false, false),
+                loader: 'js',
+            }));
+        },
+    };
+}
+
+/** Служебные вызовы, оставшиеся в коде набора: с ними вес завышен, и верить ему нельзя. */
+export function unlinkedMarks(code) {
+    return UNLINKED_MARKS.filter((mark) => code.includes(mark));
 }
 
 /** Измерение набора: байты минифицированной сборки, gzip и байты каждого файла части. */
-export async function measure(parts = STARTUP_PARTS) {
-    const missing = parts.filter((part) => !existsSync(entryFile(part)));
+export async function measure(parts = STARTUP_PARTS, packageDir = PACKAGE_DIR) {
+    const missing = parts.filter((part) => !existsSync(entryFile(part, packageDir)));
     if (missing.length > 0) {
-        throw new Error(`${DIST} has no parts: ${missing.join(', ')}; build the kit first: pnpm run build:ui-kit-v2`);
+        throw new Error(`${packageDir} has no parts: ${missing.join(', ')}; build the kit first: pnpm run build:ui-kit-v2`);
     }
-    const alias = Object.fromEntries(readEntries().map((part) => [`@rt-tools/ui-kit-v2/${part}`, entryFile(part)]));
+    const alias = Object.fromEntries(readEntries(packageDir).map((part) => [`@rt-tools/ui-kit-v2/${part}`, entryFile(part, packageDir)]));
     const contents = parts.map((part) => `export * from '@rt-tools/ui-kit-v2/${part}';`).join('\n');
+    const transformer = new JavaScriptTransformer({ sourcemap: false, advancedOptimizations: true });
     const result = await build({
+        plugins: [linkFiles(transformer)],
         stdin: { contents, resolveDir: ROOT, sourcefile: 'kit-weight-entry.mjs', loader: 'js' },
         bundle: true,
         minify: true,
@@ -62,7 +98,7 @@ export async function measure(parts = STARTUP_PARTS) {
         external: EXTERNAL,
         alias,
         logLevel: 'error',
-    });
+    }).finally(() => transformer.close());
     // Ленивый `import()` esbuild выносит в отдельный чанк, и на старте он не лежит. Чанк, который
     // файл точки входа подключает статически, грузится на старте и идёт в вес вместе с ним.
     const outputs = result.metafile.outputs;
@@ -89,7 +125,12 @@ export async function measure(parts = STARTUP_PARTS) {
     const code = Buffer.concat(
         result.outputFiles.filter((file) => startup.has(relative(ROOT, file.path))).map((file) => Buffer.from(file.contents)),
     );
-    const entries = new Set(readEntries());
+    const text = code.toString('utf8');
+    const marks = unlinkedMarks(text);
+    if (marks.length > 0) {
+        throw new Error(`unlinked Angular calls are left in the set: ${marks.join(', ')}; the weight would be overstated`);
+    }
+    const entries = new Set(readEntries(packageDir));
     const perPart = {};
     for (const key of startup) {
         for (const [file, info] of Object.entries(outputs[key].inputs)) {
@@ -100,12 +141,12 @@ export async function measure(parts = STARTUP_PARTS) {
             }
         }
     }
-    return { total: code.byteLength, gzip: gzipSync(code).byteLength, parts: perPart, styles: measureStyles() };
+    return { total: code.byteLength, gzip: gzipSync(code).byteLength, parts: perPart, styles: measureStyles(packageDir), code: text };
 }
 
 /** Байты глобальных файлов токенов, собранных в `dist/ui-kit-v2/styles`: их потребитель подключает целиком. */
-function measureStyles() {
-    const dir = join(ROOT, 'dist', 'ui-kit-v2', 'styles');
+function measureStyles(packageDir) {
+    const dir = join(packageDir, 'styles');
     if (!existsSync(dir)) {
         throw new Error(`${dir} is missing; run pnpm run build:tokens-v2 first`);
     }
@@ -149,9 +190,9 @@ export function partOfFile(name, entries) {
 }
 
 /** Имена всех частей, лежащих в собранном пакете: нужны для подмены адресов внутри набора. */
-function readEntries() {
-    const manifest = JSON.parse(readFileSync(join(ROOT, 'dist', 'ui-kit-v2', 'package.json'), 'utf8'));
-    return entryNamesFromExports(manifest.exports).filter((name) => existsSync(entryFile(name)));
+function readEntries(packageDir) {
+    const manifest = JSON.parse(readFileSync(join(packageDir, 'package.json'), 'utf8'));
+    return entryNamesFromExports(manifest.exports).filter((name) => existsSync(entryFile(name, packageDir)));
 }
 
 function table(result) {
@@ -205,7 +246,12 @@ export function compare(result, threshold) {
 
 async function main() {
     const args = process.argv.slice(2);
-    const result = await measure();
+    const other = args.includes('--package') ? args[args.indexOf('--package') + 1] : undefined;
+    if (args.includes('--package') && (other === undefined || !args.includes('--print'))) {
+        console.error('check-kit-weight: --package takes a directory and goes only with --print');
+        return 1;
+    }
+    const result = await measure(STARTUP_PARTS, other === undefined ? PACKAGE_DIR : resolve(other));
     if (args.includes('--print')) {
         console.log(table(result));
         return 0;
