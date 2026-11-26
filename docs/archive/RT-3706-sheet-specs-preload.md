@@ -1,22 +1,35 @@
-# Progress
+# RT-3706 — test(rt:ui-kit-v2): спеки шторок ждут подгрузки кода шторки (RT-3706)
 
-## Where we stand
+Задача RT-3706, запись от 2026-11-26. Прежний адрес: `docs/tasks/RT-3706-sheet-specs-preload/`.
 
-- **State:** `этап-идёт`
-- **Stage:** 1 of 1 — Specs wait for the sheet code; done
-- **Done:** the owner approved the plan: «Одобряю план». 1.1 — the four specs 42 of 42; 1.2 — the kit
-  suite exit 0. Piece (a) — `node tools/check-specs.mjs` exit 0; piece (b) — `pnpm run check:ngdoctor`
-  exit 0 (score 94.75, equal to the threshold), the wrapper spec 4 of 4, `pnpm run check:unused` exit 0.
-- **Next step:** piece (c), the kit weight 185800 → 218731, waits for the owner's word: accept the growth
-  or cut it by a task of its own.
-- **PR:** not open yet
+## Шапка разбора
 
-## Steps
+Work begun from no cargo: the task came out of the merge of the main branch into the epic RT-3530.
 
-- [x] 1.1 Add `await rtPreloadPopoverSheet()` in `beforeAll` of the four sheet specs
-- [x] 1.2 Run the whole kit suite
+## The owner request
 
-## Decisions along the way
+> продолжай работу над основным эпиком
+
+> работай
+
+> RT-3605 вынеси из эпика заведи для нее другой эпик
+
+## Questions and answers
+
+No question was put to the owner: the cause and the fix are taken from the code of the main branch,
+and the behaviour of the kit does not change.
+
+## Решения разбора
+
+- **The four specs wait for the sheet code the way the main branch specs do** — the same
+  `rtPreloadPopoverSheet()` in `beforeAll` keeps every assertion as it is. Rejected: making the
+  assertions asynchronous — it changes what the cases check and differs from the main branch.
+
+## What is left unclear
+
+- Nothing blocks the work.
+
+## Решения по ходу
 
 - **Stage revision: the work grows by three pieces beyond stage 1, approved by the owner as «Одобряю план»** —
   `product-strategist` found three more red steps of the push set after the merge. The plan file was
@@ -68,10 +81,22 @@
 - **Цена:** нет
 - **Отменено:** нет
 
-## Sessions
+## Цитаты из разбора и хода работы
 
-### 2026-11-26
+- **Done:** the owner approved the plan: «Одобряю план». 1.1 — the four specs 42 of 42; 1.2 — the kit
+  suite exit 0. Piece (a) — `node tools/check-specs.mjs` exit 0; piece (b) — `pnpm run check:ngdoctor`
+  exit 0 (score 94.75, equal to the threshold), the wrapper spec 4 of 4, `pnpm run check:unused` exit 0.
 
-- The task came out of the merge of the main branch into the epic RT-3530: four sheet specs of the epic
-  fail after RT-3645 made the sheet code load at the first opening.
 - The owner approved the plan: «Одобряю план». The way for the kit weight is not named yet.
+
+## Одобрение плана
+
+«Одобряю план»
+
+## Чем подтверждено
+
+Два круга ревью; набор перед отправкой ветки RT-3709, которая несёт эту работу, зелёный.
+
+## Оставшийся шаг
+
+Вливается одним PR с RT-3709.
