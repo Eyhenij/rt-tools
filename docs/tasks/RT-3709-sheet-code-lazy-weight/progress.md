@@ -2,8 +2,8 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
-- **Stage:** 1 of 3 — The question screen arrives at the first question
+- **State:** `разбор-кончился`
+- **Stage:** 3 of 3 — closed; the sheet spec names the lazy question and the card radio
 - **Done:** all four steps. The start set 218731 → 206521 bytes, gzip 53502 → 51655; the part radio-button
   left the start set, bottom-sheet 24268 → 20436, select 38920 → 39233. The kit suite exit 0.
 - **Next step:** the showcase snapshots of the sheets (`node tools/visual-gate.mjs ui-kit-v2 --affected
