@@ -53,7 +53,7 @@ export const MaterialSet: TStory = { args: { part: 'material-set' } };
 export const MaterialThemes: TStory = { args: { part: 'material-themes' } };
 
 /**
- * Имя Material на входе `glyph`: с парой рисуется рисунком кита, без пары — лигатурой шрифта.
+ * Вход `glyph`: имя кита рисуется рисунком кита, любое другое — лигатурой шрифта.
  * Шрифт витрина не подключает, и лигатура видна словом — так её увидит приложение без шрифта.
  */
 export const Glyph: TStory = { args: { part: 'glyph' } };

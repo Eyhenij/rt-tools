@@ -285,6 +285,19 @@ interface IIconCategoryGroup {
         }
     `,
     styles: `
+        .app-icon-matrix__map {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem 1.25rem;
+        }
+
+        .app-icon-matrix__pair {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            font-size: 0.75rem;
+        }
+
         .app-icon-matrix__note {
             max-width: 46rem;
             color: var(--rt-color-text-muted);
@@ -345,7 +358,7 @@ export class TestRtIconMatrixComponent {
     public readonly pairedGlyphs: readonly string[] = ['arrow-left', 'ico-plus', 'ico-user', 'close'];
 
     /** Имена Material, которых в ките нет: рисуются лигатурой шрифта. */
-    public readonly unpairedGlyphs: readonly string[] = ['arrow-left', 'ico-plus', 'ico-user', 'close'];
+    public readonly unpairedGlyphs: readonly string[] = ['pets', 'savings', 'rocket_launch'];
 
     /** Размеры между ступенями и крупнее последней — то, чего ступени не дают. */
     public readonly pixelSizes: readonly number[] = [14, 18, 28, 48, 56];
