@@ -1,4 +1,4 @@
-import { ApplicationRef, ChangeDetectionStrategy, Component, inject, Provider } from '@angular/core';
+import { ApplicationRef, ChangeDetectionStrategy, Component, inject, Injector, Provider, Signal, viewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { createRtFixture } from '../../../testing/rt-kit-testing';
@@ -67,6 +67,31 @@ class IconSetWindowsHostComponent {
     }
 }
 
+/* Узел внутри части, открывающий панель с собственным инжектором, как делает приложение. */
+@Component({
+    selector: 'rt-icon-set-owner',
+    template: '',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+})
+class IconSetOwnerComponent {
+    readonly #asides: RtAsideService = inject(RtAsideService);
+    readonly #injector: Injector = inject(Injector);
+
+    public open(iconSet?: string | null): void {
+        this.#asides.open(IconSetWindowComponent, { injector: this.#injector, iconSet });
+    }
+}
+
+@Component({
+    selector: 'rt-icon-set-owner-host',
+    template: '<section rtIconSet="brand"><rt-icon-set-owner /></section>',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtIconSetDirective, IconSetOwnerComponent],
+})
+class IconSetOwnerHostComponent {
+    public readonly owner: Signal<IconSetOwnerComponent> = viewChild.required(IconSetOwnerComponent);
+}
+
 function setup(): ComponentFixture<IconSetWindowsHostComponent> {
     const declared: Provider = provideRtIcons({ sets: [{ name: 'brand', url: '/brand' }] }) as unknown as Provider;
 
@@ -125,6 +150,28 @@ describe('набор значков части в открытых из неё �
             press(fixture, `[qa-dataid="${anchor}"]`);
 
             expect(windows()).toEqual([{ href: BRAND, pane: 'brand' }]);
+        }
+    );
+
+    it.each<[string, string | null | undefined, { href: string; pane: string | null }]>([
+        ['без своего набора берёт набор части из injector', undefined, { href: BRAND, pane: 'brand' }],
+        ['с iconSet берёт названный набор', 'kit', { href: '#rt-icon-close', pane: 'kit' }],
+        ['с iconSet null не берёт набор части', null, { href: '#rt-icon-close', pane: null }],
+    ])(
+        'SC-UKV-1891 — aside вне фокуса части %s',
+        (_title: string, iconSet: string | null | undefined, expected: { href: string; pane: string | null }): void => {
+            const declared: Provider = provideRtIcons({ sets: [{ name: 'brand', url: '/brand' }] }) as unknown as Provider;
+            const fixture: ComponentFixture<IconSetOwnerHostComponent> = createRtFixture(
+                IconSetOwnerHostComponent,
+                {},
+                { providers: [declared] }
+            );
+
+            fixture.componentInstance.owner().open(iconSet);
+            fixture.detectChanges();
+            TestBed.inject(ApplicationRef).tick();
+
+            expect(windows()).toEqual([expected]);
         }
     );
 

@@ -358,3 +358,36 @@ application does not change the part.
 Not covered: it cannot be closed by a test with an identifier — the scenario is about the live page
 of the showcase, and a `play` step of the story IconSet of the icon holds it. The switching itself
 is covered by `SC-UKV-1876` and `SC-UKV-1877`.
+
+### SC-UKV-1888 — under `font` the default icon of the speed menu stays a drawing
+
+Given the application draws glyphs by the strategy `font`.
+When a speed menu has no icon of its own.
+Then its button draws the kit drawing `bars`, and an icon the application names is a ligature.
+
+Covered: `projects/ui-kit-v2/src/lib/components/speed-menu/rt-speed-menu.component.spec.ts`.
+
+### SC-UKV-1889 — filled and outline icons of a set take different symbols
+
+Given a set without filled drawings, whose fallback has them.
+When the page asks for one name filled and outline.
+Then each takes its own symbol, and the filled one asks the fallback for its filled file.
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-sets.spec.ts`.
+
+### SC-UKV-1890 — a page with the code 200 instead of a file leads to the fallback
+
+Given the server answers a missing drawing with a page of the application.
+When the answer is not an SVG file.
+Then the registry takes the drawing of the fallback set.
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon.registry.spec.ts`.
+
+### SC-UKV-1891 — an aside opened with an injector from a part
+
+Given a node inside a part opens an aside with its own injector, and the focus is outside parts.
+When the aside opens.
+Then it takes the set of that part; with `iconSet` it takes the named set, and with `null` no part.
+
+Covered: `projects/ui-kit-v2/src/lib/components/dialog/rt-dialog-icon-set.spec.ts`.
+

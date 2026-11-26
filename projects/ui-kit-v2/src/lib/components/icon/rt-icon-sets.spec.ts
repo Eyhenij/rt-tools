@@ -43,6 +43,15 @@ describe('наборы значков', (): void => {
         });
     });
 
+    it('SC-UKV-1889 — залитый и контурный значок набора с залитым запасным берут разные символы', (): void => {
+        const config: IRtIconSetsConfig = rtIconSetsConfig([{ name: 'brand', url: '/brand', fallback: 'material' }]);
+        const outline: string = rtIconRef(config, 'brand', 'search', false).id;
+        const filled: string = rtIconRef(config, 'brand', 'search', true).id;
+
+        expect(filled).not.toBe(outline);
+        expect(rtIconRef(config, 'brand', 'search', true).urls).toContain('/icons-material/search.fill.svg');
+    });
+
     it('SC-UKV-1881 — запись с именем встроенного набора меняет только названные поля', (): void => {
         const config: IRtIconSetsConfig = rtIconSetsConfig([{ name: 'material', url: '/static/material' }]);
 

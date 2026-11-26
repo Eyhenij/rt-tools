@@ -16,7 +16,12 @@ const USAGE = `Использование: node rename-icon-names.mjs [--write] 
 
 Без --write ничего не меняется: печатается список мест «файл:строка».
 Приложению с glyphStrategy: 'font' запускать --write не нужно: там glyph рисуется шрифтом Material,
-и замена имён поменяла бы рисунки.`;
+и замена имён поменяла бы рисунки. Имена у rt-menu-item и в пунктах rt-side-menu замените вручную:
+меню шрифтом их не рисует. Тег со своим glyphStrategy="font" или с [glyphStrategy] скрипт не меняет.
+
+Список мест неполный: ручные места ищутся только на строках, где есть слово icon или glyph, а при
+обходе папки читаются только .html и .ts. Остальное ищите по именам из icon-names.json рядом со
+скриптом. Свой тег приложения с приставкой rt- скрипт считает тегом кита: сначала запустите без --write.`;
 
 const NAMES_FILE = join(dirname(fileURLToPath(import.meta.url)), 'icon-names.json');
 const ATTRIBUTES = new Set(['glyph', 'icon', 'iconEnd', 'invitationGlyph', 'invitationIcon', 'loadingIcon']);
@@ -27,6 +32,8 @@ const SKIPPED_DIRS = new Set(['node_modules', 'dist', '.git', '.angular', '.nx',
 /** Открывающий тег с атрибутами; значения атрибутов в кавычках могут содержать `>`. */
 const TAG_RE = /<([A-Za-z][\w-]*)((?:\s+[^\s=<>/"']+(?:\s*=\s*(?:"[^"]*"|'[^']*'))?)*)\s*\/?>/g;
 const ATTRIBUTE_RE = /(\s+)([^\s=<>/"']+)(\s*=\s*)(?:"([^"]*)"|'([^']*)')/g;
+/** Свой способ рисования у тега: по `font` замена имени сменила бы лигатуру на текст. */
+const OWN_STRATEGY_RE = /\s(?:\[glyphStrategy\]\s*=|glyphStrategy\s*=\s*(?:"font"|'font'))/;
 const QUOTED_RE = /(['"`])([a-z0-9_]+)\1/g;
 const ICON_LINE_RE = /icon|glyph/i;
 
@@ -78,7 +85,7 @@ function automatic(text) {
         const [whole, name, attributes] = tag;
         const kitTag = name.startsWith('rt-') || /\srtButton(?=[\s=/>])/.test(whole);
 
-        if (!kitTag) continue;
+        if (!kitTag || OWN_STRATEGY_RE.test(whole)) continue;
 
         const base = tag.index + 1 + name.length;
 

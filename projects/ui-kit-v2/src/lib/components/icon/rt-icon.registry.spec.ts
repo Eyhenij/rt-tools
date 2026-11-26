@@ -283,6 +283,19 @@ describe('RtIconRegistry', (): void => {
         warn.mockRestore();
     });
 
+    it('SC-UKV-1890 — страница с кодом 200 вместо файла ведёт в запасной набор', (): void => {
+        const harness: IHarness = setup(brand());
+
+        harness.registry.request('copy', 'brand');
+        harness.http.expectOne('/brand/copy.svg').flush('<!doctype html><html><body><svg><circle r="1"/></svg></body></html>');
+        harness.http.expectOne('/icons/copy.svg').flush(`<?xml version="1.0"?>\n<!-- рисунок -->\n${SVG}`);
+
+        const symbol: Element | null = document.getElementById(`${RT_ICON_SET_SYMBOL_ID_PREFIX}brand--copy`);
+
+        expect(symbol?.querySelector('path')).not.toBeNull();
+        expect(symbol?.querySelector('circle')).toBeNull();
+    });
+
     it('SC-UKV-64 — на сервере набор не грузится', (): void => {
         const harness: IHarness = setup([{ provide: PlatformService, useValue: { isPlatformBrowser: false } }]);
 

@@ -5,7 +5,7 @@
 ```
 
 Входы — `actions`, `icon`, `label`, `direction`, `size`, `variant`, `closeOnSelect` и `disabled`.
-`icon` без значения рисует `bars`.
+`icon` по умолчанию пуст: тогда кнопка рисует `bars` рисунком кита и под `glyphStrategy: 'font'`.
 Выходы — `actionSelect` и `openChange`.
 
 Описание — `docs/specs/ui-kit-v2/speed-menu/`; здесь только устройство папки.

@@ -1,10 +1,11 @@
 import { ConnectedPosition, FlexibleConnectedPositionStrategy } from '@angular/cdk/overlay';
-import { DebugElement } from '@angular/core';
+import { DebugElement, Provider } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
 import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 import { createRtFixture, qa, setInputs } from '../../../testing/rt-kit-testing';
+import { provideRtIcons } from '../icon/rt-icon.providers';
 import { RtSpeedMenuComponent } from './rt-speed-menu.component';
 import { IRtSpeedMenu } from './rt-speed-menu.model';
 
@@ -60,6 +61,23 @@ describe('RtSpeedMenuComponent', (): void => {
         const fixture: ComponentFixture<RtSpeedMenuComponent> = setup();
 
         expect(trigger(fixture).querySelector('use')?.getAttribute('href')).toBe('#rt-icon-bars');
+    });
+
+    it('SC-UKV-1888 — по способу font значок кнопки по умолчанию остаётся рисунком, а названный приложением — шрифтом', (): void => {
+        const providers: Provider[] = [provideRtIcons({ glyphStrategy: 'font' }) as unknown as Provider];
+        const byDefault: ComponentFixture<RtSpeedMenuComponent> = createRtFixture(
+            RtSpeedMenuComponent,
+            { actions: ACTIONS },
+            { providers }
+        );
+
+        expect(trigger(byDefault).querySelector('use')?.getAttribute('href')).toBe('#rt-icon-bars');
+
+        setInputs(byDefault, { icon: 'zoom_in' });
+        byDefault.detectChanges();
+
+        expect(trigger(byDefault).querySelector('use')).toBeNull();
+        expect(trigger(byDefault).textContent).toContain('zoom_in');
     });
 
     afterEach((): void => {

@@ -65,7 +65,8 @@ A person sees an icon; how it is drawn and from which set is invisible to them.
   drawings. Names are the same in every set.
 - **A drawing a set does not hold comes from its fallback, and the chain ends at `kit`.** A set
   without a named fallback takes `kit`. A name outside the list of a set is not requested from it.
-- **One address is downloaded once, and its refusal is kept.**
+- **One address is downloaded once, and its refusal is kept.** An answer that is not an SVG file
+  counts as a refusal. A filled icon whose file comes from a fallback takes a symbol of its own.
 - **A bad declaration of sets gives a warning and the set `kit`.** A drawing found nowhere gives one
   warning with the icon and the set. These warnings are developer messages: a production build of
   the application drops their texts, and the choice of the drawings stays the same.
@@ -77,7 +78,11 @@ A person sees an icon; how it is drawn and from which set is invisible to them.
 - **A panel and a window opened from a part take its set.** The panels of the menu, the popover, the
   bottom sheet, the confirmation and the aside of the container take it on every opening. A dialog
   and an aside take it from the focused node, and the confirmation of a menu item takes the set of
-  the item. A window already open keeps its set.
+  the item. A window already open keeps its set. A part holds what is declared inside it: a template
+  declared outside a part, and content projected into it from outside, keep the set of the place of
+  their declaration. An aside opened with the focus outside parts takes the set of the part of its
+  `injector`, and `iconSet` of a dialog or an aside names the set instead. A browser that does not
+  focus a clicked button leaves the focus outside the part.
 - **Under the material preset a button asks for the material drawing of its icon, as the icon
   does.**
 - **A sign of the icons alone switches the drawings under it to the material set and carries no tokens.** The
@@ -105,8 +110,13 @@ An application of an earlier version has these breaking moves: `provideRtIcons` 
 options instead of two addresses; the table `iconMaterialMap`, the type `IRtIconMaterialEntry` and
 `materialPairOf` are gone; `RT_ICONS_BASE_URL`, `RT_ICONS_MATERIAL_BASE_URL` and `IRtIcon.Drawing`
 are gone; `request` and `symbolHref` of the registry take a set name and a fill sign; an icon name
-that comes as data must be a kit name. The script `rename-icon-names` renames the static attributes
-of templates and lists the other places.
+that comes as data must be a kit name. A menu item and the side menu draw no first-kit name, under
+`font` too; the operator glyphs of the data table are kit names, and `dataTableIconName` translates
+nothing; the button of the speed menu draws the kit drawing `bars` when it has no icon of its own.
+
+The script `rename-icon-names` renames the static attributes of templates and lists the other places
+it recognizes; the list is not complete, and the table of names ships next to it as
+`icon-names.json`. The script leaves a tag with a glyph strategy of its own.
 
 ### Refusal codes
 

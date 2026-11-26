@@ -16,6 +16,8 @@ cat > "$WORK/app/page.html" <<'HTML'
 <mat-icon icon="delete"></mat-icon>
 <rt-icon [glyph]="'done'" />
 <rt-icon glyph="pets" />
+<rt-icon glyph="delete" glyphStrategy="font" />
+<rt-icon glyph="done" [glyphStrategy]="mode" />
 HTML
 cat > "$WORK/app/menu.ts" <<'TS'
 export const ITEMS = [{ icon: 'settings' }];
@@ -39,7 +41,7 @@ run() { node "$WORK/package/rename-icon-names.mjs" "$@" > "$WORK/out.log" 2>&1; 
 check 'без --write выход нулевой' 0 "$(run "$WORK/app")"
 check 'без --write файл не меняется' '' "$(diff "$WORK/before.html" "$WORK/app/page.html")"
 check 'без --write названы две автоматические замены' 2 "$(grep -c '^заменит: ' "$WORK/out.log")"
-check 'ручных мест четыре: info, чужой тег, выражение, свойство объекта' 4 "$(grep -c '^вручную: ' "$WORK/out.log")"
+check 'ручных мест шесть: info, чужой тег, выражение, свойство объекта и два тега со своим способом' 6 "$(grep -c '^вручную: ' "$WORK/out.log")"
 check 'строка без слова о значке не названа' 0 "$(grep -c 'menu.ts:2' "$WORK/out.log")"
 
 check 'с --write выход нулевой' 0 "$(run --write "$WORK/app")"
@@ -50,6 +52,8 @@ cat > "$WORK/expected.html" <<'HTML'
 <mat-icon icon="delete"></mat-icon>
 <rt-icon [glyph]="'done'" />
 <rt-icon glyph="pets" />
+<rt-icon glyph="delete" glyphStrategy="font" />
+<rt-icon glyph="done" [glyphStrategy]="mode" />
 HTML
 check 'с --write заменены только атрибуты кита' '' "$(diff "$WORK/expected.html" "$WORK/app/page.html")"
 check 'свойство объекта не тронуто' 1 "$(grep -c "icon: 'settings'" "$WORK/app/menu.ts")"

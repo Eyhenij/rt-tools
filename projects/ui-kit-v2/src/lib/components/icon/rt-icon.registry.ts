@@ -3,14 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { InjectionToken, inject, Service, signal, Signal, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { Observable, Subject, catchError, mergeMap, of, shareReplay, tap } from 'rxjs';
+import { Observable, Subject, catchError, map, mergeMap, of, shareReplay, tap } from 'rxjs';
 
 import { PlatformService } from '@rt-tools/core';
 
 import { RT_ICON_SPRITE_ID } from './rt-icon.const';
 import { rtIconCleanDrawing, SVG_NS } from './rt-icon-drawing.logic';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
-import { IRtIconRef, IRtIconSetsConfig, RT_ICON_KIT_SET, rtIconRef, rtIconSetsConfig } from './rt-icon-sets.logic';
+import { IRtIconRef, IRtIconSetsConfig, RT_ICON_KIT_SET, rtIconIsSvgFile, rtIconRef, rtIconSetsConfig } from './rt-icon-sets.logic';
 
 /* Значение задаёт сборка приложения: в рабочей сборке оно `false`, и тексты предупреждений из неё
    выпадают. Поведение от него не зависит. */
@@ -148,6 +148,7 @@ export class RtIconRegistry {
 
         if (file === undefined) {
             file = this.#http.get(url, { responseType: 'text' }).pipe(
+                map((raw: string): string | null => (rtIconIsSvgFile(raw) ? raw : null)),
                 catchError((): Observable<null> => of(null)),
                 shareReplay(1)
             );

@@ -74,6 +74,9 @@ report "a pair leading outside the kit names is named" "$(judged 'в списк�
 fresh_tree && echo '[{ "from": "delete", "to": "trash", "why": "а" }, { "from": "delete", "to": "copy", "why": "б" }]' > "$WORK/tree/$PAIRS"
 report "an old name met twice is named" "$(judged 'встречается дважды')" "1 1"
 
+fresh_tree && echo '[{ "from": "copy", "to": "trash", "why": "а" }]' > "$WORK/tree/$PAIRS"
+report "a pair that renames a kit name is named" "$(judged 'само есть в списке кита')" "1 1"
+
 fresh_tree && echo 'export const other = 1;' > "$WORK/tree/$ICON/rt-icon-sets.ts"
 report "an empty parse is a refusal, not a green answer" "$(judged 'разбор пуст')" "1 2"
 

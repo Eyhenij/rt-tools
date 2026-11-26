@@ -173,6 +173,26 @@ export function rtIconSetsConfig(added: ReadonlyArray<IRtIconSet> = [], defaultS
     return { sets, warnings, defaultSet: sets.has(defaultSet) ? defaultSet : RT_ICON_KIT_SET };
 }
 
+/* Что в файле SVG стоит перед корнем: объявление XML, комментарий, `DOCTYPE`. */
+const SVG_PROLOG_RE: RegExp = /^(?:<\?[\s\S]*?\?>|<!--[\s\S]*?-->|<!DOCTYPE\s[^>]*>)/i;
+const SVG_ROOT_RE: RegExp = /^<svg[\s/>]/i;
+
+/**
+ * Пришёл ли файл рисунка. Сервер приложения на отсутствующий адрес часто отдаёт свою страницу с
+ * кодом 200: такой ответ рисунком не является, и значок берётся из запасного набора.
+ */
+export function rtIconIsSvgFile(raw: string): boolean {
+    let rest: string = raw.trimStart();
+    let prolog: RegExpExecArray | null = SVG_PROLOG_RE.exec(rest);
+
+    while (prolog !== null) {
+        rest = rest.slice(prolog[0].length).trimStart();
+        prolog = SVG_PROLOG_RE.exec(rest);
+    }
+
+    return SVG_ROOT_RE.test(rest);
+}
+
 /**
  * Рисунок имени в наборе. Набор с перечнем, где имени нет, пропускается без запроса: символ и
  * адреса берутся у первого набора цепочки, у которого рисунок есть. Незнакомый набор — это `kit`.
@@ -195,6 +215,9 @@ export function rtIconRef(config: IRtIconSetsConfig, set: string, name: IRtIcon.
     }
 
     const ownerName: string = owner?.name ?? RT_ICON_KIT_SET;
+    /* Залитый рисунок может дать и запасной набор: тогда у него свой символ, иначе залитый и
+       контурный значок заняли бы один, и второй нарисовался бы рисунком первого. */
+    const filled: boolean = urls.some((url: string): boolean => url.endsWith('.fill.svg'));
 
-    return { id: symbolId(ownerName, name, fill && owner?.fill === true), set: ownerName, name, urls };
+    return { id: symbolId(ownerName, name, filled), set: ownerName, name, urls };
 }
