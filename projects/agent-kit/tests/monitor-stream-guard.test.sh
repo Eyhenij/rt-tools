@@ -33,7 +33,7 @@ stopped() { put "$(jq -cn --arg id "$1" '{type:"assistant",timestamp:"2026-11-26
 # The call of Monitor: «deny» or «PASS»; the reason of the last call lands in the file $TMP/reason.
 mon() {
     local out
-    out="$(jq -cn --arg p "${2-$P}" --arg c "$1" --arg w "${3:-$TMP}" '{session_id:"s",hook_event_name:"PreToolUse",tool_name:"Monitor",tool_input:{command:$c},transcript_path:$p,cwd:$w}' | bash "$H" 2>/dev/null)"
+    out="$(jq -cn --arg p "${2-$P}" --arg c "$1" --arg w "${3:-$TMP}" '{session_id:"s",hook_event_name:"PreToolUse",tool_name:"Monitor",tool_input:{command:$c},transcript_path:$p,cwd:$w}' | (cd "$TMP" && CLAUDE_PROJECT_DIR="$TMP" bash "$H" 2>/dev/null))"
     printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecisionReason // empty' >"$TMP/reason" 2>/dev/null
     [ -z "$out" ] && echo PASS || printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision // "deny"'
 }
@@ -72,6 +72,11 @@ case_of 'echo done в теле не закрывает цикл' "$(mon "while t
 case_of 'ls в цикле печатает' "$(mon "while true; do ls -la $L; sleep 5; done")" deny
 case_of 'break по условию после печати — печать на каждом круге' "$(mon "while true; do tail -1 $L; [ -f $TMP/flag ] && break; sleep 5; done")" deny
 case_of 'путь через /private, /./ и по cwd' "$(mon "tail -f /private$L")$(mon "tail -f $TMP/./set.log")$(mon 'tail -f set.log' "$P" "$TMP")" denydenydeny
+case_of 'печать || break — печать на каждом круге' "$(mon "while true; do tail -1 $L || break; sleep 5; done")" deny
+case_of '2>/dev/null на печати не глушит вывод' "$(mon "while true; do tail -1 $L 2>/dev/null; sleep 5; done")" deny
+case_of 'LC_ALL=C, /usr/bin/tail, bash -lc, <(…)' "$(mon "LC_ALL=C tail -f $L")$(mon "/usr/bin/tail -f $L")$(mon "bash -lc 'tail -f $L'")$(mon "grep --line-buffered red <(tail -n0 -f $L)")" denydenydenydeny
+fresh; bg b11 "S='$TMP/q'; bash set.sh > \$S/a.log; bash set.sh > '$TMP/b.log'; bash -c 'make > $TMP/c.log'; make>$TMP/d.log; x | tee --append $TMP/e.log $TMP/f.log"
+case_of "цели: S='…', '…', sh -c, без пробела, второй файл tee" "$(mon "tail -f $TMP/q/a.log")$(mon "tail -f $TMP/b.log")$(mon "tail -f $TMP/c.log")$(mon "tail -f $TMP/d.log")$(mon "tail -f $TMP/f.log")" denydenydenydenydeny
 fresh; bg b8 "bash set.sh 2> $L"
 case_of 'файл через 2>' "$(mon "tail -f $L")" deny
 fresh; bg b9 "bash set.sh | tee -ai $L"
@@ -92,6 +97,16 @@ case_of 'другой инструмент' "$(jq -cn --arg p "$P" '{hook_event_
 case_of 'печать, затем две строки до break' "$(mon "while true; do if grep -q exit $L; then echo '=== finished'; tail -3 $L; break; fi; sleep 5; done")" PASS
 case_of 'печать, затем rm и exit 0' "$(mon "while true; do if grep -q exit $L; then tail -3 $L; rm -f $TMP/lock; exit 0; fi; sleep 5; done")" PASS
 case_of 'файл с тем же началом' "$(mon "tail -f $L.old")" PASS
+case_of 'одна строка: grep --max-count 1, awk …exit, sed …q, head --lines=1' "$(mon "tail -f $L | grep --line-buffered --max-count 1 exit")$(mon "tail -f $L | awk '/exit/{print; exit}'")$(mon "tail -f $L | sed -n '/exit/{p;q}'")$(mon "tail -f $L | head --lines=1")" PASSPASSPASSPASS
+case_of 'until ls &>/dev/null, until grep -m1' "$(mon "until ls $L &>/dev/null; do sleep 2; done; tail -3 $L")$(mon "until grep -m1 exit $L; do sleep 5; done")" PASSPASS
+case_of 'печать во вложенном if, внешний break' "$(mon "while true; do if grep -q exit $L; then if grep -q FAIL $L; then echo FAIL; else echo OK; fi; break; fi; sleep 5; done")" PASS
+case_of 'печать, else с continue, затем break' "$(mon "while true; do if grep -q exit $L; then tail -3 $L; else sleep 5; continue; fi; break; done")" PASS
+case_of '( cd … && rm … ) и (( n++ )) до break' "$(mon "while true; do if grep -q exit $L; then tail -3 $L; ( cd $TMP && rm -f lock ); (( n++ )); break; fi; sleep 5; done")" PASS
+case_of 'апостроф в комментарии, echo done до break' "$(mon "while true; do if grep -q exit $L; then tail -3 $L # it's over
+echo done; break; fi; sleep 5; done")" PASS
+fresh; bg b1 "node -e 'process.exit(+v > 1.5)'; bash set.sh > $L"
+case_of 'число 1.5 — не путь' "$(mon 'while true; do gh pr checks 1 | tail -3; sleep 1.5; done')" PASS
+fresh; bg b1 "bash set.sh > $L 2>&1"
 fresh; bg b1 "node --input-type=module > $TMP/sizes.txt <<'EOF'
 const s = [3, 1].sort((a, b) => a - b);
 EOF"

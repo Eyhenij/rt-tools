@@ -131,8 +131,13 @@ Then the call is refused, and the refusal names the task and the file and says t
 And a path through `${TMPDIR:-/tmp}`, `$(basename "$PWD")`, an assignment `S=` of the task's command, `tee -a`, `tee -ai`, `>>` or `2>` is seen
 And `tail -fn0`, `tail -50f`, `timeout`, `stdbuf`, `bash -c`, `grep -m 500`, a loop in `{ }` or after `then`, `echo done` in the body and `ls` are refused
 And a path through `/private`, `/./`, the working directory or a leading `cd` of the task is seen; the same name in another directory and a longer name pass
-And an arrow in a heredoc, a comparison in `awk '…'` and a target with no path refuse no poll of a pull request
-And a print followed by two statements and `break` or `exit` passes; a `break` only by a condition does not leave
+And an arrow in a heredoc, a comparison in `awk '…'` and a target with no path refuse no poll of a PR
+And a print followed by two statements and `break` or `exit` passes; a `break` only by a condition or after `||` does not leave
+And `2>/dev/null` on a print, `LC_ALL=C`, `/usr/bin/tail`, `bash -lc` and `<(tail -f …)` are refused
+And a target in `S='…'`, in `'…'`, inside `sh -c`, with no space before it and the second file of `tee --append` is seen
+And `grep --max-count 1`, `awk …exit`, `sed …q`, `head --lines=1`, `until ls … &>/dev/null` and `until grep -m1` pass
+And a print in a nested `if`, an `else` with `continue`, `( … )`, `(( … ))` and an apostrophe in a comment before `break` pass
+And the number `1.5` is no path
 And of 26 `Monitor` commands from the records of the project 18 that print a line on every step of own background are refused, 8 pass
 And a wait by `until grep -q` with one print after it passes; so does a print followed by `break` in one branch
 And a pipeline followed by `break`, `tail -f | grep -m 1`, `echo` inside `$(…)`, a timer and a file no task writes pass

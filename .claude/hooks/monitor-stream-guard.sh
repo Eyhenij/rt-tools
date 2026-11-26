@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.41.1 · hooks/monitor-stream-guard.sh · efa2cde3df3a · правится надстройкой, не здесь
+# rt-kit v0.41.1 · hooks/monitor-stream-guard.sh · f7e5230bcc62 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Monitor
 # Requires: checks/task-flow-script.mjs, checks/flow-monitor.mjs, hooks/decide.sh, hooks/hook-input.sh
 #
@@ -41,7 +41,7 @@ record="${record%$'\n'}"
 command="$(printf '%s' "$input" | jq -r '.tool_input.command // ""' 2>/dev/null)"
 printf '%s' "$command" | grep -qE '(^|[^[:alnum:]_-])tail([[:space:]]+[^|;&]*)?[[:space:]](-[[:alnum:]]*[fF][[:alnum:]]*|--follow)([[:space:]=]|$)' ||
     { printf '%s' "$command" | grep -qE '(^|[^[:alnum:]_])(while|until|for)[[:space:]]' &&
-        printf '%s' "$command" | grep -qE '(^|[^[:alnum:]_])(echo|printf|cat|head|tail|awk|sed|grep|egrep|cut|jq|sort|uniq|comm|tr|wc|column|diff|ls|stat|date|du)[[:space:]]'; } ||
+        printf '%s' "$command" | grep -qE '(^|[^[:alnum:]_])(echo|printf|cat|head|tail|awk|sed|grep|egrep|cut|jq|sort|uniq|comm|tr|wc|column|diff|ls|stat|date|du|rg|nl|tee|perl)[[:space:]]'; } ||
     exit 0
 
 engine="${RT_FLOW_ENGINE:-}"
