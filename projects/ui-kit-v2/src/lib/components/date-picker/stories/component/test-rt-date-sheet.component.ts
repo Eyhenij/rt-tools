@@ -16,7 +16,7 @@ import { IRtDatePicker } from '../../rt-date-picker.model';
  */
 @Component({
     selector: 'app-date-sheet',
-    templateUrl: './test-date-sheet.component.html',
+    templateUrl: './test-rt-date-sheet.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // Angular
