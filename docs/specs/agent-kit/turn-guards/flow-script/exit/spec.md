@@ -63,6 +63,12 @@ not by a person.
   mid-turn counts as the owner's word: the host keeps it as a queued command, not as a user entry.
   Esc stops an order sent a second before it too. A queued message the host delivers within two
   seconds after the mark is judged alone, even one typed before the mark.
+- **While the owner's stop stands, own background started before it holds the end of a turn until it is taken down.**
+  A background task or a `Monitor` the session started before the stop, with no end in the record or
+  in the queue and no `TaskStop` after it, refuses the end of the turn ahead of the stop release
+  cases. The refusal names `TaskStop <id>` for each task and nothing else to do; after two such
+  refusals within one stop the turn is released by the stop. A complaint that the work was not
+  stopped — «не остановил», «не снял», «без присмотра», «продолжаешь работать» — lifts no stop.
 - **The draft check, the conscience check and the cargo mark check release the turn while the owner's stop stands.**
   Each asks the command `stop` of the engine after its own refusal conditions, with the same hook
   input, and ends the turn on its exit code 0.

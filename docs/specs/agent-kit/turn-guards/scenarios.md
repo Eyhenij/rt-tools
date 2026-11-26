@@ -99,6 +99,22 @@ names the ordered work
 
 Not covered: by the same technique as SC-AK-1358.
 
+### SC-AK-2014 — while the owner's stop stands, a turn no word of the owner opened does no work
+
+Given the owner's stop by Esc, «стоп», `/stop` left only in the queue, or Esc 30 ms after a notice
+When a notice of a task, a line of `Monitor` or a message of another session opens a turn, and a call is made in it
+Then the call is refused — a call of a subagent, `Edit` and `Write` too — and the refusal names `TaskStop <id>` of own background
+And `TaskStop`, `KillShell`, `KillBash`, `CronDelete`, `CronList`, `ToolSearch` and `TaskOutput` pass
+And a turn opened by a bare «стоп», by «стоп» after Esc or by «блин, стоп» refuses its calls
+And a turn opened by «Стоп. Пиши инцидент», a question, swearing, «продолжай», a typed command or a menu answer lets them through
+And a word queued before Esc and delivered after it opens no turn for calls; the same word typed again after Esc does
+And «стоп» queued in the middle of a turn opened by an order refuses the next call of that turn
+And with no stop, with no record, with a broken record or with an engine past its limit the call passes
+And after «стоп» and 20 MB of calls a notice still opens a turn with its calls refused
+And the entry of the turn names `TaskStop` of own background once per task, and not a task whose end is in the queue
+
+Covered: `projects/agent-kit/tests/owner-stop-call-guard.test.sh`.
+
 ### SC-AK-1363 — a command that closes the session does not end ordered work
 
 Given the owner's latest word ordered work, and the owner called the command that writes the

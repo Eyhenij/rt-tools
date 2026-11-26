@@ -48,6 +48,14 @@ exits asks the engine of the task flow for a verdict: `docs/specs/agent-kit/turn
   not by the text.
 - **The tool that closes the conversation is refused always.** The session is ended by the owner and
   by nobody else; the guard has no lawful form of bypass and refuses even without a JSON parser.
+- **While the owner's stop stands, a turn no word of the owner opened does no work.** A notice of a
+  task, a line of `Monitor` or a message of another session opens a turn the host starts by itself;
+  in it every call is refused except the take-down of own background — `TaskStop`, `KillShell`,
+  `KillBash`, `CronDelete`, `CronList`, `ToolSearch`, `TaskOutput`. A turn the owner opened by a bare
+  stop — Esc, «стоп», `/stop` — is the same; one opened by any other word of theirs carries it out. A
+  word queued before the stop and delivered after it opens no turn for calls. The host is not asked to
+  keep such a turn from starting: it shows the owner a line for every turn it keeps, so the entry of
+  the turn names `TaskStop <id>` of own background instead, once per task.
 - **A role switched off by the tree does not hold the guard at it.** The tree names the switched-off
   roles by a list in its setting, and the guard at such a role exits silently. What is switched off is
   the mandatory call, not the role itself: its file stays laid out, and it can be called at any

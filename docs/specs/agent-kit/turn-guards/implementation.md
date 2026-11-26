@@ -4,6 +4,7 @@ A statement of the spec and the place where it is carried out. The link goes by 
 statement: a removed statement is removed together with its line.
 
 - **The tool that closes the conversation is refused always.** — `projects/agent-kit/assets/hooks/end-conversation-guard.sh:tool` — the name is read by jq, without jq by grep; the refusal comes from the decision table; scenario SC-AK-1121
+- **While the owner's stop stands, a turn no word of the owner opened does no work.** — `projects/agent-kit/assets/hooks/owner-stop-call-guard.sh:owner_stop_call` — the refusal of a call, the take-down passed. `projects/agent-kit/assets/checks/task-flow-script.mjs:runStopCall` — the command `stop-call`. `projects/agent-kit/assets/task-flow/measure/owner.mjs:stopCall` — the opening of the turn against the stop. `projects/agent-kit/assets/task-flow/source/owner.mjs:turnOpener` — the prompt and its queue time. Scenario SC-AK-2014
 - **The guard of the window reminds before it refuses.** — `projects/agent-kit/assets/hooks/window-fill-guard.sh:warn_pct`
 - **The reminder repeats by steps, not at every action.** — `projects/agent-kit/assets/hooks/window-fill-guard.sh:step`
 - **After the threshold of the stop the record of the progress of the work, the handover and the commands of the delivery pass.** — `projects/agent-kit/assets/hooks/window-fill-guard.sh:allowed`
