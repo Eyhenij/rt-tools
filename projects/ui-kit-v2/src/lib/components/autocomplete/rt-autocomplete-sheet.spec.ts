@@ -5,6 +5,7 @@ import { createRtFixture } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
 import { IRtAutocomplete } from './rt-autocomplete.model';
 import { RtAutocompleteComponent } from './rt-autocomplete.component';
+import { rtPreloadPopoverSheet } from '../popover/rt-popover-sheet.helper';
 
 const CITIES: ReadonlyArray<string> = ['Грузия', 'Грузино-Имеретинская обл.', 'Груновка'];
 
@@ -39,6 +40,10 @@ function sheetSearch(): HTMLInputElement | null {
 }
 
 describe('Автокомплит в нижней шторке', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+    });
+
     afterEach((): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });

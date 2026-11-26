@@ -6,6 +6,7 @@ import { BreakpointsService } from '../../platform';
 import { IRtSelect } from '../select/rt-select.model';
 import { RtMultiselectComponent } from './rt-multiselect.component';
 import { rtMultiselectKnownCount } from './rt-multiselect-toggles.logic';
+import { rtPreloadPopoverSheet } from '../popover/rt-popover-sheet.helper';
 
 const OPTIONS: ReadonlyArray<IRtSelect.Option<string>> = [
     { label: 'Москва', value: 'msk' },
@@ -50,6 +51,10 @@ function openPanel(fixture: ComponentFixture<RtMultiselectComponent<string>>): v
 }
 
 describe('Мультиселект в нижней шторке — замечания ревью', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+    });
+
     afterEach((): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });

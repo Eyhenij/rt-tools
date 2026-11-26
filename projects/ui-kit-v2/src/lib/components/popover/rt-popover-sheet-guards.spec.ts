@@ -5,6 +5,7 @@ import { createRtFixture } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
 import { RtPopoverDirective } from './rt-popover.directive';
 import { RT_POPOVER_SHEET } from './rt-popover-sheet.token';
+import { rtPreloadPopoverSheet } from './rt-popover-sheet.helper';
 
 /** Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. */
 class BreakpointsStub {
@@ -40,6 +41,10 @@ function trigger(fixture: ComponentFixture<SheetGuardsHostComponent>): HTMLButto
 }
 
 describe('Нижняя шторка поповера — токен, фокус и уход вниз', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+    });
+
     afterEach((): void => {
         jest.restoreAllMocks();
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
