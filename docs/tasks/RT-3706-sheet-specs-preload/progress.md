@@ -42,6 +42,8 @@
   files. `pnpm run check:unused` runs after stage 3. Next after this task: the push of the epic branch and
   the PR of the epic into the main branch, whose pipeline shoots the whole showcase. Affected stage of the
   plan: 2, 3.
+- `projects/ui-kit-v2/src/lib/components/date-picker/stories/component/test-rt-date-sheet.component.ts` — превышение решения плана: файл обёртки витрины переименован из `test-date-sheet.component.ts` по имени своего класса, нового символа нет; без этого Angular Doctor красный.
+- `projects/ui-kit-v2/src/lib/components/date-picker/stories/component/test-rt-date-sheet.component.spec.ts` — превышение решения плана: тест обёртки витрины, которого требует Angular Doctor; нового символа кита нет.
 - **Цена:** нет
 - **Отменено:** нет
 
