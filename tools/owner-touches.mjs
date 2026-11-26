@@ -24,6 +24,8 @@ import { join } from 'node:path';
 
 /** The kinds the counter writes today; a kind it adds later is counted under its own name. */
 const KINDS = ['correction', 'order', 'other', 'status'];
+/** A moment after every observation: the window with no upper bound. */
+const END = String.fromCharCode(0xffff);
 const TOUCH = new Set(['record-menu', 'record-word']);
 const isTask = (task) => typeof task === 'string' && /^RT-\d+$/.test(task);
 
@@ -34,7 +36,7 @@ const median = (sorted) => {
 };
 
 /** The count of touches over the raw lines of observation files, within [since, until). */
-function countTouches(lines, { since = '', until = '￿' } = {}) {
+function countTouches(lines, { since = '', until = END } = {}) {
     let broken = 0;
     let windows = 0;
     let offTask = 0;
@@ -55,20 +57,20 @@ function countTouches(lines, { since = '', until = '￿' } = {}) {
         if (o.ev === 'guard-ask') windows += 1;
         if (o.ev === 'task-taken' && isTask(o.task)) taken.add(o.task);
         if (!TOUCH.has(o.ev)) continue;
-        // A resumed session copies the record under a new sign: the same moment of the same event is one touch.
-        const moment = [o.task, o.ev, o.kind, t].join('|');
+        // A resumed session copies the record under a new sign and on its own branch: the same moment of
+        // the same event is one touch, and it stays with the task of the line read first.
+        const moment = [o.ev, o.kind, t].join('|');
         if (moments.has(moment)) continue;
         moments.add(moment);
-        if (!isTask(o.task)) {
-            offTask += 1;
-            continue;
-        }
         const key = [o.task, o.sid, o.ev, o.kind, t.slice(0, 19)].join('|');
-        if (!touches.has(o.task)) touches.set(o.task, new Set());
-        if (touches.get(o.task).has(key)) continue;
-        touches.get(o.task).add(key);
+        const own = touches.get(isTask(o.task) ? o.task : null) ?? new Set();
+        if (own.has(key)) continue;
+        own.add(key);
+        touches.set(isTask(o.task) ? o.task : null, own);
         if (o.ev === 'record-word' && typeof o.about === 'string') kinds[o.about] = (kinds[o.about] ?? 0) + 1;
+        if (!isTask(o.task)) offTask += 1;
     }
+    touches.delete(null);
     const tasks = [...new Set([...taken, ...touches.keys()])].sort();
     const perTask = Object.fromEntries(tasks.map((task) => [task, touches.get(task)?.size ?? 0]));
     const counts = Object.values(perTask).sort((a, b) => a - b);
@@ -80,6 +82,7 @@ function countTouches(lines, { since = '', until = '￿' } = {}) {
         windows,
         offTask,
         zeroTasks: counts.filter((n) => n === 0).length,
+        medianTouched: median(counts.filter((n) => n > 0)),
         kinds,
         otherShare: marked === 0 ? null : Math.round((kinds.other / marked) * 100) / 100,
         perTask,
@@ -101,7 +104,7 @@ const NAMES = { correction: 'поправка', status: '«где стоим»',
 function table(result) {
     const rows = [
         `Задач: ${result.tasks}, обращений: ${result.total}, медиана на задачу: ${result.median}`,
-        `Задач без обращений: ${result.zeroTasks}; обращений вне задач: ${result.offTask}`,
+        `Задач без обращений: ${result.zeroTasks}; медиана задач с обращениями: ${result.medianTouched}; обращений вне задач: ${result.offTask}`,
         `Окна разрешений от хуков: ${result.windows}`,
         'Набранные сообщения по видам:',
         ...Object.keys(result.kinds).map((kind) => `  ${NAMES[kind] ?? kind}: ${result.kinds[kind]}`),
@@ -112,19 +115,20 @@ function table(result) {
 }
 
 function main(argv) {
-    const dir = option(argv, '--dir') ?? join(process.cwd(), '.claude/rt-kit/observations');
+    let dir;
+    let bounds;
+    try {
+        dir = option(argv, '--dir') ?? join(process.cwd(), '.claude/rt-kit/observations');
+        bounds = { since: option(argv, '--since') ?? '', until: option(argv, '--until') ?? END };
+    } catch (error) {
+        process.stderr.write(`owner-touches: ${error.message}\n`);
+        return 2;
+    }
     const lines = existsSync(dir)
         ? readdirSync(dir)
               .filter((name) => name.endsWith('.jsonl'))
               .flatMap((name) => readFileSync(join(dir, name), 'utf8').split('\n'))
         : [];
-    let bounds;
-    try {
-        bounds = { since: option(argv, '--since') ?? '', until: option(argv, '--until') ?? '￿' };
-    } catch (error) {
-        process.stderr.write(`owner-touches: ${error.message}\n`);
-        return 2;
-    }
     const result = countTouches(lines, bounds);
     process.stdout.write(argv.includes('--json') ? `${JSON.stringify(result)}\n` : table(result));
     return 0;

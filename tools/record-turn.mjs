@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.41.0 · checks/record-turn.mjs · 64826426a247 · правится надстройкой, не здесь
+// rt-kit v0.41.0 · checks/record-turn.mjs · cae5024864b4 · правится надстройкой, не здесь
 /**
  * The count of one turn of a session record, written as observations. The hook at the end of a turn
  * and at the end of a session calls it; so does the recount of a past day.
@@ -24,7 +24,7 @@
 import { appendFileSync, existsSync, mkdirSync, openSync, readFileSync, readSync, closeSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
-import { aboutOf, eventsOf, ownerWords, taskOf } from './record-count.mjs';
+import { eventsOf, taskOf } from './record-count.mjs';
 
 const option = (argv, name) => {
     const at = argv.indexOf(name);
@@ -89,13 +89,8 @@ export function takingsOf(entries, seen = new Set()) {
 
 /** The observation lines of the events of some entries, by the day of their moment. */
 export function observationsOf(entries, { sid, patterns, version, seen = new Set() }) {
-    const pattern = patterns ? new RegExp(patterns, 'iu') : null;
-    // The same main thread `eventsOf` reads: a word keyed here is the word that goes out as an event.
-    const words = ownerWords(entries.filter((entry) => !entry?.isSidechain));
-    const corrected = new Set(pattern ? words.filter((w) => pattern.test(w.text)).map((w) => `${w.session}|${w.at}|${w.kind}`) : []);
-    const about = new Map(words.map((w) => [`${w.session}|${w.at}|${w.kind}`, aboutOf(w.text, patterns)]));
     const byDay = new Map();
-    for (const e of eventsOf(entries)) {
+    for (const e of eventsOf(entries, patterns)) {
         const line = { t: e.at, ev: `record-${e.ev}` };
         const task = clean(taskOf(e.branch));
         if (task) line.task = task;
@@ -103,8 +98,8 @@ export function observationsOf(entries, { sid, patterns, version, seen = new Set
         if (e.ev === 'ask' && e.reask) line.reask = '1';
         if (e.ev === 'change' && e.analysis) line.analysis = '1';
         if (e.ev === 'menu' && e.answered) line.answered = clean(e.answered);
-        if (e.ev === 'word' && corrected.has(`${e.session}|${e.at}|${e.kind}`)) line.corr = '1';
-        if (e.ev === 'word' && about.has(`${e.session}|${e.at}|${e.kind}`)) line.about = about.get(`${e.session}|${e.at}|${e.kind}`);
+        if (e.ev === 'word' && e.corr) line.corr = '1';
+        if (e.ev === 'word' && e.about) line.about = clean(e.about);
         line.sid = sid;
         if (version) line.v = version;
         const day = e.at.slice(0, 10);
