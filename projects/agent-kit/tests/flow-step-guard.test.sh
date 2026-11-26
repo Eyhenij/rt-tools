@@ -450,6 +450,58 @@ gate_session_cleanup
 unset TMPDIR
 rm -rf "$R/.claude/skills/task-flow"
 
+# --- ограничитель времени: страж судит и без `timeout` -----------------------------------------
+# Каталог команд случая — ссылки на всё из PATH, кроме `timeout`, `gtimeout` и perl; ограничитель
+# вида кладётся заглушкой, которая пишет свои доводы в отметку и передаёт ход дальше.
+REAL_PERL="$(command -v perl)"
+LIMIT_BASE="$(mktemp -d)"
+TMPS+=("$LIMIT_BASE")
+( IFS=:; for dir in $PATH; do for f in "$dir"/*; do n="${f##*/}"
+    case "$n" in timeout | gtimeout | perl) continue ;; esac
+    [ -x "$f" ] && [ ! -e "$LIMIT_BASE/$n" ] && ln -s "$f" "$LIMIT_BASE/$n"; done; done )
+# Каталог вида: $1 — gtimeout, perl или none; печатает путь, отметка лежит рядом с ним.
+limit_bin() {
+    local bin="$(mktemp -d)/bin"
+    TMPS+=("${bin%/bin}")
+    cp -RP "$LIMIT_BASE" "$bin"
+    case "$1" in
+        gtimeout) printf '#!/bin/sh\necho "gtimeout $*" >> "%s"\nshift\nexec "$@"\n' "${bin%/bin}/mark" > "$bin/gtimeout" ;;
+        perl) printf '#!/bin/sh\necho "perl $*" >> "%s"\nexec "%s" "$@"\n' "${bin%/bin}/mark" "$REAL_PERL" > "$bin/perl" ;;
+    esac
+    chmod +x "$bin"/gtimeout "$bin"/perl 2>/dev/null
+    printf '%s' "$bin"
+}
+B8=RT-11-limits
+R8="$(task_repo "$B8")"
+P8="$R8/docs/tasks/$B8/progress.md"
+progress_text 'этап-идёт' '>' ' ' > "$P8"
+K1="$(limit_bin gtimeout)" K2="$(limit_bin perl)" K3="$(limit_bin none)"
+PATH_KEEP="$PATH"
+
+PATH="$K1"
+d "guard: SC-AK-2004 — только gtimeout: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
+expect_reason "guard: SC-AK-2004 — только gtimeout: отказ называет команду шага" "$GUARD" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" 'task-flow-script.mjs step 1.1'
+d "guard: SC-AK-2004 — только gtimeout: законная правка проходит" "$(edit_input Edit "$P8" '# Ход работы' '# Ход работы.' "$R8")" PASS
+PATH="$PATH_KEEP"
+report "guard: SC-AK-2004 — только gtimeout: отметка вызова с пределом 60" "$(grep -q '^gtimeout 60 node ' "${K1%/bin}/mark" 2>/dev/null && echo есть || echo нет)" есть
+
+PATH="$K2"
+d "guard: SC-AK-2004 — только perl: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
+expect_reason "guard: SC-AK-2004 — только perl: отказ называет команду шага" "$GUARD" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" 'task-flow-script.mjs step 1.1'
+d "guard: SC-AK-2004 — только perl: законная правка проходит" "$(edit_input Edit "$P8" '# Ход работы' '# Ход работы.' "$R8")" PASS
+PATH="$PATH_KEEP"
+report "guard: SC-AK-2004 — только perl: отметка вызова с alarm и пределом 60" "$(grep -q '^perl -e alarm shift; exec @ARGV 60 node ' "${K2%/bin}/mark" 2>/dev/null && echo есть || echo нет)" есть
+
+PLAN8="$(printf '# Plan\n\n## Decision\n\nNo decision: probe fixture\n\n## Stages\n\n### 1. Этап\n\n- **Steps:**\n    1. Первый шаг\n       Check: `cat a.txt | tail -1` → `готово`\n')"
+PATH="$K3"
+d "guard: SC-AK-2004 — без ограничителя: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
+expect_reason "guard: SC-AK-2004 — без ограничителя: отказ называет команду шага" "$GUARD" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" 'task-flow-script.mjs step 1.1'
+d "guard: SC-AK-2004 — без ограничителя: законная правка проходит" "$(edit_input Edit "$P8" '# Ход работы' '# Ход работы.' "$R8")" PASS
+d "guard: SC-AK-2004 — без ограничителя: запись плана со скрытой проверкой отказана" "$(edit_input Write "$R8/docs/tasks/$B8/plan.md" '' "$PLAN8" "$R8")" deny
+expect_reason "guard: SC-AK-2004 — без ограничителя: отказ записи плана называет трубу" "$GUARD" "$(edit_input Write "$R8/docs/tasks/$B8/plan.md" '' "$PLAN8" "$R8")" 'a pipe without'
+PATH="$PATH_KEEP"
+report "guard: SC-AK-2004 — без ограничителя: отметки вызова нет ни одной" "$([ -e "${K3%/bin}/mark" ] && echo есть || echo нет)" нет
+
 # --- чужие правки страж не судит ---------------------------------------------------------------
 d "обычный файл правится без стража" "$(edit_input Edit "$R/README.md" 'a' 'b' "$R")" PASS
 d "обычная команда проходит" "$(shell_input "git status --short" "$R")" PASS
