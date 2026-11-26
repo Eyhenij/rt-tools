@@ -33,6 +33,8 @@ together with the plan of RT-3695: «П8 команда измерения (Reco
 
 **Tasks of the grill:** 1
 
+**Behaviour:** unchanged — правятся счётчик наблюдений пакета правил и команда дерева, код приложения не трогается
+
 ## Questions and answers
 
 No question went to the owner: two «recommended» answers in a row close the rest by assumption
