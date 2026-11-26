@@ -29,7 +29,7 @@ describe('стили панели-шторки', (): void => {
     const frame: string = compiled('rt-aside.component.scss');
     const header: string = compiled('header/rt-aside-header.component.scss');
     const sheet: string = compiled('../bottom-sheet/rt-bottom-sheet.component.scss');
-    const confirm: string = compiled('../bottom-sheet/rt-bottom-sheet-confirm.component.scss');
+    const confirm: string = compiled('../bottom-sheet/confirm/rt-bottom-sheet-confirm.component.scss');
 
     it('SC-UKV-1802 — коробка оверлея шторки во всё окно и без сдвига: шторка стоит от окна', (): void => {
         const body: string = ruleBody(overlay, '.rt-aside-overlay.rt-aside-overlay--sheet');

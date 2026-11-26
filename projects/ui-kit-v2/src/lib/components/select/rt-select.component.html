@@ -167,7 +167,7 @@
                         @if (cards()) {
                             <!-- Радиокнопка кита только показывает выбор: нажатие принимает карточка, клавиши ведёт поле.
                                  Её код приходит с первыми карточками, а не со стартом приложения. -->
-                            @defer (on immediate; prefetch on idle) {
+                            @defer (on immediate) {
                                 <rt-radio-button
                                     rtElem="mark"
                                     qa-dataid="select-option-mark"
@@ -176,7 +176,7 @@
                                     [value]="row.option.value"
                                     [checked]="row.option.value === value()" />
                             } @placeholder {
-                                <span rtElem="mark" aria-hidden="true"></span>
+                                <span rtElem="mark" aria-hidden="true" [rtMod]="{ pending: true }"></span>
                             }
                         } @else if (row.option.value === value()) {
                             <rt-icon rtElem="check" name="check" size="sm" aria-hidden="true" />

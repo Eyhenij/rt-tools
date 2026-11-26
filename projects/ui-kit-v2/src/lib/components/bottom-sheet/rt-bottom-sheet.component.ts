@@ -36,7 +36,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
-import { RtSheetConfirmPlace } from './rt-bottom-sheet-confirm.loader';
+import { RtSheetConfirmPlace } from './rt-sheet-confirm-place';
 import { IRtSheetKeyboardBox, rtWatchSheetKeyboard } from './rt-bottom-sheet-keyboard';
 import { RtBottomSheetScreens } from './rt-bottom-sheet-screens';
 import { RtBottomSheetStackService } from './rt-bottom-sheet-stack.service';

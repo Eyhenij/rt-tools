@@ -5,14 +5,14 @@ import { createRtFixture, qa } from '../../../testing/rt-kit-testing';
 import { RtBottomSheetComponent } from './rt-bottom-sheet.component';
 
 /** Код вопроса не загружается: так выглядит оборванная сеть или кусок, которого после выкладки уже нет. */
-jest.mock('./rt-bottom-sheet-confirm.component', (): never => {
+jest.mock('./confirm/rt-bottom-sheet-confirm.component', (): never => {
     throw new Error('the question code did not load');
 });
 
 @Component({
     selector: 'rt-bottom-sheet-confirm-failure-host',
     template: `
-        <rt-bottom-sheet [open]="open()" [unsaved]="true" (openChange)="changes.push($event)">
+        <rt-bottom-sheet [open]="open()" [unsaved]="true" (openChange)="changes.push($event)" (stayRequest)="stays = stays + 1">
             <h2 sheetHeader>Фильтры</h2>
             <p>Содержимое листа</p>
         </rt-bottom-sheet>
@@ -23,6 +23,7 @@ jest.mock('./rt-bottom-sheet-confirm.component', (): never => {
 class BottomSheetConfirmFailureHostComponent {
     public readonly open: WritableSignal<boolean> = signal<boolean>(true);
     public readonly changes: boolean[] = [];
+    public stays: number = 0;
 }
 
 async function flushQuestionCode(): Promise<void> {
@@ -43,12 +44,20 @@ describe('RtBottomSheetComponent — код вопроса не загрузил
         await flushQuestionCode();
 
         const close: HTMLElement = qa(fixture, 'bottom-sheet-close')?.nativeElement as HTMLElement;
-        (close.querySelector('button') ?? close).click();
+        const button: HTMLElement = close.querySelector('button') ?? close;
+        // Вопрос, отказ Escape и вопрос снова — всё до прихода кода: на один сбой приходит один ответ.
+        button.click();
         fixture.detectChanges();
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        fixture.detectChanges();
+        button.click();
+        fixture.detectChanges();
+        const staysBeforeFailure: number = fixture.componentInstance.stays;
         await flushQuestionCode();
         fixture.detectChanges();
 
-        expect(handled.length).toBeGreaterThan(0);
+        expect(handled).toHaveLength(1);
+        expect(fixture.componentInstance.stays - staysBeforeFailure).toBe(1);
         expect(qa(fixture, 'bottom-sheet-confirm')).toBeNull();
         expect((qa(fixture, 'bottom-sheet-panel')?.nativeElement as HTMLElement).hasAttribute('inert')).toBe(false);
         expect((qa(fixture, 'bottom-sheet-backdrop')?.nativeElement as HTMLElement).hasAttribute('inert')).toBe(false);

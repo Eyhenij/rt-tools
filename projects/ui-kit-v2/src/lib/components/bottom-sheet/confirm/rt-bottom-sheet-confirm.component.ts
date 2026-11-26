@@ -13,8 +13,8 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { IRtSheetConfirmAnswers, RT_SHEET_CONFIRM_ANSWERS } from './rt-bottom-sheet-confirm.answers';
-import { IRtSheetConfirmLabels } from './rt-bottom-sheet.model';
+import { IRtSheetConfirmAnswers, RT_SHEET_CONFIRM_ANSWERS } from '../rt-bottom-sheet-confirm.answers';
+import { IRtSheetConfirmLabels } from '../rt-bottom-sheet.model';
 
 /** Свой класс хоста; элементы вопроса — элементы блока шторки, у хоста стилей нет. */
 const BEM_BLOCK: string = 'rt-bottom-sheet-confirm';

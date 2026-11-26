@@ -50,6 +50,18 @@
 - `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-confirm.loader.ts` — превышение бюджета: 114 lines
   against up to 40 — after round one the place also takes the question off on a failed load and stops drawing after
   the sheet is gone; the sheet file stays at 500 lines.
+- `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-sheet-confirm-place.ts` outgoing 0 → 4 — превышение: the place
+  moved out of the loader into a file of its class name takes the type of the question screen, the internal answers
+  token, the loader and the words of the sheet model; the loader keeps only the load.
+- `projects/ui-kit-v2/src/lib/components/bottom-sheet/confirm/rt-bottom-sheet-confirm.component.ts` outgoing 0 → 3 —
+  превышение: the question screen moved into its own folder `bottom-sheet/confirm/`, so the check of the showcase
+  pages (`tools/verify-ui-kit-v2-docs.cjs`) stops reading its internal inputs `labels` and `titleId` as inputs of
+  `rt-bottom-sheet`; it takes the core directives, the answers token and the words of the sheet model.
+- `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-confirm.component.ts:RtBottomSheetConfirmComponent`
+  — отказ от места плана: the class lives in `bottom-sheet/confirm/`, the check of the showcase pages read its
+  internal inputs as inputs of `rt-bottom-sheet`.
+- `projects/ui-kit-v2/src/lib/components/bottom-sheet/confirm/rt-bottom-sheet-confirm.component.ts` — превышение: the
+  new place of the question screen, `RtBottomSheetConfirmComponent`, moved out of the plan's path by the same reason.
 - **Правки после первого круга ревью** — qa-engineer, goal-critic, product-strategist. Fixed: a failed load of the
   question code left the sheet inert (now `stay()`, SC-UKV-1920); a sheet removed mid-load drew the question on a
   dead slot (`RtSheetConfirmPlace.destroy`); the prefetch also starts for a sheet with `confirmLabels` (the aside asks
@@ -68,6 +80,27 @@
   about repeated failures; the cause is not proven.
 - **The remainder of 20721 bytes over 185800** — the owner: «Увелич лимит». `pnpm run check:kit-weight -- --write`
   wrote the threshold 206521 bytes, gzip 51655, in `tools/kit-weight-threshold.json`.
+- **Правки после второго круга ревью** — qa-engineer, goal-critic. Fixed: one failed load answered «stay» once per
+  waiting question and reached the error handler twice — now one wait per place, the prefetch stays silent, the
+  question names the failure once (the failure spec asserts one error and one answer after Escape and a second
+  question); the radio placeholder now measures the loaded mark — the indicator and its rim on both sides — by the
+  modifier `rt-select__mark--pending`, and the loaded radio takes no size from it; `prefetch on idle` dropped as empty;
+  the spec history says the code arrives when a sheet that can ask opens, and keeps «the look is unchanged». Not
+  changed: the order of the two tests in `rt-bottom-sheet-confirm-lazy.spec.ts` is fixed by a comment, the kit's jest
+  does not shuffle tests. The placeholder size is computed from the styles, not measured in a browser: the showcase is
+  not running. The push set named four more: the question screen had no story binding — it is shown by
+  `Organisms/Aside/AsideSheet › UnsavedQuestion`, written in `shownWithin` of `tools/kit-coverage-allowlist.json`;
+  it had no spec of its own — `rt-bottom-sheet-confirm.component.spec.ts`; the place class lived in a file of another
+  name — moved to `rt-sheet-confirm-place.ts`, the loader keeps the load; `rtLoadSheetConfirm` was exported for nobody
+  — the place now imports it; the placeholder size took `calc` — now the step `--rt-size-5` (20px). Weight 207053
+  bytes, gzip 51785, written under the owner's «Увелич лимит»; 532 bytes over the 206521 shown to the owner, named in
+  the reply. Превышение бюджета: new code files 4 against the plan's 2 — `rt-bottom-sheet-confirm.answers.ts` keeps
+  the token out of the kit's entry, `rt-sheet-confirm-place.ts` gives the place a file of its name.
+- **The push set red on SC-AK-1946** — `projects/agent-kit/tests/combined-command-refusal.test.sh` expects `/tmp/x` to be
+  absent; an empty directory `/tmp/x` of 24.11 made `cp tools/laid.mjs /tmp/x` write `/tmp/x/laid.mjs`. Red on a
+  clean copy of main too. The owner: «Удали и продолжай, после того как откроеш пр заведи тикет но не бери его!» —
+  `rmdir /tmp/x`; after the PR of RT-3709 a task is filed for the test that depends on a path outside its fixture,
+  and it is not taken.
 - **Цена:** нет
 - **Отменено:** нет
 
