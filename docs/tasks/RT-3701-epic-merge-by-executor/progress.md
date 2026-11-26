@@ -2,11 +2,12 @@
 
 ## Where we stand
 
-- **State:** `задача-взята`
+- **State:** `этап-идёт`
 - **Stage:** 1 of 2 — Хук слияния знает базу и автора
-- **Done:** разбор; план прочитан `product-strategist` и `goal-critic` трижды, находки внесены до
-  коммита плана.
-- **Next step:** окно одобрения плана и формы слияния, затем plan-red и этап 1.
+- **Done:** разбор; план прочитан `product-strategist` и `goal-critic` до коммита, находки внесены;
+  владелец 26.11 одним окном: «Одобряю план RT-3701 (Recommended)» и форма слияния
+  «gh pr merge --author-email (Recommended)». plan-red записал отметку одобрения.
+- **Next step:** этап 1, шаг 1.1 — `pullState` несёт базу.
 - **PR:** not open yet
 
 ## Steps
