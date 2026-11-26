@@ -28,7 +28,9 @@ import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import {
     RT_ICON_GLYPH_STRATEGY,
     RT_ICON_MATERIAL_PRESET_SELECTOR,
-    RT_ICON_MATERIAL_SET,
+    rtIconDrawn,
+    rtIconSetOf,
+    IRtIconRef,
     RtIconFontService,
     RtIconRegistry,
     resolveIconGlyph,
@@ -100,6 +102,13 @@ export class RtButtonDirective {
         'filled'
     );
     readonly #size: IButton.Size = rtKitDefault('button', (it: IRtKitConfig.Button): IButton.Size | undefined => it.size, 'md');
+
+    /* Признак material в разметке над кнопкой: читается при каждой отрисовке значка. */
+    readonly #underMaterial: WritableSignal<boolean> = signal<boolean>(false);
+    readonly #iconSet: Signal<string> = rtIconSetOf(this.#underMaterial);
+
+    /* Значки кита, нарисованные в кнопке: смена набора меняет их ссылки, не трогая содержимое. */
+    readonly #kitIcons: WritableSignal<ReadonlyArray<IKitIconNode>> = signal<ReadonlyArray<IKitIconNode>>([]);
 
     #iconEl: HTMLElement | null = null;
     #labelEl: HTMLElement | null = null;
@@ -185,6 +194,8 @@ export class RtButtonDirective {
 
             untracked(() => this.#updateContent());
         });
+
+        effect((): void => this.#followIconSet());
     }
 
     /** Положение наружу: атрибута нет вовсе там, где положения у кнопки не бывает. */
@@ -290,6 +301,7 @@ export class RtButtonDirective {
         this.#iconEl = null;
         this.#labelEl = null;
         this.#spinnerEl = null;
+        this.#kitIcons.set([]);
     }
 
     #renderLoading(button: HTMLElement): void {
@@ -368,24 +380,33 @@ export class RtButtonDirective {
 
         // Тот же путь, что и у компонента значка: имя просится у реестра, а он ходит за файлом
         // один раз на страницу — значок, спрошенный обеими разметками сразу, едет одним запросом.
+        this.#underMaterial.set(this.#el.nativeElement.closest(RT_ICON_MATERIAL_PRESET_SELECTOR) !== null);
         const set: string = this.#iconSet();
         this.#iconRegistry.request(name, set);
+        const drawn: IRtIconRef = this.#iconRegistry.drawing(name, set);
 
         const use: SVGUseElement = this.#doc.createElementNS('http://www.w3.org/2000/svg', 'use');
-        use.setAttribute('href', this.#iconRegistry.symbolHref(name, set));
+        use.setAttribute('href', `#${drawn.id}`);
         svg.appendChild(use);
+        this.#kitIcons.update((icons: ReadonlyArray<IKitIconNode>): ReadonlyArray<IKitIconNode> => [...icons, { name, use, drawn }]);
 
         return svg as unknown as HTMLElement;
     }
 
-    /**
-     * Набор — как у компонента значка: под разметкой с признаком material — `material`, иначе набор
-     * приложения. Признак читается при каждой отрисовке содержимого, а после первой отрисовки она
-     * повторяется — контейнер к тому времени на месте.
-     */
-    #iconSet(): string {
-        const underMaterial: boolean = this.#el.nativeElement.closest(RT_ICON_MATERIAL_PRESET_SELECTOR) !== null;
-        return underMaterial ? RT_ICON_MATERIAL_SET : this.#iconRegistry.defaultSet;
+    /* Смена набора меняет только ссылки значков: загрузчик и подпись кнопки остаются на месте. */
+    #followIconSet(): void {
+        const set: string = this.#iconSet();
+
+        for (const icon of this.#kitIcons()) {
+            const target: IRtIconRef = this.#iconRegistry.drawing(icon.name, set);
+            untracked((): void => this.#iconRegistry.request(icon.name, set));
+            this.#iconRegistry.ready(target.id)();
+            const drawn: IRtIconRef = untracked((): IRtIconRef =>
+                rtIconDrawn(icon.drawn, target, (id: string): boolean => this.#iconRegistry.ready(id)())
+            );
+            icon.drawn = drawn;
+            icon.use.setAttribute('href', `#${drawn.id}`);
+        }
     }
 
     /** Лигатура шрифта Material Symbols для имени без пары. Шрифт подключает приложение. */
@@ -418,4 +439,11 @@ export class RtButtonDirective {
 
         return wrapper;
     }
+}
+
+/* Значок кита внутри кнопки и рисунок, на который он сейчас ссылается. */
+interface IKitIconNode {
+    readonly name: IRtIcon.Name;
+    readonly use: SVGUseElement;
+    drawn: IRtIconRef;
 }

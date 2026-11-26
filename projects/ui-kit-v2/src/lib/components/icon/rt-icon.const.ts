@@ -7,6 +7,9 @@
  * а реестр создаёт другой, и кадр выходит без значков.
  */
 
+/** Атрибут части страницы с набором значков: его пишет директива `rtIconSet`. */
+export const RT_ICON_SET_ATTRIBUTE: string = 'data-rt-icon-set';
+
 /** Селектор inline-sprite, создаваемого один раз при первом обращении. */
 export const RT_ICON_SPRITE_ID: string = 'rt-icon-sprite';
 

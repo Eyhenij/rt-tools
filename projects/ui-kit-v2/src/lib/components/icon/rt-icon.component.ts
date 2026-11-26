@@ -11,6 +11,7 @@ import {
     input,
     InputSignal,
     InputSignalWithTransform,
+    linkedSignal,
     numberAttribute,
     signal,
     Signal,
@@ -25,7 +26,8 @@ import { resolveIconGlyph } from './rt-icon-glyph.logic';
 import { RT_ICON_MATERIAL_PRESET_SELECTOR } from './rt-icon.const';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtIconRegistry } from './rt-icon.registry';
-import { RT_ICON_MATERIAL_SET } from './rt-icon-sets.logic';
+import { rtIconSetOf } from './rt-icon-set.service';
+import { IRtIconRef, rtIconDrawn } from './rt-icon-sets.logic';
 
 /* Ступень — свойство, которое приложение задаёт правилом на значке или на его предке; умолчание —
    шаг шкалы размеров кита, те же пиксели, что стояли здесь числом. Имя `--rt-icon-step-*`, а не
@@ -146,15 +148,30 @@ export class RtIconComponent {
         pending: !this.#fontReady(),
     }));
 
-    protected readonly href: Signal<string | null> = computed((): string | null => {
+    /** Набор, которым рисуется этот значок. */
+    protected readonly iconSet: Signal<string> = rtIconSetOf(this.#underMaterial);
+
+    /* Рисунок, который значок просит сейчас, и приехал ли он. */
+    readonly #asked: Signal<IAskedDrawing> = computed((): IAskedDrawing => {
         const name: IRtIcon.Name | null = this.kitName();
-        return name === null ? null : this.#registry.symbolHref(name, this.iconSet(), this.fill());
+        const target: IRtIconRef | null = name === null ? null : this.#registry.drawing(name, this.iconSet(), this.fill());
+
+        return { target, ready: target !== null && this.#registry.ready(target.id)() };
     });
 
-    /** Набор, которым рисуется этот значок: под признаком material — `material`, иначе набор приложения. */
-    protected readonly iconSet: Signal<string> = computed((): string =>
-        this.#underMaterial() ? RT_ICON_MATERIAL_SET : this.#registry.defaultSet
-    );
+    /* Рисунок на экране: при смене набора старый держится, пока не приехал новый. */
+    readonly #drawn: Signal<IRtIconRef | null> = linkedSignal<IAskedDrawing, IRtIconRef | null>({
+        source: this.#asked,
+        computation: (asked: IAskedDrawing, previous?: { value: IRtIconRef | null }): IRtIconRef | null =>
+            asked.target === null
+                ? null
+                : rtIconDrawn(previous?.value ?? null, asked.target, (id: string): boolean => this.#registry.ready(id)()),
+    });
+
+    protected readonly href: Signal<string | null> = computed((): string | null => {
+        const drawn: IRtIconRef | null = this.#drawn();
+        return drawn === null ? null : `#${drawn.id}`;
+    });
 
     /** Длина CSS стороны значка: ступень — её свойство `--rt-icon-step-*`, число — пиксели. */
     protected readonly sizeValue: Signal<string> = computed((): string => {
@@ -249,3 +266,8 @@ export class RtIconComponent {
 }
 
 type TRotateInput = number | string | null;
+
+interface IAskedDrawing {
+    readonly target: IRtIconRef | null;
+    readonly ready: boolean;
+}

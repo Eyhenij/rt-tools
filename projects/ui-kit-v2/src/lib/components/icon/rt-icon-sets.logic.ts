@@ -35,6 +35,16 @@ export interface IRtIconRef {
     readonly urls: ReadonlyArray<string>;
 }
 
+/**
+ * Какой рисунок показать, когда значок просит другой. Пока новый символ не приехал, при смене
+ * набора виден старый — если он сам нарисован. Новое имя значка старый рисунок не держит.
+ */
+export function rtIconDrawn(previous: IRtIconRef | null, target: IRtIconRef, ready: (id: string) => boolean): IRtIconRef {
+    const hold: boolean = previous !== null && previous.name === target.name && !ready(target.id) && ready(previous.id);
+
+    return hold && previous !== null ? previous : target;
+}
+
 /* У встроенных наборов свои приставки: по ним значки ждут и стили приложения, и снимки витрины. */
 function symbolId(set: string, name: IRtIcon.Name, fill: boolean): string {
     if (set === RT_ICON_KIT_SET) {

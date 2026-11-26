@@ -286,3 +286,38 @@ When both are asked, and the same address is asked again after its refusal.
 Then the address is requested once.
 
 Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon.registry.spec.ts`.
+
+### SC-UKV-1876 — `use()` redraws the drawn icons and buttons
+
+Given icons and a button are drawn by the set `kit`.
+When the application calls `use('brand')`, and then `use(null)`.
+Then both refer to the symbol of `brand`, and then return to the set of the markup.
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-set.directive.spec.ts`.
+
+### SC-UKV-1877 — the set of a part is stronger than `use()`, and `use()` than the material sign
+
+Given a part with `rtIconSet="material"`, a node with the material sign and icons outside both.
+When the application calls `use('kit')`.
+Then the node with the sign draws `kit`, and the part keeps `material`. A part with an empty name
+takes the set of the outer part, and the part carries the attribute `data-rt-icon-set`.
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-set.directive.spec.ts`.
+
+### SC-UKV-1878 — the old drawing stays until the new one arrives
+
+Given the icons are drawn.
+When the set changes twice before any new drawing arrives.
+Then the old drawing is on the screen until the drawing of the second set arrives, and a late drawing
+of the first changes nothing. An unknown name in `use()` gives a warning and the set `kit`.
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-set.directive.spec.ts`.
+
+### SC-UKV-1883 — a new name, a server and a loading button
+
+Given the drawings are not arrived yet, or the page is drawn on the server, or a button is loading.
+When the name of an icon or the set changes.
+Then a new name does not keep the old drawing, the server writes the reference at once, and the
+button keeps its spinner.
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-set.directive.spec.ts`.

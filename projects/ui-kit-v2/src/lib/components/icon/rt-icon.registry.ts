@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { InjectionToken, inject, Service } from '@angular/core';
+import { InjectionToken, inject, Service, signal, Signal, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { Observable, Subject, catchError, mergeMap, of, shareReplay, tap } from 'rxjs';
@@ -37,6 +37,9 @@ export class RtIconRegistry {
      */
     readonly #files: Map<string, Observable<string | null>> = new Map<string, Observable<string | null>>();
 
+    /** Нарисован ли символ. По этому сигналу значок меняет старый рисунок на новый. */
+    readonly #ready: Map<string, WritableSignal<boolean>> = new Map<string, WritableSignal<boolean>>();
+
     /** Рисунки, которые попросила разметка. Загрузку по ним ведёт подписка из конструктора. */
     readonly #requestSource: Subject<IRtIconRef> = new Subject<IRtIconRef>();
 
@@ -54,6 +57,16 @@ export class RtIconRegistry {
             .subscribe();
     }
 
+    /** Что значок берёт из набора: `id` символа и адреса рисунка по порядку запасных. */
+    public drawing(name: IRtIcon.Name, set: string = RT_ICON_KIT_SET, fill: boolean = false): IRtIconRef {
+        return rtIconRef(this.#config, set, name, fill);
+    }
+
+    /** Лежит ли символ в спрайте страницы. */
+    public ready(id: string): Signal<boolean> {
+        return this.#readiness(id);
+    }
+
     /**
      * Имя symbol для `<use href="#X">`. Возвращает строку с ведущим `#`.
      *
@@ -61,7 +74,7 @@ export class RtIconRegistry {
      * наборов рядом, и вывод по странице дал бы им один ответ.
      */
     public symbolHref(name: IRtIcon.Name, set: string = RT_ICON_KIT_SET, fill: boolean = false): string {
-        return `#${rtIconRef(this.#config, set, name, fill).id}`;
+        return `#${this.drawing(name, set, fill).id}`;
     }
 
     /**
@@ -72,7 +85,7 @@ export class RtIconRegistry {
      * иначе каждая разметка гасила бы её сама, а таких мест у значка два.
      */
     public request(name: IRtIcon.Name, set: string = RT_ICON_KIT_SET, fill: boolean = false): void {
-        const asked: IRtIconRef = rtIconRef(this.#config, set, name, fill);
+        const asked: IRtIconRef = this.drawing(name, set, fill);
         // На сервере относительных запросов к статике нет вовсе: значок дорисуется после
         // гидрации, когда разметка попросит его снова уже в браузере.
         if (!this.#platform.isPlatformBrowser || this.#requested.has(asked.id)) {
@@ -82,6 +95,7 @@ export class RtIconRegistry {
         // Символ уже лежит в спрайте страницы: его положила соседняя история витрины или
         // сама страница до старта приложения. Запроса не уходит вовсе.
         if (this.#doc.getElementById(asked.id)) {
+            this.#readiness(asked.id).set(true);
             return;
         }
         this.#requestSource.next(asked);
@@ -98,9 +112,21 @@ export class RtIconRegistry {
                     this.#reportMissing(asked);
                 } else {
                     this.#mountSymbol(asked.id, raw);
+                    this.#readiness(asked.id).set(true);
                 }
             })
         );
+    }
+
+    #readiness(id: string): WritableSignal<boolean> {
+        let ready: WritableSignal<boolean> | undefined = this.#ready.get(id);
+
+        if (ready === undefined) {
+            ready = signal<boolean>(false);
+            this.#ready.set(id, ready);
+        }
+
+        return ready;
     }
 
     #firstFile(urls: ReadonlyArray<string>, index: number): Observable<string | null> {

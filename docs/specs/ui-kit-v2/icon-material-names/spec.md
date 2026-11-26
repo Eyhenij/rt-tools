@@ -63,6 +63,11 @@ A person sees an icon; how it is drawn is invisible to them.
 - **One address is downloaded once, and its refusal is kept.**
 - **A bad declaration of sets gives a warning and the set `kit`.** A drawing found nowhere gives one
   warning with the icon and the set.
+- **The set of an icon is the set of its part, then the choice of `use()`, then the material sign,
+  then the set of the application.** A part is named by the directive `rtIconSet`; `use()` is a
+  method of `RtIconSetService`.
+- **A change of the set redraws the drawn icons and buttons, and the old drawing stays until the new
+  one arrives.** A new name of an icon does not keep the old drawing, and a button keeps its content.
 - **Under the material preset a button asks for the material drawing of its icon, as the icon
   does.**
 - **A sign of the icons alone switches the drawings under it to the material set and carries no tokens.** The
