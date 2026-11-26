@@ -55,14 +55,14 @@ describe('RtButtonDirective — имя Material и материальный на
         expect(hrefIn(buttonOf(fixture, 'material'))).toBe('#rt-icon-material-close');
     });
 
-    it('SC-UKV-554 — имя Material с парой рисуется парой из набора кита', (): void => {
-        const fixture: ComponentFixture<ButtonGlyphHostComponent> = setup('arrow_back');
+    it('SC-UKV-554 — имя кита на glyph рисуется рисунком кита', (): void => {
+        const fixture: ComponentFixture<ButtonGlyphHostComponent> = setup('arrow-left');
 
         expect(hrefIn(buttonOf(fixture, 'base'))).toBe('#rt-icon-arrow-left');
         expect(glyphIn(buttonOf(fixture, 'base'))).toBeNull();
     });
 
-    it('SC-UKV-555 — имя Material без пары рисуется лигатурой шрифта', (): void => {
+    it('SC-UKV-555 — имя вне набора кита рисуется лигатурой шрифта', (): void => {
         const button: HTMLElement = buttonOf(setup('pets'), 'base');
 
         expect(button.querySelector('svg')).toBeNull();
@@ -70,11 +70,11 @@ describe('RtButtonDirective — имя Material и материальный на
         expect(classesOf(glyphIn(button) as HTMLElement)).toEqual(['rt-button__icon', 'rt-button__glyph']);
     });
 
-    it('по стратегии font и имя с парой рисуется лигатурой', (): void => {
-        const button: HTMLElement = buttonOf(setup('arrow_back', [{ provide: RT_ICON_GLYPH_STRATEGY, useValue: 'font' }]), 'base');
+    it('по стратегии font имя кита, совпавшее с лигатурой, рисуется лигатурой', (): void => {
+        const button: HTMLElement = buttonOf(setup('search', [{ provide: RT_ICON_GLYPH_STRATEGY, useValue: 'font' }]), 'base');
 
         expect(button.querySelector('svg')).toBeNull();
-        expect(glyphIn(button)?.textContent).toBe('arrow_back');
+        expect(glyphIn(button)?.textContent).toBe('search');
     });
 
     it('SC-UKV-774 — по стратегии font имя кита, которое шрифт не нарисует, рисуется рисунком кита', (): void => {

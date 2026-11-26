@@ -6,7 +6,7 @@ import { RtDialogService } from '../dialog/rt-dialog.service';
 
 import { createRtFixture, el } from '../../../testing/rt-kit-testing';
 import { RtMenuContentDirective } from './rt-menu-content.directive';
-import { RtMenuItemComponent } from './rt-menu-item.component';
+import { RtMenuItemComponent, rtPreloadMenuConfirmDialog } from './rt-menu-item.component';
 import { RtMenuComponent } from './rt-menu.component';
 
 /** Счёт построенных и разрушенных пунктов: директива висит на каждом пункте шаблона. */
@@ -78,6 +78,10 @@ function pressTrigger(fixture: ComponentFixture<unknown>): void {
 }
 
 describe('RtMenuComponent — пункты шаблоном', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadMenuConfirmDialog();
+    });
+
     let dialog: DialogStub;
 
     function setup(): ComponentFixture<MenuSlotsHostComponent> {
@@ -182,6 +186,10 @@ describe('RtMenuComponent — пункты шаблоном', (): void => {
 });
 
 describe('RtMenuComponent — пункт вне шаблона', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadMenuConfirmDialog();
+    });
+
     it('SC-UKV-1746: пункт без rtMenuContent предупреждает в режиме разработки и не рисуется', (): void => {
         const warn: jest.SpyInstance = jest.spyOn(console, 'warn').mockImplementation((): void => undefined);
         const fixture: ComponentFixture<MenuStrayHostComponent> = createRtFixture(MenuStrayHostComponent);

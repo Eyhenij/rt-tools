@@ -225,20 +225,18 @@ export type TTabsMatrixPart =
                                     @case ('glyph и подсказка') {
                                         <rt-tabs activeId="home">
                                             <ng-template rtTab="home" glyph="home" tooltip="Главная">Главная</ng-template>
-                                            <ng-template rtTab="person" glyph="person" tooltip="Профиль">Профиль</ng-template>
+                                            <ng-template rtTab="person" glyph="user" tooltip="Профиль">Профиль</ng-template>
                                             <ng-template rtTab="search" glyph="search" tooltip="Поиск">Поиск</ng-template>
-                                            <ng-template rtTab="settings" glyph="settings" tooltip="Настройки" disabled>
-                                                Настройки
-                                            </ng-template>
+                                            <ng-template rtTab="settings" glyph="cog" tooltip="Настройки" disabled>Настройки</ng-template>
                                         </rt-tabs>
                                     }
                                     @case ('glyph и подпись') {
                                         <rt-tabs activeId="home">
                                             <ng-template rtTab="home" glyph="home" label="Главная">Главная</ng-template>
-                                            <ng-template rtTab="person" glyph="person" label="Профиль">Профиль</ng-template>
+                                            <ng-template rtTab="person" glyph="user" label="Профиль">Профиль</ng-template>
                                             <ng-template
                                                 rtTab="settings"
-                                                glyph="settings"
+                                                glyph="cog"
                                                 label="Настройки"
                                                 disabled
                                                 tooltip="Нужны права администратора">

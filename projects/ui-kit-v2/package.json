@@ -1,6 +1,6 @@
 {
   "name": "@rt-tools/ui-kit-v2",
-  "version": "0.52.0",
+  "version": "0.53.0",
   "license": "Apache-2.0",
   "author": "Yauheni Krumin",
   "type": "module",
@@ -52,6 +52,12 @@
     },
     "./styles/tokens.coexist.css": {
       "default": "./styles/tokens.coexist.css"
+    },
+    "./styles/tokens.base.css": {
+      "default": "./styles/tokens.base.css"
+    },
+    "./styles/tokens.scope.css": {
+      "default": "./styles/tokens.scope.css"
     },
     "./styles/*": {
       "sass": "./src/styles/_*.scss",

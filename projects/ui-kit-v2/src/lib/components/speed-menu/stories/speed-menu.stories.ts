@@ -29,7 +29,7 @@ export const Playground: TStory = {
         direction: 'up',
         size: 'lg',
         variant: 'primary',
-        icon: 'zoom_in',
+        icon: 'search-plus',
         label: 'Масштаб',
         closeOnSelect: false,
         disabled: false,

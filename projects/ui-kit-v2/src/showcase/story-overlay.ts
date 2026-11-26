@@ -17,6 +17,8 @@
  * Обвязка витрины: `tsconfig.lib.json` исключает `src/showcase/**`, в пакет не уезжает.
  */
 
+import { rtPreloadPopoverSheet } from '../lib/components/popover';
+
 /** Признак, по которому `play`-функция находит хост, чей оверлей надо открыть. */
 export const STORY_TRIGGER_ATTRIBUTE: string = 'data-story-trigger';
 
@@ -176,6 +178,8 @@ function fire(marked: HTMLElement, gesture: IStoryOverlayGesture): void {
  */
 export async function openStoryOverlay(canvasElement: HTMLElement, gesture: IStoryOverlayGesture = {}): Promise<void> {
     await drawn();
+    // Код нижнего листа приходит отдельным куском: кадр снимается с готовым листом, без ожидания первого открытия.
+    await rtPreloadPopoverSheet();
 
     const marked: HTMLElement | null = canvasElement.querySelector<HTMLElement>(`[${STORY_TRIGGER_ATTRIBUTE}]`);
     if (marked !== null) {
@@ -197,6 +201,7 @@ export async function openStoryOverlay(canvasElement: HTMLElement, gesture: ISto
  */
 export async function openStoryOverlays(canvasElement: HTMLElement, gesture: IStoryOverlayGesture = {}): Promise<void> {
     await drawn();
+    await rtPreloadPopoverSheet();
 
     const marked: readonly HTMLElement[] = Array.from(canvasElement.querySelectorAll<HTMLElement>(`[${STORY_TRIGGER_ATTRIBUTE}]`));
     for (const host of marked) {

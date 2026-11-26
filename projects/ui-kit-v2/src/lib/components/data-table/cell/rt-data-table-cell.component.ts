@@ -102,7 +102,7 @@ export class RtDataTableCellComponent<T = Record<string, unknown>> {
      */
     protected readonly icon: Signal<IRtDataTable.Icon | null> = computed(() => this.column().icon ?? null);
 
-    /** Значок набора кита для имени первого кита; без пары — ничего. */
+    /** Значок набора кита, когда имя колонки — имя кита; иначе ничего. */
     protected readonly kitIcon: Signal<IRtIcon.Name | null> = computed(() => {
         const icon: IRtDataTable.Icon | null = this.icon();
 
@@ -110,7 +110,7 @@ export class RtDataTableCellComponent<T = Record<string, unknown>> {
     });
 
     /**
-     * Имя без пары в перечне соответствий: его ячейка рисует глифом шрифта Material Symbols, как
+     * Имя вне набора кита: его ячейка рисует глифом шрифта Material Symbols, как
      * первый кит рисовал любой глиф. Шрифт кит не везёт — глиф виден там, где шрифт подключило
      * приложение, а без шрифта на месте значка стоит его имя.
      */

@@ -21,6 +21,26 @@ test.describe('оболочка админки', () => {
         await expect(qa(page, 'container-no-sections')).toHaveCount(0);
     });
 
+    test('SC-MB-458 — токены кита доходят до страницы приложения', async ({ page }: { page: Page }) => {
+        await openSection(page, 'postmortems');
+
+        // Токены приходят файлом стилей кита; если часть выпала из сборки (файл не подключён или
+        // порезан не там), корень не знает их и экран рисуется значениями по умолчанию браузера.
+        const tokens: Record<string, string> = await page.evaluate((): Record<string, string> => {
+            const style: CSSStyleDeclaration = getComputedStyle(document.documentElement);
+
+            return {
+                surface: style.getPropertyValue('--rt-color-bg-surface').trim(),
+                inputHeight: style.getPropertyValue('--rt-input-height').trim(),
+                space: style.getPropertyValue('--rt-space-md').trim(),
+            };
+        });
+
+        expect(tokens['surface']).not.toBe('');
+        expect(tokens['inputHeight']).not.toBe('');
+        expect(tokens['space']).not.toBe('');
+    });
+
     test('SC-MB-142 — разделы стоят верхним рядом, а колонки с ними слева нет', async ({ page }: { page: Page }) => {
         await openSection(page, 'postmortems');
 
@@ -50,7 +70,27 @@ test.describe('оболочка админки', () => {
         await expect.poll(async (): Promise<number> => (await glyphSizes()).filter((size: number): boolean => size === 0).length).toBe(0);
     });
 
-    test('SC-MB-455 — каждый раздел открывается без ошибки страницы и без упавшей загрузки скрипта', async ({ page }: { page: Page }) => {
+    test('SC-MB-459 — у каждого значка на экране списка есть символ в спрайте', async ({ page }: { page: Page }) => {
+        await openSection(page, 'postmortems');
+        await expect(qa(page, SECTION.postmortems.table)).toBeVisible();
+
+        // Значок по имени, которого нет в ките, остаётся ссылкой на несуществующий символ. Обходятся
+        // все значки экрана, а не только верхний ряд: кнопки, таблица и поля тоже берут имена кита.
+        const missing: () => Promise<{ total: number; empty: string[] }> = async (): Promise<{ total: number; empty: string[] }> =>
+            page.locator('svg use').evaluateAll((nodes: Element[]): { total: number; empty: string[] } => {
+                const hrefs: string[] = nodes.map((node: Element): string => node.getAttribute('href') ?? '');
+
+                return {
+                    total: hrefs.length,
+                    empty: hrefs.filter((href: string): boolean => !document.getElementById(href.slice(1))),
+                };
+            });
+
+        await expect.poll(async (): Promise<number> => (await missing()).total).toBeGreaterThan(Object.keys(SECTIONS).length);
+        await expect.poll(async (): Promise<string[]> => (await missing()).empty).toEqual([]);
+    });
+
+    test('SC-MB-455 —каждый раздел открывается без ошибки страницы и без упавшей загрузки скрипта', async ({ page }: { page: Page }) => {
         // Разделы грузятся своими частями сборки, и зависимость, которой не оказалось в образе или в
         // манифесте набора, роняет только свой раздел: остальные открываются, и оболочка выглядит
         // живой. Поэтому обходятся все разделы, а не один.

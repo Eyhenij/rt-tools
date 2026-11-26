@@ -1,22 +1,23 @@
 import { ConnectedPosition, FlexibleConnectedPositionStrategy } from '@angular/cdk/overlay';
-import { DebugElement } from '@angular/core';
+import { DebugElement, Provider } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
 import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 import { createRtFixture, qa, setInputs } from '../../../testing/rt-kit-testing';
+import { provideRtIcons } from '../icon/rt-icon.providers';
 import { RtSpeedMenuComponent } from './rt-speed-menu.component';
 import { IRtSpeedMenu } from './rt-speed-menu.model';
 
 const ACTIONS: readonly IRtSpeedMenu.Action[] = [
-    { value: 'zoom-in', icon: 'add', label: 'Приблизить' },
-    { value: 'zoom-out', icon: 'remove', label: 'Отдалить' },
+    { value: 'zoom-in', icon: 'ico-plus', label: 'Приблизить' },
+    { value: 'zoom-out', icon: 'minus', label: 'Отдалить' },
     { value: 'reset', icon: 'undo', label: 'Сбросить' },
 ];
 
 const WITH_UNAVAILABLE: readonly IRtSpeedMenu.Action[] = [
-    { value: 'zoom-in', icon: 'add', label: 'Приблизить' },
-    { value: 'zoom-out', icon: 'remove', label: 'Отдалить', disabled: true },
+    { value: 'zoom-in', icon: 'ico-plus', label: 'Приблизить' },
+    { value: 'zoom-out', icon: 'minus', label: 'Отдалить', disabled: true },
     { value: 'reset', icon: 'undo', label: 'Сбросить' },
 ];
 
@@ -56,6 +57,29 @@ function triggerIcon(fixture: ComponentFixture<RtSpeedMenuComponent>): string | 
 }
 
 describe('RtSpeedMenuComponent', (): void => {
+    it('SC-UKV-1880 — значок кнопки по умолчанию рисуется рисунком набора кита', (): void => {
+        const fixture: ComponentFixture<RtSpeedMenuComponent> = setup();
+
+        expect(trigger(fixture).querySelector('use')?.getAttribute('href')).toBe('#rt-icon-bars');
+    });
+
+    it('SC-UKV-1888 — по способу font значок кнопки по умолчанию остаётся рисунком, а названный приложением — шрифтом', (): void => {
+        const providers: Provider[] = [provideRtIcons({ glyphStrategy: 'font' }) as unknown as Provider];
+        const byDefault: ComponentFixture<RtSpeedMenuComponent> = createRtFixture(
+            RtSpeedMenuComponent,
+            { actions: ACTIONS },
+            { providers }
+        );
+
+        expect(trigger(byDefault).querySelector('use')?.getAttribute('href')).toBe('#rt-icon-bars');
+
+        setInputs(byDefault, { icon: 'zoom_in' });
+        byDefault.detectChanges();
+
+        expect(trigger(byDefault).querySelector('use')).toBeNull();
+        expect(trigger(byDefault).textContent).toContain('zoom_in');
+    });
+
     afterEach((): void => {
         jest.restoreAllMocks();
     });

@@ -6,12 +6,12 @@ import { createRtFixture } from '../../../testing/rt-kit-testing';
 import { RtIconComponent } from '../icon/rt-icon.component';
 import { RtMenuItemComponent } from './rt-menu-item.component';
 
-/** Пункты меню строки, как у приложения: залитый значок кита, залитое имя Material и контурный. */
+/** Пункты меню строки, как у приложения: залитый значок кита, залитое имя кита на glyph и контурный. */
 @Component({
     selector: 'rt-menu-item-fill-host',
     template: `
         <rt-menu-item label="Изменить" icon="pencil" [fill]="true" />
-        <rt-menu-item label="Карточка" glyph="person" fill />
+        <rt-menu-item label="Карточка" glyph="user" fill />
         <rt-menu-item label="Удалить" icon="trash" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,7 +24,7 @@ function icons(fixture: ComponentFixture<MenuItemFillHostComponent>): RtIconComp
 }
 
 describe('RtMenuItemComponent — заливка значка', (): void => {
-    it('пункт с fill передаёт заливку значку — и своему icon, и паре имени Material', (): void => {
+    it('пункт с fill передаёт заливку значку — и своему icon, и имени кита на glyph', (): void => {
         const fixture: ComponentFixture<MenuItemFillHostComponent> = createRtFixture(MenuItemFillHostComponent);
 
         expect(icons(fixture).map((icon: RtIconComponent): boolean => icon.fill())).toEqual([true, true, false]);

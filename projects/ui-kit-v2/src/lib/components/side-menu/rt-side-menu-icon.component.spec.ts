@@ -14,7 +14,7 @@ class StubBreakpointsService {
 }
 
 const ITEMS: IRtSideMenu.Item[] = [
-    { id: 'settings', icon: 'settings', name: 'Настройки', link: '/settings' },
+    { id: 'cog', icon: 'cog', name: 'Настройки', link: '/settings' },
     {
         id: 'launches',
         icon: 'rocket_launch',
@@ -101,6 +101,7 @@ describe('RtSideMenuComponent — значки вне набора', (): void =>
     it('SC-UKV-533 — со своим шаблоном меню о пунктах не предупреждает', (): void => {
         setup(true);
 
-        expect(warn).not.toHaveBeenCalled();
+        // О рисунке, которого нет, предупреждает реестр значков — здесь судится только меню о своих пунктах.
+        expect(warn).not.toHaveBeenCalledWith(expect.stringContaining('«rocket_launch»'));
     });
 });

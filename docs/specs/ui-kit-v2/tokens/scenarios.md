@@ -206,3 +206,25 @@ Then the root under `data-rt-scheme` carries the scheme's brand steps and its st
 blue. A ramp without the step 500 or with a step outside the line refuses the build
 
 Covered: `projects/ui-kit-v2/src/styles/color-scheme.theme.spec.ts`.
+
+### SC-UKV-1780 — the tokens come as a whole file and as a base with local pieces
+
+Given the tokens are built
+When the whole file is cut into the base and the local pieces of the theme
+Then the whole `tokens.css` keeps its bytes; the base holds a copy of the root rule of the set Material under the
+dark theme and no island of the theme; the scope holds the islands, the same root rule as the whole file and the
+density rules at its end; the two files share only the density properties; a whole file that does not fold from
+the head, the middle and the tail refuses the cut
+
+Covered: `tools/tests/build-tokens-split.test.sh`, called by `pnpm run test:checks`.
+
+### SC-UKV-1781 — the scope styles are loaded by the word of the application
+
+Given the application declared the address of `tokens.scope.css`
+When it asks for the file, once or again
+Then one link stands at the end of the head, and an asking again adds none; a link of the application to the same
+address is waited for, not duplicated. Without an address and on the server nothing is loaded. A failed load or silence past ten
+seconds removes the link and rejects, and the next ask tries again; an eager start waits for the load, and its failure
+goes to the error handler of the application while the start goes on
+
+Covered: `projects/ui-kit-v2/src/lib/scope-styles/rt-scope-styles.service.spec.ts`.

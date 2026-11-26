@@ -3,8 +3,8 @@
   "rules": {
     "angular-doctor/component-file-set-mismatch": 2,
     "angular-doctor/file-hyphen-case": 23,
-    "angular-doctor/filename-class-mismatch": 526,
-    "angular-doctor/missing-spec-file": 538,
+    "angular-doctor/filename-class-mismatch": 527,
+    "angular-doctor/missing-spec-file": 539,
     "angular-doctor/prefer-ng-optimized-image": 11,
     "angular-doctor/prefer-signal-forms": 97,
     "angular-doctor/project-layout": 4,

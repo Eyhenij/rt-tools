@@ -8,6 +8,7 @@ import { BreakpointsService } from '../../platform';
 import { createRtFixture } from '../../../testing/rt-kit-testing';
 import { IRtPageHeader } from './rt-page-header.model';
 import { RtPageHeaderComponent } from './rt-page-header.component';
+import { rtPreloadPopoverSheet } from '../popover/rt-popover-sheet.helper';
 
 /** Наблюдатели пересечения и размера: в jsdom их нет, шапке хватает пустых. */
 class ObserverDouble {
@@ -91,6 +92,10 @@ function pointerEnter(target: HTMLElement, pointerType: string): void {
 }
 
 describe('RtPageHeaderComponent — нижняя шторка', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+    });
+
     afterEach((): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });

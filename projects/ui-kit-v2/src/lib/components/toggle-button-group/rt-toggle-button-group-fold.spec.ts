@@ -6,6 +6,7 @@ import { BreakpointsService } from '../../platform';
 import { rtToggleGroupFoldedSize, rtToggleGroupFolds, rtToggleGroupNextFolded } from './rt-toggle-button-group-fold.logic';
 import { IRtToggleButtonGroup } from './rt-toggle-button-group.model';
 import { RtToggleButtonGroupComponent } from './rt-toggle-button-group.component';
+import { rtPreloadPopoverSheet } from '../popover/rt-popover-sheet.helper';
 
 const PERIODS: ReadonlyArray<IRtToggleButtonGroup.Option> = [
     { value: 'day', label: 'День' },
@@ -70,6 +71,10 @@ function row(fixture: ComponentFixture<unknown>): HTMLElement {
 }
 
 describe('RtToggleButtonGroupComponent — сворачивание', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+    });
+
     beforeEach((): void => {
         Reflect.set(globalThis, 'ResizeObserver', ResizeObserverDouble);
     });
