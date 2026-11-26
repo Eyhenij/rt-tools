@@ -25,7 +25,7 @@ plan was approved by the owner on 24.11. The third is the menu answer of 26.11 t
   say a stop holds until the owner writes again; `.claude/hooks/git-guard-draft-ready.sh` does not read the stop at
   all; `projects/agent-kit/assets/checks/flow-forecast.mjs` replays the same two measures.
 - The record forms, counted over two session records of 22–24.11: 715 queued messages, 73 Esc marks, 23 refusals of a
-  call, each followed by the Esc mark for a tool use. No record of `/stop` was found.
+  call, each followed by the Esc mark for a tool use. `/stop` was found once, as a queued message of 24.11 at 03:56:51.
 - The suites: `projects/agent-kit/tests/turn-exit-guard.test.sh` — 340 ok, 0 failures on 26.11, 23 s;
   `projects/agent-kit/tests/turn-replay.test.sh`. The last scenario number in `docs/specs` is SC-AK-1978.
 
@@ -47,7 +47,7 @@ No question is asked: every decision of this task is written in the approved epi
 - **The release cases `stopWord` and `interrupted` keep their names and logs.** Both read one walk: the stop stands
   and was set by a word, or by Esc. The turn map, its check and the forecast keep their names.
 - **`чини` joins `words.resume`.** The table row «хватит тупить, чини» resumes the work, and the plan list lacks it.
-- **`/stop` is named a limit.** No record of it was found, so it has no case.
+- **`/stop` from the queue sets the stop.** It has a case of its own.
 
 ## What is left unclear
 
