@@ -1,23 +1,50 @@
-# Progress
+# RT-3709 — perf(rt:ui-kit-v2): код вопроса шторки и радиокнопки карточек приходит при первом показе (RT-3709)
 
-## Where we stand
+Задача RT-3709, запись от 2026-11-26. Прежний адрес: `docs/tasks/RT-3709-sheet-code-lazy-weight/`.
 
-- **State:** `разбор-кончился`
-- **Stage:** 3 of 3 — closed; the sheet spec names the lazy question and the card radio
-- **Done:** all four steps. The start set 218731 → 206521 bytes, gzip 53502 → 51655; the part radio-button
-  left the start set, bottom-sheet 24268 → 20436, select 38920 → 39233. The kit suite exit 0.
-- **Next step:** the showcase snapshots of the sheets (`node tools/visual-gate.mjs ui-kit-v2 --affected
-  RT-3530-phone-sheets`), the owner's word on the remainder of 20721 bytes over 185800, then the review.
-- **PR:** not open yet
+## Согласия владельца по киту
 
-## Steps
+### Approvals
 
-- [x] 1.1 Move the question screen of the sheet into its own component, loaded at the first question, with a preload for the specs
-- [x] 2.1 Draw the radio of a select card in a deferred block that prefetches on idle
-- [x] 3.1 Measure the start set
-- [x] 3.2 Run the whole kit suite
+- **Без вида:** «Одобряю, вид не меняется»
 
-## Decisions along the way
+## Шапка разбора
+
+Work begun from no cargo: the task came out of RT-3706, the repair of the epic RT-3530 after the merge
+of the main branch; the kit weight check stayed red there.
+
+## The owner request
+
+> продолжай работу над основным эпиком
+
+> В этой же задаче
+
+The second is the owner's choice to the question «Как уменьшать вес?» with the option «В этой же задаче —
+RT-3706 расширяется: я ищу, что из кода шторок можно вынести в ленивую загрузку, и показываю вам план».
+The plan of RT-3706 is not edited after its commit, so the work goes into this task of the chain, from the
+tip of RT-3706.
+
+## Questions and answers
+
+**Как уменьшать вес?**
+В этой же задаче
+
+## Решения разбора
+
+- **The question screen moves into a component of its own, loaded at the first question, with a preload
+  for the specs** — the same way as the popover sheet. Rejected: `@defer` in the template of the sheet —
+  a second way of laziness in the kit, and its specs would wait differently from the sheet specs.
+- **The radio button of the select cards is drawn by `@defer` that prefetches on idle** — one radio per row
+  cannot be created imperatively without a second template of the row. Rejected: dropping the kit radio
+  from the cards — a change of look the owner approved otherwise.
+- **The threshold is lowered by `--write` to the measured weight only after the measurement.** A remainder
+  above 185800 goes to the owner with its numbers.
+
+## What is left unclear
+
+- How much each move cuts is known only after the measurement; the plan names an upper bound.
+
+## Решения по ходу
 
 - **The reading of the plan by goal-critic and product-strategist** — taken, as a stage revision before the
   approval (the plan file stays as its commit holds it): the growth by parts — bottom-sheet +17101,
@@ -104,61 +131,24 @@
 - **Цена:** нет
 - **Отменено:** нет
 
-## Sessions
-
-### 2026-11-26
+## Цитаты из разбора и хода работы
 
 - The task came out of RT-3706: the owner chose to cut the kit weight «В этой же задаче»; the plan of
   RT-3706 is not edited after its commit, so the work is the next task of the chain, from the tip of
   RT-3706 with the main branch merged into the epic (`e7009520e`).
+
 - The owner: «если недельный лимит достигнет 99 процентов останавливайся».
 
-## Handover of the session
+## Одобрение плана
 
-Put together by a hook before the compaction of the context (auto).
+«Одобряю, вид не меняется»
 
-**Working tree:** /Users/sviatoslavkhutornoy/WebstormProjects/rt-tools
-**Branch:** RT-3709-sheet-code-lazy-weight
+## Чем подтверждено
 
-### Where we stand at the minute of the compaction
+- Ревью прошло два круга. В первом было 2 серьёзные находки, поэтому второй круг был обязателен по команде `review-path.mjs --round-two --serious 2`. Все подтверждённые находки исправлены.
+- Отсутствие `aria-describedby` у вопроса не исправлено: его не было и до задачи.
+- Сценарий правил SC-AK-1946 падал из-за пустой папки `/tmp/x` на машине исполнителя. Папку удалили по слову владельца, а для теста, который зависит от пути вне своей временной папки, заведена отдельная задача.
 
-- **State:** `этап-идёт`
-- **Stage:** 1 of 3 — The question screen arrives at the first question
-- **Next step:** the showcase snapshots of the sheets (`node tools/visual-gate.mjs ui-kit-v2 --affected
-- **PR:** not open yet
+## Оставшийся шаг
 
-The progress in full — `docs/tasks/RT-3709-sheet-code-lazy-weight/progress.md`; the plan lies next to it.
-
-### Uncommitted
-
-```
-none
-```
-
-### Commits over the main branch
-
-```
-41fc86ffe docs(rt:ui-kit-v2): ход RT-3709 называет расхождения с решением плана — сценарии в своих наборах, связь загрузчика с моделью (RT-3709)
-f34ada95e docs(rt:ui-kit-v2): ход RT-3709 — этапы закрыты, стартовый набор 206521 байт, набор кита зелёный (RT-3709)
-5100a0086 perf(rt:ui-kit-v2): радиокнопка карточек выбора приходит с первыми карточками, а не со стартом (RT-3709)
-f717efb3d docs(rt:ui-kit-v2): ход RT-3709 — вопрос шторки снял 3741 байт стартового набора (RT-3709)
-a4e53bc13 perf(rt:ui-kit-v2): экран вопроса шторки — свой компонент, его код приходит при первом вопросе (RT-3709)
-b96eff3be docs(rt:ui-kit-v2): разбор, план и одобрение RT-3709 — экран вопроса шторки и радиокнопка карточек грузятся при первом показе (RT-3709)
-c313a6615 chore(rt:agent-kit): ветка эпика RT-3530 со свежей главной влита в RT-3706
-e7009520e chore(rt:agent-kit): главная влита в ветку эпика RT-3530, раздел «Unreleased» журнала кита стоит над выпуском 0.53.0
-3069077aa docs(rt:ui-kit-v2): ход RT-3706 записывает выбор владельца — вес кита снижается, порог не переписывается (RT-3706)
-759326ec8 test(rt:ui-kit-v2): правки RT-3706 после второго круга ревью (RT-3706)
-1065a9497 test(rt:ui-kit-v2): правки RT-3706 после первого круга ревью (RT-3706)
-7689b9568 docs(rt:ui-kit-v2): ход RT-3706 называет два файла обёртки шторки даты превышением решения плана (RT-3706)
-499b509c0 docs(rt:ui-kit-v2): ход RT-3706 — спеки шторок, номера сценариев и обёртка даты зелёные, вес кита ждёт слова владельца (RT-3706)
-b029d198f test(rt:ui-kit-v2): обёртка витрины шторки даты названа по своему классу и получила тест кадров (RT-3706)
-f08ac3b7e test(rt:ui-kit-v2): сценарии эпика, совпавшие с главной, получают свободные номера — UKV-1914…1918, AUTH-123, MB-460 (RT-3706)
-d51cd0b50 test(rt:ui-kit-v2): четыре спеки шторок эпика ждут подгрузки кода шторки, как спеки главной (RT-3706)
-d1c5ee004 docs(rt:ui-kit-v2): ход RT-3706 называет файлы эпика и главной для смены номеров (RT-3706)
-1625625aa docs(rt:ui-kit-v2): план RT-3706 после чтения ролями — четыре красных шага набора после слияния (RT-3706)
-adbc3ef5b docs(rt:ui-kit-v2): разбор и план RT-3706 — спеки шторок ждут подгрузки кода шторки (RT-3706)
-f64fa65e7 chore(rt:agent-kit): главная влита в ветку эпика RT-3530, шторка popover и асайд сведены с RT-3645 и RT-3648
-```
-
-Written by a hook before the compaction of the context. Everything standing here is checked
-against the tree: a handover retells what was written and describes the minute it was put together.
+Цепочка вливается снизу вверх: PR RT-3706 в ветку эпика, затем этот.
