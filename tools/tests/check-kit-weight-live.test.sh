@@ -15,6 +15,18 @@ if [ -f "$ROOT_DIR/dist/ui-kit-v2/fesm2022/rt-tools-ui-kit-v2-menu.mjs" ] && [ -
     AT_ROOT="$(cd "$ROOT_DIR" && node tools/check-kit-weight.mjs --print)"
     ELSEWHERE="$(cd "$WORK" && node "$TOOLS/check-kit-weight.mjs" --print)"
     report "the measurement from another directory equals the one at the root" "$ELSEWHERE" "$AT_ROOT"
+    # Two empty outputs are equal too: the table must be there.
+    report "and the table is printed" "$(printf '%s\n' "$AT_ROOT" | grep -c 'итого')" "1"
+
+    # A copy of the built kit measured by its address gives the same parts and the same total.
+    cp -R "$ROOT_DIR/dist/ui-kit-v2" "$WORK/package"
+    COPIED="$(cd "$WORK" && node "$TOOLS/check-kit-weight.mjs" --print --package package | sed 's/  gzip .*//')"
+    report "another built kit is measured by --package" "$COPIED" "$(printf '%s\n' "$AT_ROOT" | sed 's/  gzip .*//')"
+
+    # The threshold is the weight of this tree: another directory never writes it.
+    MISUSE="$(cd "$ROOT_DIR" && node tools/check-kit-weight.mjs --write --package "$WORK/package" 2>&1; echo "exit $?")"
+    report "--package without --print is refused" \
+        "$(printf '%s\n' "$MISUSE" | grep -c 'goes only with --print') $(printf '%s\n' "$MISUSE" | tail -1)" "1 exit 1"
 
     # A threshold lower than the measurement: the run exits 1 and names the set.
     node -e "

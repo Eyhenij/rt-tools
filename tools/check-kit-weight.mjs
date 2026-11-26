@@ -62,7 +62,8 @@ function linkFiles(transformer) {
                 return;
             }
             bundler.onLoad({ filter: /\.m?js$/ }, async (args) => ({
-                contents: await transformer.transformFile(args.path, false, false),
+                // Кит объявляет `sideEffects: false`, и сборка приложения передаёт тот же ответ.
+                contents: await transformer.transformFile(args.path, { sideEffects: () => false }),
                 loader: 'js',
             }));
         },
