@@ -364,30 +364,15 @@ printf '({})\n' > "$F6"
 d "protect: SC-AK-1530 — план, добавленный раньше движка, со строкой «(правится)» на этот путь — правка проходит" "$(edit_input Edit "$F6" '({})' '({ })' "$R6")" PASS
 d "protect: SC-AK-1728 — ветка закрытого списка без метки с местом — правка проходит" "$(edit_input Edit "$F6" '({})' '({ })' "$R6")" PASS
 
-# --- ход, названный отказом, спрошен у соседних проверок ----------------------------------------
-# Отказ записи оболочкой называет правку хода работы, а её держит гейт, пока правило задач не
-# загружено: слово о правиле стоит перед вердиктом движка.
-mkdir -p "$R/.claude/skills/task-flow"
-printf -- '---\nname: task-flow\nkind: rule\n---\n' > "$R/.claude/skills/task-flow/SKILL.md"
-# Правило длиннее предела хозяина: гейт не кладёт его в заход сам и держит ход до загрузки.
-printf '%010000d\n' 0 >> "$R/.claude/skills/task-flow/SKILL.md"
-gate_session_reset
-CLAUDE_PROJECT_DIR="$R" expect_reason "правку хода работы держит гейт — отказ называет правило" "$GUARD" \
-    "$(shell_input "printf 'x' >> docs/tasks/$B/progress.md" "$R")" 'load the rule «task-flow» by the tool Skill first. Then: the progress'
-gate_session_load task-flow
-CLAUDE_PROJECT_DIR="$R" expect_no_reason "правило загружено — назван один вердикт" "$GUARD" \
-    "$(shell_input "printf 'x' >> docs/tasks/$B/progress.md" "$R")" 'held by the rules gate'
-gate_session_cleanup
-unset TMPDIR
-rm -rf "$R/.claude/skills/task-flow"
-
 # --- ограничитель времени: страж судит и без `timeout` -----------------------------------------
 # Каталог команд случая — ссылки на всё из PATH, кроме `timeout`, `gtimeout` и perl; ограничитель
 # вида кладётся заглушкой, которая пишет свои доводы в отметку и передаёт ход дальше.
 REAL_PERL="$(command -v perl)"
 LIMIT_BASE="$(mktemp -d)"
 TMPS+=("$LIMIT_BASE")
-( IFS=:; for dir in $PATH; do for f in "$dir"/*; do n="${f##*/}"
+# Каталог PATH берётся абсолютным: под nx первым стоит `./node_modules/.bin`, и ссылка из него вела
+# в никуда, а имя команды было уже занято.
+( IFS=:; for dir in $PATH; do dir="$(cd "$dir" 2>/dev/null && pwd)" || continue; for f in "$dir"/*; do n="${f##*/}"
     case "$n" in timeout | gtimeout | perl) continue ;; esac
     [ -x "$f" ] && [ ! -e "$LIMIT_BASE/$n" ] && ln -s "$f" "$LIMIT_BASE/$n"; done; done )
 # Каталог вида: $1 — имя переменной для пути, дальше — заглушки вида: gtimeout, perl или ни одной.
@@ -467,6 +452,23 @@ PATH="$K6"
 d "guard: SC-AK-2004 — timeout, gtimeout и perl: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
 PATH="$PATH_KEEP"
 report "guard: SC-AK-2004 — timeout, gtimeout и perl: отметка только у timeout" "$(grep -q '^timeout 60 node ' "${K6%/bin}/mark" 2>/dev/null && ! grep -qE '^(gtimeout|perl) ' "${K6%/bin}/mark" && echo да || echo нет)" да
+
+# --- ход, названный отказом, спрошен у соседних проверок ----------------------------------------
+# Отказ записи оболочкой называет правку хода работы, а её держит гейт, пока правило задач не
+# загружено: слово о правиле стоит перед вердиктом движка.
+mkdir -p "$R/.claude/skills/task-flow"
+printf -- '---\nname: task-flow\nkind: rule\n---\n' > "$R/.claude/skills/task-flow/SKILL.md"
+# Правило длиннее предела хозяина: гейт не кладёт его в заход сам и держит ход до загрузки.
+printf '%010000d\n' 0 >> "$R/.claude/skills/task-flow/SKILL.md"
+gate_session_reset
+CLAUDE_PROJECT_DIR="$R" expect_reason "правку хода работы держит гейт — отказ называет правило" "$GUARD" \
+    "$(shell_input "printf 'x' >> docs/tasks/$B/progress.md" "$R")" 'load the rule «task-flow» by the tool Skill first. Then: the progress'
+gate_session_load task-flow
+CLAUDE_PROJECT_DIR="$R" expect_no_reason "правило загружено — назван один вердикт" "$GUARD" \
+    "$(shell_input "printf 'x' >> docs/tasks/$B/progress.md" "$R")" 'held by the rules gate'
+gate_session_cleanup
+unset TMPDIR
+rm -rf "$R/.claude/skills/task-flow"
 
 # --- чужие правки страж не судит ---------------------------------------------------------------
 d "обычный файл правится без стража" "$(edit_input Edit "$R/README.md" 'a' 'b' "$R")" PASS
