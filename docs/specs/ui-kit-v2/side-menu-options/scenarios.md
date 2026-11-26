@@ -80,13 +80,13 @@ Then it looks as before
 Not covered: this is a promise about frames. The former snapshots of the side menu stories match
 without a re-take.
 
-### SC-UKV-793 — the folder icon has a Material pair
+### SC-UKV-793 — the material set draws the folder icon
 
-Given the material preset and a submenu folder with the `folder` icon
-When the folder is drawn
-Then it draws the Material folder, outlined and filled
+Given the material preset and a submenu folder with the `folder` icon.
+When the folder is drawn.
+Then it draws the Material folder, outlined and filled.
 
-Not covered: `node tools/check-icon-map.mjs` holds every pair to an existing file of both sets.
+Not covered: `node tools/check-icon-map.mjs` holds every name of the set to its files.
 
 ### SC-UKV-794 — row and folder icons are filled by the input
 

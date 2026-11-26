@@ -21,8 +21,8 @@ export namespace IRtActionBar {
         readonly label: string;
         readonly icon?: IRtIcon.Name;
         /**
-         * Имя Material вместо значка кита: рисуется так же, как вход `glyph` у `rt-icon` — парой из
-         * перечня кита или лигатурой шрифта. Значок кита, заданный рядом, сильнее.
+         * Значок строкой вместо имени кита: рисуется так же, как вход `glyph` у `rt-icon` — имя
+         * кита рисунком, другое лигатурой шрифта. `icon`, заданный рядом, сильнее.
          */
         readonly glyph?: string;
         readonly look?: IRtActionBar.Look;

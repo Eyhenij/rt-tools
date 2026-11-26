@@ -7,6 +7,7 @@ import { RtFieldComponent } from '../field/rt-field.component';
 import { RtMultiselectComponent } from '../multiselect/rt-multiselect.component';
 import { RtSelectComponent } from './rt-select.component';
 import { IRtSelect } from './rt-select.model';
+import { rtPreloadPopoverSheet } from '../popover/rt-popover-sheet.helper';
 
 const OPTIONS: ReadonlyArray<IRtSelect.Option<string>> = [
     { label: 'Москва', value: 'msk' },
@@ -94,6 +95,10 @@ function setupMultiselect(chosen: ReadonlyArray<string>): ComponentFixture<RtMul
 }
 
 describe('Панель выбора в нижней шторке', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+    });
+
     afterEach((): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });

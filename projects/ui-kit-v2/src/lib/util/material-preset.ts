@@ -50,12 +50,40 @@ function applyThemeScope(pane: HTMLElement, theme: string | null): void {
     }
 }
 
+/** Атрибут части страницы со своим набором значков — его пишет `rtIconSet`. */
+export const RT_ICON_SET_ATTRIBUTE: string = 'data-rt-icon-set';
+
+/** Набор значков части, от которой открыта панель, — значение ближайшего `data-rt-icon-set` над `origin`. */
+export function iconSetScopeOf(origin: Element): string | null {
+    return origin.closest(`[${RT_ICON_SET_ATTRIBUTE}]`)?.getAttribute(RT_ICON_SET_ATTRIBUTE) || null;
+}
+
 /**
- * Переносит тему куска `origin` на коробку панели или снимает её, если кусок ушёл. Зовётся на
- * каждом открытии: коробка переживает закрытие, а кусок вокруг источника мог смениться.
+ * Набор значков для окна, которое открывает сервис без узла-источника: диалог, боковая панель.
+ * Источником служит узел в фокусе в момент открытия, как у `themeScopeOfFocus`.
+ */
+export function iconSetScopeOfFocus(document: Document): string | null {
+    const focused: Element | null = document.activeElement;
+    return focused ? iconSetScopeOf(focused) : null;
+}
+
+/** Пишет на коробку панели набор значков или снимает его. */
+export function applyIconSetScope(pane: HTMLElement, set: string | null): void {
+    if (set === null) {
+        pane.removeAttribute(RT_ICON_SET_ATTRIBUTE);
+    } else {
+        pane.setAttribute(RT_ICON_SET_ATTRIBUTE, set);
+    }
+}
+
+/**
+ * Переносит на коробку панели то, что объявила часть страницы вокруг `origin`: тему куска и набор
+ * значков. Чего у части нет, с коробки снимается. Зовётся на каждом открытии: коробка переживает
+ * закрытие, а часть вокруг источника могла смениться.
  */
 export function carryThemeScope(pane: HTMLElement, origin: Element): void {
     applyThemeScope(pane, themeScopeOf(origin));
+    applyIconSetScope(pane, iconSetScopeOf(origin));
 }
 
 /**
@@ -69,9 +97,10 @@ export function themeScopeOfFocus(document: Document): string | null {
 }
 
 /**
- * Переносит на коробку панели тему куска, где стоит фокус. Зовётся до того, как панель заберёт
- * фокус себе: после этого `activeElement` уже внутри панели, в конце страницы, вне куска.
+ * Переносит на коробку панели тему куска и набор значков части, где стоит фокус. Зовётся до того,
+ * как панель заберёт фокус себе: после этого `activeElement` уже внутри панели, в конце страницы.
  */
 export function carryThemeScopeOfFocus(pane: HTMLElement, document: Document): void {
     applyThemeScope(pane, themeScopeOfFocus(document));
+    applyIconSetScope(pane, iconSetScopeOfFocus(document));
 }

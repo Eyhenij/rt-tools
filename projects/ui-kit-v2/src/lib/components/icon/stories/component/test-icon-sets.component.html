@@ -1,0 +1,20 @@
+<p>
+    <!-- eslint-disable-next-line @angular-eslint/template/elements-content -->
+    <button rtButton qa-dataid="sets-all-material" type="button" label="Все: material" (click)="use('material')"></button>
+    <!-- eslint-disable-next-line @angular-eslint/template/elements-content -->
+    <button rtButton qa-dataid="sets-all-reset" type="button" label="Все: как в настройке" (click)="use(null)"></button>
+    <!-- eslint-disable-next-line @angular-eslint/template/elements-content -->
+    <button rtButton qa-dataid="sets-part-toggle" type="button" label="Часть: material или kit" (click)="togglePart()"></button>
+</p>
+<p qa-dataid="sets-app">
+    Приложение:
+    <rt-icon name="cog" />
+    <!-- eslint-disable-next-line @angular-eslint/template/elements-content -->
+    <button rtButton type="button" icon="trash" label="Удалить"></button>
+</p>
+<p qa-dataid="sets-part" [rtIconSet]="part()">
+    Часть ({{ part() }}):
+    <rt-icon name="cog" />
+    <!-- eslint-disable-next-line @angular-eslint/template/elements-content -->
+    <button rtButton type="button" icon="trash" label="Удалить"></button>
+</p>
