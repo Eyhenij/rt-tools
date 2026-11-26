@@ -38,9 +38,9 @@ record="${record%$'\n'}"
 
 # The cheap filter: a follow flag of `tail`, or a loop next to a word that prints.
 command="$(printf '%s' "$input" | jq -r '.tool_input.command // ""' 2>/dev/null)"
-printf '%s' "$command" | grep -qE '(^|[^[:alnum:]_-])tail([[:space:]]+[^|;&]*)?[[:space:]](-[[:alpha:]]*[fF][[:alpha:]]*|--follow)([[:space:]=]|$)' ||
+printf '%s' "$command" | grep -qE '(^|[^[:alnum:]_-])tail([[:space:]]+[^|;&]*)?[[:space:]](-[[:alnum:]]*[fF][[:alnum:]]*|--follow)([[:space:]=]|$)' ||
     { printf '%s' "$command" | grep -qE '(^|[^[:alnum:]_])(while|until|for)[[:space:]]' &&
-        printf '%s' "$command" | grep -qE '(^|[^[:alnum:]_])(echo|printf|cat|head|tail|awk|sed|grep|egrep|cut|jq|sort|uniq|comm|tr|wc|column|diff)[[:space:]]'; } ||
+        printf '%s' "$command" | grep -qE '(^|[^[:alnum:]_])(echo|printf|cat|head|tail|awk|sed|grep|egrep|cut|jq|sort|uniq|comm|tr|wc|column|diff|ls|stat|date|du)[[:space:]]'; } ||
     exit 0
 
 engine="${RT_FLOW_ENGINE:-}"

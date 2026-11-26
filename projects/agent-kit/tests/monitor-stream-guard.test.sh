@@ -64,6 +64,20 @@ fresh; pending p1 "bash set.sh > $L 2>&1"
 case_of 'фоновое того же ответа, ответа ещё нет' "$(mon "tail -f $L")" deny
 fresh; bg b7 "bash set.sh > $L 2>&1"
 case_of 'tail -f в фоне команды, затем ожидание' "$(mon "tail -n0 -f $L | grep --line-buffered red & until grep -q exit $L; do sleep 2; done")" deny
+case_of 'tail -fn0 и tail -50f' "$(mon "tail -fn0 $L")$(mon "tail -50f $L")" denydeny
+case_of 'обёртки timeout, stdbuf, bash -c' "$(mon "timeout 3600 tail -f $L | grep --line-buffered red")$(mon "stdbuf -oL tail -f $L")$(mon "bash -c 'tail -f $L'")" denydenydeny
+case_of 'grep -m 500 после tail -f — не одна строка' "$(mon "tail -f $L | grep --line-buffered -m 500 red")" deny
+case_of 'цикл в { } и в then' "$(mon "{ while true; do tail -1 $L; sleep 5; done; }")$(mon "if true; then while true; do tail -1 $L; sleep 5; done; fi")" denydeny
+case_of 'echo done в теле не закрывает цикл' "$(mon "while true; do echo done; tail -1 $L; sleep 5; done")" deny
+case_of 'ls в цикле печатает' "$(mon "while true; do ls -la $L; sleep 5; done")" deny
+case_of 'break по условию после печати — печать на каждом круге' "$(mon "while true; do tail -1 $L; [ -f $TMP/flag ] && break; sleep 5; done")" deny
+case_of 'путь через /private, /./ и по cwd' "$(mon "tail -f /private$L")$(mon "tail -f $TMP/./set.log")$(mon 'tail -f set.log' "$P" "$TMP")" denydenydeny
+fresh; bg b8 "bash set.sh 2> $L"
+case_of 'файл через 2>' "$(mon "tail -f $L")" deny
+fresh; bg b9 "bash set.sh | tee -ai $L"
+case_of 'файл через tee -ai' "$(mon "tail -f $L")" deny
+fresh; bg b10 "cd $TMP && bash set.sh > set.log 2>&1"
+case_of 'относительная цель задачи после cd' "$(mon "tail -f $L")" deny
 
 # --- одна строка, чужой файл, кончившаяся задача — проход ---------------------------------------
 fresh; bg b1 "bash set.sh > $L 2>&1"
@@ -75,6 +89,17 @@ case_of 'echo внутри $(…) в цикле' "$(mon "while true; do n=\$(gre
 case_of 'таймер' "$(mon 'sleep 600; echo tick')" PASS
 case_of 'файл, который не пишет ни одна задача' "$(mon "tail -f $TMP/other.log")" PASS
 case_of 'другой инструмент' "$(jq -cn --arg p "$P" '{hook_event_name:"PreToolUse",tool_name:"Bash",tool_input:{command:"tail -f /x"},transcript_path:$p}' | bash "$H" 2>/dev/null | wc -c | tr -d ' ')" 0
+case_of 'печать, затем две строки до break' "$(mon "while true; do if grep -q exit $L; then echo '=== finished'; tail -3 $L; break; fi; sleep 5; done")" PASS
+case_of 'печать, затем rm и exit 0' "$(mon "while true; do if grep -q exit $L; then tail -3 $L; rm -f $TMP/lock; exit 0; fi; sleep 5; done")" PASS
+case_of 'файл с тем же началом' "$(mon "tail -f $L.old")" PASS
+fresh; bg b1 "node --input-type=module > $TMP/sizes.txt <<'EOF'
+const s = [3, 1].sort((a, b) => a - b);
+EOF"
+bg b2 "awk '\$3 > 0 {print}' data.csv"
+bg b3 "bash set.sh > log 2>&1"
+case_of 'стрелка heredoc, сравнение awk, цель без пути — опрос PR' "$(mon 'while true; do gh pr checks 3074 | tail -3; sleep 60; done')$(mon 'while true; do gh run view 1 --log-failed | tail -1; sleep 30; done')" PASSPASS
+fresh; bg b1 "cd /repo && pnpm test > out.log"
+case_of 'тот же файл в другом каталоге' "$(mon 'tail -f /other/out.log')" PASS
 fresh; bg b1 "bash set.sh > $L 2>&1"; over b1
 case_of 'задача кончилась' "$(mon "tail -f $L")" PASS
 fresh; bg b1 "bash set.sh > $L 2>&1"; stopped b1

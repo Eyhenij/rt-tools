@@ -128,7 +128,11 @@ Covered: `projects/agent-kit/tests/owner-stop-call-guard.test.sh`.
 Given a live own Bash task in the background, or a Bash call in the background with no answer yet
 When a `Monitor` follows its output or a file its command writes by `tail -f`, `-F`, `--follow`, `-fn` or a loop that prints on every round
 Then the call is refused, and the refusal names the task and the file and says to read the file after the notice of the end
-And a path through `${TMPDIR:-/tmp}`, `$(basename "$PWD")`, an assignment `S=` of the task's command, `tee -a` or `>>` is seen
+And a path through `${TMPDIR:-/tmp}`, `$(basename "$PWD")`, an assignment `S=` of the task's command, `tee -a`, `tee -ai`, `>>` or `2>` is seen
+And `tail -fn0`, `tail -50f`, `timeout`, `stdbuf`, `bash -c`, `grep -m 500`, a loop in `{ }` or after `then`, `echo done` in the body and `ls` are refused
+And a path through `/private`, `/./`, the working directory or a leading `cd` of the task is seen; the same name in another directory and a longer name pass
+And an arrow in a heredoc, a comparison in `awk '…'` and a target with no path refuse no poll of a pull request
+And a print followed by two statements and `break` or `exit` passes; a `break` only by a condition does not leave
 And of 26 `Monitor` commands from the records of the project 18 that print a line on every step of own background are refused, 8 pass
 And a wait by `until grep -q` with one print after it passes; so does a print followed by `break` in one branch
 And a pipeline followed by `break`, `tail -f | grep -m 1`, `echo` inside `$(…)`, a timer and a file no task writes pass
