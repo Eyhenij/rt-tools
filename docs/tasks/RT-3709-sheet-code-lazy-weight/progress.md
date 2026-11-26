@@ -57,3 +57,53 @@
   RT-3706 is not edited after its commit, so the work is the next task of the chain, from the tip of
   RT-3706 with the main branch merged into the epic (`e7009520e`).
 - The owner: «если недельный лимит достигнет 99 процентов останавливайся».
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/sviatoslavkhutornoy/WebstormProjects/rt-tools
+**Branch:** RT-3709-sheet-code-lazy-weight
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 1 of 3 — The question screen arrives at the first question
+- **Next step:** the showcase snapshots of the sheets (`node tools/visual-gate.mjs ui-kit-v2 --affected
+- **PR:** not open yet
+
+The progress in full — `docs/tasks/RT-3709-sheet-code-lazy-weight/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+none
+```
+
+### Commits over the main branch
+
+```
+41fc86ffe docs(rt:ui-kit-v2): ход RT-3709 называет расхождения с решением плана — сценарии в своих наборах, связь загрузчика с моделью (RT-3709)
+f34ada95e docs(rt:ui-kit-v2): ход RT-3709 — этапы закрыты, стартовый набор 206521 байт, набор кита зелёный (RT-3709)
+5100a0086 perf(rt:ui-kit-v2): радиокнопка карточек выбора приходит с первыми карточками, а не со стартом (RT-3709)
+f717efb3d docs(rt:ui-kit-v2): ход RT-3709 — вопрос шторки снял 3741 байт стартового набора (RT-3709)
+a4e53bc13 perf(rt:ui-kit-v2): экран вопроса шторки — свой компонент, его код приходит при первом вопросе (RT-3709)
+b96eff3be docs(rt:ui-kit-v2): разбор, план и одобрение RT-3709 — экран вопроса шторки и радиокнопка карточек грузятся при первом показе (RT-3709)
+c313a6615 chore(rt:agent-kit): ветка эпика RT-3530 со свежей главной влита в RT-3706
+e7009520e chore(rt:agent-kit): главная влита в ветку эпика RT-3530, раздел «Unreleased» журнала кита стоит над выпуском 0.53.0
+3069077aa docs(rt:ui-kit-v2): ход RT-3706 записывает выбор владельца — вес кита снижается, порог не переписывается (RT-3706)
+759326ec8 test(rt:ui-kit-v2): правки RT-3706 после второго круга ревью (RT-3706)
+1065a9497 test(rt:ui-kit-v2): правки RT-3706 после первого круга ревью (RT-3706)
+7689b9568 docs(rt:ui-kit-v2): ход RT-3706 называет два файла обёртки шторки даты превышением решения плана (RT-3706)
+499b509c0 docs(rt:ui-kit-v2): ход RT-3706 — спеки шторок, номера сценариев и обёртка даты зелёные, вес кита ждёт слова владельца (RT-3706)
+b029d198f test(rt:ui-kit-v2): обёртка витрины шторки даты названа по своему классу и получила тест кадров (RT-3706)
+f08ac3b7e test(rt:ui-kit-v2): сценарии эпика, совпавшие с главной, получают свободные номера — UKV-1914…1918, AUTH-123, MB-460 (RT-3706)
+d51cd0b50 test(rt:ui-kit-v2): четыре спеки шторок эпика ждут подгрузки кода шторки, как спеки главной (RT-3706)
+d1c5ee004 docs(rt:ui-kit-v2): ход RT-3706 называет файлы эпика и главной для смены номеров (RT-3706)
+1625625aa docs(rt:ui-kit-v2): план RT-3706 после чтения ролями — четыре красных шага набора после слияния (RT-3706)
+adbc3ef5b docs(rt:ui-kit-v2): разбор и план RT-3706 — спеки шторок ждут подгрузки кода шторки (RT-3706)
+f64fa65e7 chore(rt:agent-kit): главная влита в ветку эпика RT-3530, шторка popover и асайд сведены с RT-3645 и RT-3648
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.

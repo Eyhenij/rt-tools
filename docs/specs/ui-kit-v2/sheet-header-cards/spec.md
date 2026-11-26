@@ -218,3 +218,5 @@ None.
 |            | (RT-3531)                                                                                             |
 | 2026-11-26 | Scenarios 1780…1784 move to 1914…1918: the main branch took those numbers; the frames of the date     |
 |            | sheet showcase, scenario 1919 (RT-3706)                                                               |
+| 2026-11-26 | The question screen before closing arrives at the first question, `rtPreloadSheetConfirm` waits for   |
+|            | it in specs; the radio of a select card comes with the first cards; the look is unchanged (RT-3709)   |
