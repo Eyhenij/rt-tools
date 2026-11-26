@@ -153,12 +153,9 @@ export function rtIconSetsConfig(added: ReadonlyArray<IRtIconSet> = [], defaultS
         addSet(sets, entry, warnings);
     }
 
-    for (const name of [...sets.keys()]) {
-        const set: IRtIconSet | undefined = sets.get(name);
-
-        if (set !== undefined) {
-            closeFallbacks(sets, set, warnings);
-        }
+    // Перезапись значения под тем же ключом обход не удлиняет.
+    for (const set of sets.values()) {
+        closeFallbacks(sets, set, warnings);
     }
 
     if (!sets.has(defaultSet)) {
