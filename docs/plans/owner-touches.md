@@ -25,14 +25,14 @@
 
 Обращение к владельцу — его ответ в окне вопроса, сообщение между ходами или сообщение во время хода.
 Источник — наблюдения дерева `.claude/rt-kit/observations`, события `record-menu` и `record-word`, с
-21.11, когда они появились, по 26.11. Окна разрешений от хуков (`guard-ask`) задачи не несут и идут
-отдельной строкой.
+21.11, когда они появились, до 26.11 11:00 UTC — до начала этого эпика. Окна разрешений от хуков
+(`guard-ask`) задачи не несут и идут отдельной строкой.
 
 ```bash
-cat .claude/rt-kit/observations/*.jsonl | jq -rs '[.[]|select(.ev=="record-menu" or .ev=="record-word")
-  |select(.task!=null and (.task|startswith("RT-")))] | group_by(.task) | map(length) | sort
-  | {tasks:length, total:add, median:.[(length/2|floor)]}'
-# → {"tasks": 36, "total": 277, "median": 5}
+cat .claude/rt-kit/observations/*.jsonl | jq -rs --arg u 2026-11-26T11:00 '[.[]|select(.t < $u)
+  |select(.ev=="record-menu" or .ev=="record-word")|select(.task!=null and (.task|startswith("RT-")))]
+  | group_by(.task) | map(length) | sort | {tasks:length, total:add, median:.[(length/2|floor)]}' -c
+# → {"tasks":36,"total":277,"median":5}
 ```
 
 | Вид обращения                          | Число  | Доля |
