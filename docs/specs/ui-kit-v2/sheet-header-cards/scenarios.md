@@ -134,6 +134,15 @@ Then the application learns of the apply only in the first case
 
 Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-unsaved.spec.ts`.
 
+### SC-UKV-1871 — a value typed or picked and returned in the page filters is no change
+
+Given the page filters open in the sheet
+When a value is typed into a field and erased, or a kit field is picked and returned to its value
+at the opening
+Then the close button closes the sheet at once, without a question
+
+Covered: `projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.component.spec.ts`.
+
 ### SC-UKV-1787 — a sheet with nothing changed closes at once
 
 Given the page filters open in the sheet with nothing changed
@@ -215,7 +224,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.comp
 
 Given a sheet with a choice not applied and the focus on its close button
 When the close button is pressed
-Then the focus stands on the first answer of the question and the panel and the backdrop of the
+Then the focus stands on the apply answer of the question and the panel and the backdrop of the
 sheet are inert; the cancel answer returns the focus to the close button
 
 Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-focus.spec.ts`.
@@ -235,7 +244,8 @@ When Escape is pressed with the focus in the sheet
 Then the sheet closes and the layer does not get the key; Escape already taken by a layer above
 the sheet does not close it
 
-Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-focus.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-focus.spec.ts`; end to end
+— `apps/auth-example-e2e/src/language-sheet.spec.ts`.
 
 ### SC-UKV-1759 — the answer "do not apply" is reported apart from the closing
 

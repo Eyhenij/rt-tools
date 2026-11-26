@@ -1,38 +1,63 @@
-<div
-    #frame
-    rtBlock="rt-aside"
-    qa-dataid="aside"
-    [attr.role]="modal() ? 'dialog' : 'complementary'"
-    [attr.aria-modal]="modal() || null"
-    [rtMod]="{ size: size(), content: contentLayout() }"
-    [style.--rt-aside-width]="width()"
-    [attr.aria-label]="ariaLabel()"
-    [attr.aria-busy]="pending() || null">
-    <ng-content select="rt-aside-header" />
+<ng-container rtBlock="rt-aside">
+    <!-- Рамка панели со слотами шапки и подвала — одна на оба вида: проекция объявлена один раз и не стоит
+         под условием. В шторке телефона панель переносит рамку в тело шторки, шапку — в её шапку,
+         подвал — в её подвал, пока в нём осталась кнопка. -->
+    <div
+        #frame
+        rtBlock="rt-aside"
+        qa-dataid="aside"
+        [attr.role]="frameRole()"
+        [attr.aria-modal]="frameModal()"
+        [rtMod]="frameMods()"
+        [style.--rt-aside-width]="frameWidth()"
+        [attr.aria-label]="frameLabel()"
+        [attr.aria-busy]="pending() || null">
+        <ng-content select="rt-aside-header" />
 
-    @if (hasRequestError()) {
-        <rt-aside-error-box rtElem="error" [error]="requestError()" />
-    }
-
-    <div rtElem="content" qa-dataid="aside-content">
-        @if (empty()) {
-            <div rtElem="empty" qa-dataid="aside-empty">
-                @if (emptyTemplate(); as own) {
-                    <ng-container [ngTemplateOutlet]="own.templateRef" />
-                } @else {
-                    <rt-empty-state [icon]="emptyIcon()" [title]="emptyTitleText()" [description]="emptyDescription()" />
-                }
-            </div>
-        } @else {
-            <ng-container [rtSlotOutlet]="contents()" />
+        @if (hasRequestError()) {
+            <rt-aside-error-box rtElem="error" [error]="requestError()" />
         }
+
+        <div rtElem="content" qa-dataid="aside-content">
+            @if (empty()) {
+                <div rtElem="empty" qa-dataid="aside-empty">
+                    @if (emptyTemplate(); as own) {
+                        <ng-container [ngTemplateOutlet]="own.templateRef" />
+                    } @else {
+                        <rt-empty-state [icon]="emptyIcon()" [title]="emptyTitleText()" [description]="emptyDescription()" />
+                    }
+                </div>
+            } @else {
+                <ng-container [rtSlotOutlet]="contents()" />
+            }
+        </div>
+
+        @if (pending()) {
+            <div rtElem="pending" qa-dataid="aside-pending">
+                <rt-spinner />
+            </div>
+        }
+
+        <ng-content select="rt-aside-footer" />
     </div>
 
-    <ng-content select="rt-aside-footer" />
-
-    @if (pending()) {
-        <div rtElem="pending" qa-dataid="aside-pending">
-            <rt-spinner />
-        </div>
+    @if (sheetMode()) {
+        <!-- Телефон: панель — шторка кита во всю высоту. Свои шапку и подвал шторке даёт панель: пустой
+             шаблон оставляет в шторке их места, и панель ставит туда свои узлы. -->
+        <rt-bottom-sheet
+            fullHeight
+            qa-dataid="aside-sheet"
+            [open]="sheetShown()"
+            [ariaLabel]="sheetName()"
+            [headerTemplate]="sheetSlot"
+            [footerTemplate]="sheetFooter()"
+            [confirmLabels]="sheetConfirm()"
+            [closeOnApply]="false"
+            (applyRequest)="onSheetAnswer(outcomes.Save)"
+            (discardRequest)="onSheetAnswer(outcomes.Discard)"
+            (stayRequest)="onSheetAnswer(outcomes.Stay)"
+            (closeRequest)="onSheetClose($event)" />
     }
-</div>
+
+    <ng-template #sheetSlot />
+</ng-container>

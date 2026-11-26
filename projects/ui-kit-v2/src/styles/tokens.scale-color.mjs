@@ -256,6 +256,11 @@ export const scaleColor = [
         value: `#fef2f2`,
     },
     {
+        name: `--rt-danger-300`,
+        value: `#ea7d7d`,
+        note: `красная подпись на графите: 5,6 к одному на поверхности`,
+    },
+    {
         name: `--rt-danger-500`,
         value: `#dc2626`,
     },

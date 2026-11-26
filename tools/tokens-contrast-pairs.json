@@ -242,6 +242,16 @@
       "where": "the label of a dangerous text button"
     },
     {
+      "text": "--rt-color-sheet-confirm-apply",
+      "bg": "--rt-color-bg-surface",
+      "where": "the apply answer of the question of a sheet"
+    },
+    {
+      "text": "--rt-color-sheet-confirm-danger",
+      "bg": "--rt-color-bg-surface",
+      "where": "the drop answer of the question of a sheet"
+    },
+    {
       "text": "--rt-color-action-info-on-surface",
       "bg": "--rt-color-bg-surface",
       "where": "the label of an informational text button"

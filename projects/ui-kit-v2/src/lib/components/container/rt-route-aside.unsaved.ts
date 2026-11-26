@@ -3,12 +3,27 @@ import { toObservable } from '@angular/core/rxjs-interop';
 
 import { filter, finalize, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 
-import { RtAsideUnsavedDialogComponent } from '@rt-tools/ui-kit-v2/aside';
-import { ERtAsideUnsavedOutcome } from '@rt-tools/ui-kit-v2/aside';
+import { ERtAsideUnsavedOutcome, RtAsideSheet, RtAsideUnsavedDialogComponent } from '@rt-tools/ui-kit-v2/aside';
 import { RtDialogService } from '@rt-tools/ui-kit-v2/dialog';
 
-/** То, что вопрос о правках знает о панели: чем записать и чем узнать исход записи. */
+/**
+ * Вопрос о несохранённых правках: на телефоне — вопрос шторки внизу экрана, с теми же словами и
+ * исходами, шире — окно в центре.
+ */
+export function rtAskUnsaved(sheet: RtAsideSheet | null, dialog: RtDialogService): Observable<ERtAsideUnsavedOutcome | undefined> {
+    if (sheet?.active() === true) {
+        return sheet.ask();
+    }
+
+    return dialog.open<RtAsideUnsavedDialogComponent, undefined, ERtAsideUnsavedOutcome>(RtAsideUnsavedDialogComponent).afterClosed();
+}
+
+/**
+ * То, что вопрос о правках знает о панели: как спросить — окном в центре или вопросом шторки
+ * внизу экрана телефона, — чем записать и чем узнать исход записи.
+ */
 export interface IRtRouteAsideUnsavedDeps {
+    ask: () => Observable<ERtAsideUnsavedOutcome | undefined>;
     save: () => void;
     submitting: Signal<boolean>;
     submitError: Signal<string | null>;
@@ -22,15 +37,13 @@ export interface IRtRouteAsideUnsavedDeps {
  * закрытия окна следующий уход спрашивает заново.
  */
 export class RtRouteAsideUnsavedPrompt {
-    readonly #dialog: RtDialogService;
     readonly #injector: Injector;
     readonly #deps: IRtRouteAsideUnsavedDeps;
 
     /** Вопрос, который сейчас висит. `null` — окна нет, и следующий уход откроет своё. */
     #pendingAsk$: Observable<boolean> | null = null;
 
-    constructor(dialog: RtDialogService, injector: Injector, deps: IRtRouteAsideUnsavedDeps) {
-        this.#dialog = dialog;
+    constructor(injector: Injector, deps: IRtRouteAsideUnsavedDeps) {
         this.#injector = injector;
         this.#deps = deps;
     }
@@ -43,16 +56,13 @@ export class RtRouteAsideUnsavedPrompt {
             return pending;
         }
 
-        const ask$: Observable<boolean> = this.#dialog
-            .open<RtAsideUnsavedDialogComponent, undefined, ERtAsideUnsavedOutcome>(RtAsideUnsavedDialogComponent)
-            .afterClosed()
-            .pipe(
-                switchMap((outcome: ERtAsideUnsavedOutcome | undefined): Observable<boolean> => this.#deactivateAfter(outcome)),
-                finalize((): void => {
-                    this.#pendingAsk$ = null;
-                }),
-                shareReplay({ bufferSize: 1, refCount: false })
-            );
+        const ask$: Observable<boolean> = this.#deps.ask().pipe(
+            switchMap((outcome: ERtAsideUnsavedOutcome | undefined): Observable<boolean> => this.#deactivateAfter(outcome)),
+            finalize((): void => {
+                this.#pendingAsk$ = null;
+            }),
+            shareReplay({ bufferSize: 1, refCount: false })
+        );
 
         this.#pendingAsk$ = ask$;
 

@@ -110,6 +110,7 @@ export class RtButtonDirective {
     readonly #appearanceShown: Signal<IButton.Appearance> = computed(() => this.placeLook()?.appearance ?? this.appearance());
     readonly #icon: Signal<string | null> = computed(() => (this.placeLook()?.icon === null ? null : this.icon()));
     readonly #label: Signal<string | null> = computed(() => this.placeLook()?.label ?? this.label());
+    readonly #sizeShown: Signal<IButton.Size> = computed(() => this.placeLook()?.size ?? this.size());
 
     protected readonly isIconOnly: Signal<boolean> = computed(() => !!this.#icon() && !this.#label());
 
@@ -197,7 +198,7 @@ export class RtButtonDirective {
     protected get hostClasses(): Record<string, boolean> {
         const theme: IButton.Theme = this.#theme();
         const appearance: IButton.Appearance = this.#appearanceShown();
-        const size: IButton.Size = this.size();
+        const size: IButton.Size = this.#sizeShown();
 
         return {
             [BEM_BLOCK]: true,

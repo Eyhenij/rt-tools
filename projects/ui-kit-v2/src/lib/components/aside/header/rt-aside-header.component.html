@@ -1,6 +1,21 @@
 <ng-container rtBlock="rt-aside-header">
-    <header rtElem="content" qa-dataid="aside-header">
-        @if (closable()) {
+    <header #row rtElem="content" qa-dataid="aside-header" [rtMod]="{ sheet: sheetMode(), 'title-between': titleBetween() }">
+        @if (sheetMode()) {
+            <!-- Шапка шторки: «×» слева идёт дорогой стрелки; шапка без стрелки «×» не рисует. Второй экран
+                 шторки рисует на месте «×» шеврон «назад», как шапка шторки кита; дорога та же. -->
+            <div rtElem="start">
+                @if (closable()) {
+                    <rt-icon-button
+                        rtElem="close"
+                        variant="secondary"
+                        radius="full"
+                        [attr.qa-dataid]="sheetBack() ? 'bottom-sheet-back' : 'aside-sheet-close'"
+                        [icon]="sheetBack() ? 'chevron-left' : 'ico-close'"
+                        [ariaLabel]="sheetBack() ? t().uiBack : t().bottomSheetClose"
+                        (clicked)="onSheetClose()" />
+                }
+            </div>
+        } @else if (closable()) {
             <rt-icon-button
                 rtElem="back"
                 qa-dataid="aside-back"
@@ -12,9 +27,9 @@
                 (clicked)="onDismiss()" />
         }
 
-        <div rtElem="heading">
-            @if (overline(); as overlineText) {
-                <p rtElem="overline" qa-dataid="aside-overline">{{ overlineText }}</p>
+        <div #heading rtElem="heading">
+            @if (!sheetMode()) {
+                <ng-container [ngTemplateOutlet]="meta" [ngTemplateOutletContext]="{ $implicit: 'overline' }" />
             }
             <!-- Без заголовка строки нет: пустая строка сдвинула бы надзаголовок с линии стрелки -->
             @if (title() || loading()) {
@@ -27,6 +42,39 @@
                 </h2>
             }
 
+            @if (!sheetMode()) {
+                <ng-container [ngTemplateOutlet]="meta" [ngTemplateOutletContext]="{ $implicit: 'rest' }" />
+            }
+            <!-- Проекция без условия: в шторке шапка переносит эти узлы в конец блока под собой. -->
+            <ng-content select="[asideHeadingContent]" />
+        </div>
+
+        <div rtElem="actions" qa-dataid="aside-actions">
+            <ng-content select="[asideActions]" />
+            @if (sheetMode()) {
+                <!-- Место главной кнопки подвала: панель переносит её сюда, правее значков шапки. -->
+                <div #sheetMain rtElem="main" qa-dataid="aside-sheet-main"></div>
+            }
+        </div>
+    </header>
+
+    <!-- В шторке надзаголовок, подпись, бэйджи и содержимое колонки заголовка стоят под шапкой, в начале
+         содержимого: в шапке шторки только «×», заголовок и кнопки. -->
+    @if (sheetMode()) {
+        <div #sheetMeta rtElem="sheet-meta" qa-dataid="aside-sheet-meta">
+            <ng-container [ngTemplateOutlet]="meta" [ngTemplateOutletContext]="{ $implicit: 'overline' }" />
+            <ng-container [ngTemplateOutlet]="meta" [ngTemplateOutletContext]="{ $implicit: 'rest' }" />
+        </div>
+    }
+
+    <!-- Части колонки заголовка: надзаголовок над ним, подпись и бэйджи под ним. Шаблон выводится либо в
+         колонке, либо под шапкой шторки; содержимое колонки проецируется в колонку без условия. -->
+    <ng-template #meta let-part>
+        @if (part === 'overline') {
+            @if (overline(); as overlineText) {
+                <p rtElem="overline" qa-dataid="aside-overline">{{ overlineText }}</p>
+            }
+        } @else {
             @if (subtitle(); as subtitleText) {
                 <p rtElem="subtitle" qa-dataid="aside-subtitle">{{ subtitleText }}</p>
             }
@@ -55,14 +103,8 @@
                     }
                 </div>
             }
-
-            <ng-content select="[asideHeadingContent]" />
-        </div>
-
-        <div rtElem="actions" qa-dataid="aside-actions">
-            <ng-content select="[asideActions]" />
-        </div>
-    </header>
+        }
+    </ng-template>
 
     <div rtElem="row" qa-dataid="aside-header-row">
         <ng-content select="[asideHeaderContent]" />

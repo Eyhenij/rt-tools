@@ -61,8 +61,9 @@ height of a sheet and the question before it closes are the subdomain `sheet-hea
 
 ## What is out of scope
 
-- Tooltips, the help of a field, confirmations, dialogs and asides do not open in the sheet. The
-  help of a field is the kit tooltip, subdomain `field-label-icon-actions`.
+- Tooltips, the help of a field, confirmations and dialogs do not open in the sheet. The help of a
+  field is the kit tooltip, subdomain `field-label-icon-actions`. A side panel opens on a phone as
+  a full-height sheet of its own, subdomain `aside/phone-sheet`.
 - The rows of a list next to its trigger and the rows of an actions menu do not change.
 - A focus trap inside the sheet.
 
@@ -131,3 +132,4 @@ None.
 | 2026-11-20 | The sheet opens on a phone, ≤480 px, by the owner's word «До 480 px» (RT-3399)                                                                |
 | 2026-11-20 | Scenarios renumbered to 1554…1627 after main took 1385…1389 and 1436…1505; the toggle choice left for the subdomain `toggle-choice` (RT-3399) |
 | 2026-11-23 | The multiselect done button moved to the sheet header; the header, cards and height of a sheet are subdomain `sheet-header-cards` (RT-3531)   |
+| 2026-11-25 | A side panel on a phone is a sheet of its own, subdomain `aside/phone-sheet` (RT-3532)                                                        |

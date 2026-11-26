@@ -60,7 +60,8 @@
                 <ng-container [ngTemplateOutlet]="tpl" />
             }
 
-            @if (rightResizable()) {
+            <!-- Шторка телефона во всю ширину окна: ручка ширины в ней не рисуется. -->
+            @if (rightResizable() && !rightSheetActive()) {
                 <rt-resize-handle
                     edge="start"
                     [width]="rightShownWidth()"

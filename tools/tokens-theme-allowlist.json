@@ -196,6 +196,14 @@
       "reason": "2.81:1 at the threshold 4.5:1 — RT-1872: the role colour as text on a surface: the material accent is picked for a filled backdrop, not for a letter on white",
       "task": "RT-1872"
     },
+    "contrast --rt-color-sheet-confirm-apply on --rt-color-bg-surface in the material": {
+      "reason": "3.81:1 at the threshold 4.5:1 — RT-3532: the answer of the sheet question takes the material text button colour, accepted the same for --rt-color-action-primary-on-surface; the dark answer of the base set reaches 6.03:1",
+      "task": "RT-3532"
+    },
+    "contrast --rt-color-sheet-confirm-danger on --rt-color-bg-surface in the material": {
+      "reason": "3.61:1 at the threshold 4.5:1 — RT-3532: the answer of the sheet question takes the material danger text button colour, accepted the same for --rt-color-action-danger-on-surface; the dark answer of the base set reaches 5.61:1",
+      "task": "RT-3532"
+    },
     "contrast --rt-color-state-danger on --rt-color-state-danger-bg in the dark": {
       "reason": "3.19:1 at the threshold 4.5:1 — RT-394: raising the steps to the threshold moves the showcase frames",
       "task": "RT-272"
