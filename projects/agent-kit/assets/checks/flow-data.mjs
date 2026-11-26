@@ -15,7 +15,7 @@
 import { Call, Ref } from './flow-syntax.mjs';
 
 /** The keys of `words`; `nudge` is a pattern, the rest are lists of strings. */
-export const WORD_KEYS = ['stop', 'stopExcept', 'holdAfter', 'nudge', 'write', 'menu', 'legacyBranches'];
+export const WORD_KEYS = ['stop', 'stopExcept', 'holdAfter', 'resume', 'stopInside', 'stay', 'nudge', 'write', 'menu', 'legacyBranches'];
 
 /** The ways a form of the expected result is compared with a run. */
 export const COMPARE = ['exit', 'line', 'regex', 'number'];

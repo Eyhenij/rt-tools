@@ -59,6 +59,28 @@ export function wordOf(entry) {
     return answers.length > 0 ? answers.join('\n') : null;
 }
 
+/** The text the owner typed into a refused call: «… To tell you how to proceed, the user said:\n<text>». */
+const REFUSED_WITH_TEXT = /^The user doesn't want to proceed with this tool use\.[\s\S]*?the user said:\s*\n([\s\S]+)$/;
+
+const refusalOf = (entry) =>
+    ownerEntry(entry) && Array.isArray(entry.message?.content)
+        ? (entry.message.content.map((part) => (part?.type === 'tool_result' ? REFUSED_WITH_TEXT.exec(resultText(part.content).trim())?.[1]?.trim() : null)).find(Boolean) ?? null)
+        : null;
+
+/** The owner's words, oldest first: { text, at, kind } — typed, queued, interrupt, menu or refusal; `at` in ms or null. */
+export function wordsOf(entries) {
+    return entries.flatMap((entry) => {
+        const stamp = Date.parse(entry?.timestamp ?? entry?.attachment?.timestamp ?? '');
+        const at = Number.isFinite(stamp) ? stamp : null;
+        const typed = typedOf(entry);
+        if (typed) return [{ text: typed.text, at, kind: typed.kind }];
+        const refused = refusalOf(entry);
+        if (refused) return [{ text: refused, at, kind: 'refusal' }];
+        const word = wordOf(entry);
+        return word === null ? [] : [{ text: word, at, kind: INTERRUPT_MARK.test(word.trim()) ? 'interrupt' : 'menu' }];
+    });
+}
+
 /** The approving word, in any case; «не одобряю», «не очень одобряю» and «нет одобряю» approve nothing. */
 const APPROVING = /(?<![\p{L}])(?<!(?:не|нет)(?:\s+\p{L}+)?\s+)одобряю(?![\p{L}])/iu;
 
@@ -178,5 +200,5 @@ export function open() {
         }
         return null;
     };
-    return { messages, said: (quote) => messages().some((text) => text.includes(quote)), last };
+    return { messages, said: (quote) => messages().some((text) => text.includes(quote)), last, words: () => wordsOf(entries()) };
 }

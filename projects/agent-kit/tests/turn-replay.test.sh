@@ -297,6 +297,17 @@ stopped 1548-wait-for-neighbour handed "replay: SC-AK-1913 — записанн�
 stopped 1548-stop-at-point stage "replay: SC-AK-1913 — записанное слово «Остановись на логической точке» отпускает ход (SC-AK-1548)"
 stopped 1548-not-now taken "replay: SC-AK-1913 — записанное слово «Не сейчас» отпускает ход (SC-AK-1548)"
 
+# Остановка — состояние над словами записи: по ходу на каждую строку таблицы «Переходы» эпика RT-3602.
+I='the owner interrupted the turn'
+stopped 2012-row1-stop-inside stage "replay: SC-AK-2012 строка 1 — «я же сказал стоп» отпускает ход"
+release 2012-row1-esc stage "replay: SC-AK-2012 строка 1 — Esc отпускает ход" "$I"
+hold 2012-row2-esc-then-question stage "replay: SC-AK-2012 строка 2 — Esc и вопрос через секунду: судится вопрос" "$STAGE" "$STEP"
+release 2012-row3-refusal-esc stage "replay: SC-AK-2012 строка 3 — отказ от вызова с меткой Esc отпускает ход" "$I"
+hold 2012-row4-stop-then-order stage "replay: SC-AK-2012 строка 4 — «хватит тупить, чини» держит ход" "$STAGE" "$STEP"
+for n in question abuse incident; do stopped "2012-row5-stop-then-$n" stage "replay: SC-AK-2012 строка 5 — «стоп», потом $n: остановка стоит"; done
+hold 2012-row6-stop-then-merge stage "replay: SC-AK-2012 строка 6 — «стоп», потом «вливай»: ход держится" "$STAGE" "$STEP"
+stopped 2012-row7-stop-then-no-preference stage "replay: SC-AK-2012 строка 7 — «стоп», потом «без предпочтения»: остановка стоит"
+
 # Разбор промаха: движок держит ход по этапу, а отправку судит хук модели.
 hold 1932-incident-not-sent stage "replay: SC-AK-1932 — разбор записан и не отправлен" "$STAGE" "$STEP"
 hold 1932-incident-sent stage "replay: SC-AK-1932 — разбор записан и отправлен" "$STAGE" "$STEP"

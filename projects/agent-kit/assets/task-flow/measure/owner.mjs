@@ -1,27 +1,108 @@
 /**
- * The measurer «measure.owner» — what the owner's last word says about the turn: a stop, an
+ * The measurer «measure.owner» — what the owner's words say about the turn: a stop that stands, an
  * interrupt, or a push to go on.
+ *
+ * The stop is a state walked over the owner's words of the record, oldest first, not the last word:
+ *
+ *   work    + the Esc mark, a stop signal                          → stopped
+ *   work    + the Esc mark and a message after it within 2 s       → the message alone is judged
+ *   stopped + a question, swearing, «пиши инцидент»                → stopped, the order is carried out
+ *   stopped + a working order, a choice of work in a menu          → work
+ *   any     + «без предпочтения», a notice, a neighbour's message  → unchanged
+ *
+ * Inside one message the last signal decides. A word of `words.stop` signals a stop at the opening of
+ * the message, unless a word of `words.holdAfter` follows it; a word of `words.stopInside` anywhere.
+ * A word of `words.resume` is a working order. A word with «не» before it is no signal. A part of the
+ * message — split by «.», «,», «;» and by «и», «затем», «потом» — that holds a word of `words.stay`
+ * carries no order, while a stop word in it still stops.
  */
-
-/** The owner's last word begins with a stop word of `words.stop`, and nothing after it holds the turn. */
-export function saidStop({ owner }) {
-    return ({ words, rules }) => {
-        const last = owner.last();
-        return last !== null && rules.saysStop(last, words);
-    };
-}
 
 /** The mark the host writes into the record when the owner presses Esc. */
 const INTERRUPT = /^\[Request interrupted by user/;
 
+/** A message after the Esc mark within this many milliseconds interrupted the turn by itself. */
+const ESC_WINDOW = 2000;
+
+const escapeRe = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/** A word of the list as a whole word, with no «не» before it; `prefix` lets a case ending follow. */
+const listRe = (list, prefix = false) =>
+    Array.isArray(list) && list.length > 0
+        ? new RegExp(`(?<![\\p{L}])(?<!не\\s)(?:${list.map(escapeRe).join('|')})${prefix ? '' : '(?![\\p{L}])'}`, 'giu')
+        : null;
+
+const PART_SPLIT = /[.,;]+|\s(?:и|затем|потом)\s/iu;
+
+/** The positions of the matches of `re` in `text`. */
+const at = (re, text) => (re ? [...text.matchAll(re)].map((match) => match.index) : []);
+
+/** The last signal of a message: 'stop', 'resume' or null. */
+export function signalOf(message, words) {
+    const text = message.trim();
+    const signals = [];
+    const head = text.replace(/^[\s\p{P}]+/u, '');
+    const opening = head.match(new RegExp(`^(?:${(words.stop ?? []).map(escapeRe).join('|') || '(?!)'})(?![\\p{L}])`, 'iu'));
+    if (opening) {
+        const hold = listRe(words.holdAfter, true);
+        if (!(hold && hold.test(head.slice(opening[0].length)))) signals.push({ at: text.length - head.length, kind: 'stop' });
+    }
+    const inside = listRe(words.stopInside);
+    const resume = listRe(words.resume);
+    const stay = listRe(words.stay, true);
+    let offset = 0;
+    for (const part of text.split(PART_SPLIT)) {
+        const start = text.indexOf(part, offset);
+        offset = start + part.length;
+        for (const index of at(inside, part)) signals.push({ at: start + index, kind: 'stop' });
+        if (stay && at(stay, part).length > 0) continue;
+        for (const index of at(resume, part)) signals.push({ at: start + index, kind: 'resume' });
+    }
+    signals.sort((a, b) => a.at - b.at);
+    return signals.at(-1)?.kind ?? null;
+}
+
+/** The owner's words as the source gives them; a double with `last` alone gives its one word. */
+const wordsOf = (owner) => {
+    if (typeof owner.words === 'function') return owner.words();
+    const last = owner.last();
+    return last === null ? [] : [{ text: last, at: null, kind: INTERRUPT.test(last.trim()) ? 'interrupt' : 'typed' }];
+};
+
 /**
- * The owner's last word is the interrupt mark of Esc: a turn a background notice wakes after it is
- * released until the owner writes again.
+ * The stop of the owner after their words: { stands, by } — `by` is 'esc' or 'word' while the stop
+ * stands, null otherwise.
  */
+export function stopStands({ owner }, words) {
+    const list = wordsOf(owner);
+    let state = { stands: false, by: null };
+    list.forEach((word, index) => {
+        if (word.kind === 'interrupt') {
+            const next = list[index + 1];
+            const quick = next && next.kind !== 'interrupt' && word.at !== null && next.at !== null && next.at - word.at < ESC_WINDOW;
+            if (!quick) state = { stands: true, by: 'esc' };
+            return;
+        }
+        const signal = signalOf(word.text, words);
+        if (signal === 'stop') state = { stands: true, by: 'word' };
+        else if (signal === 'resume') state = { stands: false, by: null };
+        else if (word.kind === 'menu' && state.stands && !listRe(words.stay, true)?.test(word.text)) state = { stands: false, by: null };
+    });
+    return state;
+}
+
+/** The stop stands, and a word of the owner set it. */
+export function saidStop({ owner }) {
+    return ({ words }) => {
+        const stop = stopStands({ owner }, words);
+        return stop.stands && stop.by === 'word';
+    };
+}
+
+/** The stop stands, and the Esc mark set it: turns a notice wakes are released until a working order. */
 export function interrupted({ owner }) {
-    return () => {
-        const last = owner.last();
-        return last !== null && INTERRUPT.test(last.trim());
+    return ({ words } = {}) => {
+        const stop = stopStands({ owner }, words ?? {});
+        return stop.stands && stop.by === 'esc';
     };
 }
 
