@@ -21,7 +21,7 @@
         align-items: center;
         gap: var(--rt-space-sm);
 
-        /* Глиф Material Symbols для имени без пары в перечне соответствий — лигатура шрифта,
+        /* Глиф Material Symbols для имени вне набора кита — лигатура шрифта,
            которую подключает приложение. Размер 24px — размер lg значка кита. */
         &__glyph {
             display: inline-block;

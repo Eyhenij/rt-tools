@@ -11,6 +11,7 @@ import {
     input,
     InputSignal,
     InputSignalWithTransform,
+    linkedSignal,
     numberAttribute,
     signal,
     Signal,
@@ -22,10 +23,11 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RT_ICON_GLYPH_STRATEGY, RtIconFontService } from './rt-icon-font.service';
 import { resolveIconGlyph } from './rt-icon-glyph.logic';
-import { iconMaterialDrawn } from './rt-icon-material-map';
 import { RT_ICON_MATERIAL_PRESET_SELECTOR } from './rt-icon.const';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtIconRegistry } from './rt-icon.registry';
+import { rtIconSetOf } from './rt-icon-set.service';
+import { IRtIconRef, rtIconDrawn } from './rt-icon-sets.logic';
 
 /* Ступень — свойство, которое приложение задаёт правилом на значке или на его предке; умолчание —
    шаг шкалы размеров кита, те же пиксели, что стояли здесь числом. Имя `--rt-icon-step-*`, а не
@@ -111,7 +113,7 @@ export class RtIconComponent {
     readonly #fontReady: Signal<boolean> = inject(RtIconFontService).ready;
 
     /**
-     * Набор, объявленный разметкой над этим значком.
+     * Признак material в разметке над этим значком.
      *
      * Читается у разметки, а не выбирается стилями: ссылку на символ спрайта CSS подменить нечем,
      * и второй `<use>` рядом с первым тоже не годится — он вечно указывает на символ, за которым
@@ -123,7 +125,7 @@ export class RtIconComponent {
      * Один раз после первой отрисовки: на сервере разметки нет вовсе, а признак набора страница
      * по ходу жизни не переставляет — его ставит приложение своей разметкой.
      */
-    readonly #preset: WritableSignal<IRtIcon.Preset> = signal<IRtIcon.Preset>('base');
+    readonly #underMaterial: WritableSignal<boolean> = signal<boolean>(false);
 
     /** Чем рисуется значок: именем кита или лигатурой шрифта. Ни имени, ни глифа — пустое место. */
     protected readonly resolved: Signal<IRtIcon.Resolved | null> = computed((): IRtIcon.Resolved | null =>
@@ -146,27 +148,29 @@ export class RtIconComponent {
         pending: !this.#fontReady(),
     }));
 
+    /** Набор, которым рисуется этот значок. */
+    protected readonly iconSet: Signal<string> = rtIconSetOf(this.#underMaterial);
+
+    /* Рисунок, который значок просит сейчас, и приехал ли он. */
+    readonly #asked: Signal<IAskedDrawing> = computed((): IAskedDrawing => {
+        const name: IRtIcon.Name | null = this.kitName();
+        const target: IRtIconRef | null = name === null ? null : this.#registry.drawing(name, this.iconSet(), this.fill());
+
+        return { target, ready: target !== null && this.#registry.ready(target.id)() };
+    });
+
+    /* Рисунок на экране: при смене набора старый держится, пока не приехал новый. */
+    readonly #drawn: Signal<IRtIconRef | null> = linkedSignal<IAskedDrawing, IRtIconRef | null>({
+        source: this.#asked,
+        computation: (asked: IAskedDrawing, previous?: { value: IRtIconRef | null }): IRtIconRef | null =>
+            asked.target === null
+                ? null
+                : rtIconDrawn(previous?.value ?? null, asked.target, (id: string): boolean => this.#registry.ready(id)()),
+    });
+
     protected readonly href: Signal<string | null> = computed((): string | null => {
-        const name: IRtIcon.Name | null = this.kitName();
-        return name === null ? null : this.#registry.symbolHref(name, this.drawing());
-    });
-
-    /**
-     * Набор, которым рисуется этот значок. Материальный закрывает не все имена кита — он слой
-     * переопределений, как набор оформления: имя без материального рисунка рисуется своим, и это
-     * не пробел.
-     */
-    protected readonly preset: Signal<IRtIcon.Preset> = computed((): IRtIcon.Preset => {
-        const name: IRtIcon.Name | null = this.kitName();
-        return this.#preset() === 'material' && name !== null && iconMaterialDrawn.has(name) ? 'material' : 'base';
-    });
-
-    /** Рисунок значка: залитый бывает только у материального набора, свой набор заливки не знает. */
-    protected readonly drawing: Signal<IRtIcon.Drawing> = computed((): IRtIcon.Drawing => {
-        if (this.preset() === 'base') {
-            return 'base';
-        }
-        return this.fill() ? 'material-fill' : 'material';
+        const drawn: IRtIconRef | null = this.#drawn();
+        return drawn === null ? null : `#${drawn.id}`;
     });
 
     /** Длина CSS стороны значка: ступень — её свойство `--rt-icon-step-*`, число — пиксели. */
@@ -192,14 +196,14 @@ export class RtIconComponent {
     public readonly name: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
 
     /**
-     * Имя Material вместо имени кита. Как оно рисуется — парой из перечня кита или лигатурой
-     * шрифта Material Symbols — решает настройка `glyphStrategy` у `provideRtIcons()`. Шрифт
+     * Значок строкой вместо имени кита. Нарисовать его рисунком кита или лигатурой шрифта
+     * Material Symbols — решает настройка `glyphStrategy` у `provideRtIcons()`. Шрифт
      * приложение подключает само; семья берётся из свойства `--rt-icon-glyph-font`.
      */
     public readonly glyph: InputSignal<string | null> = input<string | null>(null);
 
     /**
-     * Как рисовать имя Material у этого значка. Перекрывает `glyphStrategy` из `provideRtIcons()`;
+     * Как рисовать `glyph` у этого значка. Перекрывает `glyphStrategy` из `provideRtIcons()`;
      * `null` — берётся настройка приложения. Дефолт `null`.
      */
     public readonly glyphStrategy: InputSignal<IRtIcon.GlyphStrategy | null> = input<IRtIcon.GlyphStrategy | null>(null);
@@ -247,7 +251,7 @@ export class RtIconComponent {
         effect((): void => {
             const name: IRtIcon.Name | null = this.kitName();
             if (name !== null) {
-                this.#registry.request(name, this.drawing());
+                this.#registry.request(name, this.iconSet(), this.fill());
             }
         });
 
@@ -255,10 +259,15 @@ export class RtIconComponent {
         // контейнер с признаком набора рисует то же приложение.
         afterNextRender((): void => {
             if (this.#host.nativeElement.closest(RT_ICON_MATERIAL_PRESET_SELECTOR)) {
-                this.#preset.set('material');
+                this.#underMaterial.set(true);
             }
         });
     }
 }
 
 type TRotateInput = number | string | null;
+
+interface IAskedDrawing {
+    readonly target: IRtIconRef | null;
+    readonly ready: boolean;
+}

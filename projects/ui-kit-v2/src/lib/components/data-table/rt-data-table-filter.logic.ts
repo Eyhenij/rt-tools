@@ -8,17 +8,17 @@ export type TRtDataTableFilterValue = TRtFilterValue;
 const DATA_TABLE_EMPTY_MODE: TRtFilterEmptyMode = 'falsy';
 
 /**
- * Значок вида сравнения — имя первого кита; набор кита рисует его по перечню соответствий.
+ * Значок вида сравнения — имя кита.
  * «Начинается с» и «заканчивается на» первый кит объявлял, но значка и пункта меню им не давал.
  */
 export const DATA_TABLE_FILTER_OPERATOR_GLYPHS: Readonly<Record<TFilterOperatorType, string | null>> = {
-    [EFilterOperatorType.EQUALS]: 'drag_handle',
-    [EFilterOperatorType.NOT_EQUALS]: 'block',
+    [EFilterOperatorType.EQUALS]: 'equals',
+    [EFilterOperatorType.NOT_EQUALS]: 'ban',
     [EFilterOperatorType.STARTS_WITH]: null,
     [EFilterOperatorType.ENDS_WITH]: null,
-    [EFilterOperatorType.CONTAINS]: 'more_horiz',
-    [EFilterOperatorType.GREATER_THAN]: 'chevron_right',
-    [EFilterOperatorType.LESS_THAN]: 'chevron_left',
+    [EFilterOperatorType.CONTAINS]: 'ellipsis-h',
+    [EFilterOperatorType.GREATER_THAN]: 'chevron-right',
+    [EFilterOperatorType.LESS_THAN]: 'chevron-left',
 };
 
 /** Пункты меню видов сравнения в порядке первого кита. */

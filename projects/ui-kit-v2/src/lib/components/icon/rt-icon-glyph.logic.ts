@@ -1,4 +1,3 @@
-import { iconMaterialMap, IRtIconMaterialEntry } from './rt-icon-material-map';
 import { iconsName } from '@rt-tools/ui-kit-v2/core';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 
@@ -12,16 +11,9 @@ export function isKitIconName(name: string): name is IRtIcon.Name {
     return KIT_NAMES.has(name);
 }
 
-/** Пара имени Material из перечня кита; `null` — пары нет или имени нет. */
-export function materialPairOf(glyph: string | null | undefined): IRtIcon.Name | null {
-    if (!glyph) {
-        return null;
-    }
-    return iconMaterialMap.find((entry: IRtIconMaterialEntry): boolean => entry.from === glyph)?.to ?? null;
-}
-
-function kitOrPairOf(glyph: string): IRtIcon.Name | null {
-    return isKitIconName(glyph) ? glyph : materialPairOf(glyph);
+/** Значение `glyph`, равное имени кита; `null` — такого рисунка в ките нет. */
+export function kitNameOf(glyph: string | null | undefined): IRtIcon.Name | null {
+    return glyph && isKitIconName(glyph) ? glyph : null;
 }
 
 /** Имя кита, которое шрифт нарисовать не может: дефис или заглавная буква. Лигатура — `null`. */
@@ -32,11 +24,11 @@ function unlettered(glyph: string): IRtIcon.Name | null {
 /**
  * Чем рисуется значок: своим рисунком кита или лигатурой шрифта Material.
  *
- * Имя кита выигрывает у имени Material, если названы оба. Имя Material по способу `map-first`
- * берёт пару из перечня, а без пары — шрифт; по способу `font` — шрифт сразу. Имя кита, которое шрифт
- * нарисовать не может (`ico-plus`, `docBox`), и по способу `font` рисуется рисунком кита: иначе в
- * значке стоит текст имени. Имя кита, совпавшее с лигатурой (`search`), по `font` — шрифт. Материальный рисунок
- * для пары выбирает уже сам значок по признаку набора над собой: это не дело разбора.
+ * Имя кита выигрывает у `glyph`, если названы оба. По способу `map-first` значение `glyph`, равное
+ * имени кита, рисуется рисунком кита, а любое другое — шрифтом Material: перевода имён Material в
+ * имена кита кит не делает. По способу `font` — шрифт сразу, но имя кита, которое шрифт нарисовать
+ * не может (`ico-plus`, `docBox`), рисуется рисунком кита: иначе в значке стоит текст имени. Имя
+ * кита, совпавшее с лигатурой (`search`), по `font` — шрифт.
  *
  * `null` — значку нечего рисовать.
  */
@@ -51,6 +43,6 @@ export function resolveIconGlyph(
     if (!glyph) {
         return null;
     }
-    const pair: IRtIcon.Name | null = strategy === 'map-first' ? kitOrPairOf(glyph) : unlettered(glyph);
-    return pair === null ? { kind: 'font', glyph } : { kind: 'kit', name: pair };
+    const kit: IRtIcon.Name | null = strategy === 'map-first' ? kitNameOf(glyph) : unlettered(glyph);
+    return kit === null ? { kind: 'font', glyph } : { kind: 'kit', name: kit };
 }

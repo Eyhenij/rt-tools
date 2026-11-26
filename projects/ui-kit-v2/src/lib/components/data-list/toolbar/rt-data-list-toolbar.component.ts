@@ -31,7 +31,6 @@ import { TNullable } from '@rt-tools/utils';
 
 import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { RtCheckboxComponent } from '@rt-tools/ui-kit-v2/checkbox';
-import { dataTableIconName } from '@rt-tools/ui-kit-v2/data-table';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
@@ -42,11 +41,6 @@ const BEM_BLOCK: string = 'rt-data-list-toolbar';
 
 /** Набранное уходит приложению через эту задержку; очистка поля уходит сразу. */
 const TOOLBAR_SEARCH_DELAY_MS: number = 500;
-
-/** Значок кнопки — по имени первого кита: перечень соответствий кита даёт ему рисунок. */
-function iconOf(glyph: string, fallback: IRtIcon.Name): IRtIcon.Name {
-    return dataTableIconName(glyph) ?? fallback;
-}
 
 /**
  * Панель действий списка `rt-data-list` — панель первого кита без Material.
@@ -100,10 +94,10 @@ export class RtDataListToolbarComponent {
         computed(() => ({ count: this.selectedEntitiesCount() }))
     );
 
-    protected readonly clearFiltersIcon: IRtIcon.Name = iconOf('block', 'ban');
-    protected readonly refreshIcon: IRtIcon.Name = iconOf('sync', 'sync');
-    protected readonly tableConfigIcon: IRtIcon.Name = iconOf('view_column', 'table');
-    protected readonly searchIcon: IRtIcon.Name = iconOf('search', 'search');
+    protected readonly clearFiltersIcon: IRtIcon.Name = 'ban';
+    protected readonly refreshIcon: IRtIcon.Name = 'sync';
+    protected readonly tableConfigIcon: IRtIcon.Name = 'table';
+    protected readonly searchIcon: IRtIcon.Name = 'search';
 
     /** Набранное в поиске: поле — не сигнал, и без этой записи пересчёта по нему не будет. */
     readonly #searchText: WritableSignal<string> = signal('');

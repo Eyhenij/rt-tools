@@ -31,7 +31,7 @@ export function themeAppConfig(context: TKcContext, i18n: TKcMessages, page: Typ
             provideRtUtils(),
             provideRtStorage(),
             provideRtKit({ global: { theme: 'auto' } }),
-            provideRtIcons(`${context.url.resourcesPath}/dist/icons`),
+            provideRtIcons({ sets: [{ name: 'kit', url: `${context.url.resourcesPath}/dist/icons` }] }),
             provideRtKitLabels({ translator: signal(kitTranslatorFor(languageTag)), locale: signal(languageTag) }),
             // The service puts the theme mark on the page root, and the system theme applies from
             // the first frame rather than when the switch is drawn.

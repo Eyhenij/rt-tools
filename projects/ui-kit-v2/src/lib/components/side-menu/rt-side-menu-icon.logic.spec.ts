@@ -7,13 +7,12 @@ describe('rt-side-menu — значок пункта', (): void => {
         expect(sideMenuIconName('cog')).toBe('cog');
     });
 
-    it('SC-UKV-531 — имя Material рисуется своей парой из перечня кита', (): void => {
-        expect(sideMenuIconName('settings')).toBe('cog');
-        expect(sideMenuIconName('arrow_forward')).toBe('arrow-right');
-        expect(sideMenuIconName('add')).toBe('ico-plus');
-        expect(sideMenuIconName('home')).toBe('home');
-        expect(sideMenuIconName('insert_chart')).toBe('chart-bar');
-    });
+    it.each<[string]>([['settings'], ['arrow_forward'], ['add'], ['insert_chart']])(
+        'SC-UKV-1880 — имя первого кита %s значка пункту меню не даёт',
+        (icon: string): void => {
+            expect(sideMenuIconName(icon)).toBeNull();
+        }
+    );
 
     it('SC-UKV-531 — имя, которого кит не рисует, и пустое имя значка не дают', (): void => {
         expect(sideMenuIconName('rocket_launch')).toBeNull();
@@ -24,14 +23,14 @@ describe('rt-side-menu — значок пункта', (): void => {
 
 describe('rt-side-menu — о каких значках предупредить', (): void => {
     const items: IRtSideMenu.Item[] = [
-        { id: 1, icon: 'settings', name: 'Настройки' },
+        { id: 1, icon: 'cog', name: 'Настройки' },
         {
             id: 2,
             icon: 'rocket_launch',
             name: 'Запуски',
             submenu: [
                 { id: 21, icon: 'stadia_controller', name: 'Игры', link: '/a', iconButton: { icon: 'qr_code_scanner' } },
-                { id: 22, icon: 'rocket_launch', name: 'Повтор', link: '/b', iconButton: { icon: 'arrow_forward' } },
+                { id: 22, icon: 'rocket_launch', name: 'Повтор', link: '/b', iconButton: { icon: 'arrow-right' } },
             ],
         },
     ];
@@ -46,6 +45,6 @@ describe('rt-side-menu — о каких значках предупредить
     });
 
     it('SC-UKV-533 — меню, где кит рисует всё, предупреждать не о чем', (): void => {
-        expect(unpairedSideMenuIcons([{ id: 1, icon: 'cog', iconButton: { icon: 'add' } }], false)).toEqual([]);
+        expect(unpairedSideMenuIcons([{ id: 1, icon: 'cog', iconButton: { icon: 'ico-plus' } }], false)).toEqual([]);
     });
 });

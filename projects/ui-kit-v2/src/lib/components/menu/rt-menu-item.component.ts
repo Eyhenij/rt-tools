@@ -30,7 +30,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { RtDialogService } from '@rt-tools/ui-kit-v2/dialog';
-import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { IRtIconSetScope, RT_ICON_SET_SCOPE, RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
@@ -135,6 +135,8 @@ export class RtMenuItemComponent {
     readonly #dialogService: RtDialogService = inject(RtDialogService);
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #errors: ErrorHandler = inject(ErrorHandler);
+    /* Набор значков той части, где объявлен пункт: подтверждение берёт его, а не смотрит на фокус. */
+    readonly #iconSetScope: IRtIconSetScope | null = inject(RT_ICON_SET_SCOPE, { optional: true });
 
     readonly #confirmRequestSource: Subject<IRtMenu.ConfirmData> = new Subject<IRtMenu.ConfirmData>();
 
@@ -150,7 +152,7 @@ export class RtMenuItemComponent {
     /** Свой значок приложения — `<ng-template rtMenuItemIcon>` внутри пункта. */
     protected readonly ownIcon: Signal<RtMenuItemIconDirective | undefined> = contentChild(RtMenuItemIconDirective);
 
-    /** Значок пункта: свой `icon`, а без него — пара имени Material из перечня кита. */
+    /** Значок пункта: свой `icon`, а без него — `glyph`, если это имя кита. */
     protected readonly iconName: Signal<IRtIcon.Name | null> = computed((): IRtIcon.Name | null =>
         menuItemIconName(this.icon(), this.glyph())
     );
@@ -180,8 +182,8 @@ export class RtMenuItemComponent {
     });
 
     /**
-     * Имя значка Material, как его пишет пункт меню первого кита (`check_circle`). Рисует его набор
-     * кита через перечень соответствий; `icon` сильнее, а имя без пары рисует пункт без значка.
+     * Значок пункта строкой — для имён, приходящих данными. Рисуется, когда это имя кита; `icon`
+     * сильнее, а имя вне набора рисует пункт без значка.
      */
     public readonly glyph: InputSignal<string | null> = input<string | null>(null);
 
@@ -234,14 +236,14 @@ export class RtMenuItemComponent {
     public readonly selected: OutputEmitterRef<void> = output<void>();
 
     constructor() {
-        // Имя Material без пары рисует пункт без значка, и пропуск без предупреждения не заметен.
+        // `glyph` вне набора кита рисует пункт без значка, и пропуск без предупреждения не заметен.
         if (isDevMode()) {
             effect((): void => {
                 const glyph: string | null = unpairedGlyph(this.icon(), this.glyph(), this.ownIcon() !== undefined);
                 if (glyph !== null) {
                     // eslint-disable-next-line no-console -- предупреждение разработчику приложения: другого канала у кита нет
                     console.warn(
-                        `rt-menu-item «${this.label()}»: у значка Material «${glyph}» нет пары в перечне кита. ` +
+                        `rt-menu-item «${this.label()}»: значка «${glyph}» нет в наборе кита. ` +
                             'Задайте icon или свой значок через <ng-template rtMenuItemIcon>.'
                     );
                 }
@@ -267,7 +269,10 @@ export class RtMenuItemComponent {
                     return code.pipe(
                         mergeMap((dialog: Type<RtMenuConfirmDialogComponent>): Observable<boolean | undefined> =>
                             this.#dialogService
-                                .open<RtMenuConfirmDialogComponent, IRtMenu.ConfirmData, boolean>(dialog, { data })
+                                .open<RtMenuConfirmDialogComponent, IRtMenu.ConfirmData, boolean>(dialog, {
+                                    data,
+                                    iconSet: this.#iconSetScope?.set() ?? null,
+                                })
                                 .afterClosed()
                         ),
                         // Сбой загрузки куска не убивает поток подтверждений: ошибка идёт приложению,

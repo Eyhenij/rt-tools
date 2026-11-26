@@ -4,7 +4,7 @@ import { StoryPresetsComponent } from '../../../../../showcase/story-presets.com
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { CATEGORY_ORDER, categoryOf, TIconCategory } from '../../icon-categories';
-import { iconMaterialDrawn, iconMaterialMap, IRtIconMaterialEntry } from '../../rt-icon-material-map';
+import { iconMaterialDrawn } from '../../rt-icon-sets';
 import { iconsName } from '../../rt-icon-names';
 import { RtIconComponent } from '../../rt-icon.component';
 import { IRtIcon } from '../../rt-icon.model';
@@ -20,7 +20,6 @@ export type TIconMatrixPart =
     | 'preset-axes'
     | 'material-set'
     | 'material-themes'
-    | 'migration-map'
     | 'glyph'
     | 'spin-pixels'
     | 'themes';
@@ -208,53 +207,25 @@ interface IIconCategoryGroup {
                 </p>
             }
 
-            @case ('migration-map') {
-                <app-story-presets caption="Чем закрывается значок первого кита: имя оттуда — рисунок отсюда в обоих наборах">
-                    <ng-template>
-                        <app-story-themes>
-                            <ng-template>
-                                <div class="app-icon-matrix__map">
-                                    @for (entry of materialMap; track entry.from) {
-                                        <div class="app-icon-matrix__pair">
-                                            @if (entry.to) {
-                                                <rt-icon size="lg" [name]="entry.to" />
-                                            } @else {
-                                                <span class="app-icon-matrix__gap">—</span>
-                                            }
-                                            <code>{{ entry.from }}</code>
-                                        </div>
-                                    }
-                                </div>
-                            </ng-template>
-                        </app-story-themes>
-                    </ng-template>
-                </app-story-presets>
-
-                <p class="app-icon-matrix__note">
-                    Прочерк — имя, которому рисунка в наборе нет вовсе: его дорисовывают. Пара выбрана по смыслу, и смотреть её надо
-                    глазами: проверка держит только то, что имя существует и файл на месте.
-                </p>
-            }
-
             @case ('glyph') {
-                <app-story-presets caption="Имя Material на входе glyph в обоих наборах">
+                <app-story-presets caption="Вход glyph в обоих наборах">
                     <ng-template>
-                        <app-story-row caption="С парой в перечне кита — рисунок кита" [items]="pairedGlyphs">
+                        <app-story-row caption="Имя кита — рисунок кита" [items]="pairedGlyphs">
                             <ng-template let-glyph>
                                 <rt-icon size="lg" [glyph]="glyph" />
                             </ng-template>
                         </app-story-row>
-                        <app-story-row caption="Без пары — лигатура шрифта" [items]="unpairedGlyphs">
+                        <app-story-row caption="Не имя кита — лигатура шрифта" [items]="unpairedGlyphs">
                             <ng-template let-glyph>
                                 <rt-icon size="lg" [glyph]="glyph" />
                             </ng-template>
                         </app-story-row>
-                        <app-story-row caption="Без пары, залитый — вход fill" [items]="unpairedGlyphs">
+                        <app-story-row caption="Не имя кита, залитый — вход fill" [items]="unpairedGlyphs">
                             <ng-template let-glyph>
                                 <rt-icon size="lg" fill [glyph]="glyph" />
                             </ng-template>
                         </app-story-row>
-                        <app-story-row caption="С парой, но glyphStrategy font у значка — лигатура" [items]="pairedGlyphs">
+                        <app-story-row caption="Имя кита, но glyphStrategy font у значка" [items]="pairedGlyphs">
                             <ng-template let-glyph>
                                 <rt-icon size="lg" glyphStrategy="font" [glyph]="glyph" />
                             </ng-template>
@@ -314,13 +285,6 @@ interface IIconCategoryGroup {
         }
     `,
     styles: `
-        .app-icon-matrix__note {
-            max-width: 46rem;
-            color: var(--rt-color-text-muted);
-            font-size: 0.8125rem;
-            line-height: 1.6;
-        }
-
         .app-icon-matrix__map {
             display: flex;
             flex-wrap: wrap;
@@ -334,11 +298,11 @@ interface IIconCategoryGroup {
             font-size: 0.75rem;
         }
 
-        .app-icon-matrix__gap {
-            display: inline-flex;
-            justify-content: center;
-            width: 1.5rem;
+        .app-icon-matrix__note {
+            max-width: 46rem;
             color: var(--rt-color-text-muted);
+            font-size: 0.8125rem;
+            line-height: 1.6;
         }
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -379,9 +343,6 @@ export class TestRtIconMatrixComponent {
     public readonly socialNames: readonly IRtIcon.Name[] = iconsName.filter((name: IRtIcon.Name): boolean => categoryOf(name) === 'Social');
     public readonly rotations: readonly (number | null)[] = [null, 90, 180, 270];
 
-    /** Перечень соответствия значков первого кита: пару выбирают по смыслу, и смотрят её глазами. */
-    public readonly materialMap: readonly IRtIconMaterialEntry[] = iconMaterialMap;
-
     /** Имена, у которых материальный рисунок есть: только их и показывает пара наборов. */
     public readonly materialDrawn: readonly IRtIcon.Name[] = [...iconMaterialDrawn].sort(
         (left: IRtIcon.Name, right: IRtIcon.Name): number => left.localeCompare(right)
@@ -393,10 +354,10 @@ export class TestRtIconMatrixComponent {
         names: iconsName.filter((name: IRtIcon.Name): boolean => categoryOf(name) === category),
     })).filter((group: IIconCategoryGroup): boolean => group.names.length > 0);
 
-    /** Имена Material с парой в перечне кита: рисуются рисунком кита. */
-    public readonly pairedGlyphs: readonly string[] = ['arrow_back', 'add', 'account_circle', 'close'];
+    /** Имена кита на входе glyph: рисуются рисунком кита. */
+    public readonly pairedGlyphs: readonly string[] = ['arrow-left', 'ico-plus', 'ico-user', 'close'];
 
-    /** Имена Material без пары: рисуются лигатурой шрифта. */
+    /** Имена Material, которых в ките нет: рисуются лигатурой шрифта. */
     public readonly unpairedGlyphs: readonly string[] = ['pets', 'savings', 'rocket_launch'];
 
     /** Размеры между ступенями и крупнее последней — то, чего ступени не дают. */

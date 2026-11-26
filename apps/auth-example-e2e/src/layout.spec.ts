@@ -93,7 +93,26 @@ test.describe('the correspondence of the records screen', () => {
         }
     });
 
-    test('SC-AUTH-120 — the sprite symbols of the records screen carry SVG shapes and nothing that runs', async ({ page }) => {
+    test('SC-AUTH-122 — every icon of the records screen points to a symbol of the sprite', async ({ page }) => {
+        await signIn(page, 'reader');
+        await expect(page.getByTestId('records-chat')).toContainText('Can I check out at two?');
+        // A name the kit does not have leaves a reference to a symbol that never arrives. Every icon
+        // of the screen is walked, not only the icons inside buttons.
+        const icons: () => Promise<{ total: number; empty: string[] }> = async () =>
+            page.locator('svg use').evaluateAll((nodes: Element[]) => {
+                const hrefs: string[] = nodes.map((node: Element): string => node.getAttribute('href') ?? '');
+
+                return {
+                    total: hrefs.length,
+                    empty: hrefs.filter((href: string): boolean => !document.getElementById(href.slice(1))),
+                };
+            });
+
+        await expect.poll(async (): Promise<number> => (await icons()).total).toBeGreaterThan(2);
+        await expect.poll(async (): Promise<string[]> => (await icons()).empty).toEqual([]);
+    });
+
+    test('SC-AUTH-120 —the sprite symbols of the records screen carry SVG shapes and nothing that runs', async ({ page }) => {
         await signIn(page, 'reader');
         await expect(page.getByTestId('records-chat')).toContainText('Can I check out at two?');
         // The symbols arrive by request after the screen is drawn: the two buttons of the screen
