@@ -1,7 +1,8 @@
 import { ComponentRef, ErrorHandler, Injector, Type, ViewContainerRef } from '@angular/core';
 
 import type { RtBottomSheetConfirmComponent } from './rt-bottom-sheet-confirm.component';
-import { IRtSheetConfirmAnswers, IRtSheetConfirmLabels, RT_SHEET_CONFIRM_ANSWERS } from './rt-bottom-sheet.model';
+import { IRtSheetConfirmAnswers, RT_SHEET_CONFIRM_ANSWERS } from './rt-bottom-sheet-confirm.answers';
+import { IRtSheetConfirmLabels } from './rt-bottom-sheet.model';
 
 /** Код экрана вопроса шторки: пришедший класс и обещание, которое его ждёт. */
 interface ISheetConfirmCode {
@@ -44,12 +45,16 @@ export async function rtPreloadSheetConfirm(): Promise<void> {
 export class RtSheetConfirmPlace {
     readonly #errors: ErrorHandler;
     readonly #injector: Injector;
+    readonly #answers: IRtSheetConfirmAnswers;
     #ref: ComponentRef<RtBottomSheetConfirmComponent> | null = null;
     /** Слова показанного вопроса; `null` — вопрос снят. */
     #labels: IRtSheetConfirmLabels | null = null;
+    /** Шторка ещё жива: пришедший после её конца код экран не ставит. */
+    #alive: boolean = true;
 
     constructor(errors: ErrorHandler, parent: Injector, answers: IRtSheetConfirmAnswers) {
         this.#errors = errors;
+        this.#answers = answers;
         this.#injector = Injector.create({ providers: [{ provide: RT_SHEET_CONFIRM_ANSWERS, useValue: answers }], parent });
     }
 
@@ -78,12 +83,26 @@ export class RtSheetConfirmPlace {
         }
         rtLoadSheetConfirm().then(
             (type: Type<RtBottomSheetConfirmComponent>): void => {
-                if (this.#labels !== null && this.#ref === null) {
+                if (this.#alive && this.#labels !== null && this.#ref === null) {
                     this.#draw(slot, type, this.#labels, titleId);
                 }
             },
-            (error: unknown): void => this.#errors.handleError(error)
+            (error: unknown): void => {
+                this.#errors.handleError(error);
+                // Без кода вопроса шторка не стоит закрытой для касаний: вопрос снимается, правка остаётся.
+                if (this.#alive && this.#labels !== null) {
+                    this.#answers.stay();
+                }
+            }
         );
+    }
+
+    /** Шторка ушла: экран убирается, а код, пришедший позже, его уже не ставит. */
+    public destroy(): void {
+        this.#alive = false;
+        this.#labels = null;
+        this.#ref?.destroy();
+        this.#ref = null;
     }
 
     #draw(slot: ViewContainerRef, type: Type<RtBottomSheetConfirmComponent>, labels: IRtSheetConfirmLabels, titleId: string): void {

@@ -44,8 +44,21 @@
   сценариев SC-UKV-1757, SC-UKV-1761, SC-UKV-1795 в этом наборе: план назвал набор по памяти, а сценарии живут в
   `rt-bottom-sheet-focus.spec.ts` (1757), `rt-date-picker-sheet.spec.ts` (1761) и `rt-multiselect-sheet.spec.ts`
   (1795); этот набор держит SC-UKV-1785…1787 вопроса перед закрытием; все пять наборов зелёные.
-- `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-confirm.loader.ts` outgoing 0 → 2 — превышение:
-  загрузчик берёт ещё модель шторки ради токена ответов `RT_SHEET_CONFIRM_ANSWERS`, без подписок в методе.
+- `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-confirm.loader.ts` outgoing 0 → 3 — превышение:
+  загрузчик берёт модель шторки ради слов вопроса и внутренний файл `rt-bottom-sheet-confirm.answers.ts` ради токена
+  ответов `RT_SHEET_CONFIRM_ANSWERS`, без подписок в методе; токен вынесен из модели, чтобы не уйти в точку входа кита.
+- `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-confirm.loader.ts` — превышение бюджета: 114 lines
+  against up to 40 — after round one the place also takes the question off on a failed load and stops drawing after
+  the sheet is gone; the sheet file stays at 500 lines.
+- **Правки после первого круга ревью** — qa-engineer, goal-critic, product-strategist. Fixed: a failed load of the
+  question code left the sheet inert (now `stay()`, SC-UKV-1920); a sheet removed mid-load drew the question on a
+  dead slot (`RtSheetConfirmPlace.destroy`); the prefetch also starts for a sheet with `confirmLabels` (the aside asks
+  by `ask()`); the radio placeholder keeps the 16 px of the radio; `prefetch on idle` as the decision named; the answers
+  token left the kit's entry; `check:specs` bound the focus to the moved `confirmFirst`. Written off: no
+  `aria-describedby` on the question — the template of RT-3706 had none, outside this task. Weight after the fixes
+  206874 bytes (+353: select +109, bottom-sheet +207, the rest the build), written by `--write` under the owner's
+  «Увелич лимит». The new numbers are named in the kit changelog; the token growth of the epic (`tokens.css` +6261,
+  `tokens.scope.css` +5232, `tokens.base.css` +1029) goes into the PR body.
 - **The showcase snapshots of the sheets, two runs** — `node tools/visual-gate.mjs ui-kit-v2 --affected
   RT-3530-phone-sheets`. Run one: 674 of 674 frames match, 10 tests red with «Target crashed» in
   `page-header-vertical.stories.ts` and `popover.stories.ts`. Run two (466 s): 640 of 642 frames match, 27 tests red,

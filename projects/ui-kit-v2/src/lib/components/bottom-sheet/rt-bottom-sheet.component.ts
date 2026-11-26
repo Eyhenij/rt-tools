@@ -318,7 +318,7 @@ export class RtBottomSheetComponent {
             }
         });
         // Шторка, которая может спросить, берёт код вопроса, как только открыта; показан — ставит экран.
-        effect((): void => (this.open() && this.unsaved() ? this.#confirmPlace.prefetch() : undefined));
+        effect((): void => (this.open() && (this.unsaved() || this.confirmLabels()) ? this.#confirmPlace.prefetch() : undefined));
         effect((): void => {
             const slot: ViewContainerRef | undefined = this.confirmSlot();
             const labels: IRtSheetConfirmLabels | null = this.confirming() ? this.confirmText() : null;
@@ -329,6 +329,7 @@ export class RtBottomSheetComponent {
             this.#stack.remove(this);
             this.#setScrollLock(false);
             this.#returnFocus();
+            this.#confirmPlace.destroy();
         });
     }
 

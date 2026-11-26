@@ -416,3 +416,14 @@ Then it puts the field of that kind under its label, and the field carries the m
 story finds the button that opens its sheet
 
 Covered: `projects/ui-kit-v2/src/lib/components/date-picker/stories/component/test-rt-date-sheet.component.spec.ts`.
+
+### SC-UKV-1920 — the question before closing waits for its code and never locks the sheet
+
+Given a sheet with a choice not applied, whose question code has not arrived yet
+When the person closes it before the code arrives
+Then the question is drawn once when the code arrives, with the focus on «Apply»; a sheet removed while
+the code is on its way draws no question; a code that fails to load takes the question off, the sheet
+stays open and answers touches, and the error goes to the application's error handler
+
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-confirm-lazy.spec.ts`,
+`projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-confirm-failure.spec.ts`.

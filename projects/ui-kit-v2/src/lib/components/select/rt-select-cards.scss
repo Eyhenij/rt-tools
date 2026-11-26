@@ -47,6 +47,10 @@
 
         &__mark {
             flex-shrink: 0;
+
+            // Место радиокнопки (её индикатор — --rt-size-4), пока код в пути: подпись не меняет ширину.
+            min-block-size: var(--rt-size-4);
+            min-inline-size: var(--rt-size-4);
         }
     }
 }

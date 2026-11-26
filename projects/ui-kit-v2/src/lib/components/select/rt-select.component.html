@@ -167,7 +167,7 @@
                         @if (cards()) {
                             <!-- Радиокнопка кита только показывает выбор: нажатие принимает карточка, клавиши ведёт поле.
                                  Её код приходит с первыми карточками, а не со стартом приложения. -->
-                            @defer (on immediate) {
+                            @defer (on immediate; prefetch on idle) {
                                 <rt-radio-button
                                     rtElem="mark"
                                     qa-dataid="select-option-mark"
