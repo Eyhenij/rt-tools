@@ -2,8 +2,8 @@
 # The scenarios of the Angular Doctor threshold check: the verdict on the JSON the tool prints and
 # the writing of the threshold. The tool does not scan the tree here — the output is written out by
 # `--input`, so that every verdict is reachable, the failed and the degraded run among them. It runs
-# only on the probe, four times, half a second each: once whole and once without the constructs of
-# each source.
+# on the probe, four times, half a second each: once whole and once without the constructs of each
+# source. The scenarios of the dot directories, in a file of their own, run it four times more.
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 echo "the Angular Doctor threshold check"
@@ -226,7 +226,7 @@ misuse "an angularDoctor field with a key other than the report path is refused"
 # probe and the tool run, so the copy of the check refuses at once.
 OWN="$WORK/own"
 mkdir -p "$OWN/tools"
-cp "$CHECK" "$TOOLS/check-ngdoctor-pass.mjs" "$TOOLS/check-ngdoctor-settings.mjs" "$OWN/tools/"
+cp "$CHECK" "$TOOLS/check-ngdoctor-pass.mjs" "$TOOLS/check-ngdoctor-settings.mjs" "$TOOLS/ngdoctor-dot-dirs.mjs" "$OWN/tools/"
 CHECK_OWN="$OWN/tools/check-ngdoctor.mjs"
 own_refuses() {
     local label="$1" reason="$2" got
@@ -459,6 +459,8 @@ if grep -q "oxlint 2 files, 2 package.json, 0 stylesheets" "$WORK/said.txt"; the
 fi
 report "the pass counts its package.json files and stylesheets" "$got" "counted"
 rm -rf "$PASS/sub" "$PASS/coverage" "$PASS/package.json"
+
+. "$(dirname "${BASH_SOURCE[0]}")/check-ngdoctor-dot-dirs.sh"
 
 misuse "--pass-root without a saved output is refused" "give --input too" --pass-root "$PASS"
 misuse "--pass-oxlint without --pass-root is refused" "give --pass-root too" "${T[@]}" --pass-oxlint "$WORK/fake-oxlint.mjs"

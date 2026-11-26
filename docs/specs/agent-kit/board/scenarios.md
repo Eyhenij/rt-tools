@@ -110,11 +110,11 @@ Covered: `projects/agent-kit/tests/checks-board-pull.test.sh`.
 
 Given an open task whose body names no epic and carries no word of the owner about work outside one
 When the work queue audit runs
-Then it names the task by a line of its own and names both lines that fix it
+Then it names the task by a line of its own and names every line that fixes it
 
-Given the body carries the word of the owner about work outside an epic
+Given the body carries the line of work outside an epic
 When the same audit runs
-Then it stays silent: work outside an epic is lawful, and only the owner names it as such
+Then it stays silent: such work is named by the owner or is the only task of its grill
 
 Given the card carries the label of an epic
 When the same audit runs

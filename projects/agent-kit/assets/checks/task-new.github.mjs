@@ -16,6 +16,7 @@
  *   npm run task:new -- --epic --title 'Delivery goes by epics' --slug work-by-epics
  *   npm run task:new -- --epic-of 1921 --title '…' --slug command-creates-epic
  *   npm run task:new -- --outside-epic 'the owner asked for it apart' --title '…'
+ *   npm run task:new -- --single --title '…' --slug mail-owner-silence
  *
  * The body is read from standard input. The author and the assignee are the bot account, the same
  * one the commits go from; `--assignee` overrides the assignee.
@@ -33,11 +34,13 @@
  * its base. Both are written here and not left to the executor's hand: the shape of the line is
  * read by a machine from two sides at once, and the base of the branch is otherwise taken from the
  * working copy, where at that minute any branch may be checked out.
+ *
+ * With `--single` the task is the only one of its grill: `task-new-single.mjs` reads the count from the
+ * draft, and the body gets the line of work outside an epic without a word of the owner about it.
  */
-import { cpSync, existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { readFileSync } from 'node:fs';
 
+import { SINGLE_WORDS, outsideReasonOf } from './board-epic-link.mjs';
 import { planPathOf } from './board-epic-plan.mjs';
 import {
     BACKLOG_OPTION_ID,
@@ -54,8 +57,8 @@ import {
     ghJson,
     graphql,
     numberFromTitle,
-    unstampFolder,
 } from './board.mjs';
+import { adoptDraft } from './board-task-dirs.mjs';
 import { layEpicPlan } from './task-new-epic.mjs';
 import { confirmInQueue } from './task-new-queue.mjs';
 import { CONFIG } from './rt-kit-checks.config.mjs';
@@ -68,13 +71,21 @@ import { CONFIG } from './rt-kit-checks.config.mjs';
 const EPIC_LABEL = CONFIG.board?.epicLabel ?? '';
 const PLANS_DIR = CONFIG.plansDir ?? '';
 
+/** A text taken from a flag is not the next flag: `--outside-epic --single` named neither. */
+function textOf(flag, value) {
+    if (value?.startsWith('--')) {
+        fail(`${flag} takes a text, and «${value}» is a flag`);
+    }
+    return value;
+}
+
 function parseArgs(argv) {
-    const args = { labels: [], assignee: BOT, title: null, slug: null, epic: false, epicOf: null, outsideEpic: null };
+    const args = { labels: [], assignee: BOT, title: null, slug: null, epic: false, epicOf: null, outsideEpic: null, single: false };
     for (let index = 0; index < argv.length; index += 1) {
         const value = argv[index + 1];
         switch (argv[index]) {
             case '--title':
-                args.title = value;
+                args.title = textOf(argv[index], value);
                 index += 1;
                 break;
             case '--label':
@@ -92,12 +103,15 @@ function parseArgs(argv) {
             case '--epic':
                 args.epic = true;
                 break;
+            case '--single':
+                args.single = true;
+                break;
             case '--epic-of':
                 args.epicOf = Number(value);
                 index += 1;
                 break;
             case '--outside-epic':
-                args.outsideEpic = value ?? '';
+                args.outsideEpic = textOf(argv[index], value ?? '');
                 index += 1;
                 break;
             default:
@@ -134,9 +148,17 @@ if (args.slug !== null && !/^[a-z0-9][a-z0-9-]*$/.test(args.slug)) {
     fail('slug is lowercase latin letters, digits and dashes: the branch name is read in a list of fifty lines');
 }
 
+/** The only task of a grill is judged by the module of that kind; its neighbours and its slug — here. */
+if (args.single && (args.epic || args.epicOf !== null || args.outsideEpic !== null)) {
+    fail('--single goes with none of --epic, --epic-of, --outside-epic: it is the only task of its grill, and neither an epic nor a word of the owner is needed');
+}
+if (args.single && !args.slug) {
+    fail('--slug <short-slug> is required for --single: the draft of the grill is found by it');
+}
+
 /**
  * A task outside an epic is not created — that is the whole of the requirement, and the refusal
- * carries both lawful ways out of it, because in the shape «name the epic» alone it is read as
+ * carries the lawful ways out of it, because in the shape «name the epic» alone it is read as
  * "there is no way out" and gets bypassed by a call to the hosting past this command.
  *
  * The owner's word is the second way, and it goes into the call as text: work outside an epic
@@ -146,9 +168,9 @@ if (args.slug !== null && !/^[a-z0-9][a-z0-9-]*$/.test(args.slug)) {
  * A tree that has not named the epic label lives as before: there epics do not exist at all, and
  * demanding one of every task would stop the work of every such tree on the day of installation.
  */
-if (EPIC_LABEL && !args.epic && args.epicOf === null && args.outsideEpic === null) {
+if (EPIC_LABEL && !args.single && !args.epic && args.epicOf === null && args.outsideEpic === null) {
     fail(
-        'a task outside an epic is not taken. Two ways: name the epic — `--epic-of <number>` — or name the word of the owner about work outside an epic — `--outside-epic "<the reason of the owner>"`'
+        'a task outside an epic is not taken. Three ways: name the epic — `--epic-of <number>`; the only task of its grill — `--single`; the word of the owner about work outside an epic — `--outside-epic "<the reason of the owner>"`'
     );
 }
 if (args.outsideEpic !== null && args.outsideEpic.trim() === '') {
@@ -278,14 +300,37 @@ function epicBranchOf(plan, epicNumber) {
 }
 
 const epic = args.epicOf === null ? null : epicOfCard(args.epicOf);
+const written = readBody();
+const said = (error) => fail(String(error.message ?? error));
+// Taken by its own call alone: a tree without the engine or the assignments creates its tasks as before.
+const single = args.single ? await import('./task-new-single.mjs').catch(said) : null;
+if (single) {
+    const fault = await single.singleFault({ folders: [`_draft-${args.slug}`], body: () => written, token }).catch(said);
+    if (fault !== null) {
+        fail(fault);
+    }
+    if (outsideReasonOf(written) !== null && outsideReasonOf(written) !== SINGLE_WORDS) {
+        fail(`the body already stands outside an epic by «${outsideReasonOf(written)}»: a word of the owner goes by --outside-epic`);
+    }
+}
 const body = [
-    readBody(),
+    single ? single.withSingleLine(written) : written,
     args.epic ? `План эпика — ${planPath}` : '',
     epic ? `Задача эпика #${args.epicOf}, план — ${epic.plan}` : '',
     args.outsideEpic ? `Работа вне эпика — ${args.outsideEpic}` : '',
 ]
     .filter((part) => part !== '')
     .join('\n\n');
+
+// The words of --single are read as a count of the grill, so no other call writes them.
+if (!single && outsideReasonOf(body)?.toLowerCase() === SINGLE_WORDS) {
+    fail(`«${SINGLE_WORDS}»: these words are written by --single, which reads the count of tasks from the grill`);
+}
+
+// What the audit and the engine read off the card is asked here: a word they do not read leaves a task of no epic.
+if (args.outsideEpic !== null && outsideReasonOf(body) === null) {
+    fail('--outside-epic "<the reason of the owner>": the reason stands on one line and is no placeholder in angle brackets');
+}
 
 let number = null;
 try {
@@ -350,62 +395,8 @@ try {
 
 const branch = args.slug ? `${TASK_KEY}-${number}-${args.slug}` : `${TASK_KEY}-${number}-<short-slug>`;
 
-/**
- * The task folder is renamed here, because the number and the branch name are known at this moment
- * for the only time in the whole work. The grill of the owner's request goes before the task is
- * created — until the grill is over it is not even known how many tasks will come out of it — and
- * lies in `docs/tasks/_draft-<slug>`. Left as a draft, it stays outside the history, and the next
- * session does not find it: the startup hook looks for the folder by the branch name.
- */
-
-function adoptDraft() {
-    if (!args.slug) {
-        console.log(`\nThe task folder: --slug is not set, there is nothing to rename the draft by.`);
-        return;
-    }
-    const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-    const draft = join(root, 'docs/tasks', `_draft-${args.slug}`);
-    const target = join(root, 'docs/tasks', branch);
-
-    if (existsSync(target)) {
-        console.log(`\nThe task folder is already in place: docs/tasks/${branch}/`);
-    } else if (existsSync(draft)) {
-        renameSync(draft, target);
-        // The draft too is assembled from the sample, and the header in it is the same: it is
-        // taken off here as well.
-        unstampFolder(target);
-        console.log(`\nThe task folder: docs/tasks/_draft-${args.slug}/ → docs/tasks/${branch}/`);
-    } else {
-        const template = join(root, 'docs/tasks/_template');
-
-        if (!existsSync(template)) {
-            console.log(`\nThere is no task folder and nothing to assemble it from: the sample ${'docs/tasks/_template'} does not lie in the tree`);
-            return;
-        }
-
-        cpSync(template, target, { recursive: true });
-        unstampFolder(target);
-        console.log(`\nThe task folder is assembled from the sample: docs/tasks/${branch}/`);
-    }
-
-    // The header of the plan is read by a guard: by it the guard finds the product agreement. The
-    // number in it is set right here — by hand it is copied over from a hint and mistyped.
-    const plan = join(target, 'plan.md');
-    if (!existsSync(plan)) {
-        return;
-    }
-    const before = readFileSync(plan, 'utf8');
-    // The key is read under two names: the package sample is English, and a tree folder created
-    // before the layer was translated is Russian. It is written in English.
-    const after = before.replace(/^\*\*(?:Task|Задача):\*\*.*$/m, `**Task:** ${TASK_KEY}-${number} · **Branch:** ${branch}`);
-    if (after !== before) {
-        writeFileSync(plan, after);
-        console.log(`The header of the plan is filled in: docs/tasks/${branch}/plan.md`);
-    }
-}
-
 if (!args.epic) {
-    adoptDraft();
+    adoptDraft({ slug: args.slug, branch, number });
 }
 
 console.log(`[${TASK_KEY}-${number}] ${args.title}`);
@@ -427,7 +418,7 @@ const epicSent = args.epic && layEpicPlan({ title: args.title, number, branch, p
  * base named here saves the executor from taking it from the working copy, where any branch may be
  * checked out at that minute.
  */
-const base = args.epic ? ` origin/${CONFIG.deploy?.mainBranch || 'main'}` : epic?.branch ? ` ${epic.branch}` : '';
+const base = args.epic || args.single ? ` origin/${CONFIG.deploy?.mainBranch || 'main'}` : epic?.branch ? ` ${epic.branch}` : '';
 if (epic && !epic.branch) {
     console.error(`task-new: the plan «${epic.plan}» does not name the branch of the epic — the base of the branch is taken by hand, and it is the branch of the epic, not the main one`);
 }

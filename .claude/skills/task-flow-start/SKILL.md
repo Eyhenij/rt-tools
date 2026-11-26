@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load at the start of work from the owner — exploration before the first question, the six mandatory questions, the product agreement, creating the task, the branch and the folder. Returning to work — pattern task-flow-resume.
 ---
-<!-- rt-kit v0.40.0 · patterns/task-flow-start.md · 11b3e77ebfa6 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · patterns/task-flow-start.md · c841fe908ee9 · правится надстройкой, не здесь -->
 
 # Starting the work
 
@@ -35,7 +35,7 @@ Led by the main agent: a subagent cannot reach the owner. The command is `/grill
 
 ### State `договорённость-записана`: a series of tasks is declared an epic
 
-The grill ended with one task — no epic is declared for it: it goes into the epic in work, or, by the owner's word, outside any epic with `--outside-epic`.
+The grill says how many tasks it gave, by the line `**Tasks of the grill:** <number>`. The grill gave one task — no epic is declared for it: it goes into the epic in work; a copy with no open epic creates it with `--single`. Beside an open epic a small order goes outside it only by the owner's word, with `--outside-epic`.
 
 ### State `договорённость-записана`: the task, the branch, the folder
 

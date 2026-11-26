@@ -63,8 +63,17 @@ rt_push_docs_only() {
 # Named for the steps of the builder, the styles linter and the heavy steps — frames, end-to-end
 # suites, stands and image builds — and by the same narrow sign as a branch of texts. The checks of
 # texts and of the tree are not named: they are what reads such a commit.
+#
+# The scenarios of the tree's checks work in fixtures of their own and open no record of this tree:
+# with those paths taken away, and with garbage in their place, they gave the same count of green ones.
+# The markdown files of the root stay in their key. A commit of the progress ran them again, 83 s.
 rt_push_check_unread() {
     case "$1" in
+        *'tools/tests/run.sh'*)
+            printf '%s\n' ':(top,exclude)docs/plans' ':(top,exclude)docs/archive' \
+                ':(top,exclude,glob)docs/tasks/RT-*/**' ':(top,exclude,glob)docs/tasks/_draft-*/**' \
+                ':(top,exclude).claude/rt-kit/assignments.md'
+            ;;
         *'nx affected'* | *'lint:styles'* | *visual-gate* | *':e2e'* | *'serve:auth'* | *'docker build'*)
             printf '%s\n' ':(top,exclude)docs/plans' ':(top,exclude)docs/archive' \
                 ':(top,exclude,glob)docs/tasks/RT-*/**' ':(top,exclude,glob)docs/tasks/_draft-*/**' \

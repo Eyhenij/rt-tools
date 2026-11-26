@@ -84,7 +84,7 @@
     },
     agreement: {
       title: 'договорённость-записана',
-      action: 'create the task, the branch from the epic branch, and the folder',
+      action: 'create the task, the branch from its base, and the folder',
       pattern: 'task-flow-start',
       exit: measure.task.taken,
     },

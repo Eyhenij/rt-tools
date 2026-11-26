@@ -90,7 +90,8 @@ surface of a component is invisible to a machine — that is reading and the rul
 - `pnpm run test:stories:v2` — the sweep over all the showcase's stories: an empty showing
   and drawing errors.
 - `node tools/visual-gate.mjs ui-kit-v2` — the showcase's frames: it builds the showcase, serves it
-  as files and shoots with a browser raised in an image; `--update` re-takes them by the same road.
+  as files and shoots with a browser raised in an image. `--affected <base>` takes the stories the branch
+  touched, `--update` re-takes the frames by the same road.
   `pnpm run test:visual:v2` called on its own refuses and names this command.
 - `pnpm run build-storybook:ui-kit-v2` — the only thing that checks the showcase config.
 - `pnpm exec nx run message-bus-admin-e2e:e2e` — the admin panel's end-to-end suite together with

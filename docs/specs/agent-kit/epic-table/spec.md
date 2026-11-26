@@ -53,6 +53,9 @@ owner as it is.
   declares no other epic, because it is the epic: it is recognised by the label of an epic card. The
   answer «the task declares no epic» read there as a broken card rather than as a question asked the
   wrong way.
+- **On the branch of work outside an epic the answer names that work.** The advice to write the epic into
+  the card read there as a broken card. The code stays 1 in both modes: the stop guard reads 0 as an
+  answer about an epic.
 - **What the task is about is taken from the plan, and its name from the card.** The plan says in one
   phrase what the task does, the card carries the wording agreed with the owner: neither replaces the
   other.
@@ -162,3 +165,4 @@ of the tree, not written into the command.
   not by the memory of the session.
 - 2026-11-11 — the paragraph above the table is also taken from the section «Что даёт», which the
   draft of the plan writes; scenario SC-AK-1341.
+- 2026-11-25 — work outside an epic is named such; scenario SC-AK-1987.

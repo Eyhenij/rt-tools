@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow-handover
 description: Pattern of rule task-flow-handover. Load when the texts are up to date and the task folder is taken apart by the last commit before the PR opens. The move to the archive, the work queue audit, the rules review of the closed work and what to do with the findings.
 ---
-<!-- rt-kit v0.40.0 · patterns/task-flow-archive.md · 609f7102de83 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · patterns/task-flow-archive.md · 35d82d4b24de · правится надстройкой, не здесь -->
 
 # Taking the task folder apart and the rules review of the work
 
@@ -43,3 +43,16 @@ The role's reply lives in the conversation and dies with it, so it lands on disk
 - **The folder is taken apart before the PR opens — later nobody remembers it.**
 - **The folder is taken apart by the last commit, after the push gate has passed whole.**
 - **No plan on disk after the taking-apart, and the folder is not assembled again.**
+
+## The record in this tree
+
+The record is built by a command, not copied: the copying of the grill and the `rm -r` the cold part
+shows for one's own folder are not used here, the rule `archive-record` holds its inputs and refusals.
+
+```bash
+npm run task:archive -- <body of the PR> --title '<title of the PR>'
+```
+
+The sorting stands before it: a standing requirement is moved into the layer, and the decisions of
+the progress name where each went. The taking apart of someone else's folder still goes by hand: the
+command takes the folder of its own branch.

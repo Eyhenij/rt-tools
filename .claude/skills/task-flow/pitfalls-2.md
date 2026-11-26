@@ -1,4 +1,4 @@
-<!-- rt-kit v0.40.0 · pitfalls/task-flow.2.md · a74438dd179a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · pitfalls/task-flow.2.md · 04642a672d41 · правится надстройкой, не здесь -->
 # Work conduct — cold part, second file
 
 The sections the rule `task-flow` handed over when it was cut to its statements and split in
@@ -84,7 +84,7 @@ flowchart TD
     F --> Z
     Z -->|No| Y[The epic is declared: a card, all its tasks and a plan — then its branch from the main branch]
     Z -->|Yes| G[Task, branch from the epic branch, task folder by branch name; the epic card moves with its first task]
-    Z -->|The owner's word about work outside an epic| X[Task, branch from the main branch, task folder by branch name]
+    Z -->|The grill gave one task, or the owner's word for work outside an epic| X[Task, branch from the main branch, task folder by branch name]
     X --> H
     Y --> G
     G --> H[A plan with stages; not edited after it is written]
@@ -323,7 +323,6 @@ before the push, and the rule `task-delivery-loop` adds it on top of the states 
 
 - **The rule `task-delivery-loop` is loaded as the first action of work on a task.** The gate
   demands it on an edit of a task folder or an epic plan and on the delivery commands.
-- **Every change passes a live check and two review rounds before the push.** Fresh readers take
-  the whole diff against the base; confirmed findings are fixed in the same branch.
-- **The loop has no exceptions.** A task of texts, a config or a tool goes through it like one with
-  screens, and so does the task that opens an epic.
+- **Every change passes a live check and the review its path asks for before the push.** One round on
+  the light path, a second by risk on the full one (the owner's word of 24.11.2026); fixes stay in the branch.
+- **Every task goes through it.** A task of texts, a config or a tool, the one that opens an epic and one outside it.

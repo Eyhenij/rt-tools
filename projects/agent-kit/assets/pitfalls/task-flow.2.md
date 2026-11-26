@@ -83,7 +83,7 @@ flowchart TD
     F --> Z
     Z -->|No| Y[The epic is declared: a card, all its tasks and a plan — then its branch from the main branch]
     Z -->|Yes| G[Task, branch from the epic branch, task folder by branch name; the epic card moves with its first task]
-    Z -->|The owner's word about work outside an epic| X[Task, branch from the main branch, task folder by branch name]
+    Z -->|The grill gave one task, or the owner's word for work outside an epic| X[Task, branch from the main branch, task folder by branch name]
     X --> H
     Y --> G
     G --> H[A plan with stages; not edited after it is written]
