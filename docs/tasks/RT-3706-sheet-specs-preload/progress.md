@@ -3,17 +3,18 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 4 — Specs wait for the sheet code
-- **Done:** the owner approved the plan: «Одобряю план»; plan-red wrote the approval mark. The red
-  baseline: 4 failed, 38 passed of 42; check-specs 7 divergences; Angular Doctor 2 new findings; kit
-  weight 185800 → 218731.
-- **Next step:** 1.1; the way for the kit weight (stage 4) waits for the owner's word.
+- **Stage:** 1 of 1 — Specs wait for the sheet code; done
+- **Done:** the owner approved the plan: «Одобряю план». 1.1 — the four specs 42 of 42; 1.2 — the kit
+  suite exit 0. Piece (a) — `node tools/check-specs.mjs` exit 0; piece (b) — `pnpm run check:ngdoctor`
+  exit 0 (score 94.75, equal to the threshold), the wrapper spec 4 of 4, `pnpm run check:unused` exit 0.
+- **Next step:** piece (c), the kit weight 185800 → 218731, waits for the owner's word: accept the growth
+  or cut it by a task of its own.
 - **PR:** not open yet
 
 ## Steps
 
 - [x] 1.1 Add `await rtPreloadPopoverSheet()` in `beforeAll` of the four sheet specs
-- [>] 1.2 Run the whole kit suite
+- [x] 1.2 Run the whole kit suite
 
 ## Decisions along the way
 
