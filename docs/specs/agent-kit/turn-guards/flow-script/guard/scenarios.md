@@ -266,3 +266,14 @@ When it is written
 Then it passes
 
 Covered: `projects/agent-kit/tests/flow-decision.test.sh`.
+
+### SC-AK-2004 — the guard judges a call on a machine without `timeout`
+
+Given a machine whose commands hold no `timeout`: only `gtimeout`, only perl, or none of the three
+When an edit marks a step done by hand, an edit leaves the marks as they are, or a plan with a
+hidden check is written
+Then the hand mark is refused with the command of the step, the plain edit passes, and the plan write
+is refused with the pipe named; `gtimeout` is called with the limit 60, perl with `alarm` and 60, and
+with none of them the engine runs without a limit
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
