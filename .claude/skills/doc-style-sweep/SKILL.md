@@ -4,7 +4,7 @@ kind: pattern
 rule: doc-style
 description: Pattern of rule doc-style. Load when a document has accumulated a list of work and must be sorted into what still holds and what is closed. The selection sign, a pass over the statements, a check against the work queue, the fate of the file itself. New text — pattern doc-style-write.
 ---
-<!-- rt-kit v0.40.0 · patterns/doc-style-sweep.md · eb878203c868 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.0 · patterns/doc-style-sweep.md · eb878203c868 · правится надстройкой, не здесь -->
 
 # Sorting a document that has accumulated a work list
 

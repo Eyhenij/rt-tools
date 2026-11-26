@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the task folder, the plan, its steps and the progress. Load on any edit of a task folder and on a plan refusal. Pattern task-flow-resume.
 ---
-<!-- rt-kit v0.40.0 · rules/task-flow-plan.md · b0e06bbd7654 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.0 · rules/task-flow-plan.md · b0e06bbd7654 · правится надстройкой, не здесь -->
 
 # Work conduct — the folder, the plan and the progress
 
