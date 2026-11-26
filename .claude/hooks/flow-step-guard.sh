@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.40.0 · hooks/flow-step-guard.sh · 110848087b3b · правится надстройкой, не здесь
+# rt-kit v0.40.0 · hooks/flow-step-guard.sh · b804926b7e60 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash
 # Requires: checks/task-flow-script.mjs, checks/flow-plan.mjs, checks/decide.mjs, hooks/decide.sh, hooks/deny-tail.sh, hooks/facts.sh
 # PreToolUse guard of the course of work: the scenario moves by a measurement, not by a declaration.
@@ -48,11 +48,35 @@ done
 dir="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)"
 [ -d "$dir" ] || dir="${CLAUDE_PROJECT_DIR:-.}"
 
-verdict="$(cd "$dir" && printf '%s' "$input" | timeout 60 node "$engine" guard 2>/dev/null)" || exit 0
+# The engine runs under the first time limiter the machine has. A Mac without GNU coreutils has no
+# `timeout`: the call of a missing command failed, `|| exit 0` took it for a failed engine, and every
+# edit passed unjudged. With no limiter at all the engine runs without a limit — judged late beats
+# not judged.
+# A limiter counts only when it runs: bash 3.2 names a file without the exec bit, and its failed
+# call would pass the edit the same way.
+rt_runs() {
+    local path
+    path="$(command -v "$1" 2>/dev/null)" && [ -x "$path" ]
+}
+rt_limited() {
+    local limit="$1"
+    shift
+    if rt_runs timeout; then
+        timeout "$limit" "$@"
+    elif rt_runs gtimeout; then
+        gtimeout "$limit" "$@"
+    elif rt_runs perl; then
+        perl -e 'alarm shift; exec @ARGV' "$limit" "$@"
+    else
+        "$@"
+    fi
+}
+
+verdict="$(cd "$dir" && printf '%s' "$input" | rt_limited 60 node "$engine" guard 2>/dev/null)" || exit 0
 # A plan is judged when it is written: a check that is a pipe without `pipefail` or counts an absence by
 # `grep -c` measures nothing, and the decision names its rows. An approved plan is not asked again.
 [ -n "$verdict" ] || case "$(printf '%s' "$input" | jq -r '.tool_input.file_path // empty' 2>/dev/null)" in
-    */plan.md) verdict="$(cd "$dir" && printf '%s' "$input" | timeout 60 node "$(dirname "$engine")/flow-plan.mjs" written 2>/dev/null)" || exit 0 ;;
+    */plan.md) verdict="$(cd "$dir" && printf '%s' "$input" | rt_limited 60 node "$(dirname "$engine")/flow-plan.mjs" written 2>/dev/null)" || exit 0 ;;
 esac
 [ -n "$verdict" ] || exit 0
 

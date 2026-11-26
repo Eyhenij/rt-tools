@@ -13,76 +13,7 @@ TMPS=()
 cleanup() { rm -rf "${TMPS[@]}"; }
 trap cleanup EXIT
 
-# Дерево задачи на ветке: план с проверками, ход работы, коммит плана. Довод — имя ветки.
-task_repo() {
-    local repo="$(fixture_repo_branched main "$1")" folder="docs/tasks/$1"
-    TMPS+=("$repo")
-    fixture_commit "$repo" "$folder/plan.md" "$(plan_text "${2:-checks}")" "docs: план"
-    mkdir -p "$repo/docs/plans"
-    printf '%s' "$repo"
-}
-
-# План с двумя шагами одного этапа; `bare` — без строк проверки, `edits <путь>` — со строкой следа.
-plan_text() {
-    printf '# План\n\n## Task footprint\n\n| Layer | What |\n| --- | --- |\n'
-    [ "$1" = edits ] && printf '| Code (правится) | `%s` |\n' "$2"
-    printf '\n## Stages\n\n### 1. Этап\n\n- **Шаги:**\n    1. Первый шаг\n'
-    [ "$1" = bare ] || printf '       Проверка: `true` → exit 0\n'
-    printf '    2. Второй шаг\n'
-    [ "$1" = bare ] || printf '       Проверка: `true` → exit 0\n'
-}
-
-progress_text() {
-    printf '# Ход работы\n\n## Где мы\n\n- **State:** `%s`\n\n## Шаги\n\n- [%s] 1.1 Первый шаг\n- [%s] 1.2 Второй шаг\n' "$1" "$2" "$3"
-}
-
-# Вход правки: инструмент, путь, старая и новая строка (для Write — содержимое), каталог, запись.
-edit_input() {
-    jq -n --arg t "$1" --arg f "$2" --arg o "$3" --arg n "$4" --arg d "$5" --arg r "${6:-}" '
-        {session_id:"tests",tool_name:$t,cwd:$d,transcript_path:$r,
-         tool_input:(if $t == "Write" then {file_path:$f,content:$n} else {file_path:$f,old_string:$o,new_string:$n} end)}'
-}
-shell_input() {
-    jq -n --arg c "$1" --arg d "$2" --arg r "${3:-}" '{session_id:"tests",tool_name:"Bash",cwd:$d,transcript_path:$r,tool_input:{command:$c}}'
-}
-
-# Запись разговора с последним словом владельца: набранное сообщение или выбранный вариант меню.
-said() {
-    local file="$(mktemp)"
-    TMPS+=("$file")
-    jq -cn --arg t "$1" '{type:"user",message:{role:"user",content:$t}}' > "$file"
-    printf '%s' "$file"
-}
-chose() {
-    local file="$(mktemp)"
-    TMPS+=("$file")
-    jq -cn --arg t "$1" '{type:"user",message:{role:"user",content:[{type:"tool_result",tool_use_id:"x",content:"answered"}]},toolUseResult:{answers:{"Что делаем?":$t}}}' > "$file"
-    printf '%s' "$file"
-}
-
-# Зелёная метка шага: её пишет только движок, набор кладёт её как готовую.
-green_mark() { mkdir -p "$1/.git/rt-kit/steps/$2" && printf '{"matched":true}\n' > "$1/.git/rt-kit/steps/$2/$3.json"; }
-# Каталоги записей разговоров лежат в своём доме: движок ищет одобрение только в них.
-export RT_FLOW_RECORDS_HOME="$(mktemp -d)/.claude/projects"
-mkdir -p "$RT_FLOW_RECORDS_HOME"
-TMPS+=("${RT_FLOW_RECORDS_HOME%/.claude/projects}")
-records_dir() { printf '%s/%s' "$RT_FLOW_RECORDS_HOME" "$(cd "$1" && pwd -P | sed 's#[/.]#-#g')"; }
-# Метка одобрения с местом ответа: запись в каталоге записей копии и uuid её записи. Доводы: дерево,
-# ветка, ответ на месте (по умолчанию — одобряющий), uuid в метке, путь записи.
-approve() {
-    local repo="$1" branch="$2" task="${2%%-[a-z]*}" dir rec sha
-    local said="${3:-Одобряю план $task}"
-    dir="$(records_dir "$repo")"
-    mkdir -p "$dir"
-    rec="${5:-$dir/session.jsonl}"
-    jq -cn --arg t "$said" '{type:"user",uuid:"a1",toolUseResult:{answers:{"Одобряешь?":$t}}}' > "$rec"
-    sha="$(git -C "$repo" log --diff-filter=A --format=%H -- "docs/tasks/$branch/plan.md" | tail -1)"
-    mkdir -p "$repo/.git/rt-kit/approval"
-    jq -cn --arg a "Одобряю план $task" --arg p "$sha" --arg r "$rec" --arg u "${4:-a1}" \
-        '{answer:$a,plan:$p,place:{record:$r,uuid:$u}}' > "$repo/.git/rt-kit/approval/$branch.json"
-}
-
-d() { expect_decision "$1" "$GUARD" "$2" "$3"; }
+. "$(dirname "${BASH_SOURCE[0]}")/flow-step-guard-lib.sh"
 
 # --- guard: отметки хода работы --------------------------------------------------------------
 B=RT-7-probe
@@ -432,6 +363,95 @@ mkdir -p "$(dirname "$F6")"
 printf '({})\n' > "$F6"
 d "protect: SC-AK-1530 — план, добавленный раньше движка, со строкой «(правится)» на этот путь — правка проходит" "$(edit_input Edit "$F6" '({})' '({ })' "$R6")" PASS
 d "protect: SC-AK-1728 — ветка закрытого списка без метки с местом — правка проходит" "$(edit_input Edit "$F6" '({})' '({ })' "$R6")" PASS
+
+# --- ограничитель времени: страж судит и без `timeout` -----------------------------------------
+# Каталог команд случая — ссылки на всё из PATH, кроме `timeout`, `gtimeout` и perl; ограничитель
+# вида кладётся заглушкой, которая пишет свои доводы в отметку и передаёт ход дальше.
+REAL_PERL="$(command -v perl)"
+LIMIT_BASE="$(mktemp -d)"
+TMPS+=("$LIMIT_BASE")
+# Каталог PATH берётся абсолютным: под nx первым стоит `./node_modules/.bin`, и ссылка из него вела
+# в никуда, а имя команды было уже занято.
+( IFS=:; for dir in $PATH; do dir="$(cd "$dir" 2>/dev/null && pwd)" || continue; for f in "$dir"/*; do n="${f##*/}"
+    case "$n" in timeout | gtimeout | perl) continue ;; esac
+    [ -x "$f" ] && [ ! -e "$LIMIT_BASE/$n" ] && ln -s "$f" "$LIMIT_BASE/$n"; done; done )
+# Каталог вида: $1 — имя переменной для пути, дальше — заглушки вида: gtimeout, perl или ни одной.
+# Каталог заводится в этой оболочке, а не в подстановке: иначе его не видит уборка по выходу.
+limit_bin() {
+    local var="$1" bin
+    shift
+    bin="$(mktemp -d)/bin"
+    TMPS+=("${bin%/bin}")
+    cp -RP "$LIMIT_BASE" "$bin"
+    for stub in "$@"; do
+        case "$stub" in
+            timeout | gtimeout) printf '#!/bin/sh\necho "%s $*" >> "%s"\nshift\nexec "$@"\n' "$stub" "${bin%/bin}/mark" > "$bin/$stub" ;;
+            # Ограничитель без права на запуск: bash 3.2 всё равно называет его в `command -v`.
+            noexec-gtimeout) printf '#!/bin/sh\necho "gtimeout $*" >> "%s"\n' "${bin%/bin}/mark" > "$bin/gtimeout"; continue ;;
+            perl) printf '#!/bin/sh\necho "perl $*" >> "%s"\nexec "%s" "$@"\n' "${bin%/bin}/mark" "$REAL_PERL" > "$bin/perl" ;;
+        esac
+        chmod +x "$bin/$stub"
+    done
+    printf -v "$var" '%s' "$bin"
+}
+B8=RT-11-limits
+R8="$(task_repo "$B8")"
+TMPS+=("$R8")
+P8="$R8/docs/tasks/$B8/progress.md"
+progress_text 'этап-идёт' '>' ' ' > "$P8"
+limit_bin K1 gtimeout
+limit_bin K2 perl
+limit_bin K3
+limit_bin K4 gtimeout perl
+limit_bin K5 noexec-gtimeout perl
+limit_bin K6 timeout gtimeout perl
+PATH_KEEP="$PATH"
+PLAN8="$(printf '# Plan\n\n## Decision\n\nNo decision: probe fixture\n\n## Stages\n\n### 1. Этап\n\n- **Steps:**\n    1. Первый шаг\n       Check: `cat a.txt | tail -1` → `готово`\n')"
+
+PATH="$K1"
+d "guard: SC-AK-2004 — только gtimeout: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
+expect_reason "guard: SC-AK-2004 — только gtimeout: отказ называет команду шага" "$GUARD" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" 'task-flow-script.mjs step 1.1'
+d "guard: SC-AK-2004 — только gtimeout: законная правка проходит" "$(edit_input Edit "$P8" '# Ход работы' '# Ход работы.' "$R8")" PASS
+d "guard: SC-AK-2004 — только gtimeout: запись плана со скрытой проверкой отказана" "$(edit_input Write "$R8/docs/tasks/$B8/plan.md" '' "$PLAN8" "$R8")" deny
+PATH="$PATH_KEEP"
+report "guard: SC-AK-2004 — только gtimeout: отметка вызова записи плана под пределом" "$(grep -q '^gtimeout 60 node .*flow-plan.mjs written' "${K1%/bin}/mark" 2>/dev/null && echo есть || echo нет)" есть
+report "guard: SC-AK-2004 — только gtimeout: отметка вызова с пределом 60" "$(grep -q '^gtimeout 60 node ' "${K1%/bin}/mark" 2>/dev/null && echo есть || echo нет)" есть
+
+PATH="$K2"
+d "guard: SC-AK-2004 — только perl: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
+d "guard: SC-AK-2004 — только perl: запись плана со скрытой проверкой отказана" "$(edit_input Write "$R8/docs/tasks/$B8/plan.md" '' "$PLAN8" "$R8")" deny
+expect_reason "guard: SC-AK-2004 — только perl: отказ записи плана называет трубу" "$GUARD" "$(edit_input Write "$R8/docs/tasks/$B8/plan.md" '' "$PLAN8" "$R8")" 'a pipe without'
+expect_reason "guard: SC-AK-2004 — только perl: отказ называет команду шага" "$GUARD" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" 'task-flow-script.mjs step 1.1'
+d "guard: SC-AK-2004 — только perl: законная правка проходит" "$(edit_input Edit "$P8" '# Ход работы' '# Ход работы.' "$R8")" PASS
+PATH="$PATH_KEEP"
+report "guard: SC-AK-2004 — только perl: отметка вызова с alarm и пределом 60" "$(grep -q '^perl -e alarm shift; exec @ARGV 60 node ' "${K2%/bin}/mark" 2>/dev/null && echo есть || echo нет)" есть
+report "guard: SC-AK-2004 — только perl: отметка вызова записи плана под пределом" "$(grep -q '^perl -e alarm shift; exec @ARGV 60 node .*flow-plan.mjs written' "${K2%/bin}/mark" 2>/dev/null && echo есть || echo нет)" есть
+
+PATH="$K3"
+d "guard: SC-AK-2004 — без ограничителя: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
+expect_reason "guard: SC-AK-2004 — без ограничителя: отказ называет команду шага" "$GUARD" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" 'task-flow-script.mjs step 1.1'
+d "guard: SC-AK-2004 — без ограничителя: законная правка проходит" "$(edit_input Edit "$P8" '# Ход работы' '# Ход работы.' "$R8")" PASS
+d "guard: SC-AK-2004 — без ограничителя: запись плана со скрытой проверкой отказана" "$(edit_input Write "$R8/docs/tasks/$B8/plan.md" '' "$PLAN8" "$R8")" deny
+expect_reason "guard: SC-AK-2004 — без ограничителя: отказ записи плана называет трубу" "$GUARD" "$(edit_input Write "$R8/docs/tasks/$B8/plan.md" '' "$PLAN8" "$R8")" 'a pipe without'
+PATH="$PATH_KEEP"
+
+# gtimeout и perl рядом: берётся первый по порядку, perl не зовётся.
+PATH="$K4"
+d "guard: SC-AK-2004 — gtimeout и perl: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
+PATH="$PATH_KEEP"
+report "guard: SC-AK-2004 — gtimeout и perl: отметка только у gtimeout" "$(grep -q '^gtimeout 60 ' "${K4%/bin}/mark" 2>/dev/null && ! grep -q '^perl ' "${K4%/bin}/mark" && echo да || echo нет)" да
+
+# gtimeout без права на запуск не выбирается: зовётся perl.
+PATH="$K5"
+d "guard: SC-AK-2004 — gtimeout без права на запуск: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
+PATH="$PATH_KEEP"
+report "guard: SC-AK-2004 — gtimeout без права на запуск: отметка только у perl" "$(grep -q '^perl -e alarm' "${K5%/bin}/mark" 2>/dev/null && ! grep -q '^gtimeout ' "${K5%/bin}/mark" && echo да || echo нет)" да
+
+# timeout рядом с gtimeout и perl: берётся timeout.
+PATH="$K6"
+d "guard: SC-AK-2004 — timeout, gtimeout и perl: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
+PATH="$PATH_KEEP"
+report "guard: SC-AK-2004 — timeout, gtimeout и perl: отметка только у timeout" "$(grep -q '^timeout 60 node ' "${K6%/bin}/mark" 2>/dev/null && ! grep -qE '^(gtimeout|perl) ' "${K6%/bin}/mark" && echo да || echo нет)" да
 
 # --- ход, названный отказом, спрошен у соседних проверок ----------------------------------------
 # Отказ записи оболочкой называет правку хода работы, а её держит гейт, пока правило задач не
