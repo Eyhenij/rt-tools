@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.40.0 · hooks/flow-step-guard.sh · 5fea38c45323 · правится надстройкой, не здесь
+# rt-kit v0.40.0 · hooks/flow-step-guard.sh · b804926b7e60 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash
 # Requires: checks/task-flow-script.mjs, checks/flow-plan.mjs, checks/decide.mjs, hooks/decide.sh, hooks/deny-tail.sh, hooks/facts.sh
 # PreToolUse guard of the course of work: the scenario moves by a measurement, not by a declaration.
@@ -52,14 +52,20 @@ dir="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)"
 # `timeout`: the call of a missing command failed, `|| exit 0` took it for a failed engine, and every
 # edit passed unjudged. With no limiter at all the engine runs without a limit — judged late beats
 # not judged.
+# A limiter counts only when it runs: bash 3.2 names a file without the exec bit, and its failed
+# call would pass the edit the same way.
+rt_runs() {
+    local path
+    path="$(command -v "$1" 2>/dev/null)" && [ -x "$path" ]
+}
 rt_limited() {
     local limit="$1"
     shift
-    if command -v timeout >/dev/null 2>&1; then
+    if rt_runs timeout; then
         timeout "$limit" "$@"
-    elif command -v gtimeout >/dev/null 2>&1; then
+    elif rt_runs gtimeout; then
         gtimeout "$limit" "$@"
-    elif command -v perl >/dev/null 2>&1; then
+    elif rt_runs perl; then
         perl -e 'alarm shift; exec @ARGV' "$limit" "$@"
     else
         "$@"

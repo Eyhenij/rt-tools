@@ -51,14 +51,20 @@ dir="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)"
 # `timeout`: the call of a missing command failed, `|| exit 0` took it for a failed engine, and every
 # edit passed unjudged. With no limiter at all the engine runs without a limit — judged late beats
 # not judged.
+# A limiter counts only when it runs: bash 3.2 names a file without the exec bit, and its failed
+# call would pass the edit the same way.
+rt_runs() {
+    local path
+    path="$(command -v "$1" 2>/dev/null)" && [ -x "$path" ]
+}
 rt_limited() {
     local limit="$1"
     shift
-    if command -v timeout >/dev/null 2>&1; then
+    if rt_runs timeout; then
         timeout "$limit" "$@"
-    elif command -v gtimeout >/dev/null 2>&1; then
+    elif rt_runs gtimeout; then
         gtimeout "$limit" "$@"
-    elif command -v perl >/dev/null 2>&1; then
+    elif rt_runs perl; then
         perl -e 'alarm shift; exec @ARGV' "$limit" "$@"
     else
         "$@"
