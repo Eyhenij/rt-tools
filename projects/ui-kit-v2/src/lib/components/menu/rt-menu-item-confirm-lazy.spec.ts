@@ -2,8 +2,8 @@ import { ErrorHandler } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
 import { createRtFixture } from '../../../testing/rt-kit-testing';
-import { forgetConfirmDialogCode } from './rt-menu-confirm.code';
-import { RtMenuItemComponent } from './rt-menu-item.component';
+import { confirmDialogCodeState, forgetConfirmDialogCode } from './rt-menu-confirm.code';
+import { RtMenuItemComponent, rtPreloadMenuConfirmDialog } from './rt-menu-item.component';
 import { RT_MENU_CONFIRM_EVENT } from './rt-menu.model';
 
 const handled: unknown[] = [];
@@ -126,7 +126,7 @@ describe('Пункт меню — код диалога подтверждени
     });
 
     it('снос пункта до прихода кода не открывает диалога и не даёт выбора', async (): Promise<void> => {
-        const { fixture, picks } = setup();
+        const { fixture, picks, pending } = setup();
 
         click(fixture);
         fixture.destroy();
@@ -134,6 +134,18 @@ describe('Пункт меню — код диалога подтверждени
 
         expect(dialog()).toBeNull();
         expect(picks).not.toHaveBeenCalled();
+        // Меню не остаётся в ожидании ответа, которого уже не будет.
+        expect(pending).toEqual([true, false]);
+    });
+
+    it('предзагрузка приносит код заранее, и щелчок после неё открывает диалог сразу', async (): Promise<void> => {
+        const { fixture } = setup();
+
+        await rtPreloadMenuConfirmDialog();
+        click(fixture);
+
+        expect(confirmDialogCodeState.loaded).not.toBeNull();
+        expect(dialog()).not.toBeNull();
     });
 
     it('отключённый пункт кода диалога не просит и диалога не открывает', async (): Promise<void> => {

@@ -251,6 +251,12 @@ export class RtMenuItemComponent {
         // Подписка на результат confirm-модалки объявлена один раз: #openConfirm
         // эмитит данные модалки, mergeMap открывает её и ждёт afterClosed()
         // (одноразовый стрим — комплитится при закрытии модалки).
+        // Пункт снесён, пока подтверждение шло: поток оборван, и меню не должно ждать ответа, которого нет.
+        this.#destroyRef.onDestroy((): void => {
+            if (this.#confirming) {
+                this.#announceConfirm(false);
+            }
+        });
         this.#confirmRequestSource
             .pipe(
                 mergeMap((data: IRtMenu.ConfirmData): Observable<boolean | undefined> => {
@@ -267,7 +273,11 @@ export class RtMenuItemComponent {
                         // Сбой загрузки куска не убивает поток подтверждений: ошибка идёт приложению,
                         // а пункт отвечает «не подтверждено» и меню не остаётся в ожидании.
                         catchError((error: unknown): Observable<boolean | undefined> => {
-                            this.#errors.handleError(error);
+                            try {
+                                this.#errors.handleError(error);
+                            } catch {
+                                // Свой обработчик приложения бросил сам: поток подтверждений важнее его отказа.
+                            }
 
                             return of(false);
                         })

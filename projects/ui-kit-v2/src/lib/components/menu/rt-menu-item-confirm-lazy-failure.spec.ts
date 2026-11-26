@@ -49,4 +49,34 @@ describe('Пункт меню — код диалога подтверждени
         expect(handled).toHaveLength(2);
         expect(pending).toEqual([true, false, true, false]);
     });
+
+    it('обработчик ошибок приложения, бросивший сам, не убивает пункт: меню получает ответ и следующий щелчок работает', async (): Promise<void> => {
+        const fixture: ComponentFixture<RtMenuItemComponent> = createRtFixture(
+            RtMenuItemComponent,
+            { label: 'Удалить', confirmMessage: 'Удалить запись?' },
+            {
+                providers: [
+                    {
+                        provide: ErrorHandler,
+                        useValue: {
+                            handleError: (): never => {
+                                throw new Error('the handler of the application failed');
+                            },
+                        },
+                    },
+                ],
+            }
+        );
+        const pending: boolean[] = [];
+        (fixture.nativeElement as HTMLElement).addEventListener(RT_MENU_CONFIRM_EVENT, (event: Event): void => {
+            pending.push((event as CustomEvent<boolean>).detail);
+        });
+
+        (fixture.nativeElement as HTMLElement).click();
+        await flushDialogCode();
+        (fixture.nativeElement as HTMLElement).click();
+        await flushDialogCode();
+
+        expect(pending).toEqual([true, false, true, false]);
+    });
 });
