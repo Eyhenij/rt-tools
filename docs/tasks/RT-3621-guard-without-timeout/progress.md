@@ -29,6 +29,11 @@
   `projects/agent-kit/assets/hooks/flow-step-guard.sh` плюс 15: `rt_runs` и его довод добавили
   строки сверх числа. Превышение бюджета `projects/agent-kit/tests/flow-step-guard.test.sh` плюс 60:
   вид «gtimeout и perl» и случаи записи плана под perl — плюс 68. Affected stage of the plan: 1.
+- **Второй круг ревью: три находки исправлены** — дерево случаев R8 убирается по выходу; вид с
+  `gtimeout` без права на запуск ждёт отметку perl; вид с `timeout` рядом с `gtimeout` и perl ждёт
+  отметку `timeout`; запись плана проверена и под `gtimeout`. Вид без права на запуск краснеет без
+  `rt_runs` только под bash 3.2: bash 5 сам пропускает такой файл в `command -v`. Набор: 142 ok.
+  Affected stage of the plan: 1.
 - **Ветка эпика несёт два коммита сверх плана** — снятие 21 записи архива по сроку и адрес папки
   разборов в `.claude/skills/autonomous-work/implementation.md`: без них главная ветка красная, и
   ветка эпика не уходила на сервер. Affected stage of the plan: нет.

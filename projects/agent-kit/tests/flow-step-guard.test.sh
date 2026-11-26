@@ -469,7 +469,9 @@ limit_bin() {
     cp -RP "$LIMIT_BASE" "$bin"
     for stub in "$@"; do
         case "$stub" in
-            gtimeout) printf '#!/bin/sh\necho "gtimeout $*" >> "%s"\nshift\nexec "$@"\n' "${bin%/bin}/mark" > "$bin/gtimeout" ;;
+            timeout | gtimeout) printf '#!/bin/sh\necho "%s $*" >> "%s"\nshift\nexec "$@"\n' "$stub" "${bin%/bin}/mark" > "$bin/$stub" ;;
+            # Ограничитель без права на запуск: bash 3.2 всё равно называет его в `command -v`.
+            noexec-gtimeout) printf '#!/bin/sh\necho "gtimeout $*" >> "%s"\n' "${bin%/bin}/mark" > "$bin/gtimeout"; continue ;;
             perl) printf '#!/bin/sh\necho "perl $*" >> "%s"\nexec "%s" "$@"\n' "${bin%/bin}/mark" "$REAL_PERL" > "$bin/perl" ;;
         esac
         chmod +x "$bin/$stub"
@@ -478,22 +480,27 @@ limit_bin() {
 }
 B8=RT-11-limits
 R8="$(task_repo "$B8")"
+TMPS+=("$R8")
 P8="$R8/docs/tasks/$B8/progress.md"
 progress_text 'этап-идёт' '>' ' ' > "$P8"
 limit_bin K1 gtimeout
 limit_bin K2 perl
 limit_bin K3
 limit_bin K4 gtimeout perl
+limit_bin K5 noexec-gtimeout perl
+limit_bin K6 timeout gtimeout perl
 PATH_KEEP="$PATH"
+PLAN8="$(printf '# Plan\n\n## Decision\n\nNo decision: probe fixture\n\n## Stages\n\n### 1. Этап\n\n- **Steps:**\n    1. Первый шаг\n       Check: `cat a.txt | tail -1` → `готово`\n')"
 
 PATH="$K1"
 d "guard: SC-AK-2004 — только gtimeout: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
 expect_reason "guard: SC-AK-2004 — только gtimeout: отказ называет команду шага" "$GUARD" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" 'task-flow-script.mjs step 1.1'
 d "guard: SC-AK-2004 — только gtimeout: законная правка проходит" "$(edit_input Edit "$P8" '# Ход работы' '# Ход работы.' "$R8")" PASS
+d "guard: SC-AK-2004 — только gtimeout: запись плана со скрытой проверкой отказана" "$(edit_input Write "$R8/docs/tasks/$B8/plan.md" '' "$PLAN8" "$R8")" deny
 PATH="$PATH_KEEP"
+report "guard: SC-AK-2004 — только gtimeout: отметка вызова записи плана под пределом" "$(grep -q '^gtimeout 60 node .*flow-plan.mjs written' "${K1%/bin}/mark" 2>/dev/null && echo есть || echo нет)" есть
 report "guard: SC-AK-2004 — только gtimeout: отметка вызова с пределом 60" "$(grep -q '^gtimeout 60 node ' "${K1%/bin}/mark" 2>/dev/null && echo есть || echo нет)" есть
 
-PLAN8="$(printf '# Plan\n\n## Decision\n\nNo decision: probe fixture\n\n## Stages\n\n### 1. Этап\n\n- **Steps:**\n    1. Первый шаг\n       Check: `cat a.txt | tail -1` → `готово`\n')"
 PATH="$K2"
 d "guard: SC-AK-2004 — только perl: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
 d "guard: SC-AK-2004 — только perl: запись плана со скрытой проверкой отказана" "$(edit_input Write "$R8/docs/tasks/$B8/plan.md" '' "$PLAN8" "$R8")" deny
@@ -517,6 +524,18 @@ PATH="$K4"
 d "guard: SC-AK-2004 — gtimeout и perl: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
 PATH="$PATH_KEEP"
 report "guard: SC-AK-2004 — gtimeout и perl: отметка только у gtimeout" "$(grep -q '^gtimeout 60 ' "${K4%/bin}/mark" 2>/dev/null && ! grep -q '^perl ' "${K4%/bin}/mark" && echo да || echo нет)" да
+
+# gtimeout без права на запуск не выбирается: зовётся perl.
+PATH="$K5"
+d "guard: SC-AK-2004 — gtimeout без права на запуск: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
+PATH="$PATH_KEEP"
+report "guard: SC-AK-2004 — gtimeout без права на запуск: отметка только у perl" "$(grep -q '^perl -e alarm' "${K5%/bin}/mark" 2>/dev/null && ! grep -q '^gtimeout ' "${K5%/bin}/mark" && echo да || echo нет)" да
+
+# timeout рядом с gtimeout и perl: берётся timeout.
+PATH="$K6"
+d "guard: SC-AK-2004 — timeout, gtimeout и perl: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
+PATH="$PATH_KEEP"
+report "guard: SC-AK-2004 — timeout, gtimeout и perl: отметка только у timeout" "$(grep -q '^timeout 60 node ' "${K6%/bin}/mark" 2>/dev/null && ! grep -qE '^(gtimeout|perl) ' "${K6%/bin}/mark" && echo да || echo нет)" да
 
 # --- чужие правки страж не судит ---------------------------------------------------------------
 d "обычный файл правится без стража" "$(edit_input Edit "$R/README.md" 'a' 'b' "$R")" PASS
