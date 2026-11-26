@@ -94,7 +94,7 @@
                 [label]="t().uiApply"
                 [attr.aria-label]="t().uiApply"
                 (click)="onApply()"></button>
-            <div rtElem="sheet" qa-dataid="page-bar-sheet" (input)="sheetTouched.set(true)" (change)="sheetTouched.set(true)">
+            <div #sheetFields rtElem="sheet" qa-dataid="page-bar-sheet" (input)="onSheetEdit()" (change)="onSheetEdit()">
                 @if (search(); as searchSlot) {
                     <ng-container [ngTemplateOutlet]="searchSlot.templateRef" />
                 }

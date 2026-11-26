@@ -20,6 +20,16 @@
     line-height: var(--rt-leading-snug);
 }
 
+/// Колонки шапки нижней шторки: «×» слева, заголовок по центру, действие справа. Крайние колонки
+/// равны (`1fr`), поэтому заголовок стоит по центру панели, что бы ни стояло по бокам. Её берут
+/// шапка шторки кита и шапка боковой панели, нарисованной шторкой на телефоне.
+@mixin sheet-header-columns {
+    display: grid;
+    align-items: center;
+    gap: var(--rt-space-2);
+    grid-template-columns: minmax(max-content, 1fr) auto minmax(max-content, 1fr);
+}
+
 /// Список карточек выбора в нижней шторке: карточки стоят столбцом с одним зазором.
 @mixin sheet-card-list {
     display: flex;

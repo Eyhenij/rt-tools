@@ -31,6 +31,8 @@ export namespace IButton {
     export interface PlaceLook {
         readonly theme?: Theme;
         readonly appearance?: Appearance;
+        /** Шаг размера места: главная кнопка в шапке шторки стоит шагом `sm`, как действие шапки шторки. */
+        readonly size?: Size;
         readonly icon?: null;
         readonly label?: string;
     }

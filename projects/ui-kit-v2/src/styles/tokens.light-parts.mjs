@@ -338,4 +338,18 @@ export const lightParts = [
         dark: `var(--rt-chart-red-dark)`,
         presetShared: CHART_SERIES_SHARED,
     },
+    {
+        lead: `    /* Bottom sheet (rt-bottom-sheet) — подписи ответов вопроса перед закрытием: согласие цветом
+       марки, отказ красным. Свои имена: подпись роли на графите не дотягивает до 4,5 к одному, а
+       её ответ тёмной темы перекрасил бы все текстовые кнопки кита. На графите ступени светлее. */`,
+        space: true,
+        name: `--rt-color-sheet-confirm-apply`,
+        value: `var(--rt-color-action-primary-on-surface)`,
+        dark: `var(--rt-brand-300)`,
+    },
+    {
+        name: `--rt-color-sheet-confirm-danger`,
+        value: `var(--rt-color-action-danger-on-surface)`,
+        dark: `var(--rt-danger-300)`,
+    },
 ];

@@ -31,4 +31,27 @@ test.describe('the language list on a phone', () => {
         await expect(page.getByTestId('kc-login-form')).toBeVisible();
         expect(page.url()).toBe(address);
     });
+
+    test('SC-UKV-1758 — Escape inside the language sheet closes it and goes no further', async ({ page }) => {
+        await page.goto('/');
+        await expectEntryScreen(page);
+
+        const address: string = page.url();
+        const languages: Locator = page.getByTestId('kc-locales');
+
+        await languages.getByTestId('select-trigger').click();
+
+        const close: Locator = page.getByTestId('bottom-sheet-close');
+        const options: Locator = page.getByTestId('select-option');
+
+        await expect(close).toBeVisible();
+
+        await page.keyboard.press('Escape');
+
+        // The sheet closes, and the key does not reach the page: the sign-in form and the address stay
+        await expect(options.first()).toBeHidden();
+        await expect(close).toBeHidden();
+        await expect(page.getByTestId('kc-login-form')).toBeVisible();
+        expect(page.url()).toBe(address);
+    });
 });

@@ -9,7 +9,7 @@ import { RtToolbarComponent, RtToolbarFiltersDirective, RtToolbarRightDirective 
 /** Ширина места подменяется: отборы решают по признаку узкого места службы кита. */
 class StubBreakpointsService {
     public readonly narrow: WritableSignal<boolean> = signal(true);
-    public readonly phone: WritableSignal<boolean> = signal(true);
+    public readonly phone: WritableSignal<boolean> = signal(false);
     public readonly viewportNarrow: Signal<boolean> = this.narrow;
     public readonly belowNarrow: Signal<boolean> = this.narrow;
     public readonly mobile: Signal<boolean> = this.phone;
@@ -42,8 +42,9 @@ class ToolbarFiltersHostComponent {
 
 function setup(narrow: boolean): { fixture: ComponentFixture<ToolbarFiltersHostComponent>; breakpoints: StubBreakpointsService } {
     const breakpoints: StubBreakpointsService = new StubBreakpointsService();
+    // Узкое место шире телефона — от 481 точки: здесь отборы открываются панелью сбоку. На телефоне
+    // та же панель встаёт шторкой, это проверяет спека шторки отборов.
     breakpoints.narrow.set(narrow);
-    breakpoints.phone.set(narrow);
     TestBed.configureTestingModule({
         providers: [
             ...provideRtKitTesting(),

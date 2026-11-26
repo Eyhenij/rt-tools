@@ -12,6 +12,7 @@ import {
     EffectCleanupRegisterFn,
     ElementRef,
     inject,
+    Injector,
     input,
     InputSignal,
     InputSignalWithTransform,
@@ -31,13 +32,13 @@ import {
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
-import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { IRtSheetKeyboardBox, rtWatchSheetKeyboard } from './rt-bottom-sheet-keyboard';
+import { RtBottomSheetScreens } from './rt-bottom-sheet-screens';
 import { RtBottomSheetStackService } from './rt-bottom-sheet-stack.service';
 import { clampDragDelta, focusLeftBehind, innerFocus, isTypingTarget, outerFocus, shouldDismissDrag } from './rt-bottom-sheet.logic';
-import { IRtSheetTemplateContext } from './rt-bottom-sheet.model';
+import { IRtSheetConfirmLabels, IRtSheetTemplateContext, TRtSheetCloseReason } from './rt-bottom-sheet.model';
 import { RtSheetFooterDirective } from './rt-sheet-footer.directive';
 import { RtSheetHeaderDirective } from './rt-sheet-header.directive';
 
@@ -67,7 +68,6 @@ function takeConfirmId(): string {
         ModDirective,
 
         // kit
-        RtButtonDirective,
         RtIconButtonComponent,
     ],
     hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
@@ -75,6 +75,8 @@ function takeConfirmId(): string {
         class: BEM_BLOCK,
         '[class.rt-bottom-sheet--open]': 'open()',
         '[class.rt-bottom-sheet--covered]': 'covered()',
+        '[class.rt-bottom-sheet--nested]': 'nested()',
+        '[style.--rt-bottom-sheet-nested-height.px]': 'nestedHeight()',
         // Закрытый лист остаётся в разметке ради анимации, и спрятан он только
         // стилями — а `opacity`/`pointer-events` не убирают узел ни из порядка
         // табуляции, ни из дерева доступности. Без `inert` страница с закрытым
@@ -97,9 +99,12 @@ export class RtBottomSheetComponent {
     /** Блокировка прокрутки страницы — та же, что держит оверлей у шторки панели выбора. */
     readonly #scrollLock: ScrollStrategy = inject(ScrollStrategyOptions).block();
     readonly #overlayContainer: OverlayContainer = inject(OverlayContainer);
+    /** Экраны шторки: второй экран другой шторки и смена экранов. */
+    readonly #screens: RtBottomSheetScreens = new RtBottomSheetScreens(this.#host, inject(Injector));
     readonly #onDragMove: (event: PointerEvent) => void = (event: PointerEvent): void => this.#handleDragMove(event);
     readonly #onDragEnd: () => void = (): void => this.#handleDragEnd();
-    readonly #requestClose: () => void = (): void => this.dismiss();
+    readonly #requestClose: () => void = (): void => this.dismiss('close');
+    readonly #onResize: () => void = (): void => this.#screens.followUnder();
     readonly #requestApply: () => void = (): void => this.applyRequest.emit();
     readonly #onKeyboardBox: (box: IRtSheetKeyboardBox | null) => void = (box: IRtSheetKeyboardBox | null): void =>
         this.keyboardBox.set(box);
@@ -149,6 +154,10 @@ export class RtBottomSheetComponent {
     /** Открыта, но поверх неё открыта шторка из неё самой: эта спрятана до закрытия верхней. */
     protected readonly covered: Signal<boolean> = computed((): boolean => this.open() && this.#stack.top() !== this);
 
+    /** Шторка — второй экран другой шторки; её наименьшая высота — высота первого экрана. */
+    protected readonly nested: Signal<boolean> = this.#screens.nested.asReadonly();
+    protected readonly nestedHeight: Signal<number | null> = this.#screens.nestedHeight.asReadonly();
+
     protected readonly ownHeader: Signal<RtSheetHeaderDirective | undefined> = contentChild(RtSheetHeaderDirective);
     protected readonly ownFooter: Signal<RtSheetFooterDirective | undefined> = contentChild(RtSheetFooterDirective);
 
@@ -162,12 +171,17 @@ export class RtBottomSheetComponent {
         (): TemplateRef<IRtSheetTemplateContext> | null => this.footerTemplate() ?? this.ownFooter()?.template ?? null
     );
 
-    /** Своему шаблону шторка отдаёт просьбу закрыть — ту же, что зовёт её кнопка «×», — и просьбу применить. */
-    protected readonly templateContext: IRtSheetTemplateContext = {
-        $implicit: this.#requestClose,
-        close: this.#requestClose,
-        apply: this.#requestApply,
-    };
+    /** Слова вопроса: свои из входа, без них — вопрос о неприменённом выборе. */
+    protected readonly confirmText: Signal<IRtSheetConfirmLabels> = computed(
+        (): IRtSheetConfirmLabels =>
+            this.confirmLabels() ?? {
+                title: this.t().bottomSheetUnsavedTitle,
+                message: this.t().bottomSheetUnsavedMessage,
+                apply: this.t().uiApply,
+                discard: this.t().bottomSheetUnsavedDiscard,
+                stay: this.t().uiCancel,
+            }
+    );
 
     /** Первый ответ вопроса: фокус встаёт на него, как только вопрос нарисован. */
     protected readonly confirmFirst: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('confirmFirst');
@@ -210,7 +224,27 @@ export class RtBottomSheetComponent {
     public readonly footerTemplate: InputSignal<TemplateRef<IRtSheetTemplateContext> | null> =
         input<TemplateRef<IRtSheetTemplateContext> | null>(null);
 
+    /**
+     * Свои слова вопроса перед закрытием — у панели, которая спрашивает о правках записи, а не о
+     * выборе. Пусто — слова шторки о неприменённом выборе.
+     */
+    public readonly confirmLabels: InputSignal<IRtSheetConfirmLabels | null> = input<IRtSheetConfirmLabels | null>(null);
+
+    /**
+     * Ответ «Применить» закрывает шторку. `false` — ответ только сообщает о себе, и шторка остаётся
+     * открытой: её закроет хозяин, когда применённое запишется.
+     */
+    public readonly closeOnApply: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
     public readonly openChange: OutputEmitterRef<boolean> = output<boolean>();
+
+    /**
+     * Шторку просят закрыть, и вопроса нет: чем просят — подложкой, свайпом, Escape или кнопкой
+     * закрытия. Приходит перед `openChange(false)` того же жеста; закрытие ответом на вопрос его не даёт.
+     */
+    public readonly closeRequest: OutputEmitterRef<TRtSheetCloseReason> = output<TRtSheetCloseReason>();
 
     /** Человек ответил на вопрос «Применить»: выбор нужно применить, следом придёт просьба закрыть. */
     public readonly applyRequest: OutputEmitterRef<void> = output<void>();
@@ -218,13 +252,27 @@ export class RtBottomSheetComponent {
     /** Человек ответил на вопрос «Не применять»: неприменённое нужно отбросить, следом придёт просьба закрыть. */
     public readonly discardRequest: OutputEmitterRef<void> = output<void>();
 
+    /** Человек остался: ответил на вопрос третьей кнопкой или снял его Escape. */
+    public readonly stayRequest: OutputEmitterRef<void> = output<void>();
+
+    /** Своему шаблону — просьбы закрыть (как «×») и применить и признак второго экрана; по нему шапка `rt-aside` рисует «назад». */
+    public readonly templateContext: IRtSheetTemplateContext = {
+        $implicit: this.#requestClose,
+        close: this.#requestClose,
+        apply: this.#requestApply,
+        nested: this.nested,
+    };
+
     constructor() {
         // Порядок открытия — общий для всех шторок страницы; шторка встаёт в него с открытием.
         effect((): void => {
             if (this.open()) {
+                untracked((): void => this.#nestOver(this.#stack.top()));
                 this.#stack.push(this);
             } else {
                 this.#stack.remove(this);
+                // Второй экран ушёл: первый возвращается к своей высоте от высоты второго, содержимое — слева.
+                untracked((): void => this.#screens.leave());
             }
         });
         // Прокрутку страницы шторка держит сама, пока открыта. Шторке панели выбора это не нужно:
@@ -245,6 +293,15 @@ export class RtBottomSheetComponent {
                 }
             });
         });
+        // Второй экран идёт за высотой нижней шторки: окно, сменившее размер или повёрнутое, меняет
+        // её высоту, и шеврон второго экрана без этого уходил за край.
+        effect((onCleanup: EffectCleanupRegisterFn): void => {
+            const view: Window | null = this.#doc.defaultView;
+            if (this.open() && this.nested() && view !== null) {
+                view.addEventListener('resize', this.#onResize);
+                onCleanup((): void => view.removeEventListener('resize', this.#onResize));
+            }
+        });
         // Пока в шторке печатают, она следит за местом над экранной клавиатурой и встаёт в него;
         // место снимается само, когда печатать перестали.
         effect((onCleanup: EffectCleanupRegisterFn): void => {
@@ -257,10 +314,16 @@ export class RtBottomSheetComponent {
         // Вопрос стоит внизу экрана сам: фокус на его ответе страницу под шторкой не прокручивает.
         effect((): void => this.confirmFirst()?.nativeElement.focus({ preventScroll: true }));
         inject(DestroyRef).onDestroy((): void => {
+            this.#screens.leave();
             this.#stack.remove(this);
             this.#setScrollLock(false);
             this.#returnFocus();
         });
+    }
+
+    /** Высота панели шторки: второй экран не ниже её, и от неё переходит высота при смене экранов. */
+    public panelHeight(): number {
+        return this.#host.querySelector<HTMLElement>(':scope > .rt-bottom-sheet__panel')?.getBoundingClientRect().height ?? 0;
     }
 
     /**
@@ -271,7 +334,18 @@ export class RtBottomSheetComponent {
         if (this.confirming()) {
             this.onConfirmCancel();
         } else {
-            this.dismiss();
+            this.dismiss('escape');
+        }
+    }
+
+    /**
+     * Задать вопрос перед закрытием, не дожидаясь жеста: так спрашивает хозяин, которого просят
+     * закрыться в обход шторки. Показанный вопрос второй раз не задаётся.
+     */
+    public ask(): void {
+        if (!this.confirming()) {
+            this.#askedFrom = innerFocus(this.#doc, this.#host);
+            this.confirming.set(true);
         }
     }
 
@@ -303,7 +377,9 @@ export class RtBottomSheetComponent {
     protected onConfirmApply(): void {
         this.confirming.set(false);
         this.applyRequest.emit();
-        this.openChange.emit(false);
+        if (this.closeOnApply()) {
+            this.openChange.emit(false);
+        }
     }
 
     protected onConfirmDiscard(): void {
@@ -314,10 +390,14 @@ export class RtBottomSheetComponent {
 
     protected onConfirmCancel(): void {
         this.confirming.set(false);
+        // Панель под вопросом `inert` до следующей отрисовки, и фокус в неё не встаёт: он падал на
+        // страницу. Запрет снимается здесь же, до фокуса; отрисовка снимет его второй раз.
+        this.#host.querySelectorAll<HTMLElement>(':scope > [inert]').forEach((node: HTMLElement): void => node.removeAttribute('inert'));
         // Закрыть просили подложкой или свайпом — узла с фокусом не было: фокус берёт панель шторки,
         // иначе он упал бы на страницу под открытой шторкой.
         (this.#askedFrom ?? this.#host.querySelector<HTMLElement>('[role="dialog"]'))?.focus({ preventScroll: true });
         this.#askedFrom = null;
+        this.stayRequest.emit();
     }
 
     protected onDragStart(event: PointerEvent): void {
@@ -328,20 +408,17 @@ export class RtBottomSheetComponent {
         this.#doc.addEventListener('pointerup', this.#onDragEnd);
     }
 
-    /** Просьба закрыть: с неприменённым выбором сначала вопрос, без него — сразу наружу. */
-    protected dismiss(): void {
+    /** Просьба закрыть: с неприменённым выбором сначала вопрос, без него — сразу наружу с жестом. */
+    protected dismiss(reason: TRtSheetCloseReason): void {
         if (!this.unsaved()) {
+            this.closeRequest.emit(reason);
             this.openChange.emit(false);
             return;
         }
         // Вопрос уже показан — вторая просьба закрыть его не переспрашивает.
-        if (!this.confirming()) {
-            this.#askedFrom = innerFocus(this.#doc, this.#host);
-            this.confirming.set(true);
-        }
+        this.ask();
     }
 
-    /** Шторка панели выбора: прокрутку и Escape за неё держит её собственный оверлей. */
     /** Значение, к которому сигнал возвращается с каждой сменой открытости шторки. */
     #closedWith<T>(value: T): T {
         this.open();
@@ -356,12 +433,19 @@ export class RtBottomSheetComponent {
         return value;
     }
 
+    /** Шторка панели выбора: прокрутку и Escape за неё держит её собственный оверлей. */
     #inPopoverSheet(): boolean {
         return this.#host.closest('rt-popover-sheet') !== null;
     }
 
     #ownsEscape(): boolean {
         return this.open() && !this.covered() && !this.#inPopoverSheet();
+    }
+
+    /** Открытие поверх другой шторки делает эту её вторым экраном. */
+    #nestOver(below: object | null): void {
+        const under: RtBottomSheetComponent | null = below instanceof RtBottomSheetComponent && below !== this ? below : null;
+        this.#screens.nestOver(under === null ? null : { height: (): number => under.panelHeight(), screens: under.#screens });
     }
 
     /** Фокус, оставшийся в закрытой шторке или упавший с неё на страницу, уходит на открывший её узел. */
@@ -397,7 +481,7 @@ export class RtBottomSheetComponent {
         this.#doc.removeEventListener('pointermove', this.#onDragMove);
         this.#doc.removeEventListener('pointerup', this.#onDragEnd);
         if (shouldDismissDrag(this.dragDeltaY())) {
-            this.dismiss();
+            this.dismiss('swipe');
         }
         this.dragDeltaY.set(0);
     }

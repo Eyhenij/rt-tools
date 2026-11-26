@@ -260,6 +260,12 @@
     --rt-color-chart-series-7: var(--rt-chart-violet-light);
     --rt-color-chart-series-8: var(--rt-chart-red-light);
 
+    /* Bottom sheet (rt-bottom-sheet) — подписи ответов вопроса перед закрытием: согласие цветом
+       марки, отказ красным. Свои имена: подпись роли на графите не дотягивает до 4,5 к одному, а
+       её ответ тёмной темы перекрасил бы все текстовые кнопки кита. На графите ступени светлее. */
+    --rt-color-sheet-confirm-apply: var(--rt-color-action-primary-on-surface);
+    --rt-color-sheet-confirm-danger: var(--rt-color-action-danger-on-surface);
+
     /* Spacing aliases — named semantic aliases на primitive numeric scale */
     --rt-space-2xs: var(--rt-space-0-5); /* 2px */
     --rt-space-xs: var(--rt-space-1); /* 4px */

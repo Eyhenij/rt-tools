@@ -1,4 +1,7 @@
-import { Directive } from '@angular/core';
+import { Directive, inject } from '@angular/core';
+
+import { RT_ASIDE_SHEET, RtAsideSheet } from '@rt-tools/ui-kit-v2/aside';
+import { RtContainerStateService } from './rt-container-state.service';
 
 /**
  * Маркеры слотов оболочки — своим файлом, а не рядом с панельными директивами.
@@ -45,6 +48,9 @@ export class RtContainerLeftSidenavDirective {}
 /**
  * Маркер-директива для контента правой sidenav в `rt-container`.
  *
+ * Шаблону слота маркер даёт вид правой панели на телефоне (`RT_ASIDE_SHEET`): панель маршрута в
+ * этом слоте рисуется шторкой, а панель в остальной странице — нет.
+ *
  * @example
  * ```html
  * <rt-container>
@@ -56,6 +62,12 @@ export class RtContainerLeftSidenavDirective {}
  */
 @Directive({
     selector: '[rtContainerRightSidenav]',
+    providers: [
+        {
+            provide: RT_ASIDE_SHEET,
+            useFactory: (): RtAsideSheet | null => inject(RtContainerStateService, { optional: true })?.rightSheet ?? null,
+        },
+    ],
 })
 export class RtContainerRightSidenavDirective {}
 

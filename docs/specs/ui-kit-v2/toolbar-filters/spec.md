@@ -26,7 +26,7 @@ behind a button that opens a panel.
 | Indicator     | the dot in the corner of the filter button icon: some filter is on                     |
 | Filters panel | `rt-aside` opened by the filter button, with the filters slot in its body              |
 | Narrow screen | the place under 1080 points — `BreakpointsService.belowNarrow`                         |
-| App panel     | `rt-toolbar-filters-route-aside` opened by the application route in the outlet `ro`     |
+| App panel     | `rt-toolbar-filters-route-aside` opened by the application route in the outlet `ro`    |
 
 ### What it is called in the interface
 
@@ -95,7 +95,9 @@ behind a button that opens a panel.
 
 - **The values of the filters.** The fields and their state belong to the consumer; the kit draws
   the slot and reports the two presses.
-- **A bottom sheet instead of the panel.** The approved mockup draws an aside at full width.
+- **The filters panel on a phone.** Up to 480 points it opens as a full-height sheet and asks
+  before it closes with a change not applied: subdomain `aside/phone-sheet`. The rules here hold for
+  the panel from 481 points.
 
 ## Contract
 
@@ -117,6 +119,7 @@ Not applicable.
 | Narrow, filter off | the filter button last in the row of buttons, no dot                                 |
 | Narrow, filter on  | the same button with the dot in the icon corner, the dot whole                       |
 | Panel open         | the aside at full width: header, the fields one under another, footer of two buttons |
+| Panel on a phone   | the full-height sheet: «Применить» on the right of the header, «Сбросить» in footer  |
 
 ## Cross-cutting requirements
 
@@ -166,3 +169,5 @@ Not applicable.
 
 - 2026-10-30 — proposed by RT-3001.
 - 2026-11-23 — RT-3528: the filters threshold at 1079, the panel opened by an application route.
+- 2026-11-25 — RT-3532: up to 480 points the filters panel is a full-height sheet that asks about a
+  change not applied, subdomain `aside/phone-sheet`.
