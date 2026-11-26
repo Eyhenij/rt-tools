@@ -1,4 +1,4 @@
-// rt-kit v0.40.0 · task-flow/measure/owner.mjs · bbe91ce8c95b · правится надстройкой, не здесь
+// rt-kit v0.40.0 · task-flow/measure/owner.mjs · 0bb03352f713 · правится надстройкой, не здесь
 /**
  * The measurer «measure.owner» — what the owner's words say about the turn: a stop that stands, an
  * interrupt, or a push to go on.
@@ -17,9 +17,10 @@
  * and its one word where it closes its part of the message.
  * A word of `words.resume` is a working order. A word with «не» before it is no signal. A part of the
  * message — split by «.», «,», «;» and by «и», «затем», «потом» — that holds a word of `words.stay`
- * carries no order, while a stop word in it still stops.
+ * carries no order, while a stop word in it still stops. While the stop stands, `stopCall` refuses the
+ * calls of a turn no word of the owner opened, and `backgroundBeforeStop` holds the end of a turn until
+ * own background started before the stop is down.
  */
-
 /** The mark the host writes into the record when the owner presses Esc. */
 const INTERRUPT = /^\[Request interrupted by user/;
 
@@ -59,6 +60,8 @@ const keyed = (part) => ((part.replace(TASK, ' ').match(/\p{L}+/gu) ?? []).lengt
 
 /** A part that puts the order off: «жди, пока я не скажу продолжай», «я не говорил продолжай». */
 const PUT_OFF = /(?<![\p{L}])(?:пока\s+(?:я\s+)?|я\s+)?не\s+(?:скаж|говор|сказал|велел|просил|разреш)/iu;
+/** A complaint that work was not stopped keeps the stop: «почему ты всё бросил и не остановил набор?». */
+const notStopped = /(?<![\p{L}])(?:не\s+остановил|не\s+снял|без\s+присмотра|продолжаешь\s+работать)/iu;
 
 /** The last signal of a message: 'stop', 'resume' or null. */
 function signalOf(message, words) {
@@ -75,8 +78,8 @@ function signalOf(message, words) {
     const inside = listRe(words.stopInside);
     const resume = listRe(words.resume);
     const stay = listRe(words.stay, true);
-    // A complaint about the stop orders work anywhere in the message, a question too: «почему ты бросил эпик?».
-    for (const index of at(listRe(words.stopComplaint, true), text)) signals.push({ at: index, kind: 'resume' });
+    // A complaint about the stop orders work anywhere, a question too; one that work was not stopped does not.
+    for (const index of notStopped.test(text) ? [] : at(listRe(words.stopComplaint, true), text)) signals.push({ at: index, kind: 'resume' });
     let offset = 0;
     for (const part of text.split(PART_SPLIT)) {
         const start = text.indexOf(part, offset);
@@ -113,8 +116,8 @@ const wordsOf = (owner) => {
 };
 
 /**
- * The stop of the owner after their words: { stands, by } — `by` is 'esc' or 'word' while the stop
- * stands, null otherwise.
+ * The stop of the owner after their words: { stands, by, word } — `by` is 'esc' or 'word' while the
+ * stop stands, null otherwise; `word` the word that set it.
  */
 export function stopStands({ owner }, words) {
     const list = wordsOf(owner);
@@ -123,15 +126,53 @@ export function stopStands({ owner }, words) {
         if (word.kind === 'interrupt') {
             const next = list[index + 1];
             const gap = next && next.kind !== 'interrupt' && word.at !== null && next.at !== null ? next.at - word.at : null;
-            if (!(gap !== null && gap >= 0 && gap < ESC_WINDOW)) state = { stands: true, by: 'esc' };
+            if (!(gap !== null && gap >= 0 && gap < ESC_WINDOW)) state = { stands: true, by: 'esc', word };
             return;
         }
         const signal = signalOf(word.text, words);
-        if (signal === 'stop') state = { stands: true, by: 'word' };
+        if (signal === 'stop') state = { stands: true, by: 'word', word };
         else if (signal === 'resume') state = { stands: false, by: null };
         else if (word.kind === 'menu' && state.stands && choosesWork(word.text, words)) state = { stands: false, by: null };
     });
     return state;
+}
+
+/** A stop that orders nothing else: the Esc mark, or a stop word with no question and no word of `words.stay`. */
+const bare = (word, words) => word.kind === 'interrupt' || (signalOf(word.text, words) === 'stop' && !word.text.includes('?') && !listRe(words.stay, true)?.test(word.text));
+
+/** Own background tasks and monitors started before the stop, not ended, queued as ended or stopped: [{ task, command }]. */
+function ownBackground(owner, session, words, stop = stopStands({ owner }, words)) {
+    const open = new Map();
+    for (const event of stop.stands ? session.events() : []) {
+        if ((event.kind === 'background' || event.kind === 'monitor') && event.task && event.at < (stop.word.at ?? Infinity)) open.set(event.task, { task: event.task, command: event.command ?? null });
+        else if (event.kind === 'backgroundEnd' && event.task) open.delete(event.task);
+    }
+    return [...open.values()];
+}
+
+/** Own background before the stop holds the end of a turn until it is taken down, or two refusals named it. */
+export function backgroundBeforeStop({ owner, session }) {
+    return ({ words }) => {
+        const stop = stopStands({ owner }, words);
+        const refused = stop.stands ? session.events().filter((e) => e.kind === 'refusal' && e.at >= (stop.word.at ?? 0) && /TaskStop /.test(e.text)).length : 0;
+        return refused < 2 && ownBackground(owner, session, words, stop).length > 0;
+    };
+}
+
+/**
+ * What the stop refuses in this turn: { refuseCalls, background }. Calls are refused while the stop
+ * stands and the last word of the owner in the turn — its opening prompt and a typed command included,
+ * by queue time; one queued before the stop skipped — is missing, older than the stop or a bare stop.
+ */
+export function stopCall({ owner, session }) {
+    return ({ words }) => {
+        const stop = stopStands({ owner }, words);
+        const opener = owner.turnOpener?.() ?? null;
+        if (!stop.stands || opener === null) return { refuseCalls: false, background: ownBackground(owner, session, words, stop) };
+        const own = [...(opener.by === 'owner' ? [{ text: opener.text, kind: 'typed', index: opener.index }] : []), ...wordsOf(owner).filter((w) => w.index > opener.index)];
+        const last = own.filter((w) => w.index === stop.word.index || ((w.index === opener.index ? opener.at : w.at) ?? Infinity) >= (stop.word.at ?? -Infinity)).at(-1);
+        return { refuseCalls: !last || last.index < stop.word.index || bare(last, words), background: ownBackground(owner, session, words, stop) };
+    };
 }
 
 /** The stop stands, and a word of the owner set it. */
