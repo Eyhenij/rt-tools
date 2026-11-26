@@ -7,6 +7,7 @@
  *   said(quote)   a typed message holds the quote
  *   last()        the owner's last word: the last message typed or the options chosen in a menu,
  *                 or null
+ *   turnOpener()  what opened the current turn — a word of the owner or a notice — see `turnOpener`
  *
  * What the owner typed is read by the shared rule of the owner's words, `typedOf` of the laid-out
  * `record-count.mjs`: a message typed before a turn or queued during one, a pasted text included; a
@@ -67,18 +68,47 @@ const refusalOf = (entry) =>
         ? (entry.message.content.map((part) => (part?.type === 'tool_result' ? REFUSED_WITH_TEXT.exec(resultText(part.content).trim())?.[1]?.trim() : null)).find(Boolean) ?? null)
         : null;
 
-/** The owner's words, oldest first: { text, at, kind } — typed, queued, interrupt, menu or refusal; `at` in ms or null. */
+const timeOf = (entry) => ((stamp) => (Number.isFinite(stamp) ? stamp : null))(Date.parse(entry?.timestamp ?? entry?.attachment?.timestamp ?? ''));
+
+/** A command the owner typed; the host runs `/stop` itself, and the record keeps it in the queue only. */
+const COMMAND = /^\/[a-z][\w-]*(?:\s|$)/;
+const enqueued = (entry) => (entry?.type === 'queue-operation' && entry.operation === 'enqueue' ? String(entry.content ?? '').trim() : null);
+
+/** The owner's words, oldest first: { text, at, kind, index } — typed, queued, interrupt, menu or refusal; `at` in ms or null, `index` the place of the entry. */
 export function wordsOf(entries) {
-    return entries.flatMap((entry) => {
-        const stamp = Date.parse(entry?.timestamp ?? entry?.attachment?.timestamp ?? '');
-        const at = Number.isFinite(stamp) ? stamp : null;
-        const typed = typedOf(entry);
-        if (typed) return [{ text: typed.text, at, kind: typed.kind }];
+    return entries.flatMap((entry, index) => {
+        const at = timeOf(entry);
+        const typed = typedOf(entry) ?? (COMMAND.test(enqueued(entry) ?? '') ? { text: enqueued(entry), kind: 'queued' } : null);
+        if (typed) return [{ text: typed.text, at, kind: typed.kind, index }];
         const refused = refusalOf(entry);
-        if (refused) return [{ text: refused, at, kind: 'refusal' }];
+        if (refused) return [{ text: refused, at, kind: 'refusal', index }];
         const word = wordOf(entry);
-        return word === null ? [] : [{ text: word, at, kind: INTERRUPT_MARK.test(word.trim()) ? 'interrupt' : 'menu' }];
+        return word === null ? [] : [{ text: word, at, kind: INTERRUPT_MARK.test(word.trim()) ? 'interrupt' : 'menu', index }];
     });
+}
+
+/** A prompt the host writes itself: a notice of a task or a line of `Monitor`, a message of another session. */
+const WAKE = /^(?:<task-notification>|Another Claude session sent a message|Background \(from the session)/;
+const NO_PROMPT = /^(?:\[Request interrupted by user|Stop hook feedback:|Caveat:|This session is being continued)/;
+
+/**
+ * What opened the current turn: { by, text, at, index } — `by` 'owner' for a prompt a person typed, a
+ * command included, 'wake' for a notice, a line of `Monitor` or a message of another session; `at` the
+ * time the prompt was queued. A tool result, the Esc mark and a hook's feedback open no turn.
+ */
+export function turnOpener(entries) {
+    for (let index = entries.length - 1; index >= 0; index -= 1) {
+        const entry = entries[index];
+        const content = entry?.message?.content;
+        if (entry?.type !== 'user' || entry.isMeta || entry.isCompactSummary || (Array.isArray(content) && content.some((part) => part?.type === 'tool_result'))) continue;
+        const text = resultText(content).trim();
+        if (!text || NO_PROMPT.test(text)) continue;
+        let back = index - 1;
+        while (back >= Math.max(0, index - 400) && enqueued(entries[back]) !== text) back -= 1;
+        const at = (back >= 0 && enqueued(entries[back]) === text ? timeOf(entries[back]) : null) ?? timeOf(entry);
+        return { by: (entry.origin?.kind ?? 'human') === 'human' && !WAKE.test(text) ? 'owner' : 'wake', text, at, index };
+    }
+    return null;
 }
 
 /** The approving word, in any case; «не одобряю», «не очень одобряю» and «нет одобряю» approve nothing. */
@@ -200,5 +230,5 @@ export function open() {
         }
         return null;
     };
-    return { messages, said: (quote) => messages().some((text) => text.includes(quote)), last, words: () => wordsOf(entries()) };
+    return { messages, said: (quote) => messages().some((text) => text.includes(quote)), last, words: () => wordsOf(entries()), turnOpener: () => turnOpener(entries()) };
 }

@@ -5,7 +5,7 @@
  *
  *   toolUses()       the calls of the agent, oldest first: { name, input }
  *   events()         what happened in the record, oldest first: a refusal at the end of a turn
- *                    { kind: 'refusal', text, by } — `by` is the hook that refused, see `refusalBy`
+ *                    { kind: 'refusal', text, by, at } — `by` is the hook that refused, see `refusalBy`
  *                    — a menu { kind: 'menu', answered }, a call of a tool
  *                    { kind: 'call', id, name, input, blocked, at, branch, doneAt, failed } — `branch` is
  *                    the branch of its record entry, `doneAt` the time of its result, `failed` an
@@ -13,7 +13,8 @@
  *                    start of a background task { kind: 'background', id, task, at, output, agent,
  *                    command } — `command` is the command of its call — its end { kind: 'backgroundEnd', id,
  *                    task, output, status, stopped } — `stopped` when the session stopped it itself —
- *                    and a turn that ended { kind: 'ended' }
+ *                    the start of a monitor { kind: 'monitor', id, task, at, command }, read by the
+ *                    stop of the owner alone, and a turn that ended { kind: 'ended' }
  *   now()            the time the session is judged at, in milliseconds
  *   agent()          the role the session runs as, or null
  *   roleTools(role)  the `tools:` line of the role's header, or null
@@ -211,15 +212,20 @@ export function eventsOf(entries) {
         const refusal = feedbackText(entry);
         if (refusal) {
             closing = false;
-            events.push({ kind: 'refusal', text: refusal, by: refusalBy(refusal) });
+            events.push({ kind: 'refusal', text: refusal, by: refusalBy(refusal), at: Date.parse(entry.timestamp ?? '') });
             continue;
         }
         for (const part of parts(entry)) {
             if (part?.type !== 'tool_result') continue;
             const menu = menus.get(part.tool_use_id);
             if (menu) menu.answered = !part.is_error && Boolean(entry.toolUseResult?.answers);
-            // A monitor is no background task: a persistent one never ends.
-            const started = part.is_error || calls.get(part.tool_use_id)?.name === 'Monitor' ? null : taskStarted(entry);
+            // A monitor is no background task: a persistent one never ends. Only the stop reads its start.
+            const monitor = calls.get(part.tool_use_id)?.name === 'Monitor';
+            if (monitor && !part.is_error && entry.toolUseResult?.taskId) {
+                const at = Date.parse(entry.timestamp ?? '');
+                events.push({ kind: 'monitor', id: part.tool_use_id, task: String(entry.toolUseResult.taskId), at, command: calls.get(part.tool_use_id).input?.command ?? null });
+            }
+            const started = part.is_error || monitor ? null : taskStarted(entry);
             if (started !== null) {
                 const output = outputOf(resultText(part));
                 const agent = !entry.toolUseResult.backgroundTaskId;
