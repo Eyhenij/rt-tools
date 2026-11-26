@@ -4,13 +4,13 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the task folder, the plan, its steps and the progress. Load on any edit of a task folder and on a plan refusal. Pattern task-flow-resume.
 ---
-<!-- rt-kit v0.39.1 · rules/task-flow-plan.md · 0b2c7cdfac45 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · rules/task-flow-plan.md · b0e06bbd7654 · правится надстройкой, не здесь -->
 
 # Work conduct — the folder, the plan and the progress
 
-Rule under the law `docs/constitution/work-conduct.md`. Cold part: `pitfalls.md`; articles whole — `task-flow`, `pitfalls-2.md`.
+Rule under the law `docs/constitution/work-conduct.md`. Cold part: `pitfalls.md`; whole — `task-flow`, `pitfalls-2.md`.
 
-**Requires:** `hooks/task-flow-guard.sh`, `hooks/task-flow-draft-guard.sh`, `hooks/task-context-load.sh`, `hooks/window-fill-guard.sh`, `hooks/turn-exit-guard.sh`, `hooks/turn-judge.md`, `hooks/ask-judge.md`, `hooks/main-run-context.sh`
+**Requires:** `hooks/task-flow-guard.sh`, `hooks/flow-step-guard.sh`, `hooks/task-flow-draft-guard.sh`, `hooks/task-context-load.sh`, `hooks/window-fill-guard.sh`, `hooks/turn-exit-guard.sh`, `hooks/turn-judge.md`, `hooks/ask-judge.md`, `hooks/main-run-context.sh`
 
 ## How the law applies here
 
@@ -18,7 +18,7 @@ Rule under the law `docs/constitution/work-conduct.md`. Cold part: `pitfalls.md`
 - **The guard judges the declared transition, not the presence of files.** Lifted by `этап-идёт`, `этапы-кончились`, `разбор-кончился`, `работа-отдана`, or a taken-apart folder in history.
 - **Two requirements — two guards, and one can be lifted without losing the other.** The behaviour line lifts only the agreement.
 - **A merged agreement does not lock the branch.**
-- **The agreement is required by the edit paths, not by an appraisal of the task.** `apps/**`, `libs/**`; bypass: `**Behaviour:** unchanged — <the owner's reason>` in the plan.
+- **The agreement is required by the edit paths, not by an appraisal of the task.** `apps/**`, `libs/**`; bypass: `**Behaviour:** unchanged — <the owner's reason>`.
 - **A task folder is created for any work, no exceptions.**
 - **The task folder goes into the branch by a commit, not lives in one working tree.**
 - **The plan guard is the lower bound of the requirement, not its limit.**
@@ -26,11 +26,13 @@ Rule under the law `docs/constitution/work-conduct.md`. Cold part: `pitfalls.md`
 - **The stages of a plan cover its done-sign whole.**
 - **Every rule of the product agreement becomes a step of some stage.**
 - **Every step of the plan carries a check whose expected output is taken from a run while the plan is written.**
+- **A plan names its decision before the code.** All nine rows, or one line «No decision: <reason>»; written and approved only so.
 - **A plan for work that ports a technique from outside is written by a measurement of one's own code.**
+- **A claim about a dependency names a file and line of its installed code.**
 - **A count that becomes the measure of the work is bounded by the declaration, not by the file.**
 - **Waiting for one part of a stage is never a stop of the stage.**
-- **A finding made mid-stage is checked against the plan's exit conditions before the first edit.** Outside them: to what the work does not do, filed as a task.
-- **Done work is marked only in the progress.**
+- **A finding made mid-stage is checked against the plan's exit conditions before the first edit.** Outside them it is filed as a task.
+- **Done work is marked only in the progress.** After the plan's commit the plan, the grill and a script stay; the other records of the folder grow.
 - **The plan names the steps of every stage, and the progress mirrors them with a mark each.**
 - **The numbers and the names of the steps are copied from the plan, not reworded.**
 - **Exactly one step carries the mark of going on right now, while any step is not done.**

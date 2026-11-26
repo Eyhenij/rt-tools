@@ -90,8 +90,11 @@ CLAUDE_PROJECT_DIR="$ASK_PR" expect_reason "SC-AK-1064 — отказ назыв
     'reopening'
 
 # Чужая запись при другом рецензенте проходит, и о ней говорится вслух.
-ask_pr_reviewer "SC-AK-1065 — чужая запись при другом рецензенте проходит" третий PASS
-said="$(CLAUDE_PROJECT_DIR="$ASK_PR" input_cmd "GH_TOKEN=\$TOKEN $OPEN --title \"[RT-1695] Сделано\" --reviewer третий --body x" Bash "$ASK_PR" \
+out="$(CLAUDE_PROJECT_DIR="$ASK_PR" input_cmd "$OPEN --title \"[RT-1695] Сделано\" --reviewer третий --body x" Bash "$ASK_PR" \
+    | CLAUDE_PROJECT_DIR="$ASK_PR" "$HOOKS/git-guard-delivery.sh" 2>/dev/null \
+    | jq -r '.hookSpecificOutput.permissionDecision // "PASS"' 2>/dev/null)"
+report "SC-AK-1065 — чужая запись при другом рецензенте проходит" "${out:-PASS}" PASS
+said="$(CLAUDE_PROJECT_DIR="$ASK_PR" input_cmd "$OPEN --title \"[RT-1695] Сделано\" --reviewer третий --body x" Bash "$ASK_PR" \
     | CLAUDE_PROJECT_DIR="$ASK_PR" "$HOOKS/git-guard-delivery.sh" 2>&1 >/dev/null)"
 case "$said" in
     *'владелец'*'машинная'*) report "SC-AK-1065 — о чужой записи говорится вслух" да да ;;

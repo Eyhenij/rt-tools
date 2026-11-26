@@ -226,6 +226,11 @@ export function storiesLostFromIndex(references, storyIds) {
     return [...named].filter((id) => !held.has(id)).sort();
 }
 
+/** The Jest sample of the named files: the whole path of each, or a file would open its namesakes too. */
+export function sampleOfFiles(files) {
+    return files.map((file) => `/${file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`).join('|');
+}
+
 /** The refusal when the driver is not found: printed, and the process ends. */
 function driverMissing(message) {
     console.error(`\n  ${message}\n`);

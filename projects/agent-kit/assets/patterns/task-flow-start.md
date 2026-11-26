@@ -22,17 +22,19 @@ The steps below open one continuous count: a step number is one for the whole co
 
 ### State `просьба-не-разобрана`: exploration — before the first question
 
+The rule `code-design` and its table are loaded before the code is read, where the tree has them: bounds, terms and patterns are the executor's to choose, also when the plan is written in the plan mode of the host.
+
 A question whose answer lies in the code is not put to the owner: it devalues the rest. The findings go into the grill section "What is already in the tree".
 
 ### State `просьба-не-разобрана`: the grill with the owner
 
-Led by the main agent: a subagent cannot reach the owner. The command is `/grill-me`, one question at a time, each with its recommended answer and the reason.
+Led by the main agent: a subagent cannot reach the owner. The command is `/grill-me`, one question at a time, each with its recommended answer and the reason. The card and the owner's words behind it are answers: an option that repeats the text of the task means the question is not asked, and its decision goes into the grill with a reference. A finding against a recorded decision is a cost line in the grill, not a new question.
 
 ### State `разбор-закрыт`: the pipeline after the grill
 
 ### State `договорённость-записана`: a series of tasks is declared an epic
 
-The grill ended with one task — no epic is declared for it: it goes into the epic in work, or, by the owner's word, outside any epic with `--outside-epic`.
+The grill says how many tasks it gave, by the line `**Tasks of the grill:** <number>`. The grill gave one task — no epic is declared for it: it goes into the epic in work; a copy with no open epic creates it with `--single`. Beside an open epic a small order goes outside it only by the owner's word, with `--outside-epic`.
 
 ### State `договорённость-записана`: the task, the branch, the folder
 

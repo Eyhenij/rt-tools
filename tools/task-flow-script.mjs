@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.39.1 · checks/task-flow-script.mjs · 0a183f985837 · правится надстройкой, не здесь
+// rt-kit v0.40.0 · checks/task-flow-script.mjs · 45653b346f39 · правится надстройкой, не здесь
 /**
  * The engine of the task flow: reads the description `flow.js` through the model and answers about
  * the scenario. The description lies next to the engine as `task-flow/flow.js` where the engine is
@@ -13,6 +13,8 @@
  *   node task-flow-script.mjs step N.M  runs the check of that step of the plan, prints
  *                                      `ожидалось … · получено … · совпало|не совпало` and writes the
  *                                      mark of a matched step; exits 0 on a match, 1 otherwise
+ *   node task-flow-script.mjs step N    the steps of stage N with no green mark, side by side; marks the
+ *                                      matched in the order of the plan, up to the first that did not
  *   node task-flow-script.mjs step --done  the same for every step the progress marks done
  *   node task-flow-script.mjs step --done --pr  the rerun before a PR opens: a taken-apart folder
  *                                      comes back from the history for the run, a check that
@@ -35,9 +37,9 @@
  * read from a broken description would measure what nobody wrote.
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { evaluateCondition } from './flow-condition.mjs';
@@ -48,9 +50,10 @@ import { isWriteCommand, saysStop } from './flow-data.mjs';
 import { FlowModelError, buildModel } from './flow-model.mjs';
 import { overridePath, removedLines } from './flow-override.mjs';
 import { planProblems, readRecord, runPlanRed } from './flow-plan.mjs';
+import { runStage } from './flow-stage.mjs';
 import { runStepCommand } from './flow-step.mjs';
 import { FlowSyntaxError } from './flow-syntax.mjs';
-import { currentStep, decide, holdReason, menuCause, stageStep } from './flow-verdict.mjs';
+import { currentStep, decide, holdReason, menuCause, nightBoundary, stageStep } from './flow-verdict.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 // The history source puts a taken-apart folder back; it lies next to the laid-out engine, one level up in the package.
@@ -71,6 +74,13 @@ export function stateLines(model) {
 /** A read the hosting did not answer twice: the error a source throws carries this name. */
 const SILENT = 'HostSilent';
 
+/** What the measurers of an exit with the capability `gaps` name. */
+function gapsOf(model, exit, measured) {
+    const named = new Set([...JSON.stringify(exit).matchAll(/measure\.(\w+)\./g)].map(([, entry]) => entry));
+    const gaps = (model.measures ?? []).filter(({ entry, caps }) => named.has(entry) && caps?.gaps).flatMap(({ entry }) => measured(`measure.${entry}.gaps`));
+    return gaps.length > 0 ? { gaps } : {};
+}
+
 /**
  * The measured state: the first state whose exit is known to be unmet. An exit the hosting could not
  * answer is unknown and is passed over, and the exits after it are measured. With no unmet exit and
@@ -79,7 +89,7 @@ const SILENT = 'HostSilent';
  *
  * `read(name)` answers a measurer result by its reference and may throw `HostSilent`; a result is
  * read once per measurement. Returns `{ state, index, reason, exits }`, `exits` mapping a state key
- * to `true`, `false` or `'unknown'`.
+ * to `true`, `false` or `'unknown'`, and `gaps` — the lines an unmet exit says why by, when it has any.
  */
 export function measureStates(model, read) {
     const cache = new Map();
@@ -100,7 +110,7 @@ export function measureStates(model, read) {
             continue;
         }
         exits[state.key] = met;
-        if (!met) return { state: state.title, index: index + 1, reason: null, exits };
+        if (!met) return { state: state.title, index: index + 1, reason: null, exits, ...gapsOf(model, state.exit, measured) };
     }
     if (firstUnknown !== null) {
         return { state: model.states[firstUnknown].title, index: firstUnknown + 1, reason: 'the hosting did not answer twice', exits };
@@ -154,6 +164,7 @@ export function measureLines(model, result) {
         lines.push(`state: ${result.state} (${result.index} of ${total})`);
         lines.push(`next: ${state.action ?? ''} (${state.pattern ?? ''})`);
         if (result.reason) lines.push(`reason: ${result.reason}`);
+        lines.push(...(result.gaps ?? []).map((gap) => `not held: ${gap}`));
     }
     for (const [i, s] of model.states.entries()) {
         if (!(s.key in result.exits)) break;
@@ -168,7 +179,7 @@ export function measureJson(model, result) {
     return { ...result, action: state?.action ?? null, pattern: state?.pattern ?? null };
 }
 
-const USAGE = 'usage: node task-flow-script.mjs states | measure [--json] | step <N.M>|--done [--pr] | plan-check <plan.md> | plan-red | guard | verdict | forecast --days N [--until <date>] [--per-mille] [--guard]  [--flow <flow.js>]';
+const USAGE = 'usage: node task-flow-script.mjs states | measure [--json] | step <N.M>|<N>|--done [--pr] | plan-check <plan.md> | plan-red | guard | verdict | forecast --days N [--until <date>] [--per-mille] [--guard]  [--flow <flow.js>]';
 
 /**
  * What the guard guards: where the task folders and the epic plans lie, the tree override, and the
@@ -177,6 +188,7 @@ const USAGE = 'usage: node task-flow-script.mjs states | measure [--json] | step
 export const GUARD_SETTINGS = {
     tasksDir: process.env.RT_FLOW_TASKS_DIR || 'docs/tasks',
     plansDir: process.env.RT_FLOW_PLANS_DIR || 'docs/plans',
+    handoffDir: process.env.RT_HANDOFF_DIR || '.claude/handoff',
     overridePath: '.claude/rt-kit/overrides/task-flow/flow.js',
     protectedPaths: [
         '^projects/agent-kit/assets/task-flow/',
@@ -200,6 +212,23 @@ async function runGuard(model, base) {
     const measure = () => measureStates(model, readers).index;
     const ctx = guardContext({ root, model, marks: source('marks'), owner: source('owner'), measure, settings: GUARD_SETTINGS });
     return judgeCall(call, ctx);
+}
+
+/**
+ * The autonomous session by the newest morning list of the project: `{ until, list }` while the boundary
+ * lies ahead, otherwise null. The lists are named by their day, so the newest one is the last by name.
+ * The directory is the project's of the session, as in the guards; a list that cannot be read is none.
+ */
+function nightOf(root) {
+    try {
+        const dir = resolve(process.env.CLAUDE_PROJECT_DIR || root || '.', GUARD_SETTINGS.handoffDir);
+        const names = readdirSync(dir).filter((file) => file.endsWith('-ночь.md'));
+        const name = names.sort().at(-1);
+        const until = name ? nightBoundary(readFileSync(join(dir, name), 'utf8'), new Date()) : null;
+        return until ? { until, list: `${GUARD_SETTINGS.handoffDir}/${name}` } : null;
+    } catch {
+        return null;
+    }
 }
 
 /**
@@ -233,7 +262,8 @@ async function runVerdict(model, base) {
         step = stageStep(source('git'), source('marks'), folder, branch, text);
     }
     const task = branch?.match(/^[A-Z]+-(\d+)-/)?.[1] ?? null;
-    return { block: holdReason(model, result, step, { cause: menuCause(measured), task }) };
+    const cause = menuCause(measured);
+    return { block: holdReason(model, result, step, { cause, task, night: cause ? nightOf(root) : null }) };
 }
 
 /**
@@ -284,6 +314,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
         else if (command === 'step') {
             const source = await openSources(model, dirname(path));
             const sources = { git: source('git'), steps: source('steps'), marks: source('marks'), owner: source('owner') };
+            if (/^\d+$/.test(target)) process.exit(await runStage(sources, model, target, args.slice(2)));
             process.exit(await runStepCommand(sources, model, target, process.argv.includes('--pr') ? '--pr' : ''));
         } else if (command === 'plan-check') {
             const source = await openSources(model, dirname(path));

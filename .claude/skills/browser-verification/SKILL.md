@@ -4,7 +4,7 @@ kind: rule
 law: verifiability
 description: Rule under the verifiability law. Load for browser checks and requests to a running app. Patterns browser-verification-stand, -measure.
 ---
-<!-- rt-kit v0.39.1 · rules/browser-verification.md · ff8fba7039ae · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · rules/browser-verification.md · 79dd21b43b23 · правится надстройкой, не здесь -->
 
 # Checking the running application
 
@@ -42,3 +42,4 @@ A layout conclusion is backed by a number.
 
 - **No profile file, one connected browser: drive it, write its id.** Two or more: name them to the owner; browser work waits.
 - **A showcase check is done live before the owner looks.**
+- **Pinned Chrome loses the local tab: the built-in browser measures.**

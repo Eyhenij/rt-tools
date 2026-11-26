@@ -8,7 +8,7 @@
 # the signature, the folder and the work queue it would take the guard past the file length limit,
 # and the guard cannot be split by event: it is one whole, and its command parsing is shared.
 #
-# WHAT IS HERE. Two calls, both called from the delivery guard, where `fault`, `main_branch` and
+# WHAT IS HERE. The calls below, all called from the delivery guard, where `fault`, `main_branch` and
 # the profile calls are already declared. The helper reads neither the input nor the settings.
 #
 # The assignment of an epic to this working copy is read next to this: it judges the same subject
@@ -109,10 +109,28 @@ rt_epic_base() {
         && ! git merge-base --is-ancestor "origin/${main_branch}" "origin/${_epic_branch}" 2>/dev/null \
         && ! git merge-base --is-ancestor "origin/${main_branch}" "$_base_ref" 2>/dev/null; then
         _behind="$(git rev-list --count "origin/${_epic_branch}..origin/${main_branch}" 2>/dev/null)"
-        unmet epic_has_main_tip no "the branch of the epic «${_epic_branch}» does not carry the tip of «${main_branch}» — it has moved ahead by ${_behind:-several} commits. The main branch is merged into the branch of the epic, not bypassed by taking the base from the main one: git checkout ${_epic_branch}, git merge origin/${main_branch}, run the heavy steps by \`${ahead_cmd:-bash git-guard-push-ahead.sh} > \"\${TMPDIR:-/tmp}/push-ahead-\$(basename \"\$PWD\").log\" 2>&1\` (the Bash call with run_in_background, nothing after it; the verdict is the code of the notice and the last \`push ahead:\` line of the log), and send the branch after their end: the push is refused until they have a green mark."
+        unmet epic_has_main_tip no "the branch of the epic «${_epic_branch}» does not carry the tip of «${main_branch}» — it has moved ahead by ${_behind:-several} commits. The main branch is merged into the branch of the epic, not bypassed by taking the base from the main one: git checkout ${_epic_branch}, git merge origin/${main_branch}, run the heavy steps by \`${ahead_cmd:-bash git-guard-push-ahead.sh} > \"\${TMPDIR:-/tmp}/push-ahead-\$(basename \"\$PWD\").log\" 2>&1\` (the Bash call with run_in_background, nothing after it; the verdict is the code of the notice and the last \`push ahead:\` line of the log), and send the branch after their end: the push is refused until they have a green mark. The merge goes by the block of the pattern git-workflow-merge, which keeps conflict markers out of the guards. The repairs the merge needs go into the task branch: it is taken from that tip — git checkout -b ${_branch} ${_epic_branch} — and the task folder is created there; the epic branch takes no edits of its own."
     fi
 
     return 0
+}
+
+# The base of the branch of the only task of a grill: the main branch, and nothing over it.
+#
+# Two such tasks in a row would otherwise stand one on the other with no epic above them: the second
+# request would carry the commits of the first. The branch of the task itself is a base like any other.
+#
+# Arguments: the state of the task, its number, the ref the branch grows from, the name of the new branch.
+rt_single_base() {
+    [ "$(printf '%s' "$1" | jq -r '.single // false' 2>/dev/null)" = true ] || return 0
+    git rev-parse --verify --quiet "origin/${main_branch}" >/dev/null 2>&1 || return 0
+    _over="$(git rev-list --count "origin/${main_branch}..$3" 2>/dev/null)"
+    [ "${_over:-0}" -gt 0 ] 2>/dev/null || return 0
+    # The branch behind the ref, whatever its spelling; a hash and a detached tip have none.
+    _name="$(git rev-parse --abbrev-ref "$3" 2>/dev/null)"
+    _name="${_name#origin/}"
+    [ "$(rt_task_branch_number "$_name" 2>/dev/null)" = "$2" ] && return 0
+    unmet_class branch_create_stale_base "the only task of its grill grows from the main branch, and the base «${_name:-$3}» carries ${_over} commits over it: the request would take someone else's work with it. A task that needs those commits is the second one of a series, and a series is an epic: npm run task:new -- --epic. Otherwise take it from the main branch. Take a fresh base: git fetch origin && git checkout -b $4 origin/${main_branch}."
 }
 
 # The base of a request about a task of an epic.
@@ -167,7 +185,7 @@ rt_epic_pull_base() {
     if git rev-parse --verify --quiet "origin/${_epic_branch}" >/dev/null 2>&1 \
         && ! git merge-base --is-ancestor "origin/${_epic_branch}" HEAD 2>/dev/null; then
         _behind="$(git rev-list --count "HEAD..origin/${_epic_branch}" 2>/dev/null)"
-        unmet branch_has_epic_tip no "the branch of the epic «${_epic_branch}» has moved ahead by ${_behind:-several} commits and is not merged into this branch. The reviewer would see the edit mixed with someone else's: git fetch origin && git merge origin/${_epic_branch}."
+        unmet branch_has_epic_tip no "the branch of the epic «${_epic_branch}» has moved ahead by ${_behind:-several} commits and is not merged into this branch. The reviewer would see the edit mixed with someone else's: git fetch origin && git merge origin/${_epic_branch} — by the block of the pattern git-workflow-merge, which keeps conflict markers out of the guards."
     fi
 
     return 0

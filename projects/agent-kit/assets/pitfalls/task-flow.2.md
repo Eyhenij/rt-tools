@@ -83,7 +83,7 @@ flowchart TD
     F --> Z
     Z -->|No| Y[The epic is declared: a card, all its tasks and a plan — then its branch from the main branch]
     Z -->|Yes| G[Task, branch from the epic branch, task folder by branch name; the epic card moves with its first task]
-    Z -->|The owner's word about work outside an epic| X[Task, branch from the main branch, task folder by branch name]
+    Z -->|The grill gave one task, or the owner's word for work outside an epic| X[Task, branch from the main branch, task folder by branch name]
     X --> H
     Y --> G
     G --> H[A plan with stages; not edited after it is written]
@@ -99,7 +99,7 @@ flowchart TD
     L --> M{Review and run are over}
     M -->|Red run or remarks| V[Fixed in the same branch: the plan is gone from disk, the guard takes the sign of work from the branch history]
     V --> M
-    M -->|Green and no remarks| O[The draft, if there was one, is lifted; a person presses merge into the epic branch]
+    M -->|Green and no remarks| O[The draft, if there was one, is lifted; a person presses merge into the epic branch, or the executor by a named allowance]
     O --> P{Tasks of the epic are left}
     P -->|Yes| G
     P -->|No| Q[The PR of the epic into the main branch opens: every folder is taken apart]
@@ -142,8 +142,9 @@ flowchart TD
 - **A session does not start work by itself.** The handover, the state from the startup hook and an
   assigned epic say what to do, not whether to work: a start needs the owner's word in the same
   session. An empty message, one word or one path order no work.
-- **A refusal by an external limiter removes the way, not the task.** It names no exit: the way is
-  taken from the guard that already described this fix, and the task stays the same.
+- **A refusal by an external limiter removes the way, not the task.** The way is taken from the guard that already described this fix.
+- **A refusal that names a ready command is carried out before any question to the owner.** A move of the owner's is asked; a bypass is no command.
+- **A menu where every option hands the work to the owner or stops it bypasses the task.** «You do it» and «stop» move nothing.
 - **A question written by a past session does not become a question to the owner.** It is addressed
   to the handover's author, and some are closed by a work step.
 - **The owner's instruction holds until they cancel it, and a new fact against it is a line in the
@@ -189,17 +190,26 @@ flowchart TD
   code is written.
 - **Every step of the plan carries a check whose expected output is taken from a run while the plan
   is written.** Written by a guess, it fails at the step itself. The engine runs the check and writes
-  the mark of the step; a step marked done without its mark is refused.
+  the mark of the step; a step marked done without its mark is refused. A number is written bare,
+  `>= 12`: backticks mean a whole line. A test run is expected by its count of passed tests, never by exit 0.
+  Absence is written `grep -q … → exit 1`, never `grep -c … → = 0`: `grep` exits 1 without a match,
+  and every form but `exit N` matches only on code 0. The verdict is the code of the
+  whole line: a pipe starts with `set -o pipefail;`, and `VERBOSE=1` and the like stand in the line.
+  A comparison with another branch names its commit, by `git rev-parse --short <branch>`.
+- **A plan names its decision before the code.** What every row names and the line that replaces the
+  table — pattern `code-design-choose`. Asked on a write, by `plan-check` and `plan-red`; approved — not.
 - **A plan for work that ports a technique from outside is written by a measurement of one's own
-  code.** Reading the sample says how it is built; what is needed here is said by a count over
-  one's own files.
+  code.** The sample says how it is built; a count over one's own files says what is needed here.
+- **A claim about a dependency names a file and line of its installed code.** About how it behaves, by
+  the path from `node_modules/`. An approved plan forbade what the framework allows.
 - **A count that becomes the measure of the work is bounded by the declaration, not by the file.**
-  A file holds neighbouring sets too.
+  A file holds neighbouring sets too. The count is taken over a sign only the step's own items carry:
+  a scenario id range, a label prefix. What a review round adds carries a sign of its own and a line in
+  the progress. Rewording the added items so the frozen number holds hides them from the count.
 - **Waiting for one part of a stage is never a stop of the stage.** The parts independent of what is
   awaited are done in the same turn; the owner is told what is done and what is left for their step.
 - **A finding made mid-stage is checked against the plan's exit conditions before the first edit.**
-  A finding named by no exit condition goes to the section on what the work does not do, and is
-  filed as a task.
+  One that no exit condition names goes to what the work does not do, and is filed as a task.
 - **Done work is marked only in the progress.** "Where we stand" is rewritten by every session, not
   appended.
 - **The plan names the steps of every stage, and the progress mirrors them with a mark each.** The

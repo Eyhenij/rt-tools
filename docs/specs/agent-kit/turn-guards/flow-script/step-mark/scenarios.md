@@ -137,6 +137,14 @@ Then the fixture counts as a mismatch, and the code is 1
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
+### SC-AK-1941 — a judge that did not run stops the replay and is no mismatch
+
+Given two fixtures and a judge that ends with code 1 and the words «Please run /login», or with code 0 and nothing
+When the replay runs
+Then it stops on the first call, the answer of the judge is printed, and the code is 2; an answer with no verdict stays a mismatch
+
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
+
 ### SC-AK-1716 — a plan stripped of its checks in the working copy does not lift the refusal
 
 Given a plan whose commit wrote a check under step 1.1, and the same plan in the working copy with every check line removed
@@ -185,9 +193,9 @@ Then the opening is refused naming step 1.1 and the network as the cause
 
 Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
-### SC-AK-1726 — a task folder changed since the plan commit refuses the step
+### SC-AK-1726 — a grill changed since the plan commit refuses the step
 
-Given a check of step 1.1 that matches, and a file of the task folder other than the progress changed since the commit of the plan
+Given a check of step 1.1 that matches, and the grill changed since the commit of the plan
 When `step 1.1` is run
 Then the step is refused with its reason, and the progress keeps step 1.1 not done
 
@@ -308,7 +316,7 @@ And the task folder taken apart after every step was marked done
 When the final rerun runs
 Then the step matches: its check reads the progress before the commit that marked the step done
 
-Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-script-recheck.test.sh`.
 
 ### SC-AK-1794 — the final rerun reads the replacement lines of the last progress
 
@@ -321,7 +329,7 @@ And of two replacement lines for one step the later one is taken
 And a replacement of an earlier version, taken away by the commit that marks the step, is not brought back
 And the later one of two replacement lines also decides the mark of the step
 
-Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`, `projects/agent-kit/tests/task-flow-script-recheck.test.sh`.
 
 ### SC-AK-1740 — the final rerun runs on the node the tree pins
 
@@ -329,7 +337,7 @@ Given a tree whose `.nvmrc` names a version installed in the nvm directory, and 
 When the PR opens and the final rerun runs
 Then the engine runs on the pinned node; without `.nvmrc` it runs on the node of the session
 
-Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-script-node.test.sh`.
 
 ### SC-AK-1736 — a step command that does not match leaves the progress as it was
 
@@ -360,7 +368,7 @@ When `step 1.3` is run
 Then it is refused with the move `git revert --no-edit <the commit that took the folder apart>`
 And a number the plan does not name is refused as such, with no move and no folder put back
 And the step guard lets that command through, refuses a hand mark of a step, and the command brings the folder back
-And a folder file edited after the commit of the plan refuses the step by its name, with the revert move
+And a grill edited after the commit of the plan refuses the step by its name, with the revert move
 
 Covered: `projects/agent-kit/tests/task-flow-script-archive.test.sh`.
 
@@ -390,6 +398,14 @@ And on a taken-apart folder the second run of a group reads the progress of its 
 
 Covered: `projects/agent-kit/tests/task-flow-script-archive.test.sh`.
 
+### SC-AK-1950 — the tree names the roles a plan needs
+
+Given a tree whose `planRolesCommand` answers `none`, one without the settings, one without the key, one whose command fails, answers something else or lies in settings that do not parse
+When the roles of a plan are asked, and then an answer before the plan commit, after it and with no moment is read with no roles to wait for
+Then the first tree needs no role and every other needs both, and only the answer after the commit approves
+
+Covered: `projects/agent-kit/tests/flow-approval.test.sh`, `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+
 ### SC-AK-1826 — the line of an unmatched step names its command, output and errors
 
 Given a done step whose check prints four lines and an error and exits 3
@@ -399,3 +415,61 @@ And a check that counts the lines of a pipe shows the failure line fed to its la
 And a `tee` goes before a closing `grep` only, never into `case`, `((`, a backslash, `PIPESTATUS` or `>|`
 
 Covered: `projects/agent-kit/tests/task-flow-script-archive.test.sh`.
+
+### SC-AK-1997 — a stage whose steps all match is marked by one call
+
+Given a stage of three open steps whose checks match
+When `step <N>` runs
+Then the three are marked done, the next step is current and the code is 0
+
+Covered: `projects/agent-kit/tests/flow-stage.test.sh`.
+
+### SC-AK-1998 — a first step that did not match leaves the stage open
+
+Given a stage whose first step does not match
+When `step <N>` runs
+Then no step is marked, the matched ones keep their marks on disk and their lines name the first
+And the code is 1, an edit of the progress passes the guard, and a call after the fix marks the stage
+
+Covered: `projects/agent-kit/tests/flow-stage.test.sh`.
+
+### SC-AK-1999 — a middle step that did not match stops the marking
+
+Given a stage whose second step does not match
+When `step <N>` runs
+Then the first is marked, the second is current and the third stays open
+
+Covered: `projects/agent-kit/tests/flow-stage.test.sh`.
+
+### SC-AK-2000 — an open step of an earlier stage stops the marking
+
+Given a stage whose steps match and an open step of the stage before it
+When `step <N>` runs
+Then no step is marked and the code is 1
+
+Covered: `projects/agent-kit/tests/flow-stage.test.sh`.
+
+### SC-AK-2001 — a done step is measured again by its mark
+
+Given a stage with done steps
+When `step <N>` runs
+Then a done step with a green mark is not measured while another is open, one without a mark is
+And with every step done and green all are measured, and a step that does not match loses its mark
+
+Covered: `projects/agent-kit/tests/flow-stage.test.sh`.
+
+### SC-AK-2002 — a stage that cannot be measured is refused
+
+Given a stage number the plan lacks, a step with no check, a taken-apart folder
+When `step <N>` runs
+Then the first and the last are refused and nothing is written; the step is refused on its line, the one before it is marked
+
+Covered: `projects/agent-kit/tests/flow-stage.test.sh`.
+
+### SC-AK-2003 — a step is measured as before
+
+Given a plan of several stages
+When `step <N.M>` and `step --done` run
+Then each prints and marks as it did
+
+Covered: `projects/agent-kit/tests/flow-stage.test.sh`.

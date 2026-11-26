@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash
-# Requires: checks/task-flow-script.mjs, checks/decide.mjs, hooks/decide.sh, hooks/facts.sh
+# Requires: checks/task-flow-script.mjs, checks/flow-plan.mjs, checks/decide.mjs, hooks/decide.sh, hooks/deny-tail.sh, hooks/facts.sh
 # PreToolUse guard of the course of work: the scenario moves by a measurement, not by a declaration.
 #
 # The progress used to say what was done, and the guards believed the line. Now a step is done when
@@ -9,7 +9,8 @@
 # mark without a green mark, done and current marks out of order, a state line ahead of the measured
 # state, a shell write into the progress, the plan, the epic plan or the marks, «отложено» without the
 # owner's word naming the task, and an edit of the description of the task flow outside a task whose
-# approved plan names it.
+# approved plan names it. A plan not yet approved is refused a check whose form hides its result and
+# a decision that is not complete.
 #
 # The decisions live in the engine — `task-flow-script.mjs guard` — and this file only hands it the
 # input and turns its line into a refusal. The whole rule — rule `task-flow`.
@@ -47,6 +48,11 @@ dir="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)"
 [ -d "$dir" ] || dir="${CLAUDE_PROJECT_DIR:-.}"
 
 verdict="$(cd "$dir" && printf '%s' "$input" | timeout 60 node "$engine" guard 2>/dev/null)" || exit 0
+# A plan is judged when it is written: a check that is a pipe without `pipefail` or counts an absence by
+# `grep -c` measures nothing, and the decision names its rows. An approved plan is not asked again.
+[ -n "$verdict" ] || case "$(printf '%s' "$input" | jq -r '.tool_input.file_path // empty' 2>/dev/null)" in
+    */plan.md) verdict="$(cd "$dir" && printf '%s' "$input" | timeout 60 node "$(dirname "$engine")/flow-plan.mjs" written 2>/dev/null)" || exit 0 ;;
+esac
 [ -n "$verdict" ] || exit 0
 
 # The decision, the move and the text come from the decision table. The engine gives its reason;
@@ -61,6 +67,8 @@ case "$verdict" in
     *"belongs to the description of the task flow"*) action=edit_flow_description ;;
     *"the replacement of the check of step"*"is the owner's decision"*) action=replace_step_check ;;
     *"шаг владельца"*"is not written into a row"*) action=owner_step_row ;;
+    "the check of step "*) action=write_plan_check ;;
+    "the decision of the plan "*) action=write_plan_decision ;;
     *) action=defer_task ;;
 esac
 
@@ -86,7 +94,17 @@ facts="$(jq -cn \
     --arg handoff "$(rt_fact_from_handoff "$transcript")" \
     '{exam:$exam, window_over_stop:$window, rule_loaded:$rule, gate_rule:$gate, from_handoff:$handoff,
       task_flow_loaded:$flow, step_green:"no", measured:"earlier", owner_named_task:"no", flow_desc_approved:"no"}')"
-params="$(jq -cn --arg v "$verdict" '{verdict:$v}')"
+# A compound command is refused whole: the words name the part that holds the guarded file.
+part=""
+if [ "$tool" = Bash ]; then
+    # shellcheck disable=SC1091
+    . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
+    # shellcheck disable=SC1091
+    . "$rt_hooks_dir/write-targets.sh" 2>/dev/null
+    command -v rt_judged_part >/dev/null 2>&1 && part="$(rt_judged_part "$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)" \
+        'progress.md|plan.md|plans/|rt-kit|task-flow|flow-|.claude/projects/')"
+fi
+params="$(jq -cn --arg v "$verdict" --arg a "$part" '{verdict:$v} + (if $a == "" then {} else {after:$a} end)')"
 # shellcheck disable=SC1091
 . "$rt_hooks_dir/decide.sh" 2>/dev/null
 command -v rt_decide >/dev/null 2>&1 && rt_decide flow-step-guard.sh "$action" "$facts" "$params" PreToolUse "$input"

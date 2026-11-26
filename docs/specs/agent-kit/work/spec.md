@@ -185,7 +185,7 @@ the merge, not after.
   print and what to end with is separated from the calls of the network: otherwise it is checked only
   by a live work queue.
 - **An epic is created by the same command as a task, and by three things at once.** The label on the
-  card, the draft of the plan in the directory of plans of the tree and the path to that draft in the
+  card, the draft of the plan in the directory of plans — in the branch of the epic — and the path to it in the
   body: the audit reads the plan by the path, and a card without it points into emptiness.
 - **Everything an epic cannot be created without is asked before the card is made.** An administrator
   alone takes a made card off the board, and a refusal after the call leaves an epic without a label
@@ -196,10 +196,11 @@ the merge, not after.
 - **The branch of a task is printed with the branch of its epic as its base, and the base is read
   from the plan of the epic.** The work queue knows no names of branches at all, and a base taken
   from the working copy is whichever branch happened to be checked out that minute.
-- **A task outside an epic is not created, and the refusal carries both ways out at once.** Named as
+- **A task outside an epic is not created, and the refusal carries every way out at once.** Named as
   "name the epic" alone, it is read as "there is no way out" and gets bypassed by a call to the
-  hosting past the command; the second way is the word of the owner, and it goes into the body of the
-  task — what is said only in the call the next reader will not find.
+  hosting past the command. The only task of a grill goes by `--single`; the word of the owner goes into
+  the body of the task — what is said only in the call the next reader will not find, and a word the audit
+  does not read off the card is refused.
 - **A tree that named no label of an epic creates tasks as before.** There epics do not exist at all,
   and demanding one of every task would stop the work of such a tree on the day of installation.
 - **A run at the tip of an open request pushed out of the queue of the pipeline is a divergence of the

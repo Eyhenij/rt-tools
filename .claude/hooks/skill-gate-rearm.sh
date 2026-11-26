@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/skill-gate-rearm.sh · 33a5bee2fe86 · правится надстройкой, не здесь
+# rt-kit v0.40.0 · hooks/skill-gate-rearm.sh · 18639c01785b · правится надстройкой, не здесь
 # rt-hook: SessionStart compact|clear
 # Re-arming the gate. SessionStart(compact|clear).
 #
@@ -54,7 +54,7 @@ rm -f "$record" 2>/dev/null
 # the gate answers that they were not — and the session spends a turn finding out which of the two
 # is right. A turn was spent that way four times in one session. The line removes the contradiction:
 # the rule text is no longer in the context, which is why it is asked for again.
-context="The rules gate is armed anew: the compaction carried the text of the rules themselves out of the session. Every rule within the host limit comes back by itself, whole, at the next edit of its area — the gate puts it into the session."
+context="The rules gate is armed anew: the compaction carried the text of the rules themselves out of the session. Every rule within the host limit comes back by itself, whole, at the next edit of its area — the gate puts it into the session. Where the rules of one edit do not fit the limit together, the gate delivers as many as fit in the order of the map and refuses the edit for the rest, naming them. The rules of the grill and of a plan are the exception: they are read by the tool Skill before the document is written, and the write without them is refused."
 if [ -n "$over" ]; then
     context="${context} Longer than the host limit, and so not delivered: ${over}. Load these by the tool Skill, or read their SKILL.md by the tool Read, before the first edit of their area."
 fi

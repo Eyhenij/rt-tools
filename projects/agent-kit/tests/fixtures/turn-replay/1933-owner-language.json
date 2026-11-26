@@ -1,0 +1,11 @@
+{
+  "case": "SC-AK-1933",
+  "kind": "the reply to the owner is not in the owner's language",
+  "record": "synthetic",
+  "task": 101,
+  "turns": [
+    { "role": "owner", "at": "2026-11-24T08:00:00Z", "owner": "какой последний коммит ветки?" },
+    { "role": "agent", "at": "2026-11-24T08:01:00Z", "call": "Bash", "command": "git log --oneline -1", "code": 0, "out": "4c7d7d4 docs: plan of the task" },
+    { "role": "agent", "at": "2026-11-24T08:02:00Z", "say": "The last commit of the branch is the plan of the task." }
+  ]
+}

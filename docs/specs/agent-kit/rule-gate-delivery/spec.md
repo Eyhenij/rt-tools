@@ -43,7 +43,9 @@ turn, as today.
 ### The delivery
 
 - **An edit that needs a rule not loaded in the session passes, and the text of the rule arrives in
-  the session by the same call.** There is no refusal, no load by the tool and no repeat.
+  the session by the same call.** There is no refusal, no load by the tool and no repeat. A document
+  of design is the exception: its rules are read before the text is composed, and the subdomain
+  `rule-gate` names them.
 - **The delivery covers every call kind the gate judges: a file edit, a writing shell command, the
   browser and the mockups tool.** The readiness sign of the request is "almost no gate refusals", and
   the gate refuses on all four kinds today.
@@ -89,17 +91,20 @@ turn, as today.
   "not delivered" are one change: a broken delivery has no right to pass an edit without its rule.
 - **An edit passes only when every rule it needs is in the session.** A layer on top of the domain
   rule is needed the same way; a pass with one of the two missing lifts the requirement silently.
-- **A call whose rules do not fit the host limit together is refused whole, and the refusal names
-  every one of them.** Nothing of the call is delivered, so the session loads them in one turn
-  instead of meeting them one refusal at a time.
+- **A call whose rules do not fit the host limit together is refused, the refusal carries as many as
+  fit in the order of the map and names the rest.** The rules of one edit weigh more than the limit
+  together, and a refusal of all of them repeats after every compaction. The refusal and the rules
+  in it stay within the limit; a rule in it names its companion by its path. Where none fits next to
+  the words of the refusal, it names them all and carries none.
 - **A remaining refusal names why the rule was not delivered: longer than the host limit, not
-  fitting together with the other rules of the call, or not read.** The week report counts the
+  fitting together with the other rules of the call, not read, or read before the text is
+  composed.** The week report counts the
   refusals by this reason; without it the remaining refusals cannot be told from the old ones.
 
 ### The record
 
-- **A rule is recorded as loaded only by an answer that allows the call.** A refused call put no
-  text into the session, and a rule recorded there would pass the next edit unread.
+- **A rule is recorded as loaded only by an answer that carries its text.** A rule recorded by an
+  answer without its text would pass the next edit unread.
 - **A delivered rule is recorded as loaded, the same as after a call of the tool `Skill`.** The next
   edit of the area passes silently, and compaction and clearing forget it like any other loaded rule.
 - **The gate creates the directory of the record itself.** The first delivery of a session comes
@@ -134,7 +139,9 @@ turn, as today.
   the round being removed.
 - **The re-arming line says that every other rule comes back by itself at the next edit of its
   area.** Without such a line the summary says the rules are loaded, and the session cannot tell
-  why they arrive again.
+  why they arrive again. Of the rules of one edit that do not fit together it says the same the
+  refusal does: as many as fit arrive, the rest are named. The line names its own exception: the
+  rules of the grill and of a plan are read before the document is written.
 - **A re-arming line without a rule longer than the host limit asks to load nothing.**
 
 ## What is out of scope
@@ -163,8 +170,9 @@ exit code.
 | ------------------------------------------------------- | -------------------- | ------------------------------------------------------------- |
 | the rules of the call fit the host limit together       | a pass with the text | the delivery line, the rules, the companions or their paths   |
 | a rule of the call is longer than the host limit        | the call refused     | the rule, its law, reading its `SKILL.md`, and that it is too long |
-| the rules of the call do not fit the host limit together | the call refused    | every rule of the call, and that they do not fit together     |
+| the rules of the call do not fit the host limit together | the call refused    | the rules that fit, whole, and the names of the rest          |
 | a rule of the call could not be read                    | the call refused     | the rule, its law, and that it was not read                   |
+| a document of design is written without its rules       | the call refused     | every rule of the call, and that they are read beforehand     |
 | the call carries no session id                          | the call refused     | the rule, and how to load it                                  |
 | every rule the call needs is already loaded             | a pass               | nothing                                                       |
 
@@ -210,9 +218,10 @@ runs in. A tree that laid out no map gets no gate, as today.
   characters without being asked to read it. 67 of the 104 rules of this tree fit alone. The number
   is the default of `RT_GATE_CONTEXT_LIMIT`; the first step of the plan confirms it on a real rule,
   on the record of the session itself. Closes `Q-26`.
-- **Rules that fit apart and not together are refused together, and nothing is recorded.** A rule
-  recorded by a refused call would pass the next edit without its text; the refusal names all of
-  them, so the session loads them in one turn. Closes `Q-27`.
+- **Rules that fit apart and not together arrive in the refusal as many as fit, and only those are
+  recorded.** The text goes in the reason of the refusal, which the host always gives to the session;
+  the rest is named, so the session loads it in one turn. Closes `Q-27`; before 24 November 2026
+  nothing arrived, and the refusal repeated after every compaction.
 - **The delivered text does not repeat the article headings.** The rule arrives whole, and the
   headings above it would pay for the same text twice. The subdomain `rule-article` keeps them in
   the refusals that stay. Closes `Q-28`.
@@ -228,3 +237,4 @@ None.
 
 - 18 November 2026 — written as the agreement of RT-3326.
 - 18 November 2026 — merged as the subdomain `rule-gate-delivery`, with its bindings.
+- 24 November 2026 — a refusal for rules that do not fit together carries those that fit.

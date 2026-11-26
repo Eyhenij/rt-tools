@@ -206,3 +206,63 @@ When Write puts the laid-out `tools/task-flow/flow.js`
 Then it is refused
 
 Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1940 — a check whose form hides its result is refused when the plan is written
+
+Given a plan of the branch with no approval mark
+When Write or Edit puts a check that is a pipe without `pipefail` before it, or one that counts an absence by
+`grep -c` with any keys, `rg -c` or `grep | wc -l`
+Then the write is refused and names the step, the command and the form to write; a pipe with `pipefail`, an
+«||», a bar inside quotes, a substitution, a `case` or a test, a count behind «|| true», a count of what is
+found and another file pass
+
+Given the same plan committed, or an approval mark of the branch
+When `plan-red` runs, or the plan is written
+Then neither asks the form: an approved plan keeps its checks, and `plan-check` still names it
+
+Covered: `projects/agent-kit/tests/flow-plan-forms.test.sh`.
+
+### SC-AK-1971 — a plan without the section of the decision is named, and one line with a reason passes
+
+Given a plan text
+When the decision is read
+Then a section that is not there or holds no row is named with all nine rows, one that stands twice is named, and
+a block of code and the text after the section are not the section; line ends are of either system; the heading
+«Решение» and «Decision» are one, and «Решения нет: <reason>» or «No decision: <reason>» of two words passes;
+without a reason, with one word or with the brackets of the template it is named, and beside a table it lifts nothing
+
+Covered: `projects/agent-kit/tests/flow-decision.test.sh`.
+
+### SC-AK-1972 — every row of the decision stands and names its place, number and suite
+
+Given a plan whose decision holds the nine rows, in either language and number
+When one row is taken out, left empty, of one word or in the brackets of the template
+Then it is named; an unknown row passes, and every row of input is judged
+
+Given a module or a pattern without a place, with a line number instead, with a place in a suite, or with the place
+only after the word «dropped»; a coupling in words; an input without a scenario number or a suite; a budget
+without a path and a number, new code files or new dependencies
+When the decision is read
+Then the row is named with what it lacks; «no pattern», «no code», «no input» and «no number» with a reason pass;
+every pattern of the row is judged, whether it starts a sentence or follows «;» or «<br>», and a product file with
+«spec» or «test» in its name is a place and no suite
+
+Covered: `projects/agent-kit/tests/flow-decision.test.sh`.
+
+### SC-AK-1973 — a plan of the branch whose decision is not complete is neither written nor approved
+
+Given a plan of the branch with no approval mark
+When Write or Edit puts a decision that is not complete
+Then the write is refused, names all that lacks in one line and the line that replaces the table; a template filled
+in by edits passes while a step keeps the name of the template, and the untouched template is refused
+
+Given the same plan committed
+When `plan-check` or `plan-red` runs
+Then both name it, pushed or not, and `plan-red` says that the fix goes into the commit of the plan; a plan whose
+commit does not hold the module the history holds now is not asked, and an engine outside the history asks always
+
+Given an approval mark, the plan of another branch or of an epic, another file or a broken input
+When it is written
+Then it passes
+
+Covered: `projects/agent-kit/tests/flow-decision.test.sh`.

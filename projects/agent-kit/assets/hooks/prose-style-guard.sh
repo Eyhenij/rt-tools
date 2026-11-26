@@ -65,6 +65,59 @@ rt_prose_heredoc_bodies() {
     '
 }
 
+# The text a command without a heredoc brings with it: the whole command, part by part, less the parts
+# of reading named below and the old wording of a `sed` replacement. Each part is a paragraph of its
+# own: a chain of `sed -i` and checks read as one long sentence. A part not named is judged: an
+# unknown form of a write must not become a way past the wording.
+rt_prose_printed() {
+    awk -v q="'" '
+        # The text of a sed command without the patterns of its `s` replacements.
+        function replaced(s,   out, i, c, d, p) {
+            out = ""
+            for (i = 1; i <= length(s); i++) {
+                c = substr(s, i, 1); d = substr(s, i + 1, 1); p = substr(s, i - 1, 1)
+                if (c != "s" || d !~ /[\/|#,@!:]/ || (i > 1 && p !~ /[ \t;"0-9$\/}{]/ && p != q)) { out = out c; continue }
+                for (i += 2; i <= length(s) && substr(s, i, 1) != d; i++) { if (substr(s, i, 1) == "\\") { i++ } }
+                out = out " "
+            }
+            return out
+        }
+        function flush(   head) {
+            head = seg
+            sub(/^[ \t]*((then|do|else|if|while|until|time|!|[{(]|[A-Za-z_][A-Za-z0-9_]*=[^ \t"\047]*[ \t])[ \t]*)*/, "", head)
+            if (head ~ /^sed[ \t]/) { seg = replaced(seg) }
+            if (head !~ /^(grep|egrep|rg|ls|cat|head|tail|sort|wc|cd|diff|test|\[|\[\[)([ \t]|$)/ || head ~ /<<<|[<>$]\(|`/) {
+                gsub(/"/, "", seg); gsub(q, "", seg); print seg "\n"
+            }
+            seg = ""
+        }
+        { text = text $0 "\n" }
+        END {
+            n = length(text); quote = ""
+            for (i = 1; i <= n; i++) {
+                c = substr(text, i, 1)
+                if (c == "\\" && quote != q && i < n) { seg = seg c substr(text, ++i, 1); continue }
+                if (quote != "") {
+                    if (c == quote) { quote = "" }
+                } else if (c == "\"" || c == q) {
+                    quote = c
+                } else if (c == "#" && seg ~ /(^|[ \t])$/) {
+                    # A comment: its apostrophe opens no quote.
+                    while (i < n && substr(text, i + 1, 1) != "\n") { i++ }
+                    continue
+                } else if (c == "&" && (substr(text, i + 1, 1) == ">" || substr(text, i - 1, 1) == ">")) {
+                    # A part of a redirect, not the end of a command.
+                } else if (c == ";" || c == "&" || c == "\n" || c == "|") {
+                    flush()
+                    continue
+                }
+                seg = seg c
+            }
+            flush()
+        }
+    '
+}
+
 tool="$(rt_hook_tool)"
 case "$tool" in
     Edit | Write | MultiEdit)
@@ -76,14 +129,14 @@ case "$tool" in
         [ -z "$cmd" ] && exit 0
         # The first document among the write targets. A command writing several is judged by one of
         # them: the text is one for the whole command, and a second refusal would repeat the first.
-        path="$(printf '%s' "$cmd" | rt_write_targets | grep -m1 '\.md$')"
+        # A script the command runs is left out: its text is not the text of the command judged below.
+        path="$(printf '%s' "$cmd" | RT_WT_SCRIPT=1 rt_write_targets | grep -m1 '\.md$')"
         # The new text is taken from the heredoc bodies of the command, not from the whole call.
         # A rewrite carrying the previous wording inside the call would otherwise be refused by
         # the words of that previous wording, and the refusal repeats at the second attempt. No
-        # heredoc in the command — the whole text is judged, as before: a redirect of a printf
-        # holds the written text and nothing else.
+        # heredoc in the command — all of it but the parts that bring no text is judged.
         added="$(printf '%s' "$cmd" | rt_prose_heredoc_bodies)"
-        [ -z "$added" ] && added="$cmd"
+        [ -z "$added" ] && added="$(printf '%s' "$cmd" | rt_prose_printed)"
         ;;
     *) exit 0 ;;
 esac

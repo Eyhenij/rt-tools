@@ -281,7 +281,8 @@ When the snapshot run of the second kit starts a full session
 Then the index is read again a few times, because a lost entry came back on a repeat. An index that
 stays incomplete ends the run before any frame is taken, with a refusal naming the missing story ids.
 A reference belongs to the story whose id is its name without `.png` and without a `--w<width>` tail.
-A pointed re-take does not match the directory, since it opens part of it
+A pointed run — a match or a re-take of the named files — does not match the directory, since it opens
+part of it
 
 Covered by `tools/tests/showcase-probe.test.sh` — the pure matching of references against story ids,
 without a showcase. The wait and the refusal of the run itself need a raised showcase that loses its
@@ -314,3 +315,33 @@ is closed by the two frames of the radius grid: the controls and the surfaces, t
 Given a story opens its panel by pressing a button near the bottom edge
 When the gesture puts focus on the button
 Then the page does not scroll, and no item slides under the resting pointer with its hint
+
+### SC-UKV-1802 — a branch shoots the stories its edit reaches
+
+Given a branch whose edit lies in a template, a style, a source behind a barrel or a story file
+When the push set calls the snapshot step with the base of the push
+Then the step shoots the story files the edit reaches by imports and ends with how many of how many
+it shot. A branch that reaches no story ends with code 0 and builds no showcase
+
+Covered by `tools/tests/affected-stories.test.sh` — the reach over a one-off kit. The step called whole with
+a stand-in build and shooting — `tools/tests/visual-gate.test.sh`. The line of the set with a base and
+without one — `tools/tests/push-heavy-subjects.test.sh`.
+
+### SC-UKV-1803 — an edit whose reach is not recognised shoots everything
+
+Given an edit of a setting of the showcase, a common style, an icon, the root or the scripts of the run, an
+import that does not resolve, or a base that does not read
+When the snapshot step asks for the touched stories
+Then the answer is everything with its reasons, and the whole set is shot
+
+Covered by `tools/tests/affected-stories.test.sh` and `tools/tests/visual-gate.test.sh`.
+
+### SC-UKV-1804 — a run of the touched stories answers for every file it was given
+
+Given the run of the touched stories ended, and a named file has no story or a story the run did not reach,
+or a frame of a width its reference names is absent, or a reference without a story lies in the catalogue
+When the step matches the registry of the taken frames and the exceptions
+Then the step ends with a refusal naming the file, the story or the reference, whatever the shooting answered.
+A red run does not call a frame it did not reach an orphan
+
+Covered by `tools/tests/visual-gate.test.sh`.

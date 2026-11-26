@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/git-workflow-merge.md · 3a40c58307e0 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · pitfalls/git-workflow-merge.md · 8ccac2b68537 · правится надстройкой, не здесь -->
 # Merging the base of a branch into it — cold part
 
 The pattern `git-workflow-merge` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.
@@ -31,9 +31,15 @@ out in that tree.
 git fetch origin
 GIT_AUTHOR_NAME="<бот>" GIT_AUTHOR_EMAIL="<номер>+<бот>@users.noreply.github.com" \
 GIT_COMMITTER_NAME="<бот>" GIT_COMMITTER_EMAIL="<номер>+<бот>@users.noreply.github.com" \
-    git merge origin/<база> --no-edit
+    git merge --no-edit origin/<база> || {
+    git diff --name-only --diff-filter=U -- .claude/hooks | while IFS= read -r f; do git checkout --ours -- "$f"; done
+    false
+}
 git diff --name-only --diff-filter=U     # what ended up in conflict
 ```
+
+The markers are taken off the guards in the same call, and only off those in conflict — the hot part
+says why.
 
 The signature stands in the command itself: that command creates the merge commit, not a
 separate `git commit`, and there is nothing to change its signature with later — a merge that

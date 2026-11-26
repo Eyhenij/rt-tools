@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/task-flow-graph.needs-graph.md · 484d0b81d5e4 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · pitfalls/task-flow-graph.needs-graph.md · d3f5b0efcdc8 · правится надстройкой, не здесь -->
 # Working with the tree's code graph — cold part
 
 The pattern `task-flow-graph` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.
@@ -123,6 +123,10 @@ directories are built alone.
 npm run graph:build
 npm run graph:build -- projects/utils apps/message-bus
 ```
+
+`graph:build` is not run in a task branch. It rewrites every `graph.json` of the tree, and a
+difference foreign to the task leaves in its branch. A review finding that asks for a rebuild is
+written off with this reason; the graphs are rebuilt by a task of their own.
 
 Only `graph.json` lies in history, and `built_at_commit` names the parent of the commit that carries
 it. A graph after a merge of two branches has no `built_at_commit` at all — the merge driver joins both sides, and the result

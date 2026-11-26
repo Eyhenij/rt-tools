@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/handoff-entry-guard.sh · 1be19b9e44ca · правится надстройкой, не здесь
+# rt-kit v0.40.0 · hooks/handoff-entry-guard.sh · 1be19b9e44ca · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: checks/decide.mjs, hooks/decide.sh, hooks/facts.sh, rules/task-flow.md, hooks/deny-tail.sh, hooks/write-targets.sh
 # Handover entry guard: a session started from a handover edits no file until the work-conduct rule

@@ -29,7 +29,7 @@ te_run() {
 te_run <<'JS'
 import { buildModel } from '../assets/checks/flow-model.mjs';
 import { isWriteCommand, saysStop } from '../assets/checks/flow-data.mjs';
-import { releaseCase, holdReason, menuCause, menuOptions, decide } from '../assets/checks/flow-verdict.mjs';
+import { releaseCase, holdReason, menuCause, menuOptions, nightBoundary, decide } from '../assets/checks/flow-verdict.mjs';
 import * as ci from '../assets/task-flow/measure/ci.mjs';
 import { judgeCall } from '../assets/checks/flow-guard.mjs';
 import { wordOf as sourceWordOf } from '../assets/task-flow/source/owner.mjs';
@@ -199,6 +199,34 @@ out('menu: SC-AK-1443 — заблокированная задача — бер
 out('menu: SC-AK-1842 — меню отказа несёт «отложить RT-N» и «подскажу путь», без «стоп»', String(['«отложить RT-7»', '«подскажу путь»'].every((option) => ownerMenu.includes(option)) && !ownerMenu.includes('«стоп»')), 'true');
 out('menu: SC-AK-1842 — без номера задачи вариант остаётся «отложить RT-N»', menuOptions(model.words, null).join(', '), 'отложить RT-N, подскажу путь');
 out('menu: SC-AK-1842 — удержание просит путь в свободном поле того же меню', String(ownerMenu.includes('the way goes into its free field') && ownerMenu.includes('A bare «подскажу путь»')), 'true');
+
+// --- автономная сессия: до границы вместо меню — умолчание ----------------------------------------
+const AT_NIGHT = new Date('2026-11-24T03:00');
+const boundary = (line) => String(nightBoundary(`# Список к утру\n\nГраница: до 8 утра\n${line}\nРазрешено: «нет»\n\n| Работа | Ветка |\n`, AT_NIGHT));
+out('menu: SC-AK-1930 — граница впереди читается из головы списка', boundary('Автономно до: 2026-11-24T08:00'), '2026-11-24T08:00');
+out('menu: SC-AK-1930 — прошедшая граница — не ночь', boundary('Автономно до: 2026-11-24T02:59'), 'null');
+out('menu: SC-AK-1930 — граница ровно сейчас — не ночь', boundary('Автономно до: 2026-11-24T03:00'), 'null');
+out('menu: SC-AK-1930 — без строки границы и без списка — не ночь', `${boundary('')} ${nightBoundary(null, AT_NIGHT)}`, 'null null');
+out('menu: SC-AK-1930 — граница словами или без времени — не ночь', `${boundary('Автономно до: 8 утра')} ${boundary('Автономно до: 2026-11-25')}`, 'null null');
+out('menu: SC-AK-1930 — строка после таблицы границей не считается', String(nightBoundary('# Список\n\n| Работа |\n| --- |\n| RT-1 |\nАвтономно до: 2026-11-24T08:00\n', AT_NIGHT)), 'null');
+out('menu: SC-AK-1930 — строка не с начала границей не считается', `${boundary('Слова: Автономно до: 2026-11-24T08:00')} ${boundary('**Автономно до:** 2026-11-24T08:00')}`, 'null null');
+out('menu: SC-AK-1930 — момент, которого нет на часах, — не граница', ['2026-11-24T25:00', '2026-13-01T08:00', '2026-11-32T08:00', '2026-11-24T08:60'].map((at) => boundary(`Автономно до: ${at}`)).join(' '), 'null null null null');
+out('menu: SC-AK-1930 — граница с возвратом каретки читается', boundary('Автономно до: 2026-11-24T08:00\r'), '2026-11-24T08:00');
+const NIGHT = { until: '2026-11-24T08:00', list: '.claude/handoff/2026-11-24-ночь.md' };
+const nightOfCause = (cause) => holdReason(model, stage, null, { ...HOLD_MENU, cause, night: NIGHT });
+const isDefault = (text) => String(text.includes('An autonomous session does not ask the owner') && text.includes(NIGHT.list) && text.includes(NIGHT.until) && !text.includes("owner's menu:") && !text.includes('подскажу путь'));
+out('menu: SC-AK-1930 — night boundary ahead gives a default: шаг запрещает другая проверка', isDefault(nightOfCause(menuCause(forbiddenBy))), 'true');
+out('menu: SC-AK-1930 — night boundary ahead gives a default: простой', isDefault(nightOfCause({ idle: true })), 'true');
+out('menu: SC-AK-1930 — простой ночью называет шаг, дважды отказанный шаг заново не зовётся', [{ idle: true }, menuCause(forbiddenBy)].map((cause) => String(nightOfCause(cause).includes('The next move is'))).join(' '), 'true false');
+out('menu: SC-AK-1930 — умолчание всё равно называет отказавшую проверку', String(nightOfCause(menuCause(forbiddenBy)).includes('`git-guard-delivery` refused the same step twice')), 'true');
+out('menu: SC-AK-1930 — без ночи меню прежнее', String(ownerMenu.includes("The one move is the owner's menu:")), 'true');
+out('menu: SC-AK-1930 — ночь без причины меню шаг не меняет', String(holdReason(model, stage, { number: '2.1', name: 'x', left: 1 }, { ...HOLD_MENU, night: NIGHT }).includes('The next move is step 2.1')), 'true');
+const waitOrStop = nightOfCause({ idle: true });
+out('menu: SC-AK-1930 — умолчание: работа, ждущая внешнего шага, оставляет карточку и ветку', String(/outside step[^\n]*«Разрешено:»[^\n]*guard's window[^\n]*its card and its branch stay/.test(waitOrStop)), 'true');
+out('menu: SC-AK-1930 — умолчание: остановленная работа возвращает карточку', String(/owner's word[^\n]*its card goes back/.test(waitOrStop)), 'true');
+out('menu: SC-AK-1930 — умолчание: без следующей работы список дописывается', String(waitOrStop.includes('With no next work left, the list is completed')), 'true');
+out('menu: SC-AK-1930 — ночь не прячет зависшую задачу и отказ другой проверки', String(nightOfCause({ hung: { task: 'task-h', minutes: 95, output: null } }).includes('`task-h`') && nightOfCause({ foreign: ['git-guard-draft-ready'] }).includes('`git-guard-draft-ready`')), 'true');
+out('menu: SC-AK-1930 — ночь не прячет непрочитанную задачу',String(nightOfCause({ unread: { task: 'task-a', output: '/t/a.output', agent: false } }).includes('`task-a`')), 'true');
 
 const answered = (option) => sourceWordOf({ type: 'user', toolUseResult: { answers: { 'Что делать?': option } }, message: { content: [] } });
 out('menu: SC-AK-1467 — вариант меню отказа — слово владельца', answered('подскажу путь'), 'подскажу путь');
@@ -464,5 +492,6 @@ expect_stop "end: SC-AK-1434 — сессия роли отпускает ход
 
 . "$TESTS/turn-exit-guard-foreign.test.sh"
 . "$TESTS/turn-exit-guard-wait.test.sh"
+. "$TESTS/turn-exit-guard-night.test.sh"
 
 suite_result "проверка выхода из хода"

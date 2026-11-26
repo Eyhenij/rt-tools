@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · laws/autonomous-work.md · f00a6c08493a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · laws/autonomous-work.md · 9216331e3185 · правится надстройкой, не здесь -->
 # Law on the autonomous session
 
 A session with no owner nearby. They answer no questions, press no buttons and do not see the
@@ -15,9 +15,12 @@ happened.
   wrong.
 - **A task that runs into the owner's word is postponed whole.** A half-done one looks done: the
   next session reads it as closed and does not come back to it.
-- **An action visible from outside is not done in an autonomous session.** Sending to another
-  party, publishing, merging, mail: their consequences are undone by a person, and there is none.
-  Undoing costs more than waiting.
+- **An action visible from outside is not done in an autonomous session unless the owner named it
+  when leaving.** Sending to another party, publishing, merging, mail: their consequences are undone
+  by a person, and there is none. Undoing costs more than waiting. The owner's word said before they
+  leave is the exception, and only for what it names; the morning list carries that word verbatim.
+- **The owner's order to work alone is no approval.** It approves no plan, no mockup and no look of
+  an edit, and it is never quoted where an approval is recorded.
 - **Work that cannot be confirmed by anything is not taken.** The readiness sign of an autonomous
   session is a command with a known output, not the executor's glance: there is nobody to confirm
   it.

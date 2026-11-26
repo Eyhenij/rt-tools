@@ -52,17 +52,62 @@ turn.
   The general sign is wide on purpose — it holds the name of the interpreter too — and running a
   laid-out check would read as an edit of the check itself. A refusal on a read costs more than a
   miss: a guard that gets in the way of reading is switched off on the very first day.
-- **The parse of write targets is declared once, and every guard that judges an edit calls it.** Two
+- **The parse of write targets is declared once, and a hook that judges a write target calls it.** Two
   copies of one sign diverge silently: each is fixed on its own, and neither says the rest stayed
   blind. The parse has a suite of its own, so that a failure names the parse and not the guard that
-  called it.
+  called it. The rules gate and the guard of overrides ask it too: each of them held a parse of its own
+  and saw none of the forms the shared one had learned. A suite refuses a pattern of a writing command
+  in any other hook: the forms it knows are its cases, and the name of the function does not matter.
+  Answers of another kind stay apart. The profile of the shell says whether a command writes at all and
+  which paths it names; the rules gate, the reuse guard, the course of work, the linter after an edit and
+  the forecast of the next refusal ask it. The engine of tasks judges the steps of a task by a parse of
+  its own. Two hooks keep a pattern outside the suite: the script reader, for the one script a call puts
+  itself, and the linter after an edit, for `git mv`.
+- **A command is cut into words sign by sign, and a writing word names its targets.** A quote, a
+  separator, a substitution and a torn line are the borders of a word; a pattern over the whole line
+  saw them only by chance, and `sed` with `;` in its expression, `perl -pi`, a copy into a folder and a
+  path with a space went past. The words answer three questions: what a call writes, which code it
+  hands to an interpreter or to a shell, and who reads the body of a heredoc. A command handed to a
+  shell is read again, to the fourth shell inside it. A copy into a folder names the file it makes there;
+  a folder without a slash at the end is asked from the disk. Not seen: a redirection inside backquotes,
+  a group in braces that takes a body by a pipe, `case` inside a substitution, arithmetic over several
+  lines, a command of a container or of another machine, a command held by a variable and the second
+  `-exec` of one `find`. A file the text does not name stays unnamed: one `xargs` takes from the stream,
+  `{}` and a loop over a mask. No words of a write here: `dd`, `truncate`, `rsync`, `ln`, `patch`, `git apply`,
+  `sort -o`, `curl -o`, a write by the code of `sed` or `awk`.
+- **The directory is followed call by call inside a command handed to a shell and inside a script file.**
+  A relative path stands from the directory its call stands in, and not from the first `cd` of the text:
+  one `cd` moved or dropped the paths of every call around it. A subshell gives the directory back, and a
+  function only declared enters nothing. The root of the tree by its name and by `git rev-parse` keeps the
+  path in the tree; a directory the text computes otherwise leaves the path out, and so does one above the
+  tree. Not followed: `cd` on the line of the command itself, `cd -`, `popd`, a directory given by a key
+  of the command (`env -C`, `pnpm -C`, `git -C`). A `cd` under a condition, in a pipe behind its first call
+  or in the background counts as done; a path given by a variable is not joined, and a variable without a
+  literal stays in the path as it is written.
+- **The code of an interpreter is read apart from the words of the shell.** The calls that write and the
+  calls that run a command are known by their names; the language is not parsed. A name gets the last
+  value given to it above; a list of words, a loop over one, several names at once, a typed name and a
+  field count. A call goes on over the lines until its bracket closes, and a call inside a string or a
+  comment is text. A command the code runs, by a string or by a list of words, is read as a command of the
+  shell. Not seen: a path the code puts together from parts, takes from the arguments of the script or
+  hands to a function, a path without an extension, a bare name, a call under a name given anew, a
+  dictionary, a named list of rows, a value a function returns. A string that only looks like a redirection
+  counts as one, and so does a name given to an argument of another call and a list on the line of a write.
+- **The parse tells a file written whole from a file added to.** The guard of overrides judges only the
+  first; `>>`, `tee -a`, an edit in place, code that opens a file to append and code that reads the file
+  it writes keep what stood there. A read after the write keeps nothing, and each call of a line is judged
+  by its own mode. That guard reads no script files: a whole write inside a script is not seen by it.
+- **Without the module of words a guard passes the action and stays silent.** A broken parse does not
+  stop the work: no target is named, and nothing is written into the error stream. Without the module of
+  code only the code is not read.
 - **The body of an interpreter without a write gives out none of its paths.** Inside the body there is
   nothing to parse a foreign language with, and everything looking like a path is taken from there; a
   body holding not a single write call gave out its paths on a par with one that writes. A command
   that loaded a laid-out helper and printed its answer was forbidden as an edit of that helper —
   three times in a row in one session, and not one call wrote anything. A body that does write gives
-  out the paths of its write lines: the path and the write call stand there on different lines, and
-  there is nothing to link them by.
+  out the paths of its write statements, and through a variable the last path given to it above. What
+  a statement reads, runs or copies from is not a target; a call counts as a write only with its
+  bracket, so the word `mkdir` in a string is text.
 - **A path inside a string the script writes or substitutes is the content of the write, not its
   target.** A script that edited a work file and named a laid-out copy in the text of a new line was
   refused by the name of the copy it never opened: a string `replace(` counts as a write line, and
@@ -73,17 +118,42 @@ turn.
 - **The body of a heredoc is data of the command, and the shell parse does not read it.** A markdown
   quote line inside a body opens with the same sign as a redirection: a path standing in the quote
   was taken as a write target, and an edit that wrote nothing into the tree was refused twice by it.
-  The bodies are parsed apart, by the interpreter branch, and what stands before the body is named
-  as before.
+  A body belongs to the call its mark stands in, to the pipe after it, or to whoever the same command
+  runs the written file by: an interpreter or a shell reads it as code, for anybody else it is data.
+  What stands before the body is named as before.
 - **An arrow inside quotes is text of the command, not a redirection.** A string argument with an
   arrow in it — a message, the code of an interpreter — read as a write into the word after the
-  arrow, and a command that wrote nothing was refused as an edit. The shell parse drops every `>`
-  inside single, double or back quotes before it looks for a redirection; a backslash outside
-  single quotes escapes the next sign, and every new line starts outside quotes.
+  arrow, and a command that wrote nothing was refused as an edit. A sign inside single, double or back
+  quotes belongs to its word; a backslash outside single quotes escapes the next sign, a quote runs
+  over the lines until it closes, and a comment ends its line. A comparison of `[[ … ]]` and `(( … ))`
+  is no redirection either. The code of `bash -c` is a command and keeps its arrows.
+- **A writing word is a command only at the start of its part.** `grep -n 'cp -r' <file> | head` reads:
+  behind `sudo`, `env`, an assignment, `xargs` or `bash -c` the word is still the command, elsewhere an
+  argument. Behind a runner the parse does not know, an interpreter named by a word of its own counts.
 - **Muted output is never a sign of a write, inside a body either.** A redirection into the empty
   device and into the error stream is removed before the parse — by the same technique the shell write
   sign removes it. Otherwise a body that writes nothing gives out all its paths again: a command with
   an edit of one file and a run of a check next to it was forbidden by the path of that check.
+- **A key with code belongs to its own interpreter, and an in-place edit to its own command.** The
+  code of `-c` and `-e` is read only after the interpreter it stands by, up to the closing quote; a
+  command line is split into its commands before the target of `sed -i` is taken, and the spellings
+  `sed -E -i` and `--in-place` count as well. A variable the command gives a literal, a loop over
+  literals included, is filled in before the target is compared with the tree; one the command gives two
+  literals is left as it stands, and so is one that is given another variable. The terminal of an
+  environment hands its command as a text, and that text is read as a command: one word in quotes, or
+  without them the rest of the call. Not read: a command in quotes given to `watch`, `script -c`, `su -lc`
+  and `npx --call=`.
+- **A script file the command runs is read with the command.** An interpreter or a shell with a file,
+  `source`, and a file called by its path: the text of the file is parsed the same way as the command,
+  by the guard of the place of an edit and by the delivery guard alike; the delivery guard takes of it
+  only the calls about a request. A file tracked by its repository, an installed package, a build and a
+  file longer than 64 KB are not read. Not seen: a file fed through a pipe, a runner the parse does not
+  name, a path the script computes or takes from its arguments, a script run by another script and one
+  the same call writes. The guards of prose and of anchors read no script: they judge the text of the call.
+- **A refusal of a compound command names the part it judged.** The call is refused whole, and the
+  refusal says that the other parts did not run; a plain command gets no such words. A part that only
+  reads is never named, and where the judged text stands in a heredoc or comes through a loop none is. The guard of the
+  course of work says the same.
 - **Removing a laid-out copy passes.** A removed file the layout puts anew, and that is how a copy the
   formatter rewrote is fixed.
 - **Writing whole over a non-empty override is refused by a refusal of its own.** An override

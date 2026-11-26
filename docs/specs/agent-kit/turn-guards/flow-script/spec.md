@@ -52,7 +52,7 @@ There is no interface: the description is read by the engine and by the executor
 - **The marks lie in the common directory of git, and a mark that does not parse reads as absent.**
 - **Exit 6 is met by a version of the progress in the commit of the plan or later that repeats its steps and marks exactly one of them as going on.**
 - **Exit 7 is met when every step is done and every done step has a green mark, and a plan without check lines is judged by the marks of the progress alone.**
-- **Exit 8 is met when every path of every edited footprint row has a changed file after the plan and no agreement directory under proposed/ stands in the head.**
+- **Exit 8 is met when every path of every edited footprint row has a changed file after the plan, no agreement directory under proposed/ stands in the head and the code holds the decision of the plan.**
 - **Exit 9 is met by one commit that removed the task folder and added a record to the archive.**
 - **A read of the hosting is repeated once, and failed twice it is named as the silent hosting.**
 - **A met exit read from the hosting is kept for the life of the branch, and an answer for the later exits lives sixty seconds.**
@@ -60,11 +60,11 @@ There is no interface: the description is read by the engine and by the executor
 - **The engine measures the checked-out branch by the measurers of the description over its sources and prints the state, its action and the exits read, as lines or as one JSON object.**
 - **A branch past a state is not measured below it: a taken-apart folder, an epic merged into the main branch and an epic branch removed on the server keep the measured state.**
 - **A step is measured by the check the commit of the plan wrote; a matched step writes its mark, and an unmatched one drops it.**
-- **A step is refused when its check is a command of the work, its expected result is in no form, or a file of the task folder differs from the commit of the plan.**
+- **A step is refused when its check is a command of the work, its expected result is in no form, or the plan or the grill differs from the commit of the plan.** So does a file of the folder that is no text: a check may run it. The other texts of the folder grow.
 - **A check runs with a limit of 540 seconds, and past it the step does not match.**
 - **The command for the done steps measures again every step the progress marks done.**
 - **A plan may be written only when every step carries a check of a known form that is no command of the work, and a form added to the description is known at once.**
-- **The approval mark is written when every check is red before the work, both roles were called and the owner then approved the plan by a menu option or a typed message; it names the place of that answer.** A refusal of the mark check sends the session to `plan-red`, which finds the answer in the record; the owner is asked only when it finds none.
+- **The approval mark is written when every check is red before the work, the roles the plan needs were called and the owner then approved the plan by a menu option or a typed message; it names the place of that answer.** Which roles a plan needs the subdomain `step-mark/` says. A refusal of the mark check sends the session to `plan-red`, which finds the answer in the record; the owner is asked only when it finds none.
 - **A check is replaced only by a decision in the progress the owner allowed in the window on its edit.**
 - **A row of the epic plan is never marked «шаг владельца»: the step is the executor's.** The edit is refused and names the deferral by the owner's word. A row that still carries the old mark is read as an ordinary row, and an edit that takes the mark off passes.
 - **A branch planned before the engine reads its plan from the newest commit that changed it.**
@@ -87,9 +87,10 @@ recorded turns run through the hook on Stop are the subdomain
 `docs/specs/agent-kit/turn-guards/flow-script/replay/`. The guard at the end of a turn that asks
 the engine for its verdict, its release cases and the owner's menu are the subdomain
 `docs/specs/agent-kit/turn-guards/flow-script/exit/`; the CI hold it reads first is the subdomain
-`docs/specs/agent-kit/turn-guards/flow-script/exit-ci/`. Exits 11, 12 and 13 of the end of an epic are
+`docs/specs/agent-kit/turn-guards/flow-script/exit-ci/`. Exits 11, 12 and 13 of the end of an epic and exit 2 outside one are
 the subdomain `docs/specs/agent-kit/turn-guards/flow-script/epic/`: there exit 12 reads every task
-with a merged PR of its branch on the hosting. The guards of the end of a turn that judge the conversation are in the domain next to it. The check
+with a merged PR of its branch on the hosting. The code of the head against the decision of the plan
+at exit 8 is the subdomain `docs/specs/agent-kit/turn-guards/flow-script/decision/`. The guards of the end of a turn that judge the conversation are in the domain next to it. The check
 that the steps of the plan and of the progress match is the subdomain `docs/specs/agent-kit/work-steps/`.
 
 ## Contract
@@ -100,7 +101,7 @@ and the exits read up to it; `measure --json` prints the same as one object with
 `state`, `index`, `reason`, `exits`, `action` and `pattern`. `step <N.M>` runs the check of that
 step and prints `ожидалось … · получено … · совпало` with code 0, or `… · не совпало` with code 1;
 a refused step prints `step: <reason>` with code 1. `step --done` prints the same for every done
-step, each line led by its number. `plan-check <plan.md>` names every unfit check with code 1, and
+step, each line led by its number, and `step <N>` measures a whole stage of the plan. `plan-check <plan.md>` names every unfit check with code 1, and
 `plan-red` writes the approval mark with code 0 or names what is missing with code 1; it reads the
 record of the conversation the hook names in `RT_FLOW_TRANSCRIPT`. A description that does not build is named with its reason and code 1. A measurer gets
 its data through its ports and the data of the description; a source reads git, the working copy,
@@ -174,3 +175,5 @@ None.
   word stops the work. The forecast replays a stop after the mark of Esc as released.
 - 2026-11-24 — the owner's stop word ends the hold again, and the forecast replays a stop after it as
   released.
+- 2026-11-25 — exit 8 also holds while the code differs from the decision of the plan: the subdomain
+  `decision/`.

@@ -25,7 +25,7 @@ end of a turn — `turn-conduct`.
 ## How the law applies here
 
 - **Work begins with the epic, and a task outside one is not taken.** Except by the owner's word
-  on that work.
+  on that work, or where the grill gave one task and the copy leads no open epic.
 - **The epic branch is taken before the first task of the epic, not with it.**
 - **The epic card moves to in progress by the same turn that takes its first task.**
 - **The next task is taken from the epic plan, and the queue list is asked only where there is no

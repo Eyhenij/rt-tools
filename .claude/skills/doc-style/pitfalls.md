@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/doc-style.md · e519f288c03e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · pitfalls/doc-style.md · d9381d5a8b5a · правится надстройкой, не здесь -->
 # Project texts — cold part
 
 Pitfalls: traps already stepped on. Loaded not with the rule but on demand — an ordinary
@@ -69,6 +69,10 @@ The rule is `doc-style`; the articles that hold the law stand there.
   is stated: a parser that does not know a second notation fails silently — "51 items without a
   task" turned out to be six, because the id stood both on its own line and in a subsection
   heading.
+- **A file of an installed dependency is named by its package.** A bare file name reads as a path of
+  this tree: the code of a framework named by its file alone in a findings file turned the push set
+  red. It is written as the package and the subject — the image directive of `@angular/common` — and
+  where a line is needed, by the whole path from `node_modules/` with the line after a colon.
 - **A check named in a text is run, not retold.** "The check exists" and "the check passes" are
   different statements, and the second is usually absent from the text altogether. Of four checks
   named by a rule, three were not in the state the text described: one produced a dozen and a half

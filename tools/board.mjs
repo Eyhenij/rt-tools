@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.39.1 · checks/board.github.mjs · 7b0b635c4363 · правится надстройкой, не здесь
+// rt-kit v0.40.0 · checks/board.github.mjs · 13c07af099a3 · правится надстройкой, не здесь
 /**
  * Shared work with the work queue: the project board, the tasks and their state.
  *
@@ -17,7 +17,7 @@
  * the command mode prints `{"offline":true}`.
  */
 import { OfflineError, botToken, gh, ghJson, graphql } from './board-gh.mjs';
-import { declaredEpicOf } from './board-epic-link.mjs';
+import { SINGLE_WORDS, declaredEpicOf, outsideReasonOf } from './board-epic-link.mjs';
 import { verdictOnHead } from './board-runs.mjs';
 export { numberFromTaskDir, taskDirs, unstampFolder } from './board-task-dirs.mjs';
 import { CONFIG } from './rt-kit-checks.config.mjs';
@@ -332,6 +332,8 @@ export function taskState(number, options) {
         numbered: numberFromTitle(issue.title) === issue.number,
         labels: issue.labels.map((label) => label.name),
         epic: declaredEpicOf(issue.body) ?? null,
+        outside: outsideReasonOf(issue.body),
+        single: declaredEpicOf(issue.body) === undefined && outsideReasonOf(issue.body) === SINGLE_WORDS,
     };
 }
 

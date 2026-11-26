@@ -15,6 +15,13 @@ statement: a removed statement is removed together with its line.
 - **A step run while another live run holds the folder put back is refused, and its mark stays.** — `projects/agent-kit/assets/task-flow/source/git.mjs:liveRun` — the live run of another process; `projects/agent-kit/assets/checks/flow-step.mjs:restoreFolder` — the refusal; scenario `SC-AK-1822`
 - **`step --done` on a taken-apart folder measures the done steps the way the final rerun does.** — `projects/agent-kit/assets/checks/flow-step.mjs:runStepCommand` — the turn to `runBeforePull`; scenario `SC-AK-1822`
 
+## The stage
+
+- **`step <N>` measures the steps of stage N that lack a done mark with a green one, side by side; with none lacking it measures them all.** — `projects/agent-kit/assets/checks/flow-stage.mjs:runStage` — the steps of the stage and the choice of those measured; `projects/agent-kit/assets/checks/flow-step.mjs:measureSteps` — the runs side by side; scenarios `SC-AK-1997`, `SC-AK-2001`
+- **After the measurement `step <N>` marks the matched steps done in the order of the whole plan, up to the first step that stays open.** — `projects/agent-kit/assets/checks/flow-stage.mjs:markedStage` — the order and the first open step; scenarios `SC-AK-1997`, `SC-AK-1998`, `SC-AK-1999`, `SC-AK-2000`
+- **`step <N>` exits with 0 only when every measured step matched and is marked done.** — `projects/agent-kit/assets/checks/flow-stage.mjs:runStage` — the code; scenarios `SC-AK-1998`, `SC-AK-2000`, `SC-AK-2002`
+- **`step <N>` is refused on a stage the plan does not name and on a taken-apart task folder, one standing on disk and not in the head included.** — `projects/agent-kit/assets/checks/flow-stage.mjs:runStage` — both refusals; scenario `SC-AK-2002`
+
 ## The final rerun
 
 - **The PR of a task does not open until every done step matches on the final rerun.** — `projects/agent-kit/assets/hooks/git-guard-delivery-rerun.sh:rt_delivery_rerun` — the fact `steps_remeasured` of the opening; `projects/agent-kit/assets/checks/flow-step.mjs:runBeforePull` — the rerun over `projects/agent-kit/assets/checks/flow-step.mjs:doneSteps`; scenarios `SC-AK-1731`, `SC-AK-1732`
@@ -35,6 +42,7 @@ statement: a removed statement is removed together with its line.
 
 - **An edit of the description and the engine needs the owner's approving answer found at the place the approval mark names.** — `projects/agent-kit/assets/checks/flow-guard.mjs:judgeProtected` — the refusal; `projects/agent-kit/assets/task-flow/source/records.mjs:approvalFault` — the answer at its place; the place is written by `projects/agent-kit/assets/checks/flow-plan.mjs:runPlanRed`; scenario `SC-AK-1708`
 - **An approval mark whose place holds no approving answer counts as no approval.** — `projects/agent-kit/assets/task-flow/source/records.mjs:approvalFault` — the entry at the place; `projects/agent-kit/assets/checks/flow-plan.mjs:approvingEntry` — the same test when the mark is written; scenario `SC-AK-1709`
+- **The tree may name the plans that need no roles.** — `projects/agent-kit/assets/checks/flow-plan.mjs:rolesOfPlan` — the command of the tree and its answer; `projects/agent-kit/assets/checks/flow-plan.mjs:approvingEntry` — the moment of the plan commit where there are no roles to wait for; scenario `SC-AK-1950`
 - **An approval given in any working copy of the repository holds in every other.** — `projects/agent-kit/assets/task-flow/source/records.mjs:openAt` — the record directories of the copies `git worktree list` names; scenario `SC-AK-1734`
 - **A record outside the record directories gives no approval, the one `RT_FLOW_TRANSCRIPT` names included.** — `projects/agent-kit/assets/checks/flow-plan.mjs:runPlanRed` — the record of the answer; `projects/agent-kit/assets/task-flow/source/records.mjs:approvalFault` — the record of the mark; scenarios `SC-AK-1411`, `SC-AK-1720`
 - **An approval holds only for the plan commit it names.** — `projects/agent-kit/assets/task-flow/source/records.mjs:approvalFault` — the commit of the mark against the oldest commit that added the plan; scenario `SC-AK-1721`
@@ -52,6 +60,7 @@ statement: a removed statement is removed together with its line.
 - **The judge runs outside the tree with no tools, settings, hooks, MCP servers or memory, on the model the hook uses in production.** — `projects/agent-kit/tests/judge-replay.mjs:judgeCommand` — the call and its temporary directory; `projects/agent-kit/tests/judge-replay.mjs:hookModel` — the model of the hook's settings entry; scenario `SC-AK-1711`
 - **The script compares the judge's verdict with the expected verdicts after the judge answered.** — `projects/agent-kit/tests/judge-replay.mjs:replay` — reads `projects/agent-kit/tests/turn-replay.expected.json` after the answer; scenario `SC-AK-1712`
 - **A judge answer that is not one verdict, `allow` or `block`, is a mismatch.** — `projects/agent-kit/tests/judge-replay.mjs:verdictOf`; scenario `SC-AK-1713`
+- **A judge that did not run stops the replay, and no case of it counts as a mismatch.** — `projects/agent-kit/tests/judge-replay.mjs:JudgeDidNotRun` — thrown by the first run that did not start, ended with a code or said nothing; scenario `SC-AK-1941`
 - **The verdicts are taken only from the judge's answers in the same run.** — `projects/agent-kit/tests/judge-replay.mjs:replay` — no verdict file is read; scenario `SC-AK-1714`
 - **Run as the hook, the turn judge reads the recorded turn from disk with the tools of an agent hook.** — `projects/agent-kit/tests/judge-replay.mjs:replayAsHook` — the record on disk and the seconds; `projects/agent-kit/tests/judge-replay.mjs:asHookCommand` — the tools; `projects/agent-kit/tests/judge-replay.mjs:hookVerdictOf` — the answer of the hook; scenario `SC-AK-1756`
 - **The live count takes the runs of the hook declaration on the current branch after its last commit.** — `projects/agent-kit/tests/judge-replay.mjs:liveRuns`; scenario `SC-AK-1757`

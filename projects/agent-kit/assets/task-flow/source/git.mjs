@@ -6,7 +6,8 @@
  * found in the commit that held it.
  *
  *   branch()            the name of the checked-out branch, '' when the head is detached
- *   commits()           [{ sha, added, deleted, modified }] — the paths each commit changed
+ *   commits()           [{ sha, text, own, added, deleted, modified }] — the message, the paths each commit
+ *                       changed, and whether the branch made it itself: a merge and what it brought is not
  *   versionAt(path, sha) the text of the file at that commit, null where it is absent
  *   lastVersion(path)   the text at the head, or for a file the head lacks at `removedFrom`
  *   addedBy(path)       the sha of the oldest commit of the branch that added the file, or null
@@ -31,7 +32,8 @@ import { dirname, join } from 'node:path';
 const BASE = 'origin/main';
 
 const run = (args) => {
-    const out = spawnSync('git', args, { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+    // A path is read as it is written: by default git prints a non-ASCII one in octal codes.
+    const out = spawnSync('git', ['-c', 'core.quotePath=false', ...args], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
     return out.status === 0 ? out.stdout : null;
 };
 
@@ -53,8 +55,11 @@ export function open() {
     let cached = null;
     const commits = () => {
         if (cached) return cached;
-        const list = (run(['log', '--reverse', '--format=%H', `${BASE}..HEAD`]) ?? '').split('\n').filter(Boolean);
-        cached = list.map((sha) => ({ sha, ...parseStatus(run(['show', '--no-renames', '--name-status', '--format=', sha]) ?? '') }));
+        const list = (run(['log', '--reverse', '--format=%x1e%H%x1f%B', `${BASE}..HEAD`]) ?? '').split('\x1e').filter(Boolean);
+        const made = new Set((run(['log', '--first-parent', '--no-merges', '--format=%H', `${BASE}..HEAD`]) ?? '').split('\n'));
+        cached = list
+            .map((record) => record.split('\x1f'))
+            .map(([sha, text]) => ({ sha, text, own: made.has(sha), ...parseStatus(run(['show', '--no-renames', '--name-status', '--format=', sha]) ?? '') }));
         return cached;
     };
     const versionAt = (path, sha) => run(['show', `${sha}:${path}`]);

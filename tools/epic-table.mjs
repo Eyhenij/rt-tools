@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.39.1 · checks/epic-table.github.mjs · 3b425b2da0c6 · правится надстройкой, не здесь
+// rt-kit v0.40.0 · checks/epic-table.github.mjs · 4b5ea3e0fb02 · правится надстройкой, не здесь
 /**
  * The table of the epic's tasks: the order from the plan, the state from the hosting.
  *
@@ -19,6 +19,7 @@
 import { execFileSync } from 'node:child_process';
 
 import { OfflineError, TASK_KEY, botToken, fetchBoard, fetchOpenPulls, ghJson, numberFromBranch, numberFromTitle } from './board.mjs';
+import { outsideReasonOf } from './board-epic-link.mjs';
 import { declaredEpicOf, planPathOf, planRows } from './board-epics.mjs';
 import { verdictOnHead } from './board-runs.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
@@ -92,6 +93,10 @@ function epicAsked(argv) {
     }
 
     const declared = declaredEpicOf(String(issue.body ?? ''));
+    const outside = declared === undefined ? outsideReasonOf(issue.body) : null;
+    if (outside !== null) {
+        return { number: null, why: `задача #${number} — работа вне эпика: «${outside}», эпика у неё нет` };
+    }
     if (declared === undefined) {
         return {
             number: null,
@@ -227,7 +232,7 @@ function gathered(argv) {
     const plan = found.text;
     const rows = makeupOf(plan);
     if (rows.length === 0) {
-        return { ok: false, why: `замысел «${found.path}» не несёт состава эпика: состав — таблица со столбцом задач` };
+        return { ok: false, why: `план «${found.path}» не несёт состава эпика: состав — таблица со столбцом задач` };
     }
 
     const board = fetchBoard(OPTIONS);

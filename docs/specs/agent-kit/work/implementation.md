@@ -50,11 +50,11 @@ needed sentence — and the statement stays green when the text of the role itse
 - **A label missing from the repository is named before the task is created.** — `projects/agent-kit/assets/checks/task-new.github.mjs:missing` — the label list is asked before the creation call; scenario SC-AK-1228
 - **A work queue that was not asked is no confirmation.** — `projects/agent-kit/assets/checks/task-new.github.mjs:OfflineError`
 - **The answer of the queue is put together into lines by a pure function.** — `projects/agent-kit/assets/checks/board.github.mjs:describeTaskState`
-- **An epic is created by the same command as a task, and by three things at once.** — `projects/agent-kit/assets/checks/task-new.github.mjs:writeEpicPlan` — scenario SC-AK-936
+- **An epic is created by the same command as a task, and by three things at once.** — `projects/agent-kit/assets/checks/task-new-epic.github.mjs:layEpicPlan`, called by `projects/agent-kit/assets/checks/task-new.github.mjs:epicSent` — scenario SC-AK-936
 - **Everything an epic cannot be created without is asked before the card is made.** — `projects/agent-kit/assets/checks/task-new.github.mjs:EPIC_LABEL` — scenario SC-AK-937
 - **A task of an epic declares it in the shape the audit reads, and the line is written by the command.** — `projects/agent-kit/assets/checks/task-new.github.mjs:epicOfCard` — scenario SC-AK-938
 - **The branch of a task is printed with the branch of its epic as its base, and the base is read from the plan of the epic.** — `projects/agent-kit/assets/checks/task-new.github.mjs:epicBranchOf` — scenario SC-AK-938
-- **A task outside an epic is not created, and the refusal carries both ways out at once.** — `projects/agent-kit/assets/checks/task-new.github.mjs:outsideEpic` — scenario SC-AK-939
+- **A task outside an epic is not created, and the refusal carries every way out at once.** — `projects/agent-kit/assets/checks/task-new.github.mjs:outsideEpic` — scenario SC-AK-939
 - **A tree that named no label of an epic creates tasks as before.** — `projects/agent-kit/assets/checks/task-new.github.mjs:EPIC_LABEL` — scenario SC-AK-939
 - **Every state of the work has a section in the pattern that leads it.** — `projects/agent-kit/assets/checks/check-states.mjs:sectionsOf`
 - **A section about a state outside the list is the same divergence as a state without a section.** — `projects/agent-kit/assets/checks/check-states.mjs:known`

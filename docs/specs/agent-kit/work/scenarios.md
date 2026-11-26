@@ -438,7 +438,7 @@ Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
 ### SC-AK-936 — the command creates an epic
 
-Given the tree named the label of an epic and the directory of plans
+Given the tree named the label of an epic and the directory of plans, with no remote main branch
 When the command of creating is called with the argument about an epic
 Then the card is created with the label of an epic, a draft of the plan is laid in the directory of
 plans with the number and the branch filled in, the body of the card names the path to it, and the
@@ -485,8 +485,8 @@ Covered: `projects/agent-kit/tests/task-new-queue.test.sh`.
 
 Given the tree named the label of an epic
 When the command of creating is called without an epic and without the word of the owner
-Then no card is created, and the refusal names both ways out — to name the epic and to name the word
-of the owner
+Then no card is created, and the refusal names every way out — the epic, the only task of its grill and
+the word of the owner
 
 Given the word of the owner is named
 When the same call goes

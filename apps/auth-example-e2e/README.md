@@ -12,8 +12,8 @@ password, the refresh of the token, the exit and the rights on the screen and on
   archive of this tree and started after the archive, the compose file and the realm file were last
   written; the realm import finished after those edits; the counter numbers and the admin port match
   the running stand. Otherwise `pnpm run serve:auth` runs as before. Keycloak reads its theme only at
-  start, and that call does not restart it while its compose configuration is unchanged: a stand
-  that started before the archive was written keeps the earlier theme until Keycloak restarts.
+  start, so that call first removes a container raised with another archive (`stand/drop-stale.mjs`):
+  by the time of the file and by the digest the stand was raised with.
   Scenarios: `tools/tests/auth-stand-fresh.test.sh`.
 - The suite takes no frames and runs the browser of the machine. The first time it is installed by
   `pnpm exec playwright install chromium`.

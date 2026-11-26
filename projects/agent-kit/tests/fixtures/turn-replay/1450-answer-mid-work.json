@@ -13,7 +13,7 @@
       "code": 0
     },
     { "role": "owner", "at": "2026-11-09T12:05:00Z", "owner": "<question>" },
-    { "role": "agent", "at": "2026-11-09T12:05:30Z", "say": "The branch holds the verdict module and its suite; step 1.2 is next." }
+    { "role": "agent", "at": "2026-11-09T12:05:30Z", "say": "В ветке модуль вердикта и его набор; дальше шаг 1.2." }
   ],
   "next": { "owner": "<nudge>" }
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.39.1 · hooks/git-guard-delivery.sh · f7e84564edf4 · правится надстройкой, не здесь
+# rt-kit v0.40.0 · hooks/git-guard-delivery.sh · 3323a09a3386 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Requires: hooks/git-guard-delivery-merged.sh, hooks/git-guard-delivery-task.sh, hooks/git-guard-delivery-folder.sh,hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-pipeline.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/git-guard-delivery-rerun.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
+# Requires: hooks/git-guard-delivery-merged.sh, hooks/git-guard-delivery-task.sh, hooks/git-guard-delivery-folder.sh,hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-pipeline.sh, hooks/git-guard-delivery-identity.sh, hooks/script-files.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/git-guard-delivery-rerun.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
 #
 # The delivery law demands three things nothing usually checks: an edit starts from a task visible
@@ -72,6 +72,13 @@ if [ "$tool" = "mcp__webstorm__execute_tool" ] && command -v perl >/dev/null 2>&
     ' 2>/dev/null)"
     [ -n "$inner" ] && cmd="$inner"
 fi
+
+# A script file the command runs is read with it: a request opened from a file is the same opening, and
+# the text of the command holds only the path of the file.
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/script-files.sh" 2>/dev/null || true
+script_call='' script_text=''
+command -v rt_script_requests >/dev/null 2>&1 && rt_script_requests
 
 workdir="$(rt_hook_cwd)"
 [ -z "$workdir" ] && workdir="${CLAUDE_PROJECT_DIR:-.}"
@@ -268,14 +275,16 @@ if [ -n "$branch_arg" ]; then
         epic_arg="$(printf '%s' "$state" | jq -r '.epic // empty' 2>/dev/null)"
         [ -n "$epic_arg" ] && fact task_in_epic yes
 
-        # The delivery conditions already known here are checked here. After the work is done, the
-        # base is fixed by a merge with conflict resolution, and the commit signature by rewriting
-        # the branch; at the start of the work both cost one command.
-        #
-        # The base: the tip of the main branch must lie in what the new branch grows from. The named
-        # base is checked, not the tip of the working copy: otherwise the command that takes the
-        # base fresh — `git checkout -b <branch> origin/<main>` — would be forbidden.
-        base_arg="$(printf '%s' "$cmd" | sed -nE 's/.*git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]+[^[:space:];&|]+[[:space:]]+([^[:space:];&|-][^[:space:];&|]*).*/\4/p' | head -1)"
+        # The delivery conditions already known here are checked here: after the work the base costs a
+        # merge and the signature a rewriting of the branch, at the start one command each. The base:
+        # the tip of the main branch must lie in what the new branch grows from. The named base is
+        # checked, not the tip of the working copy: otherwise the command that takes the base fresh —
+        # `git checkout -b <branch> origin/<main>` — would be forbidden.
+        # A redirect is no base and hides none: it is cut out before the base is read. Nor is a comment, and
+        # a continued line is one line.
+        base_arg="$(printf '%s' "$cmd" | sed -e ':a' -e '/\\$/{' -e '$!N' -e 's/\\\n/ /' -e 'ta' -e '}' | sed -E 's/[[:space:]]#.*$//; s/([[:space:]][0-9]+)?[<>]+[|]?(\&[0-9-]+|[[:space:]]*("[^"]*"|[^[:space:];\&|<>]+))/ /g' | sed -nE 's/.*git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]+[^[:space:];&|]+([[:space:]]+(--conflict[[:space:]]+[a-z0-9]+|-[^[:space:];&|]+))*[[:space:]]+([^[:space:];&|()-][^[:space:];&|()]*).*/\6/p' | head -1)"
+        base_arg="${base_arg%[\'\"]}"; base_arg="${base_arg#[\'\"]}"
+        case " $cmd " in *" ${branch_arg} - "*) base_arg='@{-1}' ;; esac
         base_ref="${base_arg:-HEAD}"
         command -v rt_assignment_unmet >/dev/null 2>&1 && rt_assignment_unmet "$epic_arg" "the branch «${branch_arg}»"
         if [ -n "$epic_arg" ] && command -v rt_epic_base >/dev/null 2>&1; then
@@ -286,6 +295,8 @@ if [ -n "$branch_arg" ]; then
             behind="$(git rev-list --count "${base_ref}..origin/${main_branch}" 2>/dev/null)"
             unmet_class branch_create_stale_base "the branch will grow from a base that does not carry the tip of «${main_branch}» — it has moved ahead by ${behind:-several} commits. Take a fresh base: git fetch origin && git checkout -b ${branch_arg} origin/${main_branch}."
         fi
+        [ -n "$epic_arg" ] || ! command -v rt_single_base >/dev/null 2>&1 \
+            || rt_single_base "$state" "$number_arg" "$base_ref" "$branch_arg"
 
         # The second tier: the local reference to the main branch could itself have gone stale, and
         # then the silence of the first tier means "the base is not older than my reference", not
@@ -394,6 +405,18 @@ if command -v perl >/dev/null 2>&1; then
     ' 2>/dev/null)"
 fi
 
+case "$script_call" in
+    *create*)
+        # A title the script computes cannot be read.
+        case "$title" in
+            *'$'*)
+                unmet_class pr_create_bad_title "the request is opened from a script file, and its title is computed there: «${title}» cannot be read. Type the opening call itself, with its title."
+                refuse_unmet pr_create
+                ;;
+        esac
+        ;;
+esac
+
 if [ -n "$title" ]; then
     printf '%s' "$title" | grep -qE "$title_re" \
         || unmet_class pr_create_bad_title "the title of the request does not start with the number of the task. In the list of requests the body is invisible, and the line of the link lives exactly there — without the number in the title the PR cannot be matched to the task."
@@ -424,7 +447,7 @@ if [ -n "$epic_pull" ] && command -v rt_epic_pull_base >/dev/null 2>&1; then
 elif git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \
     && ! git merge-base --is-ancestor "origin/${main_branch}" HEAD 2>/dev/null; then
     behind="$(git rev-list --count "HEAD..origin/${main_branch}" 2>/dev/null)"
-    unmet branch_has_main_tip no "«${main_branch}» has moved ahead by ${behind:-several} commits and is not merged into the branch. A PR from a diverged branch shows the reviewer the edit mixed with someone else, and the checks on it run from a stale base. Merge it in and repeat: git fetch origin && git merge origin/${main_branch} — the order and the resolving of the conflict are in the pattern git-workflow-merge."
+    unmet branch_has_main_tip no "«${main_branch}» has moved ahead by ${behind:-several} commits and is not merged into the branch. A PR from a diverged branch shows the reviewer the edit mixed with someone else, and the checks on it run from a stale base. Merge it in and repeat: git fetch origin && git merge origin/${main_branch} — by the block of the pattern git-workflow-merge, which keeps conflict markers out of the guards; the resolving of the conflict is there too."
 fi
 
 # The second tier: the local reference could itself have gone stale. No answer — the tier stays
@@ -441,42 +464,14 @@ if [ -n "$remote_main" ] && [ -n "$local_main" ] && [ "$remote_main" != "$local_
     if [ -n "$fetched_at" ]; then
         age=" The last git fetch was $(( ( $(date +%s) - fetched_at ) / 60 )) min ago."
     fi
-    unmet origin_main_fresh no "your ref origin/${main_branch} lags behind the remote one — ${local_main:0:8} against ${remote_main:0:8}.${age} The guard compares the branch with what lies in the tree, so silence of the first tier means «the ref is not older than the branch», not «the main branch is merged in». Merge it in and repeat: git fetch origin && git merge origin/${main_branch}."
+    unmet origin_main_fresh no "your ref origin/${main_branch} lags behind the remote one — ${local_main:0:8} against ${remote_main:0:8}.${age} The guard compares the branch with what lies in the tree, so silence of the first tier means «the ref is not older than the branch», not «the main branch is merged in». Merge it in and repeat: git fetch origin && git merge origin/${main_branch} — by the block of the pattern git-workflow-merge."
 fi
 
-# The identity of the call. The hosting client holds two accounts — the logged-in one and the one
-# whose token stands in the call environment; which of them opens the PR is visible from the command
-# only through an explicit substitution.
-#
-# What is judged is not the name of the account but the clash with the reviewer: the author of a PR
-# is never its reviewer, the hosting silently drops such a review request, and the author cannot be
-# changed afterwards. A PR opened by any other account is lawful while its reviewer is somebody
-# else — judging the name instead leaves a machine that holds no token with no way to deliver at all.
-# The value is taken as one word up to the next space: a login has no spaces in it, and an alphabet
-# listed by ranges would silently not recognise a neighbouring one — the value then reads as absent,
-# and the clash with the reviewer goes unnoticed.
-pull_reviewer="$(printf '%s' "$cmd" | sed -n "s/.*--reviewer[= ]\{1,\}['\"]\{0,1\}\([^[:space:]'\"]\{1,\}\).*/\1/p" | head -1)"
-
-# Who will open the PR is asked of the hosting by the tree: the hosting, the client and the path to
-# the token are each their own. The answer covers both accounts at once — the substitution reads a
-# file that may not be on the machine, and then the client answers from the logged-in one.
-token_login=''
-command -v rt_pull_token_login >/dev/null 2>&1 && token_login="$(rt_pull_token_login 2>/dev/null)"
-
-if [ -n "$token_login" ]; then
-    if [ -n "$pull_reviewer" ] && [ "$token_login" = "$pull_reviewer" ]; then
-        unmet_class pr_create_self_review "the request would be opened by the account «${token_login}», and the same one is named as its reviewer. The hosting accepts such a review request and silently does not create it, and the author of a request cannot be changed — it is fixed only by reopening. Open it by another account${pull_token_hint:+, substituting the token: ${pull_token_hint} …}, or name another reviewer."
-    elif [ -n "$task_bot" ] && [ "$token_login" != "$task_bot" ]; then
-        # Not a refusal: the reviewer is somebody else, and the review will be created. But silence
-        # about a foreign account is indistinguishable from a check that did not fire at all.
-        printf 'the delivery guard: the request will come out from the account «%s», not the machine one «%s». The reviewer is another one, so the review will be created.\n' "$token_login" "$task_bot" >&2
-    fi
-elif [ -n "$pull_token_var" ] \
-    && ! printf '%s' "$cmd" | grep -qE "(^|[;&|(]|&&|\|\||[[:space:]])${pull_token_var}="; then
-    # There is nothing to learn the author by — no helper, or an empty answer from it. Then the only
-    # lawful call is the one that names the account in its own text.
-    unmet_class pr_create_self_review "who will open the request cannot be learned: the hosting was not asked, and the command carries no substitution of «${pull_token_var}». Opened by the logged-in account, the request may come out from the very person named as its reviewer, and that is fixed only by reopening.${pull_token_hint:+ Substitute the token: ${pull_token_hint} …}"
-fi
+# The identity of the call — who opens the PR and whether that account is its own reviewer — lives in a
+# helper next door. No helper — the identity is not judged.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/git-guard-delivery-identity.sh" ] && . "$rt_hooks_dir/git-guard-delivery-identity.sh" 2>/dev/null
+command -v rt_delivery_identity >/dev/null 2>&1 && rt_delivery_identity
 
 # The body of the request: the section about the remaining step and the line that closes the task.
 # The subject lives in a helper next door — `git-guard-delivery-body.sh`, by the same technique as

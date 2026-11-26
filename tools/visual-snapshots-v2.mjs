@@ -19,6 +19,8 @@
  * The agreement is `docs/specs/ui-kit-v2/`.
  *
  *   node tools/visual-snapshots-v2.mjs                      # matching against the references
+ *   node tools/visual-snapshots-v2.mjs '<file>'             # matching of the named story files
+ *   node tools/visual-snapshots-v2.mjs --files <list>       # matching of the story files the list names, a path a line
  *   node tools/visual-snapshots-v2.mjs --update '<file>'    # a re-take of the named story files
  *   node tools/visual-snapshots-v2.mjs --update-all         # a re-take of the whole directory
  */
@@ -27,7 +29,7 @@ import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSy
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { ensureIndex, storiesLostFromIndex } from './showcase-probe.mjs';
+import { ensureIndex, sampleOfFiles, storiesLostFromIndex } from './showcase-probe.mjs';
 
 /** The address of an already raised showcase: the run raises none of its own. */
 const URL = process.env.STORYBOOK_URL ?? 'http://localhost:6007';
@@ -43,7 +45,7 @@ const OWN_IMPORT_MARKER = 'projects/ui-kit-v2/';
 
 /** How many times the index is read again before it counts as incomplete, and how long between reads. */
 const INDEX_REREADS = 6;
-const INDEX_REREAD_MS = 5_000;
+const INDEX_REREAD_MS = Number(process.env.RT_INDEX_REREAD_MS ?? 5_000);
 
 function fail(message) {
     console.error(`\n  ${message}\n`);
@@ -179,12 +181,31 @@ if (updateIndex >= 0 && (updateOne === undefined || updateOne.startsWith('--')))
     );
 }
 
-// A pointed re-take opens part of the directory, and the match is for a full session only.
-const own = await requireOwnShowcase(updateOne === undefined);
+// A path sample without `--update` matches the named files and takes nothing anew.
+const matchOne = updateIndex < 0 && !updateAll && args[0] !== undefined && !args[0].startsWith('--') ? args[0] : undefined;
+const listIndex = args.indexOf('--files');
+const listed = listIndex >= 0 ? args[listIndex + 1] : undefined;
+
+if (listIndex >= 0 && (listed === undefined || !existsSync(listed))) {
+    fail(`The list of story files is not named or does not lie at «${listed ?? ''}».`);
+}
+
+const filesOfList = listed === undefined ? undefined : readFileSync(listed, 'utf8').split('\n').filter(Boolean);
+
+if (filesOfList !== undefined && (filesOfList.length === 0 || updateAll || updateIndex >= 0 || matchOne !== undefined)) {
+    fail('A list is matched alone and names at least one story file: an empty sample would open every file.');
+}
+
+const pointed = updateOne ?? (filesOfList ? sampleOfFiles(filesOfList) : matchOne);
+
+// A pointed run opens part of the directory, and the match of the directory is for a full session only.
+// A list is matched against the whole index: its references are checked by the caller's registry.
+const own = await requireOwnShowcase(pointed === undefined || filesOfList !== undefined);
 console.log(`The second kit's showcase on ${URL}: stories ${own}.`);
 
+// A caller that matches the registry itself gives its own: created here, it would be erased unread.
 const registryDir = mkdtempSync(join(tmpdir(), 'rt-snapshots-'));
-const registryPath = join(registryDir, 'taken.txt');
+const registryPath = filesOfList && process.env.RT_SNAPSHOT_REGISTRY ? process.env.RT_SNAPSHOT_REGISTRY : join(registryDir, 'taken.txt');
 writeFileSync(registryPath, '');
 
 /**
@@ -205,14 +226,14 @@ const runnerArgs = ['test-storybook', '--config-dir', CONFIG_DIR, '--url', URL, 
 
 if (updateAll) {
     runnerArgs.push('--', '-u');
-} else if (updateOne !== undefined) {
+} else if (pointed !== undefined) {
     // The sample selects story files by path rather than by story name. A selection by name (`-t`)
     // is no good here at all: with it the run's environment creates no page, and all the files fall
     // with `Cannot read properties of undefined (reading 'goto')` — the same at the first kit.
     // Checked flag by flag: `-u` works, `-t` breaks.
     // `test-storybook` hands Jest a command string for the shell, so the sample is quoted for it
     // here: brackets and a bar in a regex sample would otherwise drop the launch.
-    runnerArgs.push('--', '-u', `'${updateOne.replaceAll("'", "'\\''")}'`);
+    runnerArgs.push('--', ...(updateOne === undefined ? [] : ['-u']), `'${pointed.replaceAll("'", "'\\''")}'`);
 }
 
 const run = spawnSync('pnpm', ['exec', ...runnerArgs], {
@@ -235,9 +256,9 @@ const run = spawnSync('pnpm', ['exec', ...runnerArgs], {
 // everything else matches, that is, last of all.
 let stored = 0;
 try {
-    // A pointed re-take opens not the whole directory, and everything it did not touch would look
+    // A pointed run opens not the whole directory, and everything it did not touch would look
     // orphaned. The directory is matched only on a full session.
-    if (updateOne === undefined) {
+    if (pointed === undefined) {
         stored = requireNoOrphans(registryPath);
     }
 } finally {
@@ -248,4 +269,10 @@ if (run.status !== 0) {
     process.exit(run.status ?? 1);
 }
 
-console.log(`References in the directory: ${stored}. There are no orphaned ones.`);
+console.log(
+    pointed === undefined
+        ? `References in the directory: ${stored}. There are no orphaned ones.`
+        : filesOfList
+          ? `Only the ${filesOfList.length} listed files were opened.`
+          : `Only the files of «${pointed}» were opened: the directory of references is not matched.`
+);

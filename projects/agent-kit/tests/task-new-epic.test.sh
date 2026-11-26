@@ -19,6 +19,7 @@ cp "$CHECKS/board-epic-plan.github.mjs" "$TN_TREE/tools/board-epic-plan.mjs"
 cp "$CHECKS/board-task-dirs.github.mjs" "$TN_TREE/tools/board-task-dirs.mjs"
 cp "$CHECKS/task-new.github.mjs" "$TN_TREE/tools/task-new.mjs"
 cp "$CHECKS/task-new-queue.github.mjs" "$TN_TREE/tools/task-new-queue.mjs"
+cp "$CHECKS/task-new-epic.github.mjs" "$TN_TREE/tools/task-new-epic.mjs"
 
 # Настройки дерева-фикстуры: своя очередь работ, своя метка эпика, свой каталог планов.
 tn_config() {
@@ -33,7 +34,8 @@ tn_config() {
         "statusOptions": { "backlog": { "id": "bb", "name": "Backlog" } },
         "taskKey": "RT",
         "bot": "bot",
-        "epicLabel": "${2-epic}"
+        "epicLabel": "${2-epic}",
+        "epicTreeInstall": "${3-}"
     }
 }
 CFG
@@ -71,7 +73,8 @@ TN_CREATED="$TN_TREE/created"
 
 # Вызов команды из дерева-фикстуры. Ввод пустой: тело заявки набор не проверяет.
 tn_run() {
-    rm -rf "$TN_TREE/docs" "$TN_CREATED"
+    rm -rf "$TN_CREATED"
+    [ -n "${TN_KEEP_DOCS:-}" ] || rm -rf "$TN_TREE/docs"
     ( cd "$TN_TREE" && TN_CREATED="$TN_CREATED" TN_EPIC_LABELS="${TN_EPIC_LABELS-{\"name\":\"epic\"}}" \
         GH_BIN="$TN_TREE/gh" RT_GH_RETRY_MS=1 RT_TASK_NEW_PAUSES_MS=1 \
         node tools/task-new.mjs "$@" < /dev/null 2>&1 )
@@ -91,7 +94,7 @@ report "SC-AK-936 — карточка создана с меткой эпика
 if [ -f "$TN_TREE/docs/plans/work-by-epics.md" ]; then got="есть"; else got="нет"; fi
 report "SC-AK-936 — заготовка плана легла в каталог планов" "$got" "есть"
 
-if grep -q 'Замысел эпика — docs/plans/work-by-epics.md' "$TN_CREATED" 2>/dev/null; then got="есть"; else got="нет"; fi
+if grep -q 'План эпика — docs/plans/work-by-epics.md' "$TN_CREATED" 2>/dev/null; then got="есть"; else got="нет"; fi
 report "SC-AK-936 — тело карточки называет путь к плану" "$got" "есть"
 
 if grep -q 'RT-4242 · \*\*Ветка эпика:\*\* `RT-4242-work-by-epics`' "$TN_TREE/docs/plans/work-by-epics.md" 2>/dev/null; then
@@ -162,7 +165,7 @@ tn_run_under_epic() {
 
 TN_OUT="$(tn_run_under_epic '{"name":"epic"}')"
 
-if grep -q 'Задача эпика #1921, замысел — docs/plans/work-by-epics.md' "$TN_CREATED" 2>/dev/null; then
+if grep -q 'Задача эпика #1921, план — docs/plans/work-by-epics.md' "$TN_CREATED" 2>/dev/null; then
     got="есть"
 else got="нет"; fi
 report "SC-AK-938 — тело задачи объявляет эпик в читаемом сверкой виде" "$got" "есть"
@@ -202,6 +205,8 @@ if printf '%s' "$TN_OUT" | grep -q -- '--epic-of'; then got="есть"; else got
 report "SC-AK-939 — отказ называет первый выход: назвать эпик" "$got" "есть"
 if printf '%s' "$TN_OUT" | grep -q -- '--outside-epic'; then got="есть"; else got="нет"; fi
 report "SC-AK-939 — отказ называет второй выход: слово владельца" "$got" "есть"
+if printf '%s' "$TN_OUT" | grep -q -- '--single'; then got="есть"; else got="нет"; fi
+report "SC-AK-939 — отказ называет третий выход: единственную задачу разбора" "$got" "есть"
 
 # Пустой довод неотличим от флага, набранного ради обхода отказа.
 TN_OUT="$(tn_run --outside-epic '' --title 'Письма владельцу не уходят' --slug mail-silence)"
@@ -221,6 +226,109 @@ tn_config 'docs/plans' ''
 TN_OUT="$(tn_run --title 'Письма владельцу не уходят' --slug mail-silence)"
 if [ -f "$TN_CREATED" ]; then got="создана"; else got="нет"; fi
 report "SC-AK-939 — без метки эпика в дереве задача заводится как прежде" "$got" "создана"
+
+# --- SC-AK-1936 — черновик плана уходит из временной рабочей копии --------------------
+#
+# Эпик заводят посреди другой работы: рабочая копия стоит на её ветке с правками. Переключать её
+# нечем и незачем — ветка эпика берётся, коммитится и отправляется рядом.
+tn_config
+TN_G=(git -c user.name=t -c user.email=t@example.test -c commit.gpgsign=false -c init.defaultBranch=main)
+TN_HOST="$(mktemp -d)"
+"${TN_G[@]}" init -q --bare "$TN_HOST"
+( cd "$TN_TREE" && "${TN_G[@]}" init -q && "${TN_G[@]}" add tools && "${TN_G[@]}" commit -q -m start \
+    && git remote add origin "$TN_HOST" && git push -q -u origin main && git checkout -q -b RT-7-other \
+    && printf 'своё\n' > own.txt ) 2>/dev/null
+tn_run_signed() {
+    GIT_AUTHOR_NAME=t GIT_AUTHOR_EMAIL=t@example.test GIT_COMMITTER_NAME=t GIT_COMMITTER_EMAIL=t@example.test \
+        GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=commit.gpgsign GIT_CONFIG_VALUE_0=false \
+        tn_run --epic --title 'Поставка идёт эпиками' --slug work-by-epics
+}
+TN_TMP="$(mktemp -d)"
+TN_OUT="$(TMPDIR="$TN_TMP" tn_run_signed)"
+got="$(git -C "$TN_HOST" show RT-4242-work-by-epics:docs/plans/work-by-epics.md 2>/dev/null | grep -c 'Ветка эпика:\*\* `RT-4242-work-by-epics`')"
+report "SC-AK-1936 — the epic draft goes from a temporary tree" "$got" 1
+report "SC-AK-1936 — коммит черновика стоит на вершине главной" \
+    "$(git -C "$TN_HOST" log --format=%s main..RT-4242-work-by-epics 2>/dev/null)" 'docs: план эпика RT-4242'
+report "SC-AK-1936 — рабочая копия осталась на своей ветке, черновика в ней нет" \
+    "$(git -C "$TN_TREE" branch --show-current)|$(cat "$TN_TREE/own.txt")|$(ls "$TN_TREE/docs" 2>/dev/null)" 'RT-7-other|своё|'
+report "SC-AK-1936 — временного клона после вызова нет" \
+    "$(printf '%s' "$TN_OUT" | grep -c "goes to the host from .*/rt-epic-")|$(find "$TN_TMP" -name 'rt-epic-*' | grep -c .)" '1|0'
+rm -rf "$TN_TMP"
+report "SC-AK-1936 — напечатана готовая ветка" "$(printf '%s' "$TN_OUT" | grep -c '^  git checkout RT-4242-work-by-epics$')" 1
+
+# Крючок отправки видит своё хранилище, а не хранилище рабочей копии.
+printf '#!/bin/sh\ngit init -q --bare "$TMPDIR/rt-hook-probe" && git rev-parse --git-common-dir > "%s/hook-dir"\n' "$TN_HOST" \
+    > "$TN_TREE/.git/hooks-live" && mkdir -p "$TN_TREE/.git/live" && mv "$TN_TREE/.git/hooks-live" "$TN_TREE/.git/live/pre-push" \
+    && chmod +x "$TN_TREE/.git/live/pre-push"
+git -C "$TN_TREE" config core.hooksPath "$TN_TREE/.git/live"
+git -C "$TN_HOST" branch -q -D RT-4242-work-by-epics
+TN_HOOK_TMP="$(mktemp -d)"
+TMPDIR="$TN_HOOK_TMP" tn_run_signed >/dev/null
+report "SC-AK-1936 — крючок отправки запускается и хранилища рабочей копии не трогает" \
+    "$([ -s "$TN_HOST/hook-dir" ] && echo запущен)|$(git -C "$TN_TREE" config core.bare)" 'запущен|false'
+git -C "$TN_TREE" config --unset core.hooksPath
+rm -rf "$TN_HOOK_TMP"
+
+# Красный крючок останавливает отправку и там, где его история не знает: в `.git/hooks` и в каталоге,
+# который поставила установка.
+for TN_HOOKS in '' .live-hooks; do
+    git -C "$TN_HOST" branch -q -D RT-4242-work-by-epics 2>/dev/null
+    mkdir -p "$TN_TREE/${TN_HOOKS:-.git/hooks}"
+    printf '#!/bin/sh\necho "крючок отказал" >&2\nexit 1\n' > "$TN_TREE/${TN_HOOKS:-.git/hooks}/pre-push"
+    chmod +x "$TN_TREE/${TN_HOOKS:-.git/hooks}/pre-push"
+    [ -z "$TN_HOOKS" ] || git -C "$TN_TREE" config core.hooksPath "$TN_HOOKS"
+    TN_OUT="$(tn_run_signed)"
+    report "SC-AK-1936 — красный крючок «${TN_HOOKS:-.git/hooks}» останавливает отправку" \
+        "$(printf '%s' "$TN_OUT" | grep -c 'крючок отказал')|$(git -C "$TN_HOST" branch --list 'RT-4242*' | grep -c .)" '1|0'
+    rm -rf "$TN_TREE/${TN_HOOKS:-.git/hooks}/pre-push"
+    git -C "$TN_TREE" config --unset core.hooksPath
+done
+
+# Установка дерева идёт в клоне до крючков.
+tn_config docs/plans epic "pwd > '$TN_HOST/installed-in'"
+tn_run_signed >/dev/null
+report "SC-AK-1936 — команда установки дерева идёт в клоне" "$(grep -c 'rt-epic-' "$TN_HOST/installed-in" 2>/dev/null)" 1
+tn_config
+
+# План, который уже лежит в главной, не затирается: ветка уходит с ним, без коммита черновика.
+git -C "$TN_HOST" branch -q -D RT-4242-work-by-epics
+( cd "$TN_TREE" && git checkout -q main && mkdir -p docs/plans && printf '# План главной\n' > docs/plans/work-by-epics.md \
+    && git add docs && "${TN_G[@]}" commit -q -m plan && git push -q origin main && git checkout -q RT-7-other ) 2>/dev/null
+tn_run_signed >/dev/null
+report "SC-AK-1936 — план главной не затёрт черновиком" \
+    "$(git -C "$TN_HOST" show RT-4242-work-by-epics:docs/plans/work-by-epics.md 2>/dev/null)" '# План главной'
+( cd "$TN_TREE" && git checkout -q main && git reset -q --soft HEAD~1 && git rm -rq --cached docs && rm -rf docs \
+    && git push -qf origin main && git checkout -q RT-7-other ) 2>/dev/null
+
+# Плана, написанного до карточки, история не знает: отправленный, он уходит из рабочей копии, и
+# напечатанная строка его ветку берёт.
+git -C "$TN_HOST" branch -q -D RT-4242-work-by-epics
+mkdir -p "$TN_TREE/docs/plans" && printf '# Свой план\n' > "$TN_TREE/docs/plans/work-by-epics.md"
+TN_OUT="$(TN_KEEP_DOCS=1 tn_run_signed)"
+report "SC-AK-1936 — готовый план уходит на хост дословно" \
+    "$(git -C "$TN_HOST" show RT-4242-work-by-epics:docs/plans/work-by-epics.md 2>/dev/null)" '# Свой план'
+report "SC-AK-1936 — напечатанная строка берёт ветку" \
+    "$(git -C "$TN_TREE" checkout -q RT-4242-work-by-epics 2>&1; git -C "$TN_TREE" branch --show-current)" RT-4242-work-by-epics
+git -C "$TN_TREE" checkout -q RT-7-other
+
+# Ветка с этим именем уже стоит: вызов её не удаляет.
+TN_WAS="$(git -C "$TN_TREE" rev-parse RT-4242-work-by-epics)"
+tn_run_signed >/dev/null
+report "SC-AK-1936 — чужая ветка с тем же именем остаётся" "$(git -C "$TN_TREE" rev-parse --verify -q RT-4242-work-by-epics)" "$TN_WAS"
+rm -rf "$TN_TREE/docs"
+
+# Отправка не прошла: черновик лёг в рабочую копию, ветки нет, и её берут напечатанной строкой.
+git -C "$TN_TREE" branch -q -D RT-4242-work-by-epics
+git -C "$TN_TREE" update-ref -d refs/remotes/origin/RT-4242-work-by-epics
+git -C "$TN_HOST" branch -q -D RT-4242-work-by-epics
+printf '#!/bin/sh\necho "хост отказал" >&2\nexit 1\n' > "$TN_HOST/hooks/pre-receive" && chmod +x "$TN_HOST/hooks/pre-receive"
+TN_OUT="$(tn_run_signed)"
+got="$([ -f "$TN_TREE/docs/plans/work-by-epics.md" ] && echo лёг || echo нет)"
+report "SC-AK-1936 — отказ отправки оставляет черновик в рабочей копии и называет причину" \
+    "$got|$(printf '%s' "$TN_OUT" | grep -c 'the branch of the epic is not on the host')" 'лёг|1'
+report "SC-AK-1936 — после отказа ветку берут напечатанной строкой" \
+    "$(printf '%s' "$TN_OUT" | grep -c 'git checkout -b RT-4242-work-by-epics origin/main')|$(git -C "$TN_TREE" branch --list 'RT-4242*' | grep -c .)" '1|0'
+rm -rf "$TN_HOST" "$TN_TREE/.git"
 
 # --- SC-AK-1089 — путь плана читают одним ходом команда и аудит ------------------------------
 #

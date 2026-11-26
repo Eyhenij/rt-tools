@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · samples/tasks/_template/grill.md · 8a03ac27b819 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · samples/tasks/_template/grill.md · 0e4ed25708b1 · правится надстройкой, не здесь -->
 # Grill
 
 <Work begun from cargo that arrived names its records here — by full keys, as the intake reading
@@ -19,6 +19,8 @@ ready-made sample nearby. Filled in before the first question to the owner.>
 
 <What was found in the laws and rules on the subject of the question. The owner is not asked
 what already has a written answer.>
+
+**Tasks of the grill:** <the number of tasks it gave>
 
 ## Questions and answers
 

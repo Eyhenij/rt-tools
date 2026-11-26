@@ -19,5 +19,15 @@
   "1548-stop-at-point.json": { "judge": "allow" },
   "1548-stop-hold.json": { "judge": "allow" },
   "1548-wait-for-neighbour.json": { "judge": "allow" },
-  "1548-wait-for-suite.json": { "judge": "allow" }
+  "1548-wait-for-suite.json": { "judge": "allow" },
+  "1932-incident-night.json": { "judge": "allow" },
+  "1932-incident-no-role.json": { "judge": "block" },
+  "1932-incident-not-sent.json": { "judge": "block" },
+  "1932-incident-send-refused.json": { "judge": "block" },
+  "1932-incident-sent.json": { "judge": "allow" },
+  "1933-owner-language-kept.json": { "judge": "allow" },
+  "1933-owner-language.json": { "judge": "block" },
+  "1939-menu-hands-work-over.json": { "ask": "block" },
+  "1934-question-language.json": { "ask": "block" },
+  "1934-question-product-choice.json": { "ask": "allow" }
 }

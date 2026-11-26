@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/task-flow-close.2.md · 905c7fee1a5a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · pitfalls/task-flow-close.2.md · 5543417531ce · правится надстройкой, не здесь -->
 # Closing the work — cold part, continued
 
 The second half of the pattern `task-flow-close`; the first is `pitfalls.md`.
@@ -120,7 +120,7 @@ Before opening, three things are checked by a command rather than by memory:
 ```bash
 gh pr list --base <ветка эпика> --state open      # no task of the epic is left unmerged
 git ls-tree -r --name-only HEAD -- docs/tasks/    # no folder of a task of this epic is left
-git fetch origin && git merge origin/main         # the main branch is merged into the epic branch
+git fetch origin && git merge origin/main         # into the epic branch, by the block of git-workflow-merge
 ```
 
 A folder left in the epic branch reaches the main branch with it: what one branch needed becomes the

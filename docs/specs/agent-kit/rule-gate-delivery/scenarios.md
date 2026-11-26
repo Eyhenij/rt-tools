@@ -118,14 +118,20 @@ Then the gate allows it, and the delivered text carries both rules, the domain o
 
 Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-1681 — rules that do not fit together are refused together
+### SC-AK-1681 — of rules that do not fit together, those that fit arrive in the refusal
 
 Given an edit that needs two unloaded rules, each fitting the host limit alone and not together
 When the gate judges the edit
-Then it refuses it, the refusal names both rules and that they do not fit together, the answer
-carries no rule text, and the record holds neither name
+Then it refuses it, the refusal carries the text of the first one, names both — the one that arrived
+and the one to load — and stays within the host limit; the record holds the first name alone, and
+the next edit of the area gets the second one by a delivery
 
-Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
+Given not one rule fits next to the words of the refusal
+When the gate judges the edit
+Then the refusal names both rules and carries no rule text, and the record holds neither name
+
+Covered: `projects/agent-kit/tests/skill-gate-refusal.test.sh`,
+`projects/agent-kit/tests/skill-gate.test.sh`.
 
 ## The record
 
@@ -187,7 +193,8 @@ Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
 Given a refusal for a rule longer than the host limit
 When the observations of the session are read
 Then the gate refusal of that call carries the reason "too long", a refusal for rules that do not
-fit together carries "do not fit together", and a refusal for an unread rule carries "not read"
+fit together carries "do not fit together", a refusal for an unread rule carries "not read", and a
+refusal of a document of design carries "before"
 
 Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
 

@@ -11,7 +11,7 @@ Rule under the law `docs/constitution/delivery.md`, for a tree on GitHub. Cold p
 
 ## How the law applies here
 
-- **The PR of a task has the epic branch as its base — `gh pr create --base <ветка эпика>`.**
+- **The PR of a task has the epic branch as its base — `gh pr create --base <ветка эпика>`.** Outside an epic — the main one.
 - **A PR in a chain has the previous branch as its base, not main.**
 - **What checks a PR whose base is not the main branch is asked before the first PR of an epic opens.**
 - **A code edit is handed to a person by an open PR, not by a pushed branch.**
@@ -25,7 +25,7 @@ Rule under the law `docs/constitution/delivery.md`, for a tree on GitHub. Cold p
 - **A push into a branch that has an open PR is followed by rereading its body.**
 - **On remarks to a PR the person is asked whether to answer under them, and after a yes each one gets an answer.**
 - **The draft is not lifted while the PR has no review.**
-- **The PR merge is pressed by a person, not by the work's executor.** The executor merges only on a person's word about this very PR.
+- **The PR merge is pressed by a person, not by the work's executor.** The executor merges only on a person's word — about this PR or a named allowance — by `gh pr merge <номер>` with `--merge` or the tree's form.
 - **The identity of the call opening a PR is guarded by the delivery guard, not by the executor's memory.**
 - **The host client's active account is chosen per machine, not per tree; the machine account is substituted per call, never made active.**
 - **The PR author cannot be its reviewer.**

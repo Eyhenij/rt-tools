@@ -97,6 +97,7 @@ a hook with a decision, and marks a context hook and a git-side hook as helpers.
 | `browser-guard-no-listing.sh` | PreToolUse mcp__claude-in-chrome__(list_connected_browsers\|switch_browser) | guard | device_id_configured | mcp:browser-list, mcp:browser-switch | deny (exit 2) |
 | `browser-guard-no-other-drivers.sh` | PreToolUse mcp__playwright__.*\|mcp__chrome-devtools__.*\|plugin variants\|Bash\|webstorm terminal/tool | guard | device_id_configured, other_driver_used | mcp:playwright, mcp:chrome-devtools, Bash:browser-launch | deny (exit 2) |
 | `browser-guard-require-select.sh` | PreToolUse mcp__claude-in-chrome__.* | guard | device_id_configured, browser_selected_fresh | mcp:browser (all but list/switch/select) | deny |
+| `code-writes.sh` | — | helper | — | — | — |
 | `commit-msg.sh` | git commit-msg hook (no rt-hook) | guard·git | commit_msg_valid | git:commit | block (commitlint exit code) |
 | `conscience-guard.sh` | Stop | guard | conscience_role_off, stop_hook_active, conscience_repeat_found, repeat_dealt_with | Stop | block |
 | `constitution-index.sh` | SessionStart startup\|resume\|compact\|clear | guard·ctx | laws_present | SessionStart | context-only |
@@ -114,6 +115,7 @@ a hook with a decision, and marks a context hook and a git-side hook as helpers.
 | `git-guard-delivery-draft.sh` | — (tier of delivery) | helper | pr_reviewed, pr_conflicting, task_folder_in_branch | Bash:gh-pr-ready | deny (via git-guard-delivery) |
 | `git-guard-delivery-epic.sh` | — (tier of delivery) | helper | task_in_epic, epic_branch_unique_remote, base_has_epic_tip, epic_has_main_tip, pr_base_is_epic, branch_has_epic_tip, epic_folders_left | Bash:git-branch-create, Bash:gh-pr-create | deny (via git-guard-delivery) |
 | `git-guard-delivery-folder.sh` | — (tier of delivery) | helper | task_folder_in_branch, archive_gained, draft_spec_merged, folder_skip_declared | Bash:gh-pr-create, Bash:gh-pr-ready, Bash:gh-pr-merge | deny (via git-guard-delivery) |
+| `git-guard-delivery-identity.sh` | — (tier of delivery) | helper | pr_author_is_reviewer, token_answers_foreign | Bash:gh-pr-create | deny (via git-guard-delivery) |
 | `git-guard-delivery-merge.sh` | — (tier of delivery) | helper | pr_tip_run_green | Bash:gh-pr-merge | deny (via git-guard-delivery) |
 | `git-guard-delivery-merged.sh` | — (tier of delivery) | helper | branch_pr_merged | Bash:git-push | deny (via git-guard-delivery) |
 | `git-guard-delivery-pipeline.sh` | — (tier of delivery) | helper | pr_draft_base_wakes_pipeline | Bash:gh-pr-create --draft | deny (via git-guard-delivery) |
@@ -126,6 +128,7 @@ a hook with a decision, and marks a context hook and a git-side hook as helpers.
 | `git-guard-no-verify.sh` | PreToolUse Bash\|webstorm | guard | hooks_skipped | Bash:git-commit, Bash:git-push | deny |
 | `git-guard-push-ahead.sh` | — (run by hand/agent) | helper | tree_dirty, push_adds_commits, push_node_pinned; writes push_marks_green | — | — (exit codes to its caller) |
 | `git-guard-push-marks.sh` | — | helper | push_marks_green, tree_dirty, push_adds_commits | — | — |
+| `git-guard-push-ready.sh` | — (sourced by the run ahead) | helper | branch_has_epic_tip, branch_has_main_tip, epic_folders_left | — | — (lines to its caller) |
 | `git-guard-push-tests.sh` | PreToolUse Bash\|webstorm\|mcp__terminal__run_in_terminal | guard | push_plain_single, push_from_session_copy, push_adds_commits, push_node_pinned, push_marks_green, tree_dirty | Bash:git-push, mcp:terminal-push | deny |
 | `git-guard-tree-assignment.sh` | — (tier of delivery) | helper | copy_assignment_ok, assigned_epic_open | Bash:git-branch-create | deny (via git-guard-delivery) |
 | `glossary-load.sh` | SessionStart startup\|resume\|compact\|clear | guard·ctx | glossary_present | SessionStart | context-only |
@@ -172,6 +175,8 @@ a hook with a decision, and marks a context hook and a git-side hook as helpers.
 | `turn-entry-load.sh` | SessionStart startup\|resume\|compact\|clear | guard·ctx | handover_present | SessionStart | context-only |
 | `turn-exit-guard.sh` | Stop | guard | read_only_role, engine_available, flow_scenario_over (engine `verdict`) | Stop | block |
 | `turn-exit-role.sh` | — | helper | read_only_role | — | — |
+| `script-files.sh` | — | helper | — | — | — |
+| `shell-words.sh` | — | helper | — | — | — |
 | `turn-judge.md` | Stop (agent hook, by its text) | model | owner_word_is_stop, stop_hook_active, owner_word_orders_work, question_already_answered, fact_without_output, miss_admitted_no_record, proposal_ordered_not_sent | Stop | block (`ok:false`) / allow |
 | `utf8.sh` | — | helper | — | — | — |
 | `window-fill-guard.sh` | PostToolUse .* / PreToolUse .* | guard | window_over_warn, window_over_stop, tool_allowed_after_stop | Post: any tool; Pre: any tool except Ask/TodoWrite/Read/SendUserFile, edits of tasks/handoff/scratchpad, git/gh/task:move/check:* | context (Post) / deny (Pre) |

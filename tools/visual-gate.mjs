@@ -24,6 +24,8 @@
  * parent would leave a working server holding the port until the end of the session.
  *
  *   node tools/visual-gate.mjs ui-kit-v2           # the showcase's snapshots
+ *   node tools/visual-gate.mjs ui-kit-v2 '<path sample>'  # a match of the named files only
+ *   node tools/visual-gate.mjs ui-kit-v2 --affected <base>  # a match of the stories the branch touched
  *   node tools/visual-gate.mjs ui-kit-v2 --update  # a re-take of them, by the same road
  *   node tools/visual-gate.mjs ui-kit-v2 --update '<path sample>'  # a re-take of the named files only
  */
@@ -33,6 +35,9 @@ import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+
+import { affectedStories, verdictLine } from './affected-stories.mjs';
+import { storiesLostFromIndex, storyOfReference } from './showcase-probe.mjs';
 
 /**
  * The kit's showcase, its snapshot runner and its references directory. A kit without a wrapper of
@@ -49,6 +54,8 @@ export const KITS = {
         // Its wrapper `tools/visual-snapshots-v2.mjs` quotes the sample and looks for orphans itself.
         quotesSample: false,
         references: undefined,
+        // The references a run of the touched stories is matched against.
+        catalogue: 'projects/ui-kit-v2/.storybook/__snapshots__',
         probes: ['check:icons', 'check:window'],
         image: true,
     },
@@ -69,11 +76,22 @@ export function shellQuote(text) {
 }
 
 /**
- * The command of the shooting run: the script of the kit and, for a pointed re-take, the sample —
+ * The path sample of the call: after `--update` for a re-take, after the kit for a match; a flag is no
+ * sample. One that stands before `--update` is the sample too: dropped, it would re-take every frame.
+ */
+export function sampleOf(args) {
+    const at = args.indexOf('--update');
+    const named = [at >= 0 ? args[at + 1] : undefined, args[1]];
+
+    return named.find((sample) => sample !== undefined && !sample.startsWith('--'));
+}
+
+/**
+ * The command of the shooting run: the script of the kit and, for a pointed run, the sample —
  * quoted here only for a kit whose script does not quote it itself.
  */
 export function snapshotCommand(config, retakes, sample) {
-    const pointed = retakes && sample !== undefined && !sample.startsWith('--');
+    const pointed = sample !== undefined && !sample.startsWith('--');
     const script = retakes ? (pointed ? config.updateOne : config.update) : config.snapshots;
 
     if (!script) {
@@ -97,6 +115,64 @@ export function findOrphans(stored, taken) {
     return stored.filter((name) => name.endsWith('.png') && !opened.has(name.replace(/\.png$/, '')));
 }
 
+/** The flags the gate takes; any other is a refusal before the build, not a whole run in silence. */
+const FLAGS = new Set(['--update', '--affected']);
+
+/** What is wrong with the arguments after the kit, or undefined. */
+export function refusalOf(args) {
+    const strange = args.find((arg) => arg.startsWith('--') && !FLAGS.has(arg));
+
+    if (strange !== undefined) {
+        return `the flag «${strange}» is unknown`;
+    }
+
+    if (args.includes('--affected') && (args.includes('--update') || args.indexOf('--affected') > 0 || args.length > 2)) {
+        return 'the touched stories are matched alone: «--affected <base>» takes neither a sample nor --update';
+    }
+
+    return undefined;
+}
+
+/**
+ * What a run of the named story files did not shoot.
+ *
+ * `unopened` — the files the showcase holds no story of; `dropped` — those not one story of which was
+ * reached; `missed` — the other stories of the named files the run did not reach; `missing` — the
+ * references of the reached stories nobody took, with the `--wNNN` ones; `lost` — the stories
+ * references name and the index does not hold. A story is reached when its frame is taken or when the
+ * harness wrote down that it is an exception.
+ */
+export function judgeTaken({ files, entries, references, taken }) {
+    const written = new Set(taken.map((line) => line.trim()).filter((line) => line !== ''));
+    const shot = new Set([...written].filter((line) => !line.startsWith('skip ')));
+    // The runner opens what carries the tag, and the index holds the rest too.
+    const stories = entries.filter((entry) => entry.type === 'story' && (entry.tags ?? ['test']).includes('test'));
+    const names = references.filter((name) => name.endsWith('.png'));
+    const result = { unopened: [], dropped: [], missed: [], missing: [], frames: shot.size };
+
+    for (const file of files) {
+        const ids = stories.filter((entry) => entry.importPath === `./${file}`).map((entry) => entry.id);
+        const reached = new Set(ids.filter((id) => written.has(id) || written.has(`skip ${id}`)));
+
+        if (ids.length === 0) {
+            result.unopened.push(file);
+        } else if (reached.size === 0) {
+            result.dropped.push(file);
+        } else {
+            result.missed.push(...ids.filter((id) => !reached.has(id)));
+            result.missing.push(...names.filter((name) => reached.has(storyOfReference(name)) && !shot.has(name.replace(/\.png$/, ''))));
+        }
+    }
+
+    return {
+        ...result,
+        lost: storiesLostFromIndex(
+            names,
+            stories.map((entry) => entry.id)
+        ),
+    };
+}
+
 /** The script is also imported by its tests for the pure part above; the run goes only on a call. */
 const calledDirectly = process.argv[1] !== undefined && pathToFileURL(resolve(process.argv[1])).href === import.meta.url;
 
@@ -115,19 +191,45 @@ async function main() {
     const retakes = process.argv.includes('--update');
 
     /**
-     * A path sample after `--update`: then only the stories of the named files are re-taken.
+     * A path sample: then only the stories of the named files are matched, or re-taken after
+     * `--update`.
      *
      * Without it the re-take goes over the whole directory, and that erases the divergence nobody
      * expected together with the one being fixed: a frame that moved by itself becomes the new
      * reference and is never looked at again. New stories have no reference at all, and they are
      * exactly the case where a pointed re-take is the only lawful road.
      */
-    const retakeSample = retakes ? process.argv[process.argv.indexOf('--update') + 1] : undefined;
-    const pointed = retakeSample !== undefined && !retakeSample.startsWith('--');
+    const sample = sampleOf(process.argv.slice(2));
+    const pointed = sample !== undefined;
 
     if (!Object.hasOwn(KITS, kit)) {
         console.error(`\n  The kit is not named or is unknown: «${kit ?? ''}». Expected one of: ${Object.keys(KITS).join(', ')}\n`);
         process.exit(1);
+    }
+
+    const refusal = refusalOf(process.argv.slice(3));
+
+    if (refusal !== undefined) {
+        console.error(`\n  visual-gate: ${refusal}.\n`);
+        process.exit(1);
+    }
+
+    /**
+     * The story files a branch touched, when the run is theirs alone. Without a base there is nothing to
+     * take the branch's edit from, and the run is whole, as it is when the answer is «everything».
+     */
+    const base = process.argv[3] === '--affected' ? process.argv[4] : undefined;
+    const answer = base === undefined ? undefined : affectedStories(base);
+    const named = answer !== undefined && answer.all.length === 0 ? answer.files : undefined;
+
+    if (answer !== undefined) {
+        console.log(`visual-gate: ${verdictLine(answer)}`);
+        (named ?? answer.all).forEach((line) => console.log(`    ${line}`));
+    }
+
+    if (named?.length === 0) {
+        console.log('visual-gate: the branch touched no story — the showcase is not built');
+        process.exit(0);
     }
 
     /**
@@ -250,7 +352,14 @@ async function main() {
         console.log(`\n  The frames of ${kit} are matched in the pipeline only: its showcase shoots with the machine's browser.\n`);
     }
 
-    const shotArgs = snapshotCommand(KITS[kit], retakes, retakeSample);
+    const runDir = named ? mkdtempSync(join(tmpdir(), 'rt-affected-')) : undefined;
+    const listPath = runDir ? join(runDir, 'files.txt') : undefined;
+
+    if (listPath) {
+        writeFileSync(listPath, named.join('\n'));
+    }
+
+    const shotArgs = named ? ['pnpm', 'run', KITS[kit].snapshots, '--files', listPath] : snapshotCommand(KITS[kit], retakes, sample);
 
     if (!shotArgs) {
         stop();
@@ -262,10 +371,10 @@ async function main() {
 
     /*
      * The registry of opened stories is kept only where the gate itself matches the references
-     * directory, and only on a full session: a pointed re-take opens not the whole directory.
+     * directory, and only on a full session: a pointed run opens not the whole directory.
      */
     const references = judgesFrames && !pointed ? KITS[kit].references : undefined;
-    const registryDir = references ? mkdtempSync(join(tmpdir(), 'rt-snapshots-')) : undefined;
+    const registryDir = references ? mkdtempSync(join(tmpdir(), 'rt-snapshots-')) : runDir;
     const registryPath = registryDir ? join(registryDir, 'taken.txt') : undefined;
 
     if (registryPath) {
@@ -306,6 +415,39 @@ async function main() {
         );
     }
 
+    /*
+     * The named files are matched against the registry here: the run opened part of the catalogue, and a
+     * file that fell out of it would otherwise leave its references unopened and the run green.
+     */
+    let gaps = [];
+    let shots;
+
+    if (named) {
+        const index = await (await fetch(`${url}/index.json`)).json();
+
+        shots = judgeTaken({
+            files: named,
+            entries: Object.values(index.entries ?? {}),
+            references: existsSync(KITS[kit].catalogue) ? readdirSync(KITS[kit].catalogue) : [],
+            taken: readFileSync(registryPath, 'utf8').split('\n'),
+        });
+        rmSync(runDir, { recursive: true, force: true });
+        gaps = [
+            ...shots.unopened.map((file) => `${file} — the showcase holds no story of the file`),
+            ...shots.dropped.map((file) => `${file} — not one story of the file was reached`),
+            ...shots.missed.map((id) => `${id} — the story was not reached${(run.status ?? 1) === 0 ? '' : ': the run is red'}`),
+            ...shots.missing.map((name) =>
+                // A red run stops a story before its frame, and the reference is then no orphan.
+                (run.status ?? 1) === 0 ? `${name} — no story takes this frame` : `${name} — the frame was not taken: the run is red`
+            ),
+            ...shots.lost.map((id) => `${id} — the reference has no story in the showcase`),
+        ];
+    }
+
+    if (gaps.length > 0) {
+        console.error(`\n  The touched stories are not shot whole (${gaps.length}):\n    ${gaps.join('\n    ')}\n`);
+    }
+
     /**
      * The harness probes go over the same raised showcase rather than by a step of their own.
      *
@@ -328,5 +470,11 @@ async function main() {
 
     stop();
 
-    process.exit((run.status ?? 1) !== 0 || probesFailed > 0 || orphans.length > 0 ? 1 : 0);
+    if (named) {
+        const opened = named.length - shots.unopened.length - shots.dropped.length;
+
+        console.log(`снято ${opened} файлов историй из ${answer.total}, кадров ${shots.frames}`);
+    }
+
+    process.exit((run.status ?? 1) !== 0 || probesFailed > 0 || orphans.length > 0 || gaps.length > 0 ? 1 : 0);
 }

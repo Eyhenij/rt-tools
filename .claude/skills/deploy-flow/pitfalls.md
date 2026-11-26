@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/deploy-flow.github.md · ad8844cdcc12 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · pitfalls/deploy-flow.github.md · 2a7131f1f7cf · правится надстройкой, не здесь -->
 # Rollout — how it works here — cold part
 
 What the rule `deploy-flow` handed over when cut to its statements, every article whole.
@@ -208,7 +208,7 @@ rule promised production that travels by itself.
 
 ```bash
 # what is actually rolled out: the last successful rollout and its commit
-GH_TOKEN=$(cat ~/.config/rt-tools-bot-token) command gh run list \
+test -s ~/.config/rt-tools-bot-token && GH_TOKEN=$(cat ~/.config/rt-tools-bot-token) command gh run list \
     --workflow=deploy.yml --status=success --limit 1 --json headSha,createdAt
 # by how much production lags the main branch
 git rev-list --count <sha of the rollout>..origin/main

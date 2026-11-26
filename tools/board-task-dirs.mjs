@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · checks/board-task-dirs.github.mjs · 46db2bbcceca · правится надстройкой, не здесь
+// rt-kit v0.40.0 · checks/board-task-dirs.github.mjs · b0279f56b746 · правится надстройкой, не здесь
 /**
  * The task folders of the tree: recognising a number in a name, walking the folders and removing
  * the layout header from a copy of the template.
@@ -8,7 +8,7 @@
  * The queue module re-exports them under their old names — three neighbouring modules and the
  * tree's commands call them from there, and rewriting them would mean paying for the split twice.
  */
-import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, readFileSync, readdirSync, renameSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
@@ -75,6 +75,59 @@ export function unstampFolder(folder) {
     }
 
     return cleaned;
+}
+
+/**
+ * The draft of a task becomes the folder of its branch, or the folder is assembled from the sample.
+ *
+ * It is renamed at the creation, because the number and the branch name are known at that moment for
+ * the first time: the grill goes before the task and lies in `docs/tasks/_draft-<slug>`. Left as a
+ * draft, it stays outside the history, the next session does not find it, and one count of it answers
+ * for a second card.
+ */
+export function adoptDraft({ slug, branch, number }) {
+    if (!slug) {
+        console.log(`\nThe task folder: --slug is not set, there is nothing to rename the draft by.`);
+        return;
+    }
+    const draft = join(ROOT, 'docs/tasks', `_draft-${slug}`);
+    const target = join(ROOT, 'docs/tasks', branch);
+
+    if (existsSync(target)) {
+        console.log(`\nThe task folder is already in place: docs/tasks/${branch}/`);
+    } else if (existsSync(draft)) {
+        renameSync(draft, target);
+        // The draft too is assembled from the sample, and the header in it is the same: it is
+        // taken off here as well.
+        unstampFolder(target);
+        console.log(`\nThe task folder: docs/tasks/_draft-${slug}/ → docs/tasks/${branch}/`);
+    } else {
+        const template = join(ROOT, 'docs/tasks/_template');
+
+        if (!existsSync(template)) {
+            console.log(`\nThere is no task folder and nothing to assemble it from: the sample ${'docs/tasks/_template'} does not lie in the tree`);
+            return;
+        }
+
+        cpSync(template, target, { recursive: true });
+        unstampFolder(target);
+        console.log(`\nThe task folder is assembled from the sample: docs/tasks/${branch}/`);
+    }
+
+    // The header of the plan is read by a guard: by it the guard finds the product agreement. The
+    // number in it is set right here — by hand it is copied over from a hint and mistyped.
+    const plan = join(target, 'plan.md');
+    if (!existsSync(plan)) {
+        return;
+    }
+    const before = readFileSync(plan, 'utf8');
+    // The key is read under two names: the package sample is English, and a tree folder created
+    // before the layer was translated is Russian. It is written in English.
+    const after = before.replace(/^\*\*(?:Task|Задача):\*\*.*$/m, `**Task:** ${TASK_KEY}-${number} · **Branch:** ${branch}`);
+    if (after !== before) {
+        writeFileSync(plan, after);
+        console.log(`The header of the plan is filled in: docs/tasks/${branch}/plan.md`);
+    }
 }
 
 export function taskDirs(dir = join(ROOT, CONFIG.tasksDir), prefix = '') {

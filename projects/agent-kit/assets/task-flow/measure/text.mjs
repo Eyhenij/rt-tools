@@ -31,6 +31,24 @@ export function grillAnswered(text) {
     return request.some((line) => line.startsWith('>') && meaningful(line)) && answers.some(meaningful);
 }
 
+/** A fenced sample and a comment are no line of the grill. */
+const SHOWN = /^[ \t]*(`{3,}|~{3,})[\s\S]*?^[ \t]*\1[`~]*[ \t\r]*$|^[ \t]*<!--[\s\S]*?-->/gm;
+
+const TASKS_LINE = /^\*\*(?:Задач в разборе|Tasks of the grill):\*\*[ \t]*(.*)$/gm;
+
+/**
+ * The count of tasks the grill names: `{ count, line }`, or `{ why }` where it does not name one. The line
+ * stands once and holds a number; the engine and the creating command read it here alone.
+ */
+export function tasksOfGrill(text) {
+    const found = [...text.replace(SHOWN, ' ').matchAll(TASKS_LINE)];
+    const lines = found.map((m) => m[1].trim());
+    if (lines.length === 0) return { why: 'no line «**Задач в разборе:** <число>» (or «**Tasks of the grill:** <number>»)' };
+    if (lines.length > 1) return { why: `${lines.length} lines of the count of tasks` };
+    if (!/^[1-9]\d*$/.test(lines[0])) return { why: `the count of tasks is not a number: «${lines[0]}»` };
+    return { count: Number(lines[0]), line: found[0][0].trim() };
+}
+
 const PATH_LINE = /^\*\*(?:Описание фичи|Draft|Spec):\*\*\s+`([^`]+)`/gm;
 const REASON_LINE = /^\*\*(?:Описание фичи:\*\*\s+не нужно|Behaviour:\*\*\s+unchanged)\s+—\s+(.+)$/gm;
 
@@ -64,12 +82,18 @@ export function under(file, path) {
 /**
  * A changed file touches a footprint path: it lies under the path, or the path names its file or
  * its directories anywhere in it (`flow.js`, `source/`, `fixtures/turn-replay/`), as a row writes it
- * after the directory it belongs to.
+ * after the directory it belongs to. A mask is unfolded: «*» holds no slash, «**» holds any.
  */
 export function touches(file, path) {
     const bare = path.replace(/\/$/, '');
+    if (bare.includes('*')) return maskOf(bare).test(file);
     return under(file, path) || `/${file}/`.includes(`/${bare}/`);
 }
+
+const maskOf = (path) => {
+    const parts = path.split(/(\*\*\/|\*\*|\*)/).map((part) => ({ '**/': '(?:.*/)?', '**': '.*', '*': '[^/]*' })[part] ?? part.replace(/[.+?^${}()|[\]\\]/g, '\\$&'));
+    return new RegExp(`(?:^|/)${parts.join('')}(?:/|$)`);
+};
 
 /** Two lists of steps name the same steps in the same order. */
 export function sameSteps(planned, got) {

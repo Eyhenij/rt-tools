@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the owner's word and the session. Load before asking the owner, when replying to an order and at the start of a session. Pattern task-flow-cycle.
 ---
-<!-- rt-kit v0.39.1 · rules/task-flow-owner.md · 334dd9d6923c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · rules/task-flow-owner.md · c14c559d51f1 · правится надстройкой, не здесь -->
 
 # Work conduct — the owner's word and the session
 
@@ -18,6 +18,8 @@ Rule under the law `docs/constitution/work-conduct.md`. Cold part: `pitfalls.md`
 - **The last run of the main branch is read first thing in a session and after every known merge.**
 - **A session does not start work by itself.** An empty message, a word or a path orders nothing.
 - **A refusal by an external limiter removes the way, not the task.** A guard that names the fix gives the way.
+- **A refusal that names a ready command is carried out before any question to the owner.** A move the rules leave to the owner is asked.
+- **A menu where every option hands the work to the owner or stops it bypasses the task.** The move a refusal named comes first.
 - **A question written by a past session does not become a question to the owner.** It goes to the handover's author; a work step closes some.
 - **The owner's instruction holds until they cancel it, and a new fact against it is a line in the reply about the cost, not a new question.**
 - **An answer in the owner's message counts the same as an answer in a document.**

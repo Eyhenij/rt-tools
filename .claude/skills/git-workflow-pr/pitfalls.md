@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/git-workflow-pr.github.md · 9ba119e6465a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · pitfalls/git-workflow-pr.github.md · 570ab93e66a1 · правится надстройкой, не здесь -->
 # The PR — cold part
 
 The pattern `git-workflow-pr` whole, in two files: every section with its code and its reasons. Its hot part names the sections and the opening of each.
@@ -84,7 +84,9 @@ and it opens when the last folder of its tasks is taken apart.
 
 Before `gh pr create --base <ветка>` the base is checked on the host by `git ls-remote --heads origin
 <ветка>`. An empty answer means the base was merged and removed: the request then takes the next
-branch up the chain as its base, not the removed one.
+branch up the chain as its base, not the removed one. The host may keep a merged branch, and then
+`git ls-remote` does not show the merge: the base is asked by
+`gh pr list --head <base> --state merged` right before the opening call.
 
 Everything waiting for a pipeline run, a rework or an answer goes as a draft, and the question is
 asked in the PR itself: a person reads the PR, not the session's conversation.

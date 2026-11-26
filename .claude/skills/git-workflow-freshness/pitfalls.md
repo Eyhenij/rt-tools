@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/git-workflow-freshness.md · 97fb3d1e6100 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · pitfalls/git-workflow-freshness.md · 97fb3d1e6100 · правится надстройкой, не здесь -->
 # Freshness of open PRs — cold part
 
 The pattern `git-workflow-freshness` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.
