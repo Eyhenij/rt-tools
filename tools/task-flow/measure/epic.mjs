@@ -1,11 +1,13 @@
-// rt-kit v0.40.0 · task-flow/measure/epic.mjs · acb52deef1d3 · правится надстройкой, не здесь
+// rt-kit v0.40.0 · task-flow/measure/epic.mjs · 46c72d23b944 · правится надстройкой, не здесь
 /**
  * The measurer «measure.epic» — the exits that read the epic of the work: its plan in the plans
  * directory, its branch and its card.
  *
  * declared — exit 2: the epic branch stands on the server or went into the main branch by the PR of
  * the epic, and the epic card left the first column or is closed. Kept for the life of the branch
- * once met.
+ * once met. Work outside an epic meets it by its card: no epic and the line of work outside one; that
+ * answer is kept for the branch and stands only while the hosting is silent. A branch without a task
+ * number in a copy without a live epic meets it by the only draft whose grill counts one task.
  *
  * nextTaken — exit 11: every unmerged, unblocked task of the epic other than the current one has a
  * branch, locally or on the server; with no such task the exit is met. A task is blocked when it is
@@ -24,12 +26,41 @@
  * exists in any state. The tip is the local branch, the branch on the server, or the head of its
  * merged PR when the server removed the branch.
  */
-import { epicOfWork } from './epic-of.mjs';
+import { epicOfWork, workTask } from './epic-of.mjs';
 import { taskOfBranch } from './epic-text.mjs';
+import { tasksOfGrill } from './text.mjs';
+
+/** The card of the task is of work outside an epic; a silent hosting leaves the answer kept before. */
+function outsideByCard({ git, host }, task) {
+    const key = `exit2:outside:${git.branch()}`;
+    let card;
+    try {
+        card = host.issue(task);
+    } catch (error) {
+        if (error?.name === 'HostSilent' && host.recalled(key)) return true;
+        throw error;
+    }
+    const met = card !== null && (card.epic ?? null) === null && Boolean(card.outside);
+    if (met) host.remember(key);
+    return met;
+}
+
+/** The only draft of the copy counts one task, and the epic the copy is assigned is not open. */
+function outsideByDraft({ host, tree }) {
+    const drafts = tree.list('docs/tasks').filter((name) => name.startsWith('_draft-'));
+    if (drafts.length !== 1) return false;
+    if (tasksOfGrill(tree.read(`docs/tasks/${drafts[0]}/grill.md`) ?? '').count !== 1) return false;
+    const copyEpic = tree.copyEpic();
+    const card = copyEpic === null ? null : host.issue(copyEpic);
+    return !(card?.open && card.isEpic);
+}
 
 export function declared({ git, host, tree }) {
     return () => {
+        const task = workTask({ git, tree });
+        if (task !== null && outsideByCard({ git, host }, task)) return true;
         const plan = epicOfWork({ git, host, tree });
+        if (task === null && plan === null) return outsideByDraft({ host, tree });
         if (!plan?.branch) return false;
         const key = `exit2:${plan.epic}`;
         if (host.recalled(key)) return true;

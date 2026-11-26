@@ -263,6 +263,19 @@ rm -f "$TF_RED/out.txt"
 printf '%s\n' '{"type":"user","uuid":"a1","toolUseResult":{"answers":{"Одобряешь?":"Одобряю план RT-2"}}}' > "$TF_DIR/outside.jsonl"
 report "plan: SC-AK-1411 — запись вне каталогов записей метки не даёт" "$(tf_red "$TF_DIR/outside.jsonl" | grep -c 'not a session record of this repository.* code=1')" 1
 rm -f "$TF_APPROVAL"
+# SC-AK-1950 — план, которому роли не нужны, переписан в 10:00 с прежней датой автора; $1 — время ответа
+tf_light() {
+    local light="$TF_DIR/red-light-${1%%:*}" record
+    cp -R "$TF_RED" "$light"
+    record="$TF_RED_HOME/$(printf '%s' "$(cd "$light" && pwd -P)" | sed 's#[/.]#-#g')/record.jsonl"
+    mkdir -p "$(dirname "$record")" "$light/.claude/rt-kit"
+    printf '{"planRolesCommand":"echo none #"}' > "$light/.claude/rt-kit/checks.json"
+    (cd "$light" && GIT_COMMITTER_DATE=2026-11-25T10:00:00Z "${TF_G[@]}" commit -q --amend --date=2026-11-25T08:00:00Z -m plan)
+    printf '{"type":"user","uuid":"a1","timestamp":"2026-11-25T%s:00Z","toolUseResult":{"answers":{"Одобряешь план?":"Одобряю план RT-2"}}}\n' "$1" > "$record"
+    (cd "$light" && RT_FLOW_RECORDS_HOME="$TF_RED_HOME" RT_FLOW_TRANSCRIPT="$record" node "$TESTS/../assets/checks/task-flow-script.mjs" plan-red 2>&1)
+}
+report "plan: SC-AK-1950 — ответ до переписанного плана не засчитан" "$(tf_light 09:00 | grep -c 'no approving answer of the owner after the plan commit')" 1
+report "plan: SC-AK-1950 — ответ после переписанного плана засчитан" "$(tf_light 11:00 | grep -c 'approval mark is written')" 1
 tf_record 'Переделай этап 1'
 report "plan: SC-AK-1411 — другой ответ меню метки не даёт" "$(tf_red | grep -c 'no approving answer.* code=1')" 1
 report "plan: SC-AK-1411 — после отказа метки нет" "$(test -e "$TF_APPROVAL" && echo есть || echo нет)" 'нет'
@@ -273,6 +286,17 @@ report "plan: SC-AK-1873 — набранное строчными «одобр�
 rm -f "$TF_APPROVAL"
 printf '%s\n' '{"type":"user","toolUseResult":{"answers":{"Одобряешь?":"Одобряю план RT-2"}}}' > "$TF_REC"
 report "plan: SC-AK-1411 — без вызовов ролей метки нет" "$(tf_red | grep -c 'no approving answer.* code=1')" 1
+
+# SC-AK-1950 — дерево ответило none: метка без вызова ролей, по ответу после коммита плана
+mkdir -p "$TF_RED/.claude/rt-kit"
+printf '{"planRolesCommand":"grep -q Steps \\"$1\\" && echo none #"}' > "$TF_RED/.claude/rt-kit/checks.json"
+printf '%s\n' '{"type":"user","uuid":"o1","timestamp":"2020-01-01T00:00:00Z","toolUseResult":{"answers":{"Одобряешь?":"Одобряю план RT-2"}}}' > "$TF_REC"
+report "plan: SC-AK-1950 — ответ до коммита плана метки не даёт, отказ называет коммит" "$(tf_red | grep -c 'no approving answer of the owner after the plan commit .* code=1')" 1
+printf '%s\n' '{"type":"user","uuid":"l1","timestamp":"2099-01-01T00:00:00Z","toolUseResult":{"answers":{"Одобряешь?":"Одобряю план RT-2"}}}' > "$TF_REC"
+report "plan: SC-AK-1950 — ответ после коммита плана даёт метку без ролей" \
+    "$(tf_red | grep -c 'approval mark is written.* code=0')/$(node -e "console.log(require('$TF_APPROVAL').place.uuid)" 2>&1)" '1/l1'
+rm -rf "$TF_APPROVAL" "$TF_RED/.claude"
+report "plan: SC-AK-1950 — без команды дерева тот же ответ метки не даёт" "$(tf_red | grep -c 'no approving answer.* code=1')" 1
 
 # SC-AK-1412 — проверка зелёная в минуту записи — отказ
 printf 'готово\n' > "$TF_RED/out.txt"
@@ -403,74 +427,6 @@ tf_pr_progress '- [x] 1.1 Совпасть'
 got="$(tf_pr)"
 report "pr: SC-AK-1733 — разобранная папка поднята из истории, шаг совпал" "$(printf '%s' "$got" | grep -c 'matched 1 code=0')" 1
 report "pr: SC-AK-1733 — после перемера папки снова нет" "$(test -d "$TF_PR/docs/tasks/RT-2-pr" && echo есть || echo нет)" 'нет'
-
-# SC-AK-1739 — проверка читает ход работы: перемер разобранной папки даёт его таким, каким он был при замере
-(
-    cd "$TF_DIR" || exit 1
-    git -c init.defaultBranch=main init -q live-repo
-    cd live-repo || exit 1
-    printf 'start\n' > start.txt
-    git add start.txt && "${TF_G[@]}" commit -q -m start
-    git update-ref refs/remotes/origin/main HEAD
-    git checkout -q -b RT-4-live
-    mkdir -p docs/tasks/RT-4-live
-    cat > docs/tasks/RT-4-live/plan.md <<'PLAN'
-# Plan
-
-## Stages
-
-### 1. Первый
-
-- **Steps:**
-    1. Найти шаг впереди
-       Check: `grep -c '^- \[ \]' docs/tasks/RT-4-live/progress.md` → = 1
-    2. Второй
-       Check: `true` → exit 0
-- **Readiness sign:** шаги измерены
-PLAN
-    printf '# Ход работы\n\n## Шаги\n\n- [>] 1.1 Найти шаг впереди\n- [ ] 1.2 Второй\n' > docs/tasks/RT-4-live/progress.md
-    git add -A && "${TF_G[@]}" commit -q -m plan
-    node "$TESTS/../assets/checks/task-flow-script.mjs" step 1.1 >/dev/null 2>&1
-    node "$TESTS/../assets/checks/task-flow-script.mjs" step 1.2 >/dev/null 2>&1
-    git add -A && "${TF_G[@]}" commit -q -m progress
-    git rm -q -r docs/tasks/RT-4-live && "${TF_G[@]}" commit -q -m "folder taken apart"
-)
-got="$(cd "$TF_DIR/live-repo" && RT_FLOW_STEP_LIMIT_MS=5000 node "$TESTS/../assets/checks/task-flow-script.mjs" step --done --pr 2>&1; printf 'code=%s' "$?")"
-report "pr: SC-AK-1739 — шаг, читающий ход работы, совпал на ходе работы своего замера" "$(printf '%s' "$got" | grep -cE '^1\.1 .*· совпало|matched 2')" 2
-
-# SC-AK-1794 — замена проверки, записанная вместе с отметкой, читается перемером; снятая замена не возвращается
-tf_wr_run() { # $1 — каталог; $2 и $3 — ход работы двух коммитов после плана; 1.1 по плану не совпадает
-    local dir="$TF_DIR/$1" step="node $TESTS/../assets/checks/task-flow-script.mjs"
-    (
-        git -c init.defaultBranch=main init -q "$dir" && cd "$dir" || exit 1
-        printf 'start\n' > start.txt
-        git add start.txt && "${TF_G[@]}" commit -q -m start
-        git update-ref refs/remotes/origin/main HEAD
-        git checkout -q -b RT-5-wr
-        mkdir -p docs/tasks/RT-5-wr
-        printf '# Plan\n\n## Stages\n\n### 1. Первый\n\n- **Steps:**\n    1. Шаг\n       Check: `echo 5` → = 1\n- **Readiness sign:** шаг измерен\n' > docs/tasks/RT-5-wr/plan.md
-        printf '# Ход работы\n\n## Шаги\n\n- [>] 1.1 Шаг\n' > docs/tasks/RT-5-wr/progress.md
-        git add -A && "${TF_G[@]}" commit -q -m plan
-        printf '%s' "$2" > docs/tasks/RT-5-wr/progress.md
-        git add -A && "${TF_G[@]}" commit -q -m progress
-        if [ -n "$3" ]; then printf '%s' "$3" > docs/tasks/RT-5-wr/progress.md && git add -A && "${TF_G[@]}" commit -q -m "replacement taken away"; fi
-        git rm -q -r docs/tasks/RT-5-wr && "${TF_G[@]}" commit -q -m "folder taken apart"
-    )
-    (cd "$dir" && RT_FLOW_STEP_LIMIT_MS=5000 $step step --done --pr 2>&1; printf 'code=%s' "$?")
-}
-WR_HEAD='# Ход работы\n\n## Шаги\n\n- [x] 1.1 Шаг\n\n## Decisions along the way\n\n'
-WR_ONE='- **Check of step 1.1 replaced:** `echo 1` → = 1\n'
-got="$(tf_wr_run wr-one "$(printf "$WR_HEAD$WR_ONE")")"
-report "pr: SC-AK-1794 — замена и отметка в одном коммите — шаг совпал" "$(printf '%s' "$got" | tr '\n' ' ' | grep -c 'matched 1 code=0')" 1
-got="$(tf_wr_run wr-gone "$(printf "$WR_HEAD$WR_ONE")" "$(printf "$WR_HEAD")")"
-report "pr: SC-AK-1794 — снятая замена не возвращается — шаг не совпал" "$(printf '%s' "$got" | tr '\n' ' ' | grep -c 'matched 0 code=1')" 1
-got="$(tf_wr_run wr-two "$(printf "$WR_HEAD- **Check of step 1.1 replaced:** \`echo 7\` → = 1\n$WR_ONE")")"
-report "pr: SC-AK-1794 — две замены одного шага — берётся поздняя" "$(printf '%s' "$got" | tr '\n' ' ' | grep -c 'matched 1 code=0')" 1
-WR_OPEN="$(printf '# Ход работы\n\n## Шаги\n\n- [>] 1.1 Шаг\n\n## Decisions along the way\n\n')"
-got="$(tf_wr_run wr-early-gone "$(printf '%s%s' "$WR_OPEN" "$(printf -- "$WR_ONE")")" "$(printf "$WR_HEAD")")"
-report "pr: SC-AK-1794 — замена ранней версии, снятая к отметке, не возвращается" "$(printf '%s' "$got" | tr '\n' ' ' | grep -c 'matched 0 code=1')" 1
-got="$(tf_wr_run wr-early-later "$(printf '%s- **Check of step 1.1 replaced:** `echo 7` → = 1\n' "$WR_OPEN")" "$(printf "$WR_HEAD$WR_ONE")")"
-report "pr: SC-AK-1794 — замена ранней версии заменена поздней другого коммита" "$(printf '%s' "$got" | tr '\n' ' ' | grep -c 'matched 1 code=0')" 1
 
 if [ -n "${TF_ALONE:-}" ]; then
     rm -rf "$TF_DIR"

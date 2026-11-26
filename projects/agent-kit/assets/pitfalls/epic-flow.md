@@ -43,8 +43,10 @@ flowchart TD
 ## How the law applies here
 
 - **Work begins with the epic, and a task outside one is not taken.** The main branch takes the
-  whole or does not take it. Work outside an epic exists only by
-  the owner's word about that work, said about that work.
+  whole or does not take it. Two exceptions: the owner's word about that work, said about that work,
+  and the case where the grill gave one task and the copy leads no open epic. The count is the line
+  `**Tasks of the grill:** <number>`, and the creating command reads it; the epic of one task cost an
+  epic branch, its plan and a second request for nothing.
 - **The epic branch is taken before the first task of the epic, not with it.** Taken later, it
   leaves the first task on the main branch.
 - **The epic card moves to in progress by the same turn that takes its first task.** The owner

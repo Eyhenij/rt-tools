@@ -342,6 +342,10 @@ report "replay: SC-AK-1470 — фикстура несёт меню отказа
 report "replay: SC-AK-1911 — хук меню пускает одобрение плана, который правит проверку" "$(has "$ASK_JUDGE" 'The approval of a plan is never held, a plan that changes a hook or a check included')" есть
 report "replay: SC-AK-1911 — запрет на снятие проверки не задевает решение владельца" "$(has "$ASK_JUDGE" 'An option that only records the owner'"'"'s decision is not such an option')" есть
 report "replay: SC-AK-1911 — одобрение без плана и ролей держится" "$(has "$ASK_JUDGE" 'Without the plan or without both roles the option is held')" есть
+report "replay: SC-AK-1951 — лёгкий план отпускается без вызова ролей" "$(has "$ASK_JUDGE" 'with a line `**Path:** light` or `**Путь:** лёгкий`')" есть
+report "replay: SC-AK-1951 — только в дереве, назвавшем команду ролей" "$(has "$ASK_JUDGE" 'names `planRolesCommand`: the engine asks that command')" есть
+report "replay: SC-AK-1951 — список держания знает лёгкий план" "$(has "$ASK_JUDGE" 'The light plan of the list above needs no roles, only the file')" есть
+report "replay: SC-AK-1951 — ответ, отказанный до ролей, повторного меню не держит" "$(has "$ASK_JUDGE" 'An answer `plan-red` refused for the missing calls is no approval yet')" есть
 report "replay: SC-AK-1914 — план эпика держанию без папки задачи не подлежит" "$(has "$ASK_JUDGE" 'An option approves the plan of a task, not the plan of an epic')" есть
 report "replay: SC-AK-1914 — фикстура несёт одобрение с приписанным снятием проверки" \
     "$(jq -r '[.turns[] | select(.menu) | .menu[] | select(test("turn the check of marks off"))] | length' "$FIXTURES/1914-approval-appends-lift-held.json")" 1

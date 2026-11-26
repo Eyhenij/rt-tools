@@ -19,6 +19,8 @@ ready-made sample nearby. Filled in before the first question to the owner.>
 <What was found in the laws and rules on the subject of the question. The owner is not asked
 what already has a written answer.>
 
+**Tasks of the grill:** <the number of tasks it gave>
+
 ## Questions and answers
 
 **<question>**

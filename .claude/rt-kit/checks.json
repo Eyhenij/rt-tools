@@ -1,5 +1,6 @@
 {
     "archiveRetentionDays": 7,
+    "planRolesCommand": "node tools/review-path.mjs --roles",
     "sourceRoots": [
         "projects",
         "apps",

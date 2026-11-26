@@ -64,7 +64,7 @@ There is no interface: the description is read by the engine and by the executor
 - **A check runs with a limit of 540 seconds, and past it the step does not match.**
 - **The command for the done steps measures again every step the progress marks done.**
 - **A plan may be written only when every step carries a check of a known form that is no command of the work, and a form added to the description is known at once.**
-- **The approval mark is written when every check is red before the work, both roles were called and the owner then approved the plan by a menu option or a typed message; it names the place of that answer.** A refusal of the mark check sends the session to `plan-red`, which finds the answer in the record; the owner is asked only when it finds none.
+- **The approval mark is written when every check is red before the work, the roles the plan needs were called and the owner then approved the plan by a menu option or a typed message; it names the place of that answer.** Which roles a plan needs the subdomain `step-mark/` says. A refusal of the mark check sends the session to `plan-red`, which finds the answer in the record; the owner is asked only when it finds none.
 - **A check is replaced only by a decision in the progress the owner allowed in the window on its edit.**
 - **A row of the epic plan is never marked «шаг владельца»: the step is the executor's.** The edit is refused and names the deferral by the owner's word. A row that still carries the old mark is read as an ordinary row, and an edit that takes the mark off passes.
 - **A branch planned before the engine reads its plan from the newest commit that changed it.**
@@ -87,7 +87,7 @@ recorded turns run through the hook on Stop are the subdomain
 `docs/specs/agent-kit/turn-guards/flow-script/replay/`. The guard at the end of a turn that asks
 the engine for its verdict, its release cases and the owner's menu are the subdomain
 `docs/specs/agent-kit/turn-guards/flow-script/exit/`; the CI hold it reads first is the subdomain
-`docs/specs/agent-kit/turn-guards/flow-script/exit-ci/`. Exits 11, 12 and 13 of the end of an epic are
+`docs/specs/agent-kit/turn-guards/flow-script/exit-ci/`. Exits 11, 12 and 13 of the end of an epic and exit 2 outside one are
 the subdomain `docs/specs/agent-kit/turn-guards/flow-script/epic/`: there exit 12 reads every task
 with a merged PR of its branch on the hosting. The code of the head against the decision of the plan
 at exit 8 is the subdomain `docs/specs/agent-kit/turn-guards/flow-script/decision/`. The guards of the end of a turn that judge the conversation are in the domain next to it. The check
@@ -101,7 +101,7 @@ and the exits read up to it; `measure --json` prints the same as one object with
 `state`, `index`, `reason`, `exits`, `action` and `pattern`. `step <N.M>` runs the check of that
 step and prints `ожидалось … · получено … · совпало` with code 0, or `… · не совпало` with code 1;
 a refused step prints `step: <reason>` with code 1. `step --done` prints the same for every done
-step, each line led by its number. `plan-check <plan.md>` names every unfit check with code 1, and
+step, each line led by its number, and `step <N>` measures a whole stage of the plan. `plan-check <plan.md>` names every unfit check with code 1, and
 `plan-red` writes the approval mark with code 0 or names what is missing with code 1; it reads the
 record of the conversation the hook names in `RT_FLOW_TRANSCRIPT`. A description that does not build is named with its reason and code 1. A measurer gets
 its data through its ports and the data of the description; a source reads git, the working copy,

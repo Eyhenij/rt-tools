@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub — the commit and the set before a push. Load for a commit and a push. Pattern git-workflow-commit.
 ---
-<!-- rt-kit v0.40.0 · rules/git-workflow-push.github.md · b461a4aa6899 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · rules/git-workflow-push.github.md · f27bda31f77c · правится надстройкой, не здесь -->
 
 # Delivery — the commit and the push set
 
@@ -27,3 +27,9 @@ Rule under the law `docs/constitution/delivery.md`, for a tree on GitHub. Cold p
 - **The layout audit stands in the push gate set on a par with lint and the build.**
 - **After merging the base in, the check set is revised by what the branch now carries.**
 - **Guard scenarios set the git settings and the locale themselves, not take them from the machine.**
+
+## This tree
+
+- **The showcase frames of a branch are narrower than the pipeline's, by the owner's word.** The branch
+  shoots the stories its edit reaches, `--affected <base>`; the whole set is the pipeline's step on a
+  PR into `main`.
