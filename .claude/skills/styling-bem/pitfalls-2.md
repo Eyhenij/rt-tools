@@ -1,4 +1,4 @@
-<!-- rt-kit v0.40.0 · pitfalls/styling-bem.2.md · a198c6ccd8fd · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.0 · pitfalls/styling-bem.2.md · a198c6ccd8fd · правится надстройкой, не здесь -->
 # Styling — how it works here — cold part, second file
 
 What the rule `styling-bem` handed over when cut to its statements, every article whole.

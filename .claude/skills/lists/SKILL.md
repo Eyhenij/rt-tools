@@ -4,7 +4,7 @@ kind: rule
 law: lists
 description: Rule under the lists law. Load when editing a list screen (libs/admin/*/feature/list), the kit table and pagination. Names the order of blocks, what the list is assembled from, where the query lives and what the kit already has. Ready-made screen code is in pattern admin-lists-screen.
 ---
-<!-- rt-kit v0.40.0 · rules/lists.md · 9bc7f315a5d9 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.0 · rules/lists.md · 9bc7f315a5d9 · правится надстройкой, не здесь -->
 
 # List screen — how it works here
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.40.0 · hooks/git-guard-delivery-identity.sh · 23759600da94 · правится надстройкой, не здесь
+# rt-kit v0.41.0 · hooks/git-guard-delivery-identity.sh · 23759600da94 · правится надстройкой, не здесь
 # The identity of the call that opens a PR, for the delivery guard: who will open it and whether that
 # account is its own reviewer.
 #
