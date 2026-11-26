@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.41.0 · hooks/decide.sh · 49f3de577c18 · правится надстройкой, не здесь
+# rt-kit v0.41.1 · hooks/decide.sh · 49f3de577c18 · правится надстройкой, не здесь
 # The call of the decider from a guard. NOT a guard: it has no `rt-hook:` declaration and hooks into
 # no agent event. A guard gathers the facts of the state, sources this file and asks `rt_decide`;
 # the decision, the move a refusal names and its text come from the decision table.
