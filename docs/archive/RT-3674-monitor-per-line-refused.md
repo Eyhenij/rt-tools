@@ -1,49 +1,40 @@
-# Progress
+# RT-3674 — Monitor со строкой на каждый шаг своей фоновой команды отказан
 
-## Where we stand
+Задача RT-3674 эпика RT-3602, запись от 2026-11-27. Прежний адрес: `docs/tasks/RT-3674-monitor-per-line-refused/`.
 
-- **State:** `разбор-кончился`
-- **Stage:** 3 of 3 — Спеки, привязки и раскладка
-- **Done:** все три этапа; два круга ревью, правки обоих в ветке
-- **Next step:** набор перед отправкой, разбор папки, отправка, PR в ветку эпика
-- **Uncommitted:** нет
-- **PR:** not open yet
+## The owner request
 
-## Steps
+> ты … не останавливался, каждый раз когда я нажимал "стоп" - ты выкидывал строку "Стою. Жду вашего слова." и продолжал работу несмотря на нажатый "стоп"
 
-- [x] 1.1 Замер до правки записан в ход работы
-- [x] 1.2 Модуль решает, печатает ли команда строку на шаг и за какой своей задачей следит
-- [x] 1.3 Команда движка судит вызов Monitor
-- [x] 1.4 Строка USAGE движка называет обе формы после слияния main
-- [x] 2.1 Хук отказывает Monitor по своему фоновому
-- [x] 2.2 Строка таблицы решений называет отказ
-- [x] 2.3 Случаи набора на каждую форму входа
-- [x] 2.4 Команды из записей отказаны не меньше 17 из 18
-- [x] 2.5 Время хука на большой записи записано в ход работы
-- [x] 3.1 Спек проверок хода называет отказ Monitor
-- [x] 3.2 Привязка спека называет хук
-- [x] 3.3 Спек таблицы решений называет строку хука
-- [x] 3.4 Файл правила хода для дерева называет проверку
-- [x] 3.5 Раздел 0.41.1 стоит в журнале изменений один раз
-- [x] 3.6 Пакет разложен в дерево
-- [x] 3.7 Живая проверка после раскладки записана в ход работы
+> почему ты продолжаешь работать после "стоп"?
 
-## Measurements
+The owner's words of 24.11 written into the epic plan `docs/plans/owner-stop-holds.md`; the plan was approved by
+the owner on 24.11, and the epic was given to this copy by the menu answer of 26.11 «Бери RT-3602». The card
+RT-3674: a `Monitor` that prints a line for every step of a command wakes the turn on every line; on 24.11 after Esc
+14 such lines from the queue woke the turns. The card asks to refuse such a `Monitor` when the end of that command
+comes as a notice anyway.
 
-- Замер до правки: отказано 0 из 18, живой tail -f по своему фоновому прошёл. Хука на `Monitor` в дереве нет, в
-  записях проекта ни один из 18 построчных вызовов по своему фоновому не отказан. Живой вызов 26.11: фоновая
-  команда `b9yk7zidq` пишет `${TMPDIR:-/tmp}/rt3674-live.log`, `Monitor` `tail -n 0 -f` по нему стартовал задачей
-  `b13mmnawl` без отказа; обе сняты `TaskStop`.
-- Время хука: 1,48 с на записи 338 МБ — три вызова `Monitor` `tail -f` по самой большой записи проекта
-  (`05592134…jsonl`, 338 МБ в десятичных мегабайтах): 1,48, 1,41 и 1,43 с; предел плана 2 с.
-- Живая проверка после раскладки: BLOCKED by monitor-stream-guard — 26.11, фоновая команда `b4e6l2ro3` пишет
-  `${TMPDIR:-/tmp}/rt3674-live3.log`; диспетчер этой копии (`CLAUDE_PROJECT_DIR` — копия, `.claude/hooks/dispatch.sh
-  PreToolUse`) на настоящей записи сессии отказал `tail -n 0 -f … | grep --line-buffered step` с текстом «this
-  Monitor prints a line on every step of the own background task b4e6l2ro3» за 1,50 с; ожидание `until grep -q …;
-  done; tail -1` по тому же файлу прошло за 1,22 с. Сам вызов `Monitor` сессии прошёл (задача `blmbk3wyq`): хуки
-  сессии берутся из главной копии, где нового хука нет до слияния — предел тот же, что у RT-3691.
+## Questions and answers
 
-## Decisions along the way
+No question is asked: the epic plan names what is refused and by what it is judged, and the design is the executor's.
+
+## Решения разбора
+
+- **«A line for every step» is read from the command text.** It follows a file (`tail` with `-f`, `-F` or
+  `--follow`), or a loop prints inside its body by `echo` or `printf` not followed by `break` or `exit`. A wait that
+  prints after the loop — `until grep -q …; do sleep …; done; tail -3 …` — prints once and passes.
+- **«Its end comes as a notice anyway» is read from the record.** The command names the output file of a live own
+  background task, or a file that the command of a live own background task writes by `>`, `>>` or `tee`. A poll of
+  a PR, a timer and a log no own task writes pass: their end comes by no notice.
+- **The refusal names the task and the lawful move.** The end of `<task>` comes as a notice; the file is read after
+  it, or one line at the end is waited for by `until grep -q`.
+
+## What is left unclear
+
+- A file named by a path built at run time (`$(basename "$PWD")`) the text match does not see: the cost is a pass,
+  named in the spec.
+
+## Решения по ходу
 
 - `projects/agent-kit/tests/metric-events.test.sh` — превышение следа: набор считает проверки с объявленным правилом,
   новый хук делает их 27. Строка и число правятся в том же этапе.
@@ -116,69 +107,36 @@
   `gh api …/pulls/3014/reviews`, он отличается от опроса `gh pr checks` и стоит в файле данных набора. Порог шага 2.3
   (34) считан с ним.
 
-## Sessions
+## Measurements
 
-### 2026-11-26
+- Замер до правки: отказано 0 из 18, живой tail -f по своему фоновому прошёл. Хука на `Monitor` в дереве нет, в
+  записях проекта ни один из 18 построчных вызовов по своему фоновому не отказан. Живой вызов 26.11: фоновая
+  команда `b9yk7zidq` пишет `${TMPDIR:-/tmp}/rt3674-live.log`, `Monitor` `tail -n 0 -f` по нему стартовал задачей
+  `b13mmnawl` без отказа; обе сняты `TaskStop`.
+- Время хука: 1,48 с на записи 338 МБ — три вызова `Monitor` `tail -f` по самой большой записи проекта
+  (`05592134…jsonl`, 338 МБ в десятичных мегабайтах): 1,48, 1,41 и 1,43 с; предел плана 2 с.
+- Живая проверка после раскладки: BLOCKED by monitor-stream-guard — 26.11, фоновая команда `b4e6l2ro3` пишет
+  `${TMPDIR:-/tmp}/rt3674-live3.log`; диспетчер этой копии (`CLAUDE_PROJECT_DIR` — копия, `.claude/hooks/dispatch.sh
+  PreToolUse`) на настоящей записи сессии отказал `tail -n 0 -f … | grep --line-buffered step` с текстом «this
+  Monitor prints a line on every step of the own background task b4e6l2ro3» за 1,50 с; ожидание `until grep -q …;
+  done; tail -1` по тому же файлу прошло за 1,22 с. Сам вызов `Monitor` сессии прошёл (задача `blmbk3wyq`): хуки
+  сессии берутся из главной копии, где нового хука нет до слияния — предел тот же, что у RT-3691.
 
-- Задача взята после слияния RT-3673 (#3690) и слияния `main` в ветку эпика (`2a7dc1a0c`); ветка от
-  `RT-3602-owner-stop-holds`.
+## Одобрение плана
 
-## Handover of the session
+«Одобряю план RT-3674»
 
-Put together by a hook before the compaction of the context (auto).
+## Чем подтверждено
 
-**Working tree:** /Users/eyhenij/WebstormProjects/rt-tools/.claude/worktrees/epic-3471-merge
-**Branch:** RT-3674-monitor-per-line-refused
+- Набор `bash projects/agent-kit/tests/monitor-stream-guard.test.sh`: 86 ok, 0 провалов. Из них 26 команд `Monitor` из записей проекта дословно: 18 построчных по своему фоновому отказаны, 8 проходят.
+- Корпус ролей, 152 вызова `Monitor` из записей проекта: отказано 18, все построчные по своему живому фоновому; ложных отказов 0 — до правок кругов и после обоих.
+- Время хука на записи 338 МБ: 1,41–1,48 с, предел плана 2 с.
+- Живая проверка: диспетчер этой копии на настоящей записи сессии отказал `tail -n 0 -f … | grep --line-buffered` за 1,50 с; ожидание `until grep -q …; done; tail -1` прошло за 1,22 с. Сам вызов `Monitor` сессии прошёл: хуки сессии из главной копии.
+- Наборы `decision-table` 517 ok, `metric-events` 64 ok, `hooks-kind` 15 ok, `dispatch` 64 ok; `agent-kit sync --check` сходится с пакетом.
+- Первый круг ревью (qa-engineer, product-strategist, goal-critic): серьёзных находок 3 — ложные отказы опроса PR по сравнению путей подстрокой и печать перед `break` через два оператора; исправлены одним коммитом вместе с пропусками обёрток, `-fn0`, `grep -m 500`, `{ while`, `2>`, `tee -ai`.
+- Второй круг: `review-path.mjs --round-two --serious 3` — «второй круг: нужен — серьёзных находок первого круга 3». Роли нашли регрессии первого круга и изъяны разбора выхода из цикла; исправлены одним коммитом. Списанное с причиной — в ходе работы задачи.
+- Набор перед отправкой: «push ahead: the set is green, the push passes from the marks», зелёных шагов 31. Два прогона до него были красными: слово «pull request» в спеке и слова tee и perl в отсеве хука — оба исправлены.
 
-### Where we stand at the minute of the compaction
+## Оставшийся шаг
 
-- **State:** `договорённость-записана`
-- **Stage:** 1 of 3 — Замер до правки и решение
-- **Next step:** коммит плана, `plan-red` и шаг 1.1
-- **PR:** not open yet
-
-The progress in full — `docs/tasks/RT-3674-monitor-per-line-refused/progress.md`; the plan lies next to it.
-
-### Uncommitted
-
-```
- M .claude/skills/turn-conduct/implementation.md
- M docs/specs/agent-kit/decision-table/spec.md
- M docs/specs/agent-kit/turn-guards/implementation.md
- M docs/specs/agent-kit/turn-guards/scenarios.md
- M docs/specs/agent-kit/turn-guards/spec.md
- M docs/tasks/RT-3674-monitor-per-line-refused/progress.md
- M projects/agent-kit/CHANGELOG.md
- M tools/decision-table.json
- M tools/task-flow-script.mjs
-?? .claude/hooks/monitor-stream-guard.sh
-?? tools/flow-monitor.mjs
-```
-
-### Commits over the main branch
-
-```
-421bee742 feat(rt:agent-kit): хук отказывает Monitor, который печатает строку на каждый шаг своего фонового (RT-3674)
-3393209a8 feat(rt:agent-kit): движок судит Monitor, который печатает строку на каждый шаг своего фонового (RT-3674)
-5427ae649 docs(rt:agent-kit): план RT-3674 одобрен владельцем
-0cf5de700 docs(rt:agent-kit): разбор и ход работы RT-3674
-76bbafb6c docs(rt:agent-kit): задача 2 эпика влита, задача 3 идёт (RT-3674)
-2a7dc1a0c Merge remote-tracking branch 'origin/main' into RT-3602-owner-stop-holds
-861e0c95c [RT-3673] После «стоп» ход от уведомления не работает, своё фоновое снимается (#3690)
-5af4812a8 docs(rt:agent-kit): папка задачи RT-3673 разобрана в архивную запись (RT-3673)
-38409dc64 test(rt:agent-kit): набор метрик считает двадцать шестую проверку с правилом (RT-3673)
-5142a88d0 Revert "docs(rt:agent-kit): папка задачи RT-3673 разобрана в архивную запись (RT-3673)"
-577c8f688 docs(rt:agent-kit): папка задачи RT-3673 разобрана в архивную запись (RT-3673)
-3fa4b012c fix(rt:agent-kit): запрет вызовов после остановки после второго круга ревью (RT-3673)
-98b643448 fix(rt:agent-kit): запрет вызовов после остановки после первого круга ревью (RT-3673)
-41057cb4a fix(rt:agent-kit): слово из очереди считается со времени постановки (RT-3673)
-ea09cd0d5 chore(rt:agent-kit): пакет разложен в дерево (RT-3673)
-41113e2a9 docs(rt:agent-kit): спеки и привязки запрета вызовов после остановки (RT-3673)
-e50ca5c3d feat(rt:agent-kit): после остановки ход от уведомления не делает работу (RT-3673)
-7463236ca feat(rt:agent-kit): мера остановки судит вызов и своё фоновое (RT-3673)
-50ebcb6eb docs(rt:agent-kit): живая проверка хоста и замер до правки (RT-3673)
-6b54f6904 docs(rt:agent-kit): план RT-3673 одобрен владельцем
-```
-
-Written by a hook before the compaction of the context. Everything standing here is checked
-against the tree: a handover retells what was written and describes the minute it was put together.
+Живой отказ в сессии после того, как главная копия получит эпик: шаг записан в план эпика к RT-3594.
