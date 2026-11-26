@@ -1,3 +1,16 @@
+## [0.41.1](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.41.0...rt-agent-kit%400.41.1) (2026-11-26)
+
+**Метрика выпуска:** нет. Исправление проверки хода работы при слиянии проверенной базы (RT-3691)
+
+### Bug Fixes
+
+- **rt:agent-kit:** выбор стороны при слиянии после второго круга ревью (RT-3691) ([c61bdab](https://github.com/Eyhenij/rt-tools/commit/c61bdab080a0a7b665e11516103e542407374a6d))
+- **rt:agent-kit:** выбор стороны при слиянии после первого круга ревью (RT-3691) ([aa670ee](https://github.com/Eyhenij/rt-tools/commit/aa670ee5482032544065df1f454b4398c99e550a))
+
+### Features
+
+- **rt:agent-kit:** при слиянии проверенной базы проверка хода работы пропускает выбор стороны в блоке конфликта ([8b3ed7c](https://github.com/Eyhenij/rt-tools/commit/8b3ed7cd3e2873a56ff9f24fc06bb1bb68247211))
+
 # [0.41.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.40.0...rt-agent-kit%400.41.0) (2026-11-26)
 
 **Метрика выпуска:** минут впустую, вниз

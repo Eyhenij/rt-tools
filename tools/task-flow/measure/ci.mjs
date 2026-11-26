@@ -1,4 +1,4 @@
-// rt-kit v0.41.0 · task-flow/measure/ci.mjs · 888381ddb1b3 · правится надстройкой, не здесь
+// rt-kit v0.41.1 · task-flow/measure/ci.mjs · 888381ddb1b3 · правится надстройкой, не здесь
 /**
  * The measurer «measure.ci» — the CI runs the session answers for. The hold is read before the
  * release cases: a turn does not end over a run nobody watches or a red run nobody read.

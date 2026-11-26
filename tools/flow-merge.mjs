@@ -1,4 +1,4 @@
-// rt-kit v0.41.0 · checks/flow-merge.mjs · 0bfe40c2079b · правится надстройкой, не здесь
+// rt-kit v0.41.1 · checks/flow-merge.mjs · 0bfe40c2079b · правится надстройкой, не здесь
 /**
  * The resolution of a merge conflict in a guarded file of the description or the engine. While a merge
  * of a reviewed base runs, the guard of the course of work lets two moves through in a file git left

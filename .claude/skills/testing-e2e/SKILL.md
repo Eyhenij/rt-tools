@@ -4,7 +4,7 @@ kind: pattern
 rule: testing
 description: Pattern of rule testing. Load when editing and running end-to-end tests in any end-to-end suite of the tree (apps/*-e2e) — what an end-to-end test closes, ready-made run commands, a stand from the production build behind real nginx, test switches. Not for unit tests — that is pattern testing-unit.
 ---
-<!-- rt-kit v0.41.0 · patterns/testing-e2e.md · 99f3ebdd1249 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.1 · patterns/testing-e2e.md · 99f3ebdd1249 · правится надстройкой, не здесь -->
 
 # End-to-end tests
 

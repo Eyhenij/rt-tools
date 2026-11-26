@@ -1,4 +1,4 @@
-<!-- rt-kit v0.41.0 · pitfalls/code-design.md · f479883c52df · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.1 · pitfalls/code-design.md · f479883c52df · правится надстройкой, не здесь -->
 # Code design — how it works here — cold part
 
 What the rule `code-design` does not carry into every edit: where it lives, what is not here and the
