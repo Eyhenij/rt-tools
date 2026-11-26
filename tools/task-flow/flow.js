@@ -1,4 +1,4 @@
-// rt-kit v0.40.0 · task-flow/flow.js · 5732377122d8 · правится надстройкой, не здесь
+// rt-kit v0.40.0 · task-flow/flow.js · 436bdbaebb2a · правится надстройкой, не здесь
 // The task flow as an executable scenario: the data language of `flow-syntax.mjs`, nothing here runs.
 // A state is left when its exit is measured; the first state whose exit is unmet is where the work
 // stands. A release case says when a turn may end before the scenario does. A new fact is a new
@@ -187,7 +187,15 @@
       'продолжай', 'делай', 'работай', 'доделывай', 'иди дальше', 'делай дальше', 'сначала', 'спрашивать',
       'спрашивай', 'asking', 'keep going', 'go on',
     ],
-    holdAfter: ['стоять', 'останавлива', 'ждать'],
+    holdAfter: ['стоять', 'останавлива', 'ждать', 'спрашива'],
+    // The stop holds until a working order: the plan of epic RT-3602, approved by the owner 24.11.
+    resume: [
+      'продолжай', 'продолжить', 'работай', 'делай', 'сделай', 'делай дальше', 'доделывай', 'иди дальше', 'доведи',
+      'исправляй', 'чини', 'вливай', 'влей', 'мержи', 'вмержи', 'отправляй', 'выпускай', 'выпусти', 'обнови', 'заведи',
+      'бери', 'верни', 'возвращай', 'ночной режим', 'одобряю', 'keep going', 'go on',
+    ],
+    stopInside: ['стоп', 'стой', 'stop', 'не двигайся', 'остановить работу', 'остановись'],
+    stay: ['без предпочтения', 'инцидент', 'разбор', 'приёмник', 'приемник'],
     nudge: '(?<![\\p{L}])(?<!не )(продолжай|доделывай|работай|делай дальше|работаешь)(?![\\p{L}])|почему (ты )?(стоишь|встал|остановил)|что дальше|дальше\\?|^(ну )?(и )?что там|^ну и\\s*[?!.]|какого .*останов',
     write: [
       'git commit', 'git push', 'git add', 'git merge', 'git rm', 'git mv', 'sed -i', 'perl -pi', 'gh pr', 'npm run task:new', 'pnpm run task:new', 'npm run task:move',

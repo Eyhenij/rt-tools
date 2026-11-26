@@ -25,10 +25,32 @@ Given a session that wrote, and the owner's last word «Стоп, на сего�
 When the hook on Stop reads the turn, and the release cases are read
 Then the first is released as «a stop word of the owner», and the other two are held: one asks to go on, the other orders work
 And «стоп» in the running stage with a step not done releases the turn
-And «стоп» lifts the CI hold of a fresh head with no run, and a red run holds the stop until one read
+And «стоп» lifts the CI hold: a fresh head with no run, a red run and a running one with no watch
 And the text of the model hook on Stop lets the turn end on a word to stop
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`, `projects/agent-kit/tests/turn-replay.test.sh`.
+
+### SC-AK-2010 — the owner's stop holds until a working order
+
+Given the owner's words of a record in order: typed, queued, Esc, a menu answer, the text of a refused call
+When the measure reads them by the transitions
+Then Esc, a stop word at the opening of a message, «не двигайся» and «остановить работу» anywhere in it, and `/stop` from the queue set the stop
+And «хватит тупить, чини», «подожди CI и вливай», «вливай и подожди CI» and «вливай, не жди CI» do not set it
+And a message within two seconds after the mark of Esc is judged alone
+And a question, swearing, «пиши инцидент», «не вливай пока», «без предпочтения», a notice and a message of another session leave it standing
+And a working order, a choice of work in a menu and «Одобряю план» lift it
+And «отправь отчёт об инциденте в приёмник, затем продолжай работу» lifts it: the order stands in a part of its own
+
+Covered: `projects/agent-kit/tests/turn-exit-guard-stop.test.sh`.
+
+### SC-AK-2013 — the checks at the end of a turn release it while the owner's stop stands
+
+Given a turn the draft check, the conscience check or the cargo mark check would refuse
+When the owner's last words are «стоп» and a question
+Then the check releases the turn
+And after «стоп», then «продолжай» it refuses as before
+
+Covered: `tools/tests/git-guard-draft-ready.test.sh`, `projects/agent-kit/tests/conscience-guard.test.sh`, `projects/agent-kit/tests/cargo-mark-guard.test.sh`.
 
 ### SC-AK-1839 — Esc releases the turn until the owner writes again
 

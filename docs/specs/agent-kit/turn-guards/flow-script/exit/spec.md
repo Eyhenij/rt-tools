@@ -1,6 +1,6 @@
 # The guard of the exits of a turn
 
-**Status:** in force · **Revision:** 2026-11-24 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-26 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `work-conduct`
 **Procedures:** none
@@ -27,6 +27,8 @@ case of the description says it may.
   under the role of the owner when the owner presses Esc.
 - **A hung task** — a background task of the session that runs past the bound of a wait with no
   notice of its end.
+- **A working order** — a word of `words.resume` in the owner's message, compared as a whole word:
+  «продолжай», «чини», «вливай», «одобряю». It lifts the owner's stop.
 
 ### What it is called in the interface
 
@@ -44,14 +46,23 @@ not by a person.
   The history is asked only in the state of a running stage. A step the plan names and the progress
   lacks counts as not done. A step done with no matched mark gets the measuring command, and the
   revert move only for a fix inside the folder.
-- **The owner's stop word releases the turn: their last word begins with a stop word of the description, and nothing after it asks to go on.**
-  An option chosen in a menu is the owner's word too. «хватит останавливаться, продолжай» and «Стой,
-  не туда — делай RT-N» hold the turn: the first asks to go on, the second orders work.
-- **The owner's interrupt releases the turn: their last word is the mark of Esc.**
-  A turn a background notice wakes after Esc or after a stop word is released until the owner writes
-  again. A message typed mid-turn counts as writing: the host keeps it as a queued command, not as a
-  user entry. Esc stops an order sent a second before it too: the host does not send a queued message
-  after the mark.
+- **The owner's stop word releases the turn while the stop stands: the owner's words are read in order, and the stop holds until a working order.**
+  A word of `words.stop` signals at the opening of a message, a word of `words.stopInside` anywhere
+  in it; «не» before a word cancels it. Inside one message the last signal decides. The parts of a
+  message are split by «.», «,», «;» and by «и», «затем», «потом», and a part with a word of
+  `words.stay` carries no order. A question, swearing, «пиши инцидент», «без предпочтения», a notice
+  and a message of another session leave the stop standing. An option chosen in a menu is the
+  owner's word too, and a choice of work lifts the stop. «хватит останавливаться, продолжай» and
+  «Стой, не туда — делай RT-N» hold the turn.
+- **The owner's interrupt releases the turn while the stop it set stands.**
+  The mark of Esc sets the stop; a message within two seconds after the mark is judged alone. A turn
+  a background notice wakes after the stop is released until a working order. A message typed
+  mid-turn counts as the owner's word: the host keeps it as a queued command, not as a user entry.
+  Esc stops an order sent a second before it too: the host does not send a queued message after the
+  mark.
+- **The draft check, the conscience check and the cargo mark check release the turn while the owner's stop stands.**
+  Each asks the command `stop` of the engine after its own refusal conditions, with the same hook
+  input, and ends the turn on its exit code 0.
 - **A session that wrote nothing to the tree releases the turn unless the owner's last word pushes the work on, and a branch outside the scenario releases it always.**
 - **A role session with no edit tool ends with its report.**
 - **The silent hosting releases the turn only when the measurement itself stopped on the silence.**
@@ -253,3 +264,6 @@ None.
   owner's menu; scenario 1930.
 - 2026-11-24 — the stop word releases a turn again, as a release case before the interrupt: scenario
   1912 holds its cases. The stop word lifts the CI hold of a fresh head.
+- 2026-11-26 — the stop is a state of the owner's words, not their last word: scenario 2010 holds a
+  case for every transition, 2013 the three checks at the end of a turn. A question, swearing and
+  «пиши инцидент» after a stop no longer lift it.

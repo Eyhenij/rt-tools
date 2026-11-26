@@ -1,6 +1,6 @@
 # The recorded turns
 
-**Status:** in force · **Revision:** 2026-11-24 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-26 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `work-conduct`, `verifiability`
 **Procedures:** none
@@ -36,6 +36,8 @@ silent.
 - **A turn that wrote to the tree and stops while the scenario is open is held, whatever its last words are.**
 - **The refusal of a held turn names the measured state and one move: the current step with its command, or the action of the state.**
 - **A word of the owner that asks to stop or to wait, typed or chosen in a menu, releases the turn while the scenario is open.**
+  The stop holds until a working order: a question, swearing, «пиши инцидент» and «без
+  предпочтения» after it release the turn too, and «вливай» after it holds the turn again.
 - **A session that wrote nothing releases the turn on a question or on swearing of the owner.**
 - **The end of the epic releases the turn: every task lies in the epic branch, and the PR of the epic into the main branch exists.**
 - **A menu of a refusal held twice in a row releases the turn; held once, it does not.**
@@ -44,7 +46,10 @@ silent.
 - **The model hook on Stop does not judge open work and holds a question whose answer is already given.**
 - **The model hook on Stop holds a turn that wrote an incident record and did not send it, and lets one that sent it end.**
 - **The model hooks hold a reply and a question that are not in the owner's language, and a question about what the product sanitizes leaves.**
-- **A recorded turn carries no text the owner typed: the word is a class label or a phrase of at most four words that asks to stop or to wait.**
+- **A recorded turn carries no text the owner typed: the word is a class label, the mark of Esc or a phrase of at most four words.**
+  The mark of Esc is written as the host writes it, `[Request interrupted by user]`, and after a
+  refused call `[Request interrupted by user for tool use]`. A phrase is a stop, a question or an
+  order: «я же сказал стоп», «хватит тупить, чини», «вливай».
 
 ## What is out of scope
 
@@ -120,3 +125,5 @@ the case of the deadlock of RT-3304 checks it. Its number is not given again.
   «отложить RT-N» and «подскажу путь».
 - 2026-11-24 — the same seven recorded words and the menu answer «стоп» release the turn again: the
   stop word is a release case next to Esc. Scenario 1913 counts the seven messages by one line each.
+- 2026-11-26 — the stop holds until a working order: scenario 2012 holds a recorded turn for every
+  transition, and four of them carry the expected verdict of the model hook on Stop.

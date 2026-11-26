@@ -332,7 +332,8 @@ report "replay: SC-AK-1455 — хук меню пропускает меню о�
 report "replay: SC-AK-1455 — меню отказа — ровно два варианта" "$(has "$ASK_JUDGE" 'The options are exactly two: «отложить RT-N» with the task number')" есть
 report "replay: SC-AK-1842 — хук меню пропускает «подскажу путь» и вопрос о пути" "$(has "$ASK_JUDGE" 'answered that menu with a bare «подскажу путь»')" есть
 report "replay: SC-AK-1841 — хук модели на Stop отпускает ожидание своей фоновой задачи" "$(has "$TURN_JUDGE" 'A background task the session started still runs')" есть
-report "replay: SC-AK-1912 — хук модели на Stop отпускает по слову остановки" "$(has "$TURN_JUDGE" "The owner's latest word says to stop or to wait — «стоп»")" есть
+report "replay: SC-AK-1912 — хук модели на Stop отпускает по слову остановки" "$(has "$TURN_JUDGE" "a word to stop or to wait — «стоп»")" есть
+report "replay: SC-AK-2012 — хук модели на Stop держит остановку до рабочего приказа" "$(has "$TURN_JUDGE" 'the stop holds until a working order')" есть
 report "replay: SC-AK-1470 — хук меню задерживает вариант, который снимает проверку" "$(has "$ASK_JUDGE" 'removes, disables or weakens a hook or a check')" есть
 report "replay: SC-AK-1470 — и в меню отказа проверки выхода" "$(has "$ASK_JUDGE" 'Hold it in any menu, the menu of')" есть
 report "replay: SC-AK-1933 — хук модели на Stop держит реплику не на языке владельца" "$(has "$TURN_JUDGE" "The final reply is not in the owner's language")" есть

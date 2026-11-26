@@ -111,10 +111,11 @@ The guards have no interface: only the agent sees them, as the text of a refusal
   «Ожидание и убрать «стоп»», which left Esc alone. An answer chosen in a menu is the owner's word
   too. A question, a refusal of a guard and a handover are the turn going on. The other release
   cases of the description are not the agent's to choose.
-- **The owner's stop is read from their last message in the record, not from the progress.** A stop
-  word is that message; the mark of Esc is written there by the host. A line on disk is a retelling,
-  written by the one the stop suits. A stop older than the owner's latest message releases nothing:
-  the later message cancels it.
+- **The owner's stop is read from their words in the record, not from the progress.** The words are
+  read in order, and the mark of Esc is written there by the host. A line on disk is a retelling,
+  written by the one the stop suits. The stop holds until a working order: a question, swearing or
+  «пиши инцидент» after it does not lift it. The owner decided so on 26 November 2026: «Одобряю
+  план RT-3672».
 - **A command that closes a session or writes a handover is not a word to stop.** It cleans up and
   hands over; the work it does not mention stays ordered.
 - **A question to the owner is held only when the owner already answered it or a rule answers it
@@ -243,3 +244,6 @@ measured by the engine, so no doubt about it is left to decide.
   another guard refuses twice offers «отложить RT-N» and «подскажу путь».
 - 2026-11-24 — the rules follow the owner's decision «Одобряю план RT-3592»: their stop word ends a
   turn again, next to Esc.
+- 2026-11-26 — the rules follow the owner's decision «Одобряю план RT-3672»: the stop is a state of
+  the owner's words in the record and holds until a working order. A question, swearing and «пиши
+  инцидент» after it no longer lift it, and CI no longer holds a stopped turn.

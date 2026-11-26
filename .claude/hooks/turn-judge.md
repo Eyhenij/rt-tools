@@ -1,4 +1,4 @@
-<!-- rt-kit v0.40.0 · hooks/turn-judge.md · 841a726fa503 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · hooks/turn-judge.md · c021dae72504 · правится надстройкой, не здесь -->
 # Turn judge
 <!-- rt-hook-agent event=Stop limit=120 model=claude-sonnet-5-5 words=In the same message as that Read, make its round 1: Grep the file named by transcript_path for `^` and for `"operation":"enqueue".*"content":"[^<]|"content":"The user answered: |"type":"user","message":\{"role":"user","content":\[\{"type":"text","text":"\[Request interrupted by user` with output_mode count. -->
 
@@ -59,11 +59,15 @@ the end of every turn.
 ## Let the turn end — answer `{"ok": true}` — when one of these holds
 
 - None of the cases below holds. Whether work is left is measured by the exit check, not by you.
-- The owner's latest word is the Esc mark `[Request interrupted by user`: the owner stopped the
-  work, and a turn a notice woke after it ends without the work. An order typed before the mark
-  orders nothing until the owner writes again, one sent a second before the mark included.
-- The owner's latest word says to stop or to wait — «стоп», «хватит», «не сейчас», «потом»,
-  «подожди», a refusal in an answer to the question tool — and the reply does not keep working.
+- The owner stopped the work, and the stop holds until a working order: the Esc mark
+  `[Request interrupted by user`, or a word to stop or to wait — «стоп», «хватит», «не сейчас»,
+  «подожди», «не двигайся», a refusal in an answer to the question tool — and the reply does not
+  keep working. A question, swearing, «пиши инцидент» or «без предпочтения» after the stop is no
+  working order: the work stays stopped and the reply answers it. An incident record it orders is
+  still written in this turn, as the refusal below for an order not done says. A working order is a direct one —
+  «продолжай», «делай», «чини», «вливай», «одобряю», a choice of work in a menu. An order typed
+  before the Esc mark orders nothing, one sent a second before the mark included; a message within
+  two seconds after the mark is judged alone.
 - A background task the session started still runs, and the reply names the task and the step that
   goes on by its notice. A task runs when its call ran in the background — `run_in_background` or
   a background agent — and no `<task-notification>` with its id stands after it. The wait is the
@@ -81,8 +85,8 @@ the end of every turn.
   announcement is not the action: a reply that announces or promises its next work is refused even
   when the turn did part of the ordered work. A reply that waits for a running background task of
   the session, as named above, announces no work. A turn whose calls did part of the ordered work and
-  whose reply announces nothing has the work in its calls. Swearing at an agent that stands means
-  «why did you stop»: it is never a word to stop. Swearing that follows no order and names no work orders nothing. A slash
+  whose reply announces nothing has the work in its calls. Swearing at an agent that stood on its own means
+  «why did you stop»: it is never a word to stop; after the owner's stop it orders nothing. Swearing that follows no order and names no work orders nothing. A slash
   command that writes a handover or closes the session is cleanup: the work it does not mention
   stays ordered. The last records read may not hold the whole turn: before refusing because the
   ordered work is not in the calls, `Grep` the transcript for `"type":"tool_use"` from the line of

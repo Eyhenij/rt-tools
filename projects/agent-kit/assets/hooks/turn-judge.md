@@ -62,9 +62,11 @@ the end of every turn.
   `[Request interrupted by user`, or a word to stop or to wait — «стоп», «хватит», «не сейчас»,
   «подожди», «не двигайся», a refusal in an answer to the question tool — and the reply does not
   keep working. A question, swearing, «пиши инцидент» or «без предпочтения» after the stop is no
-  working order: the reply answers it and the turn ends. A working order is a direct one —
+  working order: the work stays stopped and the reply answers it. An incident record it orders is
+  still written in this turn, as the refusal below for an order not done says. A working order is a direct one —
   «продолжай», «делай», «чини», «вливай», «одобряю», a choice of work in a menu. An order typed
-  before the Esc mark orders nothing; a message within two seconds after the mark is judged alone.
+  before the Esc mark orders nothing, one sent a second before the mark included; a message within
+  two seconds after the mark is judged alone.
 - A background task the session started still runs, and the reply names the task and the step that
   goes on by its notice. A task runs when its call ran in the background — `run_in_background` or
   a background agent — and no `<task-notification>` with its id stands after it. The wait is the
