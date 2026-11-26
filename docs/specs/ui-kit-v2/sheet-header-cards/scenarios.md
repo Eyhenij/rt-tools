@@ -405,3 +405,12 @@ seen and the body scrolls; short content keeps the sheet by its height
 Not covered: a test has no layout — the height is seen by the frame of the story `Content` in
 `projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/bottom-sheet-matrix.stories.ts` and by
 the match of the showcase with the mockup.
+
+### SC-UKV-1919 — every frame of the date sheet showcase puts the field of its kind
+
+Given the showcase wrapper of the date sheet
+When a frame of a time, a time from midnight, a date with time or a period is drawn
+Then it puts the field of that kind under its label, and the field carries the mark by which the
+story finds the button that opens its sheet
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/stories/component/test-rt-date-sheet.component.spec.ts`.

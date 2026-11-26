@@ -44,6 +44,17 @@
   plan: 2, 3.
 - `projects/ui-kit-v2/src/lib/components/date-picker/stories/component/test-rt-date-sheet.component.ts` — превышение решения плана: файл обёртки витрины переименован из `test-date-sheet.component.ts` по имени своего класса, нового символа нет; без этого Angular Doctor красный.
 - `projects/ui-kit-v2/src/lib/components/date-picker/stories/component/test-rt-date-sheet.component.spec.ts` — превышение решения плана: тест обёртки витрины, которого требует Angular Doctor; нового символа кита нет.
+- **Round one of the review: qa-engineer, goal-critic, product-strategist** — fixed: the wrapper spec titles
+  borrowed SC-UKV-1760 and checked none of its Then — the frames get scenario SC-UKV-1919 of their own;
+  the index row of `docs/specs/ui-kit-v2/scenarios.md` was wider than the formatter's table; the three
+  spec histories lacked the renumbering. Written off: the record `docs/archive/RT-3617-sheet-owner-remarks.md`
+  names SC-MB-458 — an archive record is not edited after the fact; the index rows of `tokens`,
+  `snapshots` and `popover-sheet-lazy` came stale from the main branch and lie outside this work. Taken
+  into piece (c): `tools/tests/check-kit-weight-live.test.sh` is red by the same growth (the set and its
+  gzip both print a line) and turns green with the threshold; rerun `bash tools/tests/run.sh` after the
+  decision. Taken into the epic: before the epic PR the main branch is merged in again —
+  `projects/ui-kit-v2/CHANGELOG.md` conflicts with the 0.53.0 release, `[Unreleased]` stays above it; the
+  local epic branch is pushed before the PR of this task, otherwise that PR shows the main branch's files.
 - **Цена:** нет
 - **Отменено:** нет
 

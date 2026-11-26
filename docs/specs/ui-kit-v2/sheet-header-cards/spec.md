@@ -216,3 +216,5 @@ None.
 |            | of «×» (RT-3532)                                                                                      |
 | 2026-11-23 | A minute off the step, the keys of the wheel, Escape inside a date panel, scenarios 1770, 1771        |
 |            | (RT-3531)                                                                                             |
+| 2026-11-26 | Scenarios 1780…1784 move to 1914…1918: the main branch took those numbers; the frames of the date     |
+|            | sheet showcase, scenario 1919 (RT-3706)                                                               |

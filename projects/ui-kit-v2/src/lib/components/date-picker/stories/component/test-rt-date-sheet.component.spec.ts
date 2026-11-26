@@ -26,28 +26,28 @@ describe('Обёртка витрины шторки даты', (): void => {
         TestBed.resetTestingModule();
     });
 
-    it('SC-UKV-1760 — кадр времени ставит поле времени с признаком кнопки истории', (): void => {
+    it('SC-UKV-1919 — кадр времени ставит поле времени с признаком кнопки истории', (): void => {
         const root: HTMLElement = render('time');
 
         expect(trigger(root)?.tagName.toLowerCase()).toBe('rt-date-picker');
         expect(root.textContent).toContain('Время заезда');
     });
 
-    it('SC-UKV-1760 — кадр времени с полуночи ставит пустое поле времени', (): void => {
+    it('SC-UKV-1919 — кадр времени с полуночи ставит пустое поле времени', (): void => {
         const root: HTMLElement = render('midnight');
 
         expect(trigger(root)?.tagName.toLowerCase()).toBe('rt-date-picker');
         expect(root.textContent).toContain('Время выезда');
     });
 
-    it('SC-UKV-1760 — кадр даты со временем ставит поле заезда', (): void => {
+    it('SC-UKV-1919 — кадр даты со временем ставит поле заезда', (): void => {
         const root: HTMLElement = render('datetime-local');
 
         expect(trigger(root)?.tagName.toLowerCase()).toBe('rt-date-picker');
         expect(root.textContent).toContain('Заезд');
     });
 
-    it('SC-UKV-1760 — кадр периода ставит поле периода', (): void => {
+    it('SC-UKV-1919 — кадр периода ставит поле периода', (): void => {
         const root: HTMLElement = render('range');
 
         expect(trigger(root)?.tagName.toLowerCase()).toBe('rt-date-range');
