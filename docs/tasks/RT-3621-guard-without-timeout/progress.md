@@ -35,7 +35,7 @@
   отметку `timeout`; запись плана проверена и под `gtimeout`. Вид без права на запуск краснеет без
   `rt_runs` только под bash 3.2: bash 5 сам пропускает такой файл в `command -v`. Набор: 142 ok.
   Affected stage of the plan: 1.
-- **Превышение: новый файл `projects/agent-kit/tests/flow-step-guard-lib.sh`** — набор перед
+- **Превышение новых файлов кода: 1 при бюджете 0, `projects/agent-kit/tests/flow-step-guard-lib.sh`** — набор перед
   отправкой отказал: в `projects/agent-kit/tests/flow-step-guard.test.sh` 545 строк при пределе 500.
   Общие помощники набора (строки 16–85) вынесены в свой файл, как `turn-exit-lib.sh` у стража конца
   хода; случаи и их имена не тронуты, набор — 142 ok, шаг 1.1 зелёный. Affected stage of the plan: 1.
