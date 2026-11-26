@@ -209,15 +209,17 @@ Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
 
 ### SC-AK-2016 — a merge of a reviewed base takes a side of a conflict block without a plan
 
-Given a branch with no plan whose merge of `origin/main` left a conflict block in the description and in its
-laid-out copy
-When an Edit replaces the whole block by the side of the base, or by both sides one after the other, and
-`git checkout --ours` takes the laid-out copy
+Given a branch with no plan whose merge of `origin/main` left diff3 conflict blocks in the code of the
+description and in a text of its layout
+When an Edit or a MultiEdit replaces the whole block by one side, an Edit of the text puts both sides one after
+the other, `git checkout --ours` takes the text and `git restore --theirs` the code
 Then they pass
 
 Given the same merge
-When an Edit puts a line of neither side, takes the block with a line around it or removes a line outside the
-block, a Write puts the file whole, or `git checkout --theirs` names a path git merged
+When an Edit of the code puts both sides one after the other, a line of neither side or the side of the common
+ancestor, takes the block with its closing marker cut or with a line around it, or removes a line outside the
+block; a Write puts the file whole; `git checkout --theirs` names a path git merged; a side is taken with
+`git -c`; or a plan of the plans directory is a directory
 Then they are refused
 
 Given a merge of a local branch nobody pushed

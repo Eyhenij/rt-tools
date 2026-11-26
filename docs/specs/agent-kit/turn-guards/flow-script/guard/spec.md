@@ -116,17 +116,23 @@ Not applicable: one call is judged at a time.
   read the quality; a text check that guessed it would refuse true plans. The reading of a cell — the
   places with their fate, the numbers, the suites — is given out, so that the end of the stages compares
   it with the code and no second reader appears.
-- **A merge resolution is a choice of a side, not an edit judged by its lines.** An Edit of an unmerged
-  guarded file passes when its old text is one whole conflict block and its new text is the side of the
-  branch, the side of the base, both one after the other, or nothing; `git checkout` and `git restore`
-  with `--ours` or `--theirs` pass when every path they name is unmerged. A Write, an edit outside a
-  block or with lines around it, a line of neither side and a merged path are judged by the rule of the
-  guarded files. The 26.11 merge of the main branch into an epic branch had one conflict in the engine
-  source and six in its laid-out copies, each a header line: the source takes a side by an edit, the
-  copies by `--ours` and the layout after it.
-- **The base is reviewed by the remote branch it lies in, not by its name.** A local branch with a
-  commit nobody pushed is no reviewed base, and the resolution of its conflicts is refused. A merge
-  itself is not judged: `git merge` of any branch, `-X ours` and `-X theirs` pass as before.
+- **A merge resolution is a choice of a side, not an edit judged by its lines.** An Edit or MultiEdit of
+  an unmerged guarded file passes when each old text stands in the file as one whole conflict block,
+  from the start of a line to the end of one, and its new text is the side of the branch or the side of
+  the base; outside code, both sides one after the other pass too. In code two sides declare a name
+  twice, and a broken engine lets every call through. `git checkout` and `git restore` with `--ours` or
+  `--theirs` pass when every path they name is unmerged, and not with `-c`, which can set a filter that
+  writes anything. A Write, an edit outside a block, a cut marker, a line of neither side, the side of
+  the common ancestor and a merged path are judged by the rule of the guarded files. The 26.11 merge of
+  the main branch into an epic branch had one conflict in the engine source and six in its laid-out
+  copies, each a header line: the source takes a side by an edit, the copies by `--ours` and the layout
+  after it.
+- **The base counts as reviewed by the remote-tracking branch it lies in, read locally.** A local branch
+  with a commit nobody pushed is no reviewed base, and the resolution of its conflicts is refused. The
+  refs, `MERGE_HEAD` and the plans are local state, and a session that forges them on purpose passes;
+  the same holds for a merge itself, which is not judged: `git merge` of any branch, `-X ours` and
+  `-X theirs` pass as before. A merge that cannot be read — a plan that is a directory, an unreadable
+  file — counts as none, so the rule of the guarded files judges and the engine does not fail.
 - **`plan-red` passes a plan whose commit has no module of the decision.** It was written before the
   update. A module outside the tree or the history says nothing of when the plan was written, so it asks.
 

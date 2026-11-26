@@ -34,39 +34,19 @@
   `00422d2cf`. План переписан, проба идёт через сам хук: `edit=deny checkout=deny newline=deny outside=deny unreviewed=deny`.
 - Владелец одобрил план, `plan-red` записал отметку. Строку состояния выше `просьба-не-разобрана` проверка
   отказывает: движок `00422d2cf` меряет задачу вне эпика на `эпик-заведён` (индекс 2), движок этой ветки — на
-  `замысел-записан`. Код в дереве поэтому не правится.
-- Код, спек и случаи написаны во временном клоне ветки
-  `/private/tmp/claude-501/-Users-eyhenij-WebstormProjects-rt-tools/611348a0-4037-4ebe-8492-719501de2c3b/scratchpad/rt-merge/impl`:
-  `flow-merge.mjs` 39 строк, `flow-guard.mjs` 497, `flow-guard-run.mjs` 111, набор 491. Набор стража: 130 ok,
-  0 провалов, из них 12 случаев SC-AK-2016. Проба с движком клона: `edit=pass checkout=pass newline=deny outside=deny unreviewed=deny`.
-
-## Handover of the session
-
-Put together by a hook before the compaction of the context (auto).
-
-**Working tree:** /Users/eyhenij/WebstormProjects/rt-tools/.claude/worktrees/epic-3471-merge
-**Branch:** RT-3691-merge-base-engine-conflict
-
-### Where we stand at the minute of the compaction
-
-- **State:** `просьба-не-разобрана`
-- **Stage:** 0 of 2 — план написан, ждёт ролей и одобрения владельца
-- **Next step:** коммит разбора, роли `product-strategist` и `goal-critic` по плану, затем вопрос владельцу об одобрении
-- **PR:** not open yet
-
-The progress in full — `docs/tasks/RT-3691-merge-base-engine-conflict/progress.md`; the plan lies next to it.
-
-### Uncommitted
-
-```
-?? docs/tasks/RT-3691-merge-base-engine-conflict/plan.md
-```
-
-### Commits over the main branch
-
-```
-f43270048 docs(rt:agent-kit): разбор и ход работы RT-3691
-```
-
-Written by a hook before the compaction of the context. Everything standing here is checked
-against the tree: a handover retells what was written and describes the minute it was put together.
+  `замысел-записан`.
+- Код, спек и случаи сначала написаны во временном клоне ветки; когда каталог сессии стал этой копией, правки
+  охраняемых файлов прошли, и всё перенесено в дерево коммитом `8b3ed7cd3`. Шаги обоих этапов отметил движок.
+  Набор стража: 130 ok, 0 провалов. Проба через хук этой копии: `edit=pass checkout=pass newline=deny outside=deny unreviewed=deny`.
+- Первый круг ревью (`qa-engineer`, `product-strategist`, `goal-critic`). Исправлено:
+  - падение чтения слияния на каталоге или нечитаемом файле в `docs/plans` давало «пропустить всё»;
+  - обрезанный закрывающий маркер приклеивал остаток к стороне;
+  - обе стороны подряд в коде ломали движок;
+  - `git -c` с фильтром писал что угодно;
+  - абсолютный путь и `git -C` отказывались;
+  - не проверялся `origin/main`, когда `origin/HEAD` смотрит на другую ветку;
+  - слияние читалось на каждый вызов;
+  - спек обещал «или ничего»;
+  - путь клона в пробе.
+  Подделка локальных ссылок и планов записана в спеке как обход по умыслу, тем же классом, что `git merge`.
+  Набор стража после круга: 135 ok, 0 провалов.

@@ -1,13 +1,17 @@
-// rt-kit v0.40.0 · checks/flow-merge.mjs · 1a53c1f5dc3d · правится надстройкой, не здесь
+// rt-kit v0.40.0 · checks/flow-merge.mjs · bc6864b6cdcd · правится надстройкой, не здесь
 /**
  * The resolution of a merge conflict in a guarded file of the description or the engine. While a merge
  * of a reviewed base runs, the guard of the course of work lets two moves through in a file git left
  * unmerged: an edit that replaces one whole conflict block by a side of it, and `git checkout` or
  * `git restore` with `--ours` or `--theirs`. Everything else is judged by the rule of the guarded files.
- * The decisions are pure: the merge — its unmerged paths — comes from the context of the guard.
+ * The decisions are pure: the merge — its root and unmerged paths — and the text of the file come from
+ * the context of the guard.
  */
+import { isAbsolute, relative } from 'node:path';
 
 const [OPEN, BASE, MID, CLOSE] = [/^<{7}(?: .*)?$/, /^\|{7}(?: .*)?$/, /^={7}$/, /^>{7}(?: .*)?$/];
+/** Code, where two sides one after the other declare a name twice and break the engine. */
+const CODE = /\.(?:m?js|json)$/;
 
 /** The two sides of a text that is exactly one conflict block, the lines around it none; or null. */
 export function sidesOfBlock(text) {
@@ -20,23 +24,38 @@ export function sidesOfBlock(text) {
     return { ours: inner.slice(0, base >= 0 && base < mids[0] ? base : mids[0]), theirs: inner.slice(mids[0] + 1) };
 }
 
-/** The new text of an edit is a side of its block, both sides one after the other, or the block removed whole. */
-function choiceOf(oldString, newString) {
+/** The old text stands in the file from the start of a line to the end of one: a cut marker keeps its rest. */
+const wholeLines = (text, old) => {
+    const at = text.indexOf(old);
+    return at >= 0 && (at === 0 || text[at - 1] === '\n') && (old.endsWith('\n') || at + old.length === text.length || text[at + old.length] === '\n');
+};
+
+/** The new text of an edit is a side of its block, or outside code both sides one after the other. */
+function choiceOf(oldString, newString, code) {
     const sides = sidesOfBlock(oldString);
     if (!sides) return false;
     const tail = oldString.endsWith('\n') ? '\n' : '';
-    const choices = [sides.ours, sides.theirs, [...sides.ours, ...sides.theirs], [...sides.theirs, ...sides.ours]];
+    const choices = [sides.ours, sides.theirs, ...(code ? [] : [[...sides.ours, ...sides.theirs], [...sides.theirs, ...sides.ours]])];
     return choices.some((lines) => newString === (lines.length ? `${lines.join('\n')}${tail}` : ''));
 }
 
-/** Every edit of an Edit or MultiEdit of an unmerged path replaces one whole conflict block by a side of it. */
-export function resolvesBlock(call, merge) {
-    if (!merge || !['Edit', 'MultiEdit'].includes(call.tool) || !merge.unmerged.has(call.path)) return false;
+/**
+ * Every edit of an Edit or MultiEdit of an unmerged path replaces one whole conflict block of the file,
+ * read as `text`, by a side of it; the edits apply one after another, as the tool applies them.
+ */
+export function resolvesBlock(call, merge, text) {
+    if (!merge || !['Edit', 'MultiEdit'].includes(call.tool) || !merge.unmerged.has(call.path) || typeof text !== 'string') return false;
     const edits = call.edits ?? [];
-    return edits.length > 0 && edits.every((edit) => !edit.replaceAll && choiceOf(edit.oldString, edit.newString));
+    let now = text;
+    for (const edit of edits) {
+        if (edit.replaceAll || !wholeLines(now, edit.oldString) || !choiceOf(edit.oldString, edit.newString, CODE.test(call.path))) return false;
+        now = now.replace(edit.oldString, () => edit.newString);
+    }
+    return edits.length > 0;
 }
 
-/** The paths a side is taken for are all unmerged in the merge of a reviewed base. */
+/** The paths a side is taken for are all unmerged in the merge of a reviewed base; an absolute one counts from the root. */
 export function choosesSide(paths, merge) {
-    return Boolean(merge) && paths.length > 0 && paths.every((path) => path !== null && merge.unmerged.has(path));
+    const own = (path) => (path !== null && isAbsolute(path) ? merge.roots.map((root) => relative(root, path)).find((rel) => merge.unmerged.has(rel)) ?? path : path);
+    return Boolean(merge) && paths.length > 0 && paths.every((path) => path !== null && merge.unmerged.has(own(path)));
 }

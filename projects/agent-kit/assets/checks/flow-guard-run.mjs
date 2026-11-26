@@ -4,7 +4,7 @@
  * the description.
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync, readdirSync, readFileSync, realpathSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, realpathSync, statSync } from 'node:fs';
 import { basename, dirname, isAbsolute, join, relative } from 'node:path';
 
 import { approvalFault, openRecords } from './flow-step.mjs';
@@ -41,21 +41,35 @@ const git = (root, ...args) => {
 
 const EPIC_BRANCH = /\*\*(?:Ветка эпика|Epic branch):\*\*\s*`([^`]+)`/u;
 
+/** The epic branch a plan file names, or null: a directory, a dangling link or an unreadable file names none. */
+const epicOf = (path) => {
+    try {
+        return statSync(path).isFile() ? (readFileSync(path, 'utf8').match(EPIC_BRANCH)?.[1] ?? null) : null;
+    } catch {
+        return null;
+    }
+};
+
 /**
  * The merge in progress of a reviewed base: its head lies in the remote main branch or in the remote
- * branch of an epic a plan of `plansDir` names. Its unmerged paths, relative to the root; null with no
- * merge or with a head nobody pushed.
+ * branch of an epic a plan of `plansDir` names. Its unmerged paths, relative to the root, and the root;
+ * null with no merge, with a head nobody pushed, or when the merge cannot be read: then the rule of the
+ * guarded files judges, never a failed engine that lets every call through.
  */
 export function reviewedMerge(root, plansDir) {
-    const head = git(root, 'rev-parse', '-q', '--verify', 'MERGE_HEAD');
-    if (!head) return null;
-    const dir = join(root, plansDir);
-    const plans = existsSync(dir) ? readdirSync(dir).filter((name) => name.endsWith('.md')) : [];
-    const epics = plans.map((name) => readFileSync(join(dir, name), 'utf8').match(EPIC_BRANCH)?.[1]).filter(Boolean);
-    const main = git(root, 'symbolic-ref', '-q', '--short', 'refs/remotes/origin/HEAD') ?? 'origin/main';
-    const holds = (ref) => spawnSync('git', ['-C', root, 'merge-base', '--is-ancestor', head, ref]).status === 0;
-    if (![main, ...epics.map((branch) => `origin/${branch}`)].some(holds)) return null;
-    return { unmerged: new Set((git(root, 'diff', '--name-only', '--diff-filter=U') ?? '').split('\n').filter(Boolean)) };
+    try {
+        const head = git(root, 'rev-parse', '-q', '--verify', 'MERGE_HEAD');
+        if (!head) return null;
+        const holds = (ref) => spawnSync('git', ['-C', root, 'merge-base', '--is-ancestor', head, ref]).status === 0;
+        const mains = [git(root, 'symbolic-ref', '-q', '--short', 'refs/remotes/origin/HEAD'), 'origin/main'].filter(Boolean);
+        const dir = join(root, plansDir);
+        const epics = () => (existsSync(dir) ? readdirSync(dir).filter((name) => name.endsWith('.md')).map((name) => epicOf(join(dir, name))).filter(Boolean) : []);
+        if (!mains.some(holds) && !epics().some((branch) => holds(`origin/${branch}`))) return null;
+        const unmerged = new Set((git(root, 'diff', '--name-only', '--diff-filter=U') ?? '').split('\n').filter(Boolean));
+        return { unmerged, roots: [...new Set([root, realPath(root)])] };
+    } catch {
+        return null;
+    }
 }
 
 /**
@@ -67,6 +81,7 @@ export function guardContext({ root, model, marks, owner, measure, settings }) {
     const common = git(root, 'rev-parse', '--git-common-dir') ?? '.git';
     const marksAbs = join(isAbsolute(common) ? common : join(root, common), 'rt-kit');
     const states = model.states.map((state) => state.title);
+    let merged;
     return {
         branch,
         key: branch.match(/^([A-Z]+)-\d+/)?.[1] ?? settings.key,
@@ -76,8 +91,10 @@ export function guardContext({ root, model, marks, owner, measure, settings }) {
         overridePath: settings.overridePath,
         protectedPaths: settings.protectedPaths,
         legacy: model.words.legacyBranches ?? [],
-        // The merge of a reviewed base in progress, read by the decisions on a guarded file.
-        merge: reviewedMerge(root, settings.plansDir),
+        // The merge of a reviewed base in progress, read once and only by a decision on a guarded file.
+        get merge() {
+            return (merged ??= { value: reviewedMerge(root, settings.plansDir) }).value;
+        },
         read: (path) => (existsSync(join(root, path)) ? readFileSync(join(root, path), 'utf8') : null),
         committed: (path) => {
             // The text the oldest commit of the branch that added the file wrote, or null.
