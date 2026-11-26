@@ -109,6 +109,7 @@ And a turn opened by a bare «стоп», by «стоп» after Esc or by «бл
 And a turn opened by «Стоп. Пиши инцидент», a question, swearing, «продолжай», a typed command or a menu answer lets them through
 And a word queued before Esc and delivered after it opens no turn for calls; the same word typed again after Esc does
 And «стоп» queued in the middle of a turn opened by an order refuses the next call of that turn
+And «стоп» still waiting in the queue behind notices refuses the calls of the turns those notices open
 And with no stop, with no record, with a broken record or with an engine past its limit the call passes
 And after «стоп» and 20 MB of calls a notice still opens a turn with its calls refused
 And the entry of the turn names `TaskStop` of own background once per task, and not a task whose end is in the queue

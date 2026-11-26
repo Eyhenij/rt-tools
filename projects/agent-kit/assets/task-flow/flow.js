@@ -154,10 +154,10 @@
       log: 'the end of the scenario',
     },
     // The owner stops the work by a stop word or by Esc; the turns a notice wakes after either are
-    // released until a working order of `words.resume`, once own background started before the stop is
-    // taken down or two refusals named it.
-    stopWord: { when: { all: [measure.owner.saidStop, { not: measure.owner.backgroundBeforeStop }] }, order: 2, log: 'a stop word of the owner' },
-    interrupted: { when: { all: [measure.owner.interrupted, { not: measure.owner.backgroundBeforeStop }] }, order: 3, log: 'the owner interrupted the turn' },
+    // released until a working order of `words.resume`. Own background started before the stop is held
+    // ahead of these cases by `stopHold` of the verdict, until it is taken down or two refusals named it.
+    stopWord: { when: measure.owner.saidStop, order: 2, log: 'a stop word of the owner' },
+    interrupted: { when: measure.owner.interrupted, order: 3, log: 'the owner interrupted the turn' },
     // The state «работа-отдана» sends work to the background by its own action and goes on: there
     // the wait releases nothing.
     background: {

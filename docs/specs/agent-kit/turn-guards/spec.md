@@ -53,7 +53,8 @@ exits asks the engine of the task flow for a verdict: `docs/specs/agent-kit/turn
   in it every call is refused except the take-down of own background — `TaskStop`, `KillShell`,
   `KillBash`, `CronDelete`, `CronList`, `ToolSearch`, `TaskOutput`. A turn the owner opened by a bare
   stop — Esc, «стоп», `/stop` — is the same; one opened by any other word of theirs carries it out. A
-  word queued before the stop and delivered after it opens no turn for calls. The host is not asked to
+  word queued before the stop and delivered after it opens no turn for calls. A word the owner typed
+  counts from the moment it was queued: behind a row of notices it waits a minute and more. The host is not asked to
   keep such a turn from starting: it shows the owner a line for every turn it keeps, so the entry of
   the turn names `TaskStop <id>` of own background instead, once per task.
 - **A role switched off by the tree does not hold the guard at it.** The tree names the switched-off

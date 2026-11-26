@@ -69,14 +69,14 @@ const refusalOf = (entry) =>
         : null;
 
 const timeOf = (entry) => ((stamp) => (Number.isFinite(stamp) ? stamp : null))(Date.parse(entry?.timestamp ?? entry?.attachment?.timestamp ?? ''));
-/** A command the owner typed; the host runs `/stop` itself, and the record keeps it in the queue only. */
-const COMMAND = /^\/[a-z][\w-]*(?:\s|$)/;
+/** A text a person queued counts when it is queued: `/stop` stays in the queue only, a word waits behind notices. */
 const enqueued = (entry) => (entry?.type === 'queue-operation' && entry.operation === 'enqueue' ? String(entry.content ?? '').trim() : null);
+const queuedWord = (text) => Boolean(text) && !text.startsWith('<') && !WAKE.test(text) && !NO_PROMPT.test(text);
 /** The owner's words, oldest first: { text, at, kind, index } — typed, queued, interrupt, menu or refusal; `at` in ms or null, `index` the place of the entry. */
 export function wordsOf(entries) {
     return entries.flatMap((entry, index) => {
         const at = timeOf(entry);
-        const typed = typedOf(entry) ?? (COMMAND.test(enqueued(entry) ?? '') ? { text: enqueued(entry), kind: 'queued' } : null);
+        const typed = typedOf(entry) ?? (queuedWord(enqueued(entry)) ? { text: enqueued(entry), kind: 'queued' } : null);
         if (typed) return [{ text: typed.text, at, kind: typed.kind, index }];
         const refused = refusalOf(entry);
         if (refused) return [{ text: refused, at, kind: 'refusal', index }];

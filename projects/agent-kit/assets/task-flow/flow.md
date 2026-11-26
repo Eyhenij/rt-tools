@@ -61,6 +61,8 @@ The engine asks the cases in this order, and a met case lets the turn end before
 | `measure.owner.saidStop` | `source.owner` |
 | `measure.owner.interrupted` | `source.owner` |
 | `measure.owner.nudged` | `source.owner` |
+| `measure.owner.stopCall` | `source.owner`, `source.session` |
+| `measure.owner.backgroundBeforeStop` | `source.owner`, `source.session` |
 | `measure.session.wrote` | `source.session` |
 | `measure.session.role` | `source.session` |
 | `measure.session.menuLost` | `source.session` |

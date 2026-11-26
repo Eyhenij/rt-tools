@@ -1,4 +1,4 @@
-// rt-kit v0.40.0 · task-flow/flow.js · b8b210c33dfa · правится надстройкой, не здесь
+// rt-kit v0.40.0 · task-flow/flow.js · 213f55ee2afa · правится надстройкой, не здесь
 // The task flow as an executable scenario: the data language of `flow-syntax.mjs`, nothing here runs.
 // A state is left when its exit is measured; the first state whose exit is unmet is where the work
 // stands. A release case says when a turn may end before the scenario does. A new fact is a new
@@ -155,10 +155,10 @@
       log: 'the end of the scenario',
     },
     // The owner stops the work by a stop word or by Esc; the turns a notice wakes after either are
-    // released until a working order of `words.resume`, once own background started before the stop is
-    // taken down or two refusals named it.
-    stopWord: { when: { all: [measure.owner.saidStop, { not: measure.owner.backgroundBeforeStop }] }, order: 2, log: 'a stop word of the owner' },
-    interrupted: { when: { all: [measure.owner.interrupted, { not: measure.owner.backgroundBeforeStop }] }, order: 3, log: 'the owner interrupted the turn' },
+    // released until a working order of `words.resume`. Own background started before the stop is held
+    // ahead of these cases by `stopHold` of the verdict, until it is taken down or two refusals named it.
+    stopWord: { when: measure.owner.saidStop, order: 2, log: 'a stop word of the owner' },
+    interrupted: { when: measure.owner.interrupted, order: 3, log: 'the owner interrupted the turn' },
     // The state «работа-отдана» sends work to the background by its own action and goes on: there
     // the wait releases nothing.
     background: {
