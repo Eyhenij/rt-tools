@@ -61,8 +61,8 @@ not by a person.
   The mark of Esc sets the stop; a message within two seconds after the mark is judged alone. A turn
   a background notice wakes after the stop is released until a working order. A message typed
   mid-turn counts as the owner's word: the host keeps it as a queued command, not as a user entry.
-  Esc stops an order sent a second before it too: the host does not send a queued message after the
-  mark.
+  Esc stops an order sent a second before it too. A queued message the host delivers within two
+  seconds after the mark is judged alone, even one typed before the mark.
 - **The draft check, the conscience check and the cargo mark check release the turn while the owner's stop stands.**
   Each asks the command `stop` of the engine after its own refusal conditions, with the same hook
   input, and ends the turn on its exit code 0.

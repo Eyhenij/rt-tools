@@ -53,6 +53,9 @@ const asked = (text, from) => /^(?:[^.!?\n]|\.(?=\d))*\?/u.test(text.slice(from)
 /** A task key, «RT-3673». */
 const TASK = /(?<![\p{L}\d])[A-Z]+-\d+(?!\d)/gu;
 
+/** A task key orders work alone or after one word: «давай RT-3673»; «ты сломал RT-3602» is a reproach. */
+const keyed = (part) => ((part.replace(TASK, ' ').match(/\p{L}+/gu) ?? []).length <= 1 ? at(TASK, part) : []);
+
 /** A part that puts the order off: «жди, пока я не скажу продолжай», «я не говорил продолжай». */
 const PUT_OFF = /(?<![\p{L}])(?:пока\s+(?:я\s+)?|я\s+)?не\s+(?:скаж|говор|сказал|велел|просил|разреш)/iu;
 
@@ -85,7 +88,7 @@ function signalOf(message, words) {
         }
         // A part with a word of `words.stay`, or one that puts the order off, carries no order; nor does a question.
         if ((stay && at(stay, part).length > 0) || PUT_OFF.test(part)) continue;
-        for (const index of [...at(resume, part), ...at(TASK, part)]) if (!asked(text, start + index)) signals.push({ at: start + index, kind: 'resume' });
+        for (const index of [...at(resume, part), ...keyed(part)]) if (!asked(text, start + index)) signals.push({ at: start + index, kind: 'resume' });
     }
     // At one place the stop wins: «сделай паузу» is a stop, not the order «сделай».
     signals.sort((a, b) => a.at - b.at || (a.kind === 'stop') - (b.kind === 'stop'));

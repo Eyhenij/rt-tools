@@ -1,4 +1,4 @@
-<!-- rt-kit v0.40.0 · hooks/turn-judge.md · 13daa1c324d3 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · hooks/turn-judge.md · 3433fd30a858 · правится надстройкой, не здесь -->
 # Turn judge
 <!-- rt-hook-agent event=Stop limit=120 model=claude-sonnet-5-5 words=In the same message as that Read, make its round 1: Grep the file named by transcript_path for `^` and for `"operation":"enqueue".*"content":"[^<]|"content":"The user answered: |"type":"user","message":\{"role":"user","content":\[\{"type":"text","text":"\[Request interrupted by user` with output_mode count. -->
 
@@ -66,9 +66,9 @@ the end of every turn.
   working order: the work stays stopped and the reply answers it. An incident record it orders is
   still written in this turn, as the refusal below for an order not done says. A working order is a direct one —
   «продолжай», «делай», «чини», «вливай», «одобряю», a menu answer that names a task — or a
-  complaint about the stop: «почему ты стоишь», «почему бросил», «ты снова остановился». An order typed
-  before the Esc mark orders nothing, one sent a second before the mark included; a message within
-  two seconds after the mark is judged alone.
+  complaint about the stop: «почему ты стоишь», «почему бросил», «ты снова остановился». An order sent
+  before the Esc mark orders nothing, one sent a second before the mark included. A message the host
+  delivers within two seconds after the mark is judged alone, even one typed before the mark.
 - A background task the session started still runs, and the reply names the task and the step that
   goes on by its notice. A task runs when its call ran in the background — `run_in_background` or
   a background agent — and no `<task-notification>` with its id stands after it. The wait is the
