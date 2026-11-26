@@ -47,6 +47,7 @@ import { judgeCall } from './flow-guard.mjs';
 import { callOf, guardContext } from './flow-guard-run.mjs';
 import { isWriteCommand, saysStop } from './flow-data.mjs';
 import { FlowModelError, buildModel } from './flow-model.mjs';
+import { monitorVerdict } from './flow-monitor.mjs';
 import { overridePath, removedLines } from './flow-override.mjs';
 import { planProblems, readRecord, runPlanRed } from './flow-plan.mjs';
 import { runStage } from './flow-stage.mjs';
@@ -178,7 +179,7 @@ export function measureJson(model, result) {
     return { ...result, action: state?.action ?? null, pattern: state?.pattern ?? null };
 }
 
-const USAGE = 'usage: node task-flow-script.mjs states | measure [--json] | step <N.M>|--done [--pr] | plan-check <plan.md> | plan-red | guard | verdict | stop | stop-call | forecast --days N [--until <date>] [--per-mille] [--guard]  [--flow <flow.js>]';
+const USAGE = 'usage: node task-flow-script.mjs states | measure [--json] | step <N.M>|<N>|--done [--pr] | plan-check <plan.md> | plan-red | guard | verdict | stop | stop-call | monitor-call | forecast --days N [--until <date>] [--per-mille] [--guard]  [--flow <flow.js>]';
 
 /**
  * What the guard guards: where the task folders and the epic plans lie, the tree override, and the
@@ -292,6 +293,18 @@ async function runStopCall(model, base) {
 }
 
 /**
+ * Whether a `Monitor` call on the hook input from stdin prints a line on every step of a live own
+ * background task: `{ refuse, task, file }` as one JSON line, exit 0 when it is refused. The guard of
+ * monitors asks it.
+ */
+async function runMonitorCall(model, base) {
+    const input = JSON.parse(readFileSync(0, 'utf8') || '{}');
+    if (input.transcript_path) process.env.RT_FLOW_TRANSCRIPT = input.transcript_path;
+    const source = await openSources(model, base);
+    return monitorVerdict(input.tool_input?.command ?? '', source('session').events(), process.env, input.cwd ?? process.cwd());
+}
+
+/**
  * Cleans the folder a broken step run put back, at a start of the engine, by `cleanBroken` of the
  * history source: `{ verdict, folder }` or null. A folder kept because it was edited after the run is
  * named on stderr, so nobody reads its older progress for the branch's own.
@@ -304,9 +317,9 @@ export function cleanBrokenRun() {
     return broken;
 }
 
-const COMMANDS = ['states', 'measure', 'step', 'plan-check', 'plan-red', 'guard', 'verdict', 'forecast', 'stop', 'stop-call'];
+const COMMANDS = ['states', 'measure', 'step', 'plan-check', 'plan-red', 'guard', 'verdict', 'forecast', 'stop', 'stop-call', 'monitor-call'];
 /** The commands the hooks call: they judge by the package description when the override breaks. */
-const HOOK_COMMANDS = ['guard', 'verdict', 'stop', 'stop-call'];
+const HOOK_COMMANDS = ['guard', 'verdict', 'stop', 'stop-call', 'monitor-call'];
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
     const args = process.argv.slice(2);
@@ -356,6 +369,10 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
             const call = await runStopCall(model, dirname(path));
             console.log(JSON.stringify(call));
             process.exit(call.refuseCalls ? 0 : 1);
+        } else if (command === 'monitor-call') {
+            const verdict = await runMonitorCall(model, dirname(path));
+            console.log(JSON.stringify(verdict));
+            process.exit(verdict.refuse ? 0 : 1);
         } else if (command === 'guard') {
             console.log((await runGuard(model, dirname(path))) ?? '');
         } else if (command === 'forecast') {
