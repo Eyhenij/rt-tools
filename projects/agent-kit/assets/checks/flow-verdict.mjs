@@ -67,12 +67,26 @@ export function ciHoldReason(hold) {
     ].join('\n');
 }
 
+/** Own background started before the owner's stop and still alive: [{ task, command }]; empty without the measurer. */
+export function stopHold(model, read) {
+    if (!(model.measures ?? []).some((m) => m.entry === 'owner' && m.caps?.backgroundBeforeStop && m.caps?.stopCall)) return [];
+    return read('measure.owner.backgroundBeforeStop') === true ? (read('measure.owner.stopCall').background ?? []) : [];
+}
+
+/** The refusal of an end of a turn after the owner's stop: a `TaskStop` for each own task, then words. */
+export function stopHoldReason(list) {
+    const moves = list.map(({ task, command }) => `\`TaskStop ${task}\`${command ? ` — ${String(command).slice(0, 80)}` : ''}`);
+    return [`The owner stopped the work, and own background started before the stop still runs.`, `The one move is to take it down: ${moves.join('; ')}. Then end the turn with words; nothing else is done.`].join('\n');
+}
+
 /**
- * The verdict on a measured branch: { block } of a CI hold first — the end of the scenario does not
+ * The verdict on a measured branch: { block } of own background after the owner's stop and of a CI hold first — the end of the scenario does not
  * pass it — then { release } of the first release case, or null when the turn is held by the
  * scenario.
  */
 export function decide(model, read, result) {
+    const own = stopHold(model, read);
+    if (own.length > 0) return { block: stopHoldReason(own) };
     const hold = ciHold(model, read);
     if (hold) return { block: ciHoldReason(hold) };
     const released = releaseCase(model, read, result);

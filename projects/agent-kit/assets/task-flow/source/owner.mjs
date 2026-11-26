@@ -69,11 +69,9 @@ const refusalOf = (entry) =>
         : null;
 
 const timeOf = (entry) => ((stamp) => (Number.isFinite(stamp) ? stamp : null))(Date.parse(entry?.timestamp ?? entry?.attachment?.timestamp ?? ''));
-
 /** A command the owner typed; the host runs `/stop` itself, and the record keeps it in the queue only. */
 const COMMAND = /^\/[a-z][\w-]*(?:\s|$)/;
 const enqueued = (entry) => (entry?.type === 'queue-operation' && entry.operation === 'enqueue' ? String(entry.content ?? '').trim() : null);
-
 /** The owner's words, oldest first: { text, at, kind, index } — typed, queued, interrupt, menu or refusal; `at` in ms or null, `index` the place of the entry. */
 export function wordsOf(entries) {
     return entries.flatMap((entry, index) => {
@@ -86,15 +84,14 @@ export function wordsOf(entries) {
         return word === null ? [] : [{ text: word, at, kind: INTERRUPT_MARK.test(word.trim()) ? 'interrupt' : 'menu', index }];
     });
 }
-
-/** A prompt the host writes itself: a notice of a task or a line of `Monitor`, a message of another session. */
 const WAKE = /^(?:<task-notification>|Another Claude session sent a message|Background \(from the session)/;
 const NO_PROMPT = /^(?:\[Request interrupted by user|Stop hook feedback:|Caveat:|This session is being continued)/;
 
 /**
  * What opened the current turn: { by, text, at, index } — `by` 'owner' for a prompt a person typed, a
  * command included, 'wake' for a notice, a line of `Monitor` or a message of another session; `at` the
- * time the prompt was queued. A tool result, the Esc mark and a hook's feedback open no turn.
+ * time of the nearest queueing of its text no earlier delivery took. A tool result, the Esc mark and a
+ * hook's feedback open no turn.
  */
 export function turnOpener(entries) {
     for (let index = entries.length - 1; index >= 0; index -= 1) {
@@ -103,9 +100,12 @@ export function turnOpener(entries) {
         if (entry?.type !== 'user' || entry.isMeta || entry.isCompactSummary || (Array.isArray(content) && content.some((part) => part?.type === 'tool_result'))) continue;
         const text = resultText(content).trim();
         if (!text || NO_PROMPT.test(text)) continue;
-        let back = index - 1;
-        while (back >= Math.max(0, index - 400) && enqueued(entries[back]) !== text) back -= 1;
-        const at = (back >= 0 && enqueued(entries[back]) === text ? timeOf(entries[back]) : null) ?? timeOf(entry);
+        let back = index - 1, taken = 0;
+        for (; back >= Math.max(0, index - 400); back -= 1) {
+            if (entries[back]?.type === 'user' && resultText(entries[back].message?.content).trim() === text) taken += 1;
+            else if (enqueued(entries[back]) === text && taken-- === 0) break;
+        }
+        const at = (back >= Math.max(0, index - 400) ? timeOf(entries[back]) : null) ?? timeOf(entry);
         return { by: (entry.origin?.kind ?? 'human') === 'human' && !WAKE.test(text) ? 'owner' : 'wake', text, at, index };
     }
     return null;
@@ -203,12 +203,11 @@ const parse = (file) => {
     const entries = [];
     if (!file || !existsSync(file)) return entries;
     for (const line of readFileSync(file, 'utf8').split('\n')) {
-        if (!line.trim()) continue;
+        // Only a user entry, the queue and a queued command carry a word; a plain tool result carries none.
+        if (!/"type":"(?:user|queue-operation)"|"queued_command"/.test(line) || (line.includes('"tool_result"') && !/"answers"|doesn't want to proceed/.test(line))) continue;
         try {
             entries.push(JSON.parse(line));
-        } catch {
-            // A line that does not parse is no entry.
-        }
+        } catch {}
     }
     return entries;
 };

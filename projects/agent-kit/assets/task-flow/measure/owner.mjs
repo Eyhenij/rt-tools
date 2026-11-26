@@ -160,16 +160,16 @@ export function backgroundBeforeStop({ owner, session }) {
 
 /**
  * What the stop refuses in this turn: { refuseCalls, background }. Calls are refused while the stop
- * stands and the last word of the owner in the turn — the prompt that opened it included, a word
- * queued before the stop skipped — is missing, older than the stop or a bare stop.
+ * stands and the last word of the owner in the turn — its opening prompt and a typed command included,
+ * by queue time; one queued before the stop skipped — is missing, older than the stop or a bare stop.
  */
 export function stopCall({ owner, session }) {
     return ({ words }) => {
         const stop = stopStands({ owner }, words);
         const opener = owner.turnOpener?.() ?? null;
-        if (!stop.stands || opener === null) return { refuseCalls: false, background: [] };
-        const queuedAt = (word) => (word.index === opener.index ? opener.at : word.at);
-        const last = wordsOf(owner).filter((w) => w.index >= opener.index && (w.index === stop.word.index || (queuedAt(w) ?? Infinity) >= (stop.word.at ?? -Infinity))).at(-1);
+        if (!stop.stands || opener === null) return { refuseCalls: false, background: ownBackground(owner, session, words, stop) };
+        const own = [...(opener.by === 'owner' ? [{ text: opener.text, kind: 'typed', index: opener.index }] : []), ...wordsOf(owner).filter((w) => w.index > opener.index)];
+        const last = own.filter((w) => w.index === stop.word.index || ((w.index === opener.index ? opener.at : w.at) ?? Infinity) >= (stop.word.at ?? -Infinity)).at(-1);
         return { refuseCalls: !last || last.index < stop.word.index || bare(last, words), background: ownBackground(owner, session, words, stop) };
     };
 }
