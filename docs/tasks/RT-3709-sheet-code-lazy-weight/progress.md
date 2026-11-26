@@ -31,6 +31,14 @@
   `rt-bottom-sheet.component.{ts,html,scss}`, the two new files of the question screen, `select/rt-select.component.html`;
   the owner's no-look word is asked with the approval. RT-3709 is delivered in the same chain right after
   RT-3706, its PR into the epic stands on RT-3706. Affected stage of the plan: 2, 3.
+- **Stage 1 measured** — `pnpm run check:kit-weight -- --print`: bottom-sheet 24268 → 20436, the set 218731 →
+  214990, gzip 53502 → 53173. The question screen lives in its own chunk. Превышение бюджета:
+  `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-confirm.loader.ts` — 105 lines against up to 40:
+  the place of the screen moved there from the sheet, which stood at 505 lines against the limit 500; the
+  answers reach the sheet through `RT_SHEET_CONFIRM_ANSWERS` in `rt-bottom-sheet.model.ts`, not by
+  subscriptions — the tree forbids a subscription inside a method. Six spec files wait for the question code
+  by `rtPreloadSheetConfirm()`; `rt-aside-sheet.styles.spec.ts` reads the question rules from the new styles
+  file. Affected stage of the plan: 1.
 - **Цена:** нет
 - **Отменено:** нет
 
