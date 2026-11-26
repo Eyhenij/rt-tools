@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.41.0 · checks/push-inputs.mjs · 6dbbcd002aff · правится надстройкой, не здесь
+// rt-kit v0.41.1 · checks/push-inputs.mjs · 6dbbcd002aff · правится надстройкой, не здесь
 /**
  * Which steps of the push set a change can reach. A step runs when the change touches what it
  * reads; a step the change cannot reach is not started.

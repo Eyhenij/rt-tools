@@ -1,4 +1,4 @@
-// rt-kit v0.41.0 · task-flow/measure/grill.mjs · 7bf3f9d87da5 · правится надстройкой, не здесь
+// rt-kit v0.41.1 · task-flow/measure/grill.mjs · 7bf3f9d87da5 · правится надстройкой, не здесь
 /**
  * The measurer «measure.grill» — exit 1: the grill of the branch, or of a draft in the working copy,
  * holds the owner's request as a quote and an answer. The grill of the branch is read from the

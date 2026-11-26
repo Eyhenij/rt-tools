@@ -1,4 +1,4 @@
-<!-- rt-kit v0.41.0 · pitfalls/typescript-conventions.md · 775024ff8f2c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.1 · pitfalls/typescript-conventions.md · 775024ff8f2c · правится надстройкой, не здесь -->
 # Code structure — how it works here — cold part
 
 What the rule `typescript-conventions` handed over when cut to its statements, every article whole.

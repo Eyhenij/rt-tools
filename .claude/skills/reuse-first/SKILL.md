@@ -4,7 +4,7 @@ kind: rule
 law: reuse-first
 description: Rule under the reuse-first law. Load before creating any screen, component, field, store, service, mapper or procedure: what to build on, and the signs of a bypassed ready-made. Pattern reuse-first-extend.
 ---
-<!-- rt-kit v0.41.0 · rules/reuse-first.md · ee1893ce19dd · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.1 · rules/reuse-first.md · ee1893ce19dd · правится надстройкой, не здесь -->
 
 # Uniformity — how it works here
 

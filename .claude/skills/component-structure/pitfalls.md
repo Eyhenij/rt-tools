@@ -1,4 +1,4 @@
-<!-- rt-kit v0.41.0 · pitfalls/component-structure.md · a73397500934 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.1 · pitfalls/component-structure.md · a73397500934 · правится надстройкой, не здесь -->
 # Component file — how it works here — cold part
 
 What the rule `component-structure` handed over when cut to its statements, every article whole.

@@ -1,4 +1,4 @@
-// rt-kit v0.41.0 · task-flow/measure/design.mjs · 65cff5732f40 · правится надстройкой, не здесь
+// rt-kit v0.41.1 · task-flow/measure/design.mjs · 65cff5732f40 · правится надстройкой, не здесь
 /**
  * The measurer «measure.design» — exit 8 beside the footprint: the code of the head holds what the
  * decision of the plan promised, the plan as its first commit wrote it. `gaps` is the list of the

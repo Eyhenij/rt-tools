@@ -1,4 +1,4 @@
-// rt-kit v0.41.0 · task-flow/measure/epic-of.mjs · e3a2ab622e24 · правится надстройкой, не здесь
+// rt-kit v0.41.1 · task-flow/measure/epic-of.mjs · e3a2ab622e24 · правится надстройкой, не здесь
 /**
  * The epic of the work, for the measurers that read it. The task the branch carries names its epic
  * on the card. A branch without a task number takes the epic of the working copy from the assignment

@@ -341,6 +341,48 @@ d "protect: SC-AK-1524 — правка flow.js вне задачи с этим 
 d "protect: SC-AK-1532 — правка разложенного tools/task-flow/ отказана тем же стражем" "$(edit_input Write "$R/tools/task-flow/flow.js" '' '({})' "$R")" deny
 d "protect: SC-AK-1526 — запись оболочкой в описание отказана" "$(shell_input "printf '({})' > projects/agent-kit/assets/task-flow/flow.js" "$R")" deny
 
+# --- merge: слияние проверенной базы с конфликтом в охраняемом файле ------------------------------
+# Настоящий `git merge` блоками diff3 правит строку кода описания и текста раскладки; голова в `origin/main`, плана нет.
+B8=RT-11-epic-merge R8="$(fixture_repo_branched main RT-11-epic-merge)" F8=projects/agent-kit/assets/task-flow/flow.js
+TMPS+=("$R8") L8=tools/task-flow/flow.md O8=projects/agent-kit/assets/task-flow/other.js
+merge8() { git -C "$R8" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false -c merge.conflictStyle=diff3 merge -q --no-edit "$1" >/dev/null 2>&1; }
+both8() { for f in "$F8" "$L8"; do fixture_commit "$R8" "$f" "$(printf 'top\n%s\nend' "$1")" "feat: $1"; done; }
+e8() { edit_input Edit "$R8/$1" "$2" "$3" "$R8"; }
+block8() { awk '/^<<<<<<< /{on=1} on{print} /^>>>>>>> /{exit}' "$R8/${1:-$F8}"; }
+git -C "$R8" checkout -q main && both8 mid && fixture_commit "$R8" "$O8" 'one' 'feat: другой файл'
+git -C "$R8" checkout -q -B "$B8" && both8 epic && git -C "$R8" checkout -q main && both8 main
+fixture_commit "$R8" "$O8" 'two' 'feat: другой файл с главной'
+git -C "$R8" update-ref refs/remotes/origin/main main && git -C "$R8" checkout -q "$B8" && merge8 origin/main
+BLOCK8="$(block8)" BLOCKL8="$(block8 "$L8")"
+d "merge: SC-AK-2016 — блок под сторону главной проходит" "$(e8 "$F8" "$BLOCK8" 'main')" PASS
+d "merge: SC-AK-2016 — обе стороны подряд в тексте проходят" "$(e8 "$L8" "$BLOCKL8" "$(printf 'epic\nmain')")" PASS
+d "merge: SC-AK-2016 — обе стороны подряд в коде отказаны" "$(e8 "$F8" "$BLOCK8" "$(printf 'epic\nmain')")" deny
+d "merge: SC-AK-2016 — MultiEdit блока под сторону проходит" "$(jq -n --arg f "$R8/$F8" --arg o "$BLOCK8" --arg d "$R8" '{session_id:"tests",tool_name:"MultiEdit",cwd:$d,tool_input:{file_path:$f,edits:[{old_string:$o,new_string:"epic"}]}}')" PASS
+d "merge: SC-AK-2016 — строка ни одной стороны и сторона общего предка отказаны" "$(e8 "$F8" "$BLOCK8" 'mid')" deny
+d "merge: SC-AK-2016 — блок с обрезанным маркером отказан" "$(e8 "$F8" "${BLOCK8%/main}" 'main')" deny
+d "merge: SC-AK-2016 — блок с соседней строкой отказан" "$(e8 "$F8" "$BLOCK8
+end" 'main')" deny
+d "merge: SC-AK-2016 — удаление строки вне блока отказано" "$(e8 "$F8" 'top' '')" deny
+d "merge: SC-AK-2016 — Write охраняемого файла отказан" "$(edit_input Write "$R8/$F8" '' "$(printf 'top\nmain\nend')" "$R8")" deny
+d "merge: SC-AK-2016 — git checkout --ours и git restore --theirs проходят" "$(shell_input "git checkout --ours -- $L8 && git restore --theirs -- $F8" "$R8")" PASS
+d "merge: SC-AK-2016 — git checkout --theirs слитого пути отказан" "$(shell_input "git checkout --theirs -- $O8" "$R8")" deny
+d "merge: SC-AK-2016 — выбор стороны с git -c отказан" "$(shell_input "git -c filter.e.smudge=cat checkout --ours -- $L8" "$R8")" deny
+d "merge: SC-AK-2016 — выбор стороны с GIT_* в окружении отказан" "$(shell_input "GIT_CONFIG_COUNT=1 git checkout --ours -- $L8" "$R8")" deny
+# Голова, которую никто не отправил: ветка с вершиной главной и коммитом поверх; план эпика лежит в HEAD,
+# а каталог среди планов не роняет движок.
+git -C "$R8" merge --abort && git -C "$R8" checkout -q -b raw8 main && both8 raw && git -C "$R8" checkout -q "$B8"
+fixture_commit "$R8" docs/plans/epic-12.md '**Эпик:** RT-12 · **Ветка эпика:** `RT-12-epic`' 'docs: план эпика' && mkdir -p "$R8/docs/plans/broken.md" && merge8 raw8
+BLOCK8="$(block8)"
+d "merge: SC-AK-2016 — слияние непроверенной ветки отказано" "$(e8 "$F8" "$BLOCK8" 'raw')" deny
+d "merge: SC-AK-2016 — git checkout --theirs при непроверенной ветке отказан" "$(shell_input "git checkout --theirs -- $L8" "$R8")" deny
+# Та же голова на сервере как ветка эпика, которую называет план эпика: база проверенная.
+git -C "$R8" branch -q origin/RT-12-epic raw8
+d "merge: SC-AK-2016 — локальная ветка с именем удалённой базой не считается" "$(e8 "$F8" "$BLOCK8" 'raw')" deny
+git -C "$R8" update-ref refs/remotes/origin/RT-12-epic raw8
+d "merge: SC-AK-2016 — голова в ветке эпика из плана эпика проходит" "$(e8 "$F8" "$BLOCK8" 'raw')" PASS
+git -C "$R8" merge --abort
+d "merge: SC-AK-2016 — без слияния выбор стороны отказан" "$(shell_input "git checkout --ours -- $L8" "$R8")" deny
+
 B5=RT-9-edits-flow
 R5="$(fixture_repo_branched main "$B5")"
 TMPS+=("$R5")
