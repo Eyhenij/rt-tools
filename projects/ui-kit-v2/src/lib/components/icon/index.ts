@@ -6,3 +6,4 @@ export * from './rt-icon.const';
 export * from './rt-icon.providers';
 export * from './rt-icon.registry';
 export * from './rt-icon-sets';
+export * from './rt-icon-sets.logic';

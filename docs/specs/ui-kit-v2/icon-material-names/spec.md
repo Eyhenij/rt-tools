@@ -37,8 +37,8 @@ A person sees an icon; how it is drawn is invisible to them.
 - **By the strategy `font` a glyph draws the ligature, unless it is a kit name the font cannot
   draw.** Such a name, with a hyphen or a capital letter, draws the kit drawing; a kit name that is
   also a ligature, like `search`, stays the ligature.
-- **The strategy is set for the application by the third argument of `provideRtIcons`, and
-  `map-first` is the default.** A call with two addresses works as before.
+- **The strategy is set for the application by the option `glyphStrategy` of `provideRtIcons`, and
+  `map-first` is the default.**
 - **One icon sets its own strategy by the `glyphStrategy` input, and it overrides the
   application's.** Without the input the application's strategy holds.
 - **The font axes of the ligature are properties the application sets above the icon.** Weight
@@ -55,6 +55,14 @@ A person sees an icon; how it is drawn is invisible to them.
 - **Every colour of the icon but `current` is a property the application sets above it.** The
   default of `--rt-icon-color-<colour>` is the kit role the colour drew before; `primary` and
   `disabled` stand next to the former ones.
+- **A set of icons is declared as data, and the application adds its own in `provideRtIcons`.** A set
+  is a name, an address, a fallback set, an optional list of its names and a sign of filled
+  drawings. Names are the same in every set.
+- **A drawing a set does not hold comes from its fallback, and the chain ends at `kit`.** A set
+  without a named fallback takes `kit`. A name outside the list of a set is not requested from it.
+- **One address is downloaded once, and its refusal is kept.**
+- **A bad declaration of sets gives a warning and the set `kit`.** A drawing found nowhere gives one
+  warning with the icon and the set.
 - **Under the material preset a button asks for the material drawing of its icon, as the icon
   does.**
 - **A sign of the icons alone switches the drawings under it to the material set and carries no tokens.** The

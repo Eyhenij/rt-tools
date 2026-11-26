@@ -28,11 +28,11 @@ import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import {
     RT_ICON_GLYPH_STRATEGY,
     RT_ICON_MATERIAL_PRESET_SELECTOR,
+    RT_ICON_MATERIAL_SET,
     RtIconFontService,
     RtIconRegistry,
     resolveIconGlyph,
 } from '@rt-tools/ui-kit-v2/icon';
-import { iconMaterialDrawn } from '@rt-tools/ui-kit-v2/icon';
 import { RtRippleDirective } from '@rt-tools/ui-kit-v2/ripple';
 import { IButton } from '@rt-tools/ui-kit-v2/core';
 
@@ -368,24 +368,24 @@ export class RtButtonDirective {
 
         // Тот же путь, что и у компонента значка: имя просится у реестра, а он ходит за файлом
         // один раз на страницу — значок, спрошенный обеими разметками сразу, едет одним запросом.
-        const drawing: IRtIcon.Drawing = this.#drawingOf(name);
-        this.#iconRegistry.request(name, drawing);
+        const set: string = this.#iconSet();
+        this.#iconRegistry.request(name, set);
 
         const use: SVGUseElement = this.#doc.createElementNS('http://www.w3.org/2000/svg', 'use');
-        use.setAttribute('href', this.#iconRegistry.symbolHref(name, drawing));
+        use.setAttribute('href', this.#iconRegistry.symbolHref(name, set));
         svg.appendChild(use);
 
         return svg as unknown as HTMLElement;
     }
 
     /**
-     * Набор рисунка — как у компонента значка: материальный рисунок под разметкой с признаком
-     * материального набора, если у имени он есть. Признак читается при каждой отрисовке
-     * содержимого, а после первой отрисовки она повторяется — контейнер к тому времени на месте.
+     * Набор — как у компонента значка: под разметкой с признаком material — `material`, иначе набор
+     * приложения. Признак читается при каждой отрисовке содержимого, а после первой отрисовки она
+     * повторяется — контейнер к тому времени на месте.
      */
-    #drawingOf(name: IRtIcon.Name): IRtIcon.Drawing {
+    #iconSet(): string {
         const underMaterial: boolean = this.#el.nativeElement.closest(RT_ICON_MATERIAL_PRESET_SELECTOR) !== null;
-        return underMaterial && iconMaterialDrawn.has(name) ? 'material' : 'base';
+        return underMaterial ? RT_ICON_MATERIAL_SET : this.#iconRegistry.defaultSet;
     }
 
     /** Лигатура шрифта Material Symbols для имени без пары. Шрифт подключает приложение. */

@@ -80,17 +80,18 @@ in the fallback font while the font loads
 
 Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.component.spec.ts`.
 
-### SC-UKV-549 — a call with two addresses works as before
+### SC-UKV-549 — a call without options declares the built-in sets
 
-Given the application calls `provideRtIcons` with two addresses
-When the providers are read
-Then both addresses stand as given, and the strategy is `map-first`
+Given the application calls `provideRtIcons` without options.
+When the providers are read.
+Then the sets are `kit` and `material`, the set of the application is `kit`, and the strategy is
+`map-first`.
 
 Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.component.spec.ts`.
 
-### SC-UKV-550 — the third argument sets the strategy
+### SC-UKV-550 — the option `glyphStrategy` sets the strategy
 
-Given the application passes `{ glyphStrategy: 'font' }` as the third argument
+Given the application passes `{ glyphStrategy: 'font' }` to `provideRtIcons`.
 When the providers are read
 Then the strategy is `font`
 
@@ -242,3 +243,46 @@ Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-glyphs.
 `projects/ui-kit-v2/src/lib/components/menu/rt-menu-item.logic.spec.ts`,
 `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-icon.logic.spec.ts`,
 `projects/ui-kit-v2/src/lib/components/speed-menu/rt-speed-menu.component.spec.ts`.
+
+### SC-UKV-1873 — a name a set does not list comes from the fallback without a request
+
+Given the set `material` does not list the name `wallet`.
+When an icon asks for `wallet` from that set.
+Then only the file of the set `kit` is requested, and the icon refers to the kit symbol.
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon.registry.spec.ts`.
+
+### SC-UKV-1874 — a drawing found nowhere gives one warning
+
+Given neither the set of the application nor `kit` serves the drawing `close`.
+When two icons ask for it.
+Then the console gets one warning that names the icon and the set.
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon.registry.spec.ts`.
+
+### SC-UKV-1875 — an invalid declaration of sets gives a warning and the set `kit`
+
+Given a set with a bad name or an empty address, an unknown fallback or default set, or a circle of
+fallbacks.
+When the sets are read.
+Then there is one warning, and the drawings come from the set `kit`.
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-sets.spec.ts`.
+
+### SC-UKV-1881 — a set of the application draws its drawings and takes the rest from `kit`
+
+Given the application declares the set `brand` and makes it the default.
+When it draws a name the set serves and a name it does not.
+Then the first comes from the address of `brand`, and the second from `kit`. A record named as a
+built-in set changes only the fields it names.
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon.registry.spec.ts`,
+`projects/ui-kit-v2/src/lib/components/icon/rt-icon-sets.spec.ts`.
+
+### SC-UKV-1882 — one address is downloaded once, and its refusal is kept
+
+Given two sets lead to one file of the set `kit`.
+When both are asked, and the same address is asked again after its refusal.
+Then the address is requested once.
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon.registry.spec.ts`.

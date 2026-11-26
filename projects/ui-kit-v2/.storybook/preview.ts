@@ -146,7 +146,7 @@ const preview: Preview = {
                 // провайдера сама таблица не поднимается — истории падали на NG0201, показывая
                 // пустую разметку вместо строк.
                 provideRtIDBStorage(),
-                provideRtIcons('/icons'),
+                provideRtIcons(),
                 provideRtKitLabels({ translator: showcaseTranslator, locale: showcaseLabelsLang }),
                 // Подписи целых экранов уровня `Templates`. Стоят здесь, а не декоратором той
                 // истории, которой понадобились: `| transloco` без провайдера роняет отрисовку

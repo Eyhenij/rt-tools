@@ -43,7 +43,7 @@ export const talksConfig: ApplicationConfig = {
         provideHttpClient(),
         provideRtUtils(),
         provideRtStorage(),
-        provideRtIcons('/icons'),
+        provideRtIcons(),
         provideRtKitLabels({ translator: signal<TRtKitTranslator>(talksKitTranslator), locale: signal<string>(TALKS_LOCALE) }),
         provideAppInitializer((): void => {
             inject(ThemeService);

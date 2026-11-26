@@ -8,7 +8,8 @@ import { RtIconComponent } from './rt-icon.component';
 import { RT_ICON_SPRITE_ID } from './rt-icon.const';
 import { IRtIcon } from './rt-icon.model';
 import { provideRtIcons } from './rt-icon.providers';
-import { RT_ICONS_BASE_URL, RT_ICONS_MATERIAL_BASE_URL } from './rt-icon.registry';
+import { RT_ICON_SETS_CONFIG } from './rt-icon.registry';
+import { IRtIconSetsConfig } from './rt-icon-sets.logic';
 
 function setup(inputs: Readonly<Record<string, unknown>>, providers: Provider[] = []): ComponentFixture<RtIconComponent> {
     return createRtFixture(RtIconComponent, inputs, { providers });
@@ -144,16 +145,17 @@ describe('provideRtIcons — настройки значков', (): void => {
         return createEnvironmentInjector([provideRtIcons(...args)], TestBed.inject(EnvironmentInjector));
     }
 
-    it('SC-UKV-549 — вызов с двумя адресами работает как прежде, стратегия map-first', (): void => {
-        const injector: EnvironmentInjector = injectorOf('/a', '/b');
+    it('SC-UKV-549 — вызов без настроек объявляет встроенные наборы, набор kit и стратегию map-first', (): void => {
+        const injector: EnvironmentInjector = injectorOf();
+        const config: IRtIconSetsConfig = injector.get(RT_ICON_SETS_CONFIG);
 
-        expect(injector.get(RT_ICONS_BASE_URL)).toBe('/a');
-        expect(injector.get(RT_ICONS_MATERIAL_BASE_URL)).toBe('/b');
+        expect([...config.sets.keys()]).toEqual(['kit', 'material']);
+        expect(config.defaultSet).toBe('kit');
         expect(injector.get(RT_ICON_GLYPH_STRATEGY)).toBe<IRtIcon.GlyphStrategy>('map-first');
     });
 
     it('SC-UKV-550 — третий аргумент задаёт стратегию', (): void => {
-        const injector: EnvironmentInjector = injectorOf(undefined, undefined, { glyphStrategy: 'font' });
+        const injector: EnvironmentInjector = injectorOf({ glyphStrategy: 'font' });
 
         expect(injector.get(RT_ICON_GLYPH_STRATEGY)).toBe<IRtIcon.GlyphStrategy>('font');
     });
