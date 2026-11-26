@@ -8,7 +8,7 @@ import { BreakpointsService } from '../../platform';
 import { RtDialogService } from '../dialog/rt-dialog.service';
 import { RT_POPOVER_SHEET } from '../popover/rt-popover-sheet.token';
 import { RtMenuContentDirective } from './rt-menu-content.directive';
-import { RtMenuItemComponent } from './rt-menu-item.component';
+import { RtMenuItemComponent, rtPreloadMenuConfirmDialog } from './rt-menu-item.component';
 import { RtMenuComponent } from './rt-menu.component';
 import { rtPreloadPopoverSheet } from '../popover/rt-popover-sheet.helper';
 
@@ -87,6 +87,7 @@ function sheetPanel(): HTMLElement | null {
 describe('RtMenuComponent — нижняя шторка', (): void => {
     beforeAll(async (): Promise<void> => {
         await rtPreloadPopoverSheet();
+        await rtPreloadMenuConfirmDialog();
     });
 
     afterEach((): void => {

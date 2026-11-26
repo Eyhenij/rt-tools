@@ -8,6 +8,7 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { IInvite, INVITES_PATH } from '@rt/message-bus-admin/invites/util';
 import { ETreeInviteView, IPage } from '@rt/message-bus-common';
 import { IDBStorageService, provideRtStorage, provideRtUtils } from '@rt-tools/core';
+import { rtPreloadMenuConfirmDialog } from '@rt-tools/ui-kit-v2/menu';
 import { Observable, of } from 'rxjs';
 
 import { AdminInvitesListComponent } from './admin-invites-list.component';
@@ -54,6 +55,11 @@ function pageOf(rows: readonly IInvite.Short.Api[]): IPage<IInvite.Short.Api> {
 }
 
 describe('AdminInvitesListComponent', () => {
+    // Код диалога подтверждения приходит отдельным куском; спеки с жестом ждут его заранее.
+    beforeAll(async () => {
+        await rtPreloadMenuConfirmDialog();
+    });
+
     let harness: RouterTestingHarness;
     let http: HttpTestingController;
 
