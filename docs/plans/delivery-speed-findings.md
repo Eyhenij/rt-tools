@@ -240,3 +240,22 @@ The findings of the rules review of every closed task of the epic «Проста
 The items 3, 4 (its tree half), 5, 6 and 9 edit one file with sixteen lines of room. New cases: about 14 edits
 of tests by the shell (item 4 of RT-3629); six foreground runs of variants, up to 19 minutes (item 6 of
 RT-3630, item 5 of RT-3640); the size check red after the round (item 1 of RT-3640).
+
+## RT-3676 — the review of 26 November 2026
+
+1. **The ask judge finds the role calls by clock and from the start of the record** — package,
+   `hooks/ask-judge.md`. It refused the approval menu twice: by local time against UTC, then naming another
+   branch. Proposed: the plan writes and the role calls naming the branch are found by line number.
+2. **A merge of the base runs no quick checks before its commit** — package, the gate map and
+   `patterns/git-workflow-merge.md`, whose «Checks after the resolution» is an empty heading. Two growths
+   under a limit summed past it; the length check, 0 seconds, saw it only at the push.
+3. **The short plan sample is executed, not read** — tree, a scenario beside `merge-block.test.sh`: it came
+   from main without «Решение», and the engine refused it.
+4. **The plan history is rebuilt before the approval is asked** — package, `pitfalls/task-flow-start.md`.
+   `plan-red` read the first of four plan commits; the squash after the answer kept the date of the last.
+5. **«No decision» in the package words allows a new file** — package, `patterns/code-design-choose.md`;
+   the engine refuses a new suite too.
+
+New cases: the window stop mark of 25 November closed this session at 24% fill (item 1 of RT-3626); three
+readings of a plan with no blocking finding (item 3 of RT-3629); `plan-red` without the record (item 6 of
+RT-3625).
