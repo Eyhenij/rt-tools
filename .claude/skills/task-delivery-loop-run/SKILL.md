@@ -9,13 +9,12 @@ description: A pattern of the rule task-delivery-loop. Take it at each step of t
 
 A pattern of the rule `task-delivery-loop`; the steps are numbered as there. `N` is the task number, `E` the epic
 card, `<base>` the base of the branch: the previous branch of the chain, the epic branch or `main`, `<plan>` the
-file `docs/tasks/RT-N-<slug>/plan.md`. Shell variables do not live from one call to the next,
-so every block sets the client and the token itself.
+file `docs/tasks/RT-N-<slug>/plan.md`. Shell variables do not live from one call to the next, so every block sets the client and the token itself.
 
 Every call with the token starts with `test -s`: an empty or missing file would leave the variable
 empty, and the client answers from the owner's account. A block of several calls makes them through
-`bot`, where the check stands in each: one check on the first line would let the next lines run. Its
-«no machine token» is no empty answer.
+`bot`, where the check stands in each: one check on the first line would let the next lines run. Its «no
+machine token» is no empty answer.
 
 ## 2–3. The task and its branch
 
@@ -77,8 +76,8 @@ cache, and the showcase frames fall with ECONNRESET beside the tests of the pack
 The live check runs in the pinned Chrome. If it does not hold the local tab, the same measurement is
 made in the app's built-in browser, and the progress names it.
 
-A stand of another copy may already hold the port. Who listens is asked first; a held port is
-taken by the variables of the stand, not by stopping the neighbour:
+A stand of another copy may already hold the port. Who listens is asked first; a held port is taken by
+the variables of the stand, not by stopping the neighbour:
 
 ```bash
 lsof -nP -iTCP:6007 -sTCP:LISTEN; lsof -nP -iTCP:3310 -sTCP:LISTEN; lsof -nP -iTCP:4310 -sTCP:LISTEN
@@ -189,11 +188,10 @@ GIT_AUTHOR_NAME=rt-tools-dev GIT_AUTHOR_EMAIL=$EM GIT_COMMITTER_NAME=rt-tools-de
 The subject: `<type>(<scope>): <что изменилось> после первого круга ревью (RT-N)`. A round with
 nothing to fix still leaves its commit, with `--allow-empty` and the written-off findings in the body:
 `tools/task-rework.mjs` counts it as 0 lines, and a task with no commit of the round reads as a round
-not recorded and stays out of the median. The identity is
-prefixed to the commit only: exported, it reaches a push in the same call. The four variables are
-written out in the command, never packed into one:
-zsh does not split `$E` into words, so `env $E git commit` passes one argument, and the commit leaves
-under the local identity.
+not recorded and stays out of the median. The identity is prefixed to the commit only: exported, it
+reaches a push in the same call. The four variables are written out in the command, never packed into
+one: zsh does not split `$E` into words, so `env $E git commit` passes one argument, and the commit
+leaves under the local identity.
 
 ## 9, 11–12. Closing, the push set, the push
 
@@ -209,9 +207,8 @@ GIT_AUTHOR_EMAIL=$EM GIT_COMMITTER_EMAIL=$EM \
 node tools/check-specs.mjs; node tools/check-doc-paths.mjs
 ```
 
-After the merge and the texts, by a call of its own: the pruning writes into the index, and after a
-conflict its removals would leave in the commit of the merge. The same block asks the base again after
-the fixes of round two:
+After the merge and the texts, by a call of its own: the pruning writes into the index, and after a conflict its
+removals would leave in the commit of the merge. The same block asks the base again after the fixes of round two:
 
 ```bash
 git fetch -q origin; git log --oneline HEAD..origin/<base>   # not empty: the base moved, the block above
@@ -219,11 +216,11 @@ test -e "$(git rev-parse --git-path MERGE_HEAD)" || node tools/archive-prune.mjs
 ```
 
 The host keeps a merged branch, so `git ls-remote` does not show that the base merged: the list of
-merged PRs does. The merge carries the machine identity; a
-re-signing amend goes by a call of its own, since the push guard judges the commits before the amend.
+merged PRs does. The merge carries the machine identity; a re-signing amend goes by a call of its own,
+since the push guard judges the commits before the amend.
 
-The own showcase and stand are
-stopped before the run ahead: under their load an end-to-end suite went red and was green alone.
+The own showcase and stand are stopped before the run ahead: under their load an end-to-end suite
+went red and was green alone.
 
 The heavy steps run ahead by a call of their own, in the background, on a clean copy. The output
 goes to a log outside the working copy, named by the copy, and nothing stands after the set: the

@@ -316,7 +316,7 @@ And the task folder taken apart after every step was marked done
 When the final rerun runs
 Then the step matches: its check reads the progress before the commit that marked the step done
 
-Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-script-recheck.test.sh`.
 
 ### SC-AK-1794 — the final rerun reads the replacement lines of the last progress
 
@@ -329,7 +329,7 @@ And of two replacement lines for one step the later one is taken
 And a replacement of an earlier version, taken away by the commit that marks the step, is not brought back
 And the later one of two replacement lines also decides the mark of the step
 
-Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`, `projects/agent-kit/tests/task-flow-script-recheck.test.sh`.
 
 ### SC-AK-1740 — the final rerun runs on the node the tree pins
 

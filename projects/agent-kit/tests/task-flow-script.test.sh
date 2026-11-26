@@ -480,6 +480,7 @@ report "local: SC-AK-1371 — метка не JSON читается отсутс
 
 # --- Шаг плана, одобрение, фоновые задачи, прогноз, шаг после разбора папки и влитая база ---------
 . "$TESTS/task-flow-script-steps.test.sh"
+. "$TESTS/task-flow-script-recheck.test.sh"
 . "$TESTS/task-flow-script-node.test.sh"
 . "$TESTS/task-flow-script-session.test.sh"
 . "$TESTS/task-flow-script-forecast.test.sh"
