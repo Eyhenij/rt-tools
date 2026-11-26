@@ -345,11 +345,14 @@ describe('Карточки выбора селекта в шторке (вход
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1794 — каждая опция — карточка с радиокнопкой кита справа, выбранная отмечена', (): void => {
+    it('SC-UKV-1794 — каждая опция — карточка с радиокнопкой кита справа, выбранная отмечена', async (): Promise<void> => {
         const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true);
         fixture.componentInstance.writeValue('msq');
 
         press(fixture, 'select-trigger');
+        // Код радиокнопки приходит с первыми карточками: отложенный блок дорисовывается после него.
+        await fixture.whenStable();
+        fixture.detectChanges();
 
         expect(document.querySelector('[qa-dataid="select-panel"]')?.classList).toContain('rt-select__panel--cards');
         const marks: HTMLElement[] = all('select-option-mark');

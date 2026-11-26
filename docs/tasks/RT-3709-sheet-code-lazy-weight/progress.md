@@ -12,8 +12,8 @@
 ## Steps
 
 - [x] 1.1 Move the question screen of the sheet into its own component, loaded at the first question, with a preload for the specs
-- [>] 2.1 Draw the radio of a select card in a deferred block that prefetches on idle
-- [ ] 3.1 Measure the start set
+- [x] 2.1 Draw the radio of a select card in a deferred block that prefetches on idle
+- [>] 3.1 Measure the start set
 - [ ] 3.2 Run the whole kit suite
 
 ## Decisions along the way
