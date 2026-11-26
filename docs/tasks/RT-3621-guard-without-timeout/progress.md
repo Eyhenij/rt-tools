@@ -28,7 +28,8 @@
   пакета; общий файл для них вне выходов плана. Превышение бюджета
   `projects/agent-kit/assets/hooks/flow-step-guard.sh` плюс 15: `rt_runs` и его довод добавили
   строки сверх числа. Превышение бюджета `projects/agent-kit/tests/flow-step-guard.test.sh` плюс 60:
-  вид «gtimeout и perl» и случаи записи плана под perl — плюс 68. Affected stage of the plan: 1.
+  виды «gtimeout и perl», «без права на запуск», «timeout рядом» и случаи записи плана — плюс 87
+  после второго круга; хук — плюс 26, минус 2. Affected stage of the plan: 1.
 - **Второй круг ревью: три находки исправлены** — дерево случаев R8 убирается по выходу; вид с
   `gtimeout` без права на запуск ждёт отметку perl; вид с `timeout` рядом с `gtimeout` и perl ждёт
   отметку `timeout`; запись плана проверена и под `gtimeout`. Вид без права на запуск краснеет без
