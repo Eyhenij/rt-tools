@@ -2,27 +2,33 @@
 
 ## Where we stand
 
-- **State:** `договорённость-записана`
+- **State:** `этап-идёт`
 - **Stage:** 1 of 4 — Specs wait for the sheet code
-- **Done:** the grill and the plan are written; the red baseline is measured: 4 failed, 38 passed of 42;
-  check-specs 7 divergences; Angular Doctor 2 new findings; kit weight 185800 → 218731.
-- **Next step:** the owner approves the plan and names the way for the kit weight, then 1.1.
+- **Done:** the owner approved the plan: «Одобряю план»; plan-red wrote the approval mark. The red
+  baseline: 4 failed, 38 passed of 42; check-specs 7 divergences; Angular Doctor 2 new findings; kit
+  weight 185800 → 218731.
+- **Next step:** 1.1; the way for the kit weight (stage 4) waits for the owner's word.
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Add `await rtPreloadPopoverSheet()` in `beforeAll` of the four sheet specs
-- [ ] 2.1 Renumber the epic's colliding scenarios and their test titles
-- [ ] 3.1 Rename the date sheet wrapper by its class and give it a spec
-- [ ] 4.1 Bring the kit weight and its threshold together by the way the owner names
-- [ ] 4.2 Run the whole kit suite
+- [x] 1.1 Add `await rtPreloadPopoverSheet()` in `beforeAll` of the four sheet specs
+- [>] 1.2 Run the whole kit suite
 
 ## Decisions along the way
 
-- **The plan grew from one stage to four after the reading by the roles** — `product-strategist` found
-  three more red steps of the push set after the merge: scenario numbers, Angular Doctor, kit weight.
-  Affected stage of the plan: all.
-- **Step 2.1 renames only the epic's titles; the main branch keeps its own** — `check-specs` does not see a
+- **Stage revision: the work grows by three pieces beyond stage 1, approved by the owner as «Одобряю план»** —
+  `product-strategist` found three more red steps of the push set after the merge. The plan file was
+  rewritten for them by mistake and is put back as its commit holds it; the pieces live here instead:
+  (a) renumber the epic's colliding scenarios and their test titles, check `node tools/check-specs.mjs` →
+  exit 0; (b) rename the date sheet wrapper
+  `projects/ui-kit-v2/src/lib/components/date-picker/stories/component/test-date-sheet.component.ts` by its
+  class and give it a spec, check `pnpm run check:ngdoctor` → exit 0; (c) bring the kit weight and
+  `tools/kit-weight-threshold.json` together by the way the owner names, check `pnpm run check:kit-weight`
+  → exit 0. Превышение следа плана: `docs/specs/ui-kit-v2/sheet-header-cards/`, `docs/specs/auth/theme/`,
+  `docs/specs/message-bus/admin-shell/`, the date-picker stories and the weight threshold — по той же
+  причине: без них набор перед отправкой эпика красный. Affected stage of the plan: 1.
+- **Piece (a) renames only the epic's titles; the main branch keeps its own** — `check-specs` does not see a
   title left with an old number, since the number stays valid for the main scenario. Epic files:
   `sheet-header-cards` scenarios and bindings, `rt-dynamic-selector-sheet.spec.ts` (1780),
   `rt-autocomplete-sheet.spec.ts:172` (1781), `rt-table-filter-header.component.spec.ts:295` (1782),
@@ -44,3 +50,4 @@
 
 - The task came out of the merge of the main branch into the epic RT-3530: four sheet specs of the epic
   fail after RT-3645 made the sheet code load at the first opening.
+- The owner approved the plan: «Одобряю план». The way for the kit weight is not named yet.

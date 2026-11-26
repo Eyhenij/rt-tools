@@ -4,6 +4,7 @@ import { provideRouter } from '@angular/router';
 
 import { createRtFixture, qa } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
+import { rtPreloadPopoverSheet } from '../popover/rt-popover-sheet.helper';
 import { RtDynamicSelectorComponent } from './rt-dynamic-selector.component';
 
 interface IPerson {
@@ -61,6 +62,10 @@ function inSheet(selector: string): HTMLElement[] {
 }
 
 describe('Динамический селектор в нижней шторке (вход sheetCards)', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+    });
+
     afterEach((): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
