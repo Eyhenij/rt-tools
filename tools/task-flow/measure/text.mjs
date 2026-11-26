@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · task-flow/measure/text.mjs · 8e505781ac9b · правится надстройкой, не здесь
+// rt-kit v0.40.0 · task-flow/measure/text.mjs · cc83356bc094 · правится надстройкой, не здесь
 /**
  * The reading of the task folder texts shared by the measurers: the sections of the grill, the line
  * of the agreement and the rows of the task footprint. Pure functions of text: the data reaches the
@@ -65,12 +65,18 @@ export function under(file, path) {
 /**
  * A changed file touches a footprint path: it lies under the path, or the path names its file or
  * its directories anywhere in it (`flow.js`, `source/`, `fixtures/turn-replay/`), as a row writes it
- * after the directory it belongs to.
+ * after the directory it belongs to. A mask is unfolded: «*» holds no slash, «**» holds any.
  */
 export function touches(file, path) {
     const bare = path.replace(/\/$/, '');
+    if (bare.includes('*')) return maskOf(bare).test(file);
     return under(file, path) || `/${file}/`.includes(`/${bare}/`);
 }
+
+const maskOf = (path) => {
+    const parts = path.split(/(\*\*\/|\*\*|\*)/).map((part) => ({ '**/': '(?:.*/)?', '**': '.*', '*': '[^/]*' })[part] ?? part.replace(/[.+?^${}()|[\]\\]/g, '\\$&'));
+    return new RegExp(`(?:^|/)${parts.join('')}(?:/|$)`);
+};
 
 /** Two lists of steps name the same steps in the same order. */
 export function sameSteps(planned, got) {

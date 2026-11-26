@@ -232,6 +232,7 @@ cat > "$WORK/gate.jsonl" <<'EOF'
 {"t":"2026-11-18T07:01:00Z","ev":"gate-deny","res":"testing","why":"too-long","v":"0.37.0"}
 {"t":"2026-11-18T07:02:00Z","ev":"gate-deny","res":"spec-driven","why":"together","v":"0.37.0"}
 {"t":"2026-11-18T07:03:00Z","ev":"gate-deny","res":"x","why":"not-read","v":"0.37.0"}
+{"t":"2026-11-18T07:03:30Z","ev":"gate-deny","res":"code-design","why":"before","v":"0.37.0"}
 {"t":"2026-11-18T07:04:00Z","ev":"gate-deny","res":"task-flow","v":"0.37.0"}
 {"t":"2026-11-18T07:05:00Z","ev":"gate-deny","res":"testing","why":"too-long","v":"dev"}
 {"t":"2026-11-17T07:05:00Z","ev":"gate-deny","res":"testing","why":"too-long","v":"0.37.0"}
@@ -239,7 +240,7 @@ cat > "$WORK/gate.jsonl" <<'EOF'
 {"t":"2026-11-18T07:07:00Z","ev":"gate-deliver","res":"typescript-conventions","v":"0.37.0"}
 EOF
 report "SC-AK-1747 — отказы проверки правил разложены по причине; запись сценариев хуков и другой день не считаются" \
-    "$(count "$WORK/gate.jsonl" gateOf 'Object.entries(r.refused).map(([w, n]) => w + ":" + n).join(" ")' 2026-11-18)" "too-long:2 together:1 not-read:1 none:1"
+    "$(count "$WORK/gate.jsonl" gateOf 'Object.entries(r.refused).map(([w, n]) => w + ":" + n).join(" ")' 2026-11-18)" "too-long:2 together:1 not-read:1 before:1 none:1"
 report "SC-AK-1748 — правила, доставленные без отказа, считаются по заметке доставки" \
     "$(count "$WORK/gate.jsonl" gateOf 'r.delivered' 2026-11-18)" "2"
 

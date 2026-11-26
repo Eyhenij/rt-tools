@@ -52,7 +52,7 @@ There is no interface: the description is read by the engine and by the executor
 - **The marks lie in the common directory of git, and a mark that does not parse reads as absent.**
 - **Exit 6 is met by a version of the progress in the commit of the plan or later that repeats its steps and marks exactly one of them as going on.**
 - **Exit 7 is met when every step is done and every done step has a green mark, and a plan without check lines is judged by the marks of the progress alone.**
-- **Exit 8 is met when every path of every edited footprint row has a changed file after the plan and no agreement directory under proposed/ stands in the head.**
+- **Exit 8 is met when every path of every edited footprint row has a changed file after the plan, no agreement directory under proposed/ stands in the head and the code holds the decision of the plan.**
 - **Exit 9 is met by one commit that removed the task folder and added a record to the archive.**
 - **A read of the hosting is repeated once, and failed twice it is named as the silent hosting.**
 - **A met exit read from the hosting is kept for the life of the branch, and an answer for the later exits lives sixty seconds.**
@@ -89,7 +89,8 @@ the engine for its verdict, its release cases and the owner's menu are the subdo
 `docs/specs/agent-kit/turn-guards/flow-script/exit/`; the CI hold it reads first is the subdomain
 `docs/specs/agent-kit/turn-guards/flow-script/exit-ci/`. Exits 11, 12 and 13 of the end of an epic are
 the subdomain `docs/specs/agent-kit/turn-guards/flow-script/epic/`: there exit 12 reads every task
-with a merged PR of its branch on the hosting. The guards of the end of a turn that judge the conversation are in the domain next to it. The check
+with a merged PR of its branch on the hosting. The code of the head against the decision of the plan
+at exit 8 is the subdomain `docs/specs/agent-kit/turn-guards/flow-script/decision/`. The guards of the end of a turn that judge the conversation are in the domain next to it. The check
 that the steps of the plan and of the progress match is the subdomain `docs/specs/agent-kit/work-steps/`.
 
 ## Contract
@@ -174,3 +175,5 @@ None.
   word stops the work. The forecast replays a stop after the mark of Esc as released.
 - 2026-11-24 — the owner's stop word ends the hold again, and the forecast replays a stop after it as
   released.
+- 2026-11-25 — exit 8 also holds while the code differs from the decision of the plan: the subdomain
+  `decision/`.

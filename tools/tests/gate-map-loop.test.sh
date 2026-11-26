@@ -72,4 +72,16 @@ report "checkout of a file does not demand the loop" "$(loop bash "$G checkout -
 report "a plain checkout of a branch does not demand the loop" "$(loop bash "$G checkout main")" none
 report "pr view does not demand the loop" "$(loop bash "$H pr view 5")" none
 
+# --- the layer of code design is lifted from the demonstration only ---------------------------
+skip() { if skill_layer_skip "$1" "$2"; then echo lifted; else echo kept; fi; }
+K="$P/projects/ui-kit-v2/src"
+report "the layer is lifted from a story wrapper" "$(skip code-design "$K/lib/components/card/stories/component/test-rt-card.component.ts")" lifted
+report "the layer is lifted from a showcase component" "$(skip code-design "$K/showcase/templates/bookings/list.component.ts")" lifted
+report "the layer is lifted from a linter setting" "$(skip code-design "$P/eslint/boundaries/domains/admin.mjs")" lifted
+report "the layer stays on a showcase store" "$(skip code-design "$K/showcase/templates/bookings/bookings.store.ts")" kept
+report "the layer stays on a showcase helper" "$(skip code-design "$K/showcase/story-drag.ts")" kept
+report "the layer stays on a helper next to a story wrapper" "$(skip code-design "$K/lib/components/tree/stories/component/tree-story-nodes.ts")" kept
+report "the layer stays on a kit component" "$(skip code-design "$K/lib/components/card/card.component.ts")" kept
+report "another layer is not lifted" "$(skip reuse-first "$P/eslint/boundaries/domains/admin.mjs")" kept
+
 suite_result "gate-map-loop"

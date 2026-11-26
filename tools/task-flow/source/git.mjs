@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · task-flow/source/git.mjs · 4e5f65df7724 · правится надстройкой, не здесь
+// rt-kit v0.40.0 · task-flow/source/git.mjs · 2b9fb13e6f55 · правится надстройкой, не здесь
 /**
  * The source «source.git» of the task flow description: the history of the branch, read by `git`.
  *
@@ -7,7 +7,8 @@
  * found in the commit that held it.
  *
  *   branch()            the name of the checked-out branch, '' when the head is detached
- *   commits()           [{ sha, added, deleted, modified }] — the paths each commit changed
+ *   commits()           [{ sha, text, own, added, deleted, modified }] — the message, the paths each commit
+ *                       changed, and whether the branch made it itself: a merge and what it brought is not
  *   versionAt(path, sha) the text of the file at that commit, null where it is absent
  *   lastVersion(path)   the text at the head, or for a file the head lacks at `removedFrom`
  *   addedBy(path)       the sha of the oldest commit of the branch that added the file, or null
@@ -54,8 +55,11 @@ export function open() {
     let cached = null;
     const commits = () => {
         if (cached) return cached;
-        const list = (run(['log', '--reverse', '--format=%H', `${BASE}..HEAD`]) ?? '').split('\n').filter(Boolean);
-        cached = list.map((sha) => ({ sha, ...parseStatus(run(['show', '--no-renames', '--name-status', '--format=', sha]) ?? '') }));
+        const list = (run(['log', '--reverse', '--format=%x1e%H%x1f%B', `${BASE}..HEAD`]) ?? '').split('\x1e').filter(Boolean);
+        const made = new Set((run(['log', '--first-parent', '--no-merges', '--format=%H', `${BASE}..HEAD`]) ?? '').split('\n'));
+        cached = list
+            .map((record) => record.split('\x1f'))
+            .map(([sha, text]) => ({ sha, text, own: made.has(sha), ...parseStatus(run(['show', '--no-renames', '--name-status', '--format=', sha]) ?? '') }));
         return cached;
     };
     const versionAt = (path, sha) => run(['show', `${sha}:${path}`]);

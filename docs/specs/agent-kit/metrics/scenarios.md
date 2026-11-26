@@ -375,3 +375,34 @@ recorded
 Given a message matching the set of patterns
 When the hook counts it
 Then the counter of the branch grows, and the text stands in no file of the rules layer
+
+### SC-AK-1968 — the rework of one task is counted from its history
+
+Given a task with a commit of the first review round, a plan from the template first and then one
+whose footprint has a mask, a folder and a file, and later commits that touch a copy, the task folder, the archive, a plan, a binary and a
+removed file, a copy with its header after a shebang and one after the front matter
+When the command is called with the task
+Then it prints the lines of the oldest commit of the round without the copy and the own places, and
+the files no first version of the plan names; a source that only mentions the header of a copy and
+the board bookkeeping are no copy and no file outside, and a commit that ends with another task belongs to
+that task alone
+And a task whose number only begins the same, a task with no plan and one without a round are said
+so in words
+And no argument, two, a word, a count that is no number or zero, and an unknown revision end with code
+2, a task without commits with code 1
+
+Covered: `tools/tests/task-rework.test.sh`.
+
+### SC-AK-1969 — the last merged tasks and the window after a revision are summed
+
+Given merges of tasks with and without a first round, the merge of an epic, a merge without a task and
+a merge that adds a cycle
+When the command is called with a count, or with a revision
+Then it names the newest tasks of the count, or the tasks merged after the revision, and skips the
+merge without a task; a merged task without a plan, the epic among them, leaves the count and is named
+apart
+And it sums the new cycles, the imports past an entry and the overruns of each merge, growth nobody
+named and growth past the named number alike, a task merged twice once, and leaves the totals uncounted when the check counted nothing
+And it takes the median over the tasks with a round and names the others apart
+
+Covered: `tools/tests/task-rework.test.sh`.

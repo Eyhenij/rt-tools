@@ -25,7 +25,7 @@ import { fileURLToPath } from 'node:url';
 /** The tree root: the checks lie in its `tools/`, hence one level up. */
 export const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
-const CONFIG_PATH = '.claude/rt-kit/checks.json';
+export const CONFIG_PATH = '.claude/rt-kit/checks.json';
 
 const DEFAULTS = {
     /** Where the code the checks read lies. */
@@ -237,6 +237,20 @@ const DEFAULTS = {
      */
     barrelFiles: ['index.ts'],
     /**
+     * The coupling of modules. `aliasesFile` — where the path aliases stand; `extraRoots` — code judged
+     * beside the source roots, the tools of the tree for one; `blocks` — folders that are blocks though
+     * they hold no barrel; `entries` — files called from outside instead of a barrel, by path;
+     * `harness` — the names of folders with tests and harness: they call the insides of a module
+     * lawfully. A tree with a product folder of such a name writes its own list.
+     */
+    coupling: {
+        aliasesFile: 'tsconfig.base.json',
+        extraRoots: [],
+        blocks: [],
+        entries: [],
+        harness: ['tests', '__tests__', '__mocks__', 'fixtures', 'stories', '.storybook'],
+    },
+    /**
      * The signs of the production storage: a port, an address, a domain name. The checks go there
      * neither to read nor to write — the schema in production changes by a rollout. Empty — there
      * are no signs, and an address is never counted as production.
@@ -347,6 +361,15 @@ const mergeDeep = (base, over) => {
 
 /** The settings of this tree: the package defaults, and over them what the project named. */
 export const CONFIG = mergeDeep(DEFAULTS, readOverrides());
+
+/** The settings a past revision had, by the text of its file; without one or unreadable — the defaults. */
+export const configFrom = (text) => {
+    try {
+        return mergeDeep(DEFAULTS, JSON.parse(text ?? '{}'));
+    } catch {
+        return DEFAULTS;
+    }
+};
 
 /** The path to the list of accepted debts by check name: `dupes` → `tools/dupes-allowlist.json`. */
 export const allowlistOf = (name) => join(CONFIG.allowlistDir, `${name}-allowlist.json`);

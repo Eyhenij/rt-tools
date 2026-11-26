@@ -90,3 +90,14 @@ When the entry into the specs is called without a name
 Then the list is empty
 
 Covered: `projects/agent-kit/tests/roles-kind.test.sh`.
+
+### SC-AK-1970 — the review gets the structure of the code, the plan and the coupling against the base
+
+Given the role of the review and the pipeline of a feature, run with stub roles
+When the pipeline is called with a task, a grill, a base and, or without, a plan
+Then the role holds the section on the structure with «Dependencies» and «Bounds»
+And the structure lens asks it with the path of the plan, or the plan next to the grill
+And with the coupling command against the base it was passed
+And a call without a base is refused, and the launch lines of the pitfall and the README pass one
+
+Covered: `projects/agent-kit/tests/roles-kind.test.sh`.

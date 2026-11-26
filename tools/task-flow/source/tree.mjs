@@ -1,4 +1,4 @@
-// rt-kit v0.39.1 · task-flow/source/tree.mjs · 0e5ad415587a · правится надстройкой, не здесь
+// rt-kit v0.40.0 · task-flow/source/tree.mjs · 0e5ad415587a · правится надстройкой, не здесь
 /**
  * The source «source.tree» of the task flow description: the working copy as it lies on disk, from
  * its root.

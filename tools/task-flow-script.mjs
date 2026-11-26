@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.39.1 · checks/task-flow-script.mjs · ac701d12d587 · правится надстройкой, не здесь
+// rt-kit v0.40.0 · checks/task-flow-script.mjs · 563d3592ab6e · правится надстройкой, не здесь
 /**
  * The engine of the task flow: reads the description `flow.js` through the model and answers about
  * the scenario. The description lies next to the engine as `task-flow/flow.js` where the engine is
@@ -71,6 +71,13 @@ export function stateLines(model) {
 /** A read the hosting did not answer twice: the error a source throws carries this name. */
 const SILENT = 'HostSilent';
 
+/** What the measurers of an exit with the capability `gaps` name. */
+function gapsOf(model, exit, measured) {
+    const named = new Set([...JSON.stringify(exit).matchAll(/measure\.(\w+)\./g)].map(([, entry]) => entry));
+    const gaps = (model.measures ?? []).filter(({ entry, caps }) => named.has(entry) && caps?.gaps).flatMap(({ entry }) => measured(`measure.${entry}.gaps`));
+    return gaps.length > 0 ? { gaps } : {};
+}
+
 /**
  * The measured state: the first state whose exit is known to be unmet. An exit the hosting could not
  * answer is unknown and is passed over, and the exits after it are measured. With no unmet exit and
@@ -79,7 +86,7 @@ const SILENT = 'HostSilent';
  *
  * `read(name)` answers a measurer result by its reference and may throw `HostSilent`; a result is
  * read once per measurement. Returns `{ state, index, reason, exits }`, `exits` mapping a state key
- * to `true`, `false` or `'unknown'`.
+ * to `true`, `false` or `'unknown'`, and `gaps` — the lines an unmet exit says why by, when it has any.
  */
 export function measureStates(model, read) {
     const cache = new Map();
@@ -100,7 +107,7 @@ export function measureStates(model, read) {
             continue;
         }
         exits[state.key] = met;
-        if (!met) return { state: state.title, index: index + 1, reason: null, exits };
+        if (!met) return { state: state.title, index: index + 1, reason: null, exits, ...gapsOf(model, state.exit, measured) };
     }
     if (firstUnknown !== null) {
         return { state: model.states[firstUnknown].title, index: firstUnknown + 1, reason: 'the hosting did not answer twice', exits };
@@ -154,6 +161,7 @@ export function measureLines(model, result) {
         lines.push(`state: ${result.state} (${result.index} of ${total})`);
         lines.push(`next: ${state.action ?? ''} (${state.pattern ?? ''})`);
         if (result.reason) lines.push(`reason: ${result.reason}`);
+        lines.push(...(result.gaps ?? []).map((gap) => `not held: ${gap}`));
     }
     for (const [i, s] of model.states.entries()) {
         if (!(s.key in result.exits)) break;

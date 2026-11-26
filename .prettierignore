@@ -132,6 +132,7 @@ tools/check-state-next.mjs
 tools/check-states.mjs
 tools/check-styles.mjs
 tools/check-turn-map.mjs
+tools/coupling-*.mjs
 tools/lib-boundaries.mjs
 tools/lib-common.mjs
 tools/lib-domains.mjs

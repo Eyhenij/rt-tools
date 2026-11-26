@@ -1,0 +1,7 @@
+  libs/till/src/cli.mjs: incoming 0 → 0, outgoing 0 → 1, past an entry 0 → 0, taken by nobody 0 → 0 of 0
+  libs/till/src/db/raw.mjs: incoming 0 → 1, outgoing 0 → 0, past an entry 0 → 0, taken by nobody 1 → 0 of 1
+  libs/till/src/report.mjs: incoming 0 → 1, outgoing 0 → 2, past an entry 0 → 0, taken by nobody 0 → 1 of 3
+  libs/till/src/rows.mjs: incoming 0 → 1, outgoing 0 → 0, past an entry 0 → 0, taken by nobody 1 → 0 of 1
+  grown, the tree keeps no plans: `libs/till/src/cli.mjs` outgoing 0 → 1; nobody named a number for it
+  grown, the tree keeps no plans: `libs/till/src/report.mjs` outgoing 0 → 2; nobody named a number for it
+check-coupling: modules 3 → 5, links 0 → 3, cycles 0 → 0, cycles of blocks 0 → 0, past the entry 0 → 0, against main

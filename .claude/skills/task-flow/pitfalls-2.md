@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/task-flow.2.md · ba8fd693b581 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · pitfalls/task-flow.2.md · a74438dd179a · правится надстройкой, не здесь -->
 # Work conduct — cold part, second file
 
 The sections the rule `task-flow` handed over when it was cut to its statements and split in
@@ -197,9 +197,10 @@ flowchart TD
   and every form but `exit N` matches only on code 0. The verdict is the code of the
   whole line: a pipe starts with `set -o pipefail;`, and `VERBOSE=1` and the like stand in the line.
   A comparison with another branch names its commit, by `git rev-parse --short <branch>`.
+- **A plan names its decision before the code.** What every row names and the line that replaces the
+  table — pattern `code-design-choose`. Asked on a write, by `plan-check` and `plan-red`; approved — not.
 - **A plan for work that ports a technique from outside is written by a measurement of one's own
-  code.** Reading the sample says how it is built; what is needed here is said by a count over
-  one's own files.
+  code.** The sample says how it is built; a count over one's own files says what is needed here.
 - **A claim about a dependency names a file and line of its installed code.** About how it behaves, by
   the path from `node_modules/`. An approved plan forbade what the framework allows.
 - **A count that becomes the measure of the work is bounded by the declaration, not by the file.**
@@ -209,8 +210,7 @@ flowchart TD
 - **Waiting for one part of a stage is never a stop of the stage.** The parts independent of what is
   awaited are done in the same turn; the owner is told what is done and what is left for their step.
 - **A finding made mid-stage is checked against the plan's exit conditions before the first edit.**
-  A finding named by no exit condition goes to the section on what the work does not do, and is
-  filed as a task.
+  One that no exit condition names goes to what the work does not do, and is filed as a task.
 - **Done work is marked only in the progress.** "Where we stand" is rewritten by every session, not
   appended.
 - **The plan names the steps of every stage, and the progress mirrors them with a mark each.** The

@@ -40,7 +40,7 @@
     "check:docs": "node tools/check-doc-paths.mjs",
     "check:glossary": "node tools/check-glossary.mjs",
     "check:dupes": "node tools/check-dupes.mjs",
-    "check:cycles": "node tools/check-cycles.mjs",
+    "check:coupling": "node tools/check-coupling.mjs",
     "check:admin-texts": "node tools/check-admin-texts.mjs",
     "check:styles": "node tools/check-styles.mjs",
     "check:tokens-styles": "node tools/check-tokens-styles.mjs",

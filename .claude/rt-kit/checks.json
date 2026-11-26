@@ -61,6 +61,27 @@
         "index.ts",
         "public-api.ts"
     ],
+    "coupling": {
+        "extraRoots": [
+            "tools"
+        ],
+        "blocks": [
+            "projects/agent-kit/assets/checks",
+            "projects/agent-kit/assets/hooks",
+            "projects/agent-kit/assets/defaults",
+            "projects/agent-kit/assets/task-flow",
+            "projects/agent-kit/assets/task-flow/measure",
+            "projects/agent-kit/assets/task-flow/source",
+            "tools",
+            "apps/auth-example-admin",
+            "apps/auth-example-api",
+            "apps/chat-talks-embed",
+            "apps/chat-talks-page",
+            "apps/chat-widget",
+            "apps/message-bus",
+            "apps/message-bus-admin"
+        ]
+    },
     "pushGate": {
         "pipelineFile": ".github/workflows/ci.yml",
         "stepPattern": "^\\s*-\\s*name:\\s*(.+?)\\s*$",
@@ -102,7 +123,7 @@
             "Dependencies rule": "node tools/check-dependencies.mjs",
             "Package release wiring": "node tools/check-package-release.mjs",
             "Rule descriptions": "node tools/check-descriptions.mjs",
-            "Circular imports": "node tools/check-cycles.mjs",
+            "Coupling of modules": "node tools/check-coupling.mjs",
             "Words past the dictionary": "node tools/check-admin-texts.mjs",
             "Archive retention": "node tools/check-archive-age.mjs",
             "Style layer": "node tools/check-cascade-layer.mjs",

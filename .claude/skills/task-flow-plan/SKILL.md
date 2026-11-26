@@ -4,13 +4,13 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the task folder, the plan, its steps and the progress. Load on any edit of a task folder and on a plan refusal. Pattern task-flow-resume.
 ---
-<!-- rt-kit v0.39.1 · rules/task-flow-plan.md · 84bc9e7bc65c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · rules/task-flow-plan.md · b0e06bbd7654 · правится надстройкой, не здесь -->
 
 # Work conduct — the folder, the plan and the progress
 
 Rule under the law `docs/constitution/work-conduct.md`. Cold part: `pitfalls.md`; whole — `task-flow`, `pitfalls-2.md`.
 
-**Requires:** `hooks/task-flow-guard.sh`, `hooks/task-flow-draft-guard.sh`, `hooks/task-context-load.sh`, `hooks/window-fill-guard.sh`, `hooks/turn-exit-guard.sh`, `hooks/turn-judge.md`, `hooks/ask-judge.md`, `hooks/main-run-context.sh`
+**Requires:** `hooks/task-flow-guard.sh`, `hooks/flow-step-guard.sh`, `hooks/task-flow-draft-guard.sh`, `hooks/task-context-load.sh`, `hooks/window-fill-guard.sh`, `hooks/turn-exit-guard.sh`, `hooks/turn-judge.md`, `hooks/ask-judge.md`, `hooks/main-run-context.sh`
 
 ## How the law applies here
 
@@ -26,6 +26,7 @@ Rule under the law `docs/constitution/work-conduct.md`. Cold part: `pitfalls.md`
 - **The stages of a plan cover its done-sign whole.**
 - **Every rule of the product agreement becomes a step of some stage.**
 - **Every step of the plan carries a check whose expected output is taken from a run while the plan is written.**
+- **A plan names its decision before the code.** All nine rows, or one line «No decision: <reason>»; written and approved only so.
 - **A plan for work that ports a technique from outside is written by a measurement of one's own code.**
 - **A claim about a dependency names a file and line of its installed code.**
 - **A count that becomes the measure of the work is bounded by the declaration, not by the file.**

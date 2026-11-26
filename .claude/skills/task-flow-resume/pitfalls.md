@@ -1,4 +1,4 @@
-<!-- rt-kit v0.39.1 · pitfalls/task-flow-resume.md · e21086b64f09 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.40.0 · pitfalls/task-flow-resume.md · 596743932c5e · правится надстройкой, не здесь -->
 # Returning to unfinished work — cold part
 
 The pattern `task-flow-resume` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.
@@ -99,7 +99,7 @@ A large edit that crosses several layers — the contract, the storage, the appl
 by the role pipeline:
 
 ```
-Workflow(name: "feature", args: { task: "<the plan stage>", grill: "docs/tasks/<ветка>/grill.md" })
+Workflow(name: "feature", args: { task: "<the plan stage>", grill: "docs/tasks/<ветка>/grill.md", base: "origin/<base>" })
 ```
 
 The pipeline makes a plan of its own, up to six steps: its points role reads the task and epic plans,
