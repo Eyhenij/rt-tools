@@ -278,14 +278,29 @@ dlv_reason "SC-AK-2008 — отказ называет объявленный а
 dlv "SC-AK-2008 — чужой адрес автора отбит" "$EPIC" 'gh pr merge 917 --merge --author-email me@example.test' deny
 dlv "SC-AK-2008 — слияние в ветку эпика с объявленным адресом проходит" "$EPIC" 'gh pr merge 917 --merge --author-email bot@example.test' PASS
 dlv "SC-AK-2008 — короткий ключ -A тоже называет адрес" "$EPIC" 'gh pr merge 917 --merge -A bot@example.test' PASS
+dlv "SC-AK-2008 — слитный -A и вид с = называют адрес" "$EPIC" 'gh pr merge 917 -Abot@example.test && gh pr merge 917 --author-email=bot@example.test' PASS
+dlv "SC-AK-2008 — адрес в теме слияния — текст, не автор" "$EPIC" "gh pr merge 917 --merge --subject 'see -A bot@example.test'" deny
+dlv "SC-AK-2008 — справка слиянием не судится" "$EPIC" 'gh pr merge --help' PASS
 rm -rf "$EPIC"
+TOKEN="$(who_repo '{"exists":true,"number":917,"run":"none","base":"RT-1-epic"}' 'RT_PULL_TOKEN_VAR=GH_TOKEN')"
+dlv "SC-AK-2008 — слияние без токена машинной записи отбито" "$TOKEN" 'gh pr merge 917 --merge -A bot@example.test' deny
+dlv "SC-AK-2008 — слияние с токеном машинной записи проходит" "$TOKEN" 'GH_TOKEN="$(cat t)" gh pr merge 917 --merge -A bot@example.test' PASS
+rm -rf "$TOKEN"
 MAIN="$(who_repo '{"exists":true,"number":917,"run":"none","base":"main"}' 'RT_MAIN_MERGE_BY_OWNER=1')"
 dlv "SC-AK-2009 — слияние исполнителем в главную ветку отбито" "$MAIN" 'gh pr merge 917 --merge -A bot@example.test' deny
+dlv "SC-AK-2009 — клиент полным путём отбит так же" "$MAIN" '/opt/homebrew/bin/gh pr merge 917 --merge -A bot@example.test' deny
+dlv "SC-AK-2009 — обёртка клиента отбита так же" "$MAIN" 'bot() { gh "$@"; }; bot pr merge 917 --merge -A bot@example.test' deny
+dlv "SC-AK-2009 — номер после ключей отбит так же" "$MAIN" 'gh pr merge --merge -A bot@example.test 917' deny
+dlv "SC-AK-2009 — второе слияние цепочки судится" "$MAIN" 'true && gh pr merge 917 --merge -A bot@example.test' deny
+dlv_reason "SC-AK-2009 — слияние без номера просит назвать номер" "$MAIN" 'gh pr merge --merge -A bot@example.test' 'Name the number'
 rm -rf "$MAIN"
+GONE="$(who_repo '{"exists":false}' 'RT_MAIN_MERGE_BY_OWNER=1')"
+dlv_reason "SC-AK-2009 — заявки нет на хосте — проверить номер" "$GONE" 'gh pr merge 917 --merge -A bot@example.test' 'Check the number'
+rm -rf "$GONE"
 MAIN_FREE="$(who_repo '{"exists":true,"number":917,"run":"none","base":"main"}')"
 dlv "SC-AK-2009 — без настройки дерева слияние в главную ветку не судится" "$MAIN_FREE" 'gh pr merge 917 --merge -A bot@example.test' PASS
 rm -rf "$MAIN_FREE"
-UNKNOWN="$(who_repo '{"exists":false}' 'RT_MAIN_MERGE_BY_OWNER=1')"
+UNKNOWN="$(who_repo '{"exists":true,"number":917,"run":"none"}' 'RT_MAIN_MERGE_BY_OWNER=1')"
 dlv_reason "SC-AK-2009 — база неизвестна — повторить, когда хост ответит" "$UNKNOWN" 'gh pr merge 917 --merge -A bot@example.test' 'Repeat when the host answers'
 rm -rf "$UNKNOWN"
 
