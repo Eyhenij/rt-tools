@@ -1,4 +1,4 @@
-// rt-kit v0.40.0 · checks/flow-stage.mjs · 27019269df5e · правится надстройкой, не здесь
+// rt-kit v0.41.0 · checks/flow-stage.mjs · 27019269df5e · правится надстройкой, не здесь
 /**
  * A stage of the plan measured by one call — the engine command `step <N>`, the number of a stage.
  *

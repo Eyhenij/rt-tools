@@ -1,4 +1,4 @@
-<!-- rt-kit v0.40.0 · pitfalls/task-flow-cycle.md · b230774432db · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.0 · pitfalls/task-flow-cycle.md · b230774432db · правится надстройкой, не здесь -->
 # The improvement cycle — cold part
 
 The pattern `task-flow-cycle` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.

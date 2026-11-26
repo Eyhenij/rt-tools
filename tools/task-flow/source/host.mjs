@@ -1,4 +1,4 @@
-// rt-kit v0.40.0 · task-flow/source/host.mjs · f4756a89fcb7 · правится надстройкой, не здесь
+// rt-kit v0.41.0 · task-flow/source/host.mjs · f4756a89fcb7 · правится надстройкой, не здесь
 /**
  * The source «source.host» of the task flow description: the hosting and the work queue, read by
  * the board module of the tree and by `git` against the server.
