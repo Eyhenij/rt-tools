@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub — opening a PR, its draft, review and merge, the machine account. Load for every call of the hosting client about a PR. Patterns git-workflow-pr, -pr-body.
 ---
-<!-- rt-kit v0.40.0 · rules/git-workflow-hosting.github.md · 60bb4cd32d52 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.1 · rules/git-workflow-hosting.github.md · 193f836e88fb · правится надстройкой, не здесь -->
 
 # Delivery — PR, its review and the machine account
 
@@ -12,7 +12,7 @@ Rule under the law `docs/constitution/delivery.md`, for a tree on GitHub. Cold p
 
 ## How the law applies here
 
-- **The PR of a task has the epic branch as its base — `gh pr create --base <ветка эпика>`.**
+- **The PR of a task has the epic branch as its base — `gh pr create --base <ветка эпика>`.** Outside an epic — the main one.
 - **A PR in a chain has the previous branch as its base, not main.**
 - **What checks a PR whose base is not the main branch is asked before the first PR of an epic opens.**
 - **A code edit is handed to a person by an open PR, not by a pushed branch.**

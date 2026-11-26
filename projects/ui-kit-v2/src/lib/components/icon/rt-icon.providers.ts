@@ -2,17 +2,34 @@ import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
 
 import { RT_ICON_GLYPH_STRATEGY } from './rt-icon-font.service';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
-import { RT_ICONS_BASE_URL, RT_ICONS_MATERIAL_BASE_URL } from './rt-icon.registry';
+import { RT_ICON_SETS_CONFIG } from './rt-icon.registry';
+import { IRtIconSet } from './rt-icon-sets';
+import { IRtIconSetsConfig, rtIconSetsConfig } from './rt-icon-sets.logic';
+
+/* Значение задаёт сборка приложения: в рабочей сборке оно `false`, и тексты предупреждений из неё
+   выпадают. Поведение от него не зависит. */
+declare const ngDevMode: boolean | undefined;
+
+function reported(config: IRtIconSetsConfig): IRtIconSetsConfig {
+    if (typeof ngDevMode === 'undefined' || ngDevMode) {
+        for (const warning of config.warnings) {
+            // eslint-disable-next-line no-console -- предупреждение разработчику приложения: другого канала у кита нет
+            console.warn(`provideRtIcons: ${warning}.`);
+        }
+    }
+
+    return config;
+}
 
 /**
- * Называет адрес, по которому приложение опубликовало набор значков `rt-icon`.
+ * Объявляет наборы значков приложения.
  *
  * ```typescript
  * export function withCoreProviders(): EnvironmentProviders {
  *     return makeEnvironmentProviders([
  *         provideHttpClient(...),
  *         provideRtStorage(),
- *         provideRtIcons(),
+ *         provideRtIcons({ sets: [{ name: 'brand', url: '/icons-brand' }], default: 'brand' }),
  *     ]);
  * }
  * ```
@@ -20,29 +37,32 @@ import { RT_ICONS_BASE_URL, RT_ICONS_MATERIAL_BASE_URL } from './rt-icon.registr
  * Вперёд отсюда не грузится ничего: значок едет тогда, когда его попросила разметка, и платит
  * за него та страница, которая его нарисовала. Сборка спрайта и загрузка — дело `RtIconRegistry`.
  *
- * Сами файлы приложение публикует само — набор лежит в `assets/icons` пакета, и сборка копирует
- * его в свою статику.
- *
- * Наборов значков два: свой и материальный. Второй нужен только приложению, которое объявляет
- * материальный набор оформления, и адрес у него свой — набор лежит в `assets/icons-material`.
- *
- * Третий аргумент — настройки значков. `glyphStrategy` говорит, как рисуется имя Material на входе
- * `glyph`: `map-first` (по умолчанию) — пара из перечня кита, а без пары шрифт Material Symbols;
- * `font` — шрифт для любого имени. Шрифт приложение подключает само.
- *
- * @param baseUrl Адрес опубликованного набора. По умолчанию `/icons`.
- * @param materialBaseUrl Адрес материального набора. По умолчанию `/icons-material`.
- * @param options Настройки значков.
+ * Сами файлы приложение публикует само — наборы `kit` и `material` лежат в `assets/icons` и
+ * `assets/icons-material` пакета, и сборка копирует их в свою статику.
  */
-export function provideRtIcons(baseUrl?: string, materialBaseUrl?: string, options?: IRtIconsOptions): EnvironmentProviders {
+export function provideRtIcons(options: IRtIconsOptions = {}): EnvironmentProviders {
     return makeEnvironmentProviders([
-        ...(baseUrl === undefined ? [] : [{ provide: RT_ICONS_BASE_URL, useValue: baseUrl }]),
-        ...(materialBaseUrl === undefined ? [] : [{ provide: RT_ICONS_MATERIAL_BASE_URL, useValue: materialBaseUrl }]),
-        ...(options?.glyphStrategy === undefined ? [] : [{ provide: RT_ICON_GLYPH_STRATEGY, useValue: options.glyphStrategy }]),
+        {
+            provide: RT_ICON_SETS_CONFIG,
+            useFactory: (): IRtIconSetsConfig => reported(rtIconSetsConfig(options.sets, options.default)),
+        },
+        ...(options.glyphStrategy === undefined ? [] : [{ provide: RT_ICON_GLYPH_STRATEGY, useValue: options.glyphStrategy }]),
     ]);
 }
 
-/** Настройки значков приложения — третий аргумент `provideRtIcons()`. */
+/** Настройки значков приложения. */
 export interface IRtIconsOptions {
+    /**
+     * Наборы приложения рядом со встроенными `kit` и `material`. Имена значков у всех наборов
+     * одни. Запись с именем встроенного набора меняет только названные поля. Набор без `fallback`
+     * берёт недостающий рисунок из `kit`.
+     */
+    readonly sets?: ReadonlyArray<IRtIconSet>;
+    /** Набор приложения. По умолчанию `kit`. */
+    readonly default?: string;
+    /**
+     * Как значок рисует значение `glyph`: `map-first` (по умолчанию) — имя кита рисунком, любое
+     * другое шрифтом Material Symbols; `font` — шрифт. Шрифт приложение подключает само.
+     */
     readonly glyphStrategy?: IRtIcon.GlyphStrategy;
 }

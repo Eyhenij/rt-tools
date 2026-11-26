@@ -18,6 +18,7 @@
 import { execFileSync } from 'node:child_process';
 
 import { OfflineError, TASK_KEY, botToken, fetchBoard, fetchOpenPulls, ghJson, numberFromBranch, numberFromTitle } from './board.mjs';
+import { outsideReasonOf } from './board-epic-link.mjs';
 import { declaredEpicOf, planPathOf, planRows } from './board-epics.mjs';
 import { verdictOnHead } from './board-runs.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
@@ -91,6 +92,10 @@ function epicAsked(argv) {
     }
 
     const declared = declaredEpicOf(String(issue.body ?? ''));
+    const outside = declared === undefined ? outsideReasonOf(issue.body) : null;
+    if (outside !== null) {
+        return { number: null, why: `задача #${number} — работа вне эпика: «${outside}», эпика у неё нет` };
+    }
     if (declared === undefined) {
         return {
             number: null,

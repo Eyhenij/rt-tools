@@ -5,21 +5,21 @@ import { createRtFixture } from '../../../testing/rt-kit-testing';
 import { RtMenuItemIconDirective } from './rt-menu-item-icon.directive';
 import { RtMenuItemComponent } from './rt-menu-item.component';
 
-/** Имя, которого в перечне кита нет и не будет: по форме его туда не взять. */
+/** Имя, которого в наборе кита нет и не будет: по форме его туда не взять. */
 const NO_PAIR: string = 'no_such_glyph_for_test';
 
-/** Пункты, как у приложения: свой значок, свой значок у опасного пункта и имя Material без пары. */
+/** Пункты, как у приложения: свой значок, свой значок у опасного пункта и имя вне набора. */
 @Component({
     selector: 'rt-menu-item-icon-host',
     template: `
-        <rt-menu-item label="Сделать активным" icon="ico-eye" glyph="done">
+        <rt-menu-item label="Сделать активным" icon="ico-eye" glyph="check">
             <ng-template rtMenuItemIcon><svg data-own-icon viewBox="0 0 24 24"></svg></ng-template>
         </rt-menu-item>
         <rt-menu-item label="Удалить" [danger]="true">
             <ng-template rtMenuItemIcon><svg data-own-icon viewBox="0 0 24 24"></svg></ng-template>
         </rt-menu-item>
-        <rt-menu-item label="Без пары" [glyph]="noPair" />
-        <rt-menu-item label="С парой" glyph="done" />
+        <rt-menu-item label="Вне набора" [glyph]="noPair" />
+        <rt-menu-item label="Имя кита" glyph="check" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RtMenuItemComponent, RtMenuItemIconDirective],
@@ -66,17 +66,17 @@ describe('RtMenuItemIconDirective', (): void => {
         ]);
     });
 
-    it('имя Material с парой по-прежнему рисуется значком кита', (): void => {
+    it('имя кита на glyph по-прежнему рисуется значком кита', (): void => {
         const fixture: ComponentFixture<MenuItemIconHostComponent> = createRtFixture(MenuItemIconHostComponent);
 
         expect(items(fixture)[3].querySelector('rt-icon')).not.toBeNull();
     });
 
-    it('имя Material без пары и без своего значка предупреждает в консоли, остальные молчат', (): void => {
+    it('имя вне набора и без своего значка предупреждает в консоли, остальные молчат', (): void => {
         createRtFixture(MenuItemIconHostComponent);
 
         expect(warn).toHaveBeenCalledTimes(1);
         expect(warn.mock.calls[0][0]).toContain(NO_PAIR);
-        expect(warn.mock.calls[0][0]).toContain('Без пары');
+        expect(warn.mock.calls[0][0]).toContain('Вне набора');
     });
 });

@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under work-conduct — the epic as the unit of delivery. Load when an epic is declared, its branch taken, its next task chosen and its PR into the main branch opened. Pattern epic-flow-declare; one task — task-flow.
 ---
-<!-- rt-kit v0.40.0 · rules/epic-flow.md · 8b7f21b4f911 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.1 · rules/epic-flow.md · d38cbac68600 · правится надстройкой, не здесь -->
 
 # Epics — how it works here
 
@@ -26,7 +26,7 @@ end of a turn — `turn-conduct`.
 ## How the law applies here
 
 - **Work begins with the epic, and a task outside one is not taken.** Except by the owner's word
-  on that work.
+  on that work, or where the grill gave one task and the copy leads no open epic.
 - **The epic branch is taken before the first task of the epic, not with it.**
 - **The epic card moves to in progress by the same turn that takes its first task.**
 - **The next task is taken from the epic plan, and the queue list is asked only where there is no

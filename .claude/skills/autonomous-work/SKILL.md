@@ -4,7 +4,7 @@ kind: rule
 law: autonomous-work
 description: Rule under the autonomous-work law. Load when the owner has left and asked for unattended work — a chain of branches, a default instead of a question, nothing outside but what the owner named, a list by morning. Pattern autonomous-work-run. One piece of work — rule task-flow.
 ---
-<!-- rt-kit v0.40.0 · rules/autonomous-work.md · 578a160246ae · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.1 · rules/autonomous-work.md · 578a160246ae · правится надстройкой, не здесь -->
 
 # Autonomous work — how it works here
 

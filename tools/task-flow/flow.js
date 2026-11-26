@@ -1,4 +1,4 @@
-// rt-kit v0.40.0 · task-flow/flow.js · 213f55ee2afa · правится надстройкой, не здесь
+// rt-kit v0.41.1 · task-flow/flow.js · 738f4d4645ff · правится надстройкой, не здесь
 // The task flow as an executable scenario: the data language of `flow-syntax.mjs`, nothing here runs.
 // A state is left when its exit is measured; the first state whose exit is unmet is where the work
 // stands. A release case says when a turn may end before the scenario does. A new fact is a new
@@ -87,7 +87,7 @@
     },
     agreement: {
       title: 'договорённость-записана',
-      action: 'create the task, the branch from the epic branch, and the folder',
+      action: 'create the task, the branch from its base, and the folder',
       pattern: 'task-flow-start',
       exit: measure.task.taken,
     },

@@ -485,8 +485,8 @@ Covered: `projects/agent-kit/tests/task-new-queue.test.sh`.
 
 Given the tree named the label of an epic
 When the command of creating is called without an epic and without the word of the owner
-Then no card is created, and the refusal names both ways out — to name the epic and to name the word
-of the owner
+Then no card is created, and the refusal names every way out — the epic, the only task of its grill and
+the word of the owner
 
 Given the word of the owner is named
 When the same call goes

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.40.0 · pitfalls/git-workflow-push.github.md · 3790b6ebfc9c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.1 · pitfalls/git-workflow-push.github.md · 3790b6ebfc9c · правится надстройкой, не здесь -->
 # Delivery — the commit and the push set — cold part
 
 This part of the rule `git-workflow` keeps its statements hot and its explanation in the cold

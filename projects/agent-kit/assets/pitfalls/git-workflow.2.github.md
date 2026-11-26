@@ -77,7 +77,7 @@ flowchart TD
   rollout with nothing behind it in the queue. The work moves to a branch with a number.
 - **Work begins with the epic, and the branch of a task is taken from the epic branch.** `git
   checkout -b <КЛЮЧ>-<номер задачи>-<slug> <ветка эпика>`; from `main` only the epic branch itself is
-  taken — a task branched from `main` carries into it what the epic has not finished.
+  taken — a task branched from `main` carries into it what the epic has not finished. Outside an epic — `main`.
 - **The PR of a task has the epic branch as its base — `gh pr create --base <ветка эпика>`.** Opened
   into `main`, it leaves the epic branch a copy nobody merges. In a chain the base is the previous
   branch, lawful while it carries the epic branch.

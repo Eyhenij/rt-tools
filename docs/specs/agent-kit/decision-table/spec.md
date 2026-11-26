@@ -128,6 +128,7 @@ a hook with a decision, and marks a context hook and a git-side hook as helpers.
 | `git-guard-no-verify.sh` | PreToolUse Bash\|webstorm | guard | hooks_skipped | Bash:git-commit, Bash:git-push | deny |
 | `git-guard-push-ahead.sh` | — (run by hand/agent) | helper | tree_dirty, push_adds_commits, push_node_pinned; writes push_marks_green | — | — (exit codes to its caller) |
 | `git-guard-push-marks.sh` | — | helper | push_marks_green, tree_dirty, push_adds_commits | — | — |
+| `git-guard-push-ready.sh` | — (sourced by the run ahead) | helper | branch_has_epic_tip, branch_has_main_tip, epic_folders_left | — | — (lines to its caller) |
 | `git-guard-push-tests.sh` | PreToolUse Bash\|webstorm\|mcp__terminal__run_in_terminal | guard | push_plain_single, push_from_session_copy, push_adds_commits, push_node_pinned, push_marks_green, tree_dirty | Bash:git-push, mcp:terminal-push | deny |
 | `git-guard-tree-assignment.sh` | — (tier of delivery) | helper | copy_assignment_ok, assigned_epic_open | Bash:git-branch-create | deny (via git-guard-delivery) |
 | `glossary-load.sh` | SessionStart startup\|resume\|compact\|clear | guard·ctx | glossary_present | SessionStart | context-only |

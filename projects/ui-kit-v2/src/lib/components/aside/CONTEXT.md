@@ -35,14 +35,15 @@ ref.afterClosed().subscribe((result?: ITour): void => …);
 | `emptyTitle`       | `string \| null`       | `null` → `uiEmptyTitle` |
 | `emptyDescription` | `string \| null`       | `null`                  |
 
-| настройка `open()`                       | умолчание                                 |
-| ---------------------------------------- | ----------------------------------------- |
-| `data`                                   | `null` — доезжает токеном `RT_ASIDE_DATA` |
-| `position`                               | `'right'`                                 |
-| `closeOnBackdropClick` / `closeOnEscape` | `true`; второе — из настроек кита         |
-| `backdropClass` / `panelClass`           | `rt-aside-backdrop` / `rt-aside-overlay`  |
-| `injector`                               | корневой — уничтожение хозяина закрывает  |
-| `disposeOnNavigation`                    | `true` — переход по адресу снимает        |
+| настройка `open()`                       | умолчание                                  |
+| ---------------------------------------- | ------------------------------------------ |
+| `data`                                   | `null` — доезжает токеном `RT_ASIDE_DATA`  |
+| `position`                               | `'right'`                                  |
+| `closeOnBackdropClick` / `closeOnEscape` | `true`; второе — из настроек кита          |
+| `backdropClass` / `panelClass`           | `rt-aside-backdrop` / `rt-aside-overlay`   |
+| `injector`                               | корневой — уничтожение хозяина закрывает   |
+| `iconSet`                                | набор части с фокусом, затем из `injector` |
+| `disposeOnNavigation`                    | `true` — переход по адресу снимает         |
 
 ## Главное, что нужно знать
 

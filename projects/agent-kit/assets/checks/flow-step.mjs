@@ -42,7 +42,7 @@ export const STEP_LIMIT_MS = 540_000;
 /** The budget of the rerun before a PR, in milliseconds: a second run of a group starts only within it. */
 export const RERUN_BUDGET_MS = 1_500_000;
 
-const PROGRESS = 'progress.md';
+export const PROGRESS = 'progress.md';
 /** What the owner approved: these files stay as the commit of the plan holds them. */
 const FROZEN = ['plan.md', 'grill.md'];
 

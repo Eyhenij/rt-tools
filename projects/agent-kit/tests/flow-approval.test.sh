@@ -103,4 +103,37 @@ found_in() {
 report "approval: SC-AK-1873 — роли ревью после одобрения его не прячут" "$(found_in RAR)" 'a1'
 report "approval: SC-AK-1873 — одобрение до вызова ролей не засчитано" "$(found_in AR)" 'нет'
 
+# SC-AK-1950 — чьи голоса нужны плану, отвечает команда дерева
+ROLES_TREE="$(mktemp -d)"
+trap 'rm -rf "$ROLES_TREE"' EXIT
+mkdir -p "$ROLES_TREE/.claude/rt-kit"
+# $1 — настройки проверок; пусто — файла нет.
+roles_with() {
+    rm -f "$ROLES_TREE/.claude/rt-kit/checks.json"
+    [ -n "$1" ] && printf '%s' "$1" > "$ROLES_TREE/.claude/rt-kit/checks.json"
+    node --input-type=module -e "
+        const { rolesOfPlan } = await import('$FLOW_PLAN');
+        console.log(rolesOfPlan('$ROLES_TREE', 'лёгкий план').join(' ') || 'никто');
+    " 2>&1
+}
+BOTH='product-strategist goal-critic'
+report "approval: SC-AK-1950 — ответ none снимает роли" "$(roles_with '{"planRolesCommand":"echo none #"}')" 'никто'
+report "approval: SC-AK-1950 — команда получает путь текста плана" "$(roles_with '{"planRolesCommand":"grep -q лёгкий \"$1\" && echo none #"}')" 'никто'
+report "approval: SC-AK-1950 — без настроек нужны обе роли" "$(roles_with '')" "$BOTH"
+report "approval: SC-AK-1950 — без ключа нужны обе роли" "$(roles_with '{"plansDir":"docs"}')" "$BOTH"
+report "approval: SC-AK-1950 — отказ команды — обе роли" "$(roles_with '{"planRolesCommand":"echo none; exit 1 #"}')" "$BOTH"
+report "approval: SC-AK-1950 — чужой ответ — обе роли" "$(roles_with '{"planRolesCommand":"echo nobody #"}')" "$BOTH"
+report "approval: SC-AK-1950 — настройки не разобрались — обе роли" "$(roles_with '{')" "$BOTH"
+# $1 — время ответа, $2 — время коммита плана.
+light_found() {
+    node --input-type=module -e "
+        const { approvingEntry } = await import('$FLOW_PLAN');
+        const answer = { type: 'user', uuid: 'a1', timestamp: process.argv[1] || undefined, toolUseResult: { answers: { 'Одобряешь план RT-12?': 'Одобряю план RT-12' } } };
+        console.log(approvingEntry([answer], 'RT-12', [], Date.parse(process.argv[2]))?.uuid ?? 'нет');
+    " "$1" "$2" 2>&1
+}
+report "approval: SC-AK-1950 — без ролей ответ после коммита плана засчитан" "$(light_found 2026-11-25T10:00:01Z 2026-11-25T10:00:00Z)" 'a1'
+report "approval: SC-AK-1950 — ответ до коммита плана не засчитан" "$(light_found 2026-11-25T09:59:59Z 2026-11-25T10:00:00Z)" 'нет'
+report "approval: SC-AK-1950 — ответ без времени не засчитан" "$(light_found '' 2026-11-25T10:00:00Z)" 'нет'
+
 suite_result flow-approval

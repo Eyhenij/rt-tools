@@ -1,4 +1,4 @@
-<!-- rt-kit v0.40.0 · pitfalls/git-workflow-commit.github.md · 8a8bd3cb6b10 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.1 · pitfalls/git-workflow-commit.github.md · 677e4c8ad838 · правится надстройкой, не здесь -->
 # Task, branch and commit — cold part
 
 The pattern `git-workflow-commit` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.
@@ -70,10 +70,10 @@ npm run task:new -- --epic-of <номер эпика> --title 'Письма вл
 
 The body is read from standard input, `--slug` is optional and goes only into the hint with the
 branch name. The epic is named by `--epic-of`, and the command writes the line about it into the
-body itself and prints the branch line from the branch of the epic; work outside an epic goes by
-`--outside-epic '<слово владельца>'`, and without either of the two the call is refused before the
-card is created. The epic itself is created by the same command with `--epic`. Author and assignee — the machine account; the command reads the token itself, from
-a file outside the repository.
+body itself and prints the branch line from the branch of the epic. Where the grill gave one task,
+`--single` takes it from the main branch; other work outside an epic goes by `--outside-epic '<слово
+владельца>'`. Without one of the three the call is refused before the card is created. The epic itself
+is created with `--epic`. Author and assignee — the machine account, its token read from a file.
 
 A task created under an epic that has closed since is taken outside the epic, not by reviving
 the epic branch. The delivery guard reads the epic from the line in the task body, and for a closed
@@ -317,7 +317,8 @@ and the rollout moves the closed ones on to Deployed.
   pipeline `close-epic-tasks.yml`.** The host reads `Closes #…` only on a merge into the default
   branch; the pipeline reads the same line on a merge into an epic or a chain branch and closes
   the task with a comment naming the PR and the branch. So «closed» here means «merged into the
-  epic branch», and the epic's own progress grows as its tasks land.
+  epic branch», and the epic's own progress grows as its tasks land. The only task of its grill has no
+  epic: its PR goes into main, and the host closes it.
 - **Deployed is set by the rollout, its last step, not by a merge.** After a successful rollout
   `tools/board-deployed.mjs` moves every card in Done with a closed task — except a task of an
   epic still open: that one reached the epic branch, and main only with the epic. The dry run on

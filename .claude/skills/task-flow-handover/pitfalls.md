@@ -1,4 +1,4 @@
-<!-- rt-kit v0.40.0 · pitfalls/task-flow-handover.md · 42549a88ca5a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.1 · pitfalls/task-flow-handover.md · 42549a88ca5a · правится надстройкой, не здесь -->
 # Work conduct — closing a task — cold part
 
 This part of the rule `task-flow` keeps its statements hot and its explanation in the cold part

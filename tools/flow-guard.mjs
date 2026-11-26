@@ -1,4 +1,4 @@
-// rt-kit v0.40.0 · checks/flow-guard.mjs · 8bc0c725669f · правится надстройкой, не здесь
+// rt-kit v0.41.1 · checks/flow-guard.mjs · 460c983330c6 · правится надстройкой, не здесь
 /**
  * The guard of the course of work — the engine command `guard`, called by the hook `flow-step-guard.sh`
  * before Edit, Write, MultiEdit and a shell command. It refuses what would move the scenario by a
@@ -13,6 +13,7 @@
  */
 import { posix } from 'node:path';
 
+import { choosesSide, resolvesBlock } from './flow-merge.mjs';
 import { stepsOfPlan, stepsOfProgress } from './work-steps-lib.mjs';
 
 /** The word that defers a task in the epic plan; the words a row carried for a task handed to the owner. */
@@ -327,7 +328,7 @@ function judgeShell(command, ctx, level = 0, vars = new Map(), cwd = '.') {
         const scripted = (/^g?awk$/.test(name) && flag(/printf?[^;}]*>|system\s*\(|\|\s*"/)) || (/^g?sed$/.test(name) && flag(/(?:^|[;{}\n]|\/[gpiIme0-9]*)\s*w\s+\S/));
         const archive = args[args.findIndex((arg) => /^-?[a-zA-Z]*f$/.test(arg)) + 1] ?? '';
         const reads = READERS.has(name) ? !scripted && !(name === 'sort' && flag(/^-o|^--output/)) && !(name === 'find' && flag(/^-(?:delete|fprint)/))
-            : name === 'git' ? GIT_READERS.has(sub) || (sub === 'restore' && staged) || (sub === 'reset' && !flag(/^--(?:hard|merge|keep)$/))
+            : name === 'git' ? GIT_READERS.has(sub) || (sub === 'restore' && staged) || (sub === 'reset' && !flag(/^--(?:hard|merge|keep)$/)) || (['checkout', 'restore'].includes(sub) && flag(/^--(?:ours|theirs)$/) && !flag(/^-c$|^--(?:config-env|git-dir|work-tree|namespace)/) && ![...unit.words, ...vars.keys()].some((word) => /^GIT_\w*(?:=|$)/.test(word)) && choosesSide(gitPaths.map(at), ctx.merge))
             : ['cp', 'install', 'ln', 'rsync'].includes(name) ? into !== null && spared(into)
             : name === 'tar' || name === 'unzip' ? listing || (/c/.test(mode) && spared(archive))
             : ['prettier', 'eslint', 'markdownlint', 'markdownlint-cli2', 'iconv'].includes(name) ? !flag(/^(?:-w|--write|--fix\b.*|-o|--output\b.*)$/)
@@ -434,7 +435,7 @@ export function judgeCall(call, ctx) {
     if (path === progressPath) return judgeProgress(call, ctx, planPath);
     if (path.startsWith(`${ctx.plansDir}/`) && path.endsWith('.md')) return judgeDefer(call, ctx);
     if (path === ctx.overridePath) return judgeOverride(call, ctx);
-    if (ctx.protectedPaths.some((source) => new RegExp(source).test(path))) return judgeProtected(path, ctx, planPath);
+    if (ctx.protectedPaths.some((source) => new RegExp(source).test(path))) return resolvesBlock(call, ctx.merge, ctx.read?.(path)) ? null : judgeProtected(path, ctx, planPath);
     return null;
 }
 

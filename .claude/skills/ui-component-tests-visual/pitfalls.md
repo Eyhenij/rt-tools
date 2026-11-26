@@ -22,7 +22,7 @@ The comparison threshold is held at zero, so that a small edit does not pass sil
 
 The frames are taken by a browser raised in an image, and the showcase is built and served as
 files: `node tools/visual-gate.mjs ui-kit-v2`, a re-take
-by the same command with `--update`. A pointed match passes a piece of the story file path after the
+by the same command with `--update`, the stories a branch touched — with `--affected <base>`. A pointed match passes a piece of the story file path after the
 kit, a pointed re-take after the flag, not the frame name: a frame name matches no file, and the run reports no tests. The image
 is one on any machine, so the references are matched
 everywhere — on the developer's machine and in the pipeline alike. A re-take by any other road

@@ -187,6 +187,14 @@ Then the first approval leaves, and the approval of nothing is held
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`, `projects/agent-kit/tests/judge-replay.mjs`.
 
+### SC-AK-1951 — the menu hook lets the approval of a light plan leave without the roles
+
+Given a plan whose header calls it light, a tree that names `planRolesCommand`, and an answer `plan-red` refused for the missing role calls
+When the text of the menu hook is read
+Then the light plan needs the file and no role call, a plan of any other header still needs both, and the question asked again after the roles is not held
+
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
+
 ### SC-AK-1914 — an approval option that appends an action of its own is held, the plan of an epic is not
 
 Given a plan approval asked after the plan and both roles, whose option appends turning the check of marks off, and an approval of the plan of an epic

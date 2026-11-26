@@ -196,7 +196,7 @@ export class TestRtMenuItemMatrixComponent {
             name: 'согласие, значок Material',
             label: 'Принять',
             icon: null,
-            glyph: 'done',
+            glyph: 'check',
             danger: false,
             success: true,
             disabled: false,

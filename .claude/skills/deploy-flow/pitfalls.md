@@ -1,4 +1,4 @@
-<!-- rt-kit v0.40.0 · pitfalls/deploy-flow.github.md · 2a7131f1f7cf · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.1 · pitfalls/deploy-flow.github.md · 2a7131f1f7cf · правится надстройкой, не здесь -->
 # Rollout — how it works here — cold part
 
 What the rule `deploy-flow` handed over when cut to its statements, every article whole.

@@ -28,11 +28,13 @@
     "test:visual:v2:update-all": "STORYBOOK_URL=${STORYBOOK_URL:-http://localhost:6007} node tools/visual-snapshots-v2.mjs --update-all",
     "test:stories:v2": "STORYBOOK_URL=${STORYBOOK_URL:-http://localhost:6007} node tools/story-sweep-v2.mjs",
     "prettier": "npx prettier --write ./projects",
-    "check:all": "pnpm exec nx run-many -t lint typecheck test build verify --all --parallel && pnpm run lint:styles && pnpm run check:ngdoctor && pnpm run check:unused",
+    "check:all": "pnpm exec nx run-many -t lint typecheck test build verify --all --parallel && pnpm run lint:styles && pnpm run check:ngdoctor && pnpm run check:unused && pnpm run check:kit-weight",
     "check:affected": "pnpm exec nx affected -t lint typecheck test build verify --parallel && pnpm run lint:styles",
     "check:specs": "node tools/check-specs.mjs",
     "check:unused": "knip --no-progress",
     "check:ngdoctor": "node tools/check-ngdoctor.mjs",
+    "check:kit-weight": "pnpm exec nx build @rt-tools/ui-kit-v2 && pnpm run build:tokens-v2 && node tools/check-kit-weight.mjs",
+    "session:time": "node tools/session-time.mjs",
     "ngdoctor": "angular-doctor",
     "spec:next-id": "node tools/spec-next-id.mjs",
     "specs:for": "node tools/specs-for.mjs",
@@ -76,6 +78,7 @@
     "check:state-next": "node tools/check-state-next.mjs",
     "check:archive": "node tools/check-archive-age.mjs",
     "archive:prune": "node tools/archive-prune.mjs",
+    "task:archive": "node tools/archive-record.mjs",
     "task:new": "node tools/task-new.mjs",
     "task:move": "node tools/board.mjs move",
     "epic:table": "node tools/epic-table.mjs",
@@ -113,7 +116,7 @@
     "postinstall": "rimraf .angular .nx && pnpm run prisma:generate",
     "preinstall": "npx only-allow pnpm",
     "build:tokens-source": "node tools/build-tokens-v2.mjs",
-    "build:tokens-v2": "sass --no-source-map --load-path=projects/ui-kit-v2/src/styles projects/ui-kit-v2/src/styles/tokens.package.scss dist/ui-kit-v2/styles/tokens.css && sass --no-source-map --load-path=projects/ui-kit-v2/src/styles projects/ui-kit-v2/src/styles/tokens.coexist.scss dist/ui-kit-v2/styles/tokens.coexist.css"
+    "build:tokens-v2": "sass --no-source-map --load-path=projects/ui-kit-v2/src/styles projects/ui-kit-v2/src/styles/tokens.package.scss dist/ui-kit-v2/styles/tokens.css && sass --no-source-map --load-path=projects/ui-kit-v2/src/styles projects/ui-kit-v2/src/styles/tokens.coexist.scss dist/ui-kit-v2/styles/tokens.coexist.css && node tools/build-tokens-split.mjs"
   },
   "private": true,
   "repository": {

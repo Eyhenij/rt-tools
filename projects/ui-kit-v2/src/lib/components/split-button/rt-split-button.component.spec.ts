@@ -152,7 +152,7 @@ describe('RtSplitButtonComponent', (): void => {
         expect(el(fixture, '.rt-button--loading')).not.toBeNull();
     });
 
-    it('SC-UKV-559 — пункт меню с именем Material рисует его значок', (): void => {
+    it('SC-UKV-559 — пункт меню с именем вне набора кита рисует лигатуру', (): void => {
         const fixture: ComponentFixture<RtSplitButtonComponent> = setup({
             menuItems: [{ value: 'pet', label: 'Питомцы', icon: 'pets' }],
         });

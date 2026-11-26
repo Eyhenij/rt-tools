@@ -1,4 +1,4 @@
-<!-- rt-kit v0.40.0 · pitfalls/git-workflow-stack.md · 588193f36ca7 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.1 · pitfalls/git-workflow-stack.md · 588193f36ca7 · правится надстройкой, не здесь -->
 # A stack of PRs from one base — cold part
 
 The pattern `git-workflow-stack` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.

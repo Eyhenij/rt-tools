@@ -43,8 +43,8 @@ function isOneOf(name: string, names: readonly string[]): boolean {
     return names.includes(name);
 }
 
-function matchPrefixOrExact(prefixes: readonly string[], exact: readonly string[]): (name: string) => boolean {
-    return (name: string): boolean => startsWithAny(name, prefixes) || isOneOf(name, exact);
+function matchPrefixOrExact(name: string, prefixes: readonly string[], exact: readonly string[]): boolean {
+    return startsWithAny(name, prefixes) || isOneOf(name, exact);
 }
 
 /**
@@ -52,6 +52,9 @@ function matchPrefixOrExact(prefixes: readonly string[], exact: readonly string[
  * `Custom` — единственная категория по строгому префиксу `ico-` и проверяется первой,
  * чтобы исключить конфликты с другими prefix-based категориями.
  * `Misc` — fallback в {@link categoryOf}, отдельным правилом не описывается.
+ *
+ * Список не зовёт функций при объявлении: сборка приложения такие вызовы не выбрасывает,
+ * и список приезжал бы в каждое приложение со значком.
  */
 export const ICON_CATEGORY_RULES: readonly IIconCategoryRule[] = [
     // Знаки соцсетей — цветные, со своей заливкой в файле; в каталоге они стоят своим рядом,
@@ -60,31 +63,34 @@ export const ICON_CATEGORY_RULES: readonly IIconCategoryRule[] = [
     { category: 'Custom', match: (n: string): boolean => n.startsWith('ico-') },
     {
         category: 'Navigation',
-        match: matchPrefixOrExact(['arrow', 'arrows', 'angle', 'chevron', 'directions'], []),
+        match: (n: string): boolean => matchPrefixOrExact(n, ['arrow', 'arrows', 'angle', 'chevron', 'directions'], []),
     },
     {
         category: 'Alignment & Sorting',
-        match: matchPrefixOrExact(['align', 'sort', 'bars', 'ellipsis', 'sliders', 'filter', 'th'], []),
+        match: (n: string): boolean => matchPrefixOrExact(n, ['align', 'sort', 'bars', 'ellipsis', 'sliders', 'filter', 'th'], []),
     },
     {
         category: 'Status',
-        match: matchPrefixOrExact(['check', 'times', 'ban', 'exclamation', 'info', 'eye', 'lock', 'unlock', 'shield'], ['spinner', 'stop']),
+        match: (n: string): boolean =>
+            matchPrefixOrExact(n, ['check', 'times', 'ban', 'exclamation', 'info', 'eye', 'lock', 'unlock', 'shield'], ['spinner', 'stop']),
     },
     {
         category: 'Time & Calendar',
-        match: matchPrefixOrExact(['alarm', 'calendar'], ['clock']),
+        match: (n: string): boolean => matchPrefixOrExact(n, ['alarm', 'calendar'], ['clock']),
     },
     {
         category: 'Communication',
-        match: matchPrefixOrExact(['comment', 'share'], ['bell', 'bot', 'telegram', 'at', 'email', 'send', 'phone', 'mobile']),
+        match: (n: string): boolean =>
+            matchPrefixOrExact(n, ['comment', 'share'], ['bell', 'bot', 'telegram', 'at', 'email', 'send', 'phone', 'mobile']),
     },
     {
         category: 'Documents',
-        match: matchPrefixOrExact(['attach', 'file', 'folder', 'bookmark'], ['book', 'copy', 'clone', 'tag', 'tags']),
+        match: (n: string): boolean =>
+            matchPrefixOrExact(n, ['attach', 'file', 'folder', 'bookmark'], ['book', 'copy', 'clone', 'tag', 'tags']),
     },
     {
         category: 'People',
-        match: matchPrefixOrExact(['user'], ['users', 'id-card']),
+        match: (n: string): boolean => matchPrefixOrExact(n, ['user'], ['users', 'id-card']),
     },
     {
         category: 'Commerce',

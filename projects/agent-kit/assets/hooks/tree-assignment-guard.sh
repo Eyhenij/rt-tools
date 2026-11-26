@@ -88,6 +88,50 @@ kind="$(printf '%s' "$unmet" | jq -r '.kind // empty' 2>/dev/null)"
 said="$(printf '%s' "$unmet" | jq -r '.text // empty' 2>/dev/null)"
 [ -n "$said" ] || exit 0
 
+# The only task of a grill has no number before its card, so the owner can write no row for it yet: a
+# copy with no row creates it, and its row is judged by the taking of the branch. A dash is an answer of
+# the owner, and it holds.
+#
+# The call is read as the shell reads it: a continued line is one line, a quoted text, a here-document and
+# a comment are no flag and no call, a redirect ends nothing. A shell named with `-c` and a `$(…)` inside
+# double quotes are opened. The call must be the only one that takes work: its neighbour would go past the
+# table with it.
+creates_single() {
+    command -v perl >/dev/null 2>&1 || return 1
+    printf '%s' "$cmd" | perl -0777 -ne '
+        my $paren = qr/(\((?:[^()"\x27\\]++|\\.|\x27[^\x27]*\x27|"(?:[^"\\]|\\.)*"|(?-1))*\))/s;
+        sub shell {
+            my $t = shift;
+            $t =~ s/\\\n/ /g;
+            1 while $t =~ s/<<-?[ \t]*[\x27"\\]?([^\s\x27"\\<>|;&()]+)[\x27"]?([^\n]*)\n(?:.*?\n)?[ \t]*\1[ \t]*(?=\n|\z)/$2/s;
+            my ($out, $opened) = ("", "");
+            while ($t =~ /\G(?:
+                  (\b(?:ba|z|da|k)?sh(?:\s+-\w+)*?\s+-\w*c\s+)(?:\x27([^\x27]*)\x27|"((?:[^"\\]|\\.)*)")
+                | \x27[^\x27]*\x27
+                | "((?:[^"\\\$]++|\\.|\$$paren|\$)*)"
+                | \\(?s:.)
+                | (?<![^\s;&|(])\#[^\n]*
+                | ((?s:.))
+                )/gcx) {
+                if (defined $1) { $opened .= "\n" . shell(defined $2 ? $2 : $3); $out .= "_"; }
+                elsif (defined $4) { my $in = $4; my $p = $paren; while ($in =~ /\$($p)/g) { $opened .= "\n" . shell(substr($1, 1, -1)); } $out .= "_"; }
+                elsif (defined $6) { $out .= $6; }
+                elsif (substr($t, $-[0], 1) ne "#") { $out .= "_"; }
+            }
+            return $out . $opened;
+        }
+        my $all = shell($_);
+        $all =~ s/\d*[<>]+&?\d*-?/ /g;
+        my $new = qr/(?:\brun\s+(?:-\S+\s+)*|\b(?:pnpm|yarn)\s+)task:new\b|\bnode\s+(?:-\S+\s+)*\S*task-new\.mjs\b/;
+        my @taken = $all =~ /$new/g;
+        exit 1 if @taken != 1 || $all =~ /task:move|board\.mjs\s+move/;
+        exit($all =~ /$new[^|;&\n]*?\s--single(?![\w=-])/ ? 0 : 1);
+    ' 2>/dev/null
+}
+case "$kind" in
+    no_row | unnamed) creates_single && exit 0 ;;
+esac
+
 # A foreign epic is a class of its own: the copy is assigned, and the work belongs elsewhere.
 if [ "$kind" = foreign ]; then
     action=task_new_other_epic

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.40.0 · hooks/ask-judge.md · 5a141bf9d3f0 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.1 · hooks/ask-judge.md · 6e4559ab564d · правится надстройкой, не здесь -->
 # Ask judge
 <!-- rt-hook-agent event=PreToolUse pattern=AskUserQuestion limit=60 -->
 
@@ -40,7 +40,11 @@ after any refusal of another check. Avoid both.
   when two things hold. The plan lies in `<cwd>/docs/tasks/<branch>/plan.md`. After that file was
   last written, the transcript holds calls of the roles `product-strategist` and `goal-critic`
   that name this plan or its task. The plan names the change, the roles read it, the owner
-  decides it, and the option only records the decision.
+  decides it, and the option only records the decision. The second thing is not asked of a plan
+  with a line `**Path:** light` or `**Путь:** лёгкий` in a tree whose `<cwd>/.claude/rt-kit/checks.json`
+  names `planRolesCommand`: the engine asks that command, and a plan it takes for a full one gets no
+  approval without the roles. An answer `plan-red` refused for the missing calls is no approval yet:
+  the question asked again after them leaves.
 - The question follows a refusal of another check and names what was done meanwhile or why nothing
   could be done. A refusal elsewhere is never a reason to hold the question by itself. One that names
   a ready move holds a menu that leaves the move undone by the last item of the hold list.
@@ -60,7 +64,8 @@ after any refusal of another check. Avoid both.
 - The question offers to walk around a check or a rule.
 - An option approves the plan of a task, not the plan of an epic in `<cwd>/docs/plans/`.
   Without the plan or without both roles the option is held: an approval of nothing is a lift.
-  Name what is missing — the plan file or the role calls.
+  The light plan of the list above needs no roles, only the file. Name what is missing — the plan
+  file or the role calls.
 - An option of the question removes, disables or weakens a hook or a check: switches it off, drops
   a case from it, lowers its threshold or adds an exception to it. Hold it in any menu, the menu of
   the exit check included. An owner who picks such an option removes the check with their own hand,

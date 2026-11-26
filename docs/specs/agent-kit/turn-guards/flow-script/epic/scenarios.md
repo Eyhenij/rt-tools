@@ -1,7 +1,32 @@
 # Scenarios: the end of an epic
 
-The scenarios of exits 11, 12 and 13 of the engine. They carry the prefix `SC-AK` of the domain and
-keep the numbers they had in `docs/specs/agent-kit/turn-guards/flow-script/`.
+The scenarios of exits 11, 12 and 13 of the engine and of exit 2 outside an epic. They carry the prefix
+`SC-AK` of the domain, and the moved ones keep the numbers they had in
+`docs/specs/agent-kit/turn-guards/flow-script/`.
+
+### SC-AK-1984 — exit 2 is met outside an epic by the line of the card
+
+Given a card of the branch without an epic and with a line of work outside one, of any words
+When exit 2 is measured
+Then it is met; without the line, or with an epic named in the card, it is not, whatever was kept
+
+Given a silent hosting
+When exit 2 is measured
+Then the answer kept for the branch stands, and without one the hosting is named silent
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1985 — exit 2 is met outside an epic by the only draft
+
+Given a branch without a number and one draft that counts one task, by either line
+When exit 2 is measured
+Then it is met; a count of two, no line, two lines, two drafts or an open epic of the copy do not meet it
+
+Given the row of the copy names a closed epic or a plain task
+When the same exit is measured
+Then it is met
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 
 ### SC-AK-1388 — exit 11 is met by the branch of the next unblocked task
 

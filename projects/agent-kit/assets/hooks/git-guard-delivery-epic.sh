@@ -8,7 +8,7 @@
 # the signature, the folder and the work queue it would take the guard past the file length limit,
 # and the guard cannot be split by event: it is one whole, and its command parsing is shared.
 #
-# WHAT IS HERE. Two calls, both called from the delivery guard, where `fault`, `main_branch` and
+# WHAT IS HERE. The calls below, all called from the delivery guard, where `fault`, `main_branch` and
 # the profile calls are already declared. The helper reads neither the input nor the settings.
 #
 # The assignment of an epic to this working copy is read next to this: it judges the same subject
@@ -113,6 +113,24 @@ rt_epic_base() {
     fi
 
     return 0
+}
+
+# The base of the branch of the only task of a grill: the main branch, and nothing over it.
+#
+# Two such tasks in a row would otherwise stand one on the other with no epic above them: the second
+# request would carry the commits of the first. The branch of the task itself is a base like any other.
+#
+# Arguments: the state of the task, its number, the ref the branch grows from, the name of the new branch.
+rt_single_base() {
+    [ "$(printf '%s' "$1" | jq -r '.single // false' 2>/dev/null)" = true ] || return 0
+    git rev-parse --verify --quiet "origin/${main_branch}" >/dev/null 2>&1 || return 0
+    _over="$(git rev-list --count "origin/${main_branch}..$3" 2>/dev/null)"
+    [ "${_over:-0}" -gt 0 ] 2>/dev/null || return 0
+    # The branch behind the ref, whatever its spelling; a hash and a detached tip have none.
+    _name="$(git rev-parse --abbrev-ref "$3" 2>/dev/null)"
+    _name="${_name#origin/}"
+    [ "$(rt_task_branch_number "$_name" 2>/dev/null)" = "$2" ] && return 0
+    unmet_class branch_create_stale_base "the only task of its grill grows from the main branch, and the base «${_name:-$3}» carries ${_over} commits over it: the request would take someone else's work with it. A task that needs those commits is the second one of a series, and a series is an epic: npm run task:new -- --epic. Otherwise take it from the main branch. Take a fresh base: git fetch origin && git checkout -b $4 origin/${main_branch}."
 }
 
 # The base of a request about a task of an epic.

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.40.0 · pitfalls/task-flow-archive.md · 554800d4e03f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.1 · pitfalls/task-flow-archive.md · 60b2ee3f31a7 · правится надстройкой, не здесь -->
 # Taking the task folder apart and the rules review of the work — cold part
 
 The pattern `task-flow-archive` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.
@@ -267,3 +267,9 @@ indistinguishable from a sent one.
   of the work.
 - **The archive is not updated after the rollout.** What went there describes the day of the move,
   and it is edited only together with an admission that it described it wrongly.
+
+## The record in this tree, whole
+
+One's own folder is taken apart by `npm run task:archive`: the copying of the grill and the `rm -r` shown
+above are not used for it, and the command refuses a record already written by hand. What it takes and
+what it refuses is held by the rule `archive-record`. The copying above is for someone else's folder.

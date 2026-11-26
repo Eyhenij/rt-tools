@@ -4,7 +4,7 @@ import { ComponentFixture } from '@angular/core/testing';
 import { createRtFixture, el, hostClasses } from '../../../testing/rt-kit-testing';
 import { IRtIconButton } from '../icon-button/rt-icon-button.model';
 import { IRtMenu } from './rt-menu.model';
-import { RtMenuItemComponent } from './rt-menu-item.component';
+import { RtMenuItemComponent, rtPreloadMenuConfirmDialog } from './rt-menu-item.component';
 import { RtMenuContentDirective } from './rt-menu-content.directive';
 import { RtMenuComponent } from './rt-menu.component';
 
@@ -63,6 +63,10 @@ function openMenu(fixture: ComponentFixture<MenuHostComponent>): void {
 }
 
 describe('RtMenuComponent', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadMenuConfirmDialog();
+    });
+
     it('размер кнопки-триггера задаёт вход triggerSize, по умолчанию md', (): void => {
         const fixture: ComponentFixture<MenuHostComponent> = setup();
         const control: () => HTMLElement | undefined = (): HTMLElement | undefined =>
@@ -350,6 +354,10 @@ describe('RtMenuComponent', (): void => {
 });
 
 describe('RtMenuItemComponent', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadMenuConfirmDialog();
+    });
+
     function setupItem(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtMenuItemComponent> {
         return createRtFixture(RtMenuItemComponent, inputs);
     }
@@ -376,10 +384,10 @@ describe('RtMenuItemComponent', (): void => {
         expect(hostClasses(setupItem({ label: 'Принять', success: true }))).toContain('rt-menu-item--success');
     });
 
-    it('имя значка Material рисуется парой из набора кита, а своя иконка сильнее', (): void => {
-        const byGlyph: ComponentFixture<RtMenuItemComponent> = setupItem({ label: 'Принять', glyph: 'done' });
-        const byIcon: ComponentFixture<RtMenuItemComponent> = setupItem({ label: 'Принять', glyph: 'done', icon: 'ico-eye' });
-        const inactive: ComponentFixture<RtMenuItemComponent> = setupItem({ label: 'Сделать неактивным', glyph: 'person_off' });
+    it('имя кита на glyph пункта рисуется рисунком, а своя иконка сильнее', (): void => {
+        const byGlyph: ComponentFixture<RtMenuItemComponent> = setupItem({ label: 'Принять', glyph: 'check' });
+        const byIcon: ComponentFixture<RtMenuItemComponent> = setupItem({ label: 'Принять', glyph: 'check', icon: 'ico-eye' });
+        const inactive: ComponentFixture<RtMenuItemComponent> = setupItem({ label: 'Сделать неактивным', glyph: 'user-off' });
         const unknown: ComponentFixture<RtMenuItemComponent> = setupItem({ label: 'Принять', glyph: 'no_such_glyph' });
 
         const iconRef: (fixture: ComponentFixture<RtMenuItemComponent>) => string | null | undefined = (

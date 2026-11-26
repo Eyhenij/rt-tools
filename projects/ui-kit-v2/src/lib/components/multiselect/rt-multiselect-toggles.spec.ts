@@ -8,6 +8,7 @@ import { IRtSelect } from '../select/rt-select.model';
 import { RtMultiselectExtraDirective } from './rt-multiselect-extra.directive';
 import { RtMultiselectComponent } from './rt-multiselect.component';
 import { rtMultiselectAllValues, rtMultiselectSummary } from './rt-multiselect-toggles.logic';
+import { rtPreloadPopoverSheet } from '../popover/rt-popover-sheet.helper';
 
 const OPTIONS: ReadonlyArray<IRtSelect.Option<string>> = [
     { label: 'Продукты', value: 'food' },
@@ -96,6 +97,10 @@ async function switchedOn<T>(fixture: ComponentFixture<T>): Promise<number> {
 }
 
 describe('Мультиселект с переключателями', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+    });
+
     afterEach((): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });

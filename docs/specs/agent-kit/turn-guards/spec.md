@@ -133,7 +133,8 @@ exits asks the engine of the task flow for a verdict: `docs/specs/agent-kit/turn
 
 - **Whether a question to the owner may leave is judged by a model.** The package lays out the text
   of an agent hook for the question tool; a refusal of another check is never a reason to hold the
-  question, and a held one starts with `BLOCKED by ask-judge:`.
+  question, and a held one starts with `BLOCKED by ask-judge:`. The approval of a plan leaves after
+  the calls of the roles the plan needs: a light plan of a tree that names such plans needs none.
 
 ## What is out of scope
 

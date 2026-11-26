@@ -8,7 +8,8 @@ and the rollout moves the closed ones on to Deployed.
   pipeline `close-epic-tasks.yml`.** The host reads `Closes #…` only on a merge into the default
   branch; the pipeline reads the same line on a merge into an epic or a chain branch and closes
   the task with a comment naming the PR and the branch. So «closed» here means «merged into the
-  epic branch», and the epic's own progress grows as its tasks land.
+  epic branch», and the epic's own progress grows as its tasks land. The only task of its grill has no
+  epic: its PR goes into main, and the host closes it.
 - **Deployed is set by the rollout, its last step, not by a merge.** After a successful rollout
   `tools/board-deployed.mjs` moves every card in Done with a closed task — except a task of an
   epic still open: that one reached the epic branch, and main only with the epic. The dry run on
