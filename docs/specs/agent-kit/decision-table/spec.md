@@ -141,6 +141,7 @@ a hook with a decision, and marks a context hook and a git-side hook as helpers.
 | `main-run-context.sh` | SessionStart startup\|resume\|compact\|clear | guard·ctx | main_run_state | SessionStart | context-only |
 | `metric-marks.sh` | — | helper | — | — | — |
 | `metric-send-start.sh` | SessionStart / Stop / SessionEnd | helper (no decision) | — | — | — |
+| `monitor-stream-guard.sh` | PreToolUse Monitor | guard | monitor_stream (engine `task-flow-script.mjs monitor-call`) | Monitor:line on every step of own background | deny |
 | `observe.sh` | — | helper | — | — | — |
 | `override-write-guard.sh` | PreToolUse Write\|Bash\|webstorm | guard | override_exists_nonempty | Write:override, Bash:overwrite (>, tee, cp, mv) | deny |
 | `owner-corrections.sh` | UserPromptSubmit | helper (no decision) | — | — | — |

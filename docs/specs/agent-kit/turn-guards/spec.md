@@ -61,6 +61,22 @@ exits asks the engine of the task flow for a verdict: `docs/specs/agent-kit/turn
   keep such a turn from starting: it shows the owner a line for every turn it keeps, so the entry of
   the turn names `TaskStop <id>` of own background instead, once per task and stop. A turn a notice
   opened ends with no words.
+- **A `Monitor` that prints a line on every step of a live own background task is refused.** The end of
+  that task comes as a notice by itself, and every line of the monitor wakes the turn — after the
+  owner's stop too: on 24 November 2026 such lines woke 14 turns. A line on every step is read from the
+  command: `tail` with a follow flag with no one-line stop after it in its pipeline, also behind
+  `timeout`, `stdbuf`, `sh -c` or `<(…)`, or a print in a loop body whose round does not leave the loop
+  by an unconditional `break`, `exit` or `return` or one chained to it by `&&`; `2>` leaves the print
+  in the stream, `>`, `1>` and `&>` take it out. The condition of `until` prints once. The
+  task is followed when the command names its output file or a file its command writes by `>`, `>>`,
+  `2>` or `tee`, after the assignments of both commands, `TMPDIR`, `$PWD` and `$(basename "$PWD")` are
+  put in. Both paths are compared whole, in one form: a relative one from the working directory or a
+  leading `cd`, without `/private` and `/./`. A word after `>` that is no path, a heredoc body and
+  text in single quotes are not targets. A Bash call in the background with no answer yet counts; an
+  agent does not. A wait that prints one line, a poll of a PR and a timer pass. A path built
+  by any other substitution, or relative after a `cd` that is not the first command, is not seen, and
+  such a monitor passes; so does a monitor of a subagent, whose record has no answer of the host for
+  its background, and a `for ((…))` loop.
 - **A role switched off by the tree does not hold the guard at it.** The tree names the switched-off
   roles by a list in its setting, and the guard at such a role exits silently. What is switched off is
   the mandatory call, not the role itself: its file stays laid out, and it can be called at any
