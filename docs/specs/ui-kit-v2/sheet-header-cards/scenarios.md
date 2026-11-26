@@ -107,7 +107,9 @@ at the next opening; the focus on a card, a checkbox, a radio button, a button o
 field does not start the watch: nobody types there
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`; which node is
-typed in — by `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.logic.spec.ts`.
+typed in — by `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.logic.spec.ts`;
+that nothing of it stays at the next opening — by
+`projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-focus.spec.ts`.
 
 ### SC-UKV-1918 — the filters sheet opens by the height of its fields, the apply button stands in its header
 

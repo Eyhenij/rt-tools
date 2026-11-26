@@ -1,24 +1,38 @@
+import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NgModel } from '@angular/forms';
+import { By } from '@angular/platform-browser';
 
 import { STORY_TRIGGER_ATTRIBUTE } from '../../../../../showcase/story-overlay';
 import { provideRtKitTesting } from '../../../../../testing/rt-kit-testing';
+import { RtDatePickerComponent } from '../../rt-date-picker.component';
 import { TestRtDateSheetComponent } from './test-rt-date-sheet.component';
 
 type TKind = TestRtDateSheetComponent['kind'];
 
-/** Рисует обёртку кадра с заданным видом поля и отдаёт её корень. */
-function render(kind: TKind): HTMLElement {
+/** Что кадр поставил в рамку: поле с признаком кнопки истории, его подпись и модель формы. */
+interface IFrame {
+    readonly field: DebugElement;
+    readonly label: string;
+    readonly model: unknown;
+}
+
+/** Рисует обёртку кадра с заданным видом поля и отдаёт поле, найденное по признаку кнопки истории. */
+async function render(kind: TKind): Promise<IFrame> {
     TestBed.configureTestingModule({ providers: [...provideRtKitTesting()] });
     const fixture: ComponentFixture<TestRtDateSheetComponent> = TestBed.createComponent(TestRtDateSheetComponent);
     fixture.componentInstance.kind = kind;
     fixture.detectChanges();
+    await fixture.whenStable();
 
-    return fixture.nativeElement as HTMLElement;
+    const field: DebugElement = fixture.debugElement.query(By.css(`[data-story-trigger="${STORY_TRIGGER_ATTRIBUTE}"]`));
+    const wrapper: Element | null = (field.nativeElement as HTMLElement).closest('rt-field');
+
+    return { field, label: wrapper?.textContent ?? '', model: field.injector.get(NgModel).model };
 }
 
-/** Поле кадра, по которому история находит кнопку, открывающую шторку. */
-function trigger(root: HTMLElement): Element | null {
-    return root.querySelector(`[data-story-trigger="${STORY_TRIGGER_ATTRIBUTE}"]`);
+function picker(frame: IFrame): RtDatePickerComponent {
+    return frame.field.injector.get(RtDatePickerComponent);
 }
 
 describe('Обёртка витрины шторки даты', (): void => {
@@ -26,31 +40,37 @@ describe('Обёртка витрины шторки даты', (): void => {
         TestBed.resetTestingModule();
     });
 
-    it('SC-UKV-1919 — кадр времени ставит поле времени с признаком кнопки истории', (): void => {
-        const root: HTMLElement = render('time');
+    it('SC-UKV-1919 — кадр времени ставит в подпись «Время заезда» поле времени со значением', async (): Promise<void> => {
+        const frame: IFrame = await render('time');
 
-        expect(trigger(root)?.tagName.toLowerCase()).toBe('rt-date-picker');
-        expect(root.textContent).toContain('Время заезда');
+        expect(frame.label).toContain('Время заезда');
+        expect(picker(frame).type()).toBe('time');
+        expect(picker(frame).timeStart()).toBe('now');
+        expect(frame.model).toBe('09:30');
     });
 
-    it('SC-UKV-1919 — кадр времени с полуночи ставит пустое поле времени', (): void => {
-        const root: HTMLElement = render('midnight');
+    it('SC-UKV-1919 — кадр времени с полуночи ставит пустое поле времени, барабан которого начинает с полуночи', async (): Promise<void> => {
+        const frame: IFrame = await render('midnight');
 
-        expect(trigger(root)?.tagName.toLowerCase()).toBe('rt-date-picker');
-        expect(root.textContent).toContain('Время выезда');
+        expect(frame.label).toContain('Время выезда');
+        expect(picker(frame).type()).toBe('time');
+        expect(picker(frame).timeStart()).toBe('midnight');
+        expect(frame.model).toBe('');
     });
 
-    it('SC-UKV-1919 — кадр даты со временем ставит поле заезда', (): void => {
-        const root: HTMLElement = render('datetime-local');
+    it('SC-UKV-1919 — кадр даты со временем ставит в подпись «Заезд» поле даты со временем', async (): Promise<void> => {
+        const frame: IFrame = await render('datetime-local');
 
-        expect(trigger(root)?.tagName.toLowerCase()).toBe('rt-date-picker');
-        expect(root.textContent).toContain('Заезд');
+        expect(frame.label).toContain('Заезд');
+        expect(picker(frame).type()).toBe('datetime-local');
+        expect(frame.model).toBe('2026-09-27T09:30');
     });
 
-    it('SC-UKV-1919 — кадр периода ставит поле периода', (): void => {
-        const root: HTMLElement = render('range');
+    it('SC-UKV-1919 — кадр периода ставит в подпись «Период» поле периода', async (): Promise<void> => {
+        const frame: IFrame = await render('range');
 
-        expect(trigger(root)?.tagName.toLowerCase()).toBe('rt-date-range');
-        expect(root.textContent).toContain('Период');
+        expect(frame.label).toContain('Период');
+        expect(frame.field.name).toBe('rt-date-range');
+        expect(frame.model).toEqual({ start: '2026-09-21', end: '2026-09-27' });
     });
 });

@@ -55,6 +55,13 @@
   decision. Taken into the epic: before the epic PR the main branch is merged in again —
   `projects/ui-kit-v2/CHANGELOG.md` conflicts with the 0.53.0 release, `[Unreleased]` stays above it; the
   local epic branch is pushed before the PR of this task, otherwise that PR shows the main branch's files.
+- **Round two of the review: qa-engineer, goal-critic, product-strategist** — fixed: the wrapper spec told
+  the three date kinds apart by the tag alone — it now reads `type()`, `timeStart()` and the form model of
+  each frame and the label of its `rt-field`, 4 of 4; the Covered line of SC-UKV-1917 now names
+  `rt-bottom-sheet-focus.spec.ts`. Written off: `prettier --check` flags the plan — a plan is not edited
+  after its commit. product-strategist: the push set without the weight steps is green — 27 node steps,
+  the kit suite 4740 of 4740, Angular Doctor, knip; `tools/tests/run.sh` is red only by
+  `check-kit-weight-live`, which waits for the weight decision.
 - **Цена:** нет
 - **Отменено:** нет
 
