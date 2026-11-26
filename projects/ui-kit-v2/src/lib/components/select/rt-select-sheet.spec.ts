@@ -393,7 +393,7 @@ describe('Карточки выбора селекта в шторке (вход
         expect(document.activeElement).toBe(qa(fixture, 'select-trigger')?.nativeElement);
     });
 
-    describe('SC-UKV-1783 — высота под клавиатуру', (): void => {
+    describe('SC-UKV-1917 — высота под клавиатуру', (): void => {
         /** Видимая область окна, которую двигает экранная клавиатура. */
         let viewport: EventTarget & { height: number; offsetTop: number; scale: number };
 
@@ -411,7 +411,7 @@ describe('Карточки выбора селекта в шторке (вход
             viewport.dispatchEvent(new Event('resize'));
         }
 
-        it('SC-UKV-1783 — шторка с поиском во всю высоту только пока показана клавиатура', (): void => {
+        it('SC-UKV-1917 — шторка с поиском во всю высоту только пока показана клавиатура', (): void => {
             const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { filter: true });
             press(fixture, 'select-trigger');
             const panel: HTMLElement = document.querySelector('[qa-dataid="bottom-sheet-panel"]') as HTMLElement;
@@ -434,7 +434,7 @@ describe('Карточки выбора селекта в шторке (вход
             expect(panel.classList).not.toContain('rt-bottom-sheet__panel--typing');
         });
 
-        it('SC-UKV-1783 — фокус на карточке слежение за клавиатурой не включает: в неё не печатают', (): void => {
+        it('SC-UKV-1917 — фокус на карточке слежение за клавиатурой не включает: в неё не печатают', (): void => {
             const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { filter: true });
             press(fixture, 'select-trigger');
             const panel: HTMLElement = document.querySelector('[qa-dataid="bottom-sheet-panel"]') as HTMLElement;

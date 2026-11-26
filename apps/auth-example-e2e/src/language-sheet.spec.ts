@@ -8,7 +8,7 @@ const PHONE: { width: number; height: number } = { width: 390, height: 844 };
 test.describe('the language list on a phone', () => {
     test.use({ viewport: PHONE });
 
-    test('SC-AUTH-121 — on a phone the language list is a bottom sheet that closes by its close button', async ({ page }) => {
+    test('SC-AUTH-123 — on a phone the language list is a bottom sheet that closes by its close button', async ({ page }) => {
         await page.goto('/');
         await expectEntryScreen(page);
 

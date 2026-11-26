@@ -72,7 +72,7 @@ for the autocomplete by `projects/ui-kit-v2/src/lib/components/autocomplete/rt-a
 for the dynamic selector by `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-sheet.spec.ts`,
 for the table column filter by `projects/ui-kit-v2/src/lib/components/table/filter-header/rt-table-filter-header.component.spec.ts`.
 
-### SC-UKV-1780 — the dynamic selector draws cards in the sheet
+### SC-UKV-1914 — the dynamic selector draws cards in the sheet
 
 Given a dynamic selector open in the sheet
 When its list is shown
@@ -80,7 +80,7 @@ Then every option is a card with the mark on the right
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-sheet.spec.ts`.
 
-### SC-UKV-1781 — the hints of an autocomplete are cards in the sheet
+### SC-UKV-1915 — the hints of an autocomplete are cards in the sheet
 
 Given an autocomplete open in the sheet
 When its hints are shown
@@ -88,7 +88,7 @@ Then every hint is a card
 
 Covered: `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-sheet.spec.ts`.
 
-### SC-UKV-1782 — the comparison kinds of a column filter are cards in the sheet
+### SC-UKV-1916 — the comparison kinds of a column filter are cards in the sheet
 
 Given a table column filter on a phone
 When the comparison kind is pressed
@@ -96,7 +96,7 @@ Then the kinds are cards with the kit radio button, and the current one is check
 
 Covered: `projects/ui-kit-v2/src/lib/components/table/filter-header/rt-table-filter-header.component.spec.ts`.
 
-### SC-UKV-1783 — a sheet with a search takes the full height only while the keyboard is shown
+### SC-UKV-1917 — a sheet with a search takes the full height only while the keyboard is shown
 
 Given a select with a search open in the sheet by the height of its content
 When the search takes the focus
@@ -109,7 +109,7 @@ field does not start the watch: nobody types there
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`; which node is
 typed in — by `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.logic.spec.ts`.
 
-### SC-UKV-1784 — the filters sheet opens by the height of its fields, the apply button stands in its header
+### SC-UKV-1918 — the filters sheet opens by the height of its fields, the apply button stands in its header
 
 Given the page filters on a phone
 When they are opened

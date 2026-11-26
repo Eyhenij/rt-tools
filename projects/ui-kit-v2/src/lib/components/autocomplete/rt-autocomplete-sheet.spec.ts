@@ -169,7 +169,7 @@ describe('Автокомплит в нижней шторке', (): void => {
         expect(document.querySelectorAll('[qa-dataid="autocomplete-option"]').length).toBe(3);
     });
 
-    it('SC-UKV-1781 — подсказки в шторке стоят карточками', (): void => {
+    it('SC-UKV-1915 — подсказки в шторке стоят карточками', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup();
 
         tapField(fixture);

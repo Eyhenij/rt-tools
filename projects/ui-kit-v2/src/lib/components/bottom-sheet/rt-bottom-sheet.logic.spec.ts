@@ -9,14 +9,14 @@ describe('isTypingTarget', () => {
         return node;
     }
 
-    it('SC-UKV-1783 — печатают в текстовое поле, в поле поиска и в многострочное поле', () => {
+    it('SC-UKV-1917 — печатают в текстовое поле, в поле поиска и в многострочное поле', () => {
         expect(isTypingTarget(input('text'))).toBe(true);
         expect(isTypingTarget(input('search'))).toBe(true);
         expect(isTypingTarget(input('number'))).toBe(true);
         expect(isTypingTarget(document.createElement('textarea'))).toBe(true);
     });
 
-    it('SC-UKV-1783 — во флажок, радиокнопку, кнопку и поле только для чтения не печатают', () => {
+    it('SC-UKV-1917 — во флажок, радиокнопку, кнопку и поле только для чтения не печатают', () => {
         expect(isTypingTarget(input('checkbox'))).toBe(false);
         expect(isTypingTarget(input('radio'))).toBe(false);
         expect(isTypingTarget(input('text', true))).toBe(false);

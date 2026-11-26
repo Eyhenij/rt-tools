@@ -143,7 +143,7 @@ describe('rt-page-bar', (): void => {
         expect(qa(fixture, 'page-bar-sheet')).toBeNull();
     });
 
-    it('SC-UKV-1784 — the filters sheet opens by the height of its fields, the apply button stands in its header', (): void => {
+    it('SC-UKV-1918 — the filters sheet opens by the height of its fields, the apply button stands in its header', (): void => {
         const fixture: ComponentFixture<PageBarHostComponent> = setup(375);
 
         (qa(fixture, 'page-bar-filters')?.nativeElement as HTMLElement).click();

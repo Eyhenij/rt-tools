@@ -297,7 +297,7 @@ describe('RtTableFilterHeaderComponent — виды сравнения в што
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1782 — виды сравнения стоят карточками с радиокнопкой кита, нынешний отмечен', (): void => {
+    it('SC-UKV-1916 — виды сравнения стоят карточками с радиокнопкой кита, нынешний отмечен', (): void => {
         open();
 
         const radios: HTMLElement[] = items().map((item: HTMLElement): HTMLElement => item.querySelector('[role="radio"]') as HTMLElement);

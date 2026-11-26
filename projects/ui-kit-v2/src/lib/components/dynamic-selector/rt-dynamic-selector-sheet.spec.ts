@@ -70,7 +70,7 @@ describe('Динамический селектор в нижней шторке
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1780 — выбор нескольких: каждый пункт — карточка с флажком кита', (): void => {
+    it('SC-UKV-1914 — выбор нескольких: каждый пункт — карточка с флажком кита', (): void => {
         open();
 
         expect(inSheet('[qa-dataid="dynamic-selector-options"]')[0].classList).toContain('rt-dynamic-selector-popup__list--cards');
@@ -79,7 +79,7 @@ describe('Динамический селектор в нижней шторке
         expect(boxes.every((box: HTMLElement): boolean => box.classList.contains('rt-checkbox--card'))).toBe(true);
     });
 
-    it('SC-UKV-1780 — выбор одной записи: каждый пункт — карточка с радиокнопкой кита', (): void => {
+    it('SC-UKV-1914 — выбор одной записи: каждый пункт — карточка с радиокнопкой кита', (): void => {
         open({ mode: 'single' });
 
         const radios: HTMLElement[] = inSheet('[qa-dataid="dynamic-selector-option"] [role="radio"]');
