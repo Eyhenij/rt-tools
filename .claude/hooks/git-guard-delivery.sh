@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.41.1 · hooks/git-guard-delivery.sh · 01e7fca91a10 · правится надстройкой, не здесь
+# rt-kit v0.41.1 · hooks/git-guard-delivery.sh · bea6a9d59b57 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/git-guard-delivery-merged.sh, hooks/git-guard-delivery-task.sh, hooks/git-guard-delivery-folder.sh,hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-pipeline.sh, hooks/git-guard-delivery-identity.sh, hooks/script-files.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/git-guard-delivery-rerun.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
@@ -343,7 +343,7 @@ command -v rt_delivery_draft_ready >/dev/null 2>&1 && rt_delivery_draft_ready
 # entirely this way, but an accidental mention inside a word or a path no longer gets through.
 # The merge helper adds `pr merge` in any form outside quotes: a wrapper or a subshell merges too.
 [ -f "$rt_hooks_dir/git-guard-delivery-merge.sh" ] && . "$rt_hooks_dir/git-guard-delivery-merge.sh" 2>/dev/null
-if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}(gh[[:space:]]+pr[[:space:]]+merge|glab[[:space:]]+mr[[:space:]]+merge|az[[:space:]]+repos[[:space:]]+pr[[:space:]]+update)([[:space:]]|\$)" \
+if printf '%s\n' "$cmd" | { command -v rt_no_heredocs >/dev/null 2>&1 && rt_no_heredocs || cat; } | grep -qE "${RT_CMD_BOUND}(gh[[:space:]]+pr[[:space:]]+merge|glab[[:space:]]+mr[[:space:]]+merge|az[[:space:]]+repos[[:space:]]+pr[[:space:]]+update)([[:space:]]|\$)" \
     || { command -v rt_delivery_merge_said >/dev/null 2>&1 && rt_delivery_merge_said; }; then
     # The run on the tip goes first: the folder tier below leaves the guard early on many paths.
     command -v rt_delivery_merge_run >/dev/null 2>&1 && rt_delivery_merge_run

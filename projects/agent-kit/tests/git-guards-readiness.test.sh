@@ -282,6 +282,7 @@ dlv "SC-AK-2008 — слитный -A называет адрес" "$EPIC" 'gh p
 dlv "SC-AK-2008 — вид с = называет адрес" "$EPIC" 'gh pr merge 917 --merge --author-email=bot@example.test' PASS
 dlv "SC-AK-2008 — два слияния одной командой — не та форма" "$EPIC" 'gh pr merge 917 --merge -A bot@example.test && gh pr merge 917 --merge -A bot@example.test' deny
 dlv "SC-AK-2008 — слова слияния в сообщении коммита не судятся" "$EPIC" 'git commit -m "gh pr merge 917 --merge"' PASS
+dlv "SC-AK-2008 — слова слияния в heredoc не судятся" "$EPIC" "$(printf 'cat > f.txt <<%sEOF%s\ngh pr merge 917 --merge\nEOF' "'" "'")" PASS
 dlv "SC-AK-2008 — адрес в теме слияния — текст, не автор" "$EPIC" "gh pr merge 917 --merge --subject 'see -A bot@example.test'" deny
 dlv "SC-AK-2008 — справка слиянием не судится" "$EPIC" 'gh pr merge --help' PASS
 rm -rf "$EPIC"
@@ -302,7 +303,8 @@ dlv_reason "SC-AK-2009 — слияние без номера называет �
 for form in 'env GH_TOKEN=x gh pr merge 917 --merge -A bot@example.test' 'timeout 60 gh pr merge 917 --merge -A bot@example.test' \
     'sleep 0 & gh pr merge 917 --merge -A bot@example.test' 'bash -c "gh pr merge 917 --merge -A bot@example.test"' \
     'x=$(gh pr merge 917 --merge -A bot@example.test)' 'gh -R o/r pr merge 917 --merge -A bot@example.test' \
-    'gh pr merge -mt 900 917 -A bot@example.test' '"gh" pr merge 917 --merge -A bot@example.test'; do
+    'gh pr merge -mt 900 917 -A bot@example.test' '"gh" pr merge 917 --merge -A bot@example.test' \
+    'gh pr "merge" 917 --merge -A bot@example.test' "gh 'pr merge' 917 --merge -A bot@example.test"; do
     dlv "SC-AK-2009 — иная форма слияния отбита: ${form}" "$MAIN" "$form" deny
 done
 rm -rf "$MAIN"

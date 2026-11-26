@@ -39,4 +39,4 @@ here».
 
 - The green push set and the review before the merge — held by `task-delivery-loop`; a push without a green set is already refused by the push guard.
 - Whether the owner gave the word on the epic of the base — it is written in the plan of that epic, and the guard does not read it.
-- The call `gh api …/pulls/<N>/merge` — the guard does not read it; nor the owner's button in the browser, where there are no hooks at all.
+- The call `gh api …/pulls/<N>/merge` and a merge through `gh alias` — the guard does not read them; nor the owner's button in the browser, where there are no hooks at all.

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.41.1 · hooks/git-guard-delivery-merge.sh · 9ddbd1d09223 · правится надстройкой, не здесь
+# rt-kit v0.41.1 · hooks/git-guard-delivery-merge.sh · 8f41ae66b034 · правится надстройкой, не здесь
 # The run on the tip of a PR being merged, its author and its base, for the delivery guard.
 #
 # NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The delivery guard
@@ -18,7 +18,8 @@ rt_delivery_merge_said() {
     command -v rt_bare >/dev/null 2>&1 || rt_bare() { cat; }
     command -v rt_no_heredocs >/dev/null 2>&1 || rt_no_heredocs() { cat; }
     local text
-    text="$(printf '%s\n' "$cmd" | rt_no_heredocs)"
+    # Quotes around a single word, or around `pr merge` itself, are part of the call, not text.
+    text="$(printf '%s\n' "$cmd" | rt_no_heredocs | sed -E 's/"([^"[:space:]]*)"/\1/g; s/'\''([^'\''[:space:]]*)'\''/\1/g; s/["'\''](pr[[:space:]]+merge)["'\'']/\1/g')"
     printf '%s\n' "$text" | rt_bare | grep -qE '(^|[^[:alnum:]_.-])pr[[:space:]]+merge([[:space:]]|$)' && return 0
     printf '%s\n' "$text" | grep -qE '(^|[[:space:];&|(])((ba|z|da)?sh|eval)[[:space:]][^;&|]*["'\''][^"'\'']*pr[[:space:]]+merge'
 }
