@@ -450,6 +450,40 @@ gate_session_cleanup
 unset TMPDIR
 rm -rf "$R/.claude/skills/task-flow"
 
+# --- merge: слияние проверенной базы с конфликтом в охраняемом файле ------------------------------
+# Настоящий `git merge` правит одну строку описания и раскладки; голова в `origin/main`, плана на ветке нет.
+B8=RT-11-epic-merge R8="$(fixture_repo_branched main RT-11-epic-merge)" F8=projects/agent-kit/assets/task-flow/flow.js
+TMPS+=("$R8") L8=tools/task-flow/flow.js O8=projects/agent-kit/assets/task-flow/other.js
+merge8() { git -C "$R8" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false merge -q --no-edit "$1" >/dev/null 2>&1; }
+both8() { fixture_commit "$R8" "$F8" "$(printf 'top\n%s\nend' "$1")" "feat: $1" && fixture_commit "$R8" "$L8" "$(printf 'top\n%s\nend' "$1")" "feat: $1"; }
+block8() { awk '/^<<<<<<< /{on=1} on{print} /^>>>>>>> /{exit}' "$R8/$F8"; }
+git -C "$R8" checkout -q main && both8 mid && fixture_commit "$R8" "$O8" 'one' 'feat: другой файл'
+git -C "$R8" checkout -q -B "$B8" && both8 epic && git -C "$R8" checkout -q main && both8 main
+fixture_commit "$R8" "$O8" 'two' 'feat: другой файл с главной'
+git -C "$R8" update-ref refs/remotes/origin/main main && git -C "$R8" checkout -q "$B8" && merge8 origin/main
+BLOCK8="$(block8)"
+d "merge: SC-AK-2016 — блок под сторону главной проходит" "$(edit_input Edit "$R8/$F8" "$BLOCK8" 'main' "$R8")" PASS
+d "merge: SC-AK-2016 — блок обеими сторонами подряд проходит" "$(edit_input Edit "$R8/$F8" "$BLOCK8" "$(printf 'epic\nmain')" "$R8")" PASS
+d "merge: SC-AK-2016 — строка ни одной стороны отказана" "$(edit_input Edit "$R8/$F8" "$BLOCK8" 'other' "$R8")" deny
+d "merge: SC-AK-2016 — блок с соседней строкой отказан" "$(edit_input Edit "$R8/$F8" "$BLOCK8
+end" 'main' "$R8")" deny
+d "merge: SC-AK-2016 — удаление строки вне блока отказано" "$(edit_input Edit "$R8/$F8" 'top' '' "$R8")" deny
+d "merge: SC-AK-2016 — Write охраняемого файла отказан" "$(edit_input Write "$R8/$F8" '' "$(printf 'top\nmain\nend')" "$R8")" deny
+d "merge: SC-AK-2016 — git checkout --ours разложенной копии проходит" "$(shell_input "git checkout --ours -- $L8" "$R8")" PASS
+d "merge: SC-AK-2016 — git checkout --theirs слитого пути отказан" "$(shell_input "git checkout --theirs -- $O8" "$R8")" deny
+# Голова, которую никто не отправил: ветка с вершиной главной и коммитом поверх.
+git -C "$R8" merge --abort && git -C "$R8" checkout -q -b raw8 main && both8 raw && git -C "$R8" checkout -q "$B8" && merge8 raw8
+BLOCK8="$(block8)"
+d "merge: SC-AK-2016 — слияние непроверенной ветки отказано" "$(edit_input Edit "$R8/$F8" "$BLOCK8" 'raw' "$R8")" deny
+d "merge: SC-AK-2016 — git checkout --theirs при непроверенной ветке отказан" "$(shell_input "git checkout --theirs -- $L8" "$R8")" deny
+# Та же голова на сервере как ветка эпика, которую называет план эпика: база проверенная.
+git -C "$R8" update-ref refs/remotes/origin/RT-12-epic raw8
+mkdir -p "$R8/docs/plans"
+printf '# План эпика\n\n**Эпик:** RT-12 · **Ветка эпика:** `RT-12-epic`\n' > "$R8/docs/plans/epic-12.md"
+d "merge: SC-AK-2016 — голова в ветке эпика из плана эпика проходит" "$(edit_input Edit "$R8/$F8" "$BLOCK8" 'raw' "$R8")" PASS
+git -C "$R8" merge --abort
+d "merge: SC-AK-2016 — без слияния выбор стороны отказан" "$(shell_input "git checkout --ours -- $L8" "$R8")" deny
+
 # --- чужие правки страж не судит ---------------------------------------------------------------
 d "обычный файл правится без стража" "$(edit_input Edit "$R/README.md" 'a' 'b' "$R")" PASS
 d "обычная команда проходит" "$(shell_input "git status --short" "$R")" PASS

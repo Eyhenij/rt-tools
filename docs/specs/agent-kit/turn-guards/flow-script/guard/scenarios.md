@@ -207,6 +207,30 @@ Then it is refused
 
 Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
 
+### SC-AK-2016 — a merge of a reviewed base takes a side of a conflict block without a plan
+
+Given a branch with no plan whose merge of `origin/main` left a conflict block in the description and in its
+laid-out copy
+When an Edit replaces the whole block by the side of the base, or by both sides one after the other, and
+`git checkout --ours` takes the laid-out copy
+Then they pass
+
+Given the same merge
+When an Edit puts a line of neither side, takes the block with a line around it or removes a line outside the
+block, a Write puts the file whole, or `git checkout --theirs` names a path git merged
+Then they are refused
+
+Given a merge of a local branch nobody pushed
+When the block is edited or `git checkout --theirs` takes a side
+Then they are refused, and the same head pushed as the branch of an epic a plan of the epic names lets the edit
+through
+
+Given no merge in progress
+When `git checkout --ours` names a guarded file
+Then it is refused
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
 ### SC-AK-1940 — a check whose form hides its result is refused when the plan is written
 
 Given a plan of the branch with no approval mark

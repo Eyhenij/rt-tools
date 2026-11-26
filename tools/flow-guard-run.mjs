@@ -1,11 +1,11 @@
-// rt-kit v0.40.0 · checks/flow-guard-run.mjs · de8e47ff044e · правится надстройкой, не здесь
+// rt-kit v0.40.0 · checks/flow-guard-run.mjs · 5a93ce5a8387 · правится надстройкой, не здесь
 /**
  * The reading half of the guard of the course of work: the hook input as a call, and the context the
  * decisions of `flow-guard.mjs` take. The owner's last word comes from the source «source.owner» of
  * the description.
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync, readFileSync, realpathSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, realpathSync } from 'node:fs';
 import { basename, dirname, isAbsolute, join, relative } from 'node:path';
 
 import { approvalFault, openRecords } from './flow-step.mjs';
@@ -40,6 +40,25 @@ const git = (root, ...args) => {
     return out.status === 0 ? out.stdout.trim() : null;
 };
 
+const EPIC_BRANCH = /\*\*(?:Ветка эпика|Epic branch):\*\*\s*`([^`]+)`/u;
+
+/**
+ * The merge in progress of a reviewed base: its head lies in the remote main branch or in the remote
+ * branch of an epic a plan of `plansDir` names. Its unmerged paths, relative to the root; null with no
+ * merge or with a head nobody pushed.
+ */
+export function reviewedMerge(root, plansDir) {
+    const head = git(root, 'rev-parse', '-q', '--verify', 'MERGE_HEAD');
+    if (!head) return null;
+    const dir = join(root, plansDir);
+    const plans = existsSync(dir) ? readdirSync(dir).filter((name) => name.endsWith('.md')) : [];
+    const epics = plans.map((name) => readFileSync(join(dir, name), 'utf8').match(EPIC_BRANCH)?.[1]).filter(Boolean);
+    const main = git(root, 'symbolic-ref', '-q', '--short', 'refs/remotes/origin/HEAD') ?? 'origin/main';
+    const holds = (ref) => spawnSync('git', ['-C', root, 'merge-base', '--is-ancestor', head, ref]).status === 0;
+    if (![main, ...epics.map((branch) => `origin/${branch}`)].some(holds)) return null;
+    return { unmerged: new Set((git(root, 'diff', '--name-only', '--diff-filter=U') ?? '').split('\n').filter(Boolean)) };
+}
+
 /**
  * The context of the decisions for the tree at `root`. `measure` is a thunk the engine gives: the
  * index of the measured state, read only when an edit moves the state line.
@@ -58,6 +77,8 @@ export function guardContext({ root, model, marks, owner, measure, settings }) {
         overridePath: settings.overridePath,
         protectedPaths: settings.protectedPaths,
         legacy: model.words.legacyBranches ?? [],
+        // The merge of a reviewed base in progress, read by the decisions on a guarded file.
+        merge: reviewedMerge(root, settings.plansDir),
         read: (path) => (existsSync(join(root, path)) ? readFileSync(join(root, path), 'utf8') : null),
         committed: (path) => {
             // The text the oldest commit of the branch that added the file wrote, or null.
