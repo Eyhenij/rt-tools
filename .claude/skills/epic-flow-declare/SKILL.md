@@ -4,7 +4,7 @@ kind: pattern
 rule: epic-flow
 description: Pattern of rule epic-flow. Load when the grill gave a series of tasks — declaring the epic with its card, plan and all its tasks at once, then taking its branch from the main branch. One task — pattern task-flow-start.
 ---
-<!-- rt-kit v0.40.0 · patterns/epic-flow-declare.md · 773928229470 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.0 · patterns/epic-flow-declare.md · 773928229470 · правится надстройкой, не здесь -->
 
 # Declaring an epic
 

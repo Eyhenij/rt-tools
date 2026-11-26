@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.40.0 · hooks/git-guard-push-ready.sh · cd421817e00a · правится надстройкой, не здесь
+# rt-kit v0.41.0 · hooks/git-guard-push-ready.sh · cd421817e00a · правится надстройкой, не здесь
 # Whether a PR of the checked-out branch would open, asked before the push set starts. NOT a guard: it
 # has no `rt-hook:` declaration and hooks into no agent event. The run ahead
 # (`git-guard-push-ahead.sh`) sources it and calls `rt_push_ready_unmet <the base of the set>`.

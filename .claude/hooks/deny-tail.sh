@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.40.0 · hooks/deny-tail.sh · 3906358e7d54 · правится надстройкой, не здесь
+# rt-kit v0.41.0 · hooks/deny-tail.sh · 3906358e7d54 · правится надстройкой, не здесь
 # The shared deny tail. NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event.
 # The guards source it themselves — the same way they source the observation record and the word
 # about a missing profile function.
