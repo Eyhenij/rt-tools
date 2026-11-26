@@ -46,6 +46,13 @@
   (1795); этот набор держит SC-UKV-1785…1787 вопроса перед закрытием; все пять наборов зелёные.
 - `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-confirm.loader.ts` outgoing 0 → 2 — превышение:
   загрузчик берёт ещё модель шторки ради токена ответов `RT_SHEET_CONFIRM_ANSWERS`, без подписок в методе.
+- **The showcase snapshots of the sheets, two runs** — `node tools/visual-gate.mjs ui-kit-v2 --affected
+  RT-3530-phone-sheets`. Run one: 674 of 674 frames match, 10 tests red with «Target crashed» in
+  `page-header-vertical.stories.ts` and `popover.stories.ts`. Run two (466 s): 640 of 642 frames match, 27 tests red,
+  in `page-header-vertical`, `chat-matrix` and `ai-chat-section-matrix`: `globalThis.__getContext is not a function`,
+  a retry after navigation, two frames 768 px wide against 1280. The red files differ between the runs, and two of them
+  draw no sheet; no compared frame of a sheet diverged. The step is stopped after the second red by the owner's word
+  about repeated failures; the cause is not proven.
 - **Цена:** нет
 - **Отменено:** нет
 
