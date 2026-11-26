@@ -261,6 +261,34 @@ for verdict in success none; do
     rm -rf "$GREEN"
 done
 
+# --- кто сливает и чьей подписью ----------------------------------------------------------------
+#
+# Слияние кнопкой хоста подписало коммит слияния личным адресом машинной учётной записи: адрес
+# автора называет сама команда. В дереве, где слияние в главную ветку — кнопка владельца
+# (RT_MAIN_MERGE_BY_OWNER=1), исполнитель сливает только задачи в ветку эпика.
+who_repo() {
+    local dir
+    dir="$(ready_repo "printf '%s' '$1';")"
+    printf '%s\n' "RT_COMMIT_EMAIL='bot@example.test'" ${2:+"$2"} >> "$dir/.claude/rt-kit/project.sh"
+    printf '%s' "$dir"
+}
+EPIC="$(who_repo '{"exists":true,"number":917,"run":"none","base":"RT-1-epic"}' 'RT_MAIN_MERGE_BY_OWNER=1')"
+dlv "SC-AK-2008 — слияние в ветку эпика без адреса автора отбито" "$EPIC" 'gh pr merge 917 --merge' deny
+dlv_reason "SC-AK-2008 — отказ называет объявленный адрес" "$EPIC" 'gh pr merge 917 --merge' 'author-email bot@example.test'
+dlv "SC-AK-2008 — чужой адрес автора отбит" "$EPIC" 'gh pr merge 917 --merge --author-email me@example.test' deny
+dlv "SC-AK-2008 — слияние в ветку эпика с объявленным адресом проходит" "$EPIC" 'gh pr merge 917 --merge --author-email bot@example.test' PASS
+dlv "SC-AK-2008 — короткий ключ -A тоже называет адрес" "$EPIC" 'gh pr merge 917 --merge -A bot@example.test' PASS
+rm -rf "$EPIC"
+MAIN="$(who_repo '{"exists":true,"number":917,"run":"none","base":"main"}' 'RT_MAIN_MERGE_BY_OWNER=1')"
+dlv "SC-AK-2009 — слияние исполнителем в главную ветку отбито" "$MAIN" 'gh pr merge 917 --merge -A bot@example.test' deny
+rm -rf "$MAIN"
+MAIN_FREE="$(who_repo '{"exists":true,"number":917,"run":"none","base":"main"}')"
+dlv "SC-AK-2009 — без настройки дерева слияние в главную ветку не судится" "$MAIN_FREE" 'gh pr merge 917 --merge -A bot@example.test' PASS
+rm -rf "$MAIN_FREE"
+UNKNOWN="$(who_repo '{"exists":false}' 'RT_MAIN_MERGE_BY_OWNER=1')"
+dlv_reason "SC-AK-2009 — база неизвестна — повторить, когда хост ответит" "$UNKNOWN" 'gh pr merge 917 --merge -A bot@example.test' 'Repeat when the host answers'
+rm -rf "$UNKNOWN"
+
 # --- папка задачи судится по ветке названной заявки --------------------------------------------
 #
 # Нижнюю заявку стопки снимают с верхней ветки: та несёт свою папку, а у нижней папка разобрана.

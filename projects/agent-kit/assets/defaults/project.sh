@@ -343,6 +343,11 @@ RT_BOARD_EPIC_LABEL="${RT_BOARD_EPIC_LABEL:-}"
 # of its own, and an invented one would refuse work in someone else's tree.
 RT_COMMIT_EMAIL="${RT_COMMIT_EMAIL:-}"
 
+# Whether the executor's merge into the main branch is refused: `1` leaves it to the owner's button,
+# the merge of a task into its epic branch stays the executor's. The default stays silent: the law
+# lets a word named in advance cover the epic into the main branch, and a tree says otherwise itself.
+RT_MAIN_MERGE_BY_OWNER="${RT_MAIN_MERGE_BY_OWNER:-}"
+
 # The task state as one object: exists, open, onBoard, assigned, numbered. Asks the work queue
 # helper — the same one the audit and the create command use, so that the guard and the queue
 # understand "the task is in order" alike. No node, no helper, no network — silence, and the state

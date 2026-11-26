@@ -41,6 +41,10 @@ RT_STANDS='the receiver http://localhost:3000, the admin panel http://localhost:
 # lifted.
 RT_COMMIT_EMAIL='317887029+rt-tools-dev@users.noreply.github.com'
 
+# The merge into the main branch is the owner's button here; the executor merges the tasks of an epic
+# into its branch by the owner's word on that epic (epic RT-3693, 26.11).
+RT_MAIN_MERGE_BY_OWNER=1
+
 # What the machine account's token is substituted into a call by, and how that substitution looks
 # whole. The hosting client is signed in as the owner, so a call without the substitution goes from
 # them: the request comes out from the owner, they cannot be assigned as its reviewer then — the

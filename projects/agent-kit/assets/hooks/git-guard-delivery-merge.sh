@@ -30,3 +30,30 @@ rt_delivery_merge_run() {
     esac
     return 0
 }
+
+rt_delivery_merge_who() {
+    # The executor merges the PRs of a task into the epic branch by the owner's word named in
+    # advance; the epic into the main branch is the owner's button where the tree says so by
+    # `RT_MAIN_MERGE_BY_OWNER=1`. The host's merge signs the merge commit by the merging account's
+    # primary email unless the call names the author: a private address then lands in the history.
+    case "$cmd" in *gh*) ;; *) return 0 ;; esac
+    printf '%s' "$cmd" | grep -qE "(^|[;&|[:space:]])gh[[:space:]]+pr[[:space:]]+merge([[:space:]]|\$)" || return 0
+    if [ -n "${RT_COMMIT_EMAIL:-}" ]; then
+        local said
+        said="$(printf '%s' "$cmd" | sed -nE 's/.*(--author-email|[[:space:]]-A)[[:space:]=]+["'\'']?([^[:space:]"'\'';&|]+).*/\2/p' | head -1)"
+        [ "$said" = "$RT_COMMIT_EMAIL" ] \
+            || unmet merge_author_declared no "the merge names no author or a foreign one${said:+ (${said})}. The host signs the merge commit by the merging account's primary email, and a private address lands in the history of the branch. Name the declared one: gh pr merge <number> --merge --author-email ${RT_COMMIT_EMAIL}."
+    fi
+    [ "${RT_MAIN_MERGE_BY_OWNER:-}" = 1 ] || return 0
+    local ref pull base
+    ref="$(printf '%s' "$cmd" | sed -nE 's/.*(gh[[:space:]]+pr[[:space:]]+merge)[[:space:]]+([^[:space:];&|-][^[:space:];&|]*).*/\2/p' | head -1)"
+    pull=''
+    command -v rt_pull_state >/dev/null 2>&1 && pull="$(cd "$root" && rt_pull_state "$ref" 2>/dev/null)"
+    base="$(printf '%s' "$pull" | jq -r '.base // empty' 2>/dev/null)"
+    if [ -z "$base" ]; then
+        unmet pr_base_known no "the base of the request${ref:+ ${ref}} is not known: the host did not answer. The merge into the main branch is the owner's here, and a merge with no base known may be one. Repeat when the host answers."
+    elif [ "$base" = "$main_branch" ]; then
+        unmet merge_into_main yes "the request${ref:+ ${ref}} goes into «${main_branch}», and here the owner merges into it by the button (RT_MAIN_MERGE_BY_OWNER=1). Tell the owner the number and that the work is ready; a task of an epic goes into the epic branch, and that merge is the executor's."
+    fi
+    return 0
+}
