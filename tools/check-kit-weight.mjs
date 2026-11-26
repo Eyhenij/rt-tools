@@ -94,8 +94,9 @@ export async function measure(parts = STARTUP_PARTS) {
     for (const key of startup) {
         for (const [file, info] of Object.entries(outputs[key].inputs)) {
             const match = /rt-tools-ui-kit-v2-(.+)\.mjs$/.exec(file);
-            if (match && entries.has(match[1])) {
-                perPart[match[1]] = (perPart[match[1]] ?? 0) + info.bytesInOutput;
+            const part = match ? partOfFile(match[1], entries) : null;
+            if (part !== null) {
+                perPart[part] = (perPart[part] ?? 0) + info.bytesInOutput;
             }
         }
     }
@@ -116,11 +117,41 @@ function measureStyles() {
     );
 }
 
+/**
+ * Имена частей по описанию пакета: ключ `exports` называет точку входа, файл рядом несёт имя части.
+ * Кусок, который сборка выносит из части при ленивом `import()`, в описании не назван и частью не
+ * считается: каталог файлов его не отличил бы.
+ */
+export function entryNamesFromExports(exportsMap) {
+    const names = [];
+    for (const value of Object.values(exportsMap ?? {})) {
+        const file = typeof value === 'object' && value !== null ? value.default : undefined;
+        const match = typeof file === 'string' ? /rt-tools-ui-kit-v2-(.+)\.mjs$/.exec(file) : null;
+        if (match) {
+            names.push(match[1]);
+        }
+    }
+    return names;
+}
+
+/** Часть, которой принадлежит файл: сама точка входа или её кусок `<часть>-<имя>-<хэш>`; чужой файл — `null`. */
+export function partOfFile(name, entries) {
+    if (entries.has(name)) {
+        return name;
+    }
+    let best = null;
+    for (const entry of entries) {
+        if (name.startsWith(`${entry}-`) && (best === null || entry.length > best.length)) {
+            best = entry;
+        }
+    }
+    return best;
+}
+
 /** Имена всех частей, лежащих в собранном пакете: нужны для подмены адресов внутри набора. */
 function readEntries() {
-    return readdirSync(DIST)
-        .filter((name) => name.startsWith(FILE_PREFIX) && name.endsWith('.mjs'))
-        .map((name) => name.slice(FILE_PREFIX.length, -'.mjs'.length));
+    const manifest = JSON.parse(readFileSync(join(ROOT, 'dist', 'ui-kit-v2', 'package.json'), 'utf8'));
+    return entryNamesFromExports(manifest.exports).filter((name) => existsSync(entryFile(name)));
 }
 
 function table(result) {
