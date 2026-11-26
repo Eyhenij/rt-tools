@@ -8,15 +8,15 @@
     "dialog",
     "bottom-sheet"
   ],
-  "total": 320477,
-  "gzip": 56404,
+  "total": 320595,
+  "gzip": 56445,
   "parts": {
     "select": 67575,
     "form-control": 4962,
     "input": 59678,
     "popover": 16459,
     "bottom-sheet": 12026,
-    "menu": 35212,
+    "menu": 35330,
     "core": 34183,
     "icon": 28599,
     "dialog": 18463,
