@@ -62,6 +62,9 @@
   after its commit. product-strategist: the push set without the weight steps is green — 27 node steps,
   the kit suite 4740 of 4740, Angular Doctor, knip; `tools/tests/run.sh` is red only by
   `check-kit-weight-live`, which waits for the weight decision.
+- **The way for the kit weight: the owner chose «В этой же задаче»** — the weight is cut inside RT-3706: the
+  executor finds what of the sheet code can move to the lazy load and shows the owner a plan before the
+  code. Piece (c) becomes that work; the threshold is not rewritten.
 - **Цена:** нет
 - **Отменено:** нет
 
