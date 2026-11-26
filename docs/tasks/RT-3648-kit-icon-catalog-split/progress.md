@@ -4,8 +4,8 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 3 of 3 — Описание, вес и план эпика
-- **Done:** этапы 1 и 2 и шаг 3.1 прошли свои проверки; смена набора проверена вживую
-- **Next step:** шаг 3.2: порог веса, сборки приложений, тесты кита и соседних пакетов
+- **Done:** этапы 1 и 2 и шаги 3.1–3.2 прошли свои проверки; смена набора проверена вживую
+- **Next step:** шаг 3.3: пробная сборка приложения и закрытие RT-3684
 - **Uncommitted:** nothing
 - **PR:** not open yet
 
@@ -18,10 +18,12 @@
 - [x] 2.3 Диалог, подтверждение меню и aside получают набор той части, откуда их открыли
 - [x] 2.4 Витрина показывает переключение набора у всего приложения и у части страницы
 - [x] 3.1 Описание поведения, документация и README называют новую систему и все ломающие переносы
-- [>] 3.2 Порог переписан, а тесты кита и соседних пакетов зелёные
-- [ ] 3.3 Пробная сборка приложения измерена, а RT-3684 закрыта как влитая в эту задачу
+- [x] 3.2 Порог переписан, а тесты кита и соседних пакетов зелёные
+- [>] 3.3 Пробная сборка приложения измерена, а RT-3684 закрыта как влитая в эту задачу
 
 ## Decisions along the way
+
+- Предупреждения о значках и наборах стали сообщениями для разработчика: в рабочей сборке приложения их тексты выпадают, выбор рисунков от этого не меняется. Так же устроены остальные предупреждения кита. С ними порог был бы 187728 байт, выше предела плана 186000; без них записано 185418 байт, gzip 46408.
 
 ## Sessions
 
@@ -42,8 +44,8 @@ Put together by a hook before the compaction of the context (auto).
 ### Where we stand at the minute of the compaction
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 3 — Имена значков одни, таблица пар уходит из кита
-- **Next step:** шаг 1.2: переходный скрипт, загрузчик рисунков и проверка таблицы с тестами
+- **Stage:** 3 of 3 — Описание, вес и план эпика
+- **Next step:** шаг 3.2: порог веса, сборки приложений, тесты кита и соседних пакетов
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-3648-kit-icon-catalog-split/progress.md`; the plan lies next to it.
@@ -51,13 +53,25 @@ The progress in full — `docs/tasks/RT-3648-kit-icon-catalog-split/progress.md`
 ### Uncommitted
 
 ```
-?? projects/ui-kit-v2/migrations/rename-icon-names.mjs
-?? tools/tests/rename-icon-names.test.sh
+ M docs/specs/ui-kit-v2/icon-material-names/spec.md
+ M projects/ui-kit-v2/README.md
+ M projects/ui-kit-v2/src/lib/components/icon/CONTEXT.md
+ M projects/ui-kit-v2/src/lib/components/icon/rt-icon-set.service.ts
+ M projects/ui-kit-v2/src/lib/components/icon/rt-icon-sets.logic.ts
+ M projects/ui-kit-v2/src/lib/components/icon/rt-icon.providers.ts
+ M projects/ui-kit-v2/src/lib/components/icon/rt-icon.registry.ts
+ M tools/kit-weight-threshold.json
 ```
 
 ### Commits over the main branch
 
 ```
+c1f529f24 docs(rt:ui-kit-v2): описание единых имён значков и наборов, ломающие переносы названы (RT-3648)
+584c7d387 feat(rt:ui-kit-v2): витрина показывает смену набора значков на ходу (RT-3648)
+3eceb5295 feat(rt:ui-kit-v2): окна и панели получают набор значков той части, откуда их открыли (RT-3648)
+4214d73d8 feat(rt:ui-kit-v2): набор значков меняется на ходу у приложения и у части страницы (RT-3648)
+3edfc6ab5 feat(rt:ui-kit-v2): наборы значков объявляются данными, недостающий рисунок берётся из запасного (RT-3648)
+29f81b7a7 feat(rt:ui-kit-v2): переходный скрипт имён значков и проверка наборов (RT-3648)
 0e1917d6a feat(rt:ui-kit-v2): значки в ките называются только именами кита, перевода старых имён нет (RT-3648)
 f75dbe5ef docs(rt:ui-kit-v2): одобренный план RT-3648 — единые имена значков и смена наборов на ходу (RT-3648)
 f3a282469 docs(rt:ui-kit-v2): разбор RT-3648 — слово владельца о переписи логики значков и расчёт таблицы (RT-3648)
@@ -72,12 +86,6 @@ cd60580e7 docs(rt:ui-kit-v2): пересчитанный вес кита зап�
 eda38f37f Merge branch 'RT-3641-kit-presets-by-demand' of origin with main
 675e9c84b [RT-3646] Кит: диалог подтверждения menu грузится при первом подтверждении (#3677)
 7895f6128 Merge branch 'main' into RT-3641-kit-presets-by-demand
-b44d9471b docs(rt:ui-kit-v2): папка задачи RT-3646 разобрана в архивную запись (RT-3646)
-73da63330 chore(rt:ui-kit-v2): порог веса пересчитан после слияния ветки эпика (RT-3646)
-0aeabe577 Merge branch 'RT-3641-kit-presets-by-demand' into RT-3646-kit-menu-lazy-confirm
-c315de61b [RT-3645] Кит: нижний лист popover грузится при первом открытии (#3669)
-b70047846 chore(rt:ui-kit-v2): порог веса пересчитан после правок второго круга (RT-3646)
-4263e9907 fix(rt:ui-kit-v2): диалог подтверждения меню после второго круга ревью (RT-3646)
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

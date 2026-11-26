@@ -12,6 +12,10 @@ import { rtIconCleanDrawing, SVG_NS } from './rt-icon-drawing.logic';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { IRtIconRef, IRtIconSetsConfig, RT_ICON_KIT_SET, rtIconRef, rtIconSetsConfig } from './rt-icon-sets.logic';
 
+/* Значение задаёт сборка приложения: в рабочей сборке оно `false`, и тексты предупреждений из неё
+   выпадают. Поведение от него не зависит. */
+declare const ngDevMode: boolean | undefined;
+
 /**
  * Наборы значков приложения. Умолчание — только встроенные; свои наборы и свой адрес приложение
  * называет в `provideRtIcons()`.
@@ -155,8 +159,10 @@ export class RtIconRegistry {
 
     /* Предупреждение одно на символ: за ним не ходят второй раз. */
     #reportMissing(asked: IRtIconRef): void {
-        // eslint-disable-next-line no-console -- предупреждение разработчику приложения: другого канала у кита нет
-        console.warn(`rt-icon: рисунка «${asked.name}» нет ни в наборе «${asked.set}», ни в его запасных.`);
+        if (typeof ngDevMode === 'undefined' || ngDevMode) {
+            // eslint-disable-next-line no-console -- предупреждение разработчику приложения: другого канала у кита нет
+            console.warn(`rt-icon: рисунка «${asked.name}» нет ни в наборе «${asked.set}», ни в его запасных.`);
+        }
     }
 
     /**

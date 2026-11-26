@@ -8,27 +8,27 @@
     "dialog",
     "bottom-sheet"
   ],
-  "total": 194999,
-  "gzip": 47394,
+  "total": 185418,
+  "gzip": 46408,
   "parts": {
     "select": 35426,
     "form-control": 3420,
     "input": 33092,
     "popover": 9673,
-    "menu": 20729,
+    "menu": 20742,
     "bottom-sheet": 7167,
-    "core": 25713,
+    "core": 25980,
     "radius": 498,
-    "icon": 24867,
-    "dialog": 11303,
-    "icon-button": 13895,
+    "icon": 14453,
+    "dialog": 11396,
+    "icon-button": 13898,
     "ripple": 1587,
     "tooltip": 5303
   },
   "styles": {
-    "tokens.base.css": 163241,
+    "tokens.base.css": 163254,
     "tokens.coexist.css": 1514,
-    "tokens.css": 619948,
+    "tokens.css": 619961,
     "tokens.scope.css": 464842
   }
 }

@@ -3,6 +3,10 @@ import { computed, inject, InjectionToken, Service, signal, Signal, StaticProvid
 import { RT_ICON_SETS_CONFIG } from './rt-icon.registry';
 import { IRtIconSetsConfig, RT_ICON_KIT_SET, RT_ICON_MATERIAL_SET } from './rt-icon-sets.logic';
 
+/* Значение задаёт сборка приложения: в рабочей сборке оно `false`, и тексты предупреждений из неё
+   выпадают. Поведение от него не зависит. */
+declare const ngDevMode: boolean | undefined;
+
 /** Набор части страницы: его дают директива `rtIconSet` и окно, открытое из такой части. */
 export interface IRtIconSetScope {
     /** `null` — своего набора у части нет. */
@@ -38,8 +42,10 @@ export class RtIconSetService {
         if (this.#config.sets.has(name)) {
             return name;
         }
-        // eslint-disable-next-line no-console -- предупреждение разработчику приложения: другого канала у кита нет
-        console.warn(`rt-icon: набора «${name}» среди объявленных нет, взят набор «${RT_ICON_KIT_SET}».`);
+        if (typeof ngDevMode === 'undefined' || ngDevMode) {
+            // eslint-disable-next-line no-console -- предупреждение разработчику приложения: другого канала у кита нет
+            console.warn(`rt-icon: набора «${name}» среди объявленных нет, взят набор «${RT_ICON_KIT_SET}».`);
+        }
 
         return RT_ICON_KIT_SET;
     }

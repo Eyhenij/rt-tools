@@ -67,7 +67,8 @@ A person sees an icon; how it is drawn and from which set is invisible to them.
   without a named fallback takes `kit`. A name outside the list of a set is not requested from it.
 - **One address is downloaded once, and its refusal is kept.**
 - **A bad declaration of sets gives a warning and the set `kit`.** A drawing found nowhere gives one
-  warning with the icon and the set.
+  warning with the icon and the set. These warnings are developer messages: a production build of
+  the application drops their texts, and the choice of the drawings stays the same.
 - **The set of an icon is the set of its part, then the choice of `use()`, then the material sign,
   then the set of the application.** A part is named by the directive `rtIconSet`; `use()` is a
   method of `RtIconSetService`.

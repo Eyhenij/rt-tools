@@ -8,6 +8,10 @@ import {
 } from './rt-icon.const';
 import { IRtIconSet, rtIconBuiltInSets } from './rt-icon-sets';
 
+/* Значение задаёт сборка приложения: в рабочей сборке оно `false`, и тексты предупреждений из неё
+   выпадают. Поведение от него не зависит. */
+declare const ngDevMode: boolean | undefined;
+
 /** Набор самого кита: в нём есть рисунок каждого имени, на нём кончается цепочка запасных. */
 export const RT_ICON_KIT_SET: string = 'kit';
 
@@ -23,7 +27,7 @@ export interface IRtIconSetsConfig {
     readonly sets: ReadonlyMap<string, IRtIconSet>;
     /** Набор приложения, пока никто не выбрал другой. */
     readonly defaultSet: string;
-    /** Что в объявлении приложения не принято и чем это заменено. */
+    /** Что в объявлении приложения не принято и чем это заменено. В рабочей сборке пуст. */
     readonly warnings: ReadonlyArray<string>;
 }
 
@@ -67,11 +71,11 @@ function brokenChain(sets: ReadonlyMap<string, IRtIconSet>, set: IRtIconSet): st
         const found: IRtIconSet | undefined = sets.get(next);
 
         if (found === undefined) {
-            return `ведёт на необъявленный набор «${next}»`;
+            return typeof ngDevMode === 'undefined' || ngDevMode ? `ведёт на необъявленный набор «${next}»` : '';
         }
 
         if (walked.has(next)) {
-            return 'замкнута в круг';
+            return typeof ngDevMode === 'undefined' || ngDevMode ? 'замкнута в круг' : '';
         }
         walked.add(next);
         next = found.fallback ?? RT_ICON_KIT_SET;
@@ -80,12 +84,24 @@ function brokenChain(sets: ReadonlyMap<string, IRtIconSet>, set: IRtIconSet): st
     return null;
 }
 
+/* Пустой текст — это рабочая сборка: предупреждений в ней нет. */
+function warn(warnings: string[], message: string): void {
+    if (message) {
+        warnings.push(message);
+    }
+}
+
 /* Цепочка запасных обязана доходить до `kit`. Набор без названного запасного берёт `kit`; неизвестный
    запасной и круг рвутся там, где проверка их встретила. */
 function closeFallbacks(sets: Map<string, IRtIconSet>, set: IRtIconSet, warnings: string[]): void {
     if (set.name === RT_ICON_KIT_SET) {
         if (set.fallback !== undefined) {
-            warnings.push(`у набора «${RT_ICON_KIT_SET}» запасного набора нет, названный отброшен`);
+            warn(
+                warnings,
+                typeof ngDevMode === 'undefined' || ngDevMode
+                    ? `у набора «${RT_ICON_KIT_SET}» запасного набора нет, названный отброшен`
+                    : ''
+            );
             sets.set(set.name, { name: set.name, url: set.url, names: set.names, fill: set.fill });
         }
         return;
@@ -94,10 +110,32 @@ function closeFallbacks(sets: Map<string, IRtIconSet>, set: IRtIconSet, warnings
     const why: string | null = brokenChain(sets, set);
 
     if (why !== null) {
-        warnings.push(`набор «${set.name}»: цепочка запасных ${why}, запасным взят «${RT_ICON_KIT_SET}»`);
+        warn(
+            warnings,
+            typeof ngDevMode === 'undefined' || ngDevMode
+                ? `набор «${set.name}»: цепочка запасных ${why}, запасным взят «${RT_ICON_KIT_SET}»`
+                : ''
+        );
     }
 
     sets.set(set.name, { ...set, fallback: why === null ? (set.fallback ?? RT_ICON_KIT_SET) : RT_ICON_KIT_SET });
+}
+
+/* Запись приложения поверх встроенных. Негодная запись не принимается. */
+function addSet(sets: Map<string, IRtIconSet>, entry: IRtIconSet, warnings: string[]): void {
+    const merged: IRtIconSet = { ...sets.get(entry.name), ...entry };
+    const badName: boolean = !SET_NAME_RE.test(entry.name);
+
+    if (!badName && merged.url?.trim()) {
+        sets.set(entry.name, merged);
+        return;
+    }
+
+    if (typeof ngDevMode === 'undefined' || ngDevMode) {
+        const why: string = badName ? 'имя пишется строчными латинскими буквами, цифрами и одиночным дефисом' : 'у него пустой адрес';
+
+        warnings.push(`набор «${entry.name}» не принят: ${why}`);
+    }
 }
 
 /**
@@ -112,15 +150,7 @@ export function rtIconSetsConfig(added: ReadonlyArray<IRtIconSet> = [], defaultS
     const warnings: string[] = [];
 
     for (const entry of added) {
-        const merged: IRtIconSet = { ...sets.get(entry.name), ...entry };
-
-        if (!SET_NAME_RE.test(entry.name)) {
-            warnings.push(`набор «${entry.name}» не принят: имя пишется строчными латинскими буквами, цифрами и одиночным дефисом`);
-        } else if (!merged.url?.trim()) {
-            warnings.push(`набор «${entry.name}» не принят: у него пустой адрес`);
-        } else {
-            sets.set(entry.name, merged);
-        }
+        addSet(sets, entry, warnings);
     }
 
     for (const name of [...sets.keys()]) {
@@ -132,7 +162,12 @@ export function rtIconSetsConfig(added: ReadonlyArray<IRtIconSet> = [], defaultS
     }
 
     if (!sets.has(defaultSet)) {
-        warnings.push(`набора по умолчанию «${defaultSet}» среди объявленных нет, взят набор «${RT_ICON_KIT_SET}»`);
+        warn(
+            warnings,
+            typeof ngDevMode === 'undefined' || ngDevMode
+                ? `набора по умолчанию «${defaultSet}» среди объявленных нет, взят набор «${RT_ICON_KIT_SET}»`
+                : ''
+        );
     }
 
     return { sets, warnings, defaultSet: sets.has(defaultSet) ? defaultSet : RT_ICON_KIT_SET };

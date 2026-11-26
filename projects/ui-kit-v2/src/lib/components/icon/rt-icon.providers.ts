@@ -6,10 +6,16 @@ import { RT_ICON_SETS_CONFIG } from './rt-icon.registry';
 import { IRtIconSet } from './rt-icon-sets';
 import { IRtIconSetsConfig, rtIconSetsConfig } from './rt-icon-sets.logic';
 
+/* Значение задаёт сборка приложения: в рабочей сборке оно `false`, и тексты предупреждений из неё
+   выпадают. Поведение от него не зависит. */
+declare const ngDevMode: boolean | undefined;
+
 function reported(config: IRtIconSetsConfig): IRtIconSetsConfig {
-    for (const warning of config.warnings) {
-        // eslint-disable-next-line no-console -- предупреждение разработчику приложения: другого канала у кита нет
-        console.warn(`provideRtIcons: ${warning}.`);
+    if (typeof ngDevMode === 'undefined' || ngDevMode) {
+        for (const warning of config.warnings) {
+            // eslint-disable-next-line no-console -- предупреждение разработчику приложения: другого канала у кита нет
+            console.warn(`provideRtIcons: ${warning}.`);
+        }
     }
 
     return config;
