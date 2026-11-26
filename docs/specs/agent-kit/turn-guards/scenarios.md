@@ -123,6 +123,22 @@ And the entry of the turn names `TaskStop` of own background once per task and s
 
 Covered: `projects/agent-kit/tests/owner-stop-call-guard.test.sh`.
 
+### SC-AK-2017 — a Monitor that prints a line on every step of own background is refused
+
+Given a live own Bash task in the background, or a Bash call in the background with no answer yet
+When a `Monitor` follows its output or a file its command writes by `tail -f`, `-F`, `--follow`, `-fn` or a loop that prints on every round
+Then the call is refused, and the refusal names the task and the file and says to read the file after the notice of the end
+And a path through `${TMPDIR:-/tmp}`, `$(basename "$PWD")`, an assignment `S=` of the task's command, `tee -a` or `>>` is seen
+And of 26 `Monitor` commands from the records of the project 18 that print a line on every step of own background are refused, 8 pass
+And a wait by `until grep -q` with one print after it passes; so does a print followed by `break` in one branch
+And a pipeline followed by `break`, `tail -f | grep -m 1`, `echo` inside `$(…)`, a timer and a file no task writes pass
+And a task that ended, a task taken down by `TaskStop` and the output of an agent pass
+And with no record, with a broken record, with an engine that fails or runs past its limit the call passes
+And a command with no follow flag and no loop next to a print word passes without the engine
+And on the saved record of 13.11 the hook answers as the engine
+
+Covered: `projects/agent-kit/tests/monitor-stream-guard.test.sh`.
+
 ### SC-AK-1363 — a command that closes the session does not end ordered work
 
 Given the owner's latest word ordered work, and the owner called the command that writes the
