@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.40.0 · checks/flow-data.mjs · 64d6d90ce8f5 · правится надстройкой, не здесь
+// rt-kit v0.40.0 · checks/flow-data.mjs · a37ccc70b9e3 · правится надстройкой, не здесь
 /**
  * The data of the task flow description: the literals of `words`, the forms of `expect` and the
  * order of the release cases. A new stop word, a new write command, a new menu option or a new form
@@ -16,7 +16,7 @@
 import { Call, Ref } from './flow-syntax.mjs';
 
 /** The keys of `words`; `nudge` is a pattern, the rest are lists of strings. */
-export const WORD_KEYS = ['stop', 'stopExcept', 'holdAfter', 'nudge', 'write', 'menu', 'legacyBranches'];
+export const WORD_KEYS = ['stop', 'stopExcept', 'holdAfter', 'resume', 'stopComplaint', 'stopInside', 'stay', 'nudge', 'write', 'menu', 'legacyBranches'];
 
 /** The ways a form of the expected result is compared with a run. */
 export const COMPARE = ['exit', 'line', 'regex', 'number'];

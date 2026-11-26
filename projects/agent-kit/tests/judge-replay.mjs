@@ -80,6 +80,10 @@ export function judgeCommand({ model = null, cwd }) {
 
 /** One verdict, `allow` or `block`; anything else — none or both — is no verdict. */
 export function verdictOf(answer) {
+    // The hook answers as its text asks: the last JSON object `{"ok": true|false, …}` is its verdict;
+    // an earlier one quotes the rule.
+    const ok = [...String(answer).matchAll(/\{\s*"ok"\s*:\s*(true|false)\b/g)].at(-1);
+    if (ok) return ok[1] === 'true' ? 'allow' : 'block';
     const words = new Set((String(answer).match(/\b(allow|block)\b/gi) ?? []).map((w) => w.toLowerCase()));
     return words.size === 1 ? [...words][0] : null;
 }

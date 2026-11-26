@@ -210,3 +210,13 @@ When the hook on Stop reads each turn
 Then every turn is released by the case of a stop word of the owner: in the running stage, in handed-in work and in a taken task
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
+
+### SC-AK-2012 — a recorded turn for every transition of the owner's stop
+
+Given a stage going on and a session that edited a file. The owner's words after it are one of ten: «я же сказал стоп», Esc, Esc and a question a second later, a refused call with the mark of Esc, «хватит тупить, чини». The other five follow «стоп»: a question, swearing, «пиши инцидент в приёмник», «вливай», the menu answer «без предпочтения»
+When the hook on Stop reads each turn
+Then «я же сказал стоп», Esc, the refused call and every word after «стоп» but «вливай» release the turn
+And Esc with a question a second later, «хватит тупить, чини» and «стоп» then «вливай» hold it, naming the current step
+And the model hook on Stop lets the question and the swearing after «стоп» end, and holds «пиши инцидент» until the record is written and «вливай» until the work
+
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`; the verdicts of the model — `projects/agent-kit/tests/judge-replay.mjs`.
