@@ -53,6 +53,8 @@
   a retry after navigation, two frames 768 px wide against 1280. The red files differ between the runs, and two of them
   draw no sheet; no compared frame of a sheet diverged. The step is stopped after the second red by the owner's word
   about repeated failures; the cause is not proven.
+- **The remainder of 20721 bytes over 185800** — the owner: «Увелич лимит». `pnpm run check:kit-weight -- --write`
+  wrote the threshold 206521 bytes, gzip 51655, in `tools/kit-weight-threshold.json`.
 - **Цена:** нет
 - **Отменено:** нет
 
