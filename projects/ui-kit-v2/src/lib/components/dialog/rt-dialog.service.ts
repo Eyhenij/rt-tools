@@ -7,7 +7,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { EMPTY, map, merge, mergeMap, Observable, Subject, take, takeUntil } from 'rxjs';
 
-import { carryThemeScopeOfFocus, materialPresetClassesOfFocus } from '@rt-tools/ui-kit-v2/core';
+import { applyIconSetScope, carryThemeScopeOfFocus, iconSetScopeOfFocus, materialPresetClassesOfFocus } from '@rt-tools/ui-kit-v2/core';
+import { rtIconSetProviders, RtIconSetService } from '@rt-tools/ui-kit-v2/icon';
 import { RtDialogRef } from './rt-dialog-ref';
 import { RT_DIALOG_DATA } from './rt-dialog.tokens';
 
@@ -32,6 +33,12 @@ export interface IRtDialogConfig<TData = unknown> {
 
     /** Держать Tab внутри модалки, пока она открыта. По дефолту `false` — как было. */
     trapFocus?: boolean;
+
+    /**
+     * Набор значков окна. Без поля берётся набор части страницы, где стоит фокус; `null` — своего
+     * набора у окна нет.
+     */
+    iconSet?: string | null;
 
     /** После закрытия вернуть фокус туда, где он стоял при открытии. По дефолту `false`. */
     restoreFocus?: boolean;
@@ -124,6 +131,7 @@ interface IRtDialogOpenContext {
 export class RtDialogService {
     readonly #overlay: Overlay = inject(Overlay);
     readonly #injector: Injector = inject(Injector);
+    readonly #iconSets: RtIconSetService = inject(RtIconSetService);
     readonly #doc: Document = inject(DOCUMENT);
     readonly #focusTrapFactory: FocusTrapFactory = inject(FocusTrapFactory);
 
@@ -194,7 +202,10 @@ export class RtDialogService {
             disposeOnNavigation: true,
         });
         // До attach: содержимое диалога может забрать фокус, и кусок темы у кнопки будет потерян.
+        const asked: string | null | undefined = this.#iconSets.asked(config?.iconSet);
+        const iconSet: string | null = asked === undefined ? iconSetScopeOfFocus(this.#doc) : asked;
         carryThemeScopeOfFocus(overlayRef.overlayElement, this.#doc);
+        applyIconSetScope(overlayRef.overlayElement, iconSet);
 
         const dialogRef: RtDialogRef<TResult> = new RtDialogRef<TResult>(overlayRef);
         const focus: IRtDialogFocusState = {
@@ -217,6 +228,7 @@ export class RtDialogService {
             providers: [
                 { provide: RtDialogRef, useValue: dialogRef },
                 { provide: RT_DIALOG_DATA, useValue: config?.data ?? null },
+                ...rtIconSetProviders(iconSet),
             ],
         });
 

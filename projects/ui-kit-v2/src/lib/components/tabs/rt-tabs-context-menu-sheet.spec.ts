@@ -6,6 +6,7 @@ import { BreakpointsService } from '../../platform';
 import { RT_POPOVER_SHEET } from '../popover/rt-popover-sheet.token';
 import { RtTabDirective } from './rt-tab.directive';
 import { RtTabsComponent } from './rt-tabs.component';
+import { rtPreloadPopoverSheet } from '../popover/rt-popover-sheet.helper';
 
 /** Телефон: узкое окно и узкая полоса. */
 class PhoneBreakpointsStub {
@@ -56,6 +57,10 @@ function longPress(fixture: ComponentFixture<TabsContextSheetHostComponent>): vo
 }
 
 describe('Меню вкладки в нижней шторке', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+    });
+
     afterEach((): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });

@@ -18,7 +18,7 @@ export class TestRtSpeedMenuComponent {
     public direction: IRtSpeedMenu.Direction = 'up';
     public size: IRtSpeedMenu.Size = 'lg';
     public variant: IRtSpeedMenu.Variant = 'primary';
-    public icon: string = 'zoom_in';
+    public icon: string = 'search-plus';
     public label: string = 'Масштаб';
     public closeOnSelect: boolean = false;
     public disabled: boolean = false;

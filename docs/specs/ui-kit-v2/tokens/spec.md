@@ -176,6 +176,28 @@ threshold.
   build assembles it, the styles linter judges the properties, and a still frame shows a flat fill as a lawful
   one. A transition needing ends of its own gets names of its own rather than borrowing two neighbouring roles.
 
+- **The tokens come in one whole file and in two halves, and the halves are cut from the whole, not rebuilt.**
+  `tokens.css` stays as it was. `tokens.base.css` is the same file without the local pieces of the theme, and
+  it carries a copy of the root rule of the set Material under the dark theme, which wins by weight and not by
+  place. `tokens.scope.css` holds the local pieces and the density rules after them. An application without a
+  light or dark island and without a node of the set Material below the page root takes the base alone; the
+  kit puts that class itself on the pane of an overlay and on the host of a table or a list with the look
+  Material, so a page with the set Material and any of those takes both. One that has an island or such a
+  node takes the base and then the scope, in that order: the density rules of the scope end the
+  file as they end the whole one. The scope without the base works for nothing. The cut refuses a whole file that does not
+  fold from the head, the middle and the tail.
+
+- **The scope is loaded by the word of the application, and the kit asks for it nowhere.** `RtScopeStylesService`
+  of the entry `scope-styles` puts one link to the address the application declared at the end of the head,
+  after the base. An island may be written by markup without the directive, and a node of the set Material is
+  put by the kit on its own panes, so a request from inside the kit would miss some of the ways and would put
+  the service into the start of every consumer. The application asks: `ensure()` at its moment or `eager`,
+  which waits for the file before the first frame. A failed load or silence past ten seconds removes the
+  link and rejects, and the next call tries again; a marked link still loading is waited for, and a link of the
+  application to the same resolved address is waited for and is not removed on failure. At an eager start the failure goes to the error
+  handler of the application and the start goes on. On the server the service does nothing; without an
+  address it does nothing and reports it once to the error handler in the development mode.
+
 ## What is out of scope
 
 - **A move to a foreign library of the themes:** the arrangement of a foreign kit is taken as a sample of the

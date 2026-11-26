@@ -54,6 +54,17 @@ pnpm run check:ngdoctor
 # The last step of `check:all`, a step of the pipeline and of the push set; any finding turns it red
 pnpm run check:unused
 
+# The weight of the kit parts a consumer pulls at start: builds the kit, bundles the set the way a
+# consumer does (minified, without the development branches) and compares the bytes of the set
+# and of every part with `tools/kit-weight-threshold.json`. Growth over the threshold turns it red;
+# a lowering, or a growth accepted on purpose, is written by `pnpm run check:kit-weight -- --write`.
+# `--print` shows the table without comparing. gzip is compared with a half-percent tolerance, the
+# bytes exactly, so any edit of a start part or of the tokens rewrites the threshold in its own PR,
+# an upgrade of Angular or esbuild does the same, and after a neighbouring branch lands the threshold
+# is recounted by `--write`, never merged by hand.
+# A step of `check:all`, of the pipeline and of the push set
+pnpm run check:kit-weight
+
 # Where the time of agent sessions goes: the journals of this working copy, or the one named by
 # `--file`; `--steps` — the steps of the task flow, `--branches <keys>` — the mean of a task,
 # `--since`, `--until`, `--by-branch`, `--json`. It prints numbers and no text of a message

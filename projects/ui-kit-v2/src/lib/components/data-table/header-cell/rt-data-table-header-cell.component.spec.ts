@@ -136,8 +136,8 @@ describe('RtDataTableHeaderCellComponent', () => {
         expect(fixture.componentInstance.asked).toEqual([]);
     });
 
-    it('SC-UKV-318 — имя значка Material в шапке рисует набор кита', () => {
-        const fixture: ComponentFixture<HeaderHostComponent> = setup({ icon: { glyph: 'info', placement: 'left' } });
+    it('SC-UKV-318 — имя кита на glyph в шапке рисует набор кита', () => {
+        const fixture: ComponentFixture<HeaderHostComponent> = setup({ icon: { glyph: 'info-circle', placement: 'left' } });
 
         expect(fixture.debugElement.query(By.directive(RtIconComponent)).componentInstance.name()).toBe('info-circle');
         expect(qa(fixture, 'data-table-header-prefix')).not.toBeNull();
