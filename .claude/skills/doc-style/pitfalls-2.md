@@ -1,4 +1,4 @@
-<!-- rt-kit v0.40.0 · pitfalls/doc-style.2.md · 0a237c2c8100 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.0 · pitfalls/doc-style.2.md · 0a237c2c8100 · правится надстройкой, не здесь -->
 # Project texts — cold part, second file
 
 The sections the rule `doc-style` handed over when it was cut to its statements: its names,

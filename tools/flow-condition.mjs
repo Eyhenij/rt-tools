@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.40.0 · checks/flow-condition.mjs · feb0f932dea8 · правится надстройкой, не здесь
+// rt-kit v0.42.0 · checks/flow-condition.mjs · feb0f932dea8 · правится надстройкой, не здесь
 /**
  * Conditions of the task flow description: an exit of a state and a release case built from ready
  * measurers without a line of code.

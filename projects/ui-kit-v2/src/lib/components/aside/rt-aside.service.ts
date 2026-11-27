@@ -1,16 +1,38 @@
 import { ComponentType, Overlay, OverlayConfig, OverlayRef, PositionStrategy } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { DOCUMENT } from '@angular/common';
-import { inject, DestroyRef, Injector, Renderer2, RendererFactory2, Signal, Service } from '@angular/core';
+import { inject, untracked, DestroyRef, Injector, Renderer2, RendererFactory2, Signal, Service, StaticProvider } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { EMPTY, map, merge, mergeMap, Observable, Subject, Subscriber, takeUntil } from 'rxjs';
 
 import { IRtKitConfig } from '@rt-tools/ui-kit-v2/core';
 import { rtKitDefault } from '@rt-tools/ui-kit-v2/core';
-import { carryThemeScopeOfFocus, materialPresetClassesOfFocus } from '@rt-tools/ui-kit-v2/core';
+import { applyIconSetScope, carryThemeScopeOfFocus, iconSetScopeOfFocus, materialPresetClassesOfFocus } from '@rt-tools/ui-kit-v2/core';
+import { IRtIconSetScope, RT_ICON_SET_SCOPE, rtIconSetProviders, RtIconSetService } from '@rt-tools/ui-kit-v2/icon';
 import { RtAsideRef, TRtAsideCloseRequest } from './rt-aside-ref';
 import { RT_ASIDE_DATA } from './rt-aside.tokens';
+
+/** Набор значков одного открытия: что написать на коробку и что дать содержимому. */
+interface IRtAsideIconSet {
+    readonly set: string | null;
+    readonly providers: StaticProvider[];
+}
+
+/**
+ * Названный набор, затем набор части с фокусом, затем набор части из `injector`. Зовётся до того,
+ * как панель заберёт фокус.
+ */
+function asideIconSet(doc: Document, asked: string | null | undefined, injector: Injector | undefined): IRtAsideIconSet {
+    const owner: IRtIconSetScope | null = injector?.get(RT_ICON_SET_SCOPE, null) ?? null;
+    // Без `untracked` панель, открытая из `effect`, открылась бы снова на смене набора части.
+    const set: string | null =
+        asked === undefined ? (iconSetScopeOfFocus(doc) ?? untracked((): string | null => owner?.set() ?? null)) : asked;
+    // `null` при части в `injector` закрывает её: иначе содержимое взяло бы её набор.
+    const providers: StaticProvider[] = set === null && owner ? [{ provide: RT_ICON_SET_SCOPE, useValue: null }] : rtIconSetProviders(set);
+
+    return { set, providers };
+}
 
 /**
  * Позиционирование side-sheet — у какого края viewport "приклеена" панель.
@@ -45,6 +67,12 @@ export interface IRtAsideConfig<TData = unknown> {
      * панель через `close()`. Без него родитель — корневой injector, и панель живёт сама по себе.
      */
     injector?: Injector;
+
+    /**
+     * Набор значков панели. Без него панель берёт набор части, где стоит фокус, а когда фокус вне
+     * частей — набор части из `injector`. `null` — без части: набор решают `use()` и настройка.
+     */
+    iconSet?: string | null;
 
     /**
      * Снимать панель при переходе по адресу. По умолчанию `true`; `false` оставляет её открытой —
@@ -117,6 +145,7 @@ interface IRtAsideOpenContext {
 export class RtAsideService {
     readonly #overlay: Overlay = inject(Overlay);
     readonly #injector: Injector = inject(Injector);
+    readonly #iconSets: RtIconSetService = inject(RtIconSetService);
     readonly #doc: Document = inject(DOCUMENT);
     // Renderer2 нужен для манипуляции CSS-классами на overlay.hostElement.
     // В service нет ComponentRef, поэтому Renderer2 берём через factory.
@@ -198,7 +227,9 @@ export class RtAsideService {
 
         const overlayRef: OverlayRef = this.#overlay.create(overlayConfig);
         // До attach: содержимое панели может забрать фокус, и кусок темы у кнопки будет потерян.
+        const icons: IRtAsideIconSet = asideIconSet(this.#doc, this.#iconSets.asked(config?.iconSet), config?.injector);
         carryThemeScopeOfFocus(overlayRef.overlayElement, this.#doc);
+        applyIconSetScope(overlayRef.overlayElement, icons.set);
         const closeRequests: Subject<TRtAsideCloseRequest> = new Subject<TRtAsideCloseRequest>();
         const asideRef: RtAsideRef<TResult> = new RtAsideRef<TResult>(overlayRef, this.#renderer, closeRequests);
 
@@ -218,6 +249,7 @@ export class RtAsideService {
             providers: [
                 { provide: RtAsideRef, useValue: asideRef },
                 { provide: RT_ASIDE_DATA, useValue: config?.data ?? null },
+                ...icons.providers,
             ],
         });
 

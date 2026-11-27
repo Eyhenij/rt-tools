@@ -11,6 +11,7 @@
         [rtPopoverSheet]="sheet()"
         [rtPopoverSheetTitle]="triggerLabel()"
         [rtPopoverPositions]="positions()"
+        [icon]="!isOpen() && icon() === null ? 'bars' : null"
         [glyph]="isOpen() ? 'close' : icon()"
         [ariaLabel]="triggerLabel()"
         [variant]="variant()"

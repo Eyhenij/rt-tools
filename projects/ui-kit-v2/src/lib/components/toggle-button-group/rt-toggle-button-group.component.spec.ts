@@ -241,7 +241,7 @@ describe('RtToggleButtonGroupComponent', (): void => {
         expect(buttons(setup())[1].getAttribute('data-value')).toBe('week');
     });
 
-    it('SC-UKV-557 — сегмент с глифом рисует значок по имени Material', (): void => {
+    it('SC-UKV-557 — сегмент с глифом вне имён кита рисует лигатуру', (): void => {
         const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup({
             options: [{ value: 'pet', label: 'Питомцы', glyph: 'pets' }],
         });

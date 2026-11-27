@@ -1,4 +1,4 @@
-<!-- rt-kit v0.40.0 · pitfalls/testing.md · 177492b3865f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.0 · pitfalls/testing.md · 177492b3865f · правится надстройкой, не здесь -->
 # Verification — cold part
 
 Pitfalls: traps already stepped on. Loaded not with the rule but on demand — an ordinary

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.40.0 · hooks/code-writes.sh · ff87cd1739cc · правится надстройкой, не здесь
+# rt-kit v0.42.0 · hooks/code-writes.sh · ff87cd1739cc · правится надстройкой, не здесь
 # The code an interpreter reads: which files it writes and which commands it runs.
 #
 # NOT a guard and not a hook: there is deliberately no `rt-hook:` line. `write-targets.sh` sources it.

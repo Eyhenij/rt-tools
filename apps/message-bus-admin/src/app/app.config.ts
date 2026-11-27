@@ -62,7 +62,7 @@ export function appConfig(entry: IEntrySettings): ApplicationConfig {
             provideRtUtils(),
             provideRtStorage(),
             provideRtIDBStorage(),
-            provideRtIcons('/icons'),
+            provideRtIcons(),
             provideAdminKitLabels(),
             provideAppInitializer((): void => {
                 inject(ThemeService);

@@ -1,4 +1,4 @@
-// rt-kit v0.40.0 · checks/action-of.mjs · e2b69960e33d · правится надстройкой, не здесь
+// rt-kit v0.42.0 · checks/action-of.mjs · e2b69960e33d · правится надстройкой, не здесь
 /**
  * The action of a call: the class the decision table knows a tool call by.
  *

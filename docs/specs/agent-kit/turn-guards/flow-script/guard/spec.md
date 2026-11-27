@@ -18,6 +18,9 @@ that measurement, before they are written.
 - **The owner's last word** — the last entry of the conversation the owner made: a message typed or
   the options chosen in a menu.
 - **The decision** — the section «Решение» or «Decision» of a plan: how the code will be built.
+- **A reviewed base** — the head of a merge in progress that lies in the remote main branch or in the
+  remote branch of an epic a plan of the epic names.
+- **A conflict block** — the lines git wrote into an unmerged file from `<<<<<<<` to `>>>>>>>`.
 - **The tree override** — the description of the tree that adds to or replaces keys of the package
   description.
 
@@ -35,6 +38,7 @@ There is no interface: the guard answers the agent with a refusal or stays silen
 - **«отложено» in the epic plan is set and lifted only by the owner's last word naming the task.**
 - **The tree override is edited only by the owner's last word naming the key it changes, and the reason of a removed key quotes that word.**
 - **The description, its measurers and sources and the engine are edited only in a task whose approved plan names their path in a footprint row marked «(правится)».**
+- **While a merge of a reviewed base runs, a side of a conflict block is taken in a guarded file without a plan.**
 - **The owner's last word is a message the owner typed or the options the owner chose in a menu.**
 - **A plan with no approval mark is refused a check whose form hides its result, when it is written.**
 - **A plan with no approval mark is refused a decision that is not complete, and all it lacks is named at once.**
@@ -113,6 +117,27 @@ Not applicable: one call is judged at a time.
   read the quality; a text check that guessed it would refuse true plans. The reading of a cell — the
   places with their fate, the numbers, the suites — is given out, so that the end of the stages compares
   it with the code and no second reader appears.
+- **A merge resolution is a choice of a side, not an edit judged by its lines.** An Edit or MultiEdit of
+  an unmerged guarded file passes when each old text stands in the file as one whole conflict block,
+  from the start of a line to the end of one, and its new text is the side of the branch or the side of
+  the base; in a Markdown text, both sides one after the other pass too. In code two sides declare a
+  name twice, and a broken engine lets every call through. `git checkout` and `git restore` with
+  `--ours` or `--theirs` pass when every path they name is unmerged, and not with `-c`, `--git-dir`,
+  `--work-tree`, `--namespace` or a `GIT_*` variable, which point git at another config, index or
+  repository. A Write, an edit outside a block, a cut marker, a line of neither side, the side of the
+  common ancestor and a merged path are judged by the rule of the guarded files. The 26.11 merge of the
+  main branch into an epic branch had one conflict in the engine source and six in its laid-out copies,
+  each a header line. The copies of the engine take `--ours` first: while they hold markers the engine of
+  the merged tree fails, and a hook that runs it lets every call through. Then the source takes a side
+  by an edit, and the layout follows.
+- **The base counts as reviewed by the remote-tracking branch it lies in, read locally.** Every head of
+  the merge must lie in the remote-tracking main branch, named in full, or in the branch of an epic a plan committed at HEAD
+  names: a plan the merged head brings into the tree does not count, nor a local branch named like a
+  remote one. A local branch with a commit nobody pushed is no reviewed base, and the resolution of its
+  conflicts is refused. The refs, `MERGE_HEAD`, the plans and a filter set by `git config` beforehand
+  are local state, and a session that forges them on purpose passes; the same holds for a merge itself,
+  which is not judged: `git merge` of any branch, `-X ours` and `-X theirs` pass as before. A merge that
+  cannot be read counts as none, so the rule of the guarded files judges and the engine does not fail.
 - **`plan-red` passes a plan whose commit has no module of the decision.** It was written before the
   update. A module outside the tree or the history says nothing of when the plan was written, so it asks.
 
@@ -133,3 +158,5 @@ None.
 - 2026-11-26 — task RT-3621: on a machine without `timeout` the call of the missing command failed
   and every edit passed unjudged; the engine now runs under the first limiter the machine has;
   scenario SC-AK-2004.
+- 2026-11-26 — task RT-3691: while a merge of a reviewed base runs, a side of a conflict block is
+  taken in a guarded file without a plan; scenario SC-AK-2016.

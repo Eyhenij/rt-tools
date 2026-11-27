@@ -1,4 +1,4 @@
-// rt-kit v0.40.0 · task-flow/source/steps.mjs · ea6775ffa9b5 · правится надстройкой, не здесь
+// rt-kit v0.42.0 · task-flow/source/steps.mjs · ea6775ffa9b5 · правится надстройкой, не здесь
 /**
  * The source «source.steps» of the task flow description: the parsing of the steps of a plan and of
  * a progress, by the module every reader of both lists shares — `work-steps-lib.mjs`. A measurer

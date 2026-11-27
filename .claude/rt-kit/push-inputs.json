@@ -623,9 +623,11 @@
                 }
             ],
             "files": [
-                "projects/ui-kit-v2/src/lib/components/icon/rt-icon-material-map.ts",
+                "projects/ui-kit-v2/migrations/icon-names.json",
                 "projects/ui-kit-v2/src/lib/components/icon/rt-icon-names.ts",
-                "tools/check-icon-map.mjs"
+                "projects/ui-kit-v2/src/lib/components/icon/rt-icon-sets.ts",
+                "tools/check-icon-map.mjs",
+                "tools/material-icon-sources.json"
             ],
             "probes": []
         },

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.40.0 · pitfalls/lib-layers.md · 8936955ffb28 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.0 · pitfalls/lib-layers.md · 8936955ffb28 · правится надстройкой, не здесь -->
 # Imports between libs — how it works here — cold part
 
 What the rule `lib-layers` handed over when cut to its statements, every article whole.

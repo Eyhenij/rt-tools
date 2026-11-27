@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.40.0 · checks/rt-kit-checks.config.mjs · d2692a4e45f6 · правится надстройкой, не здесь
+// rt-kit v0.42.0 · checks/rt-kit-checks.config.mjs · d2692a4e45f6 · правится надстройкой, не здесь
 /**
  * Check settings: what counts as sources, where not to go and where the debt lists lie.
  *

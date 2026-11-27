@@ -1,3 +1,79 @@
+# [0.42.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.41.1...rt-agent-kit%400.42.0) (2026-11-27)
+
+**Метрика выпуска:** нет. Метрика эпика RT-3693 — обращения к владельцу на задачу, её считает команда owner:touches, в списке метрик выпуска её нет
+
+### Bug Fixes
+
+- **rt:agent-kit:** исполнитель сливает одной формой команды, иное слияние вне кавычек отбито после второго круга ревью (RT-3701) ([df17cd3](https://github.com/Eyhenij/rt-tools/commit/df17cd35c7dbe1611b576a0a9760a5865d03dfc4))
+- **rt:agent-kit:** кавычки вокруг merge не прячут слияние, heredoc не судится, gh alias в границах (RT-3701) ([ebdf665](https://github.com/Eyhenij/rt-tools/commit/ebdf665e2a50bb4761256ce523eb0c72f67afb6b))
+- **rt:agent-kit:** копии продолженной сессии и одной миллисекунды считаются один раз после первого круга ревью (RT-3696) ([a9807c8](https://github.com/Eyhenij/rt-tools/commit/a9807c8d912b9749e90d6c7525fde54f0ffbb1eb))
+- **rt:agent-kit:** слова одной миллисекунды и копии на другой ветке считаются верно после второго круга ревью (RT-3696) ([eec7b68](https://github.com/Eyhenij/rt-tools/commit/eec7b689d42ccaf4420b29aa40099ca872b6851b))
+- **rt:agent-kit:** сообщение посреди хода, повторённое записью, считается один раз (RT-3696) ([3ad9519](https://github.com/Eyhenij/rt-tools/commit/3ad95193d5f6ddafdd539a26faddfb1e48b490e4))
+- **rt:agent-kit:** хук судит каждое слияние команды — полный путь, обёртка, номер после ключей, токен после первого круга ревью (RT-3701) ([6082a64](https://github.com/Eyhenij/rt-tools/commit/6082a64fcfb36d54ae086ca158d2454df1a7741b))
+
+### Features
+
+- **rt:agent-kit:** вид набранного сообщения, второй запуск хука не пишет строки повторно (RT-3696) ([e088d47](https://github.com/Eyhenij/rt-tools/commit/e088d4748198a6466a7c3e5c351d2d3f9d715d6f))
+- **rt:agent-kit:** хук слияния знает базу PR и адрес автора, слияние в main — кнопка владельца (RT-3701) ([6864829](https://github.com/Eyhenij/rt-tools/commit/68648298edf72ef4c6f65b0830e93b3d457c74f1))
+
+## [0.41.1](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.41.0...rt-agent-kit%400.41.1) (2026-11-26)
+
+**Метрика выпуска:** нет. Повтор выпуска 0.41.1, прошлый запуск упал на записи тега на стороне GitHub
+
+### Bug Fixes
+
+- **rt:agent-kit:** выбор стороны при слиянии после второго круга ревью (RT-3691) ([c61bdab](https://github.com/Eyhenij/rt-tools/commit/c61bdab080a0a7b665e11516103e542407374a6d))
+- **rt:agent-kit:** выбор стороны при слиянии после первого круга ревью (RT-3691) ([aa670ee](https://github.com/Eyhenij/rt-tools/commit/aa670ee5482032544065df1f454b4398c99e550a))
+
+### Features
+
+- **rt:agent-kit:** при слиянии проверенной базы проверка хода работы пропускает выбор стороны в блоке конфликта ([8b3ed7c](https://github.com/Eyhenij/rt-tools/commit/8b3ed7cd3e2873a56ff9f24fc06bb1bb68247211))
+
+## [0.41.1](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.41.0...rt-agent-kit%400.41.1) (2026-11-26)
+
+**Метрика выпуска:** нет. Исправление проверки хода работы при слиянии проверенной базы (RT-3691)
+
+### Bug Fixes
+
+- **rt:agent-kit:** выбор стороны при слиянии после второго круга ревью (RT-3691) ([c61bdab](https://github.com/Eyhenij/rt-tools/commit/c61bdab080a0a7b665e11516103e542407374a6d))
+- **rt:agent-kit:** выбор стороны при слиянии после первого круга ревью (RT-3691) ([aa670ee](https://github.com/Eyhenij/rt-tools/commit/aa670ee5482032544065df1f454b4398c99e550a))
+
+### Features
+
+- **rt:agent-kit:** при слиянии проверенной базы проверка хода работы пропускает выбор стороны в блоке конфликта ([8b3ed7c](https://github.com/Eyhenij/rt-tools/commit/8b3ed7cd3e2873a56ff9f24fc06bb1bb68247211))
+
+# [0.41.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.40.0...rt-agent-kit%400.41.0) (2026-11-26)
+
+**Метрика выпуска:** минут впустую, вниз
+
+### Bug Fixes
+
+- **rt:agent-kit:** вопрос о PR до набора после второго круга ревью (RT-3628) ([5e12910](https://github.com/Eyhenij/rt-tools/commit/5e12910aa24794a031582bf40e999d1823691f77))
+- **rt:agent-kit:** готовность PR до набора после первого круга ревью (RT-3628) ([5e3232c](https://github.com/Eyhenij/rt-tools/commit/5e3232cabe9595e4fe67d0987ab49d48b1079640))
+- **rt:agent-kit:** единственная задача разбора после второго круга ревью (RT-3627) ([0276f6f](https://github.com/Eyhenij/rt-tools/commit/0276f6f2c202f87fe0a8b2872ac2df5e72236e08))
+- **rt:agent-kit:** единственная задача разбора после первого круга ревью (RT-3627) ([d3ebc2b](https://github.com/Eyhenij/rt-tools/commit/d3ebc2bd841a6609e818baa2c4e4e0260bd7e7a9))
+- **rt:agent-kit:** карточка, которой хостинг не знает, основу не судит (RT-3628) ([e21cef2](https://github.com/Eyhenij/rt-tools/commit/e21cef278362a366804cb78bfaa8ec14d03fae37))
+- **rt:agent-kit:** ловушка пробы стража после первого круга ревью (RT-3683) ([f31393e](https://github.com/Eyhenij/rt-tools/commit/f31393e3759603ef25c97257cd04196a92a12df4))
+- **rt:agent-kit:** набор рядом со вторым кругом после второго круга ревью (RT-3630) ([db9d4ab](https://github.com/Eyhenij/rt-tools/commit/db9d4ab83603d1266cc8fb8cb1ebae9b0db88299))
+- **rt:agent-kit:** набор рядом со вторым кругом после первого круга ревью (RT-3630) ([0c48388](https://github.com/Eyhenij/rt-tools/commit/0c483881365bed97619a048937b338a7b4765cf8))
+- **rt:agent-kit:** пробы стража dev-server-guard не зависят от скорости машины (RT-3683) ([07c74cf](https://github.com/Eyhenij/rt-tools/commit/07c74cf6f211771c1449282913c1a0e9ddbb0186))
+- **rt:agent-kit:** путь ревью правки после второго круга ревью (RT-3626) ([941fc59](https://github.com/Eyhenij/rt-tools/commit/941fc59e676719c2b48093e0e241390b991fa578))
+- **rt:agent-kit:** путь ревью правки после первого круга ревью (RT-3626) ([e218849](https://github.com/Eyhenij/rt-tools/commit/e21884966e71e0985abbb448bc1b166ba2cdf706))
+- **rt:agent-kit:** слияние main в эпик укладывается в пределы длины (RT-3676) ([4823b70](https://github.com/Eyhenij/rt-tools/commit/4823b70aced0ac8d367ed111538f5e052eaff74f))
+- **rt:agent-kit:** этап и архивная запись после второго круга ревью (RT-3631) ([3f2b086](https://github.com/Eyhenij/rt-tools/commit/3f2b08663261fbaf4aa5c3398ea5388f23f1b1e2))
+- **rt:agent-kit:** этап и архивная запись после первого круга ревью (RT-3631) ([72d6a60](https://github.com/Eyhenij/rt-tools/commit/72d6a60d845adbff291bfc411e828e7fd8659c97))
+
+### Features
+
+- **rt:agent-kit:** ветка с одним кругом ревью получает строку времени по шагам (RT-3626) ([762376f](https://github.com/Eyhenij/rt-tools/commit/762376f99e6134ce09148735b1aa8ca678765ffe))
+- **rt:agent-kit:** движок ведёт работу вне эпика дальше второго шага (RT-3627) ([4aaa89b](https://github.com/Eyhenij/rt-tools/commit/4aaa89b8acb96d1e03b22911abac00dee65df9ac))
+- **rt:agent-kit:** единственная задача разбора заводится без эпика (RT-3627) ([d0ef55f](https://github.com/Eyhenij/rt-tools/commit/d0ef55f0c5c93e3f3084aee9ce95e8a602cc0999))
+- **rt:agent-kit:** защиты знают единственную задачу разбора (RT-3627) ([b12263d](https://github.com/Eyhenij/rt-tools/commit/b12263d450456a516de5b2f442fc66abb37b40a6))
+- **rt:agent-kit:** лёгкому плану одобрение даётся без вызова ролей (RT-3626) ([485183d](https://github.com/Eyhenij/rt-tools/commit/485183df8b02b479e654a7666b4b4ffdf8824139))
+- **rt:agent-kit:** набор не начинается, пока PR не откроется (RT-3628) ([493ceb1](https://github.com/Eyhenij/rt-tools/commit/493ceb16dc4031303eee609759778cca256cc50a))
+- **rt:agent-kit:** набор рядом со вторым кругом, честный итог и снятие запуска (RT-3630) ([8e12fcf](https://github.com/Eyhenij/rt-tools/commit/8e12fcf397b51091af2df3771af8bf35f4e753c2))
+- **rt:agent-kit:** этап плана меряется и отмечается одним вызовом (RT-3631) ([50f656a](https://github.com/Eyhenij/rt-tools/commit/50f656a79259a86d1ad391aca2c2f31800c379b3))
+
 # [0.40.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.39.1...rt-agent-kit%400.40.0) (2026-11-25)
 
 **Метрика выпуска:** принято с первого раза, вверх

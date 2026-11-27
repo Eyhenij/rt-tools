@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.40.0 · hooks/skill-gate-rearm.sh · 18639c01785b · правится надстройкой, не здесь
+# rt-kit v0.42.0 · hooks/skill-gate-rearm.sh · 18639c01785b · правится надстройкой, не здесь
 # rt-hook: SessionStart compact|clear
 # Re-arming the gate. SessionStart(compact|clear).
 #

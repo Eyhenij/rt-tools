@@ -91,7 +91,7 @@ export class RtDataTableHeaderCellComponent<T = Record<string, unknown>> {
         return icon ? dataTableIconName(icon.glyph) : null;
     });
 
-    /** Имя без пары в перечне шапка рисует глифом Material Symbols — так же, как ячейка. */
+    /** Имя вне набора кита шапка рисует глифом Material Symbols — так же, как ячейка. */
     protected readonly glyph: Signal<string | null> = computed(() => {
         const icon: IRtDataTable.Icon | null = this.icon();
 

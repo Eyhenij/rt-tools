@@ -76,8 +76,8 @@ the screen.
 
 ## Contract
 
-The intake of the kit does not change from outside: it accepts the address of the set and nothing more.
-What changes is what stands behind it — the minute of the loading. A consumer who waited for the whole
+The intake of the kit declares the sets of icons — see the subdomain `icon-material-names`. The
+loading on demand changed what stands behind it — the minute of the loading. A consumer who waited for the whole
 sprite by the start of the application does not get it any more: this is a breaking edit of a published
 package, and it is declared by a raised version and a record in the section of the changes.
 

@@ -29,7 +29,7 @@ export const EXAMPLE_CONFIG: ApplicationConfig = {
         provideHttpClient(withInterceptors([rtAuthInterceptor])),
         provideRtUtils(),
         provideRtStorage(),
-        provideRtIcons('/icons'),
+        provideRtIcons(),
         provideAppInitializer((): void => {
             inject(ThemeService);
         }),

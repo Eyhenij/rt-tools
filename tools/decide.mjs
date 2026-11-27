@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.40.0 · checks/decide.mjs · 3966a05905a9 · правится надстройкой, не здесь
+// rt-kit v0.42.0 · checks/decide.mjs · 3966a05905a9 · правится надстройкой, не здесь
 /**
  * The decider: one answer for a hook, an action and the facts of the state — the decision, the
  * move the refusal names and its text — taken from the decision table.

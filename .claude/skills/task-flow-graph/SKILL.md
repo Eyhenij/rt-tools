@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when the tree holds a code graph and a domain is explored or a shared symbol is about to be edited. Not for a claim about behaviour, a number or a rule text — those are read from the code and the documents.
 ---
-<!-- rt-kit v0.40.0 · patterns/task-flow-graph.needs-graph.md · 5c92d959110c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.0 · patterns/task-flow-graph.needs-graph.md · 5c92d959110c · правится надстройкой, не здесь -->
 
 # Working with the tree's code graph
 

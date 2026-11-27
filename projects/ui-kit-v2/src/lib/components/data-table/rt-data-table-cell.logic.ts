@@ -1,6 +1,6 @@
 import { isNumber, isString, TNullable } from '@rt-tools/utils';
 
-import { iconMaterialMap, IRtIconMaterialEntry } from '@rt-tools/ui-kit-v2/icon';
+import { kitNameOf } from '@rt-tools/ui-kit-v2/icon';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { IRtDataTable } from '@rt-tools/ui-kit-v2/core';
 
@@ -33,12 +33,7 @@ export function dataTableCopyButtonSide(column: IRtDataTable.Column<unknown>): '
     return column.copyBtnAlign ?? (column.align === 'right' ? 'left' : 'right');
 }
 
-/**
- * Значок набора кита для имени первого кита, либо `null`, если пары нет.
- *
- * Идёт через перечень соответствий кита, а не своим списком: второй список разошёлся бы с
- * перечнем молча, и одно имя рисовалось бы в двух местах двумя рисунками.
- */
+/** Значок набора кита по имени из колонки; `null` — такого имени в наборе нет. */
 export function dataTableIconName(glyph: string): IRtIcon.Name | null {
-    return iconMaterialMap.find((entry: IRtIconMaterialEntry) => entry.from === glyph)?.to ?? null;
+    return kitNameOf(glyph);
 }

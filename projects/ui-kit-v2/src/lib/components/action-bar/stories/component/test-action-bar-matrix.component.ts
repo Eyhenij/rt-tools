@@ -155,7 +155,7 @@ export class TestRtActionBarMatrixComponent {
         },
         {
             label: 'имя Material',
-            config: config(3, 128, [{ label: 'Стереть', glyph: 'delete_forever', look: 'danger' }]),
+            config: config(3, 128, [{ label: 'Стереть', glyph: 'trash-x', look: 'danger' }]),
         },
     ];
 

@@ -2,7 +2,7 @@
 description: Closing the session — the main branch pulled, merged branches removed, the handover written
 argument-hint: '[empty | <what to add to the handover in your own words>]'
 ---
-<!-- rt-kit v0.40.0 · commands/next-session.md · 7c20fb6ff2f1 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.0 · commands/next-session.md · 7c20fb6ff2f1 · правится надстройкой, не здесь -->
 
 Close the session: bring the tree to the main branch, remove the merged branches and write the
 handover for the next session. The owner's addition to the handover: `$ARGUMENTS`
