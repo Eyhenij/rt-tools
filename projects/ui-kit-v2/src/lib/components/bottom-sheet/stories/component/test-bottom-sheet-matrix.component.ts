@@ -9,6 +9,7 @@ import { StoryPresetsComponent } from '../../../../../showcase/story-presets.com
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtBottomSheetComponent } from '../../rt-bottom-sheet.component';
 import { RtSheetFooterDirective } from '../../rt-sheet-footer.directive';
+import { RtSheetMoreDirective } from '../../rt-sheet-more.directive';
 import { RtSheetHeaderDirective } from '../../rt-sheet-header.directive';
 import { OwnSheetStackDirective } from './own-sheet-stack.directive';
 
@@ -258,7 +259,12 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'header' | 'footer' | 
                                 }
                                 <rt-icon-button sheetAction variant="secondary" radius="full" icon="reset" ariaLabel="Сбросить" />
                                 <span sheetInfo>Найдено: 12</span>
-                                <rt-toggle-switch sheetFooter label="Свободные" [formControl]="onlyFree" />
+                                <!-- Дополнительное — за «⋮» в шапке: второй экран той же шторки. -->
+                                <ng-template rtSheetMore>
+                                    <div style="padding: var(--rt-space-5) var(--rt-space-5) var(--rt-space-2)">
+                                        <rt-toggle-switch label="Свободные" size="md" [formControl]="onlyFree" />
+                                    </div>
+                                </ng-template>
                                 <button type="button" sheetPrimary rtButton size="md" label="Применить" aria-label="Применить"></button>
                             </rt-bottom-sheet>
                         </div>
@@ -307,6 +313,7 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'header' | 'footer' | 
         RtBottomSheetComponent,
         RtIconButtonComponent,
         RtSheetFooterDirective,
+        RtSheetMoreDirective,
         RtSheetHeaderDirective,
 
         // directives

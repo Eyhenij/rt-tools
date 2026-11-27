@@ -471,3 +471,29 @@ When it is open
 Then both stand on the right of the header, 8 px apart
 
 Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-footer-action.spec.ts`.
+
+### SC-UKV-1927 — a template of more puts «⋮» left of the icon buttons of the header
+
+Given a sheet with a template of more and an icon button of its own in the header
+When it is open
+Then «⋮» stands on the right of the header before the button of the application; a sheet without
+the template has neither «⋮» nor a second screen
+
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-sheet-more.directive.spec.ts`.
+
+### SC-UKV-1928 — «⋮» opens the second screen with the title of the template or «More»
+
+Given a sheet with a template of more
+When «⋮» is pressed
+Then the second screen opens with the template in it, titled «More» in the language of the kit, or
+by the title the template names
+
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-sheet-more.directive.spec.ts`.
+
+### SC-UKV-1929 — the chevron and the back request return to the first screen
+
+Given the second screen of more is open
+When the chevron back is pressed, or the template calls its back request
+Then the second screen closes and the first stays open
+
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-sheet-more.directive.spec.ts`.

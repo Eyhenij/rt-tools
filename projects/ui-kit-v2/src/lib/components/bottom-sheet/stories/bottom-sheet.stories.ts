@@ -14,7 +14,7 @@ export default {
     parameters: { snapshot: { fullPage: true } },
     argTypes: {
         open: { control: { type: 'boolean' } },
-        layout: { control: { type: 'select' }, options: ['plain', 'footer-action', 'header-icons'] },
+        layout: { control: { type: 'select' }, options: ['plain', 'footer-action', 'header-icons', 'more'] },
     },
 } as Meta<TestRtBottomSheetComponent>;
 
@@ -52,4 +52,26 @@ export const HeaderIcons: TStory = {
         layout: 'header-icons',
     },
     parameters: { snapshot: { fullPage: true, overlay: OPEN_SHEET, viewport: PHONE_WINDOW } },
+};
+
+/** Второй экран шторки: открытый и вставший на место первого. */
+const MORE_SCREEN: string = '.rt-bottom-sheet--nested.rt-bottom-sheet--open';
+
+/**
+ * Дополнительное за «⋮»: кнопка стоит левее значка сброса, а её нажатие открывает второй экран той
+ * же шторки — шеврон «назад», заголовок «Ещё» и шаблон приложения, здесь переключатель «Свободные».
+ * История нажимает «⋮» сама: кадр закрепляет второй экран. Первый экран — в «Подвале» матрицы.
+ * Кадры макета 8762:2095 и 8762:2124.
+ */
+export const MoreScreen: TStory = {
+    name: 'Дополнительное за «⋮»',
+    args: {
+        open: true,
+        layout: 'more',
+    },
+    parameters: { snapshot: { fullPage: true, overlay: MORE_SCREEN, viewport: PHONE_WINDOW } },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await document.fonts.ready;
+        canvasElement.querySelector<HTMLButtonElement>('[qa-dataid="bottom-sheet-more"] button')?.click();
+    },
 };

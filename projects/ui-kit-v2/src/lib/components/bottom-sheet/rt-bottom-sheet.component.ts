@@ -44,6 +44,7 @@ import { RtSheetDrag } from './rt-sheet-drag';
 import { IRtSheetConfirmLabels, IRtSheetTemplateContext, TRtSheetCloseReason } from './rt-bottom-sheet.model';
 import { RtSheetFooterDirective } from './rt-sheet-footer.directive';
 import { RtSheetHeaderDirective } from './rt-sheet-header.directive';
+import { IRtSheetMoreContext, RtSheetMoreDirective } from './rt-sheet-more.directive';
 
 const BEM_BLOCK: string = 'rt-bottom-sheet';
 
@@ -114,6 +115,8 @@ export class RtBottomSheetComponent {
     readonly #requestClose: () => void = (): void => this.dismiss('close');
     readonly #onResize: () => void = (): void => this.#screens.followUnder();
     readonly #requestApply: () => void = (): void => this.applyRequest.emit();
+    /** Возврат со второго экрана «Ещё» к первому. */
+    readonly #closeMore: () => void = (): void => this.moreOpen.set(false);
     readonly #onKeyboardBox: (box: IRtSheetKeyboardBox | null) => void = (box: IRtSheetKeyboardBox | null): void =>
         this.keyboardBox.set(box);
 
@@ -169,6 +172,17 @@ export class RtBottomSheetComponent {
 
     protected readonly ownHeader: Signal<RtSheetHeaderDirective | undefined> = contentChild(RtSheetHeaderDirective);
     protected readonly ownFooter: Signal<RtSheetFooterDirective | undefined> = contentChild(RtSheetFooterDirective);
+    /** Дополнительное за «⋮»: с шаблоном в шапке встаёт «⋮», и он открывает второй экран «Ещё». */
+    protected readonly ownMore: Signal<RtSheetMoreDirective | undefined> = contentChild(RtSheetMoreDirective);
+
+    /** Второй экран «Ещё» открыт; с каждой сменой открытости самой шторки он снова закрыт. */
+    protected readonly moreOpen: WritableSignal<boolean> = linkedSignal<boolean>((): boolean => this.#closedWith(false));
+
+    /** Шаблон второго экрана «Ещё» получает просьбу вернуться к первому экрану. */
+    protected readonly moreContext: IRtSheetMoreContext = {
+        $implicit: this.#closeMore,
+        back: this.#closeMore,
+    };
 
     /** Своя шапка: шаблон из входа сильнее шаблона директивы в содержимом. Пусто — шапка шторки. */
     protected readonly headerTpl: Signal<TemplateRef<IRtSheetTemplateContext> | null> = computed(

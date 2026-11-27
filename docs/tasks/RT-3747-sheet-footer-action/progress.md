@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 3 of 3 — витрина и сверка с макетом
 - **Done:** места `[sheetPrimary]` и `[sheetInfo]`, зазор кнопок шапки, тесты SC-UKV-1923…1926 (507 тестов шторки, асайда, панели выбора и отборов зелёные), `CONTEXT.md`, спека; истории «Главное действие в подвале» и «Значки в шапке»; сверка с макетом — 42 из 42 чисел; шторки периода, асайда записи, фильтров панели и асайда приложения до и после — 112 из 112 чисел без сдвига.
-- **Next step:** показ витрины владельцу (истории `organisms-aside-bottomsheet--footer-action` и `--header-icons` на :6007) и его второй ответ; затем круг ревью, набор перед отправкой, PR в ветку эпика. Снимки обеих историй сняты; снимок «Значки в шапке» снят заново после слова «Удалить» — крайняя справа» и подтверждён вторым прогоном (3 из 3).
+- **Next step:** показ витрины владельцу (истории `organisms-aside-bottomsheet--footer-action`, `--header-icons`, `--more-screen` и матрица `--header`, `--footer` на :6007) и его второй ответ; затем круг ревью, набор перед отправкой, PR в ветку эпика. «⋮» и второй экран сделаны: SC-UKV-1927…1929, снимки шторки 10 из 10 подтверждены вторым прогоном, сверка с кадрами 8762:2095 и 8762:2124 по числам совпала.
 - **PR:** not open yet
 
 ## Steps
@@ -26,6 +26,10 @@
 - **«Удалить» — крайняя справа в шапке** — слово владельца 27.11.2026: «иконка удалить (если она есть в конкретном случае) всегда справа в шапке». Кадр макета 8736:1990, история «Значки в шапке», спека и `CONTEXT.md` поправлены; снимок истории снят заново. Шторка порядок кнопок не меняет: его держит потребитель, и это правило несут RT-3748 и RT-3749. Affected stage of the plan: 2, 3.
 
 - **Цена: стартовый вес части `bottom-sheet` вырос на 815 байт (21 176 → 21 991), весь кит — 207 492 → 208 307** — это правила мест подвала, их порядка и прятания пустого подвала. Порог записан `pnpm run check:kit-weight -- --write`. Affected stage of the plan: 3.
+- **Дополнительное шторки — за «⋮», вторым экраном** — слово владельца 27.11.2026 у истории «Подвал»: «тогл свободные мне не нравится как это все выглядит, его либо спрятать на второй экран в шапку в кнопку три точки слева от кнопки ресет»; ответ на вопрос: «по дефолту ложим доп кнопки в три точки (вертикальные) слева от сброса при нажатии открывается второй экран ботомшита, но нужно давать возможность ложить и в шапку и в футер». Кадры 8762:2095 и 8762:2124, «Одобряю кадры». Сделано: директива `rtSheetMore` (шаблон второго экрана, заголовок `rtSheetMoreTitle`), кнопка «⋮» левее `[sheetAction]`, второй экран — та же шторка, вложенная в себя; подпись кита `bottomSheetMore` («Ещё» в витрине) — `uiMore` занята «Подробнее» свёрнутого текста. Сценарии SC-UKV-1927…1929, история «Дополнительное за «⋮»», «Подвал» матрицы перенёс переключатель за «⋮». Affected stage of the plan: 1, 2, 3.
+- **Правка вне плана: открытость шторки красила только свои подложку и панель** — правило `--open` задевало потомков, и закрытая шторка, вложенная в открытую (экран «Ещё»), вставала открытой. Селекторы стали `>`; остальные 8 снимков шторки совпали без пересъёмки. Affected stage of the plan: 1.
+- **Разделитель под шапкой в кадрах «⋮» убран в макете** — в кадрах 8762:2095 и 8762:2124 у шапки стояла нижняя черта 1 px, которой нет ни у главного компонента Bottom Sheet (4658:3216), ни у кита: моя ошибка рисования. После правки шапка 52, переключатель второго экрана 20 / 108, 52 × 24, подпись x 80 — те же числа, что в витрине. Affected stage of the plan: 3.
+- **Цена: стартовый вес части `bottom-sheet` вырос ещё на 2 214 байт (21 991 → 24 205), `core` на 23 (подпись), весь кит 208 307 → 210 586** — кнопка «⋮», второй экран и директива. Порог записан `node tools/check-kit-weight.mjs --write`. Affected stage of the plan: 3.
 - **Отменено: ничего** — весь объём плана сделан; входы шторки панели выбора и правило спеки о действии в шапке ушли в RT-3748 ещё до одобрения плана.
 
 - **Превышение: новых файлов кода 1 при бюджете 0** — новый файл — спек `rt-bottom-sheet-footer-action.spec.ts`, который план сам называет в строке «Input» и в шаге 1.2; кода кита новых файлов нет. Бюджет «0» плана считал только файлы кода кита, а движок считает и спек. Affected stage of the plan: 1.
@@ -50,7 +54,7 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 3 of 3 — витрина и сверка с макетом
-- **Next step:** шаг 3.4 — снимки двух историй (`node tools/visual-gate.mjs ui-kit-v2 --affected origin/RT-3746-sheet-actions-layout --update`). Снимает браузер из образа Docker: ждёт слова владельца на подъём colima. Затем показ витрины владельцу, круг ревью, набор перед отправкой, PR в ветку эпика.
+- **Next step:** показ витрины владельцу (истории `organisms-aside-bottomsheet--footer-action` и `--header-icons` на :6007) и его второй ответ; затем круг ревью, набор перед отправкой, PR в ветку эпика. Снимки обеих историй сняты; снимок «Значки в шапке» снят заново после слова «Удалить» — крайняя справа» и подтверждён вторым прогоном (3 из 3).
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-3747-sheet-footer-action/progress.md`; the plan lies next to it.
@@ -58,18 +62,23 @@ The progress in full — `docs/tasks/RT-3747-sheet-footer-action/progress.md`; t
 ### Uncommitted
 
 ```
- M docs/plans/sheet-actions-layout.md
- M docs/specs/ui-kit-v2/sheet-header-cards/spec.md
- M docs/tasks/RT-3747-sheet-footer-action/progress.md
- M projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-bottomsheet--header-icons.png
- M projects/ui-kit-v2/src/lib/components/bottom-sheet/CONTEXT.md
+ M docs/tasks/RT-3747-sheet-footer-action/approvals.md
+ M projects/ui-kit-v2/src/lib/components/bottom-sheet/index.ts
+ M projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.component.html
+ M projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.component.scss
+ M projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.component.ts
  M projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/bottom-sheet.stories.ts
+ M projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/component/test-bottom-sheet-matrix.component.ts
  M projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/component/test-bottom-sheet.component.ts
+?? projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-sheet-more.directive.spec.ts
+?? projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-sheet-more.directive.ts
 ```
 
 ### Commits over the main branch
 
 ```
+df39c100b feat(rt:ui-kit-v2): истории «Шапка» и «Подвал» шторки по новой раскладке, макеты всех шторок одобрены (RT-3747)
+f2562ef57 feat(rt:ui-kit-v2): «Удалить» крайняя справа в шапке шторки — история, снимок, спека (RT-3747)
 3f4e8af55 chore(rt:ui-kit-v2): порог стартового веса кита — места подвала шторки, плюс 815 байт (RT-3747)
 e10745329 docs(rt:ui-kit-v2): ход RT-3747 — этапы сделаны, превышение бюджета новых файлов названо (RT-3747)
 20278d7bc test(rt:ui-kit-v2): снимки историй шторки «Главное действие в подвале» и «Значки в шапке» (RT-3747)

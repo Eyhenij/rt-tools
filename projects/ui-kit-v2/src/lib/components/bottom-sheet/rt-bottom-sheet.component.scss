@@ -223,14 +223,16 @@
             }
         }
 
+        /* Только свои подложка и панель (`>`): шторка, вложенная в эту — экран «Ещё» или объявленная в
+           содержимом, — открывается своим модификатором, а не открытостью этой. */
         &--open {
             pointer-events: auto;
 
-            .rt-bottom-sheet__backdrop {
+            > .rt-bottom-sheet__backdrop {
                 opacity: 1;
             }
 
-            .rt-bottom-sheet__panel {
+            > .rt-bottom-sheet__panel {
                 transform: translateY(0);
             }
         }
