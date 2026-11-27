@@ -76,6 +76,14 @@ jobs:
                   node dist/agent-kit/bin/agent-kit.js sync
                   node dist/agent-kit/bin/agent-kit.js sync --check
 
+            # Сценарий «работа ждёт владельца» на собранном издании — до коммита версии: красный набор
+            # останавливает выпуск, пока ничего никуда не ушло. Каждая правка тупика 0.39 прошла свой
+            # набор, а вместе на записи одного дня их не прогнал никто, и сломанное издание ушло в npm.
+            - name: Owner-waits scenario on the built edition
+              run: |
+                  RT_REPLAY_EDITION=dist/agent-kit bash projects/agent-kit/tests/owner-waits-replay.test.sh
+                  RT_REPLAY_EDITION=dist/agent-kit bash projects/agent-kit/tests/turn-replay.test.sh
+
             # Один коммит на подъём версии, журнал изменений и раскладку: два коммита оставили бы
             # главную ветку в промежуточном состоянии — том самом красном, ради которого шаг заведён.
             - uses: EndBug/add-and-commit@v11
