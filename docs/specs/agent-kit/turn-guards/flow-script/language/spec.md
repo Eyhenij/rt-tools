@@ -54,8 +54,9 @@ There is no interface: the description is read by the engine and by the executor
 - **A condition object has exactly one key — `all`, `any` or `not` — and a reference in it names a measurer capability of the description.**
 - **A condition is met by the results of the measurers, and an absent result counts as unmet.**
 - **The literals of `words` are lists of non-empty strings under known keys, and `nudge` is a pattern that compiles.**
-  A stop word is read only at the start of a message. A word of `stopExcept` with no «не» before it,
-  and a word beginning with an entry of `holdAfter`, hold the turn after it.
+  A word of `stop` is read at the start of a message, a phrase of `stopInside` anywhere in it. A word
+  beginning with an entry of `holdAfter` after a stop word holds the turn; a word of `resume` lifts the
+  stop; a part with a word of `stay` carries no order.
 - **A form of the expected result is a pattern and a way of comparison of `exit`, `line`, `regex` or `number`.**
 - **A number is read from the last line of the output with the blanks around it, as `wc -l` prints it.**
 - **The release cases are asked in the order of the field `order`, and two cases never share one.**

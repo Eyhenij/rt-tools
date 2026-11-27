@@ -141,9 +141,11 @@ a hook with a decision, and marks a context hook and a git-side hook as helpers.
 | `main-run-context.sh` | SessionStart startup\|resume\|compact\|clear | guard·ctx | main_run_state | SessionStart | context-only |
 | `metric-marks.sh` | — | helper | — | — | — |
 | `metric-send-start.sh` | SessionStart / Stop / SessionEnd | helper (no decision) | — | — | — |
+| `monitor-stream-guard.sh` | PreToolUse Monitor | guard | monitor_stream (engine `task-flow-script.mjs monitor-call`) | Monitor:line on every step of own background | deny |
 | `observe.sh` | — | helper | — | — | — |
 | `override-write-guard.sh` | PreToolUse Write\|Bash\|webstorm | guard | override_exists_nonempty | Write:override, Bash:overwrite (>, tee, cp, mv) | deny |
 | `owner-corrections.sh` | UserPromptSubmit | helper (no decision) | — | — | — |
+| `owner-stop-call-guard.sh` | UserPromptSubmit; PreToolUse .* | guard | owner_stop_call (engine `task-flow-script.mjs stop-call`) | any call but the take-down | deny |
 | `pre-push.sh` | git pre-push hook (no rt-hook) | guard·git | push_sends_head_commit, push_node_pinned, push_marks_green, push_adds_commits | git:push | block (exit 1) |
 | `profile-check.sh` | — | helper | — | — | — |
 | `prose-style-guard.sh` | PreToolUse Edit\|Write\|MultiEdit\|Bash\|webstorm | guard | prose_clean (only .md in the tree, not docs/tasks, not docs/archive) | Edit:md, Bash:md-write | deny |

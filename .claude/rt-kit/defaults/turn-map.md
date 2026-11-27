@@ -1,4 +1,4 @@
-<!-- rt-kit v0.42.0 · defaults/turn-map.md · 9e662de07f5d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.1 · defaults/turn-map.md · 096bc9e9d466 · правится надстройкой, не здесь -->
 # Turn map
 
 This is not the rule but its short digest: the rule explains, the map names. The full text is
@@ -32,9 +32,10 @@ merge go on without the executor and do not get faster from being watched.
 ## What a turn ends with
 
 - **the end of the scenario** — the engine measured it; under an epic the table of its tasks is shown
-- **a stop word of the owner** — their last message begins with it, and nothing after it asks to go on
+- **a stop word of the owner** — it stands until a working order; a question, swearing or an incident
+  record after it does not lift it, a complaint about the stop does
 - **the owner interrupted the turn** — they pressed Esc; a turn a background notice wakes after it
-  ends too, until they write again
+  ends too, until a working order
 
 The exit guard holds every other turn and names the one next move. The task flow description adds
 release cases that are not the executor's choice: no write to the tree, a branch outside the

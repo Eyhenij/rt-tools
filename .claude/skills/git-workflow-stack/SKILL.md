@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load when pieces of work follow one another or more than two branches already stand on one base — chained branching from the previous one, the PR base, merging bottom-up, re-merging the base on an actual conflict. One conflict — pattern git-workflow-merge.
 ---
-<!-- rt-kit v0.42.0 · patterns/git-workflow-stack.md · 127e9eb7a980 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.1 · patterns/git-workflow-stack.md · 127e9eb7a980 · правится надстройкой, не здесь -->
 
 # A stack of PRs from one base
 
