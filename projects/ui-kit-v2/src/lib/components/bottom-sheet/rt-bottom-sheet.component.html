@@ -48,11 +48,18 @@
             <ng-content />
         </div>
         <div rtElem="footer" qa-dataid="bottom-sheet-footer">
+            <!-- Справка подвала и главная кнопка стоят и рядом со своим шаблоном подвала: им их не заменить. -->
+            <div rtElem="info" qa-dataid="bottom-sheet-info">
+                <ng-content select="[sheetInfo]" />
+            </div>
             @if (footerTpl(); as ownFooter) {
                 <ng-container [ngTemplateOutlet]="ownFooter" [ngTemplateOutletContext]="templateContext" />
             } @else {
                 <ng-content select="[sheetFooter]" />
             }
+            <div rtElem="primary" qa-dataid="bottom-sheet-primary">
+                <ng-content select="[sheetPrimary]" />
+            </div>
         </div>
     </div>
     <!-- Экран вопроса: его код приходит при первом вопросе, шторка ставит его сюда сама. -->

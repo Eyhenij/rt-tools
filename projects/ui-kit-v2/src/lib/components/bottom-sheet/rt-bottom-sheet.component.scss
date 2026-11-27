@@ -130,9 +130,12 @@
             text-align: center;
         }
 
+        /* Справа в шапке встаёт и несколько кнопок-значков: зазор между ними 8, как на макете. */
         &__action {
             display: flex;
+            align-items: center;
             justify-content: flex-end;
+            gap: var(--rt-space-2);
         }
 
         /* Тело — единственная прокручиваемая зона: панель упирается в предел высоты, а ручка,
@@ -169,9 +172,38 @@
             border-top: var(--rt-bottom-sheet-footer-border-width) solid var(--rt-color-border-default);
             gap: var(--rt-space-2);
 
-            &:empty {
+            /* Без узлов подвал места не занимает: пусты справка и главная кнопка, а своих узлов нет. */
+            &:empty,
+            &:not(:has(> :not(.rt-bottom-sheet__info:empty, .rt-bottom-sheet__primary:empty))) {
                 display: none;
             }
+        }
+
+        /* Справка подвала — своя строка над главной кнопкой, по центру: выбранный период, число
+           выбранного. Строка 20 задана шагом шкалы отступов: множителя с такой высотой у кегля 14 нет. */
+        &__info {
+            flex: 1 1 100%;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+            line-height: var(--rt-space-5);
+            text-align: center;
+        }
+
+        /* Главная кнопка — своя строка на всю ширину подвала, последней: и после узлов, которые асайд
+           кладёт в подвал сам. */
+        &__primary {
+            display: flex;
+            flex: 1 1 100%;
+            order: 1;
+
+            > * {
+                flex: 1 1 auto;
+            }
+        }
+
+        &__info:empty,
+        &__primary:empty {
+            display: none;
         }
 
         /* Экран вопроса — `confirm/rt-bottom-sheet-confirm.component.scss`: его стили приходят вместе с его кодом. */

@@ -314,18 +314,21 @@ describe('RtBottomSheetComponent', (): void => {
             expect(body.nextElementSibling).toBe(footer);
         });
 
-        it('без спроецированного подвала элемент пуст — правило :empty убирает его из раскладки', (): void => {
-            // Ни пробела, ни перевода строки: текстовый узел снял бы с элемента :empty,
-            // и пустой подвал занял бы место с линией сверху. Узел-комментарий ветки шаблона :empty не
-            // снимает: он не элемент и не текст.
+        it('без спроецированного подвала в нём только пустые места справки и главной кнопки — подвал убран из раскладки', (): void => {
+            // Ни пробела, ни перевода строки: текстовый узел снял бы с места :empty, и пустой подвал
+            // занял бы место с линией сверху. Узел-комментарий ветки шаблона :empty не снимает: он не
+            // элемент и не текст. Подвал из одних пустых мест прячет правило с `:has`.
             const fixture: ComponentFixture<BottomSheetHostComponent> = createRtFixture(BottomSheetHostComponent);
             const footer: HTMLElement = qa(fixture, 'bottom-sheet-footer')?.nativeElement as HTMLElement;
             const drawn: ChildNode[] = Array.from(footer.childNodes).filter(
                 (node: ChildNode): boolean => node.nodeType !== Node.COMMENT_NODE
             );
 
-            expect(drawn.length).toBe(0);
-            expect(footer.matches(':empty')).toBe(true);
+            expect(drawn.map((node: ChildNode): string => (node as HTMLElement).getAttribute('qa-dataid') ?? '')).toEqual([
+                'bottom-sheet-info',
+                'bottom-sheet-primary',
+            ]);
+            expect(drawn.every((node: ChildNode): boolean => (node as HTMLElement).matches(':empty'))).toBe(true);
         });
 
         it('свайп за подвал лист не тянет — тянет только ручка', (): void => {

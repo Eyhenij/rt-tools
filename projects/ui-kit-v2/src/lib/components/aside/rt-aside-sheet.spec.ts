@@ -130,6 +130,13 @@ function node(id: string): HTMLElement | null {
     return document.querySelector(`[qa-dataid="${id}"]`);
 }
 
+/** Узлы подвала шторки, кроме её пустых мест справки и главной кнопки: их прячет стиль подвала. */
+function footerNodes(): Element[] {
+    return Array.from(node('bottom-sheet-footer')?.children ?? []).filter(
+        (child: Element): boolean => !child.matches('.rt-bottom-sheet__info:empty, .rt-bottom-sheet__primary:empty')
+    );
+}
+
 function setup(phone: boolean): void {
     setMediaQueryMatches(PHONE_QUERY, phone);
     TestBed.configureTestingModule({
@@ -330,7 +337,7 @@ describe('Панель службы кита на телефоне — штор�
             expect(node('aside-header')?.classList).toContain('rt-aside-header__content--sheet');
             expect(node('aside-header')?.children[1]?.classList).toContain('rt-aside-header__heading');
             // Кнопка подвала только закрывала: подвала у шторки нет вовсе.
-            expect(node('bottom-sheet-footer')?.children.length).toBe(0);
+            expect(footerNodes()).toEqual([]);
         });
 
         it('SC-UKV-1837 — из двух кнопок главного слота в шапку уходит последняя', async (): Promise<void> => {
@@ -379,7 +386,7 @@ describe('Панель службы кита на телефоне — штор�
             await open();
 
             expect(node('foot-close')).toBeNull();
-            expect(node('bottom-sheet-footer')?.children.length).toBe(0);
+            expect(footerNodes()).toEqual([]);
         });
 
         it('SC-UKV-1847 — «×» идёт дорогой стрелки: шлёт `dismiss` и закрывает панель, обработчик спрятанной кнопки молчит', async (): Promise<void> => {
