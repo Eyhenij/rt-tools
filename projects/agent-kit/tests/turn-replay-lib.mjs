@@ -78,7 +78,7 @@ function answerOf(turn, id, at, options) {
 /** The notice of a task as the host writes it: an event of a `Monitor`, or the end of a background command. */
 export function noticeText(turn) {
     const body = turn.event ? `<event>${turn.event}</event>` : `<status>${turn.status ?? 'completed'}</status>`;
-    return `<task-notification>\n<task-id>${turn.task}</task-id>\n<tool-use-id>toolu_${turn.task}</tool-use-id>\n<output-file>/tmp/tasks/${turn.task}.output</output-file>\n${body}\n</task-notification>`;
+    return `<task-notification>\n<task-id>${turn.task}</task-id>\n<tool-use-id>toolu_${turn.task}</tool-use-id>\n<output-file>/tmp/session/tasks/${turn.task}.output</output-file>\n${body}\n</task-notification>`;
 }
 
 /** The result of a call that started a task: a command in the background or a `Monitor`. */
@@ -88,15 +88,19 @@ function startOf(turn, id, at) {
             ...result(at, id, `Monitor started (task ${turn.task}, expires in 20m unless the source ends first).`, false),
             toolUseResult: { taskId: turn.task },
         };
-    const text = `Command running in background with ID: ${turn.task}. Output is being written to: /tmp/tasks/${turn.task}.output. You will be notified when it completes.`;
+    const text = `Command running in background with ID: ${turn.task}. Output is being written to: /tmp/session/tasks/${turn.task}.output. You will be notified when it completes.`;
     return { ...result(at, id, text, false), toolUseResult: { backgroundTaskId: turn.task } };
 }
 
-/** The entries of the record, oldest first; with `upto`, the turns up to that index, moved to the minute of `now`. */
-export function recordOf(fixture, { upto = null, now = Date.now() } = {}) {
+/**
+ * The entries of the record, oldest first; with `upto`, the turns up to that index, moved to the minute
+ * of `now`; with `before`, the turn `upto` itself is left out — the record a hook reads before a call.
+ */
+export function recordOf(fixture, { upto = null, now = Date.now(), before = false } = {}) {
     const entries = [];
-    const turns = upto === null ? fixture.turns : fixture.turns.slice(0, upto + 1);
-    const shift = upto === null ? 0 : now - Date.parse(turns.at(-1).at);
+    const all = upto === null ? fixture.turns : fixture.turns.slice(0, upto + 1);
+    const shift = upto === null ? 0 : now - Date.parse(all.at(-1).at);
+    const turns = before ? all.slice(0, -1) : all;
     turns.forEach((turn, index) => {
         const at = shift ? new Date(Date.parse(turn.at) + shift).toISOString() : turn.at;
         const id = turn.task && turn.call ? `toolu_${turn.task}` : `toolu_${index}`;
@@ -108,9 +112,10 @@ export function recordOf(fixture, { upto = null, now = Date.now() } = {}) {
             if (turn.queued === 'only') entries.push({ type: 'queue-operation', operation: 'remove', timestamp: at, content: text });
             else entries.push(user(at, text));
         } else if (turn.role === 'notice') {
+            // A notice the host took back from the queue reaches no turn: its queue record alone ends the task.
             const text = noticeText(turn);
             entries.push({ type: 'queue-operation', operation: 'enqueue', timestamp: at, content: text });
-            entries.push(user(at, text, { origin: { kind: 'task-notification' } }));
+            if (turn.queued !== 'only') entries.push(user(at, text, { origin: { kind: 'task-notification' } }));
         } else if (turn.role === 'hook') entries.push(user(at, stopFeedback(turn.stop, fixture.task)));
         else if (turn.role === 'harness')
             entries.push(user(at, 'This session is being continued from a previous conversation.', { isCompactSummary: true }));
@@ -134,7 +139,21 @@ export function recordOf(fixture, { upto = null, now = Date.now() } = {}) {
             entries.push(turn.task && turn.code !== 'refused' ? startOf(turn, id, at) : answerOf(turn, id, at, []));
         }
     });
+    // The host gives every entry its id: the approval mark names the entry of the answer by it.
+    entries.forEach((entry, index) => {
+        entry.uuid ??= `e${index}`;
+    });
     return entries;
+}
+
+/**
+ * The turns of a chain of one day: its points, or the points up to `after` of a branch and the branch's
+ * own — a synthetic point is judged on a copy of the record and never enters the chain.
+ */
+export function chainTurns(chain, branch = null) {
+    const own = branch ? chain.branches[branch] : null;
+    const points = own ? [...chain.points.slice(0, own.after + 1), ...own.points] : chain.points;
+    return { task: chain.task, turns: points.map((point) => ({ ...point, role: point.kind })) };
 }
 
 /** The input of a hook before a call: the call of the point `upto` of a chain, the record before it. */
@@ -150,12 +169,17 @@ export function callInput(fixture, upto, record) {
 }
 
 // Run only when called itself: an importer's own arguments are no fixture and record.
+// A chain takes `<upto> [call] [<branch>]`: `call` writes the record before the point and prints the
+// input of the hooks of its call.
 if (process.argv[1] === fileURLToPath(import.meta.url) && process.argv[2] && process.argv[3]) {
-    const fixture = JSON.parse(readFileSync(process.argv[2], 'utf8'));
-    const upto = process.argv[4] === undefined ? null : Number(process.argv[4]);
+    const read = JSON.parse(readFileSync(process.argv[2], 'utf8'));
+    const [, , , , at, mode, branch] = process.argv;
+    const fixture = read.points ? chainTurns(read, branch || null) : read;
+    const upto = at === undefined ? null : at === 'last' ? fixture.turns.length - 1 : Number(at);
+    if (mode === 'call') console.log(JSON.stringify(callInput(fixture, upto, process.argv[3])));
     writeFileSync(
         process.argv[3],
-        `${recordOf(fixture, { upto })
+        `${recordOf(fixture, { upto, before: mode === 'call' })
             .map((entry) => JSON.stringify(entry))
             .join('\n')}\n`
     );

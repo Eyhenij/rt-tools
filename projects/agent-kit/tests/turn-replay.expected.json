@@ -34,5 +34,12 @@
   "2012-row5-stop-then-abuse.json": { "judge": "allow" },
   "2012-row5-stop-then-incident.json": { "judge": "block" },
   "2012-row6-stop-then-merge.json": { "judge": "block" },
-  "2012-row6-stop-then-complaint.json": { "judge": "block" }
+  "2012-row6-stop-then-complaint.json": { "judge": "block" },
+  "2411-morning-held-1.json": { "ask": "block" },
+  "2411-morning-held-2.json": { "ask": "block" },
+  "2411-morning-held-3.json": { "ask": "block" },
+  "2411-morning-held-4.json": { "ask": "allow" },
+  "2411-morning-held-5.json": { "ask": "allow" },
+  "2411-morning-roles-after-1.json": { "ask": "allow" },
+  "2411-morning-roles-after-2.json": { "ask": "allow" }
 }

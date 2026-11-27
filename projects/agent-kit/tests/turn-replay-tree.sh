@@ -9,12 +9,17 @@
 # RT_REPLAY_EDITION=<папка пакета> гоняет их на хуках и движке другого издания: хуки берутся из
 # `<папка>/assets/hooks` и находят движок рядом, в `../checks`, как в исходниках пакета. Хук, которого в
 # издании нет, набор не зовёт и печатает строку «нет в издании: <хук>».
+#
+# `lib.sh` снимает с окружения все переменные `RT_*`, поэтому набор берёт обе в REPLAY_LAID и
+# REPLAY_EDITION до его подключения: без этого режим молча не включается, и набор судит исходники.
 
-LAID="${RT_REPLAY_LAID:-}"
+LAID="${REPLAY_LAID:-}"
 [ -n "$LAID" ] && HOOKS="$ROOT/.claude/hooks"
 EDITION=""
-if [ -n "${RT_REPLAY_EDITION:-}" ]; then
-    EDITION="$(cd "$RT_REPLAY_EDITION" && pwd)"
+if [ -n "${REPLAY_EDITION:-}" ]; then
+    # Путь без ссылок: движок издания сверяет свой путь с путём запуска и на `/var` → `/private/var`
+    # временной папки macOS молча не работает — отказов ноль, вердикт пустой.
+    EDITION="$(cd "$REPLAY_EDITION" && pwd -P)"
     HOOKS="$EDITION/assets/hooks"
     ASSETS="$EDITION/assets"
 fi

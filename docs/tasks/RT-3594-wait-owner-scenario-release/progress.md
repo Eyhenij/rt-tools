@@ -7,8 +7,9 @@
 - **Done:** разбор записан; RT-3593 и RT-3584 перенесены в эпик RT-3714 словом владельца 27.11; план прочли
   product-strategist и goal-critic пять кругов, последний без находок; владелец одобрил план 27.11 ответом
   меню «Одобряю план RT-3594»
-- **Next step:** этап 2 — файл цепочки дня из записи 24.11 и набор `owner-waits-replay.test.sh`. Этап 1: `step 1`
-  совпало 5 из 5, `turn-replay.test.sh` — 161 ok, 0 провалов, 47 с
+- **Next step:** шаг 2.11 заблокирован — судья вопросов плавает на `2411-morning-held-5.json` (27.11: 11 и 12 из
+  14 за два прогона подряд, 6 из 7 за один); этап 3 идёт рядом. Этап 2: `step 2` совпало 10 из 11, набор дня —
+  8 ok на исходниках и на собранном издании, 36 с
 - **PR:** not open yet
 
 ## Steps
@@ -18,17 +19,17 @@
 - [x] 1.3 Общий файл берёт хуки и движок из папки пакета
 - [x] 1.4 Набор записанных ходов подключает общий файл
 - [x] 1.5 Прогон судьи берёт фикстуры по началу имени
-- [>] 2.1 Цепочка дня лежит файлом данных
-- [ ] 2.2 Ночью при границе впереди отказ конца хода не называет меню владельцу
-- [ ] 2.3 Одобрение плана, который правит проверку, после ролей проходит
-- [ ] 2.4 Отказов конца хода после Esc 10:54 один
-- [ ] 2.5 Вызов работы без слова владельца после Esc отказан
-- [ ] 2.6 Вызовы в ходах по слову владельца проходят
-- [ ] 2.7 Monitor по своему фоновому отказан
-- [ ] 2.8 Конец хода после ответа меню отпущен по фоновому
-- [ ] 2.9 На пакете 0.41.1 отказов после Esc больше одного, контрольная точка зелёная
-- [ ] 2.10 На пакете 0.39.0 цепочка держит ночью и одобрение сообщением, контрольная точка зелёная
-- [ ] 2.11 Судья вопросов даёт ожидаемый вердикт на вопросах утра два прогона подряд
+- [x] 2.1 Цепочка дня лежит файлом данных
+- [x] 2.2 Ночью при границе впереди отказ конца хода не называет меню владельцу
+- [x] 2.3 Одобрение плана, который правит проверку, после ролей проходит
+- [x] 2.4 Отказов конца хода после Esc 10:54 один
+- [x] 2.5 Вызов работы без слова владельца после Esc отказан
+- [x] 2.6 Вызовы в ходах по слову владельца проходят
+- [x] 2.7 Monitor по своему фоновому отказан
+- [x] 2.8 Конец хода после ответа меню отпущен по фоновому
+- [x] 2.9 На пакете 0.41.1 отказов после Esc больше одного, контрольная точка зелёная
+- [x] 2.10 На пакете 0.39.0 цепочка держит ночью и одобрение сообщением, контрольная точка зелёная
+- [>] 2.11 Судья вопросов даёт ожидаемый вердикт на вопросах утра два прогона подряд
 - [ ] 3.1 Процесс публикации гоняет оба набора на собранном издании после раскладки и до первого коммита
 - [ ] 3.2 Оба набора зелёные на Linux на свежесобранном издании
 - [ ] 3.3 Журнал называет RT-3594 под ненапечатанным выпуском
@@ -49,6 +50,19 @@
 - **Время записи сдвигается к минуте прогона** — движок судит фоновое по часам (`measure/session.mjs:163`,
   `BACKGROUND_BOUND` 90 минут): фоновое трёхдневной давности для него зависло. `turn-replay-lib.mjs` с `<upto>`
   берёт ходы до точки и сдвигает время так, что точка стоит на минуте прогона. Affected stage of the plan: 1.
+- **Набор ловит переменные издания до `lib.sh`** — `lib.sh` снимает все `RT_*`, и `RT_REPLAY_LAID` в
+  `turn-replay.test.sh` до этой правки не работал ни разу. Оба набора берут `RT_REPLAY_EDITION` и `RT_REPLAY_LAID`
+  в свои переменные до подключения. Affected stage of the plan: 1.
+- **Путь издания раскрывается без ссылок** — движок издания сверяет `import.meta.url` с путём запуска, и во
+  временной папке macOS (`/var` → `/private/var`) молча не работает: на 0.41.1 набор давал ноль отказов и пустой
+  вердикт. `turn-replay-tree.sh` берёт путь издания через `pwd -P`. Affected stage of the plan: 2.
+- **Каждая запись получает `uuid`** — plan-red ищет одобрение по `uuid` записей; без него дерево одобрения
+  отказано. Affected stage of the plan: 2.
+- **Цепочка дня — 630 точек, файл 660 строк при пределе 700** — набор дня идёт 36 с. Affected stage of the plan: 2.
+- **Шаг 2.11 заблокирован** — судья вопросов на `2411-morning-held-4.json` и `2411-morning-held-5.json` пускал
+  вопрос «влить ветку, которая меняет счёт одобрения, или отложить задачу» в 1 и в 2 прогонах из 4: текст судьи
+  для такого вопроса двусмысленный. Правку текста судьи ask-judge сам держит как ослабление проверки; находка
+  перенесена в карточку RT-3584 эпика RT-3714 условием готовности. Affected stage of the plan: 2.
 
 ## Sessions
 
@@ -67,9 +81,9 @@ Put together by a hook before the compaction of the context (auto).
 
 ### Where we stand at the minute of the compaction
 
-- **State:** `договорённость-записана`
-- **Stage:** 0 — план не написан
-- **Next step:** план, круги ролей, одобрение владельца
+- **State:** `этап-идёт`
+- **Stage:** 2 of 3 — Цепочка дня 24.11
+- **Next step:** этап 2 — файл цепочки дня из записи 24.11 и набор `owner-waits-replay.test.sh`. Этап 1: `step 1`
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-3594-wait-owner-scenario-release/progress.md`; the plan lies next to it.
@@ -77,12 +91,29 @@ The progress in full — `docs/tasks/RT-3594-wait-owner-scenario-release/progres
 ### Uncommitted
 
 ```
-?? docs/tasks/RT-3594-wait-owner-scenario-release/plan.md
+ M ../../../../../../.github/workflows/publish-agent-kit.yml
+ M spec.md
+ M ../../../../../tasks/RT-3594-wait-owner-scenario-release/progress.md
+ M ../../../../../../projects/agent-kit/tests/turn-replay-lib.mjs
+ M ../../../../../../projects/agent-kit/tests/turn-replay-tree.sh
+ M ../../../../../../projects/agent-kit/tests/turn-replay.expected.json
+ M ../../../../../../projects/agent-kit/tests/turn-replay.test.sh
+?? ../../../../../../projects/agent-kit/tests/fixtures/owner-waits/
+?? ../../../../../../projects/agent-kit/tests/fixtures/turn-replay/2411-morning-held-1.json
+?? ../../../../../../projects/agent-kit/tests/fixtures/turn-replay/2411-morning-held-2.json
+?? ../../../../../../projects/agent-kit/tests/fixtures/turn-replay/2411-morning-held-3.json
+?? ../../../../../../projects/agent-kit/tests/fixtures/turn-replay/2411-morning-held-4.json
+?? ../../../../../../projects/agent-kit/tests/fixtures/turn-replay/2411-morning-held-5.json
+?? ../../../../../../projects/agent-kit/tests/fixtures/turn-replay/2411-morning-roles-after-1.json
+?? ../../../../../../projects/agent-kit/tests/fixtures/turn-replay/2411-morning-roles-after-2.json
+?? ../../../../../../projects/agent-kit/tests/owner-waits-replay.test.sh
 ```
 
 ### Commits over the main branch
 
 ```
+633cb8ecc test(rt:agent-kit): сборщик записи и общее дерево сценария для цепочки дня (RT-3594)
+44858fbcc docs(rt:agent-kit): план RT-3594 одобрен владельцем
 20f8314f0 docs(rt:agent-kit): разбор и ход работы RT-3594, задачи 5–6 перенесены в эпик RT-3714
 3dd8488e9 docs(rt:agent-kit): находки разбора правил RT-3674 записаны рядом с планом эпика (RT-3594)
 8c2b99686 docs(rt:agent-kit): задача 3 эпика влита, задача 4 идёт (RT-3594)
@@ -101,8 +132,6 @@ c5f7f1520 docs(rt:agent-kit): ход работы называет расхож�
 5427ae649 docs(rt:agent-kit): план RT-3674 одобрен владельцем
 0cf5de700 docs(rt:agent-kit): разбор и ход работы RT-3674
 76bbafb6c docs(rt:agent-kit): задача 2 эпика влита, задача 3 идёт (RT-3674)
-2a7dc1a0c Merge remote-tracking branch 'origin/main' into RT-3602-owner-stop-holds
-861e0c95c [RT-3673] После «стоп» ход от уведомления не работает, своё фоновое снимается (#3690)
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

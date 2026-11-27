@@ -12,6 +12,7 @@
 # вердикты модели на тех же фикстурах сверяет `judge-replay.mjs`: судья без инструментов, сверка после.
 #
 # Дерево сценария, RT_REPLAY_LAID и RT_REPLAY_EDITION — в `turn-replay-tree.sh`, общем с набором дня.
+REPLAY_EDITION="${RT_REPLAY_EDITION:-}" REPLAY_LAID="${RT_REPLAY_LAID:-}"
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 echo "записанные ходы"

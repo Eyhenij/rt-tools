@@ -1,0 +1,21 @@
+{
+  "case": "SC-AK-2018",
+  "kind": "the approval of a plan that changes the question judge, asked after both roles read its last edit",
+  "record": "synthetic, from RT-3591 of 24.11: the roles are called again after the edit of 08:35:12",
+  "task": 101,
+  "turns": [
+    { "role": "owner", "at": "2026-11-24T01:20:08Z", "owner": "откладывай этот эпик, заводи новый" },
+    { "role": "agent", "at": "2026-11-24T01:35:12Z", "call": "Edit", "command": "docs/tasks/RT-101-replay-task/plan.md — a step of the plan of RT-101 edited", "code": "ok" },
+    { "role": "agent", "at": "2026-11-24T01:35:25Z", "call": "Agent", "command": "product-strategist on docs/tasks/RT-101-replay-task/plan.md", "code": "ok" },
+    { "role": "agent", "at": "2026-11-24T01:35:35Z", "call": "Agent", "command": "goal-critic on the owner's words of RT-101", "code": "ok" },
+    {
+      "role": "agent",
+      "at": "2026-11-24T01:35:46Z",
+      "menu": [
+        "План RT-101: судья вопросов перестаёт задерживать кнопку, которой вы решаете (одобрить план, слияние, выпуск, отложить задачу), даже если решение меняет проверку. Вариант, который сам снимает проверку, по-прежнему задерживается. Одобряете?",
+        "Одобряю план RT-101",
+        "Переделай план RT-101"
+      ]
+    }
+  ]
+}
