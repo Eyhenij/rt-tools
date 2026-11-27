@@ -110,6 +110,36 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 `rtPopoverBackdropClass`, `rtPopoverDisabled`, `rtPopoverOffsetY`, `rtPopoverOffsetX`, `rtPopoverOrigin`,
 `rtPopoverPositions`, `rtPopoverSheet`, `rtPopoverSheetTitle`.
 
+Вид шторки задают входы на том же узле:
+
+| вход                    | тип                   | умолчание                                |
+| ----------------------- | --------------------- | ---------------------------------------- |
+| `rtPopoverSheetFull`    | `boolean`             | `false` — высота по содержимому          |
+| `rtPopoverSheetAction`  | `TemplateRef \| null` | `null` — без действия справа в шапке     |
+| `rtPopoverSheetHeader`  | `TemplateRef \| null` | `null` — шапку рисует шторка             |
+| `rtPopoverSheetFooter`  | `TemplateRef \| null` | `null` — подвала нет                     |
+| `rtPopoverSheetUnsaved` | `boolean`             | `false` — шторка закрывается без вопроса |
+
+Те же входы по именам в классе директивы `RtPopoverSheetOptionsDirective` и входы своих шапки и
+подвала у списков выбора кита (`RtSheetTemplatesDirective`):
+
+| вход                  | тип                   | умолчание                                    |
+| --------------------- | --------------------- | -------------------------------------------- |
+| `fullHeight`          | `boolean`             | `false` — в разметке `rtPopoverSheetFull`    |
+| `action`              | `TemplateRef \| null` | `null` — в разметке `rtPopoverSheetAction`   |
+| `header`              | `TemplateRef \| null` | `null` — в разметке `rtPopoverSheetHeader`   |
+| `footer`              | `TemplateRef \| null` | `null` — в разметке `rtPopoverSheetFooter`   |
+| `unsaved`             | `boolean`             | `false` — в разметке `rtPopoverSheetUnsaved` |
+| `sheetHeaderTemplate` | `TemplateRef \| null` | `null` — своя шапка шторки у списка выбора   |
+| `sheetFooterTemplate` | `TemplateRef \| null` | `null` — свой подвал шторки у списка выбора  |
+
+С `rtPopoverSheetUnsaved` шторка перед закрытием спрашивает: применить, не применять, отмена.
+Ответ «Применить» приходит выходом `rtPopoverSheetApply`.
+
+`rtPopoverSheetFull` ставит приложение, когда шторка нужна во всю высоту сразу. Без него шторка
+открыта по высоте содержимого и сама встаёт во всю высоту, пока в ней печатают на сенсорном
+экране.
+
 Входы шторки — её директива создаёт сама, приложение их не задаёт. Код шторки подгружается при первом открытии, а не на старте; приложение, которому первая задержка мешает, зовёт `rtPreloadPopoverSheet()` в простое:
 
 | вход    | тип       | умолчание                                                      |
@@ -150,6 +180,9 @@ providers: [{ provide: RT_POPOVER_SHEET, useValue: false }];
 | -------- | ------ | ----------------- | ---------------- |
 | `opened` | `void` | `rtPopoverOpened` | панель открылась |
 | `closed` | `void` | `rtPopoverClosed` | панель закрылась |
+
+Выход `rtPopoverSheetApply` (`void`) — в вопросе шторки нажали «Применить» или шаблон шапки позвал
+`apply`.
 
 ## Рядом
 

@@ -19,13 +19,13 @@ import { exhaustMap, mergeMap, Observable, of, Subject, switchMap, tap } from 'r
 
 import { NotificationBus } from '@rt-tools/ui-kit-v2/core';
 
-import { RtAsideUnsavedDialogComponent } from '@rt-tools/ui-kit-v2/aside';
+import { RT_ASIDE_SHEET, RtAsideSheet } from '@rt-tools/ui-kit-v2/aside';
 import { ERtAsideCloseIntent, ERtAsideUnsavedOutcome, IRtAsideUnsavedGuard, resolveCloseIntent } from '@rt-tools/ui-kit-v2/aside';
 import { RtDialogService } from '@rt-tools/ui-kit-v2/dialog';
 import { RtContainerRightSidenavPanelDirective } from './rt-container.directives';
 import { RtRouteAsideMutations } from './rt-route-aside.mutations';
 import { RtRouteAsideNavigation } from './rt-route-aside.navigation';
-import { RtRouteAsideUnsavedPrompt } from './rt-route-aside.unsaved';
+import { rtAskUnsaved, RtRouteAsideUnsavedPrompt } from './rt-route-aside.unsaved';
 import { pristineOf } from './rt-route-aside.pristine';
 import { RtRouteAsideRegistry } from './rt-route-aside.registry';
 
@@ -65,9 +65,12 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
     readonly #dialog: RtDialogService = inject(RtDialogService);
     readonly #injector: Injector = inject(Injector);
     readonly #registry: RtRouteAsideRegistry = inject(RtRouteAsideRegistry);
+    /** Вид панели на телефоне: шторка спрашивает о правках внизу экрана, а не окном в центре. */
+    readonly #sheet: RtAsideSheet | null = inject(RT_ASIDE_SHEET, { optional: true });
 
     /** Вопрос о правках, заданный уходу по маршруту: у кнопок панели свой путь. */
-    readonly #unsavedPrompt: RtRouteAsideUnsavedPrompt = new RtRouteAsideUnsavedPrompt(this.#dialog, this.#injector, {
+    readonly #unsavedPrompt: RtRouteAsideUnsavedPrompt = new RtRouteAsideUnsavedPrompt(this.#injector, {
+        ask: (): Observable<ERtAsideUnsavedOutcome | undefined> => this.#askUnsaved(),
         save: (): void => this.#unsavedGuard()?.save(),
         submitting: this.#submitting,
         submitError: computed((): string | null => this.submitError()),
@@ -159,11 +162,7 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
         // бы от первого окна, не убрав его overlay, и на экране осталось бы два.
         this.#closeIntentSource
             .pipe(
-                exhaustMap((): Observable<ERtAsideUnsavedOutcome | undefined> =>
-                    this.#dialog
-                        .open<RtAsideUnsavedDialogComponent, undefined, ERtAsideUnsavedOutcome>(RtAsideUnsavedDialogComponent)
-                        .afterClosed()
-                ),
+                exhaustMap((): Observable<ERtAsideUnsavedOutcome | undefined> => this.#askUnsaved()),
                 takeUntilDestroyed(this.destroyRef)
             )
             .subscribe((outcome: ERtAsideUnsavedOutcome | undefined): void => this.#applyUnsavedOutcome(outcome));
@@ -428,6 +427,10 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
             guarded: this.#unsavedGuard() !== null,
             pristine: this.pristine(),
         });
+    }
+
+    #askUnsaved(): Observable<ERtAsideUnsavedOutcome | undefined> {
+        return rtAskUnsaved(this.#sheet, this.#dialog);
     }
 
     #closePanel(): void {

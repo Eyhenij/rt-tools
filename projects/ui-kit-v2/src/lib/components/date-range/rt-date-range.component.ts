@@ -27,6 +27,7 @@ import { IRtDatePicker } from '@rt-tools/ui-kit-v2/date-picker';
 import { RT_DATE_SHAPE_MASK, rtDateLayout } from '@rt-tools/ui-kit-v2/date-picker';
 import { RtFormControlBase, rtDayBoundOrNull } from '@rt-tools/ui-kit-v2/form-control';
 import { IRtInput } from '@rt-tools/ui-kit-v2/core';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RT_POPOVER_SHEET, RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
@@ -57,6 +58,7 @@ const BEM_BLOCK: string = 'rt-date-range';
     imports: [
         // standalone components / directives
         RtBottomSheetComponent,
+        RtButtonDirective,
         RtDateRangePanelComponent,
         RtIconButtonComponent,
         RtPopoverDirective,
@@ -98,6 +100,8 @@ export class RtDateRangeComponent extends RtFormControlBase<IRtDateRange.Value |
 
     protected readonly fieldEl: Signal<ElementRef<HTMLInputElement> | undefined> = viewChild<ElementRef<HTMLInputElement>>('fieldEl');
     protected readonly popover: Signal<RtPopoverDirective | undefined> = viewChild(RtPopoverDirective);
+    /** Панель в шторке: кнопка «Применить» в шапке шторки зовёт её и читает, есть ли что применять. */
+    protected readonly sheetPanel: Signal<RtDateRangePanelComponent | undefined> = viewChild<RtDateRangePanelComponent>('sheetPanel');
 
     /** Набранный текст не читается как диапазон в границах: поле помечено ошибкой. */
     protected readonly textInvalid: WritableSignal<boolean> = signal(false);

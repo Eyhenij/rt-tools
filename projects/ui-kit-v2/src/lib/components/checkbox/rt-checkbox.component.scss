@@ -27,6 +27,8 @@
         --rt-checkbox-box-radius: var(--rt-radius-sm);
         --rt-checkbox-transition-duration: var(--rt-duration-fast);
         --rt-checkbox-color-label: var(--rt-color-text-primary);
+        --rt-checkbox-card-radius: var(--rt-radius-md);
+        --rt-checkbox-card-border-width: var(--rt-border-width-thin);
 
         display: inline-flex;
         align-items: center;
@@ -81,6 +83,21 @@
             background: var(--rt-color-action-primary);
         }
 
+        /* Обёртка подписи и пояснения. Пока нет ни пояснения, ни карточки, она прозрачна для
+           раскладки: подпись стоит в строке кнопки, как стояла до появления обёртки. */
+        &__content {
+            display: contents;
+        }
+
+        &--described .rt-checkbox__content,
+        &--card .rt-checkbox__content {
+            display: flex;
+            min-width: 0;
+            flex: 1;
+            flex-direction: column;
+            gap: var(--rt-space-xs);
+        }
+
         &__label {
             color: var(--rt-checkbox-color-label);
             font-size: var(--rt-text-sm);
@@ -89,6 +106,38 @@
             &:empty {
                 display: none;
             }
+        }
+
+        &__description {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            user-select: none;
+        }
+
+        /* Пояснение делает флажок двухстрочным: квадрат стоит у первой строки, а не посередине. */
+        &--described {
+            align-items: flex-start;
+        }
+
+        /* Вид «карточка» повторяет карточку радиокнопки: рамка, содержимое слева, квадрат справа. */
+        &--card {
+            display: flex;
+            width: 100%;
+            flex-direction: row-reverse;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: var(--rt-space-sm) var(--rt-space-md);
+            border: var(--rt-checkbox-card-border-width) solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-checkbox-card-radius);
+            transition: border-color var(--rt-checkbox-transition-duration) ease;
+        }
+
+        &--card .rt-checkbox__label {
+            font-weight: var(--rt-font-weight-medium);
+        }
+
+        &--card.rt-checkbox--checked {
+            border-color: var(--rt-color-action-primary);
         }
     }
 }

@@ -203,13 +203,34 @@ describe('RtDatePanelComponent', (): void => {
     it('SC-UKV-428 — the sheet layout switches a date with time between the month and the columns', (): void => {
         const { fixture }: IPanel = setup({ type: 'datetime-local', value: '2026-09-15T09:00', sheet: true });
         expect(fixture.nativeElement.classList).toContain('rt-date-panel--sheet');
-        expect(qa(fixture, 'date-panel-calendar')).not.toBeNull();
-        expect(qa(fixture, 'date-panel-time')).toBeNull();
+        const away: (id: string) => boolean = (id: string): boolean =>
+            (qa(fixture, id)?.nativeElement as HTMLElement).hasAttribute('data-away');
+        expect(away('date-panel-calendar')).toBe(false);
+        expect(away('date-panel-time')).toBe(true);
+        expect((qa(fixture, 'date-panel-time')?.nativeElement as HTMLElement).hasAttribute('inert')).toBe(true);
 
         press(fixture, qaAll(fixture, 'toggle-button-group-option')[1]);
 
-        expect(qa(fixture, 'date-panel-calendar')).toBeNull();
-        expect(qa(fixture, 'date-panel-time')).not.toBeNull();
+        expect(away('date-panel-calendar')).toBe(true);
+        expect(away('date-panel-time')).toBe(false);
+        expect(fixture.nativeElement.classList).toContain('rt-date-panel--split');
+    });
+
+    it('SC-UKV-1800 — the month and year grids also step aside on the «Time» tab', (): void => {
+        const { fixture }: IPanel = setup({ type: 'datetime-local', value: '2026-09-15T09:00', sheet: true });
+        const hidden: (id: string) => boolean = (id: string): boolean => {
+            const node: HTMLElement = qa(fixture, id)?.nativeElement as HTMLElement;
+
+            return node.hasAttribute('data-away') && node.hasAttribute('inert');
+        };
+        press(fixture, qa(fixture, 'calendar-month-title'));
+        press(fixture, qaAll(fixture, 'toggle-button-group-option')[1]);
+        expect(hidden('date-panel-months')).toBe(true);
+
+        press(fixture, qaAll(fixture, 'toggle-button-group-option')[0]);
+        press(fixture, qa(fixture, 'date-panel-year'));
+        press(fixture, qaAll(fixture, 'toggle-button-group-option')[1]);
+        expect(hidden('date-panel-years')).toBe(true);
     });
 
     it('SC-UKV-422 — the input now sets today and the moment of «Now»', (): void => {

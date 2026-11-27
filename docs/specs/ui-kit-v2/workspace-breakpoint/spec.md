@@ -34,11 +34,11 @@ application had no way to move it. A tablet has room for the list and the conver
 - **With the threshold input the workspace is one column only at a place not wider than the input.** The width is the width of the page place; without a declared place it is the width of the window.
 - **Wider than the threshold the list and the centre stand side by side.** The details panel gets no column until the place is wider than 1080.
 - **While the details panel has no column it opens over the window as a side panel of the given width.** The panel has a dimmed background and draws the details template of the application.
-- **The panel over the window is the ordinary side panel of the kit.** It has the header of a side panel: the arrow back, the label «Details» above the title and the title of the panel. Under the header stand the details template and the footer with the button «Close».
+- **The panel over the window is the ordinary side panel of the kit.** From 481 points it has the header of a side panel: the arrow back, the label «Details» above the title and the title of the panel. Under the header stand the details template and the footer with the button «Close». Up to 480 points it is the full-height sheet of every side panel, subdomain `aside/phone-sheet`: «×» on the left, the title of the workspace in the centre, and no button «Close».
 - **The title of the panel comes from an input of the workspace.** A new value redraws the header of an open panel. Without the input the header stays with the arrow and the label, and the line of the title takes no place.
 - **A details template of tabs is laid out as tabs of a side panel.** The strip of tabs stands right under the header and keeps the inset of the panel; the content of a tab scrolls.
 - **The panel over the window closes by the arrow back, by the button «Close», by a press on the dimmed background and by the key Esc.** After any of them the workspace reports the panel as closed.
-- **At a place not wider than the threshold the details panel opens over the window as well.** One column has no room for the details either, so they open as the same side panel, the whole window wide. The arrow back and the button «Close» close it, and the record stays open.
+- **At a place not wider than the threshold the details panel opens over the window as well.** One column has no room for the details either, so they open as the same side panel, the whole window wide. The arrow back and the button «Close» close it, and the record stays open; on a phone «×» of the sheet closes it the same way.
 
 ## What is out of scope
 
@@ -102,3 +102,4 @@ Not applicable.
 - 2026-11-12 — created by the task RT-3180.
 - 2026-11-13 — the header of the panel over the window, the inputs of the title and of the content layout, by the task RT-3267.
 - 2026-11-16 — one column opens the details over the window too, by the task RT-3350.
+- 2026-11-25 — the header with the arrow and the button «Close» hold from 481 points, up to 480 the panel is a sheet; scenarios `SC-UKV-1244`, `SC-UKV-1251`…`SC-UKV-1253` and `SC-UKV-1320` are drawn at 481 points, by the task RT-3532.

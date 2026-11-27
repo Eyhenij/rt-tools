@@ -171,6 +171,16 @@
         }
     }
 
+    /* Правая панель рядом с содержимым открыта шторкой телефона: колонка места не берёт и не
+       режет шторку — та стоит от окна, во всю его ширину. Стоит перед правилами узкого окна, но
+       сильнее их двумя классами. */
+    .rt-container--right-sheet .rt-container__right-sidenav {
+        overflow: visible;
+        border-left-width: 0;
+        inline-size: 0;
+        transition: none;
+    }
+
     @media (prefers-reduced-motion: reduce) {
         .rt-container__right-sidenav,
         .rt-container__right-sidenav:not(.rt-container__right-sidenav--open) {

@@ -122,6 +122,13 @@
             margin-inline-end: var(--rt-date-range-open-offset);
         }
 
+        /* Заголовок шторки: длинная подпись поля переносится, а не обрезается. */
+        &__sheet-title {
+            min-width: 0;
+            line-height: var(--rt-leading-normal);
+            overflow-wrap: anywhere;
+        }
+
         /* Поверхность панели в поповере: она рисуется в CDK Overlay, вне поддерева блока. */
         &__popup {
             border: var(--rt-overlay-select-panel-border-width) solid var(--rt-color-border-subtle);

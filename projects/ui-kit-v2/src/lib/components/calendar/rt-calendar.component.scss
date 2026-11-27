@@ -11,6 +11,9 @@
         /* Наименьшая высота дня: панель поля даты поднимает её до размера под палец. */
         --rt-calendar-day-size: auto;
 
+        /* 1 — сетка держит высоту шести недель, месяц покороче стоит по центру; так ставит шторка. */
+        --rt-calendar-six-weeks: 0;
+
         /* Где число стоит в клетке по высоте: сверху, чтобы подписи ряда шли одной строкой. */
         --rt-calendar-day-justify: flex-start;
 
@@ -88,6 +91,15 @@
             display: grid;
             gap: var(--rt-space-0-5) var(--rt-calendar-column-gap);
             grid-template-columns: repeat(7, 1fr);
+        }
+
+        /* Недостающие до шести недели — поровну сверху и снизу: шаг ряда — день и зазор. */
+        &__grid[data-weeks='5'] {
+            padding-block: calc(var(--rt-calendar-six-weeks) * (var(--rt-calendar-day-size) + var(--rt-space-0-5)) / 2);
+        }
+
+        &__grid[data-weeks='4'] {
+            padding-block: calc(var(--rt-calendar-six-weeks) * (var(--rt-calendar-day-size) + var(--rt-space-0-5)));
         }
 
         &__weekday {

@@ -12,6 +12,22 @@
         --rt-bottom-sheet-transition-duration: var(--rt-duration-base);
         --rt-bottom-sheet-footer-border-width: var(--rt-border-width-thin);
 
+        /* Скругление карточек вопроса — шаг 15 шкалы, как у вопроса шторки до листа действий. */
+        --rt-bottom-sheet-confirm-radius: var(--rt-radius-xl);
+
+        /* Пояснение вопроса — кегль 13, тот же, что у кнопки шага `sm` (`--rt-btn-font-size`). */
+        --rt-bottom-sheet-confirm-message-size: 0.8125rem;
+
+        /* Кольцо фокуса строки ответа — внутри строки: снаружи его срезал бы край карточки. */
+        --rt-bottom-sheet-confirm-focus-shadow: inset 0 0 0 var(--rt-focus-ring-width) var(--rt-focus-ring-color);
+
+        /* Место над клавиатурой телефона: оба свойства шторка пишет сама, пока клавиатура открыта. */
+        --rt-bottom-sheet-keyboard-top: 0;
+        --rt-bottom-sheet-keyboard-height: 100%;
+
+        /* Высота первого экрана, под которым стоит второй: её шторка пишет сама, пока она второй экран. */
+        --rt-bottom-sheet-nested-height: 0px;
+
         position: fixed;
         z-index: 1000;
         inset: 0;
@@ -28,24 +44,47 @@
             transition: opacity var(--rt-bottom-sheet-transition-duration) ease;
         }
 
-        /* Предел высоты панели — `--rt-bottom-sheet-max-height`, умолчание `80vh`; свойство приходит
-           от предка или с тега листа. */
+        /* Панель растёт по содержимому до всей высоты: длинное содержимое ставит шторку во всю высоту,
+           сверху остаётся полоса, и шапка с «×» видна; дальше прокручивается тело. Высота считается от
+           самой шторки — на весь экран, в ящике ниже окна на весь ящик. Свой предел приложение задаёт
+           свойством `--rt-bottom-sheet-max-height` от предка или с тега листа. */
         &__panel {
             position: absolute;
             right: 0;
             bottom: 0;
             left: 0;
             display: flex;
-            max-height: var(--rt-bottom-sheet-max-height, 80vh);
+            max-height: min(var(--rt-bottom-sheet-max-height, 100dvh), calc(100% - var(--rt-space-2) - var(--rt-space-1)));
             flex-direction: column;
             border-radius: var(--rt-bottom-sheet-radius) var(--rt-bottom-sheet-radius) 0 0;
             background: var(--rt-color-bg-surface);
             box-shadow: var(--rt-bottom-sheet-shadow);
+
+            /* Панель берёт фокус только кодом, после отмены вопроса: кольца у неё нет. */
+            outline: 0;
             transform: translateY(100%);
             transition: transform var(--rt-bottom-sheet-transition-duration) ease;
 
             &--dragging {
                 transition: none;
+            }
+
+            /* Шторка во всю высоту: панель занимает экран целиком, сверху остаётся полоса, в которой
+               видны скруглённые углы. Высота считается от самой шторки — она стоит на весь экран, а
+               в ящике витрины на весь ящик; предел берётся от видимой области (`dvh`), чтобы панель
+               не уходила под полосы браузера на телефоне. */
+            &--full {
+                height: calc(100% - var(--rt-space-2) - var(--rt-space-1));
+                max-height: calc(100dvh - var(--rt-space-2) - var(--rt-space-1));
+            }
+
+            /* Экранная клавиатура показана: шторка встаёт во всю высоту над ней, чтобы список или
+               поля остались видны. Клавиатура убрана — модификатор снят, высота по содержимому. */
+            @media (pointer: coarse) {
+                &--typing {
+                    height: calc(100% - var(--rt-space-2) - var(--rt-space-1));
+                    max-height: calc(100dvh - var(--rt-space-2) - var(--rt-space-1));
+                }
             }
         }
 
@@ -54,35 +93,69 @@
             height: 4px;
             align-self: center;
             border-radius: var(--rt-bottom-sheet-handle-radius);
-            margin: var(--rt-space-4) 0;
+            margin: calc(var(--rt-space-2) + var(--rt-space-1)) 0 var(--rt-space-2);
             background: var(--rt-color-border-default);
             cursor: grab;
             touch-action: none;
         }
 
+        /* Шапка: кнопка закрытия слева, заголовок по центру, действие справа. Крайние колонки равны
+           (`1fr`), поэтому заголовок стоит по центру панели, что бы ни стояло по бокам. Края шапки
+           стоят в 12 от краёв панели: шаги 8 и 4 шкалы отступов. */
         &__header {
-            display: flex;
-            justify-content: center;
-            padding: 0 var(--rt-space-5) var(--rt-space-4);
+            @include kv.sheet-header-columns;
+
+            flex-shrink: 0;
+            padding: 0 calc(var(--rt-space-2) + var(--rt-space-1)) calc(var(--rt-space-2) + var(--rt-space-1));
             color: var(--rt-color-text-primary);
             font-weight: var(--rt-font-weight-semibold);
+        }
+
+        /* Своя шапка: раскладку даёт шаблон приложения, шторка оставляет поля и зазор, колонок не
+           задаёт. */
+        &__header--own {
+            display: flex;
+            grid-template-columns: none;
+        }
+
+        &__start {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        &__title {
+            display: flex;
+            min-width: 0;
+            justify-content: center;
+            text-align: center;
+        }
+
+        &__action {
+            display: flex;
+            justify-content: flex-end;
         }
 
         /* Тело — единственная прокручиваемая зона: панель упирается в предел высоты, а ручка,
            шапка и подвал остаются на месте. `min-height: 0` обязателен — без него элемент флекса
            не сжимается ниже своего содержимого, и прокрутка не включается. Колонка флекса
-           сохраняет раскладку содержимого прежней: до тела оно стояло прямо в колонке панели. */
+           сохраняет раскладку содержимого прежней: до тела оно стояло прямо в колонке панели.
+           Зона прокрутки заходит на 4 в нижнее поле шапки: кольцо фокуса у поля, стоящего сразу
+           под шапкой, иначе обрезалось бы верхним краем тела. Место содержимого это не меняет. */
         &__body {
             display: flex;
             min-width: 0;
             min-height: 0;
             flex: 1 1 auto;
             flex-direction: column;
+            margin-block-start: calc(-1 * var(--rt-space-1));
             overflow-y: auto;
             overscroll-behavior: contain;
+            padding-block-start: var(--rt-space-1);
         }
 
-        /* Подвал не прокручивается: кнопки стоят внизу при любой длине тела. Нижний отступ
+        /* Подвал не прокручивается: кнопки стоят внизу при любой длине тела. Поля над и под кнопками
+           12, по бокам 20: кнопка шага `sm` высотой 32 даёт подвал 56, кнопка шага
+           `md` высотой 40 — подвал 64. Нижний отступ
            прибавляет вырез экрана, иначе кнопки уходят под полосу жестов телефона. Без
            спроецированного подвала элемент пуст и места не занимает. Спроецированное встаёт в
            строку с зазором и переносится, когда не помещается в ширину; прижать кнопки вправо — `margin-inline-start: auto` у первой. */
@@ -91,12 +164,30 @@
             flex-shrink: 0;
             flex-wrap: wrap;
             align-items: center;
-            padding: var(--rt-space-4) var(--rt-space-5) calc(var(--rt-space-4) + env(safe-area-inset-bottom));
+            padding: calc(var(--rt-space-2) + var(--rt-space-1)) var(--rt-space-5)
+                calc(var(--rt-space-2) + var(--rt-space-1) + env(safe-area-inset-bottom));
             border-top: var(--rt-bottom-sheet-footer-border-width) solid var(--rt-color-border-default);
             gap: var(--rt-space-2);
 
             &:empty {
                 display: none;
+            }
+        }
+
+        /* Экран вопроса — `confirm/rt-bottom-sheet-confirm.component.scss`: его стили приходят вместе с его кодом. */
+
+        /* Экранная клавиатура открыта: шторка встаёт в видимую часть окна над ней. Клавиатура ложится
+           поверх окна и его не сжимает, поэтому место над ней приходит числами от самой шторки.
+           Только там, где указатель — палец: у окна с мышью экранной клавиатуры нет. */
+        @media (pointer: coarse) {
+            &--keyboard {
+                top: var(--rt-bottom-sheet-keyboard-top);
+                bottom: auto;
+                height: var(--rt-bottom-sheet-keyboard-height);
+            }
+
+            &--keyboard &__panel--typing {
+                max-height: calc(100% - var(--rt-space-2) - var(--rt-space-1));
             }
         }
 
@@ -112,17 +203,41 @@
             }
         }
 
-        /* Шторка, открытая из этой, подменяет её: эта уходит вниз, как закрытая, и возвращается,
-           когда верхнюю закроют. Стоит после `--open`, чтобы перекрыть его. */
+        /* Шторка, открытая из этой, открывается в ней же вторым экраном: панель этой прячется сразу,
+           без выезда, а затемнение остаётся — второй экран своего не рисует. Панель остаётся на месте:
+           шторка, объявленная в её содержимом, стоит от неё и встаёт ровно на её место. Стоит после
+           `--open`, чтобы перекрыть его. */
         &--open.rt-bottom-sheet--covered {
             pointer-events: none;
 
-            .rt-bottom-sheet__backdrop {
+            > .rt-bottom-sheet__panel {
+                visibility: hidden;
+            }
+        }
+
+        /* Второй экран: то же место, без выезда и без своего затемнения. Видим и внутри спрятанной
+           панели нижней шторки. Не ниже первого экрана — его высота наименьшая — и растёт по
+           содержимому до предела шторки во всю высоту, полосы 12 сверху: предел панели остаётся
+           свой. Переход высоты и въезд содержимого ведёт `rt-bottom-sheet-screens.ts`. */
+        &--nested {
+            visibility: visible;
+
+            > .rt-bottom-sheet__backdrop {
                 opacity: 0;
+                transition: none;
             }
 
-            .rt-bottom-sheet__panel {
-                transform: translateY(100%);
+            > .rt-bottom-sheet__panel {
+                min-height: min(var(--rt-bottom-sheet-nested-height), calc(100% - var(--rt-space-2) - var(--rt-space-1)));
+                transition: none;
+            }
+        }
+
+        /* Человек просил систему убавить движение: шторка появляется и уходит без выезда. */
+        @media (prefers-reduced-motion: reduce) {
+            &__backdrop,
+            &__panel {
+                transition: none;
             }
         }
 

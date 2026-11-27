@@ -75,9 +75,26 @@
         }
 
         <ng-template #operatorsTpl>
-            <div rtElem="operators" qa-dataid="table-filter-operators" role="menu">
+            <div
+                rtElem="operators"
+                qa-dataid="table-filter-operators"
+                [attr.role]="cards() ? 'radiogroup' : 'menu'"
+                [attr.aria-label]="cards() ? filtersLabel() : null"
+                [rtMod]="{ cards: cards() }">
                 @for (view of operatorViews(); track view.type) {
-                    <rt-menu-item qa-dataid="table-filter-operator-item" [label]="view.label" (selected)="onOperator(view.type)" />
+                    @if (cards()) {
+                        <!-- В шторке вид сравнения — карточка с радиокнопкой кита; нажатие на нынешний вид просто закрывает шторку. -->
+                        <rt-radio-button
+                            card
+                            qa-dataid="table-filter-operator-item"
+                            [value]="view.type"
+                            [label]="view.label"
+                            [checked]="view.type === operator()"
+                            (checkedChange)="onOperator(view.type)"
+                            (clickAction)="onOperatorCardClick()" />
+                    } @else {
+                        <rt-menu-item qa-dataid="table-filter-operator-item" [label]="view.label" (selected)="onOperator(view.type)" />
+                    }
                 }
             </div>
         </ng-template>

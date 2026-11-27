@@ -19,12 +19,15 @@
                             #addPopover="rtPopover"
                             [rtPopover]="popupTpl"
                             [rtPopoverSheet]="sheet()"
+                            [rtPopoverSheetAction]="sheetApplyTpl"
+                            [rtPopoverSheetUnsaved]="sheetUnsaved()"
                             [rtPopoverSheetTitle]="addTitle()"
                             [rtPopoverDisabled]="isDisabled()"
                             [label]="addTitle()"
                             [attr.aria-label]="addTitle()"
                             [disabled]="isDisabled()"
                             (rtPopoverOpened)="onOpened()"
+                            (rtPopoverSheetApply)="onSheetApply()"
                             (rtPopoverClosed)="onClosed()"
                             (click)="onAdd(addPopover)"></button>
                     }
@@ -49,12 +52,15 @@
                             [icon]="invitationButtonIcon()"
                             [rtPopover]="popupTpl"
                             [rtPopoverSheet]="sheet()"
+                            [rtPopoverSheetAction]="sheetApplyTpl"
+                            [rtPopoverSheetUnsaved]="sheetUnsaved()"
                             [rtPopoverSheetTitle]="addTitle()"
                             [rtPopoverDisabled]="isDisabled()"
                             [label]="addTitle()"
                             [attr.aria-label]="addTitle()"
                             [disabled]="isDisabled()"
                             (rtPopoverOpened)="onOpened()"
+                            (rtPopoverSheetApply)="onSheetApply()"
                             (rtPopoverClosed)="onClosed()"
                             (click)="onAdd(invitationPopover)"></button>
                     }
@@ -65,5 +71,19 @@
 
     <ng-template #popupTpl>
         <rt-dynamic-selector-popup />
+    </ng-template>
+
+    <!-- «Применить» в шапке шторки: окно выбора в шторке своих кнопок не рисует. -->
+    <ng-template #sheetApplyTpl>
+        <button
+            rtButton
+            type="button"
+            size="sm"
+            appearance="filled"
+            qa-dataid="dynamic-selector-sheet-apply"
+            [label]="applyText()"
+            [attr.aria-label]="applyText()"
+            [disabled]="!sheetUnsaved() || loading()"
+            (click)="onSheetApply()"></button>
     </ng-template>
 </ng-container>

@@ -29,7 +29,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/workspace/rt-workspace-breakpoin
 
 ### SC-UKV-1244 — the button «Close» closes the panel over the window
 
-Given the details are open over the window
+Given a window 481 points wide and the details open over the window
 When a person presses the button «Close»
 Then the workspace reports the panel as closed
 
@@ -61,7 +61,8 @@ Covered: `projects/ui-kit-v2/src/lib/components/workspace/rt-workspace-breakpoin
 
 ### SC-UKV-1251 — the panel over the window has the header of a side panel
 
-Given the workspace has the title «№12 Анна Смирнова» and the content layout of tabs
+Given a window 481 points wide and the workspace with the title «№12 Анна Смирнова» and the content
+layout of tabs
 When the details are opened over the window
 Then the header shows the label «Details» and the title, the panel is laid out as tabs, and a new title redraws the header
 
@@ -69,7 +70,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/workspace/rt-workspace-breakpoin
 
 ### SC-UKV-1252 — without a title the header stays with the arrow and the label
 
-Given the workspace has no title of the panel
+Given a window 481 points wide and the workspace with no title of the panel
 When the details are opened over the window
 Then the header has the arrow back and the label, and no line of the title
 
@@ -77,7 +78,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/workspace/rt-workspace-breakpoin
 
 ### SC-UKV-1253 — the arrow back closes the panel over the window
 
-Given the details are open over the window
+Given a window 481 points wide and the details open over the window
 When a person presses the arrow back in the header
 Then the workspace reports the panel as closed
 
@@ -104,7 +105,8 @@ Covered: `projects/ui-kit-v2/src/lib/components/aside/rt-aside-tabs.styles.spec.
 
 ### SC-UKV-1320 — in one column the arrow and «Close» return to the record
 
-Given the workspace has the threshold 600, the place is 375 wide and a record is open
+Given a window 481 points wide, the workspace with the threshold 600, the place 375 wide and a
+record open
 When the details are opened over the window and closed by the arrow back, then opened again and closed by «Close»
 Then the workspace reports the panel as closed each time, and the record stays open in the centre
 
