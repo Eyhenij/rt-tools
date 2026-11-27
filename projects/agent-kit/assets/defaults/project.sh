@@ -342,6 +342,7 @@ RT_BOARD_EPIC_LABEL="${RT_BOARD_EPIC_LABEL:-}"
 # The default stays silent, and then the signature is not judged: the package has no machine account
 # of its own, and an invented one would refuse work in someone else's tree.
 RT_COMMIT_EMAIL="${RT_COMMIT_EMAIL:-}"
+RT_MAIN_MERGE_BY_OWNER="${RT_MAIN_MERGE_BY_OWNER:-}" # 1: the executor's merge into main is refused; silent by default
 
 # The task state as one object: exists, open, onBoard, assigned, numbered. Asks the work queue
 # helper — the same one the audit and the create command use, so that the guard and the queue

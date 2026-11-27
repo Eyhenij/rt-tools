@@ -1,4 +1,4 @@
-# rt-kit v0.41.1 · checks/decision-table.json · 10832c442aee · правится надстройкой, не здесь
+# rt-kit v0.41.1 · checks/decision-table.json · 6bd9e3a11479 · правится надстройкой, не здесь
 {
     "areas": {
         "browser": {
@@ -189,6 +189,18 @@
                     "no"
                 ],
                 "push_node_pinned": [
+                    "yes",
+                    "no"
+                ],
+                "merge_author_declared": [
+                    "yes",
+                    "no"
+                ],
+                "merge_into_main": [
+                    "yes",
+                    "no"
+                ],
+                "pr_base_known": [
                     "yes",
                     "no"
                 ]
@@ -7262,6 +7274,60 @@
             "hook": "git-guard-delivery.sh",
             "when": {
                 "rule_loaded": "yes",
+                "merge_author_declared": "no"
+            },
+            "action": "pr_merge",
+            "decision": "deny",
+            "move": "run_command",
+            "says": "--author-email",
+            "probe": {
+                "setup": "T=\"$(fixture_repo_branched main RT-7-probe)\"\ncd \"$T\"\nprintf \".p/\\n.tmp/\\n.claude/\\ntools/\\n\" > .gitignore\ngit add .gitignore && git -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q -m \"chore: ignore\"\ngit update-ref refs/remotes/origin/main main\nmkdir -p .claude/rt-kit/defaults .p .tmp/claude-skill-gate\ncp \"$DEFAULTS/gate-map.sh\" .claude/rt-kit/defaults/\nfor r in git-workflow task-flow epic-flow turn-conduct; do mkdir -p .claude/skills/$r; printf -- \"---\\nname: %s\\nkind: rule\\n---\\n\" $r > .claude/skills/$r/SKILL.md; done\nprintf '%s' '{\"exists\":true,\"open\":true,\"onBoard\":true,\"assigned\":true,\"numbered\":true,\"status\":\"In progress\"}' > .p/state\ncat > .claude/rt-kit/project.sh <<'PROFILE'\nrt_task_state() { if [ -f \"$CLAUDE_PROJECT_DIR/.p/state-$1\" ]; then cat \"$CLAUDE_PROJECT_DIR/.p/state-$1\"; else cat \"$CLAUDE_PROJECT_DIR/.p/state\"; fi; }\nrt_pull_state() { cat \"$CLAUDE_PROJECT_DIR/.p/pull\" 2>/dev/null || return 1; }\nrt_conflicting_pulls() { cat \"$CLAUDE_PROJECT_DIR/.p/conflicts\" 2>/dev/null; return 0; }\nrt_pull_merged() { cat \"$CLAUDE_PROJECT_DIR/.p/merged\" 2>/dev/null; }\nrt_report_body() { :; }\nrt_push_checks() { printf \"%s\\n\" true; }\n[ -f \"$CLAUDE_PROJECT_DIR/.p/extra.sh\" ] && . \"$CLAUDE_PROJECT_DIR/.p/extra.sh\"\nPROFILE\nexport CLAUDE_PROJECT_DIR=\"$T\" TMPDIR=\"$T/.tmp/\"\nprintf '%s\\n' git-workflow task-flow epic-flow turn-conduct > .tmp/claude-skill-gate/tests.loaded\nturn() { : > .tmp/turn.jsonl; jq -cn '{type:\"assistant\",message:{content:[{type:\"tool_use\",name:\"Skill\",input:{skill:\"git-workflow\"}}]}}' >> .tmp/turn.jsonl; [ -n \"$1\" ] && jq -cn --arg t \"EXAM: passed $1 of 5\" '{type:\"user\",message:{content:[{type:\"tool_result\",content:$t}]}}' >> .tmp/turn.jsonl; return 0; }\nturn 5\nprintf '%s' '{\"exists\":true,\"number\":5,\"branch\":\"RT-7-probe\",\"reviewed\":true,\"conflicting\":false,\"run\":\"none\",\"base\":\"RT-1-epic\"}' > .p/pull\nprintf '%s\\n' \"RT_COMMIT_EMAIL='bot@example.test'\" > .p/extra.sh",
+                "input": "input_cmd 'gh pr merge 5 --merge' Bash \"$T\" | jq --arg r \"$T/.tmp/turn.jsonl\" '. + {transcript_path: $r}'"
+            },
+            "text": "BLOCKED: the work is not ready for delivery. Everything unmet is named whole — so that it is fixed in one session, not one miss per round:\n\n{faults}",
+            "tail": true
+        },
+        {
+            "area": "delivery",
+            "hook": "git-guard-delivery.sh",
+            "when": {
+                "rule_loaded": "yes",
+                "merge_into_main": "yes"
+            },
+            "action": "pr_merge",
+            "decision": "deny",
+            "move": "ask_owner",
+            "says": "the owner merges into it by the button",
+            "probe": {
+                "setup": "T=\"$(fixture_repo_branched main RT-7-probe)\"\ncd \"$T\"\nprintf \".p/\\n.tmp/\\n.claude/\\ntools/\\n\" > .gitignore\ngit add .gitignore && git -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q -m \"chore: ignore\"\ngit update-ref refs/remotes/origin/main main\nmkdir -p .claude/rt-kit/defaults .p .tmp/claude-skill-gate\ncp \"$DEFAULTS/gate-map.sh\" .claude/rt-kit/defaults/\nfor r in git-workflow task-flow epic-flow turn-conduct; do mkdir -p .claude/skills/$r; printf -- \"---\\nname: %s\\nkind: rule\\n---\\n\" $r > .claude/skills/$r/SKILL.md; done\nprintf '%s' '{\"exists\":true,\"open\":true,\"onBoard\":true,\"assigned\":true,\"numbered\":true,\"status\":\"In progress\"}' > .p/state\ncat > .claude/rt-kit/project.sh <<'PROFILE'\nrt_task_state() { if [ -f \"$CLAUDE_PROJECT_DIR/.p/state-$1\" ]; then cat \"$CLAUDE_PROJECT_DIR/.p/state-$1\"; else cat \"$CLAUDE_PROJECT_DIR/.p/state\"; fi; }\nrt_pull_state() { cat \"$CLAUDE_PROJECT_DIR/.p/pull\" 2>/dev/null || return 1; }\nrt_conflicting_pulls() { cat \"$CLAUDE_PROJECT_DIR/.p/conflicts\" 2>/dev/null; return 0; }\nrt_pull_merged() { cat \"$CLAUDE_PROJECT_DIR/.p/merged\" 2>/dev/null; }\nrt_report_body() { :; }\nrt_push_checks() { printf \"%s\\n\" true; }\n[ -f \"$CLAUDE_PROJECT_DIR/.p/extra.sh\" ] && . \"$CLAUDE_PROJECT_DIR/.p/extra.sh\"\nPROFILE\nexport CLAUDE_PROJECT_DIR=\"$T\" TMPDIR=\"$T/.tmp/\"\nprintf '%s\\n' git-workflow task-flow epic-flow turn-conduct > .tmp/claude-skill-gate/tests.loaded\nturn() { : > .tmp/turn.jsonl; jq -cn '{type:\"assistant\",message:{content:[{type:\"tool_use\",name:\"Skill\",input:{skill:\"git-workflow\"}}]}}' >> .tmp/turn.jsonl; [ -n \"$1\" ] && jq -cn --arg t \"EXAM: passed $1 of 5\" '{type:\"user\",message:{content:[{type:\"tool_result\",content:$t}]}}' >> .tmp/turn.jsonl; return 0; }\nturn 5\nprintf '%s' '{\"exists\":true,\"number\":5,\"branch\":\"RT-7-probe\",\"reviewed\":true,\"conflicting\":false,\"run\":\"none\",\"base\":\"main\"}' > .p/pull\nprintf '%s\\n' \"RT_COMMIT_EMAIL='bot@example.test'\" \"RT_MAIN_MERGE_BY_OWNER=1\" > .p/extra.sh",
+                "input": "input_cmd 'gh pr merge 5 --merge --author-email bot@example.test' Bash \"$T\" | jq --arg r \"$T/.tmp/turn.jsonl\" '. + {transcript_path: $r}'"
+            },
+            "text": "BLOCKED: the work is not ready for delivery. Everything unmet is named whole — so that it is fixed in one session, not one miss per round:\n\n{faults}",
+            "tail": true
+        },
+        {
+            "area": "delivery",
+            "hook": "git-guard-delivery.sh",
+            "when": {
+                "rule_loaded": "yes",
+                "pr_base_known": "no"
+            },
+            "action": "pr_merge",
+            "decision": "deny",
+            "move": "wait_run",
+            "says": "Repeat when the host answers",
+            "probe": {
+                "setup": "T=\"$(fixture_repo_branched main RT-7-probe)\"\ncd \"$T\"\nprintf \".p/\\n.tmp/\\n.claude/\\ntools/\\n\" > .gitignore\ngit add .gitignore && git -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q -m \"chore: ignore\"\ngit update-ref refs/remotes/origin/main main\nmkdir -p .claude/rt-kit/defaults .p .tmp/claude-skill-gate\ncp \"$DEFAULTS/gate-map.sh\" .claude/rt-kit/defaults/\nfor r in git-workflow task-flow epic-flow turn-conduct; do mkdir -p .claude/skills/$r; printf -- \"---\\nname: %s\\nkind: rule\\n---\\n\" $r > .claude/skills/$r/SKILL.md; done\nprintf '%s' '{\"exists\":true,\"open\":true,\"onBoard\":true,\"assigned\":true,\"numbered\":true,\"status\":\"In progress\"}' > .p/state\ncat > .claude/rt-kit/project.sh <<'PROFILE'\nrt_task_state() { if [ -f \"$CLAUDE_PROJECT_DIR/.p/state-$1\" ]; then cat \"$CLAUDE_PROJECT_DIR/.p/state-$1\"; else cat \"$CLAUDE_PROJECT_DIR/.p/state\"; fi; }\nrt_pull_state() { cat \"$CLAUDE_PROJECT_DIR/.p/pull\" 2>/dev/null || return 1; }\nrt_conflicting_pulls() { cat \"$CLAUDE_PROJECT_DIR/.p/conflicts\" 2>/dev/null; return 0; }\nrt_pull_merged() { cat \"$CLAUDE_PROJECT_DIR/.p/merged\" 2>/dev/null; }\nrt_report_body() { :; }\nrt_push_checks() { printf \"%s\\n\" true; }\n[ -f \"$CLAUDE_PROJECT_DIR/.p/extra.sh\" ] && . \"$CLAUDE_PROJECT_DIR/.p/extra.sh\"\nPROFILE\nexport CLAUDE_PROJECT_DIR=\"$T\" TMPDIR=\"$T/.tmp/\"\nprintf '%s\\n' git-workflow task-flow epic-flow turn-conduct > .tmp/claude-skill-gate/tests.loaded\nturn() { : > .tmp/turn.jsonl; jq -cn '{type:\"assistant\",message:{content:[{type:\"tool_use\",name:\"Skill\",input:{skill:\"git-workflow\"}}]}}' >> .tmp/turn.jsonl; [ -n \"$1\" ] && jq -cn --arg t \"EXAM: passed $1 of 5\" '{type:\"user\",message:{content:[{type:\"tool_result\",content:$t}]}}' >> .tmp/turn.jsonl; return 0; }\nturn 5\nprintf '%s' '{\"exists\":true,\"number\":5,\"branch\":\"RT-7-probe\",\"reviewed\":true,\"conflicting\":false,\"run\":\"none\"}' > .p/pull\nprintf '%s\\n' \"RT_COMMIT_EMAIL='bot@example.test'\" \"RT_MAIN_MERGE_BY_OWNER=1\" > .p/extra.sh",
+                "input": "input_cmd 'gh pr merge 5 --merge -A bot@example.test' Bash \"$T\" | jq --arg r \"$T/.tmp/turn.jsonl\" '. + {transcript_path: $r}'"
+            },
+            "text": "BLOCKED: the work is not ready for delivery. Everything unmet is named whole — so that it is fixed in one session, not one miss per round:\n\n{faults}",
+            "tail": true
+        },
+        {
+            "area": "delivery",
+            "hook": "git-guard-delivery.sh",
+            "when": {
+                "rule_loaded": "yes",
                 "pr_tip_run": "green",
                 "task_folder_in_branch": "yes",
                 "branch_is_main": "no",
@@ -7295,7 +7361,7 @@
             "says": "before this commit rewrite it, on your task branch — GIT_AUTHOR_EMAIL",
             "probe": {
                 "setup": "T=\"$(fixture_repo_branched main RT-7-probe)\"\ncd \"$T\"\nprintf \".p/\\n.tmp/\\n.claude/\\ntools/\\n\" > .gitignore\ngit add .gitignore && git -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q -m \"chore: ignore\"\ngit update-ref refs/remotes/origin/main main\nmkdir -p .claude/rt-kit/defaults .p .tmp/claude-skill-gate\ncp \"$DEFAULTS/gate-map.sh\" .claude/rt-kit/defaults/\nfor r in git-workflow task-flow epic-flow turn-conduct; do mkdir -p .claude/skills/$r; printf -- \"---\\nname: %s\\nkind: rule\\n---\\n\" $r > .claude/skills/$r/SKILL.md; done\nprintf '%s' '{\"exists\":true,\"open\":true,\"onBoard\":true,\"assigned\":true,\"numbered\":true,\"status\":\"In progress\"}' > .p/state\ncat > .claude/rt-kit/project.sh <<'PROFILE'\nrt_task_state() { if [ -f \"$CLAUDE_PROJECT_DIR/.p/state-$1\" ]; then cat \"$CLAUDE_PROJECT_DIR/.p/state-$1\"; else cat \"$CLAUDE_PROJECT_DIR/.p/state\"; fi; }\nrt_pull_state() { cat \"$CLAUDE_PROJECT_DIR/.p/pull\" 2>/dev/null || return 1; }\nrt_conflicting_pulls() { cat \"$CLAUDE_PROJECT_DIR/.p/conflicts\" 2>/dev/null; return 0; }\nrt_pull_merged() { cat \"$CLAUDE_PROJECT_DIR/.p/merged\" 2>/dev/null; }\nrt_report_body() { :; }\nrt_push_checks() { printf \"%s\\n\" true; }\n[ -f \"$CLAUDE_PROJECT_DIR/.p/extra.sh\" ] && . \"$CLAUDE_PROJECT_DIR/.p/extra.sh\"\nPROFILE\nexport CLAUDE_PROJECT_DIR=\"$T\" TMPDIR=\"$T/.tmp/\"\nprintf '%s\\n' git-workflow task-flow epic-flow turn-conduct > .tmp/claude-skill-gate/tests.loaded\nturn() { : > .tmp/turn.jsonl; jq -cn '{type:\"assistant\",message:{content:[{type:\"tool_use\",name:\"Skill\",input:{skill:\"git-workflow\"}}]}}' >> .tmp/turn.jsonl; [ -n \"$1\" ] && jq -cn --arg t \"EXAM: passed $1 of 5\" '{type:\"user\",message:{content:[{type:\"tool_result\",content:$t}]}}' >> .tmp/turn.jsonl; return 0; }\nturn 5\nprintf '%s\\n' 'RT_COMMIT_EMAIL=bot@example.com' >> .p/extra.sh\nfixture_commit_as \"$T\" bot bot+1@example.com s.txt x \"feat: foreign signature\"\nprintf '%s' '{\"exists\":true,\"number\":5,\"branch\":\"RT-7-probe\",\"reviewed\":true,\"conflicting\":false}' > .p/pull\nfixture_commit \"$T\" docs/tasks/RT-7-probe/plan.md plan \"docs: plan\"",
-                "input": "input_cmd 'gh pr merge 5 --merge' Bash \"$T\" | jq --arg r \"$T/.tmp/turn.jsonl\" '. + {transcript_path: $r}'"
+                "input": "input_cmd 'gh pr merge 5 --merge --author-email bot@example.com' Bash \"$T\" | jq --arg r \"$T/.tmp/turn.jsonl\" '. + {transcript_path: $r}'"
             },
             "text": "BLOCKED: the task folder «{lying}» is left in the branch — it will travel into main. There will be nobody to take it apart later: the work moves on to the next task, and this request closes. Move to «{archive_dir}» what explains the decisions taken, delete the rest, commit and repeat. If the work is merged in parts, put the line «Task-folder-skip: <reason>» into the body of the request.{where}",
             "tail": true
@@ -7360,7 +7426,7 @@
             "says": "before this commit rewrite it, on your task branch — GIT_AUTHOR_EMAIL",
             "probe": {
                 "setup": "T=\"$(fixture_repo_branched main RT-7-probe)\"\ncd \"$T\"\nprintf \".p/\\n.tmp/\\n.claude/\\ntools/\\n\" > .gitignore\ngit add .gitignore && git -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q -m \"chore: ignore\"\ngit update-ref refs/remotes/origin/main main\nmkdir -p .claude/rt-kit/defaults .p .tmp/claude-skill-gate\ncp \"$DEFAULTS/gate-map.sh\" .claude/rt-kit/defaults/\nfor r in git-workflow task-flow epic-flow turn-conduct; do mkdir -p .claude/skills/$r; printf -- \"---\\nname: %s\\nkind: rule\\n---\\n\" $r > .claude/skills/$r/SKILL.md; done\nprintf '%s' '{\"exists\":true,\"open\":true,\"onBoard\":true,\"assigned\":true,\"numbered\":true,\"status\":\"In progress\"}' > .p/state\ncat > .claude/rt-kit/project.sh <<'PROFILE'\nrt_task_state() { if [ -f \"$CLAUDE_PROJECT_DIR/.p/state-$1\" ]; then cat \"$CLAUDE_PROJECT_DIR/.p/state-$1\"; else cat \"$CLAUDE_PROJECT_DIR/.p/state\"; fi; }\nrt_pull_state() { cat \"$CLAUDE_PROJECT_DIR/.p/pull\" 2>/dev/null || return 1; }\nrt_conflicting_pulls() { cat \"$CLAUDE_PROJECT_DIR/.p/conflicts\" 2>/dev/null; return 0; }\nrt_pull_merged() { cat \"$CLAUDE_PROJECT_DIR/.p/merged\" 2>/dev/null; }\nrt_report_body() { :; }\nrt_push_checks() { printf \"%s\\n\" true; }\n[ -f \"$CLAUDE_PROJECT_DIR/.p/extra.sh\" ] && . \"$CLAUDE_PROJECT_DIR/.p/extra.sh\"\nPROFILE\nexport CLAUDE_PROJECT_DIR=\"$T\" TMPDIR=\"$T/.tmp/\"\nprintf '%s\\n' git-workflow task-flow epic-flow turn-conduct > .tmp/claude-skill-gate/tests.loaded\nturn() { : > .tmp/turn.jsonl; jq -cn '{type:\"assistant\",message:{content:[{type:\"tool_use\",name:\"Skill\",input:{skill:\"git-workflow\"}}]}}' >> .tmp/turn.jsonl; [ -n \"$1\" ] && jq -cn --arg t \"EXAM: passed $1 of 5\" '{type:\"user\",message:{content:[{type:\"tool_result\",content:$t}]}}' >> .tmp/turn.jsonl; return 0; }\nturn 5\nprintf '%s\\n' 'RT_COMMIT_EMAIL=bot@example.com' >> .p/extra.sh\nfixture_commit_as \"$T\" bot bot+1@example.com s.txt x \"feat: foreign signature\"\nprintf '%s' '{\"exists\":true,\"number\":5,\"branch\":\"RT-7-probe\",\"reviewed\":true,\"conflicting\":false}' > .p/pull\nfixture_commit \"$T\" docs/tasks/RT-7-probe/plan.md plan \"docs: plan\"\nfixture_remove \"$T\" docs/tasks/RT-7-probe \"docs: folder removed\"",
-                "input": "input_cmd 'gh pr merge 5 --merge' Bash \"$T\" | jq --arg r \"$T/.tmp/turn.jsonl\" '. + {transcript_path: $r}'"
+                "input": "input_cmd 'gh pr merge 5 --merge --author-email bot@example.com' Bash \"$T\" | jq --arg r \"$T/.tmp/turn.jsonl\" '. + {transcript_path: $r}'"
             },
             "text": "BLOCKED: the task folder was deleted, but the branch added nothing to «{archive_dir}». Deleting is cheaper than taking apart — and together with the folder the analysis of the request is gone, the only record of the words of the owner. Move what explains the decisions taken as one file with a telling name, commit it and repeat.{where}",
             "tail": true

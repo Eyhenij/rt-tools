@@ -17,3 +17,4 @@ whole.
 - **The repair named in the refusal is let through by the refusal itself.** — `projects/agent-kit/assets/hooks/git-guard-delivery-signature.sh:repair`
 - **A refusal about the signature names the commit by name and both mails.** — `projects/agent-kit/assets/hooks/git-guard-delivery-signature.sh:strangers`
 - **A tree that named no mail of a machine record gets no demand.** — `projects/agent-kit/assets/defaults/project.sh:RT_COMMIT_EMAIL`
+- **The executor's merge names its author and keeps out of the main branch where the tree says so.** — `projects/agent-kit/assets/hooks/git-guard-delivery-merge.sh:rt_delivery_merge_who` — the base arrives in the PR state from `projects/agent-kit/assets/checks/board.github.mjs:pullState`; scenarios SC-AK-2008, SC-AK-2009
