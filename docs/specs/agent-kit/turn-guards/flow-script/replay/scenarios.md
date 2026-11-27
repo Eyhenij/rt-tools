@@ -247,4 +247,5 @@ When the model judge reads each recorded question with the text of the menu hook
 Then the merge that only names the branch leaves, also when the branch makes a check take another form of the same proof, and each of the five is held
 And the replay keeps the pairs of the menu hook alone by `--key ask`, a key with no pairs is no green run, and `--model` runs the model of the background work
 
-Covered: `projects/agent-kit/tests/turn-replay.test.sh`; the verdicts of the model and `--model` — `projects/agent-kit/tests/judge-replay.mjs`, run by hand.
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
+Coverage: partial — the suite checks the key, the empty set and the merge item of the text; the verdicts of the model and `--model` are measured by a run of `projects/agent-kit/tests/judge-replay.mjs` by hand.

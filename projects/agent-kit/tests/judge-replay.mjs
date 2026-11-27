@@ -358,7 +358,8 @@ function replayed(run) {
 
 const flag = (name) => {
     const at = process.argv.indexOf(name);
-    return at > 0 && !String(process.argv[at + 1] ?? '--').startsWith('--') ? process.argv[at + 1] : null;
+    if (at > 0 && /^(--|$)/.test(process.argv[at + 1] ?? '')) (console.error(`${name} needs a value`), process.exit(1));
+    return at > 0 ? process.argv[at + 1] : null;
 };
 
 if (process.argv[1] === fileURLToPath(import.meta.url) && (process.argv.includes('--as-hook') || process.argv.includes('--live'))) {
