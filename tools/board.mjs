@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.41.1 · checks/board.github.mjs · 13c07af099a3 · правится надстройкой, не здесь
+// rt-kit v0.42.0 · checks/board.github.mjs · 66df1ac6e7bb · правится надстройкой, не здесь
 /**
  * Shared work with the work queue: the project board, the tasks and their state.
  *
@@ -188,7 +188,7 @@ export function pullState(ref, options) {
     const target = ref === undefined || ref === null || `${ref}`.trim() === '' ? [] : [`${ref}`.trim()];
     let pull;
     try {
-        pull = ghJson(['pr', 'view', ...target, '--json', 'number,isDraft,reviewRequests,latestReviews,author,mergeable,headRefName,headRefOid'], options);
+        pull = ghJson(['pr', 'view', ...target, '--json', 'number,isDraft,reviewRequests,latestReviews,author,mergeable,headRefName,headRefOid,baseRefName'], options);
     } catch (error) {
         if (error instanceof OfflineError) {
             throw error;
@@ -216,6 +216,8 @@ export function pullState(ref, options) {
         // The head branch: the folder guard judges the branch of the named PR, not the checked-out
         // one — the lower PR of a stack is lifted from the upper branch.
         branch: pull.headRefName ?? null,
+        // The base branch: the merge guard refuses the executor's merge into the main branch where the tree asks it.
+        base: pull.baseRefName ?? null,
         // The run on the tip: `success`, `failure`, `running` or `none`. The merge guard reads it —
         // an epic went into main over a red image build, and the rollout fell after it.
         run: pull.headRefOid ? verdictOnHead(pull.headRefOid, options) : 'none',

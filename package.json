@@ -35,6 +35,7 @@
     "check:ngdoctor": "node tools/check-ngdoctor.mjs",
     "check:kit-weight": "pnpm exec nx build @rt-tools/ui-kit-v2 && pnpm run build:tokens-v2 && node tools/check-kit-weight.mjs",
     "session:time": "node tools/session-time.mjs",
+    "owner:touches": "node tools/owner-touches.mjs",
     "ngdoctor": "angular-doctor",
     "spec:next-id": "node tools/spec-next-id.mjs",
     "specs:for": "node tools/specs-for.mjs",

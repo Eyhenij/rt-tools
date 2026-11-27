@@ -59,6 +59,10 @@ own turn.
   to be taken apart by hand.
 - **A tree that named no mail of a machine record gets no demand.** The package has no machine record
   of its own, and an invented one would refuse work in a foreign tree.
+- **The executor's merge names its author and keeps out of the main branch where the tree says so.**
+  The host signs a merge commit by the merging account's primary email, and a private address lands
+  in the history; a merge without the declared author is refused. With `RT_MAIN_MERGE_BY_OWNER=1` a
+  merge into the main branch, and one whose base the host did not name, are refused too.
 
 ## What is out of scope
 

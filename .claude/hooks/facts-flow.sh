@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.41.1 · hooks/facts-flow.sh · 6d2ce7c24c30 · правится надстройкой, не здесь
+# rt-kit v0.42.0 · hooks/facts-flow.sh · 6d2ce7c24c30 · правится надстройкой, не здесь
 # The facts of the course of work for one edit. NOT a guard: it has no `rt-hook:` declaration and is
 # not attached to any agent event. The work-conduct guards source it after `rt_task_flow_context`,
 # and so does a guard whose refusal names an edit of another file: it asks these facts of that edit
