@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { InjectionToken, inject, Service, signal, Signal, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { Observable, Subject, catchError, map, mergeMap, of, shareReplay, tap } from 'rxjs';
+import { AsyncSubject, Observable, Subject, catchError, map, mergeMap, of, tap } from 'rxjs';
 
 import { PlatformService } from '@rt-tools/core';
 
@@ -47,10 +47,32 @@ export class RtIconRegistry {
     /** Рисунки, которые попросила разметка. Загрузку по ним ведёт подписка из конструктора. */
     readonly #requestSource: Subject<IRtIconRef> = new Subject<IRtIconRef>();
 
+    /**
+     * Адреса, за которыми пора идти в сеть. Ответ ложится в субъект адреса: он один, и поздний
+     * подписчик получает его же. Оператор повтора из rxjs делал то же, но тянул в стартовый набор
+     * приложения на полторы тысячи байт больше.
+     */
+    readonly #fetchSource: Subject<{ url: string; answer: AsyncSubject<string | null> }> = new Subject<{
+        url: string;
+        answer: AsyncSubject<string | null>;
+    }>();
+
     /** Набор приложения из `provideRtIcons()`. */
     public readonly defaultSet: string = this.#config.defaultSet;
 
     constructor() {
+        this.#fetchSource
+            .pipe(
+                mergeMap(({ url, answer }: { url: string; answer: AsyncSubject<string | null> }): Observable<string | null> =>
+                    this.#http.get(url, { responseType: 'text' }).pipe(
+                        map((raw: string): string | null => (rtIconIsSvgFile(raw) ? raw : null)),
+                        catchError((): Observable<null> => of(null)),
+                        tap(answer)
+                    )
+                ),
+                takeUntilDestroyed()
+            )
+            .subscribe();
         // Потоки складываются, а не вытесняют друг друга: странице нужны все спрошенные
         // значки, а не последний из них.
         this.#requestSource
@@ -147,12 +169,10 @@ export class RtIconRegistry {
         let file: Observable<string | null> | undefined = this.#files.get(url);
 
         if (file === undefined) {
-            file = this.#http.get(url, { responseType: 'text' }).pipe(
-                map((raw: string): string | null => (rtIconIsSvgFile(raw) ? raw : null)),
-                catchError((): Observable<null> => of(null)),
-                shareReplay(1)
-            );
-            this.#files.set(url, file);
+            const answer: AsyncSubject<string | null> = new AsyncSubject<string | null>();
+            this.#files.set(url, answer);
+            this.#fetchSource.next({ url, answer });
+            file = answer;
         }
 
         return file;
