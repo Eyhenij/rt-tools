@@ -1,4 +1,4 @@
-// rt-kit v0.41.1 · checks/record-count.mjs · a6f6c6ab5165 · правится надстройкой, не здесь
+// rt-kit v0.41.1 · checks/record-count.mjs · f58f2a639c6d · правится надстройкой, не здесь
 /**
  * The counter of a session record: what the owner said and what the agent was refused, read from the
  * conversation record Claude Code keeps per session.
@@ -10,6 +10,7 @@
  *   pairs(entries)         ordered pairs of different checks refusing one after another: { first, second, at, session }
  *   interrupts(entries)    the entries where the owner interrupted a turn: { at, session }
  *   corrections(entries, patterns)  the owner's words the set of correction patterns matches
+ *   aboutOf(text, patterns) the kind of a typed message: correction, status, order or other
  *
  * A pair is two refusals of different checks with no successful call between them in one session;
  * a repeat of the same check is not a pair. The set of correction patterns is passed in by the caller
@@ -209,10 +210,22 @@ export function refusals(entries) {
     return out;
 }
 
-/** The owner's words of the entries, oldest first; an entry copied into a resumed session counts once. */
+/** How far apart the record writes one queued message again: the harness repeats it within seconds. */
+const QUEUED_ECHO_MS = 5000;
+
+/**
+ * The owner's words of the entries, oldest first; an entry copied into a resumed session counts once.
+ * A queued message the record writes again — the same text in the same session within
+ * `QUEUED_ECHO_MS` of its last copy, so a chain of copies stays one — counts once; two real messages
+ * with the same text minutes apart count twice. A typed word that repeats a message queued since the
+ * previous typed word of the session is the same message delivered again and counts once; the same
+ * text typed in a later turn counts again.
+ */
 export function ownerWords(entries) {
     const seen = new Set();
     const words = [];
+    const lastCopy = new Map();
+    const queuedSinceTyped = new Map();
     for (const entry of entries) {
         const id = entry?.uuid ?? entry?.attachment?.delivery_id;
         if (id && seen.has(id)) continue;
@@ -220,10 +233,19 @@ export function ownerWords(entries) {
         const word = typedOf(entry);
         if (!word) continue;
         const session = entry.sessionId ?? null;
-        const repeat =
-            word.kind === 'typed' && words.some((w) => w.kind === 'queued' && w.session === session && same(w.text, word.text));
-        if (repeat) continue;
-        words.push({ ...word, at: entry.timestamp ?? entry.attachment?.timestamp ?? null, session });
+        const at = entry.timestamp ?? entry.attachment?.timestamp ?? null;
+        if (word.kind === 'queued') {
+            const copyKey = `${session}|${word.text.trim()}`;
+            const last = lastCopy.get(copyKey);
+            lastCopy.set(copyKey, at);
+            if (last && Math.abs(Date.parse(at) - Date.parse(last)) <= QUEUED_ECHO_MS) continue;
+            queuedSinceTyped.set(session, [...(queuedSinceTyped.get(session) ?? []), word.text]);
+        } else {
+            const pending = queuedSinceTyped.get(session) ?? [];
+            queuedSinceTyped.set(session, []);
+            if (pending.some((text) => same(text, word.text))) continue;
+        }
+        words.push({ ...word, at, session, branch: entry.gitBranch ?? null });
     }
     return words;
 }
@@ -252,12 +274,13 @@ export const taskOf = (branch) => (branch ? (branch.match(/^([A-Z]+-\d+)(?:-|$)/
  *   ask        a menu question (`reask`: it names the owner's earlier answer)
  *
  * Each event carries `at`, `session` and `branch`; `answered` on a menu answer is the task of the
- * question it answers.
+ * question it answers. A word carries its kind `about`, and `corr` when the set of correction patterns
+ * passed as `patterns` matches it.
  */
 /** The path of an incident analysis: a file under a directory named so, or the word the cut keeps for it. */
 const ANALYSIS_PATH = /(^|\/)postmortems(\/|$)/;
 
-export function eventsOf(entries) {
+export function eventsOf(entries, patterns) {
     const list = unique(entries).filter(mainThread);
     const results = new Map();
     for (const entry of list) {
@@ -266,8 +289,12 @@ export function eventsOf(entries) {
     }
     const out = [];
     const askTask = new Map();
-    const words = ownerWords(list);
-    const wordAt = new Set(words.map((w) => `${w.session}|${w.at}|${w.kind}`));
+    // A word goes out from the list of words itself: copies collapse there, and two different messages
+    // of one millisecond stay two. The kind comes with it; the correction mark, when patterns are given.
+    const correction = patterns ? new RegExp(patterns, 'iu') : null;
+    for (const w of ownerWords(list)) {
+        out.push({ at: w.at, session: w.session, branch: w.branch, ev: 'word', kind: w.kind, about: aboutOf(w.text, patterns), ...(correction?.test(w.text) ? { corr: true } : {}) });
+    }
     for (const entry of list) {
         const where = { at: entry.timestamp ?? entry.attachment?.timestamp ?? null, session: entry.sessionId ?? null, branch: entry.gitBranch ?? null };
         const content = Array.isArray(entry.message?.content) ? entry.message.content : [];
@@ -290,8 +317,6 @@ export function eventsOf(entries) {
             }
             continue;
         }
-        const word = typedOf(entry);
-        if (word && wordAt.has(`${where.session}|${where.at}|${word.kind}`)) out.push({ ...where, ev: 'word', kind: word.kind });
         if (entry.type !== 'user') continue;
         for (const refusal of refusals([entry])) out.push({ ...where, ev: 'refusal', kind: refusal.kind, check: refusal.check });
         for (const part of content) {
@@ -429,6 +454,27 @@ export function gateOf(observations, day) {
         if (o.ev === 'gate-deliver') delivered += 1;
     }
     return { refused, delivered };
+}
+
+/** A question about where the work stands, in the owner's words. */
+const STATUS = /где стоим|какой статус|что со статусом|статус\s*\?|что сейчас|что делаешь|на каком этапе|сколько осталось|ну что там|where are we|what.s the status|what is the status|status\s*\?/iu;
+
+/** An order at the opening of a message: a verb of the imperative that starts or resumes work. */
+const ORDER =
+    /^(?:\S+,\s*)?(?:заведи|сделай|делай|возьми|бери|начни|начинай|продолжай|продолжи|дальше|давай|го|запусти|почисти|веди|ставь|поставь|добавь|убери|удали|влей|слей|сливай|выпусти|напиши|проверь|посмотри|изучи|прочитай|перенеси|обнови|подними|go|start|continue|make|add|remove|merge|release|write)(?=[\s,.!:]|$)(?![\s,]+(?:не|без)(?=[\s,.!:]|$))/iu;
+
+/**
+ * The kind of a message the owner typed, by the words of it alone: `correction` when the set of correction
+ * patterns matches it, `status` for a question where the work stands, `order` for an order to start or
+ * resume work, and `other` for what no pattern knows. The kinds are checked in that order, so a correction
+ * worded as an order stays a correction.
+ */
+export function aboutOf(text, patterns) {
+    const said = String(text ?? '').trim();
+    if (patterns && new RegExp(patterns, 'iu').test(said)) return 'correction';
+    if (STATUS.test(said)) return 'status';
+    if (ORDER.test(said)) return 'order';
+    return 'other';
 }
 
 /** The owner's words the set of correction patterns matches, a message queued during a turn included. */

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.41.1 · hooks/git-guard-delivery.sh · 3323a09a3386 · правится надстройкой, не здесь
+# rt-kit v0.41.1 · hooks/git-guard-delivery.sh · bea6a9d59b57 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/git-guard-delivery-merged.sh, hooks/git-guard-delivery-task.sh, hooks/git-guard-delivery-folder.sh,hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-pipeline.sh, hooks/git-guard-delivery-identity.sh, hooks/script-files.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/git-guard-delivery-rerun.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
@@ -155,7 +155,7 @@ folder_skip_re='(^|#)[[:space:]]*Task-folder-skip:[[:space:]]*[^[:space:]<"'"'"'
 # lawful value from `delivery_lawful`; a check that finds a miss records the fact with the value of
 # the miss. The facts the table reads apart from the miss — whether the task belongs to an epic,
 # whether the folder lies in the branch — are recorded by the check that learns them.
-delivery_lawful='{"own_pr_conflicting":"no","branch_is_main":"no","branch_is_task_branch":"yes","branch_has_main_tip":"yes","task_exists":"yes","task_open":"yes","task_on_board":"yes","task_assigned":"yes","task_title_numbered":"yes","task_column_taken":"yes","copy_assignment":"ok","assigned_epic_open":"yes","origin_main_fresh":"yes","worktree_email_declared":"yes","commits_signed_declared":"yes","archive_gained":"yes","draft_spec_merged":"yes","epic_folders_left":"no","pr_tip_run":"green","pr_conflicting":"no","pr_reviewed":"yes","task_in_epic":"no","task_folder_in_branch":"no","branch_pr_merged":"no","epic_branch":"one","epic_has_main_tip":"yes","branch_has_epic_tip":"yes","steps_remeasured":"yes"}'
+delivery_lawful='{"own_pr_conflicting":"no","branch_is_main":"no","branch_is_task_branch":"yes","branch_has_main_tip":"yes","task_exists":"yes","task_open":"yes","task_on_board":"yes","task_assigned":"yes","task_title_numbered":"yes","task_column_taken":"yes","copy_assignment":"ok","assigned_epic_open":"yes","origin_main_fresh":"yes","worktree_email_declared":"yes","commits_signed_declared":"yes","archive_gained":"yes","draft_spec_merged":"yes","epic_folders_left":"no","pr_tip_run":"green","merge_author_declared":"yes","merge_into_main":"no","pr_base_known":"yes","pr_conflicting":"no","pr_reviewed":"yes","task_in_epic":"no","task_folder_in_branch":"no","branch_pr_merged":"no","epic_branch":"one","epic_has_main_tip":"yes","branch_has_epic_tip":"yes","steps_remeasured":"yes"}'
 delivery_facts='{}'
 # The class of the call when a check finds the miss in the call itself — the title, the base, the
 # body: the table keeps such a miss as the action, not as a fact. The first class found stands.
@@ -341,10 +341,13 @@ command -v rt_delivery_draft_ready >/dev/null 2>&1 && rt_delivery_draft_ready
 # in the text. Otherwise the guard refuses a message where `gh pr merge` is merely mentioned in
 # quotes — that is how it fired on an edit of this very text. A quoted substring cannot be cut off
 # entirely this way, but an accidental mention inside a word or a path no longer gets through.
-if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}(gh[[:space:]]+pr[[:space:]]+merge|glab[[:space:]]+mr[[:space:]]+merge|az[[:space:]]+repos[[:space:]]+pr[[:space:]]+update)([[:space:]]|\$)"; then
+# The merge helper adds `pr merge` in any form outside quotes: a wrapper or a subshell merges too.
+[ -f "$rt_hooks_dir/git-guard-delivery-merge.sh" ] && . "$rt_hooks_dir/git-guard-delivery-merge.sh" 2>/dev/null
+if printf '%s\n' "$cmd" | { command -v rt_no_heredocs >/dev/null 2>&1 && rt_no_heredocs || cat; } | grep -qE "${RT_CMD_BOUND}(gh[[:space:]]+pr[[:space:]]+merge|glab[[:space:]]+mr[[:space:]]+merge|az[[:space:]]+repos[[:space:]]+pr[[:space:]]+update)([[:space:]]|\$)" \
+    || { command -v rt_delivery_merge_said >/dev/null 2>&1 && rt_delivery_merge_said; }; then
     # The run on the tip goes first: the folder tier below leaves the guard early on many paths.
-    [ -f "$rt_hooks_dir/git-guard-delivery-merge.sh" ] && . "$rt_hooks_dir/git-guard-delivery-merge.sh" 2>/dev/null
     command -v rt_delivery_merge_run >/dev/null 2>&1 && rt_delivery_merge_run
+    command -v rt_delivery_merge_who >/dev/null 2>&1 && rt_delivery_merge_who
     refuse_unmet pr_merge
     rt_delivery_merge_folder
 fi
