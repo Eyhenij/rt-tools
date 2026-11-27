@@ -157,6 +157,6 @@ None.
   SC-AK-1972 and SC-AK-1973.
 - 2026-11-26 — task RT-3621: on a machine without `timeout` the call of the missing command failed
   and every edit passed unjudged; the engine now runs under the first limiter the machine has;
-  scenario SC-AK-2004.
+  scenario SC-AK-2021.
 - 2026-11-26 — task RT-3691: while a merge of a reviewed base runs, a side of a conflict block is
   taken in a guarded file without a plan; scenario SC-AK-2016.

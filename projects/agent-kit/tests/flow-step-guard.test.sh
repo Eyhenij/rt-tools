@@ -451,49 +451,49 @@ PATH_KEEP="$PATH"
 PLAN8="$(printf '# Plan\n\n## Decision\n\nNo decision: probe fixture\n\n## Stages\n\n### 1. Этап\n\n- **Steps:**\n    1. Первый шаг\n       Check: `cat a.txt | tail -1` → `готово`\n')"
 
 PATH="$K1"
-d "guard: SC-AK-2004 — только gtimeout: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
-expect_reason "guard: SC-AK-2004 — только gtimeout: отказ называет команду шага" "$GUARD" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" 'task-flow-script.mjs step 1.1'
-d "guard: SC-AK-2004 — только gtimeout: законная правка проходит" "$(edit_input Edit "$P8" '# Ход работы' '# Ход работы.' "$R8")" PASS
-d "guard: SC-AK-2004 — только gtimeout: запись плана со скрытой проверкой отказана" "$(edit_input Write "$R8/docs/tasks/$B8/plan.md" '' "$PLAN8" "$R8")" deny
+d "guard: SC-AK-2021 — только gtimeout: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
+expect_reason "guard: SC-AK-2021 — только gtimeout: отказ называет команду шага" "$GUARD" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" 'task-flow-script.mjs step 1.1'
+d "guard: SC-AK-2021 — только gtimeout: законная правка проходит" "$(edit_input Edit "$P8" '# Ход работы' '# Ход работы.' "$R8")" PASS
+d "guard: SC-AK-2021 — только gtimeout: запись плана со скрытой проверкой отказана" "$(edit_input Write "$R8/docs/tasks/$B8/plan.md" '' "$PLAN8" "$R8")" deny
 PATH="$PATH_KEEP"
-report "guard: SC-AK-2004 — только gtimeout: отметка вызова записи плана под пределом" "$(grep -q '^gtimeout 60 node .*flow-plan.mjs written' "${K1%/bin}/mark" 2>/dev/null && echo есть || echo нет)" есть
-report "guard: SC-AK-2004 — только gtimeout: отметка вызова с пределом 60" "$(grep -q '^gtimeout 60 node ' "${K1%/bin}/mark" 2>/dev/null && echo есть || echo нет)" есть
+report "guard: SC-AK-2021 — только gtimeout: отметка вызова записи плана под пределом" "$(grep -q '^gtimeout 60 node .*flow-plan.mjs written' "${K1%/bin}/mark" 2>/dev/null && echo есть || echo нет)" есть
+report "guard: SC-AK-2021 — только gtimeout: отметка вызова с пределом 60" "$(grep -q '^gtimeout 60 node ' "${K1%/bin}/mark" 2>/dev/null && echo есть || echo нет)" есть
 
 PATH="$K2"
-d "guard: SC-AK-2004 — только perl: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
-d "guard: SC-AK-2004 — только perl: запись плана со скрытой проверкой отказана" "$(edit_input Write "$R8/docs/tasks/$B8/plan.md" '' "$PLAN8" "$R8")" deny
-expect_reason "guard: SC-AK-2004 — только perl: отказ записи плана называет трубу" "$GUARD" "$(edit_input Write "$R8/docs/tasks/$B8/plan.md" '' "$PLAN8" "$R8")" 'a pipe without'
-expect_reason "guard: SC-AK-2004 — только perl: отказ называет команду шага" "$GUARD" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" 'task-flow-script.mjs step 1.1'
-d "guard: SC-AK-2004 — только perl: законная правка проходит" "$(edit_input Edit "$P8" '# Ход работы' '# Ход работы.' "$R8")" PASS
+d "guard: SC-AK-2021 — только perl: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
+d "guard: SC-AK-2021 — только perl: запись плана со скрытой проверкой отказана" "$(edit_input Write "$R8/docs/tasks/$B8/plan.md" '' "$PLAN8" "$R8")" deny
+expect_reason "guard: SC-AK-2021 — только perl: отказ записи плана называет трубу" "$GUARD" "$(edit_input Write "$R8/docs/tasks/$B8/plan.md" '' "$PLAN8" "$R8")" 'a pipe without'
+expect_reason "guard: SC-AK-2021 — только perl: отказ называет команду шага" "$GUARD" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" 'task-flow-script.mjs step 1.1'
+d "guard: SC-AK-2021 — только perl: законная правка проходит" "$(edit_input Edit "$P8" '# Ход работы' '# Ход работы.' "$R8")" PASS
 PATH="$PATH_KEEP"
-report "guard: SC-AK-2004 — только perl: отметка вызова с alarm и пределом 60" "$(grep -q '^perl -e alarm shift; exec @ARGV 60 node ' "${K2%/bin}/mark" 2>/dev/null && echo есть || echo нет)" есть
-report "guard: SC-AK-2004 — только perl: отметка вызова записи плана под пределом" "$(grep -q '^perl -e alarm shift; exec @ARGV 60 node .*flow-plan.mjs written' "${K2%/bin}/mark" 2>/dev/null && echo есть || echo нет)" есть
+report "guard: SC-AK-2021 — только perl: отметка вызова с alarm и пределом 60" "$(grep -q '^perl -e alarm shift; exec @ARGV 60 node ' "${K2%/bin}/mark" 2>/dev/null && echo есть || echo нет)" есть
+report "guard: SC-AK-2021 — только perl: отметка вызова записи плана под пределом" "$(grep -q '^perl -e alarm shift; exec @ARGV 60 node .*flow-plan.mjs written' "${K2%/bin}/mark" 2>/dev/null && echo есть || echo нет)" есть
 
 PATH="$K3"
-d "guard: SC-AK-2004 — без ограничителя: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
-expect_reason "guard: SC-AK-2004 — без ограничителя: отказ называет команду шага" "$GUARD" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" 'task-flow-script.mjs step 1.1'
-d "guard: SC-AK-2004 — без ограничителя: законная правка проходит" "$(edit_input Edit "$P8" '# Ход работы' '# Ход работы.' "$R8")" PASS
-d "guard: SC-AK-2004 — без ограничителя: запись плана со скрытой проверкой отказана" "$(edit_input Write "$R8/docs/tasks/$B8/plan.md" '' "$PLAN8" "$R8")" deny
-expect_reason "guard: SC-AK-2004 — без ограничителя: отказ записи плана называет трубу" "$GUARD" "$(edit_input Write "$R8/docs/tasks/$B8/plan.md" '' "$PLAN8" "$R8")" 'a pipe without'
+d "guard: SC-AK-2021 — без ограничителя: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
+expect_reason "guard: SC-AK-2021 — без ограничителя: отказ называет команду шага" "$GUARD" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" 'task-flow-script.mjs step 1.1'
+d "guard: SC-AK-2021 — без ограничителя: законная правка проходит" "$(edit_input Edit "$P8" '# Ход работы' '# Ход работы.' "$R8")" PASS
+d "guard: SC-AK-2021 — без ограничителя: запись плана со скрытой проверкой отказана" "$(edit_input Write "$R8/docs/tasks/$B8/plan.md" '' "$PLAN8" "$R8")" deny
+expect_reason "guard: SC-AK-2021 — без ограничителя: отказ записи плана называет трубу" "$GUARD" "$(edit_input Write "$R8/docs/tasks/$B8/plan.md" '' "$PLAN8" "$R8")" 'a pipe without'
 PATH="$PATH_KEEP"
 
 # gtimeout и perl рядом: берётся первый по порядку, perl не зовётся.
 PATH="$K4"
-d "guard: SC-AK-2004 — gtimeout и perl: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
+d "guard: SC-AK-2021 — gtimeout и perl: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
 PATH="$PATH_KEEP"
-report "guard: SC-AK-2004 — gtimeout и perl: отметка только у gtimeout" "$(grep -q '^gtimeout 60 ' "${K4%/bin}/mark" 2>/dev/null && ! grep -q '^perl ' "${K4%/bin}/mark" && echo да || echo нет)" да
+report "guard: SC-AK-2021 — gtimeout и perl: отметка только у gtimeout" "$(grep -q '^gtimeout 60 ' "${K4%/bin}/mark" 2>/dev/null && ! grep -q '^perl ' "${K4%/bin}/mark" && echo да || echo нет)" да
 
 # gtimeout без права на запуск не выбирается: зовётся perl.
 PATH="$K5"
-d "guard: SC-AK-2004 — gtimeout без права на запуск: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
+d "guard: SC-AK-2021 — gtimeout без права на запуск: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
 PATH="$PATH_KEEP"
-report "guard: SC-AK-2004 — gtimeout без права на запуск: отметка только у perl" "$(grep -q '^perl -e alarm' "${K5%/bin}/mark" 2>/dev/null && ! grep -q '^gtimeout ' "${K5%/bin}/mark" && echo да || echo нет)" да
+report "guard: SC-AK-2021 — gtimeout без права на запуск: отметка только у perl" "$(grep -q '^perl -e alarm' "${K5%/bin}/mark" 2>/dev/null && ! grep -q '^gtimeout ' "${K5%/bin}/mark" && echo да || echo нет)" да
 
 # timeout рядом с gtimeout и perl: берётся timeout.
 PATH="$K6"
-d "guard: SC-AK-2004 — timeout, gtimeout и perl: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
+d "guard: SC-AK-2021 — timeout, gtimeout и perl: [x] рукой отказан" "$(edit_input Edit "$P8" '- [>] 1.1' '- [x] 1.1' "$R8")" deny
 PATH="$PATH_KEEP"
-report "guard: SC-AK-2004 — timeout, gtimeout и perl: отметка только у timeout" "$(grep -q '^timeout 60 node ' "${K6%/bin}/mark" 2>/dev/null && ! grep -qE '^(gtimeout|perl) ' "${K6%/bin}/mark" && echo да || echo нет)" да
+report "guard: SC-AK-2021 — timeout, gtimeout и perl: отметка только у timeout" "$(grep -q '^timeout 60 node ' "${K6%/bin}/mark" 2>/dev/null && ! grep -qE '^(gtimeout|perl) ' "${K6%/bin}/mark" && echo да || echo нет)" да
 
 # --- ход, названный отказом, спрошен у соседних проверок ----------------------------------------
 # Отказ записи оболочкой называет правку хода работы, а её держит гейт, пока правило задач не

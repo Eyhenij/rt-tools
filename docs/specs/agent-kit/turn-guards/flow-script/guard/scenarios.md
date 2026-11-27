@@ -293,7 +293,7 @@ Then it passes
 
 Covered: `projects/agent-kit/tests/flow-decision.test.sh`.
 
-### SC-AK-2004 — the guard judges a call on a machine without `timeout`
+### SC-AK-2021 — the guard judges a call on a machine without `timeout`
 
 Given a machine whose commands hold no `timeout`: only `gtimeout`, only perl, or none of the three
 When an edit marks a step done by hand, an edit leaves the marks as they are, or a plan with a
