@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.41.1 · checks/flow-syntax.mjs · c14676adc8a9 · правится надстройкой, не здесь
+// rt-kit v0.42.0 · checks/flow-syntax.mjs · c14676adc8a9 · правится надстройкой, не здесь
 /**
  * The parser of the task flow description language.
  *

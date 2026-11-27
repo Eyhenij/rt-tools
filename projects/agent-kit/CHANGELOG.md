@@ -4,6 +4,24 @@
 
 - **rt:agent-kit:** запись одного дня 24.11 проверяется по точкам: ночь без меню, одобрение плана после ролей, Esc и слова владельца после него, `Monitor` по своему фоновому. Выпуск кита гоняет этот набор и записанные ходы на собранном издании до коммита версии (RT-3594)
 
+# [0.42.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.41.1...rt-agent-kit%400.42.0) (2026-11-27)
+
+**Метрика выпуска:** нет. Метрика эпика RT-3693 — обращения к владельцу на задачу, её считает команда owner:touches, в списке метрик выпуска её нет
+
+### Bug Fixes
+
+- **rt:agent-kit:** исполнитель сливает одной формой команды, иное слияние вне кавычек отбито после второго круга ревью (RT-3701) ([df17cd3](https://github.com/Eyhenij/rt-tools/commit/df17cd35c7dbe1611b576a0a9760a5865d03dfc4))
+- **rt:agent-kit:** кавычки вокруг merge не прячут слияние, heredoc не судится, gh alias в границах (RT-3701) ([ebdf665](https://github.com/Eyhenij/rt-tools/commit/ebdf665e2a50bb4761256ce523eb0c72f67afb6b))
+- **rt:agent-kit:** копии продолженной сессии и одной миллисекунды считаются один раз после первого круга ревью (RT-3696) ([a9807c8](https://github.com/Eyhenij/rt-tools/commit/a9807c8d912b9749e90d6c7525fde54f0ffbb1eb))
+- **rt:agent-kit:** слова одной миллисекунды и копии на другой ветке считаются верно после второго круга ревью (RT-3696) ([eec7b68](https://github.com/Eyhenij/rt-tools/commit/eec7b689d42ccaf4420b29aa40099ca872b6851b))
+- **rt:agent-kit:** сообщение посреди хода, повторённое записью, считается один раз (RT-3696) ([3ad9519](https://github.com/Eyhenij/rt-tools/commit/3ad95193d5f6ddafdd539a26faddfb1e48b490e4))
+- **rt:agent-kit:** хук судит каждое слияние команды — полный путь, обёртка, номер после ключей, токен после первого круга ревью (RT-3701) ([6082a64](https://github.com/Eyhenij/rt-tools/commit/6082a64fcfb36d54ae086ca158d2454df1a7741b))
+
+### Features
+
+- **rt:agent-kit:** вид набранного сообщения, второй запуск хука не пишет строки повторно (RT-3696) ([e088d47](https://github.com/Eyhenij/rt-tools/commit/e088d4748198a6466a7c3e5c351d2d3f9d715d6f))
+- **rt:agent-kit:** хук слияния знает базу PR и адрес автора, слияние в main — кнопка владельца (RT-3701) ([6864829](https://github.com/Eyhenij/rt-tools/commit/68648298edf72ef4c6f65b0830e93b3d457c74f1))
+
 ## [0.41.1](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.41.0...rt-agent-kit%400.41.1) (2026-11-26)
 
 **Метрика выпуска:** нет. Исправление проверки хода работы при слиянии проверенной базы (RT-3691)

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.41.1 · pitfalls/git-workflow-pr.2.github.md · 006647e085a8 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.0 · pitfalls/git-workflow-pr.2.github.md · 006647e085a8 · правится надстройкой, не здесь -->
 # The PR — cold part, continued
 
 The second half of the pattern `git-workflow-pr`; the first is `pitfalls.md`.

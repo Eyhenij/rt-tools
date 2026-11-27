@@ -1,4 +1,4 @@
-<!-- rt-kit v0.41.1 · pitfalls/task-flow-close.md · 99acd720a50f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.0 · pitfalls/task-flow-close.md · 99acd720a50f · правится надстройкой, не здесь -->
 # Closing the work — cold part
 
 The pattern `task-flow-close` whole, in two files: every section with its code and its reasons. Its hot part names the sections and the opening of each.
