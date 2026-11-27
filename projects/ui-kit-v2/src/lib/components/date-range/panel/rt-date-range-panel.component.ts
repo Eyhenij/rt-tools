@@ -49,6 +49,7 @@ import {
     rtRangePresetOf,
 } from '../rt-date-range.logic';
 import { ERtDateRangePreset, IRtDateRange } from '../rt-date-range.model';
+import { RtChipCarouselDirective } from './rt-chip-carousel.directive';
 
 const BEM_BLOCK: string = 'rt-date-range-panel';
 const MONTH_LEN: number = 7;
@@ -107,11 +108,12 @@ interface IPresetView {
         RtButtonDirective,
         RtCalendarComponent,
         RtIconButtonComponent,
+        RtChipCarouselDirective,
     ],
     host: {
         class: BEM_BLOCK,
         '[class.rt-date-range-panel--sheet]': 'sheet()',
-        '(keydown.escape)': 'onEscape()',
+        '(keydown.escape)': 'onEscape($event)',
     },
 })
 export class RtDateRangePanelComponent {
@@ -200,6 +202,12 @@ export class RtDateRangePanelComponent {
         }));
     });
 
+    /** Повторы ряда чипов: в шторке ряд — карусель по кругу и повторён трижды, средний повтор — свой. */
+    protected readonly presetCopies: Signal<readonly number[]> = computed((): readonly number[] => (this.sheet() ? [0, 1, 2] : [1]));
+    protected readonly chosenPreset: Signal<number> = computed((): number =>
+        this.presets().findIndex((item: IPresetView): boolean => item.chosen)
+    );
+
     /** Число дней черновика подписью кита по форме множественного числа локали. */
     protected readonly daysText: Signal<string> = rtKitLabel(
         computed((): TRtKitLabelKey | '' => {
@@ -235,10 +243,37 @@ export class RtDateRangePanelComponent {
      */
     public readonly now: InputSignal<Date | null> = input<Date | null>(null);
 
+    /**
+     * Кнопка «Применить» стоит вне панели — в шапке шторки, в которую панель положили: в подвале
+     * панели её нет, как нет и своего заголовка панели: его несёт шапка шторки. Тот, кто ставит вход, сам зовёт `apply()` и читает `canApply`.
+     */
+    public readonly applyOutside: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /** Оба края выбраны: диапазон можно применить. */
+    public readonly canApply: Signal<boolean> = computed((): boolean => this.draft() !== null);
+    /** Выбранный диапазон отличается от значения: закрыть панель сейчас — значит потерять его. */
+    public readonly dirty: Signal<boolean> = computed((): boolean => {
+        const draft: IRtDateRange.Value | null = this.draft();
+        const value: IRtDateRange.Value | null = this.value();
+
+        return draft !== null && (draft.start !== value?.start || draft.end !== value.end);
+    });
+
     /** Готовый диапазон: панель просит поле его записать. */
     public readonly picked: OutputEmitterRef<IRtDateRange.Value> = output<IRtDateRange.Value>();
     /** Панель просит закрыть себя. */
     public readonly closed: OutputEmitterRef<void> = output<void>();
+
+    /** «Применить»: готовый черновик уходит значением, панель закрывается. */
+    public apply(): void {
+        const draft: IRtDateRange.Value | null = this.draft();
+        if (draft !== null) {
+            this.picked.emit(draft);
+            this.closed.emit();
+        }
+    }
 
     /** Первый выбор — начало, второй — конец; выбор после готового диапазона начинает новый. */
     protected pickDay(day: IRtCalendar.Day): void {
@@ -319,28 +354,27 @@ export class RtDateRangePanelComponent {
     }
 
     /** Escape в сетке годов или месяцев возвращает на вид назад; в днях закрывает панель. */
-    protected onEscape(): void {
+    protected onEscape(event: Event): void {
         const back: TView | null = ESCAPE_BACK[this.view()];
-        if (back === null) {
-            this.closed.emit();
+        if (back !== null) {
+            // В шторке клавиша дальше не идёт: она вернула вид назад, и шторка по ней не закрывается.
+            if (this.sheet()) {
+                event.stopPropagation();
+            }
+            this.view.set(back);
             return;
         }
-        this.view.set(back);
+        // С кнопкой снаружи панель себя не закрывает: клавиша доходит до шторки, и та сначала
+        // спросит о выбранном и не применённом.
+        if (!this.applyOutside()) {
+            this.closed.emit();
+        }
     }
 
     protected reset(): void {
         this.start.set(null);
         this.end.set(null);
         this.hover.set(null);
-    }
-
-    /** «Применить»: готовый черновик уходит значением, панель закрывается. */
-    protected apply(): void {
-        const draft: IRtDateRange.Value | null = this.draft();
-        if (draft !== null) {
-            this.picked.emit(draft);
-            this.closed.emit();
-        }
     }
 
     /** Показанные месяцы `YYYY-MM`: два рядом, в шторке — один. */

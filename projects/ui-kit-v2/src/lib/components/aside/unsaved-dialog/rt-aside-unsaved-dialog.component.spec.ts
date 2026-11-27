@@ -55,8 +55,9 @@ describe('RtAsideUnsavedDialogComponent', (): void => {
         }
     });
 
-    it('SC-UKV-1043 — окно средней ширины, «Остаться» в рамке темы secondary', (): void => {
-        // На узком окне три кнопки переносились на две строки и на компьютере.
+    it('SC-UKV-1043 — в окне от 481 точки вопрос — окно средней ширины, «Остаться» в рамке темы secondary', (): void => {
+        // На узком окне три кнопки переносились на две строки и на компьютере. До 480 точек о правках
+        // панели-шторки спрашивает вопрос внизу экрана, а не это окно (SC-UKV-1820).
         const fixture: ComponentFixture<RtAsideUnsavedDialogComponent> = setup();
         const dialog: HTMLElement = qa(fixture, 'aside-unsaved-dialog')?.nativeElement as HTMLElement;
         const stay: DOMTokenList = (qa(fixture, 'aside-unsaved-stay')?.nativeElement as HTMLElement).classList;

@@ -33,6 +33,10 @@ export namespace IRtDynamicSelectorParts {
         readonly autofocusSearch: Signal<boolean>;
         readonly titleWrap: Signal<boolean>;
         readonly highlightSearch: Signal<boolean>;
+        /** Пункты рисуются карточками: окно открыто в шторке, и карточки не выключены. */
+        readonly cards: Signal<boolean>;
+        /** Окно открыто в шторке: «Применить» стоит в её шапке, закрывает кнопка шторки — своих кнопок окно не рисует. */
+        readonly inSheet: Signal<boolean>;
     }
 
     /** Что окно выбора берёт у корня: записи, настройки и куда сообщать о действиях человека. */

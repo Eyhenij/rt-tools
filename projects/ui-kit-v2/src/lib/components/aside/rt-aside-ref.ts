@@ -3,6 +3,8 @@ import { Renderer2, signal, WritableSignal } from '@angular/core';
 
 import { Observable, Subject, take } from 'rxjs';
 
+import { RtAsideSheet } from './rt-aside-sheet';
+
 /** Длительность slide-out анимации; синхронизирована с `--rt-aside-animation-duration` в SCSS. */
 const LEAVE_ANIMATION_DURATION_MS: number = 200;
 
@@ -51,10 +53,21 @@ export class RtAsideRef<T = unknown> {
      */
     public readonly disableClose: WritableSignal<boolean> = signal(false);
 
+    /**
+     * Признак несохранённых правок, который ставит приложение, пока панель держит незаписанное.
+     * На телефоне панель-шторка с ним перед закрытием жестом или «×» спрашивает внизу экрана:
+     * сохранить и закрыть, закрыть без сохранения или остаться. Закрытие кодом через `close()`
+     * признак не читает. От 481 точки признак ничего не меняет.
+     */
+    public readonly unsaved: WritableSignal<boolean> = signal(false);
+
     readonly #overlayRef: OverlayRef;
     readonly #renderer: Renderer2;
     readonly #afterClosedSource: Subject<T | undefined> = new Subject<T | undefined>();
     readonly #closeRequestsSource: Subject<TRtAsideCloseRequest>;
+    readonly #saveRequestsSource: Subject<void> = new Subject<void>();
+    /** Вид открытия на телефоне: шторку закрытие опускает вниз. Без него панель уезжает вбок. */
+    readonly #sheet: RtAsideSheet | null;
 
     #isClosing: boolean = false;
 
@@ -65,11 +78,13 @@ export class RtAsideRef<T = unknown> {
     constructor(
         overlayRef: OverlayRef,
         renderer: Renderer2,
-        closeRequestsSource: Subject<TRtAsideCloseRequest> = new Subject<TRtAsideCloseRequest>()
+        closeRequestsSource: Subject<TRtAsideCloseRequest> = new Subject<TRtAsideCloseRequest>(),
+        sheet: RtAsideSheet | null = null
     ) {
         this.#overlayRef = overlayRef;
         this.#renderer = renderer;
         this.#closeRequestsSource = closeRequestsSource;
+        this.#sheet = sheet;
         this.#overlayRef
             .detachments()
             .pipe(take(1))
@@ -85,6 +100,8 @@ export class RtAsideRef<T = unknown> {
 
         this.#renderer.removeClass(this.#overlayRef.overlayElement, 'rt-aside-overlay--open');
         this.#renderer.addClass(this.#overlayRef.overlayElement, 'rt-aside-overlay--leaving');
+        // Шторка уезжает вниз за то же время, что панель вбок: её переход — `--rt-duration-base`.
+        this.#sheet?.show(false);
 
         // Эмитим результат сразу — consumer не ждёт slide-out.
         this.#emit(result);
@@ -109,6 +126,22 @@ export class RtAsideRef<T = unknown> {
         return this.#closeRequestsSource.asObservable();
     }
 
+    /**
+     * Человек ответил «Сохранить и закрыть» на вопрос шторки телефона. Панель остаётся открытой:
+     * приложение записывает правки и закрывает её через `close()`, признак снимать не обязательно.
+     * Завершается вместе с панелью.
+     */
+    public saveRequests(): Observable<void> {
+        return this.#saveRequestsSource.asObservable();
+    }
+
+    /** Ответ «Сохранить и закрыть» на вопрос шторки: служба передаёт его приложению. */
+    public requestSave(): void {
+        if (!this.#isClosing) {
+            this.#saveRequestsSource.next();
+        }
+    }
+
     /** Слой снят без `close()`: анимации играть не на чем, остаётся отдать результат. */
     #finish(result: T | undefined): void {
         if (this.#isClosing) {
@@ -119,8 +152,10 @@ export class RtAsideRef<T = unknown> {
     }
 
     #emit(result: T | undefined): void {
+        this.#sheet?.stopWatchingAside();
         this.#afterClosedSource.next(result);
         this.#afterClosedSource.complete();
         this.#closeRequestsSource.complete();
+        this.#saveRequestsSource.complete();
     }
 }

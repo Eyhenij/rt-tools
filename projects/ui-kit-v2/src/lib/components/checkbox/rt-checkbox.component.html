@@ -7,6 +7,8 @@
         checked: isChecked() && !indeterminate(),
         indeterminate: indeterminate(),
         disabled: isDisabled(),
+        card: card(),
+        described: description() !== '',
     }"
     [attr.id]="inputId()"
     [attr.aria-checked]="indeterminate() ? 'mixed' : isChecked()"
@@ -21,7 +23,12 @@
         }
     </span>
 
-    <span rtElem="label" qa-dataid="checkbox-label">
-        <ng-content />
+    <span rtElem="content">
+        <span rtElem="label" qa-dataid="checkbox-label">
+            <ng-content />
+        </span>
+        @if (description()) {
+            <span rtElem="description" qa-dataid="checkbox-description">{{ description() }}</span>
+        }
     </span>
 </button>

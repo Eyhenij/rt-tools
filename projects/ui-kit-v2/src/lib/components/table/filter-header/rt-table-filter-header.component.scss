@@ -1,3 +1,5 @@
+@use '../../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-table-filter-header — ViewEncapsulation.None: правила таргетируют BEM-класс блока.
        `.rt-table-filter-header` — сам хост (шаблон начинается с ng-container, класс ставит host). */
@@ -71,6 +73,18 @@
             border-radius: var(--rt-table-filter-header-menu-radius);
             background: var(--rt-color-bg-surface);
             box-shadow: var(--rt-table-filter-header-menu-shadow);
+        }
+
+        /* В шторке виды сравнения стоят столбцом карточек: рамку списка и тень несёт сама шторка. */
+        &__operators--cards {
+            padding: 0;
+            border-radius: 0;
+            box-shadow: none;
+            gap: var(--rt-space-sm);
+        }
+
+        &__operators--cards .rt-radio-button--card {
+            @include kv.sheet-card;
         }
     }
 }

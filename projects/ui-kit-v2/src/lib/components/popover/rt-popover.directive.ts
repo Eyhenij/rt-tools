@@ -1,12 +1,5 @@
 import { BooleanInput, NumberInput } from '@angular/cdk/coercion';
-import {
-    ConnectedPosition,
-    FlexibleConnectedPositionStrategy,
-    Overlay,
-    OverlayConfig,
-    OverlayRef,
-    ScrollStrategyOptions,
-} from '@angular/cdk/overlay';
+import { ConnectedPosition, FlexibleConnectedPositionStrategy, Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import {
     booleanAttribute,
@@ -31,25 +24,20 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { Observable, Subject, switchMap } from 'rxjs';
+import { Observable, Subject, switchMap, take } from 'rxjs';
 
 import { BreakpointsService, carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
 import { rtPopoverCloseIntents } from './rt-popover-intents.logic';
 import { rtBindPopoverHoverBridge } from './rt-popover-hover.logic';
 import { rtIsNestedOverlay } from './rt-popover-nested.logic';
+import { IRtPopoverOverlay, rtCreatePopoverOverlay } from './rt-popover-overlay.logic';
+import { RtPopoverSheetOptionsDirective } from './rt-popover-sheet-options.directive';
 import { rtPopoverDefaultPositions, rtPopoverSizeByWidth } from './rt-popover-position.logic';
 import { IRtPopoverSheetOpened, rtClosePopoverSheet, rtOpenPopoverSheet, rtPopoverSheetDismissals } from './rt-popover-sheet.helper';
 import { RT_POPOVER_SHEET } from './rt-popover-sheet.token';
 import { IRtPopover } from './rt-popover.model';
 
 const HOVER_CLOSE_DELAY_MS: number = 100;
-
-/**
- * Высота, ниже которой ужимать панель под вьюпорт бессмысленно: в такой полосе не
- * видно и одного пункта. Нужна только режиму `fitViewport` — по ней CDK решает,
- * что свободного места под триггером хватает.
- */
-const FIT_VIEWPORT_MIN_HEIGHT_PX: number = 120;
 
 /**
  * Переиспользуемый popover-примитив поверх CDK Overlay. Привязывает плавающую
@@ -75,6 +63,13 @@ const FIT_VIEWPORT_MIN_HEIGHT_PX: number = 120;
 @Directive({
     selector: '[rtPopover]',
     exportAs: 'rtPopover',
+    hostDirectives: [
+        {
+            directive: RtPopoverSheetOptionsDirective,
+            inputs: ['rtPopoverSheetFull', 'rtPopoverSheetAction', 'rtPopoverSheetUnsaved', 'rtPopoverSheetHeader', 'rtPopoverSheetFooter'],
+            outputs: ['rtPopoverSheetApply'],
+        },
+    ],
     host: {
         '(click)': 'onHostClick()',
         '(pointerenter)': 'onHostPointerEnter($event)',
@@ -86,7 +81,8 @@ export class RtPopoverDirective implements OnDestroy {
     readonly #overlay: Overlay = inject(Overlay);
     readonly #elementRef: ElementRef<HTMLElement> = inject<ElementRef<HTMLElement>>(ElementRef);
     readonly #viewContainerRef: ViewContainerRef = inject(ViewContainerRef);
-    readonly #scrollStrategies: ScrollStrategyOptions = inject(ScrollStrategyOptions);
+    /** Входы шторки: полная высота, действие в шапке, неприменённый выбор — в директиве рядом. */
+    readonly #sheetOptions: RtPopoverSheetOptionsDirective = inject(RtPopoverSheetOptionsDirective, { self: true });
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #injector: Injector = inject(Injector);
     readonly #narrow: Signal<boolean> = inject(BreakpointsService).phone;
@@ -94,6 +90,7 @@ export class RtPopoverDirective implements OnDestroy {
 
     readonly #overlayCreatedSource: Subject<OverlayRef> = new Subject<OverlayRef>();
     readonly #sheetCreatedSource: Subject<IRtPopoverSheetOpened> = new Subject<IRtPopoverSheetOpened>();
+    readonly #sheetLeavingSource: Subject<IRtPopoverSheetOpened> = new Subject<IRtPopoverSheetOpened>();
 
     #overlayRef: OverlayRef | null = null;
     #sheet: IRtPopoverSheetOpened | null = null;
@@ -113,6 +110,8 @@ export class RtPopoverDirective implements OnDestroy {
 
     /** Панель открыта в шторке: берётся в минуту открытия, и порог ширины не меняет открытую панель. */
     protected readonly openedInSheetState: WritableSignal<boolean> = signal<boolean>(false);
+    /** Шторка закрыта и уезжает вниз: её содержимое ещё на экране. */
+    protected readonly sheetLeavingState: WritableSignal<boolean> = signal<boolean>(false);
 
     public readonly template: InputSignal<TemplateRef<unknown> | null> = input<TemplateRef<unknown> | null>(null, { alias: 'rtPopover' });
 
@@ -220,6 +219,13 @@ export class RtPopoverDirective implements OnDestroy {
      */
     public readonly openedInSheet: Signal<boolean> = this.openedInSheetState.asReadonly();
 
+    /**
+     * Панель нарисована в шторке: открыта в ней или ещё уезжает вниз после закрытия. По нему панель
+     * выбирает свой вид в шторке — карточки, поиск, подвал: по `openedInSheet` вид сменился бы на
+     * глазах, пока шторка закрывается. Поведение — фокус, клавиши, закрытие — читает `openedInSheet`.
+     */
+    public readonly shownInSheet: Signal<boolean> = computed((): boolean => this.openedInSheetState() || this.sheetLeavingState());
+
     public readonly opened: OutputEmitterRef<void> = output<void>({ alias: 'rtPopoverOpened' });
 
     /** Шторка открыта и больше не `inert`: с этой минуты в неё можно ставить фокус. Сама панель у триггера его не шлёт. */
@@ -248,6 +254,14 @@ export class RtPopoverDirective implements OnDestroy {
                 takeUntilDestroyed(this.#destroyRef)
             )
             .subscribe((): void => this.close());
+
+        // Закрытая шторка ещё уезжает вниз: признак «нарисована в шторке» снимается, когда её снесли.
+        this.#sheetLeavingSource
+            .pipe(
+                switchMap((sheet: IRtPopoverSheetOpened): Observable<void> => sheet.overlayRef.detachments().pipe(take(1))),
+                takeUntilDestroyed(this.#destroyRef)
+            )
+            .subscribe((): void => this.sheetLeavingState.set(false));
     }
 
     public ngOnDestroy(): void {
@@ -286,6 +300,12 @@ export class RtPopoverDirective implements OnDestroy {
             return;
         }
         this.#overlayRef?.detach();
+        // Шторка уезжает вниз со своим содержимым, и признак «нарисована в шторке» живёт до её сноса.
+        const leaving: IRtPopoverSheetOpened | null = this.#sheet;
+        if (leaving !== null) {
+            this.sheetLeavingState.set(true);
+            this.#sheetLeavingSource.next(leaving);
+        }
         this.#closeSheet(true);
         this.isOpenState.set(false);
         this.closed.emit();
@@ -347,34 +367,16 @@ export class RtPopoverDirective implements OnDestroy {
         if (this.#overlayRef !== null) {
             return this.#overlayRef;
         }
-        const positions: ConnectedPosition[] = rtPopoverDefaultPositions(this.align(), this.offsetX(), this.offsetY());
-        // Сдвиг к краю экрана и ужатие по высоте включаются только по просьбе
-        // потребителя: панель, которая и так помещается, обязана стоять у своего
-        // триггера — меню строки таблицы, подтверждение, меню профиля.
-        const fitViewport: boolean = this.fitViewport();
-        const positionStrategy: FlexibleConnectedPositionStrategy = this.#overlay
-            .position()
-            .flexibleConnectedTo(this.#anchor())
-            .withPush(fitViewport)
-            .withFlexibleDimensions(fitViewport)
-            // Отступ от края экрана равен отступу от триггера: свободное место
-            // считается без него, и ужатая по высоте панель свисала бы за нижний
-            // край ровно на этот отступ — вместе со своей рамкой.
-            .withViewportMargin(fitViewport ? Math.abs(this.offsetY()) : 0)
-            .withPositions(positions);
-        this.#positionStrategy = positionStrategy;
-
-        const config: OverlayConfig = new OverlayConfig({
-            positionStrategy,
-            scrollStrategy: this.#scrollStrategies.reposition(),
-            hasBackdrop: this.backdropClass().trim() !== '',
-            backdropClass: this.backdropClass().trim() || undefined,
-            panelClass: this.#resolvePanelClasses(),
-            // Порог, ниже которого свободного места под триггером считается
-            // недостаточно и панель не ужимается, а сдвигается целиком.
-            minHeight: fitViewport ? FIT_VIEWPORT_MIN_HEIGHT_PX : undefined,
+        const { overlayRef, positionStrategy }: IRtPopoverOverlay = rtCreatePopoverOverlay({
+            overlay: this.#overlay,
+            anchor: this.#anchor(),
+            positions: rtPopoverDefaultPositions(this.align(), this.offsetX(), this.offsetY()),
+            fitViewport: this.fitViewport(),
+            offsetY: this.offsetY(),
+            backdropClass: this.backdropClass(),
+            panelClasses: this.#resolvePanelClasses(),
         });
-        const overlayRef: OverlayRef = this.#overlay.create(config);
+        this.#positionStrategy = positionStrategy;
 
         // Мост наведения: панель держится открытой, пока на неё ведёт курсор с host'а.
         rtBindPopoverHoverBridge(overlayRef.overlayElement, {
@@ -456,6 +458,7 @@ export class RtPopoverDirective implements OnDestroy {
             template: this.template() as TemplateRef<unknown>,
             context: this.context(),
             title: this.sheetTitle() ?? '',
+            options: this.#sheetOptions,
             panelClasses: this.panelClass()
                 .split(/\s+/)
                 .filter((name: string): boolean => name !== ''),

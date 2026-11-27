@@ -1,5 +1,7 @@
 import { Injectable, WritableSignal, signal } from '@angular/core';
 
+import { RtAsideSheet } from '@rt-tools/ui-kit-v2/aside';
+
 /**
  * Приватный signal-store для `rt-container`.
  *
@@ -13,9 +15,13 @@ import { Injectable, WritableSignal, signal } from '@angular/core';
  *
  * Правая sidenav (overlay) НЕ хранится здесь: её open-state живёт прямо в
  * `RtContainerComponent.rightOpen` сигнале и управляется через `openRight()` /
- * `closeRight()` методы + lifecycle outputs.
+ * `closeRight()` методы + lifecycle outputs. Здесь лежит только её вид на телефоне: его читает
+ * панель в слоте через `RT_ASIDE_SHEET`, который даёт маркер слота.
  */
 @Injectable()
 export class RtContainerStateService {
     public readonly leftSidenavOpen: WritableSignal<boolean> = signal<boolean>(true);
+
+    /** Вид правой панели: шторка телефона или панель сбоку; выбирается `openRight()` при открытии. */
+    public readonly rightSheet: RtAsideSheet = new RtAsideSheet();
 }

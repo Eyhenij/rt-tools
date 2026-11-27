@@ -1,5 +1,7 @@
 <ng-container rtBlock="rt-aside-footer">
     <footer rtElem="content" qa-dataid="aside-footer">
+        <!-- Проекция без условия: в шторке кнопку, которая только закрывает, прячет модификатор подвала —
+             её роль у «×» шапки. -->
         <ng-content select="[asideDismiss]" />
         <ng-content select="[asidePrimary]" />
     </footer>

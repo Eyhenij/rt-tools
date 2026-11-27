@@ -37,9 +37,12 @@ import { map, merge, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { RtAsideSheet } from '@rt-tools/ui-kit-v2/aside';
 import { BreakpointsService, carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
 import { clampWidth, listenTransitionEnd, RtResizeHandleComponent } from '@rt-tools/ui-kit-v2/drawer';
 import { RtToasterComponent } from '@rt-tools/ui-kit-v2/toast';
+import { rtHideBackdrop } from './rt-container-overlay';
+import { RT_OVERLAY_ENTERING_CLASS, RT_OVERLAY_LEAVING_CLASS, RT_OVERLAY_OPEN_CLASS, RtContainerSheet } from './rt-container-sheet';
 import { RtContainerStateService } from './rt-container-state.service';
 import { rtMarkPlaceRoot } from './rt-place-root.logic';
 import {
@@ -53,8 +56,6 @@ import {
 } from './rt-container.markers';
 
 const BEM_BLOCK: string = 'rt-container';
-
-const OVERLAY_OPEN_CLASS: string = 'rt-aside-overlay--open';
 
 /** Пределы ширины правой панели по умолчанию, в пикселях. */
 const RIGHT_MIN_WIDTH: number = 240;
@@ -76,6 +77,11 @@ export type TRtContainerRightMode = 'over' | 'side';
  * backdrop вели себя идентично программно открываемым asides. С `rightMode="side"` та же
  * панель стоит колонкой справа от содержимого и сужает его; режим переключается на ходу,
  * и при переключении содержимое панели создаётся заново на новом месте.
+ *
+ * На телефоне (окно до 480 точек) правая панель в обоих режимах открывается шторкой кита во всю
+ * высоту: вид выбирается при каждом открытии и держится до закрытия, переход к другой записи в
+ * открытой панели вид не меняет. Шторка всегда затемняет страницу — `rightBackdrop` к ней не
+ * относится, — а ширина и ручка ширины в ней не рисуются.
  *
  * Ширину правой панели задаёт `rightWidth` (без него — по содержимому), а с `rightResizable`
  * у её левого края стоит ручка: ширину тянут указателем и двигают стрелками.
@@ -107,6 +113,7 @@ export type TRtContainerRightMode = 'over' | 'side';
         '[class.rt-container--mobile-left-bottom]': "mobileLeftNav() === 'bottom'",
         '[class.rt-container--viewport]': "height() === 'viewport'",
         '[class.rt-container--right-side]': "rightMode() === 'side' && rightSidenavTpl() !== undefined",
+        '[class.rt-container--right-sheet]': 'rightSheetActive()',
     },
 })
 export class RtContainerComponent {
@@ -117,6 +124,10 @@ export class RtContainerComponent {
     readonly #blockScroll: BlockScrollStrategy = this.#scrollStrategies.block();
     readonly #renderer: Renderer2 = inject(RendererFactory2).createRenderer(null, null);
     readonly #window: Window | null = inject(DOCUMENT).defaultView;
+    readonly #phone: Signal<boolean> = inject(BreakpointsService).phone;
+    /** Вид правой панели на телефоне; его же панель в слоте читает через маркер слота. */
+    readonly #rightSheet: RtAsideSheet = inject(RtContainerStateService).rightSheet;
+    readonly #sheetDriver: RtContainerSheet = new RtContainerSheet(this.#rightSheet, this.#renderer, this.#window);
 
     readonly #rightOverlaySource: Subject<OverlayRef> = new Subject<OverlayRef>();
 
@@ -159,6 +170,9 @@ export class RtContainerComponent {
     protected readonly rightPaneTpl: Signal<TemplateRef<unknown> | undefined> = viewChild('rightPane', { read: TemplateRef });
 
     protected readonly rightCell: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('rightCell');
+
+    /** Правая панель открыта шторкой телефона: ширина, ручка и колонка рядом с содержимым ей не нужны. */
+    protected readonly rightSheetActive: Signal<boolean> = this.#rightSheet.active;
 
     /** Ручку тянут: колонка панели гасит переход ширины. */
     protected readonly rightResizing: WritableSignal<boolean> = signal(false);
@@ -245,7 +259,8 @@ export class RtContainerComponent {
                         overlayRef.backdropClick().pipe(map((): (() => void) => (): void => this.backdropClick.emit())),
                         overlayRef.keydownEvents().pipe(
                             map((event: KeyboardEvent): (() => void) => (): void => {
-                                if (event.key !== 'Escape' || !this.rightOpen()) {
+                                // Escape шторки телефона ведёт сама шторка: она знает, верхняя ли она.
+                                if (event.key !== 'Escape' || !this.rightOpen() || this.#rightSheet.active()) {
                                     return;
                                 }
                                 event.preventDefault();
@@ -258,13 +273,17 @@ export class RtContainerComponent {
             )
             .subscribe((handleCloseIntent: () => void): void => handleCloseIntent());
 
-        // Persistent overlay: создаётся при появлении rightSidenavTpl и живёт
-        // до уничтожения rt-container'а. Это нужно чтобы <router-outlet name="ro">
-        // внутри slot template'а материализовался и мог активировать route.
-        // Без auto-attach landmine: route не активируется → driver не вызывается
-        // → ничего не открывается (chicken-and-egg).
-        // Смена режима или подложки пересоздаёт overlay; открытая панель остаётся открытой на
-        // новом месте без повторного `rightOpened`.
+        // Жест закрытия шторки телефона для драйвера — та же отмена, что подложка и Escape панели.
+        this.#rightSheet
+            .closeRequests()
+            .pipe(takeUntilDestroyed())
+            .subscribe((): void => this.backdropClick.emit());
+
+        // Persistent overlay: создаётся при появлении rightSidenavTpl и живёт до уничтожения rt-container'а.
+        // Это нужно чтобы <router-outlet name="ro"> внутри slot template'а материализовался и мог
+        // активировать route. Без auto-attach landmine: route не активируется → driver не вызывается
+        // → ничего не открывается (chicken-and-egg). Смена режима или подложки пересоздаёт overlay;
+        // открытая панель остаётся открытой на новом месте без повторного `rightOpened`, шторка — шторкой.
         effect((onCleanup: (cleanup: () => void) => void): void => {
             const tpl: TemplateRef<unknown> | undefined = this.rightSidenavTpl();
             const pane: TemplateRef<unknown> | undefined = this.rightPaneTpl();
@@ -275,13 +294,13 @@ export class RtContainerComponent {
                 return;
             }
 
-            const overlayRef: OverlayRef = this.#createRightOverlay(pane, backdrop);
+            // Чтения сигналов шаблоном, отрисованным при создании, — не повод пересоздать оверлей.
+            const overlayRef: OverlayRef = untracked((): OverlayRef => this.#createRightOverlay(pane, backdrop));
             this.#overlayRef = overlayRef;
             this.#overlayRefSignal.set(overlayRef);
 
             if (untracked(this.rightOpen)) {
-                this.#showOverlay(overlayRef);
-                this.#renderer.addClass(overlayRef.overlayElement, OVERLAY_OPEN_CLASS);
+                this.#reopenOverlay(overlayRef);
             }
 
             onCleanup((): void => {
@@ -294,6 +313,8 @@ export class RtContainerComponent {
     }
 
     public openRight(): void {
+        const sheet: boolean = this.#sheetDriver.choose(!this.rightOpen(), this.#phone());
+
         if (this.rightMode() === 'side') {
             this.#openSide();
             return;
@@ -304,11 +325,19 @@ export class RtContainerComponent {
             return;
         }
 
+        if (sheet) {
+            carryThemeScope(overlayRef.overlayElement, this.#host.nativeElement);
+            this.rightOpen.set(true);
+            this.#sheetDriver.openOverlay(overlayRef.overlayElement, (): void => this.rightOpened.emit());
+            return;
+        }
+
+        this.#sheetDriver.leaveOverlay(overlayRef.overlayElement);
         this.#showOverlay(overlayRef);
 
         // Slide-in: на следующий paint добавляем --open.
         requestAnimationFrame((): void => {
-            this.#renderer.addClass(overlayRef.overlayElement, OVERLAY_OPEN_CLASS);
+            this.#renderer.addClass(overlayRef.overlayElement, RT_OVERLAY_OPEN_CLASS);
             listenTransitionEnd(this.#window, overlayRef.overlayElement, 'transform', (): void => this.rightOpened.emit());
         });
 
@@ -326,8 +355,17 @@ export class RtContainerComponent {
             return;
         }
 
-        this.#renderer.removeClass(overlayRef.overlayElement, OVERLAY_OPEN_CLASS);
-        this.#renderer.addClass(overlayRef.overlayElement, 'rt-aside-overlay--leaving');
+        if (this.#rightSheet.active()) {
+            this.#sheetDriver.lower(overlayRef.overlayElement, (): void => {
+                this.#sheetDriver.closeOverlay(overlayRef.overlayElement);
+                this.rightOpen.set(false);
+                this.rightClosed.emit();
+            });
+            return;
+        }
+
+        this.#renderer.removeClass(overlayRef.overlayElement, RT_OVERLAY_OPEN_CLASS);
+        this.#renderer.addClass(overlayRef.overlayElement, RT_OVERLAY_LEAVING_CLASS);
 
         const backdropEl: HTMLElement | null = overlayRef.backdropElement;
         if (backdropEl !== null) {
@@ -338,7 +376,7 @@ export class RtContainerComponent {
             this.#setScrollBlocked(false);
             // Объявления на узле возвращаются только после ухода: поставленные сразу, они
             // обрывают затухание подложки на первом же кадре.
-            this.#hideBackdrop(overlayRef);
+            rtHideBackdrop(this.#renderer, overlayRef);
             this.rightOpen.set(false);
             this.rightClosed.emit();
         });
@@ -354,11 +392,24 @@ export class RtContainerComponent {
             return;
         }
         this.rightOpen.set(true);
+        if (this.#rightSheet.active()) {
+            requestAnimationFrame((): void =>
+                this.#sheetDriver.raise(this.rightCell()?.nativeElement ?? null, (): void => this.rightOpened.emit())
+            );
+            return;
+        }
         requestAnimationFrame((): void => this.#afterSideTransition((): void => this.rightOpened.emit()));
     }
 
     #closeSide(): void {
         if (!this.rightOpen()) {
+            return;
+        }
+        if (this.#rightSheet.active()) {
+            this.#sheetDriver.lower(this.rightCell()?.nativeElement ?? null, (): void => {
+                this.rightOpen.set(false);
+                this.rightClosed.emit();
+            });
             return;
         }
         this.rightOpen.set(false);
@@ -375,13 +426,24 @@ export class RtContainerComponent {
         listenTransitionEnd(this.#window, cell, 'inline-size', callback);
     }
 
+    /** Новая коробка открытой панели — открытой без перехода; шторка — во всё окно, без сдвига и второго затемнения. */
+    #reopenOverlay(overlayRef: OverlayRef): void {
+        if (this.#rightSheet.active()) {
+            carryThemeScope(overlayRef.overlayElement, this.#host.nativeElement);
+            this.#sheetDriver.keepOverlay(overlayRef.overlayElement);
+            return;
+        }
+        this.#showOverlay(overlayRef);
+        this.#renderer.addClass(overlayRef.overlayElement, RT_OVERLAY_OPEN_CLASS);
+    }
+
     /** Открытый вид оверлея без перехода: подложка видна, страница замирает, если подложка есть. */
     #showOverlay(overlayRef: OverlayRef): void {
         // Коробка постоянная и лежит в конце страницы, а кусок темы вокруг контейнера мог смениться.
         carryThemeScope(overlayRef.overlayElement, this.#host.nativeElement);
 
-        this.#renderer.removeClass(overlayRef.overlayElement, 'rt-aside-overlay--entering');
-        this.#renderer.removeClass(overlayRef.overlayElement, 'rt-aside-overlay--leaving');
+        this.#renderer.removeClass(overlayRef.overlayElement, RT_OVERLAY_ENTERING_CLASS);
+        this.#renderer.removeClass(overlayRef.overlayElement, RT_OVERLAY_LEAVING_CLASS);
 
         const backdropEl: HTMLElement | null = overlayRef.backdropElement;
         if (backdropEl !== null) {
@@ -404,29 +466,6 @@ export class RtContainerComponent {
         }
     }
 
-    /**
-     * Подложка закрытой панели: невидима и нажатий не ловит.
-     *
-     * Стилями этого не сделать. Правила кита живут в слое каскада, а CDK кладёт свои прямо на
-     * страницу, вне слоя, — и `.cdk-overlay-backdrop-showing { opacity: 1 }` выигрывает у нашего
-     * `opacity: 0` независимо от специфичности: неслоевое правило сильнее слоевого всегда.
-     * Подложка при этом висит поверх страницы во весь экран — прозрачная и перехватывающая
-     * нажатия, а панель ещё не открывали. Объявление на самом узле сильнее обоих правил.
-     *
-     * Держится это ровно до открытия: там объявления снимаются, и дальше видом подложки
-     * заведуют классы.
-     */
-    #hideBackdrop(overlayRef: OverlayRef): void {
-        const backdropEl: HTMLElement | null = overlayRef.backdropElement;
-
-        if (backdropEl === null) {
-            return;
-        }
-
-        this.#renderer.setStyle(backdropEl, 'opacity', '0');
-        this.#renderer.setStyle(backdropEl, 'pointer-events', 'none');
-    }
-
     #createRightOverlay(tpl: TemplateRef<unknown>, hasBackdrop: boolean): OverlayRef {
         const positionStrategy: PositionStrategy = this.#overlay.position().global().right('0').top('0');
 
@@ -441,7 +480,7 @@ export class RtContainerComponent {
             panelClass: [
                 'rt-aside-overlay',
                 'rt-aside-overlay--position-right',
-                'rt-aside-overlay--entering',
+                RT_OVERLAY_ENTERING_CLASS,
                 ...materialPresetClassesOf(this.#host.nativeElement),
             ],
             disposeOnNavigation: false,
@@ -450,7 +489,7 @@ export class RtContainerComponent {
         const overlayRef: OverlayRef = this.#overlay.create(overlayConfig);
         const portal: TemplatePortal = new TemplatePortal(tpl, this.#vcr);
         overlayRef.attach(portal);
-        this.#hideBackdrop(overlayRef);
+        rtHideBackdrop(this.#renderer, overlayRef);
 
         // Backdrop-click / ESC подписки объявлены один раз в конструкторе —
         // здесь только эмит созданного OverlayRef (см. #rightOverlaySource-стрим).
