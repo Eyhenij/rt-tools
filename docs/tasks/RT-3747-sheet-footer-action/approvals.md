@@ -4,3 +4,6 @@
 - **Макет:** «Одобряю макеты» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8688-92541
 - **Макет:** «Одобряю кадры» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8762-2095
 - **План:** «Одобряю план (Recommended)»
+- **Совпадение:** 42 из 42 чисел
+- **Совпадение:** 22 из 22 чисел
+- **Витрина:** «Одобряю витрину»
