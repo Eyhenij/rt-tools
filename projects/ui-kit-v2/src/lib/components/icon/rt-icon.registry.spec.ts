@@ -330,7 +330,7 @@ describe('RtIconRegistry', (): void => {
         warn.mockRestore();
     });
 
-    it('SC-UKV-1890 —страница с кодом 200 вместо файла ведёт в запасной набор', (): void => {
+    it('SC-UKV-1890 — страница с кодом 200 вместо файла ведёт в запасной набор', (): void => {
         const harness: IHarness = setup(brand());
 
         harness.registry.request('copy', 'brand');
