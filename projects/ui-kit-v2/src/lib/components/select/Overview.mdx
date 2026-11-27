@@ -122,19 +122,26 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход                | тип                                                     | умолчание                   |
-| ------------------- | ------------------------------------------------------- | --------------------------- |
-| `appearance`        | `'outline' \| 'fill'`                                   | `'outline'`                 |
-| `options`           | `ReadonlyArray<{ label, value, disabled?, children? }>` | `[]`                        |
-| `placeholder`       | `string`                                                | `''`                        |
-| `iconLeft`          | `IRtIcon.Name \| null`                                  | `null`                      |
-| `filter`            | `boolean`                                               | `false`                     |
-| `filterPlaceholder` | `string`                                                | `''` → `uiSearch`           |
-| `panelWidth`        | `'trigger' \| 'trigger-min' \| 'auto'`                  | `'trigger-min'`             |
-| `panelMaxHeight`    | `string \| null`                                        | `null`                      |
-| `radius`            | `TRtRadius \| null`                                     | `null` → скругление полей   |
-| `floatingLabel`     | `string \| null`                                        | `null`                      |
-| `sheet`             | `boolean`                                               | `true` → шторка на телефоне |
+| вход                  | тип                                                     | умолчание                    |
+| --------------------- | ------------------------------------------------------- | ---------------------------- |
+| `appearance`          | `'outline' \| 'fill'`                                   | `'outline'`                  |
+| `options`             | `ReadonlyArray<{ label, value, disabled?, children? }>` | `[]`                         |
+| `placeholder`         | `string`                                                | `''`                         |
+| `iconLeft`            | `IRtIcon.Name \| null`                                  | `null`                       |
+| `filter`              | `boolean`                                               | `false`                      |
+| `filterPlaceholder`   | `string`                                                | `''` → `uiSearch`            |
+| `panelWidth`          | `'trigger' \| 'trigger-min' \| 'auto'`                  | `'trigger-min'`              |
+| `panelMaxHeight`      | `string \| null`                                        | `null`                       |
+| `radius`              | `TRtRadius \| null`                                     | `null` → скругление полей    |
+| `floatingLabel`       | `string \| null`                                        | `null`                       |
+| `sheet`               | `boolean`                                               | `true` → шторка на телефоне  |
+| `sheetCards`          | `boolean`                                               | `true` → карточки в шторке   |
+| `sheetHeaderTemplate` | `TemplateRef \| null`                                   | `null` → шапку рисует шторка |
+| `sheetFooterTemplate` | `TemplateRef \| null`                                   | `null` → подвала нет         |
+
+В шторке опция — карточка с подписью слева и радиокнопкой кита справа. Необязательное поле опции
+`description` стоит второй строкой карточки; у поля строка его не показывает.
+`[sheetCards]="false"` возвращает в шторку строки, какими список стоит у поля.
 
 ## Входы от основы полей
 

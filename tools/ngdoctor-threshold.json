@@ -6,7 +6,7 @@
     "angular-doctor/filename-class-mismatch": 527,
     "angular-doctor/missing-spec-file": 539,
     "angular-doctor/prefer-ng-optimized-image": 11,
-    "angular-doctor/prefer-signal-forms": 97,
+    "angular-doctor/prefer-signal-forms": 100,
     "angular-doctor/project-layout": 4,
     "angular-doctor/security-bypass": 1,
     "template-eslint/click-events-have-key-events": 7

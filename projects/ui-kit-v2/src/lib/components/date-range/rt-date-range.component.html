@@ -53,10 +53,34 @@
         </ng-template>
 
         @if (useSheet()) {
-            <rt-bottom-sheet qa-dataid="date-range-sheet" [open]="sheetOpen()" (openChange)="sheetOpen.set($event)">
+            <rt-bottom-sheet
+                qa-dataid="date-range-sheet"
+                [open]="sheetOpen()"
+                [ariaLabel]="sheetTitle() || null"
+                [unsaved]="sheetPanel()?.dirty() ?? false"
+                (applyRequest)="sheetPanel()?.apply()"
+                (openChange)="sheetOpen.set($event)">
+                <!-- Заголовок шторки — подпись поля или его доступное имя; без них в шапке остаётся кнопка закрытия. -->
+                @if (sheetTitle()) {
+                    <span sheetHeader rtElem="sheet-title" qa-dataid="date-range-sheet-title">{{ sheetTitle() }}</span>
+                }
+                <!-- «Применить» стоит справа в шапке шторки; выбранный и не применённый период шторка перед закрытием спрашивает. -->
+                <button
+                    sheetAction
+                    rtButton
+                    type="button"
+                    size="sm"
+                    appearance="filled"
+                    qa-dataid="date-range-sheet-apply"
+                    [label]="t().uiApply"
+                    [attr.aria-label]="t().uiApply"
+                    [disabled]="!(sheetPanel()?.canApply() ?? false)"
+                    (click)="sheetPanel()?.apply()"></button>
                 @if (sheetOpen()) {
                     <rt-date-range-panel
+                        #sheetPanel
                         sheet
+                        applyOutside
                         [value]="range()"
                         [min]="min()"
                         [max]="max()"

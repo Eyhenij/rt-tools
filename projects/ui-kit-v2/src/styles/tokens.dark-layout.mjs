@@ -391,4 +391,10 @@ export const darkLayout = [
     { name: `--rt-color-chart-series-6` },
     { name: `--rt-color-chart-series-7` },
     { name: `--rt-color-chart-series-8` },
+    {
+        lead: `    /* Bottom sheet — подписи ответов вопроса: ступени светлее, до 4,5 к одному на графите. */`,
+        space: true,
+        name: `--rt-color-sheet-confirm-apply`,
+    },
+    { name: `--rt-color-sheet-confirm-danger` },
 ];

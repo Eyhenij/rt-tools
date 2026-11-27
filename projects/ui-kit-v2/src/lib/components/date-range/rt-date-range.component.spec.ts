@@ -5,6 +5,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { RT_KIT_LOCALE } from '../../i18n';
 import { By } from '@angular/platform-browser';
 
+import { rtPreloadSheetConfirm } from '../bottom-sheet/rt-bottom-sheet-confirm.loader';
 import { RT_POPOVER_SHEET, RtPopoverDirective } from '../popover';
 import { BreakpointsService } from '../../platform';
 import { createRtFixture, el, hostClasses, qa, textOf } from '../../../testing/rt-kit-testing';
@@ -62,6 +63,10 @@ function popupDay(iso: string): HTMLButtonElement {
 }
 
 describe('RtDateRangeComponent', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadSheetConfirm();
+    });
+
     it('несёт свой BEM-блок', (): void => {
         expect(hostClasses(setup())).toContain('rt-date-range');
     });
@@ -198,6 +203,41 @@ describe('RtDateRangeComponent', (): void => {
             expect(sheet.querySelector('rt-date-range-panel')?.classList).toContain('rt-date-range-panel--sheet');
             expect(sheet.querySelectorAll('[qa-dataid="calendar-month"]').length).toBe(1);
             expect(popup()).toBeNull();
+        });
+
+        it('SC-UKV-1763 — в шторке периода «Применить» стоит в шапке; выбранный и не применённый период спрашивает перед закрытием', (): void => {
+            const fixture: ComponentFixture<RtDateRangeComponent> = createRtFixture(
+                RtDateRangeComponent,
+                {},
+                { providers: [RU_LOCALE, { provide: BreakpointsService, useClass: NarrowBreakpointsService }] }
+            );
+            const sheet: HTMLElement = qa(fixture, 'date-range-sheet')?.nativeElement as HTMLElement;
+            openButton(fixture).click();
+            fixture.detectChanges();
+            const apply: HTMLButtonElement = sheet.querySelector('[qa-dataid="date-range-sheet-apply"]') as HTMLButtonElement;
+
+            expect(apply.closest('[qa-dataid="bottom-sheet-action"]')).not.toBeNull();
+            expect(sheet.querySelector('[qa-dataid="date-range-apply"]')).toBeNull();
+            expect(sheet.querySelector('[qa-dataid="date-range-title"]')).toBeNull();
+            expect(apply.disabled).toBe(true);
+
+            const days: HTMLElement[] = Array.from(sheet.querySelectorAll<HTMLElement>('[qa-dataid="calendar-day"]:not([disabled])'));
+            days[2].click();
+            fixture.detectChanges();
+            days[5].click();
+            fixture.detectChanges();
+            fixture.detectChanges();
+            expect(apply.disabled).toBe(false);
+
+            (sheet.querySelector('[qa-dataid="bottom-sheet-close"] button') as HTMLElement).click();
+            fixture.detectChanges();
+            expect(sheet.querySelector('[qa-dataid="bottom-sheet-confirm"]')).not.toBeNull();
+
+            (sheet.querySelector('[qa-dataid="bottom-sheet-confirm-apply"]') as HTMLElement).click();
+            fixture.detectChanges();
+
+            expect((qa(fixture, 'date-range-control')?.nativeElement as HTMLInputElement).value).not.toBe('');
+            expect(sheet.classList).not.toContain('rt-bottom-sheet--open');
         });
 
         it('SC-UKV-1596 — на узком экране с sheet=false панель открывается поповером у поля, шторки нет', (): void => {

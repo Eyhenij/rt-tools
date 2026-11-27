@@ -1,0 +1,30 @@
+<ng-container rtBlock="rt-bottom-sheet">
+    <div rtElem="confirm" qa-dataid="bottom-sheet-confirm" role="alertdialog" aria-modal="true" [attr.aria-labelledby]="titleId()">
+        <!-- Две карточки, как лист действий телефона: вопрос с отказом и согласием, ниже отдельно «остаться».
+             Фокус встаёт на согласие; Tab идёт по строкам сверху вниз. -->
+        <div rtElem="confirm-card" qa-dataid="bottom-sheet-confirm-card">
+            <div rtElem="confirm-heading">
+                <h2 rtElem="confirm-title" qa-dataid="bottom-sheet-confirm-title" [attr.id]="titleId()">
+                    {{ labels().title }}
+                </h2>
+                <p rtElem="confirm-message" qa-dataid="bottom-sheet-confirm-message">{{ labels().message }}</p>
+            </div>
+            <button
+                rtElem="confirm-row"
+                qa-dataid="bottom-sheet-confirm-discard"
+                type="button"
+                [rtMod]="{ danger: true }"
+                (click)="onDiscard()">
+                {{ labels().discard }}
+            </button>
+            <button #confirmFirst rtElem="confirm-row" qa-dataid="bottom-sheet-confirm-apply" type="button" (click)="onApply()">
+                {{ labels().apply }}
+            </button>
+        </div>
+        <div rtElem="confirm-card" qa-dataid="bottom-sheet-confirm-stay-card">
+            <button rtElem="confirm-row" qa-dataid="bottom-sheet-confirm-cancel" type="button" [rtMod]="{ stay: true }" (click)="onStay()">
+                {{ labels().stay }}
+            </button>
+        </div>
+    </div>
+</ng-container>

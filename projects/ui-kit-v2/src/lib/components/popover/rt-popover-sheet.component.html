@@ -2,10 +2,21 @@
     <rt-bottom-sheet
         qa-dataid="popover-sheet"
         [open]="open()"
-        [ariaLabelledby]="title() ? titleId : null"
+        [ariaLabelledby]="title() && !header() ? titleId : null"
+        [ariaLabel]="title() && header() ? title() : null"
+        [fullHeight]="fullHeight()"
+        [unsaved]="unsaved()"
+        [headerTemplate]="header()"
+        [footerTemplate]="footer()"
+        (applyRequest)="applyRequest.emit()"
         (openChange)="openChange($event)">
         @if (title()) {
             <span sheetHeader rtElem="title" qa-dataid="popover-sheet-title" [attr.id]="titleId">{{ title() }}</span>
+        }
+        @if (action(); as actionTpl) {
+            <div sheetAction rtElem="action" qa-dataid="popover-sheet-action">
+                <ng-container [ngTemplateOutlet]="actionTpl" [ngTemplateOutletContext]="{ $implicit: context() }" />
+            </div>
         }
         <div rtElem="panel" qa-dataid="popover-sheet-panel">
             <ng-container [ngTemplateOutlet]="template()" [ngTemplateOutletContext]="{ $implicit: context() }" />

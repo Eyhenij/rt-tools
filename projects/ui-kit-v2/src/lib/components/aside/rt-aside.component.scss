@@ -168,6 +168,67 @@
         }
     }
 
+    /* Рамка в шторке телефона: она — тело шторки во всю его высоту и ширину. Ширина, размер и край
+       панели к шторке не относятся. Рамка не служит точкой отсчёта: слой ожидания накрывает всю
+       панель шторки — с шапкой, главной кнопкой и подвалом, как накрывал всю панель. Стоит после
+       правил размера и узкого окна, ниже, чтобы перекрыть их. */
+    rt-aside .rt-aside.rt-aside--sheet {
+        /* Инсет шторки — 20, как у тела шторки кита: поля содержимого и полосы вкладок стоят по нему. */
+        --rt-aside-inset: var(--rt-space-5);
+
+        position: static;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        min-height: 0;
+        flex: 1 1 auto;
+
+        /* Под шапкой шторки стоит черта, и содержимое отбито от неё на 12 — как кнопки подвала от его
+           черты. */
+        > .rt-aside__content {
+            padding-top: calc(var(--rt-space-2) + var(--rt-space-1));
+        }
+    }
+
+    /* Шапка панели-шторки отделена от тела той же чертой, что подвал шторки: той же толщины, тем же
+       цветом и на всю ширину панели. Только у своей шторки панели — шторки, открытые из содержимого,
+       держат свою шапку. */
+    rt-aside > rt-bottom-sheet > .rt-bottom-sheet__panel > .rt-bottom-sheet__header {
+        border-bottom: var(--rt-bottom-sheet-footer-border-width) solid var(--rt-color-border-default);
+    }
+
+    /* Вкладки панели-шторки — одна строка, как чипы периода в шторке: стрелки прокрутки не нужны —
+       ряд листают пальцем. Ряд, который не влазит, прокручивается вбок по кругу, и его края
+       затеняются на 32; модификатор ставит карусель ряда. Ряд, который влазит, без затенения. */
+    rt-aside .rt-aside--sheet.rt-aside--content--tabs {
+        /* Ряд ставит по центру карусель, и сразу. Плавная прокрутка ряда к выбранной вкладке шла
+           после центровки и оставляла ряд на полпути: вкладка уезжала за край. */
+        rt-tabs {
+            --rt-tabs-scroll-duration: 0ms;
+        }
+
+        .rt-tabs__tab-list {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            overscroll-behavior-x: contain;
+            scrollbar-width: none;
+        }
+
+        .rt-aside__tabs--overflow {
+            mask-image: linear-gradient(
+                to right,
+                transparent,
+                currentcolor var(--rt-space-8),
+                currentcolor calc(100% - var(--rt-space-8)),
+                transparent
+            );
+        }
+
+        .rt-tabs__rest {
+            display: none;
+        }
+    }
+
     @media (width <= 768px) {
         rt-aside .rt-aside,
         rt-aside .rt-aside--size--sm,

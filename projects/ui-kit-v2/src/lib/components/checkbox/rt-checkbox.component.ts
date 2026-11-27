@@ -4,7 +4,9 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
+    ElementRef,
     forwardRef,
+    inject,
     input,
     InputSignal,
     InputSignalWithTransform,
@@ -19,6 +21,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { rtAnnounceChange, rtRegisterControlValue } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 
@@ -80,6 +83,8 @@ function checkedAttribute(value: BooleanInput | null | undefined): boolean | nul
     },
 })
 export class RtCheckboxComponent implements ControlValueAccessor {
+    readonly #host: HTMLElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+
     #onChange: (value: boolean) => void = (): void => undefined;
     #onTouched: () => void = (): void => undefined;
 
@@ -113,6 +118,18 @@ export class RtCheckboxComponent implements ControlValueAccessor {
         transform: booleanAttribute,
     });
 
+    /** Вид «карточка»: рамка, содержимое слева, квадрат справа — как у радиокнопки. */
+    public readonly card: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /** Пояснение второй строкой под подписью. */
+    public readonly description: InputSignal<string> = input<string>('');
+
+    constructor() {
+        rtRegisterControlValue(this.#host, (): boolean => this.isChecked());
+    }
+
     public writeValue(value: boolean | null | undefined): void {
         this.#model.set(value === true);
     }
@@ -135,8 +152,10 @@ export class RtCheckboxComponent implements ControlValueAccessor {
         }
         // mixed-состояние при клике разрешается в checked (tri-state контракт).
         const next: boolean = this.indeterminate() ? true : !this.isChecked();
+        const previous: boolean = this.isChecked();
         this.#model.set(next);
         this.#onChange(next);
+        rtAnnounceChange(this.#host, next, previous);
         this.#onTouched();
         this.checkedChange.emit(next);
     }

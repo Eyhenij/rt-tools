@@ -77,6 +77,13 @@ Given a realm with two languages
 When a page is drawn
 Then the language is chosen from one drop-down list, not from a row of buttons
 
+### SC-AUTH-123 — on a phone the language list is a bottom sheet that closes by its close button
+
+Given the entry page of a realm with two languages in a window of a phone width
+When a person opens the language list and then presses the close button in the header of the sheet
+Then the languages stand in the sheet as cards, the sheet goes away after the press, and the entry
+form stays on the screen in the same language
+
 ### SC-AUTH-58 — the entry card has an outline and a shadow
 
 Given the entry page of the stand
