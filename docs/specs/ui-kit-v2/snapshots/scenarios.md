@@ -316,7 +316,7 @@ Given a story opens its panel by pressing a button near the bottom edge
 When the gesture puts focus on the button
 Then the page does not scroll, and no item slides under the resting pointer with its hint
 
-### SC-UKV-1802 — a branch shoots the stories its edit reaches
+### SC-UKV-1911 — a branch shoots the stories its edit reaches
 
 Given a branch whose edit lies in a template, a style, a source behind a barrel or a story file
 When the push set calls the snapshot step with the base of the push
@@ -327,7 +327,7 @@ Covered by `tools/tests/affected-stories.test.sh` — the reach over a one-off k
 a stand-in build and shooting — `tools/tests/visual-gate.test.sh`. The line of the set with a base and
 without one — `tools/tests/push-heavy-subjects.test.sh`.
 
-### SC-UKV-1803 — an edit whose reach is not recognised shoots everything
+### SC-UKV-1912 — an edit whose reach is not recognised shoots everything
 
 Given an edit of a setting of the showcase, a common style, an icon, the root or the scripts of the run, an
 import that does not resolve, or a base that does not read
@@ -336,7 +336,7 @@ Then the answer is everything with its reasons, and the whole set is shot
 
 Covered by `tools/tests/affected-stories.test.sh` and `tools/tests/visual-gate.test.sh`.
 
-### SC-UKV-1804 — a run of the touched stories answers for every file it was given
+### SC-UKV-1913 — a run of the touched stories answers for every file it was given
 
 Given the run of the touched stories ended, and a named file has no story or a story the run did not reach,
 or a frame of a width its reference names is absent, or a reference without a story lies in the catalogue

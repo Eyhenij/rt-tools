@@ -220,7 +220,7 @@ properties; a whole file that does not fold from the head, the middle and the ta
 
 Covered: `tools/tests/build-tokens-split.test.sh`, called by `pnpm run test:checks`.
 
-### SC-UKV-1921 — a node of the set Material takes its own theme on any page
+### SC-UKV-1941 — a node of the set Material takes its own theme on any page
 
 Given a page whose root carries no theme, `data-theme="dark"` or the class `rt-theme-dark`
 When a node of the set Material, marked by the class or by the attribute, stands under one light piece, one dark piece

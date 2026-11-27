@@ -35,7 +35,8 @@ import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
-import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { RtPopoverDirective, RtSheetTemplatesDirective } from '@rt-tools/ui-kit-v2/popover';
+import { RtRadioButtonComponent } from '@rt-tools/ui-kit-v2/radio-button';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtOptionList, TRtOptionListAction } from '@rt-tools/ui-kit-v2/core';
 import { RtAutocompleteEmptyDirective, RtAutocompleteErrorDirective } from './rt-autocomplete-states.directive';
@@ -85,6 +86,7 @@ function nextPanelId(): number {
         RtIconComponent,
         RtInputComponent,
         RtPopoverDirective,
+        RtRadioButtonComponent,
         RtSpinnerComponent,
         BlockDirective,
         ElemDirective,
@@ -94,7 +96,10 @@ function nextPanelId(): number {
         // Алиас базового токена — для contentChild(RtFormControlBase) в rt-field.
         { provide: RtFormControlBase, useExisting: forwardRef(() => RtAutocompleteComponent) },
     ],
-    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
+    hostDirectives: [
+        { directive: RtRadiusDirective, inputs: ['radius'] },
+        { directive: RtSheetTemplatesDirective, inputs: ['sheetHeaderTemplate', 'sheetFooterTemplate'] },
+    ],
     host: {
         class: BEM_BLOCK,
         '[class.rt-autocomplete--open]': 'isOpen()',
@@ -127,6 +132,11 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
 
     /** Список открыт в шторке: набор идёт в поле поиска наверху шторки, а не в поле под ней. Не меняется, пока шторка открыта. */
     protected readonly openedInSheet: Signal<boolean> = computed((): boolean => this.popover().openedInSheet());
+
+    /** Подсказки рисуются карточками: список открыт в шторке, и вход `sheetCards` их не выключил. */
+    /** Список нарисован в шторке — открытой или ещё уезжающей вниз: по нему выбирается вид, а не поведение. */
+    protected readonly shownInSheet: Signal<boolean> = computed((): boolean => this.popover().shownInSheet());
+    protected readonly cards: Signal<boolean> = computed((): boolean => this.sheetCards() && this.shownInSheet());
 
     /** Поле поиска в шторке — ему отдаётся фокус, когда шторка открылась. */
     protected readonly sheetSearch: Signal<RtInputComponent | undefined> = viewChild(RtInputComponent);
@@ -174,6 +184,11 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
 
     /** На телефоне список открывается в нижней шторке с полем поиска; `false` оставляет его у поля. */
     public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
+    /** Карточки в шторке: каждая подсказка — карточка. `false` возвращает строки, какими список стоит у поля. */
+    public readonly sheetCards: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
     /**
@@ -284,16 +299,11 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     protected onFocus(): void {
         // На телефоне нажатие на поле открывает шторку сразу: набирают уже в ней.
         if (this.inSheet()) {
-            this.fieldEl()?.nativeElement.blur();
-            // Закрытая шторка возвращает фокус полю — это не нажатие: запрос и открытие не повторяются.
-            if (this.isOpen()) {
-                return;
+            // Закрытая шторка возвращает фокус полю — это не нажатие: запрос и открытие не повторяются,
+            // а фокус остаётся в поле, не падает на страницу.
+            if (!this.isOpen()) {
+                this.#openSheet();
             }
-            // Запрос уходит, только когда текст не короче `minLength`, как у набора в поле; шторка открывается всегда.
-            if (this.inputText().length >= this.minLength()) {
-                this.complete.emit({ query: this.inputText(), originalEvent: new Event('focus') });
-            }
-            this.popover().open();
             return;
         }
         if (!this.openOnFocus()) {
@@ -301,6 +311,16 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
         }
         this.complete.emit({ query: this.inputText(), originalEvent: new Event('focus') });
         this.popover().open();
+    }
+
+    /**
+     * Касание поля, уже стоящего в фокусе: закрытая шторка вернула ему фокус, и `focus` второй раз не
+     * приходит. На телефоне такое касание снова открывает шторку.
+     */
+    protected onFieldTap(): void {
+        if (this.inSheet() && !this.isOpen()) {
+            this.#openSheet();
+        }
     }
 
     protected onBlur(): void {
@@ -369,6 +389,16 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
                 this.popover().close();
                 break;
         }
+    }
+
+    /** Открыть шторку от поля: клавиатуру берёт поиск шторки, а не поле под ней. */
+    #openSheet(): void {
+        this.fieldEl()?.nativeElement.blur();
+        // Запрос уходит, только когда текст не короче `minLength`, как у набора в поле; шторка открывается всегда.
+        if (this.inputText().length >= this.minLength()) {
+            this.complete.emit({ query: this.inputText(), originalEvent: new Event('focus') });
+        }
+        this.popover().open();
     }
 
     #search(query: string, originalEvent: Event): void {

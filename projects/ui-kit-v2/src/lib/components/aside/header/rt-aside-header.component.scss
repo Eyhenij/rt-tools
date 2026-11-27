@@ -1,3 +1,5 @@
+@use '../../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-aside-header — заголовок side-sheet'а. ViewEncapsulation.None.
        Селекторы префиксованы `.rt-aside-header`. */
@@ -126,6 +128,102 @@
         &__row {
             min-width: 0;
             margin-top: var(--rt-aside-header-gap, var(--rt-aside-header-gap-default));
+
+            &:empty {
+                display: none;
+            }
+        }
+
+        /* Шапка в шторке телефона: поля, ручку и отступ под собой даёт шапка шторки, сама шапка панели
+           тянется на всю её ширину. Заголовок — заголовок шторки: кегль и вес шторки, одна строка. */
+        &--sheet {
+            --rt-aside-header-title-size-default: var(--rt-text-md);
+            --rt-aside-header-title-weight-default: var(--rt-font-weight-semibold);
+
+            min-width: 0;
+            flex: 1 1 auto;
+            padding: 0;
+        }
+
+        /* Колонки шапки шторки: «×» слева, заголовок по центру, значки и главная кнопка справа. Части
+           шапки стоят по ширине своего содержимого — по ним меряется, влазит ли заголовок по центру. */
+        &__content--sheet {
+            @include kv.sheet-header-columns;
+        }
+
+        &__content--sheet > &__start {
+            justify-self: start;
+        }
+
+        &__content--sheet > &__actions {
+            justify-self: end;
+        }
+
+        /* Заголовок не влазит по центру шапки: он берёт всё место между «×» и кнопками справа, стоит
+           по центру этого места и режется многоточием. Модификатор ставит мера частей шапки. */
+        &__content--title-between {
+            grid-template-columns: max-content minmax(0, 1fr) max-content;
+        }
+
+        &__content--sheet &__heading {
+            min-height: 0;
+            text-align: center;
+        }
+
+        /* Заголовок шторки — строкой 24 при кегле 16, как заголовок шторки кита. */
+        &__content--sheet &__title {
+            line-height: var(--rt-aside-header-title-leading, var(--rt-leading-normal));
+        }
+
+        /* Значки шапки шторки — шагом `sm`, 32 со значком 16, как действие шапки шторки рядом. */
+        &__content--sheet &__actions .rt-icon-button {
+            --rt-icon-button-size-step: var(--rt-control-height-sm);
+            --rt-icon-step-md: var(--rt-size-4);
+        }
+
+        &__content--sheet &__badges {
+            justify-content: center;
+        }
+
+        /* Значки и главная кнопка шапки шторки — через 8, как в макете шапки: «⋮» 32, зазор, «Сохранить». */
+        &__content--sheet &__actions {
+            justify-content: flex-end;
+            gap: var(--rt-space-2);
+        }
+
+        /* Под шапкой шторки, в начале содержимого: надзаголовок, подпись, бэйджи и содержимое колонки
+           заголовка — по левому краю, как в панели. Пустой блок места не занимает. */
+        &__sheet-meta {
+            display: flex;
+            min-width: 0;
+            flex-direction: column;
+            padding: calc(var(--rt-space-2) + var(--rt-space-1)) 0 var(--rt-space-1);
+            gap: calc(var(--rt-space-1) + var(--rt-space-0-5));
+
+            /* Левый край — край содержимого шторки (20): шапка шторки уже отступила на 12, блок
+               добирает 8. Снизу 4 и поле шапки 12 — 16 до содержимого, как в макете. */
+            padding-inline: var(--rt-space-2);
+            text-align: start;
+
+            &:empty {
+                display: none;
+            }
+        }
+
+        /* Левая колонка шапки шторки: «×» у её начала; без «×» колонка пуста и держит центр. */
+        &__start {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        &__close {
+            flex-shrink: 0;
+        }
+
+        /* Место главной кнопки подвала — правее значков шапки. */
+        &__main {
+            display: flex;
+            flex-shrink: 0;
 
             &:empty {
                 display: none;

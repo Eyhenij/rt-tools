@@ -1,3 +1,5 @@
+@use '../../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* Строки и пункты окна выбора — отдельным файлом: стили окна целиком переросли бюджет сборки
        приложений на один файл стилей компонента. Свойства пунктов объявлены на корне окна. */
@@ -75,6 +77,40 @@
             cursor: pointer;
             font-size: var(--rt-text-sm);
             user-select: none;
+        }
+
+        // Карточки выбора в шторке: пункты стоят столбцом карточек, рамку и отметку справа несёт сам
+        // флажок или радиокнопка кита в виде карточки. Размеры карточки — общие для списков выбора.
+        &__list--cards {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-sm);
+        }
+
+        &__list--cards &__row {
+            min-height: 0;
+            padding-block: 0;
+        }
+
+        &__list--cards &__option {
+            width: 100%;
+        }
+
+        &__list--cards .rt-checkbox--card,
+        &__list--cards .rt-radio-button--card {
+            @include kv.sheet-card;
+        }
+
+        // Подпись выбора одной записи рисует окно, а не кнопка: карточкой становится сама строка,
+        // радиокнопка без подписи встаёт справа.
+        &__list--cards &__row--card {
+            @include kv.sheet-card;
+
+            flex-direction: row-reverse;
+        }
+
+        &__list--cards &__row--card#{&}__row--checked {
+            @include kv.sheet-card-chosen;
         }
 
         // Совпавшие с поиском символы: фон метки браузера заменён свойством окна, как и скругление,

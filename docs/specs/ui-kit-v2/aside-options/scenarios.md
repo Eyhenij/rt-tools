@@ -140,9 +140,10 @@ Covered: `projects/ui-kit-v2/src/lib/components/aside/rt-aside-buttons.styles.sp
 
 ### SC-UKV-1043 — the window about the unsaved edits
 
-Given the window about the unsaved edits
+Given a window 481 points wide and the window about the unsaved edits
 When it is drawn
-Then it is of the medium width, its stay button is outlined, and on a phone its buttons stand in a column
+Then it is of the medium width, its stay button is outlined, and its buttons stand in one row; at
+480 points and below the panel sheet asks at the bottom of the screen instead (`SC-UKV-1820`)
 
 Covered: `projects/ui-kit-v2/src/lib/components/aside/unsaved-dialog/rt-aside-unsaved-dialog.component.spec.ts`, `projects/ui-kit-v2/src/lib/components/aside/rt-aside-buttons.styles.spec.ts`.
 

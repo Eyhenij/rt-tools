@@ -4,7 +4,9 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
+    ElementRef,
     forwardRef,
+    inject,
     input,
     InputSignal,
     InputSignalWithTransform,
@@ -18,7 +20,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
-import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { IRtIcon, rtAnnounceChange, rtRegisterControlValue } from '@rt-tools/ui-kit-v2/core';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { IRtToggleSwitch } from './rt-toggle-switch.model';
 
@@ -93,6 +95,8 @@ function nextAutoId(): string {
     },
 })
 export class RtToggleSwitchComponent implements ControlValueAccessor {
+    readonly #host: HTMLElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+
     #onChange: (value: boolean) => void = (): void => undefined;
     #onTouched: () => void = (): void => undefined;
 
@@ -141,6 +145,10 @@ export class RtToggleSwitchComponent implements ControlValueAccessor {
         transform: booleanAttribute,
     });
 
+    constructor() {
+        rtRegisterControlValue(this.#host, (): boolean => this.isOn());
+    }
+
     public writeValue(value: boolean | null | undefined): void {
         this.isOn.set(value === true);
     }
@@ -164,6 +172,7 @@ export class RtToggleSwitchComponent implements ControlValueAccessor {
         const next: boolean = !this.isOn();
         this.isOn.set(next);
         this.#onChange(next);
+        rtAnnounceChange(this.#host, next, !next);
         this.#onTouched();
     }
 }

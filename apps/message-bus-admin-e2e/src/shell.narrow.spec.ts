@@ -34,6 +34,25 @@ test.describe('разделы на узком экране', () => {
         await expect(qa(page, SECTION.proposals.table)).toBeVisible();
     });
 
+    test('SC-MB-460 — список разделов на узком экране закрывается своей кнопкой закрытия', async ({ page }: { page: Page }) => {
+        await openSection(page, 'postmortems');
+
+        const burger: ReturnType<Page['locator']> = qa(page, 'header-nav-burger');
+
+        await burger.click();
+
+        const items: ReturnType<Page['locator']> = qa(page, 'header-nav-mobile-item');
+
+        await expect(items.first()).toBeVisible();
+
+        // Кнопку закрытия рисует шторка кита: список разделов её не заказывал и получил вместе с шапкой
+        await qa(page, 'bottom-sheet-close').click();
+
+        await expect(items.first()).toBeHidden();
+        await expect(page).toHaveURL(new RegExp(`${SECTION.postmortems.path}$`));
+        await expect(burger).toBeFocused();
+    });
+
     test('SC-MB-433 — на узком экране профиль показан одним значком, а кнопка названа именем', async ({ page }: { page: Page }) => {
         await openSection(page, 'postmortems');
 

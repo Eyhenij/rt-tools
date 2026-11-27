@@ -109,6 +109,8 @@ export type TRtDesignTokenName =
     | '--rt-color-field-fill-underline'
     | '--rt-color-service-logo-bg'
     | '--rt-color-service-logo-mark'
+    | '--rt-color-sheet-confirm-apply'
+    | '--rt-color-sheet-confirm-danger'
     | '--rt-color-skeleton-base'
     | '--rt-color-skeleton-wave'
     | '--rt-color-state-danger'
@@ -156,6 +158,7 @@ export type TRtDesignTokenName =
     | '--rt-counter-value-color'
     | '--rt-counter-value-font-size'
     | '--rt-counter-value-min-width'
+    | '--rt-danger-300'
     | '--rt-danger-50'
     | '--rt-danger-500'
     | '--rt-danger-600'
@@ -780,6 +783,8 @@ export type TRtConsumerHandleName =
     | '--rt-option-selected-state-layer-color'
     | '--rt-page-header-bg'
     | '--rt-pagination-field-font-size'
+    | '--rt-sheet-card-bg'
+    | '--rt-sheet-card-bg-hover'
     | '--rt-side-menu-sub-item-letter-spacing'
     | '--rt-stepper-current-color'
     | '--rt-stepper-description-color'
@@ -959,6 +964,8 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-color-field-fill-underline',
     '--rt-color-service-logo-bg',
     '--rt-color-service-logo-mark',
+    '--rt-color-sheet-confirm-apply',
+    '--rt-color-sheet-confirm-danger',
     '--rt-color-skeleton-base',
     '--rt-color-skeleton-wave',
     '--rt-color-state-danger',
@@ -1006,6 +1013,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-counter-value-color',
     '--rt-counter-value-font-size',
     '--rt-counter-value-min-width',
+    '--rt-danger-300',
     '--rt-danger-50',
     '--rt-danger-500',
     '--rt-danger-600',
@@ -1631,6 +1639,8 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-option-selected-state-layer-color',
     '--rt-page-header-bg',
     '--rt-pagination-field-font-size',
+    '--rt-sheet-card-bg',
+    '--rt-sheet-card-bg-hover',
     '--rt-side-menu-sub-item-letter-spacing',
     '--rt-stepper-current-color',
     '--rt-stepper-description-color',

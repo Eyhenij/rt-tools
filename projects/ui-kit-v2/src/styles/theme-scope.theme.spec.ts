@@ -120,7 +120,7 @@ describe('тема узла набора на любой странице', (): 
         return surface === lightSurface ? 'light' : surface;
     }
 
-    it('SC-UKV-1921 — узел набора берёт свою тему, а без своей — тему куска или страницы', (): void => {
+    it('SC-UKV-1941 — узел набора берёт свою тему, а без своей — тему куска или страницы', (): void => {
         const wrong: string[] = [];
         let checked: number = 0;
         for (const root of ROOTS) {

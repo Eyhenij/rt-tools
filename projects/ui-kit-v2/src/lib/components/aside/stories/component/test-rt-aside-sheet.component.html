@@ -1,0 +1,36 @@
+@switch (frame) {
+    @case ('filters') {
+        <rt-toolbar data-story-trigger>
+            <ng-template rtToolbarFilters>
+                <div>
+                    <rt-field label="Статус">
+                        <rt-select qa-dataid="story-filter-status" placeholder="Любой" [options]="statuses" />
+                    </rt-field>
+                    <rt-field label="Оплата"><rt-select placeholder="Любая" [options]="payments" /></rt-field>
+                </div>
+            </ng-template>
+        </rt-toolbar>
+    }
+    @case ('workspace') {
+        <rt-workspace hasActive asideTitle="Анна Смирнова" [singleColumnBreakpoint]="600">
+            <ng-template rtWorkspaceList><p>Брони</p></ng-template>
+            <ng-template rtWorkspaceCenter><p>Бронь №1042</p></ng-template>
+            <ng-template rtWorkspaceAside>
+                <rt-detail-list>
+                    <rt-detail-row label="Тур">Сочи, 7 ночей</rt-detail-row>
+                    <rt-detail-row label="Заезд">12 мая 2026</rt-detail-row>
+                    <rt-detail-row label="Телефон">+7 912 345-67-89</rt-detail-row>
+                </rt-detail-list>
+            </ng-template>
+        </rt-workspace>
+    }
+    @case ('columns') {
+        <rt-container>
+            <ng-template rtContainerContent><p class="app-aside-sheet__page">Брони</p></ng-template>
+            <ng-template rtContainerRightSidenav><rt-table-settings-aside /></ng-template>
+        </rt-container>
+    }
+    @default {
+        <p class="app-aside-sheet__page">Брони</p>
+    }
+}

@@ -1,0 +1,76 @@
+@layer rt-kit.components {
+    /* Барабан времени в шторке, как в iOS: часы и минуты прокручиваются под полосой выбора, стоящей
+       по центру; значения выше и ниже бледнеют к краям. Прокрутку и выбор ведёт `rtDateWheel`,
+       здесь — только вид. У поля на широком экране колонки остаются списками. */
+    .rt-date-panel--sheet {
+        --rt-date-panel-wheel-row: var(--rt-size-10);
+        --rt-date-panel-wheel-radius: var(--rt-radius-lg);
+
+        .rt-date-panel__time {
+            position: relative;
+            height: calc(var(--rt-date-panel-wheel-row) * 5);
+            gap: var(--rt-space-4);
+
+            /* Полоса выбора: во всю ширину, под обеими колонками. */
+            &:before {
+                position: absolute;
+                height: var(--rt-date-panel-wheel-row);
+                border-radius: var(--rt-date-panel-wheel-radius);
+                background: var(--rt-sheet-card-bg, var(--rt-color-bg-surface-subtle));
+                content: '';
+                inset: calc(var(--rt-date-panel-wheel-row) * 2) 0 auto;
+            }
+
+            /* Двоеточие между часами и минутами стоит в полосе и с колонками не прокручивается. */
+            &:after {
+                position: absolute;
+                color: var(--rt-color-text-primary);
+                content: ':';
+                font-size: var(--rt-text-xl);
+                font-weight: var(--rt-font-weight-semibold);
+                inset-block-start: calc(var(--rt-date-panel-wheel-row) * 2);
+                inset-inline: 0;
+                line-height: var(--rt-date-panel-wheel-row);
+                pointer-events: none;
+                text-align: center;
+            }
+        }
+
+        .rt-date-panel__time-group {
+            position: relative;
+            flex: 0 0 var(--rt-size-16);
+        }
+
+        /* Подписи «Часы» и «Минуты» барабану не нужны: имя колонки читается с её группы. */
+        .rt-date-panel__time-title {
+            display: none;
+        }
+
+        .rt-date-panel__column {
+            height: calc(var(--rt-date-panel-wheel-row) * 5);
+            gap: 0;
+            mask-image: linear-gradient(transparent, black 40%, black 60%, transparent);
+            max-block-size: none;
+            padding-block: calc(var(--rt-date-panel-wheel-row) * 2);
+            scroll-snap-type: y mandatory;
+            scrollbar-width: none;
+        }
+
+        .rt-date-panel__column .rt-date-panel__cell {
+            width: 100%;
+            height: var(--rt-date-panel-wheel-row);
+            padding: 0;
+            background: none;
+            font-size: var(--rt-text-lg);
+            min-block-size: var(--rt-date-panel-wheel-row);
+            min-inline-size: 0;
+            scroll-snap-align: center;
+            text-align: center;
+
+            &[aria-pressed='true'] {
+                background: none;
+                font-size: var(--rt-text-xl);
+            }
+        }
+    }
+}

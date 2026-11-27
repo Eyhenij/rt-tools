@@ -71,7 +71,7 @@ months, presets and a summary of the chosen days.
   start and then the end, as a click does.
 
 - **On a phone the panel opens in the kit's bottom sheet with one month.** The presets stand
-  on top and wrap to lines, the days are 44px under a finger, and the summary shows the number of
+  on top in one row that scrolls round, the days are 44px under a finger, and the summary shows the number of
   days. The phone sign is the breakpoints service's, as elsewhere in the kit; the input `sheet`
   switches the sheet off.
 
