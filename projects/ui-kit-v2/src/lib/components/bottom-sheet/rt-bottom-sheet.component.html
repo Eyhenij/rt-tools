@@ -48,7 +48,7 @@
                             icon="ellipsis-v"
                             qa-dataid="bottom-sheet-more"
                             [ariaLabel]="t().bottomSheetMore"
-                            (clicked)="moreOpen.set(true)" />
+                            (clicked)="moreScreen.open()" />
                     }
                     <ng-content select="[sheetAction]" />
                 </div>
@@ -74,9 +74,13 @@
     </div>
     <!-- Второй экран «Ещё»: шторка, открытая из этой, встаёт на её место с шевроном «назад». -->
     @if (ownMore(); as more) {
-        <rt-bottom-sheet qa-dataid="bottom-sheet-more-screen" [open]="moreOpen()" (openChange)="moreOpen.set($event)">
+        <rt-bottom-sheet
+            qa-dataid="bottom-sheet-more-screen"
+            [open]="moreScreen.opened()"
+            [ariaLabel]="more.rtSheetMoreTitle() ?? t().bottomSheetMore"
+            (openChange)="moreScreen.opened.set($event)">
             <span sheetHeader>{{ more.rtSheetMoreTitle() ?? t().bottomSheetMore }}</span>
-            <ng-container [ngTemplateOutlet]="more.template" [ngTemplateOutletContext]="moreContext" />
+            <ng-container [ngTemplateOutlet]="more.template" [ngTemplateOutletContext]="moreScreen.context" />
         </rt-bottom-sheet>
     }
     <!-- Экран вопроса: его код приходит при первом вопросе, шторка ставит его сюда сама. -->

@@ -28,6 +28,10 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 Дополнительное стоит за «⋮»: `<ng-template rtSheetMore let-back>` ставит «⋮» левее значков шапки,
 нажатие открывает второй экран шторки с этим шаблоном и заголовком «Ещё» или `rtSheetMoreTitle`.
+Своя шапка рисует «⋮» сама: её шаблон получает `hasMore` и `openMore`.
+
+Поля кита переходят на места подвала в RT-3748; до того они кладут в `[sheetAction]` залитую
+кнопку `sm` «Готово» или «Применить».
 
 Свою шапку целиком задаёт `<ng-template rtSheetHeader let-close>`, свой подвал —
 `<ng-template rtSheetFooter let-close let-apply="apply">`. Шаблон получает просьбу закрыть `close`

@@ -494,6 +494,32 @@ Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-sheet-more.direc
 
 Given the second screen of more is open
 When the chevron back is pressed, or the template calls its back request
-Then the second screen closes and the first stays open
+Then the second screen closes and the first stays open; a sheet the application closes and opens
+again opens on its first screen
+
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-sheet-more.directive.spec.ts`.
+
+### SC-UKV-1930 — a sheet with its own header opens the second screen itself
+
+Given a sheet with its own header template and a template of more
+When the header calls the request to open more
+Then the second screen opens with the template of more; with no template of more the header gets
+the sign that there is no second screen
+
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-sheet-more.directive.spec.ts`.
+
+### SC-UKV-1931 — after «stay» the closed second screen stays out of reach
+
+Given a sheet with a question before closing and a closed second screen of more
+When the person asks to close and answers «stay»
+Then the closed second screen stays `inert`: Tab and a screen reader do not reach it
+
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-sheet-more.directive.spec.ts`.
+
+### SC-UKV-1932 — the template of more belongs to the sheet it is written in
+
+Given a sheet declared in the content of another, only the inner one with a template of more
+When both are drawn
+Then «⋮» and the second screen stand in the inner sheet only
 
 Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-sheet-more.directive.spec.ts`.

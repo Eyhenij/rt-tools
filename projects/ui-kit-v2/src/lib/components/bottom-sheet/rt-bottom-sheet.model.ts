@@ -6,13 +6,16 @@ import { Signal } from '@angular/core';
  * спрашивает, как и на свою кнопку «×». Вторую зовёт своя кнопка действия: наружу уходит то же
  * событие, что по ответу «Применить», и шторка остаётся открытой, пока хозяин её не закроет.
  * `nested` — шторка открыта из другой шторки: своя шапка рисует слева шеврон «назад» вместо «×», и
- * он зовёт ту же просьбу закрыть.
+ * он зовёт ту же просьбу закрыть. `hasMore` — у шторки есть шаблон `rtSheetMore`: своя шапка рисует
+ * «⋮», и он зовёт `openMore`, открывающую второй экран «Ещё»; без шаблона просьба ничего не делает.
  */
 export interface IRtSheetTemplateContext {
     readonly $implicit: () => void;
     readonly close: () => void;
     readonly apply: () => void;
     readonly nested: Signal<boolean>;
+    readonly hasMore: Signal<boolean>;
+    readonly openMore: () => void;
 }
 
 /**

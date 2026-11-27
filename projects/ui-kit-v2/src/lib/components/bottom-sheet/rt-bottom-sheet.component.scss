@@ -172,8 +172,8 @@
             border-top: var(--rt-bottom-sheet-footer-border-width) solid var(--rt-color-border-default);
             gap: var(--rt-space-2);
 
-            /* Без узлов подвал места не занимает: пусты справка и главная кнопка, а своих узлов нет. */
-            &:empty,
+            /* Без узлов подвал места не занимает: пусты справка и главная кнопка, а своих узлов нет. Пустым
+               подвал не бывает — оба места стоят в нём всегда. */
             &:not(:has(> :not(.rt-bottom-sheet__info:empty, .rt-bottom-sheet__primary:empty))) {
                 display: none;
             }

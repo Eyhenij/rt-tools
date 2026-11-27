@@ -76,7 +76,11 @@ describe('Сведения рабочего стола на телефоне —
         const workspace: RtWorkspaceComponent = el(fixture, 'rt-workspace')?.componentInstance as RtWorkspaceComponent;
 
         expect(node('workspace-aside-overlay-close')).toBeNull();
-        expect(node('bottom-sheet-footer')?.children.length).toBe(0);
+        // В подвале шторки всегда стоят места справки и главной кнопки; пустые они не в счёт.
+        const footer: Element[] = Array.from(node('bottom-sheet-footer')?.children ?? []).filter(
+            (child: Element): boolean => !child.matches('.rt-bottom-sheet__info:empty, .rt-bottom-sheet__primary:empty')
+        );
+        expect(footer).toHaveLength(0);
 
         node('aside-sheet-close')?.querySelector('button')?.click();
         fixture.detectChanges();
