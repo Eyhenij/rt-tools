@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.42.0 · checks/record-recount.mjs · 5875ba519bd3 · правится надстройкой, не здесь
+// rt-kit v0.42.1 · checks/record-recount.mjs · 5875ba519bd3 · правится надстройкой, не здесь
 /**
  * The recount of past days from the saved session records of this tree, by the counter the hook at
  * the end of a turn uses. The hook counts only the turns after it was laid out; a day before that is

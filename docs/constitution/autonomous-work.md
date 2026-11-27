@@ -1,4 +1,4 @@
-<!-- rt-kit v0.42.0 · laws/autonomous-work.md · 9216331e3185 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.1 · laws/autonomous-work.md · 9216331e3185 · правится надстройкой, не здесь -->
 # Law on the autonomous session
 
 A session with no owner nearby. They answer no questions, press no buttons and do not see the

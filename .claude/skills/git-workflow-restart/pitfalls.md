@@ -1,4 +1,4 @@
-<!-- rt-kit v0.42.0 · pitfalls/git-workflow-restart.md · 7d202a845d6d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.1 · pitfalls/git-workflow-restart.md · 7d202a845d6d · правится надстройкой, не здесь -->
 # A manual production restart — cold part
 
 The pattern `git-workflow-restart` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.

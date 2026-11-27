@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.42.0 · hooks/owner-stop-call-guard.sh · 3a23cbcf7543 · правится надстройкой, не здесь
+# rt-kit v0.42.1 · hooks/owner-stop-call-guard.sh · 3a23cbcf7543 · правится надстройкой, не здесь
 # rt-hook: UserPromptSubmit
 # rt-hook: PreToolUse .*
 # Requires: checks/task-flow-script.mjs, hooks/decide.sh, hooks/hook-input.sh

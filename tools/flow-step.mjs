@@ -1,4 +1,4 @@
-// rt-kit v0.42.0 · checks/flow-step.mjs · df9f7354b5af · правится надстройкой, не здесь
+// rt-kit v0.42.1 · checks/flow-step.mjs · df9f7354b5af · правится надстройкой, не здесь
 /**
  * A step of the plan measured by its check — the engine command `step`.
  *

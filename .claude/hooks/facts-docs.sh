@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.42.0 · hooks/facts-docs.sh · 8c27effca4d0 · правится надстройкой, не здесь
+# rt-kit v0.42.1 · hooks/facts-docs.sh · 8c27effca4d0 · правится надстройкой, не здесь
 # The fact of the document pair: what a commit edits without the document that describes it. NOT a
 # guard: it has no `rt-hook:` declaration and hooks into no agent event. The document guard decides
 # by it, and the hooks of delivery name it first when their refusal names a commit.

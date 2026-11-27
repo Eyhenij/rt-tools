@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.42.0 · hooks/monitor-stream-guard.sh · 802a3341e5f5 · правится надстройкой, не здесь
+# rt-kit v0.42.1 · hooks/monitor-stream-guard.sh · 802a3341e5f5 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Monitor
 # Requires: checks/task-flow-script.mjs, checks/flow-monitor.mjs, hooks/decide.sh, hooks/hook-input.sh
 #

@@ -1,4 +1,4 @@
-// rt-kit v0.42.0 · checks/flow-monitor.mjs · b00b80a84a22 · правится надстройкой, не здесь
+// rt-kit v0.42.1 · checks/flow-monitor.mjs · b00b80a84a22 · правится надстройкой, не здесь
 /**
  * Whether a `Monitor` call wakes the turn on every step of a command whose end comes as a notice anyway.
  *

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.42.0 · checks/check-coupling.mjs · 4411340a4420 · правится надстройкой, не здесь
+// rt-kit v0.42.1 · checks/check-coupling.mjs · 4411340a4420 · правится надстройкой, не здесь
 /**
  * The coupling of the modules: a new cycle of modules or of blocks, a new import past an entry and
  * outgoing links grown past what the plan of the branch named are refused.

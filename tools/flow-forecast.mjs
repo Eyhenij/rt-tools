@@ -1,4 +1,4 @@
-// rt-kit v0.42.0 · checks/flow-forecast.mjs · e1b77004cc78 · правится надстройкой, не здесь
+// rt-kit v0.42.1 · checks/flow-forecast.mjs · e1b77004cc78 · правится надстройкой, не здесь
 /**
  * The forecast of refusals — the engine command `forecast`, run before the hooks are laid out.
  *

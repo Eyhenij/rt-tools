@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.42.0 · hooks/git-guard-delivery-merge.sh · 8f41ae66b034 · правится надстройкой, не здесь
+# rt-kit v0.42.1 · hooks/git-guard-delivery-merge.sh · 8f41ae66b034 · правится надстройкой, не здесь
 # The run on the tip of a PR being merged, its author and its base, for the delivery guard.
 #
 # NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The delivery guard

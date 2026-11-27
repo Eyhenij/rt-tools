@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.42.0 · hooks/role-calls.sh · 67e783b4ef41 · правится надстройкой, не здесь
+# rt-kit v0.42.1 · hooks/role-calls.sh · 67e783b4ef41 · правится надстройкой, не здесь
 # rt-hook: PostToolUse Agent|Task
 # rt-hook: UserPromptSubmit
 # rt-hook: SubagentStop
