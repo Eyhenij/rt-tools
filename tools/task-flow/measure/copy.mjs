@@ -1,4 +1,4 @@
-// rt-kit v0.41.1 · task-flow/measure/copy.mjs · eb56707ad407 · правится надстройкой, не здесь
+// rt-kit v0.42.0 · task-flow/measure/copy.mjs · eb56707ad407 · правится надстройкой, не здесь
 /**
  * The measurer «measure.copy» — where the working copy stands against the scenario.
  *

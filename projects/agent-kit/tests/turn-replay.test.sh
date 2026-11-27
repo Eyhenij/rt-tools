@@ -11,7 +11,8 @@
 # Хуки модели (`turn-judge.md`, `ask-judge.md`) модель здесь не зовёт: набор проверяет их текст, а
 # вердикты модели на тех же фикстурах сверяет `judge-replay.mjs`: судья без инструментов, сверка после.
 #
-# RT_REPLAY_LAID=1 гоняет те же ходы на разложенных хуках дерева и разложенном движке.
+# Дерево сценария, RT_REPLAY_LAID и RT_REPLAY_EDITION — в `turn-replay-tree.sh`, общем с набором дня.
+REPLAY_EDITION="${RT_REPLAY_EDITION:-}" REPLAY_LAID="${RT_REPLAY_LAID:-}"
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 echo "записанные ходы"
@@ -19,187 +20,12 @@ echo "записанные ходы"
 TESTS="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$TESTS/../../.." && pwd)"
 FIXTURES="$TESTS/fixtures/turn-replay"
-WORK="$(mktemp -d)"
+# Путь без ссылок: разложенный движок сверяет свой путь с путём запуска, а `/var` на macOS — ссылка.
+WORK="$(cd "$(mktemp -d)" && pwd -P)"
 cleanup() { rm -rf "$WORK"; }
 trap cleanup EXIT
 
-LAID="${RT_REPLAY_LAID:-}"
-[ -n "$LAID" ] && HOOKS="$ROOT/.claude/hooks"
-
-EPIC=RT-100-replay-epic
-TASK=RT-101-replay-task
-
-g() { git -C "$1" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false "${@:2}"; }
-
-put() {
-    mkdir -p "$1/$(dirname "$2")"
-    printf '%s\n' "$3" > "$1/$2"
-}
-
-commit() { g "$1" add -A docs >/dev/null 2>&1; g "$1" commit -q -m "$2" >/dev/null 2>&1; }
-
-# Двойник хостинга: модуль доски, который источник `source.host` берёт из `tools/` корня дерева.
-board_double() {
-    mkdir -p "$1/tools"
-    if [ -n "$LAID" ]; then
-        cp "$ROOT"/tools/*.mjs "$1/tools/" 2>/dev/null
-        cp -R "$ROOT/tools/task-flow" "$1/tools/" 2>/dev/null
-        rm -f "$1/tools/tree-assignment.mjs"
-    fi
-    cat > "$1/tools/board.mjs" <<'JS'
-import { readFileSync } from 'node:fs';
-const data = () => JSON.parse(readFileSync(new URL('./board-double.json', import.meta.url), 'utf8'));
-export const STATUS_OPTIONS = {};
-export function taskState(number) {
-    const card = data().issues[String(number)];
-    return card ? { exists: true, ...card } : { exists: false };
-}
-export function ghJson(args) {
-    const at = args.indexOf('--head');
-    if (at >= 0) return data().pulls[args[at + 1]] ?? [];
-    return args.includes('merged') ? (data().merged ?? []) : [];
-}
-JS
-    printf '%s\n' "$2" > "$1/tools/board-double.json"
-}
-
-# Карточки эпика 100 и задачи 101 с колонкой задачи и PR по веткам.
-cards() {
-    local pulls="${2:-}"
-    [ -n "$pulls" ] || pulls='{}'
-    printf '{"issues":{"100":{"open":true,"status":"in-progress","epic":null},"101":{"open":true,"status":"%s","epic":100}},"pulls":%s,"merged":[]}' "$1" "$pulls"
-}
-
-# PR ветки в ответе хостинга: ветка, номер, состояние, база, вершина, ревьюер — requested, reviewed
-# или none.
-pull() {
-    jq -n -c --arg head "$1" --argjson n "$2" --arg state "$3" --arg base "$4" --arg sha "$5" --arg who "$6" \
-        '{($head): [{number: $n, state: $state, baseRefName: $base, headRefOid: $sha,
-            reviewRequests: (if $who == "requested" then [{login: "reviewer"}] else [] end),
-            latestReviews: (if $who == "reviewed" then [{author: {login: "reviewer"}}] else [] end)}]}'
-}
-
-GRILL='# Разбор
-
-## Просьба владельца
-
-> переписать проверку хода
-
-## Вопросы и ответы
-
-- Что меняем? — проверку хода.
-
-**Behaviour:** unchanged — правка правил хода'
-
-PLAN='# План
-
-**Behaviour:** unchanged — правка правил хода
-
-## Этапы
-
-### 1. Проверка
-
-- **Шаги:**
-    1. Написать проверку
-       Проверка: `true` → exit 0
-    2. Запустить набор
-       Проверка: `echo ok` → `ok`'
-
-progress() { printf '# Ход работы\n\n## Шаги\n\n- [%s] 1.1 Написать проверку\n- [%s] 1.2 Запустить набор\n' "$1" "$2"; }
-
-mark() { put "$1" ".git/rt-kit/$2" "$3"; }
-# Одобрение плана с местом ответа: запись в каталоге записей копии и uuid её записи.
-export RT_FLOW_RECORDS_HOME="$WORK/records"
-approve_plan() {
-    local dir="$1" rec sha
-    rec="$RT_FLOW_RECORDS_HOME/$(cd "$dir" && pwd -P | sed 's#[/.]#-#g')/session.jsonl"
-    mkdir -p "$(dirname "$rec")"
-    printf '%s\n' '{"type":"user","uuid":"a1","toolUseResult":{"answers":{"Одобряешь?":"Одобряю план RT-101"}}}' > "$rec"
-    sha="$(g "$dir" log --diff-filter=A --format=%H -- "docs/tasks/$TASK/plan.md" | tail -1)"
-    mark "$dir" "approval/$TASK.json" "{\"answer\":\"Одобряю план RT-101\",\"plan\":\"$sha\",\"place\":{\"record\":\"$rec\",\"uuid\":\"a1\"}}"
-}
-
-# Дерево задачи эпика в названном состоянии сценария. Печатает путь.
-#   request   ветка без разбора — состояние 1
-#   taken     разбор, договорённость, задача — состояние 5 «задача-взята»
-#   stage     план одобрен, шаг 1.2 идёт — состояние 7 «этап-идёт»
-#   archived  шаги сделаны, папка разобрана, ветка не отправлена — состояние 10 «папка-разобрана»
-#   handed    ветка на сервере, PR с ревьюером — состояние 11 «работа-отдана»
-#   epicEnd   обе задачи эпика лежат в ветке эпика, PR эпика открыт — конец сценария
-#   outside   ветка без номера задачи, эпика копии нет — вне сценария
-build_tree() {
-    local dir="$WORK/$1" origin="$WORK/$1.origin" sha pulls
-    mkdir -p "$dir"
-    git init -q --bare "$origin"
-    git -C "$dir" init -q
-    git -C "$dir" checkout -q -b main
-    put "$dir" package.json '{"name":"probe"}'
-    put "$dir" docs/plans/replay-epic.md "# Эпик
-
-**Эпик:** RT-100
-**Ветка эпика:** \`$EPIC\`
-
-| # | Задача | Состояние |
-| - | ------ | --------- |
-| 1 | RT-101 — первая задача | в работе |
-| 2 | RT-102 — вторая задача | ждёт |"
-    g "$dir" add -A >/dev/null 2>&1
-    g "$dir" commit -q -m 'основание' >/dev/null 2>&1
-    g "$dir" remote add origin "$origin"
-    g "$dir" push -q origin main >/dev/null 2>&1
-    g "$dir" branch "$EPIC"
-    g "$dir" push -q origin "$EPIC" >/dev/null 2>&1
-    board_double "$dir" "$(cards in-progress)"
-    if [ "$1" = outside ]; then
-        g "$dir" checkout -q -b scratch-notes
-        printf '%s' "$dir"
-        return
-    fi
-    g "$dir" checkout -q -b "$TASK"
-    [ "$1" = request ] && { printf '%s' "$dir"; return; }
-
-    put "$dir" "docs/tasks/$TASK/grill.md" "$GRILL"
-    commit "$dir" 'docs: разбор'
-    [ "$1" = taken ] && { printf '%s' "$dir"; return; }
-
-    put "$dir" "docs/tasks/$TASK/plan.md" "$PLAN"
-    put "$dir" "docs/tasks/$TASK/progress.md" "$(progress x '>')"
-    commit "$dir" 'docs: план'
-    approve_plan "$dir"
-    [ "$1" = stage ] && { printf '%s' "$dir"; return; }
-
-    put "$dir" "docs/tasks/$TASK/progress.md" "$(progress x x)"
-    commit "$dir" 'docs: шаги сделаны'
-    mark "$dir" "steps/$TASK/1.1.json" '{"matched":true}'
-    mark "$dir" "steps/$TASK/1.2.json" '{"matched":true}'
-    g "$dir" rm -r -q "docs/tasks/$TASK" >/dev/null 2>&1
-    put "$dir" docs/archive/RT-101.md '# RT-101 — проверка хода'
-    commit "$dir" 'docs: папка задачи разобрана'
-    [ "$1" = archived ] && { printf '%s' "$dir"; return; }
-
-    g "$dir" push -q origin "$TASK" >/dev/null 2>&1
-    sha="$(g "$dir" rev-parse HEAD)"
-    if [ "$1" = handed ]; then
-        pulls="$(pull "$TASK" 11 OPEN "$EPIC" "$sha" requested)"
-        board_double "$dir" "$(cards review "$pulls")"
-        printf '%s' "$dir"
-        return
-    fi
-
-    # Конец эпика: вторая задача тоже влита в ветку эпика, PR эпика в главную ветку открыт.
-    g "$dir" checkout -q -b RT-102-second-task "$EPIC"
-    put "$dir" docs/archive/RT-102.md '# RT-102 — вторая задача'
-    commit "$dir" 'docs: вторая задача'
-    g "$dir" push -q origin RT-102-second-task >/dev/null 2>&1
-    g "$dir" checkout -q "$EPIC"
-    g "$dir" merge -q --no-edit "$TASK" RT-102-second-task >/dev/null 2>&1
-    g "$dir" push -q origin "$EPIC" >/dev/null 2>&1
-    g "$dir" checkout -q "$TASK"
-    pulls="$(jq -n --argjson a "$(pull "$TASK" 11 MERGED "$EPIC" "$sha" reviewed)" \
-        --argjson b "$(pull "$EPIC" 20 OPEN main "$sha" none)" '$a + $b')"
-    board_double "$dir" "$(cards done "$pulls")"
-    printf '%s' "$dir"
-}
+. "$TESTS/turn-replay-tree.sh"
 
 for tree in request taken stage archived handed epicEnd outside; do
     build_tree "$tree" >/dev/null
@@ -219,8 +45,6 @@ stop_input() {
 }
 
 run_hook() { (cd "$WORK/$2" && CLAUDE_PROJECT_DIR="$WORK/$2" "$HOOKS/turn-exit-guard.sh" <<< "$1" 2>/dev/null); }
-
-engine_of() { [ -n "$LAID" ] && printf '%s' "$WORK/$1/tools/task-flow-script.mjs" || printf '%s' "$ENGINE"; }
 
 # Ход держится, и отказ называет каждое из слов.
 hold() {
@@ -406,10 +230,25 @@ got="$(dead_replay "echo 'Invalid API key · Please run /login'; exit 1")"
 report "replay: SC-AK-1941 — судья не запустился: ответ назван" \
     "$(printf '%s' "$got" | grep -c '^не запустился: .*a.json: exit 1 · Invalid API key')" 1
 report "replay: SC-AK-1941 — судья не запустился: второго вызова нет" "$(grep -c вызов "$J/calls")" 1
-report "replay: SC-AK-1941 — судья не запустился: пустой ответ с кодом 0 — тоже" \
-    "$(dead_replay 'exit 0' | grep -c '^не запустился: .*an empty answer')" 1
-report "replay: SC-AK-1941 — ответ без вердикта — по-прежнему расхождение" \
-    "$(dead_replay "printf 'не знаю'" | jq -r 'map(.ok) | any')" false
+: > "$J/calls"; report "replay: SC-AK-1941 — судья не запустился: пустой ответ с кодом 0 дважды — тоже" \
+    "$(dead_replay 'exit 0' 2>/dev/null | grep -c '^не запустился: .*an empty answer')" 1
+report "replay: SC-AK-1941 — пустой ответ с кодом 0 спрошен ещё раз, один" "$(grep -c вызов "$J/calls")" 2
+report "replay: SC-AK-1941 — ответ без вердикта дважды — по-прежнему расхождение" \
+    "$(dead_replay "printf 'не знаю'" 2>/dev/null | jq -r 'map(.ok) | any')" false
+: > "$J/calls"; report "replay: SC-AK-1941 — ответ без вердикта спрошен ещё раз, строка retry на stderr" \
+    "$(dead_replay "printf 'не знаю'" 2>&1 >/dev/null | grep -c '^retry ')/$(grep -c вызов "$J/calls")" '2/4'
+: > "$J/calls"; rm -f "$J/calls.1"; report "replay: SC-AK-1941 — после ответа без вердикта засчитан второй ответ" \
+    "$(dead_replay "[ -s '$J/calls.1' ] && echo block || { echo 1 > '$J/calls.1'; echo 'не знаю'; }" 2>/dev/null | jq -r 'map(.ok) | all')/$(grep -c вызов "$J/calls")" 'true/3'
+: > "$J/calls"; report "replay: SC-AK-1941 — неверный вердикт не спрошен ещё раз" \
+    "$(dead_replay 'printf allow' | jq -r 'map(.ok) | any')/$(grep -c вызов "$J/calls")" 'false/2'
+printf '%s\n' '{ "a.json": { "judge": "block", "ask": "block" } }' > "$J/mixed.json"
+KEYED="$(RT_JUDGE_RUNNER='cat >/dev/null; echo block' judge_js "console.log(j.replay({root:'$J', fixtures:'$J/fixtures', hooksDir:'$J/hooks', expectedFile:'$J/mixed.json', hook:'ask'}).map((r) => r.key).join(' '))")"
+report "replay: SC-AK-2020 — ключ оставляет пары одного хука" "$KEYED" ask
+RT_JUDGE_RUNNER='cat >/dev/null; echo block' node "$JUDGE" --key asks > "$J/empty.txt" 2>&1
+report "replay: SC-AK-2020 — ключ без пар — не зелёный прогон" "$?/$(grep -c '^judge replay: 0 of 0 match' "$J/empty.txt")" '1/1'
+RT_JUDGE_RUNNER='cat >/dev/null; echo block' node "$JUDGE" --key --model haiku > "$J/novalue.txt" 2>&1
+report "replay: SC-AK-2020 — флаг без значения отказан до вызовов" "$?/$(grep -c 'needs a value' "$J/novalue.txt")" '1/1'
+report "replay: SC-AK-2020 — хук меню пускает влитие ветки задачи по ключу" "$(has "$ASK_JUDGE" 'wins over the item of a walk around a check only')/$(has "$ASK_JUDGE" 'also only records the decision')" есть/есть
 RT_JUDGE_RUNNER="cat > /dev/null; echo 'Please run /login'; exit 1" node "$JUDGE" > "$J/out.txt" 2>&1
 report "replay: SC-AK-1941 — судья не запустился: код вызова 2, и ответ напечатан" "$?/$(grep -c 'Please run /login' "$J/out.txt")" '2/1'
 

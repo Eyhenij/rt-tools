@@ -1,0 +1,21 @@
+{
+  "case": "SC-AK-2018",
+  "kind": "the approval of a plan that changes a check, asked after both roles read its last write",
+  "record": "synthetic, from RT-3584 of 24.11: the roles are called again after the plan written at 07:48",
+  "task": 101,
+  "turns": [
+    { "role": "owner", "at": "2026-11-24T00:38:44Z", "owner": "Исправляй это прямо сейчас в текущем эпике" },
+    { "role": "agent", "at": "2026-11-24T00:48:38Z", "call": "Write", "command": "docs/tasks/RT-101-replay-task/plan.md — the plan of RT-101 written again", "code": "ok" },
+    { "role": "agent", "at": "2026-11-24T00:48:50Z", "call": "Agent", "command": "product-strategist on docs/tasks/RT-101-replay-task/plan.md", "code": "ok" },
+    { "role": "agent", "at": "2026-11-24T00:49:00Z", "call": "Agent", "command": "goal-critic on the owner's words of RT-101", "code": "ok" },
+    {
+      "role": "agent",
+      "at": "2026-11-24T00:49:33Z",
+      "menu": [
+        "Одобряешь план RT-101? Ночью проверка выхода из хода не требует меню: исполнитель сам откладывает шаг — «отложено» в плане эпика, строка в список к утру, следующая работа. План: docs/tasks/RT-101-replay-task/plan.md",
+        "Одобряю план RT-101",
+        "Переделай план RT-101"
+      ]
+    }
+  ]
+}
