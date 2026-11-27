@@ -10,7 +10,24 @@
 - **Живая проверка:** витрина в закреплённом Chrome, история `molecules-forms-fieldextras--floating-label`. Полей 24.
   Слой `:before` есть ровно у 6 обведённых полей набора Material, у остальных 18 его нет. При фокусе рамка слоя
   `rgb(66, 132, 215)` толщиной 1px, в ней вырез под подписью.
+- **Живая проверка после первого круга:** та же история, первое обведённое поле набора Material. Цвет рамки слоя в покое
+  `rgb(116, 116, 116)`, под указателем `rgb(24, 24, 24)`, оба равны токенам. Поле с ошибкой в фокусе: рамка и кольцо
+  `rgb(235, 80, 85)`. Вид без рамки включён классом на том же поле: в покое рамка прозрачная, в фокусе
+  `rgb(66, 132, 215)`, с ошибкой `rgb(235, 80, 85)`. Дополнение витрины, имитирующее состояния, дописывает к правилу
+  без рамки варианты, совпадающие и при настоящем фокусе. На время измерения в правиле оставлен исходный селектор.
 - **PR:** not open yet
+
+## Review
+
+- **Первый круг** (`qa-engineer`, `goal-critic`): расхождений каскада в ките нет, цель достигнута, серьёзных находок нет.
+  - Исправлено: на включатель рамки не было теста. В `SC-UKV-950` добавлены четыре утверждения. С выключенным
+    включателем тест красный, с возвращённым — 24 из 24.
+  - Проверено вживую: у снимков нет наведения, ошибки с фокусом и вида без рамки.
+  - В PR: правила `:before` теперь действуют на любое поле с подписью. Слой появляется только с включателем, но свои
+    объявления `::before` приложения могут получить положение и рамку кита.
+  - В PR: назначение файла разбора правил по RT-3715 и малый выигрыш в gzip.
+- `qa-engineer` запускал собственные безголовые браузеры. Проверка запретила следующий его запуск, а свой браузер он
+  завершил командой `pkill`. Оба действия против правил дерева, его цифрам из браузера доказательством не служить.
 
 ## Steps
 
@@ -42,3 +59,53 @@
   загрузок: его надо решить до RT-3716.
 - Пробное приложение: `app-probe5.mjs` в scratchpad. Копии для старых состояний сняты, скрипту нужны только пакет 0.51.0
   и сборка этой ветки.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/eyhenij/WebstormProjects/rt-tools/.claude/worktrees/kit-presets
+**Branch:** RT-3647-kit-input-styles
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этапы-кончились`
+- **Stage:** 2 of 2 — Измерение приложения
+- **Next step:** круг ревью, набор проверок, PR.
+- **PR:** not open yet
+
+The progress in full — `docs/tasks/RT-3647-kit-input-styles/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+ M projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts
+```
+
+### Commits over the main branch
+
+```
+0af67ab16 docs(rt:ui-kit-v2): задача RT-3715 отмечена влитой в плане эпика (RT-3647)
+0b8833402 Merge remote-tracking branch 'origin/RT-3694-kit-weight-remainder' into RT-3647-kit-input-styles
+7e20694d3 docs(rt:ui-kit-v2): живая проверка стилей input (RT-3647)
+d08624e89 [RT-3715] Кеш значка без shareReplay: приложение легче на 2015 байт (#3718)
+2be2626a1 refactor(rt:ui-kit-v2): стили input без повторов признака набора (RT-3647)
+414de5263 docs(rt:ui-kit-v2): ход работы и согласие RT-3647 (RT-3647)
+bb970c5fb docs(rt:ui-kit-v2): разбор и план RT-3647, разбор правил по RT-3715 (RT-3647)
+be67e5d07 docs(rt:ui-kit-v2): разбор папки задачи RT-3715 (RT-3715)
+70c740620 test(rt:ui-kit-v2): пробел в названии теста после второго круга ревью (RT-3715)
+75d893040 chore(rt:agent-kit): убраны просроченные записи архива (RT-3715)
+2ecb3d69c docs(rt:ui-kit-v2): задача RT-3682 отмечена влитой в плане эпика (RT-3715)
+d0e933377 Merge remote-tracking branch 'origin/RT-3694-kit-weight-remainder' into RT-3715-kit-weight-outside-bytes
+5dbd10097 fix(rt:ui-kit-v2): кеш значка без нового класса rxjs, после второго круга ревью (RT-3715)
+b70995939 fix(rt:ui-kit-v2): значок рисуется до завершения потока запроса, после первого круга ревью (RT-3715)
+a6fa9d5b3 docs(rt:ui-kit-v2): согласие без вида и живая проверка значков (RT-3715)
+ab31215da docs(rt:ui-kit-v2): вес приложения после замены кеша значка и без ленивых загрузок (RT-3715)
+3b081ea15 refactor(rt:ui-kit-v2): кеш файла значка держится на AsyncSubject (RT-3715)
+b169ca4a2 docs(rt:ui-kit-v2): ход работы RT-3715, начат этап 1 (RT-3715)
+d90ed439d [RT-3682] docs(rt:ui-kit-v2): причины роста веса кита против 0.51.0 и решения по ним (#3717)
+9665bab53 docs(rt:ui-kit-v2): разбор и план RT-3715, разбор правил по RT-3682 (RT-3715)
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.

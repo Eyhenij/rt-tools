@@ -76,6 +76,12 @@ describe('поле материального набора против поля
         expect(SELECT).toContain(`.rt-select${preset} .rt-select__floating-label`);
         expect(INPUT_LABEL).toContain(`.rt-input--floating${preset}:not(.rt-input--appearance--fill`);
         expect(INPUT_LABEL).toContain(`.rt-input${preset} .rt-input__floating-label`);
+        // Слой рамки поля ввода пишется без признака набора: его включает только обведённое правило набора.
+        const boxed: string = `.rt-input--floating${preset}:not(.rt-input--appearance--fill, .rt-input--appearance--pill, .rt-input--readonly) {`;
+        expect(ruleBody(INPUT_LABEL, boxed)).toContain("--rt-private-input-outline: ''");
+        expect(ruleBody(INPUT_LABEL, '.rt-input--floating {')).toContain('--rt-private-input-outline: none');
+        expect(ruleBody(INPUT_LABEL, '.rt-input--floating:before {')).toContain('content: var(--rt-private-input-outline);');
+        expect(INPUT_LABEL.match(/--rt-private-input-outline:/g)).toHaveLength(2);
         expect(`${SELECT} ${INPUT_LABEL} ${INPUT}`).not.toMatch(/:is\(\.rt-preset-material, \[data-preset=material\]\) \.rt-/);
     });
 
