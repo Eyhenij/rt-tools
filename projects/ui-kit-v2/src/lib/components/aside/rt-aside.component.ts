@@ -207,6 +207,14 @@ export class RtAsideComponent {
               }
     );
 
+    /**
+     * Шапка шторки: место для шапки панели. У панели без шапки кита шторка рисует свою шапку с «×» —
+     * в шторке асайда «×» стоит всегда.
+     */
+    protected readonly sheetHeader: Signal<TemplateRef<IRtSheetTemplateContext> | null> = computed(
+        (): TemplateRef<IRtSheetTemplateContext> | null => (this.header() === undefined ? null : this.sheetSlot())
+    );
+
     /** Подвал шторки: только когда в подвале панели осталась кнопка, иначе шторка без подвала. */
     protected readonly sheetFooter: Signal<TemplateRef<IRtSheetTemplateContext> | null> = computed(
         (): TemplateRef<IRtSheetTemplateContext> | null => (this.footer()?.sheetFilled() === true ? this.sheetSlot() : null)
@@ -319,7 +327,10 @@ export class RtAsideComponent {
             ?.asks()
             .pipe(takeUntilDestroyed())
             .subscribe((): void => this.bottomSheet()?.ask());
+        // Панель знает, что её рисует `<rt-aside>`: без него служба открывает её сбоку.
+        const leave: (() => void) | undefined = this.#sheet?.addAside();
         inject(DestroyRef).onDestroy((): void => {
+            leave?.();
             this.#mainAction.restore();
             this.#sheetTabs.detach();
             this.#releaseFocus();
@@ -377,7 +388,9 @@ export class RtAsideComponent {
         const panel: HTMLElement | null = this.#sheetPanel();
         const target: HTMLElement | null =
             panel?.querySelector<HTMLElement>('[cdkFocusInitial]') ??
-            panel?.querySelector<HTMLElement>('[qa-dataid="aside-sheet-close"] button, [qa-dataid="bottom-sheet-back"] button') ??
+            panel?.querySelector<HTMLElement>(
+                '[qa-dataid="aside-sheet-close"] button, [qa-dataid="bottom-sheet-close"] button, [qa-dataid="bottom-sheet-back"] button'
+            ) ??
             null;
         target?.focus();
     }

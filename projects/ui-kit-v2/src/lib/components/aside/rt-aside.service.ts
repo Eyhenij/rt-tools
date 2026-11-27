@@ -1,7 +1,18 @@
 import { ComponentType, Overlay, OverlayConfig, OverlayRef, PositionStrategy } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { DOCUMENT } from '@angular/common';
-import { inject, untracked, DestroyRef, Injector, Renderer2, RendererFactory2, Signal, Service, StaticProvider } from '@angular/core';
+import {
+    inject,
+    untracked,
+    ComponentRef,
+    DestroyRef,
+    Injector,
+    Renderer2,
+    RendererFactory2,
+    Signal,
+    Service,
+    StaticProvider,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { EMPTY, exhaustMap, map, merge, mergeMap, Observable, of, Subject, Subscriber, takeUntil } from 'rxjs';
@@ -105,6 +116,12 @@ interface IRtAsideOpenContext {
     closeOnEscape: boolean;
 }
 
+/** Класс оверлея шторки телефона. */
+const SHEET_PANEL_CLASS: string = 'rt-aside-overlay--sheet';
+/** Класс показанной подложки панели сбоку. */
+const BACKDROP_VISIBLE_CLASS: string = 'rt-aside-backdrop--visible';
+const ENTERING_CLASS: string = 'rt-aside-overlay--entering';
+
 /**
  * Программный API для открытия side-sheet поверх CDK Overlay.
  *
@@ -165,7 +182,13 @@ export class RtAsideService {
        забытый вызов отличался бы от остальных. */
     readonly #closeOnEscape: boolean = rtKitDefault('aside', (it: IRtKitConfig.Aside): boolean | undefined => it.closeOnEscape, true);
 
+    /** Служба жива: смена вида после её уничтожения обратилась бы к снятому инжектору. */
+    #alive: boolean = true;
+
     constructor() {
+        inject(DestroyRef).onDestroy((): void => {
+            this.#alive = false;
+        });
         // Per-open close-подписки (backdrop / ESC) живут в одном постоянном
         // конструкторном стриме: open() эмитит контекст открытия, mergeMap
         // подписывает event-стримы конкретного OverlayRef до его dispose
@@ -182,6 +205,10 @@ export class RtAsideService {
                     // `closeRequests()` хэндла, будь то `disableClose` или выключенный жест.
                     const backdropClose$: Observable<() => void> = openContext.overlayRef.backdropClick().pipe(
                         map((): (() => void) => (): void => {
+                            // Скрытая подложка под шторкой не закрывает: полосу над шторкой ведёт шторка.
+                            if (openContext.sheet.active()) {
+                                return;
+                            }
                             this.#answerCloseGesture(openContext, 'backdrop', openContext.closeOnBackdropClick);
                         })
                     );
@@ -258,7 +285,29 @@ export class RtAsideService {
         });
 
         const portal: ComponentPortal<TComponent> = new ComponentPortal<TComponent>(component, null, injector);
-        overlayRef.attach(portal);
+        const content: ComponentRef<TComponent> = overlayRef.attach(portal);
+        // Шторку рисует `<rt-aside>`. Компонент без него остался бы на телефоне без затемнения, свайпа
+        // и Escape: такая панель открывается сбоку, как до шторки. `<rt-aside>`, нарисованный позже —
+        // под `@if` с данными или `@defer`, — возвращает панель в шторку, снятый — снова ставит сбоку.
+        // Закрываемую панель вид не меняет: он сбил бы её уход.
+        if (sheet.active()) {
+            content.changeDetectorRef.detectChanges();
+            const present: boolean = sheet.hasAside();
+            if (!present) {
+                this.#openBeside(overlayRef, config, sheet);
+            }
+            sheet.watchAside(present, (arrived: boolean): void => {
+                if (!this.#alive || !overlayRef.hasAttached()) {
+                    return;
+                }
+                if (arrived) {
+                    this.#openAsSheet(overlayRef, config, sheet);
+                } else {
+                    this.#openBeside(overlayRef, config, sheet);
+                    this.#showBeside(overlayRef);
+                }
+            });
+        }
 
         // Slide-in: на следующий paint снимаем --entering и добавляем --open.
         // CSS transition (см. rt-aside.component.scss) сделает анимацию.
@@ -269,11 +318,12 @@ export class RtAsideService {
             if (!overlayRef.hasAttached()) {
                 return;
             }
-            this.#renderer.removeClass(overlayRef.overlayElement, 'rt-aside-overlay--entering');
+            this.#renderer.removeClass(overlayRef.overlayElement, ENTERING_CLASS);
             this.#renderer.addClass(overlayRef.overlayElement, 'rt-aside-overlay--open');
             const backdropEl: HTMLElement | null = overlayRef.backdropElement;
-            if (backdropEl !== null) {
-                this.#renderer.addClass(backdropEl, 'rt-aside-backdrop--visible');
+            // У шторки затемнение своё: подложка оверлея остаётся скрытой.
+            if (backdropEl !== null && !sheet.active()) {
+                this.#renderer.addClass(backdropEl, BACKDROP_VISIBLE_CLASS);
             }
             sheet.show(true);
         });
@@ -292,7 +342,7 @@ export class RtAsideService {
         const panelClasses: string[] = [
             'rt-aside-overlay',
             `rt-aside-overlay--position-${position}`,
-            'rt-aside-overlay--entering',
+            ENTERING_CLASS,
             ...materialPresetClassesOfFocus(this.#doc),
         ];
 
@@ -307,19 +357,70 @@ export class RtAsideService {
     }
 
     /**
-     * Шторка телефона: оверлей во всё окно без своей подложки и блокировки. Затемнение, полосу над
-     * шторкой и блокировку прокрутки держит сама шторка кита, край и ширина панели к ней не относятся.
+     * Шторка телефона: оверлей во всё окно без блокировки и со скрытой подложкой. Затемнение, полосу
+     * над шторкой и блокировку прокрутки держит сама шторка кита, край и ширина панели к ней не
+     * относятся. Подложка нужна панели без `<rt-aside>`: она переходит на вид сбоку.
      */
     #sheetConfig<TData>(config: IRtAsideConfig<TData> | undefined): OverlayConfig {
-        const panelClasses: string[] = ['rt-aside-overlay', 'rt-aside-overlay--sheet', ...materialPresetClassesOfFocus(this.#doc)];
+        const panelClasses: string[] = ['rt-aside-overlay', SHEET_PANEL_CLASS, ...materialPresetClassesOfFocus(this.#doc)];
 
         return {
             positionStrategy: this.#overlay.position().global().left('0').top('0'),
             scrollStrategy: this.#overlay.scrollStrategies.noop(),
-            hasBackdrop: false,
+            // Класс подложки приложения здесь не читается: под шторкой он дал бы второе затемнение.
+            hasBackdrop: true,
+            backdropClass: 'rt-aside-backdrop',
             panelClass: config?.panelClass !== undefined ? [...panelClasses, ...this.#toArray(config.panelClass)] : panelClasses,
             disposeOnNavigation: config?.disposeOnNavigation ?? true,
         };
+    }
+
+    /** Панель без `<rt-aside>` на телефоне: оверлей шторки переходит на вид сбоку до первого кадра. */
+    #openBeside<TData>(overlayRef: OverlayRef, config: IRtAsideConfig<TData> | undefined, sheet: RtAsideSheet): void {
+        sheet.activate(false);
+        const side: OverlayConfig = this.#sideConfig(config);
+        overlayRef.removePanelClass(SHEET_PANEL_CLASS);
+        overlayRef.addPanelClass(side.panelClass ?? []);
+        const backdropEl: HTMLElement | null = overlayRef.backdropElement;
+        if (backdropEl !== null && config?.backdropClass !== undefined) {
+            this.#toArray(config.backdropClass).forEach((name: string): void => this.#renderer.addClass(backdropEl, name));
+        }
+        if (side.positionStrategy !== undefined) {
+            overlayRef.updatePositionStrategy(side.positionStrategy);
+        }
+        if (side.scrollStrategy !== undefined) {
+            overlayRef.updateScrollStrategy(side.scrollStrategy);
+        }
+    }
+
+    /** Панель ушла сбоку после первого кадра: кадр, который её показывает, уже прошёл. */
+    #showBeside(overlayRef: OverlayRef): void {
+        this.#renderer.removeClass(overlayRef.overlayElement, ENTERING_CLASS);
+        const backdropEl: HTMLElement | null = overlayRef.backdropElement;
+        if (backdropEl !== null) {
+            this.#renderer.addClass(backdropEl, BACKDROP_VISIBLE_CLASS);
+        }
+    }
+
+    /** `<rt-aside>` встал после первой отрисовки: панель сбоку возвращается в шторку. */
+    #openAsSheet<TData>(overlayRef: OverlayRef, config: IRtAsideConfig<TData> | undefined, sheet: RtAsideSheet): void {
+        const sheetConfig: OverlayConfig = this.#sheetConfig(config);
+        overlayRef.removePanelClass(`rt-aside-overlay--position-${config?.position ?? 'right'}`);
+        overlayRef.addPanelClass(SHEET_PANEL_CLASS);
+        const backdropEl: HTMLElement | null = overlayRef.backdropElement;
+        if (backdropEl !== null) {
+            this.#renderer.removeClass(backdropEl, BACKDROP_VISIBLE_CLASS);
+            if (config?.backdropClass !== undefined) {
+                this.#toArray(config.backdropClass).forEach((name: string): void => this.#renderer.removeClass(backdropEl, name));
+            }
+        }
+        if (sheetConfig.positionStrategy !== undefined) {
+            overlayRef.updatePositionStrategy(sheetConfig.positionStrategy);
+        }
+        if (sheetConfig.scrollStrategy !== undefined) {
+            overlayRef.updateScrollStrategy(sheetConfig.scrollStrategy);
+        }
+        sheet.activate(true);
     }
 
     /** Жест закрытия: закрывает панель, если жест включён и не держит `disableClose`, иначе сообщает об отказе. */
@@ -333,13 +434,18 @@ export class RtAsideService {
 
     /**
      * Просьба шторки телефона закрыться. Выключенный жест и панель под `disableClose` отказывают до
-     * вопроса, и отказ свайпа сообщается как отказ подложки. «×» идёт дорогой стрелки и не
-     * отказывает. Признак несохранённого на хэндле сначала спрашивает внизу экрана: «Сохранить и
-     * закрыть» сообщает просьбу записи и оставляет панель открытой, «Закрыть без сохранения»
-     * закрывает, «Остаться» — ничего.
+     * вопроса, и отказ свайпа сообщается как отказ подложки. «×» шапки кита идёт дорогой стрелки и
+     * не отказывает: под `disableClose` кнопка выхода подвала спрятана, и «×» — её место. «×» шторки
+     * у панели без шапки кита дороги не несёт: кнопки там стоят в подвале, и под `disableClose` он
+     * отказывает, как стрелки нет и шире телефона. Признак несохранённого на хэндле сначала
+     * спрашивает внизу экрана: «Сохранить и закрыть» сообщает просьбу записи и оставляет панель
+     * открытой, «Закрыть без сохранения» закрывает, «Остаться» — ничего.
      */
     #answerSheet(openContext: IRtAsideOpenContext, request: IRtAsideSheetCloseRequest): Observable<() => void> {
         const close: () => void = request.road ?? ((): void => openContext.asideRef.close());
+        if (request.gesture === 'dismiss' && request.road === null && openContext.asideRef.disableClose()) {
+            return of((): void => undefined);
+        }
         if (request.gesture !== 'dismiss') {
             const enabled: boolean = request.gesture === 'escape' ? openContext.closeOnEscape : openContext.closeOnBackdropClick;
             if (!enabled || openContext.asideRef.disableClose()) {

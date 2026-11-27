@@ -221,6 +221,65 @@ describe('RtBottomSheetComponent', (): void => {
 
             expect((qa(fixture, 'bottom-sheet-panel')?.nativeElement as HTMLElement).style.transform).toBe('');
         });
+
+        it('SC-UKV-1921 — прерванный системой жест возвращает панель и не закрывает шторку следующим касанием', (): void => {
+            const fixture: ComponentFixture<BottomSheetHostComponent> = createRtFixture(BottomSheetHostComponent);
+
+            qa(fixture, 'bottom-sheet-handle')?.nativeElement.dispatchEvent(pointer('pointerdown', 0));
+            fixture.detectChanges();
+            document.dispatchEvent(pointer('pointermove', DRAG_DISMISS_THRESHOLD_PX + 1));
+            fixture.detectChanges();
+            document.dispatchEvent(pointer('pointercancel', 0));
+            fixture.detectChanges();
+
+            const panel: HTMLElement = qa(fixture, 'bottom-sheet-panel')?.nativeElement as HTMLElement;
+            expect(panel.classList.contains('rt-bottom-sheet__panel--dragging')).toBe(false);
+            expect(panel.style.transform).toBe('');
+
+            // Касание где угодно после прерванного жеста — не конец перетаскивания.
+            document.dispatchEvent(pointer('pointermove', DRAG_DISMISS_THRESHOLD_PX + 50));
+            document.dispatchEvent(pointer('pointerup', 0));
+            fixture.detectChanges();
+
+            expect(fixture.componentInstance.lastChange).toBeNull();
+        });
+
+        it('SC-UKV-1921 — второе касание ручки посреди жеста не сбрасывает сдвиг', (): void => {
+            const fixture: ComponentFixture<RtBottomSheetComponent> = setup();
+            const handle: HTMLElement = qa(fixture, 'bottom-sheet-handle')?.nativeElement as HTMLElement;
+
+            handle.dispatchEvent(pointer('pointerdown', 0));
+            fixture.detectChanges();
+            document.dispatchEvent(pointer('pointermove', 60));
+            fixture.detectChanges();
+            handle.dispatchEvent(pointer('pointerdown', 50));
+            document.dispatchEvent(pointer('pointermove', 60));
+            fixture.detectChanges();
+
+            expect((qa(fixture, 'bottom-sheet-panel')?.nativeElement as HTMLElement).style.transform).toBe('translateY(60px)');
+
+            document.dispatchEvent(pointer('pointerup', 0));
+            fixture.detectChanges();
+        });
+
+        it('SC-UKV-1921 — шторка, убранная посреди жеста, не слушает касания документа', (): void => {
+            const fixture: ComponentFixture<RtBottomSheetComponent> = setup();
+            const removed: string[] = [];
+            const remove: typeof document.removeEventListener = document.removeEventListener.bind(document);
+            jest.spyOn(document, 'removeEventListener').mockImplementation(
+                (type: string, ...rest: [EventListenerOrEventListenerObject, (boolean | EventListenerOptions)?]): void => {
+                    removed.push(type);
+                    remove(type, ...rest);
+                }
+            );
+
+            qa(fixture, 'bottom-sheet-handle')?.nativeElement.dispatchEvent(pointer('pointerdown', 0));
+            fixture.detectChanges();
+            fixture.destroy();
+
+            expect(removed).toEqual(expect.arrayContaining(['pointermove', 'pointerup', 'pointercancel']));
+            jest.restoreAllMocks();
+        });
     });
 
     describe('проекция', (): void => {

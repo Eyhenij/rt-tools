@@ -155,7 +155,10 @@ export class RtAsideHeaderComponent {
      */
     public readonly badges: InputSignal<readonly IRtAsideHeader.Badge[]> = input<readonly IRtAsideHeader.Badge[]>([]);
 
-    /** Показывать кнопку закрытия в углу заголовка. Дефолт `true`. */
+    /**
+     * Показывать стрелку закрытия в углу заголовка. Дефолт `true`. В шторке телефона «×» стоит всегда,
+     * и этот вход его не прячет.
+     */
     public readonly closable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
@@ -222,8 +225,18 @@ export class RtAsideHeaderComponent {
      * Панель маршрута спрашивает сама, получив `dismiss`.
      */
     protected onSheetClose(): void {
-        if (this.#sheet === null || this.#asideRef === null) {
+        if (this.#sheet === null) {
             this.onDismiss();
+            return;
+        }
+        if (this.#asideRef === null) {
+            // Панель маршрута: шапка без стрелки могла не слушать `dismiss`, и «×» закрывает её как
+            // свайп — просьбой к рамке.
+            if (this.closable()) {
+                this.onDismiss();
+            } else {
+                this.#sheet.requestClose('dismiss');
+            }
             return;
         }
         this.#sheet.requestClose('dismiss', (): void => this.onDismiss());

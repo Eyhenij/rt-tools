@@ -152,6 +152,7 @@ export class RtAsideRef<T = unknown> {
     }
 
     #emit(result: T | undefined): void {
+        this.#sheet?.stopWatchingAside();
         this.#afterClosedSource.next(result);
         this.#afterClosedSource.complete();
         this.#closeRequestsSource.complete();

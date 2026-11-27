@@ -427,3 +427,13 @@ stays open and answers touches, and the error goes to the application's error ha
 
 Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-confirm-lazy.spec.ts`,
 `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-confirm-failure.spec.ts`.
+
+### SC-UKV-1921 — a swipe the system cancelled leaves the sheet open
+
+Given an open sheet the person drags down past the threshold
+When the system cancels the gesture — a call, an edge gesture of the system
+Then the panel returns to its place, the sheet stays open, and the next touch anywhere does not close
+it; a sheet removed in the middle of a drag stops listening to the touches of the page, and a second
+finger on the handle in the middle of a drag neither resets nor takes over the gesture
+
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.component.spec.ts`.

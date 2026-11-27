@@ -76,7 +76,7 @@ and «Сохранить и закрыть», and «Остаться» in a card
   by the system it appears and leaves without sliding.
 - **The panel sheet has the header of a sheet: the handle, «×» on the left, the title in the
   centre, the main action on the right.** The back arrow is not drawn: «×» stands in its place and
-  runs the road of the arrow. A header that switched the arrow off draws no «×» either. The title
+  runs the road of the arrow. «×» stands always, also in a header that switched the arrow off. The title
   stands in the centre of the header when it fits there between the larger of the two sides and
   its mirror; otherwise it takes the whole room between «×» and the right side and stands in the
   middle of that room, in one line cut by an ellipsis. The icons and the main action stand 8 points
@@ -268,9 +268,11 @@ are shown to him by the frames.
   only.** The application marked the node on purpose, and on a wide screen it takes the focus. The
   other sheets of the kit open from a field, and their focus rules are approved already. Rejected:
   «×» always, and «×» for every sheet.
-- **A header without the arrow draws no «×».** The application switched the arrow off to keep the
-  person in the panel until a button closes it; «×» would undo that. The swipe and Escape still
-  follow the switches of the opening. Rejected: «×» on every sheet, which overrides the switch.
+- **The panel sheet always draws «×», also in a header that switched the arrow off.** The owner
+  27.11.2026: «в ботомшит асайд кнопка крестик всегда отображается». The footer hides its
+  close-only button for «×»; a sheet without «×» and with the tap on the dim switched off kept only
+  the main button as a way out. Rejected: no «×» under the switch, which left a create form on a
+  phone without a way to leave it.
 - **The swipe obeys the switch of the tap on the dim, and a refused swipe is reported as a tap.**
   Both are gestures outside the content, and the published kinds of a close request stay as they
   are. Rejected: a switch and a kind of its own, which widen a published surface.
