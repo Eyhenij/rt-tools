@@ -7,8 +7,10 @@
 - **Done:** разбор записан; план прочли product-strategist и goal-critic пять кругов, последний без находок;
   владелец одобрил план 27.11 ответом меню «Одобряю план RT-3594». RT-3584 вернулась в эпик RT-3602 и влита
   сюда PR #3733; `step 2` после влития отметил 2.11 — 14 из 14
-- **Next step:** этап 3 (`step 3`), живая проверка, круги ревью, набор, PR в ветку эпика RT-3602; после выпуска
-  кита — задача RT-3721 (ночь по слову владельца и отпуск ночи без работы)
+- **Next step:** второй круг ревью по ответу `review-path.mjs --round-two`, набор, разбор папки, PR в ветку
+  эпика RT-3602; затем PR эпика в главную ветку, `judge-replay.mjs --key ask` на главной ветке и выпуск кита с
+  метрикой `отказов проверок turn-exit-guard: вниз`; после выпуска — задача RT-3721 (ночь по слову владельца и
+  отпуск ночи без работы)
 - **PR:** not open yet
 
 ## Steps
@@ -81,6 +83,24 @@
   слово в очереди в записи, шаг 1.1.
 - Превышение «No decision» плана: `projects/agent-kit/tests/turn-replay-lib.mjs:chainTurns` — цепочка дня по
   файлу данных, шаг 2.1.
+- Превышение «No decision» плана: `projects/agent-kit/tests/turn-replay-lib.mjs:inputOf` — ввод вызова один для
+  записи и для хука перед вызовом; находка qa-engineer первого круга: две копии уже расходились.
+- Превышение строки «Объём» плана: `projects/agent-kit/tests/turn-replay-lib.mjs` плюс 71 строка при бюджете плюс
+  45 — уведомление задачи, запуск фонового, вызов `Monitor` и цепочка дня по файлу данных, шаги 1.1 и 2.1.
+- 27.11 в плане «57 вызовов после Esc», в цепочке с первого коммита файла данных их 74: план считал без вызовов
+  правки и вопросов. Набор держит число 74 своей строкой, чтобы ноль ложных отказов не проходил на пустом наборе.
+- 27.11 первый круг ревью: исправлено в ветке — брань в файле данных дня заменена словом «плохо», как обещал план;
+  точка 09:38 «не двигайся дальше … пока не скажу» судит отпуск словом владельца; контрольная точка 11:13:20
+  судит только причину отпуска; отказ хука кодом 2 и ответ без `permissionDecision` читаются как у хоста; «нет в
+  издании» печатается вместо нуля ложных отказов; слово меню берётся из строки `menu` движка издания; метка
+  запрета вызовов живёт в папке набора; разложенный режим судит одобрение и отпуск разложенным движком;
+  неизвестная ветка цепочки — ошибка; три функции сборщика не показаны наружу, лишний параметр `now` убран;
+  журнал, сценарий SC-AK-2018 и план эпика приведены к тому, что набор судит.
+- 27.11 первый круг ревью, списано с причиной: одобрение кнопкой судьёй вопросов в барьере и меню застревания —
+  план их исключает («What this work does not do»: судья вопросов судится шагом `judge-replay.mjs`, меню
+  застревания — задачи RT-3593 и RT-3714); новой версии в npm нет — это шаг после PR эпика; файл дерева сценария
+  с двумя обязанностями — шаг 1.3 плана сам кладёт выбор издания в общий файл; подпись «11:13:20» — время конца
+  хода в записи и имя строки в проверках шагов 2.9 и 2.10.
 
 ## Sessions
 
@@ -103,9 +123,9 @@ Put together by a hook before the compaction of the context (auto).
 
 ### Where we stand at the minute of the compaction
 
-- **State:** `этап-идёт`
-- **Stage:** 2 of 3 — Цепочка дня 24.11
-- **Next step:** этап 2 — файл цепочки дня из записи 24.11 и набор `owner-waits-replay.test.sh`. Этап 1: `step 1`
+- **State:** `этапы-кончились`
+- **Stage:** 3 of 3 — Сценарий перед выпуском и тексты
+- **Next step:** этап 3 (`step 3`), живая проверка, круги ревью, набор, PR в ветку эпика RT-3602; после выпуска
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-3594-wait-owner-scenario-release/progress.md`; the plan lies next to it.
@@ -113,47 +133,32 @@ The progress in full — `docs/tasks/RT-3594-wait-owner-scenario-release/progres
 ### Uncommitted
 
 ```
- M ../../../../../../.github/workflows/publish-agent-kit.yml
- M spec.md
- M ../../../../../tasks/RT-3594-wait-owner-scenario-release/progress.md
- M ../../../../../../projects/agent-kit/tests/turn-replay-lib.mjs
- M ../../../../../../projects/agent-kit/tests/turn-replay-tree.sh
- M ../../../../../../projects/agent-kit/tests/turn-replay.expected.json
- M ../../../../../../projects/agent-kit/tests/turn-replay.test.sh
-?? ../../../../../../projects/agent-kit/tests/fixtures/owner-waits/
-?? ../../../../../../projects/agent-kit/tests/fixtures/turn-replay/2411-morning-held-1.json
-?? ../../../../../../projects/agent-kit/tests/fixtures/turn-replay/2411-morning-held-2.json
-?? ../../../../../../projects/agent-kit/tests/fixtures/turn-replay/2411-morning-held-3.json
-?? ../../../../../../projects/agent-kit/tests/fixtures/turn-replay/2411-morning-held-4.json
-?? ../../../../../../projects/agent-kit/tests/fixtures/turn-replay/2411-morning-held-5.json
-?? ../../../../../../projects/agent-kit/tests/fixtures/turn-replay/2411-morning-roles-after-1.json
-?? ../../../../../../projects/agent-kit/tests/fixtures/turn-replay/2411-morning-roles-after-2.json
-?? ../../../../../../projects/agent-kit/tests/owner-waits-replay.test.sh
+ M docs/plans/owner-stop-holds-findings.md
 ```
 
 ### Commits over the main branch
 
 ```
-633cb8ecc test(rt:agent-kit): сборщик записи и общее дерево сценария для цепочки дня (RT-3594)
-44858fbcc docs(rt:agent-kit): план RT-3594 одобрен владельцем
-20f8314f0 docs(rt:agent-kit): разбор и ход работы RT-3594, задачи 5–6 перенесены в эпик RT-3714
-3dd8488e9 docs(rt:agent-kit): находки разбора правил RT-3674 записаны рядом с планом эпика (RT-3594)
-8c2b99686 docs(rt:agent-kit): задача 3 эпика влита, задача 4 идёт (RT-3594)
-d8bd62ada [RT-3674] Monitor со строкой на каждый шаг своей фоновой команды отказан (#3710)
-c84ac76d2 docs(rt:agent-kit): папка задачи RT-3674 разобрана в архивную запись (RT-3674)
-da3360d8b docs(rt:agent-kit): ход работы называет отменённое (RT-3674)
-f28714d4e docs(rt:agent-kit): ход работы называет цену задачи (RT-3674)
-8c4023212 fix(rt:agent-kit): отсев хука Monitor без слов tee и perl (RT-3674)
-c52db07e0 fix(rt:agent-kit): отказ Monitor по своему фоновому после второго круга ревью (RT-3674)
-6b987bf94 fix(rt:agent-kit): отказ Monitor по своему фоновому после первого круга ревью (RT-3674)
-4dc9f4edc docs(rt:agent-kit): план эпика называет итог задачи 3, находки RT-3691 записаны (RT-3674)
-c5f7f1520 docs(rt:agent-kit): ход работы называет расхождения кода с решением плана (RT-3674)
-232fe8f16 docs(rt:agent-kit): спеки и файл правила называют отказ Monitor по своему фоновому, пакет разложен (RT-3674)
-421bee742 feat(rt:agent-kit): хук отказывает Monitor, который печатает строку на каждый шаг своего фонового (RT-3674)
-3393209a8 feat(rt:agent-kit): движок судит Monitor, который печатает строку на каждый шаг своего фонового (RT-3674)
-5427ae649 docs(rt:agent-kit): план RT-3674 одобрен владельцем
-0cf5de700 docs(rt:agent-kit): разбор и ход работы RT-3674
-76bbafb6c docs(rt:agent-kit): задача 2 эпика влита, задача 3 идёт (RT-3674)
+d5495ae82 docs(rt:agent-kit): превышения решения плана в ходе работы задачи сценария перед выпуском (RT-3594)
+f8ff9cf41 docs(rt:agent-kit): этапы задачи сценария перед выпуском закончены (RT-3594)
+ee0df9191 [RT-3584] Судья вопросов пускает вопрос о влитии ветки задачи (#3733)
+8ebe14a5b docs(rt:agent-kit): папка задачи судьи вопросов разобрана в архивную запись (RT-3584)
+78c494af1 docs(rt:agent-kit): отменённое в ходе работы задачи судьи вопросов (RT-3584)
+7e074aedb docs(rt:agent-kit): цена решения в ходе работы задачи судьи вопросов (RT-3584)
+c374ab8c5 fix(rt:agent-kit): флаг без значения и тексты судьи вопросов после второго круга ревью (RT-3584)
+51f0b0c8c Merge remote-tracking branch 'origin/RT-3594-wait-owner-scenario-release' into RT-3584-night-work-ends-itself
+c762768f1 chore(rt:agent-kit): таблица входов набора после слияния main (RT-3594)
+bedb373d3 fix(rt:agent-kit): прогон и текст судьи вопросов после первого круга ревью (RT-3584)
+e3b9f3484 fix(rt:agent-kit): судья вопросов пускает влитие ветки задачи (RT-3584)
+ec80b899a docs(rt:agent-kit): шаги этапов в ходе работы задачи судьи вопросов (RT-3584)
+e7256bea3 docs(rt:agent-kit): план задачи судьи вопросов (RT-3584)
+562d7bb9f Merge branch 'RT-3594-wait-owner-scenario-release' into RT-3584-night-work-ends-itself
+ee4f7838f chore(rt:agent-kit): разложенное пакета 0.42.0 и строка таблицы назначений после слияния main (RT-3594)
+e64c31512 Merge branch 'RT-3602-owner-stop-holds' into RT-3594-wait-owner-scenario-release
+b7ffac6ea Merge remote-tracking branch 'origin/main' into RT-3602-owner-stop-holds
+8c7884617 docs(rt:agent-kit): задача RT-3584 вернулась в эпик пятой задачей, разбор записан (RT-3584)
+19af62761 docs(rt:agent-kit): задача ждёт правку судьи вопросов из RT-3584 (RT-3594)
+f2496704e ci(rt:agent-kit): выпуск кита гоняет цепочку дня на собранном издании (RT-3594)
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

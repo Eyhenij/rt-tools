@@ -45,8 +45,6 @@ stop_input() {
 
 run_hook() { (cd "$WORK/$2" && CLAUDE_PROJECT_DIR="$WORK/$2" "$HOOKS/turn-exit-guard.sh" <<< "$1" 2>/dev/null); }
 
-engine_of() { [ -n "$LAID" ] && printf '%s' "$WORK/$1/tools/task-flow-script.mjs" || printf '%s' "$ENGINE"; }
-
 # Ход держится, и отказ называет каждое из слов.
 hold() {
     local fixture="$1" tree="$2" label="$3" input out got name

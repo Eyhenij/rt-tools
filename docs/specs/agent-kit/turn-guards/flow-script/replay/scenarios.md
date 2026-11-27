@@ -231,11 +231,12 @@ Covered: `projects/agent-kit/tests/turn-replay.test.sh`; the verdicts of the mod
 
 ### SC-AK-2018 — the chain of one day: every wait of the owner judged point by point
 
-Given the chain of the session of 24.11 from 01:15 to 11:13. It holds the night with its list to the morning, the plan approval after the roles and Esc at 03:54:34 with the owner's words after it. It also holds a `Monitor` at 10:53:52 on a background task of its own and the last end of a turn at 11:13:20
+Given the chain of the session of 24.11 from 01:15 to 11:13 by local time. It holds the night with its list to the morning, the plan approval after the roles, the word «не двигайся дальше … пока не скажу» at 09:38 and Esc at 10:54:34 with the owner's words after it. It also holds a `Monitor` at 10:53:52 on a background task of its own and the last end of a turn at 11:13:20
 When the hook on Stop reads the end of every turn and the hooks before a call read every call after Esc, each on the record up to its point
 Then the night with its boundary ahead ends with no menu, and an approval after the roles passes by button and by message
-And one end of a turn after Esc is refused, a call after Esc with no word of the owner is refused, and no call after a word of the owner is
-And the `Monitor` at 10:53:52 is refused, and the end at 11:13:20 is released by the case of its background task
+And the end of the turn at 09:38 is released by the stop word of the owner
+And one end of a turn after Esc is refused, a call after Esc with no word of the owner is refused, and none of the 74 calls after a word of the owner is
+And the `Monitor` at 10:53:52 is refused, and the end at 11:13:20 is released by the case of its background task, a refusal naming it never counts
 And the night of the record with the line «Граница: до слова владельца» prints `limit RT-3721` outside the count
 
 Covered: `projects/agent-kit/tests/owner-waits-replay.test.sh`.

@@ -76,7 +76,7 @@ function answerOf(turn, id, at, options) {
 }
 
 /** The notice of a task as the host writes it: an event of a `Monitor`, or the end of a background command. */
-export function noticeText(turn) {
+function noticeText(turn) {
     const body = turn.event ? `<event>${turn.event}</event>` : `<status>${turn.status ?? 'completed'}</status>`;
     return `<task-notification>\n<task-id>${turn.task}</task-id>\n<tool-use-id>toolu_${turn.task}</tool-use-id>\n<output-file>/tmp/session/tasks/${turn.task}.output</output-file>\n${body}\n</task-notification>`;
 }
@@ -92,14 +92,25 @@ function startOf(turn, id, at) {
     return { ...result(at, id, text, false), toolUseResult: { backgroundTaskId: turn.task } };
 }
 
+/** The input of the tool of a call, the same in the record and in the input of a hook before it. */
+function inputOf(turn) {
+    const inputs = {
+        Bash: () => ({ command: turn.command ?? '', ...(turn.task ? { run_in_background: true } : {}) }),
+        Monitor: () => ({ command: turn.command ?? '', description: 'watch' }),
+        Agent: () => ({ subagent_type: turn.agent ?? '', prompt: 'the facts of the record' }),
+        TaskStop: () => ({ task_id: turn.stops ?? '' }),
+    };
+    return inputs[turn.call]?.() ?? { file_path: turn.file ?? 'notes.md' };
+}
+
 /**
  * The entries of the record, oldest first; with `upto`, the turns up to that index, moved to the minute
- * of `now`; with `before`, the turn `upto` itself is left out — the record a hook reads before a call.
+ * of the run; with `before`, the turn `upto` itself is left out — the record a hook reads before a call.
  */
-export function recordOf(fixture, { upto = null, now = Date.now(), before = false } = {}) {
+export function recordOf(fixture, { upto = null, before = false } = {}) {
     const entries = [];
     const all = upto === null ? fixture.turns : fixture.turns.slice(0, upto + 1);
-    const shift = upto === null ? 0 : now - Date.parse(all.at(-1).at);
+    const shift = upto === null ? 0 : Date.now() - Date.parse(all.at(-1).at);
     const turns = before ? all.slice(0, -1) : all;
     turns.forEach((turn, index) => {
         const at = shift ? new Date(Date.parse(turn.at) + shift).toISOString() : turn.at;
@@ -128,14 +139,7 @@ export function recordOf(fixture, { upto = null, now = Date.now(), before = fals
             entries.push(assistant(at, [{ type: 'tool_use', id, name: 'AskUserQuestion', input: { questions } }]));
             entries.push(answerOf(turn, id, at, turn.menu.slice(1)));
         } else if (turn.call) {
-            const inputs = {
-                Bash: () => ({ command: turn.command ?? '', ...(turn.task ? { run_in_background: true } : {}) }),
-                Monitor: () => ({ command: turn.command ?? '', description: 'watch' }),
-                Agent: () => ({ subagent_type: turn.agent ?? '', prompt: 'the facts of the record' }),
-                TaskStop: () => ({ task_id: turn.stops ?? '' }),
-            };
-            const input = inputs[turn.call]?.() ?? { file_path: turn.file ?? 'notes.md' };
-            entries.push(assistant(at, [{ type: 'tool_use', id, name: turn.call, input }]));
+            entries.push(assistant(at, [{ type: 'tool_use', id, name: turn.call, input: inputOf(turn) }]));
             entries.push(turn.task && turn.code !== 'refused' ? startOf(turn, id, at) : answerOf(turn, id, at, []));
         }
     });
@@ -150,22 +154,23 @@ export function recordOf(fixture, { upto = null, now = Date.now(), before = fals
  * The turns of a chain of one day: its points, or the points up to `after` of a branch and the branch's
  * own — a synthetic point is judged on a copy of the record and never enters the chain.
  */
-export function chainTurns(chain, branch = null) {
-    const own = branch ? chain.branches[branch] : null;
+function chainTurns(chain, branch = null) {
+    const own = branch ? chain.branches?.[branch] : null;
+    if (branch && !own) throw new Error(`the chain has no branch ${branch}`);
     const points = own ? [...chain.points.slice(0, own.after + 1), ...own.points] : chain.points;
     return { task: chain.task, turns: points.map((point) => ({ ...point, role: point.kind })) };
 }
 
 /** The input of a hook before a call: the call of the point `upto` of a chain, the record before it. */
-export function callInput(fixture, upto, record) {
+function callInput(fixture, upto, record) {
     const turn = fixture.turns[upto];
-    const tool_input =
-        turn.call === 'Monitor'
-            ? { command: turn.command ?? '', description: 'watch' }
-            : turn.call === 'Bash'
-              ? { command: turn.command ?? '' }
-              : { file_path: turn.file ?? 'notes.md' };
-    return { session_id: 'replay', transcript_path: record, hook_event_name: 'PreToolUse', tool_name: turn.call, tool_input };
+    return {
+        session_id: 'replay',
+        transcript_path: record,
+        hook_event_name: 'PreToolUse',
+        tool_name: turn.call,
+        tool_input: inputOf(turn),
+    };
 }
 
 // Run only when called itself: an importer's own arguments are no fixture and record.

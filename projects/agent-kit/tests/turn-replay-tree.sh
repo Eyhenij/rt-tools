@@ -27,6 +27,9 @@ fi
 # Хук издания: путь, или пусто, когда его там нет.
 edition_hook() { [ -f "$HOOKS/$1" ] && printf '%s' "$HOOKS/$1"; }
 
+# Движок, который судит дерево: разложенный в его `tools/` при RT_REPLAY_LAID, иначе ENGINE набора.
+engine_of() { [ -n "$LAID" ] && printf '%s' "$WORK/$1/tools/task-flow-script.mjs" || printf '%s' "$ENGINE"; }
+
 EPIC=RT-100-replay-epic
 TASK=RT-101-replay-task
 
