@@ -54,7 +54,8 @@ SETS="$(node -e "
 report "the scope writes every set of values once" "$SETS" "0 compared"
 
 # The two shared rules of the set: each holds all its selectors, and the light one stands above the dark
-# one. Under `[data-theme=dark]` a node carrying the set is told apart from the light rule by that order.
+# one. Under `[data-theme=dark]` a node carrying the set is told apart from the light rule by that order,
+# and under `html.rt-theme-dark` by two heavier selectors of the dark rule.
 SHARED_RULES="$(node -e "
     const css = require('fs').readFileSync(process.argv[1], 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
     const rules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
@@ -81,6 +82,8 @@ SHARED_RULES="$(node -e "
         '[data-theme=dark] [data-preset=material]',
         'html.rt-theme-dark .rt-preset-material',
         'html.rt-theme-dark [data-preset=material]',
+        'html.rt-theme-dark [data-theme=light] .rt-preset-material[data-theme=dark]',
+        'html.rt-theme-dark [data-theme=light] [data-preset=material][data-theme=dark]',
     ];
     const at = (wanted) => rules.findIndex((rule) => [...rule.selectors].sort().join('|') === [...wanted].sort().join('|'));
     const [lightAt, darkAt] = [at(light), at(dark)];

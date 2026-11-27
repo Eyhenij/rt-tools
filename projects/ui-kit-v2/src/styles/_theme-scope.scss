@@ -52,8 +52,8 @@
    the dark rule by order: it is as heavy as the first two selectors here or heavier. A light piece
    between the dark one and the node is heavier than those dark selectors. A node that is a dark piece
    itself weighs the same as such a light piece around it under `[data-theme='dark']`, and order alone
-   gives it the dark values. Under `html.rt-theme-dark` the light piece is heavier, and the node stays
-   light. */
+   gives it the dark values. Under `html.rt-theme-dark` the light piece is heavier than those selectors,
+   so the dark rule names such a node by two selectors of its own, heavier still. */
 [data-preset='material']:not(:root),
 .rt-preset-material:not(:root),
 [data-theme='dark'] [data-theme='light'] [data-preset='material'],
@@ -82,7 +82,9 @@ html.rt-theme-dark .rt-preset-material,
 [data-preset='material'][data-theme='dark']:not(:root),
 [data-preset='material'] [data-theme='dark']:not(:root),
 .rt-preset-material[data-theme='dark']:not(:root),
-.rt-preset-material [data-theme='dark']:not(:root) {
+.rt-preset-material [data-theme='dark']:not(:root),
+html.rt-theme-dark [data-theme='light'] [data-preset='material'][data-theme='dark'],
+html.rt-theme-dark [data-theme='light'] .rt-preset-material[data-theme='dark'] {
     @include semantic.rt-theme-light-tokens;
     @include material.rt-preset-material-tokens;
     @include dark.rt-theme-dark-tokens;

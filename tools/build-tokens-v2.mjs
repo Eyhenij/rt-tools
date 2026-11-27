@@ -130,8 +130,8 @@ const SCOPE_NOTE = {
    the dark rule by order: it is as heavy as the first two selectors here or heavier. A light piece
    between the dark one and the node is heavier than those dark selectors. A node that is a dark piece
    itself weighs the same as such a light piece around it under \`[data-theme='dark']\`, and order alone
-   gives it the dark values. Under \`html.rt-theme-dark\` the light piece is heavier, and the node stays
-   light. */`,
+   gives it the dark values. Under \`html.rt-theme-dark\` the light piece is heavier than those selectors,
+   so the dark rule names such a node by two selectors of its own, heavier still. */`,
     presetOnDark: `/* The dark values of the set on a node: a piece carrying the set under a dark theme — of the page or
    of a piece around it — and a dark piece inside a page of the styling set. A component draws the look
    of the first kit by carrying the set on its own host, and the plain rule of the set would lay its
@@ -343,7 +343,9 @@ const files = {
         `[data-theme='dark'] .rt-preset-material,\nhtml.rt-theme-dark [data-preset='material'],\n` +
         `html.rt-theme-dark .rt-preset-material,\n` +
         `[data-preset='material'][data-theme='dark']:not(:root),\n[data-preset='material'] [data-theme='dark']:not(:root),\n` +
-        `.rt-preset-material[data-theme='dark']:not(:root),\n.rt-preset-material [data-theme='dark']:not(:root) {\n` +
+        `.rt-preset-material[data-theme='dark']:not(:root),\n.rt-preset-material [data-theme='dark']:not(:root),\n` +
+        `html.rt-theme-dark [data-theme='light'] [data-preset='material'][data-theme='dark'],\n` +
+        `html.rt-theme-dark [data-theme='light'] .rt-preset-material[data-theme='dark'] {\n` +
         `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n` +
         `    @include dark.rt-theme-dark-tokens;\n    @include material.rt-preset-material-dark-tokens;\n${COARSE_INCLUDE}}\n\n` +
         `${SCOPE_NOTE.presetRootDark}\n:root[data-theme='dark'][data-preset='material'],\n:root[data-theme='dark'].rt-preset-material,\n` +

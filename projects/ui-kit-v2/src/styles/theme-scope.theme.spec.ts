@@ -45,6 +45,107 @@ function lastDenseDeclaration(selector: string): number {
     return at;
 }
 
+/** Вес селектора: атрибуты, классы и псевдоклассы, затем имена элементов. Аргумент `:not` весит сам. */
+function weightOf(selector: string): number {
+    const flat: string = selector.replace(/:not\(([^)]*)\)/g, '$1');
+    const classes: number = flat.match(/\[[^\]]*\]|\.[\w-]+|:[\w-]+/g)?.length ?? 0;
+    const bare: string = flat.replace(/\[[^\]]*\]|\.[\w-]+|:[\w-]+/g, '');
+
+    return classes * 100 + (bare.match(/(^|[\s>+~])[a-z][\w-]*/g)?.length ?? 0);
+}
+
+/** Объявление свойства, которое каскад отдаёт самому узлу: решают вес селектора и порядок правил. */
+function winnerOf(node: Element, name: string): string {
+    let best: { weight: number; value: string } | undefined;
+    for (const [, head, body] of CSS.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+        // Внутри правила свойство объявлено несколько раз: набор, тема, тёмный набор. Решает последнее.
+        const value: string | undefined = [...body.matchAll(new RegExp(`(?<![\\w-])${name}:([^;]*)`, 'g'))].at(-1)?.[1];
+        if (value === undefined) {
+            continue;
+        }
+        for (const selector of head.split(',').map((part: string): string => part.trim())) {
+            const weight: number = weightOf(selector);
+            if (weight >= (best?.weight ?? 0) && node.matches(selector)) {
+                best = { weight, value: value.trim() };
+            }
+        }
+    }
+
+    return best?.value ?? '';
+}
+
+describe('тема узла набора на любой странице', (): void => {
+    const ROOTS: string[] = ['none', 'data-theme', 'rt-theme-dark'];
+    const THEMES: (string | null)[] = [null, 'light', 'dark'];
+    const FORMS: [string, string][] = [
+        ['class', 'rt-preset-material'],
+        ['data-preset', 'material'],
+    ];
+    function surfaceOf(mixin: string): string {
+        return /--rt-color-bg-surface:([^;]*);/.exec(mixinBody(PRESET, mixin))?.[1].trim() ?? '';
+    }
+
+    const lightSurface: string = surfaceOf('rt-preset-material-tokens');
+    const darkSurface: string = surfaceOf('rt-preset-material-dark-tokens');
+
+    function paint(root: string, piece: string | null, theme: string | null, [attribute, value]: [string, string]): string {
+        const html: HTMLElement = document.documentElement;
+        html.className = root === 'rt-theme-dark' ? root : '';
+        if (root === 'data-theme') {
+            html.setAttribute('data-theme', 'dark');
+        } else {
+            html.removeAttribute('data-theme');
+        }
+        const outer: HTMLElement = document.createElement('div');
+        const node: HTMLElement = document.createElement('div');
+        if (piece !== null) {
+            outer.setAttribute('data-theme', piece);
+        }
+        if (theme !== null) {
+            node.setAttribute('data-theme', theme);
+        }
+        node.setAttribute(attribute, value);
+        // Между куском и узлом стоит обёртка: в разметке приложения узел редко прямой потомок куска.
+        const wrapper: HTMLElement = document.createElement('div');
+        wrapper.append(node);
+        outer.append(wrapper);
+        document.body.replaceChildren(outer);
+
+        // Любое третье значение поверхности — тоже ошибка: светлым оно не считается.
+        const surface: string = winnerOf(node, '--rt-color-bg-surface');
+        if (surface === darkSurface) {
+            return 'dark';
+        }
+
+        return surface === lightSurface ? 'light' : surface;
+    }
+
+    it('SC-UKV-1921 — узел набора берёт свою тему, а без своей — тему куска или страницы', (): void => {
+        const wrong: string[] = [];
+        let checked: number = 0;
+        for (const root of ROOTS) {
+            for (const piece of THEMES) {
+                for (const theme of THEMES) {
+                    for (const form of FORMS) {
+                        const expected: string = theme ?? piece ?? (root === 'none' ? 'light' : 'dark');
+                        const got: string = paint(root, piece, theme, form);
+                        checked += 1;
+                        if (got !== expected) {
+                            wrong.push(`${root} > ${piece} > ${theme} (${form[0]}): ${got}`);
+                        }
+                    }
+                }
+            }
+        }
+
+        expect(darkSurface).not.toBe('');
+        expect(lightSurface).not.toBe('');
+        expect(lightSurface).not.toBe(darkSurface);
+        expect(checked).toBe(54);
+        expect(wrong).toEqual([]);
+    });
+});
+
 describe('кусок темы и сенсорный экран', (): void => {
     it.each([
         ':root',

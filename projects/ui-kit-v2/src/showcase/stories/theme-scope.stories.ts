@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { TestRtThemeScopeDarkSetComponent } from './component/test-rt-theme-scope-dark-set.component';
 import { TestRtThemeScopeComponent } from './component/test-theme-scope.component';
 
 /**
@@ -23,3 +24,14 @@ export default {
 type TStory = StoryObj<TestRtThemeScopeComponent>;
 
 export const ThemeScope: TStory = {};
+
+/**
+ * Тёмный узел набора внутри светлого куска под `rt-theme-dark` на `<html>`: кусок остаётся
+ * светлым, а узел берёт свою тёмную тему.
+ */
+export const DarkSetNode: TStory = {
+    render: () => ({
+        moduleMetadata: { imports: [TestRtThemeScopeDarkSetComponent] },
+        template: `<app-theme-scope-dark-set />`,
+    }),
+};
