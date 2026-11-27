@@ -69,6 +69,18 @@
 - 27.11 перед выпуском текст судьи вопросов перемеряется на главной ветке по строке плана эпика: «Перед каждым
   выпуском `judge-replay.mjs --key ask` гоняется один раз на главной ветке, без условия»; итог — рядом с итогом
   выпуска.
+- Превышение «No decision» плана: `projects/agent-kit/tests/turn-replay-tree.sh` — построение дерева сценария
+  вынесено в общий файл шагом 1.2, его берут оба набора.
+- Превышение «No decision» плана: `projects/agent-kit/tests/owner-waits-replay.test.sh` — набор цепочки дня,
+  шаги этапа 2 и 3.1–3.2 гоняют его.
+- Превышение «No decision» плана: `projects/agent-kit/tests/turn-replay-lib.mjs:noticeText` — сборщик записи
+  пишет уведомление задачи, шаг 1.1.
+- Превышение «No decision» плана: `projects/agent-kit/tests/turn-replay-lib.mjs:startOf` — запуск фоновой команды
+  в записи, шаг 1.1.
+- Превышение «No decision» плана: `projects/agent-kit/tests/turn-replay-lib.mjs:callInput` — вызов `Monitor` и
+  слово в очереди в записи, шаг 1.1.
+- Превышение «No decision» плана: `projects/agent-kit/tests/turn-replay-lib.mjs:chainTurns` — цепочка дня по
+  файлу данных, шаг 2.1.
 
 ## Sessions
 
