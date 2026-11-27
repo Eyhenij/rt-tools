@@ -45,6 +45,95 @@ function lastDenseDeclaration(selector: string): number {
     return at;
 }
 
+/** Вес селектора: атрибуты, классы и псевдоклассы, затем имена элементов. Аргумент `:not` весит сам. */
+function weightOf(selector: string): number {
+    const flat: string = selector.replace(/:not\(([^)]*)\)/g, '$1');
+    const classes: number = flat.match(/\[[^\]]*\]|\.[\w-]+|:[\w-]+/g)?.length ?? 0;
+    const bare: string = flat.replace(/\[[^\]]*\]|\.[\w-]+|:[\w-]+/g, '');
+
+    return classes * 100 + (bare.match(/(^|[\s>+~])[a-z][\w-]*/g)?.length ?? 0);
+}
+
+/** Значение свойства, которое каскад отдаёт узлу: своё по весу и порядку, а без своего — унаследованное. */
+function winnerOf(node: Element | null, name: string): string {
+    if (node === null) {
+        return '';
+    }
+    let best: { weight: number; value: string } | undefined;
+    for (const [, head, body] of CSS.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+        // Внутри правила свойство объявлено несколько раз: набор, тема, тёмный набор. Решает последнее.
+        const value: string | undefined = [...body.matchAll(new RegExp(`(?<![\\w-])${name}:([^;]*)`, 'g'))].at(-1)?.[1];
+        if (value === undefined) {
+            continue;
+        }
+        for (const selector of head.split(',').map((part: string): string => part.trim())) {
+            const weight: number = weightOf(selector);
+            if (weight >= (best?.weight ?? 0) && node.matches(selector)) {
+                best = { weight, value: value.trim() };
+            }
+        }
+    }
+
+    return best?.value ?? winnerOf(node.parentElement, name);
+}
+
+describe('тема узла набора на любой странице', (): void => {
+    const ROOTS: string[] = ['none', 'data-theme', 'rt-theme-dark'];
+    const THEMES: (string | null)[] = [null, 'light', 'dark'];
+    const FORMS: [string, string][] = [
+        ['class', 'rt-preset-material'],
+        ['data-preset', 'material'],
+    ];
+    const darkSurface: string =
+        /--rt-color-bg-surface:([^;]*);/.exec(mixinBody(PRESET, 'rt-preset-material-dark-tokens'))?.[1].trim() ?? '';
+
+    function paint(root: string, piece: string | null, theme: string | null, [attribute, value]: [string, string]): string {
+        const html: HTMLElement = document.documentElement;
+        html.className = root === 'rt-theme-dark' ? root : '';
+        if (root === 'data-theme') {
+            html.setAttribute('data-theme', 'dark');
+        } else {
+            html.removeAttribute('data-theme');
+        }
+        const outer: HTMLElement = document.createElement('div');
+        const node: HTMLElement = document.createElement('div');
+        if (piece !== null) {
+            outer.setAttribute('data-theme', piece);
+        }
+        if (theme !== null) {
+            node.setAttribute('data-theme', theme);
+        }
+        node.setAttribute(attribute, value);
+        outer.append(node);
+        document.body.replaceChildren(outer);
+
+        return winnerOf(node, '--rt-color-bg-surface') === darkSurface ? 'dark' : 'light';
+    }
+
+    it('SC-UKV-1921 — узел набора берёт свою тему, а без своей — тему куска или страницы', (): void => {
+        const wrong: string[] = [];
+        let checked: number = 0;
+        for (const root of ROOTS) {
+            for (const piece of THEMES) {
+                for (const theme of THEMES) {
+                    for (const form of FORMS) {
+                        const expected: string = theme ?? piece ?? (root === 'none' ? 'light' : 'dark');
+                        const got: string = paint(root, piece, theme, form);
+                        checked += 1;
+                        if (got !== expected) {
+                            wrong.push(`${root} > ${piece} > ${theme} (${form[0]}): ${got}`);
+                        }
+                    }
+                }
+            }
+        }
+
+        expect(darkSurface).not.toBe('');
+        expect(checked).toBe(54);
+        expect(wrong).toEqual([]);
+    });
+});
+
 describe('кусок темы и сенсорный экран', (): void => {
     it.each([
         ':root',

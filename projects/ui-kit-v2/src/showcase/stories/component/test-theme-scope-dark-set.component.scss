@@ -1,0 +1,40 @@
+// Обвязка витрины: тёмный узел набора внутри светлого куска. Цвета все из токенов — по ним и видно,
+// какую тему взял узел. Высота строки задана числом: у шкалы нет ступени, дающей 20 из 14.
+.app-theme-scope-dark-set {
+    box-sizing: border-box;
+    display: block;
+    width: 392px;
+    padding: var(--rt-space-md);
+    background-color: var(--rt-color-bg-page);
+    font-family: var(--rt-font-family-sans);
+    font-size: var(--rt-text-sm);
+    line-height: 20px;
+
+    &__piece,
+    &__card {
+        display: flex;
+        flex-direction: column;
+        padding: var(--rt-space-md);
+        border-radius: var(--rt-radius-md);
+        background-color: var(--rt-color-bg-surface);
+        color: var(--rt-color-text-primary);
+    }
+
+    &__piece {
+        gap: 12px;
+    }
+
+    &__card {
+        border: var(--rt-border-width-thin) solid var(--rt-color-border-default);
+        gap: var(--rt-space-sm);
+    }
+
+    &__title {
+        font-weight: 500;
+    }
+
+    &__text {
+        color: var(--rt-color-text-muted);
+        font-weight: 400;
+    }
+}
