@@ -1,9 +1,9 @@
 // Обвязка витрины: тёмный узел набора внутри светлого куска. Цвета все из токенов — по ним и видно,
 // какую тему взял узел. Высота строки задана числом: у шкалы нет ступени, дающей 20 из 14.
 .app-theme-scope-dark-set {
-    box-sizing: border-box;
     display: block;
     width: 392px;
+    box-sizing: border-box;
     padding: var(--rt-space-md);
     background-color: var(--rt-color-bg-page);
     font-family: var(--rt-font-family-sans);

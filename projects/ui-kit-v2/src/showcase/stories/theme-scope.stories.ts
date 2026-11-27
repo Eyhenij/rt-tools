@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
-import { TestRtThemeScopeDarkSetComponent } from './component/test-theme-scope-dark-set.component';
+import { TestRtThemeScopeDarkSetComponent } from './component/test-rt-theme-scope-dark-set.component';
 import { TestRtThemeScopeComponent } from './component/test-theme-scope.component';
 
 /**

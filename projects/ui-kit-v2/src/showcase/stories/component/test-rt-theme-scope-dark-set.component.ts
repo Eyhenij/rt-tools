@@ -14,14 +14,15 @@ const THEME_ATTRIBUTE: string = 'data-theme';
  *
  * Разметкой ячейки этот случай не показать: класс стоит на `<html>`, а метку темы, которую туда
  * пишет переключатель витрины, приложение с этим классом не ставит. Поэтому на время показа
- * обёртка ставит класс сама и снимает метку, а уходя возвращает обе.
+ * обёртка ставит класс сама и снимает метку. Уходя, она возвращает класс, а метку — только если
+ * новую никто не поставил.
  *
  * В пакет обёртка не уезжает: `tsconfig.lib.json` исключает `src/showcase/**`.
  */
 @Component({
     selector: 'app-theme-scope-dark-set',
-    templateUrl: './test-theme-scope-dark-set.component.html',
-    styleUrl: './test-theme-scope-dark-set.component.scss',
+    templateUrl: './test-rt-theme-scope-dark-set.component.html',
+    styleUrl: './test-rt-theme-scope-dark-set.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
