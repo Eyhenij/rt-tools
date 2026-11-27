@@ -1,4 +1,4 @@
-<!-- rt-kit v0.42.0 · pitfalls/task-flow.2.md · 04642a672d41 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.1 · pitfalls/task-flow.2.md · 7c103846d91d · правится надстройкой, не здесь -->
 # Work conduct — cold part, second file
 
 The sections the rule `task-flow` handed over when it was cut to its statements and split in
@@ -134,7 +134,7 @@ flowchart TD
   "this is safe" is assigned by whoever finds it convenient.
 - **A stop the owner sets on a later step is written down the moment it is said.** A task they put
   off gets the mark «отложено» in the epic plan, set only by their last word naming it; the engine
-  then takes the next task. A stop for the turn itself is read from their last message.
+  then takes the next task. A stop for the turn itself holds until their working order.
 - **A reply to the owner's order begins with the result, not with intent or its justification.** A
   justification under someone else's accepted decision reads as its appraisal. One exception:
   execution stopped by an obstacle — then the obstacle is named.

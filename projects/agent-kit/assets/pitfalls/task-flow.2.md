@@ -133,7 +133,7 @@ flowchart TD
   "this is safe" is assigned by whoever finds it convenient.
 - **A stop the owner sets on a later step is written down the moment it is said.** A task they put
   off gets the mark «отложено» in the epic plan, set only by their last word naming it; the engine
-  then takes the next task. A stop for the turn itself is read from their last message.
+  then takes the next task. A stop for the turn itself holds until their working order.
 - **A reply to the owner's order begins with the result, not with intent or its justification.** A
   justification under someone else's accepted decision reads as its appraisal. One exception:
   execution stopped by an obstacle — then the obstacle is named.

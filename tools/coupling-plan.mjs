@@ -1,4 +1,4 @@
-// rt-kit v0.42.0 · checks/coupling-plan.mjs · 9b32b5a9841c · правится надстройкой, не здесь
+// rt-kit v0.42.1 · checks/coupling-plan.mjs · 9b32b5a9841c · правится надстройкой, не здесь
 /**
  * The outgoing links a text names: a path in backticks and, before the next backtick or the line end, the
  * word «исходящие» or «outgoing» with two numbers and an arrow between — now and after.

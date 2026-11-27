@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.42.0 · checks/flow-override.mjs · 1550a2d34aa4 · правится надстройкой, не здесь
+// rt-kit v0.42.1 · checks/flow-override.mjs · 1550a2d34aa4 · правится надстройкой, не здесь
 /**
  * The tree override of the task flow description: the same language, merged with the package
  * description key by key before the model is built.

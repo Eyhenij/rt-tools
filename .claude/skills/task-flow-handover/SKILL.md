@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — closing a task: the folder taken apart, the PR opened and readied, the merge. Load before a PR opens, leaves draft or merges. Patterns task-flow-close, -archive.
 ---
-<!-- rt-kit v0.42.0 · rules/task-flow-handover.md · 7f7a77240316 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.1 · rules/task-flow-handover.md · 7f7a77240316 · правится надстройкой, не здесь -->
 
 # Work conduct — closing a task
 

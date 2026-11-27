@@ -35,6 +35,14 @@ const use = (id) => ({ type: 'assistant', timestamp: at, message: { stop_reason:
 const close = { type: 'assistant', timestamp: at, message: { stop_reason: 'end_turn', content: [] } };
 const record = [use('a'), start('a'), use('b'), start('b'), close, { type: 'queue-operation', operation: 'enqueue', timestamp: at, content: notice('a') }, { type: 'user', timestamp: at, message: { content: notice('a') } }];
 out('SC-AK-1762 — запись: уведомление в очереди до конца хода — соседняя ждётся', waits(eventsOf(record)), 'true');
+
+// SC-AK-2015: Monitor — своё событие, его читает только мера остановки; ожидание фонового его не видит.
+const monitorUse = { type: 'assistant', timestamp: at, message: { stop_reason: 'tool_use', content: [{ type: 'tool_use', id: 'm', name: 'Monitor', input: { command: 'tail -f log' } }] } };
+const monitorStart = { type: 'user', timestamp: at, message: { content: [{ type: 'tool_result', tool_use_id: 'm', content: 'Monitor started (task bm1)' }] }, toolUseResult: { taskId: 'bm1', persistent: false } };
+const watched = eventsOf([monitorUse, monitorStart, close]);
+out('SC-AK-2015 — запуск Monitor — событие вида monitor с номером задачи', watched.filter((e) => e.kind === 'monitor').map((e) => e.task).join(','), 'bm1');
+out('SC-AK-2015 — запуск Monitor — не фоновая задача', String(watched.some((e) => e.kind === 'background')), 'false');
+out('SC-AK-2015 — живой Monitor — ожидание фонового ход не отпускает', waits(watched), 'false');
 JS
 )"
 report "блок случаев отработал без ошибки" "$?" 0

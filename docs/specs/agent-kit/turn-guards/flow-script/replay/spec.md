@@ -1,6 +1,6 @@
 # The recorded turns
 
-**Status:** in force · **Revision:** 2026-11-24 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-26 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `work-conduct`, `verifiability`
 **Procedures:** none
@@ -19,6 +19,9 @@ the hook shows at once which stop it lets through again and which lawful end it 
 
 - **A recorded turn** — a fixture of `projects/agent-kit/tests/fixtures/turn-replay/`: the entries of
   one turn with their role, time, the name of a call, its answer code and the owner's word.
+- **A chain of one day** — the fixture `projects/agent-kit/tests/fixtures/owner-waits/2411-day.json`:
+  the points of one session record in their order — the owner's words, the marks of Esc, the notices,
+  the refusals at the end of a turn, the ends of turns and the calls — and its synthetic branches.
 - **A class label** — the owner's word written as its class: `<nudge>`, `<question>`, `<abuse>`,
   `<order:RT-N>`, `<refusal>`, `<menu-answer:N>`.
 - **A lawful end** — a turn the owner ended by a stop word or by Esc, or the end of the epic measured by its history.
@@ -36,6 +39,8 @@ silent.
 - **A turn that wrote to the tree and stops while the scenario is open is held, whatever its last words are.**
 - **The refusal of a held turn names the measured state and one move: the current step with its command, or the action of the state.**
 - **A word of the owner that asks to stop or to wait, typed or chosen in a menu, releases the turn while the scenario is open.**
+  The stop holds until a working order: a question, swearing, «пиши инцидент» and «без
+  предпочтения» after it release the turn too, and «вливай» after it holds the turn again.
 - **A session that wrote nothing releases the turn on a question or on swearing of the owner.**
 - **The end of the epic releases the turn: every task lies in the epic branch, and the PR of the epic into the main branch exists.**
 - **A menu of a refusal held twice in a row releases the turn; held once, it does not.**
@@ -44,7 +49,19 @@ silent.
 - **The model hook on Stop does not judge open work and holds a question whose answer is already given.**
 - **The model hook on Stop holds a turn that wrote an incident record and did not send it, and lets one that sent it end.**
 - **The model hooks hold a reply and a question that are not in the owner's language, and a question about what the product sanitizes leaves.**
-- **A recorded turn carries no text the owner typed: the word is a class label or a phrase of at most four words that asks to stop or to wait.**
+- **A recorded turn carries no text the owner typed: the word is a class label, the mark of Esc or a phrase of at most four words.**
+  The mark of Esc is written as the host writes it, `[Request interrupted by user]`, and after a
+  refused call `[Request interrupted by user for tool use]`. A phrase is a stop, a question or an
+  order: «я же сказал стоп», «хватит тупить, чини», «вливай».
+- **A chain of one day keeps the owner's words as typed, swearing replaced by a neutral word, paths without a user name.**
+  The words that decide the state are the edge cases themselves: a resume word inside a question, «стоп»
+  in quotes, a word only queued and taken back.
+- **A chain of one day is judged point by point on the history the record gave.**
+  The hook on Stop at the end of each turn, the hooks before each call after Esc; the record up to the
+  point is moved to the minute of the run, because the engine judges a background task by the clock. A
+  synthetic point is judged on a copy of the record up to its place and never enters the chain.
+- **The publication of the kit runs both suites on the built edition before the version commit.**
+  A red suite stops the release before anything leaves the tree.
 
 ## What is out of scope
 
@@ -60,6 +77,12 @@ of each fixture as the record of a conversation and calls the hook on Stop with 
 `block` answer of the hook; a released one is no answer, and the engine command `verdict` names the
 release case. `RT_REPLAY_LAID=1` runs the same turns on the laid-out hooks and engine of the tree.
 
+The suite `projects/agent-kit/tests/owner-waits-replay.test.sh` runs the chain of one day and prints a
+line per point with its value: «без меню» or «меню», «пускает» or «держит», «отказан» or «пропущен», a
+count. A point held by the limit of another task prints `limit <task>` outside the count.
+`RT_REPLAY_EDITION=<package folder>` runs both suites on the hooks and engine of that edition. In the day
+suite a hook the edition lacks is not called: it prints «нет в издании: <hook>», and its points turn red.
+
 ### Refusal codes
 
 Not applicable: a refusal comes as text naming the state and the next move.
@@ -71,6 +94,12 @@ A fixture is one JSON object: `case`, `kind`, `record`, `task`, `turns` and the 
 `say`, `call` with `code` and an optional output `out`, `menu` with `answer`, `stop`, `compact`. A
 call that ended with code 0 and names no `out` answers `done`. What the suite expects stands in
 the suite next to the case line, not in the fixture.
+
+A chain of one day is one JSON object: `case`, `task`, `points` and `branches`. A point has `kind`
+(`owner`, `notice`, `hook`, `say`, `call`, `menu`), `at` and the fields of a turn entry; `queued: "only"`
+marks a word or a notice the host took back from the queue, `task` a command sent to the background or
+a `Monitor`, `end` the end of a turn. A branch has `after`, the index of the point it follows, and its
+own `points`, each with `synthetic: true`.
 
 ## Screens and states
 
@@ -120,3 +149,7 @@ the case of the deadlock of RT-3304 checks it. Its number is not given again.
   «отложить RT-N» and «подскажу путь».
 - 2026-11-24 — the same seven recorded words and the menu answer «стоп» release the turn again: the
   stop word is a release case next to Esc. Scenario 1913 counts the seven messages by one line each.
+- 2026-11-26 — the stop holds until a working order: scenario 2012 holds a recorded turn for every
+  transition, and four of them carry the expected verdict of the model hook on Stop.
+- 2026-11-27 — the chain of one day: the session of 24.11 from 01:15 to 11:13 local time, scenario
+  2018, run on the built edition before the version commit of the kit.

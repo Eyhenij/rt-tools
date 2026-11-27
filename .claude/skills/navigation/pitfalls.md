@@ -1,4 +1,4 @@
-<!-- rt-kit v0.42.0 · pitfalls/navigation.md · 5614ad2af04d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.1 · pitfalls/navigation.md · 5614ad2af04d · правится надстройкой, не здесь -->
 # Admin navigation — how it works here — cold part
 
 What the rule `navigation` handed over when cut to its statements, every article whole.

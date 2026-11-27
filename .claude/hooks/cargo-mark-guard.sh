@@ -112,6 +112,14 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg dir "$tasks_di
 
 [ "$verdict" = "gave" ] || exit 0
 
+# The owner's stop stands — a stop word or Esc with no working order after it: the turn ends, and
+# the mark waits for the owner's next word. The engine judges the record, as the exit check does.
+for engine in "${RT_FLOW_ENGINE:-}" "${CLAUDE_PROJECT_DIR:-.}/tools/task-flow-script.mjs"; do [ -f "$engine" ] && break; done
+if [ -f "$engine" ] && command -v node >/dev/null 2>&1 \
+    && printf '%s' "$input" | perl -e 'alarm shift; exec @ARGV' 30 node "$engine" stop >/dev/null 2>&1; then
+    exit 0
+fi
+
 named="$(printf '%s' "$keys" | head -5 | sed 's/^/    /')"
 more="$(printf '%s' "$keys" | wc -l | tr -d ' ')"
 [ "$more" -gt 5 ] 2>/dev/null && named="${named}

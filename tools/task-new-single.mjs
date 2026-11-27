@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.42.0 · checks/task-new-single.github.mjs · 0b2cdeb4d617 · правится надстройкой, не здесь
+// rt-kit v0.42.1 · checks/task-new-single.github.mjs · 0b2cdeb4d617 · правится надстройкой, не здесь
 /**
  * The only task of a grill: work outside an epic by the count the grill names, not by a word of the
  * owner about that work.

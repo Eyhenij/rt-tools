@@ -30,6 +30,7 @@ Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 Given an open PR into main whose head has a running CI run, and no background task of the session
 When the turn ends
 Then the stop is held, and the refusal names the run and `gh run watch <id> --exit-status`
+And after the owner's «стоп» the run holds nothing
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
@@ -137,3 +138,12 @@ When the turn ends
 Then the refusal names the run and offers no owner's menu
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-2011 — while the owner's stop stands, no run holds the turn
+
+Given an open PR whose head has a red run, a running run with no watch, or no run yet
+When the owner's stop stands: «стоп» and a question, or Esc
+Then the CI hold holds nothing
+And after «продолжай» the red run holds the turn again
+
+Covered: `projects/agent-kit/tests/turn-exit-guard-stop.test.sh`.

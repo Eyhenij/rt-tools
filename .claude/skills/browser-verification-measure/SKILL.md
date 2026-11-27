@@ -4,7 +4,7 @@ kind: pattern
 rule: browser-verification
 description: Pattern of rule browser-verification. Load when a conclusion about layout needs a number behind it — ready-made measurements, a computed value broken down over all nodes, a narrow screen through an iframe, pitfalls of the computer tool. Not for raising a stand — pattern browser-verification-stand.
 ---
-<!-- rt-kit v0.42.0 · patterns/browser-verification-measure.md · 57ec02f4ffd4 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.1 · patterns/browser-verification-measure.md · 57ec02f4ffd4 · правится надстройкой, не здесь -->
 
 # Measurement instead of a look
 
