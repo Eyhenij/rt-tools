@@ -79,7 +79,7 @@ menus() {
     [ -n "$VERBOSE" ] && echo "  ночь $1: отказов $held, с меню $count" >&2
     if [ "$held" -eq 0 ]; then echo 'нет отказов'; elif [ "$count" -eq 0 ]; then echo 'без меню'; else echo меню; fi
 }
-printf '  limit RT-3584 — ночь из записи: %s\n' "$(menus night-record)"
+printf '  limit RT-3721 — ночь из записи: %s\n' "$(menus night-record)"
 report "$L ночь при границе впереди" "$(menus night-boundary)" 'без меню'
 
 # --- утро: одобрение плана, который правит проверку, после ролей --------------------------------------

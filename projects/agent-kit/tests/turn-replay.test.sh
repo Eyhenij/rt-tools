@@ -231,10 +231,25 @@ got="$(dead_replay "echo 'Invalid API key · Please run /login'; exit 1")"
 report "replay: SC-AK-1941 — судья не запустился: ответ назван" \
     "$(printf '%s' "$got" | grep -c '^не запустился: .*a.json: exit 1 · Invalid API key')" 1
 report "replay: SC-AK-1941 — судья не запустился: второго вызова нет" "$(grep -c вызов "$J/calls")" 1
-report "replay: SC-AK-1941 — судья не запустился: пустой ответ с кодом 0 — тоже" \
-    "$(dead_replay 'exit 0' | grep -c '^не запустился: .*an empty answer')" 1
-report "replay: SC-AK-1941 — ответ без вердикта — по-прежнему расхождение" \
-    "$(dead_replay "printf 'не знаю'" | jq -r 'map(.ok) | any')" false
+: > "$J/calls"; report "replay: SC-AK-1941 — судья не запустился: пустой ответ с кодом 0 дважды — тоже" \
+    "$(dead_replay 'exit 0' 2>/dev/null | grep -c '^не запустился: .*an empty answer')" 1
+report "replay: SC-AK-1941 — пустой ответ с кодом 0 спрошен ещё раз, один" "$(grep -c вызов "$J/calls")" 2
+report "replay: SC-AK-1941 — ответ без вердикта дважды — по-прежнему расхождение" \
+    "$(dead_replay "printf 'не знаю'" 2>/dev/null | jq -r 'map(.ok) | any')" false
+: > "$J/calls"; report "replay: SC-AK-1941 — ответ без вердикта спрошен ещё раз, строка retry на stderr" \
+    "$(dead_replay "printf 'не знаю'" 2>&1 >/dev/null | grep -c '^retry ')/$(grep -c вызов "$J/calls")" '2/4'
+: > "$J/calls"; rm -f "$J/calls.1"; report "replay: SC-AK-1941 — после ответа без вердикта засчитан второй ответ" \
+    "$(dead_replay "[ -s '$J/calls.1' ] && echo block || { echo 1 > '$J/calls.1'; echo 'не знаю'; }" 2>/dev/null | jq -r 'map(.ok) | all')/$(grep -c вызов "$J/calls")" 'true/3'
+: > "$J/calls"; report "replay: SC-AK-1941 — неверный вердикт не спрошен ещё раз" \
+    "$(dead_replay 'printf allow' | jq -r 'map(.ok) | any')/$(grep -c вызов "$J/calls")" 'false/2'
+printf '%s\n' '{ "a.json": { "judge": "block", "ask": "block" } }' > "$J/mixed.json"
+KEYED="$(RT_JUDGE_RUNNER='cat >/dev/null; echo block' judge_js "console.log(j.replay({root:'$J', fixtures:'$J/fixtures', hooksDir:'$J/hooks', expectedFile:'$J/mixed.json', hook:'ask'}).map((r) => r.key).join(' '))")"
+report "replay: SC-AK-2020 — ключ оставляет пары одного хука" "$KEYED" ask
+RT_JUDGE_RUNNER='cat >/dev/null; echo block' node "$JUDGE" --key asks > "$J/empty.txt" 2>&1
+report "replay: SC-AK-2020 — ключ без пар — не зелёный прогон" "$?/$(grep -c '^judge replay: 0 of 0 match' "$J/empty.txt")" '1/1'
+RT_JUDGE_RUNNER='cat >/dev/null; echo block' node "$JUDGE" --key --model haiku > "$J/novalue.txt" 2>&1
+report "replay: SC-AK-2020 — флаг без значения отказан до вызовов" "$?/$(grep -c 'needs a value' "$J/novalue.txt")" '1/1'
+report "replay: SC-AK-2020 — хук меню пускает влитие ветки задачи по ключу" "$(has "$ASK_JUDGE" 'wins over the item of a walk around a check only')/$(has "$ASK_JUDGE" 'also only records the decision')" есть/есть
 RT_JUDGE_RUNNER="cat > /dev/null; echo 'Please run /login'; exit 1" node "$JUDGE" > "$J/out.txt" 2>&1
 report "replay: SC-AK-1941 — судья не запустился: код вызова 2, и ответ напечатан" "$?/$(grep -c 'Please run /login' "$J/out.txt")" '2/1'
 
