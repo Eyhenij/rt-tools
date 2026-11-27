@@ -22,6 +22,12 @@ and dropped what the person had typed.
 - **The header of a sheet** — the line at the top of a bottom sheet: the close button, the title
   and the action.
 - **The action of a sheet** — the one button that ends the work in the sheet: done or apply.
+- **The place of the main action** — the line of the sheet footer where the action of a sheet stands
+  at the full width; the fields of the kit move to it by task RT-3748.
+- **The info line of a footer** — a short line above the main action, in its centre: the chosen
+  period, the count of chosen values.
+- **An icon button of the header** — a round button with an icon on the right of the header, of the
+  same look as the close button.
 - **A card of choice** — an option of a list drawn as a box of its own, with the label on the left
   and the mark on the right.
 - **A choice not applied** — what the person marked or typed in a sheet whose result reaches the
@@ -70,6 +76,15 @@ checkbox or a switch on the right. The question before closing offers «Apply»,
   time is not a choice: the sheet closes
   without a question, and the done button writes it. Next to a field on a wide screen the
   columns stay lists with no time until one is pressed.
+- **A sheet has a place for its main action in the footer and a place for icon buttons in the
+  header.** The main action stands as a line of its own at the full width of the footer, the last
+  in it. The info line stands as a line of its own above it, in its centre, muted. The nodes of the
+  footer an application puts there, its footer template and the footer of a side panel stand
+  between them; the footer template replaces those nodes only, never the two places. A footer with
+  nothing in it takes no room. The right of the header holds one button or several icon buttons,
+  8 px apart, and the title stays in the centre. An icon button of the header is the kit icon
+  button, secondary, round, 40 by 40, as the close button is. Until task RT-3748 moves the fields
+  of the kit, they keep the action on the right of the header.
 - **The sheet of the page filters has a reset in its footer.** The reset reports to the
   application, which clears the filters; the sheet stays open and no longer counts an input as not
   applied. With no filter set and nothing typed the reset is off.
@@ -222,3 +237,5 @@ None.
 |            | first question, `rtPreloadSheetConfirm` waits for it in specs; a failed load takes the question off,  |
 |            | scenario 1920; the radio of a select card comes with the first cards, its place keeps the size of the |
 |            | radio; the look is unchanged (RT-3709)                                                                |
+| 2026-11-27 | The place of the main action and the info line in the footer, icon buttons of the header,             |
+|            | scenarios 1923…1926 (RT-3747)                                                                         |
