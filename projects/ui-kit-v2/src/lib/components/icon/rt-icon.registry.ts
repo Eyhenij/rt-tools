@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { InjectionToken, inject, Service, signal, Signal, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { Observable, Subject, catchError, map, mergeMap, of, shareReplay, tap } from 'rxjs';
+import { Observable, Subject, catchError, defer, map, mergeMap, of, tap } from 'rxjs';
 
 import { PlatformService } from '@rt-tools/core';
 
@@ -24,6 +24,15 @@ export const RT_ICON_SETS_CONFIG: InjectionToken<IRtIconSetsConfig> = new Inject
     providedIn: 'root',
     factory: (): IRtIconSetsConfig => rtIconSetsConfig(),
 });
+
+/** Адрес, за которым идут в сеть, и то, что по нему пришло. */
+interface IIconFetch {
+    readonly url: string;
+    /** Первый ответ по адресу. `undefined` — ответа ещё не было, `null` — отказ. */
+    raw?: string | null;
+    /** Ответ тем, кто спросил, пока его не было. */
+    readonly arrival: Subject<string | null>;
+}
 
 @Service()
 export class RtIconRegistry {
@@ -47,10 +56,40 @@ export class RtIconRegistry {
     /** Рисунки, которые попросила разметка. Загрузку по ним ведёт подписка из конструктора. */
     readonly #requestSource: Subject<IRtIconRef> = new Subject<IRtIconRef>();
 
+    /**
+     * Адреса, за которыми пора идти в сеть. Первый ответ запоминается в записи адреса, и поздний
+     * спросивший получает его же. Оператор повтора и субъект с памятью из rxjs не берутся: любой из
+     * них утяжеляет стартовый набор приложения, у которого его ещё нет.
+     */
+    readonly #fetchSource: Subject<IIconFetch> = new Subject<IIconFetch>();
+
     /** Набор приложения из `provideRtIcons()`. */
     public readonly defaultSet: string = this.#config.defaultSet;
 
     constructor() {
+        this.#fetchSource
+            .pipe(
+                mergeMap((asked: IIconFetch): Observable<string | null> =>
+                    this.#http.get(asked.url, { responseType: 'text' }).pipe(
+                        map((raw: string): string | null => (rtIconIsSvgFile(raw) ? raw : null)),
+                        catchError((): Observable<null> => of(null)),
+                        // Ответ уходит спросившим сразу. Поток запроса может не завершиться или
+                        // завершиться без ответа: это решают перехватчики приложения.
+                        tap({
+                            next: (raw: string | null): void => {
+                                if (asked.raw === undefined) {
+                                    asked.raw = raw;
+                                    asked.arrival.next(raw);
+                                    asked.arrival.complete();
+                                }
+                            },
+                            complete: (): void => asked.arrival.complete(),
+                        })
+                    )
+                ),
+                takeUntilDestroyed()
+            )
+            .subscribe();
         // Потоки складываются, а не вытесняют друг друга: странице нужны все спрошенные
         // значки, а не последний из них.
         this.#requestSource
@@ -147,12 +186,11 @@ export class RtIconRegistry {
         let file: Observable<string | null> | undefined = this.#files.get(url);
 
         if (file === undefined) {
-            file = this.#http.get(url, { responseType: 'text' }).pipe(
-                map((raw: string): string | null => (rtIconIsSvgFile(raw) ? raw : null)),
-                catchError((): Observable<null> => of(null)),
-                shareReplay(1)
-            );
+            const fetch: IIconFetch = { url, arrival: new Subject<string | null>() };
+            // Что отдать, решается в миг подписки: ответ мог прийти раньше неё.
+            file = defer((): Observable<string | null> => (fetch.raw === undefined ? fetch.arrival : of(fetch.raw)));
             this.#files.set(url, file);
+            this.#fetchSource.next(fetch);
         }
 
         return file;
