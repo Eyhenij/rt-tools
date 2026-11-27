@@ -213,10 +213,22 @@ Given the tokens are built
 When the whole file is cut into the base and the local pieces of the theme
 Then the whole `tokens.css` keeps its bytes; the base holds a copy of the root rule of the set Material under the
 dark theme and no island of the theme; the scope holds the islands, the same root rule as the whole file and the
-density rules at its end; the two files share only the density properties; a whole file that does not fold from
-the head, the middle and the tail refuses the cut
+density rules at its end; the local pieces write every set of values once; the two shared rules of the set Material
+keep their selectors, the light one stands above the dark one, the light one holds the values of the set and no colour
+scheme, the dark one holds the dark values of the set under the dark scheme; the two files share only the density
+properties; a whole file that does not fold from the head, the middle and the tail refuses the cut
 
 Covered: `tools/tests/build-tokens-split.test.sh`, called by `pnpm run test:checks`.
+
+### SC-UKV-1941 — a node of the set Material takes its own theme on any page
+
+Given a page whose root carries no theme, `data-theme="dark"` or the class `rt-theme-dark`
+When a node of the set Material, marked by the class or by the attribute, stands under one light piece, one dark piece
+or none and carries a light theme, a dark theme or none
+Then the node takes its own theme; without one it takes the theme of the piece, and without both the theme of the page.
+A node nested deeper than one piece is outside this scenario
+
+Covered: `projects/ui-kit-v2/src/styles/theme-scope.theme.spec.ts`.
 
 ### SC-UKV-1781 — the scope styles are loaded by the word of the application
 
