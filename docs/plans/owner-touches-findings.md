@@ -40,6 +40,9 @@ tree** — true only here.
   owner's word. RT-3701 names the form `gh pr merge --author-email`. _The address: the rules layer —
   `git-workflow-hosting`._
 
+RT-3697–RT-3700 moved to the epic RT-3720 by the owner's word of 27.11: «Вынеси эти задачи в
+отдельный эпик, но не начинай его». The sections below are where that epic starts from.
+
 ## RT-3697 — no repeated windows
 
 Deferred by the owner's word of 27.11 in a window: «отложить RT-3697». The work done so far lies in
