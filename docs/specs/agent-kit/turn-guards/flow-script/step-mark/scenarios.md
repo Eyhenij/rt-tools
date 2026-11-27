@@ -146,7 +146,7 @@ And an empty answer, an answer with no verdict and a call past 90 s are asked on
 And a second empty answer stops the replay the same way, and a second answer with no verdict counts as a mismatch
 And a wrong verdict is not asked again
 
-Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`; the call past 90 s — a run of `projects/agent-kit/tests/judge-replay.mjs` with a judge that sleeps 95 s, by hand: the suite does not wait that long.
 
 ### SC-AK-1716 — a plan stripped of its checks in the working copy does not lift the refusal
 

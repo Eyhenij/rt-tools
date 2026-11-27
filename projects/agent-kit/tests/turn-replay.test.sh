@@ -242,8 +242,12 @@ report "replay: SC-AK-1941 — ответ без вердикта дважды �
     "$(dead_replay "[ -s '$J/calls.1' ] && echo block || { echo 1 > '$J/calls.1'; echo 'не знаю'; }" 2>/dev/null | jq -r 'map(.ok) | all')/$(grep -c вызов "$J/calls")" 'true/3'
 : > "$J/calls"; report "replay: SC-AK-1941 — неверный вердикт не спрошен ещё раз" \
     "$(dead_replay 'printf allow' | jq -r 'map(.ok) | any')/$(grep -c вызов "$J/calls")" 'false/2'
-report "replay: SC-AK-2020 — ключ оставляет пары одного хука" "$(RT_JUDGE_RUNNER='cat >/dev/null; echo block' \
-    judge_js "console.log(j.replay({root:'$J', fixtures:'$J/fixtures', hooksDir:'$J/hooks', expectedFile:'$J/two.json', hook:'ask'}).length)")" 0
+printf '%s\n' '{ "a.json": { "judge": "block", "ask": "block" } }' > "$J/mixed.json"
+KEYED="$(RT_JUDGE_RUNNER='cat >/dev/null; echo block' judge_js "console.log(j.replay({root:'$J', fixtures:'$J/fixtures', hooksDir:'$J/hooks', expectedFile:'$J/mixed.json', hook:'ask'}).map((r) => r.key).join(' '))")"
+report "replay: SC-AK-2020 — ключ оставляет пары одного хука" "$KEYED" ask
+RT_JUDGE_RUNNER='cat >/dev/null; echo block' node "$JUDGE" --key asks > /dev/null 2>&1
+report "replay: SC-AK-2020 — ключ без пар — не зелёный прогон" "$?" 1
+report "replay: SC-AK-2020 — хук меню пускает влитие ветки задачи по ключу" "$(has "$ASK_JUDGE" 'wins over the item of a walk around a check only')" есть
 RT_JUDGE_RUNNER="cat > /dev/null; echo 'Please run /login'; exit 1" node "$JUDGE" > "$J/out.txt" 2>&1
 report "replay: SC-AK-1941 — судья не запустился: код вызова 2, и ответ напечатан" "$?/$(grep -c 'Please run /login' "$J/out.txt")" '2/1'
 

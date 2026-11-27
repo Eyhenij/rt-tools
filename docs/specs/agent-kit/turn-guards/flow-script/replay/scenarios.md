@@ -245,6 +245,6 @@ Covered: `projects/agent-kit/tests/owner-waits-replay.test.sh`.
 Given a question with the option to merge a task branch named by its key, asked after a hold of the menu hook on an earlier question. Five more merges each say one thing in the option or the question. The branch lifts a check, or skips the calls of the roles, or lets a decision count without an action of the owner. Or the option appends a lift of its own, or hands the work over while the refusal named a ready move
 When the model judge reads each recorded question with the text of the menu hook
 Then the merge that only names the branch leaves, also when the branch makes a check take another form of the same proof, and each of the five is held
-And the replay keeps the pairs of the menu hook alone by `--key ask` and runs the model of the background work by `--model`
+And the replay keeps the pairs of the menu hook alone by `--key ask`, a key with no pairs is no green run, and `--model` runs the model of the background work
 
-Covered: `projects/agent-kit/tests/turn-replay.test.sh`, `projects/agent-kit/tests/judge-replay.mjs`.
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`; the verdicts of the model and `--model` — `projects/agent-kit/tests/judge-replay.mjs`, run by hand.

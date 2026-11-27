@@ -358,7 +358,7 @@ function replayed(run) {
 
 const flag = (name) => {
     const at = process.argv.indexOf(name);
-    return at > 0 ? process.argv[at + 1] : null;
+    return at > 0 && !String(process.argv[at + 1] ?? '--').startsWith('--') ? process.argv[at + 1] : null;
 };
 
 if (process.argv[1] === fileURLToPath(import.meta.url) && (process.argv.includes('--as-hook') || process.argv.includes('--live'))) {
@@ -401,5 +401,5 @@ if (process.argv[1] === fileURLToPath(import.meta.url) && (process.argv.includes
         console.log(`${r.ok ? 'ok' : 'mismatch'} ${r.file} ${r.key}: expected ${r.want}, got ${r.got ?? 'no verdict'}`);
     const bad = results.filter((r) => !r.ok).length;
     console.log(`judge replay: ${results.length - bad} of ${results.length} match`);
-    process.exit(bad === 0 ? 0 : 1);
+    process.exit(bad === 0 && results.length > 0 ? 0 : 1);
 }

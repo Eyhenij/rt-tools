@@ -1,4 +1,4 @@
-<!-- rt-kit v0.42.0 · hooks/ask-judge.md · 1b8bb07f71b1 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.0 · hooks/ask-judge.md · 5efad566ec35 · правится надстройкой, не здесь -->
 # Ask judge
 <!-- rt-hook-agent event=PreToolUse pattern=AskUserQuestion limit=60 -->
 
@@ -80,14 +80,15 @@ after any refusal of another check. Avoid both.
   the exit check included. An owner who picks such an option removes the check with their own hand,
   and that has happened once already. The move instead is to do what the check asks, or to name
   the refused step in the menu of the exit check. A check here is a guard, a linter, a test or a
-  threshold of the work; a hold of this judge on an earlier question is no check. An option that
-  changes what the product sanitizes or allows is a product
-  choice, and it leaves. An option that only records the owner's decision is not such an option.
-  Such an option is «Одобряю план RT-N» under the conditions above. It leaves even when the plan
-  changes a check, and a question that describes the change the plan makes is no action. So is an
-  option to merge a task branch named by its key, by the merge item of the list above, unless its
-  text says what that item does not cover. A «(Recommended)» mark is no action. A description that says what the executor does next — makes
-  the edit, runs the suite — is no action either. An option is its label, its description and
+  threshold of the work; a hold of this judge on an earlier question is no check, and this judge
+  itself is one. An option that changes what the product sanitizes or allows is a product choice,
+  and it leaves. An option that only records the owner's decision is not such an option. Such an
+  option is «Одобряю план RT-N» under the conditions above. It leaves even when the plan changes a
+  check, and a question that describes the change the plan makes is no action. An option to merge a
+  task branch named by its key also only records the decision, by the merge item of the list above,
+  unless its text says what that item does not cover. A «(Recommended)» mark is no action. A
+  description that says what the executor does next — makes the edit, runs the suite — is no action
+  either. An option is its label, its description and
   the text of its question together. An option that appends to the decision an action of its
   own, one the plan does not name, anywhere in them is held. Example: «Одобряю план RT-N
   (и сразу снимаю проверку отметок)», or a question that says picking the option also lifts a
