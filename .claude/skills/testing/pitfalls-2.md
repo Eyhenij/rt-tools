@@ -1,4 +1,4 @@
-<!-- rt-kit v0.41.1 · pitfalls/testing.2.md · fa474affc0b7 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.0 · pitfalls/testing.2.md · fa474affc0b7 · правится надстройкой, не здесь -->
 # Verifiability — cold part, second file
 
 What the rule `testing` handed over when cut to its statements, every article whole.

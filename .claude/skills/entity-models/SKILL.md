@@ -4,7 +4,7 @@ kind: rule
 law: entity-models
 description: Rule under the entity-models law. Load when declaring or editing a record model and its mapper, when editing shared models and when editing the contract description. Names the model namespace and its levels. Pattern entity-models-new.
 ---
-<!-- rt-kit v0.41.1 · rules/entity-models.md · 8eb21fcece12 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.0 · rules/entity-models.md · 8eb21fcece12 · правится надстройкой, не здесь -->
 
 # Entity models — how it works here
 

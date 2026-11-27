@@ -254,6 +254,18 @@ and no dead end over a working day — is read from the same numbers.
 - **The rules the gate delivered with no refusal are counted by its delivery notes.** One note is
   one rule put into the session; the report prints the sum over the period next to the refusals.
 
+### The owner's touches
+
+- **A queued message the record writes again is one word.** The harness writes one queued message
+  again within seconds; the same text minutes later, or typed in a later turn, is a new word.
+- **A typed message carries its kind, never its text.** The kinds are correction, by the set of the
+  correction hook, a question where the work stands, an order to start or go on, and other.
+- **A second count of one turn writes no line again.** A mark left behind or two runs of the hook
+  for one turn read the same entries; the file of the day keeps each line once.
+- **The owner's touches are counted per task.** A touch is an answer in a question window or a typed
+  message; one moment is one touch whatever session wrote it, a taken task with none counts with
+  zero, and the touches off a task are named apart.
+
 ### The report and the day line
 
 - **The lines of the result are listed, and none of them prints «нет данных».** The lines:
