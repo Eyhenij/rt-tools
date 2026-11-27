@@ -1,4 +1,4 @@
-<!-- rt-kit v0.41.1 · pitfalls/task-flow.2.md · 7c103846d91d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.0 · pitfalls/task-flow.2.md · 7c103846d91d · правится надстройкой, не здесь -->
 # Work conduct — cold part, second file
 
 The sections the rule `task-flow` handed over when it was cut to its statements and split in
