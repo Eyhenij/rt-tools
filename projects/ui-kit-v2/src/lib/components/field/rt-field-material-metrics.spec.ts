@@ -16,9 +16,24 @@ import { RtFieldComponent } from './rt-field.component';
  * они читают. Замер в браузере — история Molecules/Forms/Field → Material.
  */
 
-/** Собранный лист без переносов: селекторы и значения читаются одной строкой. */
+/** Собранный лист без комментариев и переносов: селекторы и значения читаются одной строкой. */
 function compiled(file: string): string {
-    return sass.compile(join(__dirname, file)).css.replace(/\s+/g, ' ');
+    return sass
+        .compile(join(__dirname, file))
+        .css.replace(/\/\*[\s\S]*?\*\//g, '')
+        .replace(/\s+/g, ' ');
+}
+
+interface IRule {
+    readonly selector: string;
+    readonly body: string;
+}
+
+/** Правила листа по одному: селектор целиком и тело. */
+function rules(css: string): IRule[] {
+    return Array.from(css.matchAll(/([^{}]+)\{([^{}]*)\}/g), (found: RegExpMatchArray): IRule => {
+        return { selector: found[1].trim(), body: found[2].trim() };
+    });
 }
 
 const FIELD: string = compiled('rt-field.component.scss') + compiled('rt-field-label-inside.scss');
@@ -76,12 +91,19 @@ describe('поле материального набора против поля
         expect(SELECT).toContain(`.rt-select${preset} .rt-select__floating-label`);
         expect(INPUT_LABEL).toContain(`.rt-input--floating${preset}:not(.rt-input--appearance--fill`);
         expect(INPUT_LABEL).toContain(`.rt-input${preset} .rt-input__floating-label`);
-        // Слой рамки поля ввода пишется без признака набора: его включает только обведённое правило набора.
-        const boxed: string = `.rt-input--floating${preset}:not(.rt-input--appearance--fill, .rt-input--appearance--pill, .rt-input--readonly) {`;
-        expect(ruleBody(INPUT_LABEL, boxed)).toContain("--rt-private-input-outline: ''");
-        expect(ruleBody(INPUT_LABEL, '.rt-input--floating {')).toContain('--rt-private-input-outline: none');
-        expect(ruleBody(INPUT_LABEL, '.rt-input--floating:before {')).toContain('content: var(--rt-private-input-outline);');
-        expect(INPUT_LABEL.match(/--rt-private-input-outline:/g)).toHaveLength(2);
+        // Слой рамки поля ввода пишется без признака набора: во всех листах поля его включает только обведённое
+        // правило набора, а другого содержимого у слоя нет ни в одном его состоянии.
+        const boxed: string = `.rt-input--floating${preset}:not(.rt-input--appearance--fill, .rt-input--appearance--pill, .rt-input--readonly)`;
+        const sheets: IRule[] = rules(`${INPUT_LABEL} ${INPUT} ${compiled('../input/rt-input-affixes.scss')}`);
+        const switches: IRule[] = sheets.filter((rule: IRule): boolean => rule.body.includes('--rt-private-input-outline:'));
+        expect(switches.map((rule: IRule): string => rule.selector)).toEqual([boxed, '.rt-input--floating']);
+        expect(switches[0].body).toContain("--rt-private-input-outline: '';");
+        expect(switches[1].body).toBe('--rt-private-input-outline: none;');
+
+        const layerContents: string[] = sheets
+            .filter((rule: IRule): boolean => /^\.rt-input(?!_).*:before(,|$)/.test(rule.selector))
+            .flatMap((rule: IRule): string[] => rule.body.match(/(?<![-\w])content:[^;]*/g) ?? []);
+        expect(layerContents).toEqual(['content: var(--rt-private-input-outline)']);
         expect(`${SELECT} ${INPUT_LABEL} ${INPUT}`).not.toMatch(/:is\(\.rt-preset-material, \[data-preset=material\]\) \.rt-/);
     });
 
