@@ -80,8 +80,8 @@ release case. `RT_REPLAY_LAID=1` runs the same turns on the laid-out hooks and e
 The suite `projects/agent-kit/tests/owner-waits-replay.test.sh` runs the chain of one day and prints a
 line per point with its value: «без меню» or «меню», «пускает» or «держит», «отказан» or «пропущен», a
 count. A point held by the limit of another task prints `limit <task>` outside the count.
-`RT_REPLAY_EDITION=<package folder>` runs both suites on the hooks and engine of that edition; a hook the
-edition lacks is not called and prints «нет в издании: <hook>».
+`RT_REPLAY_EDITION=<package folder>` runs both suites on the hooks and engine of that edition. In the day
+suite a hook the edition lacks is not called: it prints «нет в издании: <hook>», and its points turn red.
 
 ### Refusal codes
 

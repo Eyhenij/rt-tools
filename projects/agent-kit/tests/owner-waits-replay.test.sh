@@ -19,7 +19,8 @@ echo "день 24.11"
 
 TESTS="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$TESTS/../../.." && pwd)"
-WORK="$(mktemp -d)"
+# Путь без ссылок: разложенный движок сверяет свой путь с путём запуска, а `/var` на macOS — ссылка.
+WORK="$(cd "$(mktemp -d)" && pwd -P)"
 cleanup() { rm -rf "$WORK"; }
 trap cleanup EXIT
 # Запрет вызовов после остановки пишет метку в `$TMPDIR/claude-stop-call/<сессия>`: метка живёт в папке набора.
@@ -35,6 +36,8 @@ STOP_WORD='2026-11-24T02:38:18'
 L='SC-AK-2018 —'
 # Первое слово меню владельцу — из строки `menu` движка издания: сменит движок текст меню, набор его узнает.
 MENU_WORD="$(sed -n "s/^ *menu: \['\([^ ']*\).*/\1/p" "$ASSETS/task-flow/flow.js")"
+# Слова нет или их два — ночь без меню ничего не значит: точка ночи красная, а не судит по запасному слову.
+case "$MENU_WORD" in '' | *$'\n'*) MENU_WORD='' ;; esac
 
 for name in taken archived; do build_tree "$name" >/dev/null; done
 cp -R "$WORK/taken" "$WORK/night-record"
@@ -51,15 +54,16 @@ points() { jq -r --arg kind "$1" '.points | to_entries[] | select(.value.kind ==
 
 # Хук на Stop на записи до точки: печатает BLOCK и причину или PASS.
 stop_at() {
-    local tree="$WORK/$1" at="$2" branch="${3:-}" rec="$WORK/$1.jsonl" input out
+    local tree="$WORK/$1" at="$2" branch="${3:-}" rec="$WORK/$1.jsonl" input out hook
+    hook="$(edition_hook turn-exit-guard.sh)" || { echo PASS; return; }
     node "$LIB" "$CHAIN" "$rec" "$at" '' "$branch"
     input="$(jq -n --arg p "$rec" --arg d "$tree" '{session_id:"replay",transcript_path:$p,cwd:$d,stop_hook_active:false}')"
-    out="$(cd "$tree" && CLAUDE_PROJECT_DIR="$tree" "$HOOKS/turn-exit-guard.sh" <<< "$input" 2>/dev/null)"
+    out="$(cd "$tree" && CLAUDE_PROJECT_DIR="$tree" "$hook" <<< "$input" 2>/dev/null)"
     printf '%s' "$out" | jq -r 'if .decision == "block" then "BLOCK \(.reason // "")" else "PASS" end' 2>/dev/null || echo PASS
 }
 
 # Хук `PreToolUse` на вызове точки: печатает deny или PASS; хука нет в издании — «нет». Отказ — ответ
-# `permissionDecision` или код 2, как его читает хост.
+# `permissionDecision` или код 2, как его читает хост; иной код не 0 — «упал».
 call_at() {
     local tree="$WORK/$1" at="$2" hook branch="${4:-}" rec="$WORK/$1.call.jsonl" input out code
     hook="$(edition_hook "$3")" || { echo нет; return; }
@@ -67,6 +71,7 @@ call_at() {
     out="$(cd "$tree" && CLAUDE_PROJECT_DIR="$tree" "$hook" <<< "$input" 2>/dev/null)"
     code=$?
     if [ "$code" -eq 2 ]; then echo deny
+    elif [ "$code" -ne 0 ]; then echo упал
     elif [ -z "$out" ]; then echo PASS
     else printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision // "PASS"' 2>/dev/null; fi
 }
@@ -92,10 +97,13 @@ menus() {
         [[ "$at" < "$NIGHT_END" ]] || continue
         got="$(stop_at "$1" "$index")"
         case "$got" in BLOCK*) held=$((held + 1)) ;; esac
-        case "$got" in *"«${MENU_WORD:-отложить}"*) count=$((count + 1)) ;; esac
+        case "$got" in *"«$MENU_WORD"*) count=$((count + 1)) ;; esac
     done < <(points say)
     [ -n "$VERBOSE" ] && echo "  ночь $1: отказов $held, с меню $count" >&2
-    if [ "$held" -eq 0 ]; then echo 'нет отказов'; elif [ "$count" -eq 0 ]; then echo 'без меню'; else echo меню; fi
+    if [ -z "$MENU_WORD" ]; then echo 'нет слова меню в движке'
+    elif [ "$held" -eq 0 ]; then echo 'нет отказов'
+    elif [ "$count" -eq 0 ]; then echo 'без меню'
+    else echo меню; fi
 }
 printf '  limit RT-3721 — ночь из записи: %s\n' "$(menus night-record)"
 report "$L ночь при границе впереди" "$(menus night-boundary)" 'без меню'
@@ -128,19 +136,21 @@ while read -r index at; do
 done < <(points say)
 report "$L отказов конца хода после Esc" "$blocks" 1
 
-verdict() { case "$1" in deny) echo отказан ;; нет) echo 'нет в издании' ;; *) echo пропущен ;; esac; }
+verdict() { case "$1" in deny) echo отказан ;; нет) echo 'нет в издании' ;; упал) echo 'хук упал' ;; *) echo пропущен ;; esac; }
 deny_at="$(jq -r '.branches["deny-call"] | .after + (.points | length)' "$CHAIN")"
 report "$L вызов без слова владельца после Esc" "$(verdict "$(call_at archived "$deny_at" owner-stop-call-guard.sh deny-call)")" отказан
 
-# Ноль ложных отказов значит что-то, только когда набор дошёл до вызовов: их число стоит своей строкой.
+# Ноль ложных отказов значит что-то, только когда набор дошёл до вызовов: их число стоит своей строкой. Число
+# считает файл данных, а не ответы хука: мёртвый хук ловит строка вызова без слова владельца.
 false_refusals=0 calls=0
 while read -r index at; do
     [[ "$at" > "$ESC" ]] || continue
     calls=$((calls + 1))
-    [ "$false_refusals" = 'нет в издании' ] && continue
+    case "$false_refusals" in *[!0-9]*) continue ;; esac
     case "$(call_at archived "$index" owner-stop-call-guard.sh)" in
         deny) false_refusals=$((false_refusals + 1)) ;;
         нет) false_refusals='нет в издании' ;;
+        упал) false_refusals='хук упал' ;;
     esac
 done < <(points call)
 report "$L вызовов после Esc в ходах по слову владельца" "$calls" 74
@@ -154,6 +164,8 @@ said() { case "$1" in *'stop word'*) echo 'отпущен словом влад�
 stop_word="$(jq -r --arg t "$STOP_WORD" '.points | to_entries[] | select(.value.kind == "say" and .value.end and (.value.at | startswith($t))) | .key' "$CHAIN")"
 report "$L 09:38 «не двигайся дальше … пока не скажу»" "$(said "$(release_at archived "$stop_word")")" 'отпущен словом владельца'
 
+# Последний конец хода, 11:12:59 в цепочке, после ответа «вливай» в 11:09: строка зовётся 11:13:20, как её
+# читают проверки шагов плана.
 report "$L 11:13:20" "$(said "$(release_at archived "$(points say | tail -1 | cut -d' ' -f1)")")" 'отпущен по фоновому'
 
 suite_result "день 24.11"

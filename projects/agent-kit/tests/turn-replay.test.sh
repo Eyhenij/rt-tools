@@ -20,7 +20,8 @@ echo "записанные ходы"
 TESTS="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$TESTS/../../.." && pwd)"
 FIXTURES="$TESTS/fixtures/turn-replay"
-WORK="$(mktemp -d)"
+# Путь без ссылок: разложенный движок сверяет свой путь с путём запуска, а `/var` на macOS — ссылка.
+WORK="$(cd "$(mktemp -d)" && pwd -P)"
 cleanup() { rm -rf "$WORK"; }
 trap cleanup EXIT
 
