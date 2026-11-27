@@ -20,7 +20,7 @@
 // puts a real session record in front of the turn. `--live` reads the runs of the hook from the
 // session records of the current branch after the last commit of the hook.
 //
-// Usage: node judge-replay.mjs [--root <tree>]
+// Usage: node judge-replay.mjs [--root <tree>] [--only <start of a fixture name>]
 //        node judge-replay.mjs --as-hook [--model <id>] [--pad <session record>] [--root <tree>]
 //        node judge-replay.mjs --live [--root <tree>]
 //   RT_JUDGE_RUNNER=<command> replaces the call of the model: the command gets the prompt on stdin
@@ -136,11 +136,12 @@ function ask(prompt, root, file) {
 /**
  * Runs the judge over every pair the expected file names and compares afterwards. The pairs are
  * taken from the names of the expected file; the verdicts in it are read only after the last answer.
+ * `only` keeps the fixtures whose name starts with it: the questions of one record, one model call each.
  */
-export function replay({ root, fixtures, hooksDir, expectedFile }) {
-    const pairs = Object.entries(JSON.parse(readFileSync(expectedFile, 'utf8'))).flatMap(([file, keys]) =>
-        Object.keys(keys).map((key) => ({ file, key }))
-    );
+export function replay({ root, fixtures, hooksDir, expectedFile, only = null }) {
+    const pairs = Object.entries(JSON.parse(readFileSync(expectedFile, 'utf8')))
+        .filter(([file]) => !only || file.startsWith(only))
+        .flatMap(([file, keys]) => Object.keys(keys).map((key) => ({ file, key })));
     const answers = pairs.map(({ file, key }) => {
         const fixture = JSON.parse(readFileSync(join(fixtures, file), 'utf8'));
         const hookText = readFileSync(join(hooksDir, HOOKS[key]), 'utf8');
@@ -365,12 +366,14 @@ if (process.argv[1] === fileURLToPath(import.meta.url) && (process.argv.includes
     const at = process.argv.indexOf('--root');
     const root = at > 0 ? process.argv[at + 1] : join(HERE, '../../..');
     const laid = existsSync(join(root, '.claude/hooks/turn-judge.md'));
+    const only = process.argv.indexOf('--only');
     const results = replayed(() =>
         replay({
             root,
             fixtures: join(HERE, 'fixtures/turn-replay'),
             hooksDir: laid ? join(root, '.claude/hooks') : join(HERE, '../assets/hooks'),
             expectedFile: join(HERE, 'turn-replay.expected.json'),
+            only: only > 0 ? process.argv[only + 1] : null,
         })
     );
     for (const r of results)
