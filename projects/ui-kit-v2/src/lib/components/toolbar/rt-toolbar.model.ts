@@ -20,6 +20,8 @@ export namespace IRtToolbar {
         template: TemplateRef<IFiltersContext>;
         reset: () => void;
         apply: () => void;
+        /** Неприменённые отборы отброшены ответом «Не применять» шторки телефона; панель закрывается. */
+        discard?: () => void;
     }
 
     /**

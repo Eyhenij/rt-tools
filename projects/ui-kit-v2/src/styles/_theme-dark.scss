@@ -194,6 +194,10 @@
     --rt-color-chart-series-6: var(--rt-chart-green-dark);
     --rt-color-chart-series-7: var(--rt-chart-violet-dark);
     --rt-color-chart-series-8: var(--rt-chart-red-dark);
+
+    /* Bottom sheet — подписи ответов вопроса: ступени светлее, до 4,5 к одному на графите. */
+    --rt-color-sheet-confirm-apply: var(--rt-brand-300);
+    --rt-color-sheet-confirm-danger: var(--rt-danger-300);
 }
 
 :root[data-theme='dark'],

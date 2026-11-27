@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal, WritableSignal } from '@angular/core';
 
 import { IRtDynamicSelectorParts } from './rt-dynamic-selector-parts.model';
 
@@ -11,6 +11,12 @@ import { IRtDynamicSelectorParts } from './rt-dynamic-selector-parts.model';
 export class RtDynamicSelectorPartsService<T> {
     #popup: IRtDynamicSelectorParts.PopupSource<T> | null = null;
     #list: IRtDynamicSelectorParts.ListSource<T> | null = null;
+
+    /**
+     * Ключи, отмеченные в открытом окне и ещё не применённые. Пишет окно, читает корень: по ним
+     * шторка знает, что выбор не применён, а кнопка «Применить» в её шапке — что применять.
+     */
+    public readonly ticked: WritableSignal<unknown[]> = signal<unknown[]>([]);
 
     /** Корень привязал источник окна; без него окно берёт свои входы. */
     public get hasPopup(): boolean {

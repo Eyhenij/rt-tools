@@ -3,6 +3,7 @@ import { ComponentFixture } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { createRtFixture } from '../../../testing/rt-kit-testing';
+import { IRtControlChange, rtControlChangeOf } from '../../util/control-change';
 import { RtRadioButtonComponent } from './rt-radio-button.component';
 import { RtRadioGroupComponent } from './rt-radio-group.component';
 
@@ -96,6 +97,24 @@ describe('RtRadioGroupComponent', (): void => {
         fixture.detectChanges();
 
         expect(radios(fixture).map((radio: HTMLElement): string | null => radio.getAttribute('tabindex'))).toEqual(['-1', '-1', '0']);
+    });
+
+    it('SC-UKV-1852 — правка радиокнопки несёт значение группы до и после: возврат назад читается возвратом', (): void => {
+        const fixture: ComponentFixture<RadioGroupHostComponent> = setup();
+        fixture.componentInstance.control.setValue('single');
+        fixture.detectChanges();
+        const heard: (IRtControlChange | null)[] = [];
+        group(fixture).addEventListener('change', (event: Event): number => heard.push(rtControlChangeOf(event)));
+
+        radios(fixture)[1].click();
+        fixture.detectChanges();
+        radios(fixture)[0].click();
+        fixture.detectChanges();
+
+        expect(heard).toEqual([
+            { value: 'double', previous: 'single' },
+            { value: 'single', previous: 'double' },
+        ]);
     });
 
     it('SC-UKV-1021 — стрелка вниз выбирает следующую и переводит на неё фокус', (): void => {

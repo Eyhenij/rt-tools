@@ -216,6 +216,27 @@ describe('RtDatePickerComponent', (): void => {
             expect(popup()).toBeNull();
         });
 
+        // Прокрутку страницы держит общая оболочка шторки; её блокировку проверяет спека самой оболочки.
+        it('SC-UKV-1788 — Escape закрывает шторку даты, в шапке стоит доступное имя поля', (): void => {
+            const fixture: ComponentFixture<RtDatePickerComponent> = createRtFixture(
+                RtDatePickerComponent,
+                { ariaLabel: 'Дата заезда' },
+                { providers: [RU_LOCALE, { provide: BreakpointsService, useClass: NarrowBreakpointsService }] }
+            );
+            const sheet: HTMLElement = qa(fixture, 'date-picker-sheet')?.nativeElement as HTMLElement;
+            openButton(fixture).click();
+            fixture.detectChanges();
+
+            expect(sheet.classList).toContain('rt-bottom-sheet--open');
+            expect(textOf(qa(fixture, 'date-picker-sheet-title'))).toBe('Дата заезда');
+            expect(sheet.querySelector('[qa-dataid="bottom-sheet-close"]')).not.toBeNull();
+
+            document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+            fixture.detectChanges();
+
+            expect(sheet.classList).not.toContain('rt-bottom-sheet--open');
+        });
+
         it('SC-UKV-1595 — на узком экране с sheet=false панель открывается поповером у поля, шторки нет', (): void => {
             const fixture: ComponentFixture<RtDatePickerComponent> = createRtFixture(
                 RtDatePickerComponent,

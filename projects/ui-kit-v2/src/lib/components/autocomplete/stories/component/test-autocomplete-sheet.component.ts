@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 import { STORY_TRIGGER_ATTRIBUTE } from '../../../../../showcase/story-overlay';
 import { RtFieldComponent } from '../../../field/rt-field.component';
@@ -17,6 +18,9 @@ import { RtAutocompleteComponent } from '../../rt-autocomplete.component';
     templateUrl: './test-autocomplete-sheet.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        // Angular
+        FormsModule,
+
         // components
         RtFieldComponent,
         RtAutocompleteComponent,
@@ -28,6 +32,9 @@ export class TestRtAutocompleteSheetComponent {
     public readonly triggerAttribute: string = STORY_TRIGGER_ATTRIBUTE;
 
     public sheet: boolean = true;
+
+    /** Значение поля: его подсказка в шторке отмечена радиокнопкой. */
+    public chosen: string = 'Мурманск';
 
     // Поле-стрелка линтер считает методом, поэтому оно стоит после остальных.
     public displayWith: (item: string | null) => string = (item: string | null): string => String(item ?? '');

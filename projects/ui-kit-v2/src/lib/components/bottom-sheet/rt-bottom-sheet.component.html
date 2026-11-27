@@ -4,24 +4,57 @@
         rtElem="backdrop"
         qa-dataid="bottom-sheet-backdrop"
         [attr.aria-label]="t().bottomSheetClose"
-        (click)="dismiss()"></button>
+        [attr.inert]="confirming() ? '' : null"
+        (click)="dismiss('backdrop')"></button>
+    <!-- Пока показан вопрос, панель под ним недоступна: Tab ходит только по ответам. -->
     <div
         rtElem="panel"
         qa-dataid="bottom-sheet-panel"
         role="dialog"
         aria-modal="true"
+        tabindex="-1"
         [attr.aria-labelledby]="ariaLabelledby()"
-        [rtMod]="{ dragging: dragging() }"
-        [style.transform]="dragging() ? 'translateY(' + dragDeltaY() + 'px)' : null">
+        [attr.aria-label]="ariaLabel()"
+        [attr.inert]="confirming() ? '' : null"
+        [rtMod]="{ dragging: dragging(), full: fullHeight(), typing: raised() }"
+        [style.transform]="dragging() ? 'translateY(' + dragDeltaY() + 'px)' : null"
+        (focusin)="onFocusIn($event)">
         <div rtElem="handle" qa-dataid="bottom-sheet-handle" (pointerdown)="onDragStart($event)"></div>
-        <div rtElem="header" qa-dataid="bottom-sheet-header">
-            <ng-content select="[sheetHeader]" />
-        </div>
+        @if (headerTpl(); as ownHeader) {
+            <div rtElem="header" qa-dataid="bottom-sheet-header" [rtMod]="{ own: true }">
+                <ng-container [ngTemplateOutlet]="ownHeader" [ngTemplateOutletContext]="templateContext" />
+            </div>
+        } @else {
+            <div rtElem="header" qa-dataid="bottom-sheet-header">
+                <div rtElem="start">
+                    <!-- Второй экран шторки возвращается к первому шевроном «назад» на месте «×». -->
+                    <rt-icon-button
+                        variant="secondary"
+                        radius="full"
+                        [attr.qa-dataid]="nested() ? 'bottom-sheet-back' : 'bottom-sheet-close'"
+                        [icon]="nested() ? 'chevron-left' : 'ico-close'"
+                        [ariaLabel]="nested() ? t().uiBack : t().bottomSheetClose"
+                        (clicked)="dismiss('close')" />
+                </div>
+                <div rtElem="title" qa-dataid="bottom-sheet-title">
+                    <ng-content select="[sheetHeader]" />
+                </div>
+                <div rtElem="action" qa-dataid="bottom-sheet-action">
+                    <ng-content select="[sheetAction]" />
+                </div>
+            </div>
+        }
         <div rtElem="body" qa-dataid="bottom-sheet-body">
             <ng-content />
         </div>
         <div rtElem="footer" qa-dataid="bottom-sheet-footer">
-            <ng-content select="[sheetFooter]" />
+            @if (footerTpl(); as ownFooter) {
+                <ng-container [ngTemplateOutlet]="ownFooter" [ngTemplateOutletContext]="templateContext" />
+            } @else {
+                <ng-content select="[sheetFooter]" />
+            }
         </div>
     </div>
+    <!-- Экран вопроса: его код приходит при первом вопросе, шторка ставит его сюда сама. -->
+    <ng-container #confirmSlot />
 </ng-container>

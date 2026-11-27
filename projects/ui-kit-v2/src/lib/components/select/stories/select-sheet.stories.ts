@@ -21,6 +21,9 @@ const NARROW_ANSWERS: Pick<BreakpointsService, 'mobile' | 'tablet' | 'desktop' |
 
 const NARROW_BREAKPOINTS: BreakpointsService = NARROW_ANSWERS as BreakpointsService;
 
+/** Открытая шторка списка: по ней кадр ждёт, что список уже показан. */
+const OPEN_SHEET: string = '.rt-popover-sheet .rt-bottom-sheet--open';
+
 /** Окно телефона из эскиза `Телефон · Select`. */
 const PHONE_WINDOW: { readonly width: number; readonly height: number } = { width: 375, height: 812 };
 
@@ -47,11 +50,37 @@ async function open({ canvasElement }: { canvasElement: HTMLElement }): Promise<
     await openStoryOverlay(canvasElement);
 }
 
-/** Узкий экран: список в нижней шторке с заголовком «Страна». */
+/** Открывает шторку и ставит фокус в её поиск: от фокуса высота шторки не меняется. */
+async function openAndSearch(context: { canvasElement: HTMLElement }): Promise<void> {
+    await open(context);
+    document.querySelector<HTMLInputElement>('.rt-popover-sheet [qa-dataid="select-filter"] input')?.focus();
+}
+
+/**
+ * Узкий экран: список в нижней шторке с заголовком «Страна». Опции стоят карточками: подпись и
+ * пояснение слева, радиокнопка кита справа, выбранная отмечена, выключенная приглушена.
+ */
 export const Sheet: TStory = {
     args: { sheet: true },
-    parameters: { snapshot: { fullPage: true, overlay: '.rt-popover-sheet .rt-bottom-sheet--open', viewport: PHONE_WINDOW } },
+    parameters: { snapshot: { fullPage: true, overlay: OPEN_SHEET, viewport: PHONE_WINDOW } },
     play: open,
+};
+
+/** Список с поиском: шторка открыта по высоте содержимого. */
+export const SheetSearch: TStory = {
+    args: { sheet: true, filter: true },
+    parameters: { snapshot: { fullPage: true, overlay: OPEN_SHEET, viewport: PHONE_WINDOW } },
+    play: open,
+};
+
+/**
+ * Фокус в поиске: кольцо фокуса видно целиком, шторка по высоте содержимого. Во всю высоту она
+ * встаёт, только пока на телефоне показана экранная клавиатура; в кадре клавиатуры нет.
+ */
+export const SheetSearchFocused: TStory = {
+    args: { sheet: true, filter: true },
+    parameters: { snapshot: { fullPage: true, overlay: OPEN_SHEET, viewport: PHONE_WINDOW } },
+    play: openAndSearch,
 };
 
 /** Узкий экран с `[sheet]="false"`: шторки нет, список стоит рядом с полем. */

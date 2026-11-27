@@ -190,7 +190,11 @@ Not applicable.
 
 ### Mobile layout
 
-Not applicable: the panel and the window about the edits do not change the layout.
+Up to 480 points the panel opens as a full-height bottom sheet, and the question about the edits
+stands at the bottom of the screen as an action sheet instead of the window: subdomain
+`aside/phone-sheet`. The leaving of a panel is the same there: the guard asks by the same rules,
+and only the look of the question changes. From 481 points the panel and the window stay as they
+are.
 
 ### Several objects
 
@@ -235,6 +239,9 @@ outlets of both are named equally.
 The open questions of the domain are shared, and they live in the spec next to it.
 
 ## History of changes
+
+- 25 November 2026 — the panel as a full-height sheet on a phone was merged as the subdomain
+  `aside/phone-sheet`, the task RT-3532; the mobile layout names it.
 
 - 29 August 2026 — the agreement about the outcome of a mutation was merged, the task RT-985.
 

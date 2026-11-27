@@ -33,7 +33,8 @@ import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtInputNumberComponent } from '@rt-tools/ui-kit-v2/input-number';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { RtMenuItemComponent } from '@rt-tools/ui-kit-v2/menu';
-import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { RtPopoverDirective, RtSheetTemplatesDirective } from '@rt-tools/ui-kit-v2/popover';
+import { RtRadioButtonComponent } from '@rt-tools/ui-kit-v2/radio-button';
 import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
 import { RtSelectComponent } from '@rt-tools/ui-kit-v2/select';
 import {
@@ -128,8 +129,10 @@ const ALL_OPERATORS: readonly TFilterOperatorType[] = Object.freeze([
         RtInputNumberComponent,
         RtMenuItemComponent,
         RtPopoverDirective,
+        RtRadioButtonComponent,
         RtSelectComponent,
     ],
+    hostDirectives: [{ directive: RtSheetTemplatesDirective, inputs: ['sheetHeaderTemplate', 'sheetFooterTemplate'] }],
     host: {
         class: BEM_BLOCK,
     },
@@ -207,6 +210,11 @@ export class RtTableFilterHeaderComponent {
     /** Список видов сравнения открыт в слое; выбор пункта закрывает его отсюда — сам пункт не умеет. */
     protected readonly operatorPopover: Signal<RtPopoverDirective | undefined> = viewChild(RtPopoverDirective);
 
+    /** Виды сравнения рисуются карточками: список открыт в шторке, и вход `sheetCards` их не выключил. */
+    protected readonly cards: Signal<boolean> = computed(
+        (): boolean => this.sheetCards() && (this.operatorPopover()?.shownInSheet() ?? false)
+    );
+
     /** Список видов сравнения с подписями: шаблон читает готовое, а не зовёт словарь сам. */
     protected readonly operatorViews: Signal<readonly IOperatorView[]> = computed((): readonly IOperatorView[] =>
         this.operators().map((type: TFilterOperatorType): IOperatorView => ({ type, label: this.#operatorLabels[type]() }))
@@ -234,6 +242,14 @@ export class RtTableFilterHeaderComponent {
 
     /** На телефоне панель открывается в нижней шторке кита; `false` оставляет её у кнопки. */
     public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
+    /**
+     * Карточки в шторке: каждый вид сравнения — карточка с радиокнопкой кита, нынешний отмечен.
+     * `false` возвращает в шторку пункты меню, какими список стоит у кнопки.
+     */
+    public readonly sheetCards: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
 
@@ -274,6 +290,11 @@ export class RtTableFilterHeaderComponent {
         this.operatorPopover()?.close();
         this.chosenOperator.set(operatorType);
         this.#report(filtersWithOperator(this.filters(), this.propertyName(), operatorType));
+    }
+
+    /** Нажатие на карточку вида сравнения: нынешний вид ничего не меняет, но шторку закрывает. */
+    protected onOperatorCardClick(): void {
+        this.operatorPopover()?.close();
     }
 
     protected onClear(): void {

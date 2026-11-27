@@ -20,6 +20,94 @@
     line-height: var(--rt-leading-snug);
 }
 
+/// Колонки шапки нижней шторки: «×» слева, заголовок по центру, действие справа. Крайние колонки
+/// равны (`1fr`), поэтому заголовок стоит по центру панели, что бы ни стояло по бокам. Её берут
+/// шапка шторки кита и шапка боковой панели, нарисованной шторкой на телефоне.
+@mixin sheet-header-columns {
+    display: grid;
+    align-items: center;
+    gap: var(--rt-space-2);
+    grid-template-columns: minmax(max-content, 1fr) auto minmax(max-content, 1fr);
+}
+
+/// Список карточек выбора в нижней шторке: карточки стоят столбцом с одним зазором.
+@mixin sheet-card-list {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+    gap: var(--rt-space-2);
+    list-style: none;
+}
+
+/// Карточка выбора в нижней шторке: мягкая заливка без рамки, подпись слева, отметка справа. Один
+/// вид на все списки выбора кита — у поля выбора, выбора нескольких, подсказок и видов сравнения.
+/// Числа сняты с макета: высота 56, поля 12 и 16, зазор до отметки 12. Двенадцать — два шага шкалы
+/// отступов, 8 и 4; высота — габарит 48 и отступ 8. Строка подписи 20 и строка пояснения 16 заданы
+/// шагами той же шкалы: множителя с такими высотами у кегля 14 и 12 в шкале интерлиньяжа нет.
+@mixin sheet-card {
+    display: flex;
+    min-height: calc(var(--rt-size-12) + var(--rt-space-2));
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: space-between;
+    padding: calc(var(--rt-space-2) + var(--rt-space-1)) var(--rt-space-4);
+    border: none;
+    border-radius: var(--rt-radius-lg);
+    background: var(--rt-sheet-card-bg, var(--rt-color-bg-surface-subtle));
+    color: var(--rt-color-text-primary);
+    cursor: pointer;
+    font-size: var(--rt-text-sm);
+    font-weight: var(--rt-font-weight-medium);
+    gap: calc(var(--rt-space-2) + var(--rt-space-1));
+    line-height: var(--rt-space-5);
+
+    // Под указателем заливка плотнее: в светлой теме темнее, в тёмной светлее — шаг берётся у
+    // наведения на приглушённую поверхность. На сенсорном экране наведения нет, и заливка не залипает.
+    @media (hover: hover) {
+        &:hover {
+            @include sheet-card-hover;
+        }
+    }
+}
+
+/// Заливка карточки под указателем. Обе заливки карточки приложение переопределяет свойствами
+/// `--rt-sheet-card-bg` и `--rt-sheet-card-bg-hover` на шторке или выше неё.
+@mixin sheet-card-hover {
+    background: var(--rt-sheet-card-bg-hover, var(--rt-input-color-bg-hover));
+}
+
+/// Карточка, на которой стоит выбор с клавиатуры: та же заливка, что под указателем, и только там,
+/// где указатель есть. На сенсорном экране клавиатурой по списку не ходят, и карточка, с которой
+/// список открылся, не выделяется: выбор показывает отметка.
+@mixin sheet-card-active {
+    @media (hover: hover) {
+        @include sheet-card-hover;
+    }
+}
+
+/// Выбранная карточка заливку не меняет: выбор показывает отметка справа.
+@mixin sheet-card-chosen {
+    background: var(--rt-sheet-card-bg, var(--rt-color-bg-surface-subtle));
+    font-weight: var(--rt-font-weight-medium);
+}
+
+/// Подпись и пояснение карточки: столбец слева, пояснение второй строкой.
+@mixin sheet-card-text {
+    display: flex;
+    min-width: 0;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--rt-space-0-5);
+}
+
+@mixin sheet-card-description {
+    color: var(--rt-color-text-muted);
+    font-size: var(--rt-text-xs);
+    font-weight: var(--rt-font-weight-regular);
+    line-height: var(--rt-space-4);
+}
+
 /// Шаги скругления кита и их токены — те же шаги, что у типа `TRtRadius`. Токены названы
 /// целиком, а не склеены из шага: проверка графа токенов ищет имя, а не его начало.
 $radius-steps: (

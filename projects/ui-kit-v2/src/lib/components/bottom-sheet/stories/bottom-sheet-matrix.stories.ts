@@ -21,6 +21,22 @@ export const Open: TStory = { args: { part: 'open' } };
 
 export const Content: TStory = { args: { part: 'content' } };
 
+/**
+ * Шапка с действием справа, шторка во всю высоту и вопрос перед закрытием. Вопрос показывает
+ * шторка с неприменённым выбором на просьбу закрыть: история нажимает её кнопку «×».
+ */
+export const Header: TStory = {
+    args: { part: 'header' },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await document.fonts.ready;
+        for (const close of Array.from(
+            canvasElement.querySelectorAll<HTMLButtonElement>('[data-story-ask] [qa-dataid="bottom-sheet-close"] button')
+        )) {
+            close.click();
+        }
+    },
+};
+
 export const Footer: TStory = { args: { part: 'footer' } };
 
 export const Presets: TStory = { args: { part: 'presets' } };

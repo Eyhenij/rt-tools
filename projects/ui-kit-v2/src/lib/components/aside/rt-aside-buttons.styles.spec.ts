@@ -36,13 +36,17 @@ describe('кнопки подвала панели и окна о несохра
         expect(css).not.toContain('flex-wrap: wrap');
     });
 
-    it('SC-UKV-1043 — кнопки окна стоят в строку, а на телефоне встают столбиком во всю ширину', (): void => {
+    it('SC-UKV-1043 — в окне от 481 точки кнопки окна стоят в одну строку', (): void => {
         const css: string = compile(UNSAVED);
         const footer: string = ruleBody(css, '.rt-aside-unsaved-dialog__footer');
         const phone: number = css.indexOf('@media (width <= 480px)');
 
         expect(footer).toContain('flex-wrap: nowrap');
+        // Столбик объявлен только до 480 точек: окно шириной 481 точку его не берёт. На телефоне
+        // панель кита — шторка, и о правках спрашивает вопрос внизу экрана (SC-UKV-1820); столбик
+        // остаётся окну панели, стоящей в странице без шторки.
         expect(phone).toBeGreaterThan(-1);
+        expect(footer).not.toContain('flex-direction: column');
 
         const narrow: string = ruleBody(css.slice(phone), '.rt-aside-unsaved-dialog__footer');
         expect(narrow).toContain('flex-direction: column');
