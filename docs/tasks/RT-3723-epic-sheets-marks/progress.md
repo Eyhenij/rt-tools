@@ -11,8 +11,8 @@
 ## Steps
 
 - [x] 1.1 Number the rows of the epic plan by digits, mark every merged task «влито» and add the rows of RT-3706 and RT-3709
-- [>] 1.2 Bring the archive record of RT-3709 whole from its last local commit, with the line on the replaced check of step 3.2
-- [ ] 1.3 Remove the local branches RT-3531 and RT-3709, whose work is in the epic branch; the local branch RT-3706 stays until the PR of the epic
+- [x] 1.2 Bring the archive record of RT-3709 whole from its last local commit, with the line on the replaced check of step 3.2
+- [>] 1.3 Remove the local branches RT-3531 and RT-3709, whose work is in the epic branch; the local branch RT-3706 stays until the PR of the epic
 
 ## Decisions along the way
 

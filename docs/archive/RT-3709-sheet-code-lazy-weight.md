@@ -1,4 +1,4 @@
-# RT-3709 — perf(rt:ui-kit-v2): код вопроса шторки и радиокнопки карточек приходит при первом показе (RT-3709)
+# RT-3709 — Код вопроса шторки и радиокнопки карточек приходит при первом показе
 
 Задача RT-3709, запись от 2026-11-26. Прежний адрес: `docs/tasks/RT-3709-sheet-code-lazy-weight/`.
 
@@ -128,6 +128,7 @@ tip of RT-3706.
   clean copy of main too. The owner: «Удали и продолжай, после того как откроеш пр заведи тикет но не бери его!» —
   `rmdir /tmp/x`; after the PR of RT-3709 a task is filed for the test that depends on a path outside its fixture,
   and it is not taken.
+- **Check of step 3.2 replaced:** `test -f projects/ui-kit-v2/src/lib/components/bottom-sheet/confirm/rt-bottom-sheet-confirm.component.ts && pnpm exec nx test @rt-tools/ui-kit-v2 --maxWorkers=2 --skip-nx-cache` → exit 0 · the owner's word: «Да, замени и открывай»
 - **Цена:** нет
 - **Отменено:** нет
 
