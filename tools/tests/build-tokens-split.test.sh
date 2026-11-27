@@ -44,6 +44,73 @@ report "the scope holds the same root rule as the full file" "$(count "$OUT/toke
 report "the scope holds the islands of the set" "$([ "$(count "$OUT/tokens.scope.css" '^\[data-theme=dark\] \[data-preset=material\]')" -gt 0 ] && echo yes)" "yes"
 report "the base keeps the set Material" "$([ "$(count "$OUT/tokens.base.css" 'data-preset=material')" -gt 0 ] && echo yes)" "yes"
 
+# A set of values is long, and every copy of it lies in the styles of an application: the pieces that
+# share a set share one rule. The count of the long bodies guards the comparison against an empty list.
+SETS="$(node -e "
+    const css = require('fs').readFileSync(process.argv[1], 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+    const bodies = [...css.matchAll(/\{([^{}]*)\}/g)].map((found) => found[1].replace(/\s+/g, ' ')).filter((body) => body.length > 1500);
+    console.log(bodies.length - new Set(bodies).size, bodies.length >= 4 ? 'compared' : 'nothing to compare');
+" "$OUT/tokens.scope.css")"
+report "the scope writes every set of values once" "$SETS" "0 compared"
+
+# The two shared rules of the set: each holds all its selectors, and the light one stands above the dark
+# one. Under `[data-theme=dark]` a node carrying the set is told apart from the light rule by that order.
+SHARED_RULES="$(node -e "
+    const css = require('fs').readFileSync(process.argv[1], 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+    const rules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
+        .map((found) => ({ selectors: found[1].trim().split(/\s*,\s*/), size: found[2].length }))
+        .filter((rule) => rule.size > 1500);
+    const light = [
+        '.rt-preset-material:not(:root)',
+        '.rt-preset-material [data-theme=light]:not(:root)',
+        '.rt-preset-material[data-theme=light]:not(:root)',
+        '[data-preset=material]:not(:root)',
+        '[data-preset=material] [data-theme=light]:not(:root)',
+        '[data-preset=material][data-theme=light]:not(:root)',
+        '[data-theme=dark] [data-theme=light] .rt-preset-material',
+        '[data-theme=dark] [data-theme=light] [data-preset=material]',
+        'html.rt-theme-dark [data-theme=light] .rt-preset-material',
+        'html.rt-theme-dark [data-theme=light] [data-preset=material]',
+    ];
+    const dark = [
+        '.rt-preset-material [data-theme=dark]:not(:root)',
+        '.rt-preset-material[data-theme=dark]:not(:root)',
+        '[data-preset=material] [data-theme=dark]:not(:root)',
+        '[data-preset=material][data-theme=dark]:not(:root)',
+        '[data-theme=dark] .rt-preset-material',
+        '[data-theme=dark] [data-preset=material]',
+        'html.rt-theme-dark .rt-preset-material',
+        'html.rt-theme-dark [data-preset=material]',
+    ];
+    const at = (wanted) => rules.findIndex((rule) => [...rule.selectors].sort().join('|') === [...wanted].sort().join('|'));
+    const [lightAt, darkAt] = [at(light), at(dark)];
+    console.log(rules.length, lightAt < 0 ? 'no light' : 'light', darkAt < 0 ? 'no dark' : 'dark', lightAt < darkAt ? 'light above' : 'light below');
+" "$OUT/tokens.scope.css")"
+report "the shared rules of the set keep their selectors and their order" "$SHARED_RULES" "5 light dark light above"
+
+# The same two rules by their values: the light one answers with every name of the set Material and sets
+# no colour scheme, the dark one sets the dark scheme and answers with every name of the dark set. The
+# expected values are read from the source of the set, and the last declaration of a rule wins.
+SHARED_VALUES="$(node -e "
+    const fs = require('fs');
+    const clean = (text) => text.replace(/\/\*[\s\S]*?\*\//g, '');
+    const declarations = (body) => new Map([...body.matchAll(/(--[a-zA-Z0-9-]+|color-scheme):([^;]*);/g)]
+        .map((found) => [found[1], found[2].replace(/\s+/g, '')]));
+    const css = clean(fs.readFileSync(process.argv[1], 'utf8'));
+    const source = clean(fs.readFileSync(process.argv[2], 'utf8'));
+    const rules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)];
+    const rule = (selector) => declarations(rules.find((found) => found[2].length > 1500
+        && found[1].trim().split(/\s*,\s*/).includes(selector))?.[2] ?? '');
+    const mixin = (name) => declarations(source.split('@mixin ' + name + ' {')[1].split('\n}')[0]);
+    const answer = (found, wanted) => wanted.size < 10 ? 'nothing to compare'
+        : [...wanted].filter(([name, value]) => found.get(name) !== value).length;
+    const light = rule('[data-preset=material]:not(:root)');
+    const dark = rule('[data-theme=dark] [data-preset=material]');
+    console.log(answer(light, mixin('rt-preset-material-tokens')), light.get('color-scheme') ?? 'no scheme',
+        answer(dark, mixin('rt-preset-material-dark-tokens')), dark.get('color-scheme') ?? 'no scheme');
+" "$OUT/tokens.scope.css" "$TOOLS/../projects/ui-kit-v2/src/styles/_preset-material.scss")"
+report "the shared rules of the set hold their values" "$SHARED_VALUES" "0 no scheme 0 dark"
+
 # The order of connection is the base, then the scope: the scope declares no layer, so it wins by place.
 report "the scope opens no cascade layer" "$(count "$OUT/tokens.scope.css" '@layer')" "0"
 

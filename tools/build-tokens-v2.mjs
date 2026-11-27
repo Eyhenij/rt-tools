@@ -117,23 +117,30 @@ const SCOPE_NOTE = {
     dark: `/* A dark piece inside a page of another theme. The light base goes under the dark answers, exactly
    as it lies under them at the root: a piece carrying the dark answers alone would inherit the rest
    from the root already resolved by the light values, and come out half dark. */`,
-    presetNode: `/* A node carrying the set on a light page. The set alone rewrites only its own names, and a name
-   whose value refers to one of them would stay resolved at the root by the base values: the text
-   button in a panel of the set kept the base blue while the brand beside it followed the theme. The
-   node therefore declares the light base under the set. The dark rules below have the same force and
-   stand after this one, so a node under a dark theme still takes them. */`,
-    presetOnDark: `/* A piece carrying the set under a dark theme — of the page or of a piece around it. A component
-   draws the look of the first kit by carrying the set on its own host, and the plain rule of the set
-   would lay its light values over the dark ones the node inherited: the table came out light with
-   dark text in a dark piece. The node therefore declares the whole set in the order the root has —
-   light base, the set, the dark answers. A light piece between the dark one and the node answers
-   with the light base and the set; one level of such nesting is told apart, the next is not. */`,
+    presetNode: `/* The light values of the set on a node. Three cases share one rule, because their values are the same
+   and every copy of them lies in an application's styles:
+   - a node carrying the set on a light page. The set alone rewrites only its own names, and a name
+     whose value refers to one of them would stay resolved at the root by the base values: the text
+     button in a panel of the set kept the base blue while the brand beside it followed the theme. The
+     node therefore declares the light base under the set;
+   - a light piece between a dark one and the node: it answers with the light base and the set; one
+     level of such nesting is told apart, the next is not;
+   - a light piece inside a page of the styling set, and a light piece carrying the set itself.
+   This rule stands above the dark one, and the order holds the look. A node under a dark theme takes
+   the dark rule by order: it is as heavy as the first two selectors here or heavier. A light piece
+   between the dark one and the node is heavier than those dark selectors. A node that is a dark piece
+   itself weighs the same as such a light piece around it under \`[data-theme='dark']\`, and order alone
+   gives it the dark values. Under \`html.rt-theme-dark\` the light piece is heavier, and the node stays
+   light. */`,
+    presetOnDark: `/* The dark values of the set on a node: a piece carrying the set under a dark theme — of the page or
+   of a piece around it — and a dark piece inside a page of the styling set. A component draws the look
+   of the first kit by carrying the set on its own host, and the plain rule of the set would lay its
+   light values over the dark ones the node inherited: the table came out light with dark text in a
+   dark piece. The node therefore declares the whole set in the order the root has — light base, the
+   set, the dark answers; at the root the order is what the dark theme wins over the set by. */`,
     presetRootDark: `/* The set and a dark theme both on the page root. The dark answers come after the set there by order,
    and this rule lays the Material chains back over them: it is heavier than both root rules, so the
    order of the files does not decide. */`,
-    preset: `/* A piece inside a page of the styling set, and a piece carrying the set itself. The set lies over
-   the light base and under the dark answers — the same order the root has, and there the order is
-   what the dark theme wins over the set by. */`,
 };
 
 /* Every piece closes with the coarse pointer's override. The piece lays out the light set on its own node,
@@ -323,22 +330,18 @@ const files = {
         `${SCOPE_NOTE.light}\n[data-theme='light']:not(:root) {\n    color-scheme: light;\n\n    @include semantic.rt-theme-light-tokens;\n${COARSE_INCLUDE}}\n\n` +
         `${SCOPE_NOTE.dark}\n[data-theme='dark']:not(:root) {\n    @include semantic.rt-theme-light-tokens;\n` +
         `    @include dark.rt-theme-dark-tokens;\n${COARSE_INCLUDE}}\n\n` +
-        `${SCOPE_NOTE.presetNode}\n[data-preset='material']:not(:root),\n.rt-preset-material:not(:root) {\n` +
-        `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n${COARSE_INCLUDE}}\n\n` +
-        `${SCOPE_NOTE.presetOnDark}\n[data-theme='dark'] [data-preset='material'],\n` +
-        `[data-theme='dark'] .rt-preset-material,\nhtml.rt-theme-dark [data-preset='material'],\n` +
-        `html.rt-theme-dark .rt-preset-material {\n` +
-        `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n` +
-        `    @include dark.rt-theme-dark-tokens;\n    @include material.rt-preset-material-dark-tokens;\n${COARSE_INCLUDE}}\n\n` +
+        `${SCOPE_NOTE.presetNode}\n[data-preset='material']:not(:root),\n.rt-preset-material:not(:root),\n` +
         `[data-theme='dark'] [data-theme='light'] [data-preset='material'],\n` +
         `[data-theme='dark'] [data-theme='light'] .rt-preset-material,\n` +
         `html.rt-theme-dark [data-theme='light'] [data-preset='material'],\n` +
-        `html.rt-theme-dark [data-theme='light'] .rt-preset-material {\n` +
-        `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n${COARSE_INCLUDE}}\n\n` +
-        `${SCOPE_NOTE.preset}\n[data-preset='material'][data-theme='light']:not(:root),\n` +
+        `html.rt-theme-dark [data-theme='light'] .rt-preset-material,\n` +
+        `[data-preset='material'][data-theme='light']:not(:root),\n` +
         `[data-preset='material'] [data-theme='light']:not(:root),\n` +
         `.rt-preset-material[data-theme='light']:not(:root),\n.rt-preset-material [data-theme='light']:not(:root) {\n` +
         `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n${COARSE_INCLUDE}}\n\n` +
+        `${SCOPE_NOTE.presetOnDark}\n[data-theme='dark'] [data-preset='material'],\n` +
+        `[data-theme='dark'] .rt-preset-material,\nhtml.rt-theme-dark [data-preset='material'],\n` +
+        `html.rt-theme-dark .rt-preset-material,\n` +
         `[data-preset='material'][data-theme='dark']:not(:root),\n[data-preset='material'] [data-theme='dark']:not(:root),\n` +
         `.rt-preset-material[data-theme='dark']:not(:root),\n.rt-preset-material [data-theme='dark']:not(:root) {\n` +
         `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n` +
