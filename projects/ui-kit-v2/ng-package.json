@@ -6,6 +6,8 @@
   "assets": [
     "src/styles/**/*.scss",
     "src/assets",
+    "migrations",
+    "ICONS.md",
     "src/lib/**/*.scss",
     "src/lib/**/CONTEXT.md",
     "src/rich-editor/**/*.scss",

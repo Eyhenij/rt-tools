@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.40.0 · hooks/shell-words.sh · 0ad8046196c2 · правится надстройкой, не здесь
+# rt-kit v0.41.1 · hooks/shell-words.sh · 0ad8046196c2 · правится надстройкой, не здесь
 # The words of a shell command: which file a call writes, which code it hands to an interpreter.
 #
 # NOT a guard and not a hook: there is deliberately no `rt-hook:` line. `write-targets.sh` sources it.

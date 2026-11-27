@@ -23,6 +23,9 @@ export const RT_ICON_MATERIAL_SYMBOL_ID_PREFIX: string = 'rt-icon-material-';
 /** Префикс `id` залитых рисунков материального набора: у имени их два, и `id` у каждого свой. */
 export const RT_ICON_MATERIAL_FILL_SYMBOL_ID_PREFIX: string = 'rt-icon-material-fill-';
 
+/** Префикс `id` символов набора приложения: за ним идут имя набора, `--` и имя значка. */
+export const RT_ICON_SET_SYMBOL_ID_PREFIX: string = 'rt-icon-set-';
+
 /**
  * Атрибут, который переключает только набор рисунков значков: токенов набора оформления он не
  * несёт. Ставится на контейнер со значением `'material'` там, где значки нужны материальные, а

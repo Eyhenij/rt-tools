@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.40.0 · hooks/skill-gate.sh · abf335a8eddf · правится надстройкой, не здесь
+# rt-kit v0.41.1 · hooks/skill-gate.sh · abf335a8eddf · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__claude-in-chrome__.*|mcp__figma__use_figma
 # Requires: checks/decide.mjs, hooks/decide.sh, hooks/deny-tail.sh, hooks/write-targets.sh
 # The rules gate: it does not let a file be edited until the rule it falls under has been loaded.

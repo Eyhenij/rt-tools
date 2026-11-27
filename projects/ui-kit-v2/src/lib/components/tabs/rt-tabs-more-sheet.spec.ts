@@ -5,6 +5,7 @@ import { createRtFixture } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
 import { RtTabDirective } from './rt-tab.directive';
 import { RtTabsComponent } from './rt-tabs.component';
+import { rtPreloadPopoverSheet } from '../popover/rt-popover-sheet.helper';
 
 /** Телефон: узкое окно и узкая полоса. */
 class PhoneBreakpointsStub {
@@ -50,6 +51,10 @@ function settle(fixture: ComponentFixture<TabsMoreSheetHostComponent>): void {
 }
 
 describe('Меню «Ещё» вкладок в нижней шторке', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+    });
+
     afterEach((): void => {
         jest.restoreAllMocks();
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());

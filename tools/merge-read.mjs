@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.40.0 · checks/merge-read.mjs · 92dc5bb568b8 · правится надстройкой, не здесь
+// rt-kit v0.41.1 · checks/merge-read.mjs · 92dc5bb568b8 · правится надстройкой, не здесь
 /**
  * The merges of requests and the editions of packages, read from the hosting and the registry and
  * written as observations: what the day line and the epic windows are counted by.

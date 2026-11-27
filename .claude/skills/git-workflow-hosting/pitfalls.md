@@ -1,4 +1,4 @@
-<!-- rt-kit v0.40.0 · pitfalls/git-workflow-hosting.github.md · d8d95769c39a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.41.1 · pitfalls/git-workflow-hosting.github.md · d8d95769c39a · правится надстройкой, не здесь -->
 # Delivery — PR, its review and the machine account — cold part
 
 This part of the rule `git-workflow` keeps its statements hot and its explanation in the cold

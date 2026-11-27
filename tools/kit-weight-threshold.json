@@ -1,0 +1,34 @@
+{
+  "set": [
+    "select",
+    "menu",
+    "input",
+    "icon",
+    "popover",
+    "dialog",
+    "bottom-sheet"
+  ],
+  "total": 185800,
+  "gzip": 46632,
+  "parts": {
+    "select": 35426,
+    "form-control": 3420,
+    "input": 33092,
+    "popover": 9673,
+    "menu": 20742,
+    "bottom-sheet": 7167,
+    "core": 25980,
+    "radius": 498,
+    "icon": 14776,
+    "dialog": 11415,
+    "icon-button": 13901,
+    "ripple": 1587,
+    "tooltip": 5303
+  },
+  "styles": {
+    "tokens.base.css": 163254,
+    "tokens.coexist.css": 1514,
+    "tokens.css": 619961,
+    "tokens.scope.css": 464842
+  }
+}

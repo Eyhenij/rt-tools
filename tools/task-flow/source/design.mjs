@@ -1,4 +1,4 @@
-// rt-kit v0.40.0 · task-flow/source/design.mjs · 36738380c4b2 · правится надстройкой, не здесь
+// rt-kit v0.41.1 · task-flow/source/design.mjs · 36738380c4b2 · правится надстройкой, не здесь
 /**
  * The source «source.design» of the task flow description: the reading of the decision of a plan, by
  * the modules every reader of it shares — `flow-decision.mjs` and `coupling-plan.mjs`. A measurer

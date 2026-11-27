@@ -5,6 +5,7 @@ import { createRtFixture, qa } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
 import { IRtSelect } from '../select/rt-select.model';
 import { RtMultiselectComponent } from './rt-multiselect.component';
+import { rtPreloadPopoverSheet } from '../popover/rt-popover-sheet.helper';
 
 const OPTIONS: ReadonlyArray<IRtSelect.Option<string>> = [
     { label: 'Москва', value: 'msk' },
@@ -62,6 +63,10 @@ function click(selector: string): void {
 }
 
 describe('Мультиселект — selectionChange на «Показать все» и «Сбросить»', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+    });
+
     afterEach((): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
