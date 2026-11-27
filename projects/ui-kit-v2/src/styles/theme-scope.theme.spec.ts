@@ -54,11 +54,8 @@ function weightOf(selector: string): number {
     return classes * 100 + (bare.match(/(^|[\s>+~])[a-z][\w-]*/g)?.length ?? 0);
 }
 
-/** Значение свойства, которое каскад отдаёт узлу: своё по весу и порядку, а без своего — унаследованное. */
-function winnerOf(node: Element | null, name: string): string {
-    if (node === null) {
-        return '';
-    }
+/** Объявление свойства, которое каскад отдаёт самому узлу: решают вес селектора и порядок правил. */
+function winnerOf(node: Element, name: string): string {
     let best: { weight: number; value: string } | undefined;
     for (const [, head, body] of CSS.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
         // Внутри правила свойство объявлено несколько раз: набор, тема, тёмный набор. Решает последнее.
@@ -74,7 +71,7 @@ function winnerOf(node: Element | null, name: string): string {
         }
     }
 
-    return best?.value ?? winnerOf(node.parentElement, name);
+    return best?.value ?? '';
 }
 
 describe('тема узла набора на любой странице', (): void => {
@@ -84,8 +81,12 @@ describe('тема узла набора на любой странице', (): 
         ['class', 'rt-preset-material'],
         ['data-preset', 'material'],
     ];
-    const darkSurface: string =
-        /--rt-color-bg-surface:([^;]*);/.exec(mixinBody(PRESET, 'rt-preset-material-dark-tokens'))?.[1].trim() ?? '';
+    function surfaceOf(mixin: string): string {
+        return /--rt-color-bg-surface:([^;]*);/.exec(mixinBody(PRESET, mixin))?.[1].trim() ?? '';
+    }
+
+    const lightSurface: string = surfaceOf('rt-preset-material-tokens');
+    const darkSurface: string = surfaceOf('rt-preset-material-dark-tokens');
 
     function paint(root: string, piece: string | null, theme: string | null, [attribute, value]: [string, string]): string {
         const html: HTMLElement = document.documentElement;
@@ -104,10 +105,19 @@ describe('тема узла набора на любой странице', (): 
             node.setAttribute('data-theme', theme);
         }
         node.setAttribute(attribute, value);
-        outer.append(node);
+        // Между куском и узлом стоит обёртка: в разметке приложения узел редко прямой потомок куска.
+        const wrapper: HTMLElement = document.createElement('div');
+        wrapper.append(node);
+        outer.append(wrapper);
         document.body.replaceChildren(outer);
 
-        return winnerOf(node, '--rt-color-bg-surface') === darkSurface ? 'dark' : 'light';
+        // Любое третье значение поверхности — тоже ошибка: светлым оно не считается.
+        const surface: string = winnerOf(node, '--rt-color-bg-surface');
+        if (surface === darkSurface) {
+            return 'dark';
+        }
+
+        return surface === lightSurface ? 'light' : surface;
     }
 
     it('SC-UKV-1921 — узел набора берёт свою тему, а без своей — тему куска или страницы', (): void => {
@@ -129,6 +139,8 @@ describe('тема узла набора на любой странице', (): 
         }
 
         expect(darkSurface).not.toBe('');
+        expect(lightSurface).not.toBe('');
+        expect(lightSurface).not.toBe(darkSurface);
         expect(checked).toBe(54);
         expect(wrong).toEqual([]);
     });

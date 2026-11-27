@@ -223,9 +223,10 @@ Covered: `tools/tests/build-tokens-split.test.sh`, called by `pnpm run test:chec
 ### SC-UKV-1921 — a node of the set Material takes its own theme on any page
 
 Given a page whose root carries no theme, `data-theme="dark"` or the class `rt-theme-dark`
-When a node of the set Material, marked by the class or by the attribute, stands under a light piece, a dark piece or
-none and carries a light theme, a dark theme or none
-Then the node takes its own theme; without one it takes the theme of the piece, and without both the theme of the page
+When a node of the set Material, marked by the class or by the attribute, stands under one light piece, one dark piece
+or none and carries a light theme, a dark theme or none
+Then the node takes its own theme; without one it takes the theme of the piece, and without both the theme of the page.
+A node nested deeper than one piece is outside this scenario
 
 Covered: `projects/ui-kit-v2/src/styles/theme-scope.theme.spec.ts`.
 

@@ -45,7 +45,9 @@ export class TestRtThemeScopeDarkSetComponent {
 
         inject(DestroyRef).onDestroy((): void => {
             root.classList.toggle(DARK_CLASS, marked);
-            if (theme !== null) {
+            // Уход на соседнюю историю пишет её тему раньше, чем уничтожается эта: свежую метку
+            // сохранённая здесь не заменяет.
+            if (theme !== null && !root.hasAttribute(THEME_ATTRIBUTE)) {
                 root.setAttribute(THEME_ATTRIBUTE, theme);
             }
         });
