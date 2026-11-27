@@ -1,6 +1,6 @@
 # A panel of choice in the bottom sheet on a phone
 
-**Status:** in force · **Revision:** 20 November 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 23 November 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the popover of the second kit, the bottom sheet of the second kit, the field of the
 second kit
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
@@ -24,8 +24,10 @@ rest did not. An application had to rebuild each panel in a sheet of its own.
 
 ### What it is called in the interface
 
-The person sees a panel that slides up from the bottom of the screen, with a handle, a title and
-the same rows as before.
+The person sees a panel that slides up from the bottom of the screen, with a handle, a close button
+on the left of the header, a title in its centre and, where the sheet has an action, a filled
+button on the right. Lists of choice inside it are drawn as cards. The header, the cards, the
+height of a sheet and the question before it closes are the subdomain `sheet-header-cards`.
 
 ## Rules
 
@@ -41,10 +43,10 @@ the same rows as before.
   With neither, the sheet has no title.
 - **A choice of one value closes the sheet together with the panel.**
 - **A choice of several values keeps the sheet open until the person closes it.**
-- **A choice of several values in the sheet ends with a footer: the count, a reset and a done button.**
+- **A choice of several values in the sheet ends with a footer: the count and a reset.**
   The count says how many values are chosen, the reset takes them all off and keeps the sheet
-  open, the done button closes the sheet. The choice is written on every press, so the done
-  button confirms nothing — it only closes.
+  open. The done button stands on the right of the sheet header and closes the sheet. The choice
+  is written on every press, so the done button confirms nothing — it only closes.
 - **A field that searches as it is typed opens the sheet on a tap, and the typing goes to a search at the top of the sheet.**
   The field under the sheet gives its focus away; a query shorter than the minimum keeps the sheet
   open, since the person types on in it. A choice closes the sheet.
@@ -59,9 +61,11 @@ the same rows as before.
 
 ## What is out of scope
 
-- Tooltips, the help of a field, confirmations, dialogs and asides do not open in the sheet. The
-  help of a field is the kit tooltip, subdomain `field-label-icon-actions`.
-- The look of the rows inside the panel does not change.
+- Tooltips, the help of a field, confirmations and dialogs do not open in the sheet. The help of a
+  field is the kit tooltip, subdomain `field-label-icon-actions`. A side panel opens on a phone as
+  a full-height sheet of its own, subdomain `aside/phone-sheet`.
+- The rows of a list next to its trigger and the rows of an actions menu do not change.
+- A focus trap inside the sheet.
 
 ## Contract
 
@@ -94,7 +98,8 @@ Not applicable.
 
 ### Mobile layout
 
-The subject of the subdomain: at width 375 a panel of choice opens in the bottom sheet.
+The subject of the subdomain: at width 375 a panel of choice opens in the bottom sheet. The sizes
+of the header and of a card are in the subdomain `sheet-header-cards`.
 
 ### Several objects
 
@@ -126,3 +131,6 @@ None.
 | 2026-11-19 | Tabs switch the sheet off for their menus, scenario 1461 (RT-3399)                                                                            |
 | 2026-11-20 | The sheet opens on a phone, ≤480 px, by the owner's word «До 480 px» (RT-3399)                                                                |
 | 2026-11-20 | Scenarios renumbered to 1554…1627 after main took 1385…1389 and 1436…1505; the toggle choice left for the subdomain `toggle-choice` (RT-3399) |
+| 2026-11-23 | The multiselect done button moved to the sheet header; the header, cards and height of a sheet are subdomain `sheet-header-cards` (RT-3531)   |
+| 2026-11-25 | A side panel on a phone is a sheet of its own, subdomain `aside/phone-sheet` (RT-3532)                                                        |
+| 2026-11-25 | The code of the sheet is loaded at the first opening; its rules and scenarios 1782…1784 live in the subdomain `popover-sheet-lazy` (RT-3645)   |

@@ -1,17 +1,24 @@
 import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
-import { afterNextRender, ComponentRef, Injector, TemplateRef, ViewContainerRef } from '@angular/core';
-import { outputToObservable } from '@angular/core/rxjs-interop';
+import { afterNextRender, ComponentRef, DestroyRef, effect, ErrorHandler, Injector, TemplateRef, ViewContainerRef } from '@angular/core';
+import { outputToObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { filter, merge, Observable, tap } from 'rxjs';
+import { filter, merge, Observable, Subject, takeUntil, tap } from 'rxjs';
 
 import { carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
-import { RtPopoverSheetComponent } from './rt-popover-sheet.component';
+import type { RtPopoverSheetComponent } from './rt-popover-sheet.component';
+import type { RtPopoverSheetOptionsDirective } from './rt-popover-sheet-options.directive';
+import { sheetCodeState } from './rt-popover-sheet.code';
 
-/** Открытая шторка: её оверлей и сам компонент — их события закрывают панель. */
+/**
+ * Открытая шторка. Компонент листа приходит позже, чем ручка: его код подгружается при первом
+ * открытии, а не на старте приложения. Ручка поэтому несёт оверлей и собственный поток намерений
+ * закрыть, а не ссылку на компонент.
+ */
 export interface IRtPopoverSheetOpened {
     overlayRef: OverlayRef;
-    sheetRef: ComponentRef<RtPopoverSheetComponent>;
+    /** Подложка и ручка листа: приходит, когда лист загрузился и пользователь их нажал, и при сбое загрузки. */
+    dismissed: Observable<void>;
 }
 
 /** Что нужно шторке от директивы, которая её открывает. */
@@ -23,6 +30,8 @@ export interface IRtPopoverSheetRequest {
     template: TemplateRef<unknown>;
     context: unknown;
     title: string;
+    /** Высота, действие в шапке и неприменённый выбор: шторка читает их, пока открыта. Нет — шторка без них. */
+    options?: RtPopoverSheetOptionsDirective;
     /** Классы потребителя с `rtPopoverPanelClass`: в режиме шторки они ставятся на коробку оверлея, как у панели у триггера. */
     panelClasses?: readonly string[];
     /**
@@ -35,6 +44,37 @@ export interface IRtPopoverSheetRequest {
 /** Шторки, которые уезжают вниз сейчас: каждая даёт способ снять себя сразу. */
 const closingSheets: Set<() => void> = new Set<() => void>();
 
+/** Компонент листа каждой открытой шторки; пока код листа не пришёл, записи нет. */
+const attachedSheets: WeakMap<IRtPopoverSheetOpened, ComponentRef<RtPopoverSheetComponent>> = new WeakMap<
+    IRtPopoverSheetOpened,
+    ComponentRef<RtPopoverSheetComponent>
+>();
+
+/** Подгружает код листа ленивым `import()`; вызовы до прихода кода делят одно обещание. */
+function loadSheetCode(): Promise<typeof RtPopoverSheetComponent> {
+    if (sheetCodeState.loading === null) {
+        sheetCodeState.loading = import('./rt-popover-sheet.component')
+            .then((module: { RtPopoverSheetComponent: typeof RtPopoverSheetComponent }): typeof RtPopoverSheetComponent => {
+                sheetCodeState.loaded = module.RtPopoverSheetComponent;
+                return module.RtPopoverSheetComponent;
+            })
+            .catch((error: unknown): never => {
+                sheetCodeState.loading = null;
+                throw error;
+            });
+    }
+
+    return sheetCodeState.loading;
+}
+
+/**
+ * Подгружает код нижнего листа заранее. Первое открытие листа ждёт загрузки, а все следующие
+ * берут готовый код сразу; приложение, которому первая задержка мешает, зовёт это в простое.
+ */
+export function rtPreloadPopoverSheet(): Promise<void> {
+    return loadSheetCode().then((): void => undefined);
+}
+
 function finishClosingSheets(): void {
     for (const finish of Array.from(closingSheets)) {
         finish();
@@ -42,11 +82,36 @@ function finishClosingSheets(): void {
 }
 
 /**
+ * Входы шторки живут, пока она открыта: высота меняется, когда поиск внутри получает фокус, а
+ * неприменённый выбор появляется с первой отметкой. Ответ «Применить» на вопрос шторки уходит
+ * тому, кто её открыл. Слежение и подписка снимаются вместе с компонентом шторки.
+ */
+function bindSheetOptions(sheetRef: ComponentRef<RtPopoverSheetComponent>, options: RtPopoverSheetOptionsDirective | undefined): void {
+    if (options === undefined) {
+        return;
+    }
+    effect(
+        (): void => {
+            sheetRef.setInput('fullHeight', options.rtPopoverSheetFull());
+            sheetRef.setInput('action', options.rtPopoverSheetAction());
+            sheetRef.setInput('unsaved', options.rtPopoverSheetUnsaved());
+            sheetRef.setInput('header', options.header());
+            sheetRef.setInput('footer', options.footer());
+        },
+        { injector: sheetRef.injector }
+    );
+    outputToObservable(sheetRef.instance.applyRequest)
+        .pipe(takeUntilDestroyed(sheetRef.injector.get(DestroyRef)))
+        .subscribe((): void => options.rtPopoverSheetApply.emit());
+}
+
+/**
  * Открывает панель в нижней шторке. Шторка встаёт в свой оверлей на весь экран, а не в
  * привязанный к host'у: привязка, ширина по триггеру и подложка панели здесь не нужны. Тема куска
  * вокруг host'а и материальный набор едут на коробку шторки так же, как на панель. Шторка
  * создаётся закрытой и открывается после первой отрисовки — так она выезжает снизу, а не
- * появляется сразу на месте.
+ * появляется сразу на месте. Ручка возвращается сразу, а лист подгружается: закрытие, снос и
+ * повторное открытие до его прихода снимают оверлей, и пришедший лист не создаётся.
  */
 export function rtOpenPopoverSheet(request: IRtPopoverSheetRequest): IRtPopoverSheetOpened {
     // Шторка, ещё уезжающая вниз, снимается сразу: её блокировка прокрутки держит `<html>`, и снятая
@@ -60,28 +125,62 @@ export function rtOpenPopoverSheet(request: IRtPopoverSheetRequest): IRtPopoverS
         })
     );
     carryThemeScope(overlayRef.overlayElement, request.host);
-    const sheetRef: ComponentRef<RtPopoverSheetComponent> = overlayRef.attach(
-        new ComponentPortal(RtPopoverSheetComponent, request.viewContainerRef)
-    );
-    sheetRef.setInput('template', request.template);
-    sheetRef.setInput('context', request.context);
-    sheetRef.setInput('title', request.title);
-    afterNextRender(
-        (): void => {
-            // Слой мог уйти до первой отрисовки: быстрое закрытие или снос директивы.
-            if (!overlayRef.hasAttached()) {
-                return;
-            }
-            sheetRef.setInput('open', true);
-            // `inert` снимается привязкой хоста шторки: без этого прохода он ещё стоит, когда
-            // зовётся обратный вызов, и `focus()` внутри шторки молча ничего не делает.
-            sheetRef.changeDetectorRef.detectChanges();
-            request.onOpened?.();
-        },
-        { injector: request.injector }
-    );
+    const errors: ErrorHandler = request.injector.get(ErrorHandler);
+    const dismissedSource: Subject<void> = new Subject<void>();
+    const sheet: IRtPopoverSheetOpened = { overlayRef, dismissed: dismissedSource.asObservable() };
 
-    return { overlayRef, sheetRef };
+    const attach: (sheetComponent: typeof RtPopoverSheetComponent) => void = (sheetComponent: typeof RtPopoverSheetComponent): void => {
+        // Слой снят, пока код шёл: закрытие, снос директивы или новое открытие.
+        const host: HTMLElement | null = overlayRef.hostElement;
+        if (host?.isConnected !== true) {
+            return;
+        }
+        const sheetRef: ComponentRef<RtPopoverSheetComponent> = overlayRef.attach(
+            new ComponentPortal(sheetComponent, request.viewContainerRef)
+        );
+        attachedSheets.set(sheet, sheetRef);
+        sheetRef.setInput('template', request.template);
+        sheetRef.setInput('context', request.context);
+        sheetRef.setInput('title', request.title);
+        bindSheetOptions(sheetRef, request.options);
+        outputToObservable(sheetRef.instance.dismissed)
+            .pipe(takeUntil(overlayRef.detachments()))
+            .subscribe((): void => dismissedSource.next());
+        afterNextRender(
+            (): void => {
+                // Слой мог уйти до первой отрисовки: быстрое закрытие или снос директивы.
+                if (!overlayRef.hasAttached()) {
+                    return;
+                }
+                sheetRef.setInput('open', true);
+                // `inert` снимается привязкой хоста шторки: без этого прохода он ещё стоит, когда
+                // зовётся обратный вызов, и `focus()` внутри шторки молча ничего не делает.
+                sheetRef.changeDetectorRef.detectChanges();
+                request.onOpened?.();
+            },
+            { injector: request.injector }
+        );
+    };
+
+    const loaded: typeof RtPopoverSheetComponent | null = sheetCodeState.loaded;
+    if (loaded !== null) {
+        attach(loaded);
+    } else {
+        loadSheetCode()
+            .then(attach)
+            .catch((error: unknown): void => {
+                // Код листа не пришёл или лист не встал: оверлей снимается, панель закрывается тем же путём,
+                // что и по подложке. Закрытие не зависит от обработчика ошибок: он может сам бросить.
+                overlayRef.dispose();
+                try {
+                    errors.handleError(error);
+                } finally {
+                    dismissedSource.next();
+                }
+            });
+    }
+
+    return sheet;
 }
 
 /**
@@ -90,10 +189,21 @@ export function rtOpenPopoverSheet(request: IRtPopoverSheetRequest): IRtPopoverS
  */
 export function rtPopoverSheetDismissals(sheet: IRtPopoverSheetOpened): Observable<unknown> {
     return merge(
-        outputToObservable(sheet.sheetRef.instance.dismissed),
+        sheet.dismissed,
+        // Escape идёт через саму шторку: с неприменённым выбором она сначала спрашивает, а закрытие
+        // приходит её событием `dismissed`, как от кнопки и подложки. Пока код листа не пришёл,
+        // спрашивать не о чем, и Escape закрывает сразу.
         sheet.overlayRef.keydownEvents().pipe(
             filter((event: KeyboardEvent): boolean => event.key === 'Escape'),
-            tap((event: KeyboardEvent): void => event.preventDefault())
+            tap((event: KeyboardEvent): void => event.preventDefault()),
+            filter((): boolean => {
+                const sheetRef: ComponentRef<RtPopoverSheetComponent> | undefined = attachedSheets.get(sheet);
+                if (sheetRef === undefined) {
+                    return true;
+                }
+                sheetRef.instance.closeByEscape();
+                return false;
+            })
         )
     );
 }
@@ -183,19 +293,25 @@ function slideOut(sheet: IRtPopoverSheetOpened, panel: HTMLElement): void {
  * отрисовки, когда класс снят, иначе она вышла бы нулевой и шторка исчезала бы без выезда.
  */
 export function rtClosePopoverSheet(sheet: IRtPopoverSheetOpened, returnFocusTo: HTMLElement | null): void {
+    const sheetRef: ComponentRef<RtPopoverSheetComponent> | undefined = attachedSheets.get(sheet);
+    // Лист ещё не пришёл или оверлей уже снят: снимать нечего, а пришедший код листа оверлея не найдёт.
+    if (sheetRef === undefined || !sheet.overlayRef.hasAttached()) {
+        sheet.overlayRef.dispose();
+        return;
+    }
     const overlayElement: HTMLElement = sheet.overlayRef.overlayElement;
     const active: Element | null = overlayElement.ownerDocument.activeElement;
     if (returnFocusTo !== null && active !== null && overlayElement.contains(active)) {
         rtPopoverSheetFocusTarget(returnFocusTo).focus();
     }
     const panel: HTMLElement | null = overlayElement.querySelector<HTMLElement>('[qa-dataid="bottom-sheet-panel"]');
-    sheet.sheetRef.setInput('open', false);
+    sheetRef.setInput('open', false);
     if (panel === null) {
         sheet.overlayRef.dispose();
         return;
     }
     if (panel.classList.contains(DRAGGING_PANEL_CLASS)) {
-        afterNextRender((): void => slideOut(sheet, panel), { injector: sheet.sheetRef.injector });
+        afterNextRender((): void => slideOut(sheet, panel), { injector: sheetRef.injector });
         return;
     }
     slideOut(sheet, panel);

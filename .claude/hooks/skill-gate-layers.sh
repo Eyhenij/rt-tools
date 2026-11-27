@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.40.0 · hooks/skill-gate-layers.sh · 7658ed905784 · правится надстройкой, не здесь
+# rt-kit v0.42.0 · hooks/skill-gate-layers.sh · 7658ed905784 · правится надстройкой, не здесь
 # Layers of the rules gate: requirements that come ON TOP of the domain one.
 #
 # NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The rules gate

@@ -31,6 +31,8 @@ const PHONE: { readonly viewport: { readonly value: string } } = { viewport: { v
 const TABLET_FRAME: IFrame = { viewport: { width: 768, height: 720 }, fullPage: true };
 const PHONE_FRAME: IFrame = { viewport: { width: 375, height: 812 }, fullPage: true };
 const PANEL: string = '[qa-dataid="workspace-aside-overlay-close"]';
+/** На телефоне сведения открываются шторкой во всю высоту: стрелки закрытия нет, видна шторка. */
+const PHONE_PANEL: string = '.rt-bottom-sheet__panel';
 
 /** Планшет: список и середина рядом, панель сведений закрыта. */
 export const TabletColumns: TStory = { globals: TABLET, parameters: { snapshot: TABLET_FRAME } };
@@ -62,14 +64,14 @@ export const Phone: TStory = { globals: PHONE, parameters: { snapshot: PHONE_FRA
 /** Телефон: одна колонка, панель сведений открыта поверх окна во всю ширину. */
 export const PhoneDetails: TStory = {
     globals: PHONE,
-    parameters: { snapshot: { ...PHONE_FRAME, overlay: PANEL } },
+    parameters: { snapshot: { ...PHONE_FRAME, overlay: PHONE_PANEL } },
     args: { open: true },
 };
 
 /** Телефон, тёмная тема: панель сведений открыта поверх окна во всю ширину. */
 export const PhoneDetailsDark: TStory = {
     globals: { ...PHONE, theme: 'dark' },
-    parameters: { snapshot: { ...PHONE_FRAME, overlay: PANEL } },
+    parameters: { snapshot: { ...PHONE_FRAME, overlay: PHONE_PANEL } },
     args: { open: true },
 };
 

@@ -25,6 +25,7 @@ import { distinctUntilChanged, EMPTY, Observable, Subject, switchMap } from 'rxj
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { rtAnnounceChange, rtRegisterControlValue } from '@rt-tools/ui-kit-v2/core';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 
 import { IRtRadioGroupHost, RT_RADIO_GROUP } from './rt-radio-group.token';
@@ -156,6 +157,7 @@ export class RtRadioButtonComponent implements ControlValueAccessor {
         // Радиокнопка встаёт в группу сама: так группа знает и радиокнопку из шаблона обёртки.
         this.#group?.register(this);
         this.#destroyRef.onDestroy((): void => this.#group?.unregister(this));
+        rtRegisterControlValue(this.#host.nativeElement, (): boolean => this.isChecked());
 
         // Значение, отданное соседкой, форма этой радиокнопке не пишет — модель берётся у самого
         // контрола, иначе точка осталась бы у двух сразу. Подписка идёт за сменой контрола и
@@ -228,8 +230,11 @@ export class RtRadioButtonComponent implements ControlValueAccessor {
             return;
         }
         if (!this.isChecked()) {
+            // Правка — значение группы до и после: возврат к прежней радиокнопке читается возвратом.
+            const previous: unknown = this.#model();
             this.#model.set(this.value());
             this.#onChange(this.value());
+            rtAnnounceChange(this.#host.nativeElement, this.value(), previous);
             this.checkedChange.emit(true);
         }
         this.#onTouched();

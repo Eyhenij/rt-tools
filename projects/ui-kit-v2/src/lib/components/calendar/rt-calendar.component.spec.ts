@@ -60,6 +60,21 @@ describe('RtCalendarComponent', (): void => {
         expect(qaAll(fixture, 'calendar-blank').length).toBe(2);
     });
 
+    it('SC-UKV-1799 — сетка несёт число недель месяца: шторка по нему держит высоту шести недель', (): void => {
+        const long: IRtCalendar.Month = {
+            key: '2026-11',
+            label: 'Ноябрь 2026',
+            leadingBlanks: [0, 1, 2, 3, 4, 5],
+            days: Array.from({ length: 30 }, (_: unknown, at: number): IRtCalendar.Day => day(at + 1)),
+        };
+        const fixture: ComponentFixture<RtCalendarComponent> = setup({ months: [MONTHS[0], long] });
+        const weeks: (string | null)[] = qaAll(fixture, 'calendar-grid').map((node: DebugElement): string | null =>
+            (node.nativeElement as HTMLElement).getAttribute('data-weeks')
+        );
+
+        expect(weeks).toEqual(['1', '6']);
+    });
+
     describe('день', (): void => {
         it('несёт свою дату и состояние атрибутами данных', (): void => {
             const fixture: ComponentFixture<RtCalendarComponent> = setup();
@@ -248,7 +263,7 @@ describe('RtCalendarComponent', (): void => {
         });
     });
 
-    it('headerTitle ставит заголовок первого месяца в шапку между стрелками', (): void => {
+    it('SC-UKV-1798 — headerTitle ставит заголовок первого месяца в шапку между стрелками', (): void => {
         const fixture: ComponentFixture<RtCalendarComponent> = setup({ headerTitle: true });
 
         expect(el(fixture, '[qa-dataid="calendar-month"] [qa-dataid="calendar-month-title"]')).toBeNull();

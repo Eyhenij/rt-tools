@@ -297,7 +297,7 @@ export class RtSideMenuComponent extends RtSideMenuLookBase implements IRtSideMe
             this.#keyboard.reset();
         });
 
-        // Имя без значка кита и без пары рисует пункт без значка, и пропуск без предупреждения не заметен.
+        // Имя вне набора кита рисует пункт без значка, и пропуск без предупреждения не заметен.
         if (isDevMode()) {
             effect((): void => warnUnpairedSideMenuIcons(this.menuId(), this.menuItems(), this.ownIconTpl() !== undefined));
         }

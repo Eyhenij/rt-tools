@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.40.0 · hooks/turn-exit-guard.sh · 8239f7caef02 · правится надстройкой, не здесь
+# rt-kit v0.42.0 · hooks/turn-exit-guard.sh · 8239f7caef02 · правится надстройкой, не здесь
 # rt-hook: Stop
 # rt-hook-timeout: 90
 # Requires: checks/task-flow-script.mjs, checks/decide.mjs, hooks/decide.sh, hooks/facts.sh, hooks/deny-tail.sh, hooks/turn-exit-role.sh

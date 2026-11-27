@@ -222,3 +222,5 @@ None.
 - 2026-11-06 — the switches in the corner of a wide window, the language names and the language on
   the links, the way on from a message page, the page text on the axis, the widget without its
   frame, task RT-3125.
+- 2026-11-26 — the scenario of the language sheet on a phone moves from SC-AUTH-121 to SC-AUTH-123: the
+  main branch took that number, task RT-3706.

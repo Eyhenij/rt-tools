@@ -1,0 +1,12 @@
+@layer rt-kit.components {
+    /* Страница под панелью: во всю высоту окна, чтобы шторка вставала поверх целой страницы. */
+    .app-aside-sheet {
+        display: block;
+        min-height: 100dvh;
+
+        &__page {
+            padding: var(--rt-space-4);
+            margin: 0;
+        }
+    }
+}

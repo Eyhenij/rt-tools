@@ -6,6 +6,7 @@ import { BreakpointsService } from '../../platform';
 import { RtMenuContentDirective } from './rt-menu-content.directive';
 import { RtMenuItemComponent } from './rt-menu-item.component';
 import { RtMenuComponent } from './rt-menu.component';
+import { rtPreloadPopoverSheet } from '../popover/rt-popover-sheet.helper';
 
 /** Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. */
 class BreakpointsStub {
@@ -36,6 +37,10 @@ function settle(fixture: ComponentFixture<MenuSheetFocusHostComponent>): void {
 }
 
 describe('RtMenuComponent — фокус в нижней шторке', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+    });
+
     afterEach((): void => {
         jest.restoreAllMocks();
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());

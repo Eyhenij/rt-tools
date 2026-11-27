@@ -23,6 +23,7 @@ import { RtSplitButtonComponent } from '../split-button/rt-split-button.componen
 import { RtTableFilterHeaderComponent } from '../table/filter-header/rt-table-filter-header.component';
 import { RtThreadListFiltersDirective } from '../thread-list/rt-thread-list.directives';
 import { RtThreadListComponent } from '../thread-list/rt-thread-list.component';
+import { rtPreloadPopoverSheet } from './rt-popover-sheet.helper';
 
 /** Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. */
 class BreakpointsStub {
@@ -151,6 +152,10 @@ function panelBySide(): boolean {
 }
 
 describe('Нижняя шторка у остальных частей набора', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+    });
+
     afterEach((): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });

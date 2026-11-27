@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.40.0 · checks/record-turn.mjs · 4f819d304ccd · правится надстройкой, не здесь
+// rt-kit v0.42.0 · checks/record-turn.mjs · cae5024864b4 · правится надстройкой, не здесь
 /**
  * The count of one turn of a session record, written as observations. The hook at the end of a turn
  * and at the end of a session calls it; so does the recount of a past day.
@@ -10,7 +10,7 @@
  * It reads the record from the offset its mark keeps, turns the new entries into the events of
  * `record-count.mjs` and appends each as an observation line to the file of the day of its moment:
  * `{"t":<moment>,"ev":"record-<event>",...,"sid":<sign>}`. The words of the owner leave no text: a word
- * carries only its kind and whether the set of correction patterns matched it.
+ * carries only its kind, whether the set of correction patterns matched it and what it is about (`about`).
  *
  * An unfinished last line — the harness writes the record while the hook runs — is left for the next
  * count: the mark stays before it. A line in the middle that does not parse is skipped and counted
@@ -24,7 +24,7 @@
 import { appendFileSync, existsSync, mkdirSync, openSync, readFileSync, readSync, closeSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
-import { eventsOf, ownerWords, taskOf } from './record-count.mjs';
+import { eventsOf, taskOf } from './record-count.mjs';
 
 const option = (argv, name) => {
     const at = argv.indexOf(name);
@@ -89,12 +89,8 @@ export function takingsOf(entries, seen = new Set()) {
 
 /** The observation lines of the events of some entries, by the day of their moment. */
 export function observationsOf(entries, { sid, patterns, version, seen = new Set() }) {
-    const pattern = patterns ? new RegExp(patterns, 'iu') : null;
-    const corrected = new Set(
-        pattern ? ownerWords(entries).filter((w) => pattern.test(w.text)).map((w) => `${w.session}|${w.at}|${w.kind}`) : [],
-    );
     const byDay = new Map();
-    for (const e of eventsOf(entries)) {
+    for (const e of eventsOf(entries, patterns)) {
         const line = { t: e.at, ev: `record-${e.ev}` };
         const task = clean(taskOf(e.branch));
         if (task) line.task = task;
@@ -102,7 +98,8 @@ export function observationsOf(entries, { sid, patterns, version, seen = new Set
         if (e.ev === 'ask' && e.reask) line.reask = '1';
         if (e.ev === 'change' && e.analysis) line.analysis = '1';
         if (e.ev === 'menu' && e.answered) line.answered = clean(e.answered);
-        if (e.ev === 'word' && corrected.has(`${e.session}|${e.at}|${e.kind}`)) line.corr = '1';
+        if (e.ev === 'word' && e.corr) line.corr = '1';
+        if (e.ev === 'word' && e.about) line.about = clean(e.about);
         line.sid = sid;
         if (version) line.v = version;
         const day = e.at.slice(0, 10);
@@ -115,6 +112,22 @@ export function observationsOf(entries, { sid, patterns, version, seen = new Set
         byDay.get(day).push(JSON.stringify({ t: taking.at, ev: 'task-taken', task: clean(taking.task), sid, ...(version ? { v: version } : {}) }));
     }
     return byDay;
+}
+
+/**
+ * The lines the file of the day does not hold yet. A second run over the same entries — a mark left
+ * behind by a run that did not finish, or two runs of the hook for one turn — writes each line again;
+ * the file already holds it, so it is dropped. The count goes by the number of copies: two equal calls
+ * of one entry are two lines, and only as many as the file lacks are written.
+ */
+function notWritten(lines, file) {
+    const held = new Map();
+    if (existsSync(file)) for (const line of readFileSync(file, 'utf8').split('\n')) if (line) held.set(line, (held.get(line) ?? 0) + 1);
+    return lines.filter((line) => {
+        const left = held.get(line) ?? 0;
+        if (left > 0) held.set(line, left - 1);
+        return left === 0;
+    });
 }
 
 function main(argv) {
@@ -143,7 +156,10 @@ function main(argv) {
         const seen = new Set(Array.isArray(mark.taken) ? mark.taken : []);
         const byDay = observationsOf(read.entries, { sid, patterns: option(argv, '--patterns'), version, seen });
         mkdirSync(dir, { recursive: true });
-        for (const [day, lines] of byDay) appendFileSync(join(dir, `${day}.jsonl`), `${lines.join('\n')}\n`);
+        for (const [day, lines] of byDay) {
+            const fresh = notWritten(lines, join(dir, `${day}.jsonl`));
+            if (fresh.length > 0) appendFileSync(join(dir, `${day}.jsonl`), `${fresh.join('\n')}\n`);
+        }
         if (read.skipped > 0) note('record-skip', { n: String(read.skipped) });
         mkdirSync(dirname(markFile), { recursive: true });
         writeFileSync(markFile, JSON.stringify({ offset: read.offset, taken: [...seen] }));

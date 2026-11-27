@@ -223,6 +223,12 @@ export class RtToolbarComponent {
     /** Нажата «Применить» панели отборов; панель после этого закрыта. */
     public readonly filtersApply: OutputEmitterRef<void> = output<void>();
 
+    /**
+     * На телефоне шторку отборов с изменённым и не применённым полем закрыли ответом «Не применять»:
+     * приложение возвращает отборы к применённым. Панель закрывается, `filtersApply` не приходит.
+     */
+    public readonly filtersDiscard: OutputEmitterRef<void> = output<void>();
+
     /** Нажата «Сбросить» панели отборов; панель остаётся открытой. */
     public readonly filtersReset: OutputEmitterRef<void> = output<void>();
 
@@ -279,6 +285,7 @@ export class RtToolbarComponent {
                     template,
                     reset: (): void => this.filtersReset.emit(),
                     apply: (): void => this.filtersApply.emit(),
+                    discard: (): void => this.filtersDiscard.emit(),
                 },
                 position: 'right',
                 backdropClass: 'rt-aside-backdrop',

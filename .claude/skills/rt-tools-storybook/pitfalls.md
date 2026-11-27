@@ -143,7 +143,7 @@ it by a story decorator:
 | `provideRouter([])`                        | the kit's links demand a router in the injector                                                           |
 | `provideRtStorage()`                       | the kit's services that remember the user's choice                                                        |
 | `provideRtIDBStorage()`                    | the table keeps the column settings in IndexedDB and injects the service as a field: without the provider the table does not come up at all — `NG0201` and empty markup instead of rows |
-| `provideRtIcons('/icons')`                 | the address of the icon set                                                                               |
+| `provideRtIcons()`                         | the built-in icon sets, `kit` at `/icons` and `material` at `/icons-material`                            |
 | `provideRtKitLabels({ translator, locale })` | the kit's labels — the Russian set lies next to the showcase, in `showcase-labels.ru.ts`                 |
 | `registerLocaleData(localeRu)`             | not a provider but a module-level call: without it any `DatePipe` fails with `Missing locale data for "ru"` and draws emptiness instead of the feed |
 

@@ -7,6 +7,7 @@ import { RtFieldComponent } from '../field/rt-field.component';
 import { RtMultiselectComponent } from '../multiselect/rt-multiselect.component';
 import { RtSelectComponent } from './rt-select.component';
 import { IRtSelect } from './rt-select.model';
+import { rtPreloadPopoverSheet } from '../popover/rt-popover-sheet.helper';
 
 const OPTIONS: ReadonlyArray<IRtSelect.Option<string>> = [
     { label: 'Москва', value: 'msk' },
@@ -94,6 +95,10 @@ function setupMultiselect(chosen: ReadonlyArray<string>): ComponentFixture<RtMul
 }
 
 describe('Панель выбора в нижней шторке', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+    });
+
     afterEach((): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
@@ -277,14 +282,15 @@ describe('Панель выбора в нижней шторке', (): void => {
         expect(hostClasses(fixture)).not.toContain('rt-select--open');
     });
 
-    it('SC-UKV-1677 — подвал шторки мультиселекта считает выбранное', (): void => {
+    it('SC-UKV-1677 — подвал шторки мультиселекта считает выбранное, готовность стоит в шапке', (): void => {
         const fixture: ComponentFixture<RtMultiselectComponent<string>> = setupMultiselect(['msk', 'kzn']);
 
         press(fixture, 'multiselect-trigger');
 
         expect(document.querySelector('[qa-dataid="multiselect-sheet-count"]')?.textContent?.trim()).toBe('Selected: 2');
         expect(document.querySelector('[qa-dataid="multiselect-sheet-reset"]')).not.toBeNull();
-        expect(document.querySelector('[qa-dataid="multiselect-sheet-done"]')).not.toBeNull();
+        expect(document.querySelector('[qa-dataid="bottom-sheet-footer"] [qa-dataid="multiselect-sheet-done"]')).toBeNull();
+        expect(document.querySelector('[qa-dataid="bottom-sheet-action"] [qa-dataid="multiselect-sheet-done"]')).not.toBeNull();
     });
 
     it('SC-UKV-1678 — сброс в подвале снимает весь выбор и оставляет шторку открытой', (): void => {
@@ -302,7 +308,7 @@ describe('Панель выбора в нижней шторке', (): void => {
         expect(sheetOpen()).toBe(true);
     });
 
-    it('SC-UKV-1679 — кнопка готовности в подвале закрывает шторку', (): void => {
+    it('SC-UKV-1679 — кнопка готовности в шапке закрывает шторку', (): void => {
         const fixture: ComponentFixture<RtMultiselectComponent<string>> = setupMultiselect(['msk']);
         press(fixture, 'multiselect-trigger');
 
@@ -322,5 +328,139 @@ describe('Панель выбора в нижней шторке', (): void => {
             document.querySelector('[qa-dataid="popover-sheet"]')?.closest<HTMLElement>('.cdk-overlay-pane') ?? null;
         expect(pane).not.toBeNull();
         expect(pane?.style.width).toBe('');
+    });
+});
+
+const DESCRIBED: ReadonlyArray<IRtSelect.Option<string>> = [
+    { label: 'Одобрить', value: 'approve', description: 'Правки можно вливать' },
+    { label: 'Комментарий', value: 'comment' },
+];
+
+function all(anchor: string): HTMLElement[] {
+    return Array.from(document.querySelectorAll<HTMLElement>(`[qa-dataid="${anchor}"]`));
+}
+
+describe('Карточки выбора селекта в шторке (вход sheetCards)', (): void => {
+    afterEach((): void => {
+        document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
+    });
+
+    it('SC-UKV-1794 — каждая опция — карточка с радиокнопкой кита справа, выбранная отмечена', async (): Promise<void> => {
+        const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true);
+        fixture.componentInstance.writeValue('msq');
+
+        press(fixture, 'select-trigger');
+        // Код радиокнопки приходит с первыми карточками: отложенный блок дорисовывается после него.
+        await fixture.whenStable();
+        fixture.detectChanges();
+
+        expect(document.querySelector('[qa-dataid="select-panel"]')?.classList).toContain('rt-select__panel--cards');
+        const marks: HTMLElement[] = all('select-option-mark');
+        expect(marks.length).toBe(3);
+        expect(
+            marks.map((mark: HTMLElement): string | null | undefined => mark.querySelector('[role="radio"]')?.getAttribute('aria-checked'))
+        ).toEqual(['false', 'true', 'false']);
+        // Отметка стоит после подписи: в строке карточки она справа.
+        const option: HTMLElement = all('select-option')[0];
+        expect(option.lastElementChild?.getAttribute('qa-dataid')).toBe('select-option-mark');
+        expect(option.querySelector('.rt-select__check')).toBeNull();
+    });
+
+    it('SC-UKV-1796 — пояснение опции стоит второй строкой карточки, у поля его нет', (): void => {
+        const inSheet: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { options: DESCRIBED });
+        press(inSheet, 'select-trigger');
+
+        expect(all('select-option-description').map((node: HTMLElement): string => node.textContent?.trim() ?? '')).toEqual([
+            'Правки можно вливать',
+        ]);
+
+        document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
+        TestBed.resetTestingModule();
+        const bySide: ComponentFixture<RtSelectComponent<string>> = setupSelect(false, { options: DESCRIBED });
+        press(bySide, 'select-trigger');
+
+        expect(all('select-option').length).toBe(2);
+        expect(all('select-option-description')).toEqual([]);
+    });
+
+    it('SC-UKV-1791 — кнопка закрытия закрывает шторку и возвращает фокус полю', (): void => {
+        const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true);
+        press(fixture, 'select-trigger');
+        const close: HTMLButtonElement = document.querySelector('[qa-dataid="bottom-sheet-close"] button') as HTMLButtonElement;
+        close.focus();
+
+        close.click();
+        settle(fixture);
+
+        expect(sheetOpen()).toBe(false);
+        expect(document.activeElement).toBe(qa(fixture, 'select-trigger')?.nativeElement);
+    });
+
+    describe('SC-UKV-1917 — высота под клавиатуру', (): void => {
+        /** Видимая область окна, которую двигает экранная клавиатура. */
+        let viewport: EventTarget & { height: number; offsetTop: number; scale: number };
+
+        beforeEach((): void => {
+            viewport = Object.assign(new EventTarget(), { height: window.innerHeight, offsetTop: 0, scale: 1 });
+            Object.defineProperty(window, 'visualViewport', { configurable: true, value: viewport });
+        });
+
+        afterEach((): void => {
+            Reflect.deleteProperty(window, 'visualViewport');
+        });
+
+        function keyboard(shown: boolean): void {
+            viewport.height = shown ? window.innerHeight - 300 : window.innerHeight;
+            viewport.dispatchEvent(new Event('resize'));
+        }
+
+        it('SC-UKV-1917 — шторка с поиском во всю высоту только пока показана клавиатура', (): void => {
+            const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { filter: true });
+            press(fixture, 'select-trigger');
+            const panel: HTMLElement = document.querySelector('[qa-dataid="bottom-sheet-panel"]') as HTMLElement;
+            const search: HTMLElement = document.querySelector('[qa-dataid="select-filter"] input') as HTMLElement;
+
+            expect(panel.classList).not.toContain('rt-bottom-sheet__panel--typing');
+
+            // Нажатие в поиск само шторку не поднимает: клавиатуры ещё нет.
+            search.dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
+            settle(fixture);
+            expect(panel.classList).not.toContain('rt-bottom-sheet__panel--typing');
+
+            keyboard(true);
+            settle(fixture);
+            expect(panel.classList).toContain('rt-bottom-sheet__panel--typing');
+            expect(panel.classList).not.toContain('rt-bottom-sheet__panel--full');
+
+            keyboard(false);
+            settle(fixture);
+            expect(panel.classList).not.toContain('rt-bottom-sheet__panel--typing');
+        });
+
+        it('SC-UKV-1917 — фокус на карточке слежение за клавиатурой не включает: в неё не печатают', (): void => {
+            const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { filter: true });
+            press(fixture, 'select-trigger');
+            const panel: HTMLElement = document.querySelector('[qa-dataid="bottom-sheet-panel"]') as HTMLElement;
+
+            all('select-option')[0].dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
+            settle(fixture);
+            keyboard(true);
+            settle(fixture);
+
+            expect(panel.classList).not.toContain('rt-bottom-sheet__panel--typing');
+        });
+    });
+
+    it('SC-UKV-1797 — sheetCards=false возвращает в шторку строки, какими список стоит у поля', (): void => {
+        const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { sheetCards: false, options: DESCRIBED });
+        fixture.componentInstance.writeValue('approve');
+
+        press(fixture, 'select-trigger');
+
+        expect(sheetOpen()).toBe(true);
+        expect(document.querySelector('[qa-dataid="select-panel"]')?.classList).not.toContain('rt-select__panel--cards');
+        expect(all('select-option-mark')).toEqual([]);
+        expect(all('select-option-description')).toEqual([]);
+        expect(all('select-option')[0].querySelector('.rt-select__check')).not.toBeNull();
     });
 });

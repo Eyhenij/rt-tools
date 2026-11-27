@@ -1,4 +1,4 @@
-// rt-kit v0.40.0 · task-flow/measure/task.mjs · cfc9f47c7914 · правится надстройкой, не здесь
+// rt-kit v0.42.0 · task-flow/measure/task.mjs · cfc9f47c7914 · правится надстройкой, не здесь
 /**
  * The measurer «measure.task» — exit 4: the task the branch carries is open, or closed by its merge,
  * and left the first column of the work queue; a commit of the branch added the task folder. Kept

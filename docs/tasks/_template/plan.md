@@ -1,4 +1,4 @@
-<!-- rt-kit v0.40.0 · samples/tasks/_template/plan.md · afdad87c9633 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.0 · samples/tasks/_template/plan.md · afdad87c9633 · правится надстройкой, не здесь -->
 # Plan
 
 **Task:** <KEY>-<number> · **Branch:** <branch>

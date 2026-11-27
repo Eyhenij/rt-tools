@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.40.0 · hooks/facts.sh · e96353f9f05b · правится надстройкой, не здесь
+# rt-kit v0.42.0 · hooks/facts.sh · e96353f9f05b · правится надстройкой, не здесь
 # The facts of the state the guards decide by, each computed in one place. NOT a guard: it has no
 # `rt-hook:` declaration and hooks into no agent event. A guard sources it and calls `rt_fact_*`.
 #

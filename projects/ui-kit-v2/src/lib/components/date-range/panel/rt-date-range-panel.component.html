@@ -1,25 +1,37 @@
 <ng-container rtBlock="rt-date-range-panel">
-    @if (sheet()) {
+    @if (sheet() && !applyOutside()) {
         <p rtElem="title" qa-dataid="date-range-title">{{ t().uiPeriod }}</p>
     }
 
     <div rtElem="body">
-        <div rtElem="presets" qa-dataid="date-range-presets" role="group" [attr.aria-label]="t().uiQuickRanges">
-            @for (item of presets(); track item.cell.preset) {
-                <button
-                    rtButton
-                    rtElem="preset"
-                    qa-dataid="date-range-preset"
-                    type="button"
-                    size="sm"
-                    [theme]="item.chosen ? 'primary' : 'secondary'"
-                    [appearance]="sheet() ? 'outlined' : 'text'"
-                    [attr.data-preset]="item.cell.preset"
-                    [label]="item.label"
-                    [attr.aria-label]="item.label"
-                    [pressed]="item.chosen"
-                    [disabled]="item.cell.disabled"
-                    (click)="pickPreset(item.cell)"></button>
+        <!-- В шторке ряд — карусель: повторы по краям только для круга, читалка и Tab идут по среднему. -->
+        <div
+            rtElem="presets"
+            qa-dataid="date-range-presets"
+            role="group"
+            [attr.aria-label]="t().uiQuickRanges"
+            [rtChipCarousel]="sheet()"
+            [rtChipCarouselLoop]="presets().length"
+            [rtChipCarouselIndex]="chosenPreset()">
+            @for (copy of presetCopies(); track copy) {
+                @for (item of presets(); track item.cell.preset) {
+                    <button
+                        rtButton
+                        rtElem="preset"
+                        type="button"
+                        size="sm"
+                        [attr.qa-dataid]="copy === 1 ? 'date-range-preset' : 'date-range-preset-copy'"
+                        [attr.aria-hidden]="copy === 1 ? null : 'true'"
+                        [attr.tabindex]="copy === 1 ? null : -1"
+                        [theme]="item.chosen ? 'primary' : 'secondary'"
+                        [appearance]="sheet() ? 'outlined' : 'text'"
+                        [attr.data-preset]="item.cell.preset"
+                        [label]="item.label"
+                        [attr.aria-label]="item.label"
+                        [pressed]="item.chosen"
+                        [disabled]="item.cell.disabled"
+                        (click)="pickPreset(item.cell)"></button>
+                }
             }
         </div>
 
@@ -29,6 +41,7 @@
                 qa-dataid="date-range-calendar"
                 grid
                 titleAction
+                [headerTitle]="sheet()"
                 [months]="months()"
                 [weekdayLabels]="weekdays()"
                 [canPrev]="canPrev()"
@@ -145,14 +158,16 @@
             [label]="t().uiReset"
             [attr.aria-label]="t().uiReset"
             (click)="reset()"></button>
-        <button
-            rtButton
-            qa-dataid="date-range-apply"
-            size="sm"
-            type="button"
-            [label]="t().uiApply"
-            [attr.aria-label]="t().uiApply"
-            [disabled]="draft() === null"
-            (click)="apply()"></button>
+        @if (!applyOutside()) {
+            <button
+                rtButton
+                qa-dataid="date-range-apply"
+                size="sm"
+                type="button"
+                [label]="t().uiApply"
+                [attr.aria-label]="t().uiApply"
+                [disabled]="!canApply()"
+                (click)="apply()"></button>
+        }
     </div>
 </ng-container>

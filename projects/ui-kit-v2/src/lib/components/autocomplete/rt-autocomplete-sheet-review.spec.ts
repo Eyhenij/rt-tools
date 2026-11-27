@@ -5,6 +5,7 @@ import { createRtFixture } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
 import { IRtAutocomplete } from './rt-autocomplete.model';
 import { RtAutocompleteComponent } from './rt-autocomplete.component';
+import { rtPreloadPopoverSheet } from '../popover/rt-popover-sheet.helper';
 
 const CITIES: ReadonlyArray<string> = ['Грузия', 'Грузино-Имеретинская обл.', 'Груновка'];
 
@@ -42,6 +43,10 @@ function sheetSearch(): HTMLInputElement | null {
 }
 
 describe('Автокомплит в нижней шторке — замечания ревью', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+    });
+
     afterEach((): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
@@ -134,5 +139,19 @@ describe('Автокомплит в нижней шторке — замечан
 
         expect(queries).toEqual(['Грузия']);
         expect(document.querySelector('.rt-popover-sheet')).toBeNull();
+        expect(document.activeElement).toBe(fixture.nativeElement.querySelector('input'));
+    });
+
+    it('SC-UKV-1620 — касание поля, оставшегося в фокусе после закрытой шторки, открывает её снова', (): void => {
+        const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup();
+        tapField(fixture);
+        (document.querySelector('[qa-dataid="bottom-sheet-backdrop"]') as HTMLElement).click();
+        settle(fixture);
+        expect(document.querySelector('.rt-popover-sheet')).toBeNull();
+
+        (fixture.nativeElement.querySelector('[qa-dataid="autocomplete-input"]') as HTMLInputElement).click();
+        settle(fixture);
+
+        expect(document.querySelector('.rt-popover-sheet')).not.toBeNull();
     });
 });

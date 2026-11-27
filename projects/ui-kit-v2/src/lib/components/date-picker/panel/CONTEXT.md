@@ -15,7 +15,13 @@
 | `minuteStep`         | `number`                               | `5`        |
 | `sheet`              | `boolean`                              | `false`    |
 | `now`                | `Date \| null`                         | `null`     |
+| `timeStart`          | `'now' \| 'midnight'`                  | `'now'`    |
+| `applyOutside`       | `boolean`                              | `false`    |
 | `isTodayButtonShown` | `boolean`                              | `true`     |
+
+`timeStart` действует в виде для шторки: барабан времени у значения без времени начинает с
+текущего времени или с `00:00`. `applyOutside` убирает «Готово» и «Применить» из подвала: кнопку
+рисует тот, кто держит панель, зовёт `apply()` и читает `canApply` и `dirty`.
 
 `isTodayButtonShown` показывает «Сегодня» у типа `date`. Без кнопки подвала у даты нет, день
 выбирается нажатием и сразу закрывает панель. Подвал других типов этот вход не трогает.

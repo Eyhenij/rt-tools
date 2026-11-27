@@ -7,10 +7,12 @@ import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtBottomSheetComponent } from '../../rt-bottom-sheet.component';
+import { RtSheetFooterDirective } from '../../rt-sheet-footer.directive';
+import { RtSheetHeaderDirective } from '../../rt-sheet-header.directive';
 import { OwnSheetStackDirective } from './own-sheet-stack.directive';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TBottomSheetMatrixPart = 'open' | 'content' | 'footer' | 'presets' | 'themes';
+export type TBottomSheetMatrixPart = 'open' | 'content' | 'header' | 'footer' | 'presets' | 'themes';
 
 /**
  * Матрицы состояний `rt-bottom-sheet` для витрины.
@@ -34,8 +36,7 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'footer' | 'presets' |
  *
  * Подвал показан на содержимом длиннее предела панели: тело прокручивается, а переключатель и две
  * кнопки стоят внизу. Предел панели задан свойством `--rt-bottom-sheet-max-height` ниже высоты
- * ящика: умолчание в `80vh` считается от окна, и в высоком кадре ящик срезал бы шапку, а не
- * показал, что панель упёрлась в предел сама.
+ * ящика: так в кадре видно, что панель упёрлась в предел приложения, а не во всю высоту ящика.
  *
  * Открытость задаётся привязкой `[open]="true"`, а не голым атрибутом: вход листа объявлен
  * логическим и строку в истину не превращает. Голый атрибут даёт ему пустую строку, и лист
@@ -121,6 +122,115 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'footer' | 'presets' |
                 </app-story-presets>
             }
 
+            @case ('header') {
+                <app-story-presets caption="Шапка, высота и вопрос перед закрытием в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="23.4375rem" [items]="headers">
+                            <ng-template let-header>
+                                <div
+                                    rtStoryOwnSheetStack
+                                    style="position: relative; contain: paint; inline-size: 100%; height: 26rem; border: 1px dashed var(--rt-color-border-subtle)">
+                                    @switch (header) {
+                                        @case ('действие справа') {
+                                            <rt-bottom-sheet [open]="true">
+                                                <span sheetHeader>Каналы связи</span>
+                                                <button
+                                                    type="button"
+                                                    sheetAction
+                                                    rtButton
+                                                    size="sm"
+                                                    label="Готово"
+                                                    aria-label="Готово"></button>
+                                                <button type="button" rtButton label="Почта" aria-label="Почта" appearance="text"></button>
+                                                <button
+                                                    type="button"
+                                                    rtButton
+                                                    label="Телефон"
+                                                    aria-label="Телефон"
+                                                    appearance="text"></button>
+                                            </rt-bottom-sheet>
+                                        }
+                                        @case ('во всю высоту') {
+                                            <rt-bottom-sheet fullHeight [open]="true">
+                                                <span sheetHeader>Отборы</span>
+                                                <button
+                                                    type="button"
+                                                    sheetAction
+                                                    rtButton
+                                                    size="sm"
+                                                    label="Применить"
+                                                    aria-label="Применить"></button>
+                                                <button
+                                                    type="button"
+                                                    rtButton
+                                                    label="Статус"
+                                                    aria-label="Статус"
+                                                    appearance="text"></button>
+                                            </rt-bottom-sheet>
+                                        }
+                                        @case ('вопрос перед закрытием') {
+                                            <rt-bottom-sheet fullHeight unsaved data-story-ask [open]="true">
+                                                <span sheetHeader>Отборы</span>
+                                                <button
+                                                    type="button"
+                                                    sheetAction
+                                                    rtButton
+                                                    size="sm"
+                                                    label="Применить"
+                                                    aria-label="Применить"></button>
+                                                <button
+                                                    type="button"
+                                                    rtButton
+                                                    label="Статус"
+                                                    aria-label="Статус"
+                                                    appearance="text"></button>
+                                            </rt-bottom-sheet>
+                                        }
+                                        @case ('свои шапка и подвал') {
+                                            <rt-bottom-sheet [open]="true">
+                                                <ng-template rtSheetHeader let-close>
+                                                    <button
+                                                        type="button"
+                                                        rtButton
+                                                        size="sm"
+                                                        appearance="text"
+                                                        label="Назад"
+                                                        aria-label="Назад"
+                                                        (click)="close()"></button>
+                                                    <strong style="flex: 1 1 auto; text-align: center">Свой заголовок</strong>
+                                                    <button
+                                                        type="button"
+                                                        rtButton
+                                                        size="sm"
+                                                        appearance="outlined"
+                                                        label="Сбросить"
+                                                        aria-label="Сбросить"></button>
+                                                </ng-template>
+                                                <button
+                                                    type="button"
+                                                    rtButton
+                                                    label="Статус"
+                                                    aria-label="Статус"
+                                                    appearance="text"></button>
+                                                <ng-template rtSheetFooter let-close>
+                                                    <button
+                                                        type="button"
+                                                        rtButton
+                                                        label="Показать 12"
+                                                        aria-label="Показать 12"
+                                                        style="flex: 1 1 auto"
+                                                        (click)="close()"></button>
+                                                </ng-template>
+                                            </rt-bottom-sheet>
+                                        }
+                                    }
+                                </div>
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('footer') {
                 <app-story-presets caption="Подвал под длинным содержимым в обоих наборах">
                     <ng-template>
@@ -187,6 +297,8 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'footer' | 'presets' |
     imports: [
         // components
         RtBottomSheetComponent,
+        RtSheetFooterDirective,
+        RtSheetHeaderDirective,
 
         // directives
         RtButtonDirective,
@@ -207,6 +319,11 @@ export class TestRtBottomSheetMatrixComponent {
 
     public readonly opens: readonly boolean[] = [false, true];
     public readonly contents: readonly string[] = ['без шапки', 'с шапкой', 'длинное содержимое', 'пусто'];
+    /**
+     * Шапка с действием, шторка во всю высоту ящика, вопрос, который история открывает нажатием «×»,
+     * и шторка со своими шаблонами шапки и подвала.
+     */
+    public readonly headers: readonly string[] = ['действие справа', 'во всю высоту', 'вопрос перед закрытием', 'свои шапка и подвал'];
 
     public readonly manyActions: readonly string[] = ['Скачать', 'Отправить', 'Переименовать', 'Дублировать', 'Архивировать', 'Удалить'];
 

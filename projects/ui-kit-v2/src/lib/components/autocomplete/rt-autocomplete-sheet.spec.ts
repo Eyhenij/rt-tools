@@ -5,6 +5,7 @@ import { createRtFixture } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
 import { IRtAutocomplete } from './rt-autocomplete.model';
 import { RtAutocompleteComponent } from './rt-autocomplete.component';
+import { rtPreloadPopoverSheet } from '../popover/rt-popover-sheet.helper';
 
 const CITIES: ReadonlyArray<string> = ['Грузия', 'Грузино-Имеретинская обл.', 'Груновка'];
 
@@ -39,6 +40,10 @@ function sheetSearch(): HTMLInputElement | null {
 }
 
 describe('Автокомплит в нижней шторке', (): void => {
+    beforeAll(async (): Promise<void> => {
+        await rtPreloadPopoverSheet();
+    });
+
     afterEach((): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
@@ -162,5 +167,39 @@ describe('Автокомплит в нижней шторке', (): void => {
         expect(document.querySelector('.rt-popover-sheet')).toBeNull();
         expect(sheetSearch()).toBeNull();
         expect(document.querySelectorAll('[qa-dataid="autocomplete-option"]').length).toBe(3);
+    });
+
+    it('SC-UKV-1915 — подсказки в шторке стоят карточками', (): void => {
+        const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup();
+
+        tapField(fixture);
+
+        expect(document.querySelector('[qa-dataid="autocomplete-panel"]')?.classList).toContain('rt-autocomplete__panel--cards');
+    });
+
+    it('SC-UKV-1765 — карточка подсказки несёт отметку справа, отмечена подсказка, совпавшая со значением поля', (): void => {
+        const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup();
+        fixture.componentInstance.writeValue(CITIES[1]);
+
+        tapField(fixture);
+        const marks: HTMLElement[] = Array.from(
+            document.querySelectorAll<HTMLElement>('.rt-popover-sheet [qa-dataid="autocomplete-option-mark"]')
+        );
+        const checked: boolean[] = marks.map(
+            (mark: HTMLElement): boolean => mark.querySelector('[role="radio"]')?.getAttribute('aria-checked') === 'true'
+        );
+
+        expect(marks.length).toBe(document.querySelectorAll('.rt-popover-sheet [qa-dataid="autocomplete-option"]').length);
+        expect(checked.filter(Boolean)).toHaveLength(1);
+        expect(checked[CITIES.indexOf(CITIES[1])]).toBe(true);
+    });
+
+    it('SC-UKV-1797 — sheetCards=false оставляет в шторке строки, какими подсказки стоят у поля', (): void => {
+        const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup({ sheetCards: false });
+
+        tapField(fixture);
+
+        expect(document.querySelector('.rt-popover-sheet')).not.toBeNull();
+        expect(document.querySelector('[qa-dataid="autocomplete-panel"]')?.classList).not.toContain('rt-autocomplete__panel--cards');
     });
 });

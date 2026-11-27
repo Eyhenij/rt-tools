@@ -1,4 +1,4 @@
-<!-- rt-kit v0.40.0 · pitfalls/git-workflow.2.github.md · e04b571ea12b · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.0 · pitfalls/git-workflow.2.github.md · e04b571ea12b · правится надстройкой, не здесь -->
 # Delivery — cold part, second file
 
 The sections the rule `git-workflow` handed over when it was cut to its statements and split in

@@ -6,6 +6,7 @@
             cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
             [cdkConnectedOverlayOpen]="true"
             [cdkConnectedOverlayOrigin]="menu.point"
+            (attach)="onAttach()"
             (backdropClick)="close()"
             (detach)="close()"
             (overlayKeydown)="onKeydown($event)">

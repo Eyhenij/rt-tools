@@ -1,3 +1,4 @@
+export * from './control-change';
 export * from './delta-number';
 export * from './file-name-from-url';
 export * from './format-file-size';

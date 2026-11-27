@@ -48,12 +48,18 @@ interface IPlace {
     readonly phone: WritableSignal<boolean>;
 }
 
+/**
+ * Окно шире телефона: от 481 точки панель поверх окна выезжает сбоку со своей шапкой, до 480 —
+ * шторкой (её сценарии — в `rt-workspace-sheet.spec.ts`).
+ */
+const WINDOW_WIDTH: number = 481;
+
 /** `null` — место страницы не объявлено: узкий вид отвечает окном, здесь — узким. */
 function place(width: number | null): IPlace {
     return {
         placeWidth: signal<number | null>(width),
         narrow: signal<boolean>(width === null || width <= 1080),
-        phone: signal<boolean>(false),
+        phone: signal<boolean>(WINDOW_WIDTH <= 480),
     };
 }
 
@@ -128,7 +134,7 @@ describe('порог одной колонки рабочего стола', ():
         expect(document.querySelector('.cdk-overlay-backdrop')).not.toBeNull();
     });
 
-    it('SC-UKV-1320 — в одной колонке стрелка и «Закрыть» закрывают панель, запись остаётся открытой', (): void => {
+    it('SC-UKV-1320 — в окне 481 точки в одной колонке стрелка и «Закрыть» закрывают панель, запись остаётся открытой', (): void => {
         const fixture: ComponentFixture<WorkspaceBreakpointHostComponent> = setup(375);
 
         openAside(fixture);
@@ -171,7 +177,7 @@ describe('порог одной колонки рабочего стола', ():
         expect(document.querySelector('.cdk-overlay-backdrop')).not.toBeNull();
     });
 
-    it('SC-UKV-1244 — кнопка «Закрыть» закрывает панель поверх окна', (): void => {
+    it('SC-UKV-1244 — в окне 481 точки кнопка «Закрыть» закрывает панель поверх окна', (): void => {
         const fixture: ComponentFixture<WorkspaceBreakpointHostComponent> = setup(768);
         openAside(fixture);
 
@@ -214,7 +220,7 @@ describe('порог одной колонки рабочего стола', ():
         expect(css).toMatch(/\.rt-aside-overlay\.rt-workspace-aside-pane \{\s+width: auto;/);
     });
 
-    it('SC-UKV-1251 — у панели поверх окна шапка обычного асайда: надпись «Сведения» и заголовок из входа', (): void => {
+    it('SC-UKV-1251 — в окне 481 точки у панели поверх окна шапка обычного асайда: надпись «Сведения» и заголовок из входа', (): void => {
         const fixture: ComponentFixture<WorkspaceBreakpointHostComponent> = setup(768, { layout: 'tabs' });
         fixture.componentInstance.title.set('№12 Анна Смирнова');
         fixture.detectChanges();
@@ -234,7 +240,7 @@ describe('порог одной колонки рабочего стола', ():
         expect(header.querySelector('[qa-dataid="aside-title"]')?.textContent?.trim()).toBe('№11 Kim Minjun');
     });
 
-    it('SC-UKV-1252 — без заголовка шапка панели поверх окна остаётся со стрелкой и надписью', (): void => {
+    it('SC-UKV-1252 — в окне 481 точки без заголовка шапка панели поверх окна остаётся со стрелкой и надписью', (): void => {
         const fixture: ComponentFixture<WorkspaceBreakpointHostComponent> = setup(768);
         openAside(fixture);
 
@@ -247,7 +253,7 @@ describe('порог одной колонки рабочего стола', ():
         expect(classesOf(overlayPanel()?.querySelector('[qa-dataid="aside"]') ?? null)).not.toContain('rt-aside--content--tabs');
     });
 
-    it('SC-UKV-1253 — стрелка назад в шапке закрывает панель поверх окна', (): void => {
+    it('SC-UKV-1253 — в окне 481 точки стрелка назад в шапке закрывает панель поверх окна', (): void => {
         const fixture: ComponentFixture<WorkspaceBreakpointHostComponent> = setup(768);
         fixture.componentInstance.title.set('№12 Анна Смирнова');
         fixture.detectChanges();

@@ -391,3 +391,29 @@ Then the reasons are 2, 1, 1, 1 and 1 «без причины», and the two oth
 Given two delivery notes of the rules gate on a day
 When the gate of that day is counted
 Then the rules delivered with no refusal are two
+
+## The owner's touches
+
+### SC-AK-2004 — a queued message the record writes again counts once
+
+Given a queued message the record holds three times within two milliseconds, and twice in one millisecond
+When the owner's words and the events of the record are counted
+Then each is one word and one event, while the same text twenty minutes later or typed in a later turn is a new word
+
+### SC-AK-2005 — a typed message gets its kind
+
+Given messages of a correction, a question where the work stands, an order to go on and a thanks
+When the kind of each is taken with the set of correction patterns
+Then they are correction, status, order and other, and a correction worded as an order stays a correction
+
+### SC-AK-2007 — one turn counted by two runs writes each line once
+
+Given a turn the end-of-turn hook has counted, and its mark lost
+When the hook counts the same turn again
+Then the file of the day holds each line once, and two equal calls of one entry stay two lines
+
+### SC-AK-2006 — the touches per task are counted without repeats
+
+Given observations with one message written several times in one second and once more under another session
+When the touches are counted within a window
+Then the message is one touch, a taken task without touches counts with zero, the touches off a task are named apart, and the median of an even count is the mean of the two middle ones

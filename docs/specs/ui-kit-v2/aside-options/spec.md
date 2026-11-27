@@ -98,9 +98,12 @@ Not applicable: the kit lives inside an application behind a sign-in.
 
 ### Mobile layout
 
-The panel keeps its full-window width on a narrow screen; the pending layer and the header row
-follow it. The footer buttons stay in one row there, and the first of them
-gets the short label. The buttons of the window about the unsaved edits stand in a column.
+From 481 to 768 points the panel keeps its full-window width; the pending layer and the header row
+follow it. The footer buttons stay in one row there. Up to 480 points the panel opened by the
+service or by the frame is a full-height sheet, and it asks about the unsaved edits at the bottom of
+the screen instead of the window: subdomain `aside/phone-sheet`. A panel standing in a page without
+a sheet keeps the side look there: the first footer button gets the short label, and the buttons of
+the window about the unsaved edits stand in a column.
 
 ### Several objects
 
@@ -131,3 +134,6 @@ None.
   back button sizes, the slot of the title column, the navigation option and the frame check.
 - 2026-11-20 — the confirm popover takes the width of its buttons; the application's remark, task
   RT-3399.
+- 2026-11-25 — the full-window width and the window about the edits hold from 481 points; up to 480
+  the panel is a sheet, subdomain `aside/phone-sheet`; scenario `SC-UKV-1043` changed its promise,
+  task RT-3532.
