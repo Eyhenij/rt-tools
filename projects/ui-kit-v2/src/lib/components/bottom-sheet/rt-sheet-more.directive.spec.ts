@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Signal, signal, viewChild, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
 import { createRtFixture, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
@@ -110,6 +110,29 @@ describe('RtSheetMoreDirective', (): void => {
         expect(moreScreen(fixture)?.classList.contains('rt-bottom-sheet--open')).toBe(false);
     });
 
+    it('SC-UKV-1929: Escape на втором экране возвращает к первому, шторка остаётся открытой', (): void => {
+        const fixture: TFixture = setup(true);
+
+        openMore(fixture);
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        fixture.detectChanges();
+
+        expect(moreScreen(fixture)?.classList.contains('rt-bottom-sheet--open')).toBe(false);
+        expect(qa(fixture, 'bottom-sheet-panel')?.nativeElement.closest('rt-bottom-sheet')?.classList).toContain('rt-bottom-sheet--open');
+    });
+
+    it('SC-UKV-1929: шаблон, снятый и поставленный снова, не открывает второй экран сам', (): void => {
+        const fixture: TFixture = setup(true);
+
+        openMore(fixture);
+        fixture.componentInstance.more.set(false);
+        fixture.detectChanges();
+        fixture.componentInstance.more.set(true);
+        fixture.detectChanges();
+
+        expect(moreScreen(fixture)?.classList.contains('rt-bottom-sheet--open')).toBe(false);
+    });
+
     it('SC-UKV-1929: закрытая и снова открытая шторка начинает с первого экрана', (): void => {
         const fixture: TFixture = setup(true);
 
@@ -188,6 +211,24 @@ class SheetMoreUnsavedHostComponent {}
 })
 class SheetMoreInnerHostComponent {}
 
+/** Шторка в чужом шаблоне — как у асайда: шаблон «Ещё» приходит входом `moreTemplate`. */
+@Component({
+    selector: 'rt-sheet-more-input-host',
+    template: `
+        <ng-template rtSheetMore rtSheetMoreTitle="Дополнительно">
+            <p qa-dataid="more-free">Свободные</p>
+        </ng-template>
+        <rt-bottom-sheet [open]="true" [moreTemplate]="more() ?? null">
+            <span sheetHeader>Асайд</span>
+        </rt-bottom-sheet>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtBottomSheetComponent, RtSheetMoreDirective],
+})
+class SheetMoreInputHostComponent {
+    public readonly more: Signal<RtSheetMoreDirective | undefined> = viewChild(RtSheetMoreDirective);
+}
+
 /**
  * Прямое дитя узла по якорю. Внутренняя шторка стоит в теле внешней, поэтому смотрятся только свои
  * шапка и второй экран, без `:scope` в длинном селекторе: jsdom находит по нему и узлы внутренней.
@@ -249,5 +290,18 @@ describe('RtSheetMoreDirective — своя шапка, вопрос, шторк
         expect(ownChild(outer, 'bottom-sheet-more-screen')).toBeUndefined();
         expect(ownMore(inner)).not.toBeNull();
         expect(ownChild(inner, 'bottom-sheet-more-screen')).toBeDefined();
+    });
+
+    it('SC-UKV-1933: шаблон «Ещё» входом ставит «⋮» и открывает второй экран со своим заголовком', (): void => {
+        const fixture: ComponentFixture<SheetMoreInputHostComponent> = createRtFixture(SheetMoreInputHostComponent);
+        fixture.detectChanges();
+
+        (qa(fixture, 'bottom-sheet-more')?.nativeElement as HTMLElement).querySelector('button')?.click();
+        fixture.detectChanges();
+
+        const screen: HTMLElement = qa(fixture, 'bottom-sheet-more-screen')?.nativeElement as HTMLElement;
+        expect(screen.classList.contains('rt-bottom-sheet--open')).toBe(true);
+        expect(screen.querySelector('[qa-dataid="more-free"]')).not.toBeNull();
+        expect(textOf(qaAll(fixture, 'bottom-sheet-title')[1])).toBe('Дополнительно');
     });
 });

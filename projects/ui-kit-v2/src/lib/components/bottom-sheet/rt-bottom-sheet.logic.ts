@@ -1,4 +1,21 @@
+import { TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+
+import { IRtSheetConfirmLabels } from './rt-bottom-sheet.model';
+
 export const DRAG_DISMISS_THRESHOLD_PX: number = 80;
+
+/** Слова вопроса перед закрытием: свои из входа, без них — вопрос кита о неприменённом выборе. */
+export function sheetConfirmText(own: IRtSheetConfirmLabels | null, t: TRtKitLabelMap): IRtSheetConfirmLabels {
+    return (
+        own ?? {
+            title: t.bottomSheetUnsavedTitle,
+            message: t.bottomSheetUnsavedMessage,
+            apply: t.uiApply,
+            discard: t.bottomSheetUnsavedDiscard,
+            stay: t.uiCancel,
+        }
+    );
+}
 
 export function clampDragDelta(deltaY: number): number {
     return Math.max(0, deltaY);

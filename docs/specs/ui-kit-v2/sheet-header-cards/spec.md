@@ -96,8 +96,11 @@ checkbox or a switch on the right. The question before closing offers «Apply»,
   application. The chevron, a swipe, Escape and the back request of the template return to the first
   screen; the application closing the sheet closes both, and the sheet opens again on its first
   screen. A sheet with its own header gets the sign that it has a second screen and the request to
-  open it, and draws «⋮» itself. The template belongs to the sheet it is written in: a sheet declared
-  in the content of another keeps its template to itself. A sheet with no such template has no «⋮»
+  open it, and draws «⋮» itself. The template belongs to the sheet it is written in and stands as its
+  direct child — inside a control block or a grouping container, not inside an element: a sheet
+  declared in the content of another keeps its template to itself. A component that draws the sheet
+  in its own template — the side panel, the choice panel — passes the template by an input, and it
+  wins over one in the content. A sheet with no such template has no «⋮»
   and no second screen. What must stay in sight an application still puts in the header, the footer
   or the body.
 - **The sheet of the page filters has a reset in its footer.** The reset reports to the
@@ -254,4 +257,4 @@ None.
 |            | radio; the look is unchanged (RT-3709)                                                                |
 | 2026-11-27 | The place of the main action and the info line in the footer, icon buttons of the header,             |
 |            | scenarios 1923…1926 (RT-3747)                                                                         |
-| 2026-11-27 | The more behind «⋮» in the header and its second screen, scenarios 1927…1932 (RT-3747)                |
+| 2026-11-27 | The more behind «⋮» in the header and its second screen, scenarios 1927…1933 (RT-3747)                |

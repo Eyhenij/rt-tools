@@ -39,7 +39,7 @@ import { RtSheetConfirmPlace } from './rt-sheet-confirm-place';
 import { IRtSheetKeyboardBox, rtWatchSheetKeyboard } from './rt-bottom-sheet-keyboard';
 import { RtBottomSheetScreens } from './rt-bottom-sheet-screens';
 import { RtBottomSheetStackService } from './rt-bottom-sheet-stack.service';
-import { focusLeftBehind, innerFocus, isTypingTarget, outerFocus } from './rt-bottom-sheet.logic';
+import { focusLeftBehind, innerFocus, isTypingTarget, outerFocus, sheetConfirmText } from './rt-bottom-sheet.logic';
 import { RtSheetDrag } from './rt-sheet-drag';
 import { IRtSheetConfirmLabels, IRtSheetTemplateContext, TRtSheetCloseReason } from './rt-bottom-sheet.model';
 import { RtSheetFooterDirective } from './rt-sheet-footer.directive';
@@ -171,12 +171,13 @@ export class RtBottomSheetComponent {
 
     protected readonly ownHeader: Signal<RtSheetHeaderDirective | undefined> = contentChild(RtSheetHeaderDirective);
     protected readonly ownFooter: Signal<RtSheetFooterDirective | undefined> = contentChild(RtSheetFooterDirective);
-    /**
-     * Дополнительное за «⋮»: с шаблоном в шапке встаёт «⋮», и он открывает второй экран «Ещё». Только
-     * свой шаблон: шаблон шторки, объявленной в содержимом этой, остаётся ей.
-     */
+    /** Шаблон «⋮» — прямое дитя шторки: шаблон шторки, объявленной в содержимом этой, остаётся ей. */
     protected readonly ownMore: Signal<RtSheetMoreDirective | undefined> = contentChild(RtSheetMoreDirective, { descendants: false });
-    protected readonly moreScreen: RtSheetMoreScreen = new RtSheetMoreScreen(this.ownMore, (): boolean => this.open());
+    protected readonly moreScreen: RtSheetMoreScreen = new RtSheetMoreScreen(
+        this.ownMore,
+        (): RtSheetMoreDirective | null => this.moreTemplate(),
+        (): boolean => this.open()
+    );
 
     /** Своя шапка: шаблон из входа сильнее шаблона директивы в содержимом. Пусто — шапка шторки. */
     protected readonly headerTpl: Signal<TemplateRef<IRtSheetTemplateContext> | null> = computed(
@@ -189,15 +190,8 @@ export class RtBottomSheetComponent {
     );
 
     /** Слова вопроса: свои из входа, без них — вопрос о неприменённом выборе. */
-    protected readonly confirmText: Signal<IRtSheetConfirmLabels> = computed(
-        (): IRtSheetConfirmLabels =>
-            this.confirmLabels() ?? {
-                title: this.t().bottomSheetUnsavedTitle,
-                message: this.t().bottomSheetUnsavedMessage,
-                apply: this.t().uiApply,
-                discard: this.t().bottomSheetUnsavedDiscard,
-                stay: this.t().uiCancel,
-            }
+    protected readonly confirmText: Signal<IRtSheetConfirmLabels> = computed((): IRtSheetConfirmLabels =>
+        sheetConfirmText(this.confirmLabels(), this.t())
     );
 
     public readonly open: InputSignalWithTransform<boolean, BooleanInput> = input.required<boolean, BooleanInput>({
@@ -237,6 +231,9 @@ export class RtBottomSheetComponent {
     /** Свой подвал шаблоном; в разметке его задаёт `<ng-template rtSheetFooter>`. */
     public readonly footerTemplate: InputSignal<TemplateRef<IRtSheetTemplateContext> | null> =
         input<TemplateRef<IRtSheetTemplateContext> | null>(null);
+
+    /** Шаблон «Ещё» входом — у того, кто ставит шторку в своём шаблоне: асайд, панель выбора. */
+    public readonly moreTemplate: InputSignal<RtSheetMoreDirective | null> = input<RtSheetMoreDirective | null>(null);
 
     /**
      * Свои слова вопроса перед закрытием — у панели, которая спрашивает о правках записи, а не о

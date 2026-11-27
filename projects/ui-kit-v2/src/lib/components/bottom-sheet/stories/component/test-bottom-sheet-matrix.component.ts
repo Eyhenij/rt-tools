@@ -209,7 +209,7 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'header' | 'footer' | 
                                         }
                                         @case ('свои шапка и подвал') {
                                             <rt-bottom-sheet [open]="true">
-                                                <ng-template rtSheetHeader let-close>
+                                                <ng-template rtSheetHeader let-close let-hasMore="hasMore" let-openMore="openMore">
                                                     <button
                                                         type="button"
                                                         rtButton
@@ -219,7 +219,20 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'header' | 'footer' | 
                                                         aria-label="Назад"
                                                         (click)="close()"></button>
                                                     <strong style="flex: 1 1 auto; text-align: center">Свой заголовок</strong>
+                                                    @if (hasMore()) {
+                                                        <rt-icon-button
+                                                            variant="secondary"
+                                                            radius="full"
+                                                            icon="ellipsis-v"
+                                                            ariaLabel="Ещё"
+                                                            (clicked)="openMore()" />
+                                                    }
                                                     <rt-icon-button variant="secondary" radius="full" icon="reset" ariaLabel="Сбросить" />
+                                                </ng-template>
+                                                <ng-template rtSheetMore>
+                                                    <div style="padding: var(--rt-space-5) var(--rt-space-5) var(--rt-space-2)">
+                                                        <rt-toggle-switch label="Свободные" size="md" [formControl]="onlyFree" />
+                                                    </div>
                                                 </ng-template>
                                                 <button
                                                     type="button"

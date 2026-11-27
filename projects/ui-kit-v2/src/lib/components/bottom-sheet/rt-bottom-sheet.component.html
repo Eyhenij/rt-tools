@@ -41,7 +41,7 @@
                 </div>
                 <div rtElem="action" qa-dataid="bottom-sheet-action">
                     <!-- «⋮» стоит левее значков приложения: «Удалить», если она есть, остаётся крайней справа. -->
-                    @if (ownMore()) {
+                    @if (moreScreen.has()) {
                         <rt-icon-button
                             variant="secondary"
                             radius="full"
@@ -73,7 +73,7 @@
         </div>
     </div>
     <!-- Второй экран «Ещё»: шторка, открытая из этой, встаёт на её место с шевроном «назад». -->
-    @if (ownMore(); as more) {
+    @if (moreScreen.directive(); as more) {
         <rt-bottom-sheet
             qa-dataid="bottom-sheet-more-screen"
             [open]="moreScreen.opened()"

@@ -494,8 +494,9 @@ Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-sheet-more.direc
 
 Given the second screen of more is open
 When the chevron back is pressed, or the template calls its back request
-Then the second screen closes and the first stays open; a sheet the application closes and opens
-again opens on its first screen
+Then the second screen closes and the first stays open, and Escape does the same; a sheet the
+application closes and opens again opens on its first screen, and a template taken away and put
+back does not open the second screen by itself
 
 Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-sheet-more.directive.spec.ts`.
 
@@ -521,5 +522,13 @@ Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-sheet-more.direc
 Given a sheet declared in the content of another, only the inner one with a template of more
 When both are drawn
 Then «⋮» and the second screen stand in the inner sheet only
+
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-sheet-more.directive.spec.ts`.
+
+### SC-UKV-1933 — a template of more passed by an input opens the second screen
+
+Given a sheet drawn in the template of another component, the template of more passed by its input
+When «⋮» is pressed
+Then the second screen opens with that template and the title it names
 
 Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-sheet-more.directive.spec.ts`.
