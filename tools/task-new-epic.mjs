@@ -1,4 +1,4 @@
-// rt-kit v0.41.1 · checks/task-new-epic.github.mjs · 846c939b3a88 · правится надстройкой, не здесь
+// rt-kit v0.42.0 · checks/task-new-epic.github.mjs · 846c939b3a88 · правится надстройкой, не здесь
 /**
  * The draft of the epic plan and its way to the host.
  *

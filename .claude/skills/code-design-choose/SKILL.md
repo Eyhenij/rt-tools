@@ -4,7 +4,7 @@ kind: pattern
 rule: code-design
 description: Pattern of rule code-design. Load when a request is taken apart, a plan is written or a module is split — the table from the problem to the technique and its check, coupling, cohesion and isolation, the rows of the decision in the plan. Names and types — rule typescript-conventions.
 ---
-<!-- rt-kit v0.41.1 · patterns/code-design-choose.md · 24cec7a415de · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.0 · patterns/code-design-choose.md · 24cec7a415de · правится надстройкой, не здесь -->
 
 # Choosing the design
 

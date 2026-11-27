@@ -1,4 +1,4 @@
-<!-- rt-kit v0.41.1 · pitfalls/spec-driven.2.md · 47e180e30589 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.0 · pitfalls/spec-driven.2.md · 47e180e30589 · правится надстройкой, не здесь -->
 # Project documentation — cold part, second file
 
 The sections the rule `spec-driven` handed over when it was cut to its statements: its names,
