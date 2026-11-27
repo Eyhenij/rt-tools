@@ -129,7 +129,9 @@ const SCOPE_NOTE = {
    This rule stands above the dark one, and the order holds the look. A node under a dark theme takes
    the dark rule by order: it is as heavy as the first two selectors here or heavier. A light piece
    between the dark one and the node is heavier than those dark selectors. A node that is a dark piece
-   itself weighs the same as such a light piece around it, and order alone gives it the dark values. */`,
+   itself weighs the same as such a light piece around it under \`[data-theme='dark']\`, and order alone
+   gives it the dark values. Under \`html.rt-theme-dark\` the light piece is heavier, and the node stays
+   light. */`,
     presetOnDark: `/* The dark values of the set on a node: a piece carrying the set under a dark theme — of the page or
    of a piece around it — and a dark piece inside a page of the styling set. A component draws the look
    of the first kit by carrying the set on its own host, and the plain rule of the set would lay its
