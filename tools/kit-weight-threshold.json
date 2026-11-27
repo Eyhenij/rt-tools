@@ -8,12 +8,12 @@
     "dialog",
     "bottom-sheet"
   ],
-  "total": 186049,
-  "gzip": 46745,
+  "total": 182979,
+  "gzip": 46574,
   "parts": {
     "select": 35426,
     "form-control": 3420,
-    "input": 33092,
+    "input": 30022,
     "popover": 9673,
     "menu": 20742,
     "bottom-sheet": 7167,

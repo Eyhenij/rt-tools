@@ -2,6 +2,7 @@
     /* Признак набора — на предке или на самом поле: приложение ставит его и на тег контрола. */
     $preset: ':is(.rt-preset-material *, [data-preset="material"] *, .rt-preset-material, [data-preset="material"])';
     $preset-weak: ':where(.rt-preset-material *, [data-preset="material"] *, .rt-preset-material, [data-preset="material"])';
+    $filled: ':is(.rt-input--appearance--fill, .rt-input--appearance--pill)';
 
     /* Подпись на рамке и разрыв рамки под ней — отдельный лист стилей компонента. Одним листом с
        остальными правилами он перешёл бы порог в 8 КБ на лист, который Angular по умолчанию ставит
@@ -104,62 +105,59 @@
 
         /* Залитое поле материального набора — как поле Material: оно выше, и поднятая подпись
            уменьшается и встаёт внутрь поля над значением, а не на рамку. Пустое поле держит подпись
-           на месте подсказки размером со значение. Свой вид кита не меняется. */
-        &--floating#{$preset}.rt-input--appearance--fill,
-        &--floating#{$preset}.rt-input--appearance--pill {
+           на месте подсказки размером со значение. Свой вид кита не меняется. Залитый вид и
+           «таблетка» пишутся одним селектором: признак набора длинный, и каждый его повтор лежит
+           в стартовом наборе приложения. */
+        &--floating#{$preset}#{$filled} {
             --rt-input-height: var(--rt-input-fill-floating-height);
-        }
-
-        /* Подпись в покое — строкой Material, значение — ниже середины, под поднятой подписью:
-           при 52 px текст начинается в 22 px от верха строкой в 24 px. */
-        &--floating#{$preset}.rt-input--appearance--fill .rt-input__floating-label,
-        &--floating#{$preset}.rt-input--appearance--pill .rt-input__floating-label {
-            line-height: var(--rt-leading-tight);
-        }
-
-        /* Значение опускается под поднятую подпись. Постоянный текст и копия текста у поля с
-           суффиксом берут тот же отступ и ту же строку — иначе приставка стоит выше значения, а
-           поле с суффиксом схлопывается в строку копии. */
-        &--floating#{$preset}.rt-input--appearance--fill,
-        &--floating#{$preset}.rt-input--appearance--pill {
             --rt-input-fill-value-padding-block: calc(var(--rt-input-height) / 2 - var(--rt-space-1) - var(--rt-input-edge)) 0
                 calc(var(--rt-input-height) / 2 - var(--rt-space-5) - var(--rt-input-border-width));
-        }
 
-        &--floating#{$preset}.rt-input--appearance--fill .rt-input__field,
-        &--floating#{$preset}.rt-input--appearance--pill .rt-input__field,
-        &--floating#{$preset}.rt-input--appearance--fill :is(.rt-input__prefix, .rt-input__suffix, .rt-input__sizer),
-        &--floating#{$preset}.rt-input--appearance--pill :is(.rt-input__prefix, .rt-input__suffix, .rt-input__sizer) {
-            align-self: stretch;
-            padding: var(--rt-input-fill-value-padding-block);
-            line-height: var(--rt-leading-normal);
-        }
+            /* Подпись в покое — строкой Material, значение — ниже середины, под поднятой подписью:
+               при 52 px текст начинается в 22 px от верха строкой в 24 px. */
+            .rt-input__floating-label {
+                line-height: var(--rt-leading-tight);
+            }
 
-        &--floating#{$preset}.rt-input--appearance--fill.rt-input--label-raised .rt-input__floating-label,
-        &--floating#{$preset}.rt-input--appearance--fill:focus-within .rt-input__floating-label,
-        &--floating#{$preset}.rt-input--appearance--pill.rt-input--label-raised .rt-input__floating-label,
-        &--floating#{$preset}.rt-input--appearance--pill:focus-within .rt-input__floating-label {
-            top: calc(var(--rt-input-height) / 2 - var(--rt-space-5) - var(--rt-input-edge));
-            left: var(--rt-input-floating-label-rest-start);
-            padding: 0;
-            margin-left: 0;
-            background-color: transparent;
-            transform: none;
+            /* Значение опускается под поднятую подпись. Постоянный текст и копия текста у поля с
+               суффиксом берут тот же отступ и ту же строку — иначе приставка стоит выше значения, а
+               поле с суффиксом схлопывается в строку копии. */
+            :is(.rt-input__field, .rt-input__prefix, .rt-input__suffix, .rt-input__sizer) {
+                align-self: stretch;
+                padding: var(--rt-input-fill-value-padding-block);
+                line-height: var(--rt-leading-normal);
+            }
+
+            &:is(.rt-input--label-raised, :focus-within) .rt-input__floating-label {
+                top: calc(var(--rt-input-height) / 2 - var(--rt-space-5) - var(--rt-input-edge));
+                left: var(--rt-input-floating-label-rest-start);
+                padding: 0;
+                margin-left: 0;
+                background-color: transparent;
+                transform: none;
+            }
         }
 
         /* Разрыв рамки под подписью в материальном наборе. Рамку поля рисует слой поверх него, и
            разрыв режется в этом слое: вырезать рамку самого поля нельзя — подпись лежит внутри
            него и обрезалась бы вместе с рамкой. Залитый вид, «таблетка» и чтение рамки на
-           верху не имеют. */
+           верху не имеют. Слой включает одно это правило свойством `--rt-private-input-outline`:
+           остальные правила слоя пишутся без признака набора, а без включателя слоя нет. */
         &--floating#{$preset}:not(.rt-input--appearance--fill, .rt-input--appearance--pill, .rt-input--readonly) {
+            --rt-private-input-outline: '';
+
             border-color: transparent;
             box-shadow: none;
+        }
+
+        &--floating {
+            --rt-private-input-outline: none;
 
             &:before {
                 position: absolute;
                 border: var(--rt-input-border-width) solid var(--rt-input-color-border);
                 border-radius: inherit;
-                content: '';
+                content: var(--rt-private-input-outline);
                 inset: calc(-1 * var(--rt-input-border-width));
                 pointer-events: none;
             }

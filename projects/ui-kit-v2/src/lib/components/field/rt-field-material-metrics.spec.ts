@@ -198,9 +198,11 @@ describe('поле материального набора против поля
         const cap: string = 'var(--rt-input-height) - 2 * var(--rt-input-border-width)';
 
         expect(ruleBody(INPUT, '[data-preset=material]) .rt-input__clear .rt-icon-button')).toContain(cap);
-        expect(ruleBody(INPUT, '[data-preset=material]) .rt-input__icon-left .rt-icon-button')).toContain(cap);
+        // Значки слева и справа пишутся одним правилом: признак набора длинный и лежит в старте приложения.
+        expect(ruleBody(INPUT, '[data-preset=material]) :is(.rt-input__icon-left, .rt-input__icon-right) .rt-icon-button')).toContain(cap);
         expect(ruleBody(SELECT, '[data-preset=material]) .rt-select__clear .rt-icon-button')).toContain(cap);
         expect(INPUT).not.toMatch(/[{}] \.rt-input__(clear|icon-left|icon-right) \.rt-icon-button[ ,{]/);
+        expect(INPUT).not.toMatch(/[{}] (\.rt-input (> )?)?:is\(\.rt-input__icon-left, \.rt-input__icon-right\) \.rt-icon-button/);
         expect(SELECT).not.toMatch(/[{}] \.rt-select__clear \.rt-icon-button \{/);
         expect(ruleBody(INPUT, '.rt-input--size--sm {')).toContain('--rt-input-height: var(--rt-input-height-sm)');
     });
