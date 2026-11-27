@@ -53,6 +53,42 @@ SETS="$(node -e "
 " "$OUT/tokens.scope.css")"
 report "the scope writes every set of values once" "$SETS" "0 compared"
 
+# The two shared rules of the set: each holds all its selectors, and the light one stands above the dark
+# one. A node carrying the set under a dark theme is told apart by that order alone, and a piece that is
+# both light and dark by nesting has equal weight in both rules.
+SHARED_RULES="$(node -e "
+    const css = require('fs').readFileSync(process.argv[1], 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+    const rules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
+        .map((found) => ({ selectors: found[1].trim().split(/\s*,\s*/), size: found[2].length }))
+        .filter((rule) => rule.size > 1500);
+    const light = [
+        '.rt-preset-material:not(:root)',
+        '.rt-preset-material [data-theme=light]:not(:root)',
+        '.rt-preset-material[data-theme=light]:not(:root)',
+        '[data-preset=material]:not(:root)',
+        '[data-preset=material] [data-theme=light]:not(:root)',
+        '[data-preset=material][data-theme=light]:not(:root)',
+        '[data-theme=dark] [data-theme=light] .rt-preset-material',
+        '[data-theme=dark] [data-theme=light] [data-preset=material]',
+        'html.rt-theme-dark [data-theme=light] .rt-preset-material',
+        'html.rt-theme-dark [data-theme=light] [data-preset=material]',
+    ];
+    const dark = [
+        '.rt-preset-material [data-theme=dark]:not(:root)',
+        '.rt-preset-material[data-theme=dark]:not(:root)',
+        '[data-preset=material] [data-theme=dark]:not(:root)',
+        '[data-preset=material][data-theme=dark]:not(:root)',
+        '[data-theme=dark] .rt-preset-material',
+        '[data-theme=dark] [data-preset=material]',
+        'html.rt-theme-dark .rt-preset-material',
+        'html.rt-theme-dark [data-preset=material]',
+    ];
+    const at = (wanted) => rules.findIndex((rule) => [...rule.selectors].sort().join('|') === [...wanted].sort().join('|'));
+    const [lightAt, darkAt] = [at(light), at(dark)];
+    console.log(rules.length, lightAt < 0 ? 'no light' : 'light', darkAt < 0 ? 'no dark' : 'dark', lightAt < darkAt ? 'light above' : 'light below');
+" "$OUT/tokens.scope.css")"
+report "the shared rules of the set keep their selectors and their order" "$SHARED_RULES" "5 light dark light above"
+
 # The order of connection is the base, then the scope: the scope declares no layer, so it wins by place.
 report "the scope opens no cascade layer" "$(count "$OUT/tokens.scope.css" '@layer')" "0"
 
