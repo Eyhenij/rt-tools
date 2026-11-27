@@ -139,9 +139,12 @@ Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
 ### SC-AK-1941 — a judge that did not run stops the replay and is no mismatch
 
-Given two fixtures and a judge that ends with code 1 and the words «Please run /login», or with code 0 and nothing
+Given two fixtures and a judge that ends with code 1 and the words «Please run /login», or with code 0 and nothing, or answers with no verdict
 When the replay runs
-Then it stops on the first call, the answer of the judge is printed, and the code is 2; an answer with no verdict stays a mismatch
+Then code 1 stops it on the first call, the answer of the judge is printed, and the code is 2
+And an empty answer, an answer with no verdict and a call past 90 s are asked once more, with a `retry` line on stderr
+And a second empty answer stops the replay the same way, and a second answer with no verdict counts as a mismatch
+And a wrong verdict is not asked again
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 

@@ -1,0 +1,23 @@
+{
+  "case": "SC-AK-2020",
+  "kind": "a menu of a merge of the task branch whose every option hands the work to the owner, after a refusal that named the move",
+  "record": "the twin of the menu of 22.11: the merge option names the task branch by its key",
+  "task": 101,
+  "turns": [
+    { "role": "owner", "at": "2026-11-22T10:00:00Z", "owner": "<order:RT-101>" },
+    {
+      "role": "agent",
+      "at": "2026-11-22T10:20:00Z",
+      "call": "Edit",
+      "file": "projects/ui-kit-v2/src/menu/menu-sheet.component.ts",
+      "code": "refused",
+      "guard": "task-flow-guard",
+      "says": "there is no task folder for the branch. Assemble the task folder from the sample (cp -r docs/tasks/_template docs/tasks/RT-101-replay-task) and fill in the header, the task footprint and the stages, then repeat."
+    },
+    {
+      "role": "agent",
+      "at": "2026-11-22T10:30:00Z",
+      "menu": ["Ветка RT-101 встала на защите плана. Как продолжаем?", "Влить RT-101 — солью сам", "Стоп, отложить RT-101"]
+    }
+  ]
+}
