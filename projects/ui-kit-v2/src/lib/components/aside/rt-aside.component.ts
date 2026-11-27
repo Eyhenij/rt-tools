@@ -388,7 +388,9 @@ export class RtAsideComponent {
         const panel: HTMLElement | null = this.#sheetPanel();
         const target: HTMLElement | null =
             panel?.querySelector<HTMLElement>('[cdkFocusInitial]') ??
-            panel?.querySelector<HTMLElement>('[qa-dataid="aside-sheet-close"] button, [qa-dataid="bottom-sheet-back"] button') ??
+            panel?.querySelector<HTMLElement>(
+                '[qa-dataid="aside-sheet-close"] button, [qa-dataid="bottom-sheet-close"] button, [qa-dataid="bottom-sheet-back"] button'
+            ) ??
             null;
         target?.focus();
     }

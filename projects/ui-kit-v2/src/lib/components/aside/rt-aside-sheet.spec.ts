@@ -416,7 +416,7 @@ describe('Панель службы кита на телефоне — штор�
             expect(closed).toBe(true);
         });
 
-        it('SC-UKV-1839 — «×» не закрывает панель, удержанную приложением', async (): Promise<void> => {
+        it('SC-UKV-1839 — «×» закрывает и панель под disableClose, как стрелка на широком экране', async (): Promise<void> => {
             setup(true);
             const ref: RtAsideRef = await open({ closable: false });
             ref.disableClose.set(true);
@@ -428,7 +428,7 @@ describe('Панель службы кита на телефоне — штор�
             node('aside-sheet-close')?.querySelector('button')?.click();
             await settle();
 
-            expect(closed).toBe(false);
+            expect(closed).toBe(true);
         });
 
         it('SC-UKV-1838 — своё поле первого фокуса у панели, держащей Tab, сильнее «×»', async (): Promise<void> => {

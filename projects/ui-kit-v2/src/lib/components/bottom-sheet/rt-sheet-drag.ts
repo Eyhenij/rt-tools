@@ -31,8 +31,11 @@ export class RtSheetDrag {
         this.#dismiss = dismiss;
     }
 
+    /** Начать перетаскивание; второй палец на ручке, пока первый ведёт шторку, жест не перехватывает. */
     public start(event: PointerEvent): void {
-        this.stop();
+        if (this.dragging()) {
+            return;
+        }
         this.#pointerId = event.pointerId;
         this.#startY = event.clientY;
         this.dragging.set(true);

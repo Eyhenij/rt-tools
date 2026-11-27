@@ -120,6 +120,7 @@ interface IRtAsideOpenContext {
 const SHEET_PANEL_CLASS: string = 'rt-aside-overlay--sheet';
 /** Класс показанной подложки панели сбоку. */
 const BACKDROP_VISIBLE_CLASS: string = 'rt-aside-backdrop--visible';
+const ENTERING_CLASS: string = 'rt-aside-overlay--entering';
 
 /**
  * Программный API для открытия side-sheet поверх CDK Overlay.
@@ -181,7 +182,13 @@ export class RtAsideService {
        забытый вызов отличался бы от остальных. */
     readonly #closeOnEscape: boolean = rtKitDefault('aside', (it: IRtKitConfig.Aside): boolean | undefined => it.closeOnEscape, true);
 
+    /** Служба жива: смена вида после её уничтожения обратилась бы к снятому инжектору. */
+    #alive: boolean = true;
+
     constructor() {
+        inject(DestroyRef).onDestroy((): void => {
+            this.#alive = false;
+        });
         // Per-open close-подписки (backdrop / ESC) живут в одном постоянном
         // конструкторном стриме: open() эмитит контекст открытия, mergeMap
         // подписывает event-стримы конкретного OverlayRef до его dispose
@@ -281,13 +288,25 @@ export class RtAsideService {
         const content: ComponentRef<TComponent> = overlayRef.attach(portal);
         // Шторку рисует `<rt-aside>`. Компонент без него остался бы на телефоне без затемнения, свайпа
         // и Escape: такая панель открывается сбоку, как до шторки. `<rt-aside>`, нарисованный позже —
-        // под `@if` с данными или `@defer`, — возвращает панель в шторку.
+        // под `@if` с данными или `@defer`, — возвращает панель в шторку, снятый — снова ставит сбоку.
+        // Закрываемую панель вид не меняет: он сбил бы её уход.
         if (sheet.active()) {
             content.changeDetectorRef.detectChanges();
-            if (!sheet.hasAside()) {
+            const present: boolean = sheet.hasAside();
+            if (!present) {
                 this.#openBeside(overlayRef, config, sheet);
-                sheet.whenAside((): void => this.#openAsSheet(overlayRef, config, sheet));
             }
+            sheet.watchAside(present, (arrived: boolean): void => {
+                if (!this.#alive || !overlayRef.hasAttached()) {
+                    return;
+                }
+                if (arrived) {
+                    this.#openAsSheet(overlayRef, config, sheet);
+                } else {
+                    this.#openBeside(overlayRef, config, sheet);
+                    this.#showBeside(overlayRef);
+                }
+            });
         }
 
         // Slide-in: на следующий paint снимаем --entering и добавляем --open.
@@ -299,7 +318,7 @@ export class RtAsideService {
             if (!overlayRef.hasAttached()) {
                 return;
             }
-            this.#renderer.removeClass(overlayRef.overlayElement, 'rt-aside-overlay--entering');
+            this.#renderer.removeClass(overlayRef.overlayElement, ENTERING_CLASS);
             this.#renderer.addClass(overlayRef.overlayElement, 'rt-aside-overlay--open');
             const backdropEl: HTMLElement | null = overlayRef.backdropElement;
             // У шторки затемнение своё: подложка оверлея остаётся скрытой.
@@ -323,7 +342,7 @@ export class RtAsideService {
         const panelClasses: string[] = [
             'rt-aside-overlay',
             `rt-aside-overlay--position-${position}`,
-            'rt-aside-overlay--entering',
+            ENTERING_CLASS,
             ...materialPresetClassesOfFocus(this.#doc),
         ];
 
@@ -374,11 +393,17 @@ export class RtAsideService {
         }
     }
 
+    /** Панель ушла сбоку после первого кадра: кадр, который её показывает, уже прошёл. */
+    #showBeside(overlayRef: OverlayRef): void {
+        this.#renderer.removeClass(overlayRef.overlayElement, ENTERING_CLASS);
+        const backdropEl: HTMLElement | null = overlayRef.backdropElement;
+        if (backdropEl !== null) {
+            this.#renderer.addClass(backdropEl, BACKDROP_VISIBLE_CLASS);
+        }
+    }
+
     /** `<rt-aside>` встал после первой отрисовки: панель сбоку возвращается в шторку. */
     #openAsSheet<TData>(overlayRef: OverlayRef, config: IRtAsideConfig<TData> | undefined, sheet: RtAsideSheet): void {
-        if (!overlayRef.hasAttached()) {
-            return;
-        }
         const sheetConfig: OverlayConfig = this.#sheetConfig(config);
         overlayRef.removePanelClass(`rt-aside-overlay--position-${config?.position ?? 'right'}`);
         overlayRef.addPanelClass(SHEET_PANEL_CLASS);
@@ -409,15 +434,16 @@ export class RtAsideService {
 
     /**
      * Просьба шторки телефона закрыться. Выключенный жест и панель под `disableClose` отказывают до
-     * вопроса, и отказ свайпа сообщается как отказ подложки. «×» идёт дорогой стрелки и отказывает
-     * только панели под `disableClose`. Признак несохранённого на хэндле сначала спрашивает внизу экрана: «Сохранить и
-     * закрыть» сообщает просьбу записи и оставляет панель открытой, «Закрыть без сохранения»
-     * закрывает, «Остаться» — ничего.
+     * вопроса, и отказ свайпа сообщается как отказ подложки. «×» шапки кита идёт дорогой стрелки и
+     * не отказывает: под `disableClose` кнопка выхода подвала спрятана, и «×» — её место. «×» шторки
+     * у панели без шапки кита дороги не несёт: кнопки там стоят в подвале, и под `disableClose` он
+     * отказывает, как стрелки нет и шире телефона. Признак несохранённого на хэндле сначала
+     * спрашивает внизу экрана: «Сохранить и закрыть» сообщает просьбу записи и оставляет панель
+     * открытой, «Закрыть без сохранения» закрывает, «Остаться» — ничего.
      */
     #answerSheet(openContext: IRtAsideOpenContext, request: IRtAsideSheetCloseRequest): Observable<() => void> {
         const close: () => void = request.road ?? ((): void => openContext.asideRef.close());
-        // «×» стоит всегда, но обязательную панель под `disableClose` не закрывает.
-        if (request.gesture === 'dismiss' && openContext.asideRef.disableClose()) {
+        if (request.gesture === 'dismiss' && request.road === null && openContext.asideRef.disableClose()) {
             return of((): void => undefined);
         }
         if (request.gesture !== 'dismiss') {

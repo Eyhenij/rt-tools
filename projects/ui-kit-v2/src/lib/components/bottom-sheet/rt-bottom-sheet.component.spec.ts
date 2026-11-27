@@ -244,6 +244,24 @@ describe('RtBottomSheetComponent', (): void => {
             expect(fixture.componentInstance.lastChange).toBeNull();
         });
 
+        it('SC-UKV-1921 — второе касание ручки посреди жеста не сбрасывает сдвиг', (): void => {
+            const fixture: ComponentFixture<RtBottomSheetComponent> = setup();
+            const handle: HTMLElement = qa(fixture, 'bottom-sheet-handle')?.nativeElement as HTMLElement;
+
+            handle.dispatchEvent(pointer('pointerdown', 0));
+            fixture.detectChanges();
+            document.dispatchEvent(pointer('pointermove', 60));
+            fixture.detectChanges();
+            handle.dispatchEvent(pointer('pointerdown', 50));
+            document.dispatchEvent(pointer('pointermove', 60));
+            fixture.detectChanges();
+
+            expect((qa(fixture, 'bottom-sheet-panel')?.nativeElement as HTMLElement).style.transform).toBe('translateY(60px)');
+
+            document.dispatchEvent(pointer('pointerup', 0));
+            fixture.detectChanges();
+        });
+
         it('SC-UKV-1921 — шторка, убранная посреди жеста, не слушает касания документа', (): void => {
             const fixture: ComponentFixture<RtBottomSheetComponent> = setup();
             const removed: string[] = [];

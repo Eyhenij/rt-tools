@@ -142,10 +142,65 @@ describe('Содержимое панели службы на телефоне',
 
         const close: HTMLElement | null = node('bottom-sheet-close');
         expect(close).not.toBeNull();
+        expect(document.activeElement).toBe(close?.querySelector('button'));
 
         close?.querySelector('button')?.click();
         await settle();
 
         expect(closed).toBe(true);
+    });
+
+    it('SC-UKV-1922 — снятый после шторки rt-aside ставит панель снова сбоку, и Escape её закрывает', async (): Promise<void> => {
+        const ref: RtAsideRef = TestBed.inject(RtAsideService).open(LateContentComponent);
+        await settle();
+        LateContentComponent.last?.ready.set(true);
+        await settle();
+        await settle();
+        let closed: boolean = false;
+        ref.afterClosed().subscribe((): void => {
+            closed = true;
+        });
+
+        LateContentComponent.last?.ready.set(false);
+        await settle();
+        await settle();
+
+        expect(pane()?.classList).not.toContain('rt-aside-overlay--sheet');
+        expect(pane()?.classList).toContain('rt-aside-overlay--position-right');
+        expect(pane()?.classList).not.toContain('rt-aside-overlay--entering');
+        expect(document.querySelector('.rt-aside-backdrop')?.classList).toContain('rt-aside-backdrop--visible');
+
+        pane()?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        await settle();
+
+        expect(closed).toBe(true);
+    });
+
+    it('SC-UKV-1922 — rt-aside, вставший во время ухода панели, вид не меняет', async (): Promise<void> => {
+        const ref: RtAsideRef = TestBed.inject(RtAsideService).open(LateContentComponent);
+        await settle();
+
+        ref.close();
+        LateContentComponent.last?.ready.set(true);
+        await settle();
+        await settle();
+
+        expect(pane()?.classList).toContain('rt-aside-overlay--leaving');
+        expect(pane()?.classList).not.toContain('rt-aside-overlay--sheet');
+    });
+
+    it('SC-UKV-1839 — «×» шторки у панели без шапки кита не закрывает панель под disableClose', async (): Promise<void> => {
+        const ref: RtAsideRef = TestBed.inject(RtAsideService).open(HeadlessContentComponent);
+        await settle();
+        ref.disableClose.set(true);
+        let closed: boolean = false;
+        ref.afterClosed().subscribe((): void => {
+            closed = true;
+        });
+
+        node('bottom-sheet-close')?.querySelector('button')?.click();
+        await settle();
+
+        expect(closed).toBe(false);
     });
 });

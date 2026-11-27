@@ -136,7 +136,8 @@ export class RtAsideFooterComponent {
 
     /**
      * Кнопка слота `[asideDismiss]` только закрывает панель: в шторке её место у «×» шапки. У панели
-     * без шапки кита «×» нет, и кнопка остаётся в подвале.
+     * без шапки кита «×» рисует сама шторка, но главная кнопка остаётся в подвале, и кнопка выхода
+     * стоит рядом с ней.
      */
     protected readonly closeOnlyHidden: Signal<boolean> = computed(
         (): boolean => this.mainMoves() && this.phoneCloseLabel() && !this.dismissDanger()

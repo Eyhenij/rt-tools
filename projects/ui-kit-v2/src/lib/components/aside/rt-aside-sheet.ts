@@ -40,9 +40,11 @@ export class RtAsideSheet {
     readonly #screen: WritableSignal<Signal<boolean> | null> = signal<Signal<boolean> | null>(null);
     readonly #headers: WritableSignal<number> = signal<number>(0);
     readonly #asides: WritableSignal<number> = signal<number>(0);
-    #onAside: (() => void) | null = null;
+    #onAside: ((present: boolean) => void) | null = null;
+    #applied: boolean = false;
+    #syncQueued: boolean = false;
 
-    /** В панели нарисован `<rt-aside>`: шторку есть кому рисовать. */
+    /** В панели нарисован `<rt-aside>`: шторку есть кому рисовать. @internal — его читает служба кита. */
     public readonly hasAside: Signal<boolean> = computed((): boolean => this.#asides() > 0);
 
     /** Панель рисуется шторкой: решено при открытии. */
@@ -83,22 +85,34 @@ export class RtAsideSheet {
         return (): void => this.#headers.update((count: number): number => count - 1);
     }
 
-    /** `<rt-aside>` встал в панели; отданная функция снимает его. Первый зовёт ждущего его. */
+    /**
+     * `<rt-aside>` встал в панели; отданная функция снимает его. Смена наличия зовёт следящего.
+     * @internal — зовёт рамка панели.
+     */
     public addAside(): () => void {
         this.#asides.update((count: number): number => count + 1);
-        const waiting: (() => void) | null = this.#onAside;
-        this.#onAside = null;
-        // Вид панели меняется после отрисовки, которая поставила `<rt-aside>`, а не внутри неё.
-        if (waiting !== null) {
-            queueMicrotask(waiting);
-        }
+        this.#scheduleSync();
 
-        return (): void => this.#asides.update((count: number): number => count - 1);
+        return (): void => {
+            this.#asides.update((count: number): number => count - 1);
+            this.#scheduleSync();
+        };
     }
 
-    /** Позвать, когда в панели встанет `<rt-aside>`: панель, открытая без него, ждёт его позже. */
-    public whenAside(callback: () => void): void {
-        this.#onAside = callback;
+    /**
+     * Следить, есть ли в панели `<rt-aside>`: `present` — наличие, по которому вид уже выбран. Зовёт
+     * `onChange` с новым наличием, когда оно разошлось с выбранным: панель уходит в шторку или
+     * обратно сбоку.
+     * @internal — зовёт служба кита.
+     */
+    public watchAside(present: boolean, onChange: (present: boolean) => void): void {
+        this.#applied = present;
+        this.#onAside = onChange;
+    }
+
+    /** Панель закрывается: вид больше не меняется, уход не сбивается. @internal — зовёт хэндл панели. */
+    public stopWatchingAside(): void {
+        this.#onAside = null;
     }
 
     /** Поднять шторку или опустить её. */
@@ -136,6 +150,25 @@ export class RtAsideSheet {
     /** Ответ человека на вопрос шторки. */
     public answer(outcome: ERtAsideUnsavedOutcome): void {
         this.#answersSource.next(outcome);
+    }
+
+    /**
+     * Вид панели меняется после отрисовки, которая поставила или сняла `<rt-aside>`, а не внутри неё.
+     * Сверка одна на такт: `@if`, сменивший один `<rt-aside>` другим, вид не дёргает.
+     */
+    #scheduleSync(): void {
+        if (this.#onAside === null || this.#syncQueued) {
+            return;
+        }
+        this.#syncQueued = true;
+        queueMicrotask((): void => {
+            this.#syncQueued = false;
+            const present: boolean = this.hasAside();
+            if (present !== this.#applied && this.#onAside !== null) {
+                this.#applied = present;
+                this.#onAside(present);
+            }
+        });
     }
 
     /** Ответы человека на вопросы шторки — ими живут, например, отборы полосы при отказе. */
