@@ -1,3 +1,4 @@
+import { HttpResponse } from '@angular/common/http';
 import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { Provider } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
@@ -281,6 +282,36 @@ describe('RtIconRegistry', (): void => {
         harness.http.verify();
         expect(symbolsInSprite()).toEqual([`${RT_ICON_SYMBOL_ID_PREFIX}wallet`, `${RT_ICON_SET_SYMBOL_ID_PREFIX}brand--wallet`]);
         warn.mockRestore();
+    });
+
+    it('SC-UKV-1882 — приехавший файл достаётся и тому, кто спросил его позже', (): void => {
+        const warn: jest.SpyInstance = jest.spyOn(console, 'warn').mockImplementation((): void => undefined);
+        const harness: IHarness = setup(brand());
+
+        harness.registry.request('wallet', 'kit');
+        harness.http.expectOne('/icons/wallet.svg').flush(SVG);
+        // Своего файла у набора нет, а запасной адрес уже скачан.
+        harness.registry.request('wallet', 'brand');
+        harness.http.expectOne('/brand/wallet.svg').flush('нет такого файла', { status: 404, statusText: 'Not Found' });
+
+        harness.http.verify();
+        expect(symbolsInSprite()).toEqual([`${RT_ICON_SYMBOL_ID_PREFIX}wallet`, `${RT_ICON_SET_SYMBOL_ID_PREFIX}brand--wallet`]);
+        warn.mockRestore();
+    });
+
+    it('SC-UKV-1895 —ответ без завершения потока рисует значок и ведёт в запасной набор', (): void => {
+        const harness: IHarness = setup(brand());
+        // `flush` завершает поток сам. Одно событие ответа без завершения отдаёт перехватчик
+        // приложения, который держится за долгоживущий поток.
+        const answer: (url: string, body: string) => void = (url: string, body: string): void =>
+            harness.http.expectOne(url).event(new HttpResponse<string>({ body }));
+
+        harness.registry.request('copy', 'brand');
+        answer('/brand/copy.svg', '<!doctype html><html></html>');
+        answer('/icons/copy.svg', SVG);
+
+        expect(symbolsInSprite()).toEqual([`${RT_ICON_SET_SYMBOL_ID_PREFIX}brand--copy`]);
+        expect(harness.registry.ready(`${RT_ICON_SET_SYMBOL_ID_PREFIX}brand--copy`)()).toBe(true);
     });
 
     it('SC-UKV-1890 — страница с кодом 200 вместо файла ведёт в запасной набор', (): void => {

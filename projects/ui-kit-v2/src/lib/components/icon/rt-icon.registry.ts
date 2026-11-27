@@ -25,6 +25,12 @@ export const RT_ICON_SETS_CONFIG: InjectionToken<IRtIconSetsConfig> = new Inject
     factory: (): IRtIconSetsConfig => rtIconSetsConfig(),
 });
 
+/** Адрес, за которым идут в сеть, и субъект, в который ложится ответ. */
+interface IIconFetch {
+    url: string;
+    answer: AsyncSubject<string | null>;
+}
+
 @Service()
 export class RtIconRegistry {
     readonly #http: HttpClient = inject(HttpClient);
@@ -49,13 +55,10 @@ export class RtIconRegistry {
 
     /**
      * Адреса, за которыми пора идти в сеть. Ответ ложится в субъект адреса: он один, и поздний
-     * подписчик получает его же. Оператор повтора из rxjs делал то же, но тянул в стартовый набор
-     * приложения на полторы тысячи байт больше.
+     * подписчик получает его же. С оператором повтора из rxjs стартовый набор приложения, которое
+     * само его не берёт, тяжелее на полторы тысячи байт.
      */
-    readonly #fetchSource: Subject<{ url: string; answer: AsyncSubject<string | null> }> = new Subject<{
-        url: string;
-        answer: AsyncSubject<string | null>;
-    }>();
+    readonly #fetchSource: Subject<IIconFetch> = new Subject<IIconFetch>();
 
     /** Набор приложения из `provideRtIcons()`. */
     public readonly defaultSet: string = this.#config.defaultSet;
@@ -63,11 +66,16 @@ export class RtIconRegistry {
     constructor() {
         this.#fetchSource
             .pipe(
-                mergeMap(({ url, answer }: { url: string; answer: AsyncSubject<string | null> }): Observable<string | null> =>
+                mergeMap(({ url, answer }: IIconFetch): Observable<string | null> =>
                     this.#http.get(url, { responseType: 'text' }).pipe(
                         map((raw: string): string | null => (rtIconIsSvgFile(raw) ? raw : null)),
                         catchError((): Observable<null> => of(null)),
-                        tap(answer)
+                        // Ответ уходит подписчикам сразу. Поток запроса может не завершиться:
+                        // это решают перехватчики приложения.
+                        tap((raw: string | null): void => {
+                            answer.next(raw);
+                            answer.complete();
+                        })
                     )
                 ),
                 takeUntilDestroyed()
