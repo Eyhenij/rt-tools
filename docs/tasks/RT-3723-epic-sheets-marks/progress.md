@@ -4,8 +4,13 @@
 
 - **State:** `разбор-кончился`
 - **Stage:** 1 of 1 — The merged tasks are marked, the archive record is whole, stale branches are gone
-- **Done:** 1.1 — the engine reads 5 merged tasks of the epic plan
-- **Next step:** 1.2, then 1.3
+- **Done:** 1.1 — the engine reads 5 merged tasks of the epic plan; 1.2 — the archive record of RT-3709 equals
+  1fb585865; 1.3 — the local branches RT-3531 and RT-3709 removed. Nothing pushed.
+- **Next step:** review round one (the path is full by `node tools/review-path.mjs --base origin/RT-3530-phone-sheets`:
+  qa-engineer, goal-critic, product-strategist), then the push set
+  `bash .claude/hooks/git-guard-push-ahead.sh > "${TMPDIR:-/tmp}/push-ahead-$(basename "$PWD").log" 2>&1` in the
+  background, the folder taken apart by `npm run task:archive`, the PR into `RT-3530-phone-sheets` (ready, title
+  `[RT-3723] …`), the merge by the owner's word, then the PR of the epic into main as a draft.
 - **PR:** not open yet
 
 ## Steps
