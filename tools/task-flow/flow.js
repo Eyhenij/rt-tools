@@ -1,4 +1,4 @@
-// rt-kit v0.42.0 · task-flow/flow.js · 1c767b244c17 · правится надстройкой, не здесь
+// rt-kit v0.42.0 · task-flow/flow.js · 738f4d4645ff · правится надстройкой, не здесь
 // The task flow as an executable scenario: the data language of `flow-syntax.mjs`, nothing here runs.
 // A state is left when its exit is measured; the first state whose exit is unmet is where the work
 // stands. A release case says when a turn may end before the scenario does. A new fact is a new
@@ -47,6 +47,8 @@
       saidStop: { owner: source.owner },
       interrupted: { owner: source.owner },
       nudged: { owner: source.owner },
+      stopCall: { owner: source.owner, session: source.session },
+      backgroundBeforeStop: { owner: source.owner, session: source.session },
     },
     session: {
       wrote: { session: source.session },
@@ -153,7 +155,8 @@
       log: 'the end of the scenario',
     },
     // The owner stops the work by a stop word or by Esc; the turns a notice wakes after either are
-    // released until the owner writes again.
+    // released until a working order of `words.resume`. Own background started before the stop is held
+    // ahead of these cases by `stopHold` of the verdict, until it is taken down or two refusals named it.
     stopWord: { when: measure.owner.saidStop, order: 2, log: 'a stop word of the owner' },
     interrupted: { when: measure.owner.interrupted, order: 3, log: 'the owner interrupted the turn' },
     // The state «работа-отдана» sends work to the background by its own action and goes on: there
@@ -187,7 +190,28 @@
       'продолжай', 'делай', 'работай', 'доделывай', 'иди дальше', 'делай дальше', 'сначала', 'спрашивать',
       'спрашивай', 'asking', 'keep going', 'go on',
     ],
-    holdAfter: ['стоять', 'останавлива', 'ждать'],
+    holdAfter: ['стоять', 'останавлива', 'ждать', 'спрашива'],
+    // The stop holds until a working order: the plan of epic RT-3602, approved by the owner 24.11.
+    resume: [
+      'продолжай', 'продолжить', 'работай', 'делай', 'сделай', 'делай дальше', 'доделывай', 'иди дальше', 'доведи',
+      'исправляй', 'чини', 'вливай', 'влей', 'мержи', 'вмержи', 'отправляй', 'выпускай', 'выпусти', 'обнови', 'заведи',
+      'бери', 'ночной режим', 'одобряю', 'доделай', 'заверши', 'закончи', 'исправь', 'почини', 'переделай', 'запушь',
+      'поехали', 'давай дальше', 'выпустить', 'вмержить', 'влить', 'запушить', 'продолжи', 'продолжаем', 'работаем',
+      'keep going', 'go on', 'continue', 'proceed', 'go ahead', 'resume', 'carry on', 'fix it', 'do it', 'merge it',
+    ],
+    // A complaint about a stop is a working order, a question too: the owner's word 26.11 «Жалоба — тоже приказ».
+    // A complaint that work was not stopped is none: `notStopped` of the stop measure keeps the stop.
+    stopComplaint: [
+      'почему ты стоишь', 'почему стоишь', 'почему ты встал', 'почему встал', 'почему ты остановил', 'почему остановил',
+      'почему ты бросил', 'почему бросил', 'снова остановил', 'опять остановил', 'снова стоишь', 'опять стоишь', 'только что стоял',
+      'заблокировал работу', 'блокируешь работу', 'работа заблокирована', 'работа стоит', 'работа полностью стоит',
+      'хватит стоять', 'хватит останавлива', 'хватит ждать', 'хватит спрашива', 'не стой', 'не останавливайся',
+      'не останавливайтесь', 'чё стоишь', 'что стоишь', 'чего стоишь', 'чё встал', 'что встал', 'чего встал', 'опять встал',
+      'снова встал', 'бросил работу', 'всё бросил', 'прекратил работу', 'почему ты не работаешь', 'почему ничего не делаешь', 'почему ты ничего не делаешь', 'почему ты не продолжаешь',
+      'почему не продолжаешь', 'чего ты ждёшь', 'чего ждёшь',
+    ],
+    stopInside: ['стоп', 'стой', 'stop', 'хватит', 'прекрати', 'не двигайся', 'остановить работу', 'остановись', 'прекрати работать', 'сделай паузу', 'сделай перерыв'],
+    stay: ['без предпочтения', 'инцидент', 'разбор', 'приёмник', 'приемник'],
     nudge: '(?<![\\p{L}])(?<!не )(продолжай|доделывай|работай|делай дальше|работаешь)(?![\\p{L}])|почему (ты )?(стоишь|встал|остановил)|что дальше|дальше\\?|^(ну )?(и )?что там|^ну и\\s*[?!.]|какого .*останов',
     write: [
       'git commit', 'git push', 'git add', 'git merge', 'git rm', 'git mv', 'sed -i', 'perl -pi', 'gh pr', 'npm run task:new', 'pnpm run task:new', 'npm run task:move',

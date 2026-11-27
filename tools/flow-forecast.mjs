@@ -1,4 +1,4 @@
-// rt-kit v0.42.0 · checks/flow-forecast.mjs · 5ad362049454 · правится надстройкой, не здесь
+// rt-kit v0.42.0 · checks/flow-forecast.mjs · e1b77004cc78 · правится надстройкой, не здесь
 /**
  * The forecast of refusals — the engine command `forecast`, run before the hooks are laid out.
  *
@@ -147,15 +147,15 @@ export function historyOf(tree, tasksDir) {
 
 /**
  * The replay of the copies: `{ calls, stops, held, judged, refused, laidStops, ended, missed, longest }`. `openReaders` is the reader
- * factory of the engine; `sessionSource` and `wordOf` read the record as the sources do.
+ * factory of the engine; `sessionSource`, `wordOf` and `wordsOf` read the record as the sources do.
  */
-export async function forecastCopies({ copies, window, model, base, openReaders, sessionSource, wordOf, tree, settings, laid = () => true }) {
+export async function forecastCopies({ copies, window, model, base, openReaders, sessionSource, wordOf, wordsOf, tree, settings, laid = () => true }) {
     const live = { entries: [], uses: [], last: null, messages: [], now: 0 };
     // The summary of the stop being judged is written after the hook answers: the hook does not see it.
     const upToStop = () => (live.entries.at(-1)?.subtype === 'stop_hook_summary' ? live.entries.slice(0, -1) : live.entries);
     const given = {
         session: { toolUses: () => live.uses, events: () => sessionSource.eventsOf(upToStop()), now: () => live.now, agent: () => null, roleTools: () => null },
-        owner: { messages: () => live.messages, said: (quote) => live.messages.some((text) => text.includes(quote)), last: () => live.last },
+        owner: { messages: () => live.messages, said: (quote) => live.messages.some((text) => text.includes(quote)), last: () => live.last, words: () => wordsOf(upToStop()) },
     };
     const read = await openReaders(model, base, given);
     const history = historyOf(tree, settings.tasksDir);
@@ -312,9 +312,9 @@ export async function runForecast({ argv, model, base, openReaders, tree, root, 
     const sessionFile = model.sources.find((source) => source.entry === 'session').file;
     const ownerFile = model.sources.find((source) => source.entry === 'owner').file;
     const sessionSource = await import(pathToFileURL(join(base, sessionFile)).href);
-    const { wordOf } = await import(pathToFileURL(join(base, ownerFile)).href);
+    const { wordOf, wordsOf } = await import(pathToFileURL(join(base, ownerFile)).href);
     const copies = readCopies(root, tree, window);
-    const result = await forecastCopies({ copies, window, model, base, openReaders, sessionSource, wordOf, tree, settings });
+    const result = await forecastCopies({ copies, window, model, base, openReaders, sessionSource, wordOf, wordsOf, tree, settings });
     return args.perMille ? perMille(result, args.guard) : forecastLine(result, args.guard);
 }
 
@@ -330,7 +330,7 @@ export async function runMissed({ copies, from, model, base, openReaders, tree, 
     const sessionFile = model.sources.find((source) => source.entry === 'session').file;
     const ownerFile = model.sources.find((source) => source.entry === 'owner').file;
     const sessionSource = await import(pathToFileURL(join(base, sessionFile)).href);
-    const { wordOf } = await import(pathToFileURL(join(base, ownerFile)).href);
+    const { wordOf, wordsOf } = await import(pathToFileURL(join(base, ownerFile)).href);
     const window = { from, to: Number.POSITIVE_INFINITY };
-    return forecastCopies({ copies, window, model, base, openReaders, sessionSource, wordOf, tree, settings, laid });
+    return forecastCopies({ copies, window, model, base, openReaders, sessionSource, wordOf, wordsOf, tree, settings, laid });
 }

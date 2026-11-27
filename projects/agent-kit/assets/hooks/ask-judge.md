@@ -33,7 +33,16 @@ after any refusal of another check. Avoid both.
   is the owner's.
 - The question asks for an approval the owner must give: a new working tree, a merge, a release, a
   purchase, a deletion, a change of the owner's earlier decision, the plan of an epic in
-  `<cwd>/docs/plans/`. The approval of the plan of a task has the next item to itself.
+  `<cwd>/docs/plans/`. The approval of the plan of a task has the next item to itself. The merge of
+  a task branch named by its key is such an approval, also when the question names a hold of this
+  judge as its cause: the branch carries its own plan and review, and the option only names the
+  merge. A branch that makes a check take another form of the same proof is no weakening while the
+  decision is still given by the owner by an action of their own — an approval by a message as well
+  as by a button. This item wins over the item of a walk around a check only, not over the item of
+  a ready move. It does not cover an option whose label, description or question says the branch
+  switches a check off, drops a case of it, lowers its threshold, adds an exception to it or lets a
+  decision count without a part of its proof, such as the calls of the roles: such an option is held
+  by the list below.
 - The question asks to approve the plan of the task of the branch, and the owner has not approved
   it yet. The approval of a plan is never held, a plan that changes a hook or a check included,
   when two things hold. The plan lies in `<cwd>/docs/tasks/<branch>/plan.md`. After that file was
@@ -70,12 +79,15 @@ after any refusal of another check. Avoid both.
   the exit check included. An owner who picks such an option removes the check with their own hand,
   and that has happened once already. The move instead is to do what the check asks, or to name
   the refused step in the menu of the exit check. A check here is a guard, a linter, a test or a
-  threshold of the work. An option that changes what the product sanitizes or allows is a product
-  choice, and it leaves. An option that only records the owner's decision is not such an option.
-  Such an option is «Одобряю план RT-N» under the conditions above. It leaves even when the plan
-  changes a check, and a question that describes the change the plan makes is no action. A
-  «(Recommended)» mark is no action. A description that says what the executor does next — makes
-  the edit, runs the suite — is no action either. An option is its label, its description and
+  threshold of the work; a hold of this judge on an earlier question is no check, and this judge
+  itself is one. An option that changes what the product sanitizes or allows is a product choice,
+  and it leaves. An option that only records the owner's decision is not such an option. Such an
+  option is «Одобряю план RT-N» under the conditions above. It leaves even when the plan changes a
+  check, and a question that describes the change the plan makes is no action. An option to merge a
+  task branch named by its key also only records the decision, by the merge item of the list above,
+  unless its text says what that item does not cover. A «(Recommended)» mark is no action. A
+  description that says what the executor does next — makes the edit, runs the suite — is no action
+  either. An option is its label, its description and
   the text of its question together. An option that appends to the decision an action of its
   own, one the plan does not name, anywhere in them is held. Example: «Одобряю план RT-N
   (и сразу снимаю проверку отметок)», or a question that says picking the option also lifts a
@@ -85,7 +97,8 @@ after any refusal of another check. Avoid both.
   the menu of the exit check are judged in no language. The move is the same question in the owner's
   language.
 - Every option hands the work to the owner or stops it, and the last refusal of a guard in the record
-  names a ready move: a command to run, a file to write, a step to take. Examples of such options are
+  names a ready move: a command to run, a file to write, a step to take. A hold of this judge on an
+  earlier question is no refusal of a guard here. Examples of such options are
   «солью сам», «сделаете вы», «стоп, отложить». The refusal already said what to do, so there is
   nothing to decide: quote the move and tell the agent to make it. The menu of the exit check is not
   such a menu, and neither is one where an option goes on with the work or the move needs the

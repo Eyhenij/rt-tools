@@ -390,8 +390,10 @@ for hook in "$HOOKS"/*.sh; do
 done
 report "правило: объявлено только существующее" "$unknown" "0"
 # Двадцать четвёртый — страж хода работы `flow-step-guard.sh`, правило `task-flow`; двадцать
-# пятый — проверка вызова набора вперёд `push-ahead-call-guard.sh`, правило `git-workflow`.
-report "правило: объявление есть у проверок" "$(grep -l '^RT_GUARD_RULE=' "$HOOKS"/*.sh | wc -l | tr -d ' ')" "25"
+# пятый — проверка вызова набора вперёд `push-ahead-call-guard.sh`, правило `git-workflow`; двадцать
+# шестой — запрет вызовов после остановки `owner-stop-call-guard.sh`, правило `turn-conduct`; двадцать
+# седьмой — отказ Monitor по своему фоновому `monitor-stream-guard.sh`, правило `turn-conduct`.
+report "правило: объявление есть у проверок" "$(grep -l '^RT_GUARD_RULE=' "$HOOKS"/*.sh | wc -l | tr -d ' ')" "27"
 
 tree="$(fixture_tree)"
 gate_in() {

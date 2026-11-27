@@ -2,11 +2,10 @@
  * The source «source.owner» of the task flow description: the words of the owner in this session,
  * read from the record of the conversation the hook names in `RT_FLOW_TRANSCRIPT`.
  *
- *   messages()    the texts the owner typed, oldest first, during a turn too; a tool result is
- *                 not a message
+ *   messages()    the texts the owner typed, oldest first, during a turn too; a tool result is not one
  *   said(quote)   a typed message holds the quote
- *   last()        the owner's last word: the last message typed or the options chosen in a menu,
- *                 or null
+ *   last()        the owner's last word: the last message typed or the options chosen in a menu, or null
+ *   turnOpener()  what opened the current turn — a word of the owner or a notice — see `turnOpener`
  *
  * What the owner typed is read by the shared rule of the owner's words, `typedOf` of the laid-out
  * `record-count.mjs`: a message typed before a turn or queued during one, a pasted text included; a
@@ -17,7 +16,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-
 const HERE = dirname(fileURLToPath(import.meta.url));
 // Next to the laid-out engine one level up, or among the checks of the package.
 const SHARED = [join(HERE, '..', '..', 'record-count.mjs'), join(HERE, '..', '..', 'checks', 'record-count.mjs')].find((p) => existsSync(p));
@@ -25,10 +23,8 @@ const { typedOf } = await import(pathToFileURL(SHARED).href);
 
 /** The menu answer as the text of a tool result carries it. */
 const ANSWERED = /^(?:The user answered|Your questions have been answered):/;
-
 /** The mark the host writes when the owner presses Esc. */
 const INTERRUPT_MARK = /^\[Request interrupted by user/;
-
 const ownerEntry = (entry) =>
     entry?.type === 'user' && !entry.isMeta && !entry.isCompactSummary && (entry.origin?.kind ?? 'human') === 'human';
 
@@ -59,6 +55,62 @@ export function wordOf(entry) {
     return answers.length > 0 ? answers.join('\n') : null;
 }
 
+/** The text the owner typed into a refused call: «… To tell you how to proceed, the user said:\n<text>». */
+const REFUSED_WITH_TEXT = /^The user doesn't want to proceed with this tool use\.[\s\S]*?the user said:\s*\n([\s\S]+)$/;
+const refusalOf = (entry) =>
+    ownerEntry(entry) && Array.isArray(entry.message?.content)
+        ? (entry.message.content.map((part) => (part?.type === 'tool_result' ? REFUSED_WITH_TEXT.exec(resultText(part.content).trim())?.[1]?.trim() : null)).find(Boolean) ?? null)
+        : null;
+
+const timeOf = (entry) => ((stamp) => (Number.isFinite(stamp) ? stamp : null))(Date.parse(entry?.timestamp ?? entry?.attachment?.timestamp ?? ''));
+/** A text a person queued counts when it is queued: `/stop` stays in the queue only, a word waits behind notices. */
+const enqueued = (entry) => (entry?.type === 'queue-operation' && entry.operation === 'enqueue' ? String(entry.content ?? '').trim() : null);
+// A text of the harness is no word; «<app-root> пустой» the owner pasted is one.
+const queuedWord = (text) => Boolean(text) && !/^<(?:task-notification|agent-message|command-|local-command|system-reminder|bash-)/.test(text) && !WAKE.test(text) && !NO_PROMPT.test(text);
+/** The owner's words, oldest first: { text, at, kind, index } — typed, queued, interrupt, menu or refusal; `at` in ms or null, `index` the place of the entry. */
+export function wordsOf(entries) {
+    return entries.flatMap((entry, index) => {
+        const at = timeOf(entry);
+        const typed = typedOf(entry) ?? (queuedWord(enqueued(entry)) ? { text: enqueued(entry), kind: 'queued' } : null);
+        if (typed) return [{ text: typed.text, at, kind: typed.kind, index }];
+        const refused = refusalOf(entry);
+        if (refused) return [{ text: refused, at, kind: 'refusal', index }];
+        const word = wordOf(entry);
+        return word === null ? [] : [{ text: word, at, kind: INTERRUPT_MARK.test(word.trim()) ? 'interrupt' : 'menu', index }];
+    });
+}
+const WAKE = /^(?:<task-notification>|<agent-message[\s>]|Another Claude session sent a message|Background \(from the session)/;
+const NO_PROMPT = /^(?:\[Request interrupted by user|Stop hook feedback:|Caveat:|This session is being continued)/;
+/**
+ * What opened the current turn: { by, text, at, index } — `by` 'owner' for a prompt a person typed, a
+ * command included, 'wake' for a notice, a line of `Monitor` or a message of another session; `at` the
+ * time of the nearest queueing of its text no earlier delivery took. A tool result, the Esc mark and a
+ * hook's feedback open no turn.
+ */
+export function turnOpener(entries) {
+    for (let index = entries.length - 1; index >= 0; index -= 1) {
+        const entry = entries[index];
+        const content = entry?.message?.content;
+        if (entry?.type !== 'user' || entry.isMeta || entry.isCompactSummary || (Array.isArray(content) && content.some((part) => part?.type === 'tool_result'))) continue;
+        const text = resultText(content).trim();
+        if (!text || NO_PROMPT.test(text)) continue;
+        let back = index - 1, taken = 0;
+        for (; back >= Math.max(0, index - 400); back -= 1) {
+            if (entries[back]?.type === 'user' && resultText(entries[back].message?.content).trim() === text) taken += 1;
+            else if (enqueued(entries[back]) === text && taken-- === 0) break;
+        }
+        const at = (back >= Math.max(0, index - 400) ? timeOf(entries[back]) : null) ?? timeOf(entry);
+        return { by: (entry.origin?.kind ?? 'human') === 'human' && !WAKE.test(text) ? 'owner' : 'wake', text, at, index };
+    }
+    return null;
+}
+/** The opener of a turn by the prompt the hook names: its entry is written after the prompt hooks; a newer queueing is a new turn. */
+const promptOpener = (prompt, entries) => {
+    const found = turnOpener(entries), text = String(prompt ?? '').trim(), queued = entries.findLastIndex((entry) => enqueued(entry) === text);
+    if (!text || (found?.text === text && queued < found.index)) return found;
+    return { by: WAKE.test(text) ? 'wake' : 'owner', text, at: timeOf(entries[queued]) ?? Date.now(), index: entries.length };
+};
+
 /** The approving word, in any case; «не одобряю», «не очень одобряю» and «нет одобряю» approve nothing. */
 const APPROVING = /(?<![\p{L}])(?<!(?:не|нет)(?:\s+\p{L}+)?\s+)одобряю(?![\p{L}])/iu;
 
@@ -68,13 +120,10 @@ const APPROVING = /(?<![\p{L}])(?<!(?:не|нет)(?:\s+\p{L}+)?\s+)одобря
  */
 const LINE_HOLDS =
     /(?<![\p{L}])(?:если|когда|после|потом|позже|кроме|исключением|условии|частично|однако|хотя|переделай|переделать|перепиши|убери|исправь|сначала|напиши|написал|вариант)(?![\p{L}])/iu;
-
 /** Words that make their own clause no approval: «но» and «только» narrow what is approved. */
 const CLAUSE_HOLDS = /(?<![\p{L}])(?:но|только)(?![\p{L}])/iu;
-
 /** The words that name the plan itself, in their cases; «планшет» and «plan-red» are not it. */
 const PLAN_WORD = /(?<![\p{L}])(?:план(?:а|у|ом|е|ы|ов)?|plan_md|plan|замысел|замысла|замыслу|замыслом|замысле)(?![\p{L}-])/giu;
-
 /** Words that name another thing approved, not the plan. */
 const OTHER_THING = /(?<![\p{L}])(?:макет|витрин|дизайн|mockup|showcase|разбор|мерж|merge|спек|договорённост|выпуск|релиз|release|pr(?![\p{L}]))/iu;
 
@@ -151,12 +200,11 @@ const parse = (file) => {
     const entries = [];
     if (!file || !existsSync(file)) return entries;
     for (const line of readFileSync(file, 'utf8').split('\n')) {
-        if (!line.trim()) continue;
+        // Only a user entry, the queue and a queued command carry a word; a plain tool result carries none.
+        if (!/"type":"(?:user|queue-operation)"|"queued_command"/.test(line) || (line.includes('"tool_result"') && !/"answers"|doesn't want to proceed/.test(line))) continue;
         try {
             entries.push(JSON.parse(line));
-        } catch {
-            // A line that does not parse is no entry.
-        }
+        } catch {}
     }
     return entries;
 };
@@ -178,5 +226,5 @@ export function open() {
         }
         return null;
     };
-    return { messages, said: (quote) => messages().some((text) => text.includes(quote)), last };
+    return { messages, said: (quote) => messages().some((text) => text.includes(quote)), last, words: () => wordsOf(entries()), turnOpener: () => promptOpener(process.env.RT_FLOW_PROMPT, entries()) };
 }

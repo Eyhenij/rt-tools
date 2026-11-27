@@ -124,4 +124,16 @@ sed -i.bak "s/$(sha RT-4-foreign)/$(sha RT-6-past)/g" "$GH"
 rm -f "$WORK"/cache/rt-draft-abandoned-*
 report "draft-ready: a new head of it is named again" "$(names "$(judge_again one)" 14)" "1"
 
+# SC-AK-2013: while the owner's stop stands, the draft waits for the owner's word and the turn ends;
+# a working order after the stop puts the refusal back. The engine judges the record.
+judge_said() {
+    rm -rf "$WORK/cache" && mkdir -p "$WORK/cache"
+    jq -cn --args '$ARGS.positional[] | {type:"user",message:{content:[{type:"text",text:.}]}}' "$@" > "$WORK/said.jsonl"
+    jq -n --arg d "$REPO" --arg t "$WORK/said.jsonl" '{stop_hook_active:false,cwd:$d,transcript_path:$t}' \
+        | CLAUDE_PROJECT_DIR="$REPO" RT_FLOW_ENGINE="$ROOT/projects/agent-kit/assets/checks/task-flow-script.mjs" \
+            RT_GH_BIN="$GH" RT_BOT=rt-bot TMPDIR="$WORK/cache" bash "$HOOK" 2>/dev/null | jq -r '.reason // ""' 2>/dev/null
+}
+report "draft-ready: SC-AK-2013 — «стоп» and a question: the turn ends" "$(names "$(judge_said 'делай RT-2' 'стоп' 'почему?')" 12)" "0"
+report "draft-ready: SC-AK-2013 — «стоп», then «продолжай»: refused again" "$(names "$(judge_said 'делай RT-2' 'стоп' 'продолжай')" 12)" "1"
+
 suite_result "the draft check, the second tier"
