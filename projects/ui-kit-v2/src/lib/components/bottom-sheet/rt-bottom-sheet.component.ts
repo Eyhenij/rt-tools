@@ -20,7 +20,6 @@ import {
     linkedSignal,
     output,
     OutputEmitterRef,
-    signal,
     Signal,
     TemplateRef,
     untracked,
@@ -40,7 +39,8 @@ import { RtSheetConfirmPlace } from './rt-sheet-confirm-place';
 import { IRtSheetKeyboardBox, rtWatchSheetKeyboard } from './rt-bottom-sheet-keyboard';
 import { RtBottomSheetScreens } from './rt-bottom-sheet-screens';
 import { RtBottomSheetStackService } from './rt-bottom-sheet-stack.service';
-import { clampDragDelta, focusLeftBehind, innerFocus, isTypingTarget, outerFocus, shouldDismissDrag } from './rt-bottom-sheet.logic';
+import { focusLeftBehind, innerFocus, isTypingTarget, outerFocus } from './rt-bottom-sheet.logic';
+import { RtSheetDrag } from './rt-sheet-drag';
 import { IRtSheetConfirmLabels, IRtSheetTemplateContext, TRtSheetCloseReason } from './rt-bottom-sheet.model';
 import { RtSheetFooterDirective } from './rt-sheet-footer.directive';
 import { RtSheetHeaderDirective } from './rt-sheet-header.directive';
@@ -110,15 +110,13 @@ export class RtBottomSheetComponent {
     });
     /** Экраны шторки: второй экран другой шторки и смена экранов. */
     readonly #screens: RtBottomSheetScreens = new RtBottomSheetScreens(this.#host, inject(Injector));
-    readonly #onDragMove: (event: PointerEvent) => void = (event: PointerEvent): void => this.#handleDragMove(event);
-    readonly #onDragEnd: () => void = (): void => this.#handleDragEnd();
+    readonly #drag: RtSheetDrag = new RtSheetDrag(this.#doc, (): void => this.dismiss('swipe'));
     readonly #requestClose: () => void = (): void => this.dismiss('close');
     readonly #onResize: () => void = (): void => this.#screens.followUnder();
     readonly #requestApply: () => void = (): void => this.applyRequest.emit();
     readonly #onKeyboardBox: (box: IRtSheetKeyboardBox | null) => void = (box: IRtSheetKeyboardBox | null): void =>
         this.keyboardBox.set(box);
 
-    #dragStartY: number = 0;
     #locked: boolean = false;
     /** Узел, с которого шторку открыли: ему возвращается фокус, оставшийся в закрытой шторке. */
     #openedFrom: HTMLElement | null = null;
@@ -127,8 +125,8 @@ export class RtBottomSheetComponent {
 
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
-    protected readonly dragDeltaY: WritableSignal<number> = signal<number>(0);
-    protected readonly dragging: WritableSignal<boolean> = signal<boolean>(false);
+    protected readonly dragDeltaY: Signal<number> = this.#drag.deltaY;
+    protected readonly dragging: Signal<boolean> = this.#drag.dragging;
 
     /**
      * В шторке начали печатать: фокус побывал в поле ввода. С этого момента и до закрытия шторка
@@ -325,6 +323,7 @@ export class RtBottomSheetComponent {
             untracked((): void => this.#confirmPlace.sync(slot, labels, this.confirmTitleId));
         });
         inject(DestroyRef).onDestroy((): void => {
+            this.#drag.stop();
             this.#screens.leave();
             this.#stack.remove(this);
             this.#setScrollLock(false);
@@ -413,11 +412,7 @@ export class RtBottomSheetComponent {
     }
 
     protected onDragStart(event: PointerEvent): void {
-        this.#dragStartY = event.clientY;
-        this.dragging.set(true);
-        this.dragDeltaY.set(0);
-        this.#doc.addEventListener('pointermove', this.#onDragMove);
-        this.#doc.addEventListener('pointerup', this.#onDragEnd);
+        this.#drag.start(event);
     }
 
     /** Просьба закрыть: с неприменённым выбором сначала вопрос, без него — сразу наружу с жестом. */
@@ -482,19 +477,5 @@ export class RtBottomSheetComponent {
         } else {
             this.#scrollLock.disable();
         }
-    }
-
-    #handleDragMove(event: PointerEvent): void {
-        this.dragDeltaY.set(clampDragDelta(event.clientY - this.#dragStartY));
-    }
-
-    #handleDragEnd(): void {
-        this.dragging.set(false);
-        this.#doc.removeEventListener('pointermove', this.#onDragMove);
-        this.#doc.removeEventListener('pointerup', this.#onDragEnd);
-        if (shouldDismissDrag(this.dragDeltaY())) {
-            this.dismiss('swipe');
-        }
-        this.dragDeltaY.set(0);
     }
 }

@@ -299,11 +299,12 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     protected onFocus(): void {
         // На телефоне нажатие на поле открывает шторку сразу: набирают уже в ней.
         if (this.inSheet()) {
-            this.fieldEl()?.nativeElement.blur();
-            // Закрытая шторка возвращает фокус полю — это не нажатие: запрос и открытие не повторяются.
+            // Закрытая шторка возвращает фокус полю — это не нажатие: запрос и открытие не повторяются,
+            // а фокус остаётся в поле, не падает на страницу.
             if (this.isOpen()) {
                 return;
             }
+            this.fieldEl()?.nativeElement.blur();
             // Запрос уходит, только когда текст не короче `minLength`, как у набора в поле; шторка открывается всегда.
             if (this.inputText().length >= this.minLength()) {
                 this.complete.emit({ query: this.inputText(), originalEvent: new Event('focus') });

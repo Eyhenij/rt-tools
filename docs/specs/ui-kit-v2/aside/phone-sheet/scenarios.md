@@ -11,6 +11,13 @@ Given a window 375 points wide
 When an application opens a side panel through the kit's service
 Then the panel slides up as wide as the window and as high as it less the 12 px strip on top
 
+### SC-UKV-1922 — a component without the kit panel opens at the side on a phone
+
+Given a window 375 points wide
+When an application opens through the kit's service a component that draws no `<rt-aside>`
+Then the panel slides in at the side with the dimming of the page, as before the sheet, and Escape
+closes it
+
 ### SC-UKV-1803 — at 481 points the panel stays at the side
 
 Given a window 481 points wide
@@ -235,11 +242,12 @@ Given a phone and a panel that keeps Tab inside and marks a field for the first 
 When the panel opens
 Then the focus stands on the marked field
 
-### SC-UKV-1839 — a header without the arrow draws no «×»
+### SC-UKV-1839 — a header without the arrow still draws «×» in the sheet
 
-Given a window 375 points wide and a panel whose header switched the back arrow off
+Given a window 375 points wide and a panel whose header switched the back arrow off, opened with the
+tap on the dim switched off
 When the panel opens
-Then the header of the sheet shows no «×», and a swipe past the threshold still closes it
+Then the header of the sheet shows «×», and «×» closes the panel
 
 ### SC-UKV-1840 — a service panel with the unsaved sign asks at the bottom
 

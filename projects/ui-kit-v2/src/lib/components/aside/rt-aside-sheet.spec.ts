@@ -5,7 +5,6 @@ import { TestBed } from '@angular/core/testing';
 import { resetMediaQueries, setMediaQueryMatches } from '../../../testing/match-media-stub';
 import { provideRtKitTesting } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
-import { DRAG_DISMISS_THRESHOLD_PX } from '../bottom-sheet/rt-bottom-sheet.logic';
 import { RtButtonDirective } from '../button/rt-button.directive';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtAsideFooterComponent } from './footer/rt-aside-footer.component';
@@ -94,6 +93,16 @@ class SheetContentComponent {
     }
 }
 
+/** Компонент приложения без `<rt-aside>`: шторку ему рисовать нечем. */
+@Component({
+    selector: 'rt-aside-bare-content',
+    template: `
+        <p qa-dataid="bare-content">Без панели кита</p>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+})
+class BareContentComponent {}
+
 const DEFAULTS: ISheetData = {
     title: 'Запись',
     name: null,
@@ -150,13 +159,6 @@ function setup(phone: boolean): void {
     });
 }
 
-/** В jsdom нет `PointerEvent`: `MouseEvent` с теми же именами доходит до тех же слушателей шторки. */
-function swipe(distance: number): void {
-    node('bottom-sheet-handle')?.dispatchEvent(new MouseEvent('pointerdown', { clientY: 0, bubbles: true }));
-    document.dispatchEvent(new MouseEvent('pointermove', { clientY: distance, bubbles: true }));
-    document.dispatchEvent(new MouseEvent('pointerup', { clientY: distance, bubbles: true }));
-}
-
 describe('Панель службы кита на телефоне — шторка во всю высоту', (): void => {
     beforeEach((): void => {
         Object.keys(presses).forEach((key: string): boolean => Reflect.deleteProperty(presses, key));
@@ -179,12 +181,31 @@ describe('Панель службы кита на телефоне — штор�
             expect(node('bottom-sheet-body')?.querySelector('[qa-dataid="aside"]')?.classList).toContain('rt-aside--sheet');
         });
 
-        it('SC-UKV-1802 — шторка затемняет страницу своей подложкой, своей подложки у оверлея нет', async (): Promise<void> => {
+        it('SC-UKV-1802 — шторка затемняет страницу своей подложкой, подложка оверлея скрыта', async (): Promise<void> => {
             setup(true);
             await open();
 
             expect(node('bottom-sheet-backdrop')).not.toBeNull();
-            expect(document.querySelector('.rt-aside-backdrop')).toBeNull();
+            expect(document.querySelector('.rt-aside-backdrop')?.classList).not.toContain('rt-aside-backdrop--visible');
+        });
+
+        it('SC-UKV-1922 — компонент без rt-aside на телефоне открывается сбоку и закрывается по Escape', async (): Promise<void> => {
+            setup(true);
+            const ref: RtAsideRef = TestBed.inject(RtAsideService).open(BareContentComponent);
+            await settle();
+            let closed: boolean = false;
+            ref.afterClosed().subscribe((): void => {
+                closed = true;
+            });
+
+            expect(pane()?.classList).not.toContain('rt-aside-overlay--sheet');
+            expect(pane()?.classList).toContain('rt-aside-overlay--position-right');
+            expect(document.querySelector('.rt-aside-backdrop')?.classList).toContain('rt-aside-backdrop--visible');
+
+            pane()?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+            await settle();
+
+            expect(closed).toBe(true);
         });
 
         it('SC-UKV-1803 — на 481 точке панель выезжает сбоку, как прежде', async (): Promise<void> => {
@@ -407,18 +428,18 @@ describe('Панель службы кита на телефоне — штор�
             expect(node('aside-sheet')?.classList).not.toContain('rt-bottom-sheet--open');
         });
 
-        it('SC-UKV-1839 — шапка без стрелки не рисует «×», свайп за порог шторку закрывает', async (): Promise<void> => {
+        it('SC-UKV-1839 — шапка без стрелки в шторке всё равно рисует «×», и «×» закрывает панель', async (): Promise<void> => {
             setup(true);
-            const ref: RtAsideRef = await open({ closable: false });
+            const ref: RtAsideRef = await open({ closable: false }, { closeOnBackdropClick: false });
             let closed: boolean = false;
             ref.afterClosed().subscribe((): void => {
                 closed = true;
             });
 
-            expect(node('aside-sheet-close')).toBeNull();
-            expect(node('aside-header')?.firstElementChild?.classList).toContain('rt-aside-header__start');
+            const close: HTMLElement | null = node('aside-sheet-close');
+            expect(close).not.toBeNull();
 
-            swipe(DRAG_DISMISS_THRESHOLD_PX + 1);
+            close?.querySelector('button')?.click();
             await settle();
 
             expect(closed).toBe(true);

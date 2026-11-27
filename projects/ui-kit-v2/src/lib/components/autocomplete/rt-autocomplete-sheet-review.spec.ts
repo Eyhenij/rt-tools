@@ -139,5 +139,6 @@ describe('Автокомплит в нижней шторке — замечан
 
         expect(queries).toEqual(['Грузия']);
         expect(document.querySelector('.rt-popover-sheet')).toBeNull();
+        expect(document.activeElement).toBe(fixture.nativeElement.querySelector('input'));
     });
 });
