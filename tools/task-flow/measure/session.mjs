@@ -1,4 +1,4 @@
-// rt-kit v0.41.1 · task-flow/measure/session.mjs · a3a664f8c8b4 · правится надстройкой, не здесь
+// rt-kit v0.42.0 · task-flow/measure/session.mjs · a3a664f8c8b4 · правится надстройкой, не здесь
 /**
  * The measurer «measure.session» — what this session did: a write to the tree, a role it runs as, a
  * menu of a refusal that did not reach the owner, a step another check forbids, a stop after a

@@ -4,7 +4,7 @@ kind: rule
 law: code-structure
 description: Rule under the code-structure law. Load when a request is taken apart, a plan is written and code with behaviour is edited — modules, their duty and links, coupling, isolation, patterns, the decision in the plan. Pattern code-design-choose. Names and types — rule typescript-conventions.
 ---
-<!-- rt-kit v0.41.1 · rules/code-design.md · 21aa91e4c462 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.0 · rules/code-design.md · 21aa91e4c462 · правится надстройкой, не здесь -->
 
 # Code design — how it works here
 

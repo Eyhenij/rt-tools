@@ -1,4 +1,4 @@
-<!-- rt-kit v0.41.1 · pitfalls/doc-style-human.md · 51915706fa5a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.0 · pitfalls/doc-style-human.md · 51915706fa5a · правится надстройкой, не здесь -->
 # A task, a PR description and a reply to the owner — cold part
 
 What the pattern `doc-style-human` handed over when cut to its conventions, every section whole,
