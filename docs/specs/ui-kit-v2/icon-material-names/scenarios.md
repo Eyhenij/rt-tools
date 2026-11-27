@@ -292,7 +292,8 @@ Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon.registry.spec.ts`.
 
 Given an interceptor of the application gives the response and does not complete the stream.
 When an icon is asked and the first address answers with a page instead of a file.
-Then the fallback address is asked, and the icon is drawn.
+Then the fallback address is asked, and the icon is drawn. An error that follows a response does not
+take the file from a later asker.
 
 Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon.registry.spec.ts`.
 

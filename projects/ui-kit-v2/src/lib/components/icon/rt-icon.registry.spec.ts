@@ -299,7 +299,7 @@ describe('RtIconRegistry', (): void => {
         warn.mockRestore();
     });
 
-    it('SC-UKV-1895 —ответ без завершения потока рисует значок и ведёт в запасной набор', (): void => {
+    it('SC-UKV-1895 — ответ без завершения потока рисует значок и ведёт в запасной набор', (): void => {
         const harness: IHarness = setup(brand());
         // `flush` завершает поток сам. Одно событие ответа без завершения отдаёт перехватчик
         // приложения, который держится за долгоживущий поток.
@@ -314,7 +314,23 @@ describe('RtIconRegistry', (): void => {
         expect(harness.registry.ready(`${RT_ICON_SET_SYMBOL_ID_PREFIX}brand--copy`)()).toBe(true);
     });
 
-    it('SC-UKV-1890 — страница с кодом 200 вместо файла ведёт в запасной набор', (): void => {
+    it('SC-UKV-1895 — ошибка после ответа не отнимает файл у того, кто спросил его позже', (): void => {
+        const warn: jest.SpyInstance = jest.spyOn(console, 'warn').mockImplementation((): void => undefined);
+        const harness: IHarness = setup(brand());
+
+        harness.registry.request('wallet', 'kit');
+        const first: TestRequest = harness.http.expectOne('/icons/wallet.svg');
+        first.event(new HttpResponse<string>({ body: SVG }));
+        first.error(new ProgressEvent('error'));
+        harness.registry.request('wallet', 'brand');
+        harness.http.expectOne('/brand/wallet.svg').flush('нет такого файла', { status: 404, statusText: 'Not Found' });
+
+        harness.http.verify();
+        expect(symbolsInSprite()).toEqual([`${RT_ICON_SYMBOL_ID_PREFIX}wallet`, `${RT_ICON_SET_SYMBOL_ID_PREFIX}brand--wallet`]);
+        warn.mockRestore();
+    });
+
+    it('SC-UKV-1890 —страница с кодом 200 вместо файла ведёт в запасной набор', (): void => {
         const harness: IHarness = setup(brand());
 
         harness.registry.request('copy', 'brand');

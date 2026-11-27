@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { InjectionToken, inject, Service, signal, Signal, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { AsyncSubject, Observable, Subject, catchError, map, mergeMap, of, tap } from 'rxjs';
+import { Observable, Subject, catchError, defer, map, mergeMap, of, tap } from 'rxjs';
 
 import { PlatformService } from '@rt-tools/core';
 
@@ -25,10 +25,13 @@ export const RT_ICON_SETS_CONFIG: InjectionToken<IRtIconSetsConfig> = new Inject
     factory: (): IRtIconSetsConfig => rtIconSetsConfig(),
 });
 
-/** Адрес, за которым идут в сеть, и субъект, в который ложится ответ. */
+/** Адрес, за которым идут в сеть, и то, что по нему пришло. */
 interface IIconFetch {
-    url: string;
-    answer: AsyncSubject<string | null>;
+    readonly url: string;
+    /** Первый ответ по адресу. `undefined` — ответа ещё не было, `null` — отказ. */
+    raw?: string | null;
+    /** Ответ тем, кто спросил, пока его не было. */
+    readonly arrival: Subject<string | null>;
 }
 
 @Service()
@@ -54,9 +57,9 @@ export class RtIconRegistry {
     readonly #requestSource: Subject<IRtIconRef> = new Subject<IRtIconRef>();
 
     /**
-     * Адреса, за которыми пора идти в сеть. Ответ ложится в субъект адреса: он один, и поздний
-     * подписчик получает его же. С оператором повтора из rxjs стартовый набор приложения, которое
-     * само его не берёт, тяжелее на полторы тысячи байт.
+     * Адреса, за которыми пора идти в сеть. Первый ответ запоминается в записи адреса, и поздний
+     * спросивший получает его же. Оператор повтора и субъект с памятью из rxjs не берутся: любой из
+     * них утяжеляет стартовый набор приложения, у которого его ещё нет.
      */
     readonly #fetchSource: Subject<IIconFetch> = new Subject<IIconFetch>();
 
@@ -66,15 +69,21 @@ export class RtIconRegistry {
     constructor() {
         this.#fetchSource
             .pipe(
-                mergeMap(({ url, answer }: IIconFetch): Observable<string | null> =>
-                    this.#http.get(url, { responseType: 'text' }).pipe(
+                mergeMap((asked: IIconFetch): Observable<string | null> =>
+                    this.#http.get(asked.url, { responseType: 'text' }).pipe(
                         map((raw: string): string | null => (rtIconIsSvgFile(raw) ? raw : null)),
                         catchError((): Observable<null> => of(null)),
-                        // Ответ уходит подписчикам сразу. Поток запроса может не завершиться:
-                        // это решают перехватчики приложения.
-                        tap((raw: string | null): void => {
-                            answer.next(raw);
-                            answer.complete();
+                        // Ответ уходит спросившим сразу. Поток запроса может не завершиться или
+                        // завершиться без ответа: это решают перехватчики приложения.
+                        tap({
+                            next: (raw: string | null): void => {
+                                if (asked.raw === undefined) {
+                                    asked.raw = raw;
+                                    asked.arrival.next(raw);
+                                    asked.arrival.complete();
+                                }
+                            },
+                            complete: (): void => asked.arrival.complete(),
                         })
                     )
                 ),
@@ -177,10 +186,11 @@ export class RtIconRegistry {
         let file: Observable<string | null> | undefined = this.#files.get(url);
 
         if (file === undefined) {
-            const answer: AsyncSubject<string | null> = new AsyncSubject<string | null>();
-            this.#files.set(url, answer);
-            this.#fetchSource.next({ url, answer });
-            file = answer;
+            const fetch: IIconFetch = { url, arrival: new Subject<string | null>() };
+            // Что отдать, решается в миг подписки: ответ мог прийти раньше неё.
+            file = defer((): Observable<string | null> => (fetch.raw === undefined ? fetch.arrival : of(fetch.raw)));
+            this.#files.set(url, file);
+            this.#fetchSource.next(fetch);
         }
 
         return file;
