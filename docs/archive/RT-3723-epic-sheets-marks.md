@@ -2,6 +2,12 @@
 
 Задача RT-3723, запись от 2026-11-27. Прежний адрес: `docs/tasks/RT-3723-epic-sheets-marks/`.
 
+## Согласия владельца по киту
+
+### Approvals
+
+- **Без вида:** «Без изменения вида»
+
 ## The owner request
 
 > продолжай
@@ -38,7 +44,15 @@ are marked by the branch of the next task, and none was taken.
   exit 1: the epic branch has no task folder, so exit 12 is never printed there (product-strategist,
   `tools/task-flow/measure/grill.mjs:13`). The sign taken instead: the measure `mergedMarked` called directly over
   the tree of this branch gives `true`, and the measure on `RT-3723-epic-sheets-marks` after its PR shows exit 12.
-- **Цена:** нет
+- **The review of the whole epic, after the PR opened** — the owner: «Ревью эпика всего независимыми агентами»,
+  then «Исправляй» and «Все одной задачей» — in this task, not a new one. Four fresh readers over
+  `origin/main...origin/RT-3530-phone-sheets`; five findings confirmed by the code are fixed here: a cancelled swipe
+  (`RtSheetDrag`, SC-UKV-1921), the focus of `rt-autocomplete` after its sheet (SC-UKV-1620), «×» of the aside sheet
+  always — the owner: «в ботомшит асайд кнопка крестик всегда отображается» (SC-UKV-1839), a component without
+  `<rt-aside>` at the side on a phone (SC-UKV-1922), the kit changelog. Left as their own tasks: the focus trap of the
+  standalone sheet, the tab order for a screen reader, the keyboard lift on a real phone. The card #3728, created by
+  mistake for these fixes, is closed as not planned.
+- **Цена:** порог веса кита 207053 → 207364 байт, +311 на прерванный свайп.
 - **Отменено:** нет
 
 ## Цитаты из разбора и хода работы
