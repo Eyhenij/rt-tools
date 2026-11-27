@@ -1,4 +1,4 @@
-// rt-kit v0.41.1 · workflows/feature.js · 6832b1c0e7bc · правится надстройкой, не здесь
+// rt-kit v0.42.0 · workflows/feature.js · 6832b1c0e7bc · правится надстройкой, не здесь
 export const meta = {
     name: 'feature',
     description: 'A plan from the PM, implementation step by step, a fan of QA checks and acceptance against the original request',

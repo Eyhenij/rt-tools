@@ -1,4 +1,4 @@
-<!-- rt-kit v0.41.1 · pitfalls/agent-kit-extend.md · 3307bf8ca95d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.0 · pitfalls/agent-kit-extend.md · 3307bf8ca95d · правится надстройкой, не здесь -->
 # How to add your own on top of the package — cold part
 
 Every sample whole, with the reasons behind the short articles of the skill. Loaded on demand,

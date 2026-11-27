@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.41.1 · hooks/observe.sh · b3763066c5a9 · правится надстройкой, не здесь
+# rt-kit v0.42.0 · hooks/observe.sh · b3763066c5a9 · правится надстройкой, не здесь
 # Recording observations about the rules layer. NOT a guard: it has no `rt-hook:` declaration and it
 # hooks into no agent event. The guards source it — the same way the gate sources the map.
 #

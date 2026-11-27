@@ -4,7 +4,7 @@ kind: pattern
 rule: platform-access
 description: Pattern of rule platform-access. Load when the window, the document or an environment check enters the code — ready-made token injects, casting to Window & typeof globalThis, the window as a parameter of a pure function, DOM initialisation after the first render. Not under libs/api and apps/api.
 ---
-<!-- rt-kit v0.41.1 · patterns/platform-access-di.md · 07a930f95a49 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.0 · patterns/platform-access-di.md · 07a930f95a49 · правится надстройкой, не здесь -->
 
 # The window, the document and the environment check
 

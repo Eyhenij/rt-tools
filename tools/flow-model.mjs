@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.41.1 · checks/flow-model.mjs · 746368022037 · правится надстройкой, не здесь
+// rt-kit v0.42.0 · checks/flow-model.mjs · 746368022037 · правится надстройкой, не здесь
 /**
  * The model of the task flow description: what the parsed description means, checked against the
  * files it names, before any of them is run.

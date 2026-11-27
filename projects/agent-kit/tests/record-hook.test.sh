@@ -68,4 +68,17 @@ report "SC-AK-1622 — взятие задачи: первая запись се
     "$(cat "$TREE"/.claude/rt-kit/observations/*.jsonl | jq -r 'select(.ev == "task-taken") | .task + "@" + .t' | tr '\n' ' ')" \
     "RT-1@2026-11-13T10:00:00Z RT-2@2026-11-13T11:00:00Z "
 
+# --- one turn counted by two runs --------------------------------------------------------------------------
+# Второй запуск с той же отметкой — отметку не успел записать первый, или хук пошёл дважды за ход — читает
+# те же записи. Файл дня уже держит их строки, и второй запуск не пишет их снова; два одинаковых вызова
+# одной записи остаются двумя строками.
+rm -rf "$TREE/.claude"
+twice='{"type":"assistant","uuid":"c3","sessionId":"s1","gitBranch":"RT-1-x","timestamp":"2026-11-13T12:00:00Z","message":{"role":"assistant","content":[{"type":"tool_use","id":"t3","name":"Read","input":{}},{"type":"tool_use","id":"t4","name":"Read","input":{}}]}}'
+printf '%s\n%s\n%s\n' "$call" "$refusal" "$twice" > "$RECORD"
+run_hook Stop "$RECORD" > /dev/null
+find "$TREE/.claude" -name 'record-*.json' -delete
+run_hook Stop "$RECORD" > /dev/null
+report "SC-AK-2007 — ход, записанный двумя запусками хука с одной отметкой, даёт в файле одну строку" \
+    "$(events record-call):$(events record-refusal):$(events task-taken)" "3:1:1"
+
 suite_result "хук конца хода по записи"

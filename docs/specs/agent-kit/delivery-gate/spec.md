@@ -110,7 +110,8 @@ refuses the push.
 - **A request is not merged while the run on its tip is red or unfinished.** A merge over red
   carries the breakage into the branch, and every next request into it turns red. A request
   without a run passes: one into an epic branch never gets a run. A click on the hosting's button
-  no guard sees, and there the run is read by a command before the click.
+  no guard sees, and there the run is read by a command before the click. Who may merge, with which
+  author and into which base, is held by the delivery-signature spec.
 - **A body passed as a file is judged on a par with a body in the argument of the command.**
   Otherwise a bypass appears by itself, without a single decision: a call with the body in a file
   passes the sign silently.
