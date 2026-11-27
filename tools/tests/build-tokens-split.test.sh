@@ -44,6 +44,15 @@ report "the scope holds the same root rule as the full file" "$(count "$OUT/toke
 report "the scope holds the islands of the set" "$([ "$(count "$OUT/tokens.scope.css" '^\[data-theme=dark\] \[data-preset=material\]')" -gt 0 ] && echo yes)" "yes"
 report "the base keeps the set Material" "$([ "$(count "$OUT/tokens.base.css" 'data-preset=material')" -gt 0 ] && echo yes)" "yes"
 
+# A set of values is long, and every copy of it lies in the styles of an application: the pieces that
+# share a set share one rule. The count of the long bodies guards the comparison against an empty list.
+SETS="$(node -e "
+    const css = require('fs').readFileSync(process.argv[1], 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+    const bodies = [...css.matchAll(/\{([^{}]*)\}/g)].map((found) => found[1].replace(/\s+/g, ' ')).filter((body) => body.length > 1500);
+    console.log(bodies.length - new Set(bodies).size, bodies.length >= 4 ? 'compared' : 'nothing to compare');
+" "$OUT/tokens.scope.css")"
+report "the scope writes every set of values once" "$SETS" "0 compared"
+
 # The order of connection is the base, then the scope: the scope declares no layer, so it wins by place.
 report "the scope opens no cascade layer" "$(count "$OUT/tokens.scope.css" '@layer')" "0"
 
