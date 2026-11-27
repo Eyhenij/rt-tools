@@ -39,6 +39,11 @@ export class RtAsideSheet {
     readonly #answersSource: Subject<ERtAsideUnsavedOutcome> = new Subject<ERtAsideUnsavedOutcome>();
     readonly #screen: WritableSignal<Signal<boolean> | null> = signal<Signal<boolean> | null>(null);
     readonly #headers: WritableSignal<number> = signal<number>(0);
+    readonly #asides: WritableSignal<number> = signal<number>(0);
+    #onAside: (() => void) | null = null;
+
+    /** В панели нарисован `<rt-aside>`: шторку есть кому рисовать. */
+    public readonly hasAside: Signal<boolean> = computed((): boolean => this.#asides() > 0);
 
     /** Панель рисуется шторкой: решено при открытии. */
     public readonly active: Signal<boolean> = this.#active.asReadonly();
@@ -76,6 +81,24 @@ export class RtAsideSheet {
         this.#headers.update((count: number): number => count + 1);
 
         return (): void => this.#headers.update((count: number): number => count - 1);
+    }
+
+    /** `<rt-aside>` встал в панели; отданная функция снимает его. Первый зовёт ждущего его. */
+    public addAside(): () => void {
+        this.#asides.update((count: number): number => count + 1);
+        const waiting: (() => void) | null = this.#onAside;
+        this.#onAside = null;
+        // Вид панели меняется после отрисовки, которая поставила `<rt-aside>`, а не внутри неё.
+        if (waiting !== null) {
+            queueMicrotask(waiting);
+        }
+
+        return (): void => this.#asides.update((count: number): number => count - 1);
+    }
+
+    /** Позвать, когда в панели встанет `<rt-aside>`: панель, открытая без него, ждёт его позже. */
+    public whenAside(callback: () => void): void {
+        this.#onAside = callback;
     }
 
     /** Поднять шторку или опустить её. */

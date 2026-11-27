@@ -52,7 +52,14 @@ are marked by the branch of the next task, and none was taken.
   `<rt-aside>` at the side on a phone (SC-UKV-1922), the kit changelog. Left as their own tasks: the focus trap of the
   standalone sheet, the tab order for a screen reader, the keyboard lift on a real phone. The card #3728, created by
   mistake for these fixes, is closed as not planned.
-- **Цена:** порог веса кита 207053 → 207364 байт, +311 на прерванный свайп.
+- **Review round one of the fixes** — qa-engineer, goal-critic, product-strategist. Fixed: a second tap of the
+  autocomplete field reopens its sheet; an `<rt-aside>` drawn late returns the panel to the sheet (`whenAside`);
+  an aside without the kit header gets the «×» of the sheet; «×» of a route panel with `closable=false` asks the
+  frame like a swipe; «×» keeps a panel held by `disableClose`; the backdrop class of the application is not read
+  under the sheet; a second finger does not end a swipe; the changelog names `filtersDiscard`, `phoneCloseLabel`,
+  the public additions of the sheet and the change events. The route «×» is confirmed by reading: it takes the road
+  of the swipe, which SC-UKV-1820 covers.
+- **Цена:** порог веса кита 207053 → 207485 байт: +311 на прерванный свайп, +121 на палец жеста.
 - **Отменено:** нет
 
 ## Цитаты из разбора и хода работы

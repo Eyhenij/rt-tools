@@ -33,6 +33,7 @@
             [disabled]="isDisabled()"
             (input)="onInput($event)"
             (focus)="onFocus()"
+            (click)="onFieldTap()"
             (blur)="onBlur()"
             (keydown)="onInputKeydown($event)" />
         @if (showClearButton()) {

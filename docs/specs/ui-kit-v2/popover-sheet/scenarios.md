@@ -444,7 +444,8 @@ Covered: `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet-review.
 
 Given a sheet opened from a part whose own box takes no focus
 When the sheet closes while focus is inside it
-Then focus lands on the first focusable control of that part, and the autocomplete does not search or open again for it
+Then focus lands on the first focusable control of that part, and the autocomplete does not search or open again for it;
+the focus stays in the field of the autocomplete, and the next touch of that field opens the sheet again
 
 Covered: `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet-review.spec.ts`, `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-sheet-review.spec.ts`.
 

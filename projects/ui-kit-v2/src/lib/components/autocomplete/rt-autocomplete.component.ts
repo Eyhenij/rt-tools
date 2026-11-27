@@ -301,15 +301,9 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
         if (this.inSheet()) {
             // Закрытая шторка возвращает фокус полю — это не нажатие: запрос и открытие не повторяются,
             // а фокус остаётся в поле, не падает на страницу.
-            if (this.isOpen()) {
-                return;
+            if (!this.isOpen()) {
+                this.#openSheet();
             }
-            this.fieldEl()?.nativeElement.blur();
-            // Запрос уходит, только когда текст не короче `minLength`, как у набора в поле; шторка открывается всегда.
-            if (this.inputText().length >= this.minLength()) {
-                this.complete.emit({ query: this.inputText(), originalEvent: new Event('focus') });
-            }
-            this.popover().open();
             return;
         }
         if (!this.openOnFocus()) {
@@ -317,6 +311,16 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
         }
         this.complete.emit({ query: this.inputText(), originalEvent: new Event('focus') });
         this.popover().open();
+    }
+
+    /**
+     * Касание поля, уже стоящего в фокусе: закрытая шторка вернула ему фокус, и `focus` второй раз не
+     * приходит. На телефоне такое касание снова открывает шторку.
+     */
+    protected onFieldTap(): void {
+        if (this.inSheet() && !this.isOpen()) {
+            this.#openSheet();
+        }
     }
 
     protected onBlur(): void {
@@ -385,6 +389,16 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
                 this.popover().close();
                 break;
         }
+    }
+
+    /** Открыть шторку от поля: клавиатуру берёт поиск шторки, а не поле под ней. */
+    #openSheet(): void {
+        this.fieldEl()?.nativeElement.blur();
+        // Запрос уходит, только когда текст не короче `minLength`, как у набора в поле; шторка открывается всегда.
+        if (this.inputText().length >= this.minLength()) {
+            this.complete.emit({ query: this.inputText(), originalEvent: new Event('focus') });
+        }
+        this.popover().open();
     }
 
     #search(query: string, originalEvent: Event): void {

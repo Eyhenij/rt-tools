@@ -141,4 +141,17 @@ describe('Автокомплит в нижней шторке — замечан
         expect(document.querySelector('.rt-popover-sheet')).toBeNull();
         expect(document.activeElement).toBe(fixture.nativeElement.querySelector('input'));
     });
+
+    it('SC-UKV-1620 — касание поля, оставшегося в фокусе после закрытой шторки, открывает её снова', (): void => {
+        const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup();
+        tapField(fixture);
+        (document.querySelector('[qa-dataid="bottom-sheet-backdrop"]') as HTMLElement).click();
+        settle(fixture);
+        expect(document.querySelector('.rt-popover-sheet')).toBeNull();
+
+        (fixture.nativeElement.querySelector('[qa-dataid="autocomplete-input"]') as HTMLInputElement).click();
+        settle(fixture);
+
+        expect(document.querySelector('.rt-popover-sheet')).not.toBeNull();
+    });
 });

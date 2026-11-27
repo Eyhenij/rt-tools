@@ -247,7 +247,8 @@ Then the focus stands on the marked field
 Given a window 375 points wide and a panel whose header switched the back arrow off, opened with the
 tap on the dim switched off
 When the panel opens
-Then the header of the sheet shows «×», and «×» closes the panel
+Then the header of the sheet shows «×», and «×» closes the panel; a panel the application holds by
+`disableClose` stays open
 
 ### SC-UKV-1840 — a service panel with the unsaved sign asks at the bottom
 

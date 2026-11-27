@@ -16,10 +16,15 @@ export class RtSheetDrag {
     readonly #doc: Document;
     readonly #dismiss: () => void;
     #startY: number = 0;
-    readonly #onMove: (event: PointerEvent) => void = (event: PointerEvent): void =>
-        this.deltaY.set(clampDragDelta(event.clientY - this.#startY));
-    readonly #onEnd: () => void = (): void => this.#end();
-    readonly #onCancel: () => void = (): void => this.stop();
+    /** Палец, которым тянут: второй палец ни сдвигает, ни отпускает, ни прерывает жест. */
+    #pointerId: number | undefined = undefined;
+    readonly #onMove: (event: PointerEvent) => void = (event: PointerEvent): void => {
+        if (this.#own(event)) {
+            this.deltaY.set(clampDragDelta(event.clientY - this.#startY));
+        }
+    };
+    readonly #onEnd: (event: PointerEvent) => void = (event: PointerEvent): void => (this.#own(event) ? this.#end() : undefined);
+    readonly #onCancel: (event: PointerEvent) => void = (event: PointerEvent): void => (this.#own(event) ? this.stop() : undefined);
 
     constructor(doc: Document, dismiss: () => void) {
         this.#doc = doc;
@@ -28,6 +33,7 @@ export class RtSheetDrag {
 
     public start(event: PointerEvent): void {
         this.stop();
+        this.#pointerId = event.pointerId;
         this.#startY = event.clientY;
         this.dragging.set(true);
         this.#doc.addEventListener('pointermove', this.#onMove);
@@ -42,6 +48,10 @@ export class RtSheetDrag {
         this.#doc.removeEventListener('pointerup', this.#onEnd);
         this.#doc.removeEventListener('pointercancel', this.#onCancel);
         this.deltaY.set(0);
+    }
+
+    #own(event: PointerEvent): boolean {
+        return event.pointerId === this.#pointerId;
     }
 
     #end(): void {

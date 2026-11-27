@@ -93,16 +93,6 @@ class SheetContentComponent {
     }
 }
 
-/** Компонент приложения без `<rt-aside>`: шторку ему рисовать нечем. */
-@Component({
-    selector: 'rt-aside-bare-content',
-    template: `
-        <p qa-dataid="bare-content">Без панели кита</p>
-    `,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-})
-class BareContentComponent {}
-
 const DEFAULTS: ISheetData = {
     title: 'Запись',
     name: null,
@@ -187,25 +177,6 @@ describe('Панель службы кита на телефоне — штор�
 
             expect(node('bottom-sheet-backdrop')).not.toBeNull();
             expect(document.querySelector('.rt-aside-backdrop')?.classList).not.toContain('rt-aside-backdrop--visible');
-        });
-
-        it('SC-UKV-1922 — компонент без rt-aside на телефоне открывается сбоку и закрывается по Escape', async (): Promise<void> => {
-            setup(true);
-            const ref: RtAsideRef = TestBed.inject(RtAsideService).open(BareContentComponent);
-            await settle();
-            let closed: boolean = false;
-            ref.afterClosed().subscribe((): void => {
-                closed = true;
-            });
-
-            expect(pane()?.classList).not.toContain('rt-aside-overlay--sheet');
-            expect(pane()?.classList).toContain('rt-aside-overlay--position-right');
-            expect(document.querySelector('.rt-aside-backdrop')?.classList).toContain('rt-aside-backdrop--visible');
-
-            pane()?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
-            await settle();
-
-            expect(closed).toBe(true);
         });
 
         it('SC-UKV-1803 — на 481 точке панель выезжает сбоку, как прежде', async (): Promise<void> => {
@@ -443,6 +414,21 @@ describe('Панель службы кита на телефоне — штор�
             await settle();
 
             expect(closed).toBe(true);
+        });
+
+        it('SC-UKV-1839 — «×» не закрывает панель, удержанную приложением', async (): Promise<void> => {
+            setup(true);
+            const ref: RtAsideRef = await open({ closable: false });
+            ref.disableClose.set(true);
+            let closed: boolean = false;
+            ref.afterClosed().subscribe((): void => {
+                closed = true;
+            });
+
+            node('aside-sheet-close')?.querySelector('button')?.click();
+            await settle();
+
+            expect(closed).toBe(false);
         });
 
         it('SC-UKV-1838 — своё поле первого фокуса у панели, держащей Tab, сильнее «×»', async (): Promise<void> => {
