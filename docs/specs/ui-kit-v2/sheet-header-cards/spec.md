@@ -82,8 +82,9 @@ checkbox or a switch on the right. The question before closing offers «Apply»,
   footer an application puts there, its footer template and the footer of a side panel stand
   between them; the footer template replaces those nodes only, never the two places. A footer with
   nothing in it takes no room. The right of the header holds one button or several icon buttons,
-  8 px apart, and the title stays in the centre. An icon button of the header is the kit icon
-  button, secondary, round, 40 by 40, as the close button is. Until task RT-3748 moves the fields
+  8 px apart, and the title stays in the centre. A delete button, where a sheet has one, is always the
+  last on the right. An icon button of the header is the kit icon button, secondary, round, 40 by 40,
+  as the close button is. Until task RT-3748 moves the fields
   of the kit, they keep the action on the right of the header.
 - **The sheet of the page filters has a reset in its footer.** The reset reports to the
   application, which clears the filters; the sheet stays open and no longer counts an input as not

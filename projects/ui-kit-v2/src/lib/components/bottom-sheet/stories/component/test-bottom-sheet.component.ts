@@ -31,8 +31,9 @@ export type TBottomSheetLayout = 'plain' | 'footer-action' | 'header-icons';
             @case ('header-icons') {
                 <rt-bottom-sheet fullHeight [open]="open">
                     <span sheetHeader>Анна Смирнова</span>
-                    <rt-icon-button sheetAction variant="secondary" radius="full" icon="trash" ariaLabel="Удалить" />
+                    <!-- «Удалить» всегда крайняя справа в шапке. -->
                     <rt-icon-button sheetAction variant="secondary" radius="full" icon="copy" ariaLabel="Дублировать" />
+                    <rt-icon-button sheetAction variant="secondary" radius="full" icon="trash" ariaLabel="Удалить" />
                     <p style="margin: 0; padding: 0 var(--rt-space-5)">Бронь №1042, гость, телефон и статус.</p>
                     <button sheetPrimary rtButton type="button" size="md" appearance="filled" label="Сохранить"></button>
                 </rt-bottom-sheet>

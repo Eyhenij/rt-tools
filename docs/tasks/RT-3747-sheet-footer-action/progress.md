@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 3 of 3 — витрина и сверка с макетом
 - **Done:** места `[sheetPrimary]` и `[sheetInfo]`, зазор кнопок шапки, тесты SC-UKV-1923…1926 (507 тестов шторки, асайда, панели выбора и отборов зелёные), `CONTEXT.md`, спека; истории «Главное действие в подвале» и «Значки в шапке»; сверка с макетом — 42 из 42 чисел; шторки периода, асайда записи, фильтров панели и асайда приложения до и после — 112 из 112 чисел без сдвига.
-- **Next step:** шаг 3.4 — снимки двух историй (`node tools/visual-gate.mjs ui-kit-v2 --affected origin/RT-3746-sheet-actions-layout --update`). Снимает браузер из образа Docker: ждёт слова владельца на подъём colima. Затем показ витрины владельцу, круг ревью, набор перед отправкой, PR в ветку эпика.
+- **Next step:** показ витрины владельцу (истории `organisms-aside-bottomsheet--footer-action` и `--header-icons` на :6007) и его второй ответ; затем круг ревью, набор перед отправкой, PR в ветку эпика. Снимки обеих историй сняты; снимок «Значки в шапке» снят заново после слова «Удалить» — крайняя справа» и подтверждён вторым прогоном (3 из 3).
 - **PR:** not open yet
 
 ## Steps
@@ -21,6 +21,8 @@
 
 ## Decisions along the way
 
+- **«Удалить» — крайняя справа в шапке** — слово владельца 27.11.2026: «иконка удалить (если она есть в конкретном случае) всегда справа в шапке». Кадр макета 8736:1990, история «Значки в шапке», спека и `CONTEXT.md` поправлены; снимок истории снят заново. Шторка порядок кнопок не меняет: его держит потребитель, и это правило несут RT-3748 и RT-3749. Affected stage of the plan: 2, 3.
+
 - **Цена: стартовый вес части `bottom-sheet` вырос на 815 байт (21 176 → 21 991), весь кит — 207 492 → 208 307** — это правила мест подвала, их порядка и прятания пустого подвала. Порог записан `pnpm run check:kit-weight -- --write`. Affected stage of the plan: 3.
 - **Отменено: ничего** — весь объём плана сделан; входы шторки панели выбора и правило спеки о действии в шапке ушли в RT-3748 ещё до одобрения плана.
 
@@ -34,3 +36,49 @@
 - **Три проверки плана заменены на красные до работы, состав работ прежний** — plan-red нашёл, что общие тесты шторки, проверка спек и вес кита зелёные уже до правки и ничего не мерят. Тесты мерит новый спек, спеку — номера сценариев, шаг 3.4 — файлы снимков; порог веса кита проверяет набор перед отправкой. Affected stage of the plan: 1, 2, 3.
 
 - **Локальные папки `.claude/handoff`, `.claude/rt-kit/postmortems`, `.claude/rt-kit/observations` созданы пустыми в новой копии** — проверка путей в документах ссылается на них, а git их не хранит: без них отправка ветки эпика краснела. Affected stage of the plan: нет.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/sviatoslavkhutornoy/WebstormProjects/rt-sheet-actions
+**Branch:** RT-3747-sheet-footer-action
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 3 of 3 — витрина и сверка с макетом
+- **Next step:** шаг 3.4 — снимки двух историй (`node tools/visual-gate.mjs ui-kit-v2 --affected origin/RT-3746-sheet-actions-layout --update`). Снимает браузер из образа Docker: ждёт слова владельца на подъём colima. Затем показ витрины владельцу, круг ревью, набор перед отправкой, PR в ветку эпика.
+- **PR:** not open yet
+
+The progress in full — `docs/tasks/RT-3747-sheet-footer-action/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+ M docs/plans/sheet-actions-layout.md
+ M docs/specs/ui-kit-v2/sheet-header-cards/spec.md
+ M docs/tasks/RT-3747-sheet-footer-action/progress.md
+ M projects/ui-kit-v2/.storybook/__snapshots__/organisms-aside-bottomsheet--header-icons.png
+ M projects/ui-kit-v2/src/lib/components/bottom-sheet/CONTEXT.md
+ M projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/bottom-sheet.stories.ts
+ M projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/component/test-bottom-sheet.component.ts
+```
+
+### Commits over the main branch
+
+```
+3f4e8af55 chore(rt:ui-kit-v2): порог стартового веса кита — места подвала шторки, плюс 815 байт (RT-3747)
+e10745329 docs(rt:ui-kit-v2): ход RT-3747 — этапы сделаны, превышение бюджета новых файлов названо (RT-3747)
+20278d7bc test(rt:ui-kit-v2): снимки историй шторки «Главное действие в подвале» и «Значки в шапке» (RT-3747)
+c5cb27a02 docs(rt:ui-kit-v2): ход RT-3747 — старые шторки не сдвинулись, 112 из 112 чисел (RT-3747)
+c9ef3ee35 feat(rt:ui-kit-v2): истории шторки «Главное действие в подвале» и «Значки в шапке», сверка с макетом 42 из 42 (RT-3747)
+a6d85ef4e docs(rt:ui-kit-v2): правило мест главного действия, справки и кнопок-значков шторки, сценарии 1923…1926 (RT-3747)
+b734e519f feat(rt:ui-kit-v2): места главного действия и справки в подвале шторки, кнопки-значки в шапке (RT-3747)
+8833848bf docs(rt:ui-kit-v2): ход RT-3747 — план одобрен, начат этап мест шторки (RT-3747)
+9735dc9d9 docs(rt:ui-kit-v2): разбор и план RT-3747 — места главного действия и справки в подвале шторки (RT-3747)
+cc7ef5c07 docs(rt:ui-kit-v2): план эпика RT-3746 — главное действие шторки в подвале, дополнительные в шапке (RT-3746)
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.
