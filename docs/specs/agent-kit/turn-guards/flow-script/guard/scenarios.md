@@ -304,4 +304,4 @@ both calls of the engine, with `timeout` beside them only `timeout` is called, w
 perl both only `gtimeout`, a limiter without the exec bit is passed over, and with none of them the
 engine runs without a limit
 
-Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+Covered: `projects/agent-kit/tests/flow-step-guard-limits.test.sh`.
