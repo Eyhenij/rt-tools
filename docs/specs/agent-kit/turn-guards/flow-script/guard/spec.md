@@ -44,6 +44,7 @@ There is no interface: the guard answers the agent with a refusal or stays silen
 - **A plan with no approval mark is refused a decision that is not complete, and all it lacks is named at once.**
 - **The decision is a table of nine rows, or one line with the reason there is none.**
 - **The guard lets a call through when the engine is absent, fails or prints nothing.**
+- **The engine runs under the first time limiter the machine has — `timeout`, `gtimeout`, perl — and without a limit when it has none.**
 - **A tree override that does not build does not lift the hooks: they judge by the package description.**
 
 ## What is out of scope
@@ -154,5 +155,8 @@ None.
   scenarios SC-AK-1819 and SC-AK-1820.
 - 2026-11-25 — task RT-3610: a plan whose decision is not complete is refused; scenarios SC-AK-1971,
   SC-AK-1972 and SC-AK-1973.
+- 2026-11-26 — task RT-3621: on a machine without `timeout` the call of the missing command failed
+  and every edit passed unjudged; the engine now runs under the first limiter the machine has;
+  scenario SC-AK-2021.
 - 2026-11-26 — task RT-3691: while a merge of a reviewed base runs, a side of a conflict block is
   taken in a guarded file without a plan; scenario SC-AK-2016.

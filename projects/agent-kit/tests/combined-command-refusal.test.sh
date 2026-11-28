@@ -41,7 +41,10 @@ open('$PROGRESS', 'w').write('x')
 PY")" 'judged here')" нет
 report "SC-AK-1946 — стрелка в кавычках чтения — не запись" \
     "$(has "$(said $PLACE 'grep -n "a > b" tools/laid.mjs; cp x tools/laid.mjs')" 'judged here: `cp x tools/laid.mjs`')" да
-for read in 'sed -n 1p tools/laid.mjs' 'git diff tools/laid.mjs > /tmp/x' 'cp tools/laid.mjs /tmp/x' 'node tools/laid.mjs' 'grep x tools/laid.mjs <<<"abc"'; do
+# Путь вне дерева не должен уже стоять на машине: `cp` в существующий каталог пишет файл с именем
+# правки внутрь него, и копия читалась бы как запись.
+OUT="$(mktemp -u)"
+for read in 'sed -n 1p tools/laid.mjs' "git diff tools/laid.mjs > $OUT" "cp tools/laid.mjs $OUT" 'node tools/laid.mjs' 'grep x tools/laid.mjs <<<"abc"'; do
     report "SC-AK-1946 — «$read» рядом с правкой не названо" "$(has "$(said $PLACE "$read; cp x tools/laid.mjs")" 'judged here: `cp x tools/laid.mjs`')" да
 done
 report "SC-AK-1946 — длинный русский кусок слов не снимает" "$(has "$(said $PLACE "ls; printf '$(printf 'слово %.0s' {1..80})' > tools/laid.mjs")" 'none of the 2 parts')" да
