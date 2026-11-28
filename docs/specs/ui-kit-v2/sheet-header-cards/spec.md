@@ -86,23 +86,6 @@ checkbox or a switch on the right. The question before closing offers «Apply»,
   last on the right. An icon button of the header is the kit icon button, secondary, round, 40 by 40,
   as the close button is. Until task RT-3748 moves the fields
   of the kit, they keep the action on the right of the header.
-- **What is neither the main action nor the info line stands behind a «⋮» button by default.** A
-  sheet given a template of more opens a round «⋮» button on the right of its header, left of the
-  icon buttons of the application, 8 px apart; the sheet keeps the order of those buttons as the
-  application puts them, so a delete button is the last on the right when the application puts it
-  last. The button opens a second screen of the same sheet: the chevron back on the left, the title
-  in the centre — the one the template names, else «More» in the language of the kit, the same
-  words naming the dialog for a screen reader — and the template below it, laid out by the
-  application. The chevron, a swipe, Escape and the back request of the template return to the first
-  screen; the application closing the sheet closes both, and the sheet opens again on its first
-  screen. A sheet with its own header gets the sign that it has a second screen and the request to
-  open it, and draws «⋮» itself. The template belongs to the sheet it is written in and stands as its
-  direct child — inside a control block or a grouping container, not inside an element: a sheet
-  declared in the content of another keeps its template to itself. A component that draws the sheet
-  in its own template — the side panel, the choice panel — passes the template by an input, and it
-  wins over one in the content. A sheet with no such template has no «⋮»
-  and no second screen. What must stay in sight an application still puts in the header, the footer
-  or the body.
 - **The sheet of the page filters has a reset in its footer.** The reset reports to the
   application, which clears the filters; the sheet stays open and no longer counts an input as not
   applied. With no filter set and nothing typed the reset is off.
@@ -257,4 +240,5 @@ None.
 |            | radio; the look is unchanged (RT-3709)                                                                |
 | 2026-11-27 | The place of the main action and the info line in the footer, icon buttons of the header,             |
 |            | scenarios 1923…1926 (RT-3747)                                                                         |
-| 2026-11-27 | The more behind «⋮» in the header and its second screen, scenarios 1927…1933 (RT-3747)                |
+| 2026-11-27 | The more behind «⋮» in the header and its second screen; moved with scenarios 1927…1933 into the      |
+|            | subdomain `../sheet-more/spec.md` on 28 November (RT-3747)                                            |

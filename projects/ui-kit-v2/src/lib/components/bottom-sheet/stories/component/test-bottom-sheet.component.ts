@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { FieldTree, form, FormField } from '@angular/forms/signals';
 
 import { RtButtonDirective } from '../../../button/rt-button.directive';
 import { RtIconButtonComponent } from '../../../icon-button/rt-icon-button.component';
@@ -50,7 +50,7 @@ export type TBottomSheetLayout = 'plain' | 'footer-action' | 'header-icons' | 'm
                     <!-- Дополнительное — за «⋮»: второй экран той же шторки, раскладку задаёт приложение. -->
                     <ng-template rtSheetMore>
                         <div style="padding: var(--rt-space-5) var(--rt-space-5) var(--rt-space-2)">
-                            <rt-toggle-switch label="Свободные" size="md" [formControl]="onlyFree" />
+                            <rt-toggle-switch label="Свободные" size="md" [formField]="filters.onlyFree" />
                         </div>
                     </ng-template>
                     <span sheetInfo>Найдено: 12</span>
@@ -71,7 +71,7 @@ export type TBottomSheetLayout = 'plain' | 'footer-action' | 'header-icons' | 'm
         RtButtonDirective,
 
         // forms
-        ReactiveFormsModule,
+        FormField,
         RtToggleSwitchComponent,
     ],
 })
@@ -79,5 +79,6 @@ export class TestRtBottomSheetComponent {
     public open: boolean = false;
     public layout: TBottomSheetLayout = 'plain';
 
-    public readonly onlyFree: FormControl<boolean> = new FormControl<boolean>(true, { nonNullable: true });
+    /** Отборы второго экрана «Ещё»: переключатель «Свободные» включён, как на кадре 8762:2124. */
+    public readonly filters: FieldTree<{ onlyFree: boolean }> = form(signal<{ onlyFree: boolean }>({ onlyFree: true }));
 }
