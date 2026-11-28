@@ -40,6 +40,16 @@
                     <ng-content select="[sheetHeader]" />
                 </div>
                 <div rtElem="action" qa-dataid="bottom-sheet-action">
+                    <!-- «⋮» стоит левее значков приложения: «Удалить», если она есть, остаётся крайней справа. -->
+                    @if (moreScreen.has()) {
+                        <rt-icon-button
+                            variant="secondary"
+                            radius="full"
+                            icon="ellipsis-v"
+                            qa-dataid="bottom-sheet-more"
+                            [ariaLabel]="t().bottomSheetMore"
+                            (clicked)="moreScreen.open()" />
+                    }
                     <ng-content select="[sheetAction]" />
                 </div>
             </div>
@@ -48,13 +58,31 @@
             <ng-content />
         </div>
         <div rtElem="footer" qa-dataid="bottom-sheet-footer">
+            <!-- Справка подвала и главная кнопка стоят и рядом со своим шаблоном подвала: им их не заменить. -->
+            <div rtElem="info" qa-dataid="bottom-sheet-info">
+                <ng-content select="[sheetInfo]" />
+            </div>
             @if (footerTpl(); as ownFooter) {
                 <ng-container [ngTemplateOutlet]="ownFooter" [ngTemplateOutletContext]="templateContext" />
             } @else {
                 <ng-content select="[sheetFooter]" />
             }
+            <div rtElem="primary" qa-dataid="bottom-sheet-primary">
+                <ng-content select="[sheetPrimary]" />
+            </div>
         </div>
     </div>
+    <!-- Второй экран «Ещё»: шторка, открытая из этой, встаёт на её место с шевроном «назад». -->
+    @if (moreScreen.directive(); as more) {
+        <rt-bottom-sheet
+            qa-dataid="bottom-sheet-more-screen"
+            [open]="moreScreen.opened()"
+            [ariaLabel]="more.rtSheetMoreTitle() ?? t().bottomSheetMore"
+            (openChange)="moreScreen.opened.set($event)">
+            <span sheetHeader>{{ more.rtSheetMoreTitle() ?? t().bottomSheetMore }}</span>
+            <ng-container [ngTemplateOutlet]="more.template" [ngTemplateOutletContext]="moreScreen.context" />
+        </rt-bottom-sheet>
+    }
     <!-- Экран вопроса: его код приходит при первом вопросе, шторка ставит его сюда сама. -->
     <ng-container #confirmSlot />
 </ng-container>

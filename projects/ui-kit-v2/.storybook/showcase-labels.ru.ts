@@ -64,6 +64,7 @@ export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     asideCopyErrorInfo: 'Скопировать ошибку',
     asideRequestError: 'Ошибка запроса',
     bottomSheetClose: 'Закрыть',
+    bottomSheetMore: 'Ещё',
     bottomSheetUnsavedDiscard: 'Не применять',
     bottomSheetUnsavedMessage: 'Вы изменили выбор и не применили его.',
     bottomSheetUnsavedTitle: 'Применить изменения?',

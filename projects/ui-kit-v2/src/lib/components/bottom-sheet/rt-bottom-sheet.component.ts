@@ -39,11 +39,13 @@ import { RtSheetConfirmPlace } from './rt-sheet-confirm-place';
 import { IRtSheetKeyboardBox, rtWatchSheetKeyboard } from './rt-bottom-sheet-keyboard';
 import { RtBottomSheetScreens } from './rt-bottom-sheet-screens';
 import { RtBottomSheetStackService } from './rt-bottom-sheet-stack.service';
-import { focusLeftBehind, innerFocus, isTypingTarget, outerFocus } from './rt-bottom-sheet.logic';
+import { focusLeftBehind, innerFocus, isTypingTarget, outerFocus, sheetConfirmText } from './rt-bottom-sheet.logic';
 import { RtSheetDrag } from './rt-sheet-drag';
 import { IRtSheetConfirmLabels, IRtSheetTemplateContext, TRtSheetCloseReason } from './rt-bottom-sheet.model';
 import { RtSheetFooterDirective } from './rt-sheet-footer.directive';
 import { RtSheetHeaderDirective } from './rt-sheet-header.directive';
+import { RtSheetMoreScreen } from './rt-sheet-more-screen';
+import { RtSheetMoreDirective } from './rt-sheet-more.directive';
 
 const BEM_BLOCK: string = 'rt-bottom-sheet';
 
@@ -169,6 +171,13 @@ export class RtBottomSheetComponent {
 
     protected readonly ownHeader: Signal<RtSheetHeaderDirective | undefined> = contentChild(RtSheetHeaderDirective);
     protected readonly ownFooter: Signal<RtSheetFooterDirective | undefined> = contentChild(RtSheetFooterDirective);
+    /** Шаблон «⋮» — прямое дитя шторки: шаблон шторки, объявленной в содержимом этой, остаётся ей. */
+    protected readonly ownMore: Signal<RtSheetMoreDirective | undefined> = contentChild(RtSheetMoreDirective, { descendants: false });
+    protected readonly moreScreen: RtSheetMoreScreen = new RtSheetMoreScreen(
+        this.ownMore,
+        (): RtSheetMoreDirective | null => this.moreTemplate(),
+        (): boolean => this.open()
+    );
 
     /** Своя шапка: шаблон из входа сильнее шаблона директивы в содержимом. Пусто — шапка шторки. */
     protected readonly headerTpl: Signal<TemplateRef<IRtSheetTemplateContext> | null> = computed(
@@ -181,15 +190,8 @@ export class RtBottomSheetComponent {
     );
 
     /** Слова вопроса: свои из входа, без них — вопрос о неприменённом выборе. */
-    protected readonly confirmText: Signal<IRtSheetConfirmLabels> = computed(
-        (): IRtSheetConfirmLabels =>
-            this.confirmLabels() ?? {
-                title: this.t().bottomSheetUnsavedTitle,
-                message: this.t().bottomSheetUnsavedMessage,
-                apply: this.t().uiApply,
-                discard: this.t().bottomSheetUnsavedDiscard,
-                stay: this.t().uiCancel,
-            }
+    protected readonly confirmText: Signal<IRtSheetConfirmLabels> = computed((): IRtSheetConfirmLabels =>
+        sheetConfirmText(this.confirmLabels(), this.t())
     );
 
     public readonly open: InputSignalWithTransform<boolean, BooleanInput> = input.required<boolean, BooleanInput>({
@@ -230,6 +232,9 @@ export class RtBottomSheetComponent {
     public readonly footerTemplate: InputSignal<TemplateRef<IRtSheetTemplateContext> | null> =
         input<TemplateRef<IRtSheetTemplateContext> | null>(null);
 
+    /** Шаблон «Ещё» входом — у того, кто ставит шторку в своём шаблоне: асайд, панель выбора. */
+    public readonly moreTemplate: InputSignal<RtSheetMoreDirective | null> = input<RtSheetMoreDirective | null>(null);
+
     /**
      * Свои слова вопроса перед закрытием — у панели, которая спрашивает о правках записи, а не о
      * выборе. Пусто — слова шторки о неприменённом выборе.
@@ -261,12 +266,17 @@ export class RtBottomSheetComponent {
     /** Человек остался: ответил на вопрос третьей кнопкой или снял его Escape. */
     public readonly stayRequest: OutputEmitterRef<void> = output<void>();
 
-    /** Своему шаблону — просьбы закрыть (как «×») и применить и признак второго экрана; по нему шапка `rt-aside` рисует «назад». */
+    /**
+     * Своему шаблону — просьбы закрыть (как «×») и применить, признак второго экрана (по нему шапка
+     * `rt-aside` рисует «назад») и «⋮»: есть ли экран «Ещё» и просьба его открыть.
+     */
     public readonly templateContext: IRtSheetTemplateContext = {
         $implicit: this.#requestClose,
         close: this.#requestClose,
         apply: this.#requestApply,
         nested: this.nested,
+        hasMore: this.moreScreen.has,
+        openMore: this.moreScreen.open,
     };
 
     constructor() {
@@ -402,8 +412,11 @@ export class RtBottomSheetComponent {
     protected onConfirmCancel(): void {
         this.confirming.set(false);
         // Панель под вопросом `inert` до следующей отрисовки, и фокус в неё не встаёт: он падал на
-        // страницу. Запрет снимается здесь же, до фокуса; отрисовка снимет его второй раз.
-        this.#host.querySelectorAll<HTMLElement>(':scope > [inert]').forEach((node: HTMLElement): void => node.removeAttribute('inert'));
+        // страницу. Запрет снимается здесь же, до фокуса; отрисовка снимет его второй раз. Только у своих
+        // подложки и панели: закрытый второй экран «Ещё» — тоже дитя хозяина, и его запрет остаётся.
+        this.#host
+            .querySelectorAll<HTMLElement>(':scope > .rt-bottom-sheet__backdrop[inert], :scope > .rt-bottom-sheet__panel[inert]')
+            .forEach((node: HTMLElement): void => node.removeAttribute('inert'));
         // Закрыть просили подложкой или свайпом — узла с фокусом не было: фокус берёт панель шторки,
         // иначе он упал бы на страницу под открытой шторкой.
         (this.#askedFrom ?? this.#host.querySelector<HTMLElement>('[role="dialog"]'))?.focus({ preventScroll: true });

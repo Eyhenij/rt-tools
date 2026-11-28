@@ -2,12 +2,14 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { RtButtonDirective } from '../../../button/rt-button.directive';
+import { RtIconButtonComponent } from '../../../icon-button/rt-icon-button.component';
 import { RtToggleSwitchComponent } from '../../../toggle-switch/rt-toggle-switch.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtBottomSheetComponent } from '../../rt-bottom-sheet.component';
 import { RtSheetFooterDirective } from '../../rt-sheet-footer.directive';
+import { RtSheetMoreDirective } from '../../rt-sheet-more.directive';
 import { RtSheetHeaderDirective } from '../../rt-sheet-header.directive';
 import { OwnSheetStackDirective } from './own-sheet-stack.directive';
 
@@ -131,16 +133,15 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'header' | 'footer' | 
                                     rtStoryOwnSheetStack
                                     style="position: relative; contain: paint; inline-size: 100%; height: 26rem; border: 1px dashed var(--rt-color-border-subtle)">
                                     @switch (header) {
-                                        @case ('действие справа') {
+                                        @case ('значок в шапке, действие в подвале') {
                                             <rt-bottom-sheet [open]="true">
                                                 <span sheetHeader>Каналы связи</span>
-                                                <button
-                                                    type="button"
+                                                <rt-icon-button
                                                     sheetAction
-                                                    rtButton
-                                                    size="sm"
-                                                    label="Готово"
-                                                    aria-label="Готово"></button>
+                                                    variant="secondary"
+                                                    radius="full"
+                                                    icon="reset"
+                                                    ariaLabel="Сбросить" />
                                                 <button type="button" rtButton label="Почта" aria-label="Почта" appearance="text"></button>
                                                 <button
                                                     type="button"
@@ -148,47 +149,67 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'header' | 'footer' | 
                                                     label="Телефон"
                                                     aria-label="Телефон"
                                                     appearance="text"></button>
+                                                <span sheetInfo>Выбрано: 2</span>
+                                                <button
+                                                    type="button"
+                                                    sheetPrimary
+                                                    rtButton
+                                                    size="md"
+                                                    label="Готово"
+                                                    aria-label="Готово"></button>
                                             </rt-bottom-sheet>
                                         }
                                         @case ('во всю высоту') {
                                             <rt-bottom-sheet fullHeight [open]="true">
                                                 <span sheetHeader>Отборы</span>
-                                                <button
-                                                    type="button"
+                                                <rt-icon-button
                                                     sheetAction
-                                                    rtButton
-                                                    size="sm"
-                                                    label="Применить"
-                                                    aria-label="Применить"></button>
+                                                    variant="secondary"
+                                                    radius="full"
+                                                    icon="reset"
+                                                    ariaLabel="Сбросить" />
                                                 <button
                                                     type="button"
                                                     rtButton
                                                     label="Статус"
                                                     aria-label="Статус"
                                                     appearance="text"></button>
+                                                <button
+                                                    type="button"
+                                                    sheetPrimary
+                                                    rtButton
+                                                    size="md"
+                                                    label="Применить"
+                                                    aria-label="Применить"></button>
                                             </rt-bottom-sheet>
                                         }
                                         @case ('вопрос перед закрытием') {
                                             <rt-bottom-sheet fullHeight unsaved data-story-ask [open]="true">
                                                 <span sheetHeader>Отборы</span>
-                                                <button
-                                                    type="button"
+                                                <rt-icon-button
                                                     sheetAction
-                                                    rtButton
-                                                    size="sm"
-                                                    label="Применить"
-                                                    aria-label="Применить"></button>
+                                                    variant="secondary"
+                                                    radius="full"
+                                                    icon="reset"
+                                                    ariaLabel="Сбросить" />
                                                 <button
                                                     type="button"
                                                     rtButton
                                                     label="Статус"
                                                     aria-label="Статус"
                                                     appearance="text"></button>
+                                                <button
+                                                    type="button"
+                                                    sheetPrimary
+                                                    rtButton
+                                                    size="md"
+                                                    label="Применить"
+                                                    aria-label="Применить"></button>
                                             </rt-bottom-sheet>
                                         }
                                         @case ('свои шапка и подвал') {
                                             <rt-bottom-sheet [open]="true">
-                                                <ng-template rtSheetHeader let-close>
+                                                <ng-template rtSheetHeader let-close let-hasMore="hasMore" let-openMore="openMore">
                                                     <button
                                                         type="button"
                                                         rtButton
@@ -198,13 +219,20 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'header' | 'footer' | 
                                                         aria-label="Назад"
                                                         (click)="close()"></button>
                                                     <strong style="flex: 1 1 auto; text-align: center">Свой заголовок</strong>
-                                                    <button
-                                                        type="button"
-                                                        rtButton
-                                                        size="sm"
-                                                        appearance="outlined"
-                                                        label="Сбросить"
-                                                        aria-label="Сбросить"></button>
+                                                    @if (hasMore()) {
+                                                        <rt-icon-button
+                                                            variant="secondary"
+                                                            radius="full"
+                                                            icon="ellipsis-v"
+                                                            ariaLabel="Ещё"
+                                                            (clicked)="openMore()" />
+                                                    }
+                                                    <rt-icon-button variant="secondary" radius="full" icon="reset" ariaLabel="Сбросить" />
+                                                </ng-template>
+                                                <ng-template rtSheetMore>
+                                                    <div style="padding: var(--rt-space-5) var(--rt-space-5) var(--rt-space-2)">
+                                                        <rt-toggle-switch label="Свободные" size="md" [formControl]="onlyFree" />
+                                                    </div>
                                                 </ng-template>
                                                 <button
                                                     type="button"
@@ -242,16 +270,15 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'header' | 'footer' | 
                                 @for (action of longActions; track action) {
                                     <button type="button" rtButton appearance="text" [label]="action" [attr.aria-label]="action"></button>
                                 }
-                                <rt-toggle-switch sheetFooter label="Свободные" [formControl]="onlyFree" />
-                                <button
-                                    type="button"
-                                    sheetFooter
-                                    rtButton
-                                    label="Сбросить"
-                                    aria-label="Сбросить"
-                                    appearance="outlined"
-                                    style="margin-inline-start: auto"></button>
-                                <button type="button" sheetFooter rtButton label="Применить" aria-label="Применить"></button>
+                                <rt-icon-button sheetAction variant="secondary" radius="full" icon="reset" ariaLabel="Сбросить" />
+                                <span sheetInfo>Найдено: 12</span>
+                                <!-- Дополнительное — за «⋮» в шапке: второй экран той же шторки. -->
+                                <ng-template rtSheetMore>
+                                    <div style="padding: var(--rt-space-5) var(--rt-space-5) var(--rt-space-2)">
+                                        <rt-toggle-switch label="Свободные" size="md" [formControl]="onlyFree" />
+                                    </div>
+                                </ng-template>
+                                <button type="button" sheetPrimary rtButton size="md" label="Применить" aria-label="Применить"></button>
                             </rt-bottom-sheet>
                         </div>
                     </ng-template>
@@ -297,7 +324,9 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'header' | 'footer' | 
     imports: [
         // components
         RtBottomSheetComponent,
+        RtIconButtonComponent,
         RtSheetFooterDirective,
+        RtSheetMoreDirective,
         RtSheetHeaderDirective,
 
         // directives
@@ -320,10 +349,16 @@ export class TestRtBottomSheetMatrixComponent {
     public readonly opens: readonly boolean[] = [false, true];
     public readonly contents: readonly string[] = ['без шапки', 'с шапкой', 'длинное содержимое', 'пусто'];
     /**
-     * Шапка с действием, шторка во всю высоту ящика, вопрос, который история открывает нажатием «×»,
-     * и шторка со своими шаблонами шапки и подвала.
+     * Значок сброса в шапке и главное действие в подвале на всю ширину со справкой над ним, шторка во всю
+     * высоту ящика, вопрос, который история открывает нажатием «×», и шторка со своими шаблонами шапки
+     * и подвала.
      */
-    public readonly headers: readonly string[] = ['действие справа', 'во всю высоту', 'вопрос перед закрытием', 'свои шапка и подвал'];
+    public readonly headers: readonly string[] = [
+        'значок в шапке, действие в подвале',
+        'во всю высоту',
+        'вопрос перед закрытием',
+        'свои шапка и подвал',
+    ];
 
     public readonly manyActions: readonly string[] = ['Скачать', 'Отправить', 'Переименовать', 'Дублировать', 'Архивировать', 'Удалить'];
 

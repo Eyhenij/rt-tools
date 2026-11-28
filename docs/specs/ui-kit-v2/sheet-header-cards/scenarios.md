@@ -437,3 +437,39 @@ it; a sheet removed in the middle of a drag stops listening to the touches of th
 finger on the handle in the middle of a drag neither resets nor takes over the gesture
 
 Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.component.spec.ts`.
+
+### SC-UKV-1923 — the main action stands in the footer at the full width, the last in it
+
+Given a sheet with a main action and a node of its own footer
+When it is open
+Then the main action is a line of its own at the full width of the footer and stands after the node
+of the footer and after the footer a side panel puts there
+
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-footer-action.spec.ts`.
+
+### SC-UKV-1924 — the info line stands above the main action, in its centre
+
+Given a sheet with an info line and a main action
+When it is open
+Then the info line is a muted line of its own above the main action, in its centre
+
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-footer-action.spec.ts`.
+
+### SC-UKV-1925 — the places of the footer stand beside a footer template, an empty footer takes no room
+
+Given a sheet with a footer template, an info line and a main action
+When it is open
+Then the template, the info line and the main action all stand in the footer; a sheet with none of
+them keeps its two places empty, and the footer takes no room
+
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-footer-action.spec.ts`.
+
+### SC-UKV-1926 — the right of the header holds several icon buttons 8 px apart
+
+Given a sheet with two buttons on the right of its header
+When it is open
+Then both stand on the right of the header, 8 px apart
+
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet-footer-action.spec.ts`.
+
+The scenarios of the more behind «⋮», SC-UKV-1927…1933, stand in `../sheet-more/scenarios.md`.
