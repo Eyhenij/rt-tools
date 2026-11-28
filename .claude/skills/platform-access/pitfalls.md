@@ -1,4 +1,4 @@
-<!-- rt-kit v0.42.0 · pitfalls/platform-access.md · 61e696c4e80d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.1 · pitfalls/platform-access.md · 61e696c4e80d · правится надстройкой, не здесь -->
 # Browser environment — how it works here — cold part
 
 What the rule `platform-access` handed over when cut to its statements, every article whole.

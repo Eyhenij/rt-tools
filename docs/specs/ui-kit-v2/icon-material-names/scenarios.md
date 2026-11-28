@@ -284,7 +284,16 @@ Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon.registry.spec.ts`,
 
 Given two sets lead to one file of the set `kit`.
 When both are asked, and the same address is asked again after its refusal.
-Then the address is requested once.
+Then the address is requested once, and a later asker gets the file that has arrived.
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon.registry.spec.ts`.
+
+### SC-UKV-1895 — a response draws the icon before its stream completes
+
+Given an interceptor of the application gives the response and does not complete the stream.
+When an icon is asked and the first address answers with a page instead of a file.
+Then the fallback address is asked, and the icon is drawn. An error that follows a response does not
+take the file from a later asker.
 
 Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon.registry.spec.ts`.
 

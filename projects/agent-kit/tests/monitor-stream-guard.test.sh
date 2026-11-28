@@ -1,0 +1,164 @@
+#!/usr/bin/env bash
+# Сценарии SC-AK-2017: Monitor, который печатает строку на каждый шаг живой своей фоновой задачи, отказан —
+# конец задачи и так придёт уведомлением. Ожидание одной строки, опрос PR и таймер проходят.
+#
+# Каждый случай собирает запись сессии с фоновыми задачами, как их пишет хост, и зовёт хук на вызове
+# Monitor. Вторая половина — команды Monitor из записей проекта дословно, файл fixtures/monitor-records.tsv.
+. "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
+
+echo "Monitor по своему фоновому"
+
+H="$ASSETS/hooks/monitor-stream-guard.sh"
+TMP="$(mktemp -d)"
+trap 'rm -rf "$TMP"' EXIT
+export TMPDIR="$TMP/"
+unset RT_FLOW_ENGINE RT_MONITOR_CALL_LIMIT
+
+n=0
+fresh() { n=$((n + 1)); P="$TMP/r$n.jsonl"; : >"$P"; }
+put() { printf '%s\n' "$1" >>"$P"; }
+# A Bash task in the background: the call, then the host's answer with the task number and its output file.
+bg() {
+    put "$(jq -cn --arg id "$1" --arg c "$2" '{type:"assistant",timestamp:"2026-11-26T10:00:00Z",message:{content:[{type:"tool_use",id:("t"+$id),name:"Bash",input:{command:$c,run_in_background:true}}]}}')"
+    put "$(jq -cn --arg id "$1" --arg o "${3:-$TMP/tasks/$1.output}" '{type:"user",timestamp:"2026-11-26T10:00:01Z",toolUseResult:{backgroundTaskId:$id},message:{content:[{type:"tool_result",tool_use_id:("t"+$id),content:("Command running in background with ID: "+$id+". Output is being written to: "+$o)}]}}')"
+}
+# A Bash call in the background whose answer has not come yet: the same reply as the Monitor.
+pending() { put "$(jq -cn --arg id "$1" --arg c "$2" '{type:"assistant",timestamp:"2026-11-26T10:00:00Z",message:{content:[{type:"tool_use",id:$id,name:"Bash",input:{command:$c,run_in_background:true}}]}}')"; }
+agent() {
+    put "$(jq -cn --arg id "$1" '{type:"assistant",timestamp:"2026-11-26T10:00:00Z",message:{content:[{type:"tool_use",id:("t"+$id),name:"Agent",input:{prompt:"x",run_in_background:true}}]}}')"
+    put "$(jq -cn --arg id "$1" --arg o "$2" '{type:"user",timestamp:"2026-11-26T10:00:01Z",toolUseResult:{isAsync:true,agentId:$id},message:{content:[{type:"tool_result",tool_use_id:("t"+$id),content:("Async agent launched. output_file: "+$o)}]}}')"
+}
+over() { put "$(jq -cn --arg id "$1" '{type:"user",timestamp:"2026-11-26T10:05:00Z",message:{content:("<task-notification><task-id>"+$id+"</task-id><status>completed</status></task-notification>")}}')"; }
+stopped() { put "$(jq -cn --arg id "$1" '{type:"assistant",timestamp:"2026-11-26T10:04:00Z",message:{content:[{type:"tool_use",id:"k",name:"TaskStop",input:{task_id:$id}}]}}')"; }
+# The call of Monitor: «deny» or «PASS»; the reason of the last call lands in the file $TMP/reason.
+mon() {
+    local out
+    out="$(jq -cn --arg p "${2-$P}" --arg c "$1" --arg w "${3:-$TMP}" '{session_id:"s",hook_event_name:"PreToolUse",tool_name:"Monitor",tool_input:{command:$c},transcript_path:$p,cwd:$w}' | (cd "$TMP" && CLAUDE_PROJECT_DIR="$TMP" bash "$H" 2>/dev/null))"
+    printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecisionReason // empty' >"$TMP/reason" 2>/dev/null
+    [ -z "$out" ] && echo PASS || printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision // "deny"'
+}
+case_of() { report "SC-AK-2017 — $1" "$2" "$3"; }
+L="$TMP/set.log"
+
+# --- строка на каждый шаг по своему фоновому — отказ --------------------------------------------
+fresh; bg b1 "bash set.sh > $L 2>&1"
+case_of 'tail -f по файлу, который пишет задача' "$(mon "tail -f $L | grep --line-buffered red")" deny
+case_of 'отказ называет задачу и файл' "$(grep -c "task b1, over $L" "$TMP/reason")" 1
+case_of 'tail -F' "$(mon "tail -F $L")" deny
+case_of 'tail --follow' "$(mon "tail --follow=name $L")" deny
+case_of 'tail -fn 20' "$(mon "tail -fn 20 $L")" deny
+case_of 'tail -n 0 -f по выводу задачи' "$(mon "tail -n 0 -f $TMP/tasks/b1.output | grep --line-buffered step")" deny
+case_of 'цикл печатает на каждом круге' "$(mon "while true; do tail -1 $L; sleep 5; done")" deny
+case_of 'цикл: печать, затем присваивание' "$(mon "last=; while true; do cur=\$(tail -1 $L); [ \"\$cur\" != \"\$last\" ] && echo \"\$cur\" && last=\"\$cur\"; sleep 5; done")" deny
+fresh; bg b2 "bash set.sh | tee -a $L"
+case_of 'файл через tee -a' "$(mon "tail -f $L")" deny
+fresh; bg b3 "bash set.sh >> $L"
+case_of 'файл через >>' "$(mon "tail -f $L")" deny
+fresh; bg b4 'bash set.sh > "${TMPDIR:-/tmp}/push-ahead.log" 2>&1'
+case_of 'путь через ${TMPDIR:-/tmp} в обеих командах' "$(mon 'tail -f "${TMPDIR:-/tmp}/push-ahead.log"')" deny
+fresh; bg b5 'bash set.sh > "${TMPDIR:-/tmp}/push-ahead-$(basename "$PWD").log" 2>&1'
+case_of 'путь через $(basename "$PWD") по cwd хука' "$(mon "tail -f ${TMP}/push-ahead-$(basename "$TMP").log")" deny
+fresh; bg b6 "S=$TMP/pad; bash set.sh > \$S/prepush.log 2>&1"
+case_of 'присваивание S= в команде задачи' "$(mon "L=$TMP/pad/prepush.log; tail -n 0 -F \"\$L\" | grep --line-buffered red")" deny
+fresh; pending p1 "bash set.sh > $L 2>&1"
+case_of 'фоновое того же ответа, ответа ещё нет' "$(mon "tail -f $L")" deny
+fresh; bg b7 "bash set.sh > $L 2>&1"
+case_of 'tail -f в фоне команды, затем ожидание' "$(mon "tail -n0 -f $L | grep --line-buffered red & until grep -q exit $L; do sleep 2; done")" deny
+case_of 'tail -fn0 и tail -50f' "$(mon "tail -fn0 $L")$(mon "tail -50f $L")" denydeny
+case_of 'обёртки timeout, stdbuf, bash -c' "$(mon "timeout 3600 tail -f $L | grep --line-buffered red")$(mon "stdbuf -oL tail -f $L")$(mon "bash -c 'tail -f $L'")" denydenydeny
+case_of 'grep -m 500 после tail -f — не одна строка' "$(mon "tail -f $L | grep --line-buffered -m 500 red")" deny
+case_of 'цикл в { } и в then' "$(mon "{ while true; do tail -1 $L; sleep 5; done; }")$(mon "if true; then while true; do tail -1 $L; sleep 5; done; fi")" denydeny
+case_of 'echo done в теле не закрывает цикл' "$(mon "while true; do echo done; tail -1 $L; sleep 5; done")" deny
+case_of 'ls в цикле печатает' "$(mon "while true; do ls -la $L; sleep 5; done")" deny
+case_of 'break по условию после печати — печать на каждом круге' "$(mon "while true; do tail -1 $L; [ -f $TMP/flag ] && break; sleep 5; done")" deny
+case_of 'путь через /private, /./ и по cwd' "$(mon "tail -f /private$L")$(mon "tail -f $TMP/./set.log")$(mon 'tail -f set.log' "$P" "$TMP")" denydenydeny
+case_of 'печать || break — печать на каждом круге' "$(mon "while true; do tail -1 $L || break; sleep 5; done")" deny
+case_of '2>/dev/null на печати не глушит вывод' "$(mon "while true; do tail -1 $L 2>/dev/null; sleep 5; done")" deny
+case_of 'LC_ALL=C, /usr/bin/tail, bash -lc, <(…)' "$(mon "LC_ALL=C tail -f $L")$(mon "/usr/bin/tail -f $L")$(mon "bash -lc 'tail -f $L'")$(mon "grep --line-buffered red <(tail -n0 -f $L)")" denydenydenydeny
+fresh; bg b11 "S='$TMP/q'; bash set.sh > \$S/a.log; bash set.sh > '$TMP/b.log'; bash -c 'make > $TMP/c.log'; make>$TMP/d.log; x | tee --append $TMP/e.log $TMP/f.log"
+case_of "цели: S='…', '…', sh -c, без пробела, второй файл tee" "$(mon "tail -f $TMP/q/a.log")$(mon "tail -f $TMP/b.log")$(mon "tail -f $TMP/c.log")$(mon "tail -f $TMP/d.log")$(mon "tail -f $TMP/f.log")" denydenydenydenydeny
+fresh; bg b8 "bash set.sh 2> $L"
+case_of 'файл через 2>' "$(mon "tail -f $L")" deny
+fresh; bg b9 "bash set.sh | tee -ai $L"
+case_of 'файл через tee -ai' "$(mon "tail -f $L")" deny
+fresh; bg b10 "cd $TMP && bash set.sh > set.log 2>&1"
+case_of 'относительная цель задачи после cd' "$(mon "tail -f $L")" deny
+
+# --- одна строка, чужой файл, кончившаяся задача — проход ---------------------------------------
+fresh; bg b1 "bash set.sh > $L 2>&1"
+case_of 'until grep -q, затем tail -3' "$(mon "until grep -q '^exit' $L; do sleep 5; done; tail -3 $L")" PASS
+case_of 'цикл: печать и break в одной ветке' "$(mon "while true; do if grep -q exit $L; then tail -3 $L; break; fi; sleep 5; done")" PASS
+case_of 'конвейер, затем break' "$(mon "while true; do if grep -q exit $L; then grep red $L | tail -3 | cut -c1-80; break; fi; sleep 5; done")" PASS
+case_of 'tail -f | grep -m 1' "$(mon "tail -f $L | grep -m 1 exit")" PASS
+case_of 'echo внутри $(…) в цикле' "$(mon "while true; do n=\$(grep -c x $L || echo 0); [ \"\$n\" -gt 3 ] && break; sleep 5; done")" PASS
+case_of 'таймер' "$(mon 'sleep 600; echo tick')" PASS
+case_of 'файл, который не пишет ни одна задача' "$(mon "tail -f $TMP/other.log")" PASS
+case_of 'другой инструмент' "$(jq -cn --arg p "$P" '{hook_event_name:"PreToolUse",tool_name:"Bash",tool_input:{command:"tail -f /x"},transcript_path:$p}' | bash "$H" 2>/dev/null | wc -c | tr -d ' ')" 0
+case_of 'печать, затем две строки до break' "$(mon "while true; do if grep -q exit $L; then echo '=== finished'; tail -3 $L; break; fi; sleep 5; done")" PASS
+case_of 'печать, затем rm и exit 0' "$(mon "while true; do if grep -q exit $L; then tail -3 $L; rm -f $TMP/lock; exit 0; fi; sleep 5; done")" PASS
+case_of 'файл с тем же началом' "$(mon "tail -f $L.old")" PASS
+case_of 'одна строка: grep --max-count 1, awk …exit, sed …q, head --lines=1' "$(mon "tail -f $L | grep --line-buffered --max-count 1 exit")$(mon "tail -f $L | awk '/exit/{print; exit}'")$(mon "tail -f $L | sed -n '/exit/{p;q}'")$(mon "tail -f $L | head --lines=1")" PASSPASSPASSPASS
+case_of 'until ls &>/dev/null, until grep -m1' "$(mon "until ls $L &>/dev/null; do sleep 2; done; tail -3 $L")$(mon "until grep -m1 exit $L; do sleep 5; done")" PASSPASS
+case_of 'печать во вложенном if, внешний break' "$(mon "while true; do if grep -q exit $L; then if grep -q FAIL $L; then echo FAIL; else echo OK; fi; break; fi; sleep 5; done")" PASS
+case_of 'печать, else с continue, затем break' "$(mon "while true; do if grep -q exit $L; then tail -3 $L; else sleep 5; continue; fi; break; done")" PASS
+case_of '( cd … && rm … ) и (( n++ )) до break' "$(mon "while true; do if grep -q exit $L; then tail -3 $L; ( cd $TMP && rm -f lock ); (( n++ )); break; fi; sleep 5; done")" PASS
+case_of 'апостроф в комментарии, echo done до break' "$(mon "while true; do if grep -q exit $L; then tail -3 $L # it's over
+echo done; break; fi; sleep 5; done")" PASS
+fresh; bg b1 "node -e 'process.exit(+v > 1.5)'; bash set.sh > $L"
+case_of 'число 1.5 — не путь' "$(mon 'while true; do gh pr checks 1 | tail -3; sleep 1.5; done')" PASS
+fresh; bg b1 "bash set.sh > $L 2>&1"
+fresh; bg b1 "node --input-type=module > $TMP/sizes.txt <<'EOF'
+const s = [3, 1].sort((a, b) => a - b);
+EOF"
+bg b2 "awk '\$3 > 0 {print}' data.csv"
+bg b3 "bash set.sh > log 2>&1"
+case_of 'стрелка heredoc, сравнение awk, цель без пути — опрос PR' "$(mon 'while true; do gh pr checks 3074 | tail -3; sleep 60; done')$(mon 'while true; do gh run view 1 --log-failed | tail -1; sleep 30; done')" PASSPASS
+fresh; bg b1 "cd /repo && pnpm test > out.log"
+case_of 'тот же файл в другом каталоге' "$(mon 'tail -f /other/out.log')" PASS
+fresh; bg b1 "bash set.sh > $L 2>&1"; over b1
+case_of 'задача кончилась' "$(mon "tail -f $L")" PASS
+fresh; bg b1 "bash set.sh > $L 2>&1"; stopped b1
+case_of 'задача снята TaskStop' "$(mon "tail -f $L")" PASS
+fresh; agent a1 "$TMP/tasks/a1.output"
+case_of 'вывод агента — агент не фоновая команда' "$(mon "tail -f $TMP/tasks/a1.output")" PASS
+fresh
+case_of 'фоновых нет' "$(mon "tail -f $L")" PASS
+
+# --- запись и движок: проход без отказа ----------------------------------------------------------
+case_of 'запись без пути' "$(mon "tail -f $L" '')" PASS
+fresh; put 'не JSON {'
+case_of 'неразборная запись' "$(mon "tail -f $L")" PASS
+fresh; bg b1 "bash set.sh > $L 2>&1"
+printf '%s\n' "import { writeFileSync } from 'node:fs'; writeFileSync('$TMP/asked', 'x'); setTimeout(() => {}, 5000);" >"$TMP/slow.mjs"
+case_of 'движок дольше предела' "$(RT_FLOW_ENGINE="$TMP/slow.mjs" RT_MONITOR_CALL_LIMIT=1 mon "tail -f $L")" PASS
+printf '%s\n' 'throw new Error("broken");' >"$TMP/broken.mjs"
+case_of 'упавший движок' "$(RT_FLOW_ENGINE="$TMP/broken.mjs" mon "tail -f $L")" PASS
+rm -f "$TMP/asked"
+RT_FLOW_ENGINE="$TMP/slow.mjs" mon 'sleep 600; echo tick' >/dev/null
+RT_FLOW_ENGINE="$TMP/slow.mjs" mon "gh pr checks 1 --watch" >/dev/null
+case_of 'без follow и без цикла с печатью движок не зовётся' "$([ -f "$TMP/asked" ] && echo asked || echo none)" none
+
+# --- команды Monitor из записей проекта ----------------------------------------------------------
+# Каждая строка файла: ожидание, время, каталог, команда, свои фоновые на ту минуту.
+DATA="$ASSETS/../tests/fixtures/monitor-records.tsv"
+while IFS=$'\t' read -r expect at cwd command tasks; do
+    case "$expect" in deny | pass) ;; *) continue ;; esac
+    fresh
+    while IFS= read -r task; do
+        case "$(printf '%s' "$task" | jq -r 'if .pending then "pending" elif .agent then "agent" else "bash" end')" in
+            pending) pending "$(printf '%s' "$task" | jq -r .pending)" "$(printf '%s' "$task" | jq -r .command)" ;;
+            agent) agent "$(printf '%s' "$task" | jq -r .task)" "$(printf '%s' "$task" | jq -r '.output // ""')" ;;
+            *) bg "$(printf '%s' "$task" | jq -r .task)" "$(printf '%s' "$task" | jq -r .command)" "$(printf '%s' "$task" | jq -r '.output // ""')" ;;
+        esac
+    done < <(printf '%s' "$tasks" | jq -c '.[]')
+    want=PASS; [ "$expect" = deny ] && want=deny
+    case_of "запись $at" "$(TMPDIR=/var/folders/T/ mon "$command" "$P" "$cwd")" "$want"
+done <"$DATA"
+
+# --- настоящая запись: хук отвечает как движок ---------------------------------------------------
+REAL="$ASSETS/../tests/fixtures/real-record/2026-11-13.jsonl"
+COMMAND='tail -n 0 -f /tmp/x.log | grep --line-buffered red'
+want="$(jq -cn --arg p "$REAL" --arg c "$COMMAND" '{hook_event_name:"PreToolUse",tool_name:"Monitor",tool_input:{command:$c},transcript_path:$p,cwd:"/tmp"}' | node "$ASSETS/checks/task-flow-script.mjs" monitor-call | jq -r 'if .refuse then "deny" else "PASS" end')"
+case_of 'настоящая запись 13.11 — хук отвечает как движок' "$(mon "$COMMAND" "$REAL" /tmp)" "$want"
+
+suite_result "Monitor по своему фоновому"

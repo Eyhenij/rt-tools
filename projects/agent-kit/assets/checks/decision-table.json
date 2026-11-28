@@ -368,6 +368,8 @@
                 "commit",
                 "load_rule",
                 "end_conversation",
+                "owner_stop_call",
+                "monitor_stream",
                 "rerun_run",
                 "read_run_log"
             ],
@@ -792,6 +794,14 @@
             "file": "override-write-guard.sh",
             "kind": "guard",
             "asks": "own"
+        },
+        {
+            "file": "owner-stop-call-guard.sh",
+            "kind": "guard"
+        },
+        {
+            "file": "monitor-stream-guard.sh",
+            "kind": "guard"
         },
         {
             "file": "owner-corrections.sh",
@@ -9080,6 +9090,36 @@
                 "input": "jq -n '{session_id:\"p\",hook_event_name:\"PreToolUse\",tool_name:\"EndConversation\",tool_input:{}}'"
             },
             "text": "BLOCKED by end-conversation-guard: the executor does not end the conversation. The session is ended by the owner and by nobody else. An assignment stands until the owner cancels it, and an insult cancels nothing: do what was assigned, and where the work stands on the owner's word, wait for the word. A session that must close is closed by the owner — say so in words and go on working. There is no lawful form of bypass for this refusal.",
+            "tail": true
+        },
+        {
+            "area": "turn",
+            "hook": "owner-stop-call-guard.sh",
+            "when": {},
+            "action": "owner_stop_call",
+            "decision": "deny",
+            "move": "say_in_words",
+            "says": "take down own background — TaskStop b1 — and end the turn; a turn a notice opened ends with no words",
+            "probe": {
+                "setup": "T=$(fixture_tree); P=\"$T/turn.jsonl\"; export TMPDIR=\"$T/\" T P; : > \"$P\"; line() { printf '%s\\n' \"$1\" >> \"$P\"; }; line '{\"type\":\"user\",\"timestamp\":\"2026-11-24T04:00:00Z\",\"message\":{\"content\":\"делай задачу\"}}'; line '{\"type\":\"assistant\",\"timestamp\":\"2026-11-24T04:00:05Z\",\"message\":{\"content\":[{\"type\":\"tool_use\",\"id\":\"t1\",\"name\":\"Bash\",\"input\":{\"command\":\"sleep 100\",\"run_in_background\":true}}]}}'; line '{\"type\":\"user\",\"timestamp\":\"2026-11-24T04:00:06Z\",\"toolUseResult\":{\"backgroundTaskId\":\"b1\"},\"message\":{\"content\":[{\"type\":\"tool_result\",\"tool_use_id\":\"t1\",\"content\":\"running\"}]}}'; line '{\"type\":\"user\",\"timestamp\":\"2026-11-24T04:00:30Z\",\"message\":{\"content\":\"стоп\"}}'; line '{\"type\":\"user\",\"timestamp\":\"2026-11-24T04:00:40Z\",\"origin\":{\"kind\":\"task-notification\"},\"message\":{\"content\":\"<task-notification><task-id>m1</task-id></task-notification>\"}}'",
+                "input": "jq -n '{session_id:\"p\",hook_event_name:\"PreToolUse\",tool_name:\"Bash\",tool_input:{command:\"ls\"},transcript_path:env.P,cwd:env.T}'"
+            },
+            "text": "BLOCKED by owner-stop-call-guard: the owner's stop stands, and no word of the owner after it opened this turn — a notice of a task, a line of Monitor or a message of another session woke it, or the owner's word was a bare stop. Every call of this turn is refused except the take-down of own background: take down own background — {task_stop} — and end the turn; a turn a notice opened ends with no words. The work goes on by the owner's working order. There is no lawful form of bypass for this refusal.",
+            "tail": true
+        },
+        {
+            "area": "turn",
+            "hook": "monitor-stream-guard.sh",
+            "when": {},
+            "action": "monitor_stream",
+            "decision": "deny",
+            "move": "say_in_words",
+            "says": "the end of b1 comes as a notice; read /tmp/set.log after it",
+            "probe": {
+                "setup": "T=$(fixture_tree); P=\"$T/turn.jsonl\"; export T P; : > \"$P\"; line() { printf '%s\\n' \"$1\" >> \"$P\"; }; line '{\"type\":\"assistant\",\"timestamp\":\"2026-11-26T10:00:00Z\",\"message\":{\"content\":[{\"type\":\"tool_use\",\"id\":\"t1\",\"name\":\"Bash\",\"input\":{\"command\":\"bash set.sh > /tmp/set.log 2>&1\",\"run_in_background\":true}}]}}'; line '{\"type\":\"user\",\"timestamp\":\"2026-11-26T10:00:01Z\",\"toolUseResult\":{\"backgroundTaskId\":\"b1\"},\"message\":{\"content\":[{\"type\":\"tool_result\",\"tool_use_id\":\"t1\",\"content\":\"running\"}]}}'",
+                "input": "jq -n '{session_id:\"p\",hook_event_name:\"PreToolUse\",tool_name:\"Monitor\",tool_input:{command:\"tail -f /tmp/set.log | grep --line-buffered red\"},transcript_path:env.P,cwd:env.T}'"
+            },
+            "text": "BLOCKED by monitor-stream-guard: this Monitor prints a line on every step of the own background task {task}, over {file}. When {task} ends, its end comes as a notice by itself, and every line of the monitor wakes the turn — after the owner's stop too. The lawful move: no Monitor; the end of {task} comes as a notice; read {file} after it. A task that never ends by itself, such as a server, is waited for by one line: until grep -q '<mark>' {file}; do sleep 5; done. There is no lawful form of bypass for this refusal.",
             "tail": true
         },
         {

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.42.0 · pitfalls/git-workflow-commit.github.md · 677e4c8ad838 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.42.1 · pitfalls/git-workflow-commit.github.md · 677e4c8ad838 · правится надстройкой, не здесь -->
 # Task, branch and commit — cold part
 
 The pattern `git-workflow-commit` whole: every section with its code and its reasons. Its hot part names the sections and the opening of each.

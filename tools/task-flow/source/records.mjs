@@ -1,4 +1,4 @@
-// rt-kit v0.42.0 · task-flow/source/records.mjs · 946ea005fd6f · правится надстройкой, не здесь
+// rt-kit v0.42.1 · task-flow/source/records.mjs · 946ea005fd6f · правится надстройкой, не здесь
 /**
  * The record directories of this repository: the directories where the harness keeps the session
  * records of every working copy, one per copy. The harness names a directory by the path of its copy

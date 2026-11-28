@@ -24,7 +24,7 @@ import { buildModel } from '../assets/checks/flow-model.mjs';
 import { openReaders } from '../assets/checks/task-flow-script.mjs';
 import { forecastCopies, forecastLine, missedLine, perMille } from '../assets/checks/flow-forecast.mjs';
 import * as sessionSource from '../assets/task-flow/source/session.mjs';
-import { wordOf } from '../assets/task-flow/source/owner.mjs';
+import { wordOf, wordsOf } from '../assets/task-flow/source/owner.mjs';
 
 const out = (label, got, want) => console.log(`${label}|${got}|${want}`);
 const flow = new URL('../assets/task-flow/flow.js', import.meta.url).pathname;
@@ -40,7 +40,7 @@ const use = (branch, name, input) => ({ ...meta(branch), type: 'assistant', mess
 const stop = (branch) => ({ ...meta(branch), type: 'system', subtype: 'stop_hook_summary' });
 const say = (branch) => ({ ...meta(branch), type: 'assistant', message: { content: [{ type: 'text', text: 'done' }] } });
 const run = async (entries) =>
-    forecastCopies({ copies: [{ name: 'c', sessions: [{ id: 's', entries }] }], window, model, base: dirname(flow), openReaders, sessionSource, wordOf, tree: '/t', settings });
+    forecastCopies({ copies: [{ name: 'c', sessions: [{ id: 's', entries }] }], window, model, base: dirname(flow), openReaders, sessionSource, wordOf, wordsOf, tree: '/t', settings });
 
 const B = 'RT-7-x';
 const held = await run([owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), say(B), stop(B), say(B), owner(B, '[Request interrupted by user]'), say(B), stop(B)]);
@@ -85,7 +85,7 @@ out('missed: SC-AK-1552 — остановка с отказом хука ход
 out('missed: SC-AK-1552 — каждая остановка на ветке с движком входит в знаменатель', loop.laidStops, '3');
 const blocked = await run([owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), { ...stop(B), hookErrors: ['BLOCKED by turn-exit-guard: open'] }]);
 out('missed: SC-AK-1552 — отказ в итоге хуков ход не кончает', `${blocked.ended} ${blocked.missed}`, '0 0');
-const unlaid = await forecastCopies({ copies: [{ name: 'c', sessions: [{ id: 's', entries: [owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), say(B), stop(B)] }] }], window, model, base: dirname(flow), openReaders, sessionSource, wordOf, tree: '/t', settings, laid: () => false });
+const unlaid = await forecastCopies({ copies: [{ name: 'c', sessions: [{ id: 's', entries: [owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), say(B), stop(B)] }] }], window, model, base: dirname(flow), openReaders, sessionSource, wordOf, wordsOf, tree: '/t', settings, laid: () => false });
 out('missed: SC-AK-1552 — ветка без движка не считается', `${unlaid.ended} ${unlaid.missed}`, '0 0');
 out('missed: SC-AK-1552 — строка счёта', missedLine(held, 200), 'missed stops with open work: 1 of 2 stops in the last 200 calls');
 JS

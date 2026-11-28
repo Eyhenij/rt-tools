@@ -383,6 +383,14 @@ judge_current
 [ -z "$reason" ] && judge_abandoned
 [ -z "$reason" ] && exit 0
 
+# The owner's stop stands — a stop word or Esc with no working order after it: the turn ends, and
+# the draft waits for the owner's next word. The engine judges the record, as the exit check does.
+for engine in "${RT_FLOW_ENGINE:-}" "$root/tools/task-flow-script.mjs"; do [ -f "$engine" ] && break; done
+if [ -f "$engine" ] && command -v node >/dev/null 2>&1 \
+    && printf '%s' "$input" | perl -e 'alarm shift; exec @ARGV' 30 node "$engine" stop >/dev/null 2>&1; then
+    exit 0
+fi
+
 jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
     || printf '{"decision":"block","reason":"git-guard-draft-ready: the run is green, and the PR is still a draft — lift it."}\n'
 
