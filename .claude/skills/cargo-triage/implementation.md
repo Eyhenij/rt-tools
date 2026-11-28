@@ -67,7 +67,7 @@ sign of "read and decided".
 - **A record gets one verdict of four before any work: the executor's miss, a documentation miss, a package code miss, no longer reproduced.** — `.claude/rt-kit/gate-map.sh:skill_for` — the pattern `cargo-triage-validate` is loaded before `cargo:pull` and `cargo:mark`. Also: **Not checked by anything.** That a verdict line stands before the mark is invisible to a machine
 - **The executor's miss is set when the rule or check covering the case stood at the record's edition and the record shows it unread, bypassed or argued with.** — **Not checked by anything.** The edition is read by `git show <tag>:<path>`, step 3 of the pattern
 - **A package verdict needs evidence from the package, not the complaint's words.** — **Not checked by anything.** The verdict line names the file and line, step 5 of the pattern
-- **Every record is compared with the mission of the package.** — **Not checked by anything.** The mission stands in `docs/product/missions.md`, section `@rt-tools/agent-kit`; step 6 of the pattern
+- **Every record is compared with the mission of the package.** — **Not checked by anything.** The mission stands in `docs/product/missions.md`, section «The rules package»; step 6 of the pattern
 - **A proposal that drifts the package is refused.** — **Not checked by anything.** Step 7 of the pattern; a refusal goes to quarantine by `tools/cargo-mark.mjs` with `--quarantine-note`
 - **The verdict and its evidence are written with the record.** — **Not checked by anything.** The line form stands in the pattern `cargo-triage-validate`, section «The verdict line»
 

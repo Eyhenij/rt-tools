@@ -67,7 +67,7 @@ replaced the resource for «no longer reproduced».
 
 ## Common misses
 
-- **The record taken into work by its title.** Twelve records were marked «in work» on 28.11 without a
+- **The record taken into work by its title.** Twelve records were taken into a task on 28.11 without a
   verdict, and seven of them described hooks the current edition no longer had.
 - **A record argued with the spec and the spec held on purpose.** The scenario that held the turn after the
   owner's «ну что там?» was the decision, not a defect.

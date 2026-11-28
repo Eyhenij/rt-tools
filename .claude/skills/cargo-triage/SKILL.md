@@ -2,7 +2,7 @@
 name: cargo-triage
 kind: rule
 law: work-conduct
-description: A rule under the "Law on work conduct". Take it when the cargo that arrived in the intake is sorted out — incident analyses and proposals from trees. It names what the cargo is read by and when a record gets the marks of a fix and of a release. The pattern is cargo-triage-mark.
+description: A rule under the "Law on work conduct". Take it when the cargo that arrived in the intake is sorted out — incident analyses and proposals from trees. It names what the cargo is read by and when a record gets the marks of a fix and of a release. Patterns cargo-triage-mark and cargo-triage-validate.
 ---
 
 # Sorting out the arrived cargo — how it is arranged here

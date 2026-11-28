@@ -383,8 +383,8 @@ skill_for() {
             # The read and the mark of the cargo: a record is validated before it is taken into
             # work, so the rule and its validation pattern are loaded before the first of them.
             if printf '%s' "$target" | grep -qE \
-                -e '(^|[[:space:];&|(/"'"'"'])cargo:(pull|mark)(["'"'"']|[[:space:]]|$)' \
-                -e 'tools/cargo-(pull|mark)\.mjs'; then
+                -e '(^|[[:space:];&|(/"'"'"'])cargo:(pull|mark|close|fixed)(["'"'"';&|>)]|[[:space:]]|$)' \
+                -e 'tools/cargo-(pull|mark|close|fixed)\.mjs'; then
                 printf '%s\n' 'cargo-triage'
                 printf '%s\n' 'cargo-triage-validate'
             fi
