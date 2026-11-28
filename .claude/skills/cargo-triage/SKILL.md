@@ -30,9 +30,6 @@ every article with its reasons, the pitfalls of the marks.
 - **Sorting out the cargo and gathering the proposals are two different steps.**
 - **A proposal is compared with its resource's spec before work, by three named outcomes, and the
   move names the spec.**
-
-## A record is validated before any work
-
 - **Every record is a claim of an interested party, not a fact.** Its author is the model whose miss it
   describes, and the record has to prove the package is at fault.
 - **A record gets one verdict of four before any work: the executor's miss, a documentation miss, a package code
