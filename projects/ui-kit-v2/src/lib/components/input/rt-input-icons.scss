@@ -10,8 +10,7 @@
            своей высоты приложения вырастает до высоты кнопки. Свой вид кита держит прежний размер
            кнопки: малое поле с кнопкой в нём 34 px, как до набора. Свой размер кнопки приложения
            остаётся в силе, пока помещается. */
-        &#{$preset-weak} &__icon-left .rt-icon-button,
-        &#{$preset-weak} &__icon-right .rt-icon-button {
+        &#{$preset-weak} :is(.rt-input__icon-left, .rt-input__icon-right) .rt-icon-button {
             width: min(
                 var(--rt-icon-button-size, var(--rt-icon-button-size-step)),
                 calc(var(--rt-input-height) - 2 * var(--rt-input-border-width))
@@ -91,8 +90,7 @@
 
         /* Свес кнопки-значка за её значок — по половине разницы с каждой стороны: на него кнопка
            сдвигается наружу, и значок встаёт на место простого значка. */
-        &#{$preset-weak} > &__icon-left .rt-icon-button,
-        &#{$preset-weak} > &__icon-right .rt-icon-button {
+        &#{$preset-weak} > :is(.rt-input__icon-left, .rt-input__icon-right) .rt-icon-button {
             --rt-input-icon-button-width: min(
                 var(--rt-icon-button-size, var(--rt-icon-button-size-step)),
                 calc(var(--rt-input-height) - 2 * var(--rt-input-border-width))

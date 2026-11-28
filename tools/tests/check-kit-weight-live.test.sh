@@ -48,7 +48,7 @@ if [ -f "$ROOT_DIR/dist/ui-kit-v2/fesm2022/rt-tools-ui-kit-v2-menu.mjs" ] && [ -
     ONCE="$(node --input-type=module -e "
         const { measure } = await import('$TOOLS/check-kit-weight.mjs');
         // The value is left out: the build of an application rewrites the names of the variables.
-        const rule = '.rt-input--appearance--pill .rt-input__floating-label{line-height:';
+        const rule = ':is(.rt-input--appearance--fill,.rt-input--appearance--pill) .rt-input__floating-label{line-height:';
         console.log((await measure()).code.split(rule).length - 1);
     ")"
     report "a style of a kit component lands in the set once" "$ONCE" "1"
