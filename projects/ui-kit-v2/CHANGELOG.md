@@ -1,3 +1,11 @@
+# [0.55.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.54.0...rt-ui-kit-v2%400.55.0) (2026-11-27)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** значок рисуется до завершения потока запроса, после первого круга ревью (RT-3715) ([b709959](https://github.com/Eyhenij/rt-tools/commit/b709959398579464817c772759fa33cca00689ee))
+- **rt:ui-kit-v2:** кеш значка без нового класса rxjs, после второго круга ревью (RT-3715) ([5dbd100](https://github.com/Eyhenij/rt-tools/commit/5dbd10097bdd45fc27d6abf5a6eb4879497309a4))
+- **rt:ui-kit-v2:** тёмный узел набора тёмный и под rt-theme-dark (RT-3732) ([b3cf0c6](https://github.com/Eyhenij/rt-tools/commit/b3cf0c64b133635de7de11b945f5c1abc093bf4e))
+
 # [0.54.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.53.0...rt-ui-kit-v2%400.54.0) (2026-11-27)
 
 ### Bug Fixes

@@ -16,9 +16,24 @@ import { RtFieldComponent } from './rt-field.component';
  * они читают. Замер в браузере — история Molecules/Forms/Field → Material.
  */
 
-/** Собранный лист без переносов: селекторы и значения читаются одной строкой. */
+/** Собранный лист без комментариев и переносов: селекторы и значения читаются одной строкой. */
 function compiled(file: string): string {
-    return sass.compile(join(__dirname, file)).css.replace(/\s+/g, ' ');
+    return sass
+        .compile(join(__dirname, file))
+        .css.replace(/\/\*[\s\S]*?\*\//g, '')
+        .replace(/\s+/g, ' ');
+}
+
+interface IRule {
+    readonly selector: string;
+    readonly body: string;
+}
+
+/** Правила листа по одному: селектор целиком и тело. */
+function rules(css: string): IRule[] {
+    return Array.from(css.matchAll(/([^{}]+)\{([^{}]*)\}/g), (found: RegExpMatchArray): IRule => {
+        return { selector: found[1].trim(), body: found[2].trim() };
+    });
 }
 
 const FIELD: string = compiled('rt-field.component.scss') + compiled('rt-field-label-inside.scss');
@@ -76,6 +91,19 @@ describe('поле материального набора против поля
         expect(SELECT).toContain(`.rt-select${preset} .rt-select__floating-label`);
         expect(INPUT_LABEL).toContain(`.rt-input--floating${preset}:not(.rt-input--appearance--fill`);
         expect(INPUT_LABEL).toContain(`.rt-input${preset} .rt-input__floating-label`);
+        // Слой рамки поля ввода пишется без признака набора: во всех листах поля его включает только обведённое
+        // правило набора, а другого содержимого у слоя нет ни в одном его состоянии.
+        const boxed: string = `.rt-input--floating${preset}:not(.rt-input--appearance--fill, .rt-input--appearance--pill, .rt-input--readonly)`;
+        const sheets: IRule[] = rules(`${INPUT_LABEL} ${INPUT} ${compiled('../input/rt-input-affixes.scss')}`);
+        const switches: IRule[] = sheets.filter((rule: IRule): boolean => rule.body.includes('--rt-private-input-outline:'));
+        expect(switches.map((rule: IRule): string => rule.selector)).toEqual([boxed, '.rt-input--floating']);
+        expect(switches[0].body).toContain("--rt-private-input-outline: '';");
+        expect(switches[1].body).toBe('--rt-private-input-outline: none;');
+
+        const layerContents: string[] = sheets
+            .filter((rule: IRule): boolean => /^\.rt-input(?!_).*:before(,|$)/.test(rule.selector))
+            .flatMap((rule: IRule): string[] => rule.body.match(/(?<![-\w])content:[^;]*/g) ?? []);
+        expect(layerContents).toEqual(['content: var(--rt-private-input-outline)']);
         expect(`${SELECT} ${INPUT_LABEL} ${INPUT}`).not.toMatch(/:is\(\.rt-preset-material, \[data-preset=material\]\) \.rt-/);
     });
 
@@ -198,9 +226,11 @@ describe('поле материального набора против поля
         const cap: string = 'var(--rt-input-height) - 2 * var(--rt-input-border-width)';
 
         expect(ruleBody(INPUT, '[data-preset=material]) .rt-input__clear .rt-icon-button')).toContain(cap);
-        expect(ruleBody(INPUT, '[data-preset=material]) .rt-input__icon-left .rt-icon-button')).toContain(cap);
+        // Значки слева и справа пишутся одним правилом: признак набора длинный и лежит в старте приложения.
+        expect(ruleBody(INPUT, '[data-preset=material]) :is(.rt-input__icon-left, .rt-input__icon-right) .rt-icon-button')).toContain(cap);
         expect(ruleBody(SELECT, '[data-preset=material]) .rt-select__clear .rt-icon-button')).toContain(cap);
         expect(INPUT).not.toMatch(/[{}] \.rt-input__(clear|icon-left|icon-right) \.rt-icon-button[ ,{]/);
+        expect(INPUT).not.toMatch(/[{}] (\.rt-input (> )?)?:is\(\.rt-input__icon-left, \.rt-input__icon-right\) \.rt-icon-button/);
         expect(SELECT).not.toMatch(/[{}] \.rt-select__clear \.rt-icon-button \{/);
         expect(ruleBody(INPUT, '.rt-input--size--sm {')).toContain('--rt-input-height: var(--rt-input-height-sm)');
     });
