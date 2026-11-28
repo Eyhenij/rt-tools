@@ -380,6 +380,14 @@ skill_for() {
                 -e '\$\{?[A-Za-z_]*GH[A-Za-z_]*(:-[^}]*)?\}?"?[[:space:]]+pr[[:space:]]+(create|new)([[:space:]]|$)'; then
                 printf '%s\n' 'task-delivery-loop'
             fi
+            # The read and the mark of the cargo: a record is validated before it is taken into
+            # work, so the rule and its validation pattern are loaded before the first of them.
+            if printf '%s' "$target" | grep -qE \
+                -e '(^|[[:space:];&|(/"'"'"'])cargo:(pull|mark|close|fixed)(["'"'"';&|<>)`]|[[:space:]]|$)' \
+                -e 'tools/cargo-(pull|mark|close|fixed)\.mjs'; then
+                printf '%s\n' 'cargo-triage'
+                printf '%s\n' 'cargo-triage-validate'
+            fi
             ;;
     esac
 

@@ -159,6 +159,23 @@ flowchart TD
   lives one session. The mark command refuses such a move before the network; an analysis is not
   asked for a spec — there is nothing to compare it with.
 
+## A record is validated before any work
+
+- **The author of a record is the party the record is about.** A model that missed a rule writes the
+  record in the same session, and a package defect explains the miss at no cost to it. On 28.11 seven of
+  twelve records of one slice described hooks the edition 0.38.0 had already replaced, and one argued with a
+  scenario the spec held on purpose. Taken on trust, each would have been an edit of a package that was right.
+- **A verdict comes before the spec.** The comparison with the spec judges how the package should behave; it
+  does not ask whether the package was at fault. An executor's miss compared with the spec looks like a
+  silent spec, and the question goes to the owner about a case the rule already covered.
+- **The mission is the boundary of the package.** A person says what they want and gets a working result by
+  their words without watching over the agent; a mistake corrected once does not come back. An edit that moves
+  none of this is a cost with no return, however well the record argues for it.
+- **A drift is refused whatever the other answers.** A softer check, an exception for one workaround or a
+  paragraph nobody acts on each make the next miss cheaper, and the package exists to make it dearer.
+- **The verdict line is the trace.** Without it the decision lives one session, and the next reading of the
+  same record starts over.
+
 ## An incident analysis: what is in it and where it lives
 
 An incident is a session in which the executor did the wrong thing, the rules layer did not refuse
