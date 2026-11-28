@@ -129,6 +129,13 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `footerTemplate` | `TemplateRef \| null`           | `null`         | свой подвал от того, кто открывает лист кодом               |
 | `confirmLabels`  | `IRtSheetConfirmLabels \| null` | `null`         | заголовок, пояснение и три ответа вопроса вместо слов кита  |
 | `closeOnApply`   | `boolean`                       | `true`         | «Применить» вопроса просит закрыть; `false` — лист остаётся |
+| `moreTemplate`   | `RtSheetMoreDirective \| null`  | `null`         | шаблон «Ещё» от того, кто ставит лист в своём шаблоне       |
+
+Вход директивы `rtSheetMore`:
+
+| вход               | тип              | умолчание | что делает                                      |
+| ------------------ | ---------------- | --------- | ----------------------------------------------- |
+| `rtSheetMoreTitle` | `string \| null` | `null`    | заголовок второго экрана; без него — «Ещё» кита |
 
 ## Выходы
 
