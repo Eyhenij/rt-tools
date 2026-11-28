@@ -31,6 +31,23 @@ every article with its reasons, the pitfalls of the marks.
 - **A proposal is compared with its resource's spec before work, by three named outcomes, and the
   move names the spec.**
 
+## A record is validated before any work
+
+- **Every record is a claim of an interested party, not a fact.** Its author is the model whose miss it
+  describes, and the record has to prove the package is at fault.
+- **A record gets one verdict of four before any work: the executor's miss, a documentation miss, a package code
+  miss, no longer reproduced.** Only the two package verdicts go on to the comparison with the spec.
+- **The executor's miss is set when the rule or check covering the case stood at the record's edition and the
+  record shows it unread, bypassed or argued with.** The record closes with no edit of the package.
+- **A package verdict needs evidence from the package, not the complaint's words.** The silent or wrong text, or
+  the guard and the input that refuse a lawful move, reproduced on the current edition.
+- **Every record is compared with the mission of the package.** An edit that brings no person closer to a
+  working result without watching over the agent goes to quarantine with the reason.
+- **A proposal that drifts the package is refused.** It loosens a check, adds an exception for one workaround or
+  adds text nobody acts on.
+- **The verdict and its evidence are written with the record.** One line in the progress of the task, which
+  leaves for the archive with the grill, or in the quarantine note: the verdict, the mission, the file and line.
+
 ## An incident analysis: what is in it and where it lives
 
 - **The analysis lives in the intake, on the tree's disk only until the send.**
@@ -52,3 +69,4 @@ every article with its reasons, the pitfalls of the marks.
 ## Patterns
 
 - `cargo-triage-mark` — the ready-made read and mark calls.
+- `cargo-triage-validate` — the order of validating a record and the signs of a masked miss.
